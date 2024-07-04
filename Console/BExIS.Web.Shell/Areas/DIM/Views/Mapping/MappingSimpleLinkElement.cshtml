@@ -1,16 +1,12 @@
-﻿
-@using BExIS.Modules.Dim.UI.Models.Mapping
+﻿@using BExIS.Modules.Dim.UI.Models.Mapping
 
 @model LinkElementModel
 
 @{
 
-
     string id = Model.Type + "_" + Model.ElementId + "_" + @Model.Position + "_" + @Model.Name.Replace(' ','-')+"_MappingSimpleLinkElement";
 
 }
-
-
 
 <div id="@id" class="@id le-mapping-simple-element" title="@Model.Description">
 
@@ -31,8 +27,7 @@
 
         @if (!string.IsNullOrEmpty(@Model.XPath))
         {
-            @Model.XPath.Replace("/", "/ ")
+        @Model.XPath.Replace("/", "/ ")
         }
     </div>
-
 </div>

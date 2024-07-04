@@ -7,8 +7,6 @@ namespace BExIS.Dcm.ImportMetadataStructureWizard
 {
     public class ImportMetadataStructureTaskManager : AbstractTaskManager
     {
-
-
         public static string FILENAME = "filename";
         public static string FILEPATH = "filepath";
         public static string EXTENTION = "Extention";
@@ -32,9 +30,8 @@ namespace BExIS.Dcm.ImportMetadataStructureWizard
 
         public static string ALL_METADATA_NODES = "ALL_METADATA_NODES";
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -49,7 +46,6 @@ namespace BExIS.Dcm.ImportMetadataStructureWizard
 
             foreach (XmlNode xmlStepInfo in xmlStepInfos)
             {
-
                 StepInfo si = new StepInfo(xmlStepInfo.Attributes.GetNamedItem("title").Value)
                 {
                     GetActionInfo = new ActionInfo
@@ -76,7 +72,7 @@ namespace BExIS.Dcm.ImportMetadataStructureWizard
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -90,11 +86,10 @@ namespace BExIS.Dcm.ImportMetadataStructureWizard
             {
                 if (!StepInfos.ElementAt(i).stepStatus.Equals(StepStatus.success)) StepInfos.ElementAt(i).SetStatus(StepStatus.none);
             }
-
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -112,7 +107,7 @@ namespace BExIS.Dcm.ImportMetadataStructureWizard
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         public void GoToNext()
         {
             //this.currentStepInfo.SetStatus(StepStatus.success);
@@ -121,7 +116,7 @@ namespace BExIS.Dcm.ImportMetadataStructureWizard
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -145,7 +140,6 @@ namespace BExIS.Dcm.ImportMetadataStructureWizard
                     if (StepInfos[i].stepStatus != StepStatus.success) StepInfos[i].SetStatus(StepStatus.error);
                 }
             }
-
         }
     }
 }

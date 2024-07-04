@@ -16,9 +16,9 @@ export interface ConstraintListItem {
 }
 
 export interface DomainConstraintListItem extends ConstraintListItem {
-    domain: string;
-    provider: string;
-    selectionPredicate?: ConstraintSelectionPredicate;
+	domain: string;
+	provider: string;
+	selectionPredicate?: ConstraintSelectionPredicate;
 }
 
 export interface RangeConstraintListItem extends ConstraintListItem {
@@ -44,30 +44,30 @@ export interface Info {
 }
 
 export interface DatasetInfo extends Info {
-    datasetVersionId: number;
-    datasetVersionNumber: number;
-    datastructureId: number;
+	datasetVersionId: number;
+	datasetVersionNumber: number;
+	datastructureId: number;
 }
 
-export interface DatasetImportInfo extends DatasetInfo{
+export interface DatasetImportInfo extends DatasetInfo {
 	varId?: number;
 }
 
 export interface DatastructureInfo extends Info {
-    columnInfos: ColumnInfo[];
+	columnInfos: ColumnInfo[];
 }
 
 export interface ColumnInfo extends Info {
-    orderNr: number;
+	orderNr: number;
 	unit: string;
-    dataType: string;
+	dataType: string;
 }
 
 export interface ConstraintSelectionPredicate {
-    datasetId: number;
-    datasetVersionId: number;
-    datasetVersionNumber: number;
-    tagId: number;
-    variableId: number;
-    url: string;
+	datasetId: number;
+	datasetVersionId: number;
+	datasetVersionNumber: number;
+	tagId: number;
+	variableId: number;
+	url: string;
 }

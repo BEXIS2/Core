@@ -51,21 +51,18 @@
 	function errorHandler(e) {
 		console.log('error event in data');
 	}
-
-
 </script>
 
 {#if hooks}
 	<!-- if hooks list is loaded render hooks -->
 	<div class="grid divide-y">
 		<HookContainer {...metadataHook}>
-
 			<div>
 				<Metadata {id} {version} {...metadataHook} />
 			</div>
 		</HookContainer>
 
-		<HookContainer {...dataDescriptionHook} let:dateHandler >
+		<HookContainer {...dataDescriptionHook} let:dateHandler>
 			<div>
 				<DataDescription
 					{id}
@@ -84,7 +81,7 @@
 			let:warningHandler
 			let:dateHandler
 		>
-			<div >
+			<div>
 				<FileUpload
 					{id}
 					{version}
@@ -98,13 +95,13 @@
 		</HookContainer>
 
 		<HookContainer {...validationHook}>
-			<div >
+			<div>
 				<Validation {id} {version} {...validationHook} />
 			</div>
 		</HookContainer>
 
 		<HookContainer {...submitHook} let:errorHandler let:successHandler let:warningHandler>
-			<div >
+			<div>
 				<Submit
 					{id}
 					{version}

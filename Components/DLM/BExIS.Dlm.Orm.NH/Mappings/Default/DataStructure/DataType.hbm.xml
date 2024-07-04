@@ -1,9 +1,9 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="DataType" table="DataTypes" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
-    
+
     <id name="Id" type="Int64">
-      <column name="Id" index="idx_DataTypes_id"/>
+      <column name="Id" index="idx_DataTypes_id" />
       <generator class="native" />
     </id>
 
@@ -16,7 +16,7 @@
     </property>
 
     <!-- Mapping DataTuple properties -->
-    
+
     <property name="Name" type="String">
       <column name="Name" index="idx_DataTypes_name" />
     </property>
@@ -30,16 +30,14 @@
     </property>
 
     <set name="ApplicableUnits" inverse="true" table="Units_DataTypes" lazy="true" cascade="save-update">
-      <key column="DataTypeRef"/>
-      <many-to-many column="UnitRef" class="Unit"/>
+      <key column="DataTypeRef" />
+      <many-to-many column="UnitRef" class="Unit" />
     </set>
 
     <!-- Cascade only update. in case of delete set the FK in the data container to null-->
     <set name="DataContainers" inverse="true"  cascade="save-update">
-      <key column="DataTypeRef" not-null="true"/>
-      <one-to-many class="DataContainer"/>
+      <key column="DataTypeRef" not-null="true" />
+      <one-to-many class="DataContainer" />
     </set>
-
   </class>
-
 </hibernate-mapping>

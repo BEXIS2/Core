@@ -155,7 +155,6 @@ namespace BExIS.Dim.Helpers.Export
 
                 return "";
             }
-
         }
 
         public bool Validate(long datasetVersionId, out List<string> errors)
@@ -171,8 +170,6 @@ namespace BExIS.Dim.Helpers.Export
             string mimeType = "";
             using (DatasetManager dm = new DatasetManager())
             {
-
-
                 if (ext.Contains("csv"))
                 {
                     name = "datastructure";

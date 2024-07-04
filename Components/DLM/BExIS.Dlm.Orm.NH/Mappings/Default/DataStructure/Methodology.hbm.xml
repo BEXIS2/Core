@@ -1,7 +1,7 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Methodology" table="Methodologies" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
-    
+
     <id name="Id" type="Int64">
       <column name="Id" index="idx_Methodologies_id" />
       <generator class="native" />
@@ -16,7 +16,7 @@
     </property>
 
     <!-- Mapping Entity properties -->
-    
+
     <property name="AppliedStandards" type="String">
       <column name="AppliedStandards" />
     </property>
@@ -34,10 +34,8 @@
     </property>
 
     <set name="DataContainers" inverse="true">
-      <key column="MethodologyRef" not-null="false"/>
-      <one-to-many class="DataContainer"/>
+      <key column="MethodologyRef" not-null="false" />
+      <one-to-many class="DataContainer" />
     </set>
-    
   </class>
-
 </hibernate-mapping>

@@ -1,7 +1,6 @@
 ﻿using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;

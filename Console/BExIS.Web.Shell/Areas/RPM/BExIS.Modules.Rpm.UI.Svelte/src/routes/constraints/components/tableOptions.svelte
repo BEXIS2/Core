@@ -9,7 +9,6 @@
 
 <tableOption>
 	<div class="w-22" id={row.id}>
-		
 		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 		<button
 			type="button"
@@ -26,7 +25,7 @@
 		>
 			<Fa icon={faPen} />
 		</button>
-			
+
 		{#if row.inUse === false}
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<button
@@ -58,7 +57,9 @@
 			>
 				<Fa icon={faTrash} /></button
 			>
-			<span class="chip" title="{row.name} is in use"><Fa class="text-warning-500 shadow-md" icon={faTriangleExclamation} /></span>			
+			<span class="chip" title="{row.name} is in use"
+				><Fa class="text-warning-500 shadow-md" icon={faTriangleExclamation} /></span
+			>
 		{/if}
 	</div>
 </tableOption>

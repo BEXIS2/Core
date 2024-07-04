@@ -12,7 +12,7 @@
  }
 <div class="metadataNode row">
 @using (Html.BeginCollectionItem("metadataNames"))
-{ 
+{
     <div class="col-lg-10 vcenter">
          @Html.DropDownListFor(m => m, new SelectList(metadataNodes.OrderBy(s=>s.DisplayNameLong), "XPath", "DisplayNameLong", Model), "Please select", new { title="Corresponding metadata node to be used for the Lucene index."})
     </div>
@@ -20,7 +20,7 @@
          <a href="#" class="removeMetadataNode bx-trash bx-function" ></a>
     </div>
     @*@Html.TextBoxFor(m => m);*@
-    
+
 }
 </div>
 <style type="text/css">
@@ -35,5 +35,4 @@
         width:95%;
         margin:0;
     }
-
 </style>

@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Web;
 using System.Xml.Linq;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -25,7 +24,7 @@ namespace BExIS.Web.Shell.Helpers
         }
 
         /// <summary>
-        /// defaul menubar load with bar name like 
+        /// defaul menubar load with bar name like
         /// menubarRoot
         /// Accountbar
         /// </summary>
@@ -72,10 +71,9 @@ namespace BExIS.Web.Shell.Helpers
             }
 
             return menuItems;
-
         }
 
-        public static List<MenuItem> MenuBarSecured(string menuBar,string userName, bool sortByModule=false)
+        public static List<MenuItem> MenuBarSecured(string menuBar, string userName, bool sortByModule = false)
         {
             List<MenuItem> menuItems = new List<MenuItem>();
 
@@ -121,12 +119,11 @@ namespace BExIS.Web.Shell.Helpers
                             menuItems.Add(menuItem);
                         }
                     }
-
                 }
             }
 
-            if(sortByModule) return menuItems.OrderBy(i=>i.Module).ToList();
-            
+            if (sortByModule) return menuItems.OrderBy(i => i.Module).ToList();
+
             return menuItems;
         }
 
@@ -134,8 +131,7 @@ namespace BExIS.Web.Shell.Helpers
         {
             List<MenuItem> menuItems = new List<MenuItem>();
 
-
-            // if the user is authenticated create the account menu 
+            // if the user is authenticated create the account menu
             if (isAuthenticated)
             {
                 MenuItem menuItem = new MenuItem();
@@ -161,14 +157,12 @@ namespace BExIS.Web.Shell.Helpers
             }
             else
             {
-                MenuItem register = new MenuItem("Register","account/register","shell");
-                MenuItem login = new MenuItem("Login","account/login", "shell");
+                MenuItem register = new MenuItem("Register", "account/register", "shell");
+                MenuItem login = new MenuItem("Login", "account/login", "shell");
 
                 menuItems.Add(register);
                 menuItems.Add(login);
             }
-
-            
 
             return menuItems;
         }
@@ -220,12 +214,9 @@ namespace BExIS.Web.Shell.Helpers
             return menuItems;
         }
 
-
-
         private static string getUrl(XElement element)
         {
             StringBuilder sb = new StringBuilder();
-
 
             if (!string.IsNullOrWhiteSpace(element.Attribute("area").Value))
                 sb.Append(@"/").Append(element.Attribute("area").Value.ToLower());
@@ -243,7 +234,6 @@ namespace BExIS.Web.Shell.Helpers
         {
             StringBuilder sb = new StringBuilder();
 
-
             if (!string.IsNullOrWhiteSpace(element.Attribute("area").Value))
                 return element.Attribute("area").Value;
 
@@ -253,7 +243,7 @@ namespace BExIS.Web.Shell.Helpers
         private static string getTitle(XElement element)
         {
             if (element == null) return "";
-            return element.Attribute("title")!=null? element.Attribute("title").Value:"";
+            return element.Attribute("title") != null ? element.Attribute("title").Value : "";
         }
 
         private static bool hasOperationRigths(XElement operation, string userName)
@@ -276,7 +266,6 @@ namespace BExIS.Web.Shell.Helpers
 
             try
             {
-
                 //currently the action are not check, so we use a wildcard
                 string action = "*";//operation.Attribute("action").Value.ToLower();
 
@@ -307,9 +296,5 @@ namespace BExIS.Web.Shell.Helpers
                 operationManager.Dispose();
             }
         }
-
-
-
     }
-
 }

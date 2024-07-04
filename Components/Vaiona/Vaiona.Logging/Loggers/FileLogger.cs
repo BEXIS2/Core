@@ -29,6 +29,7 @@ namespace Vaiona.Logging.Loggers
             string logFile = Path.Combine(logFolder, fileName);
             return logFile;
         }
+
         public void LogCustom(CustomLogEntry logEntry)
         {
             throw new NotImplementedException();

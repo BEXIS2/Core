@@ -12,34 +12,23 @@ namespace BExIS.App.Testing
     [TestFixture()]
     public class CodeCheck
     {
-
         [OneTimeSetUp]
-        /// It is called once prior to executing any of the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved.
-        /// Inheritance is supported, call sequence form the parents
         public void OneTimeSetUp()
         {
             // because these tests are working on in-memory objects (datasets) only, there is no need to do the test app setup
         }
 
         [SetUp]
-        /// performs the initial setup for the tests. This runs once per test, NOT per class!
         protected void SetUp()
         {
-
         }
 
         [TearDown]
-        /// performs the cleanup after each test
         public void TearDown()
         {
         }
 
         [OneTimeTearDown]
-        /// It is called once after executing all the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved.
-        /// Inheritance is supported, call sequence form the children
-        /// Executes only if: counterpart OneTimeSetUp exists and executed successfully.
         public void OneTimeTearDown()
         {
         }
@@ -54,7 +43,6 @@ namespace BExIS.App.Testing
             List<string> lines = new List<string>();
             int countAll = 0;
 
-
             foreach (string file in files)
             {
                 string filename = Path.GetFileNameWithoutExtension(file);
@@ -66,7 +54,6 @@ namespace BExIS.App.Testing
                 using (var fileStream = File.OpenRead(file))
                 using (var streamReader = new StreamReader(fileStream, Encoding.UTF8, true, BufferSize))
                 {
-
                     string regexPatternManager = @"(new.*Manager\(\))";
                     string regexPatternDispose = @".Dispose\(\)";
 
@@ -94,7 +81,7 @@ namespace BExIS.App.Testing
                             (Regex.IsMatch(line, regexPatternDispose) && !line.Contains("guow")))
                         {
                             bool isInit = false;
-                            //check if its a start or end pattern 
+                            //check if its a start or end pattern
                             if ((Regex.IsMatch(line, regexPatternManager) && !line.Trim().StartsWith("using"))) isInit = true;
 
                             if (isInit)
@@ -106,7 +93,7 @@ namespace BExIS.App.Testing
                                 //example
                                 /**
                                  * var dm = new DatasetManager();
-                                 * 
+                                 *
                                  * dm.dispose();
                                  */
 
@@ -120,10 +107,7 @@ namespace BExIS.App.Testing
                                     var l = lines[i];
                                     if (l.Contains(name)) lines.RemoveAt(i);
                                 }
-
                             }
-
-
                         }
                     }
 
@@ -162,7 +146,5 @@ namespace BExIS.App.Testing
                 return directory;
             }
         }
-
-
     }
 }

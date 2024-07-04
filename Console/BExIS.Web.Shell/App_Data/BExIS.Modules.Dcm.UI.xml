@@ -51,7 +51,6 @@
         </member>
         <member name="M:BExIS.Modules.Dcm.UI.Controllers.API.DatasetInController.Post(BExIS.Modules.Dcm.UI.Models.API.PostApiDatasetModel)">
              <summary>
-            
              </summary>
              <example>
             {
@@ -166,7 +165,6 @@
         </member>
         <member name="M:BExIS.Modules.Dcm.UI.Controllers.EasyUploadVerificationController.GetExcelHeaderFields(OfficeOpenXml.ExcelWorksheet,BExIS.Utils.Models.SheetFormat,System.String)">
             <summary>
-            
             </summary>
             <param name="excelWorksheet"></param>
             <param name="sheetFormat"></param>
@@ -201,7 +199,6 @@
         </member>
         <member name="M:BExIS.Modules.Dcm.UI.Controllers.EntityReferenceController.Delete(System.Int64)">
              <summary>
-            
              </summary>
              <param name="model"></param>
              <returns></returns>
@@ -238,8 +235,7 @@
         </member>
         <member name="M:BExIS.Modules.Dcm.UI.Controllers.FormController.LoadSimpleAttributesForModelFromXml(BExIS.Modules.Dcm.UI.Models.CreateDataset.StepModelHelper,BExIS.Dcm.CreateDatasetWizard.CreateTaskmanager)">
             <summary>
-            load for the complex model all simple attribute models from the global set metadata xml 
-            
+            load for the complex model all simple attribute models from the global set metadata xml
             </summary>
             <param name="stepModelHelper"></param>
             <returns></returns>
@@ -402,12 +398,11 @@
         </member>
         <member name="P:BExIS.Modules.Dcm.UI.Models.FileInfoModel.Decimal">
             <summary>
-            representation of decimal 
+            representation of decimal
             </summary>
         </member>
         <member name="P:BExIS.Modules.Dcm.UI.Models.FileInfoModel.Orientation">
             <summary>
-            
             </summary>
         </member>
         <member name="P:BExIS.Modules.Dcm.UI.Models.FileInfoModel.Offset">
@@ -446,13 +441,12 @@
              </summary>
              <remarks>
              In the Metadata PUT Api there are two different ways to import metadata.
-             
+
              1. XML
              Send an xml in the xml content to update the metadata, each xpath is checked and if there is a possible mapping, the fields are updated.
-            
+
              2. JSON
              In relation to the dataset with a metadatastructure, the incoming metadata as json is validated against the associated JSON schema. Only if the json is valid, the metadata is updated.
-             
              </remarks>
              <param name="id">identifier for an specifiy entity e.g. dataset in the system </param>
              <exception cref="F:System.Net.HttpStatusCode.PreconditionFailed"></exception>

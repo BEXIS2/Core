@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BExIS.UI.Helpers
 {
@@ -84,8 +81,6 @@ namespace BExIS.UI.Helpers
 
                 return svelteBuildPath + pagehash;
             }
-
-            return "";
         }
 
         public static string GetStart(string module)
@@ -113,8 +108,6 @@ namespace BExIS.UI.Helpers
 
                 return svelteBuildPath + pagehash;
             }
-
-            return "";
         }
 
         private static string getScript(string module, string key)
@@ -143,8 +136,6 @@ namespace BExIS.UI.Helpers
 
                 return svelteBuildPath + pagehash;
             }
-
-            return "";
         }
     }
 }

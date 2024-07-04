@@ -5,7 +5,6 @@ using BExIS.Modules.Rpm.UI.Helpers;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.UI.Helpers;
 using BExIS.UI.Models;
-using BExIS.Utils.Route;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +27,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         #region External Links
 
-
         [BExISAuthorize]
         [JsonNetFilter]
         [HttpGet]
@@ -50,7 +48,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             using (var _meaningManager = new MeaningManager())
             {
-
                 List<ExternalLink> res = _meaningManager.getExternalLinks();
                 List<ListItem> items = new List<ListItem>();
                 res.ForEach(l => items.Add(MeaningsHelper.ConvertToListItem(l)));
@@ -59,7 +56,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
         }
 
-
         [BExISAuthorize]
         [JsonNetFilter]
         [System.Web.Http.HttpGet]
@@ -67,7 +63,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             using (var _meaningManager = new MeaningManager())
             {
-
                 List<ExternalLink> res = _meaningManager.getPrefixes();
                 List<PrefixListItem> items = new List<PrefixListItem>();
                 res.ForEach(l => items.Add(MeaningsHelper.ConvertToPrefixListItem(l)));
@@ -107,7 +102,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 if (string.IsNullOrEmpty(data.Uri)) throw new NullReferenceException("Uri of external link should not be null or empty.");
 
                 data.Name = data.Name.Trim();
-                data.Uri  = data.Uri.Trim();
+                data.Uri = data.Uri.Trim();
 
                 using (var _meaningManager = new MeaningManager())
                 {
@@ -115,7 +110,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     ExternalLink res = _meaningManager.addExternalLink(link);
                     return Json(res);
                 }
-
             }
             catch (Exception ex)
             {
@@ -138,15 +132,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     ExternalLink res = _meaningManager.editExternalLink(link);
                     return Json(res);
                 }
-
             }
             catch (Exception ex)
             {
                 throw new Exception("External link was not generated.", ex);
             }
         }
-
-
 
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
@@ -155,13 +146,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             try
             {
-
                 using (var _meaningManager = new MeaningManager())
                 {
                     _meaningManager.deleteExternalLink(id);
                     return Json(true);
                 }
-
             }
             catch (Exception ex)
             {
@@ -183,7 +172,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
         }
 
-        #endregion;
+        #endregion External Links
 
         #region prefix category
 
@@ -239,7 +228,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     PrefixCategory res = _meaningManager.editPrefixCategory(data);
                     return Json(res);
                 }
-
             }
             catch (Exception ex)
             {
@@ -254,13 +242,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             try
             {
-
                 using (var _meaningManager = new MeaningManager())
                 {
                     _meaningManager.deletePrefixCategory(id);
                     return Json(true);
                 }
-
             }
             catch (Exception ex)
             {
@@ -268,7 +254,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
         }
 
-        #endregion
-
+        #endregion prefix category
     }
 }

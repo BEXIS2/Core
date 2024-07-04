@@ -1,9 +1,9 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.MetadataStructure">
-  <class xmlns="urn:nhibernate-mapping-2.2" name="MetadataStructure" table="MetadataStructures" dynamic-update="true">                                                  
+  <class xmlns="urn:nhibernate-mapping-2.2" name="MetadataStructure" table="MetadataStructures" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
-    
+
     <id name="Id" type="Int64">
-      <column name="Id" index="idx_MetadataStructures_id"/>
+      <column name="Id" index="idx_MetadataStructures_id" />
       <generator class="native" />
     </id>
 
@@ -22,14 +22,14 @@
         <column name="State" />
       </property>
       <property name="Timestamp" type="DateTime">
-        <column name="StateTimestamp" not-null="false"/>
+        <column name="StateTimestamp" not-null="false" />
       </property>
       <property name="Comment" type="string">
         <column name="StateComment" />
       </property>
     </component>
 
-    <component name="CreationInfo" >
+    <component name="CreationInfo">
       <property name="ActionType" type="Vaiona.Entities.Common.AuditActionType, Vaiona.Entities">
         <column name="C_ActionType" />
       </property>
@@ -40,11 +40,11 @@
         <column name="C_Comment" />
       </property>
       <property name="Timestamp" type="DateTime">
-        <column name="C_Timestamp" not-null="false"/>
+        <column name="C_Timestamp" not-null="false" />
       </property>
     </component>
 
-    <component name="ModificationInfo" >
+    <component name="ModificationInfo">
       <property name="ActionType" type="Vaiona.Entities.Common.AuditActionType, Vaiona.Entities">
         <column name="M_ActionType" />
       </property>
@@ -55,33 +55,33 @@
         <column name="M_Comment" />
       </property>
       <property name="Timestamp" type="DateTime">
-        <column name="M_Timestamp" not-null="false"/>
+        <column name="M_Timestamp" not-null="false" />
       </property>
     </component>
 
     <!-- Mapping Entity properties -->
 
     <property name="Name" type="string">
-      <column name="Name" index="idx_MetadataStructures_name"/>
+      <column name="Name" index="idx_MetadataStructures_name" />
     </property>
 
     <property name="Description" type="string">
       <column name="Description" />
     </property>
-    
+
     <property name="XsdFileName" type="string">
       <column name="XsdFileName" />
     </property>
-    
+
     <property name="XslFileName" type="string">
       <column name="XslFileName" />
     </property>
 
-    <many-to-one name="Parent" class="MetadataStructure" not-null="false" column="ParentRef"/>
+    <many-to-one name="Parent" class="MetadataStructure" not-null="false" column="ParentRef" />
 
     <set name="Children" cascade="all-delete-orphan" inverse="true">
-      <key column="ParentRef" not-null="false" foreign-key="FK_MetadataStructure_Parent"/>
-      <one-to-many class="MetadataStructure"/>
+      <key column="ParentRef" not-null="false" foreign-key="FK_MetadataStructure_Parent" />
+      <one-to-many class="MetadataStructure" />
     </set>
 
     <set name="MetadataPackageUsages" inverse="true" order-by="Id" cascade="all-delete-orphan"> <!-- should delete the usage but not the target package-->
@@ -93,9 +93,8 @@
     </set>
 
     <set name="Datasets" inverse="true" lazy="true" order-by="Id" cascade="all"> <!--cascade only insert, update, set null in case of delete-->
-      <key column ="MetadataStructureRef" not-null="true" foreign-key="FK_Datasets_MetadataStructures"/>      
+      <key column ="MetadataStructureRef" not-null="true" foreign-key="FK_Datasets_MetadataStructures" />
       <one-to-many class="BExIS.Dlm.Entities.Data.Dataset" />
     </set>
   </class>
-
 </hibernate-mapping>

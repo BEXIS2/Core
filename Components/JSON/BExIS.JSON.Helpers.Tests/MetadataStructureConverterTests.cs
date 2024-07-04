@@ -34,10 +34,8 @@ namespace BExIS.JSON.Helpers.Tests
 
             var metadataStructureConverter = new MetadataStructureConverter();
 
-
             //Act
             var schema = metadataStructureConverter.ConvertToJsonSchema(1);
-
 
             //Assert
 
@@ -61,7 +59,6 @@ namespace BExIS.JSON.Helpers.Tests
             var metadataStructureConverter = new MetadataStructureConverter();
 
             Assert.That(() => metadataStructureConverter.ConvertToJsonSchema(10), Throws.ArgumentNullException);
-
         }
 
         [Test]
@@ -70,7 +67,6 @@ namespace BExIS.JSON.Helpers.Tests
             var metadataStructureConverter = new MetadataStructureConverter();
 
             Assert.That(() => metadataStructureConverter.ConvertToJsonSchema(0), Throws.ArgumentException);
-
         }
     }
 }

@@ -1,11 +1,11 @@
 <!--
-<?xml version="1.0" encoding="utf-8" ? >
+<?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE hibernate-mapping [ <!ENTITY BaseEntityProperties SYSTEM "..\BaseEntityProperties.xml"> ]>
 -->
-  
+
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Vaiona.Entities" namespace="Vaiona.Entities.Security">
   <class xmlns="urn:nhibernate-mapping-2.2" name="AccessRuleEntity" table="AccessRules">
-    
+
     <!-- Mapping BaseEntity properties -->
     <id name="Id" type="Int64">
       <column name="Id" />
@@ -15,10 +15,9 @@
     <version name="VersionNo" type="Int32">
       <column name="VersionNo" />
     </version>
-    
+
     <!-- Mapping BusinessEntity properties -->
 
-    
     <!-- Mapping Entity properties -->
 
     <property name="SecurityKey" type="String">
@@ -37,17 +36,16 @@
       <column name="DisplayName" />
     </property>
 
-    <many-to-one name="Parent" class="AccessRuleEntity" not-null="false" column="ParentRef" foreign-key="fk_AccessRuleEntitys_ParentAccessRuleEntity"/>
+    <many-to-one name="Parent" class="AccessRuleEntity" not-null="false" column="ParentRef" foreign-key="fk_AccessRuleEntitys_ParentAccessRuleEntity" />
 
     <set name="Children" cascade="all-delete-orphan" inverse="true">
-      <key column="ParentRef" not-null="false"/>
-      <one-to-many class="AccessRuleEntity"/>
+      <key column="ParentRef" not-null="false" />
+      <one-to-many class="AccessRuleEntity" />
     </set>
-
   </class>
 
   <sql-query name="GetRuleWithParents">
-    <return alias="accessRuleEntity" class="Vaiona.Entities.Security.AccessRuleEntity"/>
+    <return alias="accessRuleEntity" class="Vaiona.Entities.Security.AccessRuleEntity" />
     WITH RulePathUp (Id, Parentref, lv)
     AS (
     -- Anchor
@@ -67,6 +65,4 @@
     order by LEN(SecurityKey) --desc
     OPTION (MAXRECURSION 20);
   </sql-query>
-
-
 </hibernate-mapping>

@@ -1,17 +1,15 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.Meanings;
 using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.Meanings
 {
     public class Meaning : BaseEntity
     {
- 
-
-        public Meaning() {
+        public Meaning()
+        {
             this.ExternalLinks = new List<MeaningEntry>();
             this.Related_meaning = new List<Meaning>();
             this.Constraints = new List<Constraint>();
@@ -42,21 +40,24 @@ namespace BExIS.Dlm.Entities.Meanings
             this.Constraints = constraints;
         }
 
-        [Required(ErrorMessage = "Must not be Empty"),Key]
+        [Required(ErrorMessage = "Must not be Empty"), Key]
         public virtual String Name { get; set; }
+
         [Required(ErrorMessage = "Must not be Empty")]
         public virtual String ShortName { get; set; }
+
         [Required(ErrorMessage = "Must not be Empty")]
         public virtual String Description { get; set; }
+
         [Required(ErrorMessage = "Must not be Empty")]
         public virtual Boolean Selectable { get; set; }
+
         [Required(ErrorMessage = "Must not be Empty")]
         public virtual Boolean Approved { get; set; }
+
         public virtual IList<MeaningEntry> ExternalLinks { get; set; }
         public virtual IList<Meaning> Related_meaning { get; set; }
 
         public virtual ICollection<Constraint> Constraints { get; set; }
-
     }
-
 }

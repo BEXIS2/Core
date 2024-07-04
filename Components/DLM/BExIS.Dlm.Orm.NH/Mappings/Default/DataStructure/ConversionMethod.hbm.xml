@@ -1,9 +1,9 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="ConversionMethod" table="ConversionMethods" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
-    
+
     <id name="Id" type="Int64">
-      <column name="Id"  index="idx_ConversionMethods_id"/>
+      <column name="Id"  index="idx_ConversionMethods_id" />
       <generator class="native" />
     </id>
 
@@ -16,7 +16,7 @@
     </property>
 
     <!-- Mapping DataTuple properties -->
-    
+
     <property name="Description" type="String">
       <column name="Description" />
     </property>
@@ -26,9 +26,7 @@
     </property>
 
     <many-to-one name="Source" class="Unit" not-null="false" column="SourceUnitRef" cascade="none" fetch="join" />
-    
-    <many-to-one name="Target" class="Unit" not-null="false" column="TargetUnitRef" cascade="none" fetch="join" />
-    
-  </class>
 
+    <many-to-one name="Target" class="Unit" not-null="false" column="TargetUnitRef" cascade="none" fetch="join" />
+  </class>
 </hibernate-mapping>

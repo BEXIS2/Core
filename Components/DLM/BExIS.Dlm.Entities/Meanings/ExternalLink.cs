@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Vaiona.Entities.Common;
 
@@ -9,12 +8,15 @@ namespace BExIS.Dlm.Entities.Meanings
     {
         //private bool disposedValue;
 
-        [Required(ErrorMessage = "Must not be Empty"), Key,Url]
+        [Required(ErrorMessage = "Must not be Empty"), Key, Url]
         public virtual string URI { get; set; }
+
         [Required(ErrorMessage = "Must not be Empty")]
         public virtual string Name { get; set; }
+
         [Required(ErrorMessage = "Must not be Empty"), Key]
         public virtual ExternalLinkType Type { get; set; }
+
         public virtual ExternalLink Prefix { get; set; }
         public virtual PrefixCategory prefixCategory { get; set; }
 
@@ -37,8 +39,9 @@ namespace BExIS.Dlm.Entities.Meanings
             this.Id = ExternalLink.Id;
         }
 
-        public ExternalLink() {
-            this.prefixCategory= new PrefixCategory();
+        public ExternalLink()
+        {
+            this.prefixCategory = new PrefixCategory();
         }
 
         //protected  void Dispose(bool disposing)
@@ -68,12 +71,16 @@ namespace BExIS.Dlm.Entities.Meanings
     {
         prefix = 1,
         link = 2,
+
         [Display(Name = "entity - class")]
         entity = 3,
+
         [Display(Name = "characteristics - property")]
         characteristics = 4,
+
         [Display(Name = "vocabulary - dictionary")]
         vocabulary = 5,
+
         [Display(Name = "relationship - connection")]
         relationship = 6
     }

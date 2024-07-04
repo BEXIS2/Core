@@ -17,7 +17,6 @@ namespace BExIS.IO
         {
             try
             {
-
                 if (File.Exists(tempFile))
                 {
                     // check if directoy exist otherwhise create

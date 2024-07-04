@@ -3,8 +3,6 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.IO.Transform.Validation.Exceptions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dcm.UI.Models.Metadata
@@ -15,6 +13,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         /// Parameter Usage Id
         /// </summary>
         public long Id { get; set; }
+
         public long AttributeNumber { get; set; }
         public long ParentModelNumber { get; set; }
         public long ParentStepId { get; set; }
@@ -70,6 +69,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
             {
                 Id = this.Id,
                 AttributeNumber = number,
+                MetadataParameterName = this.MetadataParameterName,
+                MetadataParameterId = this.Id,
                 ParentModelNumber = this.ParentModelNumber,
                 MetadataStructureId = this.MetadataStructureId,
                 Parent = this.Parent,
@@ -87,9 +88,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                 ParentStepId = this.ParentStepId,
                 UpperBoundary = this.UpperBoundary,
                 LowerBoundary = this.LowerBoundary,
-
             };
         }
-    
     }
 }

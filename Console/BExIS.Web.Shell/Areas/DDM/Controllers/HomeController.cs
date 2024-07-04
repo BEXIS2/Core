@@ -306,7 +306,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
-
             //reset properties selected values
             var properties = provider.WorkingSearchModel.SearchComponent.Properties;
 
@@ -321,7 +320,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     if (!string.IsNullOrEmpty(p.SelectedValue)) p.SelectedValue = string.Empty;
                 }
             }
-
 
             return View(Session["SubmissionAction"].ToString(), provider); //View("Index", provider);
         }
@@ -379,8 +377,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             UpdatePropertiesDic(node, value);
             provider.WorkingSearchModel.UpdateSearchCriteria(node, value.ToString(), SearchComponentBaseType.Property);
-
-
 
             return PartialView("_searchBreadcrumb", provider.Get(provider.WorkingSearchModel.CriteriaComponent, 10, 1));
         }

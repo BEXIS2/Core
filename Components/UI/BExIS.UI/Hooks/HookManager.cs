@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
@@ -108,7 +107,7 @@ namespace BExIS.UI.Hooks
             return hooks;
         }
 
-        public bool Save<C,L>(C _cache,L _log, string _entity, string _place, HookMode _mode, long id)
+        public bool Save<C, L>(C _cache, L _log, string _entity, string _place, HookMode _mode, long id)
         {
             var saveCache = SaveCache(_cache, _entity, _place, _mode, id);
             var saveLog = SaveLog(_log, _entity, _place, _mode, id);
@@ -118,11 +117,10 @@ namespace BExIS.UI.Hooks
             return false;
         }
 
-            #region cache
+        #region cache
+
         public T LoadCache<T>(string _entity, string _place, HookMode _mode, long id) where T : new()
         {
-
-
             //check incoming values
             if (string.IsNullOrEmpty(_entity)) throw new ArgumentNullException(nameof(_entity));
             if (string.IsNullOrEmpty(_place)) throw new ArgumentNullException(nameof(_place));
@@ -150,7 +148,6 @@ namespace BExIS.UI.Hooks
 
         public bool SaveCache<T>(T _cache, string _entity, string _place, HookMode _mode, long id)
         {
-
             //check incoming values
             if (_cache == null) throw new ArgumentNullException(nameof(_cache));
             if (string.IsNullOrEmpty(_entity)) throw new ArgumentNullException(nameof(_entity));
@@ -165,8 +162,6 @@ namespace BExIS.UI.Hooks
             // combine datapath + path + filename
             string filepath = Path.Combine(directory, filename);
 
-          
-
             if (File.Exists(filepath))
             {
                 FileHelper.WaitForFile(filepath); // wait if the file is still open
@@ -175,20 +170,18 @@ namespace BExIS.UI.Hooks
 
             if (!Directory.Exists(directory)) Directory.CreateDirectory(directory); // create directory if not exist
 
-
             File.WriteAllText(filepath, JsonConvert.SerializeObject(_cache));
 
             return true;
         }
-        #endregion
+
+        #endregion cache
 
         #region result messages
 
         // load cache
         public T LoadLog<T>(string _entity, string _place, HookMode _mode, long id) where T : new()
         {
-
-
             //check incoming values
             if (string.IsNullOrEmpty(_entity)) throw new ArgumentNullException(nameof(_entity));
             if (string.IsNullOrEmpty(_place)) throw new ArgumentNullException(nameof(_place));
@@ -210,7 +203,7 @@ namespace BExIS.UI.Hooks
                 // convert json to object
                 cache = JsonConvert.DeserializeObject<T>(File.ReadAllText(filepath));
             }
-            
+
             return cache;
         }
 
@@ -238,13 +231,11 @@ namespace BExIS.UI.Hooks
 
             if (!Directory.Exists(directory)) Directory.CreateDirectory(directory); // create directory if not exist
 
-
             File.WriteAllText(filepath, JsonConvert.SerializeObject(_log));
 
             return true;
         }
 
-        #endregion
-
+        #endregion result messages
     }
 }

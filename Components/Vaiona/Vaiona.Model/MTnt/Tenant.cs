@@ -10,6 +10,7 @@ namespace Vaiona.Model.MTnt
         Active,
         Inactive
     }
+
     public class Tenant
     {
         public ITenantPathProvider PathProvider { get; set; } // to be injected automatically by the IoC
@@ -17,8 +18,9 @@ namespace Vaiona.Model.MTnt
 
         public bool UseFallback { get; set; }
         public Tenant Fallback { get; set; }
+
         /// <summary>
-        /// the abbreviation of the tenant 
+        /// the abbreviation of the tenant
         /// </summary>
         public string ShortName { get; set; }
 
@@ -32,7 +34,8 @@ namespace Vaiona.Model.MTnt
         /// </summary>
         public string Description { get; set; }
 
-        public string InfoBar { get { return string.Format("{0}: {1}", ShortName, Title); } }
+        public string InfoBar
+        { get { return string.Format("{0}: {1}", ShortName, Title); } }
 
         /// <summary>
         /// The logo should be located in /<tenant>/images/<name> of /<default>/images/<name.ext> if not provided bt the manifest
@@ -64,6 +67,7 @@ namespace Vaiona.Model.MTnt
         /// </summary>
         /// <remarks>Langing page must be registered in the modules manifest menu structure and proper security permissions should also be set.</remarks>
         private string landingPage;
+
         public string LandingPage
         {
             get { return landingPage; }
@@ -90,6 +94,7 @@ namespace Vaiona.Model.MTnt
         /// Extended menus are links to external URLs and presented differently (comparing to the built-in menus) to the tenant's users
         /// </summary>
         public XElement ExtendedMenus { get; set; }
+
         public List<XElement> Resources { get; set; }
 
         public TenantStatus Status { get; set; }
@@ -99,6 +104,7 @@ namespace Vaiona.Model.MTnt
         /// The matching rules are regular expressions to be examined against the incoming http request.
         /// </summary>
         public List<string> MatchingRules { get; set; }
+
         public bool IsDefault { get; set; }
 
         public string Header { get; set; }
@@ -131,6 +137,7 @@ namespace Vaiona.Model.MTnt
                     return PathProvider.GetImagePath(this.Id, this.Brand, this.Id); // The second this.Id argument is passed to allow the Client TenantPathProviders to have a chance of getting triggered.
             }
         }
+
         public string FavIconPath //effective path to FavIcon
         {
             get
@@ -174,7 +181,6 @@ namespace Vaiona.Model.MTnt
                     return PathProvider.GetContentFilePath(this.Id, this.Footer, this.Id);
             }
         }
-
 
         public string PolicyFileNamePath //effective path to policy content file
         {

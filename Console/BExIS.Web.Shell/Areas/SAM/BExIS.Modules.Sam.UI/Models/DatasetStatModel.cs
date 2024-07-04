@@ -18,7 +18,5 @@ namespace BExIS.Modules.Sam.UI.Models
         public string LastChangeAccount { get; set; }
         public string LastMetadataChange { get; set; }
         public string LastDataChange { get; set; }
-
-
     }
 }

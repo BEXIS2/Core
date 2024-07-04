@@ -12,10 +12,15 @@
         /// <remarks>The zip tenant package should be assumed temprary, as the register method may delete the zip after installing it.</remarks>
         /// <param name="deleteSource">determines wheather the the source package should be removed.</param>
         void Register(string tenantId, string tenantZipPackagePath, bool deleteSource = true);
+
         void Unregister(string id);
+
         void Activate(string id);
+
         void Inactivate(string id);
+
         void MakeDefault(string id);
+
         //List<Tenant> GetAll();
     }
 }

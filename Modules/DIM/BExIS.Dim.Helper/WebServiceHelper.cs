@@ -16,7 +16,6 @@ namespace BExIS.Dim.Helpers
             string pattern = @"(?:[a-z][a-z]*[0-9]+[a-z0-9]*)";
             Regex rg = new Regex(pattern, RegexOptions.IgnoreCase);
 
-
             foreach (char character in source)
             {
                 byte charInByte = Convert.ToByte(character);

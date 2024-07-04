@@ -22,7 +22,6 @@ namespace IDIV.Modules.Mmm.UI
                 {
                     generator.GenerateSeedData();
                 }
-
             }
             catch (Exception e)
             {
@@ -31,8 +30,6 @@ namespace IDIV.Modules.Mmm.UI
             }
 
             LoggerFactory.GetFileLogger().LogCustom("...end install of mmm...");
-
-
         }
 
         /// <summary>

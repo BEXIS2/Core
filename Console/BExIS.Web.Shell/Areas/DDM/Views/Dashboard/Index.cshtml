@@ -15,7 +15,6 @@
     To view more details of a dataset, click the View details button available in each row.
 }
 
-
 @section LeftPane
 {
     @foreach (var item in Model.Entities)
@@ -32,14 +31,12 @@
             }
         </ul>
 
-
     }
 }
 
 <div id="dashboard_content">
 
     @*Html.Partial("_myDatasetGridView", Model.MyDatasets) *@
-
 </div>
 
 @section Scripts
@@ -49,7 +46,6 @@
     <script type="text/javascript">
 
         /****Requests & Decisions*****/
-
 
         function grid_requests_onDataBound() {
             addTooltips();
@@ -80,7 +76,6 @@
                 }
             });
         }
-
 
         /****Dashboard*****/
 
@@ -134,6 +129,5 @@
                 }
             );
         });
-
     </script>
 }

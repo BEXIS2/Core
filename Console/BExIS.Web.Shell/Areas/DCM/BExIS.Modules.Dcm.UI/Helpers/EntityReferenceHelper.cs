@@ -250,7 +250,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 list = entityReferenceManager.References.Where(r => r.TargetId.Equals(id) && r.TargetEntityId.Equals(typeid)).ToList();
                 list.ForEach(r => tmp.Add(helper.Convert(r)));
                 tmp.RemoveAll(item => item == null);
-
             }
             catch (Exception ex)
             {
@@ -281,7 +280,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 list.ForEach(r => tmp.Add(helper.Convert(r)));
                 tmp.RemoveAll(item => item == null);
-
             }
             catch (Exception ex)
             {
@@ -311,7 +309,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 list.ForEach(r => tmp.Add(helper.Convert(r)));
                 tmp.RemoveAll(item => item == null);
-
             }
             catch (Exception ex)
             {
@@ -376,8 +373,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 throw new FileNotFoundException("File EntityReferenceConfig.xml not found in :" + dir, "EntityReferenceConfig.xml");
             }
         }
-
-
 
         #endregion Entity Reference Config
 

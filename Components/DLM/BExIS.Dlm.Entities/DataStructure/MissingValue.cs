@@ -10,11 +10,6 @@ namespace BExIS.Dlm.Entities.DataStructure
         public virtual string Placeholder { get; set; }
         public virtual string Description { get; set; }
 
-
         #endregion Attributes
-
-        #region Associations
-
-        #endregion Associations
     }
 }

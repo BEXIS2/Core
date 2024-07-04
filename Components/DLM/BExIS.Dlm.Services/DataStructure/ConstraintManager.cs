@@ -1,12 +1,8 @@
 ﻿using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.TypeSystem;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Requests;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.DataStructure
@@ -113,7 +109,7 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(entity.Items.Count > 0);
 
             Contract.Ensures(Contract.Result<DomainConstraint>() != null && Contract.Result<DomainConstraint>().Id >= 0);
-            
+
             entity.CreationDate = DateTime.Now;
             entity.LastModified = DateTime.Now;
 
@@ -152,7 +148,7 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
 
             Contract.Ensures(Contract.Result<DomainConstraint>() != null && Contract.Result<DomainConstraint>().Id >= 0, "No entity is persisted!");
-            
+
             entity.LastModified = DateTime.Now;
             entity.Dematerialize();
             using (IUnitOfWork uow = this.GetUnitOfWork())

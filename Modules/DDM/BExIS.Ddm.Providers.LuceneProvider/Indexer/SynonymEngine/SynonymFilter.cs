@@ -6,13 +6,13 @@ using AttributeSource = Lucene.Net.Util.AttributeSource;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace Lucene.Net.SynonymEngine
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class SynonymFilter : TokenFilter
     {
         private Queue<Token> synonymTokenQueue
@@ -22,7 +22,7 @@ namespace Lucene.Net.SynonymEngine
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public ISynonymEngine SynonymEngine { get; private set; }
 
         public static readonly String TOKEN_TYPE_SYNONYM = "SYNONYM";
@@ -33,7 +33,7 @@ namespace Lucene.Net.SynonymEngine
         private readonly IPositionIncrementAttribute posIncrAtt;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -54,7 +54,7 @@ namespace Lucene.Net.SynonymEngine
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         /// <returns></returns>
         public override bool IncrementToken()
         {
@@ -75,13 +75,12 @@ namespace Lucene.Net.SynonymEngine
             return true;
         }
 
-
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param></param>     
+        /// <param></param>
         /// <returns></returns>
         private bool addAliasesToStack()
         {
@@ -97,6 +96,5 @@ namespace Lucene.Net.SynonymEngine
             }
             return true;
         }
-
     }
 }

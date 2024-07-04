@@ -1,5 +1,5 @@
 ﻿using BExIS.Dcm.UploadWizard;
-using BExIS.Dim.Entities.Mapping;
+using BExIS.Dim.Entities.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
@@ -27,18 +27,16 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 using Vaiona.Entities.Common;
-using Vaiona.Logging.Aspects;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
-
 
 namespace BExIS.Modules.Dcm.UI.Helpers
 {
     public class DataASyncUploadHelper
     {
-        public EditDatasetDetailsCache Cache{ get; set; }
+        public EditDatasetDetailsCache Cache { get; set; }
         public EditDatasetDetailsLog Log { get; set; }
-         
+
         private string entity { get; set; }
         public bool RunningASync { get; set; }
         public User User { get; set; }
@@ -48,9 +46,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         private UploadHelper uploadWizardHelper = new UploadHelper();
 
         public DataASyncUploadHelper(EditDatasetDetailsCache _cache, EditDatasetDetailsLog _logs, string _entity)
-        { 
+        {
             Cache = _cache;
-            Log = _logs;    
+            Log = _logs;
             entity = _entity;
         }
 
@@ -94,6 +92,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         Cache.UpdateSetup.CurrentPackage = 0;
                         Cache.UpdateSetup.CurrentPackageSize = 0;
                     }
+
                     #endregion Progress Informations
 
                     string folder = "Temp"; // folder name inside dataset - temp or attachments
@@ -101,14 +100,10 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     var getpath = Path.Combine(dataPath, "Datasets", id.ToString(), folder);
                     var storepath = Path.Combine(dataPath, "Datasets", id.ToString());
 
-                
-                   
-
                     #region structured data
 
                     if (structureId > 0) // structure id exist, means structured data
                     {
-
                         XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
                         try
@@ -119,8 +114,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             // load structured data structure
                             StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(structureId);
                             dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);
-
-
 
                             #region excel reader
 
@@ -228,6 +221,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             foreach (var file in Cache.Files)
                             {
                                 var filepath = Path.Combine(getpath, file.Name);
+
                                 #region ascii reader
 
                                 if (iOUtility.IsSupportedAsciiFile(Path.GetExtension(file.Name))) // extention not mimetype. may change sometimes later
@@ -261,7 +255,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                         inputWasAltered = false;
                                         Cache.UpdateSetup.CurrentPackage = counter;
 
-
                                         using (Stream = reader.Open(filepath.ToString()))
                                         {
                                             rows = reader.ReadFile(Stream, file.Name.ToString(), id, packageSize);
@@ -276,7 +269,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                             //return temp;
                                         }
 
-
                                         // based the dataset status and/ or the upload method
                                         // 3 different cases append only the tuples.
                                         // 1. dataset staus create
@@ -285,6 +277,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                         if (datasetStatus == AuditActionType.Create || Cache.UpdateSetup.UpdateMethod.Equals(UploadMethod.Append) || Cache.UpdateSetup.PrimaryKeys == null)
                                         {
                                             dm.EditDatasetVersion(workingCopy, rows, null, null); // add all datatuples to the datasetversion
+
                                         }
                                         else
                                         if (datasetStatus == AuditActionType.Edit) // datatuples allready exist
@@ -298,20 +291,16 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                             }
                                         }
 
-
                                         //count rows
                                         numberOfRows += rows.Count();
-
                                     } while ((rows.Count() > 0 && rows.Count() <= packageSize) || inputWasAltered == true);
 
                                     numberOfSkippedRows = reader.NumberOSkippedfRows;
-                                    
 
                                     //Stream.Close();
                                 }
 
                                 #endregion ascii reader
-
 
                                 #region contentdescriptors
 
@@ -343,14 +332,12 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     dm.DeleteContentDescriptor(tmp);
                                 }
 
-                                #endregion contentdescriptor
+                                #endregion contentdescriptors
 
-                                MoveAndSaveOriginalFileInContentDiscriptor(workingCopy, title, id, structureId, Path.Combine(getpath,file.Name), file);
+                                MoveAndSaveOriginalFileInContentDiscriptor(workingCopy, title, id, structureId, Path.Combine(getpath, file.Name), file);
                             }
 
-
                             #region set System value into metadata
-
 
                             bool newdataset = datasetStatus == AuditActionType.Create ? true : false;
                             int v = 1;
@@ -367,12 +354,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             workingCopy.Metadata = setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
                             dm.EditDatasetVersion(workingCopy, null, null, null);
 
-
                             #endregion set System value into metadata
 
                             // ToDo: Get Comment from ui and users
 
                             dm.CheckInDataset(id, numberOfRows + " rows", User.Name);
+
+                            Cache.UpdateSetup.UpdateMethod = UpdateMethod.Update;
 
                             //send email
                             var es = new EmailService();
@@ -380,18 +368,18 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                 MessageHelper.GetUpdateDatasetMessage(id, title, User.DisplayName, typeof(Dataset).Name),
                                 GeneralSettings.SystemEmail
                                 );
-                        }
-                        catch (Exception e)
-                        {
-                            temp.Add(new Error(ErrorType.Other, "Can not upload. : " + e.Message));
-                            var es = new EmailService();
-                            es.Send(MessageHelper.GetErrorHeader(),
-                                "Dataset: " + title + "(ID: " + id + ", User: " + User.DisplayName + " )" + " Can not upload. : " + e.Message,
-                                ConfigurationManager.AppSettings["SystemEmail"]
-                                );
-                        }
-                        finally
-                        {
+                            }
+                            catch (Exception e)
+                            {
+                                temp.Add(new Error(ErrorType.Other, "Can not upload. : " + e.Message));
+                                var es = new EmailService();
+                                es.Send(MessageHelper.GetErrorHeader(),
+                                    "Dataset: " + title + "(ID: " + id + ", User: " + User.DisplayName + " )" + " Can not upload. : " + e.Message,
+                                    ConfigurationManager.AppSettings["SystemEmail"]
+                                    );
+                            }
+                            finally
+                            {
                         }
                     }
 
@@ -401,7 +389,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                     if (structureId <= 0)
                     {
-
                         try
                         {
                             using (var unitOfWork = this.GetUnitOfWork())
@@ -429,7 +416,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                 }
                             }
 
-
                             bool newdataset = datasetStatus == AuditActionType.Create ? true : false;
                             int v = 1;
                             if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
@@ -446,10 +432,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                             dm.EditDatasetVersion(workingCopy, null, null, null);
 
-
                             //filenames
                             string fileNames = string.Join(",", Cache.Files.Select(f => f.Name).ToArray());
-
 
                             // ToDo: Get Comment from ui and users
                             dm.CheckInDataset(id, fileNames, User.Name, ViewCreationBehavior.None);
@@ -458,12 +442,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         {
                             throw ex;
                         }
-
-
                     }
 
                     #endregion unstructured data
-
 
                     if (temp.Count <= 0)
                     {
@@ -489,7 +470,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             }
             finally
             {
-
                 if (RunningASync)
                 {
                     var es = new EmailService();
@@ -511,7 +491,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             new List<string> { user.Email }, null, new List<string> { GeneralSettings.SystemEmail });
                     }
 
-
                     if (Cache.Files.Count == 1)
                         es.Send(MessageHelper.GeFileUpdatHeader(id),
                             MessageHelper.GetFileUploaddMessage(id, user.Name, Cache.Files.FirstOrDefault().Name),
@@ -519,7 +498,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                     if (Cache.Files.Count > 1)
                         es.Send(MessageHelper.GeFileUpdatHeader(id),
-                            MessageHelper.GetFilesUploaddMessage(id, user.Name, Cache.Files.Select(f=>f.Name).ToArray()),
+                            MessageHelper.GetFilesUploaddMessage(id, user.Name, Cache.Files.Select(f => f.Name).ToArray()),
                             new List<string> { user.Email }, null, new List<string> { GeneralSettings.SystemEmail });
                 }
 
@@ -531,7 +510,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     Cache.Files = new List<BExIS.UI.Hooks.Caches.FileInfo>();
                     //logs.Messages.Add(new LogMessage(DateTime.Now, messages, username, "Attachment upload","upload"));
                     Log.Messages.Add(new LogMessage(DateTime.Now, "data was successfully uploaded", User.Name, "Submit", "Upload"));
-
                 }
                 else
                 {
@@ -611,7 +589,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         //[MeasurePerformance]
         private string MoveAndSaveOriginalFileInContentDiscriptor(DatasetVersion datasetVersion, string title, long datasetId, long dataStructureId, string originalFilePath, BExIS.UI.Hooks.Caches.FileInfo file)
         {
-
             string ext = ".xlsm";// Bus[TaskManager.EXTENTION].ToString();
 
             ExcelWriter excelWriter = new ExcelWriter();

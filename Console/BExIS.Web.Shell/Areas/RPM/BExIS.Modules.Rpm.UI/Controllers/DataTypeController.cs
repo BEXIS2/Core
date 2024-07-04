@@ -1,14 +1,13 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Modules.Rpm.UI.Models;
+using BExIS.Modules.Rpm.UI.Models.DataTypes;
 using BExIS.UI.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Web.Mvc;
-using BExIS.Modules.Rpm.UI.Models.DataTypes;
-using BExIS.Dlm.Entities.DataStructure;
 using System.Linq;
-using BExIS.Modules.Rpm.UI.Models;
-using BExIS.Modules.Rpm.UI.Models.Dimensions;
+using System.Web.Mvc;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -76,11 +75,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             dataType.Name = dataTypeListItem.Name;
                             dataType.Description = dataTypeListItem.Description;
                             dataType.SystemType = dataTypeListItem.SystemType;
-
                         }
                         dataType = dataTypeManager.Update(dataType);
                         dataTypeListItem = convertToDataTypeListItem(dataType);
-
                     }
                     result = new
                     {
@@ -111,8 +108,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return Json(false, JsonRequestBehavior.AllowGet);
         }
 
-
-
         private List<DataTypeListItem> convertToDataTypeListItem(List<DataType> dataTypes)
         {
             List<DataTypeListItem> dataTypeListItems = new List<DataTypeListItem>();
@@ -123,6 +118,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
             return dataTypeListItems;
         }
+
         private DataTypeListItem convertToDataTypeListItem(DataType dataType)
         {
             bool inuse = dataType.DataContainers.Any();
@@ -154,7 +150,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         validationResult.ValidationItems.Add(new ValidationItem { Name = "inUse", Message = "Data Type is in Use" });
                     }
                 }
-
 
                 if (string.IsNullOrEmpty(dataTypeListItem.Name))
                 {

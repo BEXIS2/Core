@@ -75,7 +75,7 @@
 		// if id > 0 then run validation
 		if (id > 0) {
 			res = suite(entityTemplate);
-			console.log("validate", res)
+			console.log('validate', res);
 		}
 	}
 
@@ -313,8 +313,8 @@
 					/>
 				</EntryContainer>
 			</div>
-				<h3 class="h3">Notifications</h3>
-				<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+			<h3 class="h3">Notifications</h3>
+			<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
 				<EntryContainer>
 					<MultiSelect
 						id="notification"

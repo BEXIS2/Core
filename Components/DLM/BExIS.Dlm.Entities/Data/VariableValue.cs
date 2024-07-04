@@ -7,13 +7,13 @@ using System.Xml.Serialization;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dlm.Entities.Data
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class VariableValue : DataValue
     {
         #region Attributes
@@ -22,7 +22,7 @@ namespace BExIS.Dlm.Entities.Data
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>   
+        /// <seealso cref=""/>
         [JsonIgnore]
         [XmlIgnore]
         public DataTuple Tuple { get; set; } // reference to the containing tuple
@@ -31,11 +31,11 @@ namespace BExIS.Dlm.Entities.Data
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>     
+        /// <seealso cref=""/>
         [JsonProperty("vid")]
         public Int64 VariableId { get; set; } // when variable is not loaded!
 
-        #endregion
+        #endregion Attributes
 
         #region Associations
 
@@ -43,12 +43,10 @@ namespace BExIS.Dlm.Entities.Data
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         [XmlIgnore]
         [JsonIgnore]
-
         public IList<ParameterValue> ParameterValues { get; set; }
-
 
         private VariableInstance _variable;
 
@@ -56,10 +54,9 @@ namespace BExIS.Dlm.Entities.Data
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         [XmlIgnore]
         [JsonIgnore]
-
         public VariableInstance Variable
         {
             get
@@ -76,7 +73,7 @@ namespace BExIS.Dlm.Entities.Data
             }
         }
 
-        #endregion
+        #endregion Associations
 
         #region Mathods
 
@@ -85,13 +82,12 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         public VariableValue()
         {
             ParameterValues = new List<ParameterValue>();
         }
 
-        #endregion
-
+        #endregion Mathods
     }
 }

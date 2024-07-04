@@ -1,8 +1,5 @@
-﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.Party;
-using BExIS.Dlm.Services.Party;
+﻿using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Bam.UI.Models;
-using BExIS.Utils.Route;
 using System;
 using System.Linq;
 using System.Net;
@@ -29,7 +26,7 @@ namespace BExIS.Modules.Bam.UI.Controllers.API
                     return Request.CreateResponse(HttpStatusCode.OK, partyTypes);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
             }
@@ -46,7 +43,7 @@ namespace BExIS.Modules.Bam.UI.Controllers.API
 
                     if (partyType == null)
                         return Request.CreateResponse(HttpStatusCode.BadRequest, $"partytype with id: {partyTypeId} does not exist.");
-                    
+
                     return Request.CreateResponse(HttpStatusCode.OK, ReadPartyTypeModel.Convert(partyType));
                 }
             }

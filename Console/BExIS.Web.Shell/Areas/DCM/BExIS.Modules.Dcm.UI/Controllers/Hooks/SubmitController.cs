@@ -1,15 +1,10 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.IO;
-using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
@@ -23,8 +18,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Vaiona.Entities.Common;
-using Vaiona.Utils.Cfg;
-using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -61,7 +54,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (id <= 0) throw new ArgumentException(nameof(id), "id should be greater then 0");
 
             SubmitHelper helper = new SubmitHelper();
-            SubmitModel model  = helper.GetModel(id);
+            SubmitModel model = helper.GetModel(id);
 
             return Json(model, JsonRequestBehavior.AllowGet);
         }
@@ -94,7 +87,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var user = asyncUploadHelper.User;
 
                 es.Send(MessageHelper.GetASyncStartUploadHeader(id, model.Title),
-                    MessageHelper.GetASyncStartUploadMessage(id, model.Title, model.Files.Select(f=>f.Name)),
+                    MessageHelper.GetASyncStartUploadMessage(id, model.Title, model.Files.Select(f => f.Name)),
                     new List<string>() { user.Email }, null,
                     new List<string>() { GeneralSettings.SystemEmail }
                     );
@@ -105,17 +98,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
             else
             {
-
                 var errors = asyncUploadHelper.FinishUpload(id, AuditActionType.Edit, model.StructureId).Result;
                 responce.Errors = EditHelper.SortFileErrors(errors);
-                responce.Success = responce.Errors.Any()?false:true;
+                responce.Success = responce.Errors.Any() ? false : true;
             }
-
-
 
             return Json(responce, JsonRequestBehavior.AllowGet);
         }
-
-
     }
 }

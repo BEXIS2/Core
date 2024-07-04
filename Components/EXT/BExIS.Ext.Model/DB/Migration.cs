@@ -3,7 +3,9 @@
     public abstract class Migration
     {
         public abstract bool BeforeUp();
+
         public abstract bool AfterUp();
+
         public abstract bool Up();
 
         /// <summary>
@@ -22,10 +24,12 @@
             return false;
         }
 
-
         public abstract bool BeforeDown();
+
         public abstract bool AfterDown();
+
         public abstract bool Down();
+
         public bool Uninstall() // make ir sealed
         {
             if (BeforeDown())

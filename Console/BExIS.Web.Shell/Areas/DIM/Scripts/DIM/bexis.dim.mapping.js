@@ -231,7 +231,7 @@ function createTransformationRule(id, regexPattern, mask, defaultValue) {
         "Id": id,
         "RegEx": regexPattern,
         "Mask": mask,
-        "Default":defaultValue
+        "Default": defaultValue
     }
 
     return obj;
@@ -310,7 +310,6 @@ function saveMapping(e, create) {
         isBothDirection = true;
     }
 
-   
     var mappingId = $(parent).attr("id").split("_")[2];
     var parentMappingId = $(parent).attr("parent");
     ////console.log(parent);
@@ -1277,7 +1276,6 @@ function filter(elems, terms, types) {
 }
 
 function updateRequiredMappings() {
-
     var allrequired = $("[class=le-simple-info][optional=False][position=Target]").find("#Name");
     var allRequiredLabels = [];
 
@@ -1289,16 +1287,12 @@ function updateRequiredMappings() {
         allRequiredLabels.push(title);
 
         console.log("i", allRequiredLabels.length);
-
     }
     )
 
     $(existingMappingTargets).each(function () {
-
         var title = this.innerText;
         existingLabels.push(title);
-
-
     }
     )
 
@@ -1335,6 +1329,4 @@ function updateRequiredMappings() {
         $("#mapping-stats-button").addClass("btn-danger");
         $("#mapping-stats-button").attr("title", notset.join(', '))
     }
-
-
 }

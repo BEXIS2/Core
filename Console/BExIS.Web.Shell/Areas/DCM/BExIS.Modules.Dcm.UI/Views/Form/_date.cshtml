@@ -9,7 +9,6 @@
 
 }
 
-
 @if (!Model.Locked)
 {
     string value = "";
@@ -28,7 +27,7 @@
         format = "yyyy-MM-dd";
     }
 
-    @(Html.Telerik().DatePicker()
+@(Html.Telerik().DatePicker()
             .Name(@Model.IdInput)
             .ShowButton(true)
             .TodayButton("d")
@@ -42,6 +41,5 @@
 }
 else
 {
-    @Html.Partial("_displayonly", Model)
+@Html.Partial("_displayonly", Model)
 }
-

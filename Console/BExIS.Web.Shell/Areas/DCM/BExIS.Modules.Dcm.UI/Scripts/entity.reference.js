@@ -35,13 +35,11 @@ function successFunc(data, status) {
     $("#Target").prop("disabled", false);
     $("#Target").removeClass("bx-disabled");
     $("#target_preloader").removePreloader();
-
 }
 
 function errorFunc() {
     alert('error');
     $("#target_preloader").removePreloader();
-
 }
 /*END TARGET TYPE*/
 

@@ -1,5 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dim.Entities.Mapping;
+using BExIS.Dim.Entities.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO;
@@ -134,11 +134,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     if (datasetVersion.Dataset.Versions != null && datasetVersion.Dataset.Versions.Count > 1) v = datasetVersion.Dataset.Versions.Count();
                     datasetVersion.Metadata = setSystemValuesToMetadata(datasetId, v, datasetVersion.Dataset.MetadataStructure.Id, datasetVersion.Metadata, false);
 
-
-
                     dm.EditDatasetVersion(datasetVersion, null, null, null);
                     dm.CheckInDataset(dataset.Id, fileName, GetUsernameOrDefault(), ViewCreationBehavior.None);
-
 
                     var es = new EmailService();
 
@@ -218,7 +215,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             using (UserManager userManager = new UserManager())
             {
-
                 ViewBag.Title = PresentationModel.GetViewTitleForTenant("Attach file to dataset", this.Session.GetTenant());
                 // The Name of the Upload component is "attachments"
                 if (attachments != null)
@@ -307,7 +303,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     if (datasetVersion.Dataset.Versions != null && datasetVersion.Dataset.Versions.Count > 1) v = datasetVersion.Dataset.Versions.Count();
                     datasetVersion.Metadata = setSystemValuesToMetadata(datasetId, v, datasetVersion.Dataset.MetadataStructure.Id, datasetVersion.Metadata, false);
 
-
                     dm.EditDatasetVersion(datasetVersion, null, null, null);
                     dm.CheckInDataset(dataset.Id, filenameList, GetUsernameOrDefault(), ViewCreationBehavior.None);
                 }
@@ -364,7 +359,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataCreationDate, Key.DataLastModified };
             else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
-
 
             var metadata_new = systemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
 

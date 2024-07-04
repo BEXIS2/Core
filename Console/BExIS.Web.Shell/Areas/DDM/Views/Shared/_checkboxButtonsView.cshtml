@@ -1,8 +1,8 @@
 ﻿@model BExIS.Utils.Models.Property
 
 <p><p class="PropertyHeader">@Model.DisplayName</p>
-   
-   @{ 
+
+   @{
        string value = "";
        string controller = Session["Controller"].ToString();
 
@@ -11,15 +11,14 @@
     @if (this.Session["PropertiesDictionary"] as Dictionary<string, string> != null)
     {
         Dictionary<string, string> dic = this.Session["PropertiesDictionary"] as Dictionary<string, string>;
-        value = ((dic != null && dic.ContainsKey(Model.DataSourceKey)) ? dic[Model.DataSourceKey] : Model.DefaultValue); //HtmlHelpers.GetSelectedValueInDictionary(Model.DataSourceKey, Model.DefaultValue, this.Session["PropertiesDictionary"] as Dictionary<string, string>); 
+        value = ((dic != null && dic.ContainsKey(Model.DataSourceKey)) ? dic[Model.DataSourceKey] : Model.DefaultValue); //HtmlHelpers.GetSelectedValueInDictionary(Model.DataSourceKey, Model.DefaultValue, this.Session["PropertiesDictionary"] as Dictionary<string, string>);
     }
-    
+
     @if (value == "" || this.Session["PropertiesDictionary"] as Dictionary<string, string> == null)
     {
         value = Model.DefaultValue;
     }
-    
- 
+
     @foreach (var itemValue in Model.Values)
     {
         //default value not needed by checkbox
@@ -34,7 +33,7 @@
                    runat="server"
                    onclick="confirmSubmit(this)"
                    checked="True"
-                   value="@itemValue.ToString()"/>@itemValue.ToString()
+                   value="@itemValue.ToString()" />@itemValue.ToString()
             }
             else
             {
@@ -44,7 +43,7 @@
                    runat="server"
                    onclick="confirmSubmit(this)"
 
-                   value="@itemValue.ToString()"/>@itemValue.ToString()
+                   value="@itemValue.ToString()" />@itemValue.ToString()
             }
         }
 
@@ -75,13 +74,8 @@
                 $("#searchTreeView").html(response);
             })
 
-
-           
-
-
             e.disabled = true;
             refreshGrid();
             e.disabled = false;
         }
-
     </script>

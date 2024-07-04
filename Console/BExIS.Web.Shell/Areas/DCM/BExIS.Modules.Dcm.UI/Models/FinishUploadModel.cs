@@ -11,6 +11,5 @@
             DatasetTitle = "";
             Filename = "";
         }
-
     }
 }

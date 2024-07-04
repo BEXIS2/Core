@@ -4,23 +4,23 @@
     RPM is called "Data Planning" since it is good practice to specify the Data Structure before collecting your data in the field or the laboratory. Your data can only be uploaded to the system (using the Data Collection Module) if there is a corresponding Data Structure already existing.
   </Description>
   <Assemblies>
-    <Assembly fullName="" role=""/>
+    <Assembly fullName="" role="" />
   </Assemblies>
   <Dependencies>
     <!--<Dependency moduleId="dcm" version="*.*.*" />-->
   </Dependencies>
   <Exports>
-    
+
     <Export tag="lunchbar" id="helpRpm" order="4"
             title="Data Structure" description="Data Planning Help Manual" icon=""
             controller="Help" action="index"
-            extends="./lunchbarRoot/help"/>
+            extends="./lunchbarRoot/help" />
 
 	<Export tag="settings" id="ManageDataStructures" order="1"
             title="Manage Data Structures" description="Edit, Create or Delet Data Structures" icon=""
             controller="DataStructure" action="" argument=""
             extends="./settingsRoot" />
-    
+
     <Export tag="settings" id="ManageVariableTemplates" order="2"
             title="Manage Variable Templates" description="Edit, Create or Delet Variable Templates" icon=""
             controller="VariableTemplate" action="" argument=""
@@ -30,32 +30,32 @@
             title="Manage Units" description="Edit, Create or Delet Units" icon=""
             controller="Unit" action="" argument=""
             extends="./settingsRoot" />
-	  
+
 	<Export tag="settings" id="ManageConstraints" order="4"
             title="Manage Constraints" description="Edit, Create or Delet Constraints" icon=""
             controller="Constraints" action="" argument=""
             extends="./settingsRoot" />
-	  
+
     <Export tag="settings" id="ManageDataTypes" order="5"
             title="Manage Data Types" description="Edit, Create or Delet Data Types" icon=""
             controller="DataType" action="" argument=""
             extends="./settingsRoot" />
-	  
+
 	<Export tag="settings" id="ManageDimensions" order="6"
 			title="Manage Dimensions" description="Edit, Create or Delet Dimensions" icon=""
 			controller="Dimension" action="" argument=""
 			extends="./settingsRoot" />
-	  
+
 	<Export tag="settings" id="ManageMeanings" order="7"
 		    title="Manage Meanings" description="Edit, Create or Delete Meanings" icon=""
 		    controller="Meaning" action="" argument=""
 		    extends="./settingsRoot" />
-	  
+
 	  <Export tag="settings" id="ManageExternalLinks" order="8"
 		    title="Manage External Links" description="Edit, Create or Delete External Links" icon=""
 		    controller="ExternalLink" action="" argument=""
 		    extends="./settingsRoot" />
-	  
+
 	  <Export tag="settings" id="ManagePrefixCategory" order="9"
 		    title="Manage Prefix Category" description="Edit, Create or Delete Prefix Categories" icon=""
 		    controller="ExternalLink" action="PrefixCategory" argument=""

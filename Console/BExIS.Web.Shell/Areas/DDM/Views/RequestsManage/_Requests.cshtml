@@ -13,8 +13,6 @@
             <th title="Request date">Request Date</th>
             <th title="View Dataset">View</th>
             <th title="Withdraw request">Withdraw</th>
-
-
         </tr>
     </thead>
     <tbody>
@@ -33,13 +31,12 @@
             <td>@m.RequestDate.ToString("dd.MM.yyyy")</td>
             <td>
                 <a id="@m.InstanceId" class="bx bx-grid-function bx-show" onclick="onclickDataset(this)"></a>
-            </td> 
+            </td>
             <td>
                 @if (m.RequestStatus == "Open")
                 {
                     <button type="button" class="bx bx-grid-function bx-withdraw bx-trash" value="@m.Id"></button>
                 }
-
             </td>
         </tr>
             }
@@ -47,13 +44,11 @@
     </tbody>
 </table>
 
-
 <script type="text/javascript">
     function onclickDataset(e) {
 
         // checked
         var id = e.getAttribute("id");
-
 
         var data = {
             id: id
@@ -86,7 +81,7 @@
                 return t
                     .replace(/&/g, '&amp;')
                     .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
+                    .replace( />/g, '&gt;')
                     .replace(/"/g, '&quot;');
             };
 
@@ -138,7 +133,6 @@
                 }
             },
 
-
             columnDefs: [
                 {
                     targets: 1,
@@ -150,7 +144,6 @@
 
               $('.bx-withdraw').click(function () {
 
-
             var result = confirm('Are you sure you want to withdraw this request (Id:' + $(this).attr("value") + ')?');
 
                 if (result) {
@@ -160,5 +153,4 @@
                 }
         });
     })
-
 </script>

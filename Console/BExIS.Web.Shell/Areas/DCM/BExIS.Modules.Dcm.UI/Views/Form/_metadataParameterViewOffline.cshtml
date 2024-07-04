@@ -48,8 +48,6 @@
         //lockedClass = "bx-disabled";
     }
 
-
-
     if (Model.Errors != null && Model.Errors.Count() > 0)
     {
         hasErrors = true;
@@ -77,31 +75,27 @@
 
         @if (Model.MinCardinality > 0)
         {
-            <b title="@Model.Discription">@displayName</b>
-            <b title="This field is required" style="color:red">*</b>
+        <b title="@Model.Discription">@displayName</b>
+        <b title="This field is required" style="color:red">*</b>
 
         }
         else
         {
-            <span title="@Model.Discription">@displayName</span>
+        <span title="@Model.Discription">@displayName</span>
         }
-
     </div>
     <div class="bx-paremeter-input">
 
         @if (Model.Value != null)
         {
-            @Html.DisplayWithLinksFor(m => m.Value)
+        @Html.DisplayWithLinksFor(m => m.Value)
         }
-
     </div>
 
     <div>
         @if (!string.IsNullOrEmpty(Model.Discription))
         {
-            <button type="button" title="@Html.Raw(Regex.Replace(Model.Discription, "<(.|\\n)*?>", string.Empty))" class="bx-function bx-disabled bx-info fa fa-info" onclick="showHelp('help_@idInput');"></button>
+        <button type="button" title="@Html.Raw(Regex.Replace(Model.Discription, "<(.|\\n)*?>", string.Empty))" class="bx-function bx-disabled bx-info fa fa-info" onclick="showHelp('help_@idInput');"></button>
         }
     </div>
 </div>
-
-

@@ -3,6 +3,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using Newtonsoft.Json.Linq;
+
 //using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using System;
@@ -53,7 +54,6 @@ namespace BEXIS.JSON.Helpers
                     // if usage is required add to list
                     if (required)
                         schema.Required.Add(packageUsage.Label);
-
                 }
             }
 
@@ -62,7 +62,7 @@ namespace BEXIS.JSON.Helpers
 
         /// <summary>
         /// first level of a metadata structure are the package usages
-        /// the function convert a PackageUsage into a JsonSchema and add it to the parent schema 
+        /// the function convert a PackageUsage into a JsonSchema and add it to the parent schema
         /// </summary>
         /// <param name="usage"></param>
         /// <param name="schema"></param>
@@ -78,7 +78,6 @@ namespace BEXIS.JSON.Helpers
             current.Title = usage.Label;
             current.Type = JSchemaType.Object;
             current.Description = usage.Description;
-
 
             // set required
             if (usage.MinCardinality > 0) required = true;
@@ -115,7 +114,6 @@ namespace BEXIS.JSON.Helpers
         /// <returns>incoming schame with the added usage</returns>
         private JSchema addMetadataAttrUsage(BaseUsage usage, JSchema schema, out bool required)
         {
-
             MetadataAttribute type = null;
 
             if (usage is MetadataAttributeUsage)
@@ -136,7 +134,6 @@ namespace BEXIS.JSON.Helpers
             // set required
             if (usage.MinCardinality > 0) required = true;
             else required = false;
-
 
             if (type.Self is MetadataSimpleAttribute)
             {
@@ -166,7 +163,6 @@ namespace BEXIS.JSON.Helpers
 
                 //current.Properties.Add("@ref",currentRef);
                 current.Properties.Add("#text", currentText);
-
             }
 
             if (type.Self is MetadataCompoundAttribute)
@@ -203,7 +199,6 @@ namespace BEXIS.JSON.Helpers
                 // add Range contraint
                 array.MinimumItems = usage.MinCardinality;
                 array.MaximumItems = usage.MaxCardinality;
-
             }
             else // add object to schema
             {
@@ -229,7 +224,7 @@ namespace BEXIS.JSON.Helpers
         }
 
         /// <summary>
-        /// Convert a DataType into a JSchemaType 
+        /// Convert a DataType into a JSchemaType
         /// </summary>
         /// <param name="dataType"></param>
         /// <returns>JSchemaType</returns>
@@ -251,9 +246,7 @@ namespace BEXIS.JSON.Helpers
                 case "float": return JSchemaType.Number;
                 case "decimal": return JSchemaType.Number;
                 default: return JSchemaType.String;
-
             }
-
         }
 
         /// <summary>
@@ -305,7 +298,7 @@ namespace BEXIS.JSON.Helpers
                             current.Maximum = r.Upperbound;
                         }
                     }
-                    // enum filled by domain list 
+                    // enum filled by domain list
                     if (constraint is DomainConstraint)
                     {
                         var d = (DomainConstraint)constraint;

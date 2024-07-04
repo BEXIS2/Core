@@ -31,7 +31,6 @@ namespace BEXIS.Modules.SAM.UI.Model
         /// </summary>
         public DateTime EndDate { get; set; }
 
-
         /// <summary>
         /// Fullname if system user.
         /// </summary>

@@ -1,13 +1,16 @@
-﻿using System.Collections.Generic;
+
+using System.Collections.Generic;
 using BExIS.Dlm.Entities.Meanings;
 using System.Runtime.Remoting.Activation;
 using BExIS.Modules.Rpm.UI.Models.Dimensions;
+using BExIS.Modules.Rpm.UI.Models.Dimensions;
+using System.Collections.Generic;
+
 
 namespace BExIS.Modules.Rpm.UI.Models.Units
 {
     public class UnitListItem
     {
-
         /// <summary>
         /// Name of the Unit
         /// </summary>
@@ -76,7 +79,6 @@ namespace BExIS.Modules.Rpm.UI.Models.Units
 
     public class DataTypeListItem
     {
-
         /// <summary>
         /// Name of the Entity Template
         /// </summary>

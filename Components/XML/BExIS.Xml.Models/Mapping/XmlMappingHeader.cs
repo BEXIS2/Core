@@ -23,7 +23,6 @@ namespace BExIS.Xml.Models.Mapping
             Destination.Prefix = prefix;
         }
 
-
         public void AddToPackages(XmlNode xmlNode)
         {
             string abbr = xmlNode.Attributes[XmlMapperAttributes.abbreviation.ToString()].Value;

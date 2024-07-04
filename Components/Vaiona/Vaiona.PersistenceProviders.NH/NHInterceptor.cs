@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Vaiona.PersistenceProviders.NH
 {
-    class NHInterceptor : EmptyInterceptor, IInterceptor
+    internal class NHInterceptor : EmptyInterceptor, IInterceptor
     {
         SqlString IInterceptor.OnPrepareStatement(SqlString sql)
         {

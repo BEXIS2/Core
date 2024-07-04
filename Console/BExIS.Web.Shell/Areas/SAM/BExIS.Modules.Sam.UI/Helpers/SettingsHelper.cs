@@ -7,7 +7,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
 {
     public class SettingsHelper
     {
-        string filePath = "";
+        private string filePath = "";
 
         public SettingsHelper()
         {

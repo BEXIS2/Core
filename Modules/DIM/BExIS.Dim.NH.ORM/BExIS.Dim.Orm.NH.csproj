@@ -57,20 +57,12 @@
     <Folder Include="Mappings\PostgreSQL82Dialect\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Mappings\Default\Mapping\MappingKey.hbm.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Mappings\Default\Mapping\MappingConcept.hbm.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Mappings\Default\Mapping\LinkElement.hbm.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Mappings\Default\Mapping\LinkElementTypes.hbm.xml" />
-    <Content Include="Mappings\Default\Mapping\Mapping.hbm.xml" />
-    <Content Include="Mappings\Default\Mapping\TransformationRule.hbm.xml" />
+    <Content Include="Mappings\Default\Mappings\LinkElement.hbm.xml" />
+    <Content Include="Mappings\Default\Mappings\LinkElementTypes.hbm.xml" />
+    <Content Include="Mappings\Default\Mappings\Mapping.hbm.xml" />
+    <Content Include="Mappings\Default\Mappings\MappingConcept.hbm.xml" />
+    <Content Include="Mappings\Default\Mappings\MappingKey.hbm.xml" />
+    <Content Include="Mappings\Default\Mappings\TransformationRule.hbm.xml" />
     <Content Include="Mappings\Default\Publications\Broker.hbm.xml" />
     <Content Include="Mappings\Default\Publications\MetadataStructureToRepository.hbm.xml" />
     <Content Include="Mappings\Default\Publications\Publication.hbm.xml" />

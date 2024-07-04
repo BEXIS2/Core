@@ -44,11 +44,11 @@ namespace BExIS.Dlm.Orm.NH.Utils
             var orderbyClause = orderBy?.ToSQL();
             var whereClause = filter?.ToSQL();
 
-            return Retrieve(datasetId,q, whereClause, orderbyClause, projectionClause, pageNumber, pageSize);
+            return Retrieve(datasetId, q, whereClause, orderbyClause, projectionClause, pageNumber, pageSize);
         }
 
         // can be public, but after the other overloads got matured enough.
-        protected DataTable Retrieve(long datasetId,string q, string whereClause, string orderbyClause, string projectionClause, int pageNumber = 0, int pageSize = 0)
+        protected DataTable Retrieve(long datasetId, string q, string whereClause, string orderbyClause, string projectionClause, int pageNumber = 0, int pageSize = 0)
         {
             if (!string.IsNullOrEmpty(q))
                 whereClause += " m::text like '%" + q + "%'";
@@ -297,7 +297,6 @@ namespace BExIS.Dlm.Orm.NH.Utils
             // execute the statement
             try
             {
-
                 {
                     long result = (long)uow.ExecuteScalar(mvBuilder.ToString());
                     if (result > 0)
@@ -339,7 +338,6 @@ namespace BExIS.Dlm.Orm.NH.Utils
                 return -1;
             }
         }
-
 
         public void Drop(long datasetId)
         {

@@ -1,6 +1,4 @@
-﻿
-@using BExIS.Modules.Dim.UI.Models.Mapping
-
+﻿@using BExIS.Modules.Dim.UI.Models.Mapping
 
 @model LinkElementModel
 
@@ -9,8 +7,6 @@
     string c = "le-simple-" + Model.Position;
 
 }
-
-
 
 <div id="@id" class="le-simple @id @c" title="@Model.Description">
 
@@ -33,28 +29,25 @@
             <td class="le-simple-header-td">
 
                 @Html.Partial("LinkElementContent", Model)
-
             </td>
-                <td class="le-simple-selector-container">
-                    <button class="fa fa-info bx-button small bx-disabled" disabled type="@Model.Type.ToString()" title="@Model.Description"></button>
-                    <span class="bx bx-next bx-button function small le-simple-selector" onclick="leSimpleSelectorClick(this)"></span>
-                </td>
+            <td class="le-simple-selector-container">
+                <button class="fa fa-info bx-button small bx-disabled" disabled type="@Model.Type.ToString()" title="@Model.Description"></button>
+                <span class="bx bx-next bx-button function small le-simple-selector" onclick="leSimpleSelectorClick(this)"></span>
+            </td>
             }
             else
             {
-                <td class="le-simple-selector-container">
-                    <button class="fa fa-info bx-button small bx-disabled" disabled type="@Model.Type.ToString()" title="@Model.Description"></button>
-                    <span class="bx bx-previous bx-button function small le-simple-selector" onclick="leSimpleSelectorClick(this)"></span>
-                </td>
-                <td class="le-simple-header-td">
+            <td class="le-simple-selector-container">
+                <button class="fa fa-info bx-button small bx-disabled" disabled type="@Model.Type.ToString()" title="@Model.Description"></button>
+                <span class="bx bx-previous bx-button function small le-simple-selector" onclick="leSimpleSelectorClick(this)"></span>
+            </td>
+            <td class="le-simple-header-td">
 
-                    @Html.Partial("LinkElementContent", Model)
-                </td>
+                @Html.Partial("LinkElementContent", Model)
+            </td>
             }
         </tr>
     </table>
-
-
 </div>
 <style type="text/css">
     .bx-info {

@@ -24,7 +24,5 @@
     <property name="State" type="Vaiona.Entities.Logging.CrudState, Vaiona.Entities">
       <column name="RelationState" />
     </property>
-
   </subclass>
-
 </hibernate-mapping>

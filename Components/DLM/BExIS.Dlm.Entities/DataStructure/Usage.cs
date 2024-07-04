@@ -33,9 +33,8 @@ namespace BExIS.Dlm.Entities.DataStructure
     /// <remarks></remarks>
     public abstract class Variable : BaseUsage
     {
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public virtual DataType DataType { get; set; }
 
@@ -47,7 +46,6 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <remarks>If the data attribute's unit changes, the validity of the variable's unit should be evaluated again.</remarks>
         /// <remarks>If the variable's unit is going to be changed, the compatibility to the data container's unit's dimension should be preserved.</remarks>
         public virtual Unit Unit { get; set; } // 0..1
-
 
         public virtual ICollection<Constraint> VariableConstraints { get; set; }
 
@@ -66,7 +64,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <seealso cref=""/>
         public virtual StructuredDataStructure DataStructure { get; set; }
 
-        public virtual VariableTemplate VariableTemplate { get; set; }        
+        public virtual VariableTemplate VariableTemplate { get; set; }
 
         public virtual int VarTemplate { get; set; }
 
@@ -80,15 +78,12 @@ namespace BExIS.Dlm.Entities.DataStructure
             Meanings = new List<Meaning>();
             DisplayPatternId = -1;
             VariableConstraints = new List<Constraint>();
-
         }
-
     }
 
     public class VariableTemplate : Variable
     {
         public virtual bool Approved { get; set; }
-
 
         public VariableTemplate()
         {

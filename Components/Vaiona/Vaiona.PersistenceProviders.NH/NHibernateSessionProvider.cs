@@ -11,13 +11,13 @@ namespace Vaiona.PersistenceProviders.NH
     {
         private ISession session;
         private NHibernatePersistenceManager pManager = null;
+
         public NHibernateSessionProvider()
         {
             pManager = (NHibernatePersistenceManager)IoCFactory.Container.Resolve<IPersistenceManager>();
             ISessionFactory sessionFactory = (ISessionFactory)pManager.Factory;
             Configuration cf = (Configuration)pManager.Configuration;
             session = sessionFactory.OpenSession(cf.Interceptor);
-
         }
 
         public object getSession()
@@ -35,6 +35,5 @@ namespace Vaiona.PersistenceProviders.NH
             session = null;
             // GC.Collect();
         }
-
     }
 }

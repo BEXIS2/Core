@@ -7,7 +7,6 @@
 @{
     int index = 0;
 
-
     if (!String.IsNullOrEmpty(Model.EntityType))
     {
         index = Model.Entities.IndexOf(Model.EntityType);
@@ -49,7 +48,6 @@
                               .HtmlAttributes(new {style="width:300px"})
                               .ClientEvents(events => events.OnChange("OnChangeDropDown"))
                               .BindTo(new SelectList(Model.Entities, Model.EntityType)))
-
                     </td>
                     <td></td>
                 </tr>
@@ -96,41 +94,41 @@
                     </td>
                 </tr>
                 @*@foreach (KeyValuePair<string,string> systemNode in @Model.SystemNodes)
-                {
-                    var selectionContainer = @systemNode.Key + "SelectionContainer";
-                    var selectionContainerWindow = @systemNode.Key + "SelectionContainerWindow";
+                    {
+                        var selectionContainer = @systemNode.Key + "SelectionContainer";
+                        var selectionContainerWindow = @systemNode.Key + "SelectionContainerWindow";
 
-                    <tr>
-                        <td class="labelColumn">
-                            @systemNode.Key
-                        </td>
-                        <td>
-                            <div id="@selectionContainer">
-                                @Ajax.ActionLink("Select", "ShowListOfMetadataNodes", "ImportMetadataStructureSetParameters", new {area = "DCM", key = @systemNode.Key },
-                                    new AjaxOptions
-                                    {
-                                        HttpMethod = "GET",
-                                        InsertionMode = InsertionMode.Replace,
-                                        UpdateTargetId = selectionContainerWindow
-                                    },
-                                    new {@class = "bx-button function"})
-                            </div>
-                            <div id="@selectionContainerWindow"></div>
-                        </td>
-                        <td>
-                           @systemNode.Value
-                        </td>
-                    </tr>
-                }*@
+                        <tr>
+                            <td class="labelColumn">
+                                @systemNode.Key
+                            </td>
+                            <td>
+                                <div id="@selectionContainer">
+                                    @Ajax.ActionLink("Select", "ShowListOfMetadataNodes", "ImportMetadataStructureSetParameters", new {area = "DCM", key = @systemNode.Key },
+                                        new AjaxOptions
+                                        {
+                                            HttpMethod = "GET",
+                                            InsertionMode = InsertionMode.Replace,
+                                            UpdateTargetId = selectionContainerWindow
+                                        },
+                                        new {@class = "bx-button function"})
+                                </div>
+                                <div id="@selectionContainerWindow"></div>
+                            </td>
+                            <td>
+                               @systemNode.Value
+                            </td>
+                        </tr>
+                    }*@
             </table>
             @*<br />
                 <button type="submit" value="Save" name="submit"  class="t-button " >save</button>*@
         </div>
     </div>
 
-     <div class="wizardStep_Success stepper">
- 
-           @if (Model != null)
+    <div class="wizardStep_Success stepper">
+
+        @if (Model != null)
            {
                if (Model.ErrorList != null)
                {
@@ -141,9 +139,9 @@
                    }
                }
            }
-     </div>
+    </div>
 
-     <div class="wizardStep_Error stepper">
+    <div class="wizardStep_Error stepper">
 
         @Html.ValidationSummary(true)
 
@@ -154,23 +152,21 @@
                 if (Model.ErrorList.Count == 0)
                 {
 
-
                 }
                 else
-                { 
-                   <ul>
-                        @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
-                        { 
-                            <li>@s.ToString()</li>
+                {
+        <ul>
+            @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+                        {
+            <li>@s.ToString()</li>
                         }
-                   </ul>
+        </ul>
 
                 }
             }
 
         }
-    </div>     
-
+    </div>
 </div>
 
 }
@@ -197,10 +193,10 @@
     }
 
     function OnSuccess() {
-     
+
     }
 
     function OnFailure(response) {
-   
+
     }
 </script>

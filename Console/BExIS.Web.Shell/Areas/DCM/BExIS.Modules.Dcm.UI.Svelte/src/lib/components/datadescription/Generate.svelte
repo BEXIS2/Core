@@ -38,12 +38,19 @@
 	let structures = [];
 	$: structures;
 
-
 	onMount(async () => {
 		reload();
 		setList(model.readableFiles, structures);
-		latestFileUploadDate.subscribe(s=>{if(s>0){reload()}})
-		latestDataDescriptionDate.subscribe(s=>{if(s>0){reload()}})
+		latestFileUploadDate.subscribe((s) => {
+			if (s > 0) {
+				reload();
+			}
+		});
+		latestDataDescriptionDate.subscribe((s) => {
+			if (s > 0) {
+				reload();
+			}
+		});
 	});
 
 	async function reload() {

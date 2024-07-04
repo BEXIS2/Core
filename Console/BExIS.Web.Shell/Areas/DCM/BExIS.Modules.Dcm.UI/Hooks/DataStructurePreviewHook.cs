@@ -18,8 +18,6 @@ namespace BExIS.Modules.Dcm.UI.Hooks
 
             // if status is open then check if data is available
             if (Status == HookStatus.Open) checkDataStatus(id, username);
-
-
         }
 
         private void checkPermissionStatus(long id, string username)
@@ -39,7 +37,6 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             {
                 Status = HookStatus.Open;
             }
-
         }
 
         private void checkDataStatus(long id, string username)
@@ -50,9 +47,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
                 var dataset = datasetManager.GetDataset(id);
                 if (dataset == null || dataset.DataStructure == null) { Status = HookStatus.Disabled; return; }
                 else Status = HookStatus.Open;
-
             }
         }
-
     }
 }

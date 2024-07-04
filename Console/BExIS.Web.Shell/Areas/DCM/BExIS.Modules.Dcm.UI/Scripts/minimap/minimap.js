@@ -22,88 +22,86 @@ SOFTWARE.
 
 **/
 
-(function($, undefined) {
-
+(function ($, undefined) {
     "use strict";
-    $.fn.minimap = function(options) {
+    $.fn.minimap = function (options) {
         var minimap = this;
         var $window = $(window);
-        var fn = function() {};
+        var fn = function () { };
         var shown = true;
 
         var defaults = {
-            heightRatio : 0.6,
-            widthRatio : 0.05,
-            offsetHeightRatio : 0.035,
-            offsetWidthRatio : 0.035,
-            position : "right",
+            heightRatio: 0.6,
+            widthRatio: 0.05,
+            offsetHeightRatio: 0.035,
+            offsetWidthRatio: 0.035,
+            position: "right",
             touch: true,
             smoothScroll: true,
             smoothScrollDelay: 200,
             onPreviewChange: fn,
-            disableFind : false
+            disableFind: false
         };
         var settings = $.extend({}, defaults, options);
         var position = ["right", "left"];
 
         //when invoked, this function prevents browsers from finding
         //duplicate text located in the minimap
-        jQuery.fn.disableFind = function(){
-          return this.each(function (){
-        		var newHTML = "";                             // create a new blank string
-        		var stop = false;                             // boolean to toggle whether we're in a tag or not
-        		var currentElement = $(this);                 // variable to hold the current element
-        		var html = currentElement.html();             // get html from current element
-        		for (var i = 0; i < html.length; i++)         // iterate through each character of the html
-        		{
-        			newHTML += html[i];                         // insert current character into newHTML
-        			if (html[i] === '<') { stop = true };      // stop when entering a tag
-        			if (html[i] === '>') { stop = false };     // continue when exiting a tag
-        			if (stop === false) {                      // inject dot into newHTML
-        				newHTML += '<span style="position:absolute; right:-999999999px;">'+ '.' +'</span>';
-        			}
-        			if (html[i] === ' ') { newHTML += ' '; }   // insert a space if the current character is a space
-        		}
-        		currentElement.html(newHTML);                 // replace current element with newHTML
-        	});
+        jQuery.fn.disableFind = function () {
+            return this.each(function () {
+                var newHTML = "";                             // create a new blank string
+                var stop = false;                             // boolean to toggle whether we're in a tag or not
+                var currentElement = $(this);                 // variable to hold the current element
+                var html = currentElement.html();             // get html from current element
+                for (var i = 0; i < html.length; i++)         // iterate through each character of the html
+                {
+                    newHTML += html[i];                         // insert current character into newHTML
+                    if (html[i] === '<') { stop = true };      // stop when entering a tag
+                    if (html[i] === '>') { stop = false };     // continue when exiting a tag
+                    if (stop === false) {                      // inject dot into newHTML
+                        newHTML += '<span style="position:absolute; right:-999999999px;">' + '.' + '</span>';
+                    }
+                    if (html[i] === ' ') { newHTML += ' '; }   // insert a space if the current character is a space
+                }
+                currentElement.html(newHTML);                 // replace current element with newHTML
+            });
         };
 
-        var validateProps = function(prop, value) {
-
-            switch(prop) {
+        var validateProps = function (prop, value) {
+            switch (prop) {
                 case 'disableFind':
-                  if(value != true && value != false)
-                      throw "Invalid disableFind: " + value;
-                  break;
+                    if (value != true && value != false)
+                        throw "Invalid disableFind: " + value;
+                    break;
                 case 'heightRatio':
                     var heightRatio = value;
-                    if(!$.isNumeric(heightRatio) || heightRatio <= 0.0 || heightRatio > 1.0)
+                    if (!$.isNumeric(heightRatio) || heightRatio <= 0.0 || heightRatio > 1.0)
                         throw "Invalid heightRatio: " + heightRatio;
                     break;
                 case 'widthRatio':
                     var widthRatio = value;
-                    if(!$.isNumeric(widthRatio) || widthRatio <= 0.0 || widthRatio > 0.5)
+                    if (!$.isNumeric(widthRatio) || widthRatio <= 0.0 || widthRatio > 0.5)
                         throw "Invalid widthRatio: " + widthRatio;
                     break;
                 case 'offsetHeightRatio':
                     var offsetHeightRatio = value;
-                    if(!$.isNumeric(offsetHeightRatio) || offsetHeightRatio < 0.0 || offsetHeightRatio > 0.9)
+                    if (!$.isNumeric(offsetHeightRatio) || offsetHeightRatio < 0.0 || offsetHeightRatio > 0.9)
                         throw "Invalid offsetHeightRatio: " + offsetHeightRatio;
                     break;
                 case 'offsetWidthRatio':
                     var offsetWidthRatio = value;
-                    if(!$.isNumeric(offsetWidthRatio) || offsetWidthRatio < 0.0 || offsetWidthRatio > 0.9)
+                    if (!$.isNumeric(offsetWidthRatio) || offsetWidthRatio < 0.0 || offsetWidthRatio > 0.9)
                         throw "Invalid offsetWidthRatio: " + offsetWidthRatio;
                     break;
                 case 'position':
                     var p = value.toLowerCase();
                     var pos = position.indexOf(p);
-                    if(pos === -1) throw "Invalid position: " + settings.position;
+                    if (pos === -1) throw "Invalid position: " + settings.position;
                     settings.position = p;
                     break;
                 case 'smoothScrollDelay':
                     var smoothScrollDelay = value;
-                    if(((smoothScrollDelay | 0 ) !== smoothScrollDelay) || smoothScrollDelay < 4)
+                    if (((smoothScrollDelay | 0) !== smoothScrollDelay) || smoothScrollDelay < 4)
                         throw "Invalid smoothScrollDelay(in ms): " + smoothScrollDelay;
                     break;
                 case 'touch':
@@ -111,7 +109,7 @@ SOFTWARE.
                     break;
                 case 'onPreviewChange':
                     var fn = value;
-                    if(!fn || !$.isFunction(fn))
+                    if (!fn || !$.isFunction(fn))
                         throw "Invalid onPreviewChange: " + value;
                     break;
                 default:
@@ -120,7 +118,7 @@ SOFTWARE.
         };
 
         //validate inputs
-        for(var prop in settings) validateProps(prop, settings[prop]);
+        for (var prop in settings) validateProps(prop, settings[prop]);
 
         var miniElement = minimap.clone();
 
@@ -129,12 +127,12 @@ SOFTWARE.
         miniElement.addClass('minimap noselect');
 
         //add the class that will be targeted by disableFind : true
-        if(settings.disableFind === true){
-          miniElement.children().each(function() {$(this).addClass('unsearchable');});
+        if (settings.disableFind === true) {
+            miniElement.children().each(function () { $(this).addClass('unsearchable'); });
         }
 
         // remove events & customized cursors
-        miniElement.children().each(function() {$(this).css({'pointer-events': 'none'});});
+        miniElement.children().each(function () { $(this).css({ 'pointer-events': 'none' }); });
 
         var region = $('<div class="miniregion"> </div>');
 
@@ -145,14 +143,13 @@ SOFTWARE.
         $('.unsearchable').disableFind();
 
         var scale = function () {
-
             return {
                 x: ($window.width() / minimap.width()) * settings.widthRatio,
                 y: ($window.height() / minimap.height()) * settings.heightRatio
             };
         };
 
-        var onResizeHandler = function(e) {
+        var onResizeHandler = function (e) {
             if (!shown) return;
 
             var s = scale();
@@ -162,10 +159,10 @@ SOFTWARE.
             var offsetLeftRight = $window.width() * settings.offsetWidthRatio;
 
             var top = minimap.height() * (s.y - 1) / 2 + offsetTop;
-            var leftRight = minimap.width() * (s.x - 1) / 2  + offsetLeftRight;
+            var leftRight = minimap.width() * (s.x - 1) / 2 + offsetLeftRight;
 
-            var width = $window.width() * (1/s.x) * settings.widthRatio;
-            var height = $window.height() * (1 / s.y)* settings.heightRatio;
+            var width = $window.width() * (1 / s.x) * settings.widthRatio;
+            var height = $window.height() * (1 / s.y) * settings.heightRatio;
 
             var css = {
                 '-webkit-transform': sc,
@@ -173,11 +170,11 @@ SOFTWARE.
                 '-ms-transform': sc,
                 '-o-transform': sc,
                 'transform': sc,
-                'top' : top,
-                'width' : width,
-                'height': height, 
-                'margin' : '0px',
-                'padding' : '0px'
+                'top': top,
+                'width': width,
+                'height': height,
+                'margin': '0px',
+                'padding': '0px'
             };
             css[settings.position] = leftRight;
 
@@ -185,10 +182,10 @@ SOFTWARE.
 
             var regionTop = minimap.offset().top * s.y;
             var cssRegion = {
-                width : miniElement.width() * s.x,
-                height : $window.height() * s.y,
-                margin : '0px',
-                top : $window.scrollTop() * s.y + offsetTop - regionTop + 'px'
+                width: miniElement.width() * s.x,
+                height: $window.height() * s.y,
+                margin: '0px',
+                top: $window.scrollTop() * s.y + offsetTop - regionTop + 'px'
             };
             cssRegion[settings.position] = offsetLeftRight + 'px';
             region.css(cssRegion);
@@ -196,8 +193,8 @@ SOFTWARE.
             settings.onPreviewChange(miniElement, s);
         };
 
-        var onScrollHandler = function(e) {
-            if(!shown) return;
+        var onScrollHandler = function (e) {
+            if (!shown) return;
 
             var s = scale();
             var offsetTop = $window.height() * settings.offsetHeightRatio;
@@ -206,28 +203,28 @@ SOFTWARE.
             var regionHeight = region.outerHeight(true);
             var bottom = minimap.outerHeight(true) * s.y + top;// - regionHeight;
 
-            if(pos + regionHeight + offsetTop < top || pos >  bottom) {
+            if (pos + regionHeight + offsetTop < top || pos > bottom) {
                 region.css({
                     display: 'none',
                 });
             } else {
                 region.css({
-                    top : pos + offsetTop - top + 'px',
-                    display : 'block'
+                    top: pos + offsetTop - top + 'px',
+                    display: 'block'
                 });
             }
         };
 
-        var scrollTop = function(e) {
-            if(!shown) return;
+        var scrollTop = function (e) {
+            if (!shown) return;
 
             var s = scale();
             var offsetTop = $window.height() * settings.offsetHeightRatio;
             var top = minimap.offset().top * s.y;
             var regionHeight = region.outerHeight(true);
-            var target = (e.clientY - regionHeight/2 - offsetTop + top) / s.y;
+            var target = (e.clientY - regionHeight / 2 - offsetTop + top) / s.y;
 
-            if(e.type === 'click' && settings.smoothScroll) {
+            if (e.type === 'click' && settings.smoothScroll) {
                 var current = $window.scrollTop();
                 var maxTarget = minimap.outerHeight(true);
                 target = Math.max(target, Math.min(target, maxTarget));
@@ -237,9 +234,9 @@ SOFTWARE.
                 var r = delay / distance;
                 var unitScroll = 1;
                 var unitDelay = 4;
-                if(r >= 4) {
+                if (r >= 4) {
                     unitDelay = parseInt(unitScroll);
-                } else if(r >= 1) {
+                } else if (r >= 1) {
                     unitScroll = parseInt(r) * 4;
                 } else {
                     unitScroll = (4 / r);
@@ -250,9 +247,9 @@ SOFTWARE.
                 onSmoothScroll = true;
 
                 // linear translate
-                var smoothScroll = function() {
+                var smoothScroll = function () {
                     next = next + (direction ? unitScroll : -unitScroll);
-                    if(--count <= 0) {
+                    if (--count <= 0) {
                         clearInterval(timer);
                         onSmoothScroll = false;
                         next = target;
@@ -268,23 +265,23 @@ SOFTWARE.
 
         var mousedown = false;
         var onSmoothScroll = false;
-        var onMouseupHandler = function(e) {
+        var onMouseupHandler = function (e) {
             mousedown = false;
             minimap.removeClass('noselect');
             region.removeClass('dragging');
         };
 
-        var onMousemoveHandler = function(e) {
-            if(!mousedown || onSmoothScroll) return;
+        var onMousemoveHandler = function (e) {
+            if (!mousedown || onSmoothScroll) return;
             scrollTop(e);
         };
 
-        var onClickHandler = function(e) {
+        var onClickHandler = function (e) {
             scrollTop(e);
             mousedown = false;
         };
 
-        var onMousedownHandler = function(e) {
+        var onMousedownHandler = function (e) {
             mousedown = true;
             minimap.addClass('noselect');
             region.addClass('dragging');
@@ -308,7 +305,7 @@ SOFTWARE.
         $(miniElement).on('click', onClickHandler);
 
         var lastTouchType = '';
-        var touchHandler = function(e) {
+        var touchHandler = function (e) {
             var touches = e.changedTouches;
 
             // Ignore multi-touch
@@ -326,7 +323,6 @@ SOFTWARE.
                 type = "click";
             }
 
-
             var simulatedEvent = document.createEvent("MouseEvent");
             simulatedEvent.initMouseEvent(type, true, true, window, 1,
                 touch.screenX, touch.screenY,
@@ -338,18 +334,16 @@ SOFTWARE.
         };
 
         if (settings.touch) {
-
             document.addEventListener("touchstart", touchHandler, true);
             document.addEventListener("touchmove", touchHandler, true);
             document.addEventListener("touchend", touchHandler, true);
             document.addEventListener("touchcancel", touchHandler, true);
-
         }
 
-        var setPosition = function(pos) {
+        var setPosition = function (pos) {
             var oldValue = settings.position;
             validateProps('position', pos);
-            if(oldValue !== settings.position) {
+            if (oldValue !== settings.position) {
                 var css = {};
                 css[oldValue] = '';
                 onResizeHandler();
@@ -358,34 +352,34 @@ SOFTWARE.
             }
         };
 
-        var setProperty = function(propName, redraw) {
-            return function(value) {
+        var setProperty = function (propName, redraw) {
+            return function (value) {
                 validateProps(propName, value);
                 settings[propName] = value;
-                if(redraw) onResizeHandler();
+                if (redraw) onResizeHandler();
             };
         };
 
-        var show = function() {
-            if(shown) return;
+        var show = function () {
+            if (shown) return;
             miniElement.show();
             region.show();
             shown = true;
             onResizeHandler();
         };
 
-        var hide = function() {
-            if(!shown) return;
+        var hide = function () {
+            if (!shown) return;
             miniElement.hide();
             region.hide();
             shown = false;
         };
 
-        var toggle = function() {
+        var toggle = function () {
             miniElement.toggle();
             region.toggle();
             shown = !shown;
-            if(shown) onResizeHandler();
+            if (shown) onResizeHandler();
         };
 
         return $.extend({}, this, {
@@ -394,12 +388,11 @@ SOFTWARE.
             "setWidthRatio": setProperty('widthRatio', true),
             "setOffsetHeightRatio": setProperty('offsetHeightRatio', true),
             "setOffsetWidthRatio": setProperty('offsetWidthRatio', true),
-            "setSmoothScroll" : setProperty('smoothScroll'),
-            "setSmoothScrollDelay" : setProperty('smoothScrollDelay'),
-            "show" : show,
-            "hide" : hide,
-            "toggle" : toggle
+            "setSmoothScroll": setProperty('smoothScroll'),
+            "setSmoothScrollDelay": setProperty('smoothScrollDelay'),
+            "show": show,
+            "hide": hide,
+            "toggle": toggle
         });
-
     };
 }(jQuery));

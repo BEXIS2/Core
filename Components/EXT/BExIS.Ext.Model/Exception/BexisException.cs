@@ -11,7 +11,6 @@ namespace BExIS.Ext.Model
                 throw new System.Exception(reason);
             var entity = (BaseEntity)entityObj;
             throw new System.Exception(string.Format("{0} {1} (ID: {2}) failed. Reason: {3} . {4}", exceptionType.ToString(), entityObj.GetType().Name, entity.Id, reason, GroupFailed ? " All operations canceled" : ""));
-
         }
 
         public enum ExceptionType

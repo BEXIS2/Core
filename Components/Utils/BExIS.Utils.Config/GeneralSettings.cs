@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
-using System.Runtime;
 using Vaiona.IoC;
 using Vaiona.Utils.Cfg;
 
@@ -23,7 +22,7 @@ namespace BExIS.Utils.Config
     /// </remarks>
     public class GeneralSettings : Settings
     {
-        public GeneralSettings() : base("Shell",Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.json"))
+        public GeneralSettings() : base("Shell", Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.json"))
         {
         }
 
@@ -150,14 +149,14 @@ namespace BExIS.Utils.Config
                     var ldapConfigurations = new List<LdapConfiguration>();
                     List<Entry> ldaps = (List<Entry>)GetValueByKey("ldaps");
 
-                    foreach ( var ldap in ldaps )
+                    foreach (var ldap in ldaps)
                     {
                         ldapConfigurations.Add(JsonConvert.DeserializeObject<LdapConfiguration>(ldap.Value.ToString()));
                     }
 
                     return ldapConfigurations;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     return new List<LdapConfiguration>();
                 }

@@ -1,10 +1,7 @@
 ﻿using BExIS.Utils.Config;
 using BExIS.Utils.Helpers;
-using BExIS.Xml.Helpers;
 using System;
-using System.IO;
 using System.Web.Mvc;
-using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Sam.UI.Controllers
@@ -20,8 +17,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 helpurl = ManualHelper.GetUrl(GeneralSettings.ApplicationVersion, "SAM");
             }
-      
-           
 
             return Redirect(helpurl);
         }

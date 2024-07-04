@@ -26,7 +26,5 @@ namespace BExIS.Modules.Dcm.UI.Models
         {
             DataTuples = new List<DataTuple>();
         }
-
-
     }
 }

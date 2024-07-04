@@ -62,7 +62,6 @@ namespace BExIS.Dlm.Services.Data
                 {
                     throw new Exception("EntityTemplate creation failed.", ex);
                 }
-
             }
         }
 
@@ -88,7 +87,6 @@ namespace BExIS.Dlm.Services.Data
                 {
                     throw new Exception("EntityTemplate creation failed.", ex);
                 }
-
             }
         }
 

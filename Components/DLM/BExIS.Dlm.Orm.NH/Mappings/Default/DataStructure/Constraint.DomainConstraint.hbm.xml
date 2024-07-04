@@ -1,14 +1,10 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
   <subclass name="DomainConstraint" extends="Constraint" discriminator-value="DMN" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
-    
 
     <!-- Mapping Entity properties -->
     <property name="XmlDomainItems" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <column name="XmlDomainItems" not-null="false" sql-type="xml" />
     </property>
-
-
   </subclass>
-
 </hibernate-mapping>

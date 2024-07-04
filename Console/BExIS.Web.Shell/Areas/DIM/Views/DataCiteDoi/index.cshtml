@@ -36,6 +36,7 @@
                 <th>Dataset</th>
                 <th>Creation Date</th>
                 <th>Status</th>
+                <th>Response</th>
                 <th></th>
             </tr>
             @foreach (PublicationModel p in pending.ToList())
@@ -50,12 +51,14 @@
         <h2>Registered</h2>
         <table>
             <tr>
+                <th>Id</th>
                 <th>Broker</th>
                 <th>DataRepo</th>
                 <th>DOI</th>
                 <th>Dataset</th>
                 <th>Creation Date</th>
                 <th>Status</th>
+                <th>Response</th>
                 <th></th>
             </tr>
             @foreach (PublicationModel p in registered.ToList())
@@ -70,12 +73,14 @@
         <h2>Denied</h2>
         <table>
             <tr>
+                <th>Id</th>
                 <th>Broker</th>
                 <th>DataRepo</th>
                 <th>DOI</th>
                 <th>Dataset</th>
                 <th>Creation Date</th>
                 <th>Status</th>
+                <th>Response</th>
                 <th></th>
             </tr>
             @foreach (PublicationModel p in denied.ToList())
@@ -93,8 +98,8 @@
     function init() {
         $('.doi-grant').on('click', function () {
             var id = $(this).parents('.doi-row').attr('id');
-            var parameters = '/?datasetVersionId=' + id;
-            $.get('@Url.Action("_grantDoi", "DataCiteDoi", new { area = "DIM"} )' + parameters, function (data) {
+            var parameters = '/?publicationId=' + id;
+            $.get('@Url.Action("Accept", "DataCiteDoi", new { area = "DIM"} )' + parameters, function (data) {
                 $(data).replaceAll('#' + id);
                 init();
             });
@@ -102,8 +107,8 @@
 
         $('.doi-deny').on('click', function () {
             var id = $(this).parents('.doi-row').attr('id');
-            var parameters = '/?datasetVersionId=' + id;
-            $.get('@Url.Action("_denyDoi", "DataCiteDoi", new { area = "DIM"} )' + parameters, function (data) {
+            var parameters = '/?publicationId=' + id;
+            $.get('@Url.Action("Reject", "DataCiteDoi", new { area = "DIM"} )' + parameters, function (data) {
                 $(data).replaceAll('#' + id);
                 init();
             });

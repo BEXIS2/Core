@@ -6,7 +6,7 @@ namespace BExIS.Dim.Entities.Publications
     {
         //public virtual Broker Broker { get; set; }
         public virtual string Name { get; set; }
-        public virtual string Url { get; set; }
 
+        public virtual string Url { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using BExIS.Dim.Entities.Mapping;
+﻿using BExIS.Dim.Entities.Mappings;
 using System;
 using System.Collections.Generic;
 
@@ -16,7 +16,6 @@ namespace BExIS.Modules.Dim.UI.Models.Mapping
             ParentMappings = new List<ComplexMappingModel>();
             SelectionList = new List<LinkElementRootListItem>();
         }
-
     }
 
     public class LinkElementRootListItem
@@ -28,9 +27,7 @@ namespace BExIS.Modules.Dim.UI.Models.Mapping
         {
             Id = elementId + "_" + type;
             Name = name + " (" + type + ")";
-
         }
-
     }
 
     public class LinkElementRootModel
@@ -48,7 +45,7 @@ namespace BExIS.Modules.Dim.UI.Models.Mapping
         public List<LinkElementModel> LinkElements { get; set; }
         public LinkElementPostion Position { get; set; }
 
-        public LinkElementRootModel(LinkElementType type, long elementId, string name, LinkElementPostion position, string description, string url="")
+        public LinkElementRootModel(LinkElementType type, long elementId, string name, LinkElementPostion position, string description, string url = "")
         {
             Id = ElementId;
             ElementId = elementId;
@@ -77,7 +74,6 @@ namespace BExIS.Modules.Dim.UI.Models.Mapping
             Position = position;
         }
     }
-
 
     public class LinkElementModel
     {
@@ -154,11 +150,9 @@ namespace BExIS.Modules.Dim.UI.Models.Mapping
         }
     }
 
-
     public enum LinkElementPostion
     {
         Source,
         Target
     }
-
 }

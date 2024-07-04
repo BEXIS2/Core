@@ -1,5 +1,4 @@
-﻿
-using BExIS.Security.Services.Utilities;
+﻿using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
 using Vaiona.Logging;
 
@@ -13,8 +12,6 @@ namespace BExIS.UI.Helpers
             {
                 var es = new EmailService();
                 var subject = "Error in system";
-
-
 
                 es.Send(subject,
                     result,

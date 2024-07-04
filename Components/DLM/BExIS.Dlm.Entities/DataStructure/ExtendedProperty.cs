@@ -2,13 +2,13 @@
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dlm.Entities.DataStructure
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class ExtendedProperty : BaseEntity
     {
         #region Attributes
@@ -17,17 +17,17 @@ namespace BExIS.Dlm.Entities.DataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Name { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Description { get; set; }
 
-        #endregion
+        #endregion Attributes
 
         #region Associations
 
@@ -35,7 +35,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual DataContainer DataContainer { get; set; }
 
         // Its not needed, make the database more complex, Javad/ 03.07.13
@@ -65,7 +65,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         //    }
         //}
 
-        #endregion
+        #endregion Associations
 
         #region Mathods
 
@@ -74,12 +74,12 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         public ExtendedProperty()
         {
             //Constraints = new List<Constraint>();
         }
 
-        #endregion
+        #endregion Mathods
     }
 }

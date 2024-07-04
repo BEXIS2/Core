@@ -56,7 +56,7 @@
 @if (!Model.Locked)
 {
 
-    @(Html.Telerik().IntegerTextBox()
+@(Html.Telerik().IntegerTextBox()
                     .Name(Model.IdInput)
                     .MinValue(minValue)
                     .MaxValue(maxValue)
@@ -72,5 +72,5 @@
 }
 else
 {
-    @Html.Partial("_displayonly", Model)
+@Html.Partial("_displayonly", Model)
 }

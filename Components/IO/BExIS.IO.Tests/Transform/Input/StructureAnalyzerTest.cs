@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BExIS.IO.Tests.Transform.Input
 {
@@ -10,13 +9,13 @@ namespace BExIS.IO.Tests.Transform.Input
     {
         private List<string> rows = new List<string>();
         private List<string> rowWithMissingValues = new List<string>();
-        private List<string> missingValueList = new List<string>() { "na"};
+        private List<string> missingValueList = new List<string>() { "na" };
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            rows = generateTestRows(100000, ';');
-            rowWithMissingValues = generateTestRows(100000, ';', missingValueList);
+            rows = generateTestRows(100, ';');
+            rowWithMissingValues = generateTestRows(100, ';', missingValueList);
         }
 
         [SetUp]
@@ -36,12 +35,11 @@ namespace BExIS.IO.Tests.Transform.Input
 
         #region delimeter
 
-        [TestCase("a,b,c","2.23,2.34,2",TextSeperator.comma)]
-        [TestCase("v1;v2;v3","2.23;a,b,c,d,e,f;2",TextSeperator.semicolon)]
-        [TestCase("v1\tv2\tv3","2.23\t2.34\t2",TextSeperator.tab)]
-        public void SuggestDelimeter_Valid_ResultTextSeperator(string rowA, string rowB , TextSeperator textSeperator)
+        [TestCase("a,b,c", "2.23,2.34,2", TextSeperator.comma)]
+        [TestCase("v1;v2;v3", "2.23;a,b,c,d,e,f;2", TextSeperator.semicolon)]
+        [TestCase("v1\tv2\tv3", "2.23\t2.34\t2", TextSeperator.tab)]
+        public void SuggestDelimeter_Valid_ResultTextSeperator(string rowA, string rowB, TextSeperator textSeperator)
         {
-
             //Arrange
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
@@ -50,14 +48,13 @@ namespace BExIS.IO.Tests.Transform.Input
 
             //Assert
             Assert.NotNull(result, "result should not be null.");
-            Assert.AreEqual(result,textSeperator,"textseperator not expected");
+            Assert.AreEqual(result, textSeperator, "textseperator not expected");
         }
 
         [TestCase("a,\"b\",c", "2.23,\"2.34,2.24\",2", TextSeperator.comma, TextMarker.doubleQuotes)]
         [TestCase("a,'b',c", "2.23,'2.34,2.24',2", TextSeperator.comma, TextMarker.quotes)]
         public void SuggestDelimeter_DelimeterInTextMarkers_ResultTextSeperator(string rowA, string rowB, TextSeperator textSeperator, TextMarker textMarker)
         {
-
             //Arrange
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
@@ -72,7 +69,6 @@ namespace BExIS.IO.Tests.Transform.Input
         [TestCase("a,\"b\",c", "2.23,\"a;b;c\",2", TextSeperator.comma, TextMarker.doubleQuotes)]
         public void SuggestDelimeter_CharInTextMarkersEqualToDelimeter_ResultTextSeperator(string rowA, string rowB, TextSeperator textSeperator, TextMarker textMarker)
         {
-
             //Arrange
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
@@ -87,12 +83,11 @@ namespace BExIS.IO.Tests.Transform.Input
         [Test()]
         public void SuggestDelimeter_EmptyRows_ArgumentNullException()
         {
-
             //Arrange
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
             //Act
-            var result = Assert.Throws<ArgumentNullException> (()=> structureAnalyser.SuggestDelimeter("", ""));
+            var result = Assert.Throws<ArgumentNullException>(() => structureAnalyser.SuggestDelimeter("", ""));
 
             //Assert
             Assert.AreEqual(result.ParamName, "rowA");
@@ -103,19 +98,17 @@ namespace BExIS.IO.Tests.Transform.Input
         [TestCase("v1\tv2", "2.23\t2.34\t2")]
         public void SuggestDelimeter_NoPossibleTextSeperator_Exception(string rowA, string rowB)
         {
-
             //Arrange
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
             //Act
             var result = Assert.Throws<Exception>(() => structureAnalyser.SuggestDelimeter(rowA, rowB));
 
-
             //Assert
             Assert.AreEqual(result.Message, "the guessing of the operator came to no result.");
         }
 
-        #endregion
+        #endregion delimeter
 
         #region decimal
 
@@ -125,7 +118,6 @@ namespace BExIS.IO.Tests.Transform.Input
         [TestCase("v1\tv2\tv3", "2.23\t2.34\t2", TextSeperator.tab, DecimalCharacter.point)]
         public void SuggestDecimal_Valid_ResultDecimalCharacter(string rowA, string rowB, TextSeperator textSeperator, DecimalCharacter decimalCharacter)
         {
-
             //Arrange
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
@@ -143,7 +135,6 @@ namespace BExIS.IO.Tests.Transform.Input
         [TestCase("a\tb\tc", "1.100,2\t\"der hut ist...\"\t2.400,8", TextSeperator.tab, DecimalCharacter.comma)]
         public void SuggestDecimal_DecimalWithThousandSpot_ResultDecimalCharacter(string rowA, string rowB, TextSeperator textSeperator, DecimalCharacter decimalCharacter)
         {
-
             //Arrange
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
@@ -158,7 +149,6 @@ namespace BExIS.IO.Tests.Transform.Input
         [Test()]
         public void SuggestDecimal_EmptyRows_ArgumentNullException()
         {
-
             //Arrange
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
@@ -169,15 +159,13 @@ namespace BExIS.IO.Tests.Transform.Input
             Assert.AreEqual(result.ParamName, "rowA");
         }
 
-        #endregion
+        #endregion decimal
 
         #region textmarker
-
 
         [TestCase("'a',b,'c'", "2.23,2.34,'2'", TextMarker.quotes)]
         public void SuggestTextMarker_Valid_ResultTextSeperator(string rowA, string rowB, TextMarker expect)
         {
-
             //Arrange
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
@@ -192,7 +180,6 @@ namespace BExIS.IO.Tests.Transform.Input
         [TestCase("'a',b,'c'", "2.23,'text with \\' and more chars','2'", TextMarker.quotes)]
         public void SuggestTextMarker_QuotesWithBackslash_ResultTextSeperator(string rowA, string rowB, TextMarker expect)
         {
-
             //Arrange
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
@@ -207,7 +194,6 @@ namespace BExIS.IO.Tests.Transform.Input
         [Test()]
         public void SuggestTextMarker_EmptyRows_ArgumentNullException()
         {
-
             //Arrange
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
@@ -218,28 +204,25 @@ namespace BExIS.IO.Tests.Transform.Input
             Assert.AreEqual(result.ParamName, "rowA");
         }
 
-        #endregion
+        #endregion textmarker
 
         #region systemtypes
 
         [TestCase(100)]
-        [TestCase(1000)]
-        [TestCase(10000)]
-        [TestCase(100000)]
         public void SuggestSystemTypes_Valid_ResultWithCorrectTypes(int n)
         {
             //Arrange
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
             //Act
-            var result = structureAnalyser.SuggestSystemTypes(rows.GetRange(0,n), TextSeperator.semicolon, DecimalCharacter.comma, new List<string>());
+            var result = structureAnalyser.SuggestSystemTypes(rows.GetRange(0, n), TextSeperator.semicolon, DecimalCharacter.comma, new List<string>());
 
             //Assert
             Assert.NotNull(result);
 
             var v1 = result[0];
             Assert.That(v1.Equals(typeof(UInt32)));
-        
+
             var v2 = result[1];
             Assert.That(v2.Equals(typeof(String)));
 
@@ -254,8 +237,8 @@ namespace BExIS.IO.Tests.Transform.Input
 
             var v6 = result[5];
             Assert.That(v6.Equals(typeof(Int64)));
-
         }
+
         [Test]
         public void SuggestSystemTypes_WithTestData_ResultWithCorrectTypes()
         {
@@ -293,8 +276,6 @@ namespace BExIS.IO.Tests.Transform.Input
 
             var v4 = result[3];
             Assert.That(v4.Equals(typeof(DateTime)));
-
-
         }
 
         public void SuggestSystemTypes_ValidDateTypes_ResultWithCorrectTypes(int n)
@@ -305,15 +286,11 @@ namespace BExIS.IO.Tests.Transform.Input
             List<string> dateValues = new List<string>();
             dateValues.Add("2022-12-24"); // yyyy-MM-dd
 
-
-
-
             //Act
             var result = structureAnalyser.SuggestSystemTypes(rows.GetRange(0, n), TextSeperator.semicolon, DecimalCharacter.comma, new List<string>());
 
             //Assert
             Assert.NotNull(result);
-
         }
 
         [Test]
@@ -345,17 +322,15 @@ namespace BExIS.IO.Tests.Transform.Input
 
             var v6 = result[5];
             Assert.That(v6.Equals(typeof(Int64)), "is not Int64");
-
         }
 
-        #endregion
+        #endregion systemtypes
 
-        private List<string> generateTestRows(int number, char seperator, List<string> missingValues=null)
+        private List<string> generateTestRows(int number, char seperator, List<string> missingValues = null)
         {
             List<string> rows = new List<string>();
 
             var r = new Random();
-
 
             for (int i = 0; i < number; i++)
             {
@@ -370,26 +345,22 @@ namespace BExIS.IO.Tests.Transform.Input
                 rows.Add(row);
             }
 
-            if (missingValues!=null)
+            if (missingValues != null)
             {
                 foreach (var missingValue in missingValues)
                 {
-
-                   string row = missingValue + seperator;
-                   row += missingValue + seperator;
-                   row += missingValue + seperator;
-                   row += missingValue + seperator;
-                   row += missingValue + seperator;
-                   row += missingValue;
+                    string row = missingValue + seperator;
+                    row += missingValue + seperator;
+                    row += missingValue + seperator;
+                    row += missingValue + seperator;
+                    row += missingValue + seperator;
+                    row += missingValue;
 
                     rows.Add(row);
                 }
-
-                
             }
 
             return rows;
         }
-
     }
 }

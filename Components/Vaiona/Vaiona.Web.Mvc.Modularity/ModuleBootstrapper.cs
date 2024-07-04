@@ -16,7 +16,5 @@
                 //BoC.Web.Mvc.PrecompiledViews.ApplicationPartRegistry.Register(plugin.EntryType.Assembly);
             }
         }
-
-
     }
 }

@@ -3,25 +3,16 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.DataType.DisplayPattern;
-using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Xml;
-using Vaiona.Persistence.Api;
-using Vaiona.Utils.Cfg;
 
 namespace BExIS.IO.Transform.Output
 {
     public class DataStructureDataTable
     {
-
         public long Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
@@ -37,12 +28,10 @@ namespace BExIS.IO.Transform.Output
             this.inUse = false;
             this.Structured = false;
             this.Variables = new DataTable("Variables");
-
         }
 
         public DataStructureDataTable(long id) : this()
         {
-
             DataStructureManager dataStructureManager = null;
             try
             {
@@ -61,7 +50,6 @@ namespace BExIS.IO.Transform.Output
 
                     this.Structured = false;
 
-
                     if (dataStructureManager.StructuredDataStructureRepo.Get(id) != null)
                     {
                         this.Variables = new DataTable("Variables");
@@ -77,7 +65,7 @@ namespace BExIS.IO.Transform.Output
                         this.Variables.Columns.Add("AttributeDescription");
                         this.Variables.Columns.Add("DisplayPattern");
                         this.Variables.Columns.Add("MissingValues", typeof(DataTable));
-                        
+
                         StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
                         this.Structured = true;
                         DataRow dataRow;
@@ -116,7 +104,6 @@ namespace BExIS.IO.Transform.Output
                             this.Variables.Rows.Add(dataRow);
                         }
                     }
-
                 }
             }
             finally
@@ -140,20 +127,18 @@ namespace BExIS.IO.Transform.Output
 
         public VariableElement(Variable variable)
         {
-
             Id = variable.Id;
             Label = variable.Label;
             Description = variable.Description;
             isOptional = variable.IsValueOptional;
             unit = new UnitElement(variable.Unit.Id);
             dataType = new DataTypeElement(variable.DataType.Id);
-            if(variable.MissingValues.Any())
-               variable.MissingValues.ToList().ForEach(m=> missingValues.Add(new MissingValueElement(m.DisplayName,m.Description, m.Placeholder)));
+            if (variable.MissingValues.Any())
+                variable.MissingValues.ToList().ForEach(m => missingValues.Add(new MissingValueElement(m.DisplayName, m.Description, m.Placeholder)));
 
             if (variable.Meanings.Any())
                 variable.Meanings.ToList().ForEach(m => meanings.Add(new MeaningElement(m.Name, m.Description)));
         }
-
     }
 
     public class UnitElement
@@ -184,7 +169,6 @@ namespace BExIS.IO.Transform.Output
                 um.Dispose();
             }
         }
-
     }
 
     public class DimensionElement
@@ -199,7 +183,6 @@ namespace BExIS.IO.Transform.Output
             Description = description;
             Specification = specification;
         }
-
     }
 
     public class MissingValueElement
@@ -221,12 +204,10 @@ namespace BExIS.IO.Transform.Output
         public string Name { get; set; }
         public string Description { get; set; }
 
-
         public MeaningElement(string name, string description)
         {
-            Description = description;  
-            Name = name;    
-
+            Description = description;
+            Name = name;
         }
     }
 
@@ -253,13 +234,11 @@ namespace BExIS.IO.Transform.Output
             {
                 dtm.Dispose();
             }
-
         }
     }
 
     public class DataStructureDataList
     {
-
         public long Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
@@ -279,7 +258,6 @@ namespace BExIS.IO.Transform.Output
 
         public DataStructureDataList(long id) : this()
         {
-
             DataStructureManager dataStructureManager = null;
             try
             {
@@ -318,12 +296,10 @@ namespace BExIS.IO.Transform.Output
         }
     }
 
-
-
     public class OutputDataStructureManager
     {
         /// <summary>
-        /// generate a text file with JSON from a datastructure 
+        /// generate a text file with JSON from a datastructure
         /// and stored this file on the server
         /// and store the path in the content discriptor
         /// </summary>
@@ -365,7 +341,6 @@ namespace BExIS.IO.Transform.Output
                 {
                     datasetManager.Dispose();
                 }
-
             }
             catch (Exception ex)
             {
@@ -375,10 +350,8 @@ namespace BExIS.IO.Transform.Output
             return path;
         }
 
-
         private static string storeGeneratedFilePathToContentDiscriptor(long datasetId, DatasetVersion datasetVersion, string title, string ext)
         {
-
             string name = "";
             string mimeType = "";
 
@@ -387,7 +360,6 @@ namespace BExIS.IO.Transform.Output
                 name = "datastructure";
                 mimeType = "text/comma-separated-values";
             }
-
 
             // create the generated FileStream and determine its location
             string dynamicPath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, datasetVersion.Id, title, ext);
@@ -406,7 +378,7 @@ namespace BExIS.IO.Transform.Output
             {
                 dm = new DatasetManager();
                 if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
-                {   // remove the one contentdesciptor 
+                {   // remove the one contentdesciptor
                     foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                     {
                         if (cd.Name == name)
@@ -431,7 +403,6 @@ namespace BExIS.IO.Transform.Output
                 dm.Dispose();
             }
         }
-
     }
 
     public struct StyleIndexStruct
@@ -440,9 +411,9 @@ namespace BExIS.IO.Transform.Output
         public uint Index { get; set; }
         public DataTypeDisplayPattern DisplayPattern { get; set; }
     }
+
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
-    
+    /// <remarks></remarks>
 }

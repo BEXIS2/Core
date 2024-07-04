@@ -20,7 +20,7 @@
                 <li style="text-align:left">
                     @foreach (Party party in typePair.TargetPartyType.Parties)
                     {
-                       
+
                         var existedRelationship = Model.FirstOrDefault(cc => cc.TargetParty.Id == party.Id);
                         RightType[] rightTypes;
                         if (existedRelationship != null)
@@ -31,7 +31,6 @@
                         else
                         { rightTypes = Helper.GetRightTypes(typePair.PermissionTemplate); }
                         <input type="checkbox" class="systemRelationshipParties" onclick="addRelationship(this,@counter)" partyId="@party.Id" partyTypepairId="@typePair.Id" @(existedRelationship == null ? "" : "checked") />
-
 
                         <strong>@party.Name</strong>
                         <div style="padding-left: 20px;">
@@ -98,8 +97,6 @@
         //'<input name="partyRelationships[0].Id" value="0" />'
         //'<input name="partyRelationships[0].Title" value="testrel" />'
     }
-    
 </script>
 <div id="hiddenData">
-
 </div>

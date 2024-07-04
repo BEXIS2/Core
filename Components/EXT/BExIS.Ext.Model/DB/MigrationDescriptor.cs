@@ -7,7 +7,6 @@ namespace BExIS.Ext.Model.DB
     {
         public MigrationDescriptorAttribute(String module, Version version, Version previous, String upgradeMessage, String downgradeMessage)
         {
-
         }
     }
 }

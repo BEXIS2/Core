@@ -1,10 +1,6 @@
 ﻿using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
-using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-using System.Web.Mvc;
-using System.Windows.Forms;
 
 namespace BExIS.Modules.Rpm.UI.Classes
 {
@@ -27,6 +23,7 @@ namespace BExIS.Modules.Rpm.UI.Classes
             }
             return null;
         }
+
         public static Unit ceateUnit(Unit unit)
         {
             if (unit != null && unit.Id != 0)
@@ -44,6 +41,7 @@ namespace BExIS.Modules.Rpm.UI.Classes
             }
             return null;
         }
+
         public static Unit edidUnit(Unit unit)
         {
             if (unit != null && unit.Id != 0 && unit.DataContainers.ToList().Count() <= 0)
@@ -61,6 +59,7 @@ namespace BExIS.Modules.Rpm.UI.Classes
             }
             return null;
         }
+
         public static bool deletUnit(Unit unit)
         {
             if (unit != null && unit.Id != 0 && unit.DataContainers.ToList().Count() <= 0)
@@ -74,9 +73,9 @@ namespace BExIS.Modules.Rpm.UI.Classes
                 finally
                 {
                     unitManager.Dispose();
-                }         
+                }
             }
             return false;
-        }      
+        }
     }
 }

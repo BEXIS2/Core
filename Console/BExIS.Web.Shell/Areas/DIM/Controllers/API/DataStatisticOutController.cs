@@ -19,23 +19,20 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 
 //using System.Linq.Dynamic;
 using System.Net;
 using System.Net.Http;
-using System.Web.Http.Description;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Web.Http;
+using System.Web.Http.Description;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
-
     public class DataStatisticOutController : ApiController
     {
-
         // GET api/DataStatistic
         /// <summary>
         /// Get a list of all dataset ids
@@ -67,7 +64,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
-
         // GET api/DataStatistic/{id}
         /// <summary>
         /// Get unique values, max and min values, and max and min length for all variables
@@ -84,7 +80,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return getData(id, -1, token);
         }
 
-
         // GET api/DataStatistic/{id}/{variableId}
         /// <summary>
         /// Get unique values, max and min values, and max and min length for one variable
@@ -98,7 +93,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
         [HttpGet]
         public HttpResponseMessage Get(long id, int variableId)
         {
-
             string token = this.Request.Headers.Authorization?.Parameter;
 
             return getData(id, variableId, token);
@@ -118,6 +112,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 // if a dataset is public, then the api should also return data if there is no token for a user
 
                 #region is public
+
                 dataStructureManager = new DataStructureManager();
 
                 long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
@@ -157,12 +152,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                             DataTable dt = new DataTable("Varibales");
 
-
                             List<ApiDataStatisticModel> dataStatisticModels = new List<ApiDataStatisticModel>();
                             StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(datasetVersion.Dataset.DataStructure.Id);
                             if (variableId == -1)
                             {
-
                                 foreach (VariableInstance vs in structuredDataStructure.Variables)
                                 {
                                     ApiDataStatisticModel dataStatisticModel = new ApiDataStatisticModel();
@@ -173,7 +166,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     dataStatisticModel.DataTypeName = vs.DataType.Name;
                                     dataStatisticModel.DataTypeSystemType = vs.DataType.SystemType;
 
-                                    DataTypeDisplayPattern dtdp = vs.DisplayPatternId>0?DataTypeDisplayPattern.Get(vs.DisplayPatternId):null;
+                                    DataTypeDisplayPattern dtdp = vs.DisplayPatternId > 0 ? DataTypeDisplayPattern.Get(vs.DisplayPatternId) : null;
                                     string displayPattern = "";
                                     if (dtdp != null) displayPattern = dtdp.StringPattern;
 
@@ -204,7 +197,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             }
                             else
                             {
-
                                 VariableInstance variable = new VariableInstance();
 
                                 foreach (VariableInstance vs in structuredDataStructure.Variables)
@@ -242,7 +234,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             }
                             dt.Strip();
 
-
                             dt.TableName = id + "_data";
 
                             DatasetModel model = new DatasetModel();
@@ -255,7 +246,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
                             return response;
-
                         }
                         else
                         {
@@ -368,7 +358,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         private string GetMax(DataTable missingValues, DataTable dt)
         {
-
             for (var i = dt.Rows.Count - 1; i > 0; i--)
             {
                 DataRow[] found = missingValues.Select("placeholder = '" + dt.Rows[i][0] + "'");
@@ -380,7 +369,5 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             return dt.Rows[dt.Rows.Count - 1][0].ToString();
         }
-
     }
-
 }

@@ -36,7 +36,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
     /// </summary>
     public class MetadataInController : ApiController
     {
-
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
         // POST: api/Metadata
@@ -53,13 +52,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// </summary>
         /// <remarks>
         /// In the Metadata PUT Api there are two different ways to import metadata.
-        /// 
+        ///
         /// 1. XML
         /// Send an xml in the xml content to update the metadata, each xpath is checked and if there is a possible mapping, the fields are updated.
         ///
         /// 2. JSON
         /// In relation to the dataset with a metadatastructure, the incoming metadata as json is validated against the associated JSON schema. Only if the json is valid, the metadata is updated.
-        /// 
+        ///
         /// </remarks>
         /// <param name="id">identifier for an specifiy entity e.g. dataset in the system </param>
         /// <exception cref="HttpStatusCode.PreconditionFailed"></exception>
@@ -132,6 +131,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Dataset not exist.");
 
                 #region convert metadata
+
                 XmlDocument completeMetadata = null;
 
                 if (contentType.Equals("application/xml"))
@@ -166,12 +166,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     completeMetadata = XmlMetadataImportHelper.FillInXmlValues(metadataResult,
                         metadataXmlTemplate);
 
-                    #endregion
+                    #endregion application/xml
                 }
                 else
                 if (contentType.Equals("application/json"))
                 {
-                    #region  application/json
+                    #region application/json
 
                     using (var streamReader = new StreamReader(requestStream))
                     using (var jsonReader = new JsonTextReader(streamReader))
@@ -211,17 +211,14 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             {
                                 return Request.CreateErrorResponse(HttpStatusCode.ExpectationFailed, "the json does not contain any information about the metadata structure");
                             }
-
-
-
                         }
                         catch (JsonReaderException)
                         {
                             Console.WriteLine("Invalid JSON.");
                         }
-
                     }
-                    #endregion
+
+                    #endregion application/json
                 }
 
                 #endregion convert metadata

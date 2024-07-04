@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Data;
 
 namespace BExIS.Modules.Dim.UI.Models.Api
@@ -22,6 +20,7 @@ namespace BExIS.Modules.Dim.UI.Models.Api
         public long Id { get; set; }
         public long Number { get; set; }
     }
+
     /// <summary>
     /// Return model of Dataset API
     /// </summary>
@@ -73,7 +72,6 @@ namespace BExIS.Modules.Dim.UI.Models.Api
             FirstName = "";
             LastName = "";
         }
-
     }
 
     public class ApiSimpleAttachmentModel
@@ -82,6 +80,7 @@ namespace BExIS.Modules.Dim.UI.Models.Api
         public string Name { get; set; }
         public string MimeType { get; set; }
     }
+
     /// <summary>
     /// Return model of Data Statistic API
     /// </summary>
@@ -101,7 +100,6 @@ namespace BExIS.Modules.Dim.UI.Models.Api
         public string maxLength { get; set; }
         public string minLength { get; set; }
         public DataTable missingValues { get; set; }
-
     }
 
     /// <summary>
@@ -113,34 +111,40 @@ namespace BExIS.Modules.Dim.UI.Models.Api
         /// Xpath e.g. Metadata/methods/methodsType/measurements/measurementsType/sampleAnalysis/
         /// </summary>
         public string Xpath { get; set; }
+
         /// <summary>
         /// List of Dataset version IDs to include instead of dataset id (latests versions)
         /// </summary>
         public string[] DatasetVersionIdsInclude { get; set; }
+
         /// <summary>
-        /// List of Dataset IDs to include 
+        /// List of Dataset IDs to include
         /// </summary>
         public string[] DatasetIdsInclude { get; set; }
+
         /// <summary>
-        /// List of Dataset IDs to exclude 
+        /// List of Dataset IDs to exclude
         /// </summary>
         public string[] DatasetIdsExclude { get; set; }
+
         /// <summary>
-        /// List of Metdata structure IDs to include 
+        /// List of Metdata structure IDs to include
         /// </summary>
         public string[] MetadatastructureIdsInclude { get; set; }
+
         /// <summary>
         /// List of Metdata structure IDs to exclude
         /// </summary>
         public string[] MetadatastructureIdsExclude { get; set; }
+
         /// <summary>
         /// Regex to define text to include
         /// </summary>
         public string RegexInclude { get; set; }
+
         /// <summary>
         /// Regex to define text to exclude
         /// </summary>
         public string RegexExclude { get; set; }
-
     }
 }

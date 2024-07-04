@@ -5,23 +5,20 @@
 @using BExIS.Modules.Dcm.UI.Models;
 
 @{
-    
 
 }
 
 <div class="wizardStep">
 
-     <div class="wizardStep_Main">
+    <div class="wizardStep_Main">
         <div class="wizardStep_Header stepper">
 
             <h3>@Model.StepInfo.title</h3>
         </div>
 
         <div class="wizardStep_Description stepper">
-            
-
         </div>
-        
+
         <div class="wizardStep_Content stepper">
 
             <table>
@@ -30,27 +27,26 @@
                         Metadata structure name
                     </td>
                     <td>
-                       @Model.SchemaName
+                        @Model.SchemaName
                     </td>
                 </tr>
-                 <tr>
+                <tr>
                     <td>
                         Root node
                     </td>
-                     <td>
-                         @Model.RootName
+                    <td>
+                        @Model.RootName
                     </td>
                 </tr>
             </table>
-
         </div>
     </div>
 
-     <div class="wizardStep_Success stepper">
+    <div class="wizardStep_Success stepper">
         <p>You successfully created metadata structure: <b>@Model.SchemaName</b></p>
-     </div>
+    </div>
 
-     <div class="wizardStep_Error stepper">
+    <div class="wizardStep_Error stepper">
         @if (Model != null)
         {
             if (Model.ErrorList != null)
@@ -58,25 +54,22 @@
                 if (Model.ErrorList.Count == 0)
                 {
 
-
                 }
                 else
-                { 
-                   <ul>
-                        @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
-                        { 
-                            <li>@s.ToString()</li>
+                {
+        <ul>
+            @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+                        {
+            <li>@s.ToString()</li>
                         }
-                   </ul>
+        </ul>
 
                 }
             }
 
         }
-    </div>     
-
+    </div>
 </div>
 
 <script type="text/javascript">
-
 </script>

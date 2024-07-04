@@ -126,12 +126,11 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                 copy.Parameters.Add(p.Copy(number, numberOfSourceInPackage));
             }
 
-
             return copy;
         }
 
         public void Update(XElement xelement)
-        { 
+        {
             this.Value = xelement?.Value;
 
             if (xelement.HasAttributes)
@@ -139,7 +138,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                 foreach (var attr in xelement.Attributes())
                 {
                     var parameter = Parameters.FirstOrDefault(p => p.DisplayName.ToLower().Equals(attr.Name.LocalName.ToLower()));
-                    if(parameter != null)
+                    if (parameter != null)
                     {
                         parameter.Value = attr.Value;
                     }

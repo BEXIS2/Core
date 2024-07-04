@@ -16,14 +16,16 @@
 
 	//stores
 
-	import { unitStore, dataTypeStore, templateStore, meaningsStore, constraintsStore, setByTemplateStore } from '../../store';
-
 	import {
-		updateDisplayPattern,
-		updateDatatypes,
-		updateUnits,
-		updateTemplates
-	} from './helper';
+		unitStore,
+		dataTypeStore,
+		templateStore,
+		meaningsStore,
+		constraintsStore,
+		setByTemplateStore
+	} from '../../store';
+
+	import { updateDisplayPattern, updateDatatypes, updateUnits, updateTemplates } from './helper';
 
 	import DataTypeDescription from './DataTypeDescription.svelte';
 	import Container from './Container.svelte';
@@ -62,23 +64,23 @@
 	export let isValid: boolean = false;
 	export let last: boolean = false;
 	export let expand: boolean;
-	export let blockDataRelevant:boolean;
-	
+	export let blockDataRelevant: boolean;
+
 	$: isValid;
 	// validation
 	let res = suite.get();
-	
+
 	let loaded = false;
-	
+
 	//displaypattern
 	let displayPattern: listItemType[];
 	$: displayPattern;
-	
+
 	const dispatch = createEventDispatcher();
 	const setByTemplate = get(setByTemplateStore);
-	
-	let x: listItemType = { id: 0, text: '', group: '', description:'' };
-	
+
+	let x: listItemType = { id: 0, text: '', group: '', description: '' };
+
 	onMount(() => {
 		// set suggestions
 		setList();
@@ -87,17 +89,15 @@
 		suggestedTemplates = variable.possibleTemplates;
 		// reset & reload validation
 		suite.reset();
-		
+
 		setTimeout(async () => {
-			
-	
 			updateLists();
-			
-		 //displayPattern = updateDisplayPattern(variable.dataType, true);
+
+			//displayPattern = updateDisplayPattern(variable.dataType, true);
 
 			// when type has change, reset value, but after copy do not reset
 			// thats why reset need to set
-		
+
 			if (displayPattern.length > 0) {
 				res = suite(variable, 'displayPattern');
 			}
@@ -116,29 +116,25 @@
 	});
 
 	afterUpdate(() => {
-
 		displayPattern = updateDisplayPattern(variable.dataType, false);
-		res = suite(variable,"");
+		res = suite(variable, '');
 		setValidationState(res);
-
 	});
 
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
-	function onChangeHandler(e:any) {
+	function onChangeHandler(e: any) {
 		// add some delay so the entityTemplate is updated
 		// otherwise the values are old
 		setTimeout(async () => {
 			res = suite(variable, e.target.id);
-				setValidationState(res);
-
+			setValidationState(res);
 		}, 100);
 	}
 
 	//change event: if select change check also validation only on the field
 	// *** is the id of the input component
-	function onSelectHandler(e:any, id:string) {
-
+	function onSelectHandler(e: any, id: string) {
 		setTimeout(async () => {
 			res = suite(variable, id);
 
@@ -148,37 +144,30 @@
 				updateDisplayPattern(variable.dataType);
 			}
 
-			console.log(id,e.detail,variable);
+			console.log(id, e.detail, variable);
 			if (id == 'variableTemplate') {
+				if (setByTemplate) {
+					// if true, update unit & datatype based on settings
+					if (variable.dataType == undefined || variable.dataType == '') {
+						variable.dataType = updateDataType(e.detail);
+					}
 
-				if(setByTemplate) // if true, update unit & datatype based on settings
-				{
-						if(variable.dataType == undefined || variable.dataType == "")
-						{
-								variable.dataType = updateDataType(e.detail);
-						}
+					if (variable.unit == undefined || variable.unit == '') {
+						variable.unit = updateUnit(e.detail);
+					}
 
-						if(variable.unit == undefined || variable.unit == "")
-						{
-							variable.unit = updateUnit(e.detail);
-						}
-
-						if(variable.description == undefined || variable.description == "" )
-						{
-							variable.description = e.detail.description
-						}
+					if (variable.description == undefined || variable.description == '') {
+						variable.description = e.detail.description;
+					}
 				}
 
-				variable.meanings = updateMeanings(variable, e.detail)
-				variable.constraints = updateConstraints(variable,e.detail?.constraints)
+				variable.meanings = updateMeanings(variable, e.detail);
+				variable.constraints = updateConstraints(variable, e.detail?.constraints);
 			}
-		
 
 			if (id == 'meanings') {
-				
-				var last = e.detail[e.detail.length-1]
-				variable.constraints = updateConstraints(variable,last.constraints)
-				
+				var last = e.detail[e.detail.length - 1];
+				variable.constraints = updateConstraints(variable, last.constraints);
 			}
 			// console.log("🚀 ~ update var ~ variable:", variable)
 
@@ -191,17 +180,14 @@
 	// use the store to reset the lists for the dropdowns
 	/// reset means mostly reset the groups
 	function setList() {
-
 		datatypes = $dataTypeStore.map((o) => ({ ...o })).sort(); // set datatypes
 		units = $unitStore.map((o) => ({ ...o })).sort(); // set units
 		variableTemplates = $templateStore.map((o) => ({ ...o })).sort();
 		meanings = $meaningsStore.map((o) => ({ ...o })).sort();
 		constraints = $constraintsStore.map((o) => ({ ...o })).sort();
-
 	}
 
 	function updateLists() {
-
 		//console.log("variable",variable);
 		datatypes = updateDatatypes(
 			variable.unit,
@@ -220,81 +206,77 @@
 		//console.log("updated units",units);
 		variableTemplates = updateTemplates(variable.unit, $templateStore, suggestedTemplates);
 		variableTemplates.sort();
-
 	}
 
-	function updateUnit( _variableTemplate:templateListItemType):unitListItemType|undefined
-	{
-		console.log("🚀 ~e.details _variableTemplate.units:", _variableTemplate.units)
-			if(_variableTemplate.units)
-			{
-					  var firstUnit = _variableTemplate.units[0];
-						 var us = [...$unitStore.filter(u=>u.text == firstUnit)]
-							if(us != undefined){ 
-								var u = us[0];
-								return u;
-							}
+	function updateUnit(_variableTemplate: templateListItemType): unitListItemType | undefined {
+		console.log('🚀 ~e.details _variableTemplate.units:', _variableTemplate.units);
+		if (_variableTemplate.units) {
+			var firstUnit = _variableTemplate.units[0];
+			var us = [...$unitStore.filter((u) => u.text == firstUnit)];
+			if (us != undefined) {
+				var u = us[0];
+				return u;
 			}
+		}
 
-			return undefined;
+		return undefined;
 	}
-			
 
-	function updateDataType( _variableTemplate:templateListItemType):listItemType|undefined
-	{
-			if(_variableTemplate.units)
-			{
-						 var ds = [...$dataTypeStore.filter(d=>_variableTemplate.dataTypes.includes(d.text))]
-							if(ds != undefined){ 
-								return ds[0];
-							}
+	function updateDataType(_variableTemplate: templateListItemType): listItemType | undefined {
+		if (_variableTemplate.units) {
+			var ds = [...$dataTypeStore.filter((d) => _variableTemplate.dataTypes.includes(d.text))];
+			if (ds != undefined) {
+				return ds[0];
 			}
+		}
 
-			return undefined;
+		return undefined;
 	}
 
-	function updateMeanings(_variable:VariableInstanceModel, _variableTemplate:templateListItemType):listItemType[]
-	{
-			if(_variableTemplate && _variableTemplate.meanings)
-			{
-					if(_variable.meanings)
-					{
-						return [..._variable.meanings,...$meaningsStore.filter(m=>_variableTemplate.meanings.includes(m.text))]
-					}
-					else
-					{
-						 return [...$meaningsStore.filter(m=>_variableTemplate.meanings.includes(m.text))]
-					}
+	function updateMeanings(
+		_variable: VariableInstanceModel,
+		_variableTemplate: templateListItemType
+	): listItemType[] {
+		if (_variableTemplate && _variableTemplate.meanings) {
+			if (_variable.meanings) {
+				return [
+					..._variable.meanings,
+					...$meaningsStore.filter((m) => _variableTemplate.meanings.includes(m.text))
+				];
+			} else {
+				return [...$meaningsStore.filter((m) => _variableTemplate.meanings.includes(m.text))];
 			}
+		}
 
-			return []
+		return [];
 	}
 
-	function updateConstraints(_variable:VariableInstanceModel, constraints:string[]):listItemType[]
-	{
-		if(constraints)
-		{
-				// get names of ids 
-			if(_variable.constraints)
-			{
-						return [..._variable.constraints,...$constraintsStore.filter(m=>constraints.includes(m.text))]
-					}
-					else
-					{
-						return [...$constraintsStore.filter(m=>constraints.includes(m.text))]
-					}
+	function updateConstraints(
+		_variable: VariableInstanceModel,
+		constraints: string[]
+	): listItemType[] {
+		if (constraints) {
+			// get names of ids
+			if (_variable.constraints) {
+				return [
+					..._variable.constraints,
+					...$constraintsStore.filter((m) => constraints.includes(m.text))
+				];
+			} else {
+				return [...$constraintsStore.filter((m) => constraints.includes(m.text))];
 			}
+		}
 
-			return []
+		return [];
 	}
-	
-	function setValidationState(res:any) {
+
+	function setValidationState(res: any) {
 		isValid = res.isValid();
 		// dispatch this event to the parent to check the save button
 		dispatch('var-change');
 	}
 
-	function cutData(d:any) {
+	function cutData(d: any) {
 		for (let index = 0; index < d.length; index++) {
 			let v = d[index];
 
@@ -305,8 +287,6 @@
 
 		return d;
 	}
-
-
 </script>
 
 <div id="variable-{variable.id}-container" class="flex gap-5">
@@ -444,9 +424,7 @@
 									on:change={(e) => onSelectHandler(e, 'unit')}
 								/>
 							</div>
-							<div slot="description">
-	
-							</div>
+							<div slot="description"></div>
 						</Container>
 
 						<!--Meaning-->
@@ -509,7 +487,7 @@
 								/>
 							</div>
 							<div slot="description">
-								<MeaningsDescription bind:list={variable.meanings}/>
+								<MeaningsDescription bind:list={variable.meanings} />
 							</div>
 						</Container>
 

@@ -1,4 +1,4 @@
 export interface MetadataModel {
- useExternalMetadataForm: boolean;
- externalMetadataFormUrl: string;
+	useExternalMetadataForm: boolean;
+	externalMetadataFormUrl: string;
 }

@@ -9,46 +9,45 @@
 
     <version name = "VersionNo" type="Int32">
       <column name = "VersionNo" />
-    </version >
+    </version>
 
     <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <column name = "Extra" not-null="false" sql-type="xml" />
     </property>
 
     <!-- Mapping DataTuple properties -->
-    <property name="Title" type="String" >
-      <column name="Title"  />
-    </property>
-    
-    <property name="DisplayName" type="String" >
-      <column name="DisplayName"  />
+    <property name="Title" type="String">
+      <column name="Title" />
     </property>
 
-    <property name="Description" type="StringClob" >
-      <column name="Description" sql-type="text"/>
+    <property name="DisplayName" type="String">
+      <column name="DisplayName" />
     </property>
 
-    <property name="IndicatesHierarchy" type="yes_no" >
-      <column name="IndicatesHierarchy"  />
+    <property name="Description" type="StringClob">
+      <column name="Description" sql-type="text" />
     </property>
 
-    <property name="MinCardinality" type="int" >
-      <column name="MinCardinality"  />
+    <property name="IndicatesHierarchy" type="yes_no">
+      <column name="IndicatesHierarchy" />
     </property>
 
-    <property name="MaxCardinality" type="int" >
-      <column name="MaxCardinality"  />
+    <property name="MinCardinality" type="int">
+      <column name="MinCardinality" />
+    </property>
+
+    <property name="MaxCardinality" type="int">
+      <column name="MaxCardinality" />
     </property>
 
     <set name="AssociatedPairs" table="PartyTypePairs" lazy="false">
-      <key column="PartyRelationshipTypeRef"/>
-      <one-to-many class="PartyTypePair"/>
+      <key column="PartyRelationshipTypeRef" />
+      <one-to-many class="PartyTypePair" />
     </set>
 
     <set name="PartyRelationships" table="PartyRelationships" lazy="true">
-      <key column="PartyRelationshipTypeRef"/>
-      <one-to-many class="PartyRelationship"/>
+      <key column="PartyRelationshipTypeRef" />
+      <one-to-many class="PartyRelationship" />
     </set>
-
   </class>
 </hibernate-mapping>
