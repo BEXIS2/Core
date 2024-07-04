@@ -21,7 +21,8 @@
 		UnitListItem,
 		DataTypeListItem,
 		DimensionListItem,
-		UnitValidationResult
+		UnitValidationResult,
+		LinkItem
 	} from '../models';
 
 	// event
@@ -42,19 +43,29 @@
 	export let unit: UnitListItem;
 	export let units: UnitListItem[];
 
-	let showDatatypes: boolean = false;
+	let toggle = {dataTypes: false, externalLinks: false};
+
+	let el: LinkItem[] =[]; 
 	let dt: DataTypeListItem[];
 	let ms: string[];
 	let ds: DimensionListItem[] = [];
-	let listItem =
+	let dimensionlistItem =
 		unit === undefined || unit.dimension === undefined
 			? undefined
 			: { id: unit.dimension.id, text: unit.dimension.name };
+	let linklistItem =
+		unit === undefined || unit.link === undefined
+			? undefined
+			: { id: unit.link.id, text: unit.link.name };
+	let linkUrl: URL | null = null;
+
 	$: dataTypes = dt;
 	$: measurementSystems = ms;
 	$: dimensions = ds.map(({ id, name }) => ({ id: id, text: name }));
-	$: unit.dimension = listItem === undefined ? undefined : ds.find((d) => d.id === listItem?.id);
-	$: measurementSystems, setValidation();
+	$: externalLinks = el.map(({ id, name }) => ({ id: id, text: name }));
+	$: unit.dimension = dimensionlistItem === undefined ? undefined : ds.find((d) => d.id === dimensionlistItem?.id);
+	$: unit.link = linklistItem === undefined ? undefined : el.find((e) => e.id === linklistItem?.id);
+	$: linkUrl =  unit.link === undefined ? null : converttoURL (unit.link.uri); 
 
 	onMount(async () => {
 		setValidation();
@@ -64,6 +75,7 @@
 		ms = await apiCalls.GetMeasurementSystems();
 		dt = await apiCalls.GetDataTypes();
 		ds = await apiCalls.GetDimensions();
+		el = await apiCalls.GetLinks();
 	}
 
 	function setValidation() {
@@ -72,8 +84,8 @@
 				suite.reset();
 			} else {
 				setTimeout(async () => {
-					res = suite({ unit: unit, units: units, measurementSystems: measurementSystems }, '');
-				}, 10);
+					res = suite({ unit: unit, units: units, measurementSystems: measurementSystems }, undefined);
+				}, 100);
 			}
 		}
 	}
@@ -88,9 +100,9 @@
 			// check changed field
 			res = suite(
 				{ unit: unit, units: units, measurementSystems: measurementSystems },
-				e.target.id
+				undefined
 			);
-		}, 10);
+		}, 100);
 	}
 
 	async function submit() {
@@ -131,9 +143,17 @@
 		dispatch('cancel');
 	}
 
-	function toggleDatatypes() {
-		showDatatypes = !showDatatypes;
+	function converttoURL(uri:string): URL | null
+	{
+		try{
+			return new URL(uri,undefined );
+		}
+		catch
+		{
+			return null
+		}
 	}
+
 </script>
 
 <div class="card p-5 shadow-md my-3">
@@ -239,16 +259,18 @@
 											on:mouseover={() => {
 												helpStore.show('datatypesDetails');
 											}}
-											on:click={() => toggleDatatypes()}
+											on:click={() => {
+												toggle.dataTypes = !toggle.dataTypes;
+											}}
 										>
-											{#if showDatatypes}<Fa icon={faChevronUp} />{:else}<Fa
+											{#if toggle.dataTypes}<Fa icon={faChevronUp} />{:else}<Fa
 													icon={faChevronDown}
 												/>{/if}
 										</div>
 									</div>
 								</div>
 							{/if}
-							{#if showDatatypes || unit.datatypes.length === 1}
+							{#if toggle.dataTypes || unit.datatypes.length === 1}
 								<div class="table-container my-2 w-full" transition:slide>
 									<table class="table table-compact bg-tertiary-500/30">
 										<tr class="bg-primary-300">
@@ -258,8 +280,8 @@
 										</tr>
 										{#each unit.datatypes as datatype}
 											<tr>
-												<td class="text-left px-1">{datatype.systemType}</td>
 												<td class="text-left px-1">{datatype.name}</td>
+												<td class="text-left px-1">{datatype.systemType}</td>
 												<td class="text-left px-1">{datatype.description}</td>
 											</tr>
 										{/each}
@@ -273,7 +295,7 @@
 					<DropdownKVP
 						id="dimension"
 						title="Dimension"
-						bind:target={listItem}
+						bind:target={dimensionlistItem}
 						source={dimensions}
 						required={true}
 						complexTarget={true}
@@ -314,9 +336,9 @@
 									setTimeout(async () => {
 										res = suite(
 											{ unit: unit, units: units, measurementSystems: measurementSystems },
-											measurementSystems
+											undefined
 										);
-									}, 10);
+									}, 100);
 								}}
 								bind:group={unit.measurementSystem}
 								name={item}
@@ -325,6 +347,44 @@
 							>
 						{/each}
 					</RadioGroup>
+				</div>
+
+				<div class="pb-3" title="External Links">
+					<DropdownKVP
+						id="externalLinks"
+						title="External Links"
+						bind:target={linklistItem}
+						source={externalLinks}
+						complexTarget={true}
+						help={true}
+						on:change={() => {
+							setTimeout(async () => {
+								res = suite(
+									{ unit: unit, units: units, measurementSystems: measurementSystems },
+									undefined
+								);
+							}, 100);
+						}}
+					/>
+					{#if unit.link != undefined && unit.link != null}
+					<div class="card p-2 my-1 shadow-md" transition:slide>
+						<table class="table table-compact bg-tertiary-500/30">
+							<tr class="bg-primary-300">
+								<th class="text-left px-1">Name</th>
+								<th class="text-left px-1">Link</th>
+							</tr>
+							<tr>
+								<td class="text-left px-1">{unit.link.name}</td>
+								{#if linkUrl != null && (linkUrl.protocol == 'http:' ||  linkUrl.protocol == 'https:')}
+									<!-- svelte-ignore a11y-missing-content -->
+									<td class="text-left px-1"><a href="{unit.link.uri}" target="_blank">{unit.link.uri}</a></td>
+								{:else}
+									<td class="text-left px-1">{unit.link.uri}</td>
+								{/if}
+							</tr>
+						</table>
+					</div>
+					{/if}
 				</div>
 
 				<div class="py-5 text-right col-span-2">
