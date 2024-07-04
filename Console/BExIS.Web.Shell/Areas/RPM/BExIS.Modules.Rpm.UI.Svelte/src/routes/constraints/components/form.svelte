@@ -69,7 +69,7 @@
 		if (constraint.id > 0) 
 		{
 			setTimeout(async () => {
-				res = suite({ constraint: constraint, constraints: constraints }, '');
+				res = suite({ constraint: constraint, constraints: constraints }, undefined);
 			}, 10);
 		}
 	});

@@ -62,3 +62,13 @@ export const DeleteUnit = async (id: number) => {
 		throw error;
 	}
 };
+
+export const GetLinks = async () => {
+	try {
+		const response = await Api.get('/rpm/unit/GetExternalLinks');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};

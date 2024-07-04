@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using BExIS.Dlm.Entities.Meanings;
+using System.Runtime.Remoting.Activation;
 using BExIS.Modules.Rpm.UI.Models.Dimensions;
 
 namespace BExIS.Modules.Rpm.UI.Models.Units
@@ -41,6 +43,8 @@ namespace BExIS.Modules.Rpm.UI.Models.Units
         /// </summary>
         public string MeasurementSystem { get; set; }
 
+        public LinkItem Link{ get; set; }
+
         public bool InUse { get; set; }
 
         public UnitListItem()
@@ -52,6 +56,21 @@ namespace BExIS.Modules.Rpm.UI.Models.Units
             Dimension = new DimensionListItem();
             Datatypes = new List<DataTypeListItem>();
             InUse = false;
+            Link = new LinkItem();
+        }
+    }
+
+    public class LinkItem
+    {
+        public long Id { get; set; }
+        public string URI { get; set; }
+        public string Name { get; set; }
+
+        public LinkItem()
+        {
+            Id = 0;
+            URI = string.Empty;
+            Name = string.Empty;            
         }
     }
 
