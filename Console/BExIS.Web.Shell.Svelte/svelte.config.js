@@ -11,18 +11,17 @@ const config = {
 
 	kit: {
 		adapter: adapter({
-			pages:'../BExIS.Web.Shell/Scripts/svelte', // ../BExIS.Modules.Dcm.UI/Scripts/svelte
-			assets:'../BExIS.Web.Shell/Scripts/svelte',// ../BExIS.Modules.Dcm.UI/Scripts/svelte
-			fallback:null,
-			precompress:true,
-			preprocess:true,
-			strict:false
-		}
-		),
+			pages: '../BExIS.Web.Shell/Scripts/svelte', // ../BExIS.Modules.Dcm.UI/Scripts/svelte
+			assets: '../BExIS.Web.Shell/Scripts/svelte', // ../BExIS.Modules.Dcm.UI/Scripts/svelte
+			fallback: null,
+			precompress: true,
+			preprocess: true,
+			strict: false
+		}),
 		alias: {
 			$models: './src/models',
-			$services: './src/services',
-	}
+			$services: './src/services'
+		}
 	}
 };
 

@@ -8,10 +8,6 @@ namespace Vaiona.Entities.Common
     [Serializable]
     public abstract class BaseEntity : ISystemVersionedEntity //EntityWithTypedId<Int64>
     {
-        #region Fields        
-
-        #endregion
-
         #region Attributes
 
         public virtual Int64 Id { get; set; }
@@ -22,11 +18,7 @@ namespace Vaiona.Entities.Common
         //public virtual EntityVersionInfo VersionInfo { get; set; } // Map as a component // Version item does not work inside component!!!
         public virtual XmlNode Extra { get; set; }
 
-        #endregion
-
-        #region Associations
-
-        #endregion
+        #endregion Attributes
 
         #region Mathods
 
@@ -52,7 +44,7 @@ namespace Vaiona.Entities.Common
         /// <summary>
         /// In some cases like DataTuple, value of some properties of the object are persisted ax xml. in this case there is an in-memory version and an in-storage version
         /// Dematerialize method, creates the Xml version of those properties and stores them in the relevant persistence properties
-        /// If you have put AutomaticMaterializationInfoAttribute attributes on your class and have not overridden this method, then it will try to transform the original variables into Xml counterparts 
+        /// If you have put AutomaticMaterializationInfoAttribute attributes on your class and have not overridden this method, then it will try to transform the original variables into Xml counterparts
         /// No need to override these functions, the base one performs the task for normal cases
         /// If you have a very special case or the performance of the generic one is not good, then override the methods
         /// </summary>
@@ -112,23 +104,18 @@ namespace Vaiona.Entities.Common
             }
         }
 
-        #endregion
+        #endregion Mathods
     }
 
     public abstract class BusinessEntity : BaseEntity, IStatefullEntity, IAuditableEntity
     {
-
         #region Attributes
 
         public virtual EntityStateInfo StateInfo { get; set; } // Map as a component
         public virtual EntityAuditInfo CreationInfo { get; set; } // Map as a component
         public virtual EntityAuditInfo ModificationInfo { get; set; } // Map as a component
 
-        #endregion
-
-        #region Associations
-
-        #endregion
+        #endregion Attributes
 
         #region Mathods
 
@@ -138,8 +125,9 @@ namespace Vaiona.Entities.Common
             CreationInfo = new EntityAuditInfo();
             ModificationInfo = new EntityAuditInfo();
         }
+
         //public abstract void Validate();
 
-        #endregion
+        #endregion Mathods
     }
 }

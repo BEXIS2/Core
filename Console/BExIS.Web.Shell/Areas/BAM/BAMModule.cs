@@ -11,6 +11,7 @@ namespace BExIS.Modules.Bam.UI
         {
             LoggerFactory.GetFileLogger().LogCustom("...ctor of bam...");
         }
+
         public override void Install()
         {
             LoggerFactory.GetFileLogger().LogCustom("...start install of bam...");
@@ -21,7 +22,6 @@ namespace BExIS.Modules.Bam.UI
                 {
                     generator.GenerateSeedData();
                 }
-
             }
             catch (Exception e)
             {
@@ -30,8 +30,8 @@ namespace BExIS.Modules.Bam.UI
             }
 
             LoggerFactory.GetFileLogger().LogCustom("...end install of bam...");
-
         }
+
         /// <summary>
         /// Registers current area with the routing engine.
         /// The default route is automatically registred. Using the AreaName as route prefix and url sapce.

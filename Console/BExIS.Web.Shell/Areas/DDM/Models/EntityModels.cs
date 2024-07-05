@@ -39,5 +39,4 @@ namespace BExIS.Modules.DDM.UI.Models
             };
         }
     }
-
 }

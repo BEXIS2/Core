@@ -2,13 +2,11 @@
 using BExIS.IO.Transform.Validation.Exceptions;
 using System;
 using System.Collections.Generic;
-using Vaiona.Entities.Common;
 
 namespace BExIS.UI.Hooks.Caches
 {
     public class EditDatasetDetailsCache
     {
-
         /// <summary>
         /// if true that means metadata of teh current edit version is valid
         /// </summary>
@@ -43,7 +41,7 @@ namespace BExIS.UI.Hooks.Caches
 
         /// <summary>
         /// this dictionary store the last modifications of the changed hooks
-        /// string = hook name 
+        /// string = hook name
         /// DateTime = Last Modification
         /// </summary>
         public Dictionary<string, DateTime> LastModifications { get; set; }
@@ -91,7 +89,6 @@ namespace BExIS.UI.Hooks.Caches
 
             return null;
         }
-
     }
 
     public class ExcelSetup
@@ -152,13 +149,13 @@ namespace BExIS.UI.Hooks.Caches
         /// if a validation faild, then errors are stored here
         /// if no errors, validation sucess
         /// </summary>
-        public List<Error> Errors{ get; set; }
+        public List<Error> Errors { get; set; }
 
         public FileInfo()
         {
             Name = string.Empty;
             Type = string.Empty; ;
-            Lenght = 0 ;
+            Lenght = 0;
             Description = string.Empty;
             Errors = new List<Error>();
         }

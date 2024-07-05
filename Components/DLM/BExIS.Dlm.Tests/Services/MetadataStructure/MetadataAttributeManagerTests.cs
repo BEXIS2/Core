@@ -18,7 +18,6 @@ namespace BExIS.Dlm.Tests.Services.Metadata
         public void OneTimeSetUp()
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
-
         }
 
         [OneTimeTearDown]
@@ -42,23 +41,17 @@ namespace BExIS.Dlm.Tests.Services.Metadata
 
                 // domaincontraint
                 DomainConstraint constraint = new DomainConstraint();
-                constraint.Items.Add(new DomainItem() { Key = "test_key", Value="test_value" });
+                constraint.Items.Add(new DomainItem() { Key = "test_key", Value = "test_value" });
 
-                
                 metadataParameter.ShortName = "test";
                 metadataParameter.Name = "test";
-                metadataParameter.Description ="test";
+                metadataParameter.Description = "test";
                 metadataParameter.DataType = stringType;
 
                 // Act
                 metadataParameter = metadataAttributeManager.Create(metadataParameter);
 
                 metadataAttributeManager.AddConstraint(constraint, metadataParameter);
-
-               
-
-
-               
             }
 
             using (var metadataAttributeManager = new MetadataAttributeManager())
@@ -73,7 +66,6 @@ namespace BExIS.Dlm.Tests.Services.Metadata
                 Assert.That(metadataParameter.Constraints.Count > 0);
                 Assert.That(metadataParameter.Constraints.First().Id > 0);
             }
-
         }
 
         [Test()]
@@ -93,7 +85,7 @@ namespace BExIS.Dlm.Tests.Services.Metadata
                 metadataParameter.DataType = null;
 
                 // Assert
-                // Act 
+                // Act
                 Assert.Throws<ArgumentNullException>(() => metadataAttributeManager.Create(metadataParameter));
             }
         }
@@ -107,7 +99,7 @@ namespace BExIS.Dlm.Tests.Services.Metadata
                 MetadataParameter p = null;
 
                 // Assert
-                // Act 
+                // Act
                 Assert.Throws<ArgumentNullException>(() => metadataAttributeManager.Create(p));
             }
         }
@@ -125,7 +117,7 @@ namespace BExIS.Dlm.Tests.Services.Metadata
                 metadataParameter.DataType = null;
 
                 // Assert
-                // Act 
+                // Act
                 Assert.Throws<ArgumentNullException>(() => metadataAttributeManager.Create(metadataParameter));
             }
         }
@@ -140,7 +132,6 @@ namespace BExIS.Dlm.Tests.Services.Metadata
 
                 var stringType = dataTypeManager.Repo.Get().FirstOrDefault();
 
-
                 MetadataParameter metadataParameter = new MetadataParameter();
                 metadataParameter.ShortName = "delete";
                 metadataParameter.Name = "test";
@@ -151,8 +142,7 @@ namespace BExIS.Dlm.Tests.Services.Metadata
 
                 long id = metadataParameter.Id;
 
-
-                // Act 
+                // Act
 
                 metadataAttributeManager.Delete(metadataParameter);
 
@@ -160,7 +150,6 @@ namespace BExIS.Dlm.Tests.Services.Metadata
 
                 // Assert
                 Assert.IsNull(deletedParameter);
-
             }
         }
     }

@@ -24,7 +24,6 @@ namespace BExIS.IO.Transform.Output
 
             CellFormats cellFormats = styleSheet.Elements<CellFormats>().First();
 
-
             //number 0,00
             CellFormat cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)2U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)1U, ApplyNumberFormat = true };
             cellFormat.Protection = new Protection();
@@ -71,8 +70,6 @@ namespace BExIS.IO.Transform.Output
                 //if (pattern.Name.Equals("Time")) uInt32Value = 21U;
                 ///UInt32Value uInt32Value = 0U;
 
-
-
                 cellFormat = new CellFormat() { NumberFormatId = newNumberFortmat.NumberFormatId, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)1U, ApplyNumberFormat = true };
                 cellFormat.Protection = new Protection();
                 cellFormat.Protection.Locked = false;
@@ -87,7 +84,6 @@ namespace BExIS.IO.Transform.Output
                 };
 
                 styleIndex.Add(new StyleIndexStruct() { Name = pattern.Name, Index = (uint)cellFormats.Count++, DisplayPattern = tmp });
-
             }
 
             styleSheet.NumberingFormats = numberFormats;
@@ -96,7 +92,7 @@ namespace BExIS.IO.Transform.Output
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -124,7 +120,6 @@ namespace BExIS.IO.Transform.Output
                 }
 
                 return styleIndex.Where(p => p.Name.Equals("DateTime")).FirstOrDefault().Index;
-
             }
             if (dataType.SystemType == DataTypeCode.Boolean.ToString())
                 return styleIndex.Where(p => p.Name.Equals("Text")).FirstOrDefault().Index;

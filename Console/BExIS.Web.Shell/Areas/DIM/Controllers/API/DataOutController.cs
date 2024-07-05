@@ -3,13 +3,11 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO.Transform.Output;
-using BExIS.Modules.Dim.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.Utils.NH.Querying;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using System;
@@ -91,7 +89,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return getData(id, -1, token, projection, selection);
         }
 
-
         /// <summary>
         /// In addition to the id and version id, it is possible to have projection and selection criteria passed to the action via query string parameters
         /// </summary>
@@ -160,7 +157,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 return getData(id, datasetVersion.Id, token, projection, selection);
             }
-
         }
 
         /// <summary>
@@ -186,14 +182,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
             if (string.IsNullOrEmpty(version_name))
                 return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Version name not exist");
 
-
             string projection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "header".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
             string selection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "filter".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
             string token = this.Request.Headers.Authorization?.Parameter;
 
             using (DatasetManager dm = new DatasetManager())
             {
-
                 var versionId = dm.GetDatasetVersions(id).Where(d => d.VersionName == version_name).Select(d => d.Id).FirstOrDefault();
 
                 if (versionId <= 0)
@@ -205,16 +199,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         private HttpResponseMessage getData(long id, long versionId, string token, string projection = null, string selection = null)
         {
-
             if (id <= 0)
                 return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
 
-          
             DatasetManager datasetManager = new DatasetManager();
             UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             EntityManager entityManager = new EntityManager();
-
 
             bool isPublic = false;
             try
@@ -244,12 +235,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     {
                         XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                         OutputDataManager ioOutputDataManager = new OutputDataManager();
-                        
+
                         Dataset dataset = datasetManager.GetDataset(id);
-                        if(dataset == null) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "dataset " + id +" not exist.");
+                        if (dataset == null) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "dataset " + id + " not exist.");
 
                         DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-             
+
                         // If the requested version is -1 or the last version of the dataset, then the data will be loaded in a
                         // different way than when loading the data from an older version
                         bool isLatestVersion = false;
@@ -272,8 +263,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             // check the data sturcture type ...
                             if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                             {
-
-
                                 // apply selection and projection
                                 long count = datasetManager.GetDataTuplesCount(datasetVersion.Id);
 
@@ -298,7 +287,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no data for the dataset.");
                                 }
 
-
                                 #endregion get data from the latest version of a dataset
 
                                 //return model;
@@ -306,7 +294,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             else
                             {
                                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "The data of this dataset is not structured.");
-
                             }
                         }
                         else
@@ -328,7 +315,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                                 if (count > 0) // has primary data
                                 {
-
                                     dt = datasetManager.GetDatasetVersionTuples(datasetVersion.Id, 0, count);
 
                                     dt.Strip();
@@ -348,7 +334,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 {
                                     return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no data for the dataset version.");
                                 }
-
                             }
                             else // return files of the unstructure dataset
                             {
@@ -357,7 +342,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                             #endregion load data of a older version of a dataset
                         }
-
 
                         if (dt != null)
                         {
@@ -382,12 +366,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         {
                             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "The data could not be loaded.");
                         }
-                       
-
                     }
                     else // has rights?
                     {
-
                         return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "User has no read right.");
                     }
                 }
@@ -408,6 +389,5 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 entityManager.Dispose();
             }
         }
-
     }
 }

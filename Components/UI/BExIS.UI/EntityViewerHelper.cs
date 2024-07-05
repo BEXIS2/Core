@@ -1,5 +1,4 @@
-﻿
-using BExIS.Xml.Helpers;
+﻿using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;

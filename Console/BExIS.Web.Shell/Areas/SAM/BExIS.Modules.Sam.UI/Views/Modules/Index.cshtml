@@ -8,21 +8,21 @@
     {
         using (Html.BeginForm("install", "modules", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
-            <table border="0">
-                <tr style="border:none">
-                    <td width="10%">
-                        <input type="file" name="moduleZip" />
-                    </td>
-                    <td>
-                        <input type="submit" value="Install" class="bx-button function" />
-                    </td>
-                </tr>
-            </table>
+    <table border="0">
+        <tr style="border:none">
+            <td width="10%">
+                <input type="file" name="moduleZip" />
+            </td>
+            <td>
+                <input type="submit" value="Install" class="bx-button function" />
+            </td>
+        </tr>
+    </table>
         }
     }
     else
     {
-        <div>Module installation is disabled.</div>
+    <div>Module installation is disabled.</div>
     }
 }
 @Html.ValidationSummary()

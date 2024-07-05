@@ -1,14 +1,12 @@
 <script type="ts">
+	import { SlideToggle } from '@skeletonlabs/skeleton';
 
-import { SlideToggle } from '@skeletonlabs/skeleton';
-
-$:toggle = false;
-
+	$: toggle = false;
 </script>
+
 <h1>Test with layout</h1>
 
-
 <SlideToggle name="david" bind:checked={toggle}></SlideToggle>
-<br/>
+<br />
 
 <b>toggle : {toggle}</b>

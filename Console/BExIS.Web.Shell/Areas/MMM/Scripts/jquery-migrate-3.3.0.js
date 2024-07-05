@@ -6,18 +6,15 @@
 	"use strict";
 
 	if ( typeof define === "function" && define.amd ) {
-
 		// AMD. Register as an anonymous module.
 		define( [ "jquery" ], function( jQuery ) {
 			return factory( jQuery, window );
 		} );
 	} else if ( typeof module === "object" && module.exports ) {
-
 		// Node/CommonJS
 		// eslint-disable-next-line no-undef
 		module.exports = factory( require( "jquery" ), window );
 	} else {
-
 		// Browser globals
 		factory( jQuery, window );
 	}
@@ -49,7 +46,6 @@ function jQueryVersionSince( version ) {
 }
 
 ( function() {
-
 	// Support: IE9 only
 	// IE9 only creates console object when dev tools are first opened
 	// IE9 console is a host object, callable but doesn't have .apply()
@@ -69,7 +65,6 @@ function jQueryVersionSince( version ) {
 	window.console.log( "JQMIGRATE: Migrate is installed" +
 		( jQuery.migrateMute ? "" : " with logging active" ) +
 		", version " + jQuery.migrateVersion );
-
 } )();
 
 var warnedAbout = {};
@@ -128,7 +123,6 @@ function migrateWarnFunc( obj, prop, newFunc, msg ) {
 }
 
 if ( window.document.compatMode === "BackCompat" ) {
-
 	// JQuery has never supported or tested Quirks Mode
 	migrateWarn( "jQuery is not compatible with Quirks Mode" );
 }
@@ -149,7 +143,6 @@ jQuery.fn.init = function( arg1 ) {
 	var args = Array.prototype.slice.call( arguments );
 
 	if ( typeof arg1 === "string" && arg1 === "#" ) {
-
 		// JQuery( "#" ) is a bogus ID selector, but it returned an empty set before jQuery 3.0
 		migrateWarn( "jQuery( '#' ) is not a valid selector" );
 		args[ 0 ] = [];
@@ -165,13 +158,11 @@ jQuery.find = function( selector ) {
 	// Support: PhantomJS 1.x
 	// String#match fails to match when used with a //g RegExp, only on some strings
 	if ( typeof selector === "string" && rattrHashTest.test( selector ) ) {
-
 		// The nonstandard and undocumented unquoted-hash was removed in jQuery 1.12.0
 		// First see if qS thinks it's a valid selector, if so avoid a false positive
 		try {
 			window.document.querySelector( selector );
 		} catch ( err1 ) {
-
 			// Didn't *look* valid to qSA, warn and try quoting what we think is the value
 			selector = selector.replace( rattrHashGlob, function( _, attr, op, value ) {
 				return "[" + attr + op + "\"" + value + "\"]";
@@ -241,9 +232,7 @@ if ( jQueryVersionSince( "3.2.0" ) ) {
 }
 
 if ( jQueryVersionSince( "3.3.0" ) ) {
-
 	migrateWarnFunc( jQuery, "isNumeric", function( obj ) {
-
 			// As of jQuery 3.0, isNumeric is limited to
 			// strings and numbers (primitives or objects)
 			// that can be coerced to finite numbers (gh-2662)
@@ -297,7 +286,6 @@ if ( jQueryVersionSince( "3.3.0" ) ) {
 
 // Support jQuery slim which excludes the ajax module
 if ( jQuery.ajax ) {
-
 var oldAjax = jQuery.ajax;
 
 jQuery.ajax = function( ) {
@@ -315,7 +303,6 @@ jQuery.ajax = function( ) {
 
 	return jQXHR;
 };
-
 }
 
 var oldRemoveAttr = jQuery.fn.removeAttr,
@@ -336,7 +323,6 @@ jQuery.fn.removeAttr = function( name ) {
 };
 
 jQuery.fn.toggleClass = function( state ) {
-
 	// Only deprecating no-args or single boolean arg
 	if ( state !== undefined && typeof state !== "boolean" ) {
 		return oldToggleClass.apply( this, arguments );
@@ -442,7 +428,6 @@ jQuery.swap = function( elem, options, callback, args ) {
 };
 
 if ( jQueryVersionSince( "3.4.0" ) && typeof Proxy !== "undefined" ) {
-
 	jQuery.cssProps = new Proxy( jQuery.cssProps || {}, {
 		set: function() {
 			migrateWarn( "JQMIGRATE: jQuery.cssProps is deprecated" );
@@ -458,7 +443,6 @@ if ( !jQuery.cssNumber ) {
 }
 
 function isAutoPx( prop ) {
-
 	// The first test is used to ensure that:
 	// 1. The prop starts with a lowercase letter (as we uppercase it for the second regex).
 	// 2. The prop is not empty.
@@ -522,7 +506,6 @@ jQuery.data = function( elem, name, value ) {
 
 // Support jQuery slim which excludes the effects module
 if ( jQuery.fx ) {
-
 var intervalValue, intervalMsg,
 	oldTweenRun = jQuery.Tween.prototype.run,
 	linearEasing = function( pct ) {
@@ -563,7 +546,6 @@ if ( window.requestAnimationFrame ) {
 		}
 	} );
 }
-
 }
 
 var oldLoad = jQuery.fn.load,
@@ -605,7 +587,6 @@ jQuery.event.fix = function( originalEvent ) {
 };
 
 jQuery.event.add = function( elem, types ) {
-
 	// This misses the multiple-types case but that seems awfully rare
 	if ( elem === window && types === "load" && window.document.readyState === "complete" ) {
 		migrateWarn( "jQuery(window).on('load'...) called after load event occurred" );
@@ -614,7 +595,6 @@ jQuery.event.add = function( elem, types ) {
 };
 
 jQuery.each( [ "load", "unload", "error" ], function( _, name ) {
-
 	jQuery.fn[ name ] = function() {
 		var args = Array.prototype.slice.call( arguments, 0 );
 
@@ -640,14 +620,12 @@ jQuery.each( [ "load", "unload", "error" ], function( _, name ) {
 		this.triggerHandler.apply( this, args );
 		return this;
 	};
-
 } );
 
 jQuery.each( ( "blur focus focusin focusout resize scroll click dblclick " +
 	"mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
 	"change select submit keydown keypress keyup contextmenu" ).split( " " ),
 	function( _i, name ) {
-
 	// Handle event binding
 	jQuery.fn[ name ] = function( data, fn ) {
 		migrateWarn( "jQuery.fn." + name + "() event shorthand is deprecated" );
@@ -671,7 +649,6 @@ jQuery.event.special.ready = {
 };
 
 jQuery.fn.extend( {
-
 	bind: function( types, data, fn ) {
 		migrateWarn( "jQuery.fn.bind() is deprecated" );
 		return this.on( types, null, data, fn );
@@ -747,21 +724,18 @@ jQuery.fn.offset = function() {
 // The jQuery.param patch is about respecting `jQuery.ajaxSettings.traditional`
 // so it doesn't make sense for the slim build.
 if ( jQuery.ajax ) {
-
 var oldParam = jQuery.param;
 
 jQuery.param = function( data, traditional ) {
 	var ajaxTraditional = jQuery.ajaxSettings && jQuery.ajaxSettings.traditional;
 
 	if ( traditional === undefined && ajaxTraditional ) {
-
 		migrateWarn( "jQuery.param() no longer uses jQuery.ajaxSettings.traditional" );
 		traditional = ajaxTraditional;
 	}
 
 	return oldParam.call( this, data, traditional );
 };
-
 }
 
 var oldSelf = jQuery.fn.andSelf || jQuery.fn.addBack;
@@ -773,7 +747,6 @@ jQuery.fn.andSelf = function() {
 
 // Support jQuery slim which excludes the deferred module in jQuery 4.0+
 if ( jQuery.Deferred ) {
-
 var oldDeferred = jQuery.Deferred,
 	tuples = [
 
@@ -819,7 +792,6 @@ jQuery.Deferred = function( func ) {
 			} );
 			fns = null;
 		} ).promise();
-
 	};
 
 	if ( func ) {
@@ -831,7 +803,6 @@ jQuery.Deferred = function( func ) {
 
 // Preserve handler of uncaught exceptions in promise chains
 jQuery.Deferred.exceptionHook = oldDeferred.exceptionHook;
-
 }
 
 return jQuery;

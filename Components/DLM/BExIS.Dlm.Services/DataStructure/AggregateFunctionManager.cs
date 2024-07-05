@@ -8,15 +8,12 @@ namespace BExIS.Dlm.Services.DataStructure
     public class AggregateFunctionManager
     {
         private IUnitOfWork guow = null;
+
         public AggregateFunctionManager()
         {
             //// define aggregate paths
-            ////AggregatePaths.Add((Unit u) => u.ConversionsIamTheSource);            
+            ////AggregatePaths.Add((Unit u) => u.ConversionsIamTheSource);
         }
-
-        #region Data Readers
-
-        #endregion
 
         #region AggregateFunction
 
@@ -97,7 +94,6 @@ namespace BExIS.Dlm.Services.DataStructure
             return (entity);
         }
 
-        #endregion
-
+        #endregion AggregateFunction
     }
 }

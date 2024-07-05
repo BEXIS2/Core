@@ -11,14 +11,15 @@ namespace BExIS.Dlm.Services.Administration
     public class ResearchPlanManager : IDisposable
     {
         private IUnitOfWork guow = null;
+
         public ResearchPlanManager() //: base(false, true, true)
         {
             guow = this.GetIsolatedUnitOfWork(); // Javad commented this line. bring it back with the new Data Access Pattern
             this.Repo = guow.GetReadOnlyRepository<ResearchPlan>();
-
         }
 
         private bool isDisposed = false;
+
         ~ResearchPlanManager()
         {
             Dispose(true);
@@ -43,8 +44,10 @@ namespace BExIS.Dlm.Services.Administration
         }
 
         #region Data Readers
+
         public IReadOnlyRepository<ResearchPlan> Repo { get; private set; }
-        #endregion
+
+        #endregion Data Readers
 
         #region ResearchPlan
 
@@ -139,7 +142,7 @@ namespace BExIS.Dlm.Services.Administration
             return (entity);
         }
 
-        #endregion
+        #endregion ResearchPlan
 
         #region Associations
 
@@ -208,7 +211,7 @@ namespace BExIS.Dlm.Services.Administration
         //    Contract.Requires(end2 != null && end2.Id >= 0);
         //    return false;
         //}
-        #endregion
 
+        #endregion Associations
     }
 }

@@ -12,7 +12,6 @@
 
 }
 
-
 <script type="text/javascript">
     function dataStructureGrid_onDataBound()
     {
@@ -30,16 +29,15 @@
     }
 </script>
 
-
 @if (@Model.Item1 != null)
 {
 <div style="text-align:left">
 
     <h2>@Model.Item1.Self.Name (@Model.Item1.Self.Id)</h2>
-    
+
     <p>@Model.Item1.Self.Description</p>
 </div>
-    
+
 }
 
 @if (Model.Item1 != null && Model.Item1.Self is StructuredDataStructure)
@@ -54,7 +52,6 @@
             dt = suiHelper.ConvertStructuredDataStructureToDataTable((StructuredDataStructure)Model.Item1.Self);//Model.Item1.ConvertToDataTable();
         }
     }
-
 
     if (Model.Item2 > 0)
     {
@@ -104,8 +101,6 @@
     }
 }
 else
-{ 
+{
     <span>no datastructure available</span>
 }
-
-

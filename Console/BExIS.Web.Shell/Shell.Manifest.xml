@@ -25,7 +25,6 @@
             controller="" action=""
             extends="./lunchbarRoot" />
 
-
     <Export tag="settings" id="settingsRoot" order=""
             title="Settings" description="Settings, configuration, and Management" icon="settings.icon"
             controller="" action=""
@@ -41,12 +40,11 @@
             title="FAQ" description="Link to the faq page" icon=""
             controller="help" action="faq"
             extends="./lunchbarRoot/help" />
-	  
+
 	<!--Settings-->
 	<Export tag="settings" id="apisettings" order="1"
         title="Application Settings" description="..." icon=""
         controller="settings" action=""
         extends="./settingsRoot" />
-
   </Exports>
 </Manifest>

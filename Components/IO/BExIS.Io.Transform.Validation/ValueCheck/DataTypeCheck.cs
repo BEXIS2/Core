@@ -98,7 +98,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
 
                     case "Int32":
                         {
-
                             int i = 0;
 
                             if (Int32.TryParse(value, out i))
@@ -109,7 +108,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                             {
                                 return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
                             }
-
                         }
 
                     case "Int64":
@@ -124,7 +122,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                             {
                                 return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
                             }
-
                         }
                     case "UInt16":
                         {
@@ -138,7 +135,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                             {
                                 return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
                             }
-
                         }
                     case "UInt32":
                         {
@@ -152,7 +148,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                             {
                                 return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
                             }
-
                         }
                     case "UInt64":
                         {
@@ -166,11 +161,9 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                             {
                                 return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
                             }
-
                         }
                     case "Double":
                         {
-
                             //Try to figure out the structure and then parse as double - return Error if structure doesn't fit or parsing fails
                             try
                             {
@@ -193,7 +186,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                             {
                                                 return d;
                                             }
-
                                         }
                                         else
                                         {
@@ -220,7 +212,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                             {
                                                 return d;
                                             }
-
                                         }
                                         else
                                         {
@@ -229,7 +220,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                     }
 
                                     return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
-
                                 }
 
                                 return Convert.ToDouble(value);
@@ -238,7 +228,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                             {
                                 return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
                             }
-
                         }
 
                     case "Decimal":
@@ -281,7 +270,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                     {
                                         if (!temp[temp.Length - 1].Contains('.'))
                                         {
-
                                             //chek lenght of the string and compare to the max storage of the datatype
                                             if (value.Length > 28)
                                                 return new Error(ErrorType.Value, "the value of the number is outside the value range of decimal.", new object[] { name, value, row, dataType });
@@ -291,7 +279,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                             {
                                                 return d;
                                             }
-
                                         }
                                         else
                                         {
@@ -313,7 +300,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                     case "DateTime":
                         {
                             DateTime dateTime;
-
 
                             if (!string.IsNullOrEmpty(pattern))
                             {

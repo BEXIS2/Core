@@ -96,7 +96,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         var rights = entityPermissionManager.GetRights(subject.Id, entityId, instanceId);
                         var effectiveRights = entityPermissionManager.GetEffectiveRights(subject.Id, entityId, instanceId);
 
-
                         subjects.Add(EntityPermissionGridRowModel.Convert(subject, rights, effectiveRights));
                     }
 

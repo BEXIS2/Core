@@ -3,7 +3,6 @@ using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.TypeSystem;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
@@ -11,22 +10,22 @@ namespace BExIS.Dlm.Services.DataStructure
 {
     /// <summary>
     /// DataStructureManager class is responsible for CRUD (Create, Read, Update, Delete) operations on the aggregate area of the data structure.
-    /// The data structure aggregate area is a set of entities like <see cref="DataStructure"/>, <see cref="VariableUsage"/>, and <see cref="ParameterUsage"/> that in 
+    /// The data structure aggregate area is a set of entities like <see cref="DataStructure"/>, <see cref="VariableUsage"/>, and <see cref="ParameterUsage"/> that in
     /// cooperation together can materialize the formal specification of the structure of group of datasets.
     /// </summary>
     public class VariableManager : IDisposable
     {
-
         private IUnitOfWork guow = null;
+
         public VariableManager()
         {
             guow = this.GetIsolatedUnitOfWork();
             this.VariableTemplateRepo = guow.GetReadOnlyRepository<VariableTemplate>();
             this.VariableInstanceRepo = guow.GetReadOnlyRepository<VariableInstance>();
-
         }
 
         private bool isDisposed = false;
+
         ~VariableManager()
         {
             Dispose(true);
@@ -62,9 +61,7 @@ namespace BExIS.Dlm.Services.DataStructure
         /// </summary>
         public IReadOnlyRepository<VariableTemplate> VariableTemplateRepo { get; private set; }
 
-
-        #endregion
-
+        #endregion Data Readers
 
         #region VariableTemplate
 
@@ -98,7 +95,7 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <param name="defaultValue"></param>
         /// <returns>VariableTemplate</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public VariableTemplate CreateVariableTemplate(string name, DataType dataType, Unit unit, string description = "", string defaultValue = "",String fixedValue="", ICollection<Meaning> meanings = null, ICollection<Constraint> constraints = null, bool approved = false)
+        public VariableTemplate CreateVariableTemplate(string name, DataType dataType, Unit unit, string description = "", string defaultValue = "", String fixedValue = "", ICollection<Meaning> meanings = null, ICollection<Constraint> constraints = null, bool approved = false)
         {
             // check incoming varaibles
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "Name is empty but is required.");
@@ -112,7 +109,6 @@ namespace BExIS.Dlm.Services.DataStructure
                 DefaultValue = defaultValue,
                 Unit = unit,
                 Approved = approved,
-           
             };
 
             if (meanings != null) e.Meanings = meanings;
@@ -140,7 +136,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 IRepository<Constraint> constraintsRepo = uow.GetRepository<Constraint>();
                 IRepository<Meaning> meaningsRepo = uow.GetRepository<Meaning>();
                 var merged = repo.Get(entity.Id);
-                
+
                 merged.Approved = entity.Approved;
                 merged.Description = entity.Description;
                 merged.DataType = entity.DataType;
@@ -150,23 +146,24 @@ namespace BExIS.Dlm.Services.DataStructure
                 merged.MissingValues = entity.MissingValues;
                 merged.DisplayPatternId = entity.DisplayPatternId;
                 merged.IsValueOptional = entity.IsValueOptional;
-         
+
                 merged.Label = entity.Label;
                 merged.MinCardinality = entity.MinCardinality;
                 merged.MaxCardinality = entity.MaxCardinality;
                 merged.Meanings = entity.Meanings;
 
                 // add only constraints if new
-                // clean list 
+                // clean list
                 merged.VariableConstraints = new List<Constraint>();
 
-                if (entity.VariableConstraints.Any()){ // if some exist
+                if (entity.VariableConstraints.Any())
+                { // if some exist
                     var ids = entity.VariableConstraints.Select(c => c.Id); // get ids
                     merged.VariableConstraints = constraintsRepo.Query(c => ids.Contains(c.Id)).ToList();// Load as Query from db
                 }
 
                 // add only meanings if new
-                // clean list 
+                // clean list
                 merged.Meanings = new List<Meaning>();
 
                 if (entity.Meanings.Any())
@@ -185,7 +182,6 @@ namespace BExIS.Dlm.Services.DataStructure
         // delete
         public bool DeleteVariableTemplate(long id)
         {
-
             if (id <= 0) throw new ArgumentException("Id must be greater then 0.", nameof(id));
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -214,11 +210,9 @@ namespace BExIS.Dlm.Services.DataStructure
 
         // add meanings
 
-
-
         // remove meanings
 
-        #endregion
+        #endregion VariableTemplate
 
         #region VariableInstance
 
@@ -234,7 +228,7 @@ namespace BExIS.Dlm.Services.DataStructure
             }
         }
 
-        // create - need datastucture, variable template 
+        // create - need datastucture, variable template
         /// <summary>
         /// create a Variable Instance
         /// </summary>
@@ -283,12 +277,9 @@ namespace BExIS.Dlm.Services.DataStructure
 
                 return (e);
             }
-
         }
 
-
-
-        // create - need datastucture, variable template 
+        // create - need datastucture, variable template
         /// <summary>
         /// create a Variable Instance
         /// </summary>
@@ -309,13 +300,14 @@ namespace BExIS.Dlm.Services.DataStructure
             // check incoming varaibles
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "name is empty but is required.");
             if (dataType == null) throw new ArgumentNullException(nameof(dataType), "datatype is null but is required.");
-            if (dataStructureId <= 0) throw new ArgumentNullException(nameof(dataStructureId),"dataStructureId must be greater then 0.");
+            if (dataStructureId <= 0) throw new ArgumentNullException(nameof(dataStructureId), "dataStructureId must be greater then 0.");
             //if (variableTemplateId <= 0) throw new ArgumentNullException(nameof(variableTemplateId), "variableTemplateId must be greater then 0.");
 
             // update missing values placeholder
-            if (missingValues!=null && missingValues.Any())
+            if (missingValues != null && missingValues.Any())
             {
-                missingValues.ForEach(m => {
+                missingValues.ForEach(m =>
+                {
                     m.Placeholder = getPlaceholder(getTypeCode(dataType.SystemType), missingValues);
                 });
             }
@@ -347,7 +339,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 var variableTemplate = variableTemplateRepo.Get(variableTemplateId);
                 List<Constraint> cons = new List<Constraint>();
 
-                if(constraints!=null && constraints.Any())
+                if (constraints != null && constraints.Any())
                     cons = constraintRepo.Query().Where(c => constraints.Contains(c.Id))?.ToList();
 
                 List<Meaning> means = new List<Meaning>();
@@ -399,7 +391,6 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <exception cref="ArgumentException"></exception>
         public bool DeleteVariable(long id)
         {
-
             if (id <= 0) throw new ArgumentException("Id must be greater then 0.", nameof(id));
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -418,7 +409,7 @@ namespace BExIS.Dlm.Services.DataStructure
         // add constraint
         // remove constraint
 
-        #endregion
+        #endregion VariableInstance
 
         #region missingvalues helper
 
@@ -426,7 +417,6 @@ namespace BExIS.Dlm.Services.DataStructure
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-
                 switch (typeCode)
                 {
                     case TypeCode.Int16:
@@ -582,7 +572,6 @@ namespace BExIS.Dlm.Services.DataStructure
                     case TypeCode.DateTime:
                         try
                         {
-
                             List<string> placeholders = missingValues.Select(mv => mv.Placeholder).ToList();
 
                             DateTime temp = DateTime.MaxValue.AddHours(-1);
@@ -852,7 +841,6 @@ namespace BExIS.Dlm.Services.DataStructure
             }
         }
 
-
         private TypeCode getTypeCode(string systemType)
         {
             foreach (DataTypeCode tc in Enum.GetValues(typeof(DataTypeCode)))
@@ -865,11 +853,7 @@ namespace BExIS.Dlm.Services.DataStructure
 
             return TypeCode.String;
         }
-        #endregion
 
-
-
+        #endregion missingvalues helper
     }
-
-
 }

@@ -28,13 +28,13 @@ using Vaiona.Persistence.Api;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class BexisIndexer
     {
         private List<Facet> AllFacets = new List<Facet>();
@@ -53,6 +53,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         private EntityManager entityManager;
         private EntityPermissionManager entityPermissionManager;
         private long? entityTypeId;
+
         public BexisIndexer()
         {
             entityPermissionManager = new EntityPermissionManager();
@@ -61,11 +62,12 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
             entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
         }
+
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         private void LoadBeforeIndexing()
         {
             XmlNodeList fieldProperties = configXML.GetElementsByTagName("field");
@@ -91,7 +93,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     c.Childrens = new List<Facet>();
                     AllFacets.Add(c);
                 }
-
                 else if (fieldType.ToLower().Equals("property_field"))
                 {
                     propertyXmlNodeList.Add(fieldProperty);
@@ -99,9 +100,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     c.Name = fieldProperty.Attributes.GetNamedItem("lucene_name").Value;
                     c.DisplayName = fieldProperty.Attributes.GetNamedItem("display_name").Value; ;
 
-
                     c.DataSourceKey = fieldProperty.Attributes.GetNamedItem("metadata_name").Value;
-
 
                     c.UIComponent = fieldProperty.Attributes.GetNamedItem("uiComponent").Value; ;
                     c.AggregationType = "distinct";
@@ -143,16 +142,12 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             pathIndex = FSDirectory.Open(new DirectoryInfo(luceneIndexPath));
             autoCompleteIndex = FSDirectory.Open(new DirectoryInfo(autoCompleteIndexPath));
 
-
-
             using (var bexisAnalyzer = new BexisAnalyzer())
             using (var nGramAnalyzer = new NGramAnalyzer())
             using (PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(bexisAnalyzer))
             {
-
                 indexWriter = new IndexWriter(pathIndex, analyzer, recreateIndex, IndexWriter.MaxFieldLength.UNLIMITED);
                 autoCompleteIndexWriter = new IndexWriter(autoCompleteIndex, nGramAnalyzer, recreateIndex, IndexWriter.MaxFieldLength.UNLIMITED);
-
 
                 foreach (XmlNode a in categoryXmlNodeList)
                 {
@@ -168,7 +163,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public void Index()
         {
             configureBexisIndexing(true);
@@ -177,7 +172,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             List<string> errors = new List<string>();
             try
             {
-
                 IList<long> ids = dm.GetDatasetLatestIds();
                 IList<long> ids_rev = ids.Reverse().ToList();
 
@@ -211,28 +205,21 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             catch (Exception ex)
             {
                 throw ex;
-
             }
             finally
             {
                 dm.Dispose();
                 GC.Collect();
 
-
-
                 var es = new EmailService();
                 es.Send(MessageHelper.GetSearchReIndexHeader(),
                     MessageHelper.GetSearchReIndexMessage(errors),
                     GeneralSettings.SystemEmail);
-
             }
         }
 
-
-
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -243,7 +230,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         {
             using (var uow = this.GetUnitOfWork())
             {
-
                 try
                 {
                     if (dsVersionTuples.Count() > 0)
@@ -273,10 +259,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                                                 break;
                                             }
                                     }
-
                                 }
                             }
-
                         }
 
                         foreach (var variableId in sds.Variables.Select(v => v.Id))
@@ -339,7 +323,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
                 tmp.Add(variable.Label);
                 tmp.Add(variable.Description);
-
             }
 
             return tmp;
@@ -349,7 +332,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public void ReIndex()
         {
             reIndex = true;
@@ -363,12 +346,10 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 BexisIndexSearcher.searcher.Dispose();
             }
 
-
             BexisIndexSearcher.searcher = new IndexSearcher(_Reader);
             BexisIndexSearcher._Reader = _Reader;
             indexWriter.GetReader().Dispose();
             indexWriter.Dispose();
-
 
             IndexReader _ReaderAutocomplete = autoCompleteIndexWriter.GetReader().Reopen();
             BexisIndexSearcher.autoCompleteSearcher.IndexReader.Dispose();
@@ -382,7 +363,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -403,7 +384,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             dataset.Add(new Field("gen_entity_name", xmlDatasetHelper.GetEntityName(id), Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
-
 
             foreach (XmlNode facet in facetNodes)
             {
@@ -523,7 +503,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
                 if (!category.Attributes.GetNamedItem("type").Value.Equals("primary_data_field"))
                 {
-
                     String multivalued = category.Attributes.GetNamedItem("multivalued").Value;
                     String storing = category.Attributes.GetNamedItem("store").Value;
 
@@ -554,7 +533,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                             }
                         }
                     }
-
                 }
                 else
                 {
@@ -569,7 +547,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
             foreach (XmlNode general in generalNodes)
             {
-
                 String multivalued = general.Attributes.GetNamedItem("multivalued").Value;
                 String primitiveType = general.Attributes.GetNamedItem("primitive_type").Value;
                 String lucene_name = general.Attributes.GetNamedItem("lucene_name").Value;
@@ -594,7 +571,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
                 foreach (string metadataElementName in metadataElementNames)
                 {
-
                     XmlNodeList elemList = metadataDoc.SelectNodes(metadataElementName);
                     for (int i = 0; i < elemList.Count; i++)
                     {
@@ -609,7 +585,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                         }
                     }
                 }
-
             }
 
             indexWriter.AddDocument(dataset);
@@ -617,8 +592,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
         private void indexPrimaryData(long id, List<XmlNode> categoryNodes, ref Document dataset, string docId, XmlDocument metadataDoc)
         {
-
-
             using (DatasetManager dm = new DatasetManager())
             using (DataStructureManager dsm = new DataStructureManager())
             {
@@ -638,8 +611,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
                 if (!includePrimaryData)
                     return;
-
-
 
                 // Javad: check if the dataset is "checked-in". If yes, then use the paging version of the GetDatasetVersionEffectiveTuples method
                 // number of tuples for the for loop is also available via GetDatasetVersionEffectiveTupleCount
@@ -694,7 +665,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                                 }
                             }
                         }
-
                     }
                 }
             }
@@ -733,7 +703,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public void updateIndex(Dictionary<long, IndexingAction> datasetsToIndex)
         {
             using (DatasetManager dm = new DatasetManager())
@@ -776,7 +746,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
                     BexisIndexSearcher._Reader = indexWriter.GetReader();
                     BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
-
                 }
                 catch (Exception ex)
                 {
@@ -790,7 +759,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
                     BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
                 }
-
             }
         }
 
@@ -800,7 +768,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             {
                 try
                 {
-
                     if (!isIndexConfigured)
                     {
                         this.configureBexisIndexing(false);
@@ -838,8 +805,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
                     BexisIndexSearcher._Reader = indexWriter.GetReader();
                     BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
-
-
                 }
                 catch (Exception ex)
                 {
@@ -871,7 +836,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             {
                 if (facet.Attributes.GetNamedItem("primitive_type")?.Value.ToLower() == "date")
                 {
-
                     DateTime dateValue = DateTime.MinValue;
                     DateTime dateValue_ = dateValue;
 
@@ -902,15 +866,14 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             }
             return dataset;
         }
+
         private void Debug_EMpty_nodes(string Extracted_node_path, string type, string datasetId)
         {
             LoggerFactory.GetFileLogger().LogCustom("==> Dataset ID: " + datasetId + " has Empty value for the " + type + " named : " + Extracted_node_path);
         }
 
-
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -923,27 +886,24 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             /*
              * this line was commented out because it is very time intensive. after tests no further problems were found
              */
-            //autoCompleteIndexWriter.GetReader().Reopen(); 
+            //autoCompleteIndexWriter.GetReader().Reopen();
 
             var dataset = new Document();
             dataset.Add(new Field("id", docId.ToLower(), Lucene.Net.Documents.Field.Store.NO, Field.Index.NOT_ANALYZED));
             dataset.Add(new Field("field", f.ToLower(), Lucene.Net.Documents.Field.Store.NO, Field.Index.NOT_ANALYZED));
             dataset.Add(new Field("value", V.ToLower(), Lucene.Net.Documents.Field.Store.YES, Field.Index.ANALYZED));
             autoCompleteIndexWriter.AddDocument(dataset);
-
         }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public void Dispose()
         {
             indexWriter?.Dispose();
             autoCompleteIndexWriter?.Dispose();
         }
     }
-
 }
-

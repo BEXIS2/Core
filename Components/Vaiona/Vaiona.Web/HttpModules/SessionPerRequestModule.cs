@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Web;
+
 // This is needed for the DependencyResolver...wish they would've just used Common Service Locator!
 using Vaiona.Persistence.Api;
 
@@ -12,7 +13,7 @@ namespace Vaiona.Web.HttpModules
     /// </summary>
     public class SessionPerRequestModule : IHttpModule
     {
-        IPersistenceManager pManager = null;
+        private IPersistenceManager pManager = null;
         private static readonly string[] NoPersistenceFileExtensions = new string[] { ".jpg", ".gif", ".png", ".css", ".js", ".swf", ".xap" };
 
         public void Init(HttpApplication context)
@@ -46,7 +47,8 @@ namespace Vaiona.Web.HttpModules
             //pManager.EndContext();
         }
 
-        public void Dispose() { }
+        public void Dispose()
+        { }
 
         private static bool isStatic(HttpApplication application)
         {

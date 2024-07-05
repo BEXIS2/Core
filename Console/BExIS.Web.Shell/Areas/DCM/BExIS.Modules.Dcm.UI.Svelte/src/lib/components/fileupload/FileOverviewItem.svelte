@@ -43,7 +43,6 @@
 	}
 
 	async function handleSaveFileDescription() {
-
 		const res = await saveFileDescription(save, id, file, description);
 		if (res) {
 			let message = 'Description of ' + file + ' is updated.';

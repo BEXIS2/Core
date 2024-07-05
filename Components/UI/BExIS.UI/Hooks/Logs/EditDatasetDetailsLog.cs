@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace BExIS.UI.Hooks.Logs
 {
@@ -12,7 +8,7 @@ namespace BExIS.UI.Hooks.Logs
 
         public EditDatasetDetailsLog()
         {
-            Messages = new List<LogMessage>(); 
+            Messages = new List<LogMessage>();
         }
     }
 }

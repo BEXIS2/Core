@@ -8,7 +8,6 @@ namespace BExIS.Modules.Dcm.UI.Models
 {
     public class SummaryModel
     {
-
         //Dataset
         [Display(Name = "Dataset Id")]
         public int DatasetId { get; set; }
@@ -18,7 +17,6 @@ namespace BExIS.Modules.Dcm.UI.Models
 
         [Display(Name = "Dataset Status")]
         public String DatasetStatus { get; set; }
-
 
         //Datastructure
         [Display(Name = "Datastructure Id")]
@@ -30,15 +28,15 @@ namespace BExIS.Modules.Dcm.UI.Models
         [Display(Name = "Datastructure Type")]
         public string DataStructureType { get; set; }
 
-
         //file
         [Display(Name = "Name")]
         public string Filename { get; set; }
+
         [Display(Name = "Path")]
         public string Filepath { get; set; }
+
         [Display(Name = "Extention")]
         public string Extention { get; set; }
-
 
         //if structured
         [Display(Name = "Upload Method")]
@@ -54,17 +52,14 @@ namespace BExIS.Modules.Dcm.UI.Models
         [Display(Name = "Primary Keys")]
         public string PrimaryKeys { get; set; }
 
-
         //Sync or ASync updload
         [Display(Name = "Async")]
         public bool AsyncUpload { get; set; }
-        public string AsyncUploadMessage { get; set; }
 
+        public string AsyncUploadMessage { get; set; }
 
         public StepInfo StepInfo { get; set; }
         public List<Error> ErrorList = new List<Error>();
-
-
 
         public SummaryModel()
         {

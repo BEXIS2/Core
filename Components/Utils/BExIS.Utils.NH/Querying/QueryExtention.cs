@@ -21,9 +21,7 @@ namespace BExIS.Utils.NH.Querying
             //in case you want the parameters as well
             var parameters = nhLinqExpression.ParameterValuesByName.ToDictionary(x => x.Key, x => x.Value.Item1);
 
-
             var translator = translatorFactory.CreateQueryTranslators(nhLinqExpression, null, false, sessionImpl.EnabledFilters, factory).First();
-
 
             return translator.SQLString;
         }

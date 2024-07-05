@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using Vaiona.Persistence.Api;
-using BExIS.Dlm.Entities.DataStructure;
-using Newtonsoft.Json.Linq;
+﻿using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.Meanings;
 using Newtonsoft.Json;
-using System.Security.Policy;
-using Vaiona.Utils.Cfg;
-using System.Collections;
-using static System.Net.Mime.MediaTypeNames;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.IO;
+using System.Linq;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.Meanings
 {
@@ -19,6 +14,7 @@ namespace BExIS.Dlm.Services.Meanings
     {
         // Track whether Dispose has been called.
         private bool disposedValue;
+
         private bool isDisposed = false;
         private IUnitOfWork guow = null;
 
@@ -32,9 +28,9 @@ namespace BExIS.Dlm.Services.Meanings
         }
 
         #region meanings
+
         public Meaning addMeaning(Meaning meaning)
         {
-
             Contract.Requires(meaning != null);
             Contract.Requires(GetWrongMappings(meaning.ExternalLinks).Count() == 0);
             try
@@ -63,6 +59,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public Meaning addMeaning(string Name, String ShortName, String Description, bool selectable, bool approved, List<MeaningEntry> externalLinks, List<long> meaning_ids, List<long> constraint_ids)
         {
             Contract.Requires(externalLinks != null);
@@ -93,8 +90,8 @@ namespace BExIS.Dlm.Services.Meanings
                         constraints = repoConstraints.Get().Where(x => constraint_ids.Contains(x.Id)).ToList<Constraint>();
                     }
 
-                    Meaning meaning = new Meaning(Name, ShortName, Description, selectable, approved, externalLinks, related_meanings,constraints);
-                  
+                    Meaning meaning = new Meaning(Name, ShortName, Description, selectable, approved, externalLinks, related_meanings, constraints);
+
                     repo.Put(meaning);
                     uow.Commit();
                     var xx = JsonConvert.SerializeObject(meaning, Formatting.Indented,
@@ -104,7 +101,6 @@ namespace BExIS.Dlm.Services.Meanings
                         });
                     updateMeaningEntry();
                     return meaning;
-                    
                 }
             }
             catch (Exception exc)
@@ -113,6 +109,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public Boolean deleteMeaning(Meaning meaning)
         {
             Contract.Requires(meaning != null);
@@ -135,6 +132,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return false;
             }
         }
+
         public List<Meaning> deleteMeaning(Int64 id)
         {
             try
@@ -160,8 +158,9 @@ namespace BExIS.Dlm.Services.Meanings
 
         public Meaning editMeaning(Meaning meaning)
         {
-            return editMeaning(meaning.Id, meaning.Name, meaning.ShortName, meaning.Description, meaning.Selectable, meaning.Approved, meaning.ExternalLinks.ToList(), meaning.Related_meaning?.Select(m => m.Id).ToList(), meaning.Constraints?.Select(c=>c.Id).ToList());
+            return editMeaning(meaning.Id, meaning.Name, meaning.ShortName, meaning.Description, meaning.Selectable, meaning.Approved, meaning.ExternalLinks.ToList(), meaning.Related_meaning?.Select(m => m.Id).ToList(), meaning.Constraints?.Select(c => c.Id).ToList());
         }
+
         public Meaning editMeaning(long id, string Name, String ShortName, String Description, bool selectable, bool approved, List<MeaningEntry> externalLinks, List<long> meaning_ids, List<long> constraint_ids)
         {
             Contract.Requires(externalLinks != null);
@@ -209,6 +208,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public Meaning getMeaning(Int64 id)
         {
             try
@@ -226,6 +226,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public Meaning getMeaning(string name)
         {
             try
@@ -243,6 +244,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public List<Meaning> getMeanings()
         {
             try
@@ -261,6 +263,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public List<Meaning> updateRelatedManings(string parentID, string childID)
         {
             try
@@ -284,17 +287,20 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public IEnumerable<MeaningEntry> GetWrongMappings(IEnumerable<MeaningEntry> mapping)
         {
             return mapping
                 .Where(pair => pair.MappingRelation.Type != ExternalLinkType.relationship);
         }
+
         public IEnumerable<MeaningEntry> GetWrongMappings(IEnumerable<string> mapping)
         {
             IEnumerable<MeaningEntry> externalLinksDictionary = mapping.Select(JsonConvert.DeserializeObject<MeaningEntry>);
 
             return GetWrongMappings(externalLinksDictionary);
         }
+
         public void updateMeaningEntry()
         {
             try
@@ -316,13 +322,16 @@ namespace BExIS.Dlm.Services.Meanings
                 throw (exc);
             }
         }
-        #endregion
+
+        #endregion meanings
 
         #region external link
+
         public ExternalLink addExternalLink(ExternalLink externalLink)
         {
             return addExternalLink(externalLink.URI, externalLink.Name, externalLink.Type, externalLink.Prefix, externalLink.prefixCategory);
         }
+
         public ExternalLink addExternalLink(string uri, String name, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory)
         {
             Contract.Requires(uri != null);
@@ -344,12 +353,11 @@ namespace BExIS.Dlm.Services.Meanings
                 {
                     IRepository<ExternalLink> repo = uow.GetRepository<ExternalLink>();
                     ExternalLink externalLink = new ExternalLink(uri, name, type, Prefix, prefixCategory);
-                 
-                        if (Prefix != null) externalLink.URI = getFormattedLinkUri(externalLink);
-                        repo.Put(externalLink);
-                        uow.Commit();
-                        return externalLink;
-                    
+
+                    if (Prefix != null) externalLink.URI = getFormattedLinkUri(externalLink);
+                    repo.Put(externalLink);
+                    uow.Commit();
+                    return externalLink;
                 }
             }
             catch (Exception exc)
@@ -358,6 +366,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public Boolean deleteExternalLink(ExternalLink externalLink)
         {
             Contract.Requires(externalLink != null);
@@ -381,8 +390,8 @@ namespace BExIS.Dlm.Services.Meanings
                 throw (exc);
                 return false;
             }
-
         }
+
         public List<ExternalLink> deleteExternalLink(Int64 id)
         {
             try
@@ -402,11 +411,13 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public ExternalLink editExternalLink(ExternalLink externalLink)
         {
             Contract.Requires(externalLink != null);
             return editExternalLink(externalLink.Id.ToString(), externalLink.URI, externalLink.Name, externalLink.Type, externalLink.Prefix, externalLink.prefixCategory);
         }
+
         public ExternalLink editExternalLink(string id, string uri, String name, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory)
         {
             Contract.Requires(uri != null);
@@ -434,6 +445,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public ExternalLink getExternalLink(Int64 id)
         {
             try
@@ -451,6 +463,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public ExternalLink getExternalLink(string uri)
         {
             try
@@ -468,6 +481,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public List<ExternalLink> getExternalLinks()
         {
             try
@@ -485,14 +499,17 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public List<ExternalLink> getPrefixes()
         {
             return getExternalLinks().Where(p => p.Prefix == null && p.Type.Equals(ExternalLinkType.prefix)).ToList<ExternalLink>();
         }
+
         public string getPrefixfromUri(string uri)
         {
             return getPrefixes().Where(p => uri.ToLower().Contains(p.URI.ToLower())).FirstOrDefault().URI;
         }
+
         public string getfullUri(ExternalLink externalLink)
         {
             string url = externalLink.URI; ;
@@ -501,16 +518,19 @@ namespace BExIS.Dlm.Services.Meanings
 
             return url;
         }
+
         public string getFormattedLinkUri(ExternalLink externalLink)
         {
             return externalLink.URI.Replace(externalLink.Prefix.URI, externalLink.Prefix.Name);
         }
+
         public string getViewLinkUri(ExternalLink externalLink)
         {
             if (externalLink.Prefix != null)
                 return externalLink.URI.Replace(externalLink.Prefix.Name, externalLink.Prefix.URI);
             else return externalLink.URI;
         }
+
         public Boolean updatePreviousLinks()
         {
             foreach (ExternalLink pref in getPrefixes())
@@ -530,21 +550,25 @@ namespace BExIS.Dlm.Services.Meanings
             }
             return true;
         }
-        ExternalLink GetOrCreateExternalLink(ExternalLink externalLink_)
+
+        private ExternalLink GetOrCreateExternalLink(ExternalLink externalLink_)
         {
             Contract.Requires(externalLink_ != null);
             if (!string.IsNullOrEmpty(externalLink_?.Name) && !string.IsNullOrEmpty(externalLink_?.URI) && this.getExternalLink(externalLink_?.URI) == null)
                 return this.addExternalLink(externalLink_.URI, externalLink_.Name, externalLink_.Type, externalLink_.Prefix, externalLink_.prefixCategory);
             else return this.getExternalLink(externalLink_?.URI);
         }
+
         public ExternalLink GetOrCreateExternalLink(string id, string name, string uri, ExternalLinkType type, ExternalLink Prefix, PrefixCategory prefixCategory)
         {
             if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(uri) && this.getExternalLink(uri) == null) return this.addExternalLink(uri, name, type, Prefix, prefixCategory);
             else return this.getExternalLink(uri);
         }
-        #endregion
+
+        #endregion external link
 
         #region PrefixCategory
+
         public PrefixCategory addPrefixCategory(PrefixCategory prefixCategory)
         {
             Contract.Requires(prefixCategory != null);
@@ -564,6 +588,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public PrefixCategory addPrefixCategory(string Name, string Description)
         {
             Contract.Requires(Name != null);
@@ -572,7 +597,6 @@ namespace BExIS.Dlm.Services.Meanings
             {
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
-
                     IRepository<PrefixCategory> repo = uow.GetRepository<PrefixCategory>();
                     using (PrefixCategory prefixCategory = new PrefixCategory(Name, Description))
                     {
@@ -588,6 +612,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public Boolean deletePrefixCategory(PrefixCategory prefixCategory)
         {
             Contract.Requires(prefixCategory != null);
@@ -608,8 +633,8 @@ namespace BExIS.Dlm.Services.Meanings
                 throw (exc);
                 return false;
             }
-
         }
+
         public List<PrefixCategory> deletePrefixCategory(Int64 id)
         {
             try
@@ -629,6 +654,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public PrefixCategory editPrefixCategory(PrefixCategory prefixCategory)
         {
             Contract.Requires(prefixCategory != null);
@@ -650,6 +676,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public PrefixCategory editPrefixCategory(string id, string Name, string Description)
         {
             Contract.Requires(Name != null);
@@ -675,6 +702,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public PrefixCategory getPrefixCategory(Int64 id)
         {
             try
@@ -692,6 +720,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public PrefixCategory getPrefixCategory(string Name)
         {
             try
@@ -709,6 +738,7 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
+
         public List<PrefixCategory> getPrefixCategory()
         {
             try
@@ -726,7 +756,9 @@ namespace BExIS.Dlm.Services.Meanings
                 return null;
             }
         }
-        #endregion
+
+        #endregion PrefixCategory
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -741,12 +773,12 @@ namespace BExIS.Dlm.Services.Meanings
                 disposedValue = true;
             }
         }
+
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
-
     }
 }

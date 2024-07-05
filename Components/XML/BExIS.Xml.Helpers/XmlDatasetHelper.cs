@@ -16,7 +16,7 @@ namespace BExIS.Xml.Helpers
         #region get
 
         /// <summary>
-        /// Return a value of the attribute from the incoming metadata 
+        /// Return a value of the attribute from the incoming metadata
         /// </summary>
         /// <param name="datasetid"></param>
         /// <param name="metadata"></param>
@@ -24,8 +24,6 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public string GetInformation(long datasetid, XmlDocument metadata, NameAttributeValues name)
         {
-
-
             using (var unitOfWork = this.GetUnitOfWork())
             using (DatasetManager dm = new DatasetManager())
             using (MetadataStructureManager msm = new MetadataStructureManager())
@@ -33,7 +31,6 @@ namespace BExIS.Xml.Helpers
                 if (datasetid <= 0) return String.Empty;
 
                 var dataset = dm.GetDataset(datasetid);
-
 
                 MetadataStructure metadataStructure = msm.Repo.Get(dataset.MetadataStructure.Id);
 
@@ -48,7 +45,6 @@ namespace BExIS.Xml.Helpers
 
                 return string.IsNullOrWhiteSpace(value) ? "not available" : value;
             }
-
         }
 
         /// <summary>
@@ -77,7 +73,6 @@ namespace BExIS.Xml.Helpers
             }
         }
 
-
         /// <summary>
         /// Information in metadata is stored as xml
         /// get back the vale of an attribute
@@ -88,8 +83,6 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public string GetInformationFromVersion(long datasetVersionId, long metadataStructureId, NameAttributeValues name)
         {
-
-
             using (var unitOfWork = this.GetUnitOfWork())
             using (DatasetManager dm = new DatasetManager())
             using (MetadataStructureManager msm = new MetadataStructureManager())

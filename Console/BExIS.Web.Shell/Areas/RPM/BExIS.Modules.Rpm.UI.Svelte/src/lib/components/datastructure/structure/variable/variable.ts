@@ -74,12 +74,10 @@ const suite = create((data = {}, fieldName) => {
 			});
 
 			test('unit', 'unit not match with the template', () => {
-				
-				
 				if (!isTemplateRequired && (!data.template || data.template.id == 0)) {
 					return true;
 				}
-				
+
 				if (data.template.units.includes(data.unit.text)) {
 					return true;
 				} else {

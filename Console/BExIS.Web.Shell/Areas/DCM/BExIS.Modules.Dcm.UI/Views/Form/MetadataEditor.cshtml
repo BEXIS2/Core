@@ -92,32 +92,31 @@
 }
 <link href="@Url.Content("~/Areas/DCM/" + debugPath + "Content/bexis-metadata.css")" rel="stylesheet" type="text/css" />
 
-
 @section Information
 {
     @if (Model.HeaderHelp.Length > 2)
     {
-        @Html.Raw(Model.HeaderHelp);
+    @Html.Raw(Model.HeaderHelp);
     }
     else
     {
-        <p>
-            Here you can enter metadata for your new dataset. The form varies according to the metadata structure you selected in the first step.
-            Mandatory fields are indicated with an red asterisk.
-        </p>
-        <p>You can add, remove, or re-order elements (e.g. multiple Creators) using the buttons at the right.</p>
+    <p>
+        Here you can enter metadata for your new dataset. The form varies according to the metadata structure you selected in the first step.
+        Mandatory fields are indicated with an red asterisk.
+    </p>
+    <p>You can add, remove, or re-order elements (e.g. multiple Creators) using the buttons at the right.</p>
 
-        <p>
-            More information
-            @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title = "go to help", target = "_blank" })
-        </p>
+    <p>
+        More information
+        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title = "go to help", target = "_blank" })
+    </p>
     }
 }
 
 <div id="MetadataEditor" style="width: 89%">
     @if (Model.DatasetId != -1)
     {
-        <span id="datasetId" style="display:none">@Model.DatasetId</span>
+    <span id="datasetId" style="display:none">@Model.DatasetId</span>
     }
     <div>
         <table>
@@ -125,38 +124,38 @@
                 @if (locked)
                 {
 
-                    <td style="width:500px;">
+                <td style="width:500px;">
 
-                        @if (Model.LatestVersion)
+                    @if (Model.LatestVersion)
                         {
 
-                            <span class="dropdown">
-                                <button class="bx-button function" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    Download Metadata
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                    <li><a id="downloadHtmlButton" onclick="downloadHtml()">... as Html</a></li>
-                                    <li><a id="downloadXmlButton" onclick="downloadXml()">... as XML</a></li>
-                                </ul>
-                            </span>
+                    <span class="dropdown">
+                        <button class="bx-button function" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Download Metadata
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                            <li><a id="downloadHtmlButton" onclick="downloadHtml()">... as Html</a></li>
+                            <li><a id="downloadXmlButton" onclick="downloadXml()">... as XML</a></li>
+                        </ul>
+                    </span>
                         }
                         else
                         {
-                            <button class="bx-button function bx-disabled" disabled="disabled" title="You can only download the metadata of the latest version directly.">Download Metadata </button>
+                    <button class="bx-button function bx-disabled" disabled="disabled" title="You can only download the metadata of the latest version directly.">Download Metadata </button>
                         }
 
-                        @Html.CheckBox("showAll", @showOptional, new { OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll" })
+                    @Html.CheckBox("showAll", @showOptional, new { OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll" })
 
-                        <b>show all fields</b>
-                    </td>
+                    <b>show all fields</b>
+                </td>
 
                 }
 
                 @if (!Model.Created && !locked && Model.Import)
                 {
-                    <td style="width: 100px">
-                        @(Html.Telerik().Upload()
+                <td style="width: 100px">
+                    @(Html.Telerik().Upload()
                             .Name("SelectFileUploader")
                             .Multiple(false)
                             .ShowFileList(false)
@@ -170,13 +169,13 @@
                                 .AutoUpload(true))
 
                         )
-                    </td>
+                </td>
                 }
 
                 <td id="form_message_container_Column" style="text-align: right">
                     <span id="form_message"></span>
                     <div id="preloader_cotainer">
-                        <script type="text/javascript">$("#preloader_cotainer").preloader(20, "Loading metadata...")</script>
+                        @*<script type="text/javascript">$("#preloader_cotainer").preloader(20, "Loading metadata...")</script>*@
                     </div>
                     <div id="show_help_all"><button type="button" title="Show all help information." class="bx-function bx-disabled fa  fa-info " onclick="showHelpAll();"></button></div>
                     <div id="hide_help_all"><button type="button" title="Hide all help information." class="bx-function bx-disabled" onclick="hideHelpAll();"><i class="fa bx-info" id="help_container"></i><i class="fa fa-ban" id="help_nested"></i></button></div>
@@ -187,17 +186,17 @@
                 @if (Model.Created && Model.DatasetId != -1 && !@Model.FromEditMode)
                 {
 
-                    <td>You successfully created dataset: <br /><b>@Model.DatasetTitle</b></td>
-                    <td id="upload">
-                        Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", null, new { title = "Link to upload wizard", @class = "bx-link" })</b><br />
-                        to add primary data to this dataset.
-                    </td>
+                <td>You successfully created dataset: <br /><b>@Model.DatasetTitle</b></td>
+                <td id="upload">
+                    Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", null, new { title = "Link to upload wizard", @class = "bx-link" })</b><br />
+                    to add primary data to this dataset.
+                </td>
 
                     if (Html.IsAccessible("DDM", "Data", "ShowData"))
                     {
                         if (@Model.DatasetId > 0)
                         {
-                            <td>Or see your dataset here <b>@Html.ActionLink(@Model.DatasetTitle, "ShowData", "Data", new { area = "DDM", id = @Model.DatasetId }, new { title = "Link to your dataset.", @class = "bx-link" })</b><br /></td>
+                <td>Or see your dataset here <b>@Html.ActionLink(@Model.DatasetTitle, "ShowData", "Data", new { area = "DDM", id = @Model.DatasetId }, new { title = "Link to your dataset.", @class = "bx-link" })</b><br /></td>
 
                         }
                     }
@@ -208,12 +207,12 @@
 
     @if (ViewBag.isValid == "no")
     {
-        <div id="view-warning-container">
-            <div id="view-warning" class="alert alert-danger" role="alert" style="width: 100%;">
-                <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
-                The metadata for this dataset is not complete.
-            </div>
+    <div id="view-warning-container">
+        <div id="view-warning" class="alert alert-danger" role="alert" style="width: 100%;">
+            <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
+            The metadata for this dataset is not complete.
         </div>
+    </div>
     }
 
     <div style="overflow: auto;">
@@ -234,13 +233,13 @@
                 displayName = Regex.Replace(displayName, "((?<=[a-z])[A-Z])", " $1");
                 id_label_container_1 = element.StepId + "_1_LabelContainerMenu";
                 id_label_container = element.StepId + "_Menu";
-                <div id="@id_label_container" class="header Metadata-Level-Header-1 header-menu" style="float:left; border-style: solid; border-color: white;">
-                    <div id="@id_label_container_1" class="labelContainer" onclick="showFirstLevelClick(this)">
-                        <b>@displayName</b>
-                        <div>
-                        </div>
-                    </div>
+        <div id="@id_label_container" class="header Metadata-Level-Header-1 header-menu" style="float:left; border-style: solid; border-color: white;">
+            <div id="@id_label_container_1" class="labelContainer" onclick="showFirstLevelClick(this)">
+                <b>@displayName</b>
+                <div>
                 </div>
+            </div>
+        </div>
             }
         }
     </div>
@@ -251,44 +250,44 @@
         {
             if (element.Model is MetadataPackageModel)
             {
-                <div style="width: 100%; height: 1px; background-color: white"></div>
-                @Html.Partial("_metadataCompoundAttributeView", element)
+        <div style="width: 100%; height: 1px; background-color: white"></div>
+        @Html.Partial("_metadataCompoundAttributeView", element)
             }
         }
     </div>
 
     @if (!locked)
     {
-        <div class="bx-footer right">
+    <div class="bx-footer right">
 
-            <!-- only from editmode you have the option to reset-->
-            <button id="validate" onclick="validate()" class="bx-button function" style="float: left;">Validate</button>
+        <!-- only from editmode you have the option to reset-->
+        <button id="validate" onclick="validate()" class="bx-button function" style="float: left;">Validate</button>
 
-            @*@if (@Model.FromEditMode)
-                {
-                    <button onclick="reset()" class="bx-button function" style="float: left;">Reset</button>
-                }*@
-
-            @if (@submit.IsComplete())
+        @*@if (@Model.FromEditMode)
             {
-                <button id="save" onclick="submit()" class="bx-button action">Save</button>
+                <button onclick="reset()" class="bx-button function" style="float: left;">Reset</button>
+            }*@
+
+        @if (@submit.IsComplete())
+            {
+        <button id="save" onclick="submit()" class="bx-button action">Save</button>
             }
 
-            @if (@Model.FromEditMode)
+        @if (@Model.FromEditMode)
             {
-                <button id="cancel" onclick="cancel()" class="bx-button action">Cancel</button>
+        <button id="cancel" onclick="cancel()" class="bx-button action">Cancel</button>
             }
-        </div>
+    </div>
     }
 
     <!--include additional JavaScript file at the bottum-->
     @if (ViewData["MetadataStructureID"] != null && (long)ViewData["MetadataStructureID"] != -1)
     {
-        <script src="@Url.Content("~/ddm/Data/getFile/?metadataStructureId=" + (long)ViewData["MetadataStructureID"] )" type="text/javascript"></script>
+    <script src="@Url.Content("~/ddm/Data/getFile/?metadataStructureId=" + (long)ViewData["MetadataStructureID"] )" type="text/javascript"></script>
     }
     else
     {
-        <script src="@Url.Content("~/ddm/Data/getFile/?id=" + Model.DatasetId)" type="text/javascript"></script>
+    <script src="@Url.Content("~/ddm/Data/getFile/?id=" + Model.DatasetId)" type="text/javascript"></script>
     }
 
     <script>
@@ -380,6 +379,7 @@
             //} else {
             //    loadExternalXml();
             //}
+            //}
         });
         }
 
@@ -451,13 +451,9 @@
     function cancel() {
 
         if (confirm('Are you sure you want to leave the form? All changes will be lost.')) {
-            $
-                .get('@Url.Action(@cancel.ActionName, @cancel.ControllerName, new RouteValueDictionary {{"area", @cancel.AreaName}})',
-                    function(response) {
-                        $('#MetadataEditor').replaceWith(response);
-                        bindMinimap(true);
-                        $('html, body').animate({ scrollTop: 0 }, 'slow');
-                    });
+
+            window.open(document.referrer)
+
         } else {
             return false;
         }
@@ -466,6 +462,7 @@
     function reset() {
 
         if (confirm('Are you sure? All changes will be lost.')) {
+
             $
                 .get('@Url.Action(@reset.ActionName, @reset.ControllerName, new RouteValueDictionary {{"area", @reset.AreaName}})',
                     function(response) {

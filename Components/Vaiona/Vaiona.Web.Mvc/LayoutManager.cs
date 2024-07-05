@@ -67,6 +67,7 @@ namespace Vaiona.Web.Mvc
             }
             return layoutName;
         }
+
         private static MvcHtmlString RenderThemedContent(this HtmlHelper helper, ActionModel actionModel, bool fallbackToNonThemedVersion = true)
         {
             string path = Themes.GetResourcePath("Partials", string.Concat(actionModel.ViewName, ".cshtml"));
@@ -183,7 +184,7 @@ namespace Vaiona.Web.Mvc
             return (actionModels);
         }
 
-        static ObjectCache cache = MemoryCache.Default;
+        private static ObjectCache cache = MemoryCache.Default;
 
         private static XElement getLayoutMap()
         {

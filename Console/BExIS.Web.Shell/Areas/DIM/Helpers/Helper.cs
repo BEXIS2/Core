@@ -17,7 +17,7 @@ namespace BExIS.Modules.Dim.UI.Helper
             dt.Columns.Add("VariableName");
             dt.Columns.Add("Description");
             dt.Columns.Add("Unit");
-            //dt.Columns.Add("Parameters");      
+            //dt.Columns.Add("Parameters");
             dt.Columns.Add("DataType");
             dt.Columns.Add("Category");
             dt.Columns.Add("MissingValues");

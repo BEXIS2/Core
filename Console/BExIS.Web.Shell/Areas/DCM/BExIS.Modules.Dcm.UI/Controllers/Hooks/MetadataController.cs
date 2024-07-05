@@ -36,7 +36,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             model.ExternalMetadataFormUrl = externalMetadataFormUrl;
             model.UseExternalMetadataForm = useExternalMetadataForm;
 
-
             return Json(model, JsonRequestBehavior.AllowGet);
         }
 

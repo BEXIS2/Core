@@ -11,7 +11,6 @@
     string preloader_id = "preloader_" + id;
     string tableId = "table_" + Model.Id.ToString();
 
-
 }
 <div id="@id" class="dim-export-metadata" exportIAvailable="@Model.ExportIsAvailable.ToString()" button="@convert_id">
 
@@ -25,11 +24,10 @@
         <button id="@convert_id" type="button" class="bx-button bx-disabled function" value="Convert" name="button" onclick="dim_OnClickConvert(this)" disabled="disabled">Export</button>
     </div>
 
-
     <table id="@tableId" class="display" style="width:100%">
         <thead>
             <tr>
-                
+
                 <th>
                     <input id="@all_id" name="checkedDatasetVersion" type="checkbox" value="all" title="checkedDatasetVersion" class="checkBox" onclick="OnChangeAllCheckbox(this)" />
                 </th>
@@ -59,7 +57,6 @@
                 </td>
             </tr>
             }
-
         </tbody>
     </table>
 </div>
@@ -70,7 +67,7 @@
         display:none;
     }
 
-    #datasetversionsConvertGrid 
+    #datasetversionsConvertGrid
     {
         text-align:left;
     }
@@ -80,10 +77,7 @@
         padding-left:0;
         text-align:center;
     }
-    
-
 </style>
-
 
 <script type="text/javascript">
 
@@ -91,7 +85,6 @@
     {
         $(@tableId).DataTable();
     });
-
 
     function setExportBT(e)
     {
@@ -105,11 +98,9 @@
         console.log(exportIsAvailable);
         console.log(bt);
 
-
         if ($("#" + id + " input:checkbox:checked").length > 0 && exportIsAvailable == "True") {
             console.log("some are checked");
 
-            
             $(bt).removeAttr("disabled");
             $(bt).removeClass("bx-disabled");
 
@@ -130,7 +121,6 @@
         setExportBT(e);
     }
 
-
     function dim_OnClickConvert(obj)
     {
         var selectedDatasetIds = "";
@@ -148,8 +138,6 @@
                 $(this).closest("tr").find(".download-button").preloader(12, "Converting dataset " + this.id);
             }
         })
-
-
 
         $.post('@Url.Action("ConvertSelectedDatasetVersion", "Admin", new { area="DIM"})', { Id: id, SelectedDatasetIds: selectedDatasetIds }, function (e) {
 
@@ -176,6 +164,4 @@
 
         setExportBT(obj);
     }
-
-
 </script>

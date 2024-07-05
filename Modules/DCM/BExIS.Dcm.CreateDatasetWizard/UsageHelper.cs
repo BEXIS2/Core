@@ -4,7 +4,6 @@
 
     //public class UsageHelper
     //{
-
     //    public static BaseUsage GetMetadataAttributeUsageById(long Id)
     //    {
     //        BaseUsage usage = new BaseUsage();
@@ -17,7 +16,6 @@
     //                select u;
 
     //        return q.FirstOrDefault();
-
 
     //    }
 
@@ -91,7 +89,7 @@
     //    }
 
     //    /// <summary>
-    //    /// Search in the packageusages 
+    //    /// Search in the packageusages
     //    /// </summary>
     //    /// <param name="Id"></param>
     //    /// <returns></returns>
@@ -297,7 +295,6 @@
 
     //    public static string GetNameOfType(BaseUsage usage)
     //    {
-
     //        if (usage is MetadataPackageUsage)
     //        {
     //            MetadataPackageUsage mpu = (MetadataPackageUsage)usage;
@@ -321,7 +318,6 @@
 
     //    public static long GetIdOfType(BaseUsage usage)
     //    {
-
     //        if (usage is MetadataPackageUsage)
     //        {
     //            MetadataPackageUsage mpu = (MetadataPackageUsage)usage;

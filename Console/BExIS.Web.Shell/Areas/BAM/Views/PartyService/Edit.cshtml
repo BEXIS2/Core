@@ -91,7 +91,7 @@
             return false;
         }
         var validationError=false;
-        
+
         if (!validationError)
         {
             if(partyTabStrip.getSelectedTabIndex()==0)
@@ -138,7 +138,7 @@
     }
 
     function loadCustomAttributes() {
-       
+
             $("[data-valmsg-for='PartyType.Id']").addClass("field-validation-valid").removeClass("field-validation-error");
             $('#imgPartyCustomeAttrLoading').show();
             $('#divPartyCustomAttr').load('/BAM/PartyService/LoadPartyCustomAttr/' + @Model.PartyType.Id+'?partyId='+@Model.Id, function (response, status, xhr) {
@@ -148,7 +148,7 @@
                 }
                 $('#imgPartyCustomeAttrLoading').hide();
             });
-        
+
     }
 
     //Enable dynamic validation in every ajax request because they will disable each time
@@ -194,5 +194,4 @@
         }
         return valid;
     }
-
 </script>

@@ -1,7 +1,13 @@
 <script lang="ts">
 	import Structure from '$lib/components/datastructure/structure/EditStructure.svelte';
 
-	import { Spinner, Page, ErrorMessage, type helpItemType, helpStore } from '@bexis2/bexis2-core-ui';
+	import {
+		Spinner,
+		Page,
+		ErrorMessage,
+		type helpItemType,
+		helpStore
+	} from '@bexis2/bexis2-core-ui';
 	import {
 		generate,
 		save,
@@ -11,13 +17,20 @@
 	} from '$lib/components/datastructure/services';
 
 	import type { DataStructureEditModel } from '$lib/components/datastructure/types';
-	import { displayPatternStore, structureStore,isTemplateRequiredStore,isMeaningRequiredStore, setByTemplateStore, enforcePrimaryKeyStore, changeablePrimaryKeyStore  } from '$lib/components/datastructure/store';
+	import {
+		displayPatternStore,
+		structureStore,
+		isTemplateRequiredStore,
+		isMeaningRequiredStore,
+		setByTemplateStore,
+		enforcePrimaryKeyStore,
+		changeablePrimaryKeyStore
+	} from '$lib/components/datastructure/store';
 	import { pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
 	//help
 	import { dataStructureHelp } from '../help';
 	let helpItems: helpItemType[] = dataStructureHelp;
-
 
 	// load attributes from div
 	let container;
@@ -27,50 +40,56 @@
 	$: model;
 
 	let init: boolean = true;
-	let dataExist:boolean = false;
+	let dataExist: boolean = false;
 
 	async function start() {
-
 		helpStore.setHelpItemList(helpItems);
 		// get data from parent
 		container = document.getElementById('datastructure');
 		datastructureId = Number(container?.getAttribute('structure'));
-		dataExist = (container?.getAttribute('dataExist')?.toLocaleLowerCase() === 'true');
-		console.log("🚀 ~ file: +page.svelte:32 ~ start ~ container?.getAttribute('dataExist'):", container?.getAttribute('dataExist'))
+		dataExist = container?.getAttribute('dataExist')?.toLocaleLowerCase() === 'true';
+		console.log(
+			"🚀 ~ file: +page.svelte:32 ~ start ~ container?.getAttribute('dataExist'):",
+			container?.getAttribute('dataExist')
+		);
 
-		console.log("🚀 ~ file: +page.svelte:32 ~ start ~ dataExist:", dataExist)
+		console.log('🚀 ~ file: +page.svelte:32 ~ start ~ dataExist:', dataExist);
 
-// get isTemplateRequired from settings and add it to store
+		// get isTemplateRequired from settings and add it to store
 		// is used by validation
-		const isTemplateRequired = container?.getAttribute('isTemplateRequired')?.toLocaleLowerCase()=="true"?true:false;
+		const isTemplateRequired =
+			container?.getAttribute('isTemplateRequired')?.toLocaleLowerCase() == 'true' ? true : false;
 		isTemplateRequiredStore.set(isTemplateRequired);
 
 		// get isTemplateRequired from settings and add it to store
 		// is used by validation
-		const isMeaningRequired = container?.getAttribute('isMeaningRequired')?.toLocaleLowerCase()=="true"?true:false;
-		console.log("🚀 ~ file: +page.svelte:57 ~ start ~ isMeaningRequired:", isMeaningRequired)
+		const isMeaningRequired =
+			container?.getAttribute('isMeaningRequired')?.toLocaleLowerCase() == 'true' ? true : false;
+		console.log('🚀 ~ file: +page.svelte:57 ~ start ~ isMeaningRequired:', isMeaningRequired);
 		isMeaningRequiredStore.set(isMeaningRequired);
 
 		// get setByTemplate from settings and add it to store
 		// is used by createion of variables
-		const setByTemplate = container?.getAttribute('setByTemplate')?.toLocaleLowerCase()=="true"?true:false;
+		const setByTemplate =
+			container?.getAttribute('setByTemplate')?.toLocaleLowerCase() == 'true' ? true : false;
 		setByTemplateStore.set(setByTemplate);
 
-// get enforcePrimaryKey from settings and add it to store
+		// get enforcePrimaryKey from settings and add it to store
 		// save structure only if pk is set
-		const enforcePrimaryKey = container?.getAttribute('enforcePrimaryKey')?.toLocaleLowerCase()=="true"?true:false;
+		const enforcePrimaryKey =
+			container?.getAttribute('enforcePrimaryKey')?.toLocaleLowerCase() == 'true' ? true : false;
 		enforcePrimaryKeyStore.set(enforcePrimaryKey);
 
-	// get changeablePrimaryKey from settings and add it to store
-	// save structure only if pk is set
-	const changeablePrimaryKey = container?.getAttribute('changeablePrimaryKey')?.toLocaleLowerCase()=="true"?true:false;
-	changeablePrimaryKeyStore.set(changeablePrimaryKey);
+		// get changeablePrimaryKey from settings and add it to store
+		// save structure only if pk is set
+		const changeablePrimaryKey =
+			container?.getAttribute('changeablePrimaryKey')?.toLocaleLowerCase() == 'true' ? true : false;
+		changeablePrimaryKeyStore.set(changeablePrimaryKey);
 
+		console.log('edit structure', datastructureId);
 
-		console.log('edit structure',datastructureId);
-
-			// copy structure
-			model = await get(datastructureId);
+		// copy structure
+		model = await get(datastructureId);
 
 		// load sturctures for validation against existings
 		const structures = await getStructures();
@@ -83,7 +102,6 @@
 		// console.log('model', model);
 	}
 
-	
 	function back() {
 		init = false;
 	}
@@ -99,7 +117,7 @@
 		<Spinner label="the structure is loading" />
 	{:then}
 		{#if model}
-				<Structure {model} {dataExist} on:back={back} />
+			<Structure {model} {dataExist} on:back={back} />
 		{/if}
 	{:catch error}
 		<ErrorMessage {error} />

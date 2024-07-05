@@ -39,14 +39,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         // POST: api/Structures
         [ApiExplorerSettings(IgnoreApi = true)]
-        public void Post([FromBody]string value)
+        public void Post([FromBody] string value)
         {
             throw new HttpResponseException(HttpStatusCode.NotFound);
         }
 
         // PUT: api/Structures/5
         [ApiExplorerSettings(IgnoreApi = true)]
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, [FromBody] string value)
         {
             throw new HttpResponseException(HttpStatusCode.NotFound);
         }

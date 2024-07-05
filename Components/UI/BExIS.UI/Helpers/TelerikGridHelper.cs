@@ -463,7 +463,6 @@ namespace BExIS.UI.Helpers
                             Field = new Field() { DataType = DataType.String, Name = fd.Member },
                             Operator = StringOperator.Operation.Equals,
                             Value = fd.Value
-
                         };
                     }
                 case FilterOperator.IsNotEqualTo:

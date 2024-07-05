@@ -3,12 +3,12 @@
 
 	import MissingValue from './MissingValue.svelte';
 	export let list: missingValueType[] = [];
-	
+
 	import { onMount } from 'svelte';
 	import { helpStore } from '@bexis2/bexis2-core-ui';
-	
+
 	onMount(() => {
-		console.log("🚀 ~ file: MissingValues.svelte:6 ~ list:", list)
+		console.log('🚀 ~ file: MissingValues.svelte:6 ~ list:', list);
 		if (list.length === 0) {
 			add();
 		}
@@ -36,7 +36,9 @@
 	}
 </script>
 
-<label id="missingvalues" on:mouseover={() => helpStore.show('missingvalues')}><b>Missing Values</b></label>
+<label id="missingvalues" on:mouseover={() => helpStore.show('missingvalues')}
+	><b>Missing Values</b></label
+>
 
 <div class="missing-values-container">
 	{#if list}

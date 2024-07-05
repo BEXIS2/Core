@@ -39,6 +39,5 @@ namespace Vaiona.Persistence.Api
             IUnitOfWork uow = persistenceManager.UnitOfWorkFactory.CreateIsolatedUnitOfWork(false, true);
             return (uow);
         }
-
     }
 }

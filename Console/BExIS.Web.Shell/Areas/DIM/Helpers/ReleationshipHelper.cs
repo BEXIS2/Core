@@ -1,5 +1,5 @@
-﻿using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Helpers.Mapping;
+﻿using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
 using BExIS.Xml.Helpers;
@@ -25,12 +25,9 @@ namespace BExIS.Modules.Dim.UI.Helper
                 {
                     using (var uow = this.GetUnitOfWork())
                     {
-
                         //check if mappings exist between system/relationships and the metadatastructure/attr
                         // get all party mapped nodes
                         IEnumerable<XElement> complexElements = XmlUtility.GetXElementsByAttribute("partyid", XmlUtility.ToXDocument(metadata));
-
-
 
                         // get releaionship type id for owner
                         var releationships = uow.GetReadOnlyRepository<PartyRelationshipType>().Get().Where(
@@ -64,7 +61,6 @@ namespace BExIS.Modules.Dim.UI.Helper
 
                                         var datasetParty = partyManager.Create(partyTypeManager.PartyTypeRepository.Get(cc => cc.Title == "Dataset").First(), "[description]", null, null, customAttributes);
                                         var person = partyManager.GetParty(partyid);
-
 
                                         var partyTpePair = releationship.PartyRelationships.FirstOrDefault().PartyTypePair;
 

@@ -8,16 +8,15 @@
 
  }
 
-<div class="searchHeader">           
+<div class="searchHeader">
 @using (Html.BeginForm(Session["SubmissionAction"].ToString(), @controller))
 {
 
-   <div id="search_Components"> 
+   <div id="search_Components">
        <table>
            <tr>
                 <td></td>
                 <td>
-
                 </td>
            </tr>
            <tr>
@@ -48,15 +47,13 @@
                                     filtering.FilterMode(AutoCompleteFilterMode.Contains);
                                     filtering.MinimumChars(3);
 
-                                })                                
+                                })
                        )
                 </td>
                <td>
 
                    <button type="submit" class="bx-button small function">Search</button>
-  
                </td>
-  
            </tr>
 
            @if (HttpContext.Current.User != null &&
@@ -70,13 +67,12 @@
            </tr>
            }
        </table>
-  </div>      
-     
+  </div>
+
    <div class="search_Summery">
 
         @*<b>@Model.ResultComponent.NumberOfHits results for search "" in
         Category   </b> *@
-
    </div>
 }
 </div>
@@ -108,10 +104,10 @@
          console.log(value);
 
          if (value === true) {
-             //redirect to public search 
+             //redirect to public search
              //console.log("public");
              window.location.href = '@Url.Action("Index", "PublicSearch", new RouteValueDictionary { { "area", "ddm" } })';
-             
+
          }
          else {
              //redirect to search
@@ -120,16 +116,11 @@
          }
 
      }
-
-
 </script>
 <style type="text/css">
 
-    
     #search_Components table
     {
         width:auto;
     }
-
-
 </style>

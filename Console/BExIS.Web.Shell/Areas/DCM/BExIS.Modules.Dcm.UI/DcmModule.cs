@@ -22,7 +22,6 @@ namespace BExIS.Modules.Dcm.UI
                 {
                     generator.GenerateSeedData();
                 }
-
             }
             catch (Exception e)
             {

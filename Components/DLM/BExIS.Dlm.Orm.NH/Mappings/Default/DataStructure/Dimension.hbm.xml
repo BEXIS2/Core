@@ -1,7 +1,7 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Dimension" table="Dimensions" dynamic-update="true" select-before-update="true">
     <!-- Mapping BaseEntity properties -->
-    
+
     <id name="Id" type="Int64">
       <column name="Id" index="idx_Dimensions_id" />
       <generator class="native" />
@@ -16,7 +16,7 @@
     </property>
 
     <!-- Mapping Entity properties -->
-    
+
     <property name="Name" type="String">
       <column name="Name" index="idx_Dimensions_name" />
     </property>
@@ -28,7 +28,6 @@
     <property name="Specification" type="String">
       <column name="Specification" />
     </property>
-    
 
     <set name="Units" inverse="true" lazy="true" cascade="save-update">
       <key>
@@ -36,7 +35,5 @@
       </key>
       <one-to-many class="BExIS.Dlm.Entities.DataStructure.Unit" />
     </set>
-
   </class>
-
 </hibernate-mapping>

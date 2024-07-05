@@ -98,8 +98,6 @@ namespace BExIS.IO.Tests.Transform.Input
             // Act
 
             // Assert
-
-
         }
     }
 }

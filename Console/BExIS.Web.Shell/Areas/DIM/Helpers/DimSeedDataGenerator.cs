@@ -1,7 +1,8 @@
-﻿using BExIS.Dim.Entities.Mapping;
+﻿using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers;
 using BExIS.Dim.Services;
+using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Entities.Party;
@@ -11,7 +12,6 @@ using BExIS.Modules.Dim.UI.Helper;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
-using BExIS.Utils.Config;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -165,14 +165,13 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 #endregion MAPPING
 
-                #region meanings for GBIFDWC 
+                #region meanings for GBIFDWC
 
                 createMeaningsForGBIFDWC();
 
                 createReleationships();
 
-
-                #endregion
+                #endregion meanings for GBIFDWC
             }
             catch (Exception ex)
             {
@@ -190,12 +189,10 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
         private void createMeaningsForGBIFDWC()
         {
-
             using (var meaningManager = new MeaningManager())
             {
                 ExternalLink prefix = new ExternalLink();
                 ExternalLink releation = new ExternalLink();
-
 
                 // prefix
                 if (!meaningManager.getPrefixes().Any(p => p.Name.Equals("dwc")))
@@ -208,7 +205,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                     prefix = meaningManager.addExternalLink(prefix);
                 }
-                else {
+                else
+                {
                     prefix = meaningManager.getPrefixes().FirstOrDefault(p => p.Name.Equals("dwc"));
                 }
 
@@ -227,7 +225,6 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 {
                     releation = meaningManager.getPrefixes().FirstOrDefault(p => p.Name.Equals("hasDwcTerm"));
                 }
-
 
                 // links & meanings
                 List<string> links = new List<string>();
@@ -279,13 +276,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
                             var linkList = new List<ExternalLink>();
                             linkList.Add(link);
 
-
                             Meaning meaning = new Meaning();
                             if (meaningManager.getMeanings().Any(m => m.Name.Equals(l)))
                             {
                                 meaning = meaningManager.getMeanings().FirstOrDefault(m => m.Name.Equals(l));
                             }
-                            
+
                             meaning.Name = l;
                             meaning.Selectable = true;
                             meaning.Approved = true;
@@ -300,12 +296,10 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
         private void createReleationships()
         {
-
             using (var meaningManager = new MeaningManager())
             {
                 ExternalLink prefix = new ExternalLink();
                 ExternalLink releation = new ExternalLink();
-
 
                 // prefix
                 string n = "i-adopt";
@@ -323,7 +317,6 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 {
                     prefix = meaningManager.getPrefixes().FirstOrDefault(p => p.Name.Equals(n));
                 }
-
 
                 List<string> releationshiptypes = new List<string>();
                 releationshiptypes.Add("hasContextObject");
@@ -400,12 +393,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
             {
                 // concept
                 // check if concept exist
-                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.Equals("DataCiteDoi")).FirstOrDefault();
+                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.Equals("DataCite")).FirstOrDefault();
 
                 var keys = new List<MappingKey>();
 
                 if (concept == null) //if not create
-                    concept = conceptManager.CreateMappingConcept("DataCiteDoi", "The concept is needed to create a DIO via DataCite.", "https://schema.datacite.org/meta/kernel-4.4/", "");
+                    concept = conceptManager.CreateMappingConcept("DataCite", "The concept is needed to create a DIO via DataCite.", "https://schema.datacite.org/meta/kernel-4.4/", "");
                 else // if exist load available keys
                 {
                     keys = conceptManager.MappingKeyRepo.Query(k => k.Concept.Id.Equals(concept.Id)).ToList();
@@ -421,76 +414,127 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 // publicationYear
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/publicationYear")))
-                    conceptManager.CreateMappingKey("PublicationYear", "", "", false, false, "data/attributes/publicationYear", concept);
+                    conceptManager.CreateMappingKey("PublicationYear", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/publicationyear/#id1", false, false, "data/attributes/publicationYear", concept);
 
                 // publisher
+                MappingKey publisher = null;
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/publisher")))
-                    conceptManager.CreateMappingKey("Publisher", "", "", false, false, "data/attributes/publisher", concept);
+                    publisher = conceptManager.CreateMappingKey("Publisher", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/publisher/#id1", false, true, "data/attributes/publisher", concept);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/publisher/name")))
+                    conceptManager.CreateMappingKey("Name", "", "", false, false, "data/attributes/publisher/name", concept, publisher);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/publisher/publisherIdentifier")))
+                    conceptManager.CreateMappingKey("PublisherIdentifier", "", "", true, false, "data/attributes/publisher/publisherIdentifier", concept, publisher);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/publisher/publisherIdentifierScheme")))
+                    conceptManager.CreateMappingKey("PublisherIdentifierScheme", "", "", false, false, "data/attributes/publisher/publisherIdentifierScheme", concept, publisher);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/publisher/schemeUri")))
+                    conceptManager.CreateMappingKey("SchemeUri", "", "", true, false, "data/attributes/publisher/schemeUri", concept, publisher);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/publisher/lang")))
+                    conceptManager.CreateMappingKey("Language", "", "", true, false, "data/attributes/publisher/lang", concept, publisher);
+
 
                 // title(s)
                 MappingKey titles = null;
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/titles")))
-                    titles = conceptManager.CreateMappingKey("Titles", "", "", false, true, "data/attributes/titles", concept);
+                    titles = conceptManager.CreateMappingKey("Titles", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/title/#id1", false, true, "data/attributes/titles", concept);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/titles/title")))
                     conceptManager.CreateMappingKey("Title", "", "", false, false, "data/attributes/titles/title", concept, titles);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/titles/lang")))
-                    conceptManager.CreateMappingKey("Lang", "", "", false, false, "data/attributes/titles/lang", concept, titles);
+                    conceptManager.CreateMappingKey("Lang", "", "", true, false, "data/attributes/titles/lang", concept, titles);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/titles/titleType")))
-                    conceptManager.CreateMappingKey("TitleType", "", "", false, false, "data/attributes/titles/titleType", concept, titles);
+                    conceptManager.CreateMappingKey("TitleType", "", "", true, false, "data/attributes/titles/titleType", concept, titles);
 
                 // creator(s)
                 MappingKey creators = null;
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/creators")))
-                    creators = conceptManager.CreateMappingKey("Creators", "", "www.google.de", false, true, "data/attributes/creators", concept);
+                    creators = conceptManager.CreateMappingKey("Creators", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/creator/#id1", false, true, "data/attributes/creators", concept);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/creators/name")))
                     conceptManager.CreateMappingKey("Name", "", "", false, false, "data/attributes/creators/name", concept, creators);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/creators/givenName")))
-                    conceptManager.CreateMappingKey("GivenName", "", "", false, false, "data/attributes/creators/givenName", concept, creators);
+                    conceptManager.CreateMappingKey("GivenName", "", "", true, false, "data/attributes/creators/givenName", concept, creators);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/creators/familyName")))
-                    conceptManager.CreateMappingKey("FamilyName", "", "", false, false, "data/attributes/creators/familyName", concept, creators);
+                    conceptManager.CreateMappingKey("FamilyName", "", "", true, false, "data/attributes/creators/familyName", concept, creators);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/creators/nameType")))
-                    conceptManager.CreateMappingKey("NameType", "", "", false, false, "data/attributes/creators/nameType", concept, creators);
+                    conceptManager.CreateMappingKey("NameType", "", "", true, false, "data/attributes/creators/nameType", concept, creators);
+
+                // contributor(s)
+                MappingKey contributors = null;
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors")))
+                    contributors = conceptManager.CreateMappingKey("Contributors", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/contributor/#id1", true, true, "data/attributes/contributors", concept);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors/name")))
+                    conceptManager.CreateMappingKey("Name", "", "", false, false, "data/attributes/contributors/name", concept, contributors);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors/givenName")))
+                    conceptManager.CreateMappingKey("GivenName", "", "", true, false, "data/attributes/contributors/givenName", concept, contributors);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors/familyName")))
+                    conceptManager.CreateMappingKey("FamilyName", "", "", true, false, "data/attributes/contributors/familyName", concept, contributors);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors/nameType")))
+                    conceptManager.CreateMappingKey("NameType", "", "", true, false, "data/attributes/contributors/nameType", concept, contributors);
+
+                if (!keys.Any(k => k.XPath.Equals("data/attributes/contributors/contributorType")))
+                    conceptManager.CreateMappingKey("ContributorType", "", "", true, false, "data/attributes/contributors/contributorType", concept, contributors);
 
                 // subject(s)
                 MappingKey subjects = null;
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/subjects")))
-                    subjects = conceptManager.CreateMappingKey("Subjects", "", "www.google.de", false, true, "data/attributes/subjects", concept);
+                    subjects = conceptManager.CreateMappingKey("Subjects", "", "www.google.de", true, true, "data/attributes/subjects", concept);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/subjects/subject")))
                     conceptManager.CreateMappingKey("Subject", "", "", false, false, "data/attributes/subjects/subject", concept, subjects);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/subjects/subjectScheme")))
-                    conceptManager.CreateMappingKey("SubjectScheme", "", "", false, false, "data/attributes/subjects/subjectScheme", concept, subjects);
+                    conceptManager.CreateMappingKey("SubjectScheme", "", "", true, false, "data/attributes/subjects/subjectScheme", concept, subjects);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/subjects/schemeUri")))
-                    conceptManager.CreateMappingKey("SchemeUri", "", "", false, false, "data/attributes/subjects/schemeUri", concept, subjects);
+                    conceptManager.CreateMappingKey("SchemeUri", "", "", true, false, "data/attributes/subjects/schemeUri", concept, subjects);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/subjects/valueUri")))
-                    conceptManager.CreateMappingKey("ValueUri", "", "", false, false, "data/attributes/subjects/valueUri", concept, subjects);
+                    conceptManager.CreateMappingKey("ValueUri", "", "", true, false, "data/attributes/subjects/valueUri", concept, subjects);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/subjects/lang")))
-                    conceptManager.CreateMappingKey("Lang", "", "", false, false, "data/attributes/subjects/lang", concept, subjects);
+                    conceptManager.CreateMappingKey("Lang", "", "", true, false, "data/attributes/subjects/lang", concept, subjects);
 
                 // description(s)
                 MappingKey descriptions = null;
                 if (!keys.Any(k => k.XPath.Equals("Descriptions")))
-                    descriptions = conceptManager.CreateMappingKey("Descriptions", "", "", false, true, "data/attributes/descriptions", concept);
+                    descriptions = conceptManager.CreateMappingKey("Descriptions", "", "", true, true, "data/attributes/descriptions", concept);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/descriptions/lang")))
-                    conceptManager.CreateMappingKey("Lang", "", "", false, false, "data/attributes/descriptions/lang", concept, descriptions);
+                    conceptManager.CreateMappingKey("Lang", "", "", true, false, "data/attributes/descriptions/lang", concept, descriptions);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/descriptions/description")))
                     conceptManager.CreateMappingKey("Description", "", "", false, false, "data/attributes/descriptions/description", concept, descriptions);
 
                 if (!keys.Any(k => k.XPath.Equals("data/attributes/descriptions/descriptionType")))
                     conceptManager.CreateMappingKey("DescriptionType", "", "", false, false, "data/attributes/descriptions/descriptionType", concept, descriptions);
+
+                // dates
+                //MappingKey dates = null;
+                //if (!keys.Any(k => k.XPath.Equals("Dates")))
+                //    dates = conceptManager.CreateMappingKey("Dates", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/date/#id1", true, true, "data/attributes/dates", concept);
+
+                //if (!keys.Any(k => k.XPath.Equals("data/attributes/dates/date")))
+                //    conceptManager.CreateMappingKey("Date", "", "", false, false, "data/attributes/descriptions/date", concept, dates);
+
+                //if (!keys.Any(k => k.XPath.Equals("data/attributes/dates/dateType")))
+                //    conceptManager.CreateMappingKey("Date", "", "", false, false, "data/attributes/descriptions/dateType", concept, dates);
+
+                //if (!keys.Any(k => k.XPath.Equals("data/attributes/dates/dateInformation")))
+                //    conceptManager.CreateMappingKey("DateInformation", "", "", true, false, "data/attributes/descriptions/dateInformation", concept, dates);
             }
         }
 

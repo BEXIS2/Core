@@ -23,14 +23,12 @@ namespace BExIS.Modules.Vim.UI.Helper
                     operationManager.Create("VIM", "Visualization", "*", visualization);
 
                     operationManager.Create("VIM", "Help", "*");
-
                 }
                 catch (Exception ex)
                 {
                     throw ex;
                 }
             }
-
         }
 
         public void Dispose()

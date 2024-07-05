@@ -10,14 +10,13 @@
     <version name="VersionNo" type="Int32">
       <column name="VersionNo" />
     </version>
-    
+
     <property name="Name" type="String">
       <column name="Name" />
     </property>
-		
+
     <property name="Description" type="String">
       <column name="Description" />
     </property>
-
 	</class>
 </hibernate-mapping>

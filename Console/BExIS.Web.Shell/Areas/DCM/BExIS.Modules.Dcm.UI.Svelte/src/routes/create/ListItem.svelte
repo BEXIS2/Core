@@ -14,7 +14,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 
-<div 
+<div
 	class="flex gap-5 border-b-violet-700 p-5 shadow-md ring-1 ring-gray-900/5
 hover:bg-primary-100 space-x-100 active:bg-primary-300"
 	on:click

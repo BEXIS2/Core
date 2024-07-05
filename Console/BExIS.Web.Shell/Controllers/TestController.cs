@@ -38,7 +38,7 @@ namespace BExIS.Web.Shell.Controllers
 
         public ActionResult TestRedirectToSvelte2(long id)
         {
-            return RedirectToAction("","edit",new {area="dcm", id });
+            return RedirectToAction("", "edit", new { area = "dcm", id });
         }
 
         public ActionResult AddRequest()

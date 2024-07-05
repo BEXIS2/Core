@@ -9,7 +9,6 @@ using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace BExIS.Modules.Rpm.UI.Helpers
 {
@@ -22,14 +21,14 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             model.Name = variableTemplate.Label;
             model.Description = variableTemplate.Description;
             model.DataType = new ListItem(variableTemplate.DataType.Id, variableTemplate.DataType.Name);
-            model.Unit = new UnitItem(variableTemplate.Unit.Id, variableTemplate.Unit.Name,variableTemplate.Unit.AssociatedDataTypes.Select(x => x.Name).ToList());
+            model.Unit = new UnitItem(variableTemplate.Unit.Id, variableTemplate.Unit.Name, variableTemplate.Unit.AssociatedDataTypes.Select(x => x.Name).ToList());
             model.Approved = variableTemplate.Approved;
-                 
-            // missing values 
+
+            // missing values
             variableTemplate.MissingValues?.ToList().ForEach(m => model.MissingValues.Add(new MissingValueItem(m.Id, m.DisplayName, m.Description)));
 
             // constraints
-            variableTemplate.VariableConstraints?.ToList().ForEach(c => model.Constraints.Add(new ListItem(c.Id, c.Name, getConstraintType(c),c.FormalDescription)));
+            variableTemplate.VariableConstraints?.ToList().ForEach(c => model.Constraints.Add(new ListItem(c.Id, c.Name, getConstraintType(c), c.FormalDescription)));
 
             //if (variableTemplate.Id>0)
             //using (var variableManager = new VariableManager())
@@ -56,12 +55,11 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             using (var meaningManager = new MeaningManager())
             using (var constraintManager = new ConstraintManager())
             {
-
                 var variableTemplate = new VariableTemplate();
 
                 if (_model == null) throw new ArgumentNullException("model");
-                if(_model.DataType == null) throw new ArgumentNullException("DataType");
-                if(_model.Unit == null) throw new ArgumentNullException("Unit");
+                if (_model.DataType == null) throw new ArgumentNullException("DataType");
+                if (_model.Unit == null) throw new ArgumentNullException("Unit");
 
                 DataType dataType = dataTypeManager.Repo.Get(_model.DataType.Id);
                 Unit unit = unitManager.Repo.Get(_model.Unit.Id);
@@ -112,7 +110,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 if (meanings.Any())
                 {
                     // use only the meanings that are selectable and approved
-                    foreach (Meaning meaning in meanings.Where(m=> (m.Selectable==true && m.Approved==true)))
+                    foreach (Meaning meaning in meanings.Where(m => (m.Selectable == true && m.Approved == true)))
                     {
                         list.Add(ConvertTo(meaning, meaningsManager));
                     }
@@ -120,13 +118,13 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 return list;
             }
-         }
+        }
 
         public List<ListItem> GetConstraints()
         {
             using (var constraintManager = new ConstraintManager())
             {
-                var constraints = constraintManager.Get().Where(c =>c.DataContainer==null);
+                var constraints = constraintManager.Get().Where(c => c.DataContainer == null);
                 List<ListItem> list = new List<ListItem>();
 
                 if (constraints.Any())
@@ -167,7 +165,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             return items;
         }
 
-        public VariableTemplateItem ConvertTo(VariableTemplate variableTemplate, string group="")
+        public VariableTemplateItem ConvertTo(VariableTemplate variableTemplate, string group = "")
         {
             using (var unitManager = new UnitManager()) // may not effective because this function will called a lot at once
             {
@@ -193,7 +191,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 return item;
             }
-
         }
 
         public List<MeaningItem> ConvertTo(ICollection<Meaning> meanings)
@@ -202,10 +199,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             {
                 List<MeaningItem> list = new List<MeaningItem>();
                 meanings.ToList().ForEach(m => list.Add(ConvertTo(m, meaningManager)));
-            return list;
-
+                return list;
             }
-
         }
 
         public MeaningItem ConvertTo(Meaning meaning, MeaningManager meaningsManager)
@@ -225,9 +220,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             item.Links = links;
             if (meaning.Constraints.Any())
                 item.Constraints = meaning.Constraints.Select(c => c.Name).ToList();
- 
-            return item;
 
+            return item;
         }
 
         public List<ListItem> ConvertTo(ICollection<Constraint> constraints)
@@ -236,7 +230,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             constraints.ToList().ForEach(m => list.Add(ConvertTo(m)));
 
             return list;
-
         }
 
         public ListItem ConvertTo(Constraint constraint)
@@ -250,7 +243,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             item.Description = constraint.FormalDescription;
 
             return item;
-
         }
 
         public List<Constraint> ConvertTo(ICollection<ListItem> constraints, ConstraintManager constraintManager)
@@ -259,7 +251,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             List<long> ids = constraints.Select(c => c.Id).ToList();
             list = constraintManager.ConstraintRepository.Query(c => ids.Contains(c.Id)).ToList();
             return list;
-
         }
 
         public List<Meaning> ConvertTo(List<MeaningItem> meanings, MeaningManager meaningManager)
@@ -318,7 +309,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 Constraints = ConvertTo(variable.VariableConstraints)
             };
 
-
             // add template if exist
             if (variable.VariableTemplate != null) var.Template = ConvertTo(variable.VariableTemplate, "copied");
 
@@ -358,7 +348,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 missingValueManager.Repo.Query(m => ids.Contains(m.Id));
                 return list;
             }
-
         }
 
         private string getConstraintType(Constraint c)

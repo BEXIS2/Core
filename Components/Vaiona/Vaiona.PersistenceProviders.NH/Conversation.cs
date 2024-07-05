@@ -10,7 +10,7 @@ namespace Vaiona.PersistenceProviders.NH
 {
     public class Conversation
     {
-        static Dictionary<object, List<IUnitOfWork>> attachedUnits = new Dictionary<object, List<IUnitOfWork>>(); // special observer pattern
+        private static Dictionary<object, List<IUnitOfWork>> attachedUnits = new Dictionary<object, List<IUnitOfWork>>(); // special observer pattern
         private ISessionFactory sessionFactory;
         private Configuration cfg;
         private bool showQueries = false;
@@ -65,6 +65,7 @@ namespace Vaiona.PersistenceProviders.NH
                         session.CacheMode = NHibernate.CacheMode.Normal;
                     sessionCode = session.GetHashCode();
                     break;
+
                 case TypeOfUnitOfWork.Isolated: // single conversation per uow
                     this.session = createSession();
                     statefull = true;
@@ -76,6 +77,7 @@ namespace Vaiona.PersistenceProviders.NH
                         session.CacheMode = NHibernate.CacheMode.Normal;
                     sessionCode = session.GetHashCode();
                     break;
+
                 case TypeOfUnitOfWork.Bulk: // single conversation per uow
                     this.stSession = createStatelessSession();
                     statefull = false;
@@ -83,6 +85,7 @@ namespace Vaiona.PersistenceProviders.NH
 
                     sessionCode = stSession.GetHashCode();
                     break;
+
                 default:
                     break;
             }
@@ -97,7 +100,6 @@ namespace Vaiona.PersistenceProviders.NH
             {
                 switch (type)
                 {
-
                     case TypeOfUnitOfWork.Normal: // add the uow to the observers of the current conversation, so that at closing time, the conversation is disposed with the last uow
                         lock (uow) // one commit per uow at a time!
                         {
@@ -108,6 +110,7 @@ namespace Vaiona.PersistenceProviders.NH
                             session.Transaction.Commit();
                         }
                         break;
+
                     case TypeOfUnitOfWork.Isolated: // single conversation per uow
                         lock (uow) // one commit per uow at a time!
                         {
@@ -118,6 +121,7 @@ namespace Vaiona.PersistenceProviders.NH
                             session.Transaction.Commit();
                         }
                         break;
+
                     case TypeOfUnitOfWork.Bulk: // single conversation per uow
                         lock (uow) // one commit per uow at a time!
                         {
@@ -128,6 +132,7 @@ namespace Vaiona.PersistenceProviders.NH
                             stSession.Transaction.Commit();
                         }
                         break;
+
                     default:
                         break;
                 }
@@ -137,7 +142,6 @@ namespace Vaiona.PersistenceProviders.NH
             finally
             { // no need to reactivate the transactio, it will be done on next commit attempt.
             }
-
         }
 
         public void End(IUnitOfWork uow)
@@ -156,16 +160,19 @@ namespace Vaiona.PersistenceProviders.NH
                         endSession(false);
                     }
                     break;
+
                 case TypeOfUnitOfWork.Isolated: // single conversation per uow
                     if (session == null || uow == null)
                         return;
                     endSession(true);
                     break;
+
                 case TypeOfUnitOfWork.Bulk: // single conversation per uow
                     if (stSession == null || uow == null)
                         return;
                     endStatelessSession();
                     break;
+
                 default:
                     break;
             }
@@ -214,6 +221,7 @@ namespace Vaiona.PersistenceProviders.NH
         }
 
         private static ISession singletonSession = null;
+
         private ISession createSingletonSession()
         {
             if (singletonSession == null)
@@ -325,7 +333,7 @@ namespace Vaiona.PersistenceProviders.NH
             //    return;
             //attachedUnits[session].Remove(uow);
             //if (attachedUnits[session].Count() <= 0)
-            //    attachedUnits.Remove(session);            
+            //    attachedUnits.Remove(session);
         }
     }
 }

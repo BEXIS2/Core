@@ -1,10 +1,8 @@
-﻿using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Helpers.Mapping;
-using BExIS.Dim.Services;
+﻿using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Helpers.Mappings;
+using BExIS.Dim.Services.Mappings;
 using BExIS.Modules.Dim.UI.Helper;
 using BExIS.Modules.Dim.UI.Models.Mapping;
-using BExIS.Xml.Helpers.Mapping;
-using BExIS.Xml.Models.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,17 +12,14 @@ namespace BExIS.Modules.Dim.UI.Controllers
 {
     public class MappingController : Controller
     {
-
         // GET: DIM/Mapping
         public ActionResult Index(long sourceId = 1, long targetId = 0, LinkElementType type = LinkElementType.System)
         {
             using (MappingManager mappingManager = new MappingManager())
             {
-
                 MappingMainModel model = new MappingMainModel();
                 // load from mds example
                 model.Source = MappingHelper.LoadFromMetadataStructure(sourceId, LinkElementPostion.Source, mappingManager);
-
 
                 switch (type)
                 {
@@ -56,7 +51,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     if (source != null && target != null)
                     {
-
                         //get root mapping
                         Mapping rootMapping = mappingManager.GetMapping(source, target);
 
@@ -65,21 +59,17 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             //get complex mappings
                             model.ParentMappings = MappingHelper.LoadMappings(rootMapping);
                         }
-
                     }
-
 
                     // in case of the link element has no xpath because of a older version of bexis 2
                     // every mapping will be check
                     // if a link element has no xpath get it from the generated models and update them for the furture
 
                     updateXPaths(model.ParentMappings, model.Source, model.Target);
-
                 }
 
                 return View(model);
             }
-
         }
 
         private void updateXPaths(List<ComplexMappingModel> mappings, LinkElementRootModel source, LinkElementRootModel target)
@@ -87,7 +77,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             foreach (var mapping in mappings)
             {
                 var sourceElement = source.LinkElements.FirstOrDefault(s => s.ElementId == mapping.Source.ElementId && s.Type == mapping.Source.Type);
-                if (sourceElement != null)mapping.Source.XPath = sourceElement.XPath;
+                if (sourceElement != null) mapping.Source.XPath = sourceElement.XPath;
                 var targetElement = target.LinkElements.FirstOrDefault(t => t.ElementId == mapping.Target.ElementId && t.Type == mapping.Target.Type);
                 if (targetElement != null) mapping.Target.XPath = targetElement.XPath;
 
@@ -103,9 +93,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 }
 
                 foreach (var sourceChildren in mapping.Source.Children)
-                { 
+                {
                     var sc = source.LinkElements.FirstOrDefault(s => s.ElementId == sourceChildren.ElementId && s.Complexity == LinkElementComplexity.Simple);
-                    if(sc!=null) sourceChildren.XPath = sc.XPath;
+                    if (sc != null) sourceChildren.XPath = sc.XPath;
                 }
 
                 foreach (var targetChildren in mapping.Target.Children)
@@ -148,6 +138,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 /*
                  * Here the source and target will switch the sides
                  */
+
                 #region load Source from Target
 
                 switch (sourceType)
@@ -172,9 +163,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         }
                 }
 
-                #endregion
+                #endregion load Source from Target
 
                 #region load Target
+
                 switch (targetType)
                 {
                     case LinkElementType.System:
@@ -197,7 +189,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         }
                 }
 
-                #endregion
+                #endregion load Target
+
                 if (model.Source != null && model.Target != null)
                 {
                     //get linkelements
@@ -206,7 +199,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     if (source != null && target != null)
                     {
-
                         //get root mapping
                         Mapping rootMapping = mappingManager.GetMapping(source, target);
 
@@ -219,7 +211,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 }
 
                 return model;
-               
             }
             finally
             {
@@ -237,7 +228,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 long id = position.Equals(LinkElementPostion.Source) ? sourceId : targetId;
                 LinkElementType type = position.Equals(LinkElementPostion.Source) ? sourceType : targetType;
-
 
                 switch (type)
                 {
@@ -269,11 +259,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         public ActionResult ReloadMapping(long sourceId = 1, long targetId = 0, LinkElementType sourceType = LinkElementType.System, LinkElementType targetType = LinkElementType.System, LinkElementPostion position = LinkElementPostion.Target)
         {
-
             MappingManager mappingManager = new MappingManager();
             try
             {
-
                 List<ComplexMappingModel> model = new List<ComplexMappingModel>();
 
                 // load from mds example
@@ -322,14 +310,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 if (target != null)
                 {
-
                     //get linkelements
                     LinkElement sourceLE = mappingManager.GetLinkElement(sourceId, sourceType);
                     LinkElement targetLE = mappingManager.GetLinkElement(targetId, targetType);
 
                     if (sourceLE != null && targetLE != null)
                     {
-
                         //get root mapping
                         Mapping rootMapping = mappingManager.GetMapping(sourceLE, targetLE);
 
@@ -358,15 +344,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return PartialView("MappingLinkElement", linkElementModel);
         }
 
-        public ActionResult SaveMapping(ComplexMappingModel model, bool both=false)
+        public ActionResult SaveMapping(ComplexMappingModel model, bool both = false)
         {
-
             MappingManager mappingManager = new MappingManager();
             //save link element if not exits
-            //source 
+            //source
             try
             {
-
                 #region save or update RootMapping
 
                 //create source Parents if not exist
@@ -381,9 +365,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 Mapping rootMappingReverse = null;
                 if (both) rootMappingReverse = MappingHelper.CreateIfNotExistMapping(targetParent, sourceParent, 0, null, null, mappingManager);
 
-                #endregion
+                #endregion save or update RootMapping
 
                 #region save or update complex mapping
+
                 LinkElement source;
                 LinkElement target;
 
@@ -403,23 +388,25 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 Mapping mapping = MappingHelper.CreateIfNotExistMapping(source, target, 1, null, rootMapping, mappingManager);
                 // also create the mapping in the other direction
                 Mapping mappingReverse = null;
-                if(both)mappingReverse = MappingHelper.CreateIfNotExistMapping(target, source, 1, null, rootMappingReverse, mappingManager);
+                if (both) mappingReverse = MappingHelper.CreateIfNotExistMapping(target, source, 1, null, rootMappingReverse, mappingManager);
 
                 model.Id = mapping.Id;
                 model.ParentId = mapping.Parent.Id;
-                #endregion
+
+                #endregion save or update complex mapping
 
                 #region create or update simple mapping
 
                 MappingHelper.UpdateSimpleMappings(source.Id, target.Id, model.SimpleMappings, mapping, mappingReverse, mappingManager, both);
 
-                #endregion
+                #endregion create or update simple mapping
 
                 #region generate or update mapping file
 
                 updateMappingFile(rootMapping);
 
-                #endregion
+                #endregion generate or update mapping file
+
                 //load all mappings
                 return PartialView("Mapping", model);
             }
@@ -479,7 +466,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
             catch (Exception ex)
             {
-
                 return Json(ex.Message);
             }
             finally
@@ -487,6 +473,5 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 MappingUtils.Clear();
             }
         }
-
     }
 }

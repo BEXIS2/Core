@@ -9,8 +9,7 @@ export function updateDisplayPattern(type, reset = true) {
 	const allDisplayPattern = get(displayPatternStore);
 	let displayPattern: listItemType[];
 
-	if (type != undefined && type != "") {
-
+	if (type != undefined && type != '') {
 		if (type.text.toLowerCase() === 'date') {
 			// date without time
 			displayPattern = allDisplayPattern.filter(

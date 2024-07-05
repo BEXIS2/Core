@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BExIS.Utils.Helpers
 {
@@ -18,11 +14,11 @@ namespace BExIS.Utils.Helpers
         {
             if (list == null || list.Length == 0) return "";
 
-            string input = string.Join(",",list);
+            string input = string.Join(",", list);
 
             if (string.IsNullOrEmpty(input)) return "";
 
-            using( MD5 md5 = MD5.Create())
+            using (MD5 md5 = MD5.Create())
             {
                 byte[] inputBytes = System.Text.Encoding.UTF8.GetBytes(input);
                 byte[] hashBytes = md5.ComputeHash(inputBytes);
@@ -37,6 +33,5 @@ namespace BExIS.Utils.Helpers
                 return sb.ToString();
             }
         }
-
     }
 }

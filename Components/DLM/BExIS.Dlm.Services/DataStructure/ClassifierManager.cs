@@ -8,8 +8,8 @@ namespace BExIS.Dlm.Services.DataStructure
 {
     public class ClassifierManager : IDisposable
     {
-
         private IUnitOfWork guow = null;
+
         public ClassifierManager()
         {
             guow = this.GetIsolatedUnitOfWork();
@@ -17,6 +17,7 @@ namespace BExIS.Dlm.Services.DataStructure
         }
 
         private bool isDisposed = false;
+
         ~ClassifierManager()
         {
             Dispose(true);
@@ -41,8 +42,10 @@ namespace BExIS.Dlm.Services.DataStructure
         }
 
         #region Data Readers
+
         public IReadOnlyRepository<Classifier> Repo { get; private set; }
-        #endregion
+
+        #endregion Data Readers
 
         #region Classifier
 
@@ -129,7 +132,7 @@ namespace BExIS.Dlm.Services.DataStructure
             return (entity);
         }
 
-        #endregion
+        #endregion Classifier
 
         #region Associations
 
@@ -183,7 +186,6 @@ namespace BExIS.Dlm.Services.DataStructure
             return (result);
         }
 
-        #endregion
-
+        #endregion Associations
     }
 }

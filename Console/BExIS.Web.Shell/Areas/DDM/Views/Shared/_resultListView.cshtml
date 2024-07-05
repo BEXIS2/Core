@@ -3,21 +3,19 @@
 @using BExIS.Utils.Models;
 @using Telerik.Web.Mvc.UI;
 
-
 @{
-    
+
     int PageSize = Convert.ToInt16(ViewData["PageSize"]);
     int CurrentPage =  Convert.ToInt16(ViewData["CurrentPage"]);
     List<HeaderItem> DefaultHeaderList = (List<HeaderItem>)ViewData["DefaultHeaderList"];
     HeaderItem Id = (HeaderItem)ViewData["Id"];
 
     DataTable dt = Model.ConvertToDataTable();
-    
+
     GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
     pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
     pagerStyles |= GridPagerStyles.Numeric;
 
-    
 }
 
 @*
@@ -29,7 +27,7 @@
             )
             .EnableCustomBinding(true)
             .HtmlAttributes(new { @class = "result-grid" })
-            
+
             .Columns(columns =>
             {
 
@@ -49,9 +47,8 @@
                 </text>
             )
 
+           .ClientRowTemplate(grid =>
 
-           .ClientRowTemplate(grid => 
-               
                 "<div id='resultelement<#=" + @dt.Columns[Id.Name].ColumnName + "#>' class='resultelement'>" +
                     "<div id='previe-wrapper'>" +
                         "<h3 id='ResultTitle'> <#=" + @dt.Columns[1].ColumnName + "#></h3>" +
@@ -79,7 +76,7 @@
                             .OnLoad("refreshGrid")
                             .OnSubmitChanges("refreshGrid")
                             .OnDataBound("resultList_onDataBound")
-                            
+
                             )
                 .Pageable(paging =>
                     paging
@@ -90,8 +87,7 @@
 
 )
 
-<div id="showPreviewDS-resultList" class="showPreviewDS"  >
-  
+<div id="showPreviewDS-resultList" class="showPreviewDS">
 </div>
 *@
 <script type='text/javascript'>
@@ -100,10 +96,9 @@ function OnClickPreviewDS(e) {
 
     if ($(e).hasClass('active')) {
 
-
         $(e).removeClass('active');
         $("#showPreviewDS-resultList").empty();
-        
+
     }
     else {
 
@@ -112,7 +107,7 @@ function OnClickPreviewDS(e) {
             /*$('#showPreviewDS').fadeOut('fast');*/
             $("#showPreviewDS-resultList").empty();
         }
-        
+
         var datasetID = e.title;
         var tr = $(e).closest("tr").get(0);
 
@@ -131,6 +126,4 @@ function OnClickPreviewDS(e) {
 function resultList_onDataBound(e) {
     $("#showPreviewDS-resultList").empty();
 }
-
-
 </script>

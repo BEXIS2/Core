@@ -2,13 +2,13 @@
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.IO.Transform.Output
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class AsciiHelper
     {
         /// <summary>
@@ -16,7 +16,7 @@ namespace BExIS.IO.Transform.Output
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param name="seperator">TextSeperator enum Type</param>       
+        /// <param name="seperator">TextSeperator enum Type</param>
         /// <returns>TextSeperator as string</returns>
         public static string GetSeperatorAsString(TextSeperator sep)
         {
@@ -24,22 +24,26 @@ namespace BExIS.IO.Transform.Output
             {
                 case TextSeperator.comma:
                     return TextSeperator.comma.ToString();
+
                 case TextSeperator.semicolon:
                     return TextSeperator.semicolon.ToString();
+
                 case TextSeperator.space:
                     return TextSeperator.space.ToString();
+
                 case TextSeperator.tab:
                     return TextSeperator.tab.ToString();
+
                 default: return TextSeperator.tab.ToString();
             }
         }
 
         /// <summary>
-        /// Get TextSeperator based on string as name 
+        /// Get TextSeperator based on string as name
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param name="seperator">Name of TextSeperator</param>       
+        /// <param name="seperator">Name of TextSeperator</param>
         /// <returns>TextSeperator as enum TextSeperator</returns>
         public static TextSeperator GetSeperator(string seperator)
         {
@@ -47,12 +51,16 @@ namespace BExIS.IO.Transform.Output
             {
                 case "comma":
                     return TextSeperator.comma;
+
                 case "semicolon":
                     return TextSeperator.semicolon;
+
                 case "space":
                     return TextSeperator.space;
+
                 case "tab":
                     return TextSeperator.tab;
+
                 default: return TextSeperator.tab;
             }
         }
@@ -68,10 +76,12 @@ namespace BExIS.IO.Transform.Output
             {
                 case TextSeperator.comma:
                     return ',';
+
                 case TextSeperator.semicolon:
                     return ';';
                 case TextSeperator.space:
                     return ' ';
+
                 case TextSeperator.tab:
                 default:
                     return '\t';
@@ -93,6 +103,5 @@ namespace BExIS.IO.Transform.Output
 
             return allSeperatorsAsChar;
         }
-
     }
 }

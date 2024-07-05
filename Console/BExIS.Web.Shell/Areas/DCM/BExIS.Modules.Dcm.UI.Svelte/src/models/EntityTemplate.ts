@@ -15,7 +15,7 @@ export interface EntityTemplateModel {
 	notificationGroups: number[];
 	permissionGroups: permissionsType;
 	linkedSubjects: ListItem[];
-	inUse:boolean;
+	inUse: boolean;
 }
 
 export interface permissionsType {

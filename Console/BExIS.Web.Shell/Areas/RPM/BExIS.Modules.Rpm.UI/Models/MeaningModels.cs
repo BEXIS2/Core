@@ -2,8 +2,6 @@
 using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace BExIS.Modules.Rpm.UI.Models
 {
@@ -92,13 +90,11 @@ namespace BExIS.Modules.Rpm.UI.Models
             Name = _name;
             Description = _description;
         }
-
     }
 
-    public class PrefixListItem:ListItem
+    public class PrefixListItem : ListItem
     {
         public string Url { get; set; }
-
 
         public PrefixListItem()
         {
@@ -115,9 +111,5 @@ namespace BExIS.Modules.Rpm.UI.Models
             Description = _description;
             Url = _url;
         }
-
     }
-
-
-
 }

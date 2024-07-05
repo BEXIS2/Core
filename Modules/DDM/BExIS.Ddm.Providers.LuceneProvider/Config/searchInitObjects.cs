@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Ddm.Providers.LuceneProvider.Config
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
-    class searchInitObjects
+    /// <remarks></remarks>
+    internal class searchInitObjects
     {
         public List<Facet> AllFacets = new List<Facet>();
         public List<Property> AllProperties = new List<Property>();
@@ -20,10 +20,9 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public searchInitObjects()
         {
-
         }
     }
 }

@@ -9,11 +9,9 @@ namespace BExIS.IO.Tests.Helper
 {
     public class DataGeneratorHelper
     {
-
         public List<List<string>> GenerateRowsWithRandomValuesBasedOnDatastructure(StructuredDataStructure dataStructure, long numberOfTuples)
         {
             List<List<string>> rows = new List<List<string>>();
-
 
             numberOfTuples.Should().BeGreaterThan(0);
 
@@ -30,12 +28,10 @@ namespace BExIS.IO.Tests.Helper
                     row.Add(true.ToString());
                     row.Add(DateTime.Now.ToString());
 
-
                     rows.Add(row);
                 }
 
                 return rows;
-
             }
             catch (Exception ex)
             {
@@ -49,7 +45,6 @@ namespace BExIS.IO.Tests.Helper
 
             List<string> rows = new List<string>();
 
-
             numberOfTuples.Should().BeGreaterThan(0);
 
             var r = new Random();
@@ -60,7 +55,6 @@ namespace BExIS.IO.Tests.Helper
                 {
                     string row = r.Next().ToString();
 
-
                     if (withQuotes) row += seperator.ToString() + "\"Test\"";
                     else row += seperator.ToString() + "Test";
 
@@ -68,12 +62,10 @@ namespace BExIS.IO.Tests.Helper
                     row += seperator.ToString() + true.ToString();
                     row += seperator.ToString() + DateTime.Now.ToString(datePattern.DisplayPattern);
 
-
                     rows.Add(row);
                 }
 
                 return rows;
-
             }
             catch (Exception ex)
             {
@@ -85,7 +77,6 @@ namespace BExIS.IO.Tests.Helper
         {
             List<string> rows = new List<string>();
 
-
             numberOfTuples.Should().BeGreaterThan(0);
 
             var r = new Random();
@@ -96,7 +87,6 @@ namespace BExIS.IO.Tests.Helper
                 {
                     string row = r.Next().ToString();
 
-
                     if (withQuotes) row += seperator.ToString() + "\"Test\"";
                     else row += seperator.ToString() + "Test";
 
@@ -104,19 +94,15 @@ namespace BExIS.IO.Tests.Helper
                     row += seperator.ToString() + true.ToString();
                     row += seperator.ToString() + DateTime.Now.ToString();
 
-
                     rows.Add(row);
                 }
 
                 return rows;
-
             }
             catch (Exception ex)
             {
                 return null;
             }
         }
-
-
     }
 }

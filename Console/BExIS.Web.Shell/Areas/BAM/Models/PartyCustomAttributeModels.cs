@@ -1,8 +1,4 @@
 ﻿using BExIS.Dlm.Entities.Party;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace BExIS.Modules.Bam.UI.Models
 {
@@ -17,13 +13,11 @@ namespace BExIS.Modules.Bam.UI.Models
         {
             return new ReadPartyCustomAttributeModel
             {
-                Id= customAttribute.Id,
+                Id = customAttribute.Id,
                 Name = customAttribute.Name,
                 DisplayName = customAttribute.DisplayName,
                 Description = customAttribute.Description,
             };
         }
     }
-
-
 }

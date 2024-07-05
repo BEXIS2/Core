@@ -1,9 +1,9 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Data">
   <class xmlns="urn:nhibernate-mapping-2.2" name="ContentDescriptor" table="ContentDescriptors">
     <!-- Mapping BaseEntity properties -->
-    
+
     <id name="Id" type="Int64">
-      <column name="Id" index="idx_ContentDescriptors_id"/>
+      <column name="Id" index="idx_ContentDescriptors_id" />
       <generator class="native" />
     </id>
 
@@ -16,7 +16,7 @@
     </property>
 
     <!-- Mapping own properties -->
-    
+
     <property name="OrderNo" type="Int32">
       <column name="OrderNo" />
     </property>
@@ -26,24 +26,22 @@
     </property>
 
     <property name="Name" type="String">
-      <column name="Name" index="idx_ContentDescriptors_id"/>
+      <column name="Name" index="idx_ContentDescriptors_id" />
     </property>
 
     <property name="URI" type="StringClob">
-      <column name="URI"  sql-type="text"/>
+      <column name="URI"  sql-type="text" />
     </property>
 
 	<property name="Description" type="StringClob">
-	  <column name="Description"  sql-type="text"/>
+	  <column name="Description"  sql-type="text" />
 	</property>
 
 	<property name="FileSize" type="Int32">
-	  <column name="FileSize"/>
+	  <column name="FileSize" />
 	</property>
 
-    <many-to-one class="DatasetVersion" name="DatasetVersion" column="DatasetVersionRef" not-null="true">      
-    </many-to-one>      
-    
+    <many-to-one class="DatasetVersion" name="DatasetVersion" column="DatasetVersionRef" not-null="true">
+    </many-to-one>
   </class>
-
 </hibernate-mapping>

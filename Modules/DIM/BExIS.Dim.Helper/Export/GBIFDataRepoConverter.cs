@@ -1,9 +1,10 @@
-﻿using BExIS.Dim.Entities.Mapping;
+﻿using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.GBIF;
-using BExIS.Dim.Helpers.Mapping;
+using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Helpers.Models;
 using BExIS.Dim.Services;
+using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO;

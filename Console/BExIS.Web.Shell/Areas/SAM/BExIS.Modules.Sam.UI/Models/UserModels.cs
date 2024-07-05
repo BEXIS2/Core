@@ -11,8 +11,10 @@ namespace BExIS.Modules.Sam.UI.Models
     {
         [JsonProperty("id")]
         public long Id { get; set; }
+
         [JsonProperty("email")]
         public string Email { get; set; }
+
         [JsonProperty("userName")]
         public string UserName { get; set; }
 

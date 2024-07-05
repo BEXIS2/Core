@@ -11,6 +11,7 @@ namespace Vaiona.PersistenceProviders.NH
         private NHibernatePersistenceManager manager;
         private ISessionFactory sessionFactory;
         private Configuration config;
+
         public NHibernateUnitOfWorkFactory(NHibernatePersistenceManager pManager, Configuration cfg)
         {
             config = cfg;

@@ -27,7 +27,6 @@ namespace BExIS.Modules.Dcm.UI.Models.Create
 
     public class MetadataInputField
     {
-
         public int Index { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }
@@ -41,5 +40,4 @@ namespace BExIS.Modules.Dcm.UI.Models.Create
             Name = "";
         }
     }
-
 }

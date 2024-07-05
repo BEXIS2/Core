@@ -10,7 +10,6 @@ namespace BExIS.Modules.Sam.UI.Models
         public int FeaturePermissionType { get; set; }
         public long Id { get; set; }
 
-
         public string DisplayName { get; set; }
 
         public string Type { get; set; }

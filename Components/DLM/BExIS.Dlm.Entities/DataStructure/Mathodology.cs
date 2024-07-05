@@ -3,13 +3,13 @@ using Vaiona.Entities.Common;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dlm.Entities.DataStructure
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class Methodology : BaseEntity
     {
         #region Attributes
@@ -18,31 +18,31 @@ namespace BExIS.Dlm.Entities.DataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string AppliedStandards { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Procedure { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Tolerance { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Tools { get; set; }
 
-        #endregion
+        #endregion Attributes
 
         #region Associations
 
@@ -50,10 +50,10 @@ namespace BExIS.Dlm.Entities.DataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ICollection<DataContainer> DataContainers { get; set; }
 
-        #endregion
+        #endregion Associations
 
         #region Mathods
 
@@ -62,12 +62,12 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         public Methodology()
         {
             DataContainers = new List<DataContainer>();
         }
 
-        #endregion
+        #endregion Mathods
     }
 }

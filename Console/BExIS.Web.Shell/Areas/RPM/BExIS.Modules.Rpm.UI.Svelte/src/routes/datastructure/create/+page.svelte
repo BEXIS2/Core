@@ -3,7 +3,13 @@
 	import Selection from '$lib/components/datastructure/Selection.svelte';
 	import { fade } from 'svelte/transition';
 
-	import { Spinner, Page, ErrorMessage, type helpItemType, helpStore } from '@bexis2/bexis2-core-ui';
+	import {
+		Spinner,
+		Page,
+		ErrorMessage,
+		type helpItemType,
+		helpStore
+	} from '@bexis2/bexis2-core-ui';
 	import {
 		generate,
 		save,
@@ -27,9 +33,8 @@
 	import { pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
 	//help
-		import { dataStructureHelp } from '../help';
-		let helpItems: helpItemType[] = dataStructureHelp;
-
+	import { dataStructureHelp } from '../help';
+	let helpItems: helpItemType[] = dataStructureHelp;
 
 	// load attributes from div
 	let container;
@@ -44,12 +49,9 @@
 	let selectionIsActive = true;
 	let init: boolean = true;
 
-	let loadingMessage="the structure is loading";
-	
+	let loadingMessage = 'the structure is loading';
 
 	async function start() {
-
-	
 		helpStore.setHelpItemList(helpItems);
 
 		// get data from parent
@@ -59,35 +61,39 @@
 		file = '' + container?.getAttribute('file');
 		datastructureId = Number(container?.getAttribute('structure'));
 
-		if(file){
-			loadingMessage ="the file "+file+" is currently being analyzed";
+		if (file) {
+			loadingMessage = 'the file ' + file + ' is currently being analyzed';
 		}
-
 
 		// get isTemplateRequired from settings and add it to store
 		// is used by validation
-		const isTemplateRequired = container?.getAttribute('isTemplateRequired')?.toLocaleLowerCase()=="true"?true:false;
+		const isTemplateRequired =
+			container?.getAttribute('isTemplateRequired')?.toLocaleLowerCase() == 'true' ? true : false;
 		isTemplateRequiredStore.set(isTemplateRequired);
 
 		// get isMeaningRequired from settings and add it to store
 		// is used by validation
-		const isMeaningRequired = container?.getAttribute('isMeaningRequired')?.toLocaleLowerCase()=="true"?true:false;
+		const isMeaningRequired =
+			container?.getAttribute('isMeaningRequired')?.toLocaleLowerCase() == 'true' ? true : false;
 		isMeaningRequiredStore.set(isMeaningRequired);
-		
+
 		// get setByTemplate from settings and add it to store
 		// is used by createion of variables
-		const setByTemplate = container?.getAttribute('setByTemplate')?.toLocaleLowerCase()=="true"?true:false;
+		const setByTemplate =
+			container?.getAttribute('setByTemplate')?.toLocaleLowerCase() == 'true' ? true : false;
 		setByTemplateStore.set(setByTemplate);
 
 		// get enforcePrimaryKey from settings and add it to store
 		// save structure only if pk is set
-		const enforcePrimaryKey = container?.getAttribute('enforcePrimaryKey')?.toLocaleLowerCase()=="true"?true:false;
+		const enforcePrimaryKey =
+			container?.getAttribute('enforcePrimaryKey')?.toLocaleLowerCase() == 'true' ? true : false;
 		enforcePrimaryKeyStore.set(enforcePrimaryKey);
 
-	// get changeablePrimaryKey from settings and add it to store
-	// save structure only if pk is set
-	const changeablePrimaryKey = container?.getAttribute('changeablePrimaryKey')?.toLocaleLowerCase()=="true"?true:false;
-	changeablePrimaryKeyStore.set(changeablePrimaryKey);
+		// get changeablePrimaryKey from settings and add it to store
+		// save structure only if pk is set
+		const changeablePrimaryKey =
+			container?.getAttribute('changeablePrimaryKey')?.toLocaleLowerCase() == 'true' ? true : false;
+		changeablePrimaryKeyStore.set(changeablePrimaryKey);
 
 		// 2 Usecases,
 		// 1. generate from file, selection needed -> load file
@@ -95,13 +101,12 @@
 		// check if file is empty or not
 
 		// load data from server
-		console.log("🚀 ~ file: +page.svelte:69 ~ start ~ file:", file)
+		console.log('🚀 ~ file: +page.svelte:69 ~ start ~ file:', file);
 		if (file != '') {
 			console.log('file exist', file, entityId, 0);
 
 			model = await load(file, entityId, 65001, 0);
-			console.log("🚀 ~ start ~ model:", model)
-			
+			console.log('🚀 ~ start ~ model:', model);
 		} else if (datastructureId > 0) {
 			console.log('copy structure');
 			// copy structure
@@ -146,9 +151,8 @@
 	contentLayoutType={pageContentLayoutType.full}
 	help={true}
 >
-
 	{#await start()}
-		<Spinner label="{loadingMessage}" />
+		<Spinner label={loadingMessage} />
 	{:then}
 		{#if model}
 			{#if selectionIsActive}

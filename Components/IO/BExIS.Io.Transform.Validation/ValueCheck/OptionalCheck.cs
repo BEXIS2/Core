@@ -3,13 +3,13 @@ using System;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.IO.Transform.Validation.ValueCheck
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class OptionalCheck : IValueCheck
     {
         #region private
@@ -25,7 +25,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public ValueType AppliedTo
         {
             get
@@ -38,7 +38,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public string Name
         {
             get { return name; }
@@ -48,18 +48,18 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public string DataType
         {
             get { return dataType; }
         }
 
-        #endregion
+        #endregion get
 
-        #endregion
+        #endregion private
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -78,7 +78,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -91,8 +91,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
             this.optional = optional;
             this.name = name;
             this.dataType = dataType;
-
         }
-
     }
 }
