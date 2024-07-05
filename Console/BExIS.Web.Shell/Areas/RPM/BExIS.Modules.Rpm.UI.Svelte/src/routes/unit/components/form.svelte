@@ -22,7 +22,8 @@
 		DataTypeListItem,
 		DimensionListItem,
 		UnitValidationResult,
-		LinkItem
+		LinkItem,
+		ListItem
 	} from '../models';
 
 	// event
@@ -39,25 +40,22 @@
 	// use to actived save if form is valid
 	$: disabled = !res.isValid();
 
+
+
 	// init unit
 	export let unit: UnitListItem;
 	export let units: UnitListItem[];
 
-	let toggle = {dataTypes: false, externalLinks: false};
+	let toggle = {dataTypes: false};
 
 	let el: LinkItem[] =[]; 
 	let dt: DataTypeListItem[];
 	let ms: string[];
-	let ds: DimensionListItem[] = [];
-	let dimensionlistItem =
-		unit === undefined || unit.dimension === undefined
-			? undefined
-			: { id: unit.dimension.id, text: unit.dimension.name };
-	let linklistItem =
-		unit === undefined || unit.link === undefined
-			? undefined
-			: { id: unit.link.id, text: unit.link.name };
+	let ds: DimensionListItem[] = [];	
 	let linkUrl: URL | null = null;
+	let dimensionlistItem: ListItem | undefined;
+	let linklistItem: ListItem | undefined;
+	setListItems()
 
 	$: dataTypes = dt;
 	$: measurementSystems = ms;
@@ -65,9 +63,11 @@
 	$: externalLinks = el.map(({ id, name }) => ({ id: id, text: name }));
 	$: unit.dimension = dimensionlistItem === undefined ? undefined : ds.find((d) => d.id === dimensionlistItem?.id);
 	$: unit.link = linklistItem === undefined ? undefined : el.find((e) => e.id === linklistItem?.id);
-	$: linkUrl =  unit.link === undefined ? null : converttoURL (unit.link.uri); 
+	$: linkUrl = unit.link === undefined ? null : converttoURL (unit.link.uri);
+	$: unit.link, unit.description, setListItems(), setValidation(); 
 
 	onMount(async () => {
+		setListItems()
 		setValidation();
 	});
 
@@ -100,7 +100,7 @@
 			// check changed field
 			res = suite(
 				{ unit: unit, units: units, measurementSystems: measurementSystems },
-				undefined
+				e.target.id
 			);
 		}, 100);
 	}
@@ -154,6 +154,22 @@
 		}
 	}
 
+	function setListItems()
+	{
+		if(unit)
+		{
+			if(unit.dimension)
+			{
+				dimensionlistItem = { id: unit.dimension.id, text: unit.dimension.name };
+				console.log('dimensionlistItem', dimensionlistItem);
+			}
+			if (unit.link)
+			{
+				linklistItem = { id: unit.link.id, text: unit.link.name };
+				console.log('linklistItem', linklistItem);
+			}
+		}
+	}
 </script>
 
 <div class="card p-5 shadow-md my-3">
