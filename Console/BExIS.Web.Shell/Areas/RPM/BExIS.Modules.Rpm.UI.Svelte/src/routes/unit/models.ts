@@ -36,3 +36,8 @@ export interface UnitValidationResult {
 	validationResult: ValidationResult;
 	unitListItem: UnitListItem;
 }
+
+export interface ListItem {
+	id: number;
+	text: string;
+}
