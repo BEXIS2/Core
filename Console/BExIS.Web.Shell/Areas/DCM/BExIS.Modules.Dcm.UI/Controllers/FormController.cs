@@ -3593,7 +3593,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 if (item != null && complexElement != null && complexElement.HasAttributes)
                 {
-                    item.Value = complexElement.Attribute(item.DisplayName).Value.ToString();
+                    item.Value = complexElement.Attribute(item.DisplayName) !=null? complexElement.Attribute(item.DisplayName).Value.ToString():"";
                 }
             }
 
