@@ -157,7 +157,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 createMappings();
 
-                createDOIMappingConcept();
+                createDataCiteMappingConcept();
 
                 createGBIFDWCMappingConcept();
 
@@ -387,13 +387,11 @@ namespace BExIS.Modules.Dim.UI.Helpers
             //    }
         }
 
-        private void createDOIMappingConcept()
+        private void createDataCiteMappingConcept()
         {
             using (var conceptManager = new ConceptManager())
             {
-                // concept
-                // check if concept exist
-                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.Equals("DataCite")).FirstOrDefault();
+                var concept = conceptManager.FindByName("datacite");
 
                 var keys = new List<MappingKey>();
 
@@ -544,7 +542,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
             {
                 // concept
                 // check if concept exist
-                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.Equals("Functions")).FirstOrDefault();
+                var concept = conceptManager.MappingConceptRepository.Query(c => c.Name.Equals("Functions")).FirstOrDefault();
 
                 var keys = new List<MappingKey>();
 
@@ -571,7 +569,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
         {
             using (var conceptManager = new ConceptManager())
             {
-                var concept = conceptManager.MappingConceptRepo.Query(c => c.Name.Equals("GBIF")).FirstOrDefault();
+                var concept = conceptManager.MappingConceptRepository.Query(c => c.Name.Equals("GBIF")).FirstOrDefault();
 
                 var keys = new List<MappingKey>();
 
