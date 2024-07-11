@@ -50,8 +50,8 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@bexis2/bexis2-core-ui": "0.4.7",
-		"@bexis2/bexis2-rpm-ui": "0.2.1",
+		"@bexis2/bexis2-core-ui": "^0.4.8",
+		"@bexis2/bexis2-rpm-ui": "^0.2.2",
 		"@floating-ui/dom": "^1.6.3",
 		"@fortawesome/free-solid-svg-icons": "^6.5.2",
 		"@sveltejs/adapter-static": "^3.0.1",

@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { MultiSelect, notificationStore, notificationType } from '@bexis2/bexis2-core-ui';
 
-	import { onMount } from 'svelte';
-
 	import type { DataStructureCreationModel } from '@bexis2/bexis2-rpm-ui';
 
 	import type { asciiFileReaderInfoType, fileInfoType } from '@bexis2/bexis2-core-ui';

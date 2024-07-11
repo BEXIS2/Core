@@ -1228,5 +1228,10 @@ namespace BExIS.Web.Shell.Controllers
 
             return View();
         }
+
+        public JsonResult ErrorTest()
+        {
+            throw new NotImplementedException("this is a error test");
+        }
     }
 }

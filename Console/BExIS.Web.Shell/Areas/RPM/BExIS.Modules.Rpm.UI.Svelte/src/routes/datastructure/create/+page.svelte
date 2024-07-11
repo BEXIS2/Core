@@ -132,10 +132,15 @@
 		model = e.detail;
 
 		let res = await generate(e.detail);
+		console.log("🚀 ~ update ~ res:", res)
 
 		if (res != false) {
 			model = res;
 			selectionIsActive = false;
+		}
+		else
+		{
+
 		}
 	}
 
