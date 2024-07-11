@@ -1,4 +1,6 @@
 # BEXIS2 3.3.1 Release Notes
+>In this small update we have fixed problems with uploading data and metadata editing and extended the concept to date cite, which allows you to send more metadata.
+
 
 ### Workspace changes:
 - Workspace changes: [3.3.0..3.3.1](https://github.com/BEXIS2/Workspace/compare/3.3.0..3.3.1)
