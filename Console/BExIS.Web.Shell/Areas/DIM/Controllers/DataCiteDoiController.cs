@@ -21,7 +21,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
-using Vaelastrasz.Library.Configurations;
 using Vaelastrasz.Library.Extensions;
 using Vaelastrasz.Library.Models;
 using Vaelastrasz.Library.Services;
