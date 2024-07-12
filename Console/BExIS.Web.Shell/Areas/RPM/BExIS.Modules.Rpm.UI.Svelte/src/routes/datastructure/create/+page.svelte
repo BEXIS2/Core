@@ -34,6 +34,7 @@
 
 	//help
 	import { dataStructureHelp } from '../help';
+	import { goTo } from '$services/BaseCaller';
 	let helpItems: helpItemType[] = dataStructureHelp;
 
 	// load attributes from div
@@ -47,6 +48,7 @@
 	$: model;
 
 	let selectionIsActive = true;
+	$:selectionIsActive;
 	let init: boolean = true;
 
 	let loadingMessage = 'the structure is loading';
@@ -128,20 +130,16 @@
 	}
 
 	async function update(e) {
-		console.log('update', e.detail);
+
 		model = e.detail;
 
 		let res = await generate(e.detail);
-		console.log("🚀 ~ update ~ res:", res)
 
-		if (res != false) {
+		if (res != undefined) {
 			model = res;
 			selectionIsActive = false;
 		}
-		else
-		{
 
-		}
 	}
 
 	function back() {
