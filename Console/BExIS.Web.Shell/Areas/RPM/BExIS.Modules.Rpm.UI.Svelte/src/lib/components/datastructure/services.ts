@@ -127,6 +127,7 @@ export const store = async (data) => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
+		
 	}
 };
 

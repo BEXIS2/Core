@@ -10,7 +10,7 @@
 	import { store, load } from './services';
 
 	import Fa from 'svelte-fa';
-	import { faSave, faChevronRight, faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
+	import { faSave, faChevronRight, faArrowRotateLeft,faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 	//types
 	import type { DataStructureCreationModel, markerType } from './types';
@@ -19,6 +19,7 @@
 	import Controls from './Controls.svelte';
 	import Attributes from './structure/Attributes.svelte';
 	import ConstraintsDescription from './structure/variable/ConstraintsDescription.svelte';
+	import { goTo } from '$services/BaseCaller';
 
 	export let model: DataStructureCreationModel;
 	$: model;
@@ -436,9 +437,16 @@
 			}
 
 	}
+
+	function back() {
+		goTo("/rpm/datastructure/create");
+	}
 </script>
 
+
 {#if !model || state.length == 0 || generate == false}
+<button title="back" class="btn variant-filled-warning" on:click={() => back()}
+	><Fa icon={faArrowLeft} /></button>
 	<!--if the model == false, access denied-->
 	{#if !model || state.length == 0 || generate == false}
 		<div class="h-full w-full text-surface-700">

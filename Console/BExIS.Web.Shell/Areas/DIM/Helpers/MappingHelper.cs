@@ -54,7 +54,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                 // add concepts
                 using (var conceptManager = new ConceptManager())
                 {
-                    var concepts = conceptManager.MappingConceptRepo.Get();
+                    var concepts = conceptManager.MappingConceptRepository.Get();
 
                     foreach (var concept in concepts)
                     {
@@ -458,7 +458,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
             using (var conceptManager = new ConceptManager())
             {
-                var concept = conceptManager.MappingConceptRepo.Get(id);
+                var concept = conceptManager.MappingConceptRepository.Get(id);
                 if (concept == null) throw new ArgumentNullException("concept not exist");
 
                 LinkElementRootModel root = new LinkElementRootModel(LinkElementType.MappingConcept, id, concept.Name, position, concept.Description, concept.Url);
