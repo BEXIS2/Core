@@ -19,7 +19,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             using (var conceptManager = new ConceptManager())
             {
-                foreach (var c in conceptManager.MappingConceptRepo.Get())
+                foreach (var c in conceptManager.MappingConceptRepository.Get())
                 {
                     tmp.Add(new Concept()
                     {

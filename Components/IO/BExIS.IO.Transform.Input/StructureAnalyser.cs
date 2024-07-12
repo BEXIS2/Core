@@ -309,32 +309,36 @@ namespace BExIS.IO.Transform.Input
                 // var template matches by name
                 var byNames = new List<VariableTemplate>();
 
-                // name
-                foreach (var template in allTemplates)
+                if (string.IsNullOrEmpty(input)) // if a varaible name exist as input
                 {
-                    var ro = new RatcliffObershelp();
-                    var nameSimularity = ro.Similarity(input.ToLower(), template.Label.ToLower());
 
-                    if (string.IsNullOrEmpty(input) || nameSimularity >= similarity)
+                    // name
+                    foreach (var template in allTemplates)
                     {
-                        matches.Add(template, nameSimularity);
-                    }
-                }
+                        var ro = new RatcliffObershelp();
+                        var nameSimularity = ro.Similarity(input.ToLower(), template.Label.ToLower());
 
-                // meaning
-                foreach (var template in allTemplates)
-                {
-                    if (template.Meanings.Any())
-                    {
-                        foreach (var meaning in template.Meanings)
+                        if (string.IsNullOrEmpty(input) || nameSimularity >= similarity)
                         {
-                            var ro = new RatcliffObershelp();
-                            var nameSimularity = ro.Similarity(input.ToLower(), meaning.Name.ToLower());
+                            matches.Add(template, nameSimularity);
+                        }
+                    }
 
-                            if (string.IsNullOrEmpty(input) || nameSimularity >= similarity)
+                    // meaning
+                    foreach (var template in allTemplates)
+                    {
+                        if (template.Meanings.Any())
+                        {
+                            foreach (var meaning in template.Meanings)
                             {
-                                if (matches.ContainsKey(template)) matches[template] += nameSimularity;
-                                else matches.Add(template, nameSimularity);
+                                var ro = new RatcliffObershelp();
+                                var nameSimularity = ro.Similarity(input.ToLower(), meaning.Name.ToLower());
+
+                                if (string.IsNullOrEmpty(input) || nameSimularity >= similarity)
+                                {
+                                    if (matches.ContainsKey(template)) matches[template] += nameSimularity;
+                                    else matches.Add(template, nameSimularity);
+                                }
                             }
                         }
                     }

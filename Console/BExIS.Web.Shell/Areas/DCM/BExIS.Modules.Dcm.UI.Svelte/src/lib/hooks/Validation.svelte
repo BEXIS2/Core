@@ -11,10 +11,13 @@
 		latestSubmitDate,
 		latestValidationDate
 	} from '../../routes/edit/stores';
+	
+	import { hooksStatus } from '../../routes/edit/stores';
 	import { onMount } from 'svelte';
 
 	import type { ValidationModel } from '$models/ValidationModels';
 	import PlaceHolderHookContent from './placeholder/PlaceHolderHookContent.svelte';
+	import { get } from 'svelte/store';
 
 	export let id = 0;
 	export let version = 1;
@@ -60,18 +63,18 @@
 					'🚀 ~ file: Validation.svelte:49 ~ onMount ~ latestSubmitDate:',
 					$latestSubmitDate
 				);
-				reload('latestSubmitDate');
+				//reload('latestSubmitDate');
 			}
 		});
 	});
 
 	async function reload(type) {
-		//const res = await fetch(url);
-		console.log('validation start');
-		model = null;
-		model = await getHookStart(start, id, version);
-		console.log('validation end', model?.isValid);
-		latestValidationDate.set(Date.now());
+	
+			model = null;
+			model = await getHookStart(start, id, version);
+			console.log('validation end', model?.isValid);
+			latestValidationDate.set(Date.now());
+		
 	}
 </script>
 

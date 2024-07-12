@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Page, Table, type TableConfig } from '@bexis2/bexis2-core-ui';
+	import { Page, Table, type TableConfig, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 	import { host, username, password } from '@bexis2/bexis2-core-ui';
 	import { writable } from 'svelte/store';
 	import { getToken } from '$services/BaseCaller';
@@ -44,7 +44,7 @@
 	}
 </script>
 
-<Page>
+<Page contentLayoutType="{pageContentLayoutType.full}">
 	{#if serverTableConfig}
 		<Table config={serverTableConfig} />
 	{/if}

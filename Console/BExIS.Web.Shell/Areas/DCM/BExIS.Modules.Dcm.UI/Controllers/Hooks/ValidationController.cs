@@ -132,6 +132,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             var pks = sds.Variables.Where(v => v.IsKey.Equals(true))?.Select(v => v.Id);
                             string varIdsAsString = pks == null ? "" : string.Join(",", pks.ToArray());
 
+                            //update primaryKeys if chaneged
+                            cache.UpdateSetup.PrimaryKeys = pks.ToList();
+
+                            // optionals
+                            var optionals = string.Join(",", sds.Variables.Where(v => v.IsValueOptional).Select(v => v.Id));
+
                             // check against primary key in db
                             // this check happens outside of the files,
                             var unique = false;
@@ -171,7 +177,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                 readerInfo,
                                                 cache.Files.Count.ToString(),
                                                 varIdsAsString,
-                                                sds.VersionNo.ToString());
+                                                sds.VersionNo.ToString(),
+                                                optionals
+                                                );
 
                                             // if a validation is allready run and the file has not changed, skip validation
                                             if (file.ValidationHash != incomingHash)
