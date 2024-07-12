@@ -96,6 +96,7 @@
     <Compile Include="Attributes\BExISApiAuthorizeAttribute.cs" />
     <Compile Include="Attributes\BExISAuthorizeAttribute.cs" />
     <Compile Include="Attributes\BExISEntityAuthorizeAttribute.cs" />
+    <Compile Include="Attributes\CustomExceptionFilter.cs" />
     <Compile Include="Attributes\JsonNetFilterAttribute.cs" />
     <Compile Include="Extensions\AuthorizationContextExtensions.cs" />
     <Compile Include="Helpers\BExISAuthorizeHelper.cs" />

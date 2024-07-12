@@ -383,7 +383,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     using (var conceptManager = new ConceptManager())
                     {
-                        var concept = conceptManager.MappingConceptRepo.Get().Where(c => c.Name.Equals(subsetType)).FirstOrDefault();
+                        var concept = conceptManager.MappingConceptRepository.Get().Where(c => c.Name.Equals(subsetType)).FirstOrDefault();
 
                         if (concept == null)
                             return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "In combination with the format subset - subsettype must not be empty");

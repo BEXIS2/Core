@@ -1,5 +1,6 @@
 ﻿using BExIS.Dim.Entities.Mappings;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Vaiona.Persistence.Api;
@@ -14,7 +15,7 @@ namespace BExIS.Dim.Services.Mappings
         public ConceptManager()
         {
             guow = this.GetIsolatedUnitOfWork();
-            this.MappingConceptRepo = guow.GetReadOnlyRepository<MappingConcept>();
+            this.MappingConceptRepository = guow.GetReadOnlyRepository<MappingConcept>();
             this.MappingKeyRepo = guow.GetReadOnlyRepository<MappingKey>();
         }
 
@@ -23,7 +24,7 @@ namespace BExIS.Dim.Services.Mappings
             Dispose(true);
         }
 
-        public IQueryable<MappingConcept> MappingConcepts => MappingConceptRepo.Query();
+        public IQueryable<MappingConcept> MappingConcepts => MappingConceptRepository.Query();
 
         public void Dispose()
         {
@@ -46,7 +47,7 @@ namespace BExIS.Dim.Services.Mappings
         #region Data Readers
 
         // provide read only repos for the whole aggregate area
-        public IReadOnlyRepository<MappingConcept> MappingConceptRepo { get; private set; }
+        public IReadOnlyRepository<MappingConcept> MappingConceptRepository { get; private set; }
 
         public IReadOnlyRepository<MappingKey> MappingKeyRepo { get; private set; }
 
@@ -104,6 +105,34 @@ namespace BExIS.Dim.Services.Mappings
             }
             // if any problem was detected during the commit, an exception will be thrown!
             return (true);
+        }
+
+        public MappingConcept FindById(long mappingConceptId)
+        {
+            return MappingConceptRepository.Get(mappingConceptId);
+        }
+
+        public MappingConcept FindByName(string name)
+        {
+            try
+            {
+                using (var uow = this.GetUnitOfWork())
+                {
+                    var mappingConceptRepository = uow.GetRepository<MappingConcept>();
+
+                    var mappingConcept = mappingConceptRepository.Query(u => u.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)).ToList();
+
+                    if (mappingConcept.Count != 1)
+                        return null;
+
+                    return mappingConcept.Single();
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            
         }
 
         #endregion Concept

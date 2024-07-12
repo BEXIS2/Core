@@ -544,6 +544,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost]
         public JsonResult Generate(DataStructureCreationModel model)
         {
+
             if (model == null) throw new ArgumentNullException(nameof(model));
             if (model.Markers == null || !model.Markers.Any()) throw new ArgumentNullException(nameof(model));
             if (model.File == null) throw new ArgumentNullException(nameof(model.File));
@@ -612,6 +613,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     VariableInstanceModel var = new VariableInstanceModel();
 
                     var.Name = getValueFromMarkedRow(markerRows, model.Markers, "variable", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
+                    if (string.IsNullOrEmpty(var.Name)) throw new ArgumentException($"Variable name on (" + i + ") is empty");
+
                     var.Description = getValueFromMarkedRow(markerRows, model.Markers, "description", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
 
                     // check and get datatype
@@ -644,6 +647,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     }
                     else // no unit input
                     {
+
                         templates = strutcureAnalyzer.SuggestTemplate(var.Name, 0, var.DataType.Id, similarityThreshold);
                         templates.Select(t => t.Unit).Distinct().ToList().ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
                         var.Unit = var.PossibleUnits.FirstOrDefault();
@@ -686,6 +690,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             // get default missing values
             return Json(model);
+
         }
 
         [JsonNetFilter]

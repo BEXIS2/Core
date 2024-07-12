@@ -122,7 +122,7 @@ namespace Vaiona.IoC.Unity
 
         public void StartSessionLevelContainer()
         {
-            string key = HttpContext.Current.Session.SessionID;
+            string key = HttpContext.Current?.Session.SessionID;
             if (!children.ContainsKey(key))
             {
                 UnityIoC child = new UnityIoC(container.CreateChildContainer());
@@ -134,8 +134,8 @@ namespace Vaiona.IoC.Unity
         {
             try
             {
-                string key = HttpContext.Current.Session.SessionID;
-                if (this.children.ContainsKey(key))
+                string key = HttpContext.Current?.Session.SessionID;
+                if (!string.IsNullOrEmpty(key) && this.children.ContainsKey(key))
                     children.Remove(key);
             }
             catch { }
@@ -145,7 +145,7 @@ namespace Vaiona.IoC.Unity
         {
             try
             {
-                string key = HttpContext.Current.Session.SessionID;
+                string key = HttpContext.Current?.Session.SessionID;
                 if (this.children.ContainsKey(key))
                 {
                     UnityIoC child = this.children[key];
