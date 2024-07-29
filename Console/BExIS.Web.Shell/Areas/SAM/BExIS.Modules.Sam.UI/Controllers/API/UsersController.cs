@@ -16,7 +16,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
     {
         // GET: Groups
         [HttpGet, GetRoute("api/users/{id}")]
-        public async Task<HttpResponseMessage> GetById(long id)
+        public async Task<HttpResponseMessage> GetByIdAsync(long id)
         {
             try
             {
@@ -37,7 +37,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
         }
 
         [HttpGet, GetRoute("api/users")]
-        public async Task<HttpResponseMessage> Get()
+        public async Task<HttpResponseMessage> GetAsync()
         {
             try
             {
@@ -57,7 +57,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
         }
 
         [HttpPost, PostRoute("api/users")]
-        public async Task<HttpResponseMessage> Post(CreateUserModel model)
+        public async Task<HttpResponseMessage> PostAsync(CreateUserModel model)
         {
             try
             {
@@ -77,6 +77,29 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             catch (Exception ex)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        [HttpPut, PutRoute("api/users/{id}")]
+        public async Task<HttpResponseMessage> PutByIdAsync(long userId, UpdateUserModel model)
+        {
+            using (var userManager = new UserManager())
+            {
+                var user = await userManager.FindByIdAsync(userId) ?? throw new ArgumentNullException();
+
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+        }
+
+        [HttpDelete, DeleteRoute("api/users/{id}")]
+        public async Task<HttpResponseMessage> DeleteByIdAsync(long userId)
+        {
+            using (var userManager = new UserManager())
+            {
+                var user = await userManager.FindByIdAsync(userId) ?? throw new ArgumentNullException();
+                await userManager.DeleteAsync(user);
+
+                return Request.CreateResponse(HttpStatusCode.OK);
             }
         }
     }

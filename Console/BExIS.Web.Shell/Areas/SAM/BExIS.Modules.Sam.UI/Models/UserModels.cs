@@ -71,7 +71,8 @@ namespace BExIS.Modules.Sam.UI.Models
             {
                 Email = user.Email,
                 Id = user.Id,
-                UserName = user.Name
+                UserName = user.Name,
+                user.
             };
         }
     }

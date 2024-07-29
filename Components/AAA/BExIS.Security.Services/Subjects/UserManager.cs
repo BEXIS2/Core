@@ -123,7 +123,7 @@ namespace BExIS.Security.Services.Subjects
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public Task DeleteAsync(User user)
+        public async Task DeleteAsync(User user)
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -131,8 +131,6 @@ namespace BExIS.Security.Services.Subjects
                 userRepository.Delete(user);
                 uow.Commit();
             }
-
-            return Task.FromResult(0);
         }
 
         /// <summary>
@@ -157,25 +155,15 @@ namespace BExIS.Security.Services.Subjects
             }
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        public Task<User> FindByIdAsync(long userId)
+        public async Task<User> FindByIdAsync(long userId)
         {
             using (var uow = this.GetUnitOfWork())
             {
                 var userRepository = uow.GetRepository<User>();
-                return Task.FromResult(userRepository.Get(userId));
+                return await Task.Run(() => userRepository.Get(userId));
             }
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <returns></returns>
         public Task<User> FindByNameAsync(string userName)
         {
             userName = userName.Trim();
