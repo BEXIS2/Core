@@ -110,7 +110,6 @@ namespace BExIS.Modules.Sam.UI.Models
     {
         public string Description { get; set; }
         public int GroupType { get; set; }
-        public long Id { get; set; }
 
         [Required]
         [Remote("ValidateGroupname", "Groups", AdditionalFields = "Id")]
@@ -120,7 +119,6 @@ namespace BExIS.Modules.Sam.UI.Models
         {
             return new UpdateGroupModel()
             {
-                Id = group.Id,
                 Name = group.Name,
                 Description = group.Description
             };
