@@ -3,6 +3,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Route;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -28,6 +29,29 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
                         return Request.CreateResponse(HttpStatusCode.BadRequest, $"user with id: {id} does not exist.");
 
                     return Request.CreateResponse(HttpStatusCode.OK, ReadUserModel.Convert(user));
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        [HttpGet, GetRoute("api/users/{id}/groups")]
+        public async Task<HttpResponseMessage> GetGroupsByUserIdAsync(long id)
+        {
+            try
+            {
+                using (var userManager = new UserManager())
+                {
+                    var user = await userManager.FindByIdAsync(id);
+
+                    if (user == null)
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, $"user with id: {id} does not exist.");
+
+                    var groups = user.Groups.Select(g => ReadGroupModel.Convert(g));
+
+                    return Request.CreateResponse(HttpStatusCode.OK, groups);
                 }
             }
             catch (Exception ex)
@@ -86,6 +110,22 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             using (var userManager = new UserManager())
             {
                 var user = await userManager.FindByIdAsync(userId) ?? throw new ArgumentNullException();
+
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+        }
+
+        [HttpPut, PutRoute("api/users/{id}/groups")]
+        public async Task<HttpResponseMessage> PutGroupsByUserIdAsync(long userId, List<string> groupNames)
+        {
+            using (var userManager = new UserManager())
+            {
+                var user = await userManager.FindByIdAsync(userId) ?? throw new ArgumentNullException();
+
+                foreach (var groupName in groupNames)
+                {
+                    await userManager.AddToRoleAsync(user, groupName);
+                }
 
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
