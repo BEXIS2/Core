@@ -16,17 +16,17 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
     public class UsersController : ApiController
     {
         // GET: Groups
-        [HttpGet, GetRoute("api/users/{id}")]
-        public async Task<HttpResponseMessage> GetByIdAsync(long id)
+        [HttpGet, GetRoute("api/users/{userId}")]
+        public async Task<HttpResponseMessage> GetByIdAsync(long userId)
         {
             try
             {
                 using (var userManager = new UserManager())
                 {
-                    var user = await userManager.FindByIdAsync(id);
+                    var user = await userManager.FindByIdAsync(userId);
 
                     if (user == null)
-                        return Request.CreateResponse(HttpStatusCode.BadRequest, $"user with id: {id} does not exist.");
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, $"user with id: {userId} does not exist.");
 
                     return Request.CreateResponse(HttpStatusCode.OK, ReadUserModel.Convert(user));
                 }
@@ -37,17 +37,17 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             }
         }
 
-        [HttpGet, GetRoute("api/users/{id}/groups")]
-        public async Task<HttpResponseMessage> GetGroupsByUserIdAsync(long id)
+        [HttpGet, GetRoute("api/users/{userId}/groups")]
+        public async Task<HttpResponseMessage> GetGroupsByUserIdAsync(long userId)
         {
             try
             {
                 using (var userManager = new UserManager())
                 {
-                    var user = await userManager.FindByIdAsync(id);
+                    var user = await userManager.FindByIdAsync(userId);
 
                     if (user == null)
-                        return Request.CreateResponse(HttpStatusCode.BadRequest, $"user with id: {id} does not exist.");
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, $"user with id: {userId} does not exist.");
 
                     var groups = user.Groups.Select(g => ReadGroupModel.Convert(g));
 
@@ -104,7 +104,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             }
         }
 
-        [HttpPut, PutRoute("api/users/{id}")]
+        [HttpPut, PutRoute("api/users/{userId}")]
         public async Task<HttpResponseMessage> PutByIdAsync(long userId, UpdateUserModel model)
         {
             using (var userManager = new UserManager())
@@ -115,7 +115,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             }
         }
 
-        [HttpPut, PutRoute("api/users/{id}/groups")]
+        [HttpPut, PutRoute("api/users/{userId}/groups")]
         public async Task<HttpResponseMessage> PutGroupsByUserIdAsync(long userId, List<string> groupNames)
         {
             using (var userManager = new UserManager())
@@ -131,13 +131,29 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             }
         }
 
-        [HttpDelete, DeleteRoute("api/users/{id}")]
+        [HttpDelete, DeleteRoute("api/users/{userId}")]
         public async Task<HttpResponseMessage> DeleteByIdAsync(long userId)
         {
             using (var userManager = new UserManager())
             {
                 var user = await userManager.FindByIdAsync(userId) ?? throw new ArgumentNullException();
                 await userManager.DeleteAsync(user);
+
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+        }
+
+        [HttpDelete, DeleteRoute("api/users/{userId}/groups")]
+        public async Task<HttpResponseMessage> DeleteByIdAsync(long userId, List<string> groupNames)
+        {
+            using (var userManager = new UserManager())
+            {
+                var user = await userManager.FindByIdAsync(userId) ?? throw new ArgumentNullException();
+
+                foreach (var groupName in groupNames)
+                {
+                    await userManager.RemoveFromRoleAsync(user, groupName);
+                }
 
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
