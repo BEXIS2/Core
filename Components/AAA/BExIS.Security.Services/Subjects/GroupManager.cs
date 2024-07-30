@@ -89,13 +89,13 @@ namespace BExIS.Security.Services.Subjects
         public Task CreateAsync(Group role)
         {
             if (role == null)
-                return Task.FromResult(0);
+                return Task.FromException(new Exception());
 
             if (string.IsNullOrEmpty(role.Name))
-                return Task.FromResult(0);
+                return Task.FromException(new Exception());
 
             if (FindByNameAsync(role.Name)?.Result != null)
-                return Task.FromResult(0);
+                return Task.FromException(new Exception());
 
             using (var uow = this.GetUnitOfWork())
             {
@@ -104,7 +104,7 @@ namespace BExIS.Security.Services.Subjects
                 uow.Commit();
             }
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         public Task DeleteAsync(Group role)
@@ -116,7 +116,7 @@ namespace BExIS.Security.Services.Subjects
                 uow.Commit();
             }
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         public void Dispose()
@@ -135,25 +135,32 @@ namespace BExIS.Security.Services.Subjects
 
         public Task<Group> FindByNameAsync(string roleName)
         {
-            roleName = roleName.Trim();
-
             using (var uow = this.GetUnitOfWork())
             {
                 var groupRepository = uow.GetRepository<Group>();
-                return Task.FromResult(groupRepository.Query().FirstOrDefault(u => u.Name.ToUpperInvariant() == roleName.ToUpperInvariant()));
+
+                var groups = groupRepository.Query(u => u.Name.Equals(roleName, StringComparison.InvariantCultureIgnoreCase)).ToList();
+
+                if(!groups.Any())
+                    return Task.FromException<Group>(new Exception());
+
+                if(groups.Count > 1)
+                    return Task.FromException<Group>(new Exception());
+
+                return Task.FromResult(groups.Single());
             }
         }
 
         public Task UpdateAsync(Group role)
         {
             if (role == null)
-                return Task.FromResult(0);
+                return Task.FromException(new Exception());
 
             if (string.IsNullOrEmpty(role.Name))
-                return Task.FromResult(0);
+                return Task.FromException(new Exception());
 
             if (FindByIdAsync(role.Id)?.Result == null)
-                return Task.FromResult(0);
+                return Task.FromException(new Exception());
 
             using (var uow = this.GetUnitOfWork())
             {
@@ -164,7 +171,7 @@ namespace BExIS.Security.Services.Subjects
                 uow.Commit();
             }
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         protected virtual void Dispose(bool disposing)
