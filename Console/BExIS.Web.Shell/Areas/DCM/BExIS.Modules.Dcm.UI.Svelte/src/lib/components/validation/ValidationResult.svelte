@@ -19,6 +19,16 @@
 		errorType.Value,
 		errorType.PrimaryKey
 	];
+
+	let checkDisplayName = {
+		['Dataset']: 'Dataset',
+		['File']: 'File',
+		['FileReader']: 'File Reader',
+		['Datastructure']: 'Data Structure',
+		['Value']: 'Value',
+		['PrimaryKey']: 'Primary Key'
+	};
+
 	let checks: Check[] = [];
 	$: checks;
 	let selected: Check;
@@ -74,7 +84,7 @@
 			{#each checks as check, i}
 				<li class="crumb">
 					<button class="btn variant-ghost-{check.style} p-2 flex justify-center space-x-2">
-						<span>{check.name}</span>
+						<span>{checkDisplayName[check.name]}</span>
 						<span class="pt-1">
 							{#if check.style == 'error'}
 								<Fa icon={faXmark} />
