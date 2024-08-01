@@ -32,19 +32,19 @@ namespace BExIS.Security.Services.Authorization
         public IReadOnlyRepository<EntityPermission> EntityPermissionRepository { get; }
         public IQueryable<EntityPermission> EntityPermissions => EntityPermissionRepository.Query();
 
-        public async Task CreateAsync(EntityPermission entityPermission)
+        public async Task<bool> CreateAsync(EntityPermission entityPermission)
         {
             using (var uow = this.GetUnitOfWork())
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                entityPermissionRepository.Put(entityPermission);
+                var result = entityPermissionRepository.Put(entityPermission);
                 uow.Commit();
-            }
 
-            await Task.CompletedTask;
+                return await Task.FromResult(result);
+            }
         }
 
-        public async Task CreateAsync(Subject subject, Entity entity, long key, int rights)
+        public async Task<bool> CreateAsync(Subject subject, Entity entity, long key, int rights)
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -57,14 +57,14 @@ namespace BExIS.Security.Services.Authorization
                 };
 
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                entityPermissionRepository.Put(entityPermission);
+                var result = entityPermissionRepository.Put(entityPermission);
                 uow.Commit();
-            }
 
-            await Task.CompletedTask;
+                return await Task.FromResult(result);
+            }
         }
 
-        public async Task CreateAsync(long? subjectId, long entityId, long key, int rights)
+        public async Task<bool> CreateAsync(long? subjectId, long entityId, long key, int rights)
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -79,14 +79,14 @@ namespace BExIS.Security.Services.Authorization
                 };
 
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                entityPermissionRepository.Put(entityPermission);
+                var result = entityPermissionRepository.Put(entityPermission);
                 uow.Commit();
-            }
 
-            await Task.CompletedTask;
+                return await Task.FromResult(result);
+            }
         }
 
-        public async Task CreateAsync<T>(string subjectName, string entityName, Type entityType, long key, List<RightType> rights) where T : Subject
+        public async Task<bool> CreateAsync<T>(string subjectName, string entityName, Type entityType, long key, List<RightType> rights) where T : Subject
         {
             if (string.IsNullOrEmpty(subjectName))
                 throw new Exception();
@@ -116,48 +116,48 @@ namespace BExIS.Security.Services.Authorization
                 };
 
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                entityPermissionRepository.Put(entityPermission);
+                var result = entityPermissionRepository.Put(entityPermission);
                 uow.Commit();
-            }
 
-            await Task.CompletedTask;
+                return await Task.FromResult(result);
+            }
         }
 
-        public async Task DeleteAsync(EntityPermission entityPermission)
+        public async Task<bool> DeleteAsync(EntityPermission entityPermission)
         {
             using (var uow = this.GetUnitOfWork())
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                entityPermissionRepository.Delete(entityPermission);
+                var result = entityPermissionRepository.Delete(entityPermission);
                 uow.Commit();
-            }
 
-            await Task.CompletedTask;
+                return await Task.FromResult(result);
+            }
         }
 
-        public async Task DeleteAsync(Type entityType, long key)
+        public async Task<bool> DeleteAsync(Type entityType, long key)
         {
             using (var uow = this.GetUnitOfWork())
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
                 var entityPermissions = entityPermissionRepository.Query(p => p.Entity.EntityType == entityType && p.Key == key) as IEnumerable<EntityPermission>;
-                entityPermissionRepository.Delete(entityPermissions);
+                var result = entityPermissionRepository.Delete(entityPermissions);
                 uow.Commit();
-            }
 
-            await Task.CompletedTask;
+                return await Task.FromResult(result);
+            }
         }
 
-        public async Task DeleteAsync(long entityPermissionId)
+        public async Task<bool> DeleteAsync(long entityPermissionId)
         {
             using (var uow = this.GetUnitOfWork())
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                entityPermissionRepository.Delete(entityPermissionRepository.Get(entityPermissionId));
+                var result = entityPermissionRepository.Delete(entityPermissionRepository.Get(entityPermissionId));
                 uow.Commit();
-            }
 
-            await Task.CompletedTask;
+                return await Task.FromResult(result);
+            }
         }
 
         public void Dispose()
