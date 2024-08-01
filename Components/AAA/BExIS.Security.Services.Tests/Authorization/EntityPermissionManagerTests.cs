@@ -2,6 +2,7 @@
 using BExIS.Security.Services.Authorization;
 using BExIS.Utils.Config;
 using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace BExIS.Security.Services.Tests.Authorization
 {
@@ -35,13 +36,13 @@ namespace BExIS.Security.Services.Tests.Authorization
         [TestCase(1, new[] { "Read" })]
         [TestCase(4, new[] { "Write" })]
         [TestCase(5, new[] { "Read", "Write" })]
-        public void CreateAsync_GroupIsNull_ReturnZero(short rights, string[] result)
+        public async Task CreateAsync_GroupIsNull_ReturnZero(short rights, string[] result)
         {
             //Arrange
             var a = new EntityPermissionManager();
 
             //Act
-            var r = a.GetRights(rights);
+            var r = await a.GetRightsAsync(rights);
 
             //Assert
             Assert.That(result, Is.EquivalentTo(r));
