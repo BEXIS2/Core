@@ -4,6 +4,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using Newtonsoft.Json;
 using System;
+using System.Threading.Tasks;
 
 namespace BExIS.UI.Hooks
 {
@@ -88,7 +89,7 @@ namespace BExIS.UI.Hooks
 
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             {
-                return entityPermissionManager.HasEffectiveRight(userName, typeof(Dataset), entityId, rightType);
+                return entityPermissionManager.HasEffectiveRightsAsync(userName, typeof(Dataset), entityId, rightType).Result;
             }
 
             #endregion security permissions and authorisations check

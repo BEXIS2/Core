@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Telerik.Web.Mvc;
@@ -27,17 +28,17 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class EntityPermissionsController : BaseController
     {
-        public void AddInstanceToPublic(long entityId, long instanceId)
+        public async Task AddInstanceToPublic(long entityId, long instanceId)
         {
             var entityPermissionManager = new EntityPermissionManager();
 
             try
             {
-                var entityPermission = entityPermissionManager.Find(null, entityId, instanceId);
+                var entityPermission = await entityPermissionManager.FindAsync(entityId, instanceId);
 
                 if (entityPermission == null)
                 {
-                    entityPermissionManager.Create(null, entityId, instanceId, (int)RightType.Read);
+                    await entityPermissionManager.CreateAsync(null, entityId, instanceId, (int)RightType.Read);
 
                     if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
                     {
@@ -57,23 +58,23 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
         }
 
-        public void AddRightToEntityPermission(long subjectId, long entityId, long instanceId, int rightType)
+        public async Task AddRightToEntityPermission(long subjectId, long entityId, long instanceId, int rightType)
         {
             var entityPermissionManager = new EntityPermissionManager();
 
             try
             {
-                var entityPermission = entityPermissionManager.Find(subjectId, entityId, instanceId);
+                var entityPermission = await entityPermissionManager.FindAsync(subjectId, entityId, instanceId);
 
                 if (entityPermission == null)
                 {
-                    entityPermissionManager.Create(subjectId, entityId, instanceId, rightType);
+                    await entityPermissionManager.CreateAsync(subjectId, entityId, instanceId, rightType);
                 }
                 else
                 {
                     if ((entityPermission.Rights & rightType) != 0) return;
                     entityPermission.Rights += rightType;
-                    entityPermissionManager.Update(entityPermission);
+                    await entityPermissionManager.UpdateAsync(entityPermission);
                 }
             }
             finally
@@ -111,7 +112,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [GridAction(EnableCustomBinding = false)]
-        public ActionResult Instances_Select(long entityId)
+        public async Task<ActionResult> Instances_Select(long entityId)
         {
             var entityManager = new EntityManager();
             var entityPermissionManager = new EntityPermissionManager();
@@ -119,7 +120,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             try
             {
                 var instanceStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
-                var instances = instanceStore.GetEntities().Select(i => EntityInstanceGridRowModel.Convert(i, entityPermissionManager.Exists(null, entityId, i.Id))).ToList();
+                var instances = (await Task.WhenAll(instanceStore.GetEntities().Select(async i => EntityInstanceGridRowModel.Convert(i, await entityPermissionManager.ExistsAsync(entityId, i.Id))))).ToList();
 
                 return View(new GridModel<EntityInstanceGridRowModel> { Data = instances });
             }
@@ -136,7 +137,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [GridAction]
-        public ActionResult Permissions_Select(long subjectId, long entityId, long instanceId)
+        public async Task<ActionResult> Permissions_Select(long subjectId, long entityId, long instanceId)
         {
             using (var entityPermissionManager = new EntityPermissionManager())
             using (var subjectManager = new SubjectManager())
@@ -155,7 +156,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     // Group Permissions
                     foreach (var group in user.Groups)
                     {
-                        entityPermissions.Add(ReferredEntityPermissionGridRowModel.Convert(group.Name, "Group", entityPermissionManager.GetRights(group.Id, entityId, instanceId)));
+                        entityPermissions.Add(ReferredEntityPermissionGridRowModel.Convert(group.Name, "Group", await entityPermissionManager.GetRightsAsync(group.Id, entityId, instanceId)));
                     }
 
                     // Party Relationships
@@ -178,7 +179,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 }
 
                 // Public Permission
-                var publicRights = entityPermissionManager.GetRights(subjectId: null, entityId, instanceId);
+                var publicRights = await entityPermissionManager.GetRightsAsync(entityId, instanceId);
                 if (publicRights > 0)
                 {
                     entityPermissions.Add(ReferredEntityPermissionGridRowModel.Convert("Public Dataset", "", publicRights));
@@ -188,16 +189,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
         }
 
-        public void RemoveInstanceFromPublic(long entityId, long instanceId)
+        public async Task RemoveInstanceFromPublic(long entityId, long instanceId)
         {
-            var entityPermissionManager = new EntityPermissionManager();
-
-            try
+            using (var entityPermissionManager = new EntityPermissionManager())
             {
-                var entityPermission = entityPermissionManager.Find(null, entityId, instanceId);
+                var entityPermission = await entityPermissionManager.FindAsync(entityId, instanceId);
 
                 if (entityPermission == null) return;
-                entityPermissionManager.Delete(entityPermission);
+                await entityPermissionManager.DeleteAsync(entityPermission);
 
                 if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
                 {
@@ -210,36 +209,26 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     ConfigurationManager.AppSettings["SystemEmail"]
                     );
             }
-            finally
-            {
-                entityPermissionManager.Dispose();
-            }
         }
 
-        public void RemoveRightFromEntityPermission(long subjectId, long entityId, long instanceId, int rightType)
+        public async Task RemoveRightFromEntityPermission(long subjectId, long entityId, long instanceId, int rightType)
         {
-            var entityPermissionManager = new EntityPermissionManager();
-
-            try
+            using (var entityPermissionManager = new EntityPermissionManager())
             {
-                var entityPermission = entityPermissionManager.Find(subjectId, entityId, instanceId);
+                var entityPermission = await entityPermissionManager.FindAsync(subjectId, entityId, instanceId);
 
                 if (entityPermission == null) return;
 
                 if (entityPermission.Rights == rightType)
                 {
-                    entityPermissionManager.Delete(entityPermission);
+                    await entityPermissionManager.DeleteAsync(entityPermission);
                 }
                 else
                 {
                     if ((entityPermission.Rights & rightType) == 0) return;
                     entityPermission.Rights -= rightType;
-                    entityPermissionManager.Update(entityPermission);
+                    await entityPermissionManager.UpdateAsync(entityPermission);
                 }
-            }
-            finally
-            {
-                entityPermissionManager.Dispose();
             }
         }
 
@@ -249,7 +238,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [GridAction(EnableCustomBinding = true)]
-        public ActionResult Subjects_Select(GridCommand command, long entityId, long instanceId)
+        public async Task<ActionResult> Subjects_Select(GridCommand command, long entityId, long instanceId)
         {
             var subjectManager = new SubjectManager();
             var entityPermissionManager = new EntityPermissionManager();
@@ -282,8 +271,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 //    subjects.Add(EntityPermissionGridRowModel.Convert(subject, rights, effectiveRights));
                 //}
 
-                var rightsDic = entityPermissionManager.GetRights(subjectsDb, entityId, instanceId);
-                var effectiveRightsDic = entityPermissionManager.GetEffectiveRights(subjectsDb, entityId, instanceId);
+                var rightsDic = await entityPermissionManager.GetRightsAsync(subjectsDb.Select(s => s.Id).ToList(), entityId, instanceId);
+                var effectiveRightsDic = await entityPermissionManager.GetEffectiveRightsAsync(subjectsDb.Select(s => s.Id).ToList(), entityId, instanceId);
 
                 foreach (var item in rightsDic)
                 {

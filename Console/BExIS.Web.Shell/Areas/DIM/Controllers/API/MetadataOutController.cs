@@ -339,7 +339,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
                     entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
                     bool isPublic = false;
-                    isPublic = entityPermissionManager.Exists(null, entityTypeId.Value, id);
+                    isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
 
                     // If dataset is not public check if a valid token is provided
                     if (isPublic == false)

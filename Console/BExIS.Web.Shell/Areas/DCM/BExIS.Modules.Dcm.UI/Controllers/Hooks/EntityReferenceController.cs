@@ -303,7 +303,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 var entity = entityManager.FindByName("Dataset");
                 if (entity == null) return false;
-                return entityPermissionManager.HasEffectiveRight(user.UserName, typeof(Dataset), instanceId, rightType);
+                return entityPermissionManager.HasEffectiveRightsAsync(user.UserName, typeof(Dataset), instanceId, rightType).Result;
 
                 #endregion security permissions and authorisations check
             }

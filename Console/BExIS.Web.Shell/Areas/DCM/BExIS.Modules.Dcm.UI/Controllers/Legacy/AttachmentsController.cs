@@ -172,9 +172,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var user = userTask.Result;
                 int rights = 0;
                 if (user == null)
-                    rights = entityPermissionManager.GetEffectiveRights(subjectId: null, entity.Id, datasetVersion.Dataset.Id);
+                    rights = entityPermissionManager.GetEffectiveRightsAsync(entity.Id, datasetVersion.Dataset.Id).Result;
                 else
-                    rights = entityPermissionManager.GetEffectiveRights(user.Id, entity.Id, datasetVersion.Dataset.Id);
+                    rights = entityPermissionManager.GetEffectiveRightsAsync(user.Id, entity.Id, datasetVersion.Dataset.Id).Result;
                 model.UploadAccess = (((rights & (int)RightType.Write) > 0) || ((rights & (int)RightType.Grant) > 0));
                 model.DeleteAccess = (((rights & (int)RightType.Delete) > 0) || ((rights & (int)RightType.Grant) > 0));
                 model.DownloadAccess = ((rights & (int)RightType.Read) > 0 || ((rights & (int)RightType.Grant) > 0));

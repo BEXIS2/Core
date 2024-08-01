@@ -103,7 +103,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     foreach (var groupId in entityTemplate.PermissionGroups.Full)
                     {
                         var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
-                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                        entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                     }
 
                     // ViewEditGrant
@@ -112,7 +112,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
                         var l = new List<RightType>() { RightType.Read, RightType.Write, RightType.Grant };
 
-                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
+                        entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
                     }
 
                     // ViewEdit
@@ -120,7 +120,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
                         var l = new List<RightType>() { RightType.Read, RightType.Write };
-                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
+                        entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
                     }
 
                     // View
@@ -128,13 +128,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
                         var l = new List<RightType>() { RightType.Read };
-                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
+                        entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
                     }
                 }
 
                 if (GetUsernameOrDefault() != "DEFAULT")
                 {
-                    entityPermissionManager.Create<User>(GetUsernameOrDefault(), entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                    entityPermissionManager.CreateAsync<User>(GetUsernameOrDefault(), entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                 }
 
                 #endregion add permissions
@@ -366,7 +366,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     foreach (var groupId in entityTemplate.PermissionGroups.Full)
                     {
                         var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
-                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                        entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                     }
 
                     // ViewEditGrant
@@ -375,7 +375,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
                         var l = new List<RightType>() { RightType.Read, RightType.Write, RightType.Grant };
 
-                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
+                        entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
                     }
 
                     // ViewEdit
@@ -383,7 +383,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
                         var l = new List<RightType>() { RightType.Read, RightType.Write };
-                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
+                        entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
                     }
 
                     // View
@@ -391,13 +391,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
                         var l = new List<RightType>() { RightType.Read };
-                        entityPermissionManager.Create<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
+                        entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
                     }
                 }
 
                 if (GetUsernameOrDefault() != "DEFAULT")
                 {
-                    entityPermissionManager.Create<User>(GetUsernameOrDefault(), entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                    entityPermissionManager.CreateAsync<User>(GetUsernameOrDefault(), entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                 }
 
                 #endregion add permissions

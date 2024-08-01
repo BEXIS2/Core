@@ -91,7 +91,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
                     entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
 
-                    isPublic = entityPermissionManager.Exists(null, entityTypeId.Value, id);
+                    isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
 
                     #endregion is public
 
@@ -111,7 +111,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         if (d == null)
                             return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + id + ") does not exist.");
 
-                        if (!isPublic && !entityPermissionManager.HasEffectiveRight(user.Name, typeof(Dataset), id, RightType.Read))
+                        if (!isPublic && !entityPermissionManager.HasEffectiveRightsAsync(user.Name, typeof(Dataset), id, RightType.Read).Result)
                             return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "The token is not authorized to write into the dataset.");
                     }
 
@@ -172,7 +172,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
                 entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
 
-                isPublic = entityPermissionManager.Exists(null, entityTypeId.Value, id);
+                isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
 
                 #endregion is public
 
@@ -192,7 +192,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     if (d == null)
                         return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + id + ") does not exist.");
 
-                    if (!isPublic && !entityPermissionManager.HasEffectiveRight(user.Name, typeof(Dataset), id, RightType.Read))
+                    if (!isPublic && !entityPermissionManager.HasEffectiveRightsAsync(user.Name, typeof(Dataset), id, RightType.Read).Result)
                         return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "The token is not authorized to write into the dataset.");
                 }
 
