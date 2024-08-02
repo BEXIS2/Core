@@ -26,13 +26,13 @@
 	let isEnabled = setEnable(status);
 
 	onMount(async () => {
+		console.log("onMount MetadataHook");
 		load();
 	});
 
 
 	async function load() {
 
-		
 		model = await getHookStart(start, id, version);
 		console.log("LOAD METADATA",model);
 	}
@@ -47,6 +47,7 @@
 	}
 
 	function editFn() {
+		console.log("EDIT METADATA",model);
 
 		if(model.useExternalMetadataForm)	{	
 			open = true;
@@ -68,10 +69,9 @@
 
 <div class="flex-col space-y-1">
 	<div class="flex gap-3 justify-left">
-		<button class="chip variant-filled-secondary flex-none" on:click={editFn}
-			><Fa icon={faPen} /></button>
+		<button class="chip variant-filled-secondary flex-none" on:click={editFn}><Fa icon={faPen} /></button>
 	</div>
-	
+	<p>hallo</p>
 </div>
 {#if open}
 		<MetadataDrawer {id} url={model.externalMetadataFormUrl} on:close={() => open = false}></MetadataDrawer>
