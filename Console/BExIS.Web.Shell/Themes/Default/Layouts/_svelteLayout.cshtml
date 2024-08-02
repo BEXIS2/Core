@@ -1,4 +1,4 @@
-@using System.Web.Optimization
+﻿@using System.Web.Optimization
 @using BExIS.Utils.WebHelpers
 @using Microsoft.AspNet.Identity
 @using Telerik.Web.Mvc.UI;
@@ -12,10 +12,16 @@
     @Html.Favicon(Html.GetTenant().FavIconPath)
 
     @Styles.Render("~/bundles/svelte_general_bexis")
+
+    <!-- To change the colours and appearance of svelte pages, the variables of sleketon and tailwind can be overridden in the css file -->
+    <link href="@Url.Content("~/Content/skeleton/themes/bexis2-theme.css")" rel="stylesheet" type="text/css" />
+
+
 </head>
 
 <body data-theme="bexis2theme">
 
     @RenderBody()
 </body>
+    
 </html>
