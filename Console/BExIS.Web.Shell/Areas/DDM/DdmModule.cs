@@ -31,8 +31,6 @@ namespace BExIS.Modules.Ddm.UI
             }
 
             LoggerFactory.GetFileLogger().LogCustom("...end install of ddm...");
-
-
         }
 
         public override void Start()
@@ -50,6 +48,5 @@ namespace BExIS.Modules.Ddm.UI
         {
             base.Uninstall();
         }
-
     }
 }

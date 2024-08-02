@@ -118,7 +118,6 @@ namespace Vaiona.Web.Mvc.Modularity
                 ControllerBuilder.Current.DefaultNamespaces.Add(controllerType.Namespace);
             try
             {
-
                 Controller ctrl = DependencyResolver.Current.GetService(controllerType) as Controller;
                 var ctrlContext = new ControllerContext(helper.Request.RequestContext, ctrl);
                 ctrl.ControllerContext = ctrlContext;

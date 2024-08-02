@@ -2,12 +2,12 @@
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Security.Services.Objects;
+using BExIS.Utils.Config;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BExIS.Utils.Config;
-using BExIS.Security.Services.Objects;
 
 namespace BExIS.Dlm.Tests.Services.Data
 {
@@ -19,17 +19,14 @@ namespace BExIS.Dlm.Tests.Services.Data
         public void OneTimeSetUp()
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
-
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-
         }
 
         [Test()]
-        //[Repeat(10)]
         public void Create_Valid_EntityTemplate()
         {
             using (var entityTemplateManager = new EntityTemplateManager())
@@ -49,7 +46,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 entityTemplate.MetadataFields = new List<int> { 1, 2, 3, 4 };
                 entityTemplate.NotificationGroups = new List<long> { 1, 2, 3, 4 };
                 entityTemplate.DatastructureList = new List<long> { 1, 2, 3, 4 };
-                entityTemplate.AllowedFileTypes = new List<string> { ".pdf",".txt" };
+                entityTemplate.AllowedFileTypes = new List<string> { ".pdf", ".txt" };
 
                 //Act
                 var created = entityTemplateManager.Create(entityTemplate);

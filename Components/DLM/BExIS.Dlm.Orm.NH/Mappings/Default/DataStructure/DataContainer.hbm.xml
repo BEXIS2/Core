@@ -1,14 +1,14 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="DataContainer" table="DataContainers" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
-    
+
     <id name="Id" type="Int64">
-      <column name="Id" index="idx_DataContainers_id"/>
+      <column name="Id" index="idx_DataContainers_id" />
       <generator class="native" />
     </id>
 
-    <discriminator column="Discriminator" type="String" length="3"/>
-    
+    <discriminator column="Discriminator" type="String" length="3" />
+
     <version name="VersionNo" type="Int32">
       <column name="VersionNo" />
     </version>
@@ -24,14 +24,14 @@
         <column name="State" />
       </property>
       <property name="Timestamp" type="DateTime">
-        <column name="StateTimestamp" not-null="false"/>
+        <column name="StateTimestamp" not-null="false" />
       </property>
       <property name="Comment" type="string">
         <column name="StateComment" />
       </property>
     </component>
 
-    <component name="CreationInfo" >
+    <component name="CreationInfo">
       <property name="ActionType" type="Vaiona.Entities.Common.AuditActionType, Vaiona.Entities">
         <column name="C_ActionType" />
       </property>
@@ -42,11 +42,11 @@
         <column name="C_Comment" />
       </property>
       <property name="Timestamp" type="DateTime">
-        <column name="C_Timestamp" not-null="false"/>
+        <column name="C_Timestamp" not-null="false" />
       </property>
     </component>
 
-    <component name="ModificationInfo" >
+    <component name="ModificationInfo">
       <property name="ActionType" type="Vaiona.Entities.Common.AuditActionType, Vaiona.Entities">
         <column name="M_ActionType" />
       </property>
@@ -57,24 +57,24 @@
         <column name="M_Comment" />
       </property>
       <property name="Timestamp" type="DateTime">
-        <column name="M_Timestamp" not-null="false"/>
+        <column name="M_Timestamp" not-null="false" />
       </property>
     </component>
-    
+
     <!-- Mapping entity properties -->
-    
+
     <property name="Name" type="String">
-      <column name="Name" index="idx_DataContainers_name"/>
+      <column name="Name" index="idx_DataContainers_name" />
     </property>
 
     <property name="ShortName" type="String">
-      <column name="ShortName" index="idx_DataContainers_shortName"/>
+      <column name="ShortName" index="idx_DataContainers_shortName" />
     </property>
 
-    <property name="Description" type="String" > 
+    <property name="Description" type="String">
       <column name="Description" sql-type="varchar" />
     </property>
-    
+
     <property name="IsMultiValue" type="yes_no">
       <column name="IsMultiValue" />
     </property>
@@ -84,7 +84,7 @@
     </property>
 
     <property name="Scope" type="String">
-      <column name="Scope" index="idx_DataContainers_scope"/>
+      <column name="Scope" index="idx_DataContainers_scope" />
     </property>
 
     <property name="EntitySelectionPredicate" type="String">
@@ -100,30 +100,28 @@
     </property>
 
     <!-- Mapping entity associations-->
-    <many-to-one name="DataType" class="DataType" not-null="true" column="DataTypeRef" lazy="false"/>
-    <many-to-one name="Unit" class="Unit" not-null="false" column="UnitRef"/>
-    <many-to-one name="Methodology" class="Methodology" not-null="false" column="MethodologyRef"/>
+    <many-to-one name="DataType" class="DataType" not-null="true" column="DataTypeRef" lazy="false" />
+    <many-to-one name="Unit" class="Unit" not-null="false" column="UnitRef" />
+    <many-to-one name="Methodology" class="Methodology" not-null="false" column="MethodologyRef" />
 
     <set name="Constraints" cascade="all" inverse="true" lazy="false">
-      <key column="DataContainerRef" not-null="false"/>
-      <one-to-many class="Constraint"/>
+      <key column="DataContainerRef" not-null="false" />
+      <one-to-many class="Constraint" />
     </set>
 
     <set name="ExtendedProperties" cascade="all" inverse="true">
-      <key column="DataContainerRef" not-null="false"/>
-      <one-to-many class="ExtendedProperty"/>
+      <key column="DataContainerRef" not-null="false" />
+      <one-to-many class="ExtendedProperty" />
     </set>
 
     <set name="GlobalizationInfos" cascade="all" inverse="true">
-      <key column="DataContainerRef" not-null="false"/>
-      <one-to-many class="GlobalizationInfo"/>
+      <key column="DataContainerRef" not-null="false" />
+      <one-to-many class="GlobalizationInfo" />
     </set>
 
     <set name="AggregateFunctions" table="DataContainers_AggregateFunctions" cascade="all"  lazy="true">
-      <key column="DataContainerRef"/>
-      <many-to-many column="AggregateFunctionRef" class="AggregateFunction"/>
+      <key column="DataContainerRef" />
+      <many-to-many column="AggregateFunctionRef" class="AggregateFunction" />
     </set>
-
   </class>
-
 </hibernate-mapping>

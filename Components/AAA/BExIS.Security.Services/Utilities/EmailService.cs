@@ -6,7 +6,6 @@ using Microsoft.AspNet.Identity;
 using MimeKit;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -69,6 +68,7 @@ namespace BExIS.Security.Services.Utilities
             string _emailFromAddress = _smtpConfiguration.FromAddress;
 
             // clear all mails from white space
+
             #region clear emails
 
             if (destinations != null)
@@ -83,7 +83,7 @@ namespace BExIS.Security.Services.Utilities
             if (replyTos != null)
                 _replyTos = replyTos.Select(innerItem => innerItem != null ? innerItem.Trim() : null).ToList();
 
-            #endregion
+            #endregion clear emails
 
             using (var mimeMessage = new MimeMessage())
             {

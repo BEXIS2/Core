@@ -6,7 +6,6 @@ namespace BExIS.Modules.Dcm.UI.Models
 {
     public enum PageStatus
     {
-
         FirstLoad,
         Error,
         NoError,

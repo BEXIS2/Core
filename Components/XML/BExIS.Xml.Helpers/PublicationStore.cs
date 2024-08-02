@@ -22,7 +22,6 @@ namespace BExIS.Xml.Helpers
         {
             bool withPaging = (take > 0);
 
-
             using (var uow = this.GetUnitOfWork())
             using (DatasetManager dm = new DatasetManager())
             using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
@@ -54,7 +53,6 @@ namespace BExIS.Xml.Helpers
                             datasetIds = dm.DatasetRepo.Query(d => d.MetadataStructure.Id.Equals(msid)).Select(d => d.Id).ToList();
                         }
 
-
                         if (!datasetIds.Any()) continue;
 
                         // create tuples based on dataset id list, and get latest version of each dataset
@@ -62,7 +60,6 @@ namespace BExIS.Xml.Helpers
                         List<DatasetVersion> datasetVersions = dm.GetDatasetLatestVersions(datasetIds, false);
                         foreach (var dsv in datasetVersions)
                         {
-
                             var e = new EntityStoreItem()
                             {
                                 Id = dsv.Dataset.Id,
@@ -71,7 +68,6 @@ namespace BExIS.Xml.Helpers
                             };
 
                             entities.Add(e);
-
                         }
                     }
 
@@ -84,15 +80,12 @@ namespace BExIS.Xml.Helpers
             }
         }
 
-
         public int CountEntities()
         {
             using (var uow = this.GetUnitOfWork())
             using (DatasetManager dm = new DatasetManager())
             using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
             {
-
-
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                 var entities = new List<EntityStoreItem>();
                 int count = 0;
@@ -111,7 +104,6 @@ namespace BExIS.Xml.Helpers
 
                         datasetIds = dm.DatasetRepo.Query(d => d.MetadataStructure.Id.Equals(msid)).Select(d => d.Id).ToList();
                         count += datasetIds.Count;
-
                     }
 
                     return count;

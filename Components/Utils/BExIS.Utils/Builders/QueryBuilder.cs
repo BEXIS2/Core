@@ -1,6 +1,6 @@
 ﻿namespace BExIS.Utils.Builders
 {
-    class QueryBuilder
+    internal class QueryBuilder
     {
     }
 }

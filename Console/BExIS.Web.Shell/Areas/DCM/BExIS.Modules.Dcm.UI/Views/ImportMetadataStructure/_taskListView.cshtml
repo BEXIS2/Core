@@ -6,12 +6,12 @@
 @using BExIS.Dcm.Wizard;
 
 <div id="TaskListDiv">
-<table id="taskListTable">
+    <table id="taskListTable">
 
-    @foreach (Tuple<string, StepStatus> item in Model)
-    { 
-        <tr >
-            <td >
+        @foreach (Tuple<string, StepStatus> item in Model)
+    {
+        <tr>
+            <td>
                 @item.Item1
             </td>
             <td>
@@ -20,17 +20,17 @@
                 {
                     case StepStatus.success:
                         {
-                           
+
                             break;
                         }
                     case StepStatus.inProgress:
                         {
-                            <div class="bx bx-previous" ></div>
+                <div class="bx bx-previous"></div>
                             break;
                         }
                     case StepStatus.error:
                         {
-                            <div class="bx bx-times" ></div>
+                <div class="bx bx-times"></div>
                             break;
                         }
                     default:
@@ -39,11 +39,10 @@
                             break;
                         }
                 }
-
             </td>
         </tr>
     }
-</table>
+    </table>
 </div>
 
 @*JavaScript*@
@@ -55,22 +54,17 @@ function TaskListRefresh()
             $("#TaskListDiv").html(response);
         })
 }
-
-
 </script>
 
 @*CSS*@
 
 <style type="text/css">
 
-    #taskListTable tr td
-    {
+    #taskListTable tr td {
         border-style: none;
     }
 
-    #taskListTable
-    {
+    #taskListTable {
         border-style: none;
     }
-
 </style>

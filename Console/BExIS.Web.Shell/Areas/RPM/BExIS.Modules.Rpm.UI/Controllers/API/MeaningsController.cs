@@ -1,39 +1,38 @@
-﻿using System;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dlm.Services.Meanings;
+using BExIS.Utils.Route;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Web.Http;
-using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Services.Meanings;
-using BExIS.Utils.Route;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class MeaningsController : ApiController
     {
-
         private readonly ImeaningManagr _meaningManager;
+
         public MeaningsController(ImeaningManagr _meaningManager)
         {
             this._meaningManager = _meaningManager;
         }
+
         public MeaningsController()
         {
             if (this._meaningManager == null)
-               this._meaningManager = new MeaningManager();
+                this._meaningManager = new MeaningManager();
         }
-
 
         [BExISAuthorize]
         [JsonNetFilter]
         [HttpGet, GetRoute("api/Meanings/Index")]
         public HttpResponseMessage Index()
         {
-            return cretae_response( _meaningManager.getMeanings());
+            return cretae_response(_meaningManager.getMeanings());
         }
 
         [BExISApiAuthorize]

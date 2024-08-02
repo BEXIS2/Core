@@ -5,14 +5,14 @@
       This wizard will assist you in creating a new dataset. Please select a data structure and a metadata structure below.
       Or select a dataset as template to use the metadata structure and the metadata from the selected dataset.
     </description>
-    <more text="More" title="go to help" path="/DCM/Help/Index/#_Toc434570841"/>
+    <more text="More" title="go to help" path="/DCM/Help/Index/#_Toc434570841" />
   </Information>
 
   <Information name="Help">
     <description>
       <p>This guide will walk you through the basics of data collection including how to upload data and how to import a metadata structure.</p>
     </description>
-    <more text="More" title="go to help" path=""/>
+    <more text="More" title="go to help" path="" />
   </Information>
 
   <Information name="ImportMetadataStructure">
@@ -20,20 +20,20 @@
       This wizard will assist you in adding a new metadata structure (i.e. schema) to the system. A metadata structure must be defined in XSD schema files.
       Since XSD files can be defined in various ways this wizard is build on a few assumptions (e.g. with dependencies). Please consult the Help for more details.
     </description>
-    <more text="More" title="go to help" path="/DCM/Help/Index/#_Toc434570855"/>
+    <more text="More" title="go to help" path="/DCM/Help/Index/#_Toc434570855" />
   </Information>
 
   <Information name="Push">
     <description>
       Each user has a personal folder on the server where files are stored temporary. This wizard will assist you in pushing your files to server. You can also see the uploaded files, delete each file, or use these files later, when you want to upload data to a dataset.
     </description>
-    <more text="More" title="go to help" path=""/>
+    <more text="More" title="go to help" path="" />
   </Information>
 
   <Information name="Submit">
     <description>
       This wizard will assist you in uploading data files to the system and adding them to a dataset.
     </description>
-    <more text="More" title="go to help" path="/DCM/Help/Index/#_Toc434570845"/>
+    <more text="More" title="go to help" path="/DCM/Help/Index/#_Toc434570845" />
   </Information>
 </Informations>

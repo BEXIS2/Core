@@ -1,67 +1,63 @@
-﻿
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
 
 namespace BExIS.IO.Transform.Input
 {
-
     public class FileReaderInfo
     {
         /// <summary>
-        /// representation of decimal 
+        /// representation of decimal
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public DecimalCharacter Decimal { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public Orientation Orientation { get; set; }
 
         /// <summary>
         /// Number of empty columns (columnwise) or rows (rowwise) before the variables are specified.
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public int Offset { get; set; }
 
         /// <summary>
         /// Row/Column in which the variables are.
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public int Variables { get; set; }
 
         /// <summary>
         /// Row/Column in which the Data are.
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public int Data { get; set; }
 
         /// <summary>
         /// Row/Column in which the Unit are.
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>  
+        /// <seealso cref=""/>
         public int Unit { get; set; }
 
         /// <summary>
         /// Row/Column in which the Description are.
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>  
+        /// <seealso cref=""/>
         public int Description { get; set; }
 
         /// <summary>
         /// Format of the Date
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public string Dateformat { get; set; }
 
         public string ToJson()
@@ -74,7 +70,7 @@ namespace BExIS.IO.Transform.Input
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param name="decimalCharacter"> DecimalCharacter as enum</param>  
+        /// <param name="decimalCharacter"> DecimalCharacter as enum</param>
         /// <returns>DecimalCharacter as String</returns>
         public static string GetDecimal(DecimalCharacter decimalCharacter)
         {
@@ -82,8 +78,10 @@ namespace BExIS.IO.Transform.Input
             {
                 case DecimalCharacter.comma:
                     return DecimalCharacter.comma.ToString();
+
                 case DecimalCharacter.point:
                     return DecimalCharacter.point.ToString();
+
                 default: return DecimalCharacter.point.ToString();
             }
         }
@@ -93,7 +91,7 @@ namespace BExIS.IO.Transform.Input
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param name="decimalCharacter"> DecimalCharacter as enum</param>  
+        /// <param name="decimalCharacter"> DecimalCharacter as enum</param>
         /// <returns>DecimalCharacter as String</returns>
         public static char GetDecimalCharacter(DecimalCharacter decimalCharacter)
         {
@@ -101,8 +99,10 @@ namespace BExIS.IO.Transform.Input
             {
                 case DecimalCharacter.comma:
                     return ',';
+
                 case DecimalCharacter.point:
                     return '.';
+
                 default: return '.';
             }
         }
@@ -112,7 +112,7 @@ namespace BExIS.IO.Transform.Input
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param name="decimalCharacter"> DecimalCharacter as string</param>  
+        /// <param name="decimalCharacter"> DecimalCharacter as string</param>
         /// <returns>DecimalCharacter as enum</returns>
         public static DecimalCharacter GetDecimalCharacter(string decimalCharacter)
         {
@@ -120,8 +120,10 @@ namespace BExIS.IO.Transform.Input
             {
                 case "comma":
                     return DecimalCharacter.comma;
+
                 case "point":
                     return DecimalCharacter.point;
+
                 default: return DecimalCharacter.point;
             }
         }
@@ -131,7 +133,7 @@ namespace BExIS.IO.Transform.Input
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param name="decimalCharacter"> DecimalCharacter as string</param>  
+        /// <param name="decimalCharacter"> DecimalCharacter as string</param>
         /// <returns>DecimalCharacter as enum</returns>
         public static DecimalCharacter GetDecimalCharacter(char decimalCharacter)
         {
@@ -139,8 +141,10 @@ namespace BExIS.IO.Transform.Input
             {
                 case ',':
                     return DecimalCharacter.comma;
+
                 case '.':
                     return DecimalCharacter.point;
+
                 default: return DecimalCharacter.point;
             }
         }
@@ -150,7 +154,7 @@ namespace BExIS.IO.Transform.Input
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param name="decimalCharacter"> Orientation as enum</param>  
+        /// <param name="decimalCharacter"> Orientation as enum</param>
         /// <returns>Orientation as String</returns>
         public static string GetOrientation(Orientation orientation)
         {
@@ -158,8 +162,10 @@ namespace BExIS.IO.Transform.Input
             {
                 case Orientation.columnwise:
                     return Orientation.columnwise.ToString();
+
                 case Orientation.rowwise:
                     return Orientation.rowwise.ToString();
+
                 default: return Orientation.columnwise.ToString();
             }
         }
@@ -169,7 +175,7 @@ namespace BExIS.IO.Transform.Input
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param name="decimalCharacter"> Orientation as string</param>  
+        /// <param name="decimalCharacter"> Orientation as string</param>
         /// <returns>Orientation as enum</returns>
         public static Orientation GetOrientation(string orientation)
         {
@@ -177,12 +183,12 @@ namespace BExIS.IO.Transform.Input
             {
                 case "columnswise":
                     return Orientation.columnwise;
+
                 case "rowwise":
                     return Orientation.rowwise;
+
                 default: return Orientation.columnwise;
             }
         }
-
     }
-
 }

@@ -1,68 +1,65 @@
 ﻿@model BExIS.Modules.Dcm.UI.Models.MetadataStructureModel
 
-    <div id="metadataStructureFrom" class="bx-content" style="overflow:auto">
-        <table>
-            <tr>
-                <td>
-                    <label>Id</label>
-                    @(Html.HiddenFor(m => m.Id))
-                </td>
-                <td>
-                    @Html.TextBoxFor(m => m.Id, new {@disabled = "disabled"})
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    @(Html.LabelFor(m => m.Name))<span class="bx bx-required" title="Required"/>
-                </td>
-                <td>
-                    @(Html.TextBoxFor(m => m.Name, new {@class = "t-input", title = "Display name of the item in the search user interface."}))
-                    @Html.ValidationMessageFor(m => m.Name)
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Class <span class="bx bx-required" title="Required" />
-                </td>
-                <td>
-                    @Html.DropDownListFor(m => m.Entity.Name, new SelectList(Model.EntityClasses.Select(e => e.Name), Model.Entity.Name), "Select", new { @id = "classPathSelector", classPath = @Model.Entity.ClassPath })
-                    <label title="Select an associated entity.">?</label>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    @(Html.LabelFor(m => m.TitleNode))<span class="bx bx-required" title="Required" />
-                </td>
-                <td>
-                    @Html.DropDownListFor(m => m.TitleNode, new SelectList(Model.MetadataNodes, "DisplayName", "DisplayName", Model.TitleNode), "Select")
-                    <label title="Select the node from the metadata structure that describes the title.">?</label>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    @(Html.LabelFor(m => m.DescriptionNode))<span class="bx bx-required" title="Required" />
-                </td>
-                <td>
-                    @Html.DropDownListFor(m => m.DescriptionNode, new SelectList(Model.MetadataNodes, "DisplayName", "DisplayName", Model.DescriptionNode), "Select")
-                    <label title="Select the node from the metadata structure that describes the description.">?</label>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    @(Html.LabelFor(m => m.Active))
-                </td>
-                <td>
-                    @Html.CheckBoxFor(m => m.Active, new {title = "Tick if the metadata structure item should be visible load."})
-                </td>
-            </tr>
-
-        </table>
-
-
+<div id="metadataStructureFrom" class="bx-content" style="overflow:auto">
+    <table>
+        <tr>
+            <td>
+                <label>Id</label>
+                @(Html.HiddenFor(m => m.Id))
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.Id, new {@disabled = "disabled"})
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @(Html.LabelFor(m => m.Name))<span class="bx bx-required" title="Required" />
+            </td>
+            <td>
+                @(Html.TextBoxFor(m => m.Name, new {@class = "t-input", title = "Display name of the item in the search user interface."}))
+                @Html.ValidationMessageFor(m => m.Name)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Class <span class="bx bx-required" title="Required" />
+            </td>
+            <td>
+                @Html.DropDownListFor(m => m.Entity.Name, new SelectList(Model.EntityClasses.Select(e => e.Name), Model.Entity.Name), "Select", new { @id = "classPathSelector", classPath = @Model.Entity.ClassPath })
+                <label title="Select an associated entity.">?</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @(Html.LabelFor(m => m.TitleNode))<span class="bx bx-required" title="Required" />
+            </td>
+            <td>
+                @Html.DropDownListFor(m => m.TitleNode, new SelectList(Model.MetadataNodes, "DisplayName", "DisplayName", Model.TitleNode), "Select")
+                <label title="Select the node from the metadata structure that describes the title.">?</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @(Html.LabelFor(m => m.DescriptionNode))<span class="bx bx-required" title="Required" />
+            </td>
+            <td>
+                @Html.DropDownListFor(m => m.DescriptionNode, new SelectList(Model.MetadataNodes, "DisplayName", "DisplayName", Model.DescriptionNode), "Select")
+                <label title="Select the node from the metadata structure that describes the description.">?</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @(Html.LabelFor(m => m.Active))
+            </td>
+            <td>
+                @Html.CheckBoxFor(m => m.Active, new {title = "Tick if the metadata structure item should be visible load."})
+            </td>
+        </tr>
+    </table>
 </div>
 
 <div class="bx-footer right">
-    <div id="preloader" style="position:relative; right:180px; top:10px;"/>
+    <div id="preloader" style="position:relative; right:180px; top:10px;" />
     <button value="Save" name="submit" class="bx-button action" onclick="sendForm()">Save</button>
     <button type="button" value="c" name="cancel" class="bx-button action" onclick="OnCancel()">Cancel</button>
 </div>
@@ -95,7 +92,6 @@
 
         var SystemNodes = {};
 
-
         $('.systemRef')
             .each(function() {
                 console.log(this);
@@ -104,12 +100,10 @@
 
             });
 
-
         console.log($('#Active'));
         console.log(SystemNodes);
 
         $("#preloader").preloader(20,"");
-
 
         var metadataStructureModel = {
             Id: $('#Id').val(),
@@ -135,7 +129,7 @@
             data: JSON.stringify(metadataStructureModel),
             dataType: "json",
             contentType: "application/json;charset=utf8",
-            success: function (data) {  
+            success: function (data) {
 
                 if (data === true) {
                     OnSuccess()
@@ -143,7 +137,7 @@
                 else {
                     alert("error")
                 }
-                },  
+                },
             error: function () {
                 alert("failed")
             }
@@ -155,16 +149,14 @@
 
 <style type="text/css">
 
-    #metadataStructureFrom table, 
-    #metadataStructureFrom td, 
+    #metadataStructureFrom table,
+    #metadataStructureFrom td,
     #metadataStructureFrom tr {
         border: none;
     }
 
-    .t-window-content
-    {
+    .t-window-content {
         height: auto !important;
         width: auto !important;
     }
-
 </style>

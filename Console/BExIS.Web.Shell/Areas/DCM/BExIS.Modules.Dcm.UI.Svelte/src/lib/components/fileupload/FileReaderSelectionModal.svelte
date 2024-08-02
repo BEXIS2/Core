@@ -47,6 +47,6 @@
 			</div>
 		</div>
 
-		<Selection {model} on:saved={close} on:error={()=>alert('error')} />
+		<Selection {model} on:saved={close} on:error={() => alert('error')} />
 	</div>
 </Drawer>

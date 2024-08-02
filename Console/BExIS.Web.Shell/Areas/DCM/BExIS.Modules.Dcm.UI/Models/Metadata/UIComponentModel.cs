@@ -49,7 +49,6 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
             ErrorMessage = String.Empty;
             LockedClass = String.Empty;
             OnChangeAction = String.Empty;
-            
         }
     }
 }

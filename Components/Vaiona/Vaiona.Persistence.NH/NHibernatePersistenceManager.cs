@@ -40,7 +40,7 @@ namespace Vaiona.Persistence.NH
             cfg = new Configuration();
             cfg.Configure(configFile);
 
-            // in case of having specific queries or mappings for different dialects, it is better (and possible) 
+            // in case of having specific queries or mappings for different dialects, it is better (and possible)
             // to develop different maaping files and externalizing queries
             foreach (var mappingFolder in mappingFolders)
             {
@@ -124,7 +124,6 @@ namespace Vaiona.Persistence.NH
                 sessionFactory.Close();
             }
         }
-
 
         public IUnitOfWork CreateUnitOfWork(bool autoCommit = false, bool throwExceptionOnError = true, bool allowMultipleCommit = false
             , EventHandler beforeCommit = null, EventHandler afterCommit = null, EventHandler beforeIgnore = null, EventHandler afterIgnore = null)

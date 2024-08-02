@@ -13,7 +13,6 @@
     </p>
 }
 
-
 @Html.ActionLink("Import", "ImportMetadataStructureWizard", "ImportMetadataStructure", new { area = "DCM" }, new { @class = "bx-button function" })
 <br />
 <br />
@@ -46,9 +45,7 @@
                             <tr><td><b>Description</b> :</td><td> @item.DescriptionNode</td></tr>
                         </table>
                     }
-
                 </text>).Title("Info References").Width("45%");
-
 
                         columns.Bound(c => c.Active).Width("5%");
                         columns.Template(@<text>
@@ -61,17 +58,15 @@
                             <button type="button" class="bx bx-grid-function bx-trash" onclick="metadataStructureDelete_onClick('@item.Id', @item.Id)" title="Delete @item.Name"></button>
                             @Html.ActionLink(" ", "DownloadSchema", "ManageMetadataStructure", new { id = @item.Id }, new { @class = "bx bx-grid-function bx-download " + className, title = "Download xsd schema", disabled })
 
-
                             @if (Html.IsAccessible("DIM", "Mapping", "Index"))
                                         {
                                 @Html.ActionLink(" ", "Index", "Mapping", new { area = "DIM", sourceId = @item.Id }, new { @class = "bx bx-grid-function fa-arrow-right ", title = "Mapping to system" })
                                         }
-                                                        
+
                             @if (Html.IsAccessible("DIM", "Mapping", "Mapping"))
                                         {
                                 @Html.ActionLink(" ", "Mapping", "Mapping", new { area = "DIM", sourceId = 0, targetId = @item.Id, sourceType = "System", targetType = "MetadataStructure" }, new { @class = "bx bx-grid-function fa-arrow-left ", title = "Mapping from system" })
-                                        }                                                        
-
+                                        }
                         </text>)
 
                                     .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"userEdit_onClick(\'<#= Username #>\', <#= Id #>);\" value=\"<#= Id #>\" title=\"Edit <#= Id #>\"></button>" +
@@ -148,7 +143,6 @@
                     if (response) {
                         window.location.href = '/DCM/ManageMetadataStructure';
 
-
                     } else {
                         alert("The metadata structure is not deleted!");
                     }
@@ -157,13 +151,11 @@
         }
     }
 
-
     function OnSuccess() {
 
         $("#windowEdit").data('tWindow').destroy();
         $("#metadataStructuresGrid .t-refresh").trigger('click');
     }
-
 </script>
 <style>
     .tableWithoutBorder, .tableWithoutBorder td, .tableWithoutBorder tr {

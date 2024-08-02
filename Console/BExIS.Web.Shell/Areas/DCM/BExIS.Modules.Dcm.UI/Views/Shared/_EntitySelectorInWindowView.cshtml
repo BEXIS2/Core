@@ -1,6 +1,6 @@
 ﻿@using Telerik.Web.Mvc.UI
 @model BExIS.UI.Models.EntitySelectorModel
-@{ 
+@{
     string title = "No Title";
     if (!string.IsNullOrEmpty(Model.Title))
     {
@@ -16,7 +16,6 @@
     windowName += "Window";
 }
 
-
 @(Html.Telerik().Window()
     .Name(windowName)
     .Visible(false)
@@ -29,9 +28,6 @@
     .Content(
         @Html.Partial("_EntitySelectorView", Model).ToHtmlString())
     )
-
-
-
 
 <script type="text/javascript">
 
@@ -50,6 +46,4 @@
             console.log("close window: " + name);
             $('#' + name).data('tWindow').close();
         });
-
-
 </script>

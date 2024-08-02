@@ -1,7 +1,6 @@
-﻿
-/// <summary>
+﻿/// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dlm.Entities.Data
 {
     //public class ValueCollection

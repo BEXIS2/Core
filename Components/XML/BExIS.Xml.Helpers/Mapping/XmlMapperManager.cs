@@ -295,10 +295,9 @@ namespace BExIS.Xml.Helpers.Mapping
                 {
                     this.xmlSchemaManager.XmlNamespaceManager.AddNamespace(ns.Name, ns.Namespace);
                 }
-
             }
 
-             // create nodes
+            // create nodes
             newMetadata = mapNode(newMetadata, null, metadataXml.DocumentElement);
 
             // add required attributes
@@ -432,18 +431,16 @@ namespace BExIS.Xml.Helpers.Mapping
                         if (xmlMapper.IsSourceElement(sourceXPath))
                         {
                         }
-
                     }
                 }
 
-                if (sourceNode.Attributes!=null && sourceNode.Attributes.Count>0)
+                if (sourceNode.Attributes != null && sourceNode.Attributes.Count > 0)
                 {
                     foreach (XmlAttribute childAttr in sourceNode.Attributes)
                     {
                         destinationDoc = mapNode(destinationDoc, destinationPNode, childAttr);
                     }
-                 }
-                
+                }
 
                 if (sourceNode.HasChildNodes)
                 {
@@ -522,7 +519,6 @@ namespace BExIS.Xml.Helpers.Mapping
                 Array.Resize(ref destinationSplit, destinationSplit.Length + 1);
                 destinationSplit[destinationSplit.Length - 1] = first;
             }
-
 
             // XFType[2]\F[1]\yType[4]\Y[1]\XType[2]\x[1]
             return String.Join("/", destinationSplit); ;

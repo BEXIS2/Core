@@ -1,9 +1,10 @@
-﻿using BExIS.Dim.Entities.Mapping;
+﻿using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.GBIF;
-using BExIS.Dim.Helpers.Mapping;
+using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Helpers.Models;
 using BExIS.Dim.Services;
+using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO;
@@ -61,7 +62,7 @@ namespace BExIS.Dim.Helpers.Export
 
 
                 // get metadata
-                var concept = conceptManager.MappingConceptRepo.Get().FirstOrDefault(c => c.Name.ToLower().Equals(_dataRepo.Name.ToLower()));
+                var concept = conceptManager.MappingConceptRepository.Get().FirstOrDefault(c => c.Name.ToLower().Equals(_dataRepo.Name.ToLower()));
                 if (concept != null)
                 {
                     long metadatastructureId = dataset.MetadataStructure.Id;
@@ -122,7 +123,7 @@ namespace BExIS.Dim.Helpers.Export
                 GbifHelper helper = new GbifHelper();
 
 
-                var concept = conceptManager.MappingConceptRepo.Get().Where(c => c.Name.Equals(_dataRepo.Name)).FirstOrDefault();
+                var concept = conceptManager.MappingConceptRepository.Get().Where(c => c.Name.Equals(_dataRepo.Name)).FirstOrDefault();
 
                 if (concept == null)
                 {

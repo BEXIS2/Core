@@ -3,13 +3,13 @@ using Vaiona.Entities.Common;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dlm.Entities.DataStructure
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class DataType : BaseEntity
     {
         #region Attributes
@@ -18,24 +18,24 @@ namespace BExIS.Dlm.Entities.DataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Name { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string Description { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks> System.Int32, etc </remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual string SystemType { get; set; }
 
-        #endregion
+        #endregion Attributes
 
         #region Associations
 
@@ -43,17 +43,17 @@ namespace BExIS.Dlm.Entities.DataStructure
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ICollection<DataContainer> DataContainers { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public virtual ICollection<Unit> ApplicableUnits { get; set; }
 
-        #endregion
+        #endregion Associations
 
         #region Mathods
 
@@ -62,13 +62,13 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         public DataType()
         {
             DataContainers = new List<DataContainer>();
             ApplicableUnits = new List<Unit>();
         }
-        #endregion
 
+        #endregion Mathods
     }
 }

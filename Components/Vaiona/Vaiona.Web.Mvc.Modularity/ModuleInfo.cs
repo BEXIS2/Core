@@ -15,6 +15,5 @@ namespace Vaiona.Web.Mvc.Modularity
         public ModuleBase Plugin { get; set; }
 
         public Assembly Assembly { get; set; }
-
     }
 }

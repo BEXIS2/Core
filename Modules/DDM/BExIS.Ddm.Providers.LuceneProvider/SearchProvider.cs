@@ -9,7 +9,6 @@ using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
-using Lucene.Net.Store;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -412,7 +411,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                                         bexisSearchingFacet.Add(query, Occur.MUST);
                                     else bexisSearchingFacet.Add(query, Occur.SHOULD);
                                 }
-
                             }
                             ((BooleanQuery)bexisSearching).Add(bexisSearchingFacet, Occur.MUST);
                         }

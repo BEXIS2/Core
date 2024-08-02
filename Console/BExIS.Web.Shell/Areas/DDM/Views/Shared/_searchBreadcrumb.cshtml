@@ -3,13 +3,13 @@
 
 @model BExIS.Utils.Models.SearchModel
 
-@{ 
+@{
 
     string controller = Session["Controller"].ToString();
 
-}           
+}
 
-<div id="breadCrumb">       
+<div id="breadCrumb">
 @if (@Model.CriteriaComponent != null)
 {
 
@@ -20,47 +20,43 @@
         foreach (var item in sc.SearchCriteriaList.Where(p => p.SearchComponent.IsVisible).ToList() )
         {
         <text>
-    
+
           @*searchresult textinput*@
           @if (item.SearchComponent.Name == "" && item.Values.Count == 1)
-          { 
-               <div class="breadCrumbValue"  >
-                
+          {
+               <div class="breadCrumbValue">
+
                 @foreach (string s in @item.Values)
                 {
                    <b>@item.SearchComponent.DisplayName.ToString() :</b><span ><b id="@item.SearchComponent.Name.ToString()" title="deselect @item.SearchComponent.DisplayName.ToString() ">"@Html.ActionLink(@s.ToString(), "OnClickBreadCrumbItem", new { value = s })"</b></span>
                 }
                 </div>
           }
-            
-            
+
            @*searchresult selection one element*@
            @if (item.Values.Count == 1 && item.SearchComponent.Name != "")
-           { 
-              <div  class="breadCrumbValue" >
-            
+           {
+              <div  class="breadCrumbValue">
+
                 @* <!--add parent as tooltip-->
                 <span><b>@item.Key.ToString()</b></span>*@
-                | 
+                |
                @foreach (string s in @item.Values)
                {
                    if (s != "")
-                   {             
+                   {
                    <b> @item.SearchComponent.DisplayName.ToString() :</b><span title="deselect @item.SearchComponent.DisplayName.ToString() "> @Html.ActionLink(@s.ToString(), "OnClickBreadCrumbItem", new { value = s, parent = @item.SearchComponent.Name.ToString() }) </span>
                    }
                }
-    
-            
               </div>
-           } 
+           }
 
-           
             @*searchresult slection two elements*@
            @if (item.Values.Count == 2)
-           { 
+           {
                <div  class="breadCrumbValue" >></div>
                <b> @item.SearchComponent.DisplayName.ToString() :</b>
-               <div id="@item.SearchComponent.Name.ToString()" class="breadCrumbValue" title="deselect @item.SearchComponent.DisplayName.ToString() " >
+               <div id="@item.SearchComponent.Name.ToString()" class="breadCrumbValue" title="deselect @item.SearchComponent.DisplayName.ToString() ">
                    (
                    @foreach (string s in @item.Values)
                    {
@@ -68,49 +64,45 @@
                        if (s != @item.Values.Last())
                        { <b> or </b>}
                    }
-              
+
                    )
                </div>
-           } 
-            
+           }
+
            @*searchresult slection more then three elements*@
            @if (item.Values.Count >= 3)
            {
 
                string l="";
-               
+
                foreach(string value in item.Values)
                {
                    l += value + "\n";
                }
-                   
+
                <div class="breadCrumbValue">
                  |
                 <a  id="@item.SearchComponent.Name.ToString()" class="t-link" title="@l" onclick="onSelect2(this)" > @item.Values.Count.ToString() </a> in <b ><b title="@l" >@item.SearchComponent.DisplayName.ToString()</b> @*@Html.ActionLink(@item.Name.ToString(), "OnClickBreadCrumbItem", new { value = "", parent = @item.Name.ToString() })*@</b>
-            
                </div>
-        
-           } 
+
+           }
         </text>
         }
     }
     else
-    { 
+    {
         <text>
          <div class="breadCrumbValue"><b> </b></div>
-            
         </text>
     }
 }
-
 </div>
 <script type="text/javascript">
 
     function onSelect2(e) {
 
-
         var selectedItem = e.id
-    
+
         var dw = $("#MoreWindow").data("tWindow");
 
         if (dw != null) {
@@ -123,6 +115,4 @@
             dw.center().open();
         }
     }
-
-
 </script>

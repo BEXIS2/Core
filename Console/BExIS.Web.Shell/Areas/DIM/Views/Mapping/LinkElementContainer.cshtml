@@ -5,18 +5,16 @@
     string id = @Model.Position + "_"+ @Model.Complexity;
 }
 
-
 <div id="@id" class="le-container @Model.Position">
     <div class="le-container-header">
         @Model.Complexity <span id="@i" class="bx bx-angle-double-down" onclick="iconClick(this)"></span>
     </div>
 
-    <div class="le-container-content @c" >
+    <div class="le-container-content @c">
 
         @foreach (var child in Model.LinkElements)
         {
-            @Html.Partial("LinkElement", child)
+        @Html.Partial("LinkElement", child)
         }
-
     </div>
 </div>

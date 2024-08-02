@@ -1,10 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.IO.Transform.Output;
-using BExIS.Security.Services.Objects;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using BEXIS.JSON.Helpers;
@@ -25,7 +21,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
     /// </summary>
     public class MetadataStructureOutController : ApiController
     {
-
         /// <summary>
         /// this function return an overview about existing metadata structures
         /// </summary>
@@ -41,7 +36,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             {
                 foreach (var metadataStructure in metadataStructureManager.Repo.Get())
                 {
-
                     tmp.Add(new MetadataStructureViewObject()
                     {
                         Id = metadataStructure.Id,
@@ -49,12 +43,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         EntityType = GetEntityNameFromMetadatStructure(metadataStructure)
                     });
                 }
-
             }
             return tmp;
         }
-
-
 
         /// <summary>
         /// this api get a metadata structure based on the incoming api.
@@ -62,7 +53,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// </summary>
         /// <remarks>
         /// the API returns the selected metadata structure in json schema.
-        /// each object contains a @ref attribute of type string, simple types contain a #text where the value is entered. 
+        /// each object contains a @ref attribute of type string, simple types contain a #text where the value is entered.
         /// even a simple value therefore consists of @ref and #text.
         /// @ref will beused fpor internal or external references, #text is used to store input values
         /// </remarks>
@@ -73,7 +64,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
         [HttpGet]
         public HttpResponseMessage Get(long id)
         {
-
             if (id == 0)
             {
                 return Request.CreateResponse(HttpStatusCode.PreconditionFailed, String.Format("This metadata structure ({0}) is not available ", id));
@@ -85,7 +75,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     if (metadataStructureManager.Repo.Get(id) == null)
                     {
                         return Request.CreateResponse(HttpStatusCode.PreconditionFailed, String.Format("The metadata structure with id ({0}) not exist.", id));
-
                     }
                 }
             }
@@ -111,10 +100,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             return string.Empty;
         }
-
     }
-
-
 
     public class MetadataStructureViewObject
     {
@@ -122,7 +108,4 @@ namespace BExIS.Modules.Dim.UI.Controllers
         public string Name { get; set; }
         public string EntityType { get; set; }
     }
-
-   
 }
-

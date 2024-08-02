@@ -2,7 +2,6 @@
 @using Telerik.Web.Mvc.UI
 @model MappingMainModel
 
-
 <div id="DIM_MappingContainer">
 
     @{
@@ -16,7 +15,6 @@
         <p><a href="/DIM/Help/Index/#_mapping" class="bx-informationLink" title="go to help" target="_blank">More</a></p>
     }
 
-
     @section Scripts{
 
         <link href="@Url.Content("~/Areas/DIM/Content/DIM/bexis-dim.css")" rel="stylesheet" type="text/css" />
@@ -29,36 +27,30 @@
     @section LeftPane
     {
 
-
         @if (Model.Source != null)
         {
-            @Html.Partial("LinkElemenRoot", Model.Source)
+        @Html.Partial("LinkElemenRoot", Model.Source)
         }
     }
 
     <button onclick="switchSide()" class="bx-button fa fa-exchange function"></button>
 
-
-
     <div id="mapping-stats-button" class="btn btn-danger pull-right" style="display:none" onclick='$("#mapping-stats-missed").toggle()'>
         <b>required mappings</b> <span id="mapping-stats-value" class="badge"></span>
     </div>
 
-    <p id="mapping-stats-missed" class="pull-right"  style="display:none; padding-right:20px;"></p>
+    <p id="mapping-stats-missed" class="pull-right" style="display:none; padding-right:20px;"></p>
 
     @Html.Partial("Mappings", Model.ParentMappings)
-
 
     @section RightPane
     {
 
-
         @if (Model.Target != null)
         {
-            @Html.Partial("LinkElemenRoot", Model.Target, new ViewDataDictionary() { { "SelectionList", Model.SelectionList }, { "test", "test" } })
+        @Html.Partial("LinkElemenRoot", Model.Target, new ViewDataDictionary() { { "SelectionList", Model.SelectionList }, { "test", "test" } })
         }
     }
-
 </div>
 
 <script type="text/javascript">
@@ -73,7 +65,6 @@
         var sourceId = $(sourceInfo).find("#Id").text();
         var sourceType = $(sourceInfo).find("#Type").text();
 
-
         //long sourceId, long targetId = 0, LinkElementType type = LinkElementType.System
         var sendData =
         {
@@ -81,14 +72,14 @@
             "targetId": id,
             "sourceType": sourceType,
             "targetType": type,
-            "position":"Target"
+            "position": "Target"
         }
 
         console.log("senddata", sendData)
 
-        $("#le-root-target").preloader(12,"Loading Target");
+        $("#le-root-target").preloader(12, "Loading Target");
 
-        $("#dim-mapping-middle").preloader(12,"Loading Mappings");
+        $("#dim-mapping-middle").preloader(12, "Loading Mappings");
 
         reloadSite("le-root-target", sendData);
 
@@ -102,16 +93,15 @@
         var substr = e.value;
         var id = substr.split("_")[0];
         var type = substr.split("_")[1];
-        console.log("substr",substr);
-        console.log("type",type);
-        console.log("id",id);
+        console.log("substr", substr);
+        console.log("type", type);
+        console.log("id", id);
 
         var target = $("#le-root-target");
         console.log(target);
         var targetId = $(target).attr("id").split("_")[1];
         var targetInfo = $(target).find(".le-root-info")[0];
         var targetType = $(targetInfo).find("#Type").text();
-
 
         //long sourceId, long targetId = 0, LinkElementType type = LinkElementType.System
         var sendData =
@@ -134,7 +124,7 @@
 
     }
 
-    function reloadSite(id,senddata) {
+    function reloadSite(id, senddata) {
         $.ajax({
             type: "POST",
             url: "/DIM/Mapping/ReloadTarget",
@@ -225,5 +215,4 @@
 
         updateRequiredMappings();
     }
-
 </script>

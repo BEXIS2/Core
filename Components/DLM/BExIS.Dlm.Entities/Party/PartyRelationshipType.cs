@@ -17,12 +17,15 @@ namespace BExIS.Dlm.Entities.Party
             PartyRelationships = new List<PartyRelationship>();
             AssociatedPairs = new List<PartyTypePair>();
         }
+
         #region Attributes
 
         public virtual string Title { get; set; }
         public virtual string Description { get; set; }
         private string displayName;
-        public virtual string DisplayName { get { return string.IsNullOrEmpty(displayName) ? Title : displayName; } set { displayName = value; } }
+
+        public virtual string DisplayName
+        { get { return string.IsNullOrEmpty(displayName) ? Title : displayName; } set { displayName = value; } }
 
         /// <summary>
         /// If true, the the source party type is considered to be the parent of the target party type, hence the same for the associated parties in the linked relationship
@@ -38,12 +41,14 @@ namespace BExIS.Dlm.Entities.Party
         /// Maximum numbers of parties of the target type that can be asscoated to a party of the source type
         /// </summary>
         public virtual int MaxCardinality { get; set; }
-        #endregion
+
+        #endregion Attributes
 
         #region Associations
+
         public virtual ICollection<PartyTypePair> AssociatedPairs { get; set; }
         public virtual ICollection<PartyRelationship> PartyRelationships { get; set; }
-        #endregion
 
+        #endregion Associations
     }
 }

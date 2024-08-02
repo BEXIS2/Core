@@ -13,7 +13,6 @@ namespace BExIS.Utils.WebHelpers
             byte[] image = File.ReadAllBytes(path);
             string mime = MimeMapping.GetMimeMapping(path);
 
-
             return new MvcHtmlString($"<image src='data:{mime};charset=utf-8;base64, {Convert.ToBase64String(image)}' alt='{name}' style='height: {height}px; margin-top: -10px;' />");
         }
 
@@ -21,7 +20,6 @@ namespace BExIS.Utils.WebHelpers
         {
             byte[] image = File.ReadAllBytes(path);
             string mime = MimeMapping.GetMimeMapping(path);
-
 
             return new MvcHtmlString($"<image src='data:{mime};charset=utf-8;base64, {Convert.ToBase64String(image)}' style='width: 300px;' />");
         }
@@ -56,5 +54,4 @@ namespace BExIS.Utils.WebHelpers
             return new MvcHtmlString("<li class='dropdown'>" + menu + "<ul class='dropdown-menu'>" + submenu + "</ul></li>");
         }
     }
-
 }

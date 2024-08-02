@@ -2,7 +2,6 @@
 using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
-using BExIS.IO;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.Edit;
@@ -21,6 +20,7 @@ using System.Web.Mvc;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Modularity;
+
 using Cache = BExIS.UI.Hooks.Caches;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -63,8 +63,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             #endregion
 
-
-
             HookManager hookManager = new HookManager();
 
             // load cache to check existing files
@@ -100,7 +98,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 var dataset = datasetManager.GetDataset(id);
 
-                // get list of file types based on system settings, like 
+                // get list of file types based on system settings, like
                 // if structure exist or not
 
                 DataStructureType datastructureType = DataStructureType.None;
@@ -116,11 +114,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // if entity template has some allowed filestypes
                 if (dataset.EntityTemplate.AllowedFileTypes != null && dataset.EntityTemplate.AllowedFileTypes.Any())
                 {
-                    // the system needs to compare them with the system list 
+                    // the system needs to compare them with the system list
                     // only add filetypes dat are in both lists
                     model.FileUploader.Accept = model.FileUploader.Accept.Intersect(dataset.EntityTemplate.AllowedFileTypes).ToList();
                 }
-
             }
 
             // set flag for the filereader information, if false, then fiule reader need to be set
@@ -172,7 +169,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         filesNames.Add(fname);
                     }
 
-
                     // update last modification time
                     cache.UpdateLastModificarion(typeof(FileUploadHook));
 
@@ -188,8 +184,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     List<string> messages = new List<string> { "Files uploaded" };
                     messages.AddRange(filesNames);
 
-                    log.Messages.Add(new LogMessage(DateTime.Now, messages, username,"File upload","upload"));
-                    hookManager.Save(cache,log, "dataset", "details", HookMode.edit, id);
+                    log.Messages.Add(new LogMessage(DateTime.Now, messages, username, "File upload", "upload"));
+                    hookManager.Save(cache, log, "dataset", "details", HookMode.edit, id);
                 }
             }
             else
@@ -211,17 +207,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
             var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
-
             if (cache.Files.Any(f => f.Name == file))
             {
                 var f = cache.Files.Where(x => x.Name == file).FirstOrDefault();
                 if (f != null) cache.Files.Remove(f);
             }
 
-            log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { file + " removed" }, username,"File upload","remove"));
+            log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { file + " removed" }, username, "File upload", "remove"));
             // update last modification time
             cache.UpdateLastModificarion(typeof(FileUploadHook));
-            hookManager.Save(cache,log, "dataset", "details", HookMode.edit, id);
+            hookManager.Save(cache, log, "dataset", "details", HookMode.edit, id);
 
             return Json(true);
         }
@@ -242,7 +237,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (f != null) f.Description = description;
             }
 
-            log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { file + " description updated" }, username,"File upload", "save file description"));
+            log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { file + " description updated" }, username, "File upload", "save file description"));
             // update last modification time
             cache.UpdateLastModificarion(typeof(FileUploadHook));
             hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
@@ -263,7 +258,5 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 return file.FileName;
             }
         }
-
-
     }
 }

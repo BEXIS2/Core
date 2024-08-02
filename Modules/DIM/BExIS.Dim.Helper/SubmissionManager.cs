@@ -1,6 +1,4 @@
-﻿
-
-using BExIS.Dim.Entities.Publications;
+﻿using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Services;
 using BExIS.IO;
 using BExIS.Xml.Helpers;
@@ -16,7 +14,6 @@ namespace BExIS.Dim.Helpers
     public class SubmissionManager
     {
         private const string sourceFile = "submissionConfig.json";
- 
 
         public List<Broker> Brokers;
 
@@ -33,7 +30,6 @@ namespace BExIS.Dim.Helpers
 
                 if (FileHelper.FileExist(filepath))
                 {
-
                     // Read the file contents as a string
                     string jsonString = File.ReadAllText(filepath);
 
@@ -44,10 +40,8 @@ namespace BExIS.Dim.Helpers
                     {
                         createBroker(Brokers.ElementAt(i), publicationManager);
                     }
-
                 }
             }
-
         }
 
         private Broker createBroker(Broker broker, PublicationManager publicationManager)
@@ -63,7 +57,6 @@ namespace BExIS.Dim.Helpers
                 if (repo != null) repo = publicationManager.CreateRepository(repo.Name, repo.Url);
             }
 
-
             //create broker in DB
             string brokerName = broker.Name;
 
@@ -77,7 +70,6 @@ namespace BExIS.Dim.Helpers
                 broker = publicationManager.CreateBroker(broker);
             }
 
-  
             return broker;
         }
 

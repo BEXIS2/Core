@@ -457,7 +457,7 @@ namespace BExIS.Dlm.Services.Party
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="partyRelationship"></param>
         /// <param name="direction">0 = Source, 1 = target</param>
@@ -978,7 +978,6 @@ namespace BExIS.Dlm.Services.Party
 
         public Dictionary<PartyRelationshipType, int> ValidateRelationships(long partyId)
         {
-
             using (var partyManager = new PartyManager())
             using (var partyRelationshipTypeManager = new PartyRelationshipTypeManager())
             {
@@ -1062,7 +1061,6 @@ namespace BExIS.Dlm.Services.Party
         /// <returns></returns>
         private Dictionary<PartyCustomAttribute, string> ConvertDictionaryToPartyCustomeAttrValuesDictionary(Dictionary<long, string> partyCustomAttributes)
         {
-
             using (var partyTypeManager = new PartyTypeManager())
             {
                 var result = new Dictionary<PartyCustomAttribute, string>();

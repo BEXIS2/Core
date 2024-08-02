@@ -1,5 +1,5 @@
-﻿using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Helpers.Mapping;
+﻿using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Helpers.Mappings;
 using System;
 using System.Collections.Generic;
 using System.Xml;
@@ -10,7 +10,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
     {
         public XmlDocument SetSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, params Key[] systemKeyList)
         {
-
             foreach (var t in systemKeyList)
             {
                 //get all mappings to automatic system from the metadata structure
@@ -61,7 +60,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             //switch(key)
             //....
 
-
             // set values
 
             return metadata;
@@ -76,13 +74,11 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 {
                     ((XmlElement)xmlElement).InnerText = value;
                 }
-
             }
             catch (Exception ex)
             {
                 throw (ex);
             }
-
 
             return metadata;
         }

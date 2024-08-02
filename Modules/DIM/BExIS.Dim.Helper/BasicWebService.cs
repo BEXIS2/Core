@@ -26,14 +26,12 @@ namespace BExIS.Dim.Helpers
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-
                     //test@testerer.de:WSTest
                     var byteArray = Encoding.ASCII.GetBytes(user + ":" + password);
 
                     // "basic "+ Convert.ToBase64String(byteArray)
                     AuthenticationHeaderValue ahv = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
                     client.DefaultRequestHeaders.Authorization = ahv;
-
 
                     string requesturl = url + parameters;
                     HttpResponseMessage response = await client.GetAsync(requesturl);
@@ -68,13 +66,10 @@ namespace BExIS.Dim.Helpers
 
                     //ToDO set data as json to body
 
-
-
                     //client.
                     var parameterDic = new Dictionary<string, string> { { "requestJson", body } };
                     using (var encodedContent = new FormUrlEncodedContent(parameterDic))
                     {
-
                         //test@testerer.de:WSTest
                         var byteArray = Encoding.ASCII.GetBytes(user + ":" + password);
 
@@ -91,7 +86,6 @@ namespace BExIS.Dim.Helpers
                         response.EnsureSuccessStatusCode();
                         returnValue = ((HttpResponseMessage)response).Content.ReadAsStringAsync().Result;
                     }
-
                 }
                 return returnValue;
             }

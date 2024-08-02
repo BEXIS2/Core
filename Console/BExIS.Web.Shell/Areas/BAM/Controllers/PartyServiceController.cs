@@ -1,6 +1,5 @@
 ﻿using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
-using BExIS.Modules.Bam.UI.Configurations;
 using BExIS.Modules.Bam.UI.Helpers;
 using BExIS.Modules.Bam.UI.Models;
 using BExIS.Security.Services.Subjects;
@@ -11,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
-using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Bam.UI.Controllers
 {

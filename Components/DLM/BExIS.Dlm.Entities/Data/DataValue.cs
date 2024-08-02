@@ -5,13 +5,13 @@ using System.Xml.Serialization;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dlm.Entities.Data
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public abstract class DataValue //: BaseEntity
     {
         #region Attributes
@@ -20,60 +20,46 @@ namespace BExIS.Dlm.Entities.Data
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>   
+        /// <seealso cref=""/>
         [JsonProperty("v")]
-
         public object Value { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         [XmlIgnoreAttribute]
         [JsonIgnore]
-
         public DateTime SamplingTime { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         [XmlIgnoreAttribute]
         [JsonIgnore]
-
         public DateTime ResultTime { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         [XmlIgnoreAttribute]
         [JsonIgnore]
-
         public ObtainingMethod ObtainingMethod { get; set; }
 
         /// <summary>
         /// any free note. especially in case of ObtainingMethod == Processing or Simulation, the process, formula or simulation model can be described here
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         [XmlIgnoreAttribute]
         [JsonIgnore]
-
         public string Note { get; set; }
 
-        #endregion
-
-        #region Associations
-
-        #endregion
-
-        #region Methods
-
-        #endregion
-
+        #endregion Attributes
     }
 }

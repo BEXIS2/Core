@@ -1,5 +1,5 @@
-﻿/// <reference path="modernizr-2.8.3.js" />
-/// <reference path="jquery-2.1.4.js" />
+﻿/// <reference path="jquery-2.2.4.js" />
+/// <reference path="modernizr-2.8.3.js" />
 /// <autosync enabled="true" />
 /// <reference path="2013.2.611/jquery.validate.min.js" />
 /// <reference path="2013.2.611/jquery-1.7.1.min.js" />

@@ -30,7 +30,6 @@
         cancelId += idAsString;
     }
 
-
     int width = 600;
 
     if (Model.Data.Columns.Count > 1 && Model.Data.Columns.Count < 4)
@@ -47,7 +46,6 @@
     pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
     pagerStyles |= GridPagerStyles.Numeric;
 
-
     string parameters = "test";
     if (Model.Parameters != null)
     {
@@ -55,32 +53,31 @@
     }
 }
 
-
 <div>
     @if (String.IsNullOrEmpty(Model.IDKey))
     {
-        <table>
-            <tr class="header">
-                @foreach (DataColumn c in Model.Data.Columns)
+    <table>
+        <tr class="header">
+            @foreach (DataColumn c in Model.Data.Columns)
                 {
-                    <th>@c.ColumnName</th>
+            <th>@c.ColumnName</th>
                 }
-            </tr>
-            @foreach (DataRow r in Model.Data.Rows)
+        </tr>
+        @foreach (DataRow r in Model.Data.Rows)
             {
-                <tr>
-                    @foreach (object o in r.ItemArray)
+        <tr>
+            @foreach (object o in r.ItemArray)
                     {
-                        <td>@o</td>
+            <td>@o</td>
                     }
-                </tr>
+        </tr>
             }
-        </table>
+    </table>
     }
     else
     {
 
-        @(Html.Telerik().Grid(Model.Data).Name(@idAsString).HtmlAttributes(new {@class = "bx-selection-grid"}).DataBinding(c => c.Ajax().OperationMode(GridOperationMode.Client)).DataKeys(keys => keys
+    @(Html.Telerik().Grid(Model.Data).Name(@idAsString).HtmlAttributes(new {@class = "bx-selection-grid"}).DataBinding(c => c.Ajax().OperationMode(GridOperationMode.Client)).DataKeys(keys => keys
               .Add(Model.IDKey)
               ).Selectable().Pageable().Columns(columns =>
               {
@@ -125,36 +122,35 @@
     {
         if (String.IsNullOrEmpty(targetId))
         {
-            <a id="@submitId" class="bx-button action bx-disabled submitEntitySelection">Select</a>
+    <a id="@submitId" class="bx-button action bx-disabled submitEntitySelection">Select</a>
         }
         else
         {
- 
-            @Ajax.ActionLink("Select", @Model.Reciever.Action, @Model.Reciever.Controller, new {parameters = @parameters},
-                new AjaxOptions
-                {
-                    HttpMethod = "POST",
-                    InsertionMode = InsertionMode.Replace,
-                    UpdateTargetId = targetId,
-                    OnSuccess = "OnSucess()"
-                },
-                new
-                {
-                    @class = "bx-button action bx-disabled submitEntitySelection", @id = @submitId
-                });
+
+    @Ajax.ActionLink("Select", @Model.Reciever.Action, @Model.Reciever.Controller, new {parameters = @parameters},
+        new AjaxOptions
+        {
+            HttpMethod = "POST",
+            InsertionMode = InsertionMode.Replace,
+            UpdateTargetId = targetId,
+            OnSuccess = "OnSucess()"
+        },
+        new
+        {
+            @class = "bx-button action bx-disabled submitEntitySelection", @id = @submitId
+        });
         }
 
-        <a id="@cancelId" class="bx-button action" onclick="cancel(this)">Cancel</a>
+    <a id="@cancelId" class="bx-button action" onclick="cancel(this)">Cancel</a>
     }
 </div>
 <script type="text/javascript">
 
     $(document)
-        .ready(function() {
+        .ready(function () {
             resetAllTelerikIconTitles();
             addTooltips();
         });
-
 
     function OnRowSelection(e) {
 
@@ -166,11 +162,10 @@
         var link = table.attr("link");
         var dataid = $(e.row).find("td")[idIndex].innerHTML;
 
-
         var submitEntitySelection = link;
         console.log("-->" + submitEntitySelection);
 
-        submitEntitySelection += "?id="+dataid;
+        submitEntitySelection += "?id=" + dataid;
 
         console.log(submitEntitySelection);
 
@@ -178,16 +173,14 @@
         $('#' + submitId).removeClass("bx-disabled");
     }
 
-    function OnDataBound()
-    {
+    function OnDataBound() {
         addTooltips();
         resetAllTelerikIconTitles();
     }
 
     function cancel(e) {
         var window = $(e).closest(".t-window").data('tWindow');
-        if (window != null)
-        {
+        if (window != null) {
             window.close();
             $(e).closest(".t-window").remove();
         }
@@ -195,26 +188,19 @@
 
     function OnSucess() {
         var window = $(".entityWindow").data('tWindow');
-        if (window != null)
-        {
+        if (window != null) {
             window.close();
             $(".entityWindow").remove();
         }
     }
-
 </script>
 <style type="text/css">
 
-#TestGrid table > tbody > tr:hover
-{
-    background-color: #eff7f6;
-}
+    #TestGrid table > tbody > tr:hover {
+        background-color: #eff7f6;
+    }
 
-.t-state-selected
-{
-    background-color: #eff7f6;
-}
-
+    .t-state-selected {
+        background-color: #eff7f6;
+    }
 </style>
-
-

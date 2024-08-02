@@ -1,13 +1,8 @@
 ﻿using BExIS.Modules.Bam.UI.Configurations;
-using BExIS.Modules.Bam.UI.Models;
 using BExIS.Xml.Helpers;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Xml.Linq;
-using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Bam.UI.Helpers

@@ -1,8 +1,8 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.MetadataStructure">
-  
+
   <subclass name="MetadataAttribute" extends="BExIS.Dlm.Entities.DataStructure.DataContainer" discriminator-value="MA" dynamic-update="true">
 
-    <!--<many-to-one name="Classification" class="Classifier" not-null="false" column="ClassifierRef"/>-->
+    <!--<many-to-one name="Classification" class="Classifier" not-null="false" column="ClassifierRef" />-->
 
     <set name="UsedIn" inverse="true" order-by="Id" cascade="all-delete-orphan">
       <!--cascade only insert, update, set null in case of delete-->
@@ -19,7 +19,5 @@
 		  </key>
 		  <one-to-many class="MetadataParameterUsage" />
 	  </set>
-
   </subclass>
-  
 </hibernate-mapping>

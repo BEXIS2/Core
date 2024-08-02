@@ -1,7 +1,4 @@
-﻿using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.UI.Models;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace BExIS.Modules.Dcm.UI.Models.Edit
 {
@@ -13,7 +10,6 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
 
         public MetadataModel()
         {
-            
         }
     }
 }

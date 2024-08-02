@@ -11,41 +11,27 @@ namespace BExIS.IO.Tests
     [TestFixture()]
     public class IOUtilityTests
     {
-
-        List<DateTimeHelperUTObject> DateTimeCases = new List<DateTimeHelperUTObject>();
-
+        private List<DateTimeHelperUTObject> DateTimeCases = new List<DateTimeHelperUTObject>();
 
         [OneTimeSetUp]
-        /// It is called once prior to executing any of the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved. 
-        /// Inheritance is supported, call sequence form the parents
         public void OneTimeSetUp()
         {
             DateTimeCases = generateDateTimeCases();
         }
 
         [SetUp]
-        /// performs the initial setup for the tests. This runs once per test, NOT per class!
         protected void SetUp()
         {
-
         }
 
         [TearDown]
-        /// performs the cleanup after each test
         public void TearDown()
         {
-
         }
 
         [OneTimeTearDown]
-        /// It is called once after executing all the tests in a fixture.
-        /// Multiple methods can be marked. Order is not preserved. 
-        /// Inheritance is supported, call sequence form the children
-        /// Executes only if: counterpart OneTimeSetUp exists and executed successfully.
         public void OneTimeTearDown()
         {
-
         }
 
         [Test()]
@@ -173,7 +159,7 @@ namespace BExIS.IO.Tests
             return cases;
         }
 
-        #endregion
+        #endregion Helper
     }
 
     public class DateTimeHelperUTObject
@@ -193,7 +179,6 @@ namespace BExIS.IO.Tests
 
             if (cultureInfo == null) CultureInfo = CultureInfo.InvariantCulture;
             else CultureInfo = cultureInfo;
-
         }
     }
 }

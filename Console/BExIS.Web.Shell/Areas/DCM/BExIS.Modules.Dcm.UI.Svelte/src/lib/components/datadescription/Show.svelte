@@ -21,24 +21,27 @@
 	const variableStore = writable<VariableModel[]>([]);
 
 	variableStore.set(variables);
-	console.log("🚀 ~ variables:", variables)
+	console.log('🚀 ~ variables:', variables);
 
 	const variableConfig: TableConfig<VariableModel> = {
 		id: 'variables',
 		data: variableStore,
 		height: 225,
-		columns:{
-			id:{
-				fixedWidth:100
+		columns: {
+			id: {
+				fixedWidth: 100
 			},
-			name:{
+			name: {
 				instructions: {
 					renderComponent: NameTableCol
 				}
 			},
-			isKeys:{
-				exclude:true,
-				disableFiltering:true
+			isKeys: {
+				exclude: true,
+				disableFiltering: true
+			},
+			dataType: {
+				header: 'Data Type'
 			}
 		}
 	};

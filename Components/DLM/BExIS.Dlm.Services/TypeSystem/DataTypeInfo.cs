@@ -30,6 +30,7 @@ namespace BExIS.Dlm.Services.TypeSystem
         /// <summary>
         /// use this property in the form of DataTypeInfo.Types to access all the types and filter them using LINQ if required
         /// </summary>
-        public static List<DataTypeInfo> Types { get { return typeInformation; } }
+        public static List<DataTypeInfo> Types
+        { get { return typeInformation; } }
     }
 }

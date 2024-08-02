@@ -94,7 +94,7 @@
 			on:success
 		/>
 
-		{#if model.fileUploader.existingFiles}
+		{#if model.fileUploader.existingFiles.length}
 			<FileOverview
 				{id}
 				files={model.fileUploader.existingFiles}
@@ -104,14 +104,14 @@
 				on:success={success}
 				on:warning={warning}
 			/>
-		{/if}
 
-		<FileReaderInformation
-			{id}
-			bind:target={fileReaderSelectedFile}
-			bind:readableFiles={model.fileUploader.existingFiles}
-			bind:asciiFileReaderInfo={model.asciiFileReaderInfo}
-		/>
+			<FileReaderInformation
+				{id}
+				bind:target={fileReaderSelectedFile}
+				bind:readableFiles={model.fileUploader.existingFiles}
+				bind:asciiFileReaderInfo={model.asciiFileReaderInfo}
+			/>
+		{/if}
 	{:catch error}
 		<ErrorMessage {error} />
 	{/await}

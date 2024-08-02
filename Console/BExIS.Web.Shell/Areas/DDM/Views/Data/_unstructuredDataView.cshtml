@@ -4,11 +4,11 @@
 
 <div style="text-align:left; padding-bottom:5px;">
 @if (Model.DownloadAccess && Model.FileList.Count > 0)
-{ 
+{
         @Html.ActionLink("Download all", "DownloadAllFiles", "Data", new { area = "ddm", id = @Model.DatasetId }, new { @class = "bx-button action " })
 }
 else
-{ 
+{
         <button class="bx-button bx-disabled" disabled>Download all</button>
 }
 </div>
@@ -30,11 +30,8 @@ else
                     File size
                 </th>
                 <th>
-
                 </th>
             </tr>
-      
-        
 
         @foreach (BExIS.IO.BasicFileInfo cd in Model.FileList)
         {
@@ -50,7 +47,6 @@ else
                     </td>
                     <td>
                         @Html.Partial("_fileSizeView",cd.FileSize)
-    
                     </td>
                     <td style="width:30px;">
                         @if (Model.DownloadAccess)
@@ -65,12 +61,6 @@ else
                 </tr>
 
         }
-
         </table>
-        
-    
-
 
 }
-
-

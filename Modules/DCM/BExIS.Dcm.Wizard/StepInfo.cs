@@ -3,16 +3,15 @@ using System.Collections.Generic;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Dcm.Wizard
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class StepInfo
     {
-
         public string title;
         public string parentTitle;
         public bool valid = false;
@@ -32,22 +31,22 @@ namespace BExIS.Dcm.Wizard
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public ActionInfo GetActionInfo { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public ActionInfo PostActionInfo { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param name="title"></param>            
+        /// <param name="title"></param>
         public StepInfo(string title)
         {
             this.title = title;
@@ -66,7 +65,7 @@ namespace BExIS.Dcm.Wizard
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param> 
+        /// <param>NA</param>
         /// <returns></returns>
         public Tuple<string, StepStatus> GetStatusWithName()
         {
@@ -74,7 +73,7 @@ namespace BExIS.Dcm.Wizard
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -85,7 +84,7 @@ namespace BExIS.Dcm.Wizard
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -102,7 +101,7 @@ namespace BExIS.Dcm.Wizard
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>   
+        /// <param>NA</param>
         /// <returns></returns>
         public bool IsValid()
         {
@@ -110,7 +109,7 @@ namespace BExIS.Dcm.Wizard
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -130,7 +129,7 @@ namespace BExIS.Dcm.Wizard
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum StepStatus
     {

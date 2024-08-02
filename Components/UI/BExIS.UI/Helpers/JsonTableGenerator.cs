@@ -51,7 +51,6 @@ namespace BExIS.UI.Helpers
 
                 using (OpenXmlReader reader = OpenXmlReader.Create(worksheetPart))
                 {
-
                     int expectedRowIndex = 1;
                     while (reader.Read())
                     {
@@ -193,7 +192,6 @@ namespace BExIS.UI.Helpers
                     }
                 }
 
-
                 //Make sure each row has the same number of values in it
                 foreach (List<String> row in table)
                 {
@@ -308,7 +306,6 @@ namespace BExIS.UI.Helpers
             // open excel file
             using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(this.fileStream, false))
             {
-
                 // get workbookpart
                 WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
 

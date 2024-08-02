@@ -5,32 +5,32 @@
 
 @using (Ajax.BeginForm("Create", "Users", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_createUser", OnSuccess = "createUser_onSuccess" }))
 {
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
+@Html.AntiForgeryToken()
+@Html.ValidationSummary(true)
 
-    <table class="bx-table-form">
-        <tr>
-            <td>
-                @Html.LabelFor(m => m.UserName)
-            </td>
-            <td>
-                @Html.TextBoxFor(m => m.UserName, new { @class = "t-input bx-input" })
-                @Html.ValidationMessageFor(m => m.UserName)
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @Html.LabelFor(m => m.Email)
-            </td>
-            <td>
-                @Html.TextBoxFor(m => m.Email, new { @class = "t-input bx-input" })
-                @Html.ValidationMessageFor(m => m.Email)
-            </td>
-        </tr>
-    </table>
+<table class="bx-table-form">
+    <tr>
+        <td>
+            @Html.LabelFor(m => m.UserName)
+        </td>
+        <td>
+            @Html.TextBoxFor(m => m.UserName, new { @class = "t-input bx-input" })
+            @Html.ValidationMessageFor(m => m.UserName)
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @Html.LabelFor(m => m.Email)
+        </td>
+        <td>
+            @Html.TextBoxFor(m => m.Email, new { @class = "t-input bx-input" })
+            @Html.ValidationMessageFor(m => m.Email)
+        </td>
+    </tr>
+</table>
 
-    <div class="bx-footer right">
-        <button style="margin-right: 1px" type="submit" class="bx-button action">Save</button>
-        <button style="margin-left: 1px" type="button" id="button_createUser_cancel" class="bx-button action">Cancel</button>
-    </div>
+<div class="bx-footer right">
+    <button style="margin-right: 1px" type="submit" class="bx-button action">Save</button>
+    <button style="margin-left: 1px" type="button" id="button_createUser_cancel" class="bx-button action">Cancel</button>
+</div>
 }

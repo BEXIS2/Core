@@ -1,9 +1,6 @@
 ﻿using BExIS.IO.Transform.Input;
 using BExIS.UI.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace BExIS.Modules.Dcm.UI.Models.Edit
 {
@@ -26,4 +23,3 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
         }
     }
 }
-

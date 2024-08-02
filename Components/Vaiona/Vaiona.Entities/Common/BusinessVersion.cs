@@ -2,6 +2,6 @@
 {
     public class BusinessVersion
     {
-        // asd 
+        // asd
     }
 }

@@ -28,11 +28,18 @@ export const get = async (id) => {
 /****************/
 /* Create*/
 /****************/
-export const load = async (file:string,entityId:number,encoding:number, version:number) => {
+export const load = async (file: string, entityId: number, encoding: number, version: number) => {
 	console.log(file, entityId, version);
 	try {
 		const response = await Api.get(
-			'/rpm/DataStructure/load?file=' + file +'&&encoding='+encoding+ '&&entityId=' + entityId + '&&version=' + version
+			'/rpm/DataStructure/load?file=' +
+				file +
+				'&&encoding=' +
+				encoding +
+				'&&entityId=' +
+				entityId +
+				'&&version=' +
+				version
 		);
 		return response.data;
 	} catch (error) {
@@ -76,9 +83,9 @@ export const generate = async (data) => {
 	}
 };
 
-export const checkPrimaryKeySet = async (id:number, primaryKeys:number[]) => {
+export const checkPrimaryKeySet = async (id: number, primaryKeys: number[]) => {
 	try {
-		const response = await Api.post('/rpm/DataStructure/checkPrimaryKeySet', {id,primaryKeys});
+		const response = await Api.post('/rpm/DataStructure/checkPrimaryKeySet', { id, primaryKeys });
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -120,6 +127,7 @@ export const store = async (data) => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
+		
 	}
 };
 
@@ -197,4 +205,3 @@ export const getConstraints = async () => {
 		throw error;
 	}
 };
-

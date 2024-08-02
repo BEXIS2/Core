@@ -9,21 +9,20 @@
 
     <version name = "VersionNo" type="Int32">
       <column name = "VersionNo" />
-    </version >
+    </version>
 
     <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <column name = "Extra" not-null="false" sql-type="xml" />
     </property>
 
     <!-- Mapping DataTuple properties -->
-    <property name="UserId" type="Int64" >
+    <property name="UserId" type="Int64">
       <column name="UserId"  not-null="false" />
     </property>
-    <property name="Enable" type="yes_no" >
-      <column name="Enable"  />
+    <property name="Enable" type="yes_no">
+      <column name="Enable" />
     </property>
-    <many-to-one name="CustomAttribute" class="BExIS.Dlm.Entities.Party.PartyCustomAttribute" not-null="false" column="CustomAttributeRef"/>
-    <many-to-one name="TypePair" class="BExIS.Dlm.Entities.Party.PartyTypePair" not-null="false" column="TypePairRef"/>
-
+    <many-to-one name="CustomAttribute" class="BExIS.Dlm.Entities.Party.PartyCustomAttribute" not-null="false" column="CustomAttributeRef" />
+    <many-to-one name="TypePair" class="BExIS.Dlm.Entities.Party.PartyTypePair" not-null="false" column="TypePairRef" />
   </class>
 </hibernate-mapping>

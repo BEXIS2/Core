@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { MultiSelect, notificationStore, notificationType } from '@bexis2/bexis2-core-ui';
 
-	import { onMount } from 'svelte';
-
 	import type { DataStructureCreationModel } from '@bexis2/bexis2-rpm-ui';
 
 	import type { asciiFileReaderInfoType, fileInfoType } from '@bexis2/bexis2-core-ui';
@@ -19,7 +17,7 @@
 	export let readableFiles: fileInfoType[] = [];
 	export let asciiFileReaderInfo: asciiFileReaderInfoType;
 
-	export let target:string|undefined = undefined;
+	export let target: string | undefined = undefined;
 	$: target;
 	let model: DataStructureCreationModel | null;
 	$: model;
@@ -55,7 +53,6 @@
 		loading = false;
 	}
 
-
 	// after closing the selection window reset values
 	function close() {
 		open = false;
@@ -65,7 +62,7 @@
 
 <div class="card shadow-sm border-{style}-600 border-solid border">
 	<Accordion>
-		<AccordionItem  {open}>
+		<AccordionItem {open}>
 			<svelte:fragment slot="summary">
 				{#if asciiFileReaderInfo}
 					<span class="variant-filled-surface text-{style}-500"><Fa icon={faCheck} /></span>
@@ -78,7 +75,7 @@
 				<MultiSelect
 					id="fileselection"
 					title=""
-					bind:target = {target}
+					bind:target
 					source={list}
 					on:change={selectFile}
 					isMulti={false}

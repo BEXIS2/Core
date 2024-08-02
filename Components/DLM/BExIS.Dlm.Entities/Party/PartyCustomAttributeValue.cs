@@ -8,13 +8,18 @@ namespace BExIS.Dlm.Entities.Party
         {
             CustomAttribute = new PartyCustomAttribute();
         }
+
         #region Attributes
+
         public virtual string Value { get; set; }
-        #endregion
+
+        #endregion Attributes
 
         #region Associations
+
         public virtual PartyCustomAttribute CustomAttribute { get; set; }
         public virtual Party Party { get; set; }
-        #endregion
+
+        #endregion Associations
     }
 }

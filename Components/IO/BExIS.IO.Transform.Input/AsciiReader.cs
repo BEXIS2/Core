@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Vaiona.Logging.Aspects;
 
 /// <summary>
 ///
@@ -49,7 +48,6 @@ namespace BExIS.IO.Transform.Input
         /// <param ="fileName">Full path of the FileStream</param>
         public override FileStream Open(string fileName)
         {
-
             if (File.Exists(fileName))
                 return File.Open(fileName, FileMode.Open, FileAccess.Read);
             else
@@ -66,7 +64,6 @@ namespace BExIS.IO.Transform.Input
             // get Encoding first
             if (fri != null && fri.EncodingType != null)
                 Encoding = AsciiFileReaderInfo.GetEncoding(fri.EncodingType);
-
 
             // Check params
             if (this.FileStream == null)
@@ -136,7 +133,6 @@ namespace BExIS.IO.Transform.Input
             // get Encoding first
             if (fri != null && fri.EncodingType != null)
                 Encoding = AsciiFileReaderInfo.GetEncoding(fri.EncodingType);
-
 
             // Check params
             if (this.FileStream == null)
@@ -218,7 +214,6 @@ namespace BExIS.IO.Transform.Input
             // get Encoding first
             if (fri != null && fri.EncodingType != null)
                 Encoding = AsciiFileReaderInfo.GetEncoding(fri.EncodingType);
-
 
             // Check params
             if (this.FileStream == null)
@@ -334,7 +329,6 @@ namespace BExIS.IO.Transform.Input
             // get Encoding first
             if (fri != null && fri.EncodingType != null)
                 Encoding = AsciiFileReaderInfo.GetEncoding(fri.EncodingType);
-
 
             List<List<string>> listOfSelectedvalues = new List<List<string>>();
 
@@ -459,7 +453,6 @@ namespace BExIS.IO.Transform.Input
             if (fri != null && fri.EncodingType != null)
                 Encoding = AsciiFileReaderInfo.GetEncoding(fri.EncodingType);
 
-
             // Check params
             if (this.FileStream == null)
             {
@@ -494,7 +487,6 @@ namespace BExIS.IO.Transform.Input
                             dsdIsOk = ValidateDatastructure(line, seperator);
 
                             // if data is not in the correct order, create a dictionary with the new position
-
                         }
 
                         if (dsdIsOk && index >= this.Info.Data && !string.IsNullOrEmpty(line) && !isEmpty(line, seperator))
@@ -507,7 +499,6 @@ namespace BExIS.IO.Transform.Input
                         }
 
                         index++;
-
                     }
                 }
             }
@@ -610,7 +601,6 @@ namespace BExIS.IO.Transform.Input
                 }
 
                 return count;
-
             }
             else
             {
@@ -630,7 +620,6 @@ namespace BExIS.IO.Transform.Input
         {
             if (string.IsNullOrEmpty(fileName)) throw new ArgumentNullException(nameof(fileName), "fileName not exist");
 
-
             int count = 0;
             if (File.Exists(fileName))
             {
@@ -646,7 +635,6 @@ namespace BExIS.IO.Transform.Input
                         }
                     }
                 }
-
             }
             else
             {
@@ -727,17 +715,15 @@ namespace BExIS.IO.Transform.Input
             return lineCount;
         }
 
-
-        public static List<string> GetRows(string fileName, Encoding encoding, int number=0 )
+        public static List<string> GetRows(string fileName, Encoding encoding, int number = 0)
         {
             if (string.IsNullOrEmpty(fileName)) throw new ArgumentNullException(nameof(fileName), "fileName not exist");
-     
+
             List<string> selectedRows = new List<string>();
             if (File.Exists(fileName))
             {
                 using (var file = File.Open(fileName, FileMode.Open, FileAccess.Read))
                 {
-
                     using (StreamReader streamReader = new StreamReader(file, encoding, true))
                     {
                         string line = "";
@@ -762,7 +748,7 @@ namespace BExIS.IO.Transform.Input
 
         /// <summary>
         /// get rows by index starting from first detected row- skipped are not counted
-        /// get a subset of the row with a list of active cells 
+        /// get a subset of the row with a list of active cells
         /// cells list must same lenght as row afer split with text seperator
         /// </summary>
         /// <param name="fileName"></param>
@@ -772,7 +758,7 @@ namespace BExIS.IO.Transform.Input
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
-        public static List<string> GetRows(string fileName, Encoding encoding, List<int> indexList, List<bool> activeCells=null, TextSeperator delimeter = TextSeperator.tab)
+        public static List<string> GetRows(string fileName, Encoding encoding, List<int> indexList, List<bool> activeCells = null, TextSeperator delimeter = TextSeperator.tab)
         {
             if (string.IsNullOrEmpty(fileName)) throw new ArgumentNullException(nameof(fileName), "fileName not exist");
             if (indexList == null || !indexList.Any()) throw new ArgumentNullException(nameof(fileName), "row index list is empty");
@@ -783,7 +769,6 @@ namespace BExIS.IO.Transform.Input
             {
                 using (var file = File.Open(fileName, FileMode.Open, FileAccess.Read))
                 {
-
                     using (StreamReader streamReader = new StreamReader(file, encoding, true))
                     {
                         // skipp all empty rows
@@ -793,8 +778,6 @@ namespace BExIS.IO.Transform.Input
                         {
                             if (!string.IsNullOrWhiteSpace(line))
                             {
-                                
-
                                 // check if index is in indexList
                                 if (indexList.Contains(index))
                                 {
@@ -802,7 +785,7 @@ namespace BExIS.IO.Transform.Input
                                 }
 
                                 // if selectedRows count == indexList, all rows are found, break while loop
-                                if(indexList.Count== selectedRows.Count) break;
+                                if (indexList.Count == selectedRows.Count) break;
 
                                 // count only rows they have data
                                 index++;
@@ -819,16 +802,84 @@ namespace BExIS.IO.Transform.Input
             return selectedRows;
         }
 
+        public static int CountCells(string row, char separator, char textmarker)
+        {
+            return GetCells(row, separator, textmarker).Count();
+        }
+
+        public static List<string> GetCells(string row, char separator, char textmarker)
+        {
+            if (string.IsNullOrEmpty(row)) return new List<string>();
+            var values = row.Split(separator).ToList();
+            var temp = new List<string>();
+
+            /// <summary>
+            /// check if the row contains a textmarker
+            /// </summary>
+            /// <remarks></remarks>
+            if (row.Contains(textmarker))
+            {
+                string tempValue = "";
+                bool startText = false;
+
+                temp = new List<string>();
+
+                foreach (string v in values)
+                {
+                    /// <summary>
+                    /// check if the value v contains a textmarker
+                    /// and generate a new string which include all values between
+                    /// the first Text marker and the last TextMarker
+                    /// </summar>
+                    /// <remarks></remarks>
+                    if (v.Contains(textmarker))
+                    {
+                        //if the qoutest are in one value - first and last character
+                        if (v.ToCharArray().First().Equals(textmarker) && v.ToCharArray().Last().Equals(textmarker))
+                        {
+                            temp.Add(v.Trim(textmarker));
+                        }
+                        else
+                        {
+                            if (v.ToCharArray().First().Equals(textmarker))
+                            {
+                                tempValue = v;
+                                startText = true;
+                            }
+
+                            if (v.ToCharArray().Last().Equals(textmarker))
+                            {
+                                tempValue += separator + v;
+                                temp.Add(tempValue.Trim(textmarker));
+                                startText = false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (startText)
+                            tempValue += separator + v;
+                        else temp.Add(v);
+                    }
+                }
+
+                return temp;
+            }
+
+            return values;
+
+        }
+
         private static string getSubsetOfLine(string line, List<bool> activeCells, TextSeperator delimeter)
         {
-            // if cell list exist and entry are false, means 
+            // if cell list exist and entry are false, means
             // from the row we want a subset of cells
             if (activeCells != null && activeCells.Any())
             {
                 #region subset of row
 
                 List<string> subset = new List<string>();
-                int cellCount = activeCells.Where(v=>v==true).ToList().Count;
+                int cellCount = activeCells.Where(v => v == true).ToList().Count;
 
                 char d = AsciiFileReaderInfo.GetSeperator(delimeter);
                 string[] cells = line.Split(d);
@@ -849,9 +900,7 @@ namespace BExIS.IO.Transform.Input
                     return line;
                 }
 
-                
-                #endregion
-
+                #endregion subset of row
             }
             else // full row is wanted
             {
@@ -859,12 +908,12 @@ namespace BExIS.IO.Transform.Input
             }
         }
 
-        public static List<string> GetRandowRows(string fileName, long total, long selection, long dataStart=0)
+        public static List<string> GetRandowRows(string fileName, long total, long selection, long dataStart = 0)
         {
             if (string.IsNullOrEmpty(fileName)) throw new ArgumentNullException(nameof(fileName), "fileName not exist");
-            if (total==0) throw new Exception("total can not be 0");
+            if (total == 0) throw new Exception("total can not be 0");
             if (selection == 0) throw new Exception("selection can not be 0");
-            if (total< selection) throw new Exception("total must be greater then selection");
+            if (total < selection) throw new Exception("total must be greater then selection");
 
             List<long> selectedRowsIndex = new List<long>();
             List<string> selectedRows = new List<string>();
@@ -876,7 +925,7 @@ namespace BExIS.IO.Transform.Input
                 long c = 0;
                 do // run random index till int not exist in the selectRowsIndex
                 {
-                    c = Convert.ToInt64(rand.Next(Convert.ToInt32(dataStart), Convert.ToInt32(total)+1));
+                    c = Convert.ToInt64(rand.Next(Convert.ToInt32(dataStart), Convert.ToInt32(total) + 1));
                 }
                 while (selectedRowsIndex.Contains(c));
 
@@ -904,21 +953,19 @@ namespace BExIS.IO.Transform.Input
                 }
             }
             else
-            { 
+            {
                 throw new FileNotFoundException("file not found");
             }
 
             return selectedRows;
         }
 
-        
-
-
-        #endregion
+        #endregion basic reader functions without AsciiFileReaderInfo
 
         #region helper methods
 
-        List<string> tempRow = new List<string>();
+        private List<string> tempRow = new List<string>();
+
         /// <summary>
         /// Convert a row as a string to a list of strings
         /// </summary>
@@ -941,14 +988,13 @@ namespace BExIS.IO.Transform.Input
                     //if a offset is marked in the filereaader informations the offset needs to skip from the complete string array
                     return tempRow.Skip(fileReaderInfo.Offset).ToList();
                 }
-
             }
             return line.Split(seperator).ToList();
         }
 
+        private List<string> values;
+        private List<string> temp;
 
-        List<string> values;
-        List<string> temp;
         /// <summary>
         /// If a seperator is present in a text which is highlighted with highlighter (bsp quotes),
         /// which is a special case which is treated in this function
@@ -1035,7 +1081,6 @@ namespace BExIS.IO.Transform.Input
             return false;
         }
 
-  
         #endregion helper methods
 
         #region encoding
@@ -1050,9 +1095,8 @@ namespace BExIS.IO.Transform.Input
                 Encoding = reader.CurrentEncoding;
                 reader.Close();
             }
-
         }
 
-        #endregion
+        #endregion encoding
     }
 }

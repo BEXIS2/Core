@@ -5,7 +5,6 @@ namespace BExIS.Modules.Dcm.UI.Models.ImportMetadata
 {
     public class ReadSourceModel : AbstractStepModel
     {
-
         [Display(Name = "Schema name")]
         [Required(ErrorMessage = "Please define a name for the metadata structure.")]
         public string SchemaName { get; set; }

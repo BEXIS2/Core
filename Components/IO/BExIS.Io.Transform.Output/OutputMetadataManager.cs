@@ -98,8 +98,6 @@ namespace BExIS.IO.Transform.Output
 
                 return newXml;
             }
-
-
         }
 
         public static string GetSchemaDirectoryPath(long datasetId)
@@ -156,7 +154,6 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         public static string GetMetadataPath(ICollection<ContentDescriptor> contentDescriptors)
         {
-
             using (DatasetManager datasetManager = new DatasetManager())
             {
                 string path = "";

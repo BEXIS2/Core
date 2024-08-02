@@ -3,27 +3,26 @@ using System;
 using System.Collections.Generic;
 
 /// <summary>
-/// 
-/// </summary>        
+///
+/// </summary>
 namespace BExIS.Modules.Ddm.UI.Models
 {
     /// <summary>
     /// model of showing Metadata
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class ShowMetadataModel
     {
         public List<PackageUsageModel> PU { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
 
-
         /// <summary>
         /// Show metadata model required
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref="BExIS.Web.Shell\Areas\ddm\Views\Data\ShowMetaData.cshtml"/>
-        /// <param>NA</param>       
+        /// <param>NA</param>
         public ShowMetadataModel()
         {
             PU = new List<PackageUsageModel>();
@@ -33,24 +32,23 @@ namespace BExIS.Modules.Ddm.UI.Models
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class PackageUsageModel : BaseModelElement
     {
-
         /// <summary>
         /// List of Packages
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public List<BaseModelElement> Attributes { get; set; }
 
         /// <summary>
         /// PackageUsage includes the name and a list of Packages
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>   
+        /// <seealso cref=""/>
         public PackageUsageModel()
         {
             Name = "";
@@ -61,23 +59,23 @@ namespace BExIS.Modules.Ddm.UI.Models
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class PackageModel : BaseModelElement
     {
         /// <summary>
         /// AttribueUsages is a dictionary
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public List<BaseModelElement> Attributes;
 
         /// <summary>
         /// Create a new dictionary called AttributeUsages
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public PackageModel()
         {
             Name = "";
@@ -115,7 +113,5 @@ namespace BExIS.Modules.Ddm.UI.Models
         public String Name { get; set; }
         public String DisplayName { get; set; }
         public XmlNodeType Type { get; set; }
-
     }
-
 }

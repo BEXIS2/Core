@@ -5,7 +5,6 @@ using Vaiona.Utils.Cfg;
 
 namespace BExIS.Dim.Helpers.Tests.DataCiteDOI
 {
-
     [TestFixture()]
     public class DataCiteDoiHelperTests
     {
@@ -28,7 +27,6 @@ namespace BExIS.Dim.Helpers.Tests.DataCiteDOI
             var appConfiguration = AppConfiguration.WorkspaceRootPath;
 
             Assert.That(1, Is.EqualTo(1));
-
         }
     }
 }

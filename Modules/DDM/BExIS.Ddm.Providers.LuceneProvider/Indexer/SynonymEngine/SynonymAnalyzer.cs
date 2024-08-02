@@ -3,24 +3,24 @@ using Lucene.Net.Analysis.Standard;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace Lucene.Net.SynonymEngine
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class SynonymAnalyzer : Analyzer
     {
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public ISynonymEngine SynonymEngine { get; private set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -32,7 +32,7 @@ namespace Lucene.Net.SynonymEngine
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -48,7 +48,7 @@ namespace Lucene.Net.SynonymEngine
             result = new StandardFilter(result); // first normalize the StandardTokenizer
             result = new LowerCaseFilter(result);// makes sure everything is lower case
             result = new StopFilter(true, result, StopAnalyzer.ENGLISH_STOP_WORDS_SET); // use the default list of Stop Words, provided by the StopAnalyzer class.
-            result = new SynonymFilter(result, SynonymEngine); // injects the synonyms. 
+            result = new SynonymFilter(result, SynonymEngine); // injects the synonyms.
 
             //return the built token stream.
             return result;

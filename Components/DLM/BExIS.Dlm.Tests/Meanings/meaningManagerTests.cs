@@ -1,16 +1,11 @@
-﻿using System;
-using BExIS.Dlm.Tests.Helpers;
-using BExIS.App.Testing;
-using BExIS.Utils.Config;
-using NUnit.Framework;
+﻿using BExIS.App.Testing;
 using BExIS.Dlm.Services.Meanings;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
+using BExIS.Utils.Config;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Entities.Meanings.Tests
 {
@@ -40,11 +35,13 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
         {
             _meaningManager = new MeaningManager();
         }
+
         [TearDown]
         public void CleanUp()
         {
             _meaningManager.Dispose();
         }
+
         //////////////////////////////////////////
         /// create and edit prefix categories
         //////////////////////////////////////////
@@ -60,6 +57,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             prefixCategory = _meaningManager.addPrefixCategory(prefixCategory);
             NUnit.Framework.Assert.IsNotNull(prefixCategory);
         }
+
         [Test(), Order(2)]
         public void _editPrefixCategory_returnPrefixCategory()
         {
@@ -72,8 +70,9 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             _meaningManager.getPrefixCategory(Old_name).Should().BeNull();
             _meaningManager.getPrefixCategory(Old_name).Should().BeNull();
         }
+
         //////////////////////////////////////////
-        /// create and edit External Links 
+        /// create and edit External Links
         //////////////////////////////////////////
         [Test(), Order(3)]
         public void _createExternalLinkasPrefix_returnExternalLink()
@@ -84,6 +83,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             ExternalLink el1 = _meaningManager.addExternalLink(uri, name, ExternalLinkType.prefix, null, _meaningManager.getPrefixCategory(Convert.ToString("prefix category Name 1 edited")));
             NUnit.Framework.Assert.IsNotNull(el1);
         }
+
         [Test(), Order(4)]
         public void _createExternalLinkEntityasChildren_returnExternalLink()
         {
@@ -93,6 +93,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             ExternalLink el1 = _meaningManager.addExternalLink(uri, name, ExternalLinkType.entity, prefix, null);
             NUnit.Framework.Assert.IsNotNull(el1);
         }
+
         [Test(), Order(5)]
         public void _createExternalLinkCharac_returnExternalLink()
         {
@@ -101,6 +102,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             ExternalLink el1 = _meaningManager.addExternalLink(uri, name, ExternalLinkType.characteristics, null, null);
             NUnit.Framework.Assert.IsNotNull(el1);
         }
+
         [Test(), Order(6)]
         public void _createExternalLinkAsRelation_returnExternalLink()
         {
@@ -109,6 +111,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             ExternalLink el1 = _meaningManager.addExternalLink(uri, name, ExternalLinkType.relationship, null, null);
             NUnit.Framework.Assert.IsNotNull(el1);
         }
+
         [Test(), Order(7)]
         public void _createExternalLinkAsVocaB_returnExternalLink()
         {
@@ -117,6 +120,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             ExternalLink el1 = _meaningManager.addExternalLink(uri, name, ExternalLinkType.vocabulary, null, null);
             NUnit.Framework.Assert.IsNotNull(el1);
         }
+
         [Test(), Order(8)]
         public void _editExternalLinkAsEnt_returnExternalLink()
         {
@@ -129,8 +133,9 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             _meaningManager.getExternalLink(Old_URI).Should().BeNull();
             _meaningManager.getExternalLink(Old_URI).Should().BeNull();
         }
+
         //////////////////////////////////////////
-        /// create and edit Meanings  
+        /// create and edit Meanings
         //////////////////////////////////////////
         [Test(), Order(9)]
         public void _createMeaningParent_returnMeaning()
@@ -144,6 +149,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             Meaning res = _meaningManager.addMeaning(meaning);
             NUnit.Framework.Assert.IsNotNull(res);
         }
+
         [Test(), Order(10)]
         public void _createMeaningChild_returnMeaning()
         {
@@ -167,6 +173,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             res = _meaningManager.addMeaning(meaning);
             NUnit.Framework.Assert.IsNotNull(res);
         }
+
         [Test(), Order(11)]
         public void _edit2EmptyMeaningTo1SharedMeaningEntries_returnMeaning()
         {
@@ -193,6 +200,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             NUnit.Framework.Assert.IsNotNull(meaning2);
             _meaningManager.getMeaning(meaning2.Id).ExternalLinks.Should().NotBeEmpty();
         }
+
         [Test(), Order(12)]
         public void deleteMeaningSharingMeaningEntriesWithOtherMeaning_returnMeaning()
         {
@@ -202,8 +210,9 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             Meaning meaning2 = _meaningManager.getMeanings().FirstOrDefault(x => x.Name == "2 Child meaning name");
             meaning2.ExternalLinks.Should().NotBeEmpty();
         }
+
         //////////////////////////////////////////
-        /// Delete all test data   
+        /// Delete all test data
         //////////////////////////////////////////
         [Test(), Order(13)]
         public void _delete_all_test_data()
@@ -223,6 +232,10 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
             foreach (ExternalLink el in _meaningManager.getExternalLinks())
             {
                 _meaningManager.deleteExternalLink(el);
+            }
+            foreach (PrefixCategory pc in _meaningManager.getPrefixCategory())
+            {
+                _meaningManager.deletePrefixCategory(pc);
             }
         }
     }

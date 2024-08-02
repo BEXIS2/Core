@@ -70,6 +70,7 @@ namespace Vaiona.IoC.Unity
         }
 
         private static readonly string IoCContainerPerRequestKey = "IoCRerRequestKey_Container";
+
         public void StartRequestLevelContainer()
         {
             string key = IoCContainerPerRequestKey;
@@ -119,10 +120,9 @@ namespace Vaiona.IoC.Unity
             return null;
         }
 
-
         public void StartSessionLevelContainer()
         {
-            string key = HttpContext.Current.Session.SessionID;
+            string key = HttpContext.Current?.Session.SessionID;
             if (!children.ContainsKey(key))
             {
                 UnityIoC child = new UnityIoC(container.CreateChildContainer());
@@ -134,8 +134,8 @@ namespace Vaiona.IoC.Unity
         {
             try
             {
-                string key = HttpContext.Current.Session.SessionID;
-                if (this.children.ContainsKey(key))
+                string key = HttpContext.Current?.Session.SessionID;
+                if (!string.IsNullOrEmpty(key) && this.children.ContainsKey(key))
                     children.Remove(key);
             }
             catch { }
@@ -145,7 +145,7 @@ namespace Vaiona.IoC.Unity
         {
             try
             {
-                string key = HttpContext.Current.Session.SessionID;
+                string key = HttpContext.Current?.Session.SessionID;
                 if (this.children.ContainsKey(key))
                 {
                     UnityIoC child = this.children[key];
@@ -177,6 +177,5 @@ namespace Vaiona.IoC.Unity
         {
             container.Teardown(obj);
         }
-
     }
 }

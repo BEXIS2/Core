@@ -11,7 +11,7 @@ namespace Vaiona.Logging.Aspects
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class DiagnoseAttribute : OnMethodBoundaryAspect
     {
-        public sealed override void OnEntry(MethodExecutionArgs args)
+        public override sealed void OnEntry(MethodExecutionArgs args)
         {
             if (!AppConfiguration.IsLoggingEnable || !AppConfiguration.IsDiagnosticLoggingEnable)
                 return;
@@ -21,7 +21,7 @@ namespace Vaiona.Logging.Aspects
             args.MethodExecutionTag = sw;
         }
 
-        public sealed override void OnExit(MethodExecutionArgs args)
+        public override sealed void OnExit(MethodExecutionArgs args)
         {
             var sw = (Stopwatch)args.MethodExecutionTag;
             sw.Stop();

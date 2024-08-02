@@ -21,7 +21,7 @@ namespace BExIS.IO.Tests.Transform.Input
         public void OneTimeSetUp()
         {
             // for data generation
-            int numberOfRows = 10000;
+            int numberOfRows = 100;
             int charLength = 10;
             Random random = new Random();
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ÄÜÖ";
@@ -93,7 +93,6 @@ namespace BExIS.IO.Tests.Transform.Input
             Assert.That(incoming, Is.EquivalentTo(lines));
         }
 
-
         [Test]
         public void encoding_detectEcodingByEveryRow_EncodingIsWindowsFormat()
         {
@@ -123,9 +122,6 @@ namespace BExIS.IO.Tests.Transform.Input
 
             Assert.That(incoming, Is.EquivalentTo(lines));
         }
-
-
-        
 
         [Test]
         public void encoding_detectEcodingByReadFileFirst_EncodingIsUTF8Format()

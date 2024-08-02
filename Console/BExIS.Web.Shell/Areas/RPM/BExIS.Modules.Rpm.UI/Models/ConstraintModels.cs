@@ -1,11 +1,8 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.UI.Models;
-using Newtonsoft.Json;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Meanings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Policy;
 
 namespace BExIS.Modules.Rpm.UI.Models
 {
@@ -21,7 +18,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public bool InUse { get; set; }
         public List<long> VariableIDs { get; set; }
         public string CreationDate { get; set; }
-        public string LastModified {get; set;}
+        public string LastModified { get; set; }
 
         public static ReadConstraintModel Convert(Constraint constraint, string type = "")
         {
@@ -34,11 +31,10 @@ namespace BExIS.Modules.Rpm.UI.Models
                 FormalDescription = constraint.FormalDescription,
                 Type = type,
                 Negated = constraint.Negated,
-                InUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0 || constraint.VariableConstraints.Any(),
+                InUse = inUseChecker.isConstrainInUse(constraint),
                 VariableIDs = constraint.VariableConstraints.Select(v => v.Id).ToList(),
                 CreationDate = constraint.CreationDate != null ? constraint.CreationDate.ToString("MMMM d, HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) : "",
                 LastModified = constraint.LastModified != null ? constraint.LastModified.ToString("MMMM d, HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) : "",
- 
             };
         }
 
@@ -64,7 +60,6 @@ namespace BExIS.Modules.Rpm.UI.Models
         public string Provider { get; set; }
         public ConstraintSelectionPredicate SelectionPredicate { get; set; }
 
-
         public static ReadDomainConstraintModel Convert(DomainConstraint constraint)
         {
             ConstraintSelectionPredicate selectionPredicate = new ConstraintSelectionPredicate();
@@ -77,12 +72,12 @@ namespace BExIS.Modules.Rpm.UI.Models
                 Description = string.IsNullOrEmpty(constraint.Description) ? "Constraint " + constraint.Id : constraint.Description,
                 FormalDescription = constraint.FormalDescription,
                 Negated = constraint.Negated,
-                InUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0 || constraint.VariableConstraints.Any(),
+                InUse = inUseChecker.isConstrainInUse(constraint),
                 VariableIDs = constraint.VariableConstraints.Select(v => v.Id).ToList(),
                 Domain = DomainConverter.convertDomainItemsToDomain(constraint.Items),
                 Provider = constraint.Provider != null ? constraint.Provider.ToString() : null,
                 SelectionPredicate = constraint.ConstraintSelectionPredicate != null ? selectionPredicate.Materialise(constraint.ConstraintSelectionPredicate) : null,
-        };
+            };
         }
     }
 
@@ -100,7 +95,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                 Description = string.IsNullOrEmpty(constraint.Description) ? "Constraint " + constraint.Id : constraint.Description,
                 FormalDescription = constraint.FormalDescription,
                 Negated = constraint.Negated,
-                InUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0 || constraint.VariableConstraints.Any(),
+                InUse = inUseChecker.isConstrainInUse(constraint),
                 VariableIDs = constraint.VariableConstraints.Select(v => v.Id).ToList(),
                 Pattern = constraint.MatchingPhrase
             };
@@ -109,7 +104,6 @@ namespace BExIS.Modules.Rpm.UI.Models
 
     public class ReadRangeConstraintModel : ReadConstraintModel
     {
-
         public double Lowerbound { get; set; }
         public double Upperbound { get; set; }
         public bool LowerboundIncluded { get; set; }
@@ -125,7 +119,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                 Description = string.IsNullOrEmpty(constraint.Description) ? "Constraint " + constraint.Id : constraint.Description,
                 FormalDescription = constraint.FormalDescription,
                 Negated = constraint.Negated,
-                InUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0 || constraint.VariableConstraints.Any(),
+                InUse = inUseChecker.isConstrainInUse(constraint),
                 VariableIDs = constraint.VariableConstraints.Select(v => v.Id).ToList(),
                 Lowerbound = constraint.Lowerbound,
                 Upperbound = constraint.Upperbound,
@@ -151,6 +145,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public bool Negated { get; set; }
         public bool InUse { get; set; }
     }
+
     public class EditDomainConstraintModel : EditConstraintModel
     {
         public string Domain { get; set; }
@@ -169,6 +164,22 @@ namespace BExIS.Modules.Rpm.UI.Models
     public class EditPatternConstraintModel : EditConstraintModel
     {
         public string pattern { get; set; }
+    }
+
+    public static class inUseChecker
+    {
+        public static bool isConstrainInUse(Constraint constraint)
+        {
+            bool inUse = false;
+            using (MeaningManager meaningManager = new MeaningManager())
+            {
+                if(constraint != null) 
+                {
+                    inUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0 || constraint.VariableConstraints.Any() || meaningManager.getMeanings().Where(m => m.Constraints.Any(c => c.Id.Equals(constraint.Id))).Any();
+                }                
+            }
+            return inUse;
+        }
     }
 
     public static class DomainConverter
@@ -226,7 +237,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                     if (domainItems.Where(di => di.Key.Equals(domainItem.Key)).ToList().Count == 0)
                         domainItems.Add(domainItem);
                 }
-            }           
+            }
             return domainItems.Distinct().ToList();
         }
 
@@ -235,12 +246,11 @@ namespace BExIS.Modules.Rpm.UI.Models
             string domain = "";
             foreach (DomainItem domainItem in domainItems)
             {
-            
                 if (domainItem.Key == domainItem.Value)
                 {
-                    if(domainItem != domainItems.Last())
+                    if (domainItem != domainItems.Last())
                         domain += domainItem.Value + "\n";
-                    else 
+                    else
                         domain += domainItem.Value;
                 }
                 else
@@ -275,7 +285,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public long DatasetVersionNumber { get; set; }
         public long DatastructureId { get; set; }
 
-        public DatasetInfo() 
+        public DatasetInfo()
         {
             DatasetVersionId = 0;
             DatasetVersionNumber = 0;
@@ -286,6 +296,7 @@ namespace BExIS.Modules.Rpm.UI.Models
     public class DatastructureInfo : Info
     {
         public List<ColumnInfo> ColumnInfos = new List<ColumnInfo>();
+
         public DatastructureInfo()
         {
             ColumnInfos = new List<ColumnInfo>();

@@ -3,7 +3,7 @@
     <!-- Mapping BaseEntity properties -->
 
     <id name="Id" type="Int64">
-      <column name="Id" index="idx_DataTupleVersions_id"/>
+      <column name="Id" index="idx_DataTupleVersions_id" />
       <generator class="native" />
     </id>
 
@@ -26,7 +26,7 @@
     </property>
 
     <property name="Timestamp" type="Timestamp">
-      <column name="Timestamp"  index="idx_DataTupleVersions_timestamp"/>
+      <column name="Timestamp"  index="idx_DataTupleVersions_timestamp" />
     </property>
 
     <property name="JsonVariableValues" type="StringClob">
@@ -38,9 +38,8 @@
     </property>
 
     <property name="Values" type="StringClob">
-      <column name="Values" not-null="false"/>
+      <column name="Values" not-null="false" />
     </property>
-
 
     <many-to-one class="DataTuple" name="OriginalTuple" column="OriginalTupleRef">
     </many-to-one>
@@ -50,7 +49,5 @@
 
     <many-to-one class="DatasetVersion" name="ActingDatasetVersion" column="ActingDatasetVersionRef">
     </many-to-one>
-
   </class>
-
 </hibernate-mapping>

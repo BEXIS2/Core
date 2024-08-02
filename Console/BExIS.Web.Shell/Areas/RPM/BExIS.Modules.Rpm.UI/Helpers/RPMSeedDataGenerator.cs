@@ -1,7 +1,5 @@
 ﻿using BExIS.Dlm.Entities.Administration;
-using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.Administration;
-using BExIS.Dlm.Services.Meanings;
 using BExIS.Modules.Rpm.UI.Helpers.SeedData;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
@@ -20,6 +18,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
         public void GenerateSeedData()
         {
             #region security
+
             FeatureManager featureManager = null;
             FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager();
             OperationManager operationManager = new OperationManager();
@@ -52,7 +51,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 if (!operationManager.Exists("RPM", "DataStructureIO", "*"))
                     operationManager.Create("RPM", "DataStructureIO", "*", datastructureFeature);
 
-                if (!operationManager.Exists("RPM", "DataStructure", "*"))  operationManager.Create("RPM", "DataStructure", "*", datastructureFeature);
+                if (!operationManager.Exists("RPM", "DataStructure", "*")) operationManager.Create("RPM", "DataStructure", "*", datastructureFeature);
 
                 Feature atributeFeature = features.FirstOrDefault(f =>
                     f.Name.Equals("Variables Template Management") &&
@@ -107,7 +106,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                     f.Parent.Id.Equals(dataPlanning.Id));
 
                 if (dataTypeFeature == null)
-                    dataTypeFeature = featureManager.Create("Data Type Management", "Data Type Management", dataPlanning);;
+                    dataTypeFeature = featureManager.Create("Data Type Management", "Data Type Management", dataPlanning); ;
 
                 if (!operationManager.Exists("RPM", "Home", "*"))
                     operationManager.Create("RPM", "Home", "*", dataTypeFeature);
@@ -115,20 +114,16 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 if (!operationManager.Exists("RPM", "Help", "*"))
                     operationManager.Create("RPM", "Help", "*");
 
-
                 Feature newDataTypeFeature = features.FirstOrDefault(f =>
                     f.Name.Equals("New Data Type Management") &&
                     f.Parent != null &&
                     f.Parent.Id.Equals(dataPlanning.Id));
 
                 //if (newDataTypeFeature == null)
-                    //newDataTypeFeature = featureManager.Create("New Data Type Management", "New Data Type Management", dataPlanning);
+                //newDataTypeFeature = featureManager.Create("New Data Type Management", "New Data Type Management", dataPlanning);
 
                 if (!operationManager.Exists("RPM", "DataType", "*"))
                     operationManager.Create("RPM", "DataType", "*", dataTypeFeature);
-
-
-
 
                 Feature api = features.FirstOrDefault(f =>
                     f.Name.Equals("API") &&
@@ -143,7 +138,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 //set api public
                 featurePermissionManager.Create(null, api.Id, Security.Entities.Authorization.PermissionType.Grant);
-
 
                 //meanings features and security levels
                 Feature dataMeaning = features.FirstOrDefault(f =>
@@ -179,8 +173,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                     operationManager.Create("RPM", "ExternalLink", "*", dataMeaning);
                 }
 
-                if (!operationManager.Exists("RPM", "Help", "*"))operationManager.Create("RPM", "Help", "*");
-
+                if (!operationManager.Exists("RPM", "Help", "*")) operationManager.Create("RPM", "Help", "*");
             }
             finally
             {
@@ -189,7 +182,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 operationManager.Dispose();
             }
 
-            #endregion
+            #endregion security
 
             //create seed data from csv files
             MappingReader mappingReader = new MappingReader();
@@ -223,7 +216,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             createResearchPlan();
 
             // Add seeddata or Meanings and Externel Links Maybe
-
         }
 
         private static void createResearchPlan()
@@ -240,15 +232,11 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             {
                 rpm.Dispose();
             }
-
         }
 
         public void Dispose()
         {
             // release all the resources
         }
-
-
-
     }
 }

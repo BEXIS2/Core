@@ -38,7 +38,7 @@ namespace BExIS.Web.Shell.Controllers
 
         public ActionResult TestRedirectToSvelte2(long id)
         {
-            return RedirectToAction("","edit",new {area="dcm", id });
+            return RedirectToAction("", "edit", new { area = "dcm", id });
         }
 
         public ActionResult AddRequest()
@@ -1227,6 +1227,11 @@ namespace BExIS.Web.Shell.Controllers
             metadataHook.Check(1, "david");
 
             return View();
+        }
+
+        public JsonResult ErrorTest()
+        {
+            throw new NotImplementedException("this is a error test");
         }
     }
 }

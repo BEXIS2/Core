@@ -1,7 +1,6 @@
 ﻿using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authentication;
 using BExIS.Security.Services.Subjects;
-using BExIS.UI.Helpers;
 using BExIS.Utils.Config;
 using BExIS.Utils.Config.Configurations;
 using BExIS.Web.Shell.Models;
@@ -112,7 +111,7 @@ namespace BExIS.Web.Shell.Controllers
                     return View(model);
                 }
 
-                if(userManager.FindByEmailAsync(model.Email).Result != null)
+                if (userManager.FindByEmailAsync(model.Email).Result != null)
                 {
                     ModelState.AddModelError("email", "The email is already in use.");
                     return View(model);

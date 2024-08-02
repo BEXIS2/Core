@@ -12,7 +12,6 @@ namespace BExIS.Web.Shell.Controllers
             return PartialView("Content", Session.GetTenant().FooterPath);
         }
 
-
         public ActionResult ContactUs()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Contact Us", this.Session.GetTenant());

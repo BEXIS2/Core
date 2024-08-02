@@ -1,6 +1,6 @@
 <eml>
 	<dataset>
-		<alternateIdentifier/>
+		<alternateIdentifier />
 		<title>Dataset Test</title>
 		<creator>
 			<individualName>
@@ -22,7 +22,7 @@
 		</metadataProvider>
 		<pubDate>2023-03-01</pubDate>
 		<abstract>
-			<para/>
+			<para />
 		</abstract>
 		<contact>
 			<individualName>

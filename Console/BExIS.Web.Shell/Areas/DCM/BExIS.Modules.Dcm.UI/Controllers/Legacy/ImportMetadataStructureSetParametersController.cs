@@ -5,7 +5,6 @@ using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dcm.UI.Models.ImportMetadata;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
-using BExIS.UI;
 using BExIS.UI.Helpers;
 using BExIS.UI.Models;
 using BExIS.Utils.Models;
@@ -27,13 +26,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private ImportMetadataStructureTaskManager TaskManager;
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-
         public List<SearchMetadataNode> GetAllXPathsOfSimpleAttributes()
         {
-
             using (IUnitOfWork unitOfWork = this.GetUnitOfWork())
             {
-
                 List<SearchMetadataNode> list = new List<SearchMetadataNode>();
 
                 TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
@@ -60,8 +56,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 return list;
             }
-
-
         }
 
         public ActionResult Save(ParametersModel model)
@@ -356,8 +350,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
-
-
         private List<SearchMetadataNode> GetMetadataNodes()
         {
             TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
@@ -372,7 +364,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         #region extra xdoc
 
- 
         private XmlDocument AddReferenceToMetadatStructure(string nodeName, string nodePath, string nodeType, string destinationPath, XmlDocument xmlDoc)
         {
             XmlDocument doc = xmlDatasetHelper.AddReferenceToXml(xmlDoc, nodeName, nodePath, nodeType, destinationPath);
@@ -394,7 +385,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-
                 MetadataStructure metadataStructure = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(id);
 
                 XmlDocument xmlDoc = new XmlDocument();
@@ -408,7 +398,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 xmlDoc = AddReferenceToMetadatStructure("title", titlePath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
                 // add Description
                 xmlDoc = AddReferenceToMetadatStructure("description", descriptionPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
-
 
                 if (entityManager.EntityRepository.Get().Any(e => { return e.Name != null && e.Name.Equals(entity); }))
                 {

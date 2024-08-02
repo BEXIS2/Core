@@ -395,7 +395,6 @@ namespace BExIS.Utils.Upload
             Hashtable hashtable = new Hashtable();
 
             return IsUnique(datasetId, ext, filename, filepath, info, datastructureId, ref hashtable);
-
         }
 
         /// <summary>
@@ -409,9 +408,9 @@ namespace BExIS.Utils.Upload
         /// <param name="ext"></param>
         /// <param name="filename"></param>
         /// <returns></returns>
-        public bool IsUnique(long datasetId, string ext, string filename, string filepath, FileReaderInfo info, long datastructureId,ref Hashtable hashtable)
+        public bool IsUnique(long datasetId, string ext, string filename, string filepath, FileReaderInfo info, long datastructureId, ref Hashtable hashtable)
         {
-            if(hashtable==null) hashtable=new Hashtable();
+            if (hashtable == null) hashtable = new Hashtable();
             Hashtable test = new Hashtable();
             List<string> testString = new List<string>();
 
@@ -433,11 +432,11 @@ namespace BExIS.Utils.Upload
                         StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(datastructureId);
 
                         // get list of primary keys
-                        // if no keys is set, get all variables as primary key 
+                        // if no keys is set, get all variables as primary key
                         // duplicates are not allowd
                         List<long> primaryKeys = new List<long>();
-                            
-                        if(sds.Variables.Any(v=>v.IsKey.Equals(true)))
+
+                        if (sds.Variables.Any(v => v.IsKey.Equals(true)))
                             primaryKeys = sds.Variables.Where(v => v.IsKey).Select(v => v.Id).ToList();
                         else
                             primaryKeys = sds.Variables.Select(v => v.Id).ToList();
@@ -510,7 +509,6 @@ namespace BExIS.Utils.Upload
                         reader.Position = position;
                         using (Stream stream = reader.Open(filepath))
                         {
-
                             // get a list of values for each row
                             // e.g.
                             // primarky keys id, name
@@ -559,8 +557,6 @@ namespace BExIS.Utils.Upload
             return true;
         }
 
-
-
         /// <summary>
         /// test unique of primary keys in a string[][] as data
         /// </summary>
@@ -606,7 +602,6 @@ namespace BExIS.Utils.Upload
             return true;
         }
 
-
         /// <summary>
         /// test unique of primary keys on a dataset
         /// </summary>
@@ -618,7 +613,6 @@ namespace BExIS.Utils.Upload
         //[MeasurePerformance]
         public Boolean IsUnique(long datasetId, ref Hashtable hashtable)
         {
-
             using (DataStructureManager datastructureManager = new DataStructureManager())
             using (DatasetManager datasetManager = new DatasetManager())
             {
@@ -681,7 +675,6 @@ namespace BExIS.Utils.Upload
 
                 return true;
             }
-
         }
 
         /// <summary>
@@ -755,7 +748,7 @@ namespace BExIS.Utils.Upload
                 {
                     throw new Exception("Dataset is not checked in.");
                 }
-                                return true;
+                return true;
             }
         }
 

@@ -64,7 +64,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 /// Make sure that a criterion to filter public datasets is in the working search model.
                 ///
                 provider.WorkingSearchModel.UpdateSearchCriteria("gen_isPublic", "TRUE", SearchComponentBaseType.General, false, false, "AND");
-
             }
 
             SetSearchType(searchType);
@@ -125,8 +124,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             Session["SearchType"] = value;
         }
 
-        #endregion
-
+        #endregion SearchHeader
 
         #region Treeview - _searchFacets
 
@@ -235,11 +233,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
             return View("Index", provider);
-
         }
 
         /// <summary>
-        /// When the user click on the more button in the treeview 
+        /// When the user click on the more button in the treeview
         /// a window pops up an show all categories from the main categorie
         /// </summary>
         /// <param name="parent">name of the parent where the more button is inside</param>
@@ -262,14 +259,15 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return PartialView("_windowCheckBoxList", provider.WorkingSearchModel);
         }
 
-        #endregion
+        #endregion Treeview - _searchFacets
 
         #region BreadcrumbView
+
         //+++++++++++++++++++++BreadCrumb Update Data +++++++++++++++++++++++++++
 
         /// <summary>
         /// Is called when the user click on the labels in the breadcrumb view
-        /// 
+        ///
         /// </summary>
         /// <param name="value">selected value</param>
         /// <param name="parent">patrent of selected value</param>
@@ -309,9 +307,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return View(Session["SubmissionAction"].ToString(), provider); //View("Index", provider);
         }
 
-        #endregion
+        #endregion BreadcrumbView
 
         #region Datagrid
+
         // +++++++++++++++++++++ DataGRID Action +++++++++++++++++++++++++++
 
         [GridAction]
@@ -323,7 +322,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return View(new GridModel(table));
         }
 
-
         public ActionResult SetResultViewVar(string key, string value)
         {
             Session[key] = value;
@@ -331,9 +329,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return this.Json(new { success = true });
         }
 
-        #endregion
+        #endregion Datagrid
 
         #region Properties _searchProperties
+
         //+++++++++++++++++++++ Properties Sliders Action +++++++++++++++++++++++++++
         [HttpPost]
         public ActionResult FilterByRangeSlider(int start, int end, string parent)
@@ -389,7 +388,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return PartialView("_searchBreadcrumb", provider.Get(provider.WorkingSearchModel.CriteriaComponent));
         }
 
-
         public void UpdatePropertiesDic(string name, string value)
         {
             if (name != null)
@@ -412,7 +410,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         /// <summary>
-        /// Remove a property from the Dictionary 
+        /// Remove a property from the Dictionary
         /// </summary>
         /// <example>
         /// grassland: all | yes | no
@@ -443,7 +441,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
             }
         }
-        #endregion
+
+        #endregion Properties _searchProperties
 
         #region Dictionary (Search/Properties)
 
@@ -458,7 +457,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        #endregion
+        #endregion Dictionary (Search/Properties)
 
         #region Session && Session  getter/setter
 
@@ -501,7 +500,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             else return new List<Facet>();
         }
 
-
         private void SetSelectAbleCategoryList(IEnumerable<Facet> cl)
         {
             Session["SelectAbleCategories"] = cl;
@@ -529,6 +527,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             Session["SearchType"] = filter;
         }
 
-        #endregion
+        #endregion Session && Session  getter/setter
     }
 }

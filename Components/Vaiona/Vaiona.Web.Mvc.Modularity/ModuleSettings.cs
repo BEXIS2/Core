@@ -10,7 +10,6 @@ namespace Vaiona.Web.Mvc.Modularity
                 Path.Combine(AppConfiguration.GetModuleWorkspacePath(moduleId), $"{moduleId}.Settings.json")
                 )
         {
-
         }
     }
 }

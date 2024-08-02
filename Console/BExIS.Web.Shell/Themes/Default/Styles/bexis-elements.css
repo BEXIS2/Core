@@ -473,7 +473,6 @@ ul.bx-list-multi {
     max-height: 500px;
 }
 
-
 /* Toggle */
 .bx2-toggle {
     position: absolute;
@@ -481,19 +480,19 @@ ul.bx-list-multi {
     visibility: hidden;
 }
 
-.bx2-toggle + label {
-    display: block;
-    position: relative;
-    cursor: pointer;
-    outline: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
+    .bx2-toggle + label {
+        display: block;
+        position: relative;
+        cursor: pointer;
+        outline: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
 
 input.bx2-toggle-round-flat + label {
-/*    padding: 2px;*/
+    /*    padding: 2px;*/
     width: 48px;
     height: 24px;
     background-color: rgb(216, 216, 216);
@@ -515,7 +514,7 @@ input.bx2-toggle-round-flat + label {
     }
 
     input.bx2-toggle-round-flat + label:before {
-  /*      top: 2px;
+        /*      top: 2px;
         left: 2px;
         bottom: 2px;
         right: 2px;*/
@@ -549,9 +548,9 @@ input.bx2-toggle-round-flat + label {
         transition: margin 0.4s, background 0.4s;
     }
 
-    input.bx2-toggle-round-flat:checked + label {
-        background-color: var(--highlight-color)
-    }
+input.bx2-toggle-round-flat:checked + label {
+    background-color: var(--highlight-color)
+}
 
     input.bx2-toggle-round-flat:checked + label:after {
         margin-left: 24px;

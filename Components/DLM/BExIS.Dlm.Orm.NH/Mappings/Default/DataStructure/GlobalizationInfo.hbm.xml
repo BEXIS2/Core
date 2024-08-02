@@ -1,7 +1,7 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="GlobalizationInfo" table="GlobalizationInfos" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
-    
+
     <id name="Id" type="Int64">
       <column name="Id" index="idx_Globalizations_id" />
       <generator class="native" />
@@ -16,9 +16,9 @@
     </property>
 
     <!-- Mapping Entity properties -->
-    
+
     <property name="CultureId" type="String">
-      <column name="CultureId"  index="idx_Globalizations_cultureId"/>
+      <column name="CultureId"  index="idx_Globalizations_cultureId" />
     </property>
 
     <property name="DisplayName" type="String">
@@ -29,8 +29,6 @@
       <column name="Description" />
     </property>
 
-    <many-to-one name="DataContainer" class="DataContainer" not-null="false" column="DataContainerRef"/>
-    
+    <many-to-one name="DataContainer" class="DataContainer" not-null="false" column="DataContainerRef" />
   </class>
-
 </hibernate-mapping>

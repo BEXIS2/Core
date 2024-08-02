@@ -77,7 +77,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                 return PartialView("_Create", model);
             }
-
         }
 
         [HttpPost]
@@ -85,7 +84,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             using (var identityGroupService = new IdentityGroupService())
             {
-
                 var group = identityGroupService.FindByIdAsync(groupId).Result;
 
                 foreach (var user in group.Users)
@@ -95,7 +93,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                 var result = await identityGroupService.DeleteAsync(group);
                 return result.Succeeded;
-
             }
         }
 
@@ -119,7 +116,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     groups = groupManager.Groups.Select(GroupGridRowModel.Convert).ToList();
                     count = groupManager.Groups.Count();
-
                 }
 
                 return View(new GridModel<GroupGridRowModel> { Data = groups, Total = count });

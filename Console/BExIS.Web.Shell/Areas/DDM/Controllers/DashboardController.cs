@@ -149,13 +149,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         #region mydatasets
 
         [GridAction]
-        /// <summary>
-        /// create a model to fill the table of My Dataset
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref="ShowMyDatasets"/>
-        /// <param>NA</param>
-        /// <returns>model</returns>
         public ActionResult _CustomMyDatasetBinding()
         {
             DataTable model = new DataTable();
@@ -201,7 +194,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         if (datasetManager.IsDatasetCheckedIn(datasetId))
                         {
-
                             string title = dsv.Title;
                             string description = dsv.Description;
 
@@ -313,13 +305,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 {
                     ViewBag.userLoggedIn = false;
                     datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), entityname, typeof(Dataset), RightType.Read);
-
                 }
 
                 List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(datasetIds, true);
                 foreach (var dsv in datasetVersions)
                 {
-
                     Object[] rowArray = new Object[8];
                     string isValid = "no";
 
@@ -329,10 +319,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         type = "tabular";
                     }
 
-
                     if (dsv.Dataset.Status == DatasetStatus.CheckedIn)
                     {
-
                         string title = dsv.Title;
                         string description = dsv.Description;
 
@@ -363,8 +351,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                        (string)rowArray[2],
                        (bool)rowArray[7],
                        isValid, (string)rowArray[3]));
-
-
                 }
             }
             if (onlyTable == "true")
@@ -376,7 +362,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 ViewBag.entityname = entityname;
                 return PartialView("_myDatasetsViewHeader", model);
             }
-
         }
 
         /// <summary>
@@ -465,7 +450,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             #endregion header
 
             using (DataTable model = CreateDataTable(headerItems))
-            { 
+            {
                 ViewData["PageSize"] = 10;
                 ViewData["CurrentPage"] = 1;
 
@@ -539,7 +524,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 DataType = "String"
             };
             headerItems.Add(headerItem);
-
 
             headerItem = new HeaderItem()
             {
@@ -654,6 +638,5 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         #endregion mydatasets
-
     }
 }

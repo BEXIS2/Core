@@ -25,6 +25,7 @@ namespace Vaiona.MultiTenancy.Services
         {
             return Path.Combine(AppConfiguration.WorkspaceTenantsRoot, tenantId, "images", imageFileName);
         }
+
         protected virtual string GetImagePathFromFallbackTenant(string fallbackTenantId, string imageFileName)
         {
             return Path.Combine(AppConfiguration.WorkspaceTenantsRoot, fallbackTenantId, "images", imageFileName);
@@ -43,10 +44,12 @@ namespace Vaiona.MultiTenancy.Services
             }
             return string.Empty;
         }
+
         protected virtual string GetThemePathFromTenant(string tenantId, string themeName)
         {
             return Path.Combine(AppConfiguration.WorkspaceTenantsRoot, tenantId, "themes", themeName);
         }
+
         protected virtual string GetThemePathFromFallbackTenant(string fallbackTenantId, string themeName)
         {
             return Path.Combine(AppConfiguration.WorkspaceTenantsRoot, fallbackTenantId, "themes", themeName);
@@ -70,6 +73,7 @@ namespace Vaiona.MultiTenancy.Services
         {
             return Path.Combine(AppConfiguration.WorkspaceTenantsRoot, tenantId, "contents", contentFileName);
         }
+
         protected virtual string GetContentFilePathFromFallbackTenant(string fallbackTenantId, string contentFileName)
         {
             return Path.Combine(AppConfiguration.WorkspaceTenantsRoot, fallbackTenantId, "contents", contentFileName);

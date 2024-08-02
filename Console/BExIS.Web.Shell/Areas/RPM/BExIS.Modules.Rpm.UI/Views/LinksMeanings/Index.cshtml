@@ -1,6 +1,4 @@
-﻿
-
-<head>
+﻿<head>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
@@ -73,19 +71,9 @@
     </div>
 </div>
 
-
-
-
 <br />
 
-
-
-
-
-
 <script type="text/javascript">
-
-    
 
     allmeanings = null;
     start()
@@ -152,7 +140,7 @@
     //delete existing meanins
     function deletemeaning() {
         id = $('#details_card').attr('data');
-        functABC('Delete', id , 'json').then(function (result) {
+        functABC('Delete', id, 'json').then(function (result) {
             window.location.reload();
         })
     }
@@ -302,7 +290,7 @@
                 end_nodes.push(key)
                 prepare_Data_for_view(key["related_meaning"], end_nodes)
             }
-            
+
         })
     }
     async function functABC(action, data, datatype) {
@@ -320,10 +308,8 @@
         });
     }
 
-
-
     //detailed view of a External Link element
-    
+
     function details_ExternalLink(id) {
         $('#details_card_ExternalLinkCard').attr('data', id)
         functABC('DetailExternalLinks', JSON.stringify({ id: id }), 'json').then(function (result) {

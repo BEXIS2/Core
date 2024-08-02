@@ -9,11 +9,12 @@ namespace BExIS.Dlm.Services.Data
 {
     public class DataTupleIterator : IEnumerable<AbstractTuple>
     {
-        List<long> tupleIds = new List<long>();
-        DatasetManager datasetManager;
-        bool materialize = true;
-        int preferedBatchSize = 1;
-        long iterations = 0;
+        private List<long> tupleIds = new List<long>();
+        private DatasetManager datasetManager;
+        private bool materialize = true;
+        private int preferedBatchSize = 1;
+        private long iterations = 0;
+
         public DataTupleIterator(List<long> tupleIds, DatasetManager datasetManager, bool materialize = true)
         {
             this.tupleIds = tupleIds;
@@ -27,6 +28,7 @@ namespace BExIS.Dlm.Services.Data
                     iterations++;
             }
         }
+
         public IEnumerator<AbstractTuple> GetEnumerator()
         {
             for (int round = 0; round < iterations; round++)
@@ -88,7 +90,5 @@ namespace BExIS.Dlm.Services.Data
             }
             yield break;
         }
-
-
     }
 }

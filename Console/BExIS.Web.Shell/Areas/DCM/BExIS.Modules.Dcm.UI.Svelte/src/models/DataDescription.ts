@@ -13,7 +13,7 @@ export interface DataDescriptionModel {
 	isRestricted: boolean;
 	isStructured: boolean;
 	hasData: boolean;
-	enableEdit: boolean
+	enableEdit: boolean;
 }
 
 export interface VariableModel {
@@ -21,5 +21,5 @@ export interface VariableModel {
 	name: string;
 	unit: string;
 	dataType: string;
-	isKey:boolean;
+	isKey: boolean;
 }

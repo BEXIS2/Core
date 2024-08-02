@@ -1,15 +1,15 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="DatasetView" table="DatasetViews" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
-    
+
     <id name="Id" type="Int64">
       <column name="Id" index="idx_DatasetViews_id" />
       <generator class="native" />
     </id>
 
     <!--This is the master mapping for a Table per hierarchy mapping. children are DefaultValueConstraint, ValidatorConstraint and DomainValueConstraint-->
-    <discriminator column="ConstraintType" type="String" length="3"/>
-    
+    <discriminator column="ConstraintType" type="String" length="3" />
+
     <version name="VersionNo" type="Int32">
       <column name="VersionNo" />
     </version>
@@ -19,7 +19,7 @@
     </property>
 
     <!-- Mapping entity properties -->
-    
+
     <property name="Name" type="String">
       <column name="Name" index="idx_DatasetViews_name" />
     </property>
@@ -33,13 +33,11 @@
     </property>
 
     <!-- Mapping associations -->
-    <many-to-one name="Dataset" class="BExIS.Dlm.Entities.Data.Dataset" not-null="false" column="DatasetRef"/> <!-- nullable as it is also associated with the DataStructure -->
+    <many-to-one name="Dataset" class="BExIS.Dlm.Entities.Data.Dataset" not-null="false" column="DatasetRef" /> <!-- nullable as it is also associated with the DataStructure -->
 
     <set name="DataStructures" table="DataStructures_Views" lazy="true">
-      <key column="ViewRef"/>
-      <many-to-many column="DataStructureRef" class="DataStructure"/>
+      <key column="ViewRef" />
+      <many-to-many column="DataStructureRef" class="DataStructure" />
     </set>
-
   </class>
-
 </hibernate-mapping>

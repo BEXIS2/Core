@@ -139,7 +139,7 @@ export const GetDatastructure = async (id: number) => {
 
 export const GetData = async (id: number, pagesize: number = 10, variableid: number = 0) => {
 	try {
-		const response = await Api.post('/rpm/constraints/GetData', { id,  pagesize, variableid } );
+		const response = await Api.post('/rpm/constraints/GetData', { id, pagesize, variableid });
 		return response.data;
 	} catch (error) {
 		console.error(error);

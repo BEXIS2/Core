@@ -50,7 +50,6 @@
         //lockedClass = "bx-disabled";
     }
 
-
     UIComponentModel uiComponentModel = new UIComponentModel(MetadataAttrType.Parameter)
     {
         IdByXpath = idByXpath,
@@ -92,36 +91,34 @@
 
         @if (Model.MinCardinality > 0)
         {
-            <b title="@Model.Discription">@displayName</b>
-            <b title="This field is required" style="color:red">*</b>
+        <b title="@Model.Discription">@displayName</b>
+        <b title="This field is required" style="color:red">*</b>
 
         }
         else
         {
-            <span title="@Model.Discription">@displayName</span>
+        <span title="@Model.Discription">@displayName</span>
         }
-
     </div>
     <div class="bx-paremeter-input">
-
 
         @if (Model.SystemType.Equals(TypeCode.String.ToString()))
         {
             if (locked)
             {
-                <div class="bx-input bx-disabled bx-disabled-parameter">
-                    @if (Model.Value != null)
+        <div class="bx-input bx-disabled bx-disabled-parameter">
+            @if (Model.Value != null)
                     {
-                        @Html.DisplayWithLinksFor(m => m.Value)
+            @Html.DisplayWithLinksFor(m => m.Value)
                     }
-                </div>
+        </div>
             }
             else
             {
                 if (Model.DomainList.Count > 0) // dropdown
                 {
                     uiComponentModel.OnChangeAction = "OnChangeParameterDropDown";
-                    @Html.Partial("_list", uiComponentModel)
+        @Html.Partial("_list", uiComponentModel)
 
                 }
                 else // input
@@ -129,9 +126,8 @@
                     string value = "";
                     if (@Model.Value != null) { value = @Model.Value.ToString(); }
 
-                    <input class="bx-input @errorClass" id="@idInput" idbyxpath="@idByXpath" name="@idInput" title="" value="@value" xpath="@xpath" onchange="OnChangeParameter(this)" />
+        <input class="bx-input @errorClass" id="@idInput" idbyxpath="@idByXpath" name="@idInput" title="" value="@value" xpath="@xpath" onchange="OnChangeParameter(this)" />
                 }
-          
 
             }
         }
@@ -143,36 +139,33 @@
                     Model.SystemType.Equals(TypeCode.UInt32.ToString()) ||
                     Model.SystemType.Equals(TypeCode.UInt64.ToString()))
         {
-            @Html.Partial("_integer", uiComponentModel)
+        @Html.Partial("_integer", uiComponentModel)
         }
 
         @if (Model.SystemType.Equals(TypeCode.Decimal.ToString()) ||
                 Model.SystemType.Equals(TypeCode.Double.ToString()) ||
                 Model.SystemType.Equals(TypeCode.Single.ToString()))
         {
-            @Html.Partial("_number", uiComponentModel)
+        @Html.Partial("_number", uiComponentModel)
         }
 
         @if (Model.SystemType.Equals(TypeCode.Boolean.ToString()))
         {
-            @Html.Partial("_bool", uiComponentModel)
+        @Html.Partial("_bool", uiComponentModel)
         }
 
         @if (Model.SystemType.Equals(TypeCode.DateTime.ToString()))
         {
-            @Html.Partial("_date", uiComponentModel)
+        @Html.Partial("_date", uiComponentModel)
         }
 
         <div id="error_@idInput" class="error">@errorMessage</div>
-
     </div>
 
     <div>
         @if (!string.IsNullOrEmpty(Model.Discription))
         {
-            <button type="button" title="@Html.Raw(Regex.Replace(Model.Discription, "<(.|\\n)*?>", string.Empty))" class="bx-function bx-disabled bx-info fa fa-info" onclick="showHelp('help_@idInput');"></button>
+        <button type="button" title="@Html.Raw(Regex.Replace(Model.Discription, "<(.|\\n)*?>", string.Empty))" class="bx-function bx-disabled bx-info fa fa-info" onclick="showHelp('help_@idInput');"></button>
         }
     </div>
 </div>
-
-

@@ -1,5 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dim.Entities.Mapping;
+using BExIS.Dim.Entities.Mappings;
 using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -8,6 +8,7 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.API;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
@@ -23,7 +24,6 @@ using System.Web.Http.Description;
 using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Entities.Common;
-using BExIS.Modules.Dcm.UI.Helpers;
 
 namespace BExIS.Modules.Dcm.UI.Controllers.API
 {
@@ -67,7 +67,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
 
                     user = ControllerContext.RouteData.Values["user"] as User;
 
-        
                     if (user == null)
                     {
                         request.Content = new StringContent("Token is not valid.");
@@ -154,7 +153,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
                         // update metadata based on system mappings
                         workingCopy.Metadata = setSystemValuesToMetadata(datasetId, 1, dataset.MetadataStructureId, workingCopy.Metadata, true);
 
-
                         ////set modification
                         workingCopy.ModificationInfo = new EntityAuditInfo()
                         {
@@ -178,7 +176,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
                     return request;
                 }
             }
-
         }
 
         // PUT api/<controller>/5

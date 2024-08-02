@@ -9,7 +9,7 @@ namespace BExIS.Web.Shell
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                 "~/Scripts/jquery-2.2.4.min.js",
-                "~/Scripts/jquery-migrate-1.4.1.min.js",
+                "~/Scripts/jquery-migrate-1.2.1.min.js",
                 "~/Scripts/jQueryUI/1.10.3/js/jquery-ui-1.10.3.custom.min.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
@@ -77,7 +77,7 @@ namespace BExIS.Web.Shell
             #region sveltelayout
 
             bundles.Add(new ScriptBundle("~/bundles/svelte_jquery").Include(
-                "~/Scripts/jquery-2.1.4.min.js",
+                "~/Scripts/jquery-2.2.4.min.js",
                 "~/Scripts/jquery-migrate-1.2.1.min.js"));
 
             bundles.Add(new StyleBundle("~/bundles/svelte_general_bexis").Include(

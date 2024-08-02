@@ -21,7 +21,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 {
     public class AdminController : BaseController
     {
-
         private List<long> datasetVersionIds = new List<long>();
         private XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
@@ -65,7 +64,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                          IsExportAvailable(metadataStructure)
                     );
 
-                #endregion
+                #endregion load Model
 
                 return PartialView("_metadataStructureView", model);
             }
@@ -77,7 +76,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         public ActionResult ConvertSelectedDatasetVersion(string Id, string SelectedDatasetIds)
         {
-
             #region load Model
 
             DatasetManager datasetManager = new DatasetManager();
@@ -97,13 +95,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     );
 
-                #endregion
+                #endregion load Model
 
                 #region convert
 
                 if (SelectedDatasetIds != null && SelectedDatasetIds != "")
                 {
-
                     string[] ids = SelectedDatasetIds.Split(',');
 
                     foreach (string id in ids)
@@ -113,7 +110,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     }
                 }
 
-                #endregion
+                #endregion convert
 
                 return PartialView("_metadataStructureView", model);
             }
@@ -135,7 +132,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             string path_mapping_file = "";
             try
             {
-
                 string path = OutputMetadataManager.CreateConvertedMetadata(datasetVersion.Dataset.Id,
                     TransmissionType.mappingFileExport);
 
@@ -164,7 +160,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
-
 
         private List<DatasetVersionModel> getDatasetVersionsDic(MetadataStructure metadataStructure, List<long> datasetVersionIds)
         {
@@ -216,10 +211,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return hasMappingFile;
         }
 
-
-
-        #endregion
-
-
+        #endregion helper
     }
 }

@@ -55,7 +55,6 @@ namespace IDIV.Modules.Mmm.UI.Models
             this.Perimeter = -1.0;
             this.Circularity = -1.0;
             this.Children = new List<Measurement>();
-
         }
     }
 
@@ -89,4 +88,3 @@ namespace IDIV.Modules.Mmm.UI.Models
         }
     }
 }
-

@@ -8,16 +8,18 @@
 
 	//services
 	import { store, load } from './services';
-	
 
 	import Fa from 'svelte-fa';
-	import { faSave, faChevronRight, faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
+	import { faSave, faChevronRight, faArrowRotateLeft,faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 	//types
 	import type { DataStructureCreationModel, markerType } from './types';
 
 	import { positionType } from '@bexis2/bexis2-core-ui';
 	import Controls from './Controls.svelte';
+	import Attributes from './structure/Attributes.svelte';
+	import ConstraintsDescription from './structure/variable/ConstraintsDescription.svelte';
+	import { goTo } from '$services/BaseCaller';
 
 	export let model: DataStructureCreationModel;
 	$: model;
@@ -34,6 +36,8 @@
 	let generate: boolean = true;
 
 	let selectedRowIndex: number = 0;
+	let data = [];
+	$:data;
 
 	let errors: string[] = [];
 	$: errors;
@@ -59,14 +63,33 @@
 		setMarkers(model.markers, init);
 
 		delimeter = model.delimeter;
-
+	 prepareData(model.preview)
 		checkStatus();
+
 	});
+
+
+	function prepareData(rows:string[])
+	{
+		data = [];
+		if(rows)
+		{
+			rows.forEach(r=>{
+					const cv = textMarkerHandling(r);
+					data = [...data,cv]
+			})
+
+			console.log("🚀 ~ onMount ~ model.preview:", model.preview)
+			console.log("🚀 ~ onMount ~ data:", data)
+		}
+	}
 
 	function setTableInfos(rows, delimeter) {
 		console.log('set table infos');
 		//number of columns
-		cLength = rows[0].split(delimeter).length;
+		cLength = textMarkerHandling(rows[0]).length; // 1,2,"3,4",5
+
+		console.log("🚀 ~ setTableInfos ~ cLength:", cLength)
 		//number of rows
 		rLength = rows.length;
 
@@ -328,6 +351,7 @@
 	// if you change the delimeter you need to change/update also the table informations
 	function changeDelimeter() {
 		setTableInfos(model.preview, String.fromCharCode(model.delimeter));
+		prepareData(model.preview)
 	}
 
 	// ROW Selection
@@ -347,17 +371,82 @@
 		}
 	};
 
-	async function onChangeEncodingHandler(e)
-	{
-			const encoding = e;
-			console.log("🚀 ~ e.detail:", e)
-			const m = await load(model.file, model.entityId,encoding,0);
-			model.preview = m.preview;
+	async function onChangeEncodingHandler(e) {
+		const encoding = e;
+		console.log('🚀 ~ e.detail:', e);
+		const m = await load(model.file, model.entityId, encoding, 0);
+		model.preview = m.preview;
 	}
 
+ 
+	function textMarkerHandling(row:string):[]
+	{
+		 const d = String.fromCharCode(model.delimeter);
+		 const t = String.fromCharCode(model.textMarker);
+			const values = row.split(d);
+
+			let temp=[]; 
+
+			if(row.includes(t))
+			{
+				 let tempValue:string = "";
+					let startText:boolean = false;
+
+					values.forEach(v => {
+
+							if(v.includes(t))
+							{
+										if(v.startsWith(t) && v.endsWith(t))
+										{
+												temp = [...temp,v]
+										}
+										else
+										{
+													if (v.startsWith(t))
+													{
+																	tempValue = v;
+																	startText = true;
+													}
+
+													if (v.endsWith(t))
+													{
+																	tempValue += d + v;
+																	temp = [...temp,tempValue];
+																	startText = false;
+													}
+										}
+							}
+							else
+							{
+								if (startText){
+									tempValue += d + v;
+								}
+								else{
+									temp = [...temp, v];
+								}
+							}
+						
+							
+					});
+					
+					return temp;
+			}
+			else
+			{
+				return values;
+			}
+
+	}
+
+	function back() {
+		goTo("/rpm/datastructure/create");
+	}
 </script>
 
+
 {#if !model || state.length == 0 || generate == false}
+<button title="back" class="btn variant-filled-warning" on:click={() => back()}
+	><Fa icon={faArrowLeft} /></button>
 	<!--if the model == false, access denied-->
 	{#if !model || state.length == 0 || generate == false}
 		<div class="h-full w-full text-surface-700">
@@ -400,7 +489,6 @@
 							source={model.decimals}
 							complexTarget={false}
 							help={true}
-
 						/>
 
 						<DropdownKVP
@@ -429,8 +517,7 @@
 							id="selectVar"
 							type="button"
 							on:click={() => onclickHandler(MARKER_TYPE.VARIABLE)}
-							on:mouseover={() => helpStore.show('selectVar')}
-							>Variable</button
+							on:mouseover={() => helpStore.show('selectVar')}>Variable</button
 						>
 						<button
 							class="btn variant-filled-success"
@@ -444,7 +531,6 @@
 							type="button"
 							id="selectDescription"
 							on:mouseover={() => helpStore.show('selectDescription')}
-
 							on:click={() => onclickHandler(MARKER_TYPE.DESCRIPTION)}>Description</button
 						>
 						<button
@@ -473,7 +559,7 @@
 						>
 					</div>
 
-					<div id="missingvalues" class="grow" >
+					<div id="missingvalues" class="grow">
 						<!-- Missing Values-->
 						<MissingValues bind:list={model.missingValues} />
 					</div>
@@ -495,7 +581,7 @@
 				<div class="controls"><Controls /></div>
 			</div>
 
-			<div id="preview data" class="flex-col py-5 ">
+			<div id="preview data" class="flex-col py-5">
 				<div id="data infos" class="flex flex-auto gap-5 pb-2">
 					<label><b>Total:</b> {model.total}</label>
 					<label><b>Found:</b> {model.total - model.skipped}</label>
@@ -504,50 +590,50 @@
 				</div>
 
 				<div class="overflow-x-auto">
-				<table class="table table-compact" on:contextmenu={(e) => e.preventDefault()}>
-					<tbody>
-						{#each model.preview as row, r}
-							<tr>
-								<td
-									class="w-8 hover:cursor-pointer select-none text-sm hover:border-surface-400 hover:border-solid hover:border-b-2"
-									on:mousedown={rowSelectionHandler(r)}
-								>
-									<div class="pt-1">
-										<Fa icon={faChevronRight} size="sm" />
-									</div>
-								</td>
-
-								{#each row.split(String.fromCharCode(model.delimeter)) as cell, c}
+					<table class="table table-compact" on:contextmenu={(e) => e.preventDefault()}>
+						<tbody>
+							{#each data as row, r}
+								<tr>
 									<td
-										class="hover:cursor-pointer select-none hover:border-surface-400 hover:border-solid hover:border-b-2"
-										on:dblclick={dbclickHandler(r)}
-										on:mousedown={mouseDownHandler(r, c)}
-										on:mouseenter={mouseHandler(r, c)}
-										class:variant-soft-error={selection.find(
-											(e) => e.row === r && e.cells[c] === true
-										)?.type === MARKER_TYPE.VARIABLE}
-										class:variant-soft-success={selection.find(
-											(e) => e.row === r && e.cells[c] === true
-										)?.type === MARKER_TYPE.UNIT}
-										class:variant-soft-warning={selection.find(
-											(e) => e.row === r && e.cells[c] === true
-										)?.type === MARKER_TYPE.DESCRIPTION}
-										class:variant-soft-secondary={selection.find(
-											(e) => e.row === r && e.cells[c] === true
-										)?.type === MARKER_TYPE.MISSING_VALUES}
-										class:variant-soft-primary={selection.find(
-											(e) => e.row === r && e.cells[c] === true
-										)?.type === MARKER_TYPE.DATA}
-										class:variant-ghost-surface={state[r][c]}
+										class="w-8 hover:cursor-pointer select-none text-sm hover:border-surface-400 hover:border-solid hover:border-b-2"
+										on:mousedown={rowSelectionHandler(r)}
 									>
-										{(cell = cell.replaceAll(String.fromCharCode(model.textMarker), ''))}
+										<div class="pt-1">
+											<Fa icon={faChevronRight} size="sm" />
+										</div>
 									</td>
-								{/each}
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
+
+									{#each row as cell, c}
+										<td
+											class="hover:cursor-pointer select-none hover:border-surface-400 hover:border-solid hover:border-b-2"
+											on:dblclick={dbclickHandler(r)}
+											on:mousedown={mouseDownHandler(r, c)}
+											on:mouseenter={mouseHandler(r, c)}
+											class:variant-soft-error={selection.find(
+												(e) => e.row === r && e.cells[c] === true
+											)?.type === MARKER_TYPE.VARIABLE}
+											class:variant-soft-success={selection.find(
+												(e) => e.row === r && e.cells[c] === true
+											)?.type === MARKER_TYPE.UNIT}
+											class:variant-soft-warning={selection.find(
+												(e) => e.row === r && e.cells[c] === true
+											)?.type === MARKER_TYPE.DESCRIPTION}
+											class:variant-soft-secondary={selection.find(
+												(e) => e.row === r && e.cells[c] === true
+											)?.type === MARKER_TYPE.MISSING_VALUES}
+											class:variant-soft-primary={selection.find(
+												(e) => e.row === r && e.cells[c] === true
+											)?.type === MARKER_TYPE.DATA}
+											class:variant-ghost-surface={state[r][c]}
+										>
+											{(cell = cell.replaceAll(String.fromCharCode(model.textMarker), ''))}
+										</td>
+									{/each}
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	</form>

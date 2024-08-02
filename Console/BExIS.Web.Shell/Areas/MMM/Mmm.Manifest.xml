@@ -4,7 +4,7 @@
     <!--add proper description-->
   </Description>
   <Assemblies>
-    <Assembly fullName="" role=""/>
+    <Assembly fullName="" role="" />
   </Assemblies>
   <Dependencies>
     <!--<Dependency moduleId="dcm" version="*.*.*" />-->
@@ -19,6 +19,5 @@
             title="Multimedia Data View" description="" icon=""
             controller="ShowMultimediaData" action="multimediaData"
             extends="" />
-    
   </Exports>
 </Manifest>

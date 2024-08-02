@@ -7,7 +7,7 @@ export interface ListItem {
 	id: number;
 	text: string;
 	group: string;
-	description:string;
+	description: string;
 }
 
 export interface sortedError {

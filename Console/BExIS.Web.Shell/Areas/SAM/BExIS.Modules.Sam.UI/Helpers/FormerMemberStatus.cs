@@ -68,10 +68,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
                         }
                     }
 
-
-
                     //remove all groups and add alumni
-
 
                     //remove all groups from user and add to alumniUsersGroupsRelation
 
@@ -91,7 +88,6 @@ namespace BExIS.Modules.SAM.UI.Helpers
                         statuschanged = true;
                     }
                 }
-                
             }
 
             return statuschanged;
@@ -126,9 +122,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
                         {
                             alumniFeaturePermissionManager.Delete(alumniFeaturePermissions[i].Subject.Id, alumniFeaturePermissions[i].Feature.Id);
                         }
-
                     }
-
 
                     //add all groups to user again
                     var relations = alumniUsersGroupsRelationManager.FormerMemberFeaturePermissions.Where(r => r.UserRef == user.Id).ToList();

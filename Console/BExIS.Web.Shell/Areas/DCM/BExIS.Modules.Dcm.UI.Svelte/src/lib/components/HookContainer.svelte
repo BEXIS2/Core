@@ -112,9 +112,7 @@
 			{/if}
 			<div class="h-full w-full">
 				{#if !wait}
-					<slot {errorHandler} {successHandler} {warningHandler} {dateHandler}
-						>render view</slot
-					>
+					<slot {errorHandler} {successHandler} {warningHandler} {dateHandler}>render view</slot>
 				{:else}
 					<div class="flex gap-2 text-surface-600">
 						<Fa icon={faLock} size="lg" />

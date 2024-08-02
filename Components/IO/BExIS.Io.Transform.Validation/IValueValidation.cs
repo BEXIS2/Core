@@ -2,38 +2,38 @@
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.IO.Transform.Validation
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public interface IValueValidation
     {
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         ValueType AppliedTo { get; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         string Name { get; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         string DataType { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -41,11 +41,10 @@ namespace BExIS.IO.Transform.Validation
         /// <param name="row"></param>
         /// <returns></returns>
         Error Execute(object value, int row);
-
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum ValueType
     {

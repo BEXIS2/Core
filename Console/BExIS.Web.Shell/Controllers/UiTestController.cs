@@ -1,12 +1,4 @@
-﻿using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Services.Subjects;
-using BExIS.UI.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
-
-namespace BExIS.Web.Shell.Controllers
+﻿namespace BExIS.Web.Shell.Controllers
 {
     //public class UiTestController : Controller
     //{
@@ -64,13 +56,11 @@ namespace BExIS.Web.Shell.Controllers
     //            value = "2"
     //        });
 
-
     //        return Json(treeview, JsonRequestBehavior.AllowGet);
     //    }
 
     //    public JsonResult Select(long id)
     //    {
-
     //        return Json(true, JsonRequestBehavior.AllowGet);
     //    }
 
