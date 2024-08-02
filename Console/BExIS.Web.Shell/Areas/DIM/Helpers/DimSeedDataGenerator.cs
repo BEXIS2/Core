@@ -393,15 +393,17 @@ namespace BExIS.Modules.Dim.UI.Helpers
             using (var conceptManager = new ConceptManager())
             {
                 MappingConcept mappingConcept;
-                try
-                {
-                    mappingConcept = conceptManager.FindByName("datacite");
-
-                }
-                catch (Exception e)
-                {
-                    mappingConcept = conceptManager.CreateMappingConcept("datacite", "The concept for DIO management at DataCite.", "https://schema.datacite.org/meta/kernel-4.5/", "");
-                }
+                 try
+                 {
+                     mappingConcept = conceptManager.FindByName("datacite");
+                     if(mappingConcept == null)
+                         mappingConcept = conceptManager.CreateMappingConcept("datacite", "The concept for DIO management at DataCite.", "https://schema.datacite.org/meta/kernel-4.5/", "");
+                
+                 }
+                 catch (Exception e)
+                 {
+                     mappingConcept = conceptManager.CreateMappingConcept("datacite", "The concept for DIO management at DataCite.", "https://schema.datacite.org/meta/kernel-4.5/", "");
+                 }
 
                 List<MappingKey> mappingKeys;
                 try
