@@ -19,7 +19,7 @@
 	import Controls from './Controls.svelte';
 	import Attributes from './structure/Attributes.svelte';
 	import ConstraintsDescription from './structure/variable/ConstraintsDescription.svelte';
-	import { goTo } from '$services/BaseCaller';
+	import { goTo } from '../../services/BaseCaller';
 
 	export let model: DataStructureCreationModel;
 	$: model;
