@@ -89,23 +89,30 @@ namespace BExIS.Security.Services.Authorization
         public async Task<bool> CreateAsync<T>(string subjectName, string entityName, Type entityType, long key, List<RightType> rights) where T : Subject
         {
             if (string.IsNullOrEmpty(subjectName))
-                throw new Exception();
+                return await Task.FromResult(false);
 
             if (string.IsNullOrEmpty(entityName))
-                throw new Exception();
+                return await Task.FromResult(false);
 
             if (entityType == null)
-                throw new Exception();
+                return await Task.FromResult(false);
 
             using (var uow = this.GetUnitOfWork())
             {
                 var entityRepository = uow.GetReadOnlyRepository<Entity>();
                 var subjectRepository = uow.GetReadOnlyRepository<Subject>();
 
-                var subject = subjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault() ?? throw new Exception();
-                var entity = entityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault() ?? throw new Exception();
+                var subject = subjectRepository.Query(s => s.Name.ToLowerInvariant() == subjectName.ToLowerInvariant() && s is T).FirstOrDefault();
+                
+                if(subject == null)
+                    return await Task.FromResult(false);
+                var entity = entityRepository.Query(e => e.Name.ToLowerInvariant() == entityName.ToLowerInvariant() && e.EntityType == entityType).FirstOrDefault();
+                
+                if(entity == null)
+                    return await Task.FromResult(false);
+
                 if (await ExistsAsync(subject, entity, key))
-                    throw new Exception();
+                    return await Task.FromResult(false);
 
                 var entityPermission = new EntityPermission()
                 {
@@ -208,7 +215,7 @@ namespace BExIS.Security.Services.Authorization
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
 
                 if (entity == null)
-                    throw new Exception();
+                    return await Task.FromResult(false);
 
                 if (subject == null)
                     return await Task.FromResult(entityPermissionRepository.Query(p => p.Subject == null && p.Entity.Id == entity.Id && p.Key == key).Count() == 1);
@@ -227,10 +234,10 @@ namespace BExIS.Security.Services.Authorization
                 entityPermissions = entityPermissionRepository.Query(p => p.Subject == null && p.Entity.Id == entityId && p.Key == instanceId).ToList();
 
                 if (!entityPermissions.Any())
-                    throw new Exception();
+                    return await Task.FromResult<EntityPermission>(null);
 
                 if (entityPermissions.Count > 1)
-                    throw new Exception();
+                    return await Task.FromResult<EntityPermission>(null);
 
                 return await Task.FromResult(entityPermissions.Single());
             }
@@ -246,10 +253,10 @@ namespace BExIS.Security.Services.Authorization
                 entityPermissions = entityPermissionRepository.Query(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == instanceId).ToList();
 
                 if (!entityPermissions.Any())
-                    throw new Exception();
+                    return await Task.FromResult<EntityPermission>(null);
 
                 if (entityPermissions.Count > 1)
-                    throw new Exception();
+                    return await Task.FromResult<EntityPermission>(null);
 
                 return await Task.FromResult(entityPermissions.Single());
             }
@@ -263,7 +270,7 @@ namespace BExIS.Security.Services.Authorization
 
                 var entityPermission = entityPermissionRepository.Get(entityPermissionId);
 
-                return entityPermission == null ? throw new Exception() : await Task.FromResult(entityPermission);
+                return entityPermission == null ? await Task.FromResult<EntityPermission>(null) : await Task.FromResult(entityPermission);
             }
         }
 
