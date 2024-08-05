@@ -89,13 +89,16 @@ namespace BExIS.Security.Services.Subjects
         public Task CreateAsync(Group role)
         {
             if (role == null)
-                return Task.FromException(new Exception());
+                //return Task.FromException(new Exception());
+                return Task.CompletedTask;
 
             if (string.IsNullOrEmpty(role.Name))
-                return Task.FromException(new Exception());
+                //return Task.FromException(new Exception());
+                return Task.CompletedTask;
 
             if (FindByNameAsync(role.Name)?.Result != null)
-                return Task.FromException(new Exception());
+                //return Task.FromException(new Exception());
+                return Task.CompletedTask;
 
             using (var uow = this.GetUnitOfWork())
             {
@@ -142,10 +145,10 @@ namespace BExIS.Security.Services.Subjects
                 var groups = groupRepository.Query(u => u.Name.ToLowerInvariant() == roleName.ToLowerInvariant()).ToList();
 
                 if(!groups.Any())
-                    return Task.FromException<Group>(new Exception());
+                    return Task.FromResult<Group>(null);
 
-                if(groups.Count > 1)
-                    return Task.FromException<Group>(new Exception());
+                if (groups.Count > 1)
+                    return Task.FromResult<Group>(null);
 
                 return Task.FromResult(groups.Single());
             }
@@ -154,13 +157,13 @@ namespace BExIS.Security.Services.Subjects
         public Task UpdateAsync(Group role)
         {
             if (role == null)
-                return Task.FromException(new Exception());
+                return Task.CompletedTask;
 
             if (string.IsNullOrEmpty(role.Name))
-                return Task.FromException(new Exception());
+                return Task.CompletedTask;
 
             if (FindByIdAsync(role.Id)?.Result == null)
-                return Task.FromException(new Exception());
+                return Task.CompletedTask;
 
             using (var uow = this.GetUnitOfWork())
             {

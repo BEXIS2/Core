@@ -88,15 +88,15 @@ namespace BExIS.Security.Services.Subjects
         {
             if (user == null)
                 //return Task.FromException(new Exception());
-                return Task.FromResult<User>(null);
+                return Task.CompletedTask;
 
             if (string.IsNullOrEmpty(user.UserName))
                 //return Task.FromException(new Exception());
-                return Task.FromResult<User>(null);
+                return Task.CompletedTask;
 
             if (FindByNameAsync(user.UserName)?.Result != null)
                 //return Task.FromException(new Exception());
-                return Task.FromResult<User>(null);
+                return Task.CompletedTask;
 
             using (var uow = this.GetUnitOfWork())
             {
