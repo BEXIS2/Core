@@ -312,7 +312,7 @@ namespace BExIS.Security.Services.Authorization
                         var entityName = entityRepository.Get(entityId).Name;
 
                         var entityParty = partyRepository
-                            .Query(m => entityName.Equals(m.PartyType.Title, StringComparison.InvariantCultureIgnoreCase) && m.Name.Equals(key.ToString(), StringComparison.InvariantCultureIgnoreCase))
+                            .Query(m => entityName.ToLowerInvariant() == m.PartyType.Title.ToLowerInvariant() && m.Name.ToLowerInvariant() == key.ToString().ToLowerInvariant())
                             .FirstOrDefault();
 
                         if (userParty != null && entityParty != null)
@@ -475,7 +475,7 @@ namespace BExIS.Security.Services.Authorization
             using (var uow = this.GetUnitOfWork())
             {
                 var userRepository = uow.GetReadOnlyRepository<User>();
-                var userIds = userRepository.Query(s => s.Name.Equals(username, StringComparison.InvariantCultureIgnoreCase)).Select(u => u.Id);
+                var userIds = userRepository.Query(s => s.Name.ToLowerInvariant() == username.ToLowerInvariant()).Select(u => u.Id);
                 if (userIds.Count() != 1)
                     return await Task.FromResult(false);
 

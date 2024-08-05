@@ -87,13 +87,16 @@ namespace BExIS.Security.Services.Subjects
         public Task CreateAsync(User user)
         {
             if (user == null)
-                return Task.FromException(new Exception());
+                //return Task.FromException(new Exception());
+                return Task.FromResult<User>(null);
 
             if (string.IsNullOrEmpty(user.UserName))
-                return Task.FromException(new Exception());
+                //return Task.FromException(new Exception());
+                return Task.FromResult<User>(null);
 
             if (FindByNameAsync(user.UserName)?.Result != null)
-                return Task.FromException(new Exception());
+                //return Task.FromException(new Exception());
+                return Task.FromResult<User>(null);
 
             using (var uow = this.GetUnitOfWork())
             {
@@ -128,13 +131,15 @@ namespace BExIS.Security.Services.Subjects
             {
                 var userRepository = uow.GetRepository<User>();
 
-                var users = userRepository.Query(u => u.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase)).ToList();
+                var users = userRepository.Query(u => u.Email.ToLowerInvariant() == email.ToLowerInvariant()).ToList();
 
                 if (!users.Any())
-                    return Task.FromException<User>(new Exception());
+                    //return Task.FromException(new Exception());
+                    return Task.FromResult<User>(null);
 
                 if (users.Count > 1)
-                    return Task.FromException<User>(new Exception());
+                    //return Task.FromException(new Exception());
+                    return Task.FromResult<User>(null);
 
                 return Task.FromResult(users.Single());
             }
@@ -155,13 +160,15 @@ namespace BExIS.Security.Services.Subjects
             {
                 var userRepository = uow.GetRepository<User>();
 
-                var users = userRepository.Query(u => u.Name.Equals(userName, StringComparison.InvariantCultureIgnoreCase)).ToList();
+                var users = userRepository.Query().Where(u => u.Name.ToLowerInvariant() == userName.ToLowerInvariant()).ToList();
 
                 if (!users.Any())
-                    return Task.FromException<User>(new Exception());
+                    //return Task.FromException(new Exception());
+                    return Task.FromResult<User>(null);
 
                 if (users.Count > 1)
-                    return Task.FromException<User>(new Exception());
+                    //return Task.FromException(new Exception());
+                    return Task.FromResult<User>(null);
 
                 return Task.FromResult(users.Single());
             }
@@ -192,13 +199,16 @@ namespace BExIS.Security.Services.Subjects
         public Task UpdateAsync(User user)
         {
             if (user == null)
-                return Task.FromException(new Exception());
+                //return Task.FromException(new Exception());
+                return Task.CompletedTask;
 
             if (string.IsNullOrEmpty(user.UserName))
-                return Task.FromException(new Exception());
+                //return Task.FromException(new Exception());
+                return Task.CompletedTask;
 
             if (FindByIdAsync(user.Id)?.Result == null)
-                return Task.FromException(new Exception());
+                //return Task.FromException(new Exception());
+                return Task.CompletedTask;
 
             using (var uow = this.GetUnitOfWork())
             {
@@ -257,13 +267,15 @@ namespace BExIS.Security.Services.Subjects
             {
                 var loginRepository = uow.GetRepository<Login>();
 
-                var users = loginRepository.Query(m => m.LoginProvider.Equals(login.LoginProvider, StringComparison.InvariantCultureIgnoreCase) && m.ProviderKey.Equals(login.ProviderKey, StringComparison.InvariantCultureIgnoreCase)).Select(m => m.User).ToList();
+                var users = loginRepository.Query(m => m.LoginProvider.ToLowerInvariant() ==login.LoginProvider.ToLowerInvariant() && m.ProviderKey.ToLowerInvariant() == login.ProviderKey.ToLowerInvariant()).Select(m => m.User).ToList();
 
                 if (!users.Any())
-                    return Task.FromException<User>(new Exception());
+                    //return Task.FromException(new Exception());
+                    return Task.FromResult<User>(null);
 
                 if (users.Count > 1)
-                    return Task.FromException<User>(new Exception());
+                    //return Task.FromException(new Exception());
+                    return Task.FromResult<User>(null);
 
                 return Task.FromResult(users.Single());
             }
@@ -364,13 +376,15 @@ namespace BExIS.Security.Services.Subjects
             using (var uow = this.GetUnitOfWork())
             {
                 var groupRepository = uow.GetReadOnlyRepository<Group>();
-                var groups = groupRepository.Query(g => g.Name.Equals(roleName, StringComparison.InvariantCultureIgnoreCase)).ToList();
+                var groups = groupRepository.Query(g => g.Name.ToLowerInvariant() == roleName.ToLowerInvariant()).ToList();
 
                 if (!groups.Any())
-                    return Task.FromException<Group>(new Exception());
+                    //return Task.FromException(new Exception());
+                    return Task.FromResult(false);
 
                 if (groups.Count > 1)
-                    return Task.FromException<Group>(new Exception());
+                    //return Task.FromException(new Exception());
+                    return Task.FromResult(false);
 
                 var group = groups.Single();
 
@@ -385,13 +399,13 @@ namespace BExIS.Security.Services.Subjects
                 var userRepository = uow.GetRepository<User>();
                 user = userRepository.Get(user.Id);
 
-                if (group == null) return Task.FromException<Group>(new Exception());
+                if (group == null) return Task.FromResult(false);
 
                 user.Groups.Add(group);
                 userRepository.Put(user);
                 uow.Commit();
 
-                return Task.CompletedTask;
+                return Task.FromResult(true);
             }
         }
 
@@ -415,7 +429,7 @@ namespace BExIS.Security.Services.Subjects
                 var userRepository = uow.GetRepository<User>();
                 user = userRepository.Get(user.Id);
 
-                return Task.FromResult(user.Groups.Any(m => m.Name.Equals(roleName, StringComparison.InvariantCultureIgnoreCase)));
+                return Task.FromResult(user.Groups.Any(m => m.Name.ToLowerInvariant() == roleName.ToLowerInvariant()));
             }
         }
 
@@ -427,14 +441,14 @@ namespace BExIS.Security.Services.Subjects
                 var userRepository = uow.GetRepository<User>();
                 var group = groupRepository.Query(g => g.Name.ToUpperInvariant() == roleName.ToUpperInvariant()).FirstOrDefault();
 
-                if (group == null) return Task.FromException(new Exception());
+                if (group == null) return Task.FromResult(false);
 
                 user = userRepository.Get(user.Id);
                 user.Groups.Remove(group);
                 userRepository.Put(user);
                 uow.Commit();
 
-                return Task.CompletedTask;
+                return Task.FromResult(true);
             }
         }
 

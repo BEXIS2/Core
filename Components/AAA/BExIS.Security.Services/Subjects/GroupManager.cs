@@ -139,7 +139,7 @@ namespace BExIS.Security.Services.Subjects
             {
                 var groupRepository = uow.GetRepository<Group>();
 
-                var groups = groupRepository.Query(u => u.Name.Equals(roleName, StringComparison.InvariantCultureIgnoreCase)).ToList();
+                var groups = groupRepository.Query(u => u.Name.ToLowerInvariant() == roleName.ToLowerInvariant()).ToList();
 
                 if(!groups.Any())
                     return Task.FromException<Group>(new Exception());
