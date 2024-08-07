@@ -26,9 +26,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             using (var featurePermissionManager = new FeaturePermissionManager())
             {
-                if (!featurePermissionManager.Exists(null, featureId))
+                if (!featurePermissionManager.ExistsAsync(null, featureId).Result)
                 {
-                    featurePermissionManager.Create(null, featureId, PermissionType.Grant);
+                    var result_create = featurePermissionManager.CreateAsync(null, featureId, PermissionType.Grant).Result;
                 }
             }
         }
@@ -43,16 +43,16 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             using (var featurePermissionManager = new FeaturePermissionManager())
             {
-                var featurePermission = featurePermissionManager.Find(subjectId, featureId);
+                var featurePermission = featurePermissionManager.FindAsync(subjectId, featureId).Result;
 
                 if (featurePermission != null)
                 {
                     featurePermission.PermissionType = (PermissionType)permissionType;
-                    featurePermissionManager.Update(featurePermission);
+                    var result_update= featurePermissionManager.UpdateAsync(featurePermission).Result;
                 }
                 else
                 {
-                    featurePermissionManager.Create(subjectId, featureId, (PermissionType)permissionType);
+                    var result_create = featurePermissionManager.CreateAsync(subjectId, featureId, (PermissionType)permissionType).Result;
                 }
             }
         }
@@ -69,7 +69,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             try
             {
-                featurePermissionManager.Delete(subjectId, featureId);
+                var result_delete = featurePermissionManager.DeleteAsync(subjectId, featureId).Result;
             }
             finally
             {
@@ -112,9 +112,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             using (var featurePermissionManager = new FeaturePermissionManager())
             {
-                if (featurePermissionManager.Exists(null, featureId))
+                if (featurePermissionManager.ExistsAsync(null, featureId).Result)
                 {
-                    featurePermissionManager.Delete(null, featureId);
+                    var result_delete = featurePermissionManager.DeleteAsync(null, featureId).Result;
                 }
             }
         }
@@ -167,8 +167,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 //}
 
                 var subjectIds = subjects.Select(s => s.Id);
-                var userPermissionDic = featurePermissionManager.GetPermissionType(subjectIds, feature.Id);
-                var userHasAccessDic = featurePermissionManager.GetAccessList(subjects, feature.Id);
+                var userPermissionDic = featurePermissionManager.GetPermissionTypeAsync(subjectIds, feature.Id).Result;
+                var userHasAccessDic = featurePermissionManager.GetAccessListAsync(subjects, feature.Id).Result;
 
                 foreach (var item in userPermissionDic)
                 {

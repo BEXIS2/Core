@@ -210,7 +210,7 @@ namespace BExIS.Web.Shell.Controllers
 
                 var result = userManager.FindByNameAsync(userName);
 
-                if (featurePermissionManager.HasAccess(result.Result?.Id, feature.Id))
+                if (featurePermissionManager.HasAccessAsync(result.Result?.Id, feature.Id).Result)
                 {
                     return true;
                 }

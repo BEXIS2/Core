@@ -95,8 +95,10 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 operationManager.Create("DDM", "Home", "*", SearchFeature);
                 operationManager.Create("DDM", "Data", "*");
 
-                if (!featurePermissionManager.Exists(null, SearchFeature.Id, PermissionType.Grant))
-                    featurePermissionManager.Create(null, SearchFeature.Id, PermissionType.Grant);
+                if (!featurePermissionManager.ExistsAsync(null, SearchFeature.Id, PermissionType.Grant).Result)
+                {
+                    var result_create = featurePermissionManager.CreateAsync(null, SearchFeature.Id, PermissionType.Grant).Result;
+                }
 
                 #endregion Search Workflow
 

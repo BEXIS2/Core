@@ -256,7 +256,7 @@ namespace BExIS.App.Bootstrap.Helpers
                                     response.Content = new StringContent("UserName and/or Password are incorrect.");
                                 }
 
-                                if (!featurePermissionManager.HasAccess(user.Id, featureId))
+                                if (!featurePermissionManager.HasAccessAsync(user.Id, featureId).Result)
                                 {
                                     response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
                                     response.Content = new StringContent("User is not valid.");

@@ -63,7 +63,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 if (API == null) API = featureManager.Create("API", "API", DataDissemination);
 
                 //set api public
-                featurePermissionManager.Create(null, API.Id, Security.Entities.Authorization.PermissionType.Grant);
+                var result_create = featurePermissionManager.CreateAsync(null, API.Id, Security.Entities.Authorization.PermissionType.Grant).Result;
 
                 Operation operation = null;
 

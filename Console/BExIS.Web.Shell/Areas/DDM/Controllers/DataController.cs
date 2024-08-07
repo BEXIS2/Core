@@ -1516,7 +1516,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                     Feature feature = operationManager.OperationRepository.Query().Where(o => o.Module.ToLower().Equals("rpm") && o.Controller.ToLower().Equals("datastructureedit")).FirstOrDefault().Feature;
                                     Subject subject = subjectManager.SubjectRepository.Query().Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).FirstOrDefault();
 
-                                    if (featurePermissionManager.HasAccess(subject.Id, feature.Id))
+                                    if (featurePermissionManager.HasAccessAsync(subject.Id, feature.Id).Result)
                                         DSlink = "/RPM/DataStructureEdit/?dataStructureId=" + dataStructureId;
                                 }
                             }
@@ -1993,7 +1993,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         var result = userManager.FindByNameAsync(GetUsernameOrDefault());
 
-                        if (featurePermissionManager.HasAccess(result.Result?.Id, feature.Id)) return true;
+                        if (featurePermissionManager.HasAccessAsync(result.Result?.Id, feature.Id).Result) return true;
                     }
                 }
             }

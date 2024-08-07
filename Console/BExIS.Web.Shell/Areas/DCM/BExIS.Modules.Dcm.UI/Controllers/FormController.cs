@@ -3614,7 +3614,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-                return featurePermissionManager.HasAccess<User>(GetUsernameOrDefault(), "DCM", "CreateDataset", "*");
+                return featurePermissionManager.HasAccessAsync<User>(GetUsernameOrDefault(), "DCM", "CreateDataset", "*").Result;
             }
             finally
             {
