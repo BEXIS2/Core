@@ -39,6 +39,9 @@
 			isKeys: {
 				exclude: true,
 				disableFiltering: true
+			},
+			dataType: {
+				header: 'Data Type'
 			}
 		}
 	};

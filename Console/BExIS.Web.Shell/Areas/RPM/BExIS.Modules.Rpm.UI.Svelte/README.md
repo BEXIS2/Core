@@ -1,8 +1,15 @@
 # bexis2-rpm-ui
+## 0.2.4
+- fix issue in selection component
+ 
+## 0.2.3
 
+- update libaries
+  
 ## 0.2.2
 - fix DataStructureCreationModel accessability
-- 
+ 
+
 ## 0.2.1
 - fix selection with textmarks and delimiters
 

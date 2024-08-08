@@ -796,16 +796,7 @@
     <Content Include="Content\Images\Bad.png" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\bootstrap-slider.min.css" />
-    <Content Include="Content\skeleton\themes\theme-crimson.css" />
-    <Content Include="Content\skeleton\themes\theme-gold-nouveau.css" />
-    <Content Include="Content\skeleton\themes\theme-hamlindigo.css" />
-    <Content Include="Content\skeleton\themes\theme-modern.css" />
-    <Content Include="Content\skeleton\themes\theme-rocket.css" />
-    <Content Include="Content\skeleton\themes\theme-sahara.css" />
-    <Content Include="Content\skeleton\themes\theme-seafoam.css" />
-    <Content Include="Content\skeleton\themes\theme-seasonal.css" />
-    <Content Include="Content\skeleton\themes\theme-skeleton.css" />
-    <Content Include="Content\skeleton\themes\theme-vintage.css" />
+    <Content Include="Content\skeleton\themes\bexis2-theme.css" />
     <Content Include="css\font-awesome.css" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
