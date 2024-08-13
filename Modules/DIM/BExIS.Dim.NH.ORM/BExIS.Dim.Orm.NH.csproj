@@ -79,7 +79,7 @@
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\DIM"
 rmdir /S /Q  "$(SolutionDir)Console\Workspace\Modules\Dim\Db\Mappings"
-C:\Windows\System32\xcopy "$(ProjectDir)Mappings" "$(SolutionDir)Console\Workspace\Modules\Dim\Db\Mappings" /E /C /Y /I</PostBuildEvent>
+C:\Windows\System32\xcopy "$(ProjectDir)Mappings" "$(SolutionDir)Console\Workspace\Modules\Dim\Db\Mappings" /E /C /Y /I /D</PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -354,7 +354,7 @@
   </ProjectExtensions>
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\RPM"
-C:\Windows\System32\xcopy "$(ProjectDir)rpm.Settings.json" "$(SolutionDir)Console\Workspace\Modules\RPM" /C /Y /I</PostBuildEvent>
+C:\Windows\System32\xcopy "$(ProjectDir)rpm.Settings.json" "$(SolutionDir)Console\Workspace\Modules\RPM" /C /Y /I /D</PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

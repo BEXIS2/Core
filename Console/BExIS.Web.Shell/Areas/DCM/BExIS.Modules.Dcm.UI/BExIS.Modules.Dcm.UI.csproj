@@ -19,7 +19,6 @@
     <RootNamespace>BExIS.Modules.Dcm.UI</RootNamespace>
     <AssemblyName>BExIS.Modules.Dcm.UI</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <MvcBuildViews>true</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -29,12 +28,14 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
-    <PostSharpHostConfigurationFile>Web.config</PostSharpHostConfigurationFile>
+	<MvcBuildViews>false</MvcBuildViews>
+	<PostSharpHostConfigurationFile>Web.config</PostSharpHostConfigurationFile>
     <TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
     <TypeScriptCompileOnSaveEnabled>False</TypeScriptCompileOnSaveEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
+	<MvcBuildViews>true</MvcBuildViews>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\</OutputPath>
@@ -946,7 +947,7 @@
   </ProjectExtensions>
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\DCM"
-C:\Windows\System32\xcopy "$(ProjectDir)Dcm.Settings.json" "$(SolutionDir)Console\Workspace\Modules\DCM" /C /Y /I
+C:\Windows\System32\xcopy "$(ProjectDir)Dcm.Settings.json" "$(SolutionDir)Console\Workspace\Modules\DCM" /C /Y /I /D
 		</PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
