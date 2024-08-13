@@ -1226,9 +1226,9 @@
   </ProjectExtensions>
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\DIM"
-C:\Windows\System32\xcopy "$(ProjectDir)Dim.Settings.json" "$(SolutionDir)Console\Workspace\Modules\DIM" /C /Y /I
-C:\Windows\System32\xcopy "$(ProjectDir)\App_Data\submissionConfig.json" "$(SolutionDir)Console\Workspace\Modules\DIM" /C /Y /I
-C:\Windows\System32\xcopy "$(ProjectDir)\bin\BExIS.Modules.Dim.UI.xml" "$(SolutionDir)Console\BExIS.Web.Shell\App_Data" /C /Y /I</PostBuildEvent>
+C:\Windows\System32\xcopy "$(ProjectDir)Dim.Settings.json" "$(SolutionDir)Console\Workspace\Modules\DIM" /C /Y /I /D
+C:\Windows\System32\xcopy "$(ProjectDir)\App_Data\submissionConfig.json" "$(SolutionDir)Console\Workspace\Modules\DIM" /C /Y /I /D
+C:\Windows\System32\xcopy "$(ProjectDir)\bin\BExIS.Modules.Dim.UI.xml" "$(SolutionDir)Console\BExIS.Web.Shell\App_Data" /C /Y /I /D</PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
