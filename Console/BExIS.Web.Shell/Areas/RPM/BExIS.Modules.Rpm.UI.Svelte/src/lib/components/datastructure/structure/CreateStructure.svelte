@@ -81,6 +81,7 @@
 				title="back"
 				class="btn variant-filled-warning"
 				on:mouseover={() => helpStore.show('back')}
+				on:focus={() => helpStore.show('back')}
 				on:click={() => back()}><Fa icon={faArrowLeft} /></button
 			>
 		</div>
@@ -90,7 +91,9 @@
 				title="save"
 				class="btn variant-filled-primary text-xl"
 				on:mouseover={() => helpStore.show('save')}
+				on:focus={() => helpStore.show('save')}
 				on:click={onSaveHandler}
+				on:keypress={onSaveHandler}
 				disabled={!areVariablesValid ||
 					!areAttributesValid ||
 					!((enforcePrimaryKey && isPKSet) || !enforcePrimaryKey)}><Fa icon={faSave} /></button
@@ -100,7 +103,7 @@
 
 	<Attributes {model} bind:valid={areAttributesValid} />
 	{#if enforcePrimaryKey && model.variables.length > 0 && !isPKSet}
-		<Alert message="please select a primary key" cssClass="variant-filled-warning"></Alert>
+		<Alert message="Please select a (combined) primary key." cssClass="variant-filled-warning"></Alert>
 	{/if}
 
 	<Variables

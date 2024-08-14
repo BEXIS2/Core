@@ -34,7 +34,7 @@
 
 	// load attributes from div
 	let container;
-	let datastructureId: number = 0;
+	let datastructureId: number = 6;
 
 	let model: DataStructureEditModel;
 	$: model;
@@ -45,6 +45,8 @@
 	async function start() {
 		helpStore.setHelpItemList(helpItems);
 		// get data from parent
+		//<div id="datastructure" structure="9" dataexist="False" istemplaterequired="False" ismeaningrequired="False" setbytemplate="True" enforceprimarykey="True" changeableprimarykey="False"></div>
+
 		container = document.getElementById('datastructure');
 		datastructureId = Number(container?.getAttribute('structure'));
 		dataExist = container?.getAttribute('dataExist')?.toLocaleLowerCase() === 'true';
@@ -106,15 +108,16 @@
 		init = false;
 	}
 </script>
-
 <Page
-	title="Data structure"
+	title="Data Structure"
 	note="This page allows you to create and edit data structures."
 	contentLayoutType={pageContentLayoutType.full}
 	help={true}
+	footer={false}
 >
+
 	{#await start()}
-		<Spinner label="the structure is loading" />
+		<Spinner label="the data structure is loading" />
 	{:then}
 		{#if model}
 			<Structure {model} {dataExist} on:back={back} />
