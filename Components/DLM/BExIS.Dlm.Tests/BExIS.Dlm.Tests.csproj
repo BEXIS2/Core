@@ -142,10 +142,6 @@
       <Project>{76702A4F-D6E5-416F-BD81-58447514AF05}</Project>
       <Name>BExIS.Modules.Rpm.UI</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Modules\DIM\BExIS.Dim.Services\BExIS.Dim.Services.csproj">
-      <Project>{cac933a2-6849-4c61-82b4-cbf4052210cc}</Project>
-      <Name>BExIS.Dim.Services</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
       <Project>{C230693B-D780-438B-B26C-82257642DD5C}</Project>
       <Name>BExIS.Security.Entities</Name>
