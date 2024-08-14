@@ -140,8 +140,8 @@
 </script>
 
 <Page
-	title="Data structures"
-	note="overview about the data structures in bexis2."
+	title="Data Structures"
+	note="overview of data structures in the system"
 	contentLayoutType={pageContentLayoutType.center}
 >
 	{#await reload()}

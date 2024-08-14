@@ -51,7 +51,7 @@
 	$:selectionIsActive;
 	let init: boolean = true;
 
-	let loadingMessage = 'the structure is loading';
+	let loadingMessage = 'the data structure is loading';
 
 	async function start() {
 		helpStore.setHelpItemList(helpItems);
@@ -149,7 +149,7 @@
 </script>
 
 <Page
-	title="Data structure"
+	title="Data Structure"
 	note="This page allows you to create and edit a selected data structure."
 	contentLayoutType={pageContentLayoutType.full}
 	help={true}
