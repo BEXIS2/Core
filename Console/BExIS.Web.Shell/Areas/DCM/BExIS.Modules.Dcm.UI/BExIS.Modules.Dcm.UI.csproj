@@ -19,7 +19,7 @@
     <RootNamespace>BExIS.Modules.Dcm.UI</RootNamespace>
     <AssemblyName>BExIS.Modules.Dcm.UI</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <MvcBuildViews>true</MvcBuildViews>
+    <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
