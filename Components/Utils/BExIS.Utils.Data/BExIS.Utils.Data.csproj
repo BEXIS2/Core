@@ -89,10 +89,6 @@
       <Project>{0815d220-3625-4e23-bbbc-8152345637fe}</Project>
       <Name>Vaiona.Entities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
-      <Project>{e8b37581-1cac-463d-903b-b4bee8b2b0e3}</Project>
-      <Name>Vaiona.Logging</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Model\Vaiona.Model.csproj">
       <Project>{A60AC05F-8C9A-4EFD-9826-452E6049DA4D}</Project>
       <Name>Vaiona.Model</Name>
