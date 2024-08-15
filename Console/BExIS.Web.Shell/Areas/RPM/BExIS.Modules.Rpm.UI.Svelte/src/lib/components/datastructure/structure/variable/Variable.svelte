@@ -36,6 +36,7 @@
 	import ConstraintsDescription from './ConstraintsDescription.svelte';
 	import MeaningsDescription from './MeaningsDescription.svelte';
 	import Status from './Status.svelte';
+	import MissingValues from '../../MissingValues.svelte';
 
 	export let variable: VariableInstanceModel = new VariableInstanceModel();
 	$: variable;
@@ -88,6 +89,8 @@
 		suggestedDataType = variable.dataType;
 		suggestedUnits = variable.possibleUnits;
 		suggestedTemplates = variable.possibleTemplates;
+		console.log("🚀 ~ onMount ~ variable:", variable)
+		
 		// reset & reload validation
 		suite.reset();
 
@@ -528,6 +531,14 @@
 							</div>
 							<div slot="description">
 								<ConstraintsDescription bind:list={variable.constraints} />
+							</div>
+						</Container>
+						<Container>
+							<div slot="property">
+								<MissingValues bind:list={variable.missingValues} ></MissingValues>
+							</div>
+							<div slot="description">
+							
 							</div>
 						</Container>
 					</section>

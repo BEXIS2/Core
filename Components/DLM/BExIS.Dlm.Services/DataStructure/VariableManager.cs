@@ -372,9 +372,36 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<VariableInstance> repo = uow.GetRepository<VariableInstance>();
-                repo.Merge(entity);
+
+                // update missing values placeholder
+                if (entity.MissingValues != null && entity.MissingValues.Any())
+                {
+                    for (int i = 0; i < entity.MissingValues.Count; i++)
+                    {
+                        var m = entity.MissingValues.ElementAt(i);
+                        m.Placeholder = getPlaceholder(getTypeCode(entity.DataType.SystemType), entity.MissingValues.ToList());
+                    }
+                 
+                }
 
                 var merged = repo.Get(entity.Id);
+                merged.DataType = entity.DataType;
+                merged.DisplayPatternId = entity.DisplayPatternId;
+                merged.DefaultValue = entity.DefaultValue;
+                merged.FixedValue = entity.FixedValue;
+                merged.IsKey = entity.IsKey;
+                merged.IsValueOptional = entity.IsValueOptional;
+                merged.Label = entity.Label;
+                merged.MaxCardinality = entity.MaxCardinality;
+                merged.MinCardinality = entity.MinCardinality;
+                merged.Unit = entity.Unit;
+                merged.VarTemplate = entity.VarTemplate;
+                merged.DataStructure = entity.DataStructure;
+                merged.VariableTemplate = entity.VariableTemplate;
+                merged.VariableConstraints = entity.VariableConstraints;    
+                merged.Meanings = entity.Meanings;  
+                merged.MissingValues = entity.MissingValues;
+                merged.Description = entity.Description;  
                 repo.Put(merged);
                 uow.Commit();
             }
