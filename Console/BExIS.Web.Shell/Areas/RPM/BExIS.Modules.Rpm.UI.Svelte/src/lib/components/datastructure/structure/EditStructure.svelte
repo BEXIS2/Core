@@ -111,7 +111,7 @@
 </script>
 
 <div>
-	<div transition:fade class="flex">
+	<div transition:fade class="flex px-2">
 		<div class="grow">
 			<button title="back" class="btn variant-filled-warning" on:click={() => back()}
 				><Fa icon={faArrowLeft} /></button
@@ -143,6 +143,7 @@
 	</div>
 
 	<Attributes {model} bind:valid={areAttributesValid} />
+	<div class="px-2">
 	{#if enforcePrimaryKey && model.variables.length > 0 && currentPks.length == 0}
 		<Alert message="Please select a (combined) primary key." cssClass="variant-filled-warning"></Alert>
 	{/if}
@@ -151,7 +152,7 @@
 			By selecting all variables as part of the primary key, it is impossible to update the data. At least one column must remain as a value.
 		</Alert>
 	{/if}
-
+</div>
 	<Variables
 		bind:variables={model.variables}
 		bind:valid={areVariablesValid}
