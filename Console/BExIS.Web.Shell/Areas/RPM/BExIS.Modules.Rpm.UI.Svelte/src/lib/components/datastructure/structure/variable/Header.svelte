@@ -55,34 +55,7 @@
 	</div>
 
 
-	<!-- <div class="flex flex-col">
-		<div class="flex justify-items-end">
-			<label class="flex items-center gap-2" for="isKey">Is part of primary key?</label>
-	
-					<SlideToggle
-					class="pl-2"
-					size="sm"
-					name="isKey"
-					bind:checked={isKey}
-					active="bg-primary-500"
-					disabled={blockDataRelevant && !changeablePrimaryKey}
-				/>
 
-		</div>
-
-		<div class="flex gap-2 selection:text-right">
-			<label class="flex items-center gap-2" for="isOptional">Values are optional?</label>
-
-				<SlideToggle
-				class="pl-2"
-				size="sm"
-				name="isOptional"
-				active="bg-primary-500"
-				bind:checked={isOptional}
-				disabled={blockDataRelevant}
-			/>
-
-			</div>	 -->
 
 			<div class="flex-none flex-col text-right">
 				<div class="flex gap-2 pb-2 justify-end">
