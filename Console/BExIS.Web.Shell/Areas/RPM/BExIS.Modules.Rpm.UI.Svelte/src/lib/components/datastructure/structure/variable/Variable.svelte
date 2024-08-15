@@ -308,8 +308,8 @@
 							bind:expand
 							{blockDataRelevant}
 						>
-
-						<Container name="Title" py=0>
+		
+						<Container name="Title" >
 							<div class="flex" slot="property">
 								<div class="grow">
 								<TextInput
@@ -535,10 +535,12 @@
 						</Container>
 						<Container>
 							<div slot="property">
-								<MissingValues bind:list={variable.missingValues} ></MissingValues>
+								<div class="flex w-full gap-1 py-1">
+									<div class="grow">Missing Values</div>
+								</div>
+								<MissingValues bind:list={variable.missingValues} showTitle={false}></MissingValues>
 							</div>
 							<div slot="description">
-							
 							</div>
 						</Container>
 					</section>

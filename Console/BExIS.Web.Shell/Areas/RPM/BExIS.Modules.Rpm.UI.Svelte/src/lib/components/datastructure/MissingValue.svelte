@@ -9,6 +9,7 @@
 	export let description = '';
 	export let last = true;
 
+
 	const dispatch = createEventDispatcher();
 
 	function remove() {
@@ -22,15 +23,18 @@
 
 <div class="flex space-x-3 content-center">
 	<!-- <Label>Name:</Label>  -->
-	<TextInput
-		id="missing-value-name"
-		bind:value={displayName}
-		on:change
-		placeholder="Missing Value"
-		help={true}
-	/>
+		<div class="grow">
+		<TextInput
+			id="missing-value-name"
+			bind:value={displayName}
+			on:change
+			placeholder="Missing Value"
+			help={true}
+		/>
+</div>
 
 	<!-- <Label>Description:</Label>  -->
+	<div class="grow">
 	<TextInput
 		id="missing-value-description"
 		bind:value={description}
@@ -38,8 +42,9 @@
 		placeholder="Description"
 		help={true}
 	/>
+	</div>
 
-	<div class="self-center text-xl mt-5">
+	<div class="self-center text-xl mt-5 w-11">
 		<button
 			id="delete-missing-value"
 			title="delete"
