@@ -378,11 +378,14 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             {
                 foreach (var item in source)
                 {
-                    target.Add(new MissingValue()
+                    if (!string.IsNullOrEmpty(item.DisplayName))
                     {
-                        DisplayName = item.DisplayName,
-                        Description = item.Description
-                    });
+                        target.Add(new MissingValue()
+                        {
+                            DisplayName = item.DisplayName,
+                            Description = item.Description
+                        });
+                    }
                 }
             }
 

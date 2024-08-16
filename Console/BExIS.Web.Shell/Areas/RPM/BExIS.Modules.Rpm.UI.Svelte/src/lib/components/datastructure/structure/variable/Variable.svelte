@@ -66,7 +66,7 @@
 	export let isValid: boolean = false;
 	export let last: boolean = false;
 	export let expand: boolean;
-	export let blockDataRelevant: boolean;
+	export let blockDataRelevant: boolean = false;
 
 	$: isValid;
 	// validation
@@ -538,7 +538,7 @@
 								<div class="flex w-full gap-1 py-1">
 									<div class="grow">Missing Values</div>
 								</div>
-								<MissingValues bind:list={variable.missingValues} showTitle={false}></MissingValues>
+								<MissingValues bind:list={variable.missingValues} showTitle={false} disabled={blockDataRelevant}></MissingValues>
 							</div>
 							<div slot="description">
 							</div>

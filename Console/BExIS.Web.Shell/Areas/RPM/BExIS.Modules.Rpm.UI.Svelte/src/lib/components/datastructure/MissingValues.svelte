@@ -4,7 +4,7 @@
 	import MissingValue from './MissingValue.svelte';
 	export let list: missingValueType[] = [];
 	export let showTitle:boolean = true;
-
+	export let disabled:boolean = false;
 
 	import { onMount } from 'svelte';
 	import { helpStore } from '@bexis2/bexis2-core-ui';
@@ -52,6 +52,7 @@
 				on:add={add}
 				on:remove={() => remove(i)}
 				last={list.length - 1 === i}
+				{disabled}
 			/>
 		{/each}
 	{/if}
