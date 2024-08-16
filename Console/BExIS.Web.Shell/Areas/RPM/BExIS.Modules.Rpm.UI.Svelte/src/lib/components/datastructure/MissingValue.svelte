@@ -8,6 +8,7 @@
 	export let displayName = '';
 	export let description = '';
 	export let last = true;
+	export let disabled:boolean = false;
 
 
 	const dispatch = createEventDispatcher();
@@ -30,6 +31,7 @@
 			on:change
 			placeholder="Missing Value"
 			help={true}
+			{disabled}
 		/>
 </div>
 
@@ -41,9 +43,11 @@
 		on:change
 		placeholder="Description"
 		help={true}
+		{disabled}
 	/>
 	</div>
 
+	{#if !disabled}
 	<div class="self-center text-xl mt-5 w-11">
 		<button
 			id="delete-missing-value"
@@ -63,4 +67,5 @@
 			>
 		{/if}
 	</div>
+	{/if}
 </div>
