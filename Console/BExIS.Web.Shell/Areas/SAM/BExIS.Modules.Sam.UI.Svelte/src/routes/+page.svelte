@@ -1,5 +1,21 @@
-<!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
+<script>
+	import { Page } from '@bexis2/bexis2-core-ui';
 
-<div class="container h-full mx-auto flex justify-center items-center">
-	<h1>Let's get cracking bones!</h1>
-</div>
+	// hide context menu
+	window.addEventListener(
+		'contextmenu',
+		function (e) {
+			// do something here...
+			e.preventDefault();
+		},
+		false
+	);
+</script>
+
+<Page title="System Administration">
+	<div class="grid grid-flow-col gap-10">
+		<a class="btn variant-filled-secondary" href="./users">users</a>
+		<a class="btn variant-filled-secondary" href="./groups">groups</a>
+	
+	</div>
+</Page>

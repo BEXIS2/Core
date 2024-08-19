@@ -444,8 +444,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         updatedVariable.VariableConstraints = variableHelper.ConvertTo(variable.Constraints, constraintsManager);
                         updatedVariable.Meanings = variableHelper.ConvertTo(variable.Meanings, meaningManager);
 
-                        // add update of missing values
+                        //add update of missing values
+                        updatedVariable.MissingValues = variableHelper.Update(variable.MissingValues, updatedVariable.MissingValues);
 
+                        updatedVariable =  variableManager.UpdateVariable(updatedVariable);
                     }
                     else // create
                     {

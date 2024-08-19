@@ -36,6 +36,7 @@
 	import ConstraintsDescription from './ConstraintsDescription.svelte';
 	import MeaningsDescription from './MeaningsDescription.svelte';
 	import Status from './Status.svelte';
+	import MissingValues from '../../MissingValues.svelte';
 
 	export let variable: VariableInstanceModel = new VariableInstanceModel();
 	$: variable;
@@ -65,7 +66,7 @@
 	export let isValid: boolean = false;
 	export let last: boolean = false;
 	export let expand: boolean;
-	export let blockDataRelevant: boolean;
+	export let blockDataRelevant: boolean = false;
 
 	$: isValid;
 	// validation
@@ -88,6 +89,8 @@
 		suggestedDataType = variable.dataType;
 		suggestedUnits = variable.possibleUnits;
 		suggestedTemplates = variable.possibleTemplates;
+		console.log("🚀 ~ onMount ~ variable:", variable)
+		
 		// reset & reload validation
 		suite.reset();
 
@@ -305,8 +308,8 @@
 							bind:expand
 							{blockDataRelevant}
 						>
-
-						<Container name="Title" py=0>
+		
+						<Container name="Title" >
 							<div class="flex" slot="property">
 								<div class="grow">
 								<TextInput
@@ -528,6 +531,16 @@
 							</div>
 							<div slot="description">
 								<ConstraintsDescription bind:list={variable.constraints} />
+							</div>
+						</Container>
+						<Container>
+							<div slot="property">
+								<div class="flex w-full gap-1 py-1">
+									<div class="grow">Missing Values</div>
+								</div>
+								<MissingValues bind:list={variable.missingValues} showTitle={false} disabled={blockDataRelevant}></MissingValues>
+							</div>
+							<div slot="description">
 							</div>
 						</Container>
 					</section>

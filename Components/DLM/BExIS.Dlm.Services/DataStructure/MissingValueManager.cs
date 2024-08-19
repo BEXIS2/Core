@@ -481,6 +481,8 @@ namespace BExIS.Dlm.Services.DataStructure
 
         public MissingValue Create(string displayName, string description, Variable variable, string placeholder = null)
         {
+            throw new NotImplementedException("never used and worked");
+
             Contract.Requires(!string.IsNullOrWhiteSpace(displayName));
             Contract.Requires(variable != null);
 
@@ -511,6 +513,7 @@ namespace BExIS.Dlm.Services.DataStructure
                     MissingValue missingValue = new MissingValue()
                     {
                         DisplayName = displayName,
+                        Description = description,
                         Placeholder = placeholder
                     };
                     repo.Put(missingValue);
