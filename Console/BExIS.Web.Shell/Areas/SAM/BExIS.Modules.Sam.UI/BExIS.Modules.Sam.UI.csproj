@@ -401,9 +401,8 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>
-			mkdir "$(SolutionDir)Console\Workspace\Modules\SAM"
-			C:\Windows\System32\xcopy "$(ProjectDir)Sam.Settings.json" "$(SolutionDir)Console\Workspace\Modules\SAM" /C /Y /I /D
+    <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\SAM"
+C:\Windows\System32\xcopy "$(ProjectDir)Sam.Settings.json" "$(SolutionDir)Console\Workspace\Modules\SAM" /C /Y /I /D
 		</PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

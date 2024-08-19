@@ -1216,6 +1216,10 @@
       <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
       <Name>BExIS.Utils.Config</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
+      <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
+      <Name>BExIS.Utils.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
       <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
       <Name>BExIS.Utils</Name>
@@ -1240,6 +1244,14 @@
       <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
       <Name>Vaiona.Persistence.Api</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.Persistence.NH\Vaiona.Persistence.NH.csproj">
+      <Project>{8c5c0209-69a3-4579-9f9b-4d5f084a3b85}</Project>
+      <Name>Vaiona.Persistence.NH</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.PersistenceProviders.NH\Vaiona.PersistenceProviders.NH.csproj">
+      <Project>{2fb8def8-5749-4eae-8588-8a5aaed251a5}</Project>
+      <Name>Vaiona.PersistenceProviders.NH</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Components\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
       <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
       <Name>Vaiona.Utils</Name>
@@ -1259,6 +1271,10 @@
     <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
       <Name>BExIS.Xml.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
+      <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
+      <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
