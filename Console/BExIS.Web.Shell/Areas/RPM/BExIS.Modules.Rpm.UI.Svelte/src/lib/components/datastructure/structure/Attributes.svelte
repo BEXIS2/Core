@@ -33,7 +33,7 @@
 </script>
 
 {#if model}
-	<div class="structure-attributes-container grid md:grid-cols-2 sm:grid-cols-1 gap-5">
+	<div class="structure-attributes-container grid md:grid-cols-2 sm:grid-cols-1 gap-5 px-2">
 		<TextInput
 			id="title"
 			label="Title"

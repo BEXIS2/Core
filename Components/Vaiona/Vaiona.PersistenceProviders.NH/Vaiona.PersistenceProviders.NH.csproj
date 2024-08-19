@@ -50,14 +50,8 @@
       <HintPath>..\..\..\packages\Remotion.Linq.EagerFetching.2.2.0\lib\net45\Remotion.Linq.EagerFetching.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -102,14 +96,6 @@
     <ProjectReference Include="..\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">
       <Project>{705f8751-e58a-453e-a7fd-0c310fd3cae8}</Project>
       <Name>Vaiona.Web.Mvc.Modularity</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Vaiona.Web.Mvc\Vaiona.Web.Mvc.csproj">
-      <Project>{5f5d22e8-8c05-49cd-854e-8fe8eff1aa6c}</Project>
-      <Name>Vaiona.Web.Mvc</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Vaiona.Web\Vaiona.Web.csproj">
-      <Project>{5b48b5a8-eae8-4ef8-8f2c-7fedb1b095d3}</Project>
-      <Name>Vaiona.Web</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

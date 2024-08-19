@@ -10,7 +10,6 @@ using BExIS.Utils.Config;
 using IDIV.Modules.Mmm.UI.Models;
 using MediaInfoLib;
 using MetadataExtractor;
-using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
 using System.IO;

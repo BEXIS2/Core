@@ -111,7 +111,7 @@
 </script>
 
 <div>
-	<div transition:fade class="flex">
+	<div transition:fade class="flex px-2">
 		<div class="grow">
 			<button title="back" class="btn variant-filled-warning" on:click={() => back()}
 				><Fa icon={faArrowLeft} /></button
@@ -124,13 +124,16 @@
 					title="Check changed primary key against datasets that belong to the data structure."
 					class="btn variant-filled-error text-xl"
 					on:mouseover={() => helpStore.show('check')}
-					on:click={onCheckPKHandler}><Fa icon={faBinoculars} /></button
+					on:focus={() => helpStore.show('check')}
+					on:click={onCheckPKHandler}
+					on:keypress={onCheckPKHandler}><Fa icon={faBinoculars} /></button
 				>
 			{/if}
 			<button
 				title="save"
 				class="btn variant-filled-primary text-xl"
 				on:click={onSaveHandler}
+				on:keypress={onSaveHandler}
 				disabled={!areVariablesValid ||
 					!areAttributesValid ||
 					!((enforcePrimaryKey && isPKSet) || !enforcePrimaryKey) ||
@@ -140,16 +143,16 @@
 	</div>
 
 	<Attributes {model} bind:valid={areAttributesValid} />
+	<div class="px-2">
 	{#if enforcePrimaryKey && model.variables.length > 0 && currentPks.length == 0}
-		<Alert message="please select a primary key" cssClass="variant-filled-warning"></Alert>
+		<Alert message="Please select a (combined) primary key." cssClass="variant-filled-warning"></Alert>
 	{/if}
 	{#if model.variables.length == currentPks.length}
 		<Alert cssClass="variant-filled-warning">
-			By selecting all variables as primary key, it is not possible to change lines during an
-			update. At least one column must remain as a value.
+			By selecting all variables as part of the primary key, it is impossible to update the data. At least one column must remain as a value.
 		</Alert>
 	{/if}
-
+</div>
 	<Variables
 		bind:variables={model.variables}
 		bind:valid={areVariablesValid}

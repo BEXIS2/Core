@@ -1,8 +1,7 @@
 // import adapter from '@sveltejs/adapter-auto';
 import adapter from '@sveltejs/adapter-static';
 
-import { vitePreprocess } from '@sveltejs/kit/vite';
-import { build } from 'vite';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -11,21 +10,22 @@ const config = {
 	preprocess: vitePreprocess(),
 	kit: {
 		adapter: adapter({
-			pages:'../BExIS.Modules.Sam.UI/Scripts/svelte', // ../BExIS.Modules.Dcm.UI/Scripts/svelte
-			assets:'../BExIS.Modules.Sam.UI/Scripts/svelte',// ../BExIS.Modules.Dcm.UI/Scripts/svelte
-			fallback:null,
-			precompress:true,
-			preprocess:true,
-			strict:false
+			pages: '../BExIS.Modules.Sam.UI/Scripts/svelte', // ../BExIS.Modules.Dcm.UI/Scripts/svelte
+			assets: '../BExIS.Modules.Sam.UI/Scripts/svelte', // ../BExIS.Modules.Dcm.UI/Scripts/svelte
+			fallback: null,
+			precompress: true,
+			preprocess: true,
+			strict: false
 		}),
-		paths:{
-			base: process.env.NODE_ENV ==='production' ? '/sam':'' // add module id here e.g. /dcm
+		paths: {
+			relative: true,
+			base: process.env.NODE_ENV === 'production' ? '/dcm' : '' // add module id here,
 		},
+
 		alias: {
 			$models: './src/models',
-			$services: './src/services',
-	}
-
+			$services: './src/services'
+		}
 	}
 };
 

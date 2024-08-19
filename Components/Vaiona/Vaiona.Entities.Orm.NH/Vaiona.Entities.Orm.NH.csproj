@@ -36,11 +36,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -51,28 +46,28 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Mappings\Default\Logging\LogEntryEntity.RelationLog.hbm.xml">
-     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\Default\Logging\LogEntryEntity.DataLog.hbm.xml">
-     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\Default\Logging\LogEntryEntity.CustomLog.hbm.xml">
-     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\Default\Logging\LogEntryEntity.MethodLog.hbm.xml">
-     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\Default\Logging\LogEntryEntity.hbm.xml">
-     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\Default\Seucrity\AccessRuleEntity.hbm.xml">
-     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>rmdir /S /Q  "$(SolutionDir)Console\Workspace\Components\Vaiona\Db\Mappings"
-C:\Windows\System32\xcopy "$(ProjectDir)Mappings" "$(SolutionDir)Console\Workspace\Components\Vaiona\Db\Mappings" /E /C /Y /I</PostBuildEvent>
+C:\Windows\System32\xcopy "$(ProjectDir)Mappings" "$(SolutionDir)Console\Workspace\Components\Vaiona\Db\Mappings" /E /C /Y /I /D</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

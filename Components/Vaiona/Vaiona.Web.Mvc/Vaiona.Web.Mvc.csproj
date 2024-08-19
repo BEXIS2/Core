@@ -42,7 +42,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
@@ -76,9 +75,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -107,21 +103,9 @@
       <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
       <Name>BExIS.Utils.Config</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Utils\BExIS.Utils\BExIS.Utils.csproj">
-      <Project>{782B71C1-707F-4AB1-80E9-90D2880635B4}</Project>
-      <Name>BExIS.Utils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Vaiona.IoC\Vaiona.IoC.csproj">
-      <Project>{29A7BE0F-A17C-4AE8-8CA1-15FE4DD74129}</Project>
-      <Name>Vaiona.IoC</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Vaiona.Model\Vaiona.Model.csproj">
       <Project>{a60ac05f-8c9a-4efd-9826-452e6049da4d}</Project>
       <Name>Vaiona.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Vaiona.MultiTenancy.Services\Vaiona.MultiTenancy.Services.csproj">
-      <Project>{4639d130-e0aa-4aef-b9bd-bef6ad99dbaf}</Project>
-      <Name>Vaiona.MultiTenancy.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj">
       <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>

@@ -444,11 +444,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         updatedVariable.VariableConstraints = variableHelper.ConvertTo(variable.Constraints, constraintsManager);
                         updatedVariable.Meanings = variableHelper.ConvertTo(variable.Meanings, meaningManager);
 
-                        // update missingValues
-                        List<long> dbMVs = updatedVariable.MissingValues.Select(mv => mv.Id).ToList();
-                        List<MissingValueItem> newMVs = variable.MissingValues.Where(mv => !dbMVs.Contains(mv.Id)).ToList();
-                        if (newMVs.Any())
-                            updatedVariable.MissingValues.ToList().AddRange(variableHelper.ConvertTo(newMVs));
+                        //add update of missing values
+                        updatedVariable.MissingValues = variableHelper.Update(variable.MissingValues, updatedVariable.MissingValues);
+
+                        updatedVariable =  variableManager.UpdateVariable(updatedVariable);
                     }
                     else // create
                     {
