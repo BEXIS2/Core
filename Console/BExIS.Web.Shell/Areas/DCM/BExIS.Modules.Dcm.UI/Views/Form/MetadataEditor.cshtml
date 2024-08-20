@@ -270,7 +270,8 @@
 
         @if (@submit.IsComplete())
             {
-        <button id="save" onclick="submit()" class="bx-button action">Save</button>
+                    <input id="commit_message" class="bx-commit-message bx-input bx-metadataFormTextInput" placeholder="Please describe what you have changed" type="text" value="" />
+                    <button id="save" onclick="submit()" class="bx-button action">Save</button>
             }
 
         @if (@Model.FromEditMode)
@@ -318,7 +319,7 @@
             bindMinimap();
         });
 
-            function SelectFileProcess_OnSelect(e) {
+    function SelectFileProcess_OnSelect(e) {
 
         var file = e.files[0];
         var maxsize = '@int_MaxRequestLength';
@@ -486,6 +487,10 @@
 
     function submit() {
 
+  
+        var commit_message = $('#commit_message').val();
+        console.log("commit_message", commit_message)
+
         $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}})',
             function(response) {
                 $('#MetadataEditor').replaceWith(response);
@@ -493,7 +498,8 @@
                 var errors = $('.bx-input-error');
 
                 if (errors.length == 0) {
-                    callSubmitAction(true);
+
+                    callSubmitAction(true, commit_message);
                 } else {
 
                     console.log('@Model.SaveWithErrors');
@@ -502,16 +508,19 @@
 
                         console.log("inside");
                         if (confirm('Warning: Some fields are not complete or contain entries that do not meet the requirements. Press OK to save anyways and resume later.')) {
-                            callSubmitAction(false);
+                            callSubmitAction(false, commit_message);
                         }
                     }
                 }
             })
     }
 
-    function callSubmitAction(valid) {
+        function callSubmitAction(valid, commit_message) {
 
-        $.get('@Url.Action(
+           
+
+
+         $.get('@Url.Action(
                  @submit.ActionName,
                  @submit.ControllerName,
                  new RouteValueDictionary
@@ -520,7 +529,8 @@
                      { "editMode", @Model.FromEditMode},
                  })',
             {
-                valid: valid
+                valid: valid,
+                commitMessage: commit_message
             },
             function (response) {
 
