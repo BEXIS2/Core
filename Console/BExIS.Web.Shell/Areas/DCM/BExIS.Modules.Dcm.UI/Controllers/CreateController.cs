@@ -255,6 +255,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (MetadataStructureManager msm = new MetadataStructureManager())
             using (GroupManager gm = new GroupManager())
             using (EntityTemplateManager entityTemplateManager = new EntityTemplateManager())
+            using (TagManager tagManager = new TagManager())
             {
                 // create Entity based on entity template
                 // load entitytemplate
@@ -354,7 +355,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     dm.EditDatasetVersion(workingCopy, null, null, null);
 
                     // close check out
-                    dm.CheckInDataset(datasetId, "Init creation a " + entityTemplate.EntityType.Name + " based on " + entityTemplate.Name + " Template", GetUsernameOrDefault(), ViewCreationBehavior.None);
+                    dm.CheckInDataset(datasetId, "Init creation a " + entityTemplate.EntityType.Name + " based on " + entityTemplate.Name + " Template", GetUsernameOrDefault(), ViewCreationBehavior.None, TagType.Minor);
                 }
 
                 #endregion update version

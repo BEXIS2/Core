@@ -13,8 +13,8 @@
 	  
     <!-- Mapping EntityTag properties -->
 
-    <property name="TagNr" type="double">
-      <column name="TagNr" />
+    <property name="Nr" type="double">
+      <column name="Nr" />
     </property>
 
     <property name="ReleaseDate" type="Timestamp">
@@ -29,10 +29,6 @@
 	<property name="Show" type="Boolean">
 	  <column name="Show" />
 	</property>
-
-	<many-to-one name="Version" class="BExIS.Dlm.Entities.Data.DatasetVersion" not-null="true" column="DatasetVersionRef"/>
-
-
-
+	  
   </class>
 </hibernate-mapping>

@@ -611,7 +611,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             TaskManager.AddToBus(CreateTaskmanager.ENTITY_ID, datasetId);
 
                             dm.EditDatasetVersion(workingCopy, null, null, null);
-                            dm.CheckInDataset(datasetId, commitMessage, GetUsernameOrDefault(), ViewCreationBehavior.None);
+                            var tagType = newDataset? TagType.None : TagType.Minor;
+
+                            dm.CheckInDataset(datasetId, commitMessage, GetUsernameOrDefault(), ViewCreationBehavior.None, tagType);
 
                             #region set releationships
 

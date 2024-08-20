@@ -51,7 +51,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             {
 
                 // Arrange
-                var tag = new Tag { TagNr = 1.0, Final = false, Show = false, ReleaseDate = DateTime.Now, Version = dataset.Versions.FirstOrDefault() };
+                var tag = new Tag { Nr = 1.0, Final = false, Show = false, ReleaseDate = DateTime.Now};
 
                 // Act
                 Tag result = _tagManager.Create(tag);
@@ -59,7 +59,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 // Assert
                 Assert.IsNotNull(result);
                 Assert.AreEqual(tag.Id, result.Id);
-                Assert.AreEqual(tag.TagNr, result.TagNr);
+                Assert.AreEqual(tag.Nr, result.Nr);
             }
 
         }
@@ -71,10 +71,10 @@ namespace BExIS.Dlm.Tests.Services.Data
             using (var _tagManager = new TagManager())
             {
                 // Arrange
-                var tag = new Tag { TagNr = 1.0, Final = false, Show = false, ReleaseDate = DateTime.Now, Version = dataset.Versions.FirstOrDefault() };
+                var tag = new Tag { Nr = 1.0, Final = false, Show = false, ReleaseDate = DateTime.Now };
 
                 tag = _tagManager.Create(tag);
-                tag.TagNr += 1.0;
+                tag.Nr += 1.0;
 
                 // Act
                 var result = _tagManager.Update(tag);
@@ -82,7 +82,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 // Assert
                 Assert.IsNotNull(result);
                 Assert.AreEqual(tag.Id, result.Id);
-                Assert.AreEqual(tag.TagNr, 2.0);
+                Assert.AreEqual(tag.Nr, 2.0);
             }
         }
 
@@ -92,7 +92,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             using (var _tagManager = new TagManager())
             {
                 // Arrange
-                var tag = new Tag { TagNr = 0.1, Final = false, Show = false, ReleaseDate = DateTime.Now, Version = dataset.Versions.FirstOrDefault() };
+                var tag = new Tag { Nr = 0.1, Final = false, Show = false, ReleaseDate = DateTime.Now };
 
                 tag = _tagManager.Create(tag);
 

@@ -112,6 +112,13 @@ namespace BExIS.Dlm.Entities.Data
         public virtual Dataset Dataset { get; set; }
 
         /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        public virtual Tag Tag { get; set; }
+
+        /// <summary>
         /// There is a need for the tuples to be managed smarter inside any version, in order to:
         /// 1: reduce the amount of tuple duplication
         /// 2: be able to find out changes among versions e.g., deleted tuples, added tuples, changed ones

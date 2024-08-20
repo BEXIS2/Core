@@ -63,6 +63,34 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
+        public Tag Create()
+        {
+            Tag Tag = new Tag()
+            {
+                Nr = 0,
+                Show = false,
+                Final = false
+            };
+
+            if (Tag == null) throw new ArgumentNullException("Tag must not be null.");
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                try
+                {
+                    IRepository<Tag> repo = uow.GetRepository<Tag>();
+                    repo.Put(Tag);
+                    uow.Commit();
+
+                    return (Tag);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Tag creation failed.", ex);
+                }
+            }
+        }
+
         public Tag Update(Tag Tag)
         {
             if (Tag == null) throw new ArgumentNullException("Tag must not be null.");
