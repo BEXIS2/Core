@@ -148,6 +148,7 @@
     <Compile Include="DataStructure\AggregateFunctionManager.cs" />
     <Compile Include="DataStructure\ClassifierManager.cs" />
     <Compile Include="Data\DataTupleIterator.cs" />
+    <Compile Include="Data\TagManager.cs" />
     <Compile Include="Helpers\ExtendedPropertyHelper.cs" />
     <Compile Include="Data\EntityTemplateManager.cs" />
     <Compile Include="Helpers\ConstraintHelper.cs" />

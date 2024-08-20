@@ -20,7 +20,6 @@ namespace BExIS.Xml.Helpers
             List<SearchMetadataNode> list = new List<SearchMetadataNode>();
 
             // load metadatastructure with all packages and attributes
-
             using (var uow = this.GetUnitOfWork())
             {
                 string title = uow.GetReadOnlyRepository<MetadataStructure>().Get(id).Name;

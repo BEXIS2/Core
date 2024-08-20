@@ -94,6 +94,7 @@
     <Compile Include="Data\ExtendedPropertyValue.cs" />
     <Compile Include="Data\ParameterValue.cs" />
     <Compile Include="Data\DataTupleVersion.cs" />
+    <Compile Include="Data\Tag.cs" />
     <Compile Include="Data\VariableValue.cs" />
     <Compile Include="Data\VariableValueCollection.cs" />
     <Compile Include="Data\Dataset.cs" />

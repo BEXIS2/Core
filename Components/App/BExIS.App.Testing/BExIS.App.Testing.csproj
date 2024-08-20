@@ -126,6 +126,10 @@
       <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
       <Name>Vaiona.Persistence.Api</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Vaiona\Vaiona.Persistence.NH\Vaiona.Persistence.NH.csproj">
+      <Project>{8c5c0209-69a3-4579-9f9b-4d5f084a3b85}</Project>
+      <Name>Vaiona.Persistence.NH</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.PersistenceProviders.NH\Vaiona.PersistenceProviders.NH.csproj">
       <Project>{2fb8def8-5749-4eae-8588-8a5aaed251a5}</Project>
       <Name>Vaiona.PersistenceProviders.NH</Name>
@@ -149,6 +153,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <Content Include="IoC.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
