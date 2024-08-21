@@ -60,7 +60,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     if (user != null)
                     {
                         // is the user allowed to delete this dataset
-                        if (entityPermissionManager.HasEffectiveRight(user.UserName, typeof(Dataset), id, Security.Entities.Authorization.RightType.Delete))
+                        if (entityPermissionManager.HasEffectiveRightsAsync(user.UserName, typeof(Dataset), id, Security.Entities.Authorization.RightType.Delete).Result)
                         {
                             //try delete the dataset
                             if (datasetManager.DeleteDataset(id, ControllerContext.HttpContext.User.Identity.Name, true))
@@ -273,11 +273,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     if (user != null)
                     {
                         // is the user allowed to delete this dataset
-                        if (entityPermissionManager.HasEffectiveRight(user.UserName, typeof(Dataset), id, Security.Entities.Authorization.RightType.Delete))
+                        if (entityPermissionManager.HasEffectiveRightsAsync(user.UserName, typeof(Dataset), id, Security.Entities.Authorization.RightType.Delete).Result)
                         {
                             if (dm.PurgeDataset(id))
                             {
-                                entityPermissionManager.Delete(typeof(Dataset), id);
+                                entityPermissionManager.DeleteAsync(typeof(Dataset), id);
 
                                 var es = new EmailService();
                                 es.Send(MessageHelper.GetPurgeDatasetHeader(id, typeof(Dataset).Name),

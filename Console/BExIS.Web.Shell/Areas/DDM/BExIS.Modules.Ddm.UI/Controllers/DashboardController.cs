@@ -184,7 +184,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     var datasetId = dsv.Dataset.Id;
 
                     //get permissions
-                    int rights = entityPermissionManager.GetEffectiveRights(user?.Id, entity.Id, datasetId);
+                    int rights = entityPermissionManager.GetEffectiveRightsAsync(user.Id, entity.Id, datasetId).Result;
 
                     if (rights > 0)
                     {
@@ -278,7 +278,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     ViewBag.userLoggedIn = true;
 
                     // get datasets based on entity permissions
-                    datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), entityname, typeof(Dataset), rightType);
+                    datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), entityname, typeof(Dataset), rightType).Result;
 
                     var userParty = partyManager.GetPartyByUser(user.Id);
 
@@ -304,7 +304,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 else
                 {
                     ViewBag.userLoggedIn = false;
-                    datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), entityname, typeof(Dataset), RightType.Read);
+                    datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), entityname, typeof(Dataset), RightType.Read).Result;
                 }
 
                 List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(datasetIds, true);
@@ -343,7 +343,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     }
 
                     //
-                    rowArray[7] = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), dsv.Dataset.Id, RightType.Write); ;
+                    rowArray[7] = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), dsv.Dataset.Id, RightType.Write).Result;
 
                     model.Add(new MyDatasetsModel(
                        (long)rowArray[0],

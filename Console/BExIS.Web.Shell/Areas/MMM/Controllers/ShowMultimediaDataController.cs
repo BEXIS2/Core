@@ -37,9 +37,9 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             {
                 entityPermissionManager = new EntityPermissionManager();
 
-                ViewData["edit"] = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Write);
+                ViewData["edit"] = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Write).Result;
 
-                bool access = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read);
+                bool access = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read).Result;
 
                 if (access)
                 {
@@ -73,10 +73,10 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                     if (versionId == datasetManager.GetDatasetLatestVersion(datasetID).Id)
                         isLatestVersion = true;
 
-                    ViewData["edit"] = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Write);
+                    ViewData["edit"] = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Write).Result;
 
-                    bool access = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read);
-                    Session["DatasetInfo"] = new DatasetInfo(datasetID, versionId, isLatestVersion, access, entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Delete));
+                    bool access = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read).Result;
+                    Session["DatasetInfo"] = new DatasetInfo(datasetID, versionId, isLatestVersion, access, entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Delete).Result);
                     if (access)
                         return PartialView("_multimediaData", getFilesByDatasetId(datasetID, entityType, versionId));
                     else
@@ -127,7 +127,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                     DatasetInfo datasetInfo = (DatasetInfo)Session["DatasetInfo"];
                     string entityType = (string)Session["EntityType"];
                     long datasetID = datasetInfo.DatasetId;
-                    bool access = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read);
+                    bool access = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read).Result;
                     if (access)
                     {
                         path = Path.Combine(AppConfiguration.DataPath, path);
@@ -194,7 +194,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                         string[] temp = path.Split('\\');
                         long datasetID = datasetInfo.DatasetId;
                         status = datasetManager.GetDatasetLatestVersion(datasetID).StateInfo.State;
-                        bool access = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Delete);
+                        bool access = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Delete).Result;
 
                         if (access && (datasetManager.IsDatasetCheckedOutFor(datasetID, HttpContext.User.Identity.Name) || datasetManager.CheckOutDataset(datasetID, HttpContext.User.Identity.Name)))
                         {
@@ -279,7 +279,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                     string entityType = (string)Session["EntityType"];
 
                     long datasetID = datasetInfo.DatasetId;
-                    bool access = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read);
+                    bool access = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read).Result;
                     if (access)
                     {
                         path = Path.Combine(AppConfiguration.DataPath, path);
@@ -447,7 +447,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                     DatasetInfo datasetInfo = (DatasetInfo)Session["DatasetInfo"];
                     string entityType = (string)Session["EntityType"];
                     long datasetID = datasetInfo.DatasetId;
-                    bool access = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read);
+                    bool access = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read).Result;
                     if (access)
                     {
                         path = Path.Combine(AppConfiguration.DataPath, path);
@@ -545,7 +545,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             {
                 entityPermissionManager = new EntityPermissionManager();
                 datasetManager = new DatasetManager();
-                bool access = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), datasetId, RightType.Read);
+                bool access = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetId, RightType.Read).Result;
                 if (access)
                 {
                     Session["EntityType"] = entityType;
@@ -574,7 +574,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             {
                 List<FileInformation> fileInfos = new List<FileInformation>();
                 entityPermissionManager = new EntityPermissionManager();
-                bool access = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), dataset.Id, RightType.Read);
+                bool access = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), dataset.Id, RightType.Read).Result;
                 if (dataset != null && access)
                 {
                     DatasetVersion datasetVersion = new DatasetVersion();

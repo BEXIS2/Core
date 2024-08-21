@@ -95,8 +95,10 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 operationManager.Create("DDM", "Home", "*", SearchFeature);
                 operationManager.Create("DDM", "Data", "*");
 
-                if (!featurePermissionManager.Exists(null, SearchFeature.Id, PermissionType.Grant))
-                    featurePermissionManager.Create(null, SearchFeature.Id, PermissionType.Grant);
+                if (!featurePermissionManager.ExistsAsync(null, SearchFeature.Id, PermissionType.Grant).Result)
+                {
+                    var result_create = featurePermissionManager.CreateAsync(null, SearchFeature.Id, PermissionType.Grant).Result;
+                }
 
                 #endregion Search Workflow
 
@@ -120,14 +122,18 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 #endregion Requests
 
                 Feature Api = features.FirstOrDefault(f =>
+                Feature SearchApi = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Search Api") && f.Parent.Equals(DataDiscovery));
+                if (SearchApi == null) SearchApi = featureManager.Create("Search Api", "Search Api", DataDiscovery);
+                if (!operationManager.Exists("api", "SearchApi", "*")) operationManager.Create("api", "SearchApi", "*", SearchApi);
+
+                Feature DataTable = features.FirstOrDefault(f =>
                    f.Name.Equals("Api") &&
                    f.Parent != null &&
                    f.Parent.Id.Equals(DataDiscovery.Id));
 
                 if (RequestsManage == null) RequestsManage = featureManager.Create("Api", "Api", DataDiscovery);
 
-                operationManager.Create("Api", "DataTable", "*", Api);
-                operationManager.Create("Api", "TagInfo", "*", Api);
+                operationManager.Create("Api", "DataTable", "*", DataTable);
 
                 #endregion SECURITY
             }

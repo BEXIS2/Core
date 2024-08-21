@@ -105,9 +105,9 @@ namespace BExIS.App.Bootstrap.Attributes
                     }
 
                     var feature = operation.Feature;
-                    if (feature != null && !featurePermissionManager.Exists(null, feature.Id))
+                    if (feature != null && !featurePermissionManager.ExistsAsync(null, feature.Id).Result)
                     {
-                        if (!featurePermissionManager.HasAccess(user.Id, feature.Id))
+                        if (!featurePermissionManager.HasAccessAsync(user.Id, feature.Id).Result)
                         {
                             actionContext.Response = new HttpResponseMessage(HttpStatusCode.Forbidden);
                             actionContext.Response.Content = new StringContent("The system denied the access.");

@@ -89,7 +89,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
                 entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
 
-                isPublic = entityPermissionManager.Exists(null, entityTypeId.Value, id);
+                isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
 
                 #endregion is public
 
@@ -102,7 +102,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 if (isPublic || user != null)
                 {
-                    if (isPublic || entityPermissionManager.HasEffectiveRight(user.Name, typeof(Dataset), id, RightType.Read))
+                    if (isPublic || entityPermissionManager.HasEffectiveRightsAsync(user.Name, typeof(Dataset), id, RightType.Read).Result)
                     {
                         XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                         OutputDataManager ioOutputDataManager = new OutputDataManager();

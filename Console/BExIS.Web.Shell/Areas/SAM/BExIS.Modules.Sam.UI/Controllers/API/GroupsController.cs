@@ -79,5 +79,33 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
             }
         }
+
+        [HttpPut, PutRoute("api/groups/{id}")]
+        public async Task<HttpResponseMessage> PutByIdAsync(long groupId, UpdateGroupModel model)
+        {
+            using (var groupManager = new GroupManager())
+            {
+                var group = await groupManager.FindByIdAsync(groupId) ?? throw new ArgumentNullException();
+
+                group.Name = model.Name;
+                group.Description = model.Description;
+
+                await groupManager.UpdateAsync(group);
+
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+        }
+
+        [HttpDelete, DeleteRoute("api/groups/{id}")]
+        public async Task<HttpResponseMessage> DeleteByIdAsync(long groupId)
+        {
+            using (var groupManager = new GroupManager())
+            {
+                var group = await groupManager.FindByIdAsync(groupId) ?? throw new ArgumentNullException();
+                await groupManager.DeleteAsync(group);
+
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+        }
     }
 }

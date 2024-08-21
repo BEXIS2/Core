@@ -241,7 +241,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-                List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), "Dataset", typeof(Dataset), RightType.Write).ToList();
+                List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), "Dataset", typeof(Dataset), RightType.Write).Result.ToList();
 
                 List<ListViewItem> tempStructured = new List<ListViewItem>();
                 List<ListViewItem> tempUnStructured = new List<ListViewItem>();

@@ -807,13 +807,13 @@ namespace BExIS.Web.Shell.Controllers
             var x = entityPermissionManager.EntityPermissions.Where(m => m.Entity.Id == 1);
             for (int i = 0; i < 500; i++)
             {
-                var ep = entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 1,
+                var ep = entityPermissionManager.CreateAsync<User>("javad", "Dataset", typeof(Dataset), 1,
                     Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                 //entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 2, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                 //entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 3, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                 //var entityPermissions = entityPermissionManager.QueryEntityPermissions().Where(m => m.Entity.Id == ep.Id);
             }
-            entityPermissionManager.Create<User>("javad", "Dataset", typeof(Dataset), 1,
+            entityPermissionManager.CreateAsync<User>("javad", "Dataset", typeof(Dataset), 1,
                 Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
             var y = x.ToList(); // it should work, while its repo is created from an isolated UoW.
         }
