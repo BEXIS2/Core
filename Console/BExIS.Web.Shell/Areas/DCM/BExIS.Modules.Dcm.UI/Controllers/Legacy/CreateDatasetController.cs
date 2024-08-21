@@ -499,13 +499,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         #region Submit And Create And Finish And Cancel and Reset
 
-        public JsonResult Submit(bool valid)
+        public JsonResult Submit(bool valid, string commitMessage)
         {
             try
             {
                 // create and submit Dataset
 
-                long datasetId = SubmitDataset(valid, "Dataset");
+                long datasetId = SubmitDataset(valid, "Dataset", commitMessage);
 
                 return Json(new { result = "redirect", url = Url.Action("Show", "Data", new { area = "DDM", id = datasetId }) }, JsonRequestBehavior.AllowGet);
             }
@@ -519,7 +519,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// Submit a Dataset based on the imformations
         /// in the CreateTaskManager
         /// </summary>
-        public long SubmitDataset(bool valid, string entityname)
+        public long SubmitDataset(bool valid, string entityname, string commitMessage = "")
         {
             #region create dataset
 
@@ -611,7 +611,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             TaskManager.AddToBus(CreateTaskmanager.ENTITY_ID, datasetId);
 
                             dm.EditDatasetVersion(workingCopy, null, null, null);
-                            dm.CheckInDataset(datasetId, "", GetUsernameOrDefault(), ViewCreationBehavior.None);
+                            var tagType = newDataset? TagType.None : TagType.Minor;
+
+                            dm.CheckInDataset(datasetId, commitMessage, GetUsernameOrDefault(), ViewCreationBehavior.None, tagType);
 
                             #region set releationships
 

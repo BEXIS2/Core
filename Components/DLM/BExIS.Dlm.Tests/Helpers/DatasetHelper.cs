@@ -4,9 +4,11 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.MetadataStructure;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.Linq;
 
@@ -57,6 +59,40 @@ namespace BExIS.Dlm.Tests.Helpers
             finally
             {
                 manager.Dispose();
+            }
+        }
+
+        public Dataset CreateDataset()
+        {
+            using (var dm = new DatasetManager())
+            using (var rsm = new ResearchPlanManager())
+            using (var mdm = new MetadataStructureManager())
+            using (var etm = new EntityTemplateManager())
+            {
+                StructuredDataStructure dataStructure = CreateADataStructure();
+                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+
+                var rp = CreateResearchPlan();
+                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+
+                var mds = mdm.Repo.Query().First();
+                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+
+                var et = etm.Repo.Query().First();
+                et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
+
+                if (dm.IsDatasetCheckedOutFor(dataset.Id, "username") || dm.CheckOutDataset(dataset.Id, "username"))
+                {
+                    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
+
+                    var dsv = dm.EditDatasetVersion(workingCopy, null, null, null);
+                    dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", "username", ViewCreationBehavior.None);
+                    return dm.GetDataset(dataset.Id);
+                }
+
+                return null;
             }
         }
 

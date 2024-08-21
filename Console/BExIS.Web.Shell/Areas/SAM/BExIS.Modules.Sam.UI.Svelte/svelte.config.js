@@ -19,7 +19,7 @@ const config = {
 		}),
 		paths: {
 			relative: true,
-			base: process.env.NODE_ENV === 'production' ? '/dcm' : '' // add module id here,
+			base: process.env.NODE_ENV === 'production' ? '/sam' : '' // add module id here,
 		},
 
 		alias: {

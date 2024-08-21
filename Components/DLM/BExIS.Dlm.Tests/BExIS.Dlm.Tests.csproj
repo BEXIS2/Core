@@ -169,6 +169,10 @@
       <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
       <Name>Vaiona.Persistence.Api</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Vaiona\Vaiona.PersistenceProviders.NH\Vaiona.PersistenceProviders.NH.csproj">
+      <Project>{2fb8def8-5749-4eae-8588-8a5aaed251a5}</Project>
+      <Name>Vaiona.PersistenceProviders.NH</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>
@@ -196,6 +200,7 @@
     <Compile Include="Services\Data\DatasetManager_GetDatasetVersionEffectiveDataTuplesTest.cs" />
     <Compile Include="Services\Data\DatasetManager_GetDataTuplesTest.cs" />
     <Compile Include="Services\Data\EntityTemplateManagerTests.cs" />
+    <Compile Include="Services\Data\TagManagerTests.cs" />
     <Compile Include="Services\Helpers\ExtendedPropertyHelperTests.cs" />
     <Compile Include="Services\MetadataStructure\MetadataAttributeManagerTests.cs" />
     <Compile Include="Services\MetadataStructure\MetadataStructureManagerTests.cs" />
