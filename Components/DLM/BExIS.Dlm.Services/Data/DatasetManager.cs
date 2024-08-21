@@ -12,6 +12,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Xml;
+using Vaiona.Entities.Logging;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
@@ -354,9 +355,9 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="username">The username that performs the check-in, which should be the same as the check-out username</param>
         /// <remarks>Does not support simultaneous check-ins</remarks>
         //[MeasurePerformance]
-        public void CheckInDataset(Int64 datasetId, string comment, string username, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh)
+        public void CheckInDataset(Int64 datasetId, string comment, string username, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, TagType tagType=TagType.None)
         {
-            checkInDataset(datasetId, comment, username, false, viewCreationBehavior, "");
+            checkInDataset(datasetId, comment, username, false, viewCreationBehavior, "", tagType);
         }
 
         /// <summary>
@@ -422,7 +423,7 @@ namespace BExIS.Dlm.Services.Data
                     //This fetch and insert will be problematic on bigger datasets! try implement the logic without loading the tuples
                     var tupleIds = getWorkingCopyTupleIds(workingCopy);
                     workingCopy = editDatasetVersionBig(workingCopy, null, null, tupleIds, null); // deletes all the tuples from the active list and moves them to the history table
-                    checkInDataset(entity.Id, "Dataset is deleted", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, deleteReason);
+                    checkInDataset(entity.Id, "Dataset is deleted", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, deleteReason, TagType.None);
 
                     entity = datasetRepo.Get(datasetId); // maybe not needed!
                     entity.Status = DatasetStatus.Deleted;
@@ -441,7 +442,7 @@ namespace BExIS.Dlm.Services.Data
                 {
                     if (entity.Status == DatasetStatus.CheckedOut)
                     {
-                        checkInDataset(entity.Id, "Checked-in after failed delete try!", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, "");
+                        checkInDataset(entity.Id, "Checked-in after failed delete try!", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, "", TagType.None);
                     }
                     return false;
                 }
@@ -569,7 +570,7 @@ namespace BExIS.Dlm.Services.Data
                 {
                     if (entity.Status == DatasetStatus.CheckedOut)
                     {
-                        checkInDataset(entity.Id, "Checked-in after failed delete try!", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, "");
+                        checkInDataset(entity.Id, "Checked-in after failed delete try!", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, "", TagType.None);
                     }
                     return false;
                 }
@@ -2934,6 +2935,9 @@ namespace BExIS.Dlm.Services.Data
                         Status = DatasetVersionStatus.CheckedOut,
                         Dataset = ds
                     };
+
+                    dsNewVersion.Tag = new Tag();
+
                     // if there is a previous version, copy its metadata, content descriptors and extended property values to the newly created version
                     if (ds.Versions.Count() > 0)
                     {
@@ -2953,6 +2957,7 @@ namespace BExIS.Dlm.Services.Data
                             dsNewVersion.VersionName = previousCheckedInVersion.VersionName;
                             dsNewVersion.PublicAccess = previousCheckedInVersion.PublicAccess; //@Todo Copy or set to NULL?
                             dsNewVersion.StateInfo = previousCheckedInVersion.StateInfo;
+                            dsNewVersion.Tag = previousCheckedInVersion.Tag;
 
                             // in state the status of the metadat is store
                             // e.g. metadata is valid
@@ -2998,7 +3003,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="datasetId"></param>
         /// <param name="comment"></param>
         /// <param name="adminMode">if true, the check for current user is bypassed</param>
-        private void checkInDataset(Int64 datasetId, string comment, string username, bool adminMode, ViewCreationBehavior viewCreationBehavior, string mStateComment = "")
+        private void checkInDataset(Int64 datasetId, string comment, string username, bool adminMode, ViewCreationBehavior viewCreationBehavior, string mStateComment = "", TagType tagType = TagType.None)
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -3024,8 +3029,16 @@ namespace BExIS.Dlm.Services.Data
                     if (ds.StateInfo == null)
                         ds.StateInfo = new Vaiona.Entities.Common.EntityStateInfo();
                     ds.ModificationInfo.Comment = mStateComment;
+
+
+                    // add tag
+                    dsv.Tag = updateTag(dsv, tagType, uow);
+
                     repo.Put(ds);
                     uow.Commit();
+
+                    
+
                     // when everything is OK, check if a materialized view is created for the datsets, if yes: refresh it to the lateset changes
                     // if not: try creating a materialized view and refresh it
                     // This only works for the latest versions of datasets, so any function that returns the lateset versions' tuples, must use the materialized views
@@ -3512,6 +3525,35 @@ namespace BExIS.Dlm.Services.Data
                 }
                 return (workingCopyVersion);
             }
+        }
+
+        private Tag updateTag(DatasetVersion dsv, TagType type, IUnitOfWork uow )
+        {
+ 
+
+            Tag tag = new Tag()
+            {
+                Nr = 0,
+                Type = type
+            };
+
+            if (dsv.Tag != null)
+            {
+                var tagNr = dsv.Tag.Nr;
+
+                // update nr in case of major or minor
+                // none as no changes to nr
+                if(type == TagType.Minor) tagNr = tagNr + 0.1;
+                if (type == TagType.Major) {
+                    if (tagNr % 1 > 0) tagNr = Math.Ceiling(tagNr);
+                    else tagNr += 1;
+                }
+
+                tag.Nr = tagNr;
+
+            }
+
+            return tag;
         }
 
         #endregion Private Methods

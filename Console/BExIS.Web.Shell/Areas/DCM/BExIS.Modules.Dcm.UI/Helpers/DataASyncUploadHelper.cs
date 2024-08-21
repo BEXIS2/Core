@@ -358,7 +358,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                             // ToDo: Get Comment from ui and users
 
-                            dm.CheckInDataset(id, numberOfRows + " rows", User.Name);
+                            dm.CheckInDataset(id, numberOfRows + " rows", User.Name,ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, TagType.Major);
 
                             Cache.UpdateSetup.UpdateMethod = UpdateMethod.Update;
 
@@ -436,7 +436,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             string fileNames = string.Join(",", Cache.Files.Select(f => f.Name).ToArray());
 
                             // ToDo: Get Comment from ui and users
-                            dm.CheckInDataset(id, fileNames, User.Name, ViewCreationBehavior.None);
+                            dm.CheckInDataset(id, fileNames, User.Name, ViewCreationBehavior.None, TagType.Major);
                         }
                         catch (Exception ex)
                         {
