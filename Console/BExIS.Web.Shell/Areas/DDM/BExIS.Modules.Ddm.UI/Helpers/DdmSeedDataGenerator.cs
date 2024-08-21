@@ -121,6 +121,10 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
                 #endregion Requests
 
+                Feature SearchApi = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Search Api") && f.Parent.Equals(DataDiscovery));
+                if (SearchApi == null) SearchApi = featureManager.Create("Search Api", "Search Api", DataDiscovery);
+                if (!operationManager.Exists("api", "SearchApi", "*")) operationManager.Create("api", "SearchApi", "*", SearchApi);
+
                 Feature DataTable = features.FirstOrDefault(f =>
                    f.Name.Equals("Api") &&
                    f.Parent != null &&
