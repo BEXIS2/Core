@@ -46,17 +46,17 @@ namespace BExIS.App.Bootstrap.Helpers
                 var type = authArray[0].ToLower();
                 var code = authArray[1];
 
-                if (type == "bearer")
-                {
-                    var token = code;
-                    if (token != null)
-                    {
-                        // resolve the token to the corresponding user
-                        var users = userManager.Users.Where(u => u.Token == token);
-                        user = users.FirstOrDefault();
-                        return user;
-                    }
-                }
+                //if (type == "bearer")
+                //{
+                //    var token = code;
+                //    if (token != null)
+                //    {
+                //        // resolve the token to the corresponding user
+                //        var users = userManager.Users.Where(u => u.Token == token);
+                //        user = users.FirstOrDefault();
+                //        return user;
+                //    }
+                //}
 
                 if (type == "basic")
                 {
@@ -210,30 +210,30 @@ namespace BExIS.App.Bootstrap.Helpers
                 var type = authArray[0].ToLower();
                 var code = authArray[1];
 
-                if (type == "bearer")
-                {
-                    var token = code;
-                    if (token != null)
-                    {
-                        // resolve the token to the corresponding user
-                        var users = userManager.Users.Where(u => u.Token == token);
+                //if (type == "bearer")
+                //{
+                //    var token = code;
+                //    if (token != null)
+                //    {
+                //        // resolve the token to the corresponding user
+                //        var users = userManager.Users.Where(u => u.Token == token);
 
-                        if (users == null || users.Count() != 1)
-                        {
-                            response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-                            response.Content = new StringContent("Bearer token not exist.");
-                        }
+                //        if (users == null || users.Count() != 1)
+                //        {
+                //            response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                //            response.Content = new StringContent("Bearer token not exist.");
+                //        }
 
-                        if (!featurePermissionManager.HasAccess(users.Single().Id, featureId))
-                        {
-                            response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-                            response.Content = new StringContent("Token is not valid.");
-                        }
+                //        if (!featurePermissionManager.HasAccess(users.Single().Id, featureId))
+                //        {
+                //            response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                //            response.Content = new StringContent("Token is not valid.");
+                //        }
 
-                        user = users.FirstOrDefault();
-                        return response;
-                    }
-                }
+                //        user = users.FirstOrDefault();
+                //        return response;
+                //    }
+                //}
 
                 if (type == "basic")
                 {
@@ -256,7 +256,7 @@ namespace BExIS.App.Bootstrap.Helpers
                                     response.Content = new StringContent("UserName and/or Password are incorrect.");
                                 }
 
-                                if (!featurePermissionManager.HasAccess(user.Id, featureId))
+                                if (!featurePermissionManager.HasAccessAsync(user.Id, featureId).Result)
                                 {
                                     response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
                                     response.Content = new StringContent("User is not valid.");

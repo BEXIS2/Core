@@ -419,10 +419,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 model.DatasetId = datasetId;
 
                 //Todo Download Rigths -> currently set read rigths for this case
-                model.DownloadRights = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
-                    typeof(Dataset), datasetId, RightType.Read);
-                model.EditRights = entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name,
-                    typeof(Dataset), datasetId, RightType.Write);
+                model.DownloadRights = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name,
+                    typeof(Dataset), datasetId, RightType.Read).Result;
+                model.EditRights = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name,
+                    typeof(Dataset), datasetId, RightType.Write).Result;
 
                 List<long> versions = new List<long>();
                 if (datasetVersionId == -1)

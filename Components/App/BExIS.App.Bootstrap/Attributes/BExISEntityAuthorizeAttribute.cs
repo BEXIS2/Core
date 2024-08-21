@@ -26,7 +26,7 @@ namespace BExIS.App.Bootstrap.Attributes
             this.rightType = rightType;
         }
 
-        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        public async override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var entityPermissionManager = new EntityPermissionManager();
             var userManager = new UserManager();
@@ -46,7 +46,7 @@ namespace BExIS.App.Bootstrap.Attributes
                     if (user != null) userName = user.Name;
                 }
 
-                if (!entityPermissionManager.HasEffectiveRight(userName, entityType, Convert.ToInt64(filterContext.ActionParameters[keyName]), rightType))
+                if (!(await entityPermissionManager.HasEffectiveRightsAsync(userName, entityType, Convert.ToInt64(filterContext.ActionParameters[keyName]), rightType)))
                 {
                     var returnType = ((ReflectedActionDescriptor)filterContext.ActionDescriptor).MethodInfo.ReturnType;
                     if (returnType == typeof(JsonResult))  // if the action work with json result a json object should be returned

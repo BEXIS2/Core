@@ -42,7 +42,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             {
                                 Id = m.Id,
                                 RequestId = m.Request.Id,
-                                Rights = string.Join(", ", entityPermissionManager.GetRights(m.Request.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
+                                Rights = string.Join(", ", entityPermissionManager.GetRightsAsync(m.Request.Rights).Result), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
                                 Status = m.Status,
                                 StatusAsText = Enum.GetName(typeof(DecisionStatus), m.Status),
                                 InstanceId = m.Request.Key,
@@ -219,7 +219,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 Id = m.Id,
                                 InstanceId = m.Key,
                                 Title = entityStore.GetTitleById(m.Key),
-                                Rights = string.Join(", ", entityPermissionManager.GetRights(m.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
+                                Rights = string.Join(", ", entityPermissionManager.GetRightsAsync(m.Rights).Result), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
                                 RequestStatus = Enum.GetName(typeof(RequestStatus), m.Status),
                                 Intention = m.Intention,
                                 RequestDate = m.RequestDate

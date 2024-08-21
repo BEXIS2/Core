@@ -78,8 +78,10 @@ namespace BExIS.Modules.Sam.UI.Helpers
                 if (formerMemberFeature == null) formerMemberFeature = featureManager.Create("Former Member Management", "Former Member Management", administrationFeature);
                 operationManager.Create("SAM", "FormerMember", "*", formerMemberFeature);
 
-                if (!featurePermissionManager.Exists(null, featurePermissionFeature.Id, PermissionType.Grant))
-                    featurePermissionManager.Create(null, featurePermissionFeature.Id, PermissionType.Grant);
+                if (!featurePermissionManager.ExistsAsync(null, featurePermissionFeature.Id, PermissionType.Grant).Result)
+                {
+                    var result_create = featurePermissionManager.CreateAsync(null, featurePermissionFeature.Id, PermissionType.Grant).Result;
+                }
             }
         }
     }

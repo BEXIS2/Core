@@ -166,7 +166,6 @@
     <Compile Include="Requests\RequestManager.cs" />
     <Compile Include="Subjects\IdentityGroupService.cs" />
     <Compile Include="Subjects\IdentityUserService.cs" />
-    <Compile Include="Subjects\IUserManager.cs" />
     <Compile Include="Subjects\GroupManager.cs" />
     <Compile Include="Subjects\SubjectManager.cs" />
     <Compile Include="Subjects\UserManager.cs" />
