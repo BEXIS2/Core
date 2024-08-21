@@ -2,15 +2,11 @@
 using BExIS.Security.Entities.Subjects;
 using BExIS.Utils.NH.Querying;
 using Microsoft.AspNet.Identity;
-using Owin.Security.Providers.Orcid.Message;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
-using System.Web.Security;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Subjects
@@ -340,7 +336,18 @@ namespace BExIS.Security.Services.Subjects
 
         public Task<DateTimeOffset> GetLockoutEndDateAsync(User user)
         {
-            return Task.FromResult(user.LockoutEndDate);
+            DateTimeOffset dateTimeOffset;
+
+            if (user.LockoutEndDate.HasValue)
+            {
+                var lockoutEndDate = user.LockoutEndDate;
+                dateTimeOffset = new DateTimeOffset(DateTime.SpecifyKind(lockoutEndDate.Value, DateTimeKind.Utc));
+            }
+            else
+            {
+                dateTimeOffset = new DateTimeOffset();
+            }
+            return Task.FromResult(dateTimeOffset); throw new NotImplementedException();
         }
 
         public Task<int> IncrementAccessFailedCountAsync(User user)

@@ -23,12 +23,12 @@ namespace BExIS.Security.Entities.Subjects
         public virtual bool IsPhoneNumberConfirmed { get; set; }
         public virtual bool IsTwoFactorEnabled { get; set; }
         public virtual bool LockoutEnabled { get; set; }
-        public virtual DateTimeOffset LockoutEndDate { get; set; }
+        public virtual DateTime? LockoutEndDate { get; set; }
         public virtual ICollection<Login> Logins { get; set; }
         public virtual string Password { get; set; }
         public virtual string PhoneNumber { get; set; }
         public virtual string SecurityStamp { get; set; }
-        public virtual DateTimeOffset RegistrationDate { get; set; }
+        public virtual DateTime RegistrationDate { get; set; }
 
         public virtual string UserName
         {
