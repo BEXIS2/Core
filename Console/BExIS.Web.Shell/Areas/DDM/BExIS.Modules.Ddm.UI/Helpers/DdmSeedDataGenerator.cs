@@ -119,14 +119,15 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
                 #endregion Requests
 
-                Feature DataTable = features.FirstOrDefault(f =>
+                Feature Api = features.FirstOrDefault(f =>
                    f.Name.Equals("Api") &&
                    f.Parent != null &&
                    f.Parent.Id.Equals(DataDiscovery.Id));
 
                 if (RequestsManage == null) RequestsManage = featureManager.Create("Api", "Api", DataDiscovery);
 
-                operationManager.Create("Api", "DataTable", "*", DataTable);
+                operationManager.Create("Api", "DataTable", "*", Api);
+                operationManager.Create("Api", "TagInfo", "*", Api);
 
                 #endregion SECURITY
             }
