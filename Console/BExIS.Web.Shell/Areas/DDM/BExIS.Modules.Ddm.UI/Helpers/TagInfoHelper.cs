@@ -32,7 +32,9 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 model.ReleaseNote = dsv.ChangeDescription;
                 model.SystemDescription = dsv.ModificationInfo?.Comment;
                 model.SystemAuthor = dsv.ModificationInfo?.Performer;
-                model.SystemDate = (DateTime)dsv.ModificationInfo?.Timestamp;
+
+                if(dsv.ModificationInfo?.Timestamp != null)
+                    model.SystemDate = (DateTime)dsv.ModificationInfo?.Timestamp;
 
 
                 if (dsv.Tag != null)

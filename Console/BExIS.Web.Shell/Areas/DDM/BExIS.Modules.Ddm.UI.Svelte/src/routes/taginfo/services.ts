@@ -7,9 +7,9 @@ import { Api } from '@bexis2/bexis2-core-ui';
 /* Overview Variable Template*/
 /****************/
 
-export const getTagInfos = async (id) => {
+export const get = async (id) => {
 	try {
-		const response = await Api.get('/api/TagInfo/'+id);
+		const response = await Api.get('/api/taginfo/'+id);
 		console.log("🚀 ~ getTagInfos ~ response:", response)
 
 		return response.data;
@@ -24,8 +24,7 @@ export const save = async (model:TagInfoModel) => {
 		const response = await Api.post('/api/TagInfo/',model);
 		console.log("🚀 ~ save ~ response:", response)
 
-
-		return response.data;
+		return response;
 	} catch (error) {
 		console.error(error);
 		throw error;
