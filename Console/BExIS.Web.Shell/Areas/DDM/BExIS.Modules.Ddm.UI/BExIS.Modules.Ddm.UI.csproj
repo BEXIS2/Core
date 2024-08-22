@@ -122,6 +122,7 @@
   <ItemGroup>
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\Api\DataTableController.cs" />
+    <Compile Include="Controllers\Api\SearchApiController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\DataController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
