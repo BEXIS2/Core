@@ -177,7 +177,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         //check primary with data : uniqueness
                         //bool IsUniqueInDb = uploadHelper.IsUnique2(dataset.Id, variables.Select(v=>v.Id).ToList()); // may can removed
-                        bool IsUniqueInData = uploadHelper.IsUnique(primaryKeyIndexes, data.Data);
+                        bool IsUniqueInData = uploadHelper.IsUnique(primaryKeyIndexes.ToArray(), data.Data);
 
                         if (!IsUniqueInData)
                         {
