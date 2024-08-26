@@ -3862,7 +3862,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                     long entityId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
-                    long datastructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.DATASTRUCTURE_ID]);
+                    long datastructureId = 0;
+                    if(TaskManager.Bus.ContainsKey(CreateTaskmanager.DATASTRUCTURE_ID))
+                        datastructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.DATASTRUCTURE_ID]);
                     long researchplanId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.RESEARCHPLAN_ID]);
                     long metadatastructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
 
