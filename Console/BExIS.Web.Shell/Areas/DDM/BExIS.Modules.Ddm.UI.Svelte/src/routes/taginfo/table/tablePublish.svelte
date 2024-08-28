@@ -1,13 +1,15 @@
 <script lang="ts">
 	import { SlideToggle } from '@skeletonlabs/skeleton';
-	import type { TagInfoModel } from '../types';
+ import {tagInfoModelStore} from '../stores';
+	import type { TagInfoEditModel } from '../types';
+	import { get } from 'svelte/store';
 
-	
+
 	export let value: boolean;
 	export let row: any;
-	export let dispatchFn;
-
-let currentRow:TagInfoModel = row.original;
+	let currentRow:TagInfoEditModel;
+	
+ $:currentRow	= get(tagInfoModelStore).find(x=>x.versionId==row.original.versionId);
 
 </script>
 

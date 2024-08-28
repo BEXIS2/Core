@@ -3,16 +3,16 @@
 	import { faSave } from '@fortawesome/free-solid-svg-icons';
 	import {tagInfoModelStore } from '../stores';	
 	import {get} from 'svelte/store';
+	import type { TagInfoEditModel } from '../types';
 
-	export let row;
+	export let row:TagInfoEditModel;
 	export let dispatchFn;
 
-	let first:boolean = isFirstRow(row);
+	let noTag:boolean = hasNoTag();
 
-	function isFirstRow(row){
-		const tagInfoModel = get(tagInfoModelStore)
-		const lastRow = tagInfoModel[0];
-		return lastRow.tagId === row.tagId;
+	function hasNoTag(){
+
+		return  row.tagId == 0;
 	}
 
 
@@ -51,7 +51,7 @@
 			</button>
 	
 
-		{#if first}
+		{#if noTag}
 			<button
 				class="btn btn-sm variant-filled-primary"
 				on:click|preventDefault={() => eventDispatchFn("MINOR")}

@@ -1,21 +1,25 @@
 <script lang="ts">
 	import { SlideToggle } from '@skeletonlabs/skeleton';
-	import type { TagInfoModel } from '../types';
+ import {tagInfoModelStore} from '../stores';
+	import type { TagInfoEditModel } from '../types';
+	import { get } from 'svelte/store';
 
-	
 	export let value: boolean;
 	export let row: any;
-	export let dispatchFn;
 
-let currentRow:TagInfoModel = row.original;
+	let currentRow:TagInfoEditModel;
+
+ $:currentRow	= get(tagInfoModelStore).find(x=>x.versionId==row.original.versionId);
 
 
 </script>
 
+
 <div class="flex h-full items-center justify-center">
  <div>	
-		{#if currentRow.tagId>0 }
-			<SlideToggle name="{""+row.versionId}" class="" bind:checked={currentRow.show} size="sm" />
+		{#if currentRow && currentRow.tagId>0 }
+			<SlideToggle name="{""+currentRow.versionId}" class="" bind:checked={currentRow.show} size="sm" />
 		{/if}
 	</div>
 </div>
+
