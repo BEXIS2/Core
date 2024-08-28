@@ -355,7 +355,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     dm.EditDatasetVersion(workingCopy, null, null, null);
 
                     // close check out
-                    dm.CheckInDataset(datasetId, "Init creation a " + entityTemplate.EntityType.Name + " based on " + entityTemplate.Name + " Template", GetUsernameOrDefault(), ViewCreationBehavior.None, TagType.Minor);
+                    dm.CheckInDataset(datasetId, "Init creation a " + entityTemplate.EntityType.Name + " based on " + entityTemplate.Name + " Template", GetUsernameOrDefault(), ViewCreationBehavior.None, TagType.Copy);
                 }
 
                 #endregion update version

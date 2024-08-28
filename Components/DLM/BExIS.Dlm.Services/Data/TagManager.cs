@@ -68,7 +68,6 @@ namespace BExIS.Dlm.Services.Data
             Tag Tag = new Tag()
             {
                 Nr = 0,
-                Show = false,
                 Final = false
             };
 

@@ -13,7 +13,9 @@ let currentRow:TagInfoModel = row.original;
 </script>
 
 <div class="flex h-full items-center justify-center">
- <div>
-		<SlideToggle name="{""+row.versionId}" class="" bind:checked={currentRow.show} size="sm" />
+ <div>	
+		{#if currentRow.tagId>0 }
+			<SlideToggle name="{""+row.versionId}" class="" bind:checked={currentRow.show} size="sm" />
+		{/if}
 	</div>
 </div>

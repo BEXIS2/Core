@@ -135,6 +135,24 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
                 operationManager.Create("Api", "DataTable", "*", DataTable);
 
+
+                #region Tags
+
+                Feature tagFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Tag") && f.Parent.Equals(DataDiscovery));
+                if (tagFeature == null) tagFeature = featureManager.Create("Tag", "Tag", DataDiscovery);
+                Feature tagView = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("View") && f.Parent.Equals(tagFeature));
+                if (tagView == null) tagView = featureManager.Create("View", "View of the tags", tagFeature);
+
+                Feature tagEdit = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Edit") && f.Parent.Equals(tagFeature));
+                if (tagEdit == null) tagEdit = featureManager.Create("Edit", "Edit of the tags", tagFeature);
+
+                operationManager.Create("Api", "TagInfoView", "*", tagView);
+                operationManager.Create("Api", "TagInfoEdit", "*", tagEdit);
+
+
+                #endregion Requests
+
+
                 #endregion SECURITY
             }
         }

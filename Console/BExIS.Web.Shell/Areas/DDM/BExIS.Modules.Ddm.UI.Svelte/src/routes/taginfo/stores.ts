@@ -1,5 +1,5 @@
-import type { TagInfoModel } from './types';
+import type { TagInfoEditModel } from './types';
 import { writable } from 'svelte/store';
 
-export const tagInfoModelStore = writable<TagInfoModel[]>([]);
+export const tagInfoModelStore = writable<TagInfoEditModel[]>([]);
 

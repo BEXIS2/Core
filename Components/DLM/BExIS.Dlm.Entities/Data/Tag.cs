@@ -7,7 +7,8 @@ namespace BExIS.Dlm.Entities.Data
     { 
         None = 0,
         Major = 1,
-        Minor = 2
+        Minor = 2,
+        Copy = 3
     }
     public class Tag
     {
@@ -16,15 +17,16 @@ namespace BExIS.Dlm.Entities.Data
         public virtual DateTime ReleaseDate { get; set; }
 
         public virtual bool Final { get; set; }
-        public virtual bool Show { get; set; }
+
         public virtual TagType Type { get; set; }
+        public virtual string Doi { get; set; }
 
         public Tag()
         {
             this.Final = false;
-            this.Show = false;
             this.Nr = 0.0;
-            this.Type = TagType.None;
+            this.Type = TagType.Copy;
+            this.Doi = "";
         }
     }
 }
