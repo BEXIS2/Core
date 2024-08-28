@@ -30,13 +30,13 @@ namespace BExIS.Dlm.Tests.Services.Data
         [TearDown]
         public void TearDown()
         {
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<Tag> repo = uow.GetRepository<Tag>();
+            //using (IUnitOfWork uow = this.GetUnitOfWork())
+            //{
+            //    IRepository<Tag> repo = uow.GetRepository<Tag>();
 
-                repo.Get().ToList().ForEach(v => repo.Delete(v));
-                uow.Commit();
-            }
+            //    repo.Get().ToList().ForEach(v => repo.Delete(v));
+            //    uow.Commit();
+            //}
 
             dsHelper.PurgeAllDatasets();
             dsHelper.PurgeAllDataStructures();

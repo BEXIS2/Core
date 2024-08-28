@@ -121,6 +121,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
                 #endregion Requests
 
+
                 Feature SearchApi = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Search Api") && f.Parent.Equals(DataDiscovery));
                 if (SearchApi == null) SearchApi = featureManager.Create("Search Api", "Search Api", DataDiscovery);
                 if (!operationManager.Exists("api", "SearchApi", "*")) operationManager.Create("api", "SearchApi", "*", SearchApi);
@@ -133,6 +134,24 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 if (RequestsManage == null) RequestsManage = featureManager.Create("Api", "Api", DataDiscovery);
 
                 operationManager.Create("Api", "DataTable", "*", DataTable);
+
+
+                #region Tags
+
+                Feature tagFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Tag") && f.Parent.Equals(DataDiscovery));
+                if (tagFeature == null) tagFeature = featureManager.Create("Tag", "Tag", DataDiscovery);
+                Feature tagView = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("View") && f.Parent.Equals(tagFeature));
+                if (tagView == null) tagView = featureManager.Create("View", "View of the tags", tagFeature);
+
+                Feature tagEdit = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Edit") && f.Parent.Equals(tagFeature));
+                if (tagEdit == null) tagEdit = featureManager.Create("Edit", "Edit of the tags", tagFeature);
+
+                operationManager.Create("Api", "TagInfoView", "*", tagView);
+                operationManager.Create("Api", "TagInfoEdit", "*", tagEdit);
+
+
+                #endregion Requests
+
 
                 #endregion SECURITY
             }

@@ -611,7 +611,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             TaskManager.AddToBus(CreateTaskmanager.ENTITY_ID, datasetId);
 
                             dm.EditDatasetVersion(workingCopy, null, null, null);
-                            var tagType = newDataset? TagType.None : TagType.Minor;
+                            var tagType = newDataset? TagType.None : TagType.Copy;
 
                             dm.CheckInDataset(datasetId, commitMessage, GetUsernameOrDefault(), ViewCreationBehavior.None, tagType);
 

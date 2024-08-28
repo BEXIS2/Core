@@ -100,6 +100,8 @@ namespace BExIS.Dlm.Entities.Data
         /// <seealso cref=""/>
         public virtual DateTime PublicAccessDate { get; set; }
 
+
+
         #endregion Attributes
 
         #region Associations
@@ -117,6 +119,11 @@ namespace BExIS.Dlm.Entities.Data
         /// <remarks></remarks>
         /// <seealso cref=""/>
         public virtual Tag Tag { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual bool Show { get; set; }
 
         /// <summary>
         /// There is a need for the tuples to be managed smarter inside any version, in order to:

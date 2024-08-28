@@ -22,12 +22,13 @@
     </property>
 
 
-	<property name="Final" type="Boolean">
-	  <column name="Final" />
-	</property>
+	 <property name="Final" type="Boolean">
+		 <column name="Final" />
+	 </property>
 
-	<property name="Show" type="Boolean">
-	  <column name="Show" />
+
+	  <property name="Doi" type="String">
+		<column name="Doi" />
 	</property>
 	  
   </class>

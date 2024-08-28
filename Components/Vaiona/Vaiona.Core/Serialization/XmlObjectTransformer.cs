@@ -42,14 +42,15 @@ namespace Vaiona.Core.Serialization
             {
                 var resourceDocument = new XmlDocument();
                 var sw = new StringWriter();
-                var xw = new XmlTextWriter(sw);
-                ((XmlNode)source).WriteTo(xw);
-                var temp = sw.ToString();
-                resourceDocument.LoadXml(temp);
+                using (var xw = new XmlTextWriter(sw))
+                {
+                    ((XmlNode)source).WriteTo(xw);
+                    var temp = sw.ToString();
+                    resourceDocument.LoadXml(temp);
 
-                doc = resourceDocument;
-                //doc.ImportNode((XmlNode)source, true);
-                //doc = ((XmlNode)source).OwnerDocument;
+                    doc = resourceDocument;
+                }
+
             }
             if (deSerializer == null)
                 deSerializer = new ObjGraphXmlDeserializer();

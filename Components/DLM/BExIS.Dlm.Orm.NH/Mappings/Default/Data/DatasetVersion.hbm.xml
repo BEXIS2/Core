@@ -118,7 +118,13 @@
 	  <!-- Mapping entity associations -->
 	  <many-to-one name="Dataset" class="BExIS.Dlm.Entities.Data.Dataset" not-null="true" column="DatasetRef" index="idx_DatasetVersions_DatasetRef" />
 
+	  
+	  <!-- tag specific-->
 	  <many-to-one name="Tag" class="BExIS.Dlm.Entities.Data.Tag" column="TagRef"  cascade="all" />
+
+	  <property name="Show" type="Boolean">
+		  <column name="Show" />
+	  </property>
 
  
     <set cascade="all-delete-orphan" name="PriliminaryTuples" inverse="true" lazy="true" order-by="OrderNo">

@@ -355,7 +355,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="username">The username that performs the check-in, which should be the same as the check-out username</param>
         /// <remarks>Does not support simultaneous check-ins</remarks>
         //[MeasurePerformance]
-        public void CheckInDataset(Int64 datasetId, string comment, string username, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, TagType tagType=TagType.None)
+        public void CheckInDataset(Int64 datasetId, string comment, string username, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, TagType tagType=TagType.Copy)
         {
             checkInDataset(datasetId, comment, username, false, viewCreationBehavior, "", tagType);
         }
@@ -2936,7 +2936,7 @@ namespace BExIS.Dlm.Services.Data
                         Dataset = ds
                     };
 
-                    dsNewVersion.Tag = new Tag();
+                    dsNewVersion.Tag = null;
 
                     // if there is a previous version, copy its metadata, content descriptors and extended property values to the newly created version
                     if (ds.Versions.Count() > 0)
@@ -3003,7 +3003,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="datasetId"></param>
         /// <param name="comment"></param>
         /// <param name="adminMode">if true, the check for current user is bypassed</param>
-        private void checkInDataset(Int64 datasetId, string comment, string username, bool adminMode, ViewCreationBehavior viewCreationBehavior, string mStateComment = "", TagType tagType = TagType.None)
+        private void checkInDataset(Int64 datasetId, string comment, string username, bool adminMode, ViewCreationBehavior viewCreationBehavior, string mStateComment = "", TagType tagType = TagType.Copy)
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -3032,7 +3032,7 @@ namespace BExIS.Dlm.Services.Data
 
 
                     // add tag
-                    dsv.Tag = updateTag(dsv, tagType, uow);
+                    dsv.Tag = IncreaseTag(dsv.Tag, tagType);
 
                     repo.Put(ds);
                     uow.Commit();
@@ -3527,34 +3527,7 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
-        private Tag updateTag(DatasetVersion dsv, TagType type, IUnitOfWork uow )
-        {
- 
-
-            Tag tag = new Tag()
-            {
-                Nr = 0,
-                Type = type
-            };
-
-            if (dsv.Tag != null)
-            {
-                var tagNr = dsv.Tag.Nr;
-
-                // update nr in case of major or minor
-                // none as no changes to nr
-                if(type == TagType.Minor) tagNr = tagNr + 0.1;
-                if (type == TagType.Major) {
-                    if (tagNr % 1 > 0) tagNr = Math.Ceiling(tagNr);
-                    else tagNr += 1;
-                }
-
-                tag.Nr = tagNr;
-
-            }
-
-            return tag;
-        }
+     
 
         #endregion Private Methods
 
@@ -4047,5 +4020,93 @@ namespace BExIS.Dlm.Services.Data
         }
 
         #endregion Associations
+
+        #region tag
+
+        /// <summary>
+        /// Get latest version with Tag Nr for a dataset
+        /// </summary>
+        /// <param name="id"> id of the dataset</param>
+        /// <returns></returns>
+        public Tag GetLatestTag(long id)
+        {
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                List<DatasetVersion> versions = uow.GetReadOnlyRepository<DatasetVersion>().Query().Where(v => v.Dataset.Id == id).ToList();
+                versions = versions.Where(v => v.Tag != null).ToList();
+                                            
+                if (versions.Any())
+                {
+                    var v = versions.OrderByDescending(t => t.Tag.Nr).FirstOrDefault();
+
+                    return (v.Tag);
+                }
+
+                return null;
+            }
+            
+        }
+
+
+        public Tag IncreaseTag(Tag last, TagType type)
+        {
+
+            Tag tag = new Tag()
+            {
+                Nr = 0,
+                Type = type
+            };
+
+            // if none tag is uses -return null (e.g. update data)
+            if (type == TagType.None) return null;
+
+            // use same tag
+            if (type == TagType.Copy) return last;
+
+            // update nr in case of major or minor
+            // none as no changes to nr
+            if (type == TagType.Minor || type == TagType.Major)
+            {
+                var tagNr = last != null ? last.Nr : 0.0;
+                tagNr = increaseTagNr(tagNr, type);
+                tag.Nr = tagNr;
+            }
+
+
+            return tag;
+        }
+
+        private double increaseTagNr(double tagNr, TagType type)
+        {
+            if (type == TagType.Minor)
+            {
+                string tagNrStr = tagNr.ToString();
+                string[] strings;
+                if (tagNrStr.Contains("."))
+                {
+                    strings = tagNrStr.Split('.');
+                    int integerPlace = Int32.Parse(strings[0]);
+                    int decimalPlace = Int32.Parse(strings[1]);
+                    decimalPlace++;
+
+                    string newNr = string.Format("{0}.{1}", integerPlace, decimalPlace);
+                    tagNr = double.Parse(newNr);
+                }
+                else
+                {
+                    tagNr = tagNr + 0.1;
+                }
+            }
+            if (type == TagType.Major)
+            {
+                if (tagNr % 1 > 0) tagNr = Math.Ceiling(tagNr);
+                else tagNr += 1;
+            }
+
+            return tagNr;
+        }
+
+        #endregion
     }
 }
