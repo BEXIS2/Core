@@ -19,6 +19,11 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 tag.Nr = model.TagNr;
                 tag.ReleaseDate = model.ReleaseDate;
                 tag.Final = model.Publish;
+
+                if (tag.Final && model.ReleaseDate == new DateTime())
+                {
+                    tag.ReleaseDate = DateTime.Now;
+                }
             }
 
             return tag;
@@ -75,7 +80,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
             foreach (var nr in tags)
             {
-                var tagVersions = versions.OrderByDescending(o=>o.Id).Where(v => v.Tag !=null && v.Tag.Nr.Equals(nr) && v.Show).ToList();
+                var tagVersions = versions.OrderByDescending(o=>o.Id).Where(v => v.Tag !=null && v.Tag.Nr.Equals(nr) && v.Show && v.Tag.Final).ToList();
                 if (tagVersions.Any())
                 {
                     models.Add(new TagInfoViewModel()

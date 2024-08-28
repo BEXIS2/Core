@@ -4048,6 +4048,22 @@ namespace BExIS.Dlm.Services.Data
             
         }
 
+        public List<long> GetAllVersionAfterLastTag(long id, Tag last, long currentVersionId)
+        {
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                List<DatasetVersion> versions = uow.GetReadOnlyRepository<DatasetVersion>().Query().Where(v => v.Dataset.Id == id).ToList();
+
+                var LastWithTag = versions.Where(v => v.Tag != null && v.Tag.Id.Equals(last.Id))?.OrderByDescending(v=>v.Id).Select( v=> v.Id);
+
+                var versionsToUpdate = versions.Where(v => v.Id <= currentVersionId && v.Id > LastWithTag.FirstOrDefault()).ToList();
+
+                return versionsToUpdate.Select(v => v.Id).ToList();
+   
+            }
+        }
+
 
         public Tag IncreaseTag(Tag last, TagType type)
         {

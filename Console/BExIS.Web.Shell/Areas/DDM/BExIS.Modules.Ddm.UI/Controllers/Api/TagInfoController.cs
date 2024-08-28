@@ -105,8 +105,16 @@ namespace BExIS.Modules.Ddm.UI.Controllers.API
 
                     newTag = tagManager.Create(newTag);
 
-                    version.Tag = newTag;
-                    datasetManager.UpdateDatasetVersion(version);
+
+                    // update all versions before without tag
+                    var vIDs = datasetManager.GetAllVersionAfterLastTag(version.Dataset.Id, latestTag, version.Id);
+
+                    foreach (var vID in vIDs)
+                    {
+                        var v = datasetManager.GetDatasetVersion(vID);
+                        v.Tag = newTag;
+                        datasetManager.UpdateDatasetVersion(v);
+                    }
 
                     return Request.CreateResponse(HttpStatusCode.OK);
                 }
