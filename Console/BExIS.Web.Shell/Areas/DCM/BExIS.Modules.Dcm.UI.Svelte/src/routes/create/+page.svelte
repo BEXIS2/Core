@@ -23,6 +23,7 @@
 
 	async function load() {
 		entitytemplates = await getEntityTemplateList();
+		console.log("🚀 ~ load ~ entitytemplates:", entitytemplates)
 	}
 	function handleSelect(e) {
 		console.log('on select');

@@ -47,19 +47,19 @@
             {
                 using (Html.BeginForm("LogOff", "Account", new { Area = "" }, FormMethod.Post, new { @class = "navbar-right", id = "form_logoff" }))
                 {
-            @Html.AntiForgeryToken()
+                    @Html.AntiForgeryToken()
 
-            <ul class="nav navbar-nav">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@User.Identity.GetUserName()<span class="caret"></span></a>
-                    <ul class='dropdown-menu'>
-                        <li>@Html.ActionLink("Profile", "Edit", "PartyService", new { area = "bam" }, null)</li>
-                        <li>@Html.ActionLink("Token", "GetToken", "Tokens", new { area = "" }, null)</li>
-                        <li><a href="@Url.Content("~/apihelp/index")" target="_blank">Api</a></li>
-                        <li><a href="javascript:document.getElementById('form_logoff').submit()">Log Off</a></li>
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@User.Identity.GetUserName()<span class="caret"></span></a>
+                            <ul class='dropdown-menu'>
+                                <li>@Html.ActionLink("Profile", "Edit", "PartyService", new { area = "bam" }, null)</li>
+                                <li>@Html.ActionLink("Token", "GetToken", "Tokens", new { area = "" }, null)</li>
+                                <li><a href="@Url.Content("~/apihelp/index")" target="_blank">Api</a></li>
+                                <li><a href="javascript:document.getElementById('form_logoff').submit()">Log Off</a></li>
+                            </ul>
+                        </li>
                     </ul>
-                </li>
-            </ul>
                 }
             }
             else
