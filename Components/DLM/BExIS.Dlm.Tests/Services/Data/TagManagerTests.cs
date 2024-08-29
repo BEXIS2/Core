@@ -51,7 +51,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             {
 
                 // Arrange
-                var tag = new Tag { Nr = 1.0, Final = false, Show = false, ReleaseDate = DateTime.Now};
+                var tag = new Tag { Nr = 1.0, Final = false, ReleaseDate = DateTime.Now};
 
                 // Act
                 Tag result = _tagManager.Create(tag);
@@ -71,7 +71,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             using (var _tagManager = new TagManager())
             {
                 // Arrange
-                var tag = new Tag { Nr = 1.0, Final = false, Show = false, ReleaseDate = DateTime.Now };
+                var tag = new Tag { Nr = 1.0, Final = false, ReleaseDate = DateTime.Now };
 
                 tag = _tagManager.Create(tag);
                 tag.Nr += 1.0;
@@ -92,7 +92,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             using (var _tagManager = new TagManager())
             {
                 // Arrange
-                var tag = new Tag { Nr = 0.1, Final = false, Show = false, ReleaseDate = DateTime.Now };
+                var tag = new Tag { Nr = 0.1, Final = false, ReleaseDate = DateTime.Now };
 
                 tag = _tagManager.Create(tag);
 
