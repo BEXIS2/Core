@@ -12,17 +12,6 @@
 
 }
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken() <!-- This generates the hidden input field -->
-}
-
-<script>
-        // Get the anti-forgery token from the hidden input field
-        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-        window.antiForgeryToken = token; // Make it available globally
-</script>
-
 <div id="create" isTemplateRequired="@isTemplateRequired">
     @Html.Partial("_sveltePage")
 </div>
