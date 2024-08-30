@@ -142,7 +142,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return View("Show");
         }
 
-        public ActionResult ShowData(long id, int version = 0, bool asPartial = false, string versionName = "")
+        public ActionResult ShowData(long id, int version = 0, bool asPartial = false, string versionName = "", double tag = 0)
         {
             using (DatasetManager dm = new DatasetManager())
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
@@ -180,9 +180,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         List<DatasetVersion> datasetVersions = dm.GetDatasetVersions(id);
                         List<DatasetVersion> datasetVersionsAllowed = new List<DatasetVersion>();
 
+        
                         // Get version id based on public or internal access. Version name has a higher priority as version.
                         // Public access has higher priority as major/minor versions
+
                         versionId = getVersionId(id, version, versionName, datasetVersions, researcobject.Status);
+  
+                        
                         // Set if the latest version is selected. Compare current version id against unfiltered max id
                         latestVersionId = datasetVersions.OrderByDescending(d => d.Timestamp).Select(d => d.Id).FirstOrDefault();
                         latestVersionNr = dm.GetDatasetVersionNr(latestVersionId);
@@ -1843,11 +1847,15 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             using (DatasetManager dm = new DatasetManager())
             {
+                // may all versions or only public versions be shown
                 List<DatasetVersion> datasetVersionsAllowed = dm.GetDatasetVersionsAllowed(datasetId, true, false, datasetVersions, datasetStatus);
 
                 // User is not logged in
                 if (GetUsernameOrDefault() == "DEFAULT")
                 {
+                    //TAG:have versionnr and got to TAG - return latest public version with tag.final = true
+
+
                     // No version or version name -> use latest allowed version
                     if (version == 0 && versionName.Length == 0)
                     {
@@ -1856,6 +1864,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             versionId = datasetVersionsAllowed.OrderByDescending(d => d.Timestamp).Select(d => d.Id).FirstOrDefault();
                         }
                     }
+                    // TAG: if requested tag exist and is public
+
                     // Version name -> check if requested version is allowed
                     else if (versionName.Length > 0)
                     {
@@ -1906,6 +1916,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             return versionId;
         }
+
 
         public bool UserExist()
         {

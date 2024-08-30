@@ -3,6 +3,7 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Orm.NH.Utils;
 using BExIS.Dlm.Services.Helpers;
+using BExIS.Security.Entities.Authorization;
 using BExIS.Utils.NH.Querying;
 using System;
 using System.Collections.Generic;
@@ -1502,6 +1503,27 @@ namespace BExIS.Dlm.Services.Data
 
             // rerturn list of allowed versions
             return allowedVersionList;
+        }
+
+        /// <summary>
+        /// get latest version by tag
+        /// </summary>
+        /// <param name="datasetId"></param>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        public DatasetVersion GetLatestDatasetVersionByTag(Int64 datasetId, double tag, bool isPublic)
+        {
+            List<DatasetVersion> allowedVersionList = new List<DatasetVersion>();
+
+            // Get list od dataset versions, if not provided
+             var datasetVersions = GetDatasetVersions(datasetId, DatasetStatus.CheckedIn);
+      
+            // 1. get versions with tag
+            List<DatasetVersion> versionsWithTag = datasetVersions.Where(v => v.Tag!=null && v.Tag.Nr.Equals(tag) && v.Tag.Final.Equals(isPublic)).ToList();
+
+            var lastest = versionsWithTag.OrderByDescending(v => v.Timestamp).FirstOrDefault();
+
+            return lastest;
         }
 
         public DataTable ConvertToDataTable(DatasetVersion dsVersion)

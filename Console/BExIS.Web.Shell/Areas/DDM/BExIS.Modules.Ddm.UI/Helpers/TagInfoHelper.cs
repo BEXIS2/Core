@@ -95,7 +95,5 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
             return models;
         }
-
-
     }
 }
