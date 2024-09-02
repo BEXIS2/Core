@@ -30,6 +30,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -180,13 +181,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         List<DatasetVersion> datasetVersions = dm.GetDatasetVersions(id);
                         List<DatasetVersion> datasetVersionsAllowed = new List<DatasetVersion>();
 
-        
+
                         // Get version id based on public or internal access. Version name has a higher priority as version.
                         // Public access has higher priority as major/minor versions
+                        versionId = getVersionId(id, version, versionName, tag).Result;
 
-                        versionId = getVersionId(id, version, versionName, datasetVersions, researcobject.Status);
-  
-                        
+
                         // Set if the latest version is selected. Compare current version id against unfiltered max id
                         latestVersionId = datasetVersions.OrderByDescending(d => d.Timestamp).Select(d => d.Id).FirstOrDefault();
                         latestVersionNr = dm.GetDatasetVersionNr(latestVersionId);
@@ -1840,82 +1840,210 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
         }
 
-        private long getVersionId(long datasetId, int version, string versionName, List<DatasetVersion> datasetVersions, DatasetStatus datasetStatus)
+
+
+        private async Task<long> getVersionId(long datasetId,int versionNr=0, string versionName="",  double tagNr=0)
         {
-            long versionId = 0;
-            SettingsHelper helper = new SettingsHelper();
+            // get entity by versionnr,versionName, tagnr
+            RightType rightType = RightType.Read;
+            bool isPublic = false;
+            bool isVerionReady = false;
+   
 
-            using (DatasetManager dm = new DatasetManager())
+            string username = GetUsernameOrDefault();
+
+            using (var permissionManager = new EntityPermissionManager())
+            using (var datasetManager = new  DatasetManager())
             {
-                // may all versions or only public versions be shown
-                List<DatasetVersion> datasetVersionsAllowed = dm.GetDatasetVersionsAllowed(datasetId, true, false, datasetVersions, datasetStatus);
+                var dataset = datasetManager.GetDataset(datasetId);
 
-                // User is not logged in
-                if (GetUsernameOrDefault() == "DEFAULT")
+                // check if dataset is public
+                isPublic = await permissionManager.IsPublicAsync(dataset.EntityTemplate.EntityType.Id, datasetId);
+
+                // get rights
+                bool hasEditRights = await permissionManager.HasEffectiveRightsAsync(username, typeof(Dataset), datasetId, RightType.Write);
+                bool hasReadRights = await permissionManager.HasEffectiveRightsAsync(username, typeof(Dataset), datasetId, RightType.Read);
+
+                // if user has edit rights && public/ internal accessible dont matter
+                if (hasEditRights)
                 {
-                    //TAG:have versionnr and got to TAG - return latest public version with tag.final = true
-
-
-                    // No version or version name -> use latest allowed version
-                    if (version == 0 && versionName.Length == 0)
+                    if (tagNr > 0) // first try use tag
                     {
-                        if (datasetVersionsAllowed.Count > 0)
-                        {
-                            versionId = datasetVersionsAllowed.OrderByDescending(d => d.Timestamp).Select(d => d.Id).FirstOrDefault();
-                        }
+                        return datasetManager.GetLatestVersionIdByTagNr(datasetId, tagNr);
                     }
-                    // TAG: if requested tag exist and is public
-
-                    // Version name -> check if requested version is allowed
-                    else if (versionName.Length > 0)
+                    else if (!string.IsNullOrEmpty(versionName)) // try use versionname !!obsolete
                     {
-                        if (datasetVersionsAllowed.Where(d => d.VersionName == versionName).Count() == 1)
-                        {
-                            versionId = datasetVersionsAllowed.OrderByDescending(d => d.Timestamp).Where(d => d.VersionName == versionName).Select(d => d.Id).FirstOrDefault();
-                        }
+                        throw new NotImplementedException();
                     }
-                    // Version number -> check if requested version is allowed
-                    else if (version != 0)
+                    else if (versionNr > 0) // try use versionnr
                     {
-                        var idTemp = datasetVersions.OrderBy(d => d.Timestamp).Skip(version - 1).Take(1).Select(d => d.Id).FirstOrDefault();
-
-                        if (idTemp > 0 && datasetVersionsAllowed.Where(d => d.Id == idTemp).Count() == 1)
-                        {
-                            versionId = idTemp;
-                        }
+                        return datasetManager.GetDatasetVersionId(datasetId, versionNr);
+                    }
+                    else // use latest version
+                    {
+                        return datasetManager.GetDatasetLatestVersionId(datasetId);
                     }
                 }
-                // User is logged in
-                else
+                else if (hasReadRights)
                 {
-                    // Get version by version name
-                    if (versionName.Length > 0 && datasetVersions.Where(d => d.VersionName == versionName).Select(d => d.Id).FirstOrDefault() > 0)
+                        
+                    if (tagNr > 0) // public, not public version & not public 
                     {
-                        versionId = datasetVersions.Where(d => d.VersionName == versionName).Select(d => d.Id).FirstOrDefault();
+                        return datasetManager.GetLatestVersionIdByTagNr(datasetId, tagNr);
                     }
-                    // Get latest version
-                    else if (version == 0)
+                    else if (!string.IsNullOrEmpty(versionName)) // try use versionname !!obsolete , public, not public version & not public 
                     {
-                        // Use latest public, if exists or latest without restriction
-                        if (datasetVersionsAllowed.Count > 0 && helper.GetValue("restrict_latest_version_logged_in").ToString() == "true")
-                        {
-                            versionId = datasetVersionsAllowed.OrderByDescending(d => d.Timestamp).Select(d => d.Id).FirstOrDefault();
-                        }
-                        else
-                        {
-                            versionId = dm.GetDatasetLatestVersionId(datasetId, datasetStatus);
-                        }
+                        throw new NotImplementedException();
                     }
-                    // Get specific version number
-                    else
+                    else if (versionNr > 0) // public, not public version & not public 
                     {
-                        versionId = dm.GetDatasetVersions(datasetId).OrderBy(d => d.Timestamp).Skip(version - 1).Take(1).Select(d => d.Id).FirstOrDefault();
+                        //get the latest version belong to the tag of the requested version
+                        var datasetVersionId = datasetManager.GetDatasetVersionId(datasetId, versionNr);
+                        var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+                        var latest = datasetManager.GetLatestVersionIdByTagNr(datasetId, datasetVersion.Tag.Nr);
+                        return latest;
+                    }
+                    else // use latest version
+                    {
+                        throw new NotImplementedException();
                     }
                 }
-            }
+                else // no rigths
+                {
+ 
+                    long datasetVersionId = -1;
+                    DatasetVersion datasetVersion = null;
+                    Tag tag = null;
 
-            return versionId;
+                    
+                    if (isPublic || !string.IsNullOrEmpty(username))
+                    {
+                        if (tagNr > 0)
+                        {
+                            datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, tagNr);
+                            if (datasetVersion.Tag != null && datasetVersion.Tag.Final)
+                                return datasetVersion.Id;
+
+                            // if tag is not reachable
+                            tag = datasetManager.GetLatestTag(datasetId, true);
+                            datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, tag.Nr);
+                            if (datasetVersion.Tag != null && datasetVersion.Tag.Final)
+                                return datasetVersion.Id;
+
+                            return -1;
+                        }
+                        else if (!string.IsNullOrEmpty(versionName)) // try use versionname !!obsolete , public, not public version & not public 
+                        {
+                            throw new NotImplementedException();
+                        }
+                        else if (versionNr > 0) // public, not public version & not public 
+                        {
+                            datasetVersion = datasetManager.GetDatasetVersion(datasetId, versionNr);
+                            datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, datasetVersion.Tag.Nr);
+
+                            if (datasetVersion.Tag != null && datasetVersion.Tag.Final)
+                                return datasetVersion.Id;
+
+                            // if tag is not reachable
+                            tag = datasetManager.GetLatestTag(datasetId, true);
+                            datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, tag.Nr);
+
+                            if (datasetVersion.Tag != null && datasetVersion.Tag.Final)
+                                return datasetVersion.Id;
+
+                        }
+
+                        // get latest public
+                        tag = datasetManager.GetLatestTag(datasetId, true);
+                        if (tag == null) return -1;
+                        datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, tag.Nr);
+
+                        if (datasetVersion!=null&& datasetVersion.Tag != null && datasetVersion.Tag.Final)
+                            return datasetVersion.Id;
+
+                    }
+                }
+
+             }
+
+            return - 1;
         }
+        //private long getVersionId(long datasetId, int version, string versionName, List<DatasetVersion> datasetVersions, DatasetStatus datasetStatus)
+        //{
+        //    long versionId = 0;
+        //    SettingsHelper helper = new SettingsHelper();
+
+        //    using (DatasetManager dm = new DatasetManager())
+        //    {
+        //        // may all versions or only public versions be shown
+        //        List<DatasetVersion> datasetVersionsAllowed = dm.GetDatasetVersionsAllowed(datasetId, true, false, datasetVersions, datasetStatus);
+
+        //        // User is not logged in
+        //        if (GetUsernameOrDefault() == "DEFAULT")
+        //        {
+        //            //TAG:have versionnr and got to TAG - return latest public version with tag.final = true
+
+
+        //            // No version or version name -> use latest allowed version
+        //            if (version == 0 && versionName.Length == 0)
+        //            {
+        //                if (datasetVersionsAllowed.Count > 0)
+        //                {
+        //                    versionId = datasetVersionsAllowed.OrderByDescending(d => d.Timestamp).Select(d => d.Id).FirstOrDefault();
+        //                }
+        //            }
+        //            // TAG: if requested tag exist and is public
+
+        //            // Version name -> check if requested version is allowed
+        //            else if (versionName.Length > 0)
+        //            {
+        //                if (datasetVersionsAllowed.Where(d => d.VersionName == versionName).Count() == 1)
+        //                {
+        //                    versionId = datasetVersionsAllowed.OrderByDescending(d => d.Timestamp).Where(d => d.VersionName == versionName).Select(d => d.Id).FirstOrDefault();
+        //                }
+        //            }
+        //            // Version number -> check if requested version is allowed
+        //            else if (version != 0)
+        //            {
+        //                var idTemp = datasetVersions.OrderBy(d => d.Timestamp).Skip(version - 1).Take(1).Select(d => d.Id).FirstOrDefault();
+
+        //                if (idTemp > 0 && datasetVersionsAllowed.Where(d => d.Id == idTemp).Count() == 1)
+        //                {
+        //                    versionId = idTemp;
+        //                }
+        //            }
+        //        }
+        //        // User is logged in
+        //        else
+        //        {
+        //            // Get version by version name
+        //            if (versionName.Length > 0 && datasetVersions.Where(d => d.VersionName == versionName).Select(d => d.Id).FirstOrDefault() > 0)
+        //            {
+        //                versionId = datasetVersions.Where(d => d.VersionName == versionName).Select(d => d.Id).FirstOrDefault();
+        //            }
+        //            // Get latest version
+        //            else if (version == 0)
+        //            {
+        //                // Use latest public, if exists or latest without restriction
+        //                if (datasetVersionsAllowed.Count > 0 && helper.GetValue("restrict_latest_version_logged_in").ToString() == "true")
+        //                {
+        //                    versionId = datasetVersionsAllowed.OrderByDescending(d => d.Timestamp).Select(d => d.Id).FirstOrDefault();
+        //                }
+        //                else
+        //                {
+        //                    versionId = dm.GetDatasetLatestVersionId(datasetId, datasetStatus);
+        //                }
+        //            }
+        //            // Get specific version number
+        //            else
+        //            {
+        //                versionId = dm.GetDatasetVersions(datasetId).OrderBy(d => d.Timestamp).Skip(version - 1).Take(1).Select(d => d.Id).FirstOrDefault();
+        //            }
+        //        }
+        //    }
+
+        //    return versionId;
+        //}
 
 
         public bool UserExist()
