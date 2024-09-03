@@ -165,19 +165,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         pkVariables = dataStructure.Variables.Where(v => v.IsKey).ToList();
 
                         // prepare pk index list from data
-                        int[] primaryKeyIndexes = new int[pkVariables.Count];
+                        List<int> primaryKeyIndexes = new List<int>();
                         for (int i = 0; i <= dataStructure.Variables.Count - 1; i++)
                         {
                             var variable = dataStructure.Variables.ElementAt(i);
                             if (variable.IsKey)
                             {
-                                primaryKeyIndexes[i] = data.Columns.ToList().IndexOf(variable.Label);
+                                primaryKeyIndexes.Add(data.Columns.ToList().IndexOf(variable.Label));
                             }
                         }
 
                         //check primary with data : uniqueness
                         //bool IsUniqueInDb = uploadHelper.IsUnique2(dataset.Id, variables.Select(v=>v.Id).ToList()); // may can removed
-                        bool IsUniqueInData = uploadHelper.IsUnique(primaryKeyIndexes, data.Data);
+                        bool IsUniqueInData = uploadHelper.IsUnique(primaryKeyIndexes.ToArray(), data.Data);
 
                         if (!IsUniqueInData)
                         {

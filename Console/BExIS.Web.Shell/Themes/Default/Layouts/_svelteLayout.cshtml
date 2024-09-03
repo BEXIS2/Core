@@ -16,6 +16,20 @@
 
 <body data-theme="bexis2theme">
 
+    @if (Request.IsAuthenticated)
+    {
+        using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken() <!-- This generates the hidden input field -->
+        }
+
+        <script>
+        // Get the anti-forgery token from the hidden input field
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+            window.antiForgeryToken = token; // Make it available globally
+        </script>
+    }
+
     @RenderBody()
 </body>
 </html>

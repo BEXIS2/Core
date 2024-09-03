@@ -12,7 +12,8 @@ ALTER TABLE IF EXISTS mappingkeys
 
 -- brokers
 ALTER TABLE IF EXISTS public.dim_brokers
-    ADD COLUMN type character varying(255) COLLATE pg_catalog."default",
+    ADD COLUMN type character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE IF EXISTS public.dim_brokers
     ADD COLUMN host character varying(255);
 
 ALTER TABLE IF EXISTS public.dim_brokers
