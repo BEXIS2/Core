@@ -1431,8 +1431,8 @@
   </ProjectExtensions>
   <PropertyGroup>
     <PostBuildEvent>rmdir /S /Q  "$(SolutionDir)Console\Workspace\General\Db\Settings"
-C:\Windows\System32\xcopy "$(ProjectDir)Db\Settings" "$(SolutionDir)Console\Workspace\General\Db\Settings" /E /C /Y /I
-C:\Windows\System32\xcopy "$(ProjectDir)bin\BExIS.Web.Shell.xml" "$(SolutionDir)Console\BExIS.Web.Shell\App_Data" /C /Y /I</PostBuildEvent>
+C:\Windows\System32\xcopy "$(ProjectDir)Db\Settings" "$(SolutionDir)Console\Workspace\General\Db\Settings" /E /C /Y /I /D
+C:\Windows\System32\xcopy "$(ProjectDir)bin\BExIS.Web.Shell.xml" "$(SolutionDir)Console\BExIS.Web.Shell\App_Data" /C /Y /I /D</PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>
