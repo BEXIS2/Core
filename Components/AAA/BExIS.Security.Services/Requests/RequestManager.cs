@@ -68,7 +68,7 @@ namespace BExIS.Security.Services.Requests
                         PartyRepository.Query(m => m.Name == key.ToString() && m.PartyType.Id == dataset_partyType.Id)
                             .FirstOrDefault();
 
-                    var ownerPartyRelationshipType = ModuleManager.GetModuleSettings("bam").GetValueByKey<string>("OwnerPartyRelationshipType");
+                    var ownerPartyRelationshipType = ModuleManager.GetModuleSettings("bam").GetValueByKey("OwnerPartyRelationshipType");
 
                     if (dataset_party != null && ownerPartyRelationshipType != null)
                     {
