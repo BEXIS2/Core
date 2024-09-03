@@ -3,9 +3,9 @@ import { setApiConfig } from '@bexis2/bexis2-core-ui';
 /** @type {import('./$types').PageLoad} */
 export async function load({ fetch }) {
 	if (import.meta.env.DEV) {
-		console.log('dev');
+
 		setApiConfig('http://localhost:44345', 'admin', '123456');
-		console.log('layout');
+
 	}
 
 	return {};

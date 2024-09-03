@@ -1,0 +1,48 @@
+﻿@model BaseModelElement
+@using BExIS.Modules.Ddm.UI.Models;
+
+@{
+    var cModel = new CompundAttributeModel();
+    var sModel = new SimpleAttributeModel();
+
+    if (Model is CompundAttributeModel)
+    {
+        cModel = (CompundAttributeModel)Model;
+    }
+
+    if (Model is SimpleAttributeModel)
+    {
+        sModel = (SimpleAttributeModel)Model;
+    }
+
+}
+
+@* SimpleAttributeModel *@
+
+@if(Model is SimpleAttributeModel)
+{
+    <td class="subNode lable highlight">@sModel.DisplayName</td><td class="highlight value">@sModel.Value</td>
+}
+
+@* CompundAttributeModel *@
+
+@if(Model is CompundAttributeModel)
+{
+    <td class="noBorder subNode">
+
+    @if (cModel.Type != BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage &&
+        cModel.Type != BExIS.Xml.Helpers.XmlNodeType.MetadataPackage)
+    {
+        <b class="lableType">@cModel.DisplayName </b>
+    }
+    <table class="noBorder">
+    @foreach( var child in cModel.Childrens)
+    {
+        <tr class="noBorder">
+            @Html.Partial("_showItem", child )
+        </tr>
+
+    }
+    </table>
+    </td>
+}

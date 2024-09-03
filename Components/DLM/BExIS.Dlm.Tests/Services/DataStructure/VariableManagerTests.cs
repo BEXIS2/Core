@@ -1,4 +1,6 @@
-﻿using BExIS.App.Testing;
+﻿
+
+using BExIS.App.Testing;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.DataStructure;
@@ -33,11 +35,13 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Meaning> repoM = uow.GetRepository<Meaning>();
+                IRepository<MissingValue> repoMV = uow.GetRepository<MissingValue>();
                 IRepository<VariableTemplate> repoVT = uow.GetRepository<VariableTemplate>();
                 IRepository<VariableInstance> repoVI = uow.GetRepository<VariableInstance>();
                 IRepository<StructuredDataStructure> repoSDS = uow.GetRepository<StructuredDataStructure>();
 
                 repoM.Get().ToList().ForEach(m => repoM.Delete(m));
+                repoMV.Get().ToList().ForEach(mv => repoMV.Delete(mv));
                 repoVT.Get().ToList().ForEach(v => repoVT.Delete(v));
                 repoVI.Get().ToList().ForEach(v => repoVI.Delete(v));
 
@@ -934,6 +938,321 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 var variableFromDB = variableManager.GetVariable(created.Id);
 
                 Assert.AreEqual(updated.Label, variableFromDB.Label);
+            }
+        }
+        [Test]
+
+        public void CreateVariable_WithMissingValue_UpdatedVariable()
+        {
+            using (var variableManager = new VariableManager())
+            using (var datastructureManager = new DataStructureManager())
+            using (var dataTypeManager = new DataTypeManager())
+            using (var unitManager = new UnitManager())
+            {
+                //Arrange
+                var dataType = dataTypeManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(dataType, "datatype not exist");
+
+                var unit = unitManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(unit, "unit not exist");
+
+                //Variable Template
+                var variableTemplate = variableManager.CreateVariableTemplate(
+                    "TestVariableTemplate",
+                    dataType,
+                    unit,
+                    "TestVariableTemplate Description",
+                    "xyz"
+                    );
+
+                // Datastructure
+                var dataStructure = datastructureManager.CreateStructuredDataStructure(
+                    "Test Structure",
+                    "Test StrutcureDescription",
+                    null,
+                    null,
+                    DataStructureCategory.Generic,
+                    null
+                    );
+
+                // misisng Values
+                var missingValues = new List<MissingValue>();
+                missingValues.Add(new MissingValue()
+                {
+                    DisplayName = "NA Test",
+                    Description = "NA Description"
+                });
+
+                var created = variableManager.CreateVariable(
+                    "TestVariable",
+                    variableTemplate.DataType,
+                    variableTemplate.Unit,
+                    dataStructure.Id,
+                    true,
+                    false,
+                    1,
+                    variableTemplate.Id,
+                    "",
+                    "",
+                    "",
+                    0,
+                    missingValues
+                    );
+
+                //Act
+                created.Label = "updated";
+
+                //Assert
+                Assert.IsNotNull(created);
+                Assert.That(created.Id > 0);
+
+                var variableFromDB = variableManager.GetVariable(created.Id);
+                Assert.AreEqual(variableFromDB.MissingValues.Count, 1);
+                Assert.That(variableFromDB.MissingValues.First().Id > 0);
+
+            }
+        }
+        [Test]
+        public void UpdateVariable_AddMissingValueWithUpdateVariable_UpdatedVariable()
+        {
+            using (var variableManager = new VariableManager())
+            using (var datastructureManager = new DataStructureManager())
+            using (var dataTypeManager = new DataTypeManager())
+            using (var unitManager = new UnitManager())
+            using (var missingValuemanager = new MissingValueManager())
+            {
+                //Arrange
+                var dataType = dataTypeManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(dataType, "datatype not exist");
+
+                var unit = unitManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(unit, "unit not exist");
+
+                //Variable Template
+                var variableTemplate = variableManager.CreateVariableTemplate(
+                    "TestVariableTemplate",
+                    dataType,
+                    unit,
+                    "TestVariableTemplate Description",
+                    "xyz"
+                    );
+
+                // Datastructure
+                var dataStructure = datastructureManager.CreateStructuredDataStructure(
+                    "Test Structure",
+                    "Test StrutcureDescription",
+                    null,
+                    null,
+                    DataStructureCategory.Generic,
+                    null
+                    );
+
+                if(dataStructure==null) dataStructure = datastructureManager.StructuredDataStructureRepo.Get().Where(d=>d.Name.Equals("Test Structure")).FirstOrDefault();
+
+                // misisng Values
+                var missingValues = new List<MissingValue>();
+                missingValues.Add(new MissingValue()
+                {
+                    DisplayName = "NA Test",
+                    Description = "NA Description"
+                });
+
+                var created = variableManager.CreateVariable(
+                    "TestVariable",
+                    variableTemplate.DataType,
+                    variableTemplate.Unit,
+                    dataStructure.Id,
+                    true,
+                    false,
+                    1,
+                    variableTemplate.Id,
+                    "",
+                    "",
+                    "",
+                    0
+                    );
+
+                //Act
+                created.Label = "updated";
+
+                //Assert
+                Assert.IsNotNull(created);
+                Assert.That(created.Id > 0);
+
+                ICollection<string> test;
+                List<string> t2 = new List<string>() { "1", "2" };
+                test = t2;
+
+                var variableFromDB = variableManager.GetVariable(created.Id);
+                variableFromDB.MissingValues = missingValues;
+
+                variableFromDB = variableManager.UpdateVariable(variableFromDB);
+
+                Assert.AreEqual(variableFromDB.MissingValues.Count, 1);
+                Assert.That(variableFromDB.MissingValues.First().Id > 0);
+
+            }
+        }
+
+        [Test]
+
+        public void UpdateVariable_UpdateMissingValue_UpdatedVariable()
+        {
+            using (var variableManager = new VariableManager())
+            using (var datastructureManager = new DataStructureManager())
+            using (var dataTypeManager = new DataTypeManager())
+            using (var unitManager = new UnitManager())
+            {
+                //Arrange
+                var dataType = dataTypeManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(dataType, "datatype not exist");
+
+                var unit = unitManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(unit, "unit not exist");
+
+                //Variable Template
+                var variableTemplate = variableManager.CreateVariableTemplate(
+                    "TestVariableTemplate",
+                    dataType,
+                    unit,
+                    "TestVariableTemplate Description",
+                    "xyz"
+                    );
+
+                // Datastructure
+                var dataStructure = datastructureManager.CreateStructuredDataStructure(
+                    "Test Structure",
+                    "Test StrutcureDescription",
+                    null,
+                    null,
+                    DataStructureCategory.Generic,
+                    null
+                    );
+
+                // misisng Values
+                var missingValues = new List<MissingValue>();
+                missingValues.Add(new MissingValue()
+                {
+                    DisplayName = "NA Test",
+                    Description = "NA Description"
+                });
+
+                var created = variableManager.CreateVariable(
+                    "TestVariable",
+                    variableTemplate.DataType,
+                    variableTemplate.Unit,
+                    dataStructure.Id,
+                    true,
+                    false,
+                    1,
+                    variableTemplate.Id,
+                    "",
+                    "",
+                    "",
+                    0,
+                    missingValues
+                    );
+
+                //Act
+                created.Label = "updated";
+
+                //Assert
+                Assert.IsNotNull(created);
+                Assert.That(created.Id > 0);
+
+                var variableFromDB = variableManager.GetVariable(created.Id);
+                Assert.AreEqual(variableFromDB.MissingValues.Count, 1);
+
+                variableFromDB.MissingValues.First().DisplayName = "updated";
+
+                var updated = variableManager.UpdateVariable(created);
+                variableFromDB = variableManager.GetVariable(created.Id);
+
+                Assert.AreEqual(variableFromDB.MissingValues.First().DisplayName, updated.MissingValues.First().DisplayName);
+
+            }
+        }
+        [Test]
+        public void UpdateVariable_DeleteMissingValue_OneMissingValueExist()
+        {
+            using (var variableManager = new VariableManager())
+            using (var datastructureManager = new DataStructureManager())
+            using (var dataTypeManager = new DataTypeManager())
+            using (var unitManager = new UnitManager())
+            {
+                //Arrange
+                var dataType = dataTypeManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(dataType, "datatype not exist");
+
+                var unit = unitManager.Repo.Get().FirstOrDefault();
+                Assert.IsNotNull(unit, "unit not exist");
+
+                //Variable Template
+                var variableTemplate = variableManager.CreateVariableTemplate(
+                    "TestVariableTemplate",
+                    dataType,
+                    unit,
+                    "TestVariableTemplate Description",
+                    "xyz"
+                    );
+
+                // Datastructure
+                var dataStructure = datastructureManager.CreateStructuredDataStructure(
+                    "Test Structure",
+                    "Test StrutcureDescription",
+                    null,
+                    null,
+                    DataStructureCategory.Generic,
+                    null
+                    );
+
+                // misisng Values
+                var missingValues = new List<MissingValue>();
+                missingValues.Add(new MissingValue()
+                {
+                    DisplayName = "NA Test",
+                    Description = "NA Description"
+                });
+
+                missingValues.Add(new MissingValue()
+                {
+                    DisplayName = "NA Test 2",
+                    Description = "NA Description 2"
+                });
+
+                var created = variableManager.CreateVariable(
+                    "TestVariable",
+                    variableTemplate.DataType,
+                    variableTemplate.Unit,
+                    dataStructure.Id,
+                    true,
+                    false,
+                    1,
+                    variableTemplate.Id,
+                    "",
+                    "",
+                    "",
+                    0,
+                    missingValues
+                    );
+
+                //Act
+                created.Label = "updated";
+
+                //Assert
+                Assert.IsNotNull(created);
+                Assert.That(created.Id > 0);
+
+                var variableFromDB = variableManager.GetVariable(created.Id);
+                Assert.AreEqual(variableFromDB.MissingValues.Count, 2);
+
+                variableFromDB.MissingValues.Remove(variableFromDB.MissingValues.First());
+
+                var updated = variableManager.UpdateVariable(created);
+                variableFromDB = variableManager.GetVariable(created.Id);
+
+                Assert.AreEqual(variableFromDB.MissingValues.Count, 1);
+
             }
         }
 

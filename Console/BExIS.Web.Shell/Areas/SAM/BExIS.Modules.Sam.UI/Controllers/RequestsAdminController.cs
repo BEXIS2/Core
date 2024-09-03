@@ -54,7 +54,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         {
                             Id = m.Id,
                             RequestId = m.Request.Id,
-                            Rights = string.Join(", ", entityPermissionManager.GetRights(m.Request.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
+                            Rights = string.Join(", ", entityPermissionManager.GetRightsAsync(m.Request.Rights).Result), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
                             Status = m.Status,
                             StatusAsText = Enum.GetName(typeof(DecisionStatus), m.Status),
                             InstanceId = m.Request.Key,

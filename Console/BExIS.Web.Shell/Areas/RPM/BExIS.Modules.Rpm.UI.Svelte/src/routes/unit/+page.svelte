@@ -57,7 +57,8 @@
 			dimension: undefined,
 			datatypes: [],
 			measurementSystem: '',
-			inUse: false
+			inUse: false,
+			link: undefined
 		};
 	}
 
@@ -182,6 +183,13 @@
 						},
 						measurementSystem: {
 							header: 'Measurement System'
+						},
+						link: {
+							disableFiltering: true,
+							header: 'External Link',
+							instructions: {
+								renderComponent: TableElement
+							}
 						},
 						inUse: {
 							disableFiltering: true,

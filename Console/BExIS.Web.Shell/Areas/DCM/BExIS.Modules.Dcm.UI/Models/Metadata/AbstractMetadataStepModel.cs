@@ -14,6 +14,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public long Id { get; set; }
         public long PartyId { get; set; }
 
+        public bool IsEmpty = true;
+
         public String DisplayName { get; set; }
         public String Discription { get; set; }
         public int MinCardinality { get; set; }

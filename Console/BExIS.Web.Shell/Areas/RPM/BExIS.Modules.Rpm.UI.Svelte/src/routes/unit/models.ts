@@ -7,6 +7,7 @@ export interface UnitListItem {
 	abbreviation: string;
 	dimension?: DimensionListItem;
 	datatypes: DataTypeListItem[];
+	link?: LinkItem;
 	measurementSystem: string;
 	inUse: boolean;
 }
@@ -25,7 +26,18 @@ export interface DimensionListItem {
 	specification: string;
 }
 
+export interface LinkItem {
+	id: number;
+	uri: string;
+	name: string;
+}
+
 export interface UnitValidationResult {
 	validationResult: ValidationResult;
 	unitListItem: UnitListItem;
+}
+
+export interface ListItem {
+	id: number;
+	text: string;
 }

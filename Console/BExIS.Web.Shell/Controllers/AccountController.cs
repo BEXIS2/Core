@@ -230,69 +230,78 @@ namespace BExIS.Web.Shell.Controllers
         [ValidateInput(false)]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, change to shouldLockout: true
-            using (var signInManager = new SignInManager(AuthenticationManager))
-            using (var identityUserService = new IdentityUserService())
+            try
             {
-                if (!ModelState.IsValid)
-                {
-                    return View(model);
-                }
 
-                // Search for user by email, if not found search by user name
-                var user = await identityUserService.FindByEmailAsync(model.UserName);
-
-                if (user != null)
+                // This doesn't count login failures towards account lockout
+                // To enable password failures to trigger account lockout, change to shouldLockout: true
+                using (var signInManager = new SignInManager(AuthenticationManager))
+                using (var identityUserService = new IdentityUserService())
                 {
-                    model.UserName = user.UserName;
-                }
-                else
-                {
-                    user = await identityUserService.FindByNameAsync(model.UserName);
-                }
-
-                // Require the user to have a confirmed email before they can log on.
-                if (user != null)
-                {
-                    if (!await identityUserService.IsEmailConfirmedAsync(user.Id))
+                    if (!ModelState.IsValid)
                     {
-                        ViewBag.errorMessage = "You must have a confirmed email address to log in. Please check your email and verify your email address. If you did not receive an email, please also check your spam folder.";
-                        return View("Error");
+                        return View(model);
+                    }
+
+                    // Search for user by email, if not found search by user name
+                    var user = await identityUserService.FindByEmailAsync(model.UserName);
+
+                    if (user != null)
+                    {
+                        model.UserName = user.UserName;
+                    }
+                    else
+                    {
+                        user = await identityUserService.FindByNameAsync(model.UserName);
+                    }
+
+                    // Require the user to have a confirmed email before they can log on.
+                    if (user != null)
+                    {
+                        if (!await identityUserService.IsEmailConfirmedAsync(user.Id))
+                        {
+                            ViewBag.errorMessage = "You must have a confirmed email address to log in. Please check your email and verify your email address. If you did not receive an email, please also check your spam folder.";
+                            return View("Error");
+                        }
+                    }
+
+                    // set-cookie
+                    if (user != null)
+                    {
+                        var jwt = JwtHelper.Get(user);
+
+                        // Create a new cookie
+                        HttpCookie cookie = new HttpCookie("jwt", jwt);
+
+                        // Set additional properties if needed
+                        cookie.Expires = DateTime.Now.AddDays(1); // Expires in 1 day
+                        cookie.Domain = Request.Url.Host; // Set the domain
+                        cookie.Path = "/"; // Set the path
+
+                        // Add the cookie to the response
+                        Response.Cookies.Add(cookie);
+                    }
+
+                    var result =
+                        await signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
+                    switch (result)
+                    {
+                        case SignInStatus.Success:
+                            return RedirectToLocal(returnUrl);
+
+                        case SignInStatus.LockedOut:
+                            return View("Lockout");
+
+                        default:
+                            ModelState.AddModelError("", "Invalid login attempt.");
+                            return View(model);
                     }
                 }
-
-                // set-cookie
-                if (user != null)
-                {
-                    var jwt = JwtHelper.Get(user);
-
-                    // Create a new cookie
-                    HttpCookie cookie = new HttpCookie("jwt", jwt);
-
-                    // Set additional properties if needed
-                    cookie.Expires = DateTime.Now.AddDays(1); // Expires in 1 day
-                    cookie.Domain = Request.Url.Host; // Set the domain
-                    cookie.Path = "/"; // Set the path
-
-                    // Add the cookie to the response
-                    Response.Cookies.Add(cookie);
-                }
-
-                var result =
-                    await signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
-                switch (result)
-                {
-                    case SignInStatus.Success:
-                        return RedirectToLocal(returnUrl);
-
-                    case SignInStatus.LockedOut:
-                        return View("Lockout");
-
-                    default:
-                        ModelState.AddModelError("", "Invalid login attempt.");
-                        return View(model);
-                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Invalid login attempt.");
+                return View(model);
             }
         }
 

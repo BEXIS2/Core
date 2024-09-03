@@ -8,6 +8,8 @@
 	export let displayName = '';
 	export let description = '';
 	export let last = true;
+	export let disabled:boolean = false;
+
 
 	const dispatch = createEventDispatcher();
 
@@ -22,24 +24,31 @@
 
 <div class="flex space-x-3 content-center">
 	<!-- <Label>Name:</Label>  -->
-	<TextInput
-		id="missing-value-name"
-		bind:value={displayName}
-		on:change
-		placeholder="Missing Value"
-		help={true}
-	/>
+		<div class="grow">
+		<TextInput
+			id="missing-value-name"
+			bind:value={displayName}
+			on:change
+			placeholder="Missing Value"
+			help={true}
+			{disabled}
+		/>
+</div>
 
 	<!-- <Label>Description:</Label>  -->
+	<div class="grow">
 	<TextInput
 		id="missing-value-description"
 		bind:value={description}
 		on:change
 		placeholder="Description"
 		help={true}
+		{disabled}
 	/>
+	</div>
 
-	<div class="self-center text-xl mt-5">
+	{#if !disabled}
+	<div class="self-center text-xl mt-5 w-11">
 		<button
 			id="delete-missing-value"
 			title="delete"
@@ -58,4 +67,5 @@
 			>
 		{/if}
 	</div>
+	{/if}
 </div>

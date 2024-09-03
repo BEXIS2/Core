@@ -559,7 +559,7 @@
 						>
 					</div>
 
-					<div id="missingvalues" class="grow">
+					<div id="missingvalues" class="grow w-1/2">
 						<!-- Missing Values-->
 						<MissingValues bind:list={model.missingValues} />
 					</div>

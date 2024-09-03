@@ -18,7 +18,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
         public void OneTimeSetUp()
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
-            new TestSetupHelper(WebApiConfig.Register, false);
+
         }
 
         [OneTimeTearDown]
@@ -56,6 +56,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
 
             prefixCategory = _meaningManager.addPrefixCategory(prefixCategory);
             NUnit.Framework.Assert.IsNotNull(prefixCategory);
+
         }
 
         [Test(), Order(2)]

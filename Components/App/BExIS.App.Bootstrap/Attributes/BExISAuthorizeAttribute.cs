@@ -35,7 +35,7 @@ namespace BExIS.App.Bootstrap.Attributes
                     else
                     {
                         var feature = operation.Feature;
-                        if (feature != null && !featurePermissionManager.HasAccess(null, feature.Id))
+                        if (feature != null && !featurePermissionManager.HasAccessAsync(null, feature.Id).Result)
                         {
                             User user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(filterContext.HttpContext).Result;
 
@@ -45,7 +45,7 @@ namespace BExIS.App.Bootstrap.Attributes
                             }
                             else
                             {
-                                if (!featurePermissionManager.HasAccess(user.Id, feature.Id))
+                                if (!featurePermissionManager.HasAccessAsync(user.Id, feature.Id).Result)
                                 {
                                     filterContext.SetResponse(HttpStatusCode.Forbidden);
                                 }

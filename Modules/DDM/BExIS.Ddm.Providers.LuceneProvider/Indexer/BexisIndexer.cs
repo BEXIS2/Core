@@ -380,7 +380,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             ///
             /// Add a field to indicte whether the dataset is public, this will be used for the public datasets' search page.
             ///
-            dataset.Add(new Field("gen_isPublic", entityPermissionManager.Exists(null, entityTypeId.Value, id) ? "TRUE" : "FALSE", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
+            dataset.Add(new Field("gen_isPublic", entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result ? "TRUE" : "FALSE", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
 
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             dataset.Add(new Field("gen_entity_name", xmlDatasetHelper.GetEntityName(id), Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));

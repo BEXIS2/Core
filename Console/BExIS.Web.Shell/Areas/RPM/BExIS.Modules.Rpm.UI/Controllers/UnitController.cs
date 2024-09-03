@@ -8,6 +8,10 @@ using BExIS.UI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BExIS.Modules.Rpm.UI.Models;
+using BExIS.Dlm.Entities.Meanings;
+using BExIS.Dlm.Services.Meanings;
+using BExIS.Utils.NH.Querying;
 using System.Web.Mvc;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
@@ -62,6 +66,16 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
+        [HttpGet]
+        public JsonResult GetExternalLinks()
+        {
+            using (MeaningManager meaningManager = new MeaningManager())
+            {
+                return Json(convertToLinkItem(meaningManager.getExternalLinks().Where(el => el.Type.Equals(ExternalLinkType.link)).OrderBy(el => el.Id).ToList()), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [JsonNetFilter]
         [HttpPost]
         public JsonResult EditUnit(UnitListItem unitListItem)
         {
@@ -80,6 +94,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (UnitManager unitManager = new UnitManager())
                 using (DataTypeManager dataTypeManager = new DataTypeManager())
+                using (MeaningManager meaningManager = new MeaningManager())
                 {
                     validationResult = new ValidationResult();
                     validationResult = unitValidation(unitListItem, unitManager);
@@ -105,6 +120,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         if (unitListItem.Datatypes.Count > 0)
                         {
                             unit.AssociatedDataTypes = dataTypeManager.Repo.Get().Where(p => unitListItem.Datatypes.Select(d => d.Id).Contains(p.Id)).ToList();
+                        }
+                        if (unitListItem.Link != null && unitListItem.Link.Id != 0)
+                        {
+                            unit.ExternalLink = meaningManager.getExternalLink(unitListItem.Link.Id);
+                        }
+                        else
+                        {
+                            unit.ExternalLink = null;
                         }
                         unit = unitManager.Update(unit);
                         unitListItem = convertToUnitListItem(unit);
@@ -140,6 +163,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         private List<DimensionListItem> convertToDimensionListItem(List<Dimension> dimensions)
         {
+            if (dimensions == null || dimensions.Count == 0)
+                return new List<DimensionListItem>();
+
             List<DimensionListItem> dimensionListItems = new List<DimensionListItem>();
 
             foreach (Dimension dimension in dimensions)
@@ -151,6 +177,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         private DimensionListItem convertToDimensionListItem(Dimension dimension)
         {
+            if (dimension == null)
+                return new DimensionListItem();
+
             DimensionListItem dimensionListItem = new DimensionListItem
             {
                 Id = dimension.Id,
@@ -161,19 +190,24 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return dimensionListItem;
         }
 
-        private List<DataTypeListItem> convertToDataTypeListItem(List<DataType> dataTypes)
+        private List<DataTypeListItem> convertToDataTypeListItem(List<Dlm.Entities.DataStructure.DataType> dataTypes)
         {
+            if (dataTypes == null || dataTypes.Count == 0)
+                return new List<DataTypeListItem>();
+
             List<DataTypeListItem> dataTypeListItems = new List<DataTypeListItem>();
 
-            foreach (DataType dataType in dataTypes)
+            foreach (Dlm.Entities.DataStructure.DataType dataType in dataTypes)
             {
                 dataTypeListItems.Add(convertToDataTypeListItem(dataType));
             }
             return dataTypeListItems;
         }
-
-        private DataTypeListItem convertToDataTypeListItem(DataType dataType)
+        private DataTypeListItem convertToDataTypeListItem(Dlm.Entities.DataStructure.DataType dataType)
         {
+            if (dataType == null)
+                return new DataTypeListItem();
+
             DataTypeListItem dataTypeListItem = new DataTypeListItem
             {
                 Id = dataType.Id,
@@ -182,6 +216,34 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 SystemType = dataType.SystemType,
             };
             return dataTypeListItem;
+        }
+
+        private List<LinkItem> convertToLinkItem(List<ExternalLink> externalLinks)
+        {
+            if (externalLinks == null || externalLinks.Count == 0)
+                return new List<LinkItem>();
+
+            List<LinkItem> linkItems = new List<LinkItem>();
+
+            foreach (ExternalLink externalLink in externalLinks)
+            {
+                linkItems.Add(convertToLinkItem(externalLink));
+            }
+            return linkItems;
+        }
+
+        private LinkItem convertToLinkItem(ExternalLink externalLink)
+        {
+            if (externalLink == null)
+                return new LinkItem();
+
+            LinkItem LinkItem = new LinkItem
+            {
+                Id = externalLink.Id,
+                Name = externalLink.Name,
+                URI = externalLink.URI,
+            };
+            return LinkItem;
         }
 
         private List<UnitListItem> convertToUnitListItem(List<Unit> units)
@@ -214,6 +276,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 Datatypes = convertToDataTypeListItem(unit.AssociatedDataTypes.ToList()),
                 MeasurementSystem = unit.MeasurementSystem.ToString(),
                 InUse = inuse,
+                Link = convertToLinkItem(unit.ExternalLink),
             };
             return unitListItem;
         }

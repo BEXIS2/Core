@@ -1,0 +1,35 @@
+<!--
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE hibernate-mapping [ <!ENTITY BaseEntityProperties SYSTEM "..\BaseEntityProperties.xml"> ]>
+-->
+
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Data">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="Tag" table="Tags">
+    <!-- Mapping BaseEntity properties -->
+    <id name="Id" type="Int64">
+      <column name="Id" index="idx_EntityTags_id" />
+      <generator class="native" />
+    </id>
+	  
+    <!-- Mapping EntityTag properties -->
+
+    <property name="Nr" type="double">
+      <column name="Nr" />
+    </property>
+
+    <property name="ReleaseDate" type="Timestamp">
+      <column name="ReleaseDate"  index="idx_ReleaseDate_timestamp" />
+    </property>
+
+
+	 <property name="Final" type="Boolean">
+		 <column name="Final" />
+	 </property>
+
+
+	  <property name="Doi" type="String">
+		<column name="Doi" />
+	</property>
+	  
+  </class>
+</hibernate-mapping>
