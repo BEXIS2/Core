@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { TablePlaceholder, ErrorMessage} from "@bexis2/bexis2-core-ui";
+	import { TablePlaceholder, ErrorMessage, host} from "@bexis2/bexis2-core-ui";
 	import { getView } from './services'
+
 
 	import TableDate from "./table/tableDate.svelte";
 	import type { TagInfoViewModel } from "./types";
@@ -10,6 +11,7 @@
 	let id: number = 0;
 	let taginfos:TagInfoViewModel[] = [];
 	$:taginfos
+
 	async function reload(){
 
 		container = document.getElementById('taginfo');
@@ -17,6 +19,7 @@
 
 		taginfos = await getView(id);
 		console.log("🚀 ~ reload ~ taginfos:", taginfos)
+
 
 		return taginfos;
 	}
@@ -40,7 +43,7 @@
 		{#each model as tagInfo}
 			<tr>
 				<td>
-					<a href="/ddm/show?tag={tagInfo.version}">{tagInfo.version}</a>
+					<a href="{host}/ddm/data/showdata?id={id}&tag={tagInfo.version}">{tagInfo.version}</a>
 				</td>
 				<td>
 					<div class="flex flex-col ">
