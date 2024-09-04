@@ -50,7 +50,8 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@bexis2/bexis2-core-ui": "0.4.9",
+
+		"@bexis2/bexis2-core-ui": "0.4.15",
 		"@bexis2/bexis2-rpm-ui": "0.2.4",
 		"@floating-ui/dom": "1.6.8",
 		"@fortawesome/free-solid-svg-icons": "6.6.0",
@@ -62,6 +63,7 @@
 		"svelte-headless-table": "0.18.2",
 		"svelte-select": "5.8.3",
 		"vest": "5.4.0"
+
 	},
 	"author": "David Schöne",
 	"license": "ISC",
