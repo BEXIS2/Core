@@ -31,7 +31,10 @@ namespace Vaiona.IoC.Unity
 
         public void RegisterHeirarchical(Type from, Type to)
         {
-            this.container.RegisterType(from, to, new HierarchicalLifetimeManager());
+            using (var hierarchicalLifetimeManager = new HierarchicalLifetimeManager())
+            {
+                this.container.RegisterType(from, to, hierarchicalLifetimeManager);
+            }
         }
 
         public void Register(Type from, Type to)

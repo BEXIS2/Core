@@ -1,6 +1,15 @@
-﻿User-Agent: *
+User-agent: *
+Disallow: /Views/
+Disallow: /App_Data/
+Disallow: /App_Start/
+Disallow: /Content/
+Disallow: /Scripts/
+Disallow: /favicon.ico
+Disallow: /robots.txt
 Allow: /footer/imprint
 Allow: /footer/contactus
 Allow: /footer/policy
 Allow: /ddm/home/index
-Disallow: /
+Allow: /Content/images/
+Allow: /Content/css/
+Allow: /Content/js/

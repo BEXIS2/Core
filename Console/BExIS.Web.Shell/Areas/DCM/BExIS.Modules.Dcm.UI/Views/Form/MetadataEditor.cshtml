@@ -227,19 +227,19 @@
 
         @foreach (var element in Model.StepModelHelpers)
         {
-            if (element.Level == 0)
+            if (element.Level == 0 && ((showOptional || !element.IsEmpty()) && locked) || !locked)
             {
                 displayName = char.ToUpper(element.UsageName[0]) + element.UsageName.Substring(1).Replace("_", " ");
                 displayName = Regex.Replace(displayName, "((?<=[a-z])[A-Z])", " $1");
                 id_label_container_1 = element.StepId + "_1_LabelContainerMenu";
                 id_label_container = element.StepId + "_Menu";
-        <div id="@id_label_container" class="header Metadata-Level-Header-1 header-menu" style="float:left; border-style: solid; border-color: white;">
-            <div id="@id_label_container_1" class="labelContainer" onclick="showFirstLevelClick(this)">
-                <b>@displayName</b>
-                <div>
+                <div id="@id_label_container" class="header Metadata-Level-Header-1 header-menu" style="float:left; border-style: solid; border-color: white;">
+                    <div id="@id_label_container_1" class="labelContainer" onclick="showFirstLevelClick(this)">
+                        <b>@displayName</b>
+                        <div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
             }
         }
     </div>
@@ -250,8 +250,8 @@
         {
             if (element.Model is MetadataPackageModel)
             {
-        <div style="width: 100%; height: 1px; background-color: white"></div>
-        @Html.Partial("_metadataCompoundAttributeView", element)
+                <div style="width: 100%; height: 1px; background-color: white"></div>
+                @Html.Partial("_metadataCompoundAttributeView", element)
             }
         }
     </div>
@@ -552,8 +552,7 @@
         var fromEditMode = '@Model.FromEditMode';
         var latest = '@Model.LatestVersion'
 
-        //if(Model.Created && Model.DatasetId != -1 && !Model.FromEditMode)
-
+  
         $.get('@Url.Action("SwitchVisibilityOfOptionalElements", "Form","DCM")',
             {
                 show: show,

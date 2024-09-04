@@ -1122,7 +1122,7 @@ namespace BExIS.Dlm.Services.Party
             {
                 IRepository<PartyX> repo = uow.GetRepository<PartyX>();
                 //party = repo.Reload(party);
-                var mainValues = party.CustomAttributeValues.Where(item => item.CustomAttribute.IsMain).Select(item => item.Value).ToArray();
+                var mainValues = party.CustomAttributeValues.Where(item => item.CustomAttribute.IsMain).OrderBy(item => item.CustomAttribute.DisplayOrder).Select(item => item.Value).ToArray();
                 if (mainValues.Length > 0)
                 {
                     party.Name = string.Join(" ", mainValues); // what should happen when no custom attribute is there!?

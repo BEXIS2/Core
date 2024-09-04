@@ -73,7 +73,9 @@ namespace Vaiona.Web.Mvc.Modularity
         public static HtmlHelper GetHtmlHelper(this Controller controller)
         {
             var viewContext = new ViewContext(controller.ControllerContext, new FakeView(), controller.ViewData, controller.TempData, TextWriter.Null);
+#pragma warning disable CA2000 // Dispose objects before losing scope
             return new HtmlHelper(viewContext, new ViewPage());
+#pragma warning restore CA2000 // Dispose objects before losing scope
         }
 
         public static MvcHtmlString Render(this Controller helper, string moduleId, string controllerName, string actionName, RouteValueDictionary routeValues = null)
