@@ -29,6 +29,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\App\BExIS.App.Testing\BExIS.App.Testing.csproj" />
+    <ProjectReference Include="..\..\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj" />
+    <ProjectReference Include="..\..\Vaiona\Vaiona.PersistenceProviders.NH\Vaiona.PersistenceProviders.NH.csproj" />
     <ProjectReference Include="..\BEXIS.JSON.Helpers\BEXIS.JSON.Helpers.csproj" />
   </ItemGroup>
 
