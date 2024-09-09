@@ -5,10 +5,23 @@
 
 @{
     int tabIndex = 0;
+    bool use_tags = false;
+    bool use_minor = false;
+
 
     if (ViewData["TabIndex"] != null)
     {
         tabIndex = Convert.ToInt32(ViewData["TabIndex"].ToString());
+    }
+
+    if (ViewData["use_tags"] != null)
+    {
+        use_tags = Convert.ToBoolean(ViewData["use_tags"]);
+    }
+
+    if (ViewData["use_minor"] != null)
+    {
+        use_minor = Convert.ToBoolean(ViewData["use_minor"]);
     }
 
     var show_tabs = new Dictionary<string, string>();
@@ -149,7 +162,7 @@
 
 @if (Model != null && ((Model.IsPublic == true || User.Identity.Name != "") || check_public_metadata == "false"))
 {
-
+  
     <div id="showData">
 
         <div class="datasetview_header">
@@ -168,6 +181,8 @@
                 <span class="datasetview_header-toggle-text">switch to edit</span>
             }
         </div>
+
+
 
         @if (ViewData["Message"].ToString() != "")
         {
@@ -191,31 +206,38 @@
             </div>
         }
 
+       
+
         @if (ViewData["state"].ToString() != "hidden")
         {
             <div id="view-header" class="row">
-                <div id="view-header-dataset-details" class="col-xs-6 col-md-6 col-lg-6 ">
-                    <div class="row">
-                        <div class="col-md-6" style="white-space: nowrap;display: flex;">
-                            <div>
-                                <b>Dataset id:</b> @Model.Id
-                                <b style="padding-left: 5px;">Version:</b>
-                                @if (ViewData.ModelState.IsValid)
-                                {
-                                    @Html.DropDownListFor(m => m.VersionSelect, null, Model.LatestVersionNumber + " (Latest internal version)", new { @class = "bx-dropdown", @style = "border:none;" })
-                                }
-                                else
-                                {
-                                    @Html.DropDownListFor(m => m.VersionSelect, null, "Select version", new { @class = "bx-dropdown", @style = "border:none;" })
+                <div id="view-header-dataset-details" class="col-xs-6 col-md-6 col-lg-6">
 
-                                }
-                            </div>
-                        </div>
-                    </div>
+
+                    <b>Dataset id:</b> @Model.Id
+
+                    @if (use_tags)
+                    {
+                        <div id="tags"></div>
+                    }
+                    else
+                    {
+                        <b style="padding-left: 5px;">Version:</b>
+                        if (ViewData.ModelState.IsValid)
+                        {
+                            @Html.DropDownListFor(m => m.VersionSelect, null, Model.LatestVersionNumber + " (Latest internal version)", new { @class = "bx-dropdown", @style = "border:none;" })
+                        }
+                        else
+                        {
+                            @Html.DropDownListFor(m => m.VersionSelect, null, "Select version", new { @class = "bx-dropdown", @style = "border:none;" })
+
+                        }
+                    }
+
+
+
                 </div>
-                <div class="col-xs-2 col-md-2 col-lg-2">
-                    @*<div id="preloaderContainer"></div>*@
-                </div>
+
 
                 <div id="view-header-dataset-options" class="col-xs-4 col-md-4 col-lg-4 pull-right text-right">
 
@@ -396,9 +418,26 @@
         initfetch('@activeHook.Name', '@activeHook.Start',@Model.Id,@Model.Version)
         console.log("document ready end prefetch")
 
+        loadTags();
+
         $("#preloaderContainer").removePreloader();
 
-	});
+    });
+
+
+    function loadTags() {
+            $.ajax({
+            url: '@Url.Action("Tags", "Data")', // Replace with your actual controller and action names
+                data: { id: '@Model.Id', version: '@Model.Version' }, // Pass any parameters if needed
+            success: function(response) {
+                $("#tags").html(response);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("Error:", textStatus, errorThrown);
+            }
+        });
+    }
+
 
 	function existsRightType(rights, rightType) {
 		if (jQuery.inArray(rightType, rights) != -1) {

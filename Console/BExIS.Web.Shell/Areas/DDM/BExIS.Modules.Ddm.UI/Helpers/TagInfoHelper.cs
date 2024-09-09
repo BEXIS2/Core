@@ -72,7 +72,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
 
 
-        public List<TagInfoViewModel> GetViews(List<DatasetVersion> versions, DatasetManager datasetManager)
+        public List<TagInfoViewModel> GetViews(List<DatasetVersion> versions, DatasetManager datasetManager,bool released=false)
         {
             List<TagInfoViewModel> models = new List<TagInfoViewModel>();
 
@@ -80,7 +80,10 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
             foreach (var nr in tags)
             {
-                var tagVersions = versions.OrderByDescending(o=>o.Id).Where(v => v.Tag !=null && v.Tag.Nr.Equals(nr) && v.Show && v.Tag.Final).ToList();
+                var tagVersions = versions.OrderByDescending(o=>o.Id).Where(v => v.Tag !=null && v.Tag.Nr.Equals(nr)).ToList();
+                if (released)
+                    tagVersions = tagVersions.Where(v => v.Show && v.Tag.Final).ToList();
+
                 if (tagVersions.Any())
                 {
                     models.Add(new TagInfoViewModel()

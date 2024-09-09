@@ -147,7 +147,9 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 if (tagEdit == null) tagEdit = featureManager.Create("Edit", "Edit of the tags", tagFeature);
 
                 operationManager.Create("Api", "TagInfoView", "*", tagView);
+
                 operationManager.Create("Api", "TagInfoEdit", "*", tagEdit);
+                operationManager.Create("DDM", "TagInfo", "*", tagEdit);
 
 
                 #endregion Requests

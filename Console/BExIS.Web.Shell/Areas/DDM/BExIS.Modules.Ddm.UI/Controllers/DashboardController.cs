@@ -19,6 +19,7 @@ using Telerik.Web.Mvc;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
@@ -31,6 +32,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
 
             DashboardModel model = GetDefaultDashboardModel();
+
+            // load settings
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            ViewData["use_tags"] = moduleSettings.GetValueByKey("use_tags");
+            ViewData["use_minor"] = moduleSettings.GetValueByKey("use_minor");
+
 
             #region mydatasetmodel
 
@@ -255,6 +262,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
 
             List<MyDatasetsModel> model = new List<MyDatasetsModel>();
+
+            // load settings
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            ViewData["use_tags"] = moduleSettings.GetValueByKey("use_tags");
+            ViewData["use_minor"] = moduleSettings.GetValueByKey("use_minor");
 
             using (DatasetManager datasetManager = new DatasetManager())
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
