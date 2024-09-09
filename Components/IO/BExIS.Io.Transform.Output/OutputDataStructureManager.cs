@@ -133,9 +133,11 @@ namespace BExIS.IO.Transform.Output
             isOptional = variable.IsValueOptional;
             unit = new UnitElement(variable.Unit.Id);
             dataType = new DataTypeElement(variable.DataType.Id);
+            missingValues = new List<MissingValueElement>();
             if (variable.MissingValues.Any())
                 variable.MissingValues.ToList().ForEach(m => missingValues.Add(new MissingValueElement(m.DisplayName, m.Description, m.Placeholder)));
 
+            meanings = new List<MeaningElement>();
             if (variable.Meanings.Any())
                 variable.Meanings.ToList().ForEach(m => meanings.Add(new MeaningElement(m.Name, m.Description)));
         }

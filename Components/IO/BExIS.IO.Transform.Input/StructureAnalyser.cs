@@ -311,7 +311,6 @@ namespace BExIS.IO.Transform.Input
 
                 if (!string.IsNullOrEmpty(input)) // if a varaible name exist as input
                 {
-
                     // name
                     foreach (var template in allTemplates)
                     {
