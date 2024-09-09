@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewBag.Title = "tags";
+    Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
+
+    long id = 0;
+
+    if (ViewData["id"] != null)
+    {
+        id = (long)ViewData["id"];
+    }
+
+}
+
+<div id="taginfo" dataset="@id">
+    @Html.Partial("_sveltePage")
+</div>

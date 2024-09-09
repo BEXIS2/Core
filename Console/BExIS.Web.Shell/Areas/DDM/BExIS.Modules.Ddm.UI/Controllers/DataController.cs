@@ -25,10 +25,12 @@ using BExIS.Utils.NH.Querying;
 using BExIS.Xml.Helpers;
 using Ionic.Zip;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -149,6 +151,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (EntityManager entityManager = new EntityManager())
             {
+                // load settings
+                var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+                ViewData["use_tags"] = moduleSettings.GetValueByKey("use_tags");
+                ViewData["use_minor"] = moduleSettings.GetValueByKey("use_minor");
+
                 Dataset researcobject = dm.GetDataset(id);
 
                 if (researcobject != null)
@@ -1579,6 +1586,38 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #endregion entity references
 
+        #region tags only for old view
+
+        public PartialViewResult Tags(long id,int version)
+        {
+            if (id <= 0) throw new ArgumentException("id is not valid");
+            ViewData["Id"] = id;
+     
+
+            bool hasEditRights = hasUserRights(id, RightType.Write);
+
+
+            List<TagInfoViewModel> tags = new List<TagInfoViewModel>();
+
+            using (DatasetManager datasetmanager = new DatasetManager())
+            {
+                TagInfoHelper _helper = new TagInfoHelper();
+                var versions = datasetmanager.GetDatasetVersions(id);
+                var currentVersion = datasetmanager.GetDatasetVersion(id, version);
+                ViewData["Tag"] = currentVersion.Tag.Nr;
+
+                if (versions != null)
+                {
+                    tags = _helper.GetViews(versions, datasetmanager, !hasEditRights);
+                }
+            }
+
+            return PartialView("_tagsView", tags); // Replace "_PartialViewName" with your actual name
+
+        }
+
+        #endregion
+
         #region helper
 
         private List<DropDownItem> GetDownloadOptions()
@@ -1968,83 +2007,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             return - 1;
         }
-        //private long getVersionId(long datasetId, int version, string versionName, List<DatasetVersion> datasetVersions, DatasetStatus datasetStatus)
-        //{
-        //    long versionId = 0;
-        //    SettingsHelper helper = new SettingsHelper();
-
-        //    using (DatasetManager dm = new DatasetManager())
-        //    {
-        //        // may all versions or only public versions be shown
-        //        List<DatasetVersion> datasetVersionsAllowed = dm.GetDatasetVersionsAllowed(datasetId, true, false, datasetVersions, datasetStatus);
-
-        //        // User is not logged in
-        //        if (GetUsernameOrDefault() == "DEFAULT")
-        //        {
-        //            //TAG:have versionnr and got to TAG - return latest public version with tag.final = true
-
-
-        //            // No version or version name -> use latest allowed version
-        //            if (version == 0 && versionName.Length == 0)
-        //            {
-        //                if (datasetVersionsAllowed.Count > 0)
-        //                {
-        //                    versionId = datasetVersionsAllowed.OrderByDescending(d => d.Timestamp).Select(d => d.Id).FirstOrDefault();
-        //                }
-        //            }
-        //            // TAG: if requested tag exist and is public
-
-        //            // Version name -> check if requested version is allowed
-        //            else if (versionName.Length > 0)
-        //            {
-        //                if (datasetVersionsAllowed.Where(d => d.VersionName == versionName).Count() == 1)
-        //                {
-        //                    versionId = datasetVersionsAllowed.OrderByDescending(d => d.Timestamp).Where(d => d.VersionName == versionName).Select(d => d.Id).FirstOrDefault();
-        //                }
-        //            }
-        //            // Version number -> check if requested version is allowed
-        //            else if (version != 0)
-        //            {
-        //                var idTemp = datasetVersions.OrderBy(d => d.Timestamp).Skip(version - 1).Take(1).Select(d => d.Id).FirstOrDefault();
-
-        //                if (idTemp > 0 && datasetVersionsAllowed.Where(d => d.Id == idTemp).Count() == 1)
-        //                {
-        //                    versionId = idTemp;
-        //                }
-        //            }
-        //        }
-        //        // User is logged in
-        //        else
-        //        {
-        //            // Get version by version name
-        //            if (versionName.Length > 0 && datasetVersions.Where(d => d.VersionName == versionName).Select(d => d.Id).FirstOrDefault() > 0)
-        //            {
-        //                versionId = datasetVersions.Where(d => d.VersionName == versionName).Select(d => d.Id).FirstOrDefault();
-        //            }
-        //            // Get latest version
-        //            else if (version == 0)
-        //            {
-        //                // Use latest public, if exists or latest without restriction
-        //                if (datasetVersionsAllowed.Count > 0 && helper.GetValue("restrict_latest_version_logged_in").ToString() == "true")
-        //                {
-        //                    versionId = datasetVersionsAllowed.OrderByDescending(d => d.Timestamp).Select(d => d.Id).FirstOrDefault();
-        //                }
-        //                else
-        //                {
-        //                    versionId = dm.GetDatasetLatestVersionId(datasetId, datasetStatus);
-        //                }
-        //            }
-        //            // Get specific version number
-        //            else
-        //            {
-        //                versionId = dm.GetDatasetVersions(datasetId).OrderBy(d => d.Timestamp).Skip(version - 1).Take(1).Select(d => d.Id).FirstOrDefault();
-        //            }
-        //        }
-        //    }
-
-        //    return versionId;
-        //}
-
 
         public bool UserExist()
         {

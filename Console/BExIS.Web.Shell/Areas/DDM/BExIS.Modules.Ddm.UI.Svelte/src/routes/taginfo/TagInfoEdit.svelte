@@ -181,7 +181,7 @@
 							disableSorting:true
 						},
 						publish:{
-							header:"Publish dataset",
+							header:"Publish Tag",
 							fixedWidth:10,
 							instructions:{
 								renderComponent:TablePublish

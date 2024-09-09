@@ -2,6 +2,17 @@
 
 @model List<MyDatasetsModel>
 
+@{ 
+    bool use_tags = false;
+
+    if (ViewData["use_tags"] != null)
+    {
+        use_tags = Convert.ToBoolean(ViewData["use_tags"]);
+    }
+}
+
+@use_tags
+
 <table id="resources_table" class="display" style="width:100%">
     <thead>
         <tr>
@@ -36,12 +47,17 @@
 
                     <a class="bx bx-grid-function bx-edit" href="/dcm/edit/?id=@m.Id" target="_blank" title="Edit " style="text-decoration: none;"> </a>
 
+                    if (use_tags)
+                    {
+                        <a class="bx bx-grid-function fa-tag" href="/ddm/taginfo/?id=@m.Id" target="_blank" title="Tags " style="text-decoration: none;"> </a>
+                    }
+
                     if (m.Type == "tabular")
                     {
                         <a class="bx bx-grid-function fa-bars" href="/dcm/test/?id=@m.Id" target="_blank" title="Show data (BETA)" style="text-decoration: none;"> </a>
                     }
                 }
-                </td>
+            </td>
         </tr>
         }
     </tbody>

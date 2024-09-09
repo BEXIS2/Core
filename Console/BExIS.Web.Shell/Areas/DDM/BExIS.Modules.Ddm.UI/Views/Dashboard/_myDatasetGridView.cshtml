@@ -15,6 +15,10 @@
 	int PageSize = 10;
 	int CurrentPage = 1;
 
+	bool use_tags = false;
+	bool use_minor = false;
+
+
 	if (ViewData["PageSize"] != null)
 	{
 		PageSize = Convert.ToInt16(ViewData["PageSize"]);
@@ -23,6 +27,16 @@
 	if (ViewData["CurrentPage"] != null)
 	{
 		CurrentPage = Convert.ToInt16(ViewData["CurrentPage"]);
+	}
+
+	if (ViewData["use_tags"] != null)
+	{
+		use_tags = Convert.ToBoolean(ViewData["use_tags"]);
+	}
+
+	if (ViewData["use_minor"] != null)
+	{
+		use_minor = Convert.ToBoolean(ViewData["use_minor"]);
 	}
 
 	List<HeaderItem> DefaultHeaderList = (List<HeaderItem>)ViewData["DefaultHeaderList"];

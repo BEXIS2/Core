@@ -132,6 +132,7 @@
     <Compile Include="Controllers\RequestsManageController.cs" />
     <Compile Include="Controllers\RequestsSendController.cs" />
     <Compile Include="Controllers\SearchIndexController.cs" />
+    <Compile Include="Controllers\TagInfoController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DdmModule.cs" />
     <Compile Include="GlobalSuppressions.cs" />
@@ -234,6 +235,8 @@
     <Content Include="Views\RequestsManage\_Requests.cshtml" />
     <Content Include="Views\RequestsManage\_Requests_And_Decisions.cshtml" />
     <Content Include="Web.config" />
+    <Content Include="Views\Data\_tagsView.cshtml" />
+    <Content Include="Views\TagInfo\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
