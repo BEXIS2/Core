@@ -287,6 +287,48 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+        /// </summary>
+        /// <remarks>
+        ///
+        /// ## format
+        /// Based on the existing transformation options, the converted metadata can be obtained via format.
+        ///
+        /// ## simplfiedJson
+        /// if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
+        /// 0 = returns the metadata with full internal structure <br/>
+        /// 1 = returns a simplified form of the structure with all fields and attributes <br/>
+        /// 2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
+        ///
+        /// </remarks>
+        /// <param name="id">Dataset Id</param>
+        /// <param name="tag">Tag Nr</param>
+        /// <param name="format">Internal,External,Subset</param>
+        /// <param name="subsetType">Based on the existing concept mappings, the converted metadata can be obtained via subsetType.</param>
+        /// <param name="simplifiedJson">accept 0,1,2</param>
+        /// <returns>metadata as xml or json</returns>
+        [BExISApiAuthorize]
+        [GetRoute("api/Metadata/{id}/tag/{tag}")]
+        public HttpResponseMessage Get(long id, double tag, [FromUri] Format format = Format.Internal, [FromUri] string subsetType = null, [FromUri] int simplifiedJson = 0)
+        {
+            if (id <= 0)
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
+
+            if (tag<=0)
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Tag not exist");
+
+            using (DatasetManager dm = new DatasetManager())
+            {
+                var versionId = dm.GetLatestVersionIdByTagNr(id, tag);
+
+                if (versionId <= 0)
+                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This tag does not exist for this dataset");
+
+                return GetMetadata(id, versionId, format, subsetType, simplifiedJson);
+            }
+        }
+
         private HttpResponseMessage GetMetadata(long id, long versionId, Format format, string subsetType, int simplifiedJson)
         {
             DatasetVersion datasetVersion = null;

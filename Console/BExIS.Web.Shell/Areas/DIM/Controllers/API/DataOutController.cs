@@ -197,6 +197,44 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
+        /// <summary>
+        /// In addition to the id and tag, it is possible to have projection and selection criteria passed to the action via query string parameters
+        /// </summary>
+        /// <param name="id">Dataset Id</param>
+        /// <param name="tag">tag number of the dataset</param>
+        /// <returns></returns>
+        /// <remarks> The action accepts the following additional parameters via the query string
+        /// 1: header: is a comman separated list of ids that determines which variables of the dataset version tuples should take part in the result set
+        /// 2: filter: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
+        /// logical operators, nesting, precedence, and SOME functions should be supported.
+        /// </remarks>
+        [BExISApiAuthorize]
+        //[Route("api/Data")]
+        [GetRoute("api/Data/{id}/tag/{tag}")]
+        [HttpGet]
+        public HttpResponseMessage Get(long id, double tag, [FromUri] string header = null, [FromUri] string filter = null)
+        {
+            if (id <= 0)
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
+
+            if (tag<=0)
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Tag not exist");
+
+            string projection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "header".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            string selection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "filter".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            string token = this.Request.Headers.Authorization?.Parameter;
+
+            using (DatasetManager dm = new DatasetManager())
+            {
+                var versionId = dm.GetLatestVersionByTagNr(id, tag).Id;
+
+                if (versionId <= 0)
+                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This tag does not exist for this dataset");
+
+                return getData(id, versionId, token, projection, selection);
+            }
+        }
+
         private HttpResponseMessage getData(long id, long versionId, string token, string projection = null, string selection = null)
         {
             if (id <= 0)

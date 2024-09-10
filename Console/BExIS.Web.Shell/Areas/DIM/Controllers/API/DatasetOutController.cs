@@ -69,6 +69,8 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                             Id = dsv.Id,
                             Number = i + 1
                         };
+                        if(dsv.Tag != null) datasetVersionModel.Tag = dsv.Tag.Nr;
+
 
                         datasetModel.Versions.Add(datasetVersionModel);
                         datasetModel.Title = dsv.Title;
@@ -194,6 +196,35 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
                 if (versionId <= 0)
                     return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This version name does not exist for this dataset");
+
+                return get(id, versionId);
+            }
+        }
+
+        // GET api/DatasetOut/{id}/{version}
+        /// <summary>
+        /// Get dataset informations of a specific version of a dataset by id and tag.
+        /// </summary>
+        ///
+        /// <param name="id">Identifier of a dataset</param>
+        /// <param name="tag">tag number of a dataset</param>
+        [BExISApiAuthorize]
+        [GetRoute("api/Dataset/{id}/tag/{tag}")]
+        [ResponseType(typeof(ApiDatasetModel))]
+        public HttpResponseMessage Get(long id, double tag)
+        {
+            if (id <= 0)
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
+
+            if (tag<=0)
+                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Tag not exist");
+
+            using (DatasetManager dm = new DatasetManager())
+            {
+                var versionId = dm.GetLatestVersionIdByTagNr(id, tag);
+
+                if (versionId <= 0)
+                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This tag does not exist for this dataset");
 
                 return get(id, versionId);
             }
