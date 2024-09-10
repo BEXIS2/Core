@@ -41,6 +41,17 @@ export const save = async (model:TagInfoEditModel) => {
 	}
 };
 
+export const updateSearch = async (id:number) => {
+	try {
+		const response = await Api.get('/ddm/taginfo/updatesearch?id='+id);
+
+		return response;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
 export const add = async (model:TagInfoEditModel, type:TagType) => {
 	try {
 		

@@ -13,15 +13,19 @@ using BExIS.Utils.Config;
 using BExIS.Utils.Upload;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.Routing;
 using Vaiona.Entities.Common;
+using Vaiona.Web.Mvc;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class SubmitController : Controller
+    public class SubmitController : BaseController
     {
         private User _user;
         private FileStream Stream;
@@ -101,6 +105,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var errors = asyncUploadHelper.FinishUpload(id, AuditActionType.Edit, model.StructureId).Result;
                 responce.Errors = EditHelper.SortFileErrors(errors);
                 responce.Success = responce.Errors.Any() ? false : true;
+
+
+            }
+
+            if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
+            {
+                var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", id } });
             }
 
             return Json(responce, JsonRequestBehavior.AllowGet);

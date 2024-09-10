@@ -11,6 +11,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Routing;
 
 
 namespace BExIS.Modules.Ddm.UI.Controllers.API
@@ -73,6 +74,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers.API
                     dsv.Show = model.Show;
 
                     datasetManager.UpdateDatasetVersion(dsv);
+
 
                     return Request.CreateResponse(HttpStatusCode.OK);
                 }

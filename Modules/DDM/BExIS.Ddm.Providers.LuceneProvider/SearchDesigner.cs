@@ -218,11 +218,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             this._configXML.Save(FileHelper.ConfigFilePath);
         }
 
-        public void Reload()
+        public void Reload(bool onlyReleasedTags)
         {
             try
             {
-                bexisIndexer.ReIndex();
+                bexisIndexer.ReIndex(onlyReleasedTags);
             }
             catch (Exception ex)
             {
