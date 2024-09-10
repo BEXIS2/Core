@@ -1,13 +1,12 @@
 ﻿using BExIS.UI.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
+using Vaiona.Web.Mvc;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
-    public class TagInfoController : Controller
+    public class TagInfoController : BaseController
     {
         // GET: TagInfo
         public ActionResult Index(long id)
@@ -19,6 +18,16 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             ViewData["id"] = id;
 
             return View();
+        }
+
+        public ActionResult UpdateSearch(long id)
+        {
+            if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
+            {
+                return this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", id } });
+            }
+
+            return null;
         }
 
     }

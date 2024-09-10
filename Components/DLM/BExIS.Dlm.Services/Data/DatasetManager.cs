@@ -4062,6 +4062,22 @@ namespace BExIS.Dlm.Services.Data
 
         #region tag
 
+
+        public List<long> GetDatasetIdsWithTag(bool onlyReady = true)
+        {
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                List<long> datasetids = uow.GetReadOnlyRepository<DatasetVersion>().Query().Where(v => 
+                v.Tag != null && v.Tag.Final &&
+                (v.Dataset.Status == DatasetStatus.CheckedIn || v.Dataset.Status == DatasetStatus.CheckedOut) // include checked in (latest) versions of currently checked out datasets
+                            && (v.Status == DatasetVersionStatus.CheckedIn)
+                ).Select(v => v.Dataset.Id).Distinct().ToList();
+                return datasetids;
+            }
+
+        }
+
         /// <summary>
         /// Get latest version with Tag Nr for a dataset
         /// </summary>
@@ -4156,9 +4172,39 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
+        /// <summary>
+        /// Checks if a dataset has a released tag.
+        /// </summary>
+        /// <param name="id">The ID of the dataset.</param>
+        /// <returns>True if the dataset has a released tag, false otherwise.</returns>
+        public bool hasDatasetReleasedTag(long id)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
+                var datasetVersions = datasetVersionRepo.Query().Where(dsv => dsv.Dataset.Id.Equals(id)).OrderBy(dsv => dsv.Timestamp);
+
+                if (datasetVersions.Any())
+                {
+                    foreach (var version in datasetVersions)
+                    {
+                        if (version != null && version.Tag != null && version.Tag.Final)
+                            return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Retrieves a list of all version IDs after the last tag for a given dataset.
+        /// </summary>
+        /// <param name="id">The ID of the dataset.</param>
+        /// <param name="last">The last tag.</param>
+        /// <param name="currentVersionId">The ID of the current version.</param>
+        /// <returns>A list of version IDs.</returns>
         public List<long> GetAllVersionAfterLastTag(long id, Tag last, long currentVersionId)
         {
-
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 List<DatasetVersion> versions = uow.GetReadOnlyRepository<DatasetVersion>().Query().Where(v => v.Dataset.Id == id).ToList();
@@ -4168,13 +4214,17 @@ namespace BExIS.Dlm.Services.Data
                 var versionsToUpdate = versions.Where(v => v.Id <= currentVersionId && v.Id > LastWithTag.FirstOrDefault()).ToList();
 
                 return versionsToUpdate.Select(v => v.Id).ToList();
-
             }
         }
 
+        /// <summary>
+        /// Increases the tag based on the last tag and the specified tag type.
+        /// </summary>
+        /// <param name="last">The last tag used.</param>
+        /// <param name="type">The type of tag to increase.</param>
+        /// <returns>The increased tag.</returns>
         public Tag IncreaseTag(Tag last, TagType type)
         {
-
             Tag tag = new Tag()
             {
                 Nr = 0,
@@ -4195,7 +4245,6 @@ namespace BExIS.Dlm.Services.Data
                 tagNr = increaseTagNr(tagNr, type);
                 tag.Nr = tagNr;
             }
-
 
             return tag;
         }

@@ -1,7 +1,7 @@
 <script lang="ts">
 
 	import { TablePlaceholder, Table, notificationStore, notificationType, ErrorMessage} from "@bexis2/bexis2-core-ui";
-	import { add, get, save } from './services'
+	import { add, get, save, updateSearch } from './services'
 
 	import { tagInfoModelStore } from './stores.js'
 	import TablePublish from "./table/tablePublish.svelte";
@@ -53,6 +53,12 @@
 		const responce = await save(tagInfo);
 		
 		if(responce.status ===	200){
+
+			// trigger to update search index
+	
+				const res = await updateSearch(id);
+				console.log("🚀 ~ saveFn ~ res:", res)
+			
 				notificationStore.showNotification({
 					notificationType: notificationType.success,
 					message: 'Tag is saved.'

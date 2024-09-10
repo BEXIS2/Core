@@ -1604,7 +1604,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 TagInfoHelper _helper = new TagInfoHelper();
                 var versions = datasetmanager.GetDatasetVersions(id);
                 var currentVersion = datasetmanager.GetDatasetVersion(id, version);
-                ViewData["Tag"] = currentVersion.Tag.Nr;
+                ViewData["Tag"] = currentVersion.Tag?.Nr;
 
                 if (versions != null)
                 {

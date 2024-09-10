@@ -20,11 +20,13 @@ using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Routing;
 using System.Xml;
 using Vaiona.Entities.Common;
 using Vaiona.Persistence.Api;
@@ -520,6 +522,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 }
 
                 hookManager.Save(Cache, Log, entity, "details", HookMode.edit, id);
+
+
             }
 
             return temp;

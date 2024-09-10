@@ -15,7 +15,7 @@
 
     double tagNr = 0;
 
-    if (ViewData.ContainsKey("Tag"))
+    if (ViewData.ContainsKey("Tag") && ViewData["Tag"]!=null )
     {
         tagNr = (double)ViewData["Tag"];
     }

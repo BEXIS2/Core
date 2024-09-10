@@ -1,9 +1,11 @@
 ﻿using BExIS.Ddm.Api;
+using BExIS.Dlm.Services.Data;
 using BExIS.Utils.Models;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Vaiona.IoC;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
@@ -35,14 +37,27 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
+            //get Tag setting from module
+            //if the settings is true, the dataset will be indexed only if it has a released tag
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            var use_tags = (bool)moduleSettings.GetValueByKey("use_tags");
+            bool hasReleasedTag = false;
+
             if (id == 0)
             {
                 provider?.Reload();
             }
             else
             {
-                var enumAction = (IndexingAction)Enum.Parse(typeof(IndexingAction), actionType);
-                provider?.UpdateSingleDatasetIndex(id, enumAction);
+                using (var datasetManager = new DatasetManager())
+                {
+                    hasReleasedTag = datasetManager.hasDatasetReleasedTag(id);
+                    if (use_tags == false || (use_tags && hasReleasedTag))// not tags are used or dataset has released tag 
+                    {
+                        var enumAction = (IndexingAction)Enum.Parse(typeof(IndexingAction), actionType);
+                        provider?.UpdateSingleDatasetIndex(id, enumAction);
+                    }
+                }
             }
             return null;
         }

@@ -164,7 +164,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        public void Index()
+        public void Index(bool onlyReleasedTags)
         {
             configureBexisIndexing(true);
             // there is no need for the metadataAccess class anymore. Talked with David and deleted. 30.18.13. Javad/ compare to the previous version to see the deletions
@@ -172,7 +172,15 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             List<string> errors = new List<string>();
             try
             {
-                IList<long> ids = dm.GetDatasetLatestIds();
+                // if the system is using tags, then only datasets that have a tag and its released should be indexeds
+
+                IList<long> ids = new List<long>();
+                if (!onlyReleasedTags) ids = dm.GetDatasetLatestIds(); // index all datasets
+                else // index only with tags
+                { 
+                    ids = dm.GetDatasetIdsWithTag();
+                }
+               
                 IList<long> ids_rev = ids.Reverse().ToList();
 
                 //ToDo only enitities from type dataset should be indexed in this index
@@ -333,10 +341,10 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        public void ReIndex()
+        public void ReIndex(bool onlyReleasedTags)
         {
             reIndex = true;
-            this.Index();
+            this.Index(onlyReleasedTags);
             SearchProvider.Providers.Values.Where(p => p.IsAlive).ToList().ForEach(p => ((SearchProvider)p.Target).Reload());
             IndexReader _Reader = indexWriter.GetReader().Reopen();
 

@@ -11,6 +11,7 @@ using Telerik.Web.Mvc;
 using Vaiona.IoC;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
@@ -223,9 +224,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Search", this.Session.GetTenant());
             ISearchDesigner sd = GetSearchDesigner();
+
+            // load settings
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            var tagUsed = (bool)moduleSettings.GetValueByKey("use_tags");
+
             try
             {
-                sd.Reload();
+                sd.Reload(tagUsed);
             }
             catch (Exception ex)
             {
@@ -305,9 +311,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             bool success = false;
 
+            // load settings
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            var use_tags = (bool)moduleSettings.GetValueByKey("use_tags");
+
             try
             {
-                sd.Reload();
+                sd.Reload(use_tags);
                 success = true;
             }
             catch (Exception e)
