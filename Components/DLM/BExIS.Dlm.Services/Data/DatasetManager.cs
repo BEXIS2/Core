@@ -1764,6 +1764,7 @@ namespace BExIS.Dlm.Services.Data
 
                 //return (qu.ToList());
             }
+
         }
 
         /// <summary>
@@ -4068,12 +4069,8 @@ namespace BExIS.Dlm.Services.Data
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                List<long> datasetids = uow.GetReadOnlyRepository<DatasetVersion>().Query().Where(v => 
-                v.Tag != null && v.Tag.Final &&
-                (v.Dataset.Status == DatasetStatus.CheckedIn || v.Dataset.Status == DatasetStatus.CheckedOut) // include checked in (latest) versions of currently checked out datasets
-                            && (v.Status == DatasetVersionStatus.CheckedIn)
-                ).Select(v => v.Dataset.Id).Distinct().ToList();
-                return datasetids;
+                return DatasetVersionRepo.Get().Where(v => 
+                v.Tag != null && v.Tag.Final && v.Dataset.Status == DatasetStatus.CheckedIn).Select(v => v.Dataset.Id).Distinct().ToList();
             }
 
         }

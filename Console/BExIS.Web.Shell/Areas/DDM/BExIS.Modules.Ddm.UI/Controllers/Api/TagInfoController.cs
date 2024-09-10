@@ -148,7 +148,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers.API
 
                     if (versions != null)
                     {
-                        tags = _helper.GetViews(versions, datasetmanager);
+                        tags = _helper.GetViews(versions, datasetmanager, true);
                     }
 
                     return Request.CreateResponse(HttpStatusCode.OK, tags);

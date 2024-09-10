@@ -189,7 +189,18 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 {
                     try
                     {
-                        writeBexisIndex(id, dm.GetDatasetLatestMetadataVersion(id));
+                        XmlDocument metadata = null;
+
+                        if (onlyReleasedTags)
+                        {
+                            var latestTag = dm.GetLatestTag(id, true);
+                            var version = dm.GetLatestVersionByTagNr(id, latestTag.Nr);
+                            metadata = version.Metadata;
+                        }
+                        else
+                            metadata = dm.GetDatasetLatestMetadataVersion(id);
+
+                        writeBexisIndex(id, metadata);
                         //GC.Collect();
                     }
                     catch (Exception ex)

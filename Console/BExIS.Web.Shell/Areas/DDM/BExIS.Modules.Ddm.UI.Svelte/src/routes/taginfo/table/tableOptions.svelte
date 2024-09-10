@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Fa from 'svelte-fa';
 	import { faSave } from '@fortawesome/free-solid-svg-icons';
-	import {tagInfoModelStore } from '../stores';	
+	import {withMinorStore } from '../stores';	
 	import {get} from 'svelte/store';
 	import type { TagInfoEditModel } from '../types';
 
@@ -9,6 +9,7 @@
 	export let dispatchFn;
 
 	let noTag:boolean = hasNoTag();
+ let withMinor = get(withMinorStore);
 
 	function hasNoTag(){
 
@@ -52,10 +53,12 @@
 	
 
 		{#if noTag}
+		 {#if withMinor}
 			<button
 				class="btn btn-sm variant-filled-primary"
 				on:click|preventDefault={() => eventDispatchFn("MINOR")}
 				>minor</button>
+				{/if}
 				<button
 				class="btn btn-sm variant-filled-primary"
 				on:click|preventDefault={() => eventDispatchFn("MAJOR")}

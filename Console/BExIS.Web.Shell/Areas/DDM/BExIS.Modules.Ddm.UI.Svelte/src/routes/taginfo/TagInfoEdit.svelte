@@ -3,7 +3,7 @@
 	import { TablePlaceholder, Table, notificationStore, notificationType, ErrorMessage} from "@bexis2/bexis2-core-ui";
 	import { add, get, save, updateSearch } from './services'
 
-	import { tagInfoModelStore } from './stores.js'
+	import { tagInfoModelStore, withMinorStore } from './stores.js'
 	import TablePublish from "./table/tablePublish.svelte";
 	import TableShow from "./table/tableShow.svelte";
 	import TableNr from "./table/tableNr.svelte";
@@ -16,13 +16,16 @@
 
 	let container;
 	let id: number = 0;
+	let withMinor: boolean = false;
 
 	async function reload(){
 		container = document.getElementById('taginfo');
 		id = Number(container?.getAttribute('dataset'));
+		withMinor = Boolean(container?.getAttribute('withMinor'));
 
 		const tagInfos = await get(id);
 		tagInfoModelStore.set(tagInfos);
+		withMinorStore.set(withMinor);
 
 		console.log("🚀 ~ reload ~ tagInfoModelStore:", $tagInfoModelStore)
 	}
