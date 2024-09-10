@@ -193,12 +193,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         // Public access has higher priority as major/minor versions
                         versionId = getVersionId(id, version, versionName, tag).Result;
 
-
                         // Set if the latest version is selected. Compare current version id against unfiltered max id
                         latestVersionId = datasetVersions.OrderByDescending(d => d.Timestamp).Select(d => d.Id).FirstOrDefault();
                         latestVersionNr = dm.GetDatasetVersionNr(latestVersionId);
                         latestVersion = (versionId == latestVersionId);
-
                         // Get version number based on version id
                         if (versionId != 0)
                         {

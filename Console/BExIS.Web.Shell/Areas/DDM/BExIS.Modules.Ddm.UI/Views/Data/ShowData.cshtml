@@ -416,7 +416,7 @@
         //load active hook
         console.log("document ready start prefetch")
         initfetch('@activeHook.Name', '@activeHook.Start',@Model.Id,@Model.Version)
-        console.log("document ready end prefetch")
+        console.log("document ready end prefetch",@Model.Id,@Model.Version)
 
         loadTags();
 
@@ -455,7 +455,7 @@
 
         if (loaded == undefined) {
 
-            console.log("load content");
+            console.log("load content", url);
             // set preloader
             $("#" + hook).preloader(20, "Loading...");
 

@@ -41,7 +41,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult LoadForm(long id, int version)
         {
-            return RedirectToAction("LoadMetadata", "Form", new { entityId = id, locked = false, created = false, fromEditMode = true, asPartial = false });
+            return RedirectToAction("LoadMetadata", "Form", new { entityId = id, version, locked = false, created = false, fromEditMode = true, asPartial = false });
         }
     }
 }
