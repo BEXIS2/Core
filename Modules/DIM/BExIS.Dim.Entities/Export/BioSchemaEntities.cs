@@ -19,7 +19,7 @@ namespace BExIS.Dim.Entities.Export
         public string Type { get; set; }
 
         [JsonProperty("@id")]
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         [JsonProperty("dct:conformsTo")]
         public string ConformsTo { get; set; }
