@@ -1,4 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dim.Helpers.BIOSCHEMA;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.Party;
@@ -330,7 +331,16 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             hook.Status = HookStatus.Disabled;
                     }
 
+
+                    // load BioSchema Description if exist
+                    string bioschemadescription = getBioSchema(id, version);
+                    if (!string.IsNullOrEmpty(bioschemadescription))
+                        ViewData["BioSchema"] = bioschemadescription;
+
+
                     if (asPartial) return PartialView(model);
+
+                  
 
                     return View(model);
                 }
@@ -1611,6 +1621,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
 
             return PartialView("_tagsView", tags); // Replace "_PartialViewName" with your actual name
+
+        }
+
+        private string getBioSchema(long id, int version)
+        {
+            if (id <= 0) throw new ArgumentException("id is not valid");
+            ViewData["Id"] = id;
+
+            var helper = new BioSchemaHelper();
+            string json = helper.GetBioSchemaForDataset(id, version, HttpContext.Request.Url.ToString());
+
+            return json; // Replace "_PartialViewName" with your actual name
 
         }
 
