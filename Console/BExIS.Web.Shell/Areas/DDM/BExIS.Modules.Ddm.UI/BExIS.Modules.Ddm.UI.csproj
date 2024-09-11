@@ -237,6 +237,7 @@
     <Content Include="Web.config" />
     <Content Include="Views\Data\_tagsView.cshtml" />
     <Content Include="Views\TagInfo\Index.cshtml" />
+    <Content Include="Views\Data\_bioSchemaView.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -349,6 +350,10 @@
     <ProjectReference Include="..\..\..\..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
       <Project>{FBE3101A-791A-4EAB-9B8F-F6E071F8DBDC}</Project>
       <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Modules\DIM\BExIS.Dim.Helper\BExIS.Dim.Helpers.csproj">
+      <Project>{81EF18E8-DCED-4980-96F9-E99124075B82}</Project>
+      <Name>BExIS.Dim.Helpers</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -41,11 +41,13 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataRepository.cs" />
+    <Compile Include="Export\BioSchemaEntities.cs" />
     <Compile Include="Mappings\LinkElement.cs" />
     <Compile Include="Mappings\LinkElementTypes.cs" />
     <Compile Include="Mappings\Mapping.cs" />

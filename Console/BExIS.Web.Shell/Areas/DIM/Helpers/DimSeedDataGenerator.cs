@@ -9,6 +9,7 @@ using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Meanings;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dim.UI.Helper;
+using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
@@ -164,6 +165,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 createFunctionConcept();
 
+                createBioSchemaMappingConcept();
+
                 #endregion MAPPING
 
                 #region meanings for GBIFDWC
@@ -187,6 +190,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
             //ImportPartyTypes();
         }
+
 
         private void createMeaningsForGBIFDWC()
         {
@@ -356,37 +360,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
             }
         }
 
-        private static void ImportPartyTypes()
-        {
-            //PartyTypeManager partyTypeManager = new PartyTypeManager();
-            //var filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("BAM"), "partyTypes.xml");
-            //XDocument xDoc = XDocument.Load(filePath);
-            //XmlDocument xmlDoc = new XmlDocument();
-            //xmlDoc.Load(xDoc.CreateReader());
-            //var partyTypesNodeList = xmlDoc.SelectNodes("//PartyTypes");
-            //if (partyTypesNodeList.Count > 0)
-            //    foreach (XmlNode partyTypeNode in partyTypesNodeList[0].ChildNodes)
-            //    {
-            //        var title = partyTypeNode.Attributes["Name"].Value;
-            //        //If there is not such a party type
-            //        if (partyTypeManager.Repo.Get(item => item.Title == title).Count == 0)
-            //        {
-            //            //
-            //            var partyType = partyTypeManager.Create(title, "Imported from partyTypes.xml", null);
-            //            partyTypeManager.AddStatusType(partyType, "Create", "", 0);
-            //            foreach (XmlNode customAttrNode in partyTypeNode.ChildNodes)
-            //            {
-            //                var customAttrType = customAttrNode.Attributes["type"] == null ? "String" : customAttrNode.Attributes["type"].Value;
-            //                var description = customAttrNode.Attributes["description"] == null ? "" : customAttrNode.Attributes["description"].Value;
-            //                var validValues = customAttrNode.Attributes["validValues"] == null ? "" : customAttrNode.Attributes["validValues"].Value;
-            //                var isValueOptional = customAttrNode.Attributes["isValueOptional"] == null ? true : Convert.ToBoolean(customAttrNode.Attributes["isValueOptional"].Value);
-            //                partyTypeManager.CreatePartyCustomAttribute(partyType, customAttrType, customAttrNode.Attributes["Name"].Value, description, validValues, isValueOptional);
-            //            }
-            //        }
-            //        //edit add other custom attr
-
-            //    }
-        }
+  
 
         private void createDataCiteMappingConcept()
         {
@@ -990,7 +964,168 @@ namespace BExIS.Modules.Dim.UI.Helpers
             }
         }
 
-        private LinkElement createLinkELementIfNotExist(
+
+        private void createBioSchemaMappingConcept()
+        {
+            using (var conceptManager = new ConceptManager())
+            {
+                var concept = conceptManager.MappingConceptRepository.Query(c => c.Name.Equals("BIOSCHEMA-Dataset")).FirstOrDefault();
+
+                var keys = new List<MappingKey>();
+
+                if (concept == null) //if not create
+                    concept = conceptManager.CreateMappingConcept("BIOSCHEMA-Dataset", "This concept is used to provide attributes for a dataset in the system with information based on bioschema. This makes it easier to find entities.", "https://bioschemas.org/","");
+                else // if exist load available keys
+                {
+                    keys = conceptManager.MappingKeyRepo.Query(k => k.Concept.Id.Equals(concept.Id)).ToList();
+                }
+
+                // name
+                if (!keys.Any(k => k.Name.Equals("name")))
+                    conceptManager.CreateMappingKey(
+                        "name",
+                        "A descriptive name of the dataset.",
+                        "https://schema.org/name",
+                        false,
+                        false,
+                        "dataset/name",
+                        concept);
+
+                // description
+                if (!keys.Any(k => k.Name.Equals("description")))
+                    conceptManager.CreateMappingKey(
+                        "description",
+                        "A description of the item.",
+                        "https://schema.org/description",
+                        false,
+                        false,
+                        "dataset/description",
+                        concept);
+
+                // identifier
+                if (!keys.Any(k => k.Name.Equals("identifier")))
+                    conceptManager.CreateMappingKey(
+                        "identifier",
+                        "The identifier property represents any kind of identifier for any kind of Thing, such as ISBNs, GTIN codes, UUIDs etc. Schema.org provides dedicated properties for representing many of these, either as textual strings or as URL (URI) links. See background notes for more details.",
+                        "https://schema.org/identifier",
+                        false,
+                        false,
+                        "dataset/identifier",
+                        concept);
+
+                // license
+                if (!keys.Any(k => k.Name.Equals("license")))
+                    conceptManager.CreateMappingKey(
+                        "license",
+                        "A license under which the dataset is distributed.",
+                        "https://schema.org/license",
+                        false,
+                        false,
+                        "dataset/license",
+                        concept);
+
+                // license
+                if (!keys.Any(k => k.Name.Equals("keywords")))
+                    conceptManager.CreateMappingKey(
+                        "keywords",
+                        "Keywords should be drawn from a controlled vocabulary, e.g. EDAM, and supplied as a DefinedTerm list.",
+                        "https://schema.org/license",
+                        false,
+                        false,
+                        "dataset/keywords",
+                        concept);
+
+                // url
+                if (!keys.Any(k => k.Name.Equals("url")))
+                    conceptManager.CreateMappingKey(
+                        "url",
+                        "The location of a page describing the dataset.",
+                        "https://schema.org/url",
+                        false,
+                        false,
+                        "dataset/url",
+                        concept);
+
+                // citation
+                if (!keys.Any(k => k.Name.Equals("citation")))
+                    conceptManager.CreateMappingKey(
+                        "citation",
+                        "A citation for a publication that describes the dataset.",
+                        "https://schema.org/citation",
+                        true,
+                        false,
+                        "dataset/citation",
+                        concept);
+
+                // creator
+                MappingKey creator = null;
+                if (!keys.Any(k => k.Name.Equals("creator")))
+
+                    creator = conceptManager.CreateMappingKey(
+                        "creator",
+                        "The name of the dataset creator (person or organization).",
+                        "https://schema.org/creator",
+                        false,
+                        false,
+                        "dataset/creator",
+                        concept);
+
+                    // creator/givenName
+                    if (!keys.Any(k => k.Name.Equals("givenName")))
+                        conceptManager.CreateMappingKey(
+                            "givenName",
+                            "Given name. In the U.S., the first name of a Person.",
+                            "https://schema.org/givenName",
+                            false,
+                            false,
+                            "dataset/creator/givenName",
+                            concept,
+                            creator);
+
+                // creator/familyName
+                if (!keys.Any(k => k.Name.Equals("familyName")))
+                        conceptManager.CreateMappingKey(
+                            "familyName",
+                            "Family name. In the U.S., the last name of a Person.",
+                            "https://schema.org/familyName",
+                            false,
+                            false,
+                            "dataset/creator/familyName",
+                            concept,
+                            creator);
+                
+
+                // creator/email
+                if (!keys.Any(k => k.Name.Equals("email")))
+                    conceptManager.CreateMappingKey(
+                    "email",
+                    "Email address.",
+                    "https://schema.org/email",
+                    false,
+                    false,
+                    "dataset/creator/email",
+                    concept,
+                    creator);
+
+
+                // creator/affiliation
+                if (!keys.Any(k => k.Name.Equals("affiliation")))
+                    conceptManager.CreateMappingKey(
+                    "affiliation",
+                    "An organization that this person is affiliated with. For example, a school/university, a club, or a team.",
+                    "https://schema.org/affiliation",
+                    true,
+                    false,
+                    "dataset/creator/affiliation",
+                    concept,
+                    creator);
+            }
+
+
+
+    }
+
+    private LinkElement createLinkELementIfNotExist(
             MappingManager mappingManager,
             long id,
             string name,
