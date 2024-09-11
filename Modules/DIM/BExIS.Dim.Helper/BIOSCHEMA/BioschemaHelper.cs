@@ -45,7 +45,7 @@ namespace BExIS.Dim.Helpers.BIOSCHEMA
                     json = JsonConvert.SerializeObject(jObject, Newtonsoft.Json.Formatting.Indented);
 
                     BioSchema bioSchema = JsonConvert.DeserializeObject<BioSchema>(json);
-                    bioSchema.Dataset.Id = id;
+                    bioSchema.Dataset.Id = url + "/ddm/data/show?id=" + id;
                     bioSchema.Dataset.Identifier = "" + id;
                     bioSchema.Dataset.Url = url + "/ddm/data/show?id=" + id + "&version=" + versionNr;
 

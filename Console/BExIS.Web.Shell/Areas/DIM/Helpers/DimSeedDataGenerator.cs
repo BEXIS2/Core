@@ -1066,7 +1066,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         "The name of the dataset creator (person or organization).",
                         "https://schema.org/creator",
                         false,
-                        false,
+                        true,
                         "dataset/creator",
                         concept);
 
