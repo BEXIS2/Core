@@ -80,7 +80,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
             foreach (var nr in tags)
             {
-                var tagVersions = versions.OrderByDescending(o=>o.Id).Where(v => v.Tag !=null && v.Tag.Nr.Equals(nr)).ToList();
+                var tagVersions = versions.OrderByDescending(o=>o.Id).Where(v => v.Tag !=null && v.Show && v.Tag.Nr.Equals(nr)).ToList();
                 if (released)
                     tagVersions = tagVersions.Where(v => v.Show && v.Tag.Final).ToList();
 

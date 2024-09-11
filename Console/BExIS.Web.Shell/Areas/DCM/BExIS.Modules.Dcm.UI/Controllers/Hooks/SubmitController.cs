@@ -55,7 +55,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [JsonNetFilter]
         public JsonResult Load(long id, int version = 0)
         {
-            if (id <= 0) throw new ArgumentException(nameof(id), "id should be greater then 0");
+            if (id <= 0) throw new ArgumentException(nameof(id), "id should be greater than 0");
 
             SubmitHelper helper = new SubmitHelper();
             SubmitModel model = helper.GetModel(id);
@@ -109,10 +109,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             }
 
-            if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
+            // load settings
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            bool use_tags = (bool)moduleSettings.GetValueByKey("use_tags");
+
+            // Reindexes a single item in the search index if the "DDM" module is accessible and the "use_tags" setting is false.
+            if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle") && !use_tags)
             {
                 var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", id } });
             }
+
 
             return Json(responce, JsonRequestBehavior.AllowGet);
         }
