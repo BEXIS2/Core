@@ -1,14 +1,17 @@
-# BEXIS2 3.3.2 Release Notes
-> This is a hotfix release to fix 3 major bugs.
+# BEXIS2 3.3.3 Release Notes
+> During the further development we noticed 3 more small bugs, which we will fix quickly with this update. 
+> And adding an accessibility document link to the footer
 
 ### Workspace changes:
-- Workspace changes: [3.3.1..3.3.2](https://github.com/BEXIS2/Workspace/compare/3.3.0..3.3.1)
+- Workspace changes: [3.3.2..3.3.3](https://github.com/BEXIS2/Workspace/compare/3.3.2..3.3.3)
 
 ### Database Update(s):
 - Update script version 3.3.1 to 3.3.2:
-- [Update_Script_3.3.1_3.3.2.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/3.3.1_3.3.2.sql)
+- [Update_Script_3.3.2_3.3.3.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/3.3.2_3.3.3.sql)
 
 ### Bugfixes
-- [HOTFIX] DataIn Api fail with primary key check [#1805](https://github.com/BEXIS2/Core/issues/1805)
-- [HOTFIX] Download Metadata Html is not working [#1808](https://github.com/BEXIS2/Core/issues/1808)
-- [HOTFIX] Send Request fail [#1822](https://github.com/BEXIS2/Core/issues/1822)
+- [HOTFIX] Table search is not working [#1833](https://github.com/BEXIS2/Core/issues/1833)
+- [HOTFIX] Variable Template suggestion is not working [#1829](https://github.com/BEXIS2/Core/issues/1829)
+- [HOTFIX] GFBIO Observations download returns collections package [#1833](https://github.com/BEXIS2/Core/issues/1833)
+- Adding an accessibility document link to the footer [#1837](https://github.com/BEXIS2/Core/issues/1837)
+
