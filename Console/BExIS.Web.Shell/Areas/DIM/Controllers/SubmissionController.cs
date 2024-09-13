@@ -568,19 +568,26 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     switch (_broker.Name.ToLower())
                     {
-                        case "pangaea":
-                            {
-                                PangaeaDataRepoConverter dataRepoConverter = new PangaeaDataRepoConverter(_broker);
+                        case "gfbio":
+                            { 
+                                switch (_broker.Type.ToLower())
+                                {
+                                    case "observations":
+                                        {
+                                            PangaeaDataRepoConverter dataRepoConverter = new PangaeaDataRepoConverter(_broker);
 
-                                tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "text/txt");
-                                return tmp;
-                            }
-                        case "collections":
-                            {
-                                GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(_broker);
-                                tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "application/zip");
-                                return tmp;
-                            }
+                                            tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "text/txt");
+                                            return tmp;
+                                        }
+                                    default: // also collections
+                                        {
+                                            //default
+                                            GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(_broker);
+                                            tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "application/zip");
+                                            return tmp;
+                                        }
+                                }
+                            }   
                         case "pensoft":
                             {
                                 PensoftDataRepoConverter dataRepoConverter = new PensoftDataRepoConverter(_broker);
