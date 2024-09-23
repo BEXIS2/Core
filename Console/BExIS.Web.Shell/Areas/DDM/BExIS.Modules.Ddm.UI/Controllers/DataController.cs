@@ -156,6 +156,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
                 ViewData["use_tags"] = moduleSettings.GetValueByKey("use_tags");
                 ViewData["use_minor"] = moduleSettings.GetValueByKey("use_minor");
+                ViewData["check_public_metadata"] = moduleSettings.GetValueByKey("check_public_metadata");
 
                 Dataset researcobject = dm.GetDataset(id);
 
@@ -301,6 +302,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     ViewData["datasetSettings"] = getSettingsDataset();
                     ViewData["Message"] = "";
                     ViewData["State"] = "";
+                    ViewData["HasEditRight"] = model.HasEditRight;
 
                     // set message and unset all tabs except of metadata (+ data structure & links)
                     if (dm.IsDatasetDeleted(id))

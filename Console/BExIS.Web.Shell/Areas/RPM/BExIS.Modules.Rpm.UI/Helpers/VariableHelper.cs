@@ -348,7 +348,21 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             using (var missingValueManager = new MissingValueManager())
             {
                 List<long> ids = items.Select(m => m.Id).ToList();
-                missingValueManager.Repo.Query(m => ids.Contains(m.Id));
+                list = missingValueManager.Repo.Query(m => ids.Contains(m.Id)).ToList();
+
+                foreach (var mv in items)
+                {
+                    if(mv.Id==0)
+                    {                        
+                        list.Add(new MissingValue()
+                        {
+                            DisplayName = mv.DisplayName,
+                            Description = mv.Description,
+                        });
+                    }
+     
+                }
+
                 return list;
             }
         }

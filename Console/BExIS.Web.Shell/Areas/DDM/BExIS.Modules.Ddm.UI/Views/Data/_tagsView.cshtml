@@ -3,7 +3,7 @@
 @{
     ViewBag.Title = "Tags View";
     string url = "/ddm/data/showdata?id=";
-
+    Boolean hasEditRigths = false;
     if (ViewData.ContainsKey("Id"))
     {
         url += ViewData["Id"];
@@ -15,51 +15,96 @@
 
     double tagNr = 0;
 
-    if (ViewData.ContainsKey("Tag") && ViewData["Tag"]!=null )
+    if (ViewData.ContainsKey("Tag") && ViewData["Tag"] != null)
     {
         tagNr = (double)ViewData["Tag"];
     }
+
+    if (ViewData.ContainsKey("HasEditRight"))
+    {
+        hasEditRigths = (Boolean)ViewData["HasEditRight"];
+    }
+
 }
 
-@if (Model != null)
+@if (Model != null && Model.Any())
 {
+    <div id="tagsinfo-container">
+        <div id="tagsview" style="display: none;">
+            <div>
+                <table>
+                    <tbody>
+                        @foreach (var tag in Model)
+                        {
+                            <tr id="@tag.Version">
+                                <td><a href="@url&tag=@tag.Version"> @tag.Version</a></td>
+                                <td>
+                                    @foreach (var note in tag.ReleaseNotes)
+                                    {
+                                        <div>@note</div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
 
-    <div id="tagsview">
-        <table>
-            @*<thead>
-            <th>Tag</th>
-            <th>Release Notes</th>
-            </thead>*@
-            <tbody>
-                @foreach (var tag in Model)
-                {
-                    <tr id="@tag.Version">
-                        <td><a href="@url&tag=@tag.Version"> @tag.Version</a></td>
-                        <td>
-                            @foreach (var note in tag.ReleaseNotes)
-                            {
-                                <div>@note</div>
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+        </div>
+
+        <div id="tagview">
+            <div>
+                <table>
+                    <tbody>
+                        @{
+                            var singletag = Model.First();
+
+                            <tr id="@singletag.Version" class="selected">
+                                <td><a href="@url&tag=@singletag.Version"> @singletag.Version</a></td>
+                                <td>
+                                    @foreach (var note in singletag.ReleaseNotes)
+                                    {
+                                        <div>@note</div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <div>
+            <button id="showTags" class="bx bx-function fa-arrow-down small" onclick="onClickFn()"></button>
+            @if (hasEditRigths)
+            {
+                <button id="editTags" class="bx bx-function fa-tag small"></button>
+            }
+        </div>
     </div>
-        }
+}
 
-        <style type="text/css">
-            #tagsview {
-                overflow-y: scroll;
-                height: 90px;
-            }
+<style type="text/css">
+    #tagsinfo-container {
+        display: flex;
+        flex: 1 1 auto;
+    }
 
-            .selected {
-                background-color: #f0f0f0;
-            }
-        </style>
+    #tagsview {
+        padding: 1px;
+        display: flex;
+        flex: 1 1 auto;
+        max-height: 90px;
+        overflow-y: auto;
+    }
 
-        <script>
+    .selected {
+        background-color: #f0f0f0;
+    }
+</style>
+
+<script>
     $(document).ready(function () {
         const trElement = document.getElementById('@tagNr');
         console.log(trElement)
@@ -73,4 +118,23 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     });
- </script>
+
+    function onClickFn(){
+
+        var tagview = document.getElementById("tagview");
+        var tagsview = document.getElementById("tagsview");
+
+        if (tagview.style.display === "none") {
+            tagview.style.display = "block";
+            tagsview.style.display = "none";
+        } else {
+            tagview.style.display = "none";
+            tagsview.style.display = "block";
+        }
+
+        const element = document.getElementById("showTags");
+        element.classList.toggle("fa-arrow-up");
+        element.classList.toggle("fa-arrow-down");
+
+    }
+</script>

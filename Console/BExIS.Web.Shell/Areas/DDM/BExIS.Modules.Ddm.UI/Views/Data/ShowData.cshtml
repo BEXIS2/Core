@@ -30,12 +30,12 @@
     }
 
     var show_tabs = new Dictionary<string, string>();
-    string check_public_metadata = "false";
+    bool check_public_metadata = false;
 
     if (ViewData["datasetSettings"] != null)
     {
         show_tabs = (Dictionary<string, string>)ViewData["datasetSettings"];
-        check_public_metadata = show_tabs["check_public_metadata"];
+        //check_public_metadata = show_tabs["check_public_metadata"];
     }
     else
     {
@@ -53,6 +53,11 @@
     if (ViewData["gridTotal"] != null)
     {
         total = Convert.ToInt32(ViewData["gridTotal"]); //  (int)Session["gridTotal"];
+    }
+
+    if (ViewData["check_public_metadata"] != null)
+    {
+        check_public_metadata = (bool)ViewData["check_public_metadata"]; //  (int)Session["gridTotal"];
     }
 
     Hook metadataHook = null;
@@ -165,7 +170,7 @@
 
 <link href="@Url.Content("~/Areas/DDM/Content/ddm.css")" rel="stylesheet" type="text/css" />
 
-@if (Model != null && ((Model.IsPublic == true || User.Identity.Name != "") || check_public_metadata == "false"))
+@if (Model != null && ((Model.IsPublic == true || User.Identity.Name != "") || check_public_metadata))
 {
   
     @Html.Partial("_bioSchemaView",bioSchemaInfos)

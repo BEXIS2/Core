@@ -15,7 +15,7 @@
       "title": "Check public metadata for not-logged in users",
       "value": false,
       "type": "Boolean",
-      "description": "Set true to enable to only show metadata for not-logged in users, if the dataset is public."
+      "description": "Set true to enable to show metadata for not-logged in users, if the dataset is not public."
     },
     {
       "key": "reduce_versions_select_logged_in",
