@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 
+// This comment is needed due to github issues.
+
 namespace BExIS.Security.Services.Authorization
 {
     public class EntityPermissionManager : IDisposable
