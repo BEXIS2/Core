@@ -33,6 +33,11 @@ namespace BExIS.Utils.Models
         /// <remarks> good for property name matching when trying to dynamically show the rows in a grid </remarks>
         /// <seealso cref=""/>
         public string Name { get; set; }
+
+        /// <summary>
+        /// PlaceHolder as string
+        /// </summary>
+        public string Placeholder { get; set; }
     }
 
     /// <summary>

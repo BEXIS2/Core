@@ -167,6 +167,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 createBioSchemaMappingConcept();
 
+                createSearchMappingConcept();
+
                 #endregion MAPPING
 
                 #region meanings for GBIFDWC
@@ -1125,7 +1127,69 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
     }
 
-    private LinkElement createLinkELementIfNotExist(
+
+        private void createSearchMappingConcept()
+        {
+            using (var conceptManager = new ConceptManager())
+            {
+                var concept = conceptManager.MappingConceptRepository.Query(c => c.Name.Equals("Search")).FirstOrDefault();
+
+                var keys = new List<MappingKey>();
+
+                if (concept == null) //if not create
+                    concept = conceptManager.CreateMappingConcept("Search", "", "", "");
+                else // if exist load available keys
+                {
+                    keys = conceptManager.MappingKeyRepo.Query(k => k.Concept.Id.Equals(concept.Id)).ToList();
+                }
+
+                //title
+                if (!keys.Any(k => k.Name.Equals("title")))
+                    conceptManager.CreateMappingKey(
+                        "title",
+                        "Placeholder for title",
+                        "",
+                        false,
+                        false,
+                        "dataset/title",
+                        concept);
+
+                //description
+                if (!keys.Any(k => k.Name.Equals("description")))
+                    conceptManager.CreateMappingKey(
+                        "description",
+                        "Placeholder for description",
+                        "",
+                        false,
+                        false,
+                        "dataset/description",
+                        concept);
+
+                //author
+                if (!keys.Any(k => k.Name.Equals("author")))
+                    conceptManager.CreateMappingKey(
+                        "author",
+                        "Placeholder for author",
+                        "",
+                        false,
+                        false,
+                        "dataset/author",
+                        concept);
+
+                //license
+                if (!keys.Any(k => k.Name.Equals("license")))
+                    conceptManager.CreateMappingKey(
+                        "license",
+                        "Placeholder for license",
+                        "",
+                        false,
+                        false,
+                        "dataset/license",
+                        concept);
+            }
+        }
+
+        private LinkElement createLinkELementIfNotExist(
             MappingManager mappingManager,
             long id,
             string name,
