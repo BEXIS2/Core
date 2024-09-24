@@ -88,9 +88,9 @@
 
 	const next: ModalSettings = {
 		type: 'alert',
-		title: 'The import of your data has been started.',
-		body: 'The editing of your dataset will be disabled until completion.  You will be informed via email once it is completed. Please check the result and your provided metadata.',
-		buttonTextCancel: 'ok'
+		title: 'Import started',
+		body: 'Editing will be disabled until completion. You will be informed via email once it is completed. <br>Please check the result and your provided metadata.',
+		buttonTextCancel: 'Ok'
 		// TRUE if confirm pressed, FALSE if cancel pressed
 	};
 
