@@ -338,10 +338,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
                     // list missing values
                     List<MissingValue> missingValues = new List<MissingValue>();
-                    if (model.MissingValues.Any())
-                    {
-                        missingValues = helper.ConvertTo(model.MissingValues);
-                    }
+                    if(variable.MissingValues.Any()) missingValues = variableHelper.ConvertTo(variable.MissingValues);
+                    else missingValues = variableHelper.ConvertTo(model.MissingValues);
 
                     long varTempId = variable.Template != null ? variable.Template.Id : 0;
 
@@ -682,6 +680,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         var.Constraints = helper.ConvertTo(t.VariableConstraints);
                         if (string.IsNullOrEmpty(var.Description)) var.Description = t.Description;
                     }
+
+                    // add missing values
+                    model.MissingValues.ToList().ForEach(mv => var.MissingValues.Add(new MissingValueItem(0, mv.DisplayName, mv.Description)));
 
                     model.Variables.Add(var);
                 }

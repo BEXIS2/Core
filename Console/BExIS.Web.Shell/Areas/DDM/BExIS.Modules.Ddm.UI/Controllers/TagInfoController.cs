@@ -17,6 +17,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             ViewData["start"] = SvelteHelper.GetStart(module);
             ViewData["id"] = id;
 
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            ViewData["use_minor"] = moduleSettings.GetValueByKey("use_minor");
+
             return View();
         }
 
