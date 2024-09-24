@@ -67,6 +67,9 @@ namespace BExIS.Modules.Ddm.UI.Models
         [Required(ErrorMessage = "Please select a Selection Type")]
         public string aggregationType { get; set; }
 
+        [Display(Name = "Placeholder")]
+        public string placeholder { get; set; }
+
         /*[Display(Name = "Date Format")]
         public string dateFormat = "bgc:format";*/
 
@@ -77,6 +80,7 @@ namespace BExIS.Modules.Ddm.UI.Models
             this.norm = true;
             this.boost = 5;
             this.metadataNames = new List<string>();
+            this.placeholder = "";
         }
 
         public static SearchAttribute GetSearchAttribute(SearchAttributeViewModel searchAttributeViewModel)
@@ -108,6 +112,7 @@ namespace BExIS.Modules.Ddm.UI.Models
             sa.direction = SearchAttribute.GetDirection(searchAttributeViewModel.direction);
             sa.uiComponent = SearchAttribute.GetUIComponent(searchAttributeViewModel.uiComponent);
             sa.aggregationType = SearchAttribute.GetAggregationType(searchAttributeViewModel.aggregationType);
+            sa.placeholder = searchAttributeViewModel.placeholder;
             //sa.dateFormat = searchAttributeViewModel.dateFormat;
 
             return sa;
@@ -142,6 +147,7 @@ namespace BExIS.Modules.Ddm.UI.Models
             sa.uiComponent = SearchAttribute.GetUIComponentAsString(searchAttribute.uiComponent);
             sa.aggregationType = SearchAttribute.GetAggregationTypeAsString(searchAttribute.aggregationType);
             //sa.dateFormat = searchAttribute.dateFormat;
+            sa.placeholder = searchAttribute.placeholder;
 
             return sa;
         }

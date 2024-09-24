@@ -131,6 +131,7 @@
     <Compile Include="Controllers\PublicSearchController.cs" />
     <Compile Include="Controllers\RequestsManageController.cs" />
     <Compile Include="Controllers\RequestsSendController.cs" />
+    <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\SearchIndexController.cs" />
     <Compile Include="Controllers\TagInfoController.cs" />
     <Compile Include="Controllers\TestController.cs" />
@@ -238,6 +239,7 @@
     <Content Include="Views\Data\_tagsView.cshtml" />
     <Content Include="Views\TagInfo\Index.cshtml" />
     <Content Include="Views\Data\_bioSchemaView.cshtml" />
+    <Content Include="Views\Search\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
