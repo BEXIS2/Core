@@ -75,7 +75,7 @@
 	const confirm: ModalSettings = {
 		type: 'confirm',
 		title: 'Submit',
-		body: 'Are you sure you wish to the data?',
+		body: 'Are you sure you wish to submit the data?',
 		// TRUE if confirm pressed, FALSE if cancel pressed
 		response: (r: boolean) => {
 			if (r === true) {
@@ -89,7 +89,7 @@
 	const next: ModalSettings = {
 		type: 'alert',
 		title: 'The import of your data has been started.',
-		body: 'The editing of your dataset will be disabled until completion.  You will be informed via email once completed. Please check the result and your provided metadata.',
+		body: 'The editing of your dataset will be disabled until completion.  You will be informed via email once it is completed. Please check the result and your provided metadata.',
 		buttonTextCancel: 'ok'
 		// TRUE if confirm pressed, FALSE if cancel pressed
 	};
@@ -112,16 +112,16 @@
 		}
 	}
 
-	// return a boolean value for 2 diffrent usecases for submit
+	// return a boolean value for 2 different cases for submit
 	//1. upload files only
-	//2. updload data with datastructure
+	//2. updload data with data structure
 	function activateSubmit() {
-		//check usecase 1
+		//check use case 1
 		if (model.hasStructrue == false && model.files.length > 0) {
 			return true;
 		}
 
-		//check usecase 2
+		//check use case 2
 		if (
 			model.hasStructrue == true &&
 			model.files.length > 0 &&
