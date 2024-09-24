@@ -309,9 +309,8 @@ namespace BExIS.IO.Transform.Input
                 // var template matches by name
                 var byNames = new List<VariableTemplate>();
 
-                if (string.IsNullOrEmpty(input)) // if a varaible name exist as input
+                if (!string.IsNullOrEmpty(input)) // if a varaible name exist as input
                 {
-
                     // name
                     foreach (var template in allTemplates)
                     {
