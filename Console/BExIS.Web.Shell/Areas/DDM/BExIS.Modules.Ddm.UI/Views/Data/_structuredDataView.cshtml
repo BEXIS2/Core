@@ -68,14 +68,17 @@
         if (@total < 1048576) // hide Excel download for bigger datasets, which exceed the max number of rows in excel
         {
             <span class="dropdown">
-                <button class="bx-button function" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <button class="bx-button function" type="button" onclick="downloadExcel(@Model.DatasetId)">
+                    Download Excel
+                </button>
+                @*<button class="bx-button function" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     Download Excel
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
                     <li><a id="downloadExcelTemplateButton" onclick="downloadExcelTemplate(@Model.DatasetId)">Template (.xlsm)</a></li>
                     <li><a id="downloadExcelButton" onclick="downloadExcel(@Model.DatasetId)">Excel (.xlsx)</a></li>
-                </ul>
+                </ul>*@
             </span>
         }
 
