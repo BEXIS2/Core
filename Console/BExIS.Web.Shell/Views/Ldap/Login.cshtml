@@ -17,7 +17,7 @@
 <div class="row">
     <div class="col-md-8">
         <section id="loginForm">
-            @using (Html.BeginForm("Login", "Ldap", new { Name = ViewBag.Name, ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            @using (Html.BeginForm("Login", "Ldap", new { Name = ViewBag.Name, ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { autocomplete = "off", @class = "form-horizontal", role = "form" }))
             {
             @Html.AntiForgeryToken()
             @Html.HiddenFor(m => m.Name)
