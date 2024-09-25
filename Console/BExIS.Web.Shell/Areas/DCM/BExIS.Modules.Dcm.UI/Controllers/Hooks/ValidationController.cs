@@ -137,6 +137,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             // optionals
                             var optionals = string.Join(",", sds.Variables.Where(v => v.IsValueOptional).Select(v => v.Id));
+                            var varVersions = string.Join(",", sds.Variables.Select(v => v.VersionNo));
+                        
 
                             // check against primary key in db
                             // this check happens outside of the files,
@@ -178,7 +180,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                 cache.Files.Count.ToString(),
                                                 varIdsAsString,
                                                 sds.VersionNo.ToString(),
-                                                optionals
+                                                optionals,
+                                                varVersions
                                                 );
 
                                             // if a validation is already run and the file has not changed, skip validation
