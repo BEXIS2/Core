@@ -985,7 +985,7 @@ namespace BExIS.IO.Transform.Input
                     tempRow = new List<string>();
                     tempRow = TextMarkerHandling(line, seperator, AsciiFileReaderInfo.GetTextMarker(fileReaderInfo.TextMarker));
 
-                    //if a offset is marked in the filereaader informations the offset needs to skip from the complete string array
+                    //if a offset is marked in the file reader information the offset needs to skip from the complete string array
                     return tempRow.Skip(fileReaderInfo.Offset).ToList();
                 }
             }

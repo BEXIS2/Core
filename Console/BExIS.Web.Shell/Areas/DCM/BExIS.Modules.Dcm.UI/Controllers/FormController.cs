@@ -1190,7 +1190,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // maybee its not needed anymore but the base idea was that the taskmanager knows where we are
             TaskManager.SetCurrent(TaskManager.Get(parentStepId));
 
-            // Each step has a stepModelHelp with basic informations in the Taskmanager
+            // Each step has a stepModelHelp with basic information in the Taskmanager
             // load the parent Model helper based on the parentstep id to remove the child with the number that comes in
             var stepModelHelper = GetStepModelhelper(parentStepId, TaskManager);
 

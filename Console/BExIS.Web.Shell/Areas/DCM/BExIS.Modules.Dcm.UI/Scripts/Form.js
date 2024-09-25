@@ -302,7 +302,7 @@ function OnChangeTextInput(e, ui) {
                 console.log("partyid", partyid);
                 console.log("partyidConverted", partyidConverted);
 
-                //delete party informations when a party was selected before
+                //delete party information when a party was selected before
                 if (partyidConverted !== null && partyidConverted > 0 && afterClosed === false && isMappingSelection !== null) {
                     console.log("go delete it");
                     //console.log(ParentStepID);

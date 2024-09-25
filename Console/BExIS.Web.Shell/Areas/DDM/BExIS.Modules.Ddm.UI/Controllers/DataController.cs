@@ -325,7 +325,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     model.Hooks.ForEach(h => h.Check(id, userName));
 
-                    // add informations disbaled hooks from the enity template
+                    // add information disabled hooks from the entity template
                     // based on the entity template, hooks can be disabled.
                     foreach (var hook in model.Hooks)
                     {
@@ -419,7 +419,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     // check if the user has download rights
                     downloadAccess = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read).Result;
 
-                    // check if a reuqest of this dataset exist
+                    // check if a request of this dataset exist
                     if (!downloadAccess)
                     {
                         requestExist = HasOpenRequest(id);
@@ -809,7 +809,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     string message = string.Format("dataset {0} version {1} was downloaded as {2}.", id,
                                                     datasetVersion.Id, ext);
-                    //create a history dátaset
+                    //create a history dataset
                     if (!latest)
                     {
                         DataTable datatable = getHistoryData(versionid);
@@ -873,7 +873,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     string message = string.Format("dataset {0} version {1} was downloaded as {2}.", id,
                         versionNr, ext);
 
-                    //create a history dátaset
+                    //create a history dataset
                     if (!latest)
                     {
                         DataTable datatable = getHistoryData(versionid);
@@ -1027,7 +1027,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     OutputDataManager outputDataManager = new OutputDataManager();
 
-                    //create a history dátaset
+                    //create a history dataset
                     if (!latest)
                     {
                         DataTable datatable = getHistoryData(versionid);
@@ -1040,7 +1040,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         #region generate a subset of a dataset
 
-                        //ToDo filter datatuples
+                        //ToDo filter data tuples
 
                         DataTable datatable = getFilteredData(id);
                         path = outputDataManager.GenerateExcelFile("temp", datatable, title + "_filtered", datasetVersion.Dataset.DataStructure.Id, ext, withUnits);
@@ -1186,7 +1186,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     OutputDataManager outputDataManager = new OutputDataManager();
                     string mimitype = MimeMapping.GetMimeMapping(ext);
 
-                    //create a history dátaset
+                    //create a history dataset
                     if (!latest)
                     {
                         path = outputDataManager.GenerateExcelFile(id, versionid, true, null);
@@ -1198,7 +1198,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         #region generate a subset of a dataset
 
-                        //ToDo filter datatuples
+                        //ToDo filter data tuples
 
                         DataTable datatable = getFilteredData(id);
                         path = outputDataManager.GenerateExcelFile(id, versionid, true, datatable);
@@ -1465,7 +1465,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #endregion primary data
 
-        #region datastructure
+        #region data structure
 
         [GridAction]
         public ActionResult _CustomDataStructureBinding(GridCommand command, long datasetID)
@@ -1559,7 +1559,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
-        #endregion datastructure
+        #endregion data structure
 
         #region entity references
 
@@ -1829,7 +1829,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     sb.Append(" - ");
                     sb.Append(createEditedBy(d.ModificationInfo.Performer));
 
-                    // both exits - needs seperator
+                    // both exits - needs separator
                     if (d.ModificationInfo != null &&
                         string.IsNullOrEmpty(d.ModificationInfo.Performer) &&
                         !string.IsNullOrEmpty(d.ModificationInfo.Comment) &&
@@ -1838,7 +1838,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         sb.Append(" : ");
                     }
 
-                    //changedescription is not null or empty
+                    //change description is not null or empty
                     if (!string.IsNullOrEmpty(d.ChangeDescription))
                     {
                         sb.Append(Truncate(d.ChangeDescription, 30));
@@ -2065,7 +2065,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             try
             {
                 if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
-                {   // remove the one contentdesciptor
+                {   // remove the one content descriptor
                     foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                     {
                         if (cd.Name == name)
@@ -2077,7 +2077,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
                 else
                 {
-                    // add current contentdesciptor to list
+                    // add current content descriptor to list
                     //datasetVersion.ContentDescriptors.Add(generatedDescriptor);
                     dm.CreateContentDescriptor(name, mimeType, dynamicPath, 1, datasetVersion);
                 }
@@ -2093,12 +2093,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         private bool hasUserRights(long entityId, RightType rightType)
         {
-            #region security permissions and authorisations check
+            #region security permissions and authorizations check
 
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
                 return entityPermissionManager.HasEffectiveRightsAsync(GetUsernameOrDefault(), typeof(Dataset), entityId, rightType).Result;
 
-            #endregion security permissions and authorisations check
+            #endregion security permissions and authorizations check
         }
 
         private bool hasUserRequestRight()

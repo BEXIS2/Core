@@ -84,7 +84,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
         // GET api/Dataset/{id}
         /// <summary>
-        /// Get dataset informations of the latest version of a dataset by id.
+        /// Get dataset information of the latest version of a dataset by id.
         /// </summary>
         ///
         /// <param name="id">Identifier of a dataset</param>
@@ -125,7 +125,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
         // GET api/DatasetOut/{id}/{version}
         /// <summary>
-        /// Get dataset informations of a specific version of a dataset by id and version id.
+        /// Get dataset information of a specific version of a dataset by id and version id.
         /// </summary>
         ///
         /// <param name="id">Identifier of a dataset</param>
@@ -140,7 +140,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
         // GET api/DatasetOut/{id}/{version}
         /// <summary>
-        /// Get dataset informations of a specific version of a dataset by id and version number.
+        /// Get dataset information of a specific version of a dataset by id and version number.
         /// </summary>
         ///
         /// <param name="id">Identifier of a dataset</param>
@@ -174,7 +174,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
         // GET api/DatasetOut/{id}/{version}
         /// <summary>
-        /// Get dataset informations of a specific version of a dataset by id and version name.
+        /// Get dataset information of a specific version of a dataset by id and version name.
         /// </summary>
         ///
         /// <param name="id">Identifier of a dataset</param>
@@ -303,7 +303,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
             Dictionary<string, List<XElement>> elements = new Dictionary<string, List<XElement>>();
 
-            // add addtional Informations / mapped system keys
+            // add additional Information / mapped system keys
             foreach (Key k in Enum.GetValues(typeof(Key)))
             {
                 var tmp = MappingUtils.GetValuesFromMetadata(Convert.ToInt64(k), LinkElementType.Key,

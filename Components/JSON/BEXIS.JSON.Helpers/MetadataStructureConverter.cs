@@ -74,7 +74,7 @@ namespace BEXIS.JSON.Helpers
 
             JSchema current = new JSchema();
 
-            // base informations
+            // base information
             current.Title = usage.Label;
             current.Type = JSchemaType.Object;
             current.Description = usage.Description;
