@@ -65,7 +65,7 @@
 		if (type.action == 'delete') {
 			const modal: ModalSettings = {
 				type: 'confirm',
-				title: 'Delete Unit',
+				title: 'Delete Dimension',
 				body:
 					'Are you sure you wish to delete Dimension "' +
 					dimension.name +
