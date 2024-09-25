@@ -518,9 +518,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             // description
             var descriptionMarker = model.Markers.Where(m => m.Type.Equals("description")).FirstOrDefault();
             if (descriptionMarker != null) cache.AsciiFileReaderInfo.Description = descriptionMarker.Row + 1;// add 1 to store nit the index but the row
+            else cache.AsciiFileReaderInfo.Description = 0;
             // units
             var unitMarker = model.Markers.Where(m => m.Type.Equals("unit")).FirstOrDefault();
             if (unitMarker != null) cache.AsciiFileReaderInfo.Unit = unitMarker.Row + 1;// add 1 to store nit the index but the row
+            else cache.AsciiFileReaderInfo.Unit = 0;
 
             // update modifikation date
             //cache.UpdateLastModificarion(typeof(DataDescriptionHook));
