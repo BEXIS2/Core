@@ -348,8 +348,8 @@
 		}
 	}
 
-	// if you change the delimeter you need to change/update also the table informations
-	function changeDelimeter() {
+	// if you change the delimeter you need to change/update also the table information
+	function changeDelimiter() {
 		setTableInfos(model.preview, String.fromCharCode(model.delimeter));
 		prepareData(model.preview)
 	}
@@ -378,14 +378,14 @@
 		model.preview = m.preview;
 	}
 
- 
+
 	function textMarkerHandling(row:string):[]
 	{
 		 const d = String.fromCharCode(model.delimeter);
 		 const t = String.fromCharCode(model.textMarker);
 			const values = row.split(d);
 
-			let temp=[]; 
+			let temp=[];
 
 			if(row.includes(t))
 			{
@@ -425,10 +425,10 @@
 									temp = [...temp, v];
 								}
 							}
-						
-							
+
+
 					});
-					
+
 					return temp;
 			}
 			else
@@ -474,17 +474,17 @@
 					<div id="reader selections" class="flex flex-none gap-2">
 						<DropdownKVP
 							id="delimeter"
-							title="Delimeter"
+							title="Delimiter"
 							bind:target={model.delimeter}
 							source={model.delimeters}
 							complexTarget={false}
-							on:change={changeDelimeter}
+							on:change={changeDelimiter}
 							help={true}
 						/>
 
 						<DropdownKVP
 							id="decimal"
-							title="Decimal"
+							title="Decimal Separator"
 							bind:target={model.decimal}
 							source={model.decimals}
 							complexTarget={false}
@@ -493,7 +493,7 @@
 
 						<DropdownKVP
 							id="textMarker"
-							title="TextMarker"
+							title="Text Marker"
 							bind:target={model.textMarker}
 							source={model.textMarkers}
 							complexTarget={false}
@@ -509,6 +509,11 @@
 							help={true}
 							on:change={onChangeEncodingHandler(model.fileEncoding)}
 						/>
+					</div>
+
+					<div id="missingvalues" class="grow w-1/2">
+						<!-- Missing Values-->
+						<MissingValues bind:list={model.missingValues} />
 					</div>
 
 					<div id="markers" class="py-5 flex gap-1">
@@ -552,16 +557,11 @@
 						<button
 							title="reset selection"
 							id="resetSelection"
-							class="btn variant-filled-warning text-lg"
+							class="btn variant-filled-warning text-lg pl-2"
 							type="button"
 							on:mouseover={() => helpStore.show('resetSelection')}
-							on:click={resetSelection}><Fa icon={faArrowRotateLeft} /></button
+							on:click={resetSelection}>Reset</button
 						>
-					</div>
-
-					<div id="missingvalues" class="grow w-1/2">
-						<!-- Missing Values-->
-						<MissingValues bind:list={model.missingValues} />
 					</div>
 
 					<div class="flex">
