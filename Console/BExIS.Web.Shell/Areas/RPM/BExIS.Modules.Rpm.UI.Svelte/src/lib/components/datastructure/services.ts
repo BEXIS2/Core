@@ -1,6 +1,6 @@
 // Implementations for all the calls for the pokemon endpoints.
 //import Api from "./Api";
-import { Api } from '@bexis2/bexis2-core-ui';
+import { Api, host } from '@bexis2/bexis2-core-ui';
 
 /****************/
 /* Overview Data structures*/
@@ -205,3 +205,10 @@ export const getConstraints = async () => {
 		throw error;
 	}
 };
+
+
+// go to a internal action
+export const goTo = async (url:string) => {
+	window.open(host + url, '_self').focus();
+};
+

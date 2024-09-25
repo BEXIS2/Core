@@ -36,7 +36,8 @@
 	}
 </script>
 
-<Drawer position="right" width="10" on:backdrop={close} on:touchend={close}>
+	<div style="z-index:150">
+<Drawer position="right" width="10"  on:backdrop={close} on:touchend={close}>
 	<div class="p-5 space-y-5">
 		<div class="flex">
 			<div class="grow"><h2 class="h2">File reader information</h2></div>
@@ -50,3 +51,4 @@
 		<Selection {model} on:saved={close} on:error={() => alert('error')} />
 	</div>
 </Drawer>
+</div>
