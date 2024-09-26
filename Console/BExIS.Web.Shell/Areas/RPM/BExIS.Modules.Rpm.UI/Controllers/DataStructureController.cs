@@ -502,7 +502,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             // update Data description hook
 
-            // set file reading informations
+            // set file reading information
             if (cache.AsciiFileReaderInfo == null)
                 cache.AsciiFileReaderInfo = new AsciiFileReaderInfo();
 
@@ -514,15 +514,17 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             cache.AsciiFileReaderInfo.Cells = model.Markers.Where(m => m.Type.Equals("variable")).FirstOrDefault().Cells;
             cache.AsciiFileReaderInfo.EncodingType = (EncodingType)model.FileEncoding;
 
-            // additional infotmations
+            // additional information
             // description
             var descriptionMarker = model.Markers.Where(m => m.Type.Equals("description")).FirstOrDefault();
             if (descriptionMarker != null) cache.AsciiFileReaderInfo.Description = descriptionMarker.Row + 1;// add 1 to store nit the index but the row
+            else cache.AsciiFileReaderInfo.Description = 0;
             // units
             var unitMarker = model.Markers.Where(m => m.Type.Equals("unit")).FirstOrDefault();
             if (unitMarker != null) cache.AsciiFileReaderInfo.Unit = unitMarker.Row + 1;// add 1 to store nit the index but the row
+            else cache.AsciiFileReaderInfo.Unit = 0;
 
-            // update modifikation date
+            // update modification date
             //cache.UpdateLastModificarion(typeof(DataDescriptionHook));
 
             // store in messages
@@ -568,7 +570,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             // contains marker rows in order of model.Markers rows index
             List<string> markerRows = AsciiReader.GetRows(path, Encoding.UTF8, rowIndexes, activeCells, AsciiFileReaderInfo.GetSeperator("" + (char)model.Delimeter));
 
-            // missingvalues
+            // missing values
             List<string> missingValues = new List<string>();
             if (model.Markers.Any(m => m.Type.Equals("missing-values")))
             {
@@ -618,7 +620,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     if (systemTypes.ContainsKey(i))
                         var.SystemType = systemTypes[i].Name;
 
-                    // get list of possible datatypes
+                    // get list of possible data types
                     var.DataType = strutcureAnalyzer.SuggestDataType(var.SystemType).Select(d => new ListItem(d.Id, d.Name, "detect")).FirstOrDefault();
 
                     // get list of possible units
@@ -657,15 +659,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         var.Unit = var.PossibleUnits.FirstOrDefault();
                     }
 
-                    // get suggestes DisplayPattern / currently only for DateTime
+                    // get suggested DisplayPattern / currently only for DateTime
                     if (var.SystemType.Equals(typeof(DateTime).Name))
                     {
-                        var.DisplayPattern = null; // here a suggesten of the display pattern is needed
+                        var.DisplayPattern = null; // here a suggestion of the display pattern is needed
                         var displayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.ToString().Equals(var.SystemType));
                         displayPattern.ToList().ForEach(d => var.PossibleDisplayPattern.Add(new ListItem(d.Id, d.DisplayPattern)));
                     }
 
-                    // varaible template
+                    // variable template
                     templates.ForEach(t => var.PossibleTemplates.Add(helper.ConvertTo(t, "detect")));
 
                     if (var.PossibleTemplates.Any())
@@ -739,7 +741,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost]
         public JsonResult Delete(long id)
         {
-            if (id <= 0) throw new NullReferenceException("id of the structure should be greater then 0");
+            if (id <= 0) throw new NullReferenceException("id of the data structure should be greater then 0");
 
             using (var structureManager = new DataStructureManager())
             using (var variableManager = new VariableManager())
@@ -747,7 +749,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 if (id > 0)
                 {
                     var structure = structureManager.StructuredDataStructureRepo.Get(id);
-                    if (structure == null) throw new Exception("Structure with id " + id + " not exist.");
+                    if (structure == null) throw new Exception("Data structure with id " + id + " does not exist.");
 
                     structureManager.DeleteStructuredDataStructure(structure);
                 }
@@ -784,7 +786,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [JsonNetFilter]
         public JsonResult Get(long id)
         {
-            if (id <= 0) throw new NullReferenceException("id of the structure should be greater then 0");
+            if (id <= 0) throw new NullReferenceException("Id of the data structure should be greater then 0");
             DataStructureEditModel model = new DataStructureEditModel();
             VariableHelper helper = new VariableHelper();
 
@@ -793,7 +795,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 if (id > 0)
                 {
                     var structure = structureManager.StructuredDataStructureRepo.Get(id);
-                    if (structure == null) throw new NullReferenceException("structure with id " + id);
+                    if (structure == null) throw new NullReferenceException("Data structure with id " + id);
                     model.Id = structure.Id;
                     model.Title = structure.Name;
                     model.Description = structure.Description;

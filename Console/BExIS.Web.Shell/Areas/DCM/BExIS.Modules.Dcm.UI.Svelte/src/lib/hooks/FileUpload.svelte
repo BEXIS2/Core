@@ -11,7 +11,8 @@
 	import {
 		latestFileUploadDate,
 		latestFileReaderDate,
-		latestSubmitDate
+		latestSubmitDate,
+		latestDataDescriptionDate
 	} from '../../routes/edit/stores';
 
 	import type { FileUploadModel } from '$models/FileUpload';
@@ -32,6 +33,7 @@
 
 	$: $latestFileReaderDate, load();
 	$: $latestSubmitDate, load();
+	$: $latestDataDescriptionDate, load();
 
 	let model: FileUploadModel;
 	$: model;
@@ -40,6 +42,7 @@
 
 	onMount(async () => {
 		load();
+
 	});
 
 	$: loading = false;
@@ -93,7 +96,6 @@
 			on:error
 			on:success
 		/>
-
 		{#if model.fileUploader.existingFiles.length}
 			<FileOverview
 				{id}
@@ -104,6 +106,7 @@
 				on:success={success}
 				on:warning={warning}
 			/>
+ 	{#if model.allFilesReadable && model.hasStructure}
 
 			<FileReaderInformation
 				{id}
@@ -111,6 +114,7 @@
 				bind:readableFiles={model.fileUploader.existingFiles}
 				bind:asciiFileReaderInfo={model.asciiFileReaderInfo}
 			/>
+			{/if}
 		{/if}
 	{:catch error}
 		<ErrorMessage {error} />

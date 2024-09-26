@@ -250,7 +250,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                                 return new Error(ErrorType.Value, "the value of the number is outside the value range of decimal.", new object[] { name, value, row, dataType });
 
                                             //convert to decimal and compare both string lenghts
-                                            return Decimal.Parse(value, NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint, new CultureInfo("en-US"));
+                                            return Decimal.Parse(value, NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint | NumberStyles.Float, new CultureInfo("en-US"));
                                         }
                                         else
                                         {

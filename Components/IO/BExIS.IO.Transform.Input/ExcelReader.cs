@@ -150,8 +150,8 @@ namespace BExIS.IO.Transform.Input
 
         /// <summary>
         /// Read a Excel Template file
-        /// Convert the rows into a datatuple based on the datastructure.
-        /// Return a list of datatuples
+        /// Convert the rows into a data tuple based on the data structure.
+        /// Return a list of data tuples
         /// </summary>
         /// <remarks>Only when excel template is in use</remarks>
         /// <seealso cref=""/>
@@ -183,7 +183,7 @@ namespace BExIS.IO.Transform.Input
             // Select variable area
             this._areaOfVariables = namesTable.Where(p => p.Key.Equals("VariableIdentifiers")).FirstOrDefault();
 
-            // Get intergers for reading data
+            // Get integers for reading data
             startColumn = GetColumnNumber(this._areaOfData.StartColumn);
             endColumn = GetColumnNumber(this._areaOfData.EndColumn);
 
@@ -210,8 +210,8 @@ namespace BExIS.IO.Transform.Input
 
         /// <summary>
         /// Read a Excel Template file wth package size
-        /// Convert the rows into a datatuple based on the datastructure.
-        /// Return a list of datatuples
+        /// Convert the rows into a data tuple based on the data structure.
+        /// Return a list of data tuples
         /// </summary>
         /// <remarks>Only when excel template is in use</remarks>
         /// <seealso cref=""/>
@@ -248,7 +248,7 @@ namespace BExIS.IO.Transform.Input
             // Select variable area
             this._areaOfVariables = namesTable.Where(p => p.Key.Equals("VariableIdentifiers")).FirstOrDefault();
 
-            // Get intergers for reading data
+            // Get integers for reading data
             startColumn = GetColumnNumber(this._areaOfData.StartColumn);
             endColumn = GetColumnNumber(this._areaOfData.EndColumn);
 
@@ -289,14 +289,14 @@ namespace BExIS.IO.Transform.Input
 
         /// <summary>
         /// Read a Excel row by row
-        /// Convert the rows into a datatuple based on the datastructure.
-        /// Return a list of datatuples
+        /// Convert the rows into a data tuple based on the data structure.
+        /// Return a list of data tuples
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="file">File as stream</param>
         /// <param name="fileName">Name of the file</param>
-        /// <param name="fri">FileReaderInfo (ExcelFileReaderInfo) for additional Informations to read the file</param>
+        /// <param name="fri">FileReaderInfo (ExcelFileReaderInfo) for additional information to read the file</param>
         /// <param name="sds">StructuredDataStructure of a dataset</param>
         /// <param name="datasetId">Datasetid of a dataset</param>
         /// <returns>List of DataTuples</returns>
@@ -306,7 +306,7 @@ namespace BExIS.IO.Transform.Input
             this.FileName = fileName;
             this.DatasetId = datasetId;
 
-            // clear list of datatuples for the next package
+            // clear list of data tuples for the next package
             this.DataTuples = new List<DataTuple>();
 
             ExcelFileReaderInfo fri = (ExcelFileReaderInfo)Info;
@@ -419,7 +419,7 @@ namespace BExIS.IO.Transform.Input
             // Select variable area
             this._areaOfVariables = namesTable.Where(p => p.Key.Equals("VariableIdentifiers")).FirstOrDefault();
 
-            // Get intergers for reading data
+            // Get integers for reading data
             startColumn = GetColumnNumber(this._areaOfData.StartColumn);
             endColumn = GetColumnNumber(this._areaOfData.EndColumn);
 
@@ -510,7 +510,7 @@ namespace BExIS.IO.Transform.Input
         }
 
         /// <summary>
-        /// Read rows from worksheetPart starts from a startrow and ends on the endrow
+        /// Read rows from worksheetPart starts from a start row and ends on the end row
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -593,14 +593,14 @@ namespace BExIS.IO.Transform.Input
             this._areaOfVariables = namesTable.Where(p => p.Key.Equals("VariableIdentifiers")).FirstOrDefault();
             if (this._areaOfVariables == null) this.ErrorMessages.Add(new Error(ErrorType.Other, "VariableIdentifiers area is not defined in the excel template."));
 
-            // Get intergers for reading data
+            // Get integers for reading data
             startColumn = GetColumnNumber(this._areaOfData.StartColumn);
             endColumn = GetColumnNumber(this._areaOfData.EndColumn);
 
             numOfColumns = (endColumn - startColumn) + 1;
             offset = GetColumnNumber(GetColumnName(this._areaOfData.StartColumn)) - 1;
 
-            // select worksheetpart by selected defined name area like data in sheet
+            // select worksheet part by selected defined name area like data in sheet
             // sheet where data area is inside
             WorksheetPart worksheetPart = GetWorkSheetPart(workbookPart, this._areaOfData);
             //worksheet = worksheetPart.Worksheet;
@@ -677,7 +677,7 @@ namespace BExIS.IO.Transform.Input
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param name="worksheetPart">Part of a excel worksheet where the datastructure is located</param>
+        /// <param name="worksheetPart">Part of a excel worksheet where the data structure is located</param>
         /// <param name="startRow">Row where the DataStructure is starting</param>
         /// <param name="endRow">Row where the DataStructure is ending</param>
         protected bool ValidateDatastructure(WorksheetPart worksheetPart, int startRow, int endRow)
@@ -820,7 +820,7 @@ namespace BExIS.IO.Transform.Input
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="r"> row from a excel file</param>
-        /// <param name="varIds">if null all columns will return otherwhise only the columns with the varids returned</param>
+        /// <param name="varIds">if null all columns will return otherwise only the columns with the varids returned</param>
         /// <returns>list of string for each cell in the row</returns>
         private List<string> RowToList(Row r, List<long> varIds = null)
         {
@@ -832,7 +832,7 @@ namespace BExIS.IO.Transform.Input
                 columns = new List<int>();
                 foreach (long id in varIds)
                 {
-                    //get the index of the variableintifier where id euqls id from varids
+                    //get the index of the variable identifier where id equals id from varids
                     int columnPosition = GetColumnNumber(this._areaOfData.StartColumn) + this.SubmitedVariableIdentifiers.IndexOf(this.SubmitedVariableIdentifiers.Where(p => p.id.Equals(id)).FirstOrDefault());
                     columns.Add(columnPosition);
                 }
@@ -934,7 +934,7 @@ namespace BExIS.IO.Transform.Input
                                                     value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, "");
                                                 }
                                             }
-                                            else //numberformat not exist in the stylesheet but may numberformatid exist
+                                            else //number format not exist in the stylesheet but may numberformatid exist
                                             {
                                                 string formatcode = ExcelHelper.GetFormatCode(numberFormatId);
 
@@ -952,7 +952,7 @@ namespace BExIS.IO.Transform.Input
                                     value = ExcelHelper.ConvertWithFormat(c.CellValue.Text, "");
                                 }
 
-                                // define index based on cell refernce - offset
+                                // define index based on cell reference - offset
                                 //int index = cellReferencAsInterger - offset - 1;
                                 if ((columns == null || columns.Contains(cellReferencAsInterger)) && index >= 0)
                                 {
@@ -1106,7 +1106,7 @@ namespace BExIS.IO.Transform.Input
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="workbookPart">Workbook part</param>
-        /// <param name="definedName">Object with informations about a area</param>
+        /// <param name="definedName">Object with information about a area</param>
         /// <returns>Worksheet where the area is inside</returns>
         private static WorksheetPart GetWorkSheetPart(WorkbookPart workbookPart, DefinedNameVal definedName)
         {

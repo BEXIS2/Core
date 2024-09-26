@@ -1026,7 +1026,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         "dataset/license",
                         concept);
 
-                // license
+                // keywords
                 if (!keys.Any(k => k.Name.Equals("keywords")))
                     conceptManager.CreateMappingKey(
                         "keywords",

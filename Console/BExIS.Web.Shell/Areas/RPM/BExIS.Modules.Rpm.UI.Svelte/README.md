@@ -1,4 +1,8 @@
 # bexis2-rpm-ui
+
+## 0.2.5
+- refactor file reader view
+- 
 ## 0.2.4
 - fix issue in selection component
  

@@ -74,7 +74,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 model.Hooks.ForEach(h => h.Check(id, userName));
 
-                // add informations disbaled hooks from the enity template
+                // add information disabled hooks from the entity template
                 // based on the entity template, hooks can be disabled.
                 foreach (var hook in model.Hooks)
                 {
@@ -110,7 +110,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 Hooks.ForEach(h => h.Check(id, userName));
 
-                // add informations disbaled hooks from the enity template
+                // add information disabled hooks from the entity template
                 // based on the entity template, hooks can be disabled.
                 foreach (var hook in Hooks)
                 {

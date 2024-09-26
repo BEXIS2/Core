@@ -496,14 +496,14 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64)">
              <summary>
-             Get dataset informations of the latest version of a dataset by id.
+             Get dataset information of the latest version of a dataset by id.
              </summary>
             
              <param name="id">Identifier of a dataset</param>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64,System.Int64)">
              <summary>
-             Get dataset informations of a specific version of a dataset by id and version id.
+             Get dataset information of a specific version of a dataset by id and version id.
              </summary>
             
              <param name="id">Identifier of a dataset</param>
@@ -511,7 +511,7 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64,System.Int32)">
              <summary>
-             Get dataset informations of a specific version of a dataset by id and version number.
+             Get dataset information of a specific version of a dataset by id and version number.
              </summary>
             
              <param name="id">Identifier of a dataset</param>
@@ -519,7 +519,7 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64,System.String)">
              <summary>
-             Get dataset informations of a specific version of a dataset by id and version name.
+             Get dataset information of a specific version of a dataset by id and version name.
              </summary>
             
              <param name="id">Identifier of a dataset</param>
@@ -786,7 +786,7 @@
              ## format
              Based on the existing transformation options, the converted metadata can be obtained via format.
             
-             ## simplfiedJson
+             ## simplifiedJson
              if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
              0 = returns the metadata with full internal structure <br/>
              1 = returns a simplified form of the structure with all fields and attributes <br/>
@@ -808,7 +808,7 @@
              ## format
              Based on the existing transformation options, the converted metadata can be obtained via format.
             
-             ## simplfiedJson
+             ## simplifiedJson
              if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
              0 = returns the metadata with full internal structure <br/>
              1 = returns a simplified form of the structure with all fields and attributes <br/>
@@ -831,7 +831,7 @@
              ## format
              Based on the existing transformation options, the converted metadata can be obtained via format.
             
-             ## simplfiedJson
+             ## simplifiedJson
              if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
              0 = returns the metadata with full internal structure <br/>
              1 = returns a simplified form of the structure with all fields and attributes <br/>
@@ -854,7 +854,7 @@
              ## format
              Based on the existing transformation options, the converted metadata can be obtained via format.
             
-             ## simplfiedJson
+             ## simplifiedJson
              if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
              0 = returns the metadata with full internal structure <br/>
              1 = returns a simplified form of the structure with all fields and attributes <br/>

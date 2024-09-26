@@ -34,14 +34,14 @@
     {
       "key": "use_tags",
       "title": "Activate tags to summarize versions",
-      "value": true,
+      "value": false,
       "type": "Boolean",
       "description": "Enable to possibilty for Users to define a combination of versions to a tag."
     },
     {
       "key": "use_minor",
       "title": "Use minor tags",
-      "value": true,
+      "value": false,
       "type": "Boolean",
       "description": "Activate minor tags in order to be able to show the changes more granularly."
     }

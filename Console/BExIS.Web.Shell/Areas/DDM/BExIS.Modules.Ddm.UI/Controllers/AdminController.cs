@@ -1,5 +1,7 @@
 ﻿using BExIS.Ddm.Api;
 using BExIS.Ddm.Providers.LuceneProvider;
+using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Services.Mappings;
 using BExIS.Modules.Ddm.UI.Models;
 using BExIS.Utils.Models;
 using System;
@@ -42,6 +44,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 Session["searchAttributeList"] = GetListOfSearchAttributeViewModels(sd.Get());
                 Session["metadatNodes"] = sd.GetMetadataNodes();
                 ViewData["windowVisible"] = false;
+                ViewData["placeholder"] = getPlaceHolders();
                 Session["IncludePrimaryData"] = sd.IsPrimaryDataIncluded();
                 //}
             }
@@ -88,6 +91,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             ViewData["windowVisible"] = true;
             ViewData["selectedSearchAttribute"] = sa;
+            ViewData["placeholder"] = getPlaceHolders();
             return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
         }
 
@@ -99,6 +103,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             ViewData["windowVisible"] = true;
             ViewData["selectedSearchAttribute"] = searchAttributeList.Where(p => p.id.Equals(id)).First();
+            ViewData["placeholder"] = getPlaceHolders();
             return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
             //return PartialView("_editSearchAttribute", searchAttributeList.Where(p => p.id.Equals(id)).First());
         }
@@ -334,12 +339,26 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
 
             if (success)
-                return RedirectToAction("Index", "Home", new RouteValueDictionary { { "area", "ddm" } });
+                return RedirectToAction("Index", "Search", new RouteValueDictionary { { "area", "ddm" } });
             else
                 return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
         }
 
         #endregion ReIndex
+
+        private List<string> getPlaceHolders()
+        {
+
+            using (var conceptManager = new ConceptManager())
+            {
+                MappingConcept c = conceptManager.FindByName("Search");
+                if (c != null) return conceptManager.MappingKeyRepo.Get().Where(k => k.Concept.Id.Equals(c.Id)).Select(k => k.Name).ToList();
+
+                return new List<string>();
+
+            }
+        }
+
 
         #region
 

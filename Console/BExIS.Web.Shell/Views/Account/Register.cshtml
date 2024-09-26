@@ -8,7 +8,7 @@
     Here you are able to register with the system.
 }
 
-@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { autocomplete = "off", @class = "form-horizontal", role = "form" }))
 {
 @Html.AntiForgeryToken()
 @Html.TextBoxFor(m => m.Extra, new { @class = "extra" });

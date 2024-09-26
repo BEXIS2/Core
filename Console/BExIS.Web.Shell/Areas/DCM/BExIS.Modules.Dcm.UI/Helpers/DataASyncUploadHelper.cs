@@ -80,14 +80,14 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 // checkout the dataset, apply the changes, and check it in.
                 if (dm.IsDatasetCheckedOutFor(id, User.Name) || dm.CheckOutDataset(id, User.Name))
                 {
-                    //GetValues from the previus version
+                    //GetValues from the previous version
                     // Status
                     workingCopy = dm.GetDatasetWorkingCopy(id);
                     title = workingCopy.Title;
                     string status = DatasetStateInfo.NotValid.ToString();
                     if (workingCopy.StateInfo != null) status = workingCopy.StateInfo.State;
 
-                    #region Progress Informations
+                    #region Progress Information
 
                     if (Cache.UpdateSetup != null)
                     {
@@ -95,7 +95,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         Cache.UpdateSetup.CurrentPackageSize = 0;
                     }
 
-                    #endregion Progress Informations
+                    #endregion Progress Information
 
                     string folder = "Temp"; // folder name inside dataset - temp or attachments
                     var dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
@@ -231,14 +231,14 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     // open file
                                     AsciiReader reader = new AsciiReader(sds, Cache.AsciiFileReaderInfo);
 
-                                    //set packagsize for one loop
+                                    //set package size for one loop
                                     int packageSize = 100000;
                                     Cache.UpdateSetup.CurrentPackageSize = packageSize;
 
-                                    //schleife
+                                    //loop
                                     int counter = 0;
 
-                                    //set StateInfo of the previus version
+                                    //set StateInfo of the previous version
                                     if (workingCopy.StateInfo == null)
                                     {
                                         workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
@@ -273,20 +273,20 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                         // based the dataset status and/ or the upload method
                                         // 3 different cases append only the tuples.
-                                        // 1. dataset staus create
+                                        // 1. dataset status create
                                         // 2. update method -> append (obsolete)
                                         // 3. primary keys are not set
                                         if (datasetStatus == AuditActionType.Create || Cache.UpdateSetup.UpdateMethod.Equals(UploadMethod.Append) || Cache.UpdateSetup.PrimaryKeys == null)
                                         {
-                                            dm.EditDatasetVersion(workingCopy, rows, null, null); // add all datatuples to the datasetversion
+                                            dm.EditDatasetVersion(workingCopy, rows, null, null); // add all data tuples to the dataset version
 
                                         }
                                         else
-                                        if (datasetStatus == AuditActionType.Edit) // datatuples allready exist
+                                        if (datasetStatus == AuditActionType.Edit) // data tuples already exist
                                         {
                                             if (rows.Count() > 0)
                                             {
-                                                //split the incoming datatuples to (new|edit) based on the primary keys
+                                                //split the incoming data tuples to (new|edit) based on the primary keys
                                                 var splittedDatatuples = uploadWizardHelper.GetSplitDatatuples(rows, Cache.UpdateSetup.PrimaryKeys, workingCopy, ref datatupleFromDatabaseIds);
                                                 dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                                                 inputWasAltered = true;
@@ -304,9 +304,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                 #endregion ascii reader
 
-                                #region contentdescriptors
+                                #region content descriptors
 
-                                //remove all contentdescriptors from the old version
+                                //remove all content descriptors from the old version
                                 //generatedTXT
                                 if (workingCopy.ContentDescriptors.Any(c => c.Name.Equals("generatedTXT")))
                                 {
@@ -334,7 +334,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     dm.DeleteContentDescriptor(tmp);
                                 }
 
-                                #endregion contentdescriptors
+                                #endregion content descriptors
 
                                 MoveAndSaveOriginalFileInContentDiscriptor(workingCopy, title, id, structureId, Path.Combine(getpath, file.Name), file);
                             }
@@ -534,7 +534,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             try
             {
                 //XXX put function like GetStorePathOriginalFile or GetDynamicStorePathOriginalFile
-                // the function is available in the abstract class datawriter
+                // the function is available in the abstract class data writer
                 ExcelWriter excelWriter = new ExcelWriter();
                 // Move Original File to its permanent location
                 String tempPath = getpath;
@@ -551,7 +551,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 var directory = Path.GetDirectoryName(storePath);
                 if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
 
-                // check if file exist allready and if yes change the name
+                // check if file exist already and if yes change the name
                 int count = 1;
                 string fileNameOnly = Path.GetFileNameWithoutExtension(storePath);
                 string extension = Path.GetExtension(storePath);
@@ -579,7 +579,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     Description = file.Description
                 };
 
-                // add current contentdesciptor to list
+                // add current content desciptor to list
                 datasetVersion.ContentDescriptors.Add(originalDescriptor);
 
                 return storePath;
@@ -617,7 +617,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             };
 
             if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(originalDescriptor.Name)) > 0)
-            {   // remove the one contentdesciptor
+            {   // remove the one content descriptor
                 foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                 {
                     if (cd.Name == originalDescriptor.Name)
@@ -628,7 +628,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             }
             else
             {
-                // add current contentdesciptor to list
+                // add current content descriptor to list
                 datasetVersion.ContentDescriptors.Add(originalDescriptor);
             }
 

@@ -96,6 +96,7 @@
 
 	async function submitBt() {
 		isSubmiting = true;
+		canSubmit = false;
 		const res: submitResponceType = await submit(id);
 
 		//console.log("submit",res);

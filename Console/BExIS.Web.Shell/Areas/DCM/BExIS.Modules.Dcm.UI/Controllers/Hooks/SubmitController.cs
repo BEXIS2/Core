@@ -74,7 +74,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             SubmitResponce responce = new SubmitResponce();
 
             HookManager hookManager = new HookManager();
-            // load cache to get informations about the current upload workflow
+            // load cache to get information about the current upload workflow
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
             EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
 

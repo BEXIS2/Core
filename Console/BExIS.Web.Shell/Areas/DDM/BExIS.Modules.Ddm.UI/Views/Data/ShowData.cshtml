@@ -267,7 +267,7 @@
 
                                     @if (@total < 1048576) // hide Excel download for bigger datasets, which exceed the max number of rows in excel
                                     {
-                                        <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId })">... with Template</a></li>
+                                        <li>@*<a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId })">... with Template</a>*@</li>
                                         <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId })">... with Excel</a></li>
                                     }
                                     <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })">... with CSV</a></li>

@@ -9,6 +9,7 @@
 	import { convertTableData } from '$lib/helpers';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 	import Cards from '$lib/components/Cards.svelte';
+	import CriteriaChip from '$lib/components/CriteriaChip.svelte';
 
 	let columns: Columns;
 	let config: TableConfig<any>;
@@ -175,6 +176,13 @@
 				};
 				return acc;
 			}, {});
+		} else {
+			$criteria = Object.keys($criteria).reduce((acc, key) => {
+				if ($criteria[key].type === 'Facet') {
+					delete acc[key];
+				}
+				return acc;
+			}, $criteria);
 		}
 
 		$facetGroups = facets.map((facet: any) => {
@@ -364,6 +372,8 @@
 
 	const handleAutoCompleteSelect = async (e: { detail: { value: string; label: string } }) => {
 		q = e.detail.value;
+
+		return null;
 	};
 
 	onMount(async () => {
@@ -376,7 +386,7 @@
 	note="Search over the data in this system."
 	contentLayoutType={pageContentLayoutType.full}
 >
-	<div class="flex gap-8">
+	<div class="flex gap-8 overflow-auto">
 		<div class="min-w-64">
 			{#if $facetGroups.length > 0}
 				<Facets
@@ -404,13 +414,6 @@
 							<option value={category.name}>{category.displayName}</option>
 						{/each}
 					</select>
-					<!-- <input
-						type="text"
-						name="search"
-						id="search"
-						class=""
-						bind:value={q}
-					/> -->
 					<Select
 						loadOptions={setAutoCompleteValues}
 						class="input grow max-w-[500px] min-w-[200px]"
@@ -420,7 +423,8 @@
 						clearFilterTextOnBlur={false}
 						hideEmptyState={true}
 						clearable={false}
-						value=""
+						value={undefined}
+						placeholder=""
 					/>
 					<button
 						class="btn variant-filled-primary"
@@ -430,44 +434,46 @@
 
 				<!-- Criteria and applied search queries -->
 				<div class="flex grow w-full">
-					<div class="flex gap-8 overflow-auto w-96 grow">
+					<div class="flex gap-4 w-96 grow overflow-auto">
 						{#each Object.keys($criteria) as key, index}
 							{#if $criteria[key].values.length > 0}
-								<div class="flex items-center gap-6">
-									<div
-										class="p-2 border border-surface-900 w-min rounded-md font-bold px-4 text-nowrap"
-									>
-										{$criteria[key].displayName}
+								<div class="flex items-center gap-4">
+									<div class="w-min font-bold text-nowrap text-xs">
+										{$criteria[key].displayName}:
 									</div>
-									<div class="flex items-center gap-2"></div>
+
 									{#if $criteria[key].values.length < 3}
 										{#each $criteria[key].values as value, index}
-											<button
-												type="reset"
-												class="underline"
-												on:click|preventDefault={async () => {
+											<CriteriaChip
+												on:remove={async () => {
 													if ($criteria[key].type === 'Facet') {
 														await toggleFacet(key, value);
 													} else {
 														await removeCriterion(key, value);
 													}
-												}}>{value}</button
+												}}
+												on:click={async () => {
+													if ($criteria[key].type === 'Facet') {
+														await toggleFacet(key, value);
+													} else {
+														await removeCriterion(key, value);
+													}
+												}}>{value}</CriteriaChip
 											>
 											{#if $criteria[key].operation && index !== $criteria[key].values.length - 1}
 												<div class="text-xs">{$criteria[key].operation}</div>
 											{/if}
 										{/each}
 									{:else}
-										<button
-											type="reset"
-											class="underline"
-											on:click|preventDefault={async () => {
+										<CriteriaChip
+											removable={false}
+											on:click={async () => {
 												facetsRef && facetsRef.showMore(key);
-											}}>{$criteria[key].values.length} options</button
+											}}>{$criteria[key].values.length} options</CriteriaChip
 										>
 									{/if}
 									{#if index !== Object.keys($criteria).length - 1}
-										<div class="border border-r h-full border-surface-900/30"></div>
+										<div class="border border-r h-full border-surface-900/10 mx-3"></div>
 									{/if}
 								</div>
 							{/if}
