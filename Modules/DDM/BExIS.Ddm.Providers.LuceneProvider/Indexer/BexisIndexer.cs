@@ -164,7 +164,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        public void Index()
+        public void Index(bool onlyReleasedTags)
         {
             configureBexisIndexing(true);
             // there is no need for the metadataAccess class anymore. Talked with David and deleted. 30.18.13. Javad/ compare to the previous version to see the deletions
@@ -172,7 +172,15 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             List<string> errors = new List<string>();
             try
             {
-                IList<long> ids = dm.GetDatasetLatestIds();
+                // if the system is using tags, then only datasets that have a tag and its released should be indexeds
+
+                IList<long> ids = new List<long>();
+                if (!onlyReleasedTags) ids = dm.GetDatasetLatestIds(); // index all datasets
+                else // index only with tags
+                { 
+                    ids = dm.GetDatasetIdsWithTag();
+                }
+               
                 IList<long> ids_rev = ids.Reverse().ToList();
 
                 //ToDo only enitities from type dataset should be indexed in this index
@@ -181,7 +189,18 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 {
                     try
                     {
-                        writeBexisIndex(id, dm.GetDatasetLatestMetadataVersion(id));
+                        XmlDocument metadata = null;
+
+                        if (onlyReleasedTags)
+                        {
+                            var latestTag = dm.GetLatestTag(id, true);
+                            var version = dm.GetLatestVersionByTagNr(id, latestTag.Nr);
+                            metadata = version.Metadata;
+                        }
+                        else
+                            metadata = dm.GetDatasetLatestMetadataVersion(id);
+
+                        writeBexisIndex(id, metadata);
                         //GC.Collect();
                     }
                     catch (Exception ex)
@@ -333,10 +352,10 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        public void ReIndex()
+        public void ReIndex(bool onlyReleasedTags)
         {
             reIndex = true;
-            this.Index();
+            this.Index(onlyReleasedTags);
             SearchProvider.Providers.Values.Where(p => p.IsAlive).ToList().ForEach(p => ((SearchProvider)p.Target).Reload());
             IndexReader _Reader = indexWriter.GetReader().Reopen();
 
@@ -380,7 +399,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             ///
             /// Add a field to indicte whether the dataset is public, this will be used for the public datasets' search page.
             ///
-            dataset.Add(new Field("gen_isPublic", entityPermissionManager.Exists(null, entityTypeId.Value, id) ? "TRUE" : "FALSE", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
+            dataset.Add(new Field("gen_isPublic", entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result ? "TRUE" : "FALSE", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
 
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             dataset.Add(new Field("gen_entity_name", xmlDatasetHelper.GetEntityName(id), Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));

@@ -108,6 +108,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
                     datastructureType = DataStructureType.Structured;
 
+                model.HasStructure = datastructureType != DataStructureType.None;
+
                 // get default list of allowed file types
                 model.FileUploader.Accept = UploadHelper.GetExtentionList(datastructureType, this.Session.GetTenant());
 

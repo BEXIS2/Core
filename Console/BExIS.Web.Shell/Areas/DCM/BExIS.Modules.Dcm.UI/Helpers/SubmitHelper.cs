@@ -19,12 +19,12 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 var dataset = datasetManager.GetDataset(id);
                 if (dataset == null) new NullReferenceException("dataset with id " + id + " not exist");
                 var datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                if (datasetVersion == null) new NullReferenceException("latest datasetVersion not exist");
+                if (datasetVersion == null) new NullReferenceException("latest dataset version does not exist");
 
                 SubmitModel model = new SubmitModel();
                 HookManager hookManager = new HookManager();
 
-                // set dataset and structre informations
+                // set dataset and structure information
                 model.Id = id;
                 model.Title = datasetVersion.Title;
 
@@ -34,12 +34,12 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     model.StructureTitle = dataset.DataStructure.Name;
                     model.HasStructrue = true;
                 }
-                // load cache to get informations about the current upload workflow
+                // load cache to get information about the current upload workflow
                 EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
 
                 if (cache != null)
                 {
-                    #region file informations
+                    #region file information
 
                     model.AsciiFileReaderInfo = cache.AsciiFileReaderInfo;
 
@@ -62,7 +62,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         model.AllFilesReadable = cache.Files.Count == countReadableFile;
                     }
 
-                    #endregion file informations
+                    #endregion file information
 
                     model.IsDataValid = cache.IsDataValid;
                 }

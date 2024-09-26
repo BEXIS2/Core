@@ -219,6 +219,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 hi = new HeaderItem();
                 hi.Name = ade.Attributes.GetNamedItem("lucene_name").Value;
                 hi.DisplayName = ade.Attributes.GetNamedItem("display_name").Value;
+                hi.Placeholder = ade.Attributes.GetNamedItem("placeholder").Value;
                 Header.Add(hi);
 
                 if (ade.Attributes.GetNamedItem("default_visible_item").Value.ToLower().Equals("yes"))

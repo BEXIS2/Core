@@ -1,0 +1,198 @@
+﻿@using BExIS.Modules.Ddm.UI.Models
+
+@model List<MyDatasetsModel>
+
+@{ 
+    bool use_tags = false;
+
+    if (ViewData["use_tags"] != null)
+    {
+        use_tags = Convert.ToBoolean(ViewData["use_tags"]);
+    }
+}
+
+<table id="resources_table" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th title="Id">Id</th>
+            <th title="Title">Title</th>
+            <th title="Abstract">Abstract</th>
+            <th title="is valid">Metadata <br />complete</th>
+            <th title="Tabular">Tabular</th>
+            <th title="d"></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var m in Model)
+        {
+        <tr>
+            <td>@m.Id</td>
+
+            <td>@m.Title</td>
+            <td>@m.Description</td>
+            <td>@m.IsValid</td>
+            <td>
+                @if (m.Type == "tabular")
+                {
+                    <span class="bx fa-check"></span>
+                }            </td>
+            <td class="dt-body-center">
+                <a class="bx bx-grid-function bx-show" href="/ddm/Data/Show/@m.Id" target="_blank" title="View details" style="text-decoration: none;"> </a>
+                @if (m.IsOwn)
+                {
+                    <a class="bx bx-grid-function bx-copy" href="/dcm/create/copy?id=@m.Id" target="_blank" title="Copy " style="text-decoration: none;"> </a>
+
+                    <a class="bx bx-grid-function bx-edit" href="/dcm/edit/?id=@m.Id" target="_blank" title="Edit " style="text-decoration: none;"> </a>
+
+                    if (use_tags)
+                    {
+                        <a class="bx bx-grid-function fa-tag" href="/ddm/taginfo/?id=@m.Id" target="_blank" title="Tags " style="text-decoration: none;"> </a>
+                    }
+
+                    if (m.Type == "tabular")
+                    {
+                        <a class="bx bx-grid-function fa-bars" href="/dcm/test/?id=@m.Id" target="_blank" title="Show data (BETA)" style="text-decoration: none;"> </a>
+                    }
+                }
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+    <script type="text/javascript">
+
+        $('document').ready(function () {
+            jQuery.fn.dataTable.render.ellipsis = function (cutoff, wordbreak, escapeHtml) {
+                var esc = function (t) {
+                    return t
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace( />/g, '&gt;')
+                        .replace(/"/g, '&quot;');
+                };
+
+                return function (d, type, row) {
+                    // Order, search and type get the original data
+                    if (type !== 'display') {
+                        return d;
+                    }
+
+                    if (typeof d !== 'number' && typeof d !== 'string') {
+                        return d;
+                    }
+
+                    d = d.toString(); // cast numbers
+
+                    if (d.length <= cutoff) {
+                        return d;
+                    }
+
+                    var shortened = d.substr(0, cutoff - 1);
+
+                    // Find the last white space character in the string
+                    if (wordbreak) {
+                        shortened = shortened.replace(/\s([^\s]*)$/, '');
+                    }
+
+                    // Protect against uncontrolled HTML input
+                    if (escapeHtml) {
+                        shortened = esc(shortened);
+                    }
+
+                    return '<span class="ellipsis" title="' + esc(d) + '">' + shortened + '&#8230;</span>';
+                };
+            };
+
+            var oTable = $("#resources_table").DataTable({
+                "autoWidth": false,
+                ordering: true,
+                order: [[0, "desc"]], // order by Id
+                paging: false,
+                responsive: true,
+
+                createdRow: function (row, data, dataIndex) {
+                    if (data[3] == "no") {
+                        $(row).addClass('error');
+                    }
+                },
+
+              /*  columnDefs: [
+                    {
+                        targets: 1,
+                        render: $.fn.dataTable.render.ellipsis(60, true)
+                    }]
+                    */
+            });
+
+;
+        })
+
+        function resultGrid_OnRowDataBound(e) {
+
+            //alert(e.item);
+            var obj = e.row.childNodes;
+
+            $.each(obj, function (i) {
+
+                obj[i].title = obj[i].textContent;
+                if (obj[i].textContent.length > 50) {
+                    obj[i].textContent = jQuery.trim(obj[i].textContent).substring(0, 50).trim(this) + "...";
+                }
+            });
+            // Add color to row based on value (yes / no) in 7. column ToDo: make it not fixed to position in array
+            $('.result-grid tbody tr').each(function () {
+                var cellText = $(this).find("td").eq(7).html();
+                if (cellText == "no") {
+                    $(this).find("td").eq(7).parent().addClass("error");
+                }
+
+            });
+
+        }
+
+        function onclickDataset(e) {
+
+            // checked
+            var id = e.getAttribute("id");
+
+            var data = {
+                id: id
+            }
+
+            $.ajax({
+                url: '/ddm/Data/IsDatasetCheckedIn',
+                type: 'POST',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                error: function (xhr) {
+                    alert('Error: ' + xhr.statusText);
+
+                },
+                success: function (result) {
+                    if (result) {
+                        window.open("/ddm/Data/ShowData/" + id, "_blank");
+                    } else {
+
+                        alert("Dataset is locked. Please try again later.");
+                    }
+                }
+            });
+        }
+    </script>
+
+    <style type="text/css">
+
+        #resultGrid .t-grid-content {
+            position: relative;
+            height: auto !important;
+            max-height: 450px;
+            /*overflow:auto;*/
+        }
+
+        #resultGrid .t-status {
+            display: none;
+        }
+    </style>

@@ -139,6 +139,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult LoadMetadata(long entityId, bool locked = false, bool created = false, bool fromEditMode = false, bool resetTaskManager = false, XmlDocument newMetadata = null, bool asPartial = true)
         {
+            return LoadMetadataByVersion(entityId, -1, locked, created, fromEditMode, resetTaskManager, newMetadata, asPartial);
+        }
+
+        public ActionResult LoadMetadataByVersion(long entityId, int version=-1, bool locked = false, bool created = false, bool fromEditMode = false, bool resetTaskManager = false, XmlDocument newMetadata = null, bool asPartial = true)
+        {
             var loadFromExternal = resetTaskManager;
             long metadataStructureId = -1;
             long dataStructureId = -1;
@@ -155,7 +160,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 using (var datasetManager = new DatasetManager())
                 {
                     var dataset = datasetManager.GetDataset(entityId);
-                    var metadata = datasetManager.GetDatasetLatestMetadataVersion(entityId);
+                    XmlDocument metadata = null;
+                        
+                     if(version==-1) metadata = datasetManager.GetDatasetLatestMetadataVersion(entityId);
+                     else metadata = datasetManager.GetDatasetVersion(entityId,version)?.Metadata;
+
+
                     metadataStructureId = dataset.MetadataStructure.Id;
                     if (dataset.DataStructure != null)
                         dataStructureId = dataset.DataStructure.Id;
@@ -1180,7 +1190,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // maybee its not needed anymore but the base idea was that the taskmanager knows where we are
             TaskManager.SetCurrent(TaskManager.Get(parentStepId));
 
-            // Each step has a stepModelHelp with basic informations in the Taskmanager
+            // Each step has a stepModelHelp with basic information in the Taskmanager
             // load the parent Model helper based on the parentstep id to remove the child with the number that comes in
             var stepModelHelper = GetStepModelhelper(parentStepId, TaskManager);
 
@@ -3614,7 +3624,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-                return featurePermissionManager.HasAccess<User>(GetUsernameOrDefault(), "DCM", "CreateDataset", "*");
+                return featurePermissionManager.HasAccessAsync<User>(GetUsernameOrDefault(), "DCM", "CreateDataset", "*").Result;
             }
             finally
             {
@@ -3634,7 +3644,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-                return entityPermissionManager.HasEffectiveRight(GetUsernameOrDefault(), typeof(Dataset), entityId, RightType.Write);
+                return entityPermissionManager.HasEffectiveRightsAsync(GetUsernameOrDefault(), typeof(Dataset), entityId, RightType.Write).Result;
             }
             finally
             {
@@ -3863,7 +3873,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                     long entityId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
                     long datastructureId = 0;
+                    
                     if (TaskManager.Bus.ContainsKey(CreateTaskmanager.DATASTRUCTURE_ID))
+
                         datastructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.DATASTRUCTURE_ID]);
                     long researchplanId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.RESEARCHPLAN_ID]);
                     long metadatastructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);

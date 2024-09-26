@@ -272,7 +272,7 @@ namespace BExIS.Web.Shell.Helpers
                 if (string.IsNullOrEmpty(operation.Attribute("area").Value)) area = "shell";
                 else area = operation.Attribute("area").Value.ToLower();
 
-                bool permission = featurePermissionManager.HasAccess<User>(name, area, controller, action);
+                bool permission = featurePermissionManager.HasAccessAsync<User>(name, area, controller, action).Result;
 
                 System.Web.HttpContext.Current.Session[identifier] = permission;
 

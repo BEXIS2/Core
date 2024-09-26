@@ -8,7 +8,9 @@ using BExIS.Modules.Rpm.UI.Models.DataStructure;
 using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace BExIS.Modules.Rpm.UI.Helpers
 {
@@ -274,7 +276,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 IsKey = variable.IsKey,
                 IsOptional = variable.IsValueOptional,
                 Meanings = ConvertTo(variable.Meanings),
-                Constraints = ConvertTo(variable.VariableConstraints)
+                Constraints = ConvertTo(variable.VariableConstraints),
+                MissingValues = ConvertTo(variable.MissingValues)
             };
 
             // add template if exist
@@ -345,9 +348,62 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             using (var missingValueManager = new MissingValueManager())
             {
                 List<long> ids = items.Select(m => m.Id).ToList();
-                missingValueManager.Repo.Query(m => ids.Contains(m.Id));
+                list = missingValueManager.Repo.Query(m => ids.Contains(m.Id)).ToList();
+
+                foreach (var mv in items)
+                {
+                    if(mv.Id==0)
+                    {                        
+                        list.Add(new MissingValue()
+                        {
+                            DisplayName = mv.DisplayName,
+                            Description = mv.Description,
+                        });
+                    }
+     
+                }
+
                 return list;
             }
+        }
+
+        public List<MissingValueItem> ConvertTo(ICollection<MissingValue> items)
+        {
+            List<MissingValueItem> list = new List<MissingValueItem>();
+            foreach (var mv in items)
+            {
+                list.Add(new MissingValueItem()
+                {
+                    Id = mv.Id,
+                    DisplayName = mv.DisplayName,
+                    Description = mv.Description,
+                });
+            }
+
+            return list;
+        }
+
+
+        public ICollection<MissingValue> Update(ICollection<MissingValueItem> source, ICollection<MissingValue> target)
+        {
+            target.Clear();
+
+            using (var missingValueManager = new MissingValueManager())
+            {
+                foreach (var item in source)
+                {
+                    if (!string.IsNullOrEmpty(item.DisplayName))
+                    {
+                        target.Add(new MissingValue()
+                        {
+                            DisplayName = item.DisplayName,
+                            Description = item.Description
+                        });
+                    }
+                }
+            }
+
+            return target;
         }
 
         private string getConstraintType(Constraint c)

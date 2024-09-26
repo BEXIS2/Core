@@ -61,7 +61,16 @@ namespace BExIS.Utils.Models
             direction = Direction.increase;
             uiComponent = UiComponent.None;
             aggregationType = AggregationType.None;
+
+            placeholder = "";
         }
+
+        /// <summary>
+        /// Palceholder for card view
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        public string placeholder { get; set; }
 
         /// <summary>
         ///

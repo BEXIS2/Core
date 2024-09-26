@@ -64,7 +64,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
                         //Remove orginal feature permissions
                         for (int i = 0; i < featurePermissions.Count; i++)
                         {
-                            featurePermissionManager.Delete(featurePermissions[i].Subject.Id, featurePermissions[i].Feature.Id);
+                            var result_delete = featurePermissionManager.DeleteAsync(featurePermissions[i].Subject.Id, featurePermissions[i].Feature.Id).Result;
                         }
                     }
 
@@ -116,7 +116,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
                     var alumniFeaturePermissions = alumniFeaturePermissionManager.FormerMemberFeaturePermissionRepository.Get(a => a.Subject.Id == user.Id).ToList();
                     if (alumniFeaturePermissions.Count > 0)
                     {
-                        alumniFeaturePermissions.ForEach(u => featurePermissionManager.Create(user, u.Feature, u.PermissionType));
+                        alumniFeaturePermissions.ForEach(async u => await featurePermissionManager.CreateAsync(user, u.Feature, u.PermissionType));
                         //remove
                         for (int i = 0; i < alumniFeaturePermissions.Count; i++)
                         {

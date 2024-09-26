@@ -598,12 +598,10 @@ namespace BExIS.Dlm.Services.Meanings
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
                     IRepository<PrefixCategory> repo = uow.GetRepository<PrefixCategory>();
-                    using (PrefixCategory prefixCategory = new PrefixCategory(Name, Description))
-                    {
-                        repo.Put(prefixCategory);
-                        uow.Commit();
-                        return prefixCategory;
-                    }
+                    PrefixCategory prefixCategory = new PrefixCategory(Name, Description);
+                    repo.Put(prefixCategory);
+                    uow.Commit();
+                    return prefixCategory;
                 }
             }
             catch (Exception exc)

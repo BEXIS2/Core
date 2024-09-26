@@ -28,9 +28,9 @@ hover:bg-primary-100 space-x-100 active:bg-primary-300"
 	</div>
 	<div class="flex-none text-right">
 		<div class="flex gap-2">
-			{#if inUse}
+			<!--{#if inUse}
 				<span class="badge variant-filled-error">in use</span>
-			{/if}
+			{/if}-->
 			<span class="badge variant-filled-surface">{metadataStructure.text}</span>
 			<span class="badge variant-filled-secondary">{entityType.text}</span>
 		</div>

@@ -9,7 +9,6 @@ namespace BExIS.Security.Services.Subjects
 {
     public class IdentityUserService : UserManager<User, long>
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
         public IdentityUserService() : base(new UserManager())
         {
             // Configure validation logic for usernames
@@ -46,7 +45,7 @@ namespace BExIS.Security.Services.Subjects
             UserTokenProvider = new DataProtectorTokenProvider<User, long>(dataProtector);
         }
 
-        [Obsolete("Dot not use it, and there is no other way of chaning phone numbers!", true)] // this is an example of making a base class method obsolete and causing compilation error
+        [Obsolete("Dot not use it, and there is no other way of changing phone numbers!", true)] // this is an example of making a base class method obsolete and causing compilation error
         public new Task<IdentityResult> ChangePhoneNumberAsync(long userId, string phoneNumber, string token)
         {
             return base.ChangePhoneNumberAsync(userId, phoneNumber, token);

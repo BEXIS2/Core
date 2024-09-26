@@ -1,0 +1,49 @@
+{
+  "id": "ddm",
+  "name": "Data Discovery",
+  "description": "...",
+  "entries": [
+    {
+      "key": "help",
+      "title": "Help URL",
+      "value": "",
+      "type": "String",
+      "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
+    },
+    {
+      "key": "check_public_metadata",
+      "title": "Check public metadata for not-logged in users",
+      "value": false,
+      "type": "Boolean",
+      "description": "Set true to enable to show metadata for not-logged in users, if the dataset is not public."
+    },
+    {
+      "key": "reduce_versions_select_logged_in",
+      "title": "Reduce versions select for logged in users",
+      "value": true,
+      "type": "Boolean",
+      "description": "Set true to reduce the versions select for logged in users."
+    },
+    {
+      "key": "restrict_latest_version_logged_in",
+      "title": "Restrict to latest version for logged in users",
+      "value": false,
+      "type": "Boolean",
+      "description": "Set true to restrict the version select to the latest version for logged in users."
+    },
+    {
+      "key": "use_tags",
+      "title": "Activate tags to summarize versions",
+      "value": false,
+      "type": "Boolean",
+      "description": "Enable to possibilty for Users to define a combination of versions to a tag."
+    },
+    {
+      "key": "use_minor",
+      "title": "Use minor tags",
+      "value": false,
+      "type": "Boolean",
+      "description": "Activate minor tags in order to be able to show the changes more granularly."
+    }
+  ]
+}

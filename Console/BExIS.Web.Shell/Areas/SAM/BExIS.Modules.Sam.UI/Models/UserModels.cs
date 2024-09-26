@@ -83,7 +83,7 @@ namespace BExIS.Modules.Sam.UI.Models
         public string Name { get; set; }
         public string DisplayName { get; set; }
         public string IsEmailConfirmed { get; set; }
-        public DateTime RegistrationDate { get; set; }
+        public DateTimeOffset RegistrationDate { get; set; }
 
         public static UserGridRowModel Convert(User user)
         {

@@ -195,7 +195,7 @@
 
 		const confirm: ModalSettings = {
 			type: 'confirm',
-			title: 'Delete Unit',
+			title: 'Delete Variable',
 			body: 'Are you sure you wish to delete the variable "' + deleteVar.name + '"?',
 			// TRUE if confirm pressed, FALSE if cancel pressed
 			response: (r: boolean) => {

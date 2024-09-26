@@ -35,6 +35,8 @@
 	import suite from './variable';
 	import ConstraintsDescription from './ConstraintsDescription.svelte';
 	import MeaningsDescription from './MeaningsDescription.svelte';
+	import Status from './Status.svelte';
+	import MissingValues from '../../MissingValues.svelte';
 
 	export let variable: VariableInstanceModel = new VariableInstanceModel();
 	$: variable;
@@ -64,7 +66,7 @@
 	export let isValid: boolean = false;
 	export let last: boolean = false;
 	export let expand: boolean;
-	export let blockDataRelevant: boolean;
+	export let blockDataRelevant: boolean = false;
 
 	$: isValid;
 	// validation
@@ -87,6 +89,8 @@
 		suggestedDataType = variable.dataType;
 		suggestedUnits = variable.possibleUnits;
 		suggestedTemplates = variable.possibleTemplates;
+		console.log("🚀 ~ onMount ~ variable:", variable)
+		
 		// reset & reload validation
 		suite.reset();
 
@@ -304,20 +308,67 @@
 							bind:expand
 							{blockDataRelevant}
 						>
-							<TextInput
-								id="name"
-								label="Name"
-								bind:value={variable.name}
-								on:input={onChangeHandler}
-								valid={res.isValid('name')}
-								invalid={res.hasErrors('name')}
-								feedback={res.getErrors('name')}
-								disabled={blockDataRelevant}
-							/>
+		
+						<Container name="Title" >
+							<div class="flex" slot="property">
+								<div class="grow">
+								<TextInput
+									id="name"
+									label="Name"
+									bind:value={variable.name}
+									on:input={onChangeHandler}
+									valid={res.isValid('name')}
+									invalid={res.hasErrors('name')}
+									feedback={res.getErrors('name')}
+									disabled={blockDataRelevant}
+								/>
+							</div>
+								<Status {isValid}></Status>
+							</div>
+
+							<div slot="template">
+								<div class="flex w-full gap-1 py-1">
+									<div class="grow">Template (data is copied and changeable!)</div>
+									{#each suggestedTemplates.slice(0, 3) as t}
+										<button
+											class="badge"
+											class:variant-filled-primary={t.text == variable.template?.text}
+											class:variant-ghost-primary={t.text != variable.template?.text}
+											on:click={() => (variable.template = t)}>{t.text}</button
+										>
+									{/each}
+								</div>
+								<MultiSelect
+									id="variableTemplate"
+									title=""
+									source={variableTemplates}
+									itemId="id"
+									itemLabel="text"
+									itemGroup="group"
+									complexSource={true}
+									complexTarget={true}
+									isMulti={false}
+									clearable={true}
+									bind:target={variable.template}
+									placeholder="-- Please select --"
+									invalid={res.hasErrors('variableTemplate') && !blockDataRelevant}
+									feedback={res.getErrors('variableTemplate')}
+									on:change={(e) => onSelectHandler(e, 'variableTemplate')}
+									disabled={blockDataRelevant}
+								/>
+							</div>
+
+							<div slot="description">...</div>
+
+
+						</Container>
 						</Header>
 					</header>
 
 					<section class="py-2 px-10">
+						
+
+
 						<!--Description-->
 						<Container>
 							<div slot="property">
@@ -339,7 +390,7 @@
 						</Container>
 
 						<!--Datatype-->
-						<Container>
+						<Container name="DataType">
 							<div slot="property">
 								<MultiSelect
 									id="dataType"
@@ -383,17 +434,9 @@
 									/>
 								{/if}
 							</div>
-							<div slot="description">
-								{#if variable.dataType}
-									<DataTypeDescription type={variable.dataType.text} {missingValues} />
-								{/if}
-							</div>
-						</Container>
 
-						<!--Unit-->
-						<Container>
-							<div slot="property">
-								<div class="flex w-full gap-1 py-1">
+							<div slot="unit">
+								<div class="flex w-full gap-1">
 									<div class="grow">Unit</div>
 									{#if suggestedUnits && suggestedUnits.length > 1}
 										{#each suggestedUnits?.slice(0, 3) as u}
@@ -424,44 +467,15 @@
 									on:change={(e) => onSelectHandler(e, 'unit')}
 								/>
 							</div>
-							<div slot="description"></div>
+
+
+							<div slot="description">
+								{#if variable.dataType}
+									<DataTypeDescription type={variable.dataType.text} {missingValues} />
+								{/if}
+							</div>
 						</Container>
 
-						<!--Meaning-->
-						<Container>
-							<div slot="property">
-								<div class="flex w-full gap-1 py-1">
-									<div class="grow">Template</div>
-									{#each suggestedTemplates.slice(0, 3) as t}
-										<button
-											class="badge"
-											class:variant-filled-primary={t.text == variable.template?.text}
-											class:variant-ghost-primary={t.text != variable.template?.text}
-											on:click={() => (variable.template = t)}>{t.text}</button
-										>
-									{/each}
-								</div>
-								<MultiSelect
-									id="variableTemplate"
-									title=""
-									source={variableTemplates}
-									itemId="id"
-									itemLabel="text"
-									itemGroup="group"
-									complexSource={true}
-									complexTarget={true}
-									isMulti={false}
-									clearable={true}
-									bind:target={variable.template}
-									placeholder="-- Please select --"
-									invalid={res.hasErrors('variableTemplate') && !blockDataRelevant}
-									feedback={res.getErrors('variableTemplate')}
-									on:change={(e) => onSelectHandler(e, 'variableTemplate')}
-									disabled={blockDataRelevant}
-								/>
-							</div>
-							<div slot="description">...</div>
-						</Container>
 
 						<Container>
 							<div slot="property">
@@ -519,6 +533,16 @@
 								<ConstraintsDescription bind:list={variable.constraints} />
 							</div>
 						</Container>
+						<Container>
+							<div slot="property">
+								<div class="flex w-full gap-1 py-1">
+									<div class="grow">Missing Values</div>
+								</div>
+								<MissingValues bind:list={variable.missingValues} showTitle={false} disabled={blockDataRelevant}></MissingValues>
+							</div>
+							<div slot="description">
+							</div>
+						</Container>
 					</section>
 
 					<footer class="card-footer">
@@ -543,7 +567,19 @@
 					template={variable.template?.text}
 					description={variable.description}
 					datapreview={cutData(data).join(', ')}
-				/>
+				>
+
+						<TextInput
+									id="name"
+									label="Name"
+									bind:value={variable.name}
+									on:input={onChangeHandler}
+									valid={res.isValid('name')}
+									invalid={res.hasErrors('name')}
+									feedback={res.getErrors('name')}
+									disabled={blockDataRelevant}
+								/>
+			</Overview>
 			{/if}
 		</div>
 		<div

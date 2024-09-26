@@ -22,7 +22,7 @@
 		<add key="UseSchemaInDatabaseGeneration" value="False" />
 		<add key="ThrowErrorWhenParialContentNotFound" value="False" />
 		<add key="ApplicationName" value="{APPLICATIONNAME}" />
-		<add key="ApplicationVersion" value="3.3.3" />
+		<add key="ApplicationVersion" value="3.4.0" />
 		<add key="SessionWarningDelaySecond" value="30" />
 		<!-- Keep it as false, there are some test data in the database-->
 		<add key="CreateDatabase" value="false" />
@@ -153,7 +153,7 @@
 			<customHeaders>
 				<!-- Remove header to impreove security -->
 				<remove name="X-Powered-By" />
-				<add name="Content-Security-Policy" value="default-src 'self'; connect-src *; font-src *; frame-src *; img-src * data:; media-src *; object-src *; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline';"/>
+				<add name="Content-Security-Policy" value="frame-ancestors 'self'" />
 			</customHeaders>
 		</httpProtocol>
 		<!-- reset the cache after one day -->
@@ -178,7 +178,7 @@
 			</dependentAssembly>
 			<dependentAssembly>
 				<assemblyIdentity name="PostSharp" publicKeyToken="b13fd38b8f9c99d7" culture="neutral" />
-				<bindingRedirect oldVersion="0.0.0.0-4.3.48.0" newVersion="4.3.48.0" />
+				<bindingRedirect oldVersion="0.0.0.0-4.3.19.0" newVersion="4.3.19.0" />
 			</dependentAssembly>
 			<dependentAssembly>
 				<assemblyIdentity name="Microsoft.Practices.Unity" publicKeyToken="31bf3856ad364e35" culture="neutral" />

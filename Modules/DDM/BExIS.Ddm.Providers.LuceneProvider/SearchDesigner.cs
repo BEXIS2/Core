@@ -95,6 +95,10 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                     if (fieldProperty.Attributes.GetNamedItem("date_format") != null)
                         sa.dateFormat = fieldProperty.Attributes.GetNamedItem("date_format").Value;
 
+
+                    if (fieldProperty.Attributes.GetNamedItem("placeholder") != null)
+                        sa.placeholder = fieldProperty.Attributes.GetNamedItem("placeholder").Value.ToString();
+
                     this._searchAttributeList.Add(sa);
                     index++;
                 }
@@ -218,11 +222,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             this._configXML.Save(FileHelper.ConfigFilePath);
         }
 
-        public void Reload()
+        public void Reload(bool onlyReleasedTags)
         {
             try
             {
-                bexisIndexer.ReIndex();
+                bexisIndexer.ReIndex(onlyReleasedTags);
             }
             catch (Exception ex)
             {
@@ -279,6 +283,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             //boost
             xa = this._configXML.CreateAttribute("boost");
             xa.Value = sa.boost.ToString();
+            xmlElement.Attributes.Append(xa);
+
+            //placeholder
+            xa = this._configXML.CreateAttribute("placeholder");
+            xa.Value = sa.placeholder.ToString();
             xmlElement.Attributes.Append(xa);
 
             // ResultView

@@ -19,7 +19,7 @@
 	import Controls from './Controls.svelte';
 	import Attributes from './structure/Attributes.svelte';
 	import ConstraintsDescription from './structure/variable/ConstraintsDescription.svelte';
-	import { goTo } from '$services/BaseCaller';
+	import { goTo } from './services';
 
 	export let model: DataStructureCreationModel;
 	$: model;
@@ -348,8 +348,8 @@
 		}
 	}
 
-	// if you change the delimeter you need to change/update also the table informations
-	function changeDelimeter() {
+	// if you change the delimeter you need to change/update also the table information
+	function changeDelimiter() {
 		setTableInfos(model.preview, String.fromCharCode(model.delimeter));
 		prepareData(model.preview)
 	}
@@ -378,14 +378,14 @@
 		model.preview = m.preview;
 	}
 
- 
+
 	function textMarkerHandling(row:string):[]
 	{
 		 const d = String.fromCharCode(model.delimeter);
 		 const t = String.fromCharCode(model.textMarker);
 			const values = row.split(d);
 
-			let temp=[]; 
+			let temp=[];
 
 			if(row.includes(t))
 			{
@@ -425,10 +425,10 @@
 									temp = [...temp, v];
 								}
 							}
-						
-							
+
+
 					});
-					
+
 					return temp;
 			}
 			else
@@ -469,22 +469,23 @@
 			on:mousedown={beginDrag}
 			on:mouseup={endDrag}
 		>
+		<label id="title" ><b>File Structure</b></label>
 			<div class="flex gap-5">
 				<div id="edit" class="flex flex-col grow gap-2">
 					<div id="reader selections" class="flex flex-none gap-2">
 						<DropdownKVP
 							id="delimeter"
-							title="Delimeter"
+							title="Delimiter"
 							bind:target={model.delimeter}
 							source={model.delimeters}
 							complexTarget={false}
-							on:change={changeDelimeter}
+							on:change={changeDelimiter}
 							help={true}
 						/>
 
 						<DropdownKVP
 							id="decimal"
-							title="Decimal"
+							title="Decimal Separator"
 							bind:target={model.decimal}
 							source={model.decimals}
 							complexTarget={false}
@@ -493,7 +494,7 @@
 
 						<DropdownKVP
 							id="textMarker"
-							title="TextMarker"
+							title="Text Marker"
 							bind:target={model.textMarker}
 							source={model.textMarkers}
 							complexTarget={false}
@@ -511,7 +512,14 @@
 						/>
 					</div>
 
-					<div id="markers" class="py-5 flex gap-1">
+					<div id="missingvalues" class="py-4 grow w-1/2">
+						<!-- Missing Values-->
+						<MissingValues bind:list={model.missingValues} />
+					</div>
+
+					<span id="title"><b>Mark at least Variable and Data</b></span>
+					<div id="markers" class="flex gap-1">
+
 						<button
 							class="btn variant-filled-error"
 							id="selectVar"
@@ -548,23 +556,17 @@
 							on:mouseover={() => helpStore.show('selectData')}
 							on:click={() => onclickHandler(MARKER_TYPE.DATA)}>Data</button
 						>
+						<div class="ml-10">
+							<button
+								title="reset selection"
+								id="resetSelection"
+								class="btn variant-ghost-surface text-lg"
+								type="button"
+								on:mouseover={() => helpStore.show('resetSelection')}
+								on:click={resetSelection}>Reset</button
+							>
+					 </div>
 
-						<button
-							title="reset selection"
-							id="resetSelection"
-							class="btn variant-filled-warning text-lg"
-							type="button"
-							on:mouseover={() => helpStore.show('resetSelection')}
-							on:click={resetSelection}><Fa icon={faArrowRotateLeft} /></button
-						>
-					</div>
-
-					<div id="missingvalues" class="grow">
-						<!-- Missing Values-->
-						<MissingValues bind:list={model.missingValues} />
-					</div>
-
-					<div class="flex">
 						<div id="errors" class="m-2 text-sm grow text-right">
 							{#each errors as error}
 								<label class="text-error-500">{error}</label>
@@ -572,9 +574,13 @@
 						</div>
 						<div class="text-right">
 							<button title="save" class="btn variant-filled-primary text-lg" disabled={!isValid}>
-								<Fa icon={faSave} />
+								<Fa icon={faSave} size="lg" />
 							</button>
 						</div>
+					</div>
+
+					<div class="flex">
+
 					</div>
 				</div>
 

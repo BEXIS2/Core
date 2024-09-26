@@ -60,7 +60,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // load from settings
             bool enforcePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("enforcePrimaryKey");
 
-            // load cache to get informations about the current upload workflow
+            // load cache to get information about the current upload workflow
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
             EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
             if (log == null) log = new EditDatasetDetailsLog();
@@ -81,7 +81,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     if (id <= 0)
                         errors.Add(new Error(ErrorType.Other, "The validation cannot be executed because a dataset with id " + id + " not exist."));
 
-                    //check dataset and datastructure
+                    //check dataset and data structure
                     var dataset = datasetManager.GetDataset(id); ;
                     if (dataset == null)
                     {
@@ -91,12 +91,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         #region file error
 
-                        // if datastructue is null
+                        // if data structure is null
                         if (dataset.DataStructure == null)
                         {
                             errors.Add(new Error(ErrorType.Datastructure, "The validation cannot be executed because a dataset has no structure.", "Datastructure"));
                         }
-                        else // datastrutcure exist
+                        else // data structure exist
                         {
                             long datastructureId = dataset.DataStructure.Id;
 
@@ -110,7 +110,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 cache.UpdateSetup.VariablesCount = sds.Variables.Count;
                             }
 
-                            // check data and primary key usecases before reading files
+                            // check data and primary key use cases before reading files
                             // 1. no data, no pk -> (check for duplicates, all vars are the primary key) - is checked by UploadHelper.IsUnique fn
                             // 2. exist data & no pk -> force pk - info : change data or structure pk
                             bool hasData = false;
@@ -132,11 +132,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             var pks = sds.Variables.Where(v => v.IsKey.Equals(true))?.Select(v => v.Id);
                             string varIdsAsString = pks == null ? "" : string.Join(",", pks.ToArray());
 
-                            //update primaryKeys if chaneged
+                            //update primaryKeys if changed
                             cache.UpdateSetup.PrimaryKeys = pks.ToList();
 
                             // optionals
                             var optionals = string.Join(",", sds.Variables.Where(v => v.IsValueOptional).Select(v => v.Id));
+                            var varVersions = string.Join(",", sds.Variables.Select(v => v.VersionNo));
+                        
 
                             // check against primary key in db
                             // this check happens outside of the files,
@@ -146,7 +148,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             // read all files
                             foreach (var file in cache.Files)
                             {
-                                // get extention, name & path
+                                // get extension, name & path
                                 var ext = Path.GetExtension(file.Name);
                                 var fileName = Path.GetFileName(file.Name);
                                 var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "Temp", file.Name);
@@ -159,15 +161,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     if (cache.AsciiFileReaderInfo == null)
                                     {
                                         existReaderInfo = false;
-                                        fileErrors.Add(new Error(ErrorType.FileReader, "File reader informations missing.", "FileReader"));
+                                        fileErrors.Add(new Error(ErrorType.FileReader, "File reader information missing.", "FileReader"));
                                     }
                                     else
                                     {
                                         if (System.IO.File.Exists(filePath))
                                         {
                                             // check if hash of file has changed or not exist
-                                            // if so, then valdiate and overide hash if not set results to model
-                                            // the hash value need to be abot: name, lenght, structure id, ascci reader info;
+                                            // if so, then validate and override hash if not set results to model
+                                            // the hash value need to be about: name, length, structure id, ascii reader info;
                                             // if something has changed also validation need to repeat
                                             string readerInfo = cache.AsciiFileReaderInfo != null ? cache.AsciiFileReaderInfo.ToJson() : "";
                                             string incomingHash = HashHelper.CreateMD5Hash(
@@ -178,10 +180,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                 cache.Files.Count.ToString(),
                                                 varIdsAsString,
                                                 sds.VersionNo.ToString(),
-                                                optionals
+                                                optionals,
+                                                varVersions
                                                 );
 
-                                            // if a validation is allready run and the file has not changed, skip validation
+                                            // if a validation is already run and the file has not changed, skip validation
                                             if (file.ValidationHash != incomingHash)
                                             {
                                                 if (ext.Equals(".xlsm")) // excel Template

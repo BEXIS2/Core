@@ -1,0 +1,136 @@
+﻿@using BExIS.Modules.Ddm.UI.Models
+
+@model List<MyDatasetsModel>
+
+@section Information
+{
+    <p>This table contains all datasets, created by you as a current logged on user. </p>
+    <p>By right clicking on the header, you can manage the visibility of columns. You can also use filtering or grouping to see the more operative information.</p>
+    <p>To view more details of a dataset, click the <strong>View details</strong> button available in each row.</p>
+}
+
+@if (ViewBag.userLoggedIn == true)
+{
+
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#" id="own">Own</a></li>
+        <li><a href="#" id="edit">Edit</a></li>
+        <li><a href="#" id="download">Download</a></li>
+    </ul>
+}
+else
+{
+    <ul class="nav nav-tabs">
+        <li  class="active"><a href="#">Download</a></li>
+    </ul>
+}
+
+<script type="text/javascript">
+
+        var cache = [];
+     $('document').ready(function () {
+
+        $('#own').click(function () {
+            $('.nav-tabs li.active').removeClass('active');
+            $(this).parent().addClass('active');
+
+            if (cache["Datasetgrant"] != null){
+                $("#table_content").html(cache["Datasetgrant"]);
+            }
+            else
+            {
+                loadContent("@ViewBag.entityname", "grant");
+            }
+        });
+
+        $('#edit').click(function () {
+            $('.nav-tabs li.active').removeClass('active');
+            $(this).parent().addClass('active');
+
+            if (cache["Datasetwrite"] != null){
+                $("#table_content").html(cache["Datasetwrite"]);
+            }
+            else
+            {
+                loadContent("@ViewBag.entityname", "write");
+            }
+        });
+
+        $('#download').click(function () {
+            $('.nav-tabs li.active').removeClass('active');
+            $(this).parent().addClass('active');
+
+            if (cache["Datasetread"] != null){
+                $("#table_content").html(cache["Datasetread"]);
+            }
+            else
+            {
+                loadContent("@ViewBag.entityname", "read");
+            }
+        });
+
+        function loadContent(entityname, rightType){
+
+            $("#table_content").preloader("..loading datasets");
+
+            var onlyTable = true;
+
+            $.get("/ddm/dashboard/ShowMyDatasets",
+                {entityname, rightType, onlyTable },
+                function (data, textStatus, jqXHR) {
+                    $("#table_content").html(data);
+                    var id = entityname+rightType;
+                    cache[id] = data;
+                }
+            );
+         }
+
+        function onclickDataset(e) {
+
+            // checked
+            var id = e.getAttribute("id");
+
+            var data = {
+                id: id
+            }
+
+            $.ajax({
+                url: '/ddm/Data/IsDatasetCheckedIn',
+                type: 'POST',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                error: function (xhr) {
+                    alert('Error: ' + xhr.statusText);
+
+                },
+                success: function (result) {
+                    if (result) {
+                        window.open("/ddm/Data/ShowData/" + id, "_blank");
+                    } else {
+
+                        alert("Dataset is locked. Please try again later.");
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+<style type="text/css">
+
+    #resultGrid .t-grid-content {
+        position: relative;
+        height: auto !important;
+        max-height: 450px;
+        /*overflow:auto;*/
+    }
+
+    #resultGrid .t-status {
+        display: none;
+    }
+</style>
+
+<div id="table_content">
+    @Html.Partial("_myDatasetsView", Model)
+</div>

@@ -3,6 +3,8 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Orm.NH.Utils;
 using BExIS.Dlm.Services.Helpers;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Versions;
 using BExIS.Utils.NH.Querying;
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Xml;
+using Vaiona.Entities.Logging;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
@@ -354,9 +357,9 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="username">The username that performs the check-in, which should be the same as the check-out username</param>
         /// <remarks>Does not support simultaneous check-ins</remarks>
         //[MeasurePerformance]
-        public void CheckInDataset(Int64 datasetId, string comment, string username, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh)
+        public void CheckInDataset(Int64 datasetId, string comment, string username, ViewCreationBehavior viewCreationBehavior = ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, TagType tagType=TagType.Copy)
         {
-            checkInDataset(datasetId, comment, username, false, viewCreationBehavior, "");
+            checkInDataset(datasetId, comment, username, false, viewCreationBehavior, "", tagType);
         }
 
         /// <summary>
@@ -422,7 +425,7 @@ namespace BExIS.Dlm.Services.Data
                     //This fetch and insert will be problematic on bigger datasets! try implement the logic without loading the tuples
                     var tupleIds = getWorkingCopyTupleIds(workingCopy);
                     workingCopy = editDatasetVersionBig(workingCopy, null, null, tupleIds, null); // deletes all the tuples from the active list and moves them to the history table
-                    checkInDataset(entity.Id, "Dataset is deleted", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, deleteReason);
+                    checkInDataset(entity.Id, "Dataset is deleted", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, deleteReason, TagType.None);
 
                     entity = datasetRepo.Get(datasetId); // maybe not needed!
                     entity.Status = DatasetStatus.Deleted;
@@ -441,7 +444,7 @@ namespace BExIS.Dlm.Services.Data
                 {
                     if (entity.Status == DatasetStatus.CheckedOut)
                     {
-                        checkInDataset(entity.Id, "Checked-in after failed delete try!", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, "");
+                        checkInDataset(entity.Id, "Checked-in after failed delete try!", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, "", TagType.None);
                     }
                     return false;
                 }
@@ -569,7 +572,7 @@ namespace BExIS.Dlm.Services.Data
                 {
                     if (entity.Status == DatasetStatus.CheckedOut)
                     {
-                        checkInDataset(entity.Id, "Checked-in after failed delete try!", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, "");
+                        checkInDataset(entity.Id, "Checked-in after failed delete try!", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, "", TagType.None);
                     }
                     return false;
                 }
@@ -1503,6 +1506,27 @@ namespace BExIS.Dlm.Services.Data
             return allowedVersionList;
         }
 
+        /// <summary>
+        /// get latest version by tag
+        /// </summary>
+        /// <param name="datasetId"></param>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        public DatasetVersion GetLatestDatasetVersionByTag(Int64 datasetId, double tag, bool isPublic)
+        {
+            List<DatasetVersion> allowedVersionList = new List<DatasetVersion>();
+
+            // Get list od dataset versions, if not provided
+             var datasetVersions = GetDatasetVersions(datasetId, DatasetStatus.CheckedIn);
+      
+            // 1. get versions with tag
+            List<DatasetVersion> versionsWithTag = datasetVersions.Where(v => v.Tag!=null && v.Tag.Nr.Equals(tag) && v.Tag.Final.Equals(isPublic)).ToList();
+
+            var lastest = versionsWithTag.OrderByDescending(v => v.Timestamp).FirstOrDefault();
+
+            return lastest;
+        }
+
         public DataTable ConvertToDataTable(DatasetVersion dsVersion)
         {
             return this.convertDataTuplesToDataTable(dsVersion);
@@ -1740,6 +1764,7 @@ namespace BExIS.Dlm.Services.Data
 
                 //return (qu.ToList());
             }
+
         }
 
         /// <summary>
@@ -1809,6 +1834,22 @@ namespace BExIS.Dlm.Services.Data
                     workingCopyDatasetVersion.StateInfo = stateInfo;
 
                 return editDatasetVersion(workingCopyDatasetVersion, createdTuples, editedTuples, deletedTuples, unchangedTuples);
+            }
+        }
+
+        public DatasetVersion GetDatasetVersion(long id, int versionNr)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
+                var datasetVersions = datasetVersionRepo.Query().Where(dsv => dsv.Dataset.Id.Equals(id)).OrderBy(dsv => dsv.Timestamp);
+
+                if (datasetVersions.Any() && datasetVersions.Count() >= (versionNr - 1))
+                {
+                    return datasetVersions.ToList().ElementAt(versionNr - 1);
+                }
+
+                return null;
             }
         }
 
@@ -2934,6 +2975,9 @@ namespace BExIS.Dlm.Services.Data
                         Status = DatasetVersionStatus.CheckedOut,
                         Dataset = ds
                     };
+
+                    dsNewVersion.Tag = null;
+
                     // if there is a previous version, copy its metadata, content descriptors and extended property values to the newly created version
                     if (ds.Versions.Count() > 0)
                     {
@@ -2953,6 +2997,7 @@ namespace BExIS.Dlm.Services.Data
                             dsNewVersion.VersionName = previousCheckedInVersion.VersionName;
                             dsNewVersion.PublicAccess = previousCheckedInVersion.PublicAccess; //@Todo Copy or set to NULL?
                             dsNewVersion.StateInfo = previousCheckedInVersion.StateInfo;
+                            dsNewVersion.Tag = previousCheckedInVersion.Tag;
 
                             // in state the status of the metadat is store
                             // e.g. metadata is valid
@@ -2998,7 +3043,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="datasetId"></param>
         /// <param name="comment"></param>
         /// <param name="adminMode">if true, the check for current user is bypassed</param>
-        private void checkInDataset(Int64 datasetId, string comment, string username, bool adminMode, ViewCreationBehavior viewCreationBehavior, string mStateComment = "")
+        private void checkInDataset(Int64 datasetId, string comment, string username, bool adminMode, ViewCreationBehavior viewCreationBehavior, string mStateComment = "", TagType tagType = TagType.Copy)
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -3024,8 +3069,16 @@ namespace BExIS.Dlm.Services.Data
                     if (ds.StateInfo == null)
                         ds.StateInfo = new Vaiona.Entities.Common.EntityStateInfo();
                     ds.ModificationInfo.Comment = mStateComment;
+
+
+                    // add tag
+                    dsv.Tag = IncreaseTag(dsv.Tag, tagType);
+
                     repo.Put(ds);
                     uow.Commit();
+
+                    
+
                     // when everything is OK, check if a materialized view is created for the datsets, if yes: refresh it to the lateset changes
                     // if not: try creating a materialized view and refresh it
                     // This only works for the latest versions of datasets, so any function that returns the lateset versions' tuples, must use the materialized views
@@ -3513,6 +3566,8 @@ namespace BExIS.Dlm.Services.Data
                 return (workingCopyVersion);
             }
         }
+
+     
 
         #endregion Private Methods
 
@@ -4005,5 +4060,222 @@ namespace BExIS.Dlm.Services.Data
         }
 
         #endregion Associations
+
+        #region tag
+
+
+        public List<long> GetDatasetIdsWithTag(bool onlyReady = true)
+        {
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                return DatasetVersionRepo.Get().Where(v => 
+                v.Tag != null && v.Tag.Final && v.Dataset.Status == DatasetStatus.CheckedIn).Select(v => v.Dataset.Id).Distinct().ToList();
+            }
+
+        }
+
+        /// <summary>
+        /// Get latest version with Tag Nr for a dataset
+        /// </summary>
+        /// <param name="id"> id of the dataset</param>
+        /// <param name="onlyReady"> get only tag wich are ready</param>
+        /// <returns></returns>
+        public Tag GetLatestTag(long id, bool onlyReady=false)
+        {
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                List<DatasetVersion> versions = uow.GetReadOnlyRepository<DatasetVersion>().Query().Where(v => v.Dataset.Id == id).ToList();
+                if (onlyReady)
+                    versions = versions.Where(v => v.Tag != null && v.Tag.Final == true).ToList(); // get only tags wich are ready
+                else
+                    versions = versions.Where(v => v.Tag != null).ToList();
+                                            
+                if (versions.Any())
+                {
+                    var v = versions.OrderByDescending(t => t.Tag.Nr).FirstOrDefault();
+
+                    return (v.Tag);
+                }
+
+                return null;
+            }
+            
+        }
+
+
+        /// <summary>
+        /// return latest dataset version id wich belongs to the tag nr
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="tagNr"></param>
+        /// <returns></returns>
+        public long GetLatestVersionIdByTagNr(long id, double tagNr)
+        {
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                List<DatasetVersion> versions = uow.GetReadOnlyRepository<DatasetVersion>().Query().Where(v => v.Dataset.Id == id).ToList();
+
+                var lastVersionByTag = versions.Where(v => v.Tag != null && v.Tag.Nr.Equals(tagNr))?.OrderByDescending(v => v.Id).FirstOrDefault();
+                long lastVersionIdByTag = lastVersionByTag == null ? 0 : lastVersionByTag.Id;
+
+                return lastVersionIdByTag;
+            }
+        }
+
+        /// <summary>
+        /// return latest dataset version id wich belongs to the tag nr
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="tagNr"></param>
+        /// <returns></returns>
+        public DatasetVersion GetLatestVersionByTagNr(long id, double tagNr)
+        {
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                List<DatasetVersion> versions = uow.GetReadOnlyRepository<DatasetVersion>().Query().Where(v => v.Dataset.Id == id).ToList();
+                var lastVersionByTag = versions.Where(v => v.Tag != null && v.Tag.Nr.Equals(tagNr))?.OrderByDescending(v => v.Id).FirstOrDefault();
+          
+                return lastVersionByTag;
+            }
+        }
+
+        /// <summary>
+        /// return ture if the version is public
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="versionNr"></param>
+        /// <returns></returns>
+        public bool IsVersionReady(long id, int versionNr )
+        {
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+             
+                var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
+                var datasetVersions = datasetVersionRepo.Query().Where(dsv => dsv.Dataset.Id.Equals(id)).OrderBy(dsv => dsv.Timestamp);
+
+                if (datasetVersions.Any() && datasetVersions.Count() >= (versionNr - 1))
+                {
+                    var version = datasetVersions.ToList().ElementAt(versionNr - 1);
+                    if (version != null && version.Tag != null && version.Tag.Final)
+                        return true;
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Checks if a dataset has a released tag.
+        /// </summary>
+        /// <param name="id">The ID of the dataset.</param>
+        /// <returns>True if the dataset has a released tag, false otherwise.</returns>
+        public bool hasDatasetReleasedTag(long id)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
+                var datasetVersions = datasetVersionRepo.Query().Where(dsv => dsv.Dataset.Id.Equals(id)).OrderBy(dsv => dsv.Timestamp);
+
+                if (datasetVersions.Any())
+                {
+                    foreach (var version in datasetVersions)
+                    {
+                        if (version != null && version.Tag != null && version.Tag.Final)
+                            return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Retrieves a list of all version IDs after the last tag for a given dataset.
+        /// </summary>
+        /// <param name="id">The ID of the dataset.</param>
+        /// <param name="last">The last tag.</param>
+        /// <param name="currentVersionId">The ID of the current version.</param>
+        /// <returns>A list of version IDs.</returns>
+        public List<long> GetAllVersionAfterLastTag(long id, Tag last, long currentVersionId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                List<DatasetVersion> versions = uow.GetReadOnlyRepository<DatasetVersion>().Query().Where(v => v.Dataset.Id == id).ToList();
+
+                var LastWithTag = versions.Where(v => v.Tag != null && v.Tag.Id.Equals(last.Id))?.OrderByDescending(v => v.Id).Select(v => v.Id);
+
+                var versionsToUpdate = versions.Where(v => v.Id <= currentVersionId && v.Id > LastWithTag.FirstOrDefault()).ToList();
+
+                return versionsToUpdate.Select(v => v.Id).ToList();
+            }
+        }
+
+        /// <summary>
+        /// Increases the tag based on the last tag and the specified tag type.
+        /// </summary>
+        /// <param name="last">The last tag used.</param>
+        /// <param name="type">The type of tag to increase.</param>
+        /// <returns>The increased tag.</returns>
+        public Tag IncreaseTag(Tag last, TagType type)
+        {
+            Tag tag = new Tag()
+            {
+                Nr = 0,
+                Type = type
+            };
+
+            // if none tag is uses -return null (e.g. update data)
+            if (type == TagType.None) return null;
+
+            // use same tag
+            if (type == TagType.Copy) return last;
+
+            // update nr in case of major or minor
+            // none as no changes to nr
+            if (type == TagType.Minor || type == TagType.Major)
+            {
+                var tagNr = last != null ? last.Nr : 0.0;
+                tagNr = increaseTagNr(tagNr, type);
+                tag.Nr = tagNr;
+            }
+
+            return tag;
+        }
+
+        private double increaseTagNr(double tagNr, TagType type)
+        {
+            if (type == TagType.Minor)
+            {
+                string tagNrStr = tagNr.ToString();
+                string[] strings;
+                if (tagNrStr.Contains("."))
+                {
+                    strings = tagNrStr.Split('.');
+                    int integerPlace = Int32.Parse(strings[0]);
+                    int decimalPlace = Int32.Parse(strings[1]);
+                    decimalPlace++;
+
+                    string newNr = string.Format("{0}.{1}", integerPlace, decimalPlace);
+                    tagNr = double.Parse(newNr);
+                }
+                else
+                {
+                    tagNr = tagNr + 0.1;
+                }
+            }
+            if (type == TagType.Major)
+            {
+                if (tagNr % 1 > 0) tagNr = Math.Ceiling(tagNr);
+                else tagNr += 1;
+            }
+
+            return tagNr;
+        }
+
+        #endregion
     }
 }

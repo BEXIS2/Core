@@ -428,11 +428,11 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetASyncStartUploadMessage(long datasetid, string title, IEnumerable<string> files)
         {
-            string fNames = string.Join(",", files);
+            string fNames = string.Join(", ", files);
 
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"Your upload to the dataset <b>\"{title}\"</b> with id <b>(\"{datasetid}\")</b> has started. <br/>");
-            stringBuilder.AppendLine($"<b>\"{fNames}\"</b> will be uploaded.");
+            stringBuilder.AppendLine($"The upload of the file(s) <b>\"{fNames}\"</b> to your dataset <b>\"{title}\"</b> with Id <b>{datasetid}</b> has started.");
+
 
             return stringBuilder.ToString();
         }
@@ -445,9 +445,9 @@ namespace BExIS.Security.Services.Utilities
         public static string GetASyncFinishUploadMessage(long datasetid, string title, int numberOfRows, int numberOfSkippedRows)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"Your upload to the dataset <b>\"{title}\"</b> with id <b>(\"{datasetid}\")</b> is completed. <br/>");
-            stringBuilder.AppendLine($"<b>\"{numberOfRows}\"</b> lines have been successfully added/edited.");
-            stringBuilder.AppendLine($"<b>\"{numberOfSkippedRows}\"</b> lines will be skipped.");
+            stringBuilder.AppendLine($"Your upload of the file(s) to the dataset <b>\"{title}\"</b> with Id <b>\"{datasetid}\"</b> is complete. <br/>");
+            stringBuilder.AppendLine($"<b>\"{numberOfRows}\"</b> rows have been successfully added/edited.");
+            stringBuilder.AppendLine($"<b>\"{numberOfSkippedRows}\"</b> rows were be skipped.");
 
             return stringBuilder.ToString();
         }

@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Manifest moduleId="ddm" displayName="Data Discovery Module" version="1.0.0" builtin="true">
+  <Description>
+    DDM provides a sophisticated search facility over registered data sets.
+  </Description>
+  <Assemblies>
+    <Assembly fullName="BExIS.Ddm.Api" role="" />
+    <!--<Assembly fullName="BExIS.Ddm.Model" role="" />-->
+    <Assembly fullName="BExIS.Ddm.Providers.LuceneProvider" role="" />
+  </Assemblies>
+  <Dependencies>
+    <Dependency moduleId="dcm" version="*.*.*" />
+  </Dependencies>
+  <Exports>
+    <Export tag="settings" id="manageSearch" order="1"
+            title="Manage Search" description="Manage search attributes and configure search paremeters" icon=""
+            controller="admin" action="searchDesigner" argument=""
+            extends="./settingsRoot" />
+
+    <Export tag="menubar" id="menuSearch" order="2"
+            title="Search" description="Search datasets" icon=""
+            controller="search" action=""
+            extends="./menubarRoot" />
+
+    <!--<Export tag="menubar" id="menuSearchPublic" order="2"
+            title="Public" description="Search in public datasets" icon=""
+            controller="publicsearch" action="public"
+            extends="./menubarRoot" />-->
+
+    <Export tag="menubar" id="dashboard" order="1"
+        title="My Data" description="Quick Access to User Area" icon=""
+        controller="dashboard" action="index"
+        extends="./menubarRoot" />
+
+    <Export tag="lunchbar" id="helpDdm" order="1"
+            title="Search" description="Search Help Manual" icon=""
+            controller="help" action="index"
+            extends="./lunchbarRoot/help" />
+
+    <!--<Export tag="api" id="tntList"
+            title="No thing" description="Change me!" icon=""
+            controller="publicsearch" action="public"
+            extends="./apiRoot" />-->
+
+    <!-- INTERNAL-->
+
+    <Export tag="internalApi" id="publicsearch"
+            title="Public Search" description="public search" icon=""
+            controller="PublicSearch" action="Index"
+            extends="" />
+
+    <Export tag="internalApi" id="showData"
+            title="Show Data" description="ShowData" icon=""
+            controller="Data" action="ShowData"
+            extends="" />
+
+    <Export tag="internalApi" id="ReIndexSearch"
+        title="Reindex Search" description="Reindex Search" icon=""
+        controller="SearchIndex" action="ReIndex"
+        extends="" />
+
+    <Export tag="internalApi" id="ReIndexSingle"
+        title="Reindex a Single " description="Reindex single" icon=""
+        controller="SearchIndex" action="ReIndexSingle"
+        extends="" />
+
+    <Export tag="internalApi" id="ReIndexUpdateSingle"
+        title="Reindex a Single " description="Reindex single" icon=""
+        controller="SearchIndex" action="ReIndexUpdateSingle"
+        extends="" />
+
+    <Export tag="internalApi" id="freeTextSearch"
+            title="Free Text Search" description="free Text Search" icon=""
+            controller="SearchIndex" action="Get"
+            extends="" />
+
+    <!--<Export tag="internalApi" id="showDatasetsInDashboard"
+            title="Show one's datasets" description="Shows the datasets of the logged in user" icon=""
+            controller="home" action="index"
+            extends="" />-->
+  </Exports>
+
+  <EntityActions>
+    <EntityAction id="showDataset" entity="dataset" controller="data" action="Showdata" area="DDM" modus="show" />
+    <EntityAction id="uploadDataset" entity="dataset" controller="Submit" action="Upload" area="DCM" modus="upload" />
+  </EntityActions>
+    <!-- fill out alle the hook aatributes otherwise there will not be loaded -->
+    <Hooks>
+    </Hooks>
+</Manifest>

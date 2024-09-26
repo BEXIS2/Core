@@ -62,18 +62,6 @@
 			</div>
 		</HookContainer>
 
-		<HookContainer {...dataDescriptionHook} let:dateHandler>
-			<div>
-				<DataDescription
-					{id}
-					{version}
-					hook={dataDescriptionHook}
-					on:error={(e) => errorHandler(e)}
-					on:dateChanged={(e) => dateHandler(e)}
-				/>
-			</div>
-		</HookContainer>
-
 		<HookContainer
 			{...fileUploadHook}
 			let:errorHandler
@@ -93,6 +81,20 @@
 				/>
 			</div>
 		</HookContainer>
+
+		<HookContainer {...dataDescriptionHook} let:dateHandler>
+			<div>
+				<DataDescription
+					{id}
+					{version}
+					hook={dataDescriptionHook}
+					on:error={(e) => errorHandler(e)}
+					on:dateChanged={(e) => dateHandler(e)}
+				/>
+			</div>
+		</HookContainer>
+
+		
 
 		<HookContainer {...validationHook}>
 			<div>

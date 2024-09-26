@@ -14,7 +14,6 @@ using System.Data;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
-using Telerik.Web.Mvc.Extensions;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -588,7 +587,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     {
                         foreach (Dataset ds in datasets)
                         {
-                            rights = entityPermissionManager.GetEffectiveRights(user?.Id, ds.EntityTemplate.EntityType.Id, ds.Id);
+                            rights = entityPermissionManager.GetEffectiveRightsAsync(user.Id, ds.EntityTemplate.EntityType.Id, ds.Id).Result;
 
                             if (rights > 0)
                             {
@@ -689,7 +688,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         {
                             dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructure.Id);
 
-                            rights = entityPermissionManager.GetEffectiveRights(user?.Id, dataset.EntityTemplate.EntityType.Id, dataset.Id);
+                            rights = entityPermissionManager.GetEffectiveRightsAsync(user.Id, dataset.EntityTemplate.EntityType.Id, dataset.Id).Result;
                             if (rights > 0 && dataStructure != null && dataStructure.Id != 0)
                             {
                                 if (pageSize > 0)

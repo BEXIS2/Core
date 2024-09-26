@@ -137,7 +137,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                     operationManager.Create("API", "Structures", "*", api);
 
                 //set api public
-                featurePermissionManager.Create(null, api.Id, Security.Entities.Authorization.PermissionType.Grant);
+                bool result_create;
+                result_create = featurePermissionManager.CreateAsync(null, api.Id, Security.Entities.Authorization.PermissionType.Grant).Result;
 
                 //meanings features and security levels
                 Feature dataMeaning = features.FirstOrDefault(f =>
@@ -160,7 +161,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 if (!operationManager.Exists("API", "Meanings", "*"))
                 {
                     operationManager.Create("API", "Meanings", "*", dataMeaning_pub);
-                    featurePermissionManager.Create(null, dataMeaning_pub.Id, Security.Entities.Authorization.PermissionType.Grant);
+                    result_create = featurePermissionManager.CreateAsync(null, dataMeaning_pub.Id, Security.Entities.Authorization.PermissionType.Grant).Result;
                 }
 
                 if (!operationManager.Exists("RPM", "Meaning", "*"))

@@ -286,6 +286,8 @@ namespace BExIS.App.Bootstrap
         private void registerRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            routes.IgnoreRoute("{file}.txt");
+
             //if (!routes.Any(p => ((Route)p).DataTokens["__RouteName"].ToString().Equals("Default", StringComparison.InvariantCultureIgnoreCase)))
 
             foreach (Route item in routes)

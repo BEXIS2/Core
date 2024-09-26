@@ -349,7 +349,7 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>C:\Windows\System32\xcopy "$(ProjectDir)Db\Settings" "$(SolutionDir)Workspace\General\Db\Settings" /E /C /Y /I</PostBuildEvent>
+    <PostBuildEvent>C:\Windows\System32\xcopy "$(ProjectDir)Db\Settings" "$(SolutionDir)Workspace\General\Db\Settings" /E /C /Y /I /D</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\PostSharp.4.3.19\tools\PostSharp.targets" Condition="Exists('..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" />
   <Target Name="EnsurePostSharpImported" BeforeTargets="BeforeBuild" Condition="'$(PostSharp30Imported)' == ''">
