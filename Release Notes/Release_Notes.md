@@ -1,17 +1,49 @@
-# BEXIS2 3.3.3 Release Notes
-> During the further development we noticed 3 more small bugs, which we will fix quickly with this update. 
-> And adding an accessibility document link to the footer
+# BEXIS2 3.4.0 Release Notes
+> ....once the new Features are stable we plan to release as version 4.0.0
 
 ### Workspace changes:
-- Workspace changes: [3.3.2..3.3.3](https://github.com/BEXIS2/Workspace/compare/3.3.2..3.3.3)
+- Workspace changes: [3.3.3..3.4.0](https://github.com/BEXIS2/Workspace/compare/3.3.3..3.4.0)
 
 ### Database Update(s):
-- Update script version 3.3.1 to 3.3.2:
-- [Update_Script_3.3.2_3.3.3.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/3.3.2_3.3.3.sql)
+- Update script version 3.3.3 to 3.4.0:
+- [Update_Script_3.3.3_3.4.0.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/3.3.3_3.4.0.sql)
+
+### New Settings
+
+
+### Features
+- Dataset versioning: Creation, View and Editing. Call via tag (url & API) [#1647](https://github.com/BEXIS2/Core/issues/#1647)
+- Bioschema.org integration: Add as concept for mapping and to the metadata [#511](https://github.com/BEXIS2/Core/issues/511)
+- Refactored Search UI to Svelte (as is was before) [#1801](https://github.com/BEXIS2/Core/issues/1801)
+- DOI integration into BEXIS2 Core System [#1567](https://github.com/BEXIS2/Core/issues/1567)
+
+
+### Enhancements
+- Hide empty field groups in Metadata View [#1807](https://github.com/BEXIS2/Core/issues/1807)
+- Change and edit missing values during editing and creation of a data structure [#1779](https://github.com/BEXIS2/Core/issues/1779)
+- Add centralized BEXIS2 theme CSS generation [#1790](https://github.com/BEXIS2/Core/issues/1790)
+- Variable edit in data structure: Change group names from value to category [#1787](https://github.com/BEXIS2/Core/issues/1787)
+- Bigger refactoring of the variable edit in the data structure [#1792](ttps://github.com/BEXIS2/Core/issues/1792)
+- UI improvements File Reader Information & Spell checking [#1855](https://github.com/BEXIS2/Core/issues/1855)
+- Change the order of the data structure and file upload in the metadata edit [#1859](https://github.com/BEXIS2/Core/issues/1859)
+- Add variable count to data structure error message [#1777](https://github.com/BEXIS2/Core/issues/1777)
+- Remove "in use" info from user view [#1782](https://github.com/BEXIS2/Core/issues/1782)
+
+### Maintenance & Security
+- Add API error messages as notification to page component for development [#91](https://github.com/BEXIS2/bexis2-core-ui/issues/91)
+- Fix problems with build solution after new installation of BEXIS 2 [#1791](https://github.com/BEXIS2/Core/issues/1791)
+- Reduction of used NuGet packages [#1794](https://github.com/BEXIS2/Core/issues/1794)
+- Robots.txt: change default settings [#735](https://github.com/BEXIS2/Core/issues/)
+- Prevent Web Application Potentially Vulnerable to Clickjacking [#1853](https://github.com/BEXIS2/Core/issues/1853)
+- Prevent Web Server Allows Password Auto-Completion [#1861](https://github.com/BEXIS2/Core/issues/1861)
+
 
 ### Bugfixes
-- [HOTFIX] Table search is not working [#1833](https://github.com/BEXIS2/Core/issues/1833)
-- [HOTFIX] Variable Template suggestion is not working [#1829](https://github.com/BEXIS2/Core/issues/1829)
-- [HOTFIX] GFBIO Observations download returns collections package [#1833](https://github.com/BEXIS2/Core/issues/1833)
-- Adding an accessibility document link to the footer [#1837](https://github.com/BEXIS2/Core/issues/1837)
-
+- Fix data structure (date pattern) changes are not detected [#1858](https://github.com/BEXIS2/Core/issues/1858)
+- Fix name of a person (party type) switches after edit [#1484](https://github.com/BEXIS2/Core/issues/1484)
+- Fix Log Off does not work in Svelte Layout [#1518](https://github.com/BEXIS2/Core/issues/1518)
+- Fix file reader information: Selection without description does not work [#1856](https://github.com/BEXIS2/Core/issues/1856)
+- Fix disable Submit after submitting does not work for small files [#1857](https://github.com/BEXIS2/Core/issues/1857)
+- Fix data structure (date pattern & missing values) changes are not detected [#1858](https://github.com/BEXIS2/Core/issues/1858)
+- Fix data type Decimal does not allow negative values [#1866](https://github.com/BEXIS2/Core/issues/1866)
+- Fix wrong title for delete Variable & Dimension [#1868](https://github.com/BEXIS2/Core/issues/1868)
