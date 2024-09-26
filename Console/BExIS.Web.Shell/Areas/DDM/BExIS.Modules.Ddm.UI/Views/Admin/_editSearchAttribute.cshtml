@@ -92,7 +92,7 @@
                         @(Html.LabelFor(m => m.displayName))<span class="bx bx-required" title="Required">
                     </td>
                     <td>
-                        @(Html.TextBoxFor(m => m.displayName, new { @class = "t-input", title="Display name of the item in the search user interface." }))
+                        @(Html.TextBoxFor(m => m.displayName, new { @class = "t-input", title = "Display name of the item in the search user interface." }))
                         @Html.ValidationMessageFor(m => m.displayName)
                     </td>
                 </tr>
@@ -154,7 +154,6 @@
 
                     <td>
                         @Html.DropDownListFor(m => m.placeholder, new SelectList(placeholder, Model.placeholder), "Please select")
-                        @Model.placeholder
                     </td>
                 </tr>
 
