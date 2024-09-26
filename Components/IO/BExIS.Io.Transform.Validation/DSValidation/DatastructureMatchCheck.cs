@@ -65,7 +65,7 @@ namespace BExIS.IO.Transform.Validation.DSValidation
             }
             else
             {
-                errors.Add(new Error(ErrorType.Datastructure, "Data structure does not fit. The number of variables in the file does not match with the defined number in the data structure.", sourceListName));
+                errors.Add(new Error(ErrorType.Datastructure, "Data structure does not fit. The number of variables in the file ( "+ checkList.Count +" ) does not match with the defined number in the data structure ( " + sourceList.Count + " ).", sourceListName));
                 return errors;
             }
 
