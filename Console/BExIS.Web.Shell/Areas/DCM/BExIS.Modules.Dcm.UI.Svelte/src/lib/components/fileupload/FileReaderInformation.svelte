@@ -84,7 +84,8 @@
 					placeholder="please select a file to set/update the file reader information"
 				/>
 
-				{#if model}
+				{#if model && model.hasStructure}
+				
 					<FileReaderSelectionModal {model} on:close={close} />
 				{/if}
 			</svelte:fragment>
