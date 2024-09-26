@@ -1,15 +1,20 @@
 # BEXIS2 3.4.0 Release Notes
 > ....once the new Features are stable we plan to release as version 4.0.0
+> web.config.samples and the workspace contain important changes 
 
 ### Workspace changes:
 - Workspace changes: [3.3.3..3.4.0](https://github.com/BEXIS2/Workspace/compare/3.3.3..3.4.0)
 
 ### Database Update(s):
-- Update script version 3.3.3 to 3.4.0:
-- [Update_Script_3.3.3_3.4.0.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/3.3.3_3.4.0.sql)
+- Update script from version 3.3.3 to 3.4.0: [Update_Script_3.3.3_3.4.0.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/3.3.3_3.4.0.sql)
 
 ### New Settings
-
+- General
+  - <b>landingPageForUsers</b> update link to new search
+- Data Discovery
+  - <b>use_tags</b> : Enable to possibilty for Users to define a combination of versions to a tag.
+  - <b>use_minor</b> : Activate minor tags in order to be able to show the changes more granularly.
+  
 
 ### Features
 - Dataset versioning: Creation, View and Editing. Call via tag (url & API) [#1647](https://github.com/BEXIS2/Core/issues/#1647)
