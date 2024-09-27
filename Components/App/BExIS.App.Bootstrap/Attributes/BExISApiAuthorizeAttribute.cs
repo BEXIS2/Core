@@ -41,7 +41,7 @@ namespace BExIS.App.Bootstrap.Attributes
                     var principal = actionContext.ControllerContext.RequestContext.Principal;
 
                     // get jwt from cookie
-                    if (principal == null && actionContext.Request?.Headers?.GetCookies("jwt") != null)
+                    if ((principal == null || !principal.Identity.IsAuthenticated) && actionContext.Request?.Headers?.GetCookies("jwt") != null)
                     {
                         string jwt = "";
                         foreach (var cookie in actionContext.Request.Headers.GetCookies())
