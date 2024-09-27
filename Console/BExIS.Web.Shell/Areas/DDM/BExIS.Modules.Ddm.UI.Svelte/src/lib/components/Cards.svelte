@@ -6,7 +6,7 @@
 	export let store: Writable<any[]> = writable([]);
 </script>
 
-<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-4 grow">
 	<p class="text-muted text-sm">
 		{$store.length}
 		{`dataset${$store.length !== 1 ? 's' : ''}`} found
