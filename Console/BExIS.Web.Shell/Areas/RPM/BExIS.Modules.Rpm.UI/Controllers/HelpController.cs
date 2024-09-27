@@ -18,7 +18,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             //add default link if not set
             if (String.IsNullOrEmpty(helpurl))
             {
-                helpurl = ManualHelper.GetUrl(GeneralSettings.ApplicationVersion, "Rpm");
+                helpurl = ManualHelper.GetUrl(GeneralSettings.ApplicationVersion, "RPM");
             }
 
             return Redirect(helpurl);

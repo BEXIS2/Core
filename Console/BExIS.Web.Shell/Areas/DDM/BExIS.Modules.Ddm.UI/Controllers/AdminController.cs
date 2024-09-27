@@ -339,7 +339,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
 
             if (success)
-                return RedirectToAction("Index", "Search", new RouteValueDictionary { { "area", "ddm" } });
+                return RedirectToAction("index", "search", new RouteValueDictionary { { "area", "ddm" } });
             else
                 return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
         }

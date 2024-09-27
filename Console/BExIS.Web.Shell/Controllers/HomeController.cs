@@ -98,8 +98,12 @@ namespace BExIS.Web.Shell.Controllers
                 return View(); // open shell/home/index
 
             // return result of defined landing page
-            var result = this.Render(landingPage.Item1, landingPage.Item2, landingPage.Item3);
-            return Content(result.ToHtmlString(), "text/html");
+            string action = landingPage.Item3.ToLower().Equals("index")?"": landingPage.Item3;
+            var result = this.Render(landingPage.Item1.ToLower(), landingPage.Item2.ToLower(), action);
+
+            return RedirectToAction(action, landingPage.Item2.ToLower(), new { area = landingPage.Item1.ToLower() });
+
+            //return Content(result.ToHtmlString(), "text/html");
         }
 
         /// <summary>
