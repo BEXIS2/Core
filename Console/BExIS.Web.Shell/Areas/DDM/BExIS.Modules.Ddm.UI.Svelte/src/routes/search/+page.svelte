@@ -227,6 +227,8 @@
 			}));
 
 		if (placeholders.length > 0) {
+			const idIndex = headers.findIndex((header) => header.Name === 'ID');
+
 			const data = rows.map((row) => ({
 				...placeholders.reduce(
 					(acc, item) => {
@@ -237,7 +239,7 @@
 					},
 					{} as { [key: string]: string }
 				),
-				id: row.iD
+				id: row.Values[idIndex]
 			}));
 
 			placeholderStore.set(data);
