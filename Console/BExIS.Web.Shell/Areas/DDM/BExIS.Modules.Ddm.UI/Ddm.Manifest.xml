@@ -43,8 +43,12 @@
             extends="./apiRoot" />-->
 
     <!-- INTERNAL-->
+	 <Export tag="internalApi" id="internalsearch"
+				 title="Search" description="internal search" icon=""
+				 controller="Search" action="Index"
+				 extends="" />
 
-    <Export tag="internalApi" id="publicsearch"
+	  <Export tag="internalApi" id="publicsearch"
             title="Public Search" description="public search" icon=""
             controller="PublicSearch" action="Index"
             extends="" />

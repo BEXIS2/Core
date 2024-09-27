@@ -157,8 +157,8 @@ namespace BExIS.Web.Shell.Helpers
             }
             else
             {
-                MenuItem register = new MenuItem("Register", "account/register", "shell");
-                MenuItem login = new MenuItem("Login", "account/login", "shell");
+                MenuItem register = new MenuItem("Register", "/account/register", "shell");
+                MenuItem login = new MenuItem("Login", "/account/login", "shell");
 
                 menuItems.Add(register);
                 menuItems.Add(login);

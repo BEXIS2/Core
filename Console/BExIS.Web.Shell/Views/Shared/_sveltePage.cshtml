@@ -10,21 +10,14 @@
     if (!string.IsNullOrEmpty(start) || !string.IsNullOrEmpty(app))
     {
 
-    <script>
+        <script>
         {
             console.log("location", location);
-            console.log("pathname", location.pathname);
-            console.log("pathname.slice", location.pathname.slice(0, -1));
+            console.log("pathname", location.pathname); // /dcm/create/index
+            console.log("pathname.slice", location.pathname.slice(0, -1)); // url.path.slice /dcm/create
             console.log("url", new URL(".", location));
             console.log("url.path.slice", new URL(".", location).pathname.slice(0, -1));
             console.log("pathname", location.pathname);
-
-            __sveltekit_19e9fi3 = {
-                base: new URL(".", location).pathname.slice(0, -1),
-                env: {}
-            };
-
-            console.log(__sveltekit_19e9fi3);
 
             const element = document.currentScript.parentElement;
 
@@ -39,6 +32,6 @@
                 kit.start(app, element);
             });
         }
-    </script>
+        </script>
     }
 }

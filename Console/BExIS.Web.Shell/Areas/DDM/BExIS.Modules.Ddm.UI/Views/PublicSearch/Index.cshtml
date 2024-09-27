@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "Public search";
+    Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
+
+    bool isTemplateRequired = false;
+
+    if (ViewData["isTemplateRequired"] != null)
+    {
+        isTemplateRequired = (bool)ViewData["isTemplateRequired"];
+    }
+
+}
+
+<div id="publicsearch">
+    @Html.Partial("_sveltePage")
+</div>

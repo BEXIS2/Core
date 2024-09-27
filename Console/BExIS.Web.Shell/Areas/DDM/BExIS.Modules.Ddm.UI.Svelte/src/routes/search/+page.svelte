@@ -382,12 +382,19 @@
 	onMount(async () => {
 		await handleSearch(true);
 	});
+
+	let links: any[] = [
+		{
+			label: 'public search',
+			url: '/ddm/publicsearch'
+		}]
 </script>
 
 <Page
 	title="Search"
 	note="Search over the data in this system."
 	contentLayoutType={pageContentLayoutType.full}
+	{links}
 >
 	<div class="flex gap-8 overflow-auto">
 		<div class="min-w-64">

@@ -15,6 +15,7 @@
 	let categories: { name: string; displayName: string }[] = [];
 	let currentCategory = 'All';
 	let q = '';
+	const controller:string="publicsearch";
 
 	let currentView: 'table' | 'cards' = 'table';
 
@@ -34,7 +35,7 @@
 
 	const handleSearch = async (init: boolean = false) => {
 		const response = await Api.post(
-			'/ddm/search/Query',
+			'/ddm/'+controller+'/Query',
 			init
 				? {
 						searchType: 'new'
@@ -99,7 +100,7 @@
 			deleteCriteriaKey(parent, selectedItem);
 		}
 
-		const response = await Api.post('/ddm/search/ToggleFacet', {
+		const response = await Api.post('/ddm/'+controller+'/ToggleFacet', {
 			selectedItem,
 			parent
 		});
@@ -245,7 +246,7 @@
 	};
 
 	const removeCriterion = async (criterion: string, value: string) => {
-		const response = await Api.post('/ddm/search/RemoveSearchCriteria', {
+		const response = await Api.post('/ddm/'+controller+'/RemoveSearchCriteria', {
 			value,
 			parent: criterion
 		});
@@ -282,7 +283,7 @@
 			formBody.append(index.toString(), value.toString());
 		});
 
-		const response = await fetch('/ddm/search/AddFacetsToSearch', {
+		const response = await fetch('/ddm/'+controller+'/AddFacetsToSearch', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded'
@@ -321,7 +322,7 @@
 
 		if (!open) return;
 
-		const response = await Api.post('/ddm/search/ShowMoreWindow', {
+		const response = await Api.post('/ddm/'+controller+'/ShowMoreWindow', {
 			parent
 		});
 
@@ -350,7 +351,7 @@
 	const setAutoCompleteValues = async (input: string) => {
 		if (input.length < 3) return [];
 
-		const response = await Api.post('/ddm/search/_AutoCompleteAjaxLoading', {
+		const response = await Api.post('/ddm/'+controller+'/_AutoCompleteAjaxLoading', {
 			text: input
 		});
 
@@ -372,8 +373,8 @@
 </script>
 
 <Page
-	title="Search"
-	note="Search over the data in this system."
+	title="Public Search"
+	note="Search across all datasets that are publicly available"
 	contentLayoutType={pageContentLayoutType.full}
 >
 	<div class="flex gap-8">

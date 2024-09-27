@@ -1,5 +1,7 @@
 ﻿using BExIS.Ddm.Api;
+using BExIS.UI.Helpers;
 using BExIS.Utils.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,36 +18,45 @@ namespace BExIS.Modules.Ddm.UI.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search in Public Datasets", this.Session.GetTenant());
-            Session["SubmissionAction"] = "Index";
-            Session["Controller"] = "PublicSearch";
-            Session["PropertiesDictionary"] = null;
+            string module = "DDM";
 
-            try
-            {
-                ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
 
-                provider.WorkingSearchModel.CriteriaComponent.Clear();
-                ///
-                /// Make sure that a criterion to filter public datasets is in the working search model.
-                ///
-                provider.WorkingSearchModel.UpdateSearchCriteria("gen_isPublic", "TRUE", SearchComponentBaseType.General, false, false, "AND");
-
-                provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
-                SetSessionsToDefault();
-
-                return View("Index", provider);
-            }
-            catch (Exception e)
-            {
-                ModelState.AddModelError(String.Empty, e.Message);
-
-                return View("Error");
-            }
+            return View();
         }
 
+        public JsonResult Query()
+        {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
+            Session["SubmissionAction"] = "Query";
+            Session["Controller"] = "Search";
+            Session["PropertiesDictionary"] = null;
+
+
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
+
+            provider.WorkingSearchModel.CriteriaComponent.Clear();
+            provider.WorkingSearchModel.UpdateSearchCriteria("gen_isPublic", "TRUE", SearchComponentBaseType.General, false, false, "AND");
+
+            provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
+
+            SetSessionsToDefault();
+
+            return Json(provider.WorkingSearchModel);
+
+        }
+
+        /// <summary>
+        /// This action is called when the search button is pressed
+        /// </summary>
+        /// <param name="autoComplete">search input as string</param>
+        /// <param name="FilterList">selected filter</param>
+        /// <param name="searchType"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
-        public ActionResult Index(string autoComplete, string FilterList, string searchType)
+        public JsonResult Query(string autoComplete, string FilterList, string searchType)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search in Public Datasets", this.Session.GetTenant());
             Session["SubmissionAction"] = "Index";
@@ -77,7 +88,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             SetSearchType("basedon");
 
-            return View(provider);
+            return Json(provider.WorkingSearchModel);
         }
 
         #region SearchHeader
@@ -90,13 +101,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult FilterByDropDownList(string SelectedFilter, string searchType)
+        public JsonResult FilterByDropDownList(string SelectedFilter, string searchType)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             SetFilterAC(SelectedFilter);
 
-            return View("Index", provider);
+            return Json(provider.WorkingSearchModel);
         }
 
         /// <summary>
@@ -105,10 +116,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult _AutoCompleteAjaxLoading(string text)
+        public JsonResult _AutoCompleteAjaxLoading(string text)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
-            return new JsonResult { Data = new SelectList(provider.GetTextBoxSearchValues(text, GetFilterAC(), Session["SearchType"].ToString(), 10).SearchComponent.TextBoxSearchValues, "Value", "Name") };
+            SearchModel model = provider.GetTextBoxSearchValues(text, GetFilterAC(), Session["SearchType"].ToString(), 10);
+            IEnumerable<TextValue> textvalues = model.SearchComponent.TextBoxSearchValues;
+
+            return new JsonResult { Data = new SelectList(textvalues, "Value", "Name") };
         }
 
         /// <summary>
@@ -138,22 +152,24 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult CheckedTreeViewItem(string SelectedItem, string Parent)
+        public JsonResult ToggleFacet(string SelectedItem, string Parent)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             provider.WorkingSearchModel.UpdateSearchCriteria(Parent, SelectedItem, SearchComponentBaseType.Facet, true);
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
-            return PartialView("_searchFacets", Tuple.Create(provider.WorkingSearchModel, provider.DefaultSearchModel.SearchComponent.Facets));
+            //return PartialView("_searchFacets", Tuple.Create(provider.WorkingSearchModel, provider.DefaultSearchModel.SearchComponent.Facets));
+            return Json(provider.WorkingSearchModel);
         }
 
-        public ActionResult UpdateFacets()
+        public JsonResult UpdateFacets()
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
-            return PartialView("_searchFacets", Tuple.Create(provider.UpdateFacets(provider.WorkingSearchModel.CriteriaComponent), provider.DefaultSearchModel.SearchComponent.Facets));
+            //return PartialView("_searchFacets", Tuple.Create(provider.UpdateFacets(provider.WorkingSearchModel.CriteriaComponent), provider.DefaultSearchModel.SearchComponent.Facets));
+            return Json(provider.WorkingSearchModel);
         }
 
-        public ActionResult UpdateProperties()
+        public JsonResult UpdateProperties()
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             var properties = provider.UpdateProperties(provider.WorkingSearchModel.CriteriaComponent).SearchComponent.Properties;
@@ -170,14 +186,15 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
             }
 
-            return PartialView("_searchProperties", properties);
+
+            return Json(provider.WorkingSearchModel);
         }
 
-        public ActionResult GetDataForBreadCrumbView()
+        public JsonResult GetDataForBreadCrumbView()
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
-            return PartialView("_searchBreadCrumb", provider.WorkingSearchModel);
+            return Json(provider.WorkingSearchModel);
         }
 
         //+++++++++++++++++++++ TreeView onSelect Action +++++++++++++++++++++++++++
@@ -189,7 +206,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <param name="IsChecked">show the status of the checkbox (true = selected/false=deselected)</param>
         /// <param name="model"></param>
         /// <returns></returns>
-        public ActionResult OnSelectTreeViewItem(string SelectedItem, string Parent)
+        public JsonResult OnSelectTreeViewItem(string SelectedItem, string Parent)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
 
@@ -197,7 +214,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             provider.WorkingSearchModel.UpdateSearchCriteria(Parent, SelectedItem, SearchComponentBaseType.Facet, true);
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
-            return View("Index", provider);
+            return Json(provider.WorkingSearchModel);
         }
 
         /// <summary>
@@ -206,7 +223,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult AddFacetsToSearch()
+        public JsonResult AddFacetsToSearch()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
 
@@ -217,7 +234,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             //data.ToList().ForEach(p => selectedValues.Add(p.ToString()));
 
-            for (int i = 0; i < this.Request.Form.AllKeys.Count() - 1; i++)
+            for (int i = 0; i < this.Request.Form.AllKeys.Count(); i++)
             {
                 int index = Convert.ToInt32(this.Request.Form.AllKeys[i]);
                 string[] temp = this.Request.Form.GetValues(i);
@@ -232,7 +249,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             provider.WorkingSearchModel.UpdateSearchCriteria(parent, selectedValues, SearchComponentBaseType.Facet, true);
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
-            return View("Index", provider);
+            return Json(provider.WorkingSearchModel);
         }
 
         /// <summary>
@@ -242,7 +259,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <param name="parent">name of the parent where the more button is inside</param>
         /// <param name="model"></param>
         /// <returns></returns>
-        public ActionResult ShowMoreWindow(string parent)
+        public JsonResult ShowMoreWindow(string parent)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
@@ -256,7 +273,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             SetSelectAbleCategoryList(facet.Childrens.Where(p => p.Count > 0).OrderBy(p => p.Name.ToLower()).ToList());
 
-            return PartialView("_windowCheckBoxList", provider.WorkingSearchModel);
+            return Json(provider.WorkingSearchModel);
         }
 
         #endregion Treeview - _searchFacets
@@ -273,7 +290,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <param name="parent">patrent of selected value</param>
         /// <param name="model"></param>
         /// <returns></returns>
-        public ActionResult OnClickBreadCrumbItem(string value, string parent)
+        public JsonResult RemoveSearchCriteria(string value, string parent)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
 
@@ -304,25 +321,22 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
             }
 
-            return View(Session["SubmissionAction"].ToString(), provider); //View("Index", provider);
+            return Json(provider.WorkingSearchModel);
         }
 
         #endregion BreadcrumbView
 
         #region Datagrid
-
-        // +++++++++++++++++++++ DataGRID Action +++++++++++++++++++++++++++
-
-        [GridAction]
-        public ActionResult _CustomBinding(GridCommand command)
+        [HttpPost]
+        public JsonResult GetTableData()
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             DataTable table = provider.Get(provider.WorkingSearchModel.CriteriaComponent).ResultComponent.ConvertToDataTable();
-
-            return View(new GridModel(table));
+            var data = JsonConvert.SerializeObject(table);
+            return Json(data);
         }
 
-        public ActionResult SetResultViewVar(string key, string value)
+        public JsonResult SetResultViewVar(string key, string value)
         {
             Session[key] = value;
 
@@ -335,57 +349,60 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         //+++++++++++++++++++++ Properties Sliders Action +++++++++++++++++++++++++++
         [HttpPost]
-        public ActionResult FilterByRangeSlider(int start, int end, string parent)
+        public JsonResult FilterByRangeSlider(int start, int end, string parent)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
-            return PartialView("_searchBreadcrumb", provider.WorkingSearchModel);
+            return Json(provider.WorkingSearchModel);
         }
 
         [HttpPost]
-        public ActionResult FilterBySlider(int value, string parent)
+        public JsonResult FilterBySlider(int value, string parent)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
             UpdatePropertiesDic(parent, value.ToString());
             provider.WorkingSearchModel.UpdateSearchCriteria(parent, value.ToString(), SearchComponentBaseType.Property, false, true);
+            var m = provider.Get(provider.WorkingSearchModel.CriteriaComponent);
 
-            return PartialView("_searchBreadcrumb", provider.Get(provider.WorkingSearchModel.CriteriaComponent));
+            return Json(m);
         }
 
         //+++++++++++++++++++++Properties DropDown Action +++++++++++++++++++++++++++
         [HttpPost]
-        public ActionResult FilterByDropDown(string value, string node)
+        public JsonResult FilterByDropDown(string value, string node)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
             UpdatePropertiesDic(node, value);
             provider.WorkingSearchModel.UpdateSearchCriteria(node, value.ToString(), SearchComponentBaseType.Property);
+            var m = provider.Get(provider.WorkingSearchModel.CriteriaComponent, 10, 1);
 
-            return PartialView("_searchBreadcrumb", provider.Get(provider.WorkingSearchModel.CriteriaComponent, 10, 1));
+            return Json(m);
         }
 
         //+++++++++++++++++++++Properties RadioButton Action +++++++++++++++++++++++++++
         [HttpPost]
-        public ActionResult FilterByRadioButton(string value, string node, bool isChecked)
+        public JsonResult FilterByRadioButton(string value, string node, bool isChecked)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             UpdatePropertiesDic(node, value);
             provider.WorkingSearchModel.UpdateSearchCriteria(node, value.ToString(), SearchComponentBaseType.Property);
-
-            return PartialView("_searchBreadcrumb", provider.Get(provider.WorkingSearchModel.CriteriaComponent));
+            var m = provider.Get(provider.WorkingSearchModel.CriteriaComponent);
+            return Json(m);
         }
 
         //+++++++++++++++++++++Properties ´CheckButton Action +++++++++++++++++++++++++++
 
         [HttpPost]
-        public ActionResult FilterByCheckBox(string value, string node, bool isChecked)
+        public JsonResult FilterByCheckBox(string value, string node, bool isChecked)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
             UpdatePropertiesDic(node, value);
             provider.WorkingSearchModel.UpdateSearchCriteria(node, value.ToString(), SearchComponentBaseType.Property, true);
+            var m = provider.Get(provider.WorkingSearchModel.CriteriaComponent);
 
-            return PartialView("_searchBreadcrumb", provider.Get(provider.WorkingSearchModel.CriteriaComponent));
+            return Json(m);
         }
 
         public void UpdatePropertiesDic(string name, string value)

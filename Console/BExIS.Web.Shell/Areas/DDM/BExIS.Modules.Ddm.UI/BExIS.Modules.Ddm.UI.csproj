@@ -240,6 +240,7 @@
     <Content Include="Views\TagInfo\Index.cshtml" />
     <Content Include="Views\Data\_bioSchemaView.cshtml" />
     <Content Include="Views\Search\Index.cshtml" />
+    <Content Include="Views\PublicSearch\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -254,7 +255,6 @@
     <Folder Include="Content\Images\" />
     <Folder Include="Views\Export\" />
     <Folder Include="Views\Home\" />
-    <Folder Include="Views\PublicSearch\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
