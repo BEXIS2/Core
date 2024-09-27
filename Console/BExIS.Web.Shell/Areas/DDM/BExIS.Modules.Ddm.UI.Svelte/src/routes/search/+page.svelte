@@ -420,13 +420,13 @@
 					</div>
 
 					<select class="input w-max" bind:value={currentCategory}>
-						{#each categories as category}
+						{#each categories as category (category.name)}
 							<option value={category.name}>{category.displayName}</option>
 						{/each}
 					</select>
 					<Select
 						loadOptions={setAutoCompleteValues}
-						class="input grow max-w-[500px] min-w-[200px]"
+						class="input grow max-w-[500px] min-w-[500px]"
 						name="search"
 						bind:filterText={q}
 						on:select={handleAutoCompleteSelect}
@@ -445,7 +445,7 @@
 				<!-- Criteria and applied search queries -->
 				<div class="flex grow w-full">
 					<div class="flex gap-4 w-96 grow overflow-auto">
-						{#each Object.keys($criteria) as key, index}
+						{#each Object.keys($criteria) as key, index (key)}
 							{#if $criteria[key].values.length > 0}
 								<div class="flex items-center gap-4">
 									<div class="w-min font-bold text-nowrap text-xs">
@@ -453,7 +453,7 @@
 									</div>
 
 									{#if $criteria[key].values.length < 3}
-										{#each $criteria[key].values as value, index}
+										{#each $criteria[key].values as value, index (`${key}-${value}`)}
 											<CriteriaChip
 												on:remove={async () => {
 													if ($criteria[key].type === 'Facet') {
