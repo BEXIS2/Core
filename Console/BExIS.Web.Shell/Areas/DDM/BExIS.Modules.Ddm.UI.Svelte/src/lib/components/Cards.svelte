@@ -37,10 +37,12 @@
 		/>
 	{/each}
 
-	<Paginator
-		bind:settings={paginationSettings}
-		showFirstLastButtons={false}
-		showPreviousNextButtons={true}
-		controlVariant="variant-filled-primary"
-	/>
+	{#if $store.length > 0}
+		<Paginator
+			bind:settings={paginationSettings}
+			showFirstLastButtons={false}
+			showPreviousNextButtons={true}
+			controlVariant="variant-filled-primary"
+		/>
+	{/if}
 </div>
