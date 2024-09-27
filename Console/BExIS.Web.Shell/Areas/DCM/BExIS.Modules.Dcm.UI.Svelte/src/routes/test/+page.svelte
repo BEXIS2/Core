@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { Page, Table, type TableConfig, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
-	import { host, username, password } from '@bexis2/bexis2-core-ui';
+	import { host } from '@bexis2/bexis2-core-ui';
 	import { writable } from 'svelte/store';
-	import { getToken } from '$services/BaseCaller';
 	import { createEventDispatcher } from 'svelte';
 
 	// load attributes from div
@@ -27,20 +26,18 @@
 		id = Number(container?.getAttribute('dataset'));
 		const tableStore = writable<any[]>([]);
 		const url = host + '/api/datatable/';
-		t = await getToken();
 
 		serverTableConfig = {
 			id: 'serverTable', // a unique id for the table
+			data: tableStore, // store to hold and retrieve data
+			search: false, // enable search
+			server:	{
 			entityId: id, // dataset ID
 			versionId: -1, // vesion ID
-			data: tableStore, // store to hold and retrieve data
-			serverSide: true, // serverSide needs to be set to true
-			// URL for the table to be fetched from
-			URL: url,
-			token: t // API token to access the datasets
+			baseUrl: url
+		}
 		};
 
-		console.log(url, t, id, serverTableConfig);
 	}
 </script>
 
