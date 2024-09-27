@@ -12,7 +12,7 @@
 
 <div class="flex grow">
 	<div
-		class="p-4 px-5 border rounded-md bg-surface-100 border-surface-500 min-w-[500px] max-w-[800px] grow cursor-pointer hover:border-primary-500"
+		class="p-4 px-5 border rounded-md bg-surface-100 border-surface-500 grow cursor-pointer hover:border-primary-500"
 		on:click={() => window.open(`/ddm/data/Showdata/${id}`)}
 		on:keydown={() => window.open(`/ddm/data/Showdata/${id}`)}
 		role="link"
