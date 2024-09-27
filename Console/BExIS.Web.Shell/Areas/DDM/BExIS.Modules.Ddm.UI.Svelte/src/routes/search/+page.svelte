@@ -2,14 +2,14 @@
 	import Select from 'svelte-select';
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
+	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 	import { Api, Facets, Page, pageContentLayoutType, Table } from '@bexis2/bexis2-core-ui';
 	import type { Columns, FacetGroup, TableConfig } from '@bexis2/bexis2-core-ui';
 
 	import ShowData from '$lib/components/ShowData.svelte';
-	import { convertTableData } from '$lib/helpers';
-	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 	import Cards from '$lib/components/Cards.svelte';
 	import CriteriaChip from '$lib/components/CriteriaChip.svelte';
+	import { convertTableData } from '$lib/helpers';
 
 	let columns: Columns;
 	let config: TableConfig<any>;
@@ -218,29 +218,30 @@
 	};
 
 	const mapPlaceholders = (headers: any[], rows: any[]) => {
-		const placeholders = headers.map((header, index) => {
-			if (header.Placeholder && header.Placeholder !== '') {
-				return {
-					header: header.DisplayName,
-					placeholder: header.Placeholder,
-					index
-				};
-			}
-		});
+		const placeholders = headers
+			.filter((header) => header.Placeholder && header.Placeholder !== '')
+			.map((header, index) => ({
+				header: header.DisplayName,
+				placeholder: header.Placeholder,
+				index
+			}));
 
-		const data = rows.map((row) =>
-			placeholders.reduce(
-				(acc, item) => {
-					if (item) {
-						acc[item.placeholder] = row.Values[item.index];
-					}
-					return acc;
-				},
-				{} as { [key: string]: string }
-			)
-		);
+		if (placeholders.length > 0) {
+			const data = rows.map((row) => ({
+				...placeholders.reduce(
+					(acc, item) => {
+						if (item) {
+							acc[item.placeholder] = row.Values[item.index];
+						}
+						return acc;
+					},
+					{} as { [key: string]: string }
+				),
+				id: row.iD
+			}));
 
-		placeholderStore.set(data);
+			placeholderStore.set(data);
+		}
 	};
 
 	const deleteCriteriaKey = (criterion: string, value: string) => {
@@ -399,8 +400,8 @@
 				/>
 			{/if}
 		</div>
-		<div class="flex flex-col gap-4 grow">
-			<div class="flex flex-col gap-4 grow">
+		<div class="flex flex-col gap-4">
+			<div class="flex flex-col gap-4">
 				<div class="flex gap-4">
 					<div class="w-min flex">
 						<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
@@ -482,7 +483,7 @@
 				</div>
 			</div>
 
-			<div class="pt-8">
+			<div class="pt-8 grow">
 				{#if config}
 					<div class:hidden={currentView === 'cards'}>
 						<Table {config} />
