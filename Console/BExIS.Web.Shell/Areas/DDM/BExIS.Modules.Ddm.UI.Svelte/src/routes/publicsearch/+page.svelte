@@ -400,7 +400,7 @@
 					</div>
 
 					<select class="input w-max" bind:value={currentCategory}>
-						{#each categories as category}
+						{#each categories as category (category.name)}
 							<option value={category.name}>{category.displayName}</option>
 						{/each}
 					</select>
@@ -431,7 +431,7 @@
 				<!-- Criteria and applied search queries -->
 				<div class="flex grow w-full">
 					<div class="flex gap-8 overflow-auto w-96 grow">
-						{#each Object.keys($criteria) as key, index}
+						{#each Object.keys($criteria) as key, index (key)}
 							{#if $criteria[key].values.length > 0}
 								<div class="flex items-center gap-6">
 									<div
@@ -441,7 +441,7 @@
 									</div>
 									<div class="flex items-center gap-2"></div>
 									{#if $criteria[key].values.length < 3}
-										{#each $criteria[key].values as value, index}
+										{#each $criteria[key].values as value, index (`${key}-${value}`)}
 											<button
 												type="reset"
 												class="underline"
