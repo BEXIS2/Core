@@ -21,6 +21,7 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
+using BExIS.UI.Models;
 using BExIS.Utils.Config;
 using BExIS.Utils.NH.Querying;
 using BExIS.Xml.Helpers;
@@ -1966,7 +1967,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     }
                     else // use latest version
                     {
-                        throw new NotImplementedException();
+                        var datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                        return datasetVersion.Id;
                     }
                 }
                 else // no rigths
