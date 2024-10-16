@@ -134,10 +134,10 @@ WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='API' AND control
 -- CONCEPTS
 --------------------------
 -- Schema.Org
-INSERT INTO public.mappingconcepts(
+INSERT INTO public.dim_mappingconcepts(
 	version, name, description, url, xsd) 
 	SELECT 1,'BIOSCHEMA-Dataset', 'This concept is used to provide attributes for a dataset in the system with information based on bioschema. This makes it easier to find entities.', 'https://bioschemas.org/', ''
-	WHERE NOT EXISTS (SELECT * FROM public.mappingconcepts WHERE name='BIOSCHEMA-Dataset');
+	WHERE NOT EXISTS (SELECT * FROM public.dim_mappingconcepts WHERE name='BIOSCHEMA-Dataset');
 
 -- schema.org/name
 INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept, xpath)
@@ -178,7 +178,7 @@ INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, 
 INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept,parentRef, xpath)
     SELECT 'givenName','Given name. In the U.S., the first name of a Person.', 'https://schema.org/givenName', false, false, 
 				(select id from dim_mappingconcepts where name='BIOSCHEMA-Dataset'), 
-				(SELECT id FROM public.mappingkeys WHERE name='creator'and concept = (SELECT id FROM public.mappingconcepts WHERE name='BIOSCHEMA-Dataset')),
+				(SELECT id FROM public.dim_mappingkeys WHERE name='creator'and concept = (SELECT id FROM public.dim_mappingconcepts WHERE name='BIOSCHEMA-Dataset')),
 				'dataset/creator/givenName'
     WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='BIOSCHEMA-Dataset') AND xpath='dataset/creator/givenName');
 
@@ -186,7 +186,7 @@ INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, 
 INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept,parentRef, xpath)
     SELECT 'familyName','Family name. In the U.S., the last name of a Person.', 'https://schema.org/familyName', false, false, 
 				(select id from dim_mappingconcepts where name='BIOSCHEMA-Dataset'), 
-				(SELECT id FROM public.mappingkeys WHERE name='creator'and concept = (SELECT id FROM public.mappingconcepts WHERE name='BIOSCHEMA-Dataset')),
+				(SELECT id FROM public.dim_mappingkeys WHERE name='creator'and concept = (SELECT id FROM public.dim_mappingconcepts WHERE name='BIOSCHEMA-Dataset')),
 				'dataset/creator/familyName'
     WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='BIOSCHEMA-Dataset') AND xpath='dataset/creator/familyName');
 
@@ -194,7 +194,7 @@ INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, 
 INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept,parentRef, xpath)
     SELECT 'email','A email of a creator of the dataset.', 'https://schema.org/email', false, false, 
 				(select id from dim_mappingconcepts where name='BIOSCHEMA-Dataset'), 
-				(SELECT id FROM public.mappingkeys WHERE name='creator'and concept = (SELECT id FROM public.mappingconcepts WHERE name='BIOSCHEMA-Dataset')),
+				(SELECT id FROM public.dim_mappingkeys WHERE name='creator'and concept = (SELECT id FROM public.dim_mappingconcepts WHERE name='BIOSCHEMA-Dataset')),
 				'dataset/creator/familyName'
     WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='BIOSCHEMA-Dataset') AND xpath='dataset/creator/email');
 
@@ -202,15 +202,15 @@ INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, 
 INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept,parentRef, xpath)
     SELECT 'affiliation','An organization that this person is affiliated with. For example, a school/university, a club, or a team.', 'https://schema.org/affiliation', false, false, 
 				(select id from dim_mappingconcepts where name='BIOSCHEMA-Dataset'), 
-				(SELECT id FROM public.mappingkeys WHERE name='creator'and concept = (SELECT id FROM public.mappingconcepts WHERE name='BIOSCHEMA-Dataset')),
+				(SELECT id FROM public.dim_mappingkeys WHERE name='creator'and concept = (SELECT id FROM public.dim_mappingconcepts WHERE name='BIOSCHEMA-Dataset')),
 				'dataset/creator/familyName'
     WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='BIOSCHEMA-Dataset') AND xpath='dataset/creator/affiliation');
 
 -- Search
-INSERT INTO public.mappingconcepts(
+INSERT INTO public.dim_mappingconcepts(
 	version, name, description, url, xsd) 
 	SELECT 1,'Search', '', '', ''
-	WHERE NOT EXISTS (SELECT * FROM public.mappingconcepts WHERE name='Search');
+	WHERE NOT EXISTS (SELECT * FROM public.dim_mappingconcepts WHERE name='Search');
 
 -- search/title
 INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept, xpath)
