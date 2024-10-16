@@ -127,8 +127,8 @@
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="Vaelastrasz.Library, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Vaelastrasz.Library.3.0.1\lib\netstandard2.0\Vaelastrasz.Library.dll</HintPath>
+    <Reference Include="Vaelastrasz.Library, Version=3.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Vaelastrasz.Library.3.1.1\lib\netstandard2.0\Vaelastrasz.Library.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
