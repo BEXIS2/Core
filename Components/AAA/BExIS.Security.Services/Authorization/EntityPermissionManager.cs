@@ -356,6 +356,18 @@ namespace BExIS.Security.Services.Authorization
             return await Task.FromResult(rights);
         }
 
+        public async Task<int> GetEffectiveRightsAsync(long subjectId, IEnumerable<long> entityIds, long key)
+        {
+            int rights = 0;
+
+            foreach (var entityId in entityIds)
+            {
+                rights = Math.Max(rights, await GetEffectiveRightsAsync(subjectId, entityId, key));
+            }
+
+            return await Task.FromResult(rights);
+        }
+
         public async Task<List<long>> GetKeys(string userName, string entityName, Type entityType, RightType rightType)
         {
             using (var uow = this.GetUnitOfWork())
@@ -490,10 +502,10 @@ namespace BExIS.Security.Services.Authorization
 
                 var entityRepository = uow.GetReadOnlyRepository<Entity>();
                 var entityIds = entityRepository.Query(e => e.EntityType == entityType).Select(e => e.Id).ToList();
-                if (entityIds.Count() != 1)
+                if (entityIds.Count() == 0)
                     return await Task.FromResult(false);
 
-                return await HasEffectiveRightsAsync(userIds.Single(), entityIds.Single(), key, rightType);
+                return await HasEffectiveRightsAsync(userIds.Single(), entityIds, key, rightType);
             }
         }
 
@@ -505,6 +517,11 @@ namespace BExIS.Security.Services.Authorization
         public async Task<bool> HasEffectiveRightsAsync(long subjectId, long entityId, long key, RightType rightType)
         {
             return await Task.FromResult((await GetEffectiveRightsAsync(subjectId, entityId, key) & (int)rightType) > 0);
+        }
+
+        private async Task<bool> HasEffectiveRightsAsync(long subjectId, List<long> entityIds, long key, RightType rightType)
+        {
+            return await Task.FromResult((await GetEffectiveRightsAsync(subjectId, entityIds, key) & (int)rightType) > 0);
         }
 
         public async Task<bool> HasRightsAsync(long entityId, long key, RightType rightType)
