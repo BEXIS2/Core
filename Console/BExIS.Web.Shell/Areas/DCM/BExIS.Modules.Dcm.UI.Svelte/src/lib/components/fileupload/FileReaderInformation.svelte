@@ -40,7 +40,7 @@
 			} catch (error) {
 				notificationStore.showNotification({
 					notificationType: notificationType.error,
-					message: 'This file has not a proper structure, please try a other one.'
+					message: 'This file does not have a proper structure; please try another one.'
 				});
 			}
 		}
@@ -81,7 +81,7 @@
 					isMulti={false}
 					complexTarget={true}
 					{loading}
-					placeholder="please select a file to set/update the file reader information"
+					placeholder="Please select a file to set/update the file reader information"
 				/>
 
 				{#if model && model.hasStructure}
