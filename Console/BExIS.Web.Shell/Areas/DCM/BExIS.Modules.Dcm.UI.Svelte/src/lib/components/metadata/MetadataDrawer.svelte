@@ -45,17 +45,20 @@
 	}
 </script>
 
-<Drawer position="right" width="w-11/12" on:backdrop={close} on:touchend={close}>
-	<div class="p-5 space-y-5">
+<div id="metadata-drawer-container" >
+<Drawer  position="right" width="w-11/12" on:backdrop={close} on:touchend={close} >
+	<!-- <div class="">
 		<div class="flex">
 			<div class="grow"></div>
-			<div class="text-right flex-none w-15">
-				<button class="chip variant-filled-warning" on:click={close}>
+			<div class="text-right flex-none w-15 h-10 p-2">
+				<button class="chip variant-filled-warning " on:click={close}>
 					<Fa icon={faXmark} />
 				</button>
 			</div>
-		</div>
+		</div> -->
 
 		<IFrame app="test" {url} on:close={close}></IFrame>
-	</div>
+	<!-- </div> -->
 </Drawer>
+</div>
+

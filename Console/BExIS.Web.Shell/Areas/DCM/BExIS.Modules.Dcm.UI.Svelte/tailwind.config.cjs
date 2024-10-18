@@ -19,7 +19,11 @@ module.exports = {
 	],
 
 	theme: {
-		extend: {}
+		extend: {
+			height: {
+				'custom-height': '200px',
+			}
+		}
 	},
 	plugins: [
 		require('@tailwindcss/forms'),
