@@ -226,6 +226,14 @@
 				index
 			}));
 
+		// For debugging
+		// const placeholders = [
+		// 	{ header: 'Title', placeholder: 'title', index: 2 },
+		// 	{ header: 'Description', placeholder: 'description', index: 5 },
+		// 	{ header: 'Author', placeholder: 'author', index: 4 },
+		// 	{ header: 'Date', placeholder: 'date', index: 3 }
+		// ];
+
 		if (placeholders.length > 0) {
 			const idIndex = headers.findIndex((header) => header.Name === 'ID');
 
@@ -405,14 +413,21 @@
 		<div class="flex flex-col gap-4">
 			<div class="flex flex-col gap-4">
 				<div class="flex gap-4">
-					<div class="w-min flex">
+					<div class="w-min flex" title="Switch between table and card view">
 						<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
-							<RadioItem bind:group={currentView} name="currentView" value="table">Table</RadioItem>
-							<RadioItem bind:group={currentView} name="currentView" value="cards">Cards</RadioItem>
+							<RadioItem
+								bind:group={currentView}
+								name="currentView"
+								value="table"
+								title="Table view">Table</RadioItem
+							>
+							<RadioItem bind:group={currentView} name="currentView" value="cards" title="Card view"
+								>Cards</RadioItem
+							>
 						</RadioGroup>
 					</div>
 
-					<select class="input w-max" bind:value={currentCategory}>
+					<select class="input w-max" bind:value={currentCategory} title="Filter categories">
 						{#each categories as category (category.name)}
 							<option value={category.name}>{category.displayName}</option>
 						{/each}
@@ -427,9 +442,10 @@
 						hideEmptyState={true}
 						clearable={false}
 						value={undefined}
-						placeholder=""
+						placeholder="Search within selected category"
 					/>
 					<button
+						title="Search"
 						class="btn variant-filled-primary"
 						on:click|preventDefault={async () => await handleSearch()}>Search</button
 					>
@@ -448,6 +464,7 @@
 									{#if $criteria[key].values.length < 3}
 										{#each $criteria[key].values as value, index (`${key}-${value}`)}
 											<CriteriaChip
+												title="Click to remove search term {value}"
 												on:remove={async () => {
 													if ($criteria[key].type === 'Facet') {
 														await toggleFacet(key, value);
@@ -469,6 +486,7 @@
 										{/each}
 									{:else}
 										<CriteriaChip
+											title="Click to show all options for criterion {key}"
 											removable={false}
 											on:click={async () => {
 												facetsRef && facetsRef.showMore(key);
