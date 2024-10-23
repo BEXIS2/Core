@@ -470,6 +470,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 }
 
                                 HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(json, Encoding.UTF8, "application/json") };
+                      
                                 return response;
                             }
                         case "application/xml":
