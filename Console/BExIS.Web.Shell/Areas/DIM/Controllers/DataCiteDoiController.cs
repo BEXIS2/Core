@@ -197,7 +197,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     var model = new CreateDataCiteModel();
 
-                    var configuration = new Vaelastrasz.Library.Configurations.Configuration(publication.Broker.UserName, publication.Broker.Password, publication.Broker.Host);
+                    var configuration = new Vaelastrasz.Library.Configurations.Configuration(publication.Broker.UserName, publication.Broker.Password, publication.Broker.Host, true);
                     var doiService = new DOIService(configuration);
                     var createSuffixModel = new CreateSuffixModel()
                     {
@@ -218,7 +218,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             Status = publication.Status,
                             DatasetId = publication.DatasetVersion.Dataset.Id,
                             DatasetVersionNr = datasetVersionNr,
-                            Response = doi.ErrorMessage
+                            Response = $"status: {doi.Status}. error message: {doi.ErrorMessage}"
                         });
 
                     var json_model = JsonConvert.SerializeObject(model);
@@ -256,7 +256,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             Status = publication.Status,
                             DatasetId = publication.DatasetVersion.Dataset.Id,
                             DatasetVersionNr = datasetVersionNr,
-                            Response = ex.Message
+                            Response = $"error message: {ex.Message}"
                         });
                     }
 
@@ -299,7 +299,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     else
                     {
                         publication.Status = "pending";
-                        publication.Response = dataCiteResponse.ErrorMessage;
+                        publication.Response = $"status: {dataCiteResponse.Status}. error message: {dataCiteResponse.ErrorMessage}";
 
                         publicationManager.Update(publication);
                     }
