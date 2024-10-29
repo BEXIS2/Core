@@ -21,6 +21,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
+using Vaelastrasz.Library.Entities;
 using Vaelastrasz.Library.Extensions;
 using Vaelastrasz.Library.Models;
 using Vaelastrasz.Library.Services;
@@ -48,7 +49,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 var updated = publicationManager.Update(publication);
 
-                if(updated)
+                if (updated)
                 {
                     EmailService es = new EmailService();
                     List<string> tmp = null;
@@ -91,12 +92,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw;
             }
-            
-            
+
+
             using (DatasetManager datasetManager = new DatasetManager())
             using (PublicationManager publicationManager = new PublicationManager())
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
@@ -112,100 +113,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 DatasetVersion latestDatasetVersion = datasetManager.GetDatasetLatestVersion(datasetVersion.Dataset.Id);
 
                 string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + datasetVersion.Dataset.Id).ToString()).ToString();
-
-                //SettingsHelper settingsHelper = new SettingsHelper();
-                //if (settingsHelper.KeyExist("proxy") && settingsHelper.KeyExist("token"))
-                //{
-                //    // helper
-                //    var datacitedoihelper = new DataCiteDOIHelper();
-
-                //    var client = new RestClient(settingsHelper.GetValue("proxy"));
-                //    client.Authenticator = new JwtAuthenticator(settingsHelper.GetValue("token"));
-
-                //    // doi
-                //    var placeholders = datacitedoihelper.CreatePlaceholders(datasetVersion, settingsHelper.GetDataCiteSettings("placeholders"));
-
-                //    var doi_request = new RestRequest($"api/dois", Method.POST).AddJsonBody(placeholders);
-                //    //CreateDOIModel doi = JsonConvert.DeserializeObject<CreateDOIModel>(client.Execute(doi_request).Content);
-
-                //    // Model
-                //    var mappings = settingsHelper.GetDataCiteDOISettings("mappings");
-
-                //    var model = datacitedoihelper.CreateDataCiteModel(datasetVersion, mappings);
-                //    model.Data.Attributes.Doi = "";
-
-                //    var datacite_request = new RestRequest($"api/datacite", Method.POST).AddJsonBody(JsonConvert.SerializeObject(model));
-                //    var response = client.Execute(datacite_request);
-
-                //    if (response.StatusCode != System.Net.HttpStatusCode.Created)
-                //    {
-                //        return PartialView("_requestRow", new PublicationModel()
-                //        {
-                //            Broker = new BrokerModel(publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
-                //            DataRepo = publication.Repository.Name,
-                //            DatasetVersionId = publication.DatasetVersion.Id,
-                //            CreationDate = publication.Timestamp,
-                //            ExternalLink = publication.ExternalLink,
-                //            FilePath = publication.FilePath,
-                //            Status = publication.Status,
-                //            DatasetId = publication.DatasetVersion.Dataset.Id,
-                //            DatasetVersionNr = datasetManager.GetDatasetVersionNr(publication.DatasetVersion.Id)
-                //        });
-                //    }
-
-                //    //var response_content = JsonConvert.DeserializeObject<ReadDataCiteModel>(response.Content);
-                //    var response_content = JsonConvert.DeserializeObject(response.Content);
-
-                //    publication.DatasetVersion = latestDatasetVersion;
-                //    //  publication.Doi = doi;
-                //    publication.ExternalLink = "response_content.Id";
-                //    publication.Status = "DOI Registered";
-
-                //    publication = publicationManager.UpdatePublication(publication);
-
-                //    EmailService es = new EmailService();
-                //    List<string> tmp = null;
-                //    string title = new XmlDatasetHelper().GetInformationFromVersion(latestDatasetVersion.Id, NameAttributeValues.title);
-                //    string subject = "DOI Request for Dataset " + title + "(" + latestDatasetVersion.Dataset.Id + ")";
-                //    string body = "<p>DOI reqested for dataset <a href=\"" + datasetUrl + "\">" + title + "(" + latestDatasetVersion.Dataset.Id + ")</a>, was granted by the Datamanager.</p>" +
-                //        "<p>The doi is<a href=\"https://doi.org/" + "doi.DOI" + "\">" + "doi.DOI" + "</a></p>";
-
-                //    tmp = new List<string>();
-                //    List<string> emails = new List<string>();
-                //    tmp = MappingUtils.GetValuesFromMetadata((int)Key.Email, LinkElementType.Key, latestDatasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(latestDatasetVersion.Metadata));
-
-                //    foreach (string s in tmp)
-                //    {
-                //        var email = s.Trim();
-                //        if (!string.IsNullOrEmpty(email) && !emails.Contains(email))
-                //        {
-                //            emails.Add(email);
-                //        }
-
-                //    }
-
-                //    es.Send(subject, body, emails);
-                //    es.Send(subject, body, ConfigurationManager.AppSettings["SystemEmail"]);
-
-                //    long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).FirstOrDefault().Id;
-
-                //    EntityPermission entityPermission = entityPermissionManager.Find(null, entityId, datasetVersion.Dataset.Id);
-
-                //    if (entityPermission == null)
-                //    {
-                //        entityPermissionManager.Create(null, entityId, datasetVersion.Dataset.Id, (int)RightType.Read);
-                //    }
-                //    else
-                //    {
-                //        entityPermission.Rights = (int)RightType.Read;
-                //        entityPermissionManager.Update(entityPermission);
-                //    }
-
-                //    if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
-                //    {
-                //        var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", datasetVersion.Dataset.Id } });
-                //    }
-                //}
 
                 return PartialView("_requestRow", new PublicationModel()
                 {
@@ -237,7 +144,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     if (publication == null)
                         throw new ArgumentException("Publication does not exist", nameof(publicationId));
 
-                    if(publication.Status == "accepted")
+                    if (publication.Status == "accepted")
                         return PartialView("_requestRow", new PublicationModel()
                         {
                             Id = publication.Id,
@@ -249,7 +156,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             FilePath = publication.FilePath,
                             Status = publication.Status,
                             DatasetId = publication.DatasetVersion.Dataset.Id,
-                            DatasetVersionNr = datasetVersionNr
+                            DatasetVersionNr = datasetVersionNr,
+                            Response = publication.Response
                         });
 
                     // Preparation
@@ -297,7 +205,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     };
                     var doi = await doiService.GenerateAsync(createSuffixModel);
 
-                    if(!doi.IsSuccessful)
+                    if (!doi.IsSuccessful)
                         return PartialView("_requestRow", new PublicationModel()
                         {
                             Id = publication.Id,
@@ -309,7 +217,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             FilePath = publication.FilePath,
                             Status = publication.Status,
                             DatasetId = publication.DatasetVersion.Dataset.Id,
-                            DatasetVersionNr = datasetVersionNr
+                            DatasetVersionNr = datasetVersionNr,
+                            Response = doi.ErrorMessage
                         });
 
                     var json_model = JsonConvert.SerializeObject(model);
@@ -327,9 +236,29 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     JsonExtensions.TransformToMatchClassTypes(jObject, typeof(CreateDataCiteModel));
 
-                    json = JsonConvert.SerializeObject(jObject, Newtonsoft.Json.Formatting.Indented);
+                    json = JsonConvert.SerializeObject(jObject, Formatting.Indented);
 
-                    model = JsonConvert.DeserializeObject<CreateDataCiteModel>(json);
+                    try
+                    {
+                        model = JsonConvert.DeserializeObject<CreateDataCiteModel>(json);
+                    }
+                    catch (Exception ex)
+                    {
+                        return PartialView("_requestRow", new PublicationModel()
+                        {
+                            Id = publication.Id,
+                            Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                            DataRepo = publication.Repository.Name,
+                            DatasetVersionId = publication.DatasetVersion.Id,
+                            CreationDate = publication.Timestamp,
+                            ExternalLink = publication.ExternalLink,
+                            FilePath = publication.FilePath,
+                            Status = publication.Status,
+                            DatasetId = publication.DatasetVersion.Dataset.Id,
+                            DatasetVersionNr = datasetVersionNr,
+                            Response = ex.Message
+                        });
+                    }
 
                     model.SetDoi(doi.Data);
 
@@ -360,7 +289,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     var dataCiteResponse = await dataCiteService.CreateAsync(model);
 
                     // Publication Status
-                    if(dataCiteResponse.IsSuccessful)
+                    if (dataCiteResponse.IsSuccessful)
                     {
                         publication.Status = "accepted";
                         publication.Response = JsonConvert.SerializeObject(dataCiteResponse.Data);
@@ -413,11 +342,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         FilePath = publication.FilePath,
                         Status = publication.Status,
                         DatasetId = publication.DatasetVersion.Dataset.Id,
-                        DatasetVersionNr = datasetVersionNr
+                        DatasetVersionNr = datasetVersionNr,
+                        Response = publication.Response
                     });
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw;
             }
