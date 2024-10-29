@@ -89,8 +89,8 @@
 		suggestedDataType = variable.dataType;
 		suggestedUnits = variable.possibleUnits;
 		suggestedTemplates = variable.possibleTemplates;
-		console.log("🚀 ~ onMount ~ variable:", variable)
-		
+		console.log('🚀 ~ onMount ~ variable:', variable);
+
 		// reset & reload validation
 		suite.reset();
 
@@ -308,67 +308,61 @@
 							bind:expand
 							{blockDataRelevant}
 						>
-		
-						<Container name="Title" >
-							<div class="flex" slot="property">
-								<div class="grow">
-								<TextInput
-									id="name"
-									label="Name"
-									bind:value={variable.name}
-									on:input={onChangeHandler}
-									valid={res.isValid('name')}
-									invalid={res.hasErrors('name')}
-									feedback={res.getErrors('name')}
-									disabled={blockDataRelevant}
-								/>
-							</div>
-								<Status {isValid}></Status>
-							</div>
-
-							<div slot="template">
-								<div class="flex w-full gap-1 py-1">
-									<div class="grow">Template (data is copied and changeable!)</div>
-									{#each suggestedTemplates.slice(0, 3) as t}
-										<button
-											class="badge"
-											class:variant-filled-primary={t.text == variable.template?.text}
-											class:variant-ghost-primary={t.text != variable.template?.text}
-											on:click={() => (variable.template = t)}>{t.text}</button
-										>
-									{/each}
+							<Container name="Title">
+								<div class="flex" slot="property">
+									<div class="grow">
+										<TextInput
+											id="name"
+											label="Name"
+											bind:value={variable.name}
+											on:input={onChangeHandler}
+											valid={res.isValid('name')}
+											invalid={res.hasErrors('name')}
+											feedback={res.getErrors('name')}
+											disabled={blockDataRelevant}
+										/>
+									</div>
+									<Status {isValid}></Status>
 								</div>
-								<MultiSelect
-									id="variableTemplate"
-									title=""
-									source={variableTemplates}
-									itemId="id"
-									itemLabel="text"
-									itemGroup="group"
-									complexSource={true}
-									complexTarget={true}
-									isMulti={false}
-									clearable={true}
-									bind:target={variable.template}
-									placeholder="-- Please select --"
-									invalid={res.hasErrors('variableTemplate') && !blockDataRelevant}
-									feedback={res.getErrors('variableTemplate')}
-									on:change={(e) => onSelectHandler(e, 'variableTemplate')}
-									disabled={blockDataRelevant}
-								/>
-							</div>
 
-							<div slot="description">...</div>
+								<div slot="template">
+									<div class="flex w-full gap-1 py-1">
+										<div class="grow">Template (data is copied and changeable!)</div>
+										{#each suggestedTemplates.slice(0, 3) as t}
+											<button
+												class="badge"
+												class:variant-filled-primary={t.text == variable.template?.text}
+												class:variant-ghost-primary={t.text != variable.template?.text}
+												on:click={() => (variable.template = t)}>{t.text}</button
+											>
+										{/each}
+									</div>
+									<MultiSelect
+										id="variableTemplate"
+										title=""
+										source={variableTemplates}
+										itemId="id"
+										itemLabel="text"
+										itemGroup="group"
+										complexSource={true}
+										complexTarget={true}
+										isMulti={false}
+										clearable={true}
+										bind:target={variable.template}
+										placeholder="-- Please select --"
+										invalid={res.hasErrors('variableTemplate') && !blockDataRelevant}
+										feedback={res.getErrors('variableTemplate')}
+										on:change={(e) => onSelectHandler(e, 'variableTemplate')}
+										disabled={blockDataRelevant}
+									/>
+								</div>
 
-
-						</Container>
+								<div slot="description">...</div>
+							</Container>
 						</Header>
 					</header>
 
 					<section class="py-2 px-10">
-						
-
-
 						<!--Description-->
 						<Container>
 							<div slot="property">
@@ -468,14 +462,12 @@
 								/>
 							</div>
 
-
 							<div slot="description">
 								{#if variable.dataType}
 									<DataTypeDescription type={variable.dataType.text} {missingValues} />
 								{/if}
 							</div>
 						</Container>
-
 
 						<Container>
 							<div slot="property">
@@ -538,10 +530,13 @@
 								<div class="flex w-full gap-1 py-1">
 									<div class="grow">Missing Values</div>
 								</div>
-								<MissingValues bind:list={variable.missingValues} showTitle={false} disabled={blockDataRelevant}></MissingValues>
+								<MissingValues
+									bind:list={variable.missingValues}
+									showTitle={false}
+									disabled={blockDataRelevant}
+								></MissingValues>
 							</div>
-							<div slot="description">
-							</div>
+							<div slot="description"></div>
 						</Container>
 					</section>
 
@@ -568,18 +563,17 @@
 					description={variable.description}
 					datapreview={cutData(data).join(', ')}
 				>
-
-						<TextInput
-									id="name"
-									label="Name"
-									bind:value={variable.name}
-									on:input={onChangeHandler}
-									valid={res.isValid('name')}
-									invalid={res.hasErrors('name')}
-									feedback={res.getErrors('name')}
-									disabled={blockDataRelevant}
-								/>
-			</Overview>
+					<TextInput
+						id="name"
+						label="Name"
+						bind:value={variable.name}
+						on:input={onChangeHandler}
+						valid={res.isValid('name')}
+						invalid={res.hasErrors('name')}
+						feedback={res.getErrors('name')}
+						disabled={blockDataRelevant}
+					/>
+				</Overview>
 			{/if}
 		</div>
 		<div

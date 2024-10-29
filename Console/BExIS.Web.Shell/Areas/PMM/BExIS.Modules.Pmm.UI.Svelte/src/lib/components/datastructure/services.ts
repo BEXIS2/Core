@@ -127,7 +127,6 @@ export const store = async (data) => {
 		return response.data;
 	} catch (error) {
 		console.error(error);
-		
 	}
 };
 
@@ -206,9 +205,7 @@ export const getConstraints = async () => {
 	}
 };
 
-
 // go to a internal action
-export const goTo = async (url:string) => {
+export const goTo = async (url: string) => {
 	window.open(host + url, '_self').focus();
 };
-

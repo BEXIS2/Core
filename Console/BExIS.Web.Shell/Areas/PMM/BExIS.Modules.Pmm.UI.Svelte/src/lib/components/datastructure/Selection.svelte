@@ -10,7 +10,12 @@
 	import { store, load } from './services';
 
 	import Fa from 'svelte-fa';
-	import { faSave, faChevronRight, faArrowRotateLeft,faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+	import {
+		faSave,
+		faChevronRight,
+		faArrowRotateLeft,
+		faArrowLeft
+	} from '@fortawesome/free-solid-svg-icons';
 
 	//types
 	import type { DataStructureCreationModel, markerType } from './types';
@@ -37,7 +42,7 @@
 
 	let selectedRowIndex: number = 0;
 	let data = [];
-	$:data;
+	$: data;
 
 	let errors: string[] = [];
 	$: errors;
@@ -63,24 +68,20 @@
 		setMarkers(model.markers, init);
 
 		delimeter = model.delimeter;
-	 prepareData(model.preview)
+		prepareData(model.preview);
 		checkStatus();
-
 	});
 
-
-	function prepareData(rows:string[])
-	{
+	function prepareData(rows: string[]) {
 		data = [];
-		if(rows)
-		{
-			rows.forEach(r=>{
-					const cv = textMarkerHandling(r);
-					data = [...data,cv]
-			})
+		if (rows) {
+			rows.forEach((r) => {
+				const cv = textMarkerHandling(r);
+				data = [...data, cv];
+			});
 
-			console.log("🚀 ~ onMount ~ model.preview:", model.preview)
-			console.log("🚀 ~ onMount ~ data:", data)
+			console.log('🚀 ~ onMount ~ model.preview:', model.preview);
+			console.log('🚀 ~ onMount ~ data:', data);
 		}
 	}
 
@@ -89,7 +90,7 @@
 		//number of columns
 		cLength = textMarkerHandling(rows[0]).length; // 1,2,"3,4",5
 
-		console.log("🚀 ~ setTableInfos ~ cLength:", cLength)
+		console.log('🚀 ~ setTableInfos ~ cLength:', cLength);
 		//number of rows
 		rLength = rows.length;
 
@@ -351,7 +352,7 @@
 	// if you change the delimeter you need to change/update also the table information
 	function changeDelimiter() {
 		setTableInfos(model.preview, String.fromCharCode(model.delimeter));
-		prepareData(model.preview)
+		prepareData(model.preview);
 	}
 
 	// ROW Selection
@@ -378,75 +379,57 @@
 		model.preview = m.preview;
 	}
 
+	function textMarkerHandling(row: string): [] {
+		const d = String.fromCharCode(model.delimeter);
+		const t = String.fromCharCode(model.textMarker);
+		const values = row.split(d);
 
-	function textMarkerHandling(row:string):[]
-	{
-		 const d = String.fromCharCode(model.delimeter);
-		 const t = String.fromCharCode(model.textMarker);
-			const values = row.split(d);
+		let temp = [];
 
-			let temp=[];
+		if (row.includes(t)) {
+			let tempValue: string = '';
+			let startText: boolean = false;
 
-			if(row.includes(t))
-			{
-				 let tempValue:string = "";
-					let startText:boolean = false;
+			values.forEach((v) => {
+				if (v.includes(t)) {
+					if (v.startsWith(t) && v.endsWith(t)) {
+						temp = [...temp, v];
+					} else {
+						if (v.startsWith(t)) {
+							tempValue = v;
+							startText = true;
+						}
 
-					values.forEach(v => {
+						if (v.endsWith(t)) {
+							tempValue += d + v;
+							temp = [...temp, tempValue];
+							startText = false;
+						}
+					}
+				} else {
+					if (startText) {
+						tempValue += d + v;
+					} else {
+						temp = [...temp, v];
+					}
+				}
+			});
 
-							if(v.includes(t))
-							{
-										if(v.startsWith(t) && v.endsWith(t))
-										{
-												temp = [...temp,v]
-										}
-										else
-										{
-													if (v.startsWith(t))
-													{
-																	tempValue = v;
-																	startText = true;
-													}
-
-													if (v.endsWith(t))
-													{
-																	tempValue += d + v;
-																	temp = [...temp,tempValue];
-																	startText = false;
-													}
-										}
-							}
-							else
-							{
-								if (startText){
-									tempValue += d + v;
-								}
-								else{
-									temp = [...temp, v];
-								}
-							}
-
-
-					});
-
-					return temp;
-			}
-			else
-			{
-				return values;
-			}
-
+			return temp;
+		} else {
+			return values;
+		}
 	}
 
 	function back() {
-		goTo("/rpm/datastructure/create");
+		goTo('/rpm/datastructure/create');
 	}
 </script>
 
-
 {#if !model || state.length == 0 || generate == false}
-<button title="back" class="btn variant-filled-warning" on:click={() => back()}
-	><Fa icon={faArrowLeft} /></button>
+	<button title="back" class="btn variant-filled-warning" on:click={() => back()}
+		><Fa icon={faArrowLeft} /></button
+	>
 	<!--if the model == false, access denied-->
 	{#if !model || state.length == 0 || generate == false}
 		<div class="h-full w-full text-surface-700">
@@ -469,7 +452,7 @@
 			on:mousedown={beginDrag}
 			on:mouseup={endDrag}
 		>
-		<label id="title" ><b>File Structure</b></label>
+			<label id="title"><b>File Structure</b></label>
 			<div class="flex gap-5">
 				<div id="edit" class="flex flex-col grow gap-2">
 					<div id="reader selections" class="flex flex-none gap-2">
@@ -519,7 +502,6 @@
 
 					<span id="title"><b>Mark at least Variable and Data</b></span>
 					<div id="markers" class="flex gap-1">
-
 						<button
 							class="btn variant-filled-error"
 							id="selectVar"
@@ -565,7 +547,7 @@
 								on:mouseover={() => helpStore.show('resetSelection')}
 								on:click={resetSelection}>Reset</button
 							>
-					 </div>
+						</div>
 
 						<div id="errors" class="m-2 text-sm grow text-right">
 							{#each errors as error}
@@ -579,9 +561,7 @@
 						</div>
 					</div>
 
-					<div class="flex">
-
-					</div>
+					<div class="flex"></div>
 				</div>
 
 				<div class="controls"><Controls /></div>
