@@ -197,7 +197,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     var model = new CreateDataCiteModel();
 
-                    var configuration = new Vaelastrasz.Library.Configurations.Configuration(publication.Broker.UserName, publication.Broker.Password, publication.Broker.Host);
+                    var configuration = new Vaelastrasz.Library.Configurations.Configuration(publication.Broker.UserName, publication.Broker.Password, publication.Broker.Host, true);
                     var doiService = new DOIService(configuration);
                     var createSuffixModel = new CreateSuffixModel()
                     {
@@ -206,6 +206,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     var doi = await doiService.GenerateAsync(createSuffixModel);
 
                     if(!doi.IsSuccessful)
+                    {
+                        publication.Response = $"status: {doi.Status}, error message: {doi.ErrorMessage}";
+                        publicationManager.Update(publication);
+
                         return PartialView("_requestRow", new PublicationModel()
                         {
                             Id = publication.Id,
@@ -218,8 +222,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             Status = publication.Status,
                             DatasetId = publication.DatasetVersion.Dataset.Id,
                             DatasetVersionNr = datasetVersionNr,
-                            Response = doi.ErrorMessage
+                            Response = publication.Response
                         });
+                    }
+
 
                     var json_model = JsonConvert.SerializeObject(model);
 
@@ -244,6 +250,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     }
                     catch(Exception ex)
                     {
+                        publication.Response = $"status: exception, error message: {ex.Message}";
+                        publicationManager.Update(publication);
+
                         return PartialView("_requestRow", new PublicationModel()
                         {
                             Id = publication.Id,
@@ -256,7 +265,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             Status = publication.Status,
                             DatasetId = publication.DatasetVersion.Dataset.Id,
                             DatasetVersionNr = datasetVersionNr,
-                            Response = ex.Message
+                            Response = publication.Response
                         });
                     }
 
@@ -299,7 +308,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     else
                     {
                         publication.Status = "pending";
-                        publication.Response = dataCiteResponse.ErrorMessage;
+                        publication.Response = $"status: {dataCiteResponse.Status}, error message: {dataCiteResponse.ErrorMessage}";
 
                         publicationManager.Update(publication);
                     }
