@@ -194,8 +194,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                         if (onlyReleasedTags)
                         {
                             var latestTag = dm.GetLatestTag(id, true);
-                            var version = dm.GetLatestVersionByTagNr(id, latestTag.Nr);
-                            metadata = version.Metadata;
+                            if (latestTag != null)
+                            {
+                                var version = dm.GetLatestVersionByTagNr(id, latestTag.Nr);
+                                metadata = version.Metadata;
+                            }
                         }
                         else
                             metadata = dm.GetDatasetLatestMetadataVersion(id);

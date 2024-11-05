@@ -35,7 +35,7 @@ namespace BExIS.Modules.Dcm.UI.Models
         [Display(Name = "Path")]
         public string Filepath { get; set; }
 
-        [Display(Name = "Extention")]
+        [Display(Name = "Extension")]
         public string Extention { get; set; }
 
         //if structured
