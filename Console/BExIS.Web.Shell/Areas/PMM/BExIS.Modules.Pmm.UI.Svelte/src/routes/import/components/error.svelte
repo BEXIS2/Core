@@ -1,11 +1,12 @@
 <script lang="ts">
-	import type { tableErrorItem } from "../models";
+	import type { tableErrorItem } from '../models';
 
-    export let value: any;
-    //console.log(value);
+	export let value: any;
+	//console.log(value);
 </script>
+
 {#if value.errorType}
-    <div class="btn variant-ghost-error" title="{value.errorMsg}">{value.value}</div> 
+	<div class="btn variant-ghost-error" title={value.errorMsg}>{value.value}</div>
 {:else}
-    {value}
+	{value}
 {/if}

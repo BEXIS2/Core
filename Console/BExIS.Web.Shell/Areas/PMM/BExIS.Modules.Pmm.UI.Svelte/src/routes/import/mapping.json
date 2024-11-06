@@ -1,0 +1,172 @@
+{
+    "Mappings": [
+        {
+            "publication": [
+                { 
+                    "Source": "Abstract Note", 
+                    "Target": "Abstract" 
+                },
+                { 
+                    "Source": "Author", 
+                    "Target": "Authors" 
+                },
+                {
+                    "Curation": [
+                        { 
+                            "Source": "Rated by",
+                            "Target": "rated_by" 
+                        },
+                        {
+                            "Source": "Access Date",
+                            "Target": "acces_date" 
+                        },
+                        { 
+                            "Source": "Date Added",
+                            "Target": "date_added" 
+                        },
+                        { 
+                            "Source": "Date Modified", 
+                            "Target": "date_modified" 
+                        }
+                    ]
+                },
+                {
+                    "Identifiers": [
+                        { 
+                            "Source": "ISBN",
+                            "Target": "isbn" 
+                        },
+                        { 
+                            "Source": "ISSN",
+                            "Target": "issn" 
+                        },
+                        { 
+                            "Source": "DOI",
+                            "Target": "doi" 
+                        },
+                        { 
+                            "Source": "Article DOI", 
+                            "Target": "doi" 
+                        },
+                        {
+                            "Source": "Data DOI",
+                            "Target": "doi" 
+                        },
+                        { 
+                            "Source": "Code DOI",
+                            "Target": "doi" 
+                        },
+                        { 
+                            "Source": "URL",
+                            "Target": "uri" 
+                        },
+                        { 
+                            "Source": "Article URL",
+                            "Target": "uri" 
+                        },
+                        { 
+                            "Source": "Data URL",
+                            "Target": "uri" 
+                        },   
+                        { 
+                            "Source": "Code URL",
+                            "Target": "uri" 
+                        },
+                        { 
+                            "Source": "Other URL",
+                            "Target": "alt_uri" 
+                        }
+                    ]
+                },
+                { 
+                    "Source": "Publication type",
+                    "Target": "Type"
+                },
+                { 
+                    "Source": "Data License",
+                    "Target": "Licence" 
+                },
+                { 
+                    "Source": "Code License",
+                    "Target": "Licence" 
+                },
+                { 
+                    "Source": "Pages",
+                    "Target": "pages" 
+                },
+                { 
+                    "Source": "Issue",
+                    "Target": "issue" 
+                },
+                { 
+                    "Source": "Volume",
+                    "Target": "volume" 
+                },
+                { 
+                    "Source": "Comment",
+                    "Target": "comment" 
+                },
+                { 
+                    "Source": "Manual Tags",
+                    "Target": "keywords" 
+                }
+            ]
+        },
+        {
+            "Resource": [
+                { 
+                    "Source": "Language",
+                    "Target": "Language" 
+                },
+                {
+                    "Availability": [
+                        { 
+                            "Source": "URL",
+                            "Target": "URI" 
+                        },
+                        { 
+                            "Source": "Article URL",
+                            "Target": "URI" 
+                        },
+                        { 
+                            "Source": "Data URL",
+                            "Target": "URI" 
+                        },   
+                        { 
+                            "Source": "Code URL",
+                            "Target": "URI" 
+                        },
+                        { 
+                            "Source": "Data License",
+                            "Target": "Licence" 
+                        },
+                        { 
+                            "Source": "Code License",
+                            "Target": "Licence" 
+                        }
+                    ]
+                },
+                {
+                    "File": [
+                        { 
+                            "Source": "Data format",
+                            "Target": "File_Format" 
+                        },
+                        { 
+                            "Source": "Code Format",
+                            "Target": "File_Format" 
+                        }
+                    ]
+                },
+                {
+                    "Code": [
+                        { 
+                            "Source": "Programming Language", 
+                            "Target": "Programming_Language" 
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
