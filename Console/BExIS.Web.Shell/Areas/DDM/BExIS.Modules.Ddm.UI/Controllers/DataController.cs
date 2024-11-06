@@ -21,6 +21,7 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
+using BExIS.UI.Models;
 using BExIS.Utils.Config;
 using BExIS.Utils.NH.Querying;
 using BExIS.Xml.Helpers;
@@ -200,13 +201,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         latestVersionNr = dm.GetDatasetVersionNr(latestVersionId);
                         latestVersion = (versionId == latestVersionId);
                         // Get version number based on version id
-                        if (versionId != 0)
+                        if (versionId >= 0)
                         {
                             version = dm.GetDatasetVersionNr(versionId);
                         }
 
                         // Throw error if no version id was found.
-                        if (versionId == 0)
+                        if (versionId <= 0)
                         {
                             ModelState.AddModelError("", string.Format("The version with the requested name {1} or id {0} does not exist or is not publicly accessible", version, versionName));
                         }
@@ -334,12 +335,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     }
 
 
-                    // load BioSchema Description if exist
-                    string bioschemadescription = getBioSchema(id, version);
-                    if (!string.IsNullOrEmpty(bioschemadescription))
-                        ViewData["BioSchema"] = bioschemadescription;
+                    if (version > 0)
+                    { 
+                        // load BioSchema Description if exist
+                        string bioschemadescription = getBioSchema(id, version);
+                        if (!string.IsNullOrEmpty(bioschemadescription))
+                            ViewData["BioSchema"] = bioschemadescription;
 
-
+                    }
                     if (asPartial) return PartialView(model);
 
                   
@@ -1601,18 +1604,20 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public PartialViewResult Tags(long id,int version)
         {
             if (id <= 0) throw new ArgumentException("id is not valid");
-            ViewData["Id"] = id;
-     
 
+            ViewData["Id"] = id;
+            List<TagInfoViewModel> tags = new List<TagInfoViewModel>();
             bool hasEditRights = hasUserRights(id, RightType.Write);
 
+            if(version == 0) return PartialView("_tagsView", tags); // return empty list
 
-            List<TagInfoViewModel> tags = new List<TagInfoViewModel>();
+
 
             using (DatasetManager datasetmanager = new DatasetManager())
             {
                 TagInfoHelper _helper = new TagInfoHelper();
                 var versions = datasetmanager.GetDatasetVersions(id);
+
                 var currentVersion = datasetmanager.GetDatasetVersion(id, version);
                 ViewData["Tag"] = currentVersion.Tag?.Nr;
 
@@ -1909,7 +1914,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             RightType rightType = RightType.Read;
             bool isPublic = false;
             bool isVerionReady = false;
-   
+
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            bool useTags = false;
+
+            bool.TryParse(moduleSettings.GetValueByKey("use_tags").ToString(),out useTags);
+
 
             string username = GetUsernameOrDefault();
 
@@ -1966,7 +1976,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     }
                     else // use latest version
                     {
-                        throw new NotImplementedException();
+                        var datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                        return datasetVersion.Id;
                     }
                 }
                 else // no rigths
@@ -2014,14 +2025,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         }
 
-                        // get latest public
-                        tag = datasetManager.GetLatestTag(datasetId, true);
-                        if (tag == null) return -1;
-                        datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, tag.Nr);
+                        // check in the settings if tags are active
 
-                        if (datasetVersion!=null&& datasetVersion.Tag != null && datasetVersion.Tag.Final)
-                            return datasetVersion.Id;
-
+                        if (useTags)
+                        {
+                            // get latest public
+                            tag = datasetManager.GetLatestTag(datasetId, true);
+                            if (tag == null) return -1;
+                        }
+                        else
+                        { 
+                            return datasetManager.GetDatasetLatestVersionId(datasetId);
+                        }
                     }
                 }
 

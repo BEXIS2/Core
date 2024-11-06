@@ -2,7 +2,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import Fa from 'svelte-fa';
-	import { faArrowLeft, faSave } from '@fortawesome/free-solid-svg-icons';
+	import { faArrowLeft, faSave, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 	import Attributes from './Attributes.svelte';
 	import Variables from './Variables.svelte';
@@ -19,6 +19,9 @@
 
 	import type { DataStructureCreationModel } from '../types';
 	import { Alert, helpStore } from '@bexis2/bexis2-core-ui';
+	import  { type ModalSettings, getModalStore } from '@skeletonlabs/skeleton';
+	const modalStore = getModalStore();
+
 	export let model: DataStructureCreationModel;
 	let enforcePrimaryKey: boolean = get(enforcePrimaryKeyStore);
 
@@ -69,13 +72,32 @@
 	}
 
 	function back() {
-		goTo(document.referrer);
+		dispatch('back');
 	}
+
+	function cancelFn() {
+
+		const confirm: ModalSettings = {
+				type: 'confirm',
+				title: 'Cancel data structure generation',
+				body:
+					'Are you sure you wish to cancel the data structure generation?',
+				// TRUE if confirm pressed, FALSE if cancel pressed
+				response: (r: boolean) => {
+					if (r === true) {
+						goTo(document.referrer);
+					}
+				}
+			};
+			modalStore.trigger(confirm);
+	}
+
 </script>
 
 <div>
 	<div transition:fade class="flex">
 		<div class="grow">
+			{#if model.file}
 			<button
 				id="back"
 				title="back"
@@ -84,8 +106,17 @@
 				on:focus={() => helpStore.show('back')}
 				on:click={() => back()}><Fa icon={faArrowLeft} /></button
 			>
+			{/if}
 		</div>
 		<div class="flex-none text-end">
+			<button
+				id="cancel"
+				title="cancel"
+				class="btn variant-filled-warning text-xl"
+				on:mouseover={() => helpStore.show('cancel')}
+				on:focus={() => helpStore.show('cancel')}
+				on:click={() => cancelFn()}><Fa icon={faXmark} /></button
+			>
 			<button
 				id="save"
 				title="save"

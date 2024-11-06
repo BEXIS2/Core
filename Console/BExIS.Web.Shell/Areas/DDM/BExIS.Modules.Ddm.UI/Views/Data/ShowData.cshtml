@@ -170,10 +170,22 @@
 
 <link href="@Url.Content("~/Areas/DDM/Content/ddm.css")" rel="stylesheet" type="text/css" />
 
+@if (!ViewData.ModelState.IsValid && ViewBag.Errors!=null)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewBag.Errors)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+
 @if (Model != null && ((Model.IsPublic == true || User.Identity.Name != "") || check_public_metadata))
 {
-  
-    @Html.Partial("_bioSchemaView",bioSchemaInfos)
+
+    @Html.Partial("_bioSchemaView", bioSchemaInfos)
 
     <div id="showData">
 
@@ -218,7 +230,7 @@
             </div>
         }
 
-       
+
 
         @if (ViewData["state"].ToString() != "hidden")
         {
@@ -431,7 +443,7 @@
         console.log("document ready end prefetch",@Model.Id,@Model.Version)
 
         loadTags();
-  
+
         $("#preloaderContainer").removePreloader();
 
     });

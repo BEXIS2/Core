@@ -1844,7 +1844,7 @@ namespace BExIS.Dlm.Services.Data
                 var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
                 var datasetVersions = datasetVersionRepo.Query().Where(dsv => dsv.Dataset.Id.Equals(id)).OrderBy(dsv => dsv.Timestamp);
 
-                if (datasetVersions.Any() && datasetVersions.Count() >= (versionNr - 1))
+                if (datasetVersions.Any() && versionNr>0 && datasetVersions.Count() >= (versionNr - 1) )
                 {
                     return datasetVersions.ToList().ElementAt(versionNr - 1);
                 }

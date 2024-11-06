@@ -196,7 +196,7 @@ namespace BExIS.Security.Services.Authorization
                     return await Task.FromResult<int>((int)featurePermission.PermissionType);
                 }
 
-                return await Task.FromResult(2);
+                return await Task.FromResult(0);
             }
         }
 
