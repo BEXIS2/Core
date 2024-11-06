@@ -565,16 +565,21 @@
 
         var intention = $("#intention").val();
 
-	    $.post("/DDM/RequestsSend/Send", { id, intention }, function(data) {
-	        if (data === true) {
-	            $("#sendRequestBt").prop("disabled", "disabled");
-	            $("#sendRequestBt").addClass("bx-disabled", "bx-disabled");
-                $("#sendRequestBt").text("Request has been made.");
+        if (intention == '') {
 
-                $("#intention").remove();
-	        }
-	    });
+            alert("Please fill in the respective intention in order to send the request!");
+        }
+        else {
+            $.post("/DDM/RequestsSend/Send", { id, intention }, function (data) {
+                if (data === true) {
+                    $("#sendRequestBt").prop("disabled", "disabled");
+                    $("#sendRequestBt").addClass("bx-disabled", "bx-disabled");
+                    $("#sendRequestBt").text("Request has been made.");
 
+                    $("#intention").remove();
+                }
+            });
+        }
     });
 
     $("#VersionSelect").on('change', function () {
