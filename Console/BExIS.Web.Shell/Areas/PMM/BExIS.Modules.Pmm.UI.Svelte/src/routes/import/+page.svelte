@@ -16,6 +16,8 @@
 	
 	let csvData: any;
 	let filename: string = '';
+	// let source: string[] = [];
+	const Sources = new Set<string>();
 	// let dataStore = writable([]);
 
 	let validData: any[] = [];
@@ -97,17 +99,33 @@
 			header: true,
 			complete: function (results) {
 				let jsonData:any = results.data;
+
+				processMappings(jMapping.Mappings);
+
+				jsonData = jsonData.map((row: any) => {
+                	const filteredRow: any = {};
+                	Sources.forEach((header) => {
+                    	if (header in row) {
+                        	filteredRow[header] = row[header];
+                    	}
+                	});
+                	return filteredRow;
+            	});
+
+				console.log('jsonData', jsonData)
+
 				let codeColumns = Object.keys(jsonData[0]).filter(
 					(key) => key.trim().toLocaleLowerCase().startsWith('code') && !['code', 'code present', 'code number'].includes(key.trim().toLowerCase())
 					// || key.startsWith('Data')
 				);
 				sortData(codeColumns, jsonData, 'Code URL');
+
 				let dataColumns = Object.keys(jsonData[0]).filter(
 					(key) => key.trim().toLocaleLowerCase().startsWith('data') && !['data present'].includes(key.trim().toLowerCase())
 					// || key.startsWith('Data')
 				);
-				processMappings(jMapping.Mappings);
 				sortData(dataColumns, jsonData, 'Data URL');
+
 				createDownloadLinks();
 			}
 		});
@@ -121,6 +139,7 @@
 					for (const entry of entries) {
 						// Direkte Zuordnung von Source zu Target
 						if (entry.Source && entry.Target) {
+							Sources.add(entry.Source);
 							console.log(`${prefix}${entry.Source} -> ${entry.Target}`);
 						}
 
@@ -137,6 +156,7 @@
 				}
 			}
 		}
+		console.log('Source Array:', Sources)
 	}
 
 
