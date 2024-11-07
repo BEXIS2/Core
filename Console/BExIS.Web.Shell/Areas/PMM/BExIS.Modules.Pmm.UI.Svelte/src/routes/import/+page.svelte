@@ -10,7 +10,9 @@
 	import lineClamp from './components/lineClamp.svelte';
 	import error from './components/error.svelte';
 	import { invalidTableStore, validTableStore } from './stores';
-	import type { errorArray, errorItem, tableErrorItem } from './models';
+	import type { errorArray, errorItem, tableErrorItem, Mapping, MappingEntry } from './models';
+	import jMapping from './mapping.json';
+	
 	
 	let csvData: any;
 	let filename: string = '';
@@ -104,10 +106,37 @@
 					(key) => key.trim().toLocaleLowerCase().startsWith('data') && !['data present'].includes(key.trim().toLowerCase())
 					// || key.startsWith('Data')
 				);
+				processMappings(jMapping.Mappings);
 				sortData(dataColumns, jsonData, 'Data URL');
 				createDownloadLinks();
 			}
 		});
+	}
+
+	function processMappings(mappings: Mapping[], prefix = ""): void {
+		for (const mapping of mappings) {
+			for (const key in mapping) {
+				const entries = mapping[key as keyof Mapping];
+				if (Array.isArray(entries)) {
+					for (const entry of entries) {
+						// Direkte Zuordnung von Source zu Target
+						if (entry.Source && entry.Target) {
+							console.log(`${prefix}${entry.Source} -> ${entry.Target}`);
+						}
+
+						// Dynamische Überprüfung aller Schlüssel im entry-Objekt
+						for (const nestedKey in entry) {
+							const nestedEntries = entry[nestedKey as keyof MappingEntry];
+							
+							// Wenn der Wert ein Array ist, rufe processMappings rekursiv auf
+							if (Array.isArray(nestedEntries)) {
+								processMappings([{ publication: nestedEntries }], `${prefix}${nestedKey} > `);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 
@@ -118,8 +147,8 @@
 	
 	// sort data in 2 different files, 1 with vaild data and 1 with invalid data
 	function sortData(columns:any, data: any, refColumn: string) {
-		console.log('columns', columns);
-		console.log('refColumn', refColumn);
+		// console.log('columns', columns);
+		// console.log('refColumn', refColumn);
 		validData = [];
 		invalidData = [];
 		let columnErrors: { [key: string]: any[] } = {};
@@ -135,8 +164,8 @@
 					validDataCounter++;
 				} else {
 					let numberOfCommas: number = countCommas(ref);
-					console.log('commas', numberOfCommas);
-					console.log('ref', ref);
+					// console.log('commas', numberOfCommas);
+					// console.log('ref', ref);
 					let valid: boolean = true;
 					
 

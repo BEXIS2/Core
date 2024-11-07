@@ -14,19 +14,28 @@ export interface errorArray {
 	cellErrors: errorItem[];
 }
 
+// export interface mappingType {
+// 	Source: string;
+// 	Target: string;
+// }
 
+// export interface MappingArray {
+// 	mappingTypeArray: mappingType[];
+// }
 
-export interface MappingType {
-    Mappings: MappingEntry[];
+export interface Mapping {
+    publication?: MappingEntry[];
+    Resource?: MappingEntry[];
 }
 
+// Anpassung von MappingEntry, sodass entweder Source/Target oder eine verschachtelte Struktur existieren kann
 export interface MappingEntry {
-    publication?: MappingField[];
-    Resource?: MappingField[];
-}
-
-export interface MappingField {
     Source?: string;
     Target?: string;
-    [key: string]: MappingField[] | string | undefined;
+    Curation?: MappingEntry[];
+    Identifiers?: MappingEntry[];
+    Availability?: MappingEntry[];
+    File?: MappingEntry[];
+    Code?: MappingEntry[];
 }
+
