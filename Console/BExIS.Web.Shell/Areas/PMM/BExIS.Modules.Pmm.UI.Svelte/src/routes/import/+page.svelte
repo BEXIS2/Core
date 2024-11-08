@@ -2,7 +2,13 @@
 	import { Page } from '@bexis2/bexis2-core-ui';
 	import Papa from 'papaparse';
 	import Fa from 'svelte-fa';
-	import { faFileArrowDown, faArrowUpFromBracket, faPlus, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+	import {
+		faFileArrowDown,
+		faArrowUpFromBracket,
+		faPlus,
+		faChevronDown,
+		faChevronUp
+	} from '@fortawesome/free-solid-svg-icons';
 	import { FileButton } from '@skeletonlabs/skeleton';
 	import { Spinner } from '@bexis2/bexis2-core-ui';
 	import { slide } from 'svelte/transition';
@@ -12,74 +18,92 @@
 	import { invalidTableStore, validTableStore } from './stores';
 	import type { errorArray, errorItem, tableErrorItem, Mapping, MappingEntry } from './models';
 	import jMapping from './mapping.json';
+	import { onMount } from 'svelte';
+
 	
-	
-	let csvData: any;
 	let filename: string = '';
-	// let source: string[] = [];
-	const Sources = new Set<string>();
+	
 	// let dataStore = writable([]);
 
 	let validData: any[] = [];
-	let validDataCounter: number = 0;
-	let showValid = false;
+	//let validDataCounter: number = 0;
+	let showValid:boolean = false;
 
 	let invalidData: any[] = [];
 	let invalidDataCounter: number = 0;
-	let showInvalid: boolean = true;
-
+	let showInvalid: boolean = false;
 
 	let downloadLinkValidData = '';
 	let downloadLinkInvalidData = '';
 
 	let isLoading: boolean = false;
 
-	$: validTableStore.set(validData);
-
-	$: fillInvalidTableStore(invalidData);
-	
-	let errors: errorArray[]=[];
+	let errors: errorArray[] = [];
 	let showErrorMsg: boolean = false;
 
 	let columnCfg: any = {
-							"Author": {
-								minWidth: 300,
-								instructions: {
-									renderComponent: lineClamp
-									
-								},
-							},
-							"Title": {
-								minWidth: 300,
-								instructions: {
-									renderComponent: lineClamp
-								},
-							},
-							"Abstract Note": {
-								minWidth: 600,
-								instructions: {
-									renderComponent: lineClamp
-								},
-							}
-						};
+		Author: {
+			minWidth: 300,
+			instructions: {
+				renderComponent: lineClamp
+			}
+		},
+		Title: {
+			minWidth: 300,
+			instructions: {
+				renderComponent: lineClamp
+			}
+		},
+		'Abstract Note': {
+			minWidth: 600,
+			instructions: {
+				renderComponent: lineClamp
+			}
+		}
+	};
 
-    function fillInvalidTableStore (data :any) {
+	onMount(async () => {
+		clear();
+	});
+
+	function fillInvalidTableStore(data: any) {
+		// console.log('fillInvalidTableStore');
+		console.time('fillInvalidTableStore');
 		invalidTableStore.set(data);
 		let tableErrorItem: tableErrorItem;
 		let errorItem: errorItem;
-		for(let i :number = 0; i < errors.length; i++)
-		{
-			for (let j :number = 0; j < errors[i].cellErrors.length ; j++)	{
+		for (let i: number = 0; i < errors.length; i++) {
+			// console.log('original row', errors[i].rowIndex);
+			for (let j: number = 0; j < errors[i].cellErrors.length; j++) {
 				errorItem = errors[i].cellErrors[j];
-				tableErrorItem = {errorType: 'missmatch', errorMsg: errorItem.errorMsg, value: $invalidTableStore[i][errorItem.column]}
+				// console.log('errorItem', errorItem);
+				tableErrorItem = {
+					errorType: 'missmatch',
+					errorMsg: errorItem.errorMsg,
+					value: $invalidTableStore[i][errorItem.column]
+				};
 				$invalidTableStore[i][errorItem.column] = tableErrorItem;
+				//console.log('row ' + i + ', column ' + errorItem.column, tableErrorItem.value);
+				
 			}
 		}
+		console.timeEnd('fillInvalidTableStore');
+	}
+
+	function clear()
+	{
+		invalidDataCounter = 0;
+		invalidData = [];
+		validData = [];
+		errors = [];
+		isLoading = false;
+		showValid = false;
+		showInvalid = false;
 	}
 	// upload file and parse to json
 	function handleFileUpload(event: any) {
-		validDataCounter = 0;
-		invalidDataCounter = 0;
+		clear();
+		let csvData: any;
 		isLoading = true;
 		if (event.target.files[0]) {
 			let file: File = event.target.files[0];
@@ -95,134 +119,145 @@
 
 	// function that parses csv to json
 	function parseCSVToJson(data: any) {
+		let Sources = new Set<string>();
 		Papa.parse(data, {
 			header: true,
 			complete: function (results) {
-				let jsonData:any = results.data;
+				let jsonData: any = results.data;
 
-				processMappings(jMapping.Mappings);
-
+				processMappings(jMapping.Mappings, Sources);
+				//console.log('Sources',Sources)
+				console.time('start filter');
 				jsonData = jsonData.map((row: any) => {
-                	const filteredRow: any = {};
-                	Sources.forEach((header) => {
-                    	if (header in row) {
-                        	filteredRow[header] = row[header];
-                    	}
-                	});
-                	return filteredRow;
-            	});
+					const filteredRow: any = {};
+					Sources.forEach((header) => {
+						if (header in row) {
+							filteredRow[header] = row[header];
+						}
+					});
+					return filteredRow;
+				});
+				console.timeEnd('start filter');
 
-				console.log('jsonData', jsonData)
-
+				//console.log('jsonData', jsonData);
+				
+				console.time('start sort');
 				let codeColumns = Object.keys(jsonData[0]).filter(
-					(key) => key.trim().toLocaleLowerCase().startsWith('code') && !['code', 'code present', 'code number'].includes(key.trim().toLowerCase())
+					(key) =>
+						key.trim().toLocaleLowerCase().startsWith('code') &&
+						!['code', 'code present', 'code number'].includes(key.trim().toLowerCase())
 					// || key.startsWith('Data')
 				);
 				sortData(codeColumns, jsonData, 'Code URL');
 
 				let dataColumns = Object.keys(jsonData[0]).filter(
-					(key) => key.trim().toLocaleLowerCase().startsWith('data') && !['data present'].includes(key.trim().toLowerCase())
+					(key) =>
+						key.trim().toLocaleLowerCase().startsWith('data') &&
+						!['data present'].includes(key.trim().toLowerCase())
 					// || key.startsWith('Data')
 				);
 				sortData(dataColumns, jsonData, 'Data URL');
+				fillInvalidTableStore(invalidData);
+				showInvalid = invalidData.length > 0 ? true: false;
+				validTableStore.set(validData);
 
+				
+
+				console.timeEnd('start sort');
 				createDownloadLinks();
 			}
 		});
 	}
 
-	function processMappings(mappings: Mapping[], prefix = ""): void {
+	function processMappings(mappings: Mapping[], Sources: any)  {
+		let entries: any;
+		let nestedEntries: any;
+
 		for (const mapping of mappings) {
 			for (const key in mapping) {
-				const entries = mapping[key as keyof Mapping];
+				entries = mapping[key as keyof Mapping];
 				if (Array.isArray(entries)) {
 					for (const entry of entries) {
 						// Direkte Zuordnung von Source zu Target
-						if (entry.Source && entry.Target) {
+						if (entry.Source) {
 							Sources.add(entry.Source);
-							console.log(`${prefix}${entry.Source} -> ${entry.Target}`);
+							//console.log(`${prefix}${entry.Source} -> ${entry.Target}`);
 						}
 
 						// Dynamische Überprüfung aller Schlüssel im entry-Objekt
 						for (const nestedKey in entry) {
-							const nestedEntries = entry[nestedKey as keyof MappingEntry];
-							
+							nestedEntries = entry[nestedKey as keyof MappingEntry];
+
 							// Wenn der Wert ein Array ist, rufe processMappings rekursiv auf
 							if (Array.isArray(nestedEntries)) {
-								processMappings([{ publication: nestedEntries }], `${prefix}${nestedKey} > `);
+								processMappings([{ publication: nestedEntries }], Sources);
 							}
 						}
 					}
 				}
 			}
 		}
-		console.log('Source Array:', Sources)
+		return Sources;
 	}
-
 
 	// count commas
 	function countCommas(data: string): number {
 		return data.split(',').length - 1;
 	}
-	
+
 	// sort data in 2 different files, 1 with vaild data and 1 with invalid data
-	function sortData(columns:any, data: any, refColumn: string) {
+	function sortData(columns: any, data: any, refColumn: string) {
 		// console.log('columns', columns);
 		// console.log('refColumn', refColumn);
-		validData = [];
-		invalidData = [];
 		let columnErrors: { [key: string]: any[] } = {};
 		let cellError: errorItem[] = [];
 
 		data.forEach((row: any, rowIndex: number) => {
-			cellError = []; 
+			cellError = [];
 			const ref: string = row[refColumn];
 			//console.log('ref', ref);
 			if (ref) {
 				if (countCommas(ref) == 0) {
 					validData.push(row);
-					validDataCounter++;
+					//validDataCounter++;
 				} else {
 					let numberOfCommas: number = countCommas(ref);
 					// console.log('commas', numberOfCommas);
 					// console.log('ref', ref);
 					let valid: boolean = true;
-					
 
 					for (let i = 0; i < columns.length; i++) {
-						
 						if (numberOfCommas != countCommas(row[columns[i]])) {
-							cellError.push({ column : columns[i], errorMsg: 'Number of entries dose not match with Data URL'})
+							cellError.push({
+								column: columns[i],
+								errorMsg: 'Number of entries dose not match with Data URL'
+							});
 							valid = false;
 
 							if (!columnErrors[columns[i]]) {
-                            columnErrors[columns[i]] = [];
-                        	}
-                        columnErrors[columns[i]].push(rowIndex);
+								columnErrors[columns[i]] = [];
+							}
+							columnErrors[columns[i]].push(rowIndex);
 						}
-					
 					}
 					//console.log('cellError',cellError);
 					if (!valid) {
-						let contains:boolean = false;
-						for(let i = 0; i < errors.length; i++){
-							if(rowIndex == errors[i].rowIndex){
+						let contains: boolean = false;
+						for (let i = 0; i < errors.length; i++) {
+							if (rowIndex == errors[i].rowIndex) {
 								errors[i].cellErrors.concat(cellError);
-								contains = true
+								contains = true;
 								break;
-							}							
+							}
 						}
-						
-					if(!contains)
-					{
-						invalidDataCounter++;
-						invalidData.push(row);
-						errors.push({rowIndex: rowIndex, cellErrors: cellError});
-					}
-					
-						
+						if (!contains) {
+							invalidDataCounter++;
+							//console.log('invDataCounter', invalidDataCounter)
+							invalidData.push(row);
+							errors.push({ rowIndex: rowIndex, cellErrors: cellError });
+						}
 					} else {
-						validDataCounter++;
+						//validDataCounter++;
 						validData.push(row);
 					}
 				}
@@ -230,15 +265,16 @@
 		});
 
 		columns.forEach((columnHeader: string) => {
-			if (!columnCfg[columnHeader]) {			// WenncolumnsWithError eine Spalte bereits existiert, füge den renderComponent hinzu
-					columnCfg[columnHeader] = {
-						...(columnCfg[columnHeader] || {}),
-						disableFiltering: true,
-						instructions: {
-							renderComponent: error // Setzt den error renderComponent für diese Spalte
-						}
-					};
-				}
+			if (!columnCfg[columnHeader]) {
+				// WenncolumnsWithError eine Spalte bereits existiert, füge den renderComponent hinzu
+				columnCfg[columnHeader] = {
+					...(columnCfg[columnHeader] || {}),
+					disableFiltering: true,
+					instructions: {
+						renderComponent: error // Setzt den error renderComponent für diese Spalte
+					}
+				};
+			}
 		});
 	}
 
@@ -280,7 +316,6 @@
 	function toggleErrorMsg() {
 		showErrorMsg = !showErrorMsg;
 	}
-
 </script>
 
 <Page help={true} title="Manage Publications">
@@ -325,7 +360,7 @@
 		</div> -->
 
 	<div class="card p-2">
-		{#if validDataCounter != undefined}
+		{#if validData.length > 0}
 			<div class="grid gap-5 w-full">
 				<div class="text-left card variant-ghost-primary w-full flex gap-5 p-2 my-1">
 					{#if !showValid}
@@ -380,7 +415,7 @@
 			</div>
 		{/if}
 
-		{#if invalidDataCounter != undefined}
+		{#if invalidData.length > 0}
 			<div class="w-full">
 				<div class="text-left card variant-ghost-warning w-full flex gap-5 p-2 my-1">
 					<div class="w-full align-middle">{invalidDataCounter} rows failed to import</div>
@@ -405,7 +440,7 @@
 							<div class="col-span-5"><hr /></div>
 							<div>{error.rowIndex}</div>
 							{#each error.cellErrors as cellError, i}
-								{#if i > 0}	
+								{#if i > 0}
 									<div></div>
 								{/if}
 								<div>{cellError.column}</div>

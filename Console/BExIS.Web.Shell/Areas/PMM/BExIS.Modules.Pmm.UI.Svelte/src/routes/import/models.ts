@@ -6,7 +6,7 @@ export interface errorItem {
 export interface tableErrorItem {
 	errorType: string;
 	errorMsg: string;
-	value: any;
+	value?: any;
 }
 
 export interface errorArray {
@@ -14,28 +14,18 @@ export interface errorArray {
 	cellErrors: errorItem[];
 }
 
-// export interface mappingType {
-// 	Source: string;
-// 	Target: string;
-// }
-
-// export interface MappingArray {
-// 	mappingTypeArray: mappingType[];
-// }
-
 export interface Mapping {
-    publication?: MappingEntry[];
-    Resource?: MappingEntry[];
+	publication?: MappingEntry[];
+	Resource?: MappingEntry[];
 }
 
 // Anpassung von MappingEntry, sodass entweder Source/Target oder eine verschachtelte Struktur existieren kann
 export interface MappingEntry {
-    Source?: string;
-    Target?: string;
-    Curation?: MappingEntry[];
-    Identifiers?: MappingEntry[];
-    Availability?: MappingEntry[];
-    File?: MappingEntry[];
-    Code?: MappingEntry[];
+	Source?: string;
+	Target?: string;
+	Curation?: MappingEntry[];
+	Identifiers?: MappingEntry[];
+	Availability?: MappingEntry[];
+	File?: MappingEntry[];
+	Code?: MappingEntry[];
 }
-

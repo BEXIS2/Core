@@ -1,6 +1,4 @@
 <script lang="ts">
-	import type { tableErrorItem } from '../models';
-
 	export let value: any;
 	//console.log(value);
 </script>
