@@ -151,7 +151,7 @@ namespace BExIS.App.Bootstrap.Attributes
                         cookie.Path = "/"; // Set the path
 
                         // Add the cookie to the response
-                        actionContext.Response.Headers.AddCookies(new[] { cookie });
+                        actionContext.Response?.Headers?.AddCookies(new[] { cookie });
                     }
 
                     return;
