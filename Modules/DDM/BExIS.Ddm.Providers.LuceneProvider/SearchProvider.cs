@@ -371,6 +371,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                                 {
                                     try
                                     {
+                                        // check if range values are dates
                                         DateTime dateValue_;
                                         DateTime.TryParse(list_values[0], out dateValue_);
                                         DateTime dateValue__;
@@ -383,18 +384,24 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                                                 bexisSearchingFacet.Add(rangeQuery, Occur.MUST);
                                             else bexisSearchingFacet.Add(rangeQuery, Occur.SHOULD);
                                         }
-                                        else
+                                        else // check if range values are numbers
                                         {
                                             double out_;
-                                            double.TryParse(encodedValue.Split('-')[0].Trim(), out out_);
                                             double out__;
-                                            double.TryParse(encodedValue.Split('-')[1].Trim(), out out__);
-                                            if ((out_ != null) && (out__ != null))
+
+                                            if (double.TryParse(encodedValue.Split('-')[0].Trim(), out out_) && double.TryParse(encodedValue.Split('-')[1].Trim(), out out__))
                                             {
                                                 Query rangeQuery = NumericRangeQuery.NewDoubleRange(fieldName, out_, out__, true, true);
                                                 if (sco.ValueSearchOperation == "AND")
                                                     bexisSearchingFacet.Add(rangeQuery, Occur.MUST);
                                                 else bexisSearchingFacet.Add(rangeQuery, Occur.SHOULD);
+                                            }
+                                            else
+                                            {                                                
+                                                Query query = new TermQuery(new Term(fieldName, encodedValue));
+                                                if (sco.ValueSearchOperation == "AND")
+                                                    bexisSearchingFacet.Add(query, Occur.MUST);
+                                                else bexisSearchingFacet.Add(query, Occur.SHOULD);
                                             }
                                         }
                                     }
