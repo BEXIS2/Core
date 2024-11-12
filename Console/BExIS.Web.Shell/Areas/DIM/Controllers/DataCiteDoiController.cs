@@ -500,15 +500,15 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (PublicationManager publicationManager = new PublicationManager())
             using (var brokerManager = new BrokerManager())
             {
-                Broker broker = brokerManager.FindByName("datacite").FirstOrDefault();
-                List<Publication> publications = publicationManager.Publications.Where(p => p.Broker.Name.ToLower().Equals(broker.Name.ToLower())).ToList();
+                List<long> brokerIds = brokerManager.FindByName("datacite").Select(b => b.Id).ToList();
+                List<Publication> publications = publicationManager.Publications.Where(p => brokerIds.Contains(p.Broker.Id)).ToList();
 
                 foreach (Publication p in publications)
                 {
                     model.Add(new PublicationModel()
                     {
                         Id = p.Id,
-                        Broker = new BrokerModel(broker.Id, broker.Name, new List<string>() { p.Repository.Name }, broker.Link),
+                        Broker = new BrokerModel(p.Broker.Id, p.Broker.Name, new List<string>() { p.Repository.Name }, p.Broker.Link),
                         DataRepo = p.Repository.Name,
                         DatasetVersionId = p.DatasetVersion.Id,
                         CreationDate = p.Timestamp,
