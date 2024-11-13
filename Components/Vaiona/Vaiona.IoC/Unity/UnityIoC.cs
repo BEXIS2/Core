@@ -126,7 +126,7 @@ namespace Vaiona.IoC.Unity
         public void StartSessionLevelContainer()
         {
             string key = HttpContext.Current?.Session.SessionID;
-            if (!children.ContainsKey(key))
+            if (!string.IsNullOrEmpty(key) && !children.ContainsKey(key))
             {
                 UnityIoC child = new UnityIoC(container.CreateChildContainer());
                 children.Add(key, child);
