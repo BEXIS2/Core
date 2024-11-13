@@ -13,9 +13,6 @@ namespace BExIS.App.Bootstrap.Attributes
     {
         public override void OnException(ExceptionContext filterContext)
         {
-            if (filterContext.ExceptionHandled || filterContext.Result != null)
-                return;
-
             if (filterContext.RequestContext.HttpContext.Request.AcceptTypes != null && filterContext.RequestContext.HttpContext.Request.AcceptTypes.Contains("application/json"))
             {
                 // Handle JSON errors
