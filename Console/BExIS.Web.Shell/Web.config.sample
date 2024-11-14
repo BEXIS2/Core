@@ -160,6 +160,11 @@
 		<staticContent>
 			<clientCache cacheControlMode="UseMaxAge" cacheControlMaxAge="1.00:00:00" />
 		</staticContent>
+		<!-- it's used to control how IIS (Internet Information Services) handles HTTP errors 
+		errorMode="DetailedLocalOnly": This attribute specifies that IIS should display detailed error messages only to clients on the same machine as the web server. This is useful for debugging purposes, as it provides more specific information about the error.
+		existingResponse="PassThrough" This attribute instructs IIS to pass through any existing response, regardless of whether it's an error response or not. This means that if your application has already generated a response, IIS will send that response to the client, even if there was an error during processing.
+		-->
+		<httpErrors errorMode="DetailedLocalOnly" existingResponse="PassThrough"/>
 	</system.webServer>
 	<runtime>
 		<assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">

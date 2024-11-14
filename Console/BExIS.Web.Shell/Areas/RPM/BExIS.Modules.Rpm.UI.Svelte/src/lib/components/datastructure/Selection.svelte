@@ -337,7 +337,7 @@
 			console.log('save selection', model);
 			let res = await store(model);
 			console.log(res);
-			if (res != false) {
+			if (res.status==200 && res.data != false) {
 				console.log('selection', res);
 				dispatch('saved', model);
 				generate = false;
