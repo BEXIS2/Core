@@ -11,6 +11,6 @@ WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='API' AND control
 -- Insert version
 INSERT INTO public.versions(
 	versionno, extra, module, value, date)
-	VALUES (1, null, 'Shell', '2.15',NOW());
+	VALUES (1, null, 'Shell', '2.15.0',NOW());
 
 COMMIT;
