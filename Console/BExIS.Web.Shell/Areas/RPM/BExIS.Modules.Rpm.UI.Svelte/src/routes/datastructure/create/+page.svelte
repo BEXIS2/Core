@@ -35,6 +35,7 @@
 	//help
 	import { dataStructureHelp } from '../help';
 	import { goTo } from '$services/BaseCaller';
+	import { goto } from '$app/navigation';
 	let helpItems: helpItemType[] = dataStructureHelp;
 
 	// load attributes from div
@@ -134,15 +135,26 @@
 		model = e.detail;
 
 		let res = await generate(e.detail);
+		selectionIsActive = true;
 
-		if (res != undefined) {
-			model = res;
-			selectionIsActive = false;
+		if (res && res.status ==	200) {	
+			model = res.data;
 		}
+		else
+		{
+			// got ot other page
+			console.log("error do something")
+			model = undefined
+			start();
+			selectionIsActive = false;
+			selectionIsActive = true;
+		}
+		
 
 	}
 
 	function back() {
+		console.log('🚀 ~ back');
 		selectionIsActive = true;
 		init = false;
 	}

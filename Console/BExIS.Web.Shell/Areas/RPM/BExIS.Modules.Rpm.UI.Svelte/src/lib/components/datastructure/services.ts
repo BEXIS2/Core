@@ -77,9 +77,10 @@ export const getDelimeters = async () => {
 export const generate = async (data) => {
 	try {
 		const response = await Api.post('/rpm/DataStructure/generate', data);
-		return response.data;
+		return response;
 	} catch (error) {
 		console.error(error);
+		return error;
 	}
 };
 
@@ -124,7 +125,7 @@ export const remove = async (id) => {
 export const store = async (data) => {
 	try {
 		const response = await Api.post('/rpm/DataStructure/store', data);
-		return response.data;
+		return response;
 	} catch (error) {
 		console.error(error);
 		
