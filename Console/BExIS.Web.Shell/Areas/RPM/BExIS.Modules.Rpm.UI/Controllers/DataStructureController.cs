@@ -1078,8 +1078,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         private string getValueFromMarkedRow(List<string> rows, List<Marker> markers, string type, char delimeter, int position, char textMarker)
         {
+            /**here it is assumed that the index of the line and the index of the maker match.
+                0 = variable marker & variable data
+                1 = descrption marker & descrption data 
+                2 = unit marker & unit data
+                *****
+            */
             var marker = markers.FirstOrDefault(m => m.Type.Equals(type));
-            int markerIndex = marker != null ? marker.Row : -1;
+            int markerIndex = marker != null ? markers.IndexOf(marker) : -1;
 
             if (markerIndex > -1)
             {
