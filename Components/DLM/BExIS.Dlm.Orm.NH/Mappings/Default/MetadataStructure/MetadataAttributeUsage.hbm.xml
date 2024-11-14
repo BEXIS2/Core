@@ -33,12 +33,12 @@
       <column name="Description" sql-type="text" />
     </property>
 
-	<property name="DefaultValue" type="String">
-		<column name="DefaultValue" />
+	<property name="DefaultValue" type="StringClob">
+		<column name="DefaultValue" sql-type="text" />
 	</property>
 
-	<property name="FixedValue" type="String">
-		<column name="FixedValue" />
+	<property name="FixedValue" type="StringClob">
+		<column name="FixedValue" sql-type="text" />
 	</property>
 
     <many-to-one name="MetadataPackage" class="MetadataPackage" not-null="true" column="MetadataPackageRef" lazy="false" />
