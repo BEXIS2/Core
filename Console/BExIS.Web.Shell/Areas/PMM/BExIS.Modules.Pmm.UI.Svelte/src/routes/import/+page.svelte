@@ -20,6 +20,9 @@
 	import jMapping from './mapping.json';
 	import { onMount } from 'svelte';
 
+	import * as apiCalls from './services/apiCalls';
+	// import {promises as fs} from 'fs';
+
 	
 	let filename: string = '';
 	
@@ -34,6 +37,7 @@
 	let showInvalid: boolean = false;
 
 	let downloadLinkValidData = '';
+	let downloadLinkValidDataAsJson = '';
 	let downloadLinkInvalidData = '';
 
 	let isLoading: boolean = false;
@@ -64,6 +68,8 @@
 
 	onMount(async () => {
 		clear();
+		let test = apiCalls.GetMetadataScheema(1);
+		console.log(test);
 	});
 
 	function fillInvalidTableStore(data: any) {
@@ -284,6 +290,11 @@
 		const blobValid = new Blob([validCSVString], { type: 'text/csv' });
 		downloadLinkValidData = URL.createObjectURL(blobValid);
 
+		// fs.writeFile('valid_data', validData)
+		const validDataJson = JSON.stringify(validData);
+		const blobJson = new Blob([validDataJson], {type: "application/json"});
+		downloadLinkValidDataAsJson = URL.createObjectURL(blobJson);
+
 		const invalidCSVString = Papa.unparse(invalidData, { delimiter: ',' }); // Ensure comma as separator
 		const blobInvalid = new Blob([invalidCSVString], { type: 'text/csv' });
 		downloadLinkInvalidData = URL.createObjectURL(blobInvalid);
@@ -291,10 +302,17 @@
 		isLoading = false;
 	}
 
-	function downloadValidData() {
+	// function downloadValidData() {
+	// 	const link = document.createElement('a');
+	// 	link.href = downloadLinkValidData;
+	// 	link.download = 'valid__data.csv';
+	// 	link.click();
+	// }
+
+	function downloadValidDataAsJson() {
 		const link = document.createElement('a');
-		link.href = downloadLinkValidData;
-		link.download = 'valid__data.csv';
+		link.href = downloadLinkValidDataAsJson;
+		link.download = 'valid__data.json';
 		link.click();
 	}
 
@@ -369,7 +387,7 @@
 						<div class="w-full align-middle">Hide Valid Data</div>
 					{/if}
 					<div class="w-8">
-						<button class="chip variant-filled-primary" on:click={downloadValidData}
+						<button class="chip variant-filled-primary" on:click={downloadValidDataAsJson}
 							><Fa icon={faFileArrowDown}></Fa></button
 						>
 					</div>
