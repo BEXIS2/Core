@@ -132,6 +132,7 @@
 
 	async function update(e) {
 
+		console.log('🚀 ~ update ~ e.detail:', e.detail);
 		model = e.detail;
 
 		let res = await generate(e.detail);
@@ -139,6 +140,7 @@
 
 		if (res && res.status ==	200) {	
 			model = res.data;
+			selectionIsActive = false;
 		}
 		else
 		{
@@ -148,6 +150,7 @@
 			start();
 			selectionIsActive = false;
 			selectionIsActive = true;
+			init	= false;
 		}
 		
 
