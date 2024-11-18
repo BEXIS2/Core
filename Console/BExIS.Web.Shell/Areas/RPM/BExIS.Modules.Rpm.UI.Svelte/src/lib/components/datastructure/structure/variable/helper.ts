@@ -4,6 +4,7 @@ import { get } from 'svelte/store';
 import type { templateListItemType, unitListItemType } from '../../types';
 
 export function updateDisplayPattern(type, reset = true) {
+	//console.log('updateDisplayPattern', type);
 	// currently only date, date tim e and time is use with display pattern.
 	// however the serve only now date time so we need to preselect the possible display pattern to date, time and date time
 	const allDisplayPattern = get(displayPatternStore);
@@ -11,19 +12,26 @@ export function updateDisplayPattern(type, reset = true) {
 
 	if (type != undefined && type != '') {
 		if (type.text.toLowerCase() === 'date') {
+			//console.log('updateDisplayPattern', type);
 			// date without time
 			displayPattern = allDisplayPattern.filter(
 				(m) =>
 					m.group.toLowerCase().includes(type.text) &&
-					(!m.text.toLowerCase().includes('h') || !m.text.toLowerCase().includes('s'))
+					(!m.text.toLowerCase().includes(':'))
 			);
+   displayPattern.forEach((m) => { m.group	= 'Date'; });
+			//console.log('date patterns', displayPattern, type.text);
+
 		} else if (type.text.toLowerCase() === 'time') {
 			// time without date
 			displayPattern = allDisplayPattern.filter(
 				(m) =>
 					m.group.toLowerCase().includes(type.text) &&
-					(!m.text.toLowerCase().includes('d') || !m.text.toLowerCase().includes('y'))
+					((!m.text.toLowerCase().includes('d') || !m.text.toLowerCase().includes('y')) && m.text.toLowerCase().includes(':'))
 			);
+
+			displayPattern.forEach((m) => { m.group	= 'Time'; });
+
 		} else if (type.text.toLowerCase() === 'datetime') {
 			// both
 			displayPattern = allDisplayPattern.filter((m) => m.group.toLowerCase().includes(type.text));

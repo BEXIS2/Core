@@ -8,9 +8,12 @@ using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO;
+using BExIS.Security.Entities.Objects;
+using BExIS.Security.Services.Objects;
 using Ionic.Zip;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,11 +22,30 @@ using System.Threading.Tasks;
 using System.Xml;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
+using static BExIS.Dim.Helpers.Export.GBIFDataRepoConverter;
 
 namespace BExIS.Dim.Helpers.Export
 {
     public class GBIFDataRepoConverter : IDataRepoConverter
     {
+        public enum ExtensionType
+        {
+            Occurence,
+            Event,
+            Humbolt,
+            EMof,
+            Organism,
+            MaterialEntity,
+            MaterialSample,
+            MeasurementOrFact,
+            ResourceRelationship,
+            Taxon,
+            Identification,
+            Location,
+            ChronometricAge,
+            GeologicalContext
+        }
+
         private Repository _dataRepo { get; set; }
 
         private GbifDataType _type { get; set; }
@@ -35,6 +57,7 @@ namespace BExIS.Dim.Helpers.Export
             string path = "";
             using (var datasetManager = new DatasetManager())
             using (var conceptManager = new ConceptManager())
+            using (var entityReferenceManager = new EntityReferenceManager())
             using (ZipFile zip = new ZipFile())
             {
                 string dwcStorePath = ModuleManager.GetModuleSettings("DIM").GetValueByKey("gbifCollectionArea").ToString();
@@ -48,7 +71,7 @@ namespace BExIS.Dim.Helpers.Export
                 // if starts with / it means it should store under {DATA}/ dwcStorePath
                 // if starts with Char then it means the full Folepath is defined 
 
-                string folder = Regex.Match(dwcStorePath, "^([A-Z]:\\|/)").Success ? dwcStorePath :Path.Combine(AppConfiguration.DataPath, dwcStorePath);
+                string folder = Regex.Match(dwcStorePath, "^([A-Z]:\\|/)").Success ? dwcStorePath : Path.Combine(AppConfiguration.DataPath, dwcStorePath);
 
                 FileHelper.CreateDicrectoriesIfNotExist(folder);
 
@@ -67,24 +90,47 @@ namespace BExIS.Dim.Helpers.Export
                 {
                     long metadatastructureId = dataset.MetadataStructure.Id;
                     long id = dataset.Id;
-                    long versionId = datasetversion.Id; 
+                    long versionId = datasetversion.Id;
                     string xsdPath = Path.Combine(AppConfiguration.WorkspaceRootPath, concept.XSD);
 
                     // generate metadata
                     string metadataFilePath = helper.GenerateResourceMetadata(concept.Id, metadatastructureId, datasetversion.Metadata, folder, xsdPath);
-                    if(File.Exists(metadataFilePath)) zip.AddFile(metadataFilePath, "");
-                
+                    if (File.Exists(metadataFilePath)) zip.AddFile(metadataFilePath, "");
+
                     // get data
                     string datapath = helper.GenerateData(id, versionId);
                     if (File.Exists(datapath)) zip.AddFile(datapath, "");
 
+                    // has links to extentions? (IsDwcEventOf,IsDwcHumboltExtensionOf, IsEwcEMofExtensionOf)
+                    // has links?
+                    var links = helper.GetExtentions().Select(e=>e.LinkName);
+                    var refs = entityReferenceManager.ReferenceRepository.Get().Where(r => r.SourceEntityId == dataset.EntityTemplate.EntityType.Id && r.SourceId == dataset.Id && links.Contains(r.ReferenceType)).ToList();
+                    // add data from linked datasets links 
+                    List<ExtentionEntity> extentions = new List<ExtentionEntity>();
+                    foreach (var r in refs)
+                    {
+                        if (links.Contains(r.ReferenceType))
+                        {
+                            var ext = datasetManager.GetDataset(r.SourceId);
+                            var structureId = ext.DataStructure == null?0: ext.DataStructure.Id;
+                            string rPath = helper.GenerateData(r.SourceId, r.SourceVersion);
+                            if (File.Exists(rPath))
+                            {
+                                // how to find the position of id of the core
+                                // check links for the specifiy types
+                                var extention = helper.GetExtention(r.ReferenceType);
+
+                                extentions.Add(new ExtentionEntity() { IdIndex = 0, Version = r.SourceVersion, StructureId = structureId, Extention = extention, dataPath = Path.GetFileName(rPath) });
+                                zip.AddFile(rPath, "");
+                            }
+                        }
+                    }
+
                     // generate meta file
-                    string metaFilePath = helper.GenerateMeta(_type, dataset.DataStructure.Id, folder, Path.GetFileName(datapath));
+                    string metaFilePath = helper.GenerateMeta(_type, dataset.DataStructure.Id, folder, Path.GetFileName(datapath), extentions);
                     if (File.Exists(metaFilePath)) zip.AddFile(metaFilePath, "");
 
                     zip.Save(zipfilepath);
-
-                    
 
                     return zipfilepath;
 
@@ -96,7 +142,6 @@ namespace BExIS.Dim.Helpers.Export
 
         public bool Validate(long datasetVersionId, out List<string> errors)
         {
-           
 
             long metadataStructureId = 0;
             long dataStructureId = 0;
@@ -105,8 +150,11 @@ namespace BExIS.Dim.Helpers.Export
             // metadata ist valid
             using (var conceptManager = new ConceptManager())
             using (var datasetManager = new DatasetManager())
+            using (var entityReferenceManager = new EntityReferenceManager())
+
             {
                 var datasetversion = datasetManager.GetDatasetVersion(datasetVersionId);
+                var dataset = datasetversion.Dataset;
                 long datasetId = datasetversion.Dataset.Id;
 
                 if (datasetversion.Dataset.DataStructure == null) errors.Add("no data structure exist for this entity.");
@@ -154,18 +202,27 @@ namespace BExIS.Dim.Helpers.Export
                     }
 
                 }
-
-                //// in V2 file for structure exist
-                //// in data structure - dcw terms
-                //string dwtermsFilePath = Path.Combine(AppConfiguration.DataPath, "DataStructures", dataStructureId.ToString(), "dw_terms.json");
-
-                //if (!File.Exists(dwtermsFilePath))
-                //    errors.Add("dw_terms.json file not exist.");
-
-                //// check all needed dw terms mapped for the type
-       
                 // in V3 read from structre
                 helper.ValidateDWCTerms(dataStructureId, _type, out errors);
+
+                // validate extentions
+                var links = helper.GetExtentions().Select(e=>e.LinkName);
+                var refs = entityReferenceManager.ReferenceRepository.Get().Where(r => r.SourceEntityId == dataset.EntityTemplate.EntityType.Id && r.SourceId == dataset.Id && links.Contains(r.ReferenceType)).ToList();
+                // add data from linked datasets links 
+                List<ExtentionEntity> extentions = new List<ExtentionEntity>();
+                foreach (var r in refs)
+                {
+                    var ext = datasetManager.GetDataset(r.SourceId);
+                    var structureId = ext.DataStructure == null ? 0 : ext.DataStructure.Id;
+
+                    // load structure and check if a dwc term id is available 
+                    // based on type event or occurence
+                    var dwcextention = helper.GetExtentions().FirstOrDefault(e => e.LinkName == r.ReferenceType);
+                    List<string> extErrors = new List<string>();
+                    helper.ValidateExtension(ext.Id, ext.DataStructure.Id, _type, dwcextention, out extErrors);
+                    errors.AddRange(extErrors);
+                    
+                }
 
                 //check if data exist
                 if (datasetManager.GetDataTuplesCount(datasetVersionId)<=0)
@@ -185,4 +242,5 @@ namespace BExIS.Dim.Helpers.Export
             _type = type;
         }
     }
+
 }

@@ -331,7 +331,7 @@
 		generate = true;
 
 		model.markers = selection;
-
+		console.log('save')
 		// if model entityid == 0, means subject id is not set and store to cache is not needed
 		if (model.entityId > 0) {
 			console.log('save selection', model);
@@ -343,6 +343,7 @@
 				generate = false;
 			}
 		} else {
+			console.log('saved')
 			dispatch('saved', model);
 			generate = false;
 		}
