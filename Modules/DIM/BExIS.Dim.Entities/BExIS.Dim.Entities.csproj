@@ -46,7 +46,6 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataRepository.cs" />
     <Compile Include="Export\BioSchemaEntities.cs" />
     <Compile Include="Mappings\LinkElement.cs" />
     <Compile Include="Mappings\LinkElementTypes.cs" />
