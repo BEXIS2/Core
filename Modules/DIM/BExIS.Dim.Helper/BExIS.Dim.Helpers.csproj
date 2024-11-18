@@ -135,6 +135,7 @@
     <Compile Include="Api\ApiHelper.cs" />
     <Compile Include="BasicWebService.cs" />
     <Compile Include="BIOSCHEMA\BioschemaHelper.cs" />
+    <None Include="GBIF\DWCExtentions.json" />
     <Compile Include="GBIF\GbifHelper.cs" />
     <Compile Include="Export\GBIFDataRepoConverter.cs" />
     <Compile Include="Export\PangaeaDataRepoConverter.cs" />
@@ -228,6 +229,11 @@
     <Analyzer Include="..\..\..\packages\Microsoft.CodeAnalysis.NetAnalyzers.8.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.NetAnalyzers.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\DIM"
+C:\Windows\System32\xcopy "$(ProjectDir)\GBIF\DWCExtentions.json" "$(SolutionDir)Console\Workspace\Modules\DIM" /C /Y /I /D
+</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
