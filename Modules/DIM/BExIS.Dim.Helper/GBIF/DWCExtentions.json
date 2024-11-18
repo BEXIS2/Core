@@ -1,0 +1,32 @@
+﻿[
+  {
+    "name": "Occurrence",
+    "linkName": "HasOccurrence",
+    "rowType": "Occurrence",
+    "requiredFields": [ "occurrenceID", "basisOfRecord", "scientificName", "eventDate" ]
+  },
+  {
+    "name": "Event",
+    "linkName": "HasEvent",
+    "rowType": "Event",
+    "requiredFields": [ "eventID", "eventDate", "samplingProtocol", "sampleSizeValue", "sampleSizeUnit" ]
+  },
+  {
+    "name": "Taxon",
+    "linkName": "HasTaxon",
+    "rowType": "Taxon",
+    "requiredFields": []
+  },
+  {
+    "name": "Humbolt",
+    "linkName": "HasHumbolt",
+    "rowType": "Event",
+    "requiredFields": []
+  },
+  {
+    "name": "EMof",
+    "linkName": "HasEMof",
+    "rowType": "ExtendedMeasurementOrFact",
+    "requiredFields": []
+  }
+]
