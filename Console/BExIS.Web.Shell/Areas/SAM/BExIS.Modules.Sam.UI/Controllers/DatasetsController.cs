@@ -17,6 +17,7 @@ using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
+using Microsoft.Web.Helpers;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
