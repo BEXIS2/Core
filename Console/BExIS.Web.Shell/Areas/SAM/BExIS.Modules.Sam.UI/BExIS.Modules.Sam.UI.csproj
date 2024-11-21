@@ -51,8 +51,8 @@
     <Reference Include="Microsoft.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.WebHelpers.3.3.0\lib\net45\Microsoft.Web.Helpers.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Microsoft.Web.Infrastructure.2.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -94,6 +94,9 @@
       <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc, Version=5.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.Mvc.5.3.0\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.Razor.3.3.0\lib\net45\System.Web.Razor.dll</HintPath>
     </Reference>
@@ -109,10 +112,6 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Web.Services" />
-    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Telerik.Web.Mvc">
       <HintPath>..\..\..\..\..\packages\TelerikMvcExtensions.2013.2.611\lib\net40\Telerik.Web.Mvc.dll</HintPath>
