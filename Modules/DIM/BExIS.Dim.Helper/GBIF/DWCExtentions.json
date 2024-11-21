@@ -18,8 +18,8 @@
     "requiredFields": []
   },
   {
-    "name": "Humbolt",
-    "linkName": "HasHumbolt",
+    "name": "Humboldt",
+    "linkName": "HasHumboldt",
     "rowType": "Event",
     "requiredFields": []
   },

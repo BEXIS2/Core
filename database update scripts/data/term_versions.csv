@@ -1,0 +1,109 @@
+
+dwclinks text[] := ARRAY[
+ 'siteCount',
+
+siteCount,Total number of individual sites surveyed during the dwc:Event.
+siteNestingDescription,Textual description of the hierarchical sampling design.
+verbatimSiteDescriptions,Original textual description of the site(s).
+verbatimSiteNames,A list (concatenated and separated) of original site names.
+geospatialScopeAreaValue,The numeric value for the total area of the geospatial scope of the dwc:Event.
+geospatialScopeAreaUnit,The units associated with eco:geospatialScopeAreaValue.
+totalAreaSampledValue,The numeric value for the total area surveyed during the dwc:Event.
+totalAreaSampledUnit,The units associated with eco:totalAreaSampledValue.
+reportedWeather,A list of weather or climatic conditions present during the dwc:Event.
+reportedExtremeConditions,A description of any extreme weather or environmental conditions that may have affected the dwc:Event.
+targetHabitatScope,The habitats targeted for sampling during the dwc:Event.
+excludedHabitatScope,The habitats explicitly excluded from sampling during the dwc:Event.
+eventDurationValue,The numeric value for the duration of the dwc:Event.
+eventDurationUnit,The units associated with the eco:eventDurationValue.
+targetTaxonomicScope,The taxonomic group(s) targeted for sampling during the dwc:Event.
+excludedTaxonomicScope,The taxonomic group(s) explicitly excluded from sampling during the dwc:Event.
+taxonCompletenessReported,Statement about whether the taxonomic completeness of the dwc:Event was assessed.
+taxonCompletenessProtocols,A description of or reference (publication, URL) to the methods used to determine eco:taxonCompletenessReported.
+isTaxonomicScopeFullyReported,Every dwc:Organism that was included within the taxonomic scope, and was detected during the dwc:Event, was reported.
+isAbsenceReported,Taxonomic absences were reported.
+absentTaxa,A list (concatenated and separated) of taxa reported absent during the dwc:Event.
+hasNonTargetTaxa,One or more dwc:Organisms of taxa outside the target taxonomic scope (the combination of eco:targetTaxonomicScope and eco:excludedTaxonomicScope) were detected and reported for this dwc:Event.
+nonTargetTaxa,A list (concatenated and separated) of taxa reported during the dwc:Event that are outside of the target taxonomic scope (the combination of eco:targetTaxonomicScope and eco:excludedTaxonomicScope).
+areNonTargetTaxaFullyReported,Every dwc:Organism that was outside of the target taxonomic scope (the combination of eco:targetTaxonomicScope and eco:excludedTaxonomicScope) and detected during the dwc:Event, and that was detectable using the given protocol (given in eco:protocolDescription and dwc:samplingProtocol), was reported.
+targetLifeStageScope,The age classes or life stages of the dwc:Organisms targeted for sampling during the dwc:Event.
+excludedLifeStageScope,The age classes or life stages of the dwc:Organisms explicitly excluded from sampling during the dwc:Event.
+isLifeStageScopeFullyReported,Every dwc:Organism that was included within the life stage scope, and was detected during the dwc:Event, was reported.
+targetDegreeOfEstablishmentScope,The degrees of establishment of the dwc:Organisms targeted for sampling during the dwc:Event.
+excludedDegreeOfEstablishmentScope,The degrees of establishment of the dwc:Organisms explicitly excluded from sampling during the dwc:Event.
+isDegreeOfEstablishmentScopeFullyReported,Every dwc:Organism that was included within the degree of establishment scope, and was detected during the dwc:Event, was reported.
+targetGrowthFormScope,The growth forms or habits of the dwc:Organisms targeted for sampling during the dwc:Event.
+excludedGrowthFormScope,The growth forms or habits of the dwc:Organisms explicitly excluded from sampling during the dwc:Event.
+isGrowthFormScopeFullyReported,Every dwc:Organism that was included within the growth form scope, and was detected during the dwc:Event, was reported.
+hasNonTargetOrganisms,One or more dwc:Organisms outside the target organismal scopes (eco:targetDegreeOfEstablishmentScope, eco:targetGrowthFormScope, and eco:targetLifeStageScope) were detected and reported for this dwc:Event.
+verbatimTargetScope,The verbatim original description of the dwc:Event scope.
+compilationTypes,A statement specifying whether data reported are derived from sampling events, ancillary data compiled from other sources, or a combination of both.
+compilationSourceTypes,The types of data sources contributing to the compilation reported.
+inventoryTypes,The types of search processes used to conduct the inventory.
+protocolNames,Categorical descriptive names for the methods used during the dwc:Event.
+protocolDescriptions,A detailed description of the methods used during the dwc:Event.
+protocolReferences,The references to the methods used during the dwc:Event.
+isAbundanceReported,The number of dwc:Organisms collected or observed was reported.
+isAbundanceCapReported,A maximum number of dwc:Organisms was reported, as specified or restricted by the protocol used.
+abundanceCap,The reported maximum number of dwc:Organisms.
+isVegetationCoverReported,A vegetation cover metric was reported.
+isLeastSpecificTargetCategoryQuantityInclusive,The total detected quantity for a dwc:Taxon (including subcategories thereof) in a dwc:Event is given explicitly in a single record (dwc:organismQuantity value) for that dwc:Taxon.
+hasVouchers,Specimen vouchers were collected during the dwc:Event.
+voucherInstitutions,A list (concatenated and separated) of the names or acronyms of the institutions where vouchers collected during the dwc:Event were deposited.
+hasMaterialSamples,Material samples were collected during the dwc:Event.
+materialSampleTypes,A list (concatenated and separated) of material sample types collected during the dwc:Event.
+samplingPerformedBy,"A person, group, or organization responsible for recording the dwc:Event."
+isSamplingEffortReported,The sampling effort associated with the dwc:Event was reported.
+samplingEffortProtocol,A description of or reference (publication or URL) to the methods used to determine the sampling effort.
+samplingEffortValue,The numeric value for the sampling effort expended during the dwc:Event.
+samplingEffortUnit,The units associated with the eco:samplingEffortValue.
+absentTaxa,A taxon reported absent during the dwc:Event.
+compilationSourceTypes,The type of data source contributing to the compilation reported.
+compilationTypes,"A statement specifying whether data reported are derived from sampling events, ancillary data compiled from other sources, or a combination of both."
+eventDurationUnit,The units associated with the eco:eventDurationValue.
+excludedDegreeOfEstablishmentScope,The degree of establishment of the dwc:Organisms explicitly excluded from sampling during the dwc:Event.
+excludedGrowthFormScope,The growth form or habit of the dwc:Organisms explicitly excluded from sampling during the dwc:Event.
+excludedHabitatScope,The habitat explicitly excluded from sampling during the dwc:Event.
+excludedLifeStageScope,The age class or life stage of the dwc:Organisms explicitly excluded from sampling during the dwc:Event.
+excludedTaxonomicScope,The taxonomic group explicitly excluded from sampling during the dwc:Event.
+geospatialScopeAreaUnit,The units associated with eco:geospatialScopeAreaValue.
+inventoryTypes,The type of search process used to conduct the inventory.
+materialSampleTypes,A material sample type collected during the dwc:Event.
+nonTargetTaxa,A taxon reported during the dwc:Event that is outside of the target taxonomic scope (the combination of ecoiri:targetTaxonomicScope and ecoiri:excludedTaxonomicScope).
+protocolNames,Categorical descriptive name for the methods used during the dwc:Event.
+samplingEffortProtocol,"A method or protocol used to determine the sampling effort, denoted by an IRI."
+samplingEffortUnit,The units associated with the eco:samplingEffortValue.
+samplingPerformedBy,"A person, group, or organization responsible for recording the dwc:Event."
+targetDegreeOfEstablishmentScope,The degree of establishment of the dwc:Organisms targeted for sampling during the dwc:Event.
+targetGrowthFormScope,The growth form or habit of the dwc:Organisms targeted for sampling during the dwc:Event.
+targetHabitatScope,The habitat targeted for sampling during the dwc:Event.
+targetLifeStageScope,The age class or life stage of the dwc:Organisms targeted for sampling during the dwc:Event.
+targetTaxonomicScope,The taxonomic group targeted for sampling during the dwc:Event.
+taxonCompletenessProtocols,"A method or protocol used to determine ecoiri:taxonCompletenessReported, denoted by an IRI."
+taxonCompletenessReported,Statement about whether the taxonomic completeness of the dwc:Event was assessed.
+totalAreaSampledUnit,The units associated with eco:totalAreaSampledValue.
+absentTaxa,A list (concatenated and separated) of taxa reported absent during the dwc:Event.
+compilationSourceTypes,The types of data sources contributing to the compilation reported.
+compilationTypes,"A statement specifying whether data reported are derived from sampling events, ancillary data compiled from other sources, or a combination of both."
+eventDurationUnit,The units associated with the eco:eventDurationValue.
+excludedDegreeOfEstablishmentScope,The degrees of establishment of the dwc:Organisms explicitly excluded from sampling during the dwc:Event.
+excludedGrowthFormScope,The growth forms or habits of the dwc:Organisms explicitly excluded from sampling during the dwc:Event.
+excludedHabitatScope,The habitats explicitly excluded from sampling during the dwc:Event.
+excludedLifeStageScope,The age classes or life stages of the dwc:Organisms explicitly excluded from sampling during the dwc:Event.
+excludedTaxonomicScope,The taxonomic group(s) explicitly excluded from sampling during the dwc:Event.
+geospatialScopeAreaUnit,The units associated with eco:geospatialScopeAreaValue.
+inventoryTypes,The types of search processes used to conduct the inventory.
+materialSampleTypes,A list (concatenated and separated) of material sample types collected during the dwc:Event.
+nonTargetTaxa,A list (concatenated and separated) of taxa reported during the dwc:Event that are outside of the target taxonomic scope (the combination of eco:targetTaxonomicScope and eco:excludedTaxonomicScope).
+protocolNames,Categorical descriptive names for the methods used during the dwc:Event.
+samplingEffortProtocol,A description of or reference (publication or URL) to the methods used to determine the sampling effort.
+samplingEffortUnit,The units associated with the eco:samplingEffortValue.
+samplingPerformedBy,"A person, group, or organization responsible for recording the dwc:Event."
+targetDegreeOfEstablishmentScope,The degrees of establishment of the dwc:Organisms targeted for sampling during the dwc:Event.
+targetGrowthFormScope,The growth forms or habits of the dwc:Organisms targeted for sampling during the dwc:Event.
+targetHabitatScope,The habitats targeted for sampling during the dwc:Event.
+targetLifeStageScope,The age classes or life stages of the dwc:Organisms targeted for sampling during the dwc:Event.
+targetTaxonomicScope,The taxonomic group(s) targeted for sampling during the dwc:Event.
+taxonCompletenessProtocols,"A description of or reference (publication, URL) to the methods used to determine eco:taxonCompletenessReported."
+taxonCompletenessReported,Statement about whether the taxonomic completeness of the dwc:Event was assessed.
+totalAreaSampledUnit,The units associated with eco:totalAreaSampledValue.
