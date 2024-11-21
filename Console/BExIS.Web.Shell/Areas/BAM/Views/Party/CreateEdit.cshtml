@@ -41,18 +41,21 @@
     <p>
         <a href="/bam/Help/Index/" class="bx-informationLink" title="go to help" target="_blank">More</a>
     </p>
+
+   
 }
 
 @using (Html.BeginForm("CreateEdit", "Party", new { area = "BAM" }, FormMethod.Post, new { id = "frmParty" }))
 {
+    string name = Model.PartyType != null && !string.IsNullOrEmpty(Model.PartyType.Title) ? string.Format("{0}({1})", Model.PartyType.Title, Model.Name) : "Party";
+
     @Html.HiddenFor(m => m.Id)
     @(Html.Telerik().TabStrip()
         .Name("ShowDataTabStrip").ClientEvents(item => item.OnLoad("onLoad"))
         .SelectedIndex(addRelationship ? 2 : 0).ClientEvents(events => events.OnSelect("tabSelected"))
         .Items(tabs =>
         {
-        tabs.Add()
-                    .Text(Model.PartyType != null && !string.IsNullOrEmpty(Model.PartyType.Title) ? string.Format("{0}({1})", Model.PartyType.Title, Model.Name) : "Party").Content(@<text>
+        tabs.Add().Text(name).Content(@<text>
                 <table class="bx-table-form" id="tblParty">
                     <tr>
                         <td><b title="Required" style="color: red">*</b></td>
