@@ -14,7 +14,7 @@
     <RootNamespace>BExIS.Web.Shell</RootNamespace>
     <AssemblyName>BExIS.Web.Shell</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <MvcBuildViews>false</MvcBuildViews>
+    <MvcBuildViews>true</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -1263,6 +1263,38 @@
     <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
       <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
       <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="Areas\BAM\BExIS.Modules.Bam.UI.csproj">
+      <Project>{4c00a9c4-5a27-485a-bc14-147567b29332}</Project>
+      <Name>BExIS.Modules.Bam.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="Areas\DCM\BExIS.Modules.Dcm.UI\BExIS.Modules.Dcm.UI.csproj">
+      <Project>{44dd2a5e-0d2f-4fab-b297-4211441030b7}</Project>
+      <Name>BExIS.Modules.Dcm.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="Areas\DDM\BExIS.Modules.Ddm.UI\BExIS.Modules.Ddm.UI.csproj">
+      <Project>{44dd2a5e-0d2f-4fab-b297-4211441030b6}</Project>
+      <Name>BExIS.Modules.Ddm.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="Areas\DIM\BExIS.Modules.Dim.UI.csproj">
+      <Project>{9bfffd11-03c6-47df-9cc9-f458a9a49377}</Project>
+      <Name>BExIS.Modules.Dim.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="Areas\MMM\IDIV.Modules.Mmm.UI.csproj">
+      <Project>{58f2040a-eeb5-4175-a439-b6dbce50be01}</Project>
+      <Name>IDIV.Modules.Mmm.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="Areas\RPM\BExIS.Modules.Rpm.UI\BExIS.Modules.Rpm.UI.csproj">
+      <Project>{76702a4f-d6e5-416f-bd81-58447514af05}</Project>
+      <Name>BExIS.Modules.Rpm.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="Areas\SAM\BExIS.Modules.Sam.UI\BExIS.Modules.Sam.UI.csproj">
+      <Project>{dec22f9c-47be-4146-94be-1c9aa969afc3}</Project>
+      <Name>BExIS.Modules.Sam.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="Areas\VIM\BExIS.Modules.Vim.UI.csproj">
+      <Project>{15821863-0273-485b-a9ab-d7c1e1011ade}</Project>
+      <Name>BExIS.Modules.Vim.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

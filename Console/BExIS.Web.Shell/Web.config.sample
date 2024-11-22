@@ -81,7 +81,7 @@
 		<globalization uiCulture="en-US" culture="en-US" />
 		<sessionState timeout="120" />
 		<!-- 20 minutes session timeout, set the cookie name as a cobination of the appname + version-->
-		<compilation targetFramework="4.5.2" debug="true">
+		<compilation targetFramework="4.8" debug="false">
 			<assemblies>
 				<add assembly="System.Web.Abstractions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35" />
 				<add assembly="System.Web.Helpers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35" />
