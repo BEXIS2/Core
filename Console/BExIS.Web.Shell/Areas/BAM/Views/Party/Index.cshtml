@@ -1,4 +1,6 @@
 ﻿@model List<BExIS.Dlm.Entities.Party.PartyType>
+@using Telerik.Web.Mvc.UI;
+
 @{
     string partyTypeTitle = "";
     if (Request.QueryString["partyTypeTitle"] != null)
@@ -23,7 +25,9 @@
 }
 else
 {
-    <img src="@Url.Content(Themes.GetResourcePath("Styles/Default", "loading.gif"))" style="display:none" id="imgPartyGridCustomGridColumnsLoading" />
+    string url = Themes.GetResourcePath("Styles/Default", "loading.gif");
+
+    <img src="@Url.Content(url)" style="display:none" id="imgPartyGridCustomGridColumnsLoading" />
     <div id="partyTypesTabs" class="t-widget t-tabstrip t-header">
         <ul class="t-reset t-tabstrip-items" style="background-color:none !important;">
             <li id="" class="t-item t-state-default t-state-active">
