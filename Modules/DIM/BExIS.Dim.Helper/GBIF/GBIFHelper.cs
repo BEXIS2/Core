@@ -211,7 +211,9 @@ namespace BExIS.Dim.Helpers.GBIF
                     LinesTerminatedBy = ",",
                     FieldsTerminatedBy = @"\n",
                     IgnoreHeaderLines = "1",
-                    CoreId = new Id() { Index= extentionEntity.IdIndex }
+                    CoreId = new Id() { Index= extentionEntity.IdIndex },
+                    fields = dwterms.Field
+                    
                 };
 
                 exts.Add(ext);
@@ -375,9 +377,9 @@ namespace BExIS.Dim.Helpers.GBIF
 
         }
 
-        public DWCExtention GetExtention(string name)
+        public DWCExtention GetExtention(string linkName)
         {
-            return dWCExtentions.FirstOrDefault(e => e.Name.Equals(name));
+            return dWCExtentions.FirstOrDefault(e => e.LinkName.Equals(linkName));
         }
 
         public List<DWCExtention> GetExtentions()
