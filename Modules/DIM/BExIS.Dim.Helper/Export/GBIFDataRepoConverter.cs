@@ -111,9 +111,9 @@ namespace BExIS.Dim.Helpers.Export
                     {
                         if (links.Contains(r.ReferenceType))
                         {
-                            var ext = datasetManager.GetDataset(r.SourceId);
+                            var ext = datasetManager.GetDataset(r.TargetId);
                             var structureId = ext.DataStructure == null?0: ext.DataStructure.Id;
-                            string rPath = helper.GenerateData(r.SourceId, r.SourceVersion);
+                            string rPath = helper.GenerateData(r.TargetId, r.TargetVersion);
                             if (File.Exists(rPath))
                             {
                                 // how to find the position of id of the core
