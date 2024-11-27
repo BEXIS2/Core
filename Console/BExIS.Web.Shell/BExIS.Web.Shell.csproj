@@ -1265,10 +1265,6 @@
       <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
       <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
     </ProjectReference>
-    <ProjectReference Include="Areas\MMM\IDIV.Modules.Mmm.UI.csproj">
-      <Project>{58f2040a-eeb5-4175-a439-b6dbce50be01}</Project>
-      <Name>IDIV.Modules.Mmm.UI</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Themes\Default\Styles\awesome\fonts\fontawesome-webfont.woff2" />
