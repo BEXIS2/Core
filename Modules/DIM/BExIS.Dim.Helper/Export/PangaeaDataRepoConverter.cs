@@ -94,8 +94,6 @@ namespace BExIS.Dim.Helpers.Export
                 {
                     throw exception;
                 }
-
-                return "";
             }
             finally
             {
