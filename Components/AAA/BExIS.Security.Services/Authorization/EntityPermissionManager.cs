@@ -300,7 +300,10 @@ namespace BExIS.Security.Services.Authorization
 
                 var rights = new List<int>
                 {
+                    // public
                     await GetRightsAsync(entityId, key),
+
+                    // private
                     await GetRightsAsync(subjectId, entityId, key)
                 };
 
@@ -493,15 +496,20 @@ namespace BExIS.Security.Services.Authorization
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var userRepository = uow.GetReadOnlyRepository<User>();
-                var userIds = userRepository.Query(s => s.Name.ToLowerInvariant() == username.ToLowerInvariant()).Select(u => u.Id);
-                if (userIds.Count() != 1)
-                    return false;
-
                 var entityRepository = uow.GetReadOnlyRepository<Entity>();
                 var entityIds = entityRepository.Query(e => e.EntityType == entityType).Select(e => e.Id).ToList();
-                if (entityIds.Count() == 0)
+                if (entityIds.Count == 0)
                     return false;
+
+                if (string.IsNullOrEmpty(username))
+                {
+                    return await HasEffectiveRightsAsync(0, entityIds, key, rightType);
+                }
+
+                var userRepository = uow.GetReadOnlyRepository<User>();
+                var userIds = userRepository.Query(s => s.Name.ToLowerInvariant() == username.ToLowerInvariant()).Select(u => u.Id);
+                if(userIds.Count() != 1)
+                    return await HasEffectiveRightsAsync(0, entityIds, key, rightType);
 
                 return await HasEffectiveRightsAsync(userIds.Single(), entityIds, key, rightType);
             }
@@ -543,6 +551,19 @@ namespace BExIS.Security.Services.Authorization
                 return permissions.Count == 1;
             }
         }
+
+        public async Task<bool> IsPublicAsync(List<long> entityIds, long key)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+
+                var permissions = entityPermissionRepository.Query(p => p.Subject == null && entityIds.Contains(p.Entity.Id) && p.Key == key && p.Rights > (int)RightType.Read).ToList();
+
+                return permissions.Count == 1;
+            }
+        }
+
 
         public async Task UpdateAsync(EntityPermission entity)
         {
