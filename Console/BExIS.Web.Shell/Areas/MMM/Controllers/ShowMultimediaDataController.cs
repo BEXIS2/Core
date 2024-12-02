@@ -143,13 +143,15 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                         string message = string.Format("File from {0} version {1} was downloaded: {2}.", datasetID, versionNr, filename);
                         LoggerFactory.LogCustom(message);
 
-                        var es = new EmailService();
                         if (send_mail == "true")
                         {
-                            es.Send(MessageHelper.GetFileDownloadHeader(datasetID, versionNr),
-                                                    MessageHelper.GetFileDownloadMessage(GetUsernameOrDefault(), datasetID, fileInfo.Name),
-                                                    GeneralSettings.SystemEmail
-                                                    );
+                            using (var emailService = new EmailService())
+                            {
+                                emailService.Send(MessageHelper.GetFileDownloadHeader(datasetID, versionNr),
+                                                                                        MessageHelper.GetFileDownloadMessage(GetUsernameOrDefault(), datasetID, fileInfo.Name),
+                                                                                        GeneralSettings.SystemEmail
+                                                                                        );
+                            }
                         }
                         return File(path, MimeMapping.GetMimeMapping(fileInfo.Name), filename);
                     }

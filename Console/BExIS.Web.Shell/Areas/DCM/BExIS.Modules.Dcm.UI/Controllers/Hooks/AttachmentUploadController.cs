@@ -188,12 +188,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 dm.EditDatasetVersion(datasetVersion, null, null, null);
                 dm.CheckInDataset(dataset.Id, file, username, ViewCreationBehavior.None);
 
-                var es = new EmailService();
-
-                es.Send(MessageHelper.GetAttachmentDeleteHeader(id, typeof(Dataset).Name),
-                                MessageHelper.GetAttachmentDeleteMessage(id, file, username),
-                                GeneralSettings.SystemEmail
-                                );
+                using (var emailService = new EmailService())
+                {
+                    emailService.Send(MessageHelper.GetAttachmentDeleteHeader(id, typeof(Dataset).Name),
+                                    MessageHelper.GetAttachmentDeleteMessage(id, file, username),
+                                    GeneralSettings.SystemEmail
+                                    );
+                }
 
                 // add message to the cache
                 log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { file + " removed" }, username, "Attachment upload", "remove"));
@@ -308,11 +309,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             AddFileInContentDiscriptor(datasetVersion, fileName);
                         }
 
-                        var es = new EmailService();
-                        es.Send(MessageHelper.GetAttachmentUploadHeader(datasetId, typeof(Dataset).Name),
-                        MessageHelper.GetAttachmentUploadMessage(datasetId, filemNames, user.DisplayName),
-                        GeneralSettings.SystemEmail
-                        );
+                        using (var emailService = new EmailService())
+                        {
+                            emailService.Send(MessageHelper.GetAttachmentUploadHeader(datasetId, typeof(Dataset).Name),
+                                                        MessageHelper.GetAttachmentUploadMessage(datasetId, filemNames, user.DisplayName),
+                                                        GeneralSettings.SystemEmail
+                                                        );
+                        }
 
                         //set modification
                         datasetVersion.ModificationInfo = new EntityAuditInfo()

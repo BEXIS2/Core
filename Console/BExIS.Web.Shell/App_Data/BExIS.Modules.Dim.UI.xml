@@ -907,6 +907,22 @@
             Other mosules who consume the API results of a module, should only expect .NET types, DLM types, json, xml, CSV, or Html.
             </summary>
         </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.PublishData(System.Int64,System.Int64)">
+            <summary>
+            
+            </summary>
+            <param name="datasetId"></param>
+            <param name="datasetVersionId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.SendDataToDataRepo(System.Int64,System.Int64)">
+            <summary>
+            
+            </summary>
+            <param name="brokerId"></param>
+            <param name="datasetId"></param>
+            <returns></returns>
+        </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.PrepareData(System.Int64,System.Int64)">
             <summary>
             prepare data for the broker and repo
@@ -915,16 +931,14 @@
             tuple.item2 = mimetype
             </summary>
             <param name="datasetVersionId"></param>
-            <param name="datasetId"></param>
-            <param name="datarepo"></param>
-            <param name="broker"></param>
+            <param name="brokerId"></param>
             <returns></returns>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.GetStatus(BExIS.Dim.Entities.Publications.Publication)">
             <summary>
             Get Status from publiction
             </summary>
-            <param name="id"></param>
+            <param name="publication"></param>
             <returns></returns>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Helpers.DimSeedDataGenerator.createFromKeyMapping(System.String,BExIS.Dim.Entities.Mappings.LinkElementType,System.String,BExIS.Dim.Entities.Mappings.LinkElementType,BExIS.Dim.Entities.Mappings.Key,BExIS.Dim.Entities.Mappings.Mapping,System.Xml.Linq.XDocument,BExIS.Dim.Services.Mappings.MappingManager)">

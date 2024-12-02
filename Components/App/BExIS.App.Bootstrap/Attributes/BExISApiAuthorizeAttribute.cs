@@ -73,7 +73,7 @@ namespace BExIS.App.Bootstrap.Attributes
 
                         if (!string.IsNullOrEmpty(jwt))
                         {
-                            principal = JwtHelper.Get(jwt);
+                            principal = JwtHelper.GetClaimsPrincipleByToken(jwt);
                         }
                     }
 
@@ -140,7 +140,7 @@ namespace BExIS.App.Bootstrap.Attributes
                     if (user != null)
                     {
                         var jwtConfiguration = GeneralSettings.JwtConfiguration;
-                        var jwt = JwtHelper.Get(user);
+                        var jwt = JwtHelper.GetTokenByUser(user);
               
                         // Create a new cookie
                         CookieHeaderValue cookie = new CookieHeaderValue("jwt", jwt);

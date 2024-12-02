@@ -233,10 +233,13 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 dm.Dispose();
                 GC.Collect();
 
-                var es = new EmailService();
-                es.Send(MessageHelper.GetSearchReIndexHeader(),
-                    MessageHelper.GetSearchReIndexMessage(errors),
-                    GeneralSettings.SystemEmail);
+                using (var emailService = new EmailService())
+                {
+                    emailService.Send(MessageHelper.GetSearchReIndexHeader(),
+                        MessageHelper.GetSearchReIndexMessage(errors),
+                        GeneralSettings.SystemEmail);
+                }
+                    
             }
         }
 

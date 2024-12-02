@@ -638,22 +638,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
 
-                            if (newDataset)
+                            using(var emailService = new EmailService())
                             {
-                                var es = new EmailService();
-                                es.Send(MessageHelper.GetCreateDatasetHeader(datasetId, entityname),
-                                    MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
-                                    GeneralSettings.SystemEmail
-                                    );
-                            }
-                            else
-                            {
-                                var es = new EmailService();
-                                es.Send(MessageHelper.GetMetadataUpdatHeader(datasetId, entityname),
-                                    MessageHelper.GetUpdateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
-                                    GeneralSettings.SystemEmail
-                                    );
-                            }
+                                if (newDataset)
+                                {
+                                    emailService.Send(MessageHelper.GetCreateDatasetHeader(datasetId, entityname),
+                                        MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
+                                        GeneralSettings.SystemEmail
+                                        );
+                                }
+                                else
+                                {
+                                    emailService.Send(MessageHelper.GetMetadataUpdatHeader(datasetId, entityname),
+                                        MessageHelper.GetUpdateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
+                                        GeneralSettings.SystemEmail
+                                        );
+                                }
+                            }                            
                         }
 
                         Session["CreateDatasetTaskManager"] = null;
@@ -663,12 +664,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
                 catch (Exception ex)
                 {
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetMetadataUpdatHeader(datasetId, entityname),
-                        ex.Message,
-                        GeneralSettings.SystemEmail
-                        );
-
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetMetadataUpdatHeader(datasetId, entityname),
+                            ex.Message,
+                            GeneralSettings.SystemEmail
+                            );
+                    }
+                        
                     string message = String.Format("error appears by create/update dataset with id: {0} , error: {1} ", datasetId.ToString(), ex.Message);
                     LoggerFactory.LogCustom(message);
                 }

@@ -466,6 +466,60 @@
               Sucht eine lokalisierte Zeichenfolge, die Update ähnelt.
             </summary>
         </member>
+        <member name="M:BExIS.Web.Shell.Controllers.AccountController.ClearSession">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Web.Shell.Controllers.AccountController.ConfirmEmail(System.Int64,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="userId"></param>
+            <param name="code"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Web.Shell.Controllers.AccountController.ExternalLogin(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="provider"></param>
+            <param name="returnUrl"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Web.Shell.Controllers.AccountController.ExternalLoginCallback(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="returnUrl"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Web.Shell.Controllers.AccountController.ExternalLoginConfirmation(BExIS.Web.Shell.Models.ExternalLoginConfirmationViewModel,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="model"></param>
+            <param name="returnUrl"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Web.Shell.Controllers.AccountController.Profile">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Web.Shell.Controllers.AccountController.Register">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:BExIS.Web.Shell.Controllers.API.PersonNameComponentsController">
+             <summary>
+            
+             </summary>
+        </member>
         <member name="M:BExIS.Web.Shell.Controllers.API.PersonNameComponentsController.Post(System.String)">
             <summary>
             Get the separate parts of a person's name.
@@ -473,11 +527,52 @@
             <param name="name">complete name of the person</param>
             <returns>separated person names (e.g. first, middle, last,...)</returns>
         </member>
+        <member name="T:BExIS.Web.Shell.Controllers.API.TokensController">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="M:BExIS.Web.Shell.Controllers.API.TokensController.Get">
             <summary>
             Get the token based on basic authentication
             </summary>
             <returns>Token</returns>
+        </member>
+        <member name="M:BExIS.Web.Shell.Controllers.API.TokensController.Verify(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="token"></param>
+            <returns></returns>
+        </member>
+        <member name="T:BExIS.Web.Shell.Controllers.API.VersionsController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:BExIS.Web.Shell.Controllers.API.VersionsController.GetVersionFromDatabase">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Web.Shell.Controllers.API.VersionsController.GetVersionFromSite">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Web.Shell.Controllers.API.VersionsController.GetVersionFromWorkspace">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Web.Shell.Controllers.API.VersionsController.GetVersions">
+            <summary>
+            
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:BExIS.Web.Shell.Controllers.HomeController.Start">
             <summary>

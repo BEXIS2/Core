@@ -9,12 +9,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Utilities
 {
-    public class EmailService : IIdentityMessageService
+    public class EmailService : IIdentityMessageService, IDisposable
     {
+        private readonly IUnitOfWork _guow = null;
         private SmtpConfiguration _smtpConfiguration;
+        private bool isDisposed = false;
 
         public EmailService(SmtpConfiguration smtpConfiguration)
         {
@@ -24,6 +27,29 @@ namespace BExIS.Security.Services.Utilities
         public EmailService()
         {
             _smtpConfiguration = GeneralSettings.SmtpConfiguration;
+        }
+
+        ~EmailService()
+        {
+            Dispose(true);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {
+                    if (_guow != null)
+                        _guow.Dispose();
+                    isDisposed = true;
+                }
+            }
         }
 
         public void Send(MimeMessage message)

@@ -54,7 +54,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 {
                     var ids = model.Related_meaning.Select(m => m.Id);
 
-                    meaning.Related_meaning = meaningManager.getMeanings().Where(m => ids.Contains(m.Id)).ToList();
+                    meaning.Related_meaning = meaningManager.GetMeanings().Where(m => ids.Contains(m.Id)).ToList();
                 }
             }
 
@@ -83,13 +83,13 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             using (var meaningManager = new MeaningManager())
             {
                 if (model.MappingRelation != null)
-                    entry.MappingRelation = meaningManager.getExternalLink(model.MappingRelation.Id);
+                    entry.MappingRelation = meaningManager.GetExternalLink(model.MappingRelation.Id);
 
                 if (model.MappedLinks.Any())
                 {
                     var ids = model.MappedLinks.Select(m => m.Id);
 
-                    entry.MappedLinks = meaningManager.getExternalLinks().Where(e => ids.Contains(e.Id)).ToList();
+                    entry.MappedLinks = meaningManager.GetExternalLinks().Where(e => ids.Contains(e.Id)).ToList();
                 }
             }
             return entry;
@@ -185,12 +185,12 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 if (model.PrefixCategory != null)
                 {
-                    prefixCategory = meaningManager.getPrefixCategory(model.PrefixCategory.Id);
+                    prefixCategory = meaningManager.GetPrefixCategory(model.PrefixCategory.Id);
                 }
 
                 if (model.Prefix != null)
                 {
-                    prefix = meaningManager.getExternalLink(model.Prefix.Id);
+                    prefix = meaningManager.GetExternalLink(model.Prefix.Id);
                 }
 
                 link.Id = model.Id;

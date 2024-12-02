@@ -175,7 +175,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             {
                 if(constraint != null) 
                 {
-                    inUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0 || constraint.VariableConstraints.Any() || meaningManager.getMeanings().Where(m => m.Constraints.Any(c => c.Id.Equals(constraint.Id))).Any();
+                    inUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0 || constraint.VariableConstraints.Any() || meaningManager.GetMeanings().Where(m => m.Constraints.Any(c => c.Id.Equals(constraint.Id))).Any();
                 }                
             }
             return inUse;

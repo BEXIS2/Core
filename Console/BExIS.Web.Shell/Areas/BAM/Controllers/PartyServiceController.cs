@@ -172,11 +172,14 @@ namespace BExIS.Modules.Bam.UI.Controllers
                             var entity = party.CustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == nameProp.Id);
                             if (user.Email != entity.Value)
                             {
-                                var es = new EmailService();
-                                es.Send(MessageHelper.GetUpdateEmailHeader(),
-                                    MessageHelper.GetUpdaterEmailMessage(user.DisplayName, user.Email, entity.Value),
-                                    GeneralSettings.SystemEmail
-                                    );
+                                using (var emailService = new EmailService())
+                                {
+                                    emailService.Send(MessageHelper.GetUpdateEmailHeader(),
+                                        MessageHelper.GetUpdaterEmailMessage(user.DisplayName, user.Email, entity.Value),
+                                        GeneralSettings.SystemEmail
+                                        );
+                                }
+                                    
                             }
                             user.Email = entity.Value;
                         }

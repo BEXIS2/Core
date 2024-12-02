@@ -42,7 +42,7 @@ namespace BExIS.Security.Services.Authorization
                 var result = entityPermissionRepository.Put(entityPermission);
                 uow.Commit();
 
-                return await Task.FromResult(result);
+                return result;
             }
         }
 
@@ -62,7 +62,7 @@ namespace BExIS.Security.Services.Authorization
                 var result = entityPermissionRepository.Put(entityPermission);
                 uow.Commit();
 
-                return await Task.FromResult(result);
+                return result;
             }
         }
 
@@ -74,7 +74,7 @@ namespace BExIS.Security.Services.Authorization
                 var subjectRepository = uow.GetReadOnlyRepository<Subject>();
                 var entityPermission = new EntityPermission()
                 {
-                    Subject = subjectId == null ? null : subjectRepository.Query(s => s.Id == subjectId).FirstOrDefault(),
+                    Subject = subjectId.HasValue ? subjectRepository.Get(subjectId.Value) : null,
                     Entity = entityRepository.Get(entityId),
                     Key = key,
                     Rights = rights
@@ -84,37 +84,43 @@ namespace BExIS.Security.Services.Authorization
                 var result = entityPermissionRepository.Put(entityPermission);
                 uow.Commit();
 
-                return await Task.FromResult(result);
+                return result;
             }
         }
 
         public async Task<bool> CreateAsync<T>(string subjectName, string entityName, Type entityType, long key, List<RightType> rights) where T : Subject
         {
             if (string.IsNullOrEmpty(subjectName))
-                return await Task.FromResult(false);
+                return false;
 
             if (string.IsNullOrEmpty(entityName))
-                return await Task.FromResult(false);
+                return false;
 
             if (entityType == null)
-                return await Task.FromResult(false);
+                return false;
 
             using (var uow = this.GetUnitOfWork())
             {
                 var entityRepository = uow.GetReadOnlyRepository<Entity>();
                 var subjectRepository = uow.GetReadOnlyRepository<Subject>();
 
-                var subject = subjectRepository.Query(s => s.Name.ToLowerInvariant() == subjectName.ToLowerInvariant() && s is T).FirstOrDefault();
-                
-                if(subject == null)
-                    return await Task.FromResult(false);
+                var subjects = subjectRepository.Query(s => s.Name.ToLowerInvariant() == subjectName.ToLowerInvariant() && s is T);
+
+                if (subjects.Count() != 1)
+                    return false;
+
+                var subject = subjects.Single();
+
+                if (subject == null)
+                    return false;
+
                 var entity = entityRepository.Query(e => e.Name.ToLowerInvariant() == entityName.ToLowerInvariant() && e.EntityType == entityType).FirstOrDefault();
-                
-                if(entity == null)
-                    return await Task.FromResult(false);
+
+                if (entity == null)
+                    return false;
 
                 if (await ExistsAsync(subject, entity, key))
-                    return await Task.FromResult(false);
+                    return false;
 
                 var entityPermission = new EntityPermission()
                 {
@@ -128,7 +134,7 @@ namespace BExIS.Security.Services.Authorization
                 var result = entityPermissionRepository.Put(entityPermission);
                 uow.Commit();
 
-                return await Task.FromResult(result);
+                return result;
             }
         }
 
@@ -140,7 +146,7 @@ namespace BExIS.Security.Services.Authorization
                 var result = entityPermissionRepository.Delete(entityPermission);
                 uow.Commit();
 
-                return await Task.FromResult(result);
+                return result;
             }
         }
 
@@ -153,7 +159,7 @@ namespace BExIS.Security.Services.Authorization
                 var result = entityPermissionRepository.Delete(entityPermissions);
                 uow.Commit();
 
-                return await Task.FromResult(result);
+                return result;
             }
         }
 
@@ -165,7 +171,7 @@ namespace BExIS.Security.Services.Authorization
                 var result = entityPermissionRepository.Delete(entityPermissionRepository.Get(entityPermissionId));
                 uow.Commit();
 
-                return await Task.FromResult(result);
+                return result;
             }
         }
 
@@ -179,7 +185,7 @@ namespace BExIS.Security.Services.Authorization
             using (var uow = this.GetUnitOfWork())
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                return await Task.FromResult(entityPermissionRepository.Query(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key).Count() == 1);
+                return entityPermissionRepository.Query(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key).Count() == 1;
             }
         }
 
@@ -188,7 +194,7 @@ namespace BExIS.Security.Services.Authorization
             using (var uow = this.GetUnitOfWork())
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                return await Task.FromResult(entityPermissionRepository.Query(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == key).Count() == 1);
+                return entityPermissionRepository.Query(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == key).Count() == 1;
             }
         }
 
@@ -197,7 +203,7 @@ namespace BExIS.Security.Services.Authorization
             using (var uow = this.GetUnitOfWork())
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                return await Task.FromResult(entityPermissionRepository.Query(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key && (p.Rights & (int)rightType) > 0).Count() == 1);
+                return entityPermissionRepository.Query(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key && (p.Rights & (int)rightType) > 0).Count() == 1;
             }
         }
 
@@ -206,7 +212,7 @@ namespace BExIS.Security.Services.Authorization
             using (var uow = this.GetUnitOfWork())
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                return await Task.FromResult(entityPermissionRepository.Query(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == key && (p.Rights & (int)rightType) > 0).Count() == 1);
+                return entityPermissionRepository.Query(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == key && (p.Rights & (int)rightType) > 0).Count() == 1;
             }
         }
 
@@ -217,12 +223,12 @@ namespace BExIS.Security.Services.Authorization
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
 
                 if (entity == null)
-                    return await Task.FromResult(false);
+                    return false;
 
                 if (subject == null)
-                    return await Task.FromResult(entityPermissionRepository.Query(p => p.Subject == null && p.Entity.Id == entity.Id && p.Key == key).Count() == 1);
+                    return entityPermissionRepository.Query(p => p.Subject == null && p.Entity.Id == entity.Id && p.Key == key).Count() == 1;
 
-                return await Task.FromResult(entityPermissionRepository.Query(p => p.Subject.Id == subject.Id && p.Entity.Id == entity.Id && p.Key == key).Count() == 1);
+                return entityPermissionRepository.Query(p => p.Subject.Id == subject.Id && p.Entity.Id == entity.Id && p.Key == key).Count() == 1;
             }
         }
 
@@ -232,16 +238,12 @@ namespace BExIS.Security.Services.Authorization
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
 
-                var entityPermissions = new List<EntityPermission>();
-                entityPermissions = entityPermissionRepository.Query(p => p.Subject == null && p.Entity.Id == entityId && p.Key == instanceId).ToList();
+                var entityPermissions = entityPermissionRepository.Query(p => p.Subject == null && p.Entity.Id == entityId && p.Key == instanceId);
 
-                if (!entityPermissions.Any())
-                    return await Task.FromResult<EntityPermission>(null);
+                if (entityPermissions.Count() != 1)
+                    return null;
 
-                if (entityPermissions.Count > 1)
-                    return await Task.FromResult<EntityPermission>(null);
-
-                return await Task.FromResult(entityPermissions.Single());
+                return entityPermissions.Single();
             }
         }
 
@@ -251,16 +253,12 @@ namespace BExIS.Security.Services.Authorization
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
 
-                var entityPermissions = new List<EntityPermission>();
-                entityPermissions = entityPermissionRepository.Query(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == instanceId).ToList();
+                var entityPermissions = entityPermissionRepository.Query(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.Key == instanceId);
 
-                if (!entityPermissions.Any())
-                    return await Task.FromResult<EntityPermission>(null);
+                if (entityPermissions.Count() != 1)
+                    return null;
 
-                if (entityPermissions.Count > 1)
-                    return await Task.FromResult<EntityPermission>(null);
-
-                return await Task.FromResult(entityPermissions.Single());
+                return entityPermissions.Single();
             }
         }
 
@@ -270,9 +268,7 @@ namespace BExIS.Security.Services.Authorization
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
 
-                var entityPermission = entityPermissionRepository.Get(entityPermissionId);
-
-                return entityPermission == null ? await Task.FromResult<EntityPermission>(null) : await Task.FromResult(entityPermission);
+                return entityPermissionRepository.Get(entityPermissionId);
             }
         }
 
@@ -287,7 +283,7 @@ namespace BExIS.Security.Services.Authorization
                     await GetRightsAsync(entityId, key),
                 };
 
-                return await Task.FromResult(rights.Aggregate(0, (left, right) => left | right));
+                return rights.Aggregate(0, (left, right) => left | right);
             }
         }
 
@@ -304,7 +300,10 @@ namespace BExIS.Security.Services.Authorization
 
                 var rights = new List<int>
                 {
+                    // public
                     await GetRightsAsync(entityId, key),
+
+                    // private
                     await GetRightsAsync(subjectId, entityId, key)
                 };
 
@@ -340,7 +339,7 @@ namespace BExIS.Security.Services.Authorization
                     }
                 }
 
-                return await Task.FromResult(rights.Aggregate(0, (left, right) => left | right));
+                return rights.Aggregate(0, (left, right) => left | right);
             }
         }
 
@@ -353,7 +352,7 @@ namespace BExIS.Security.Services.Authorization
                 rights.Add(subjectId, await GetEffectiveRightsAsync(subjectId, entityId, key));
             }
 
-            return await Task.FromResult(rights);
+            return rights;
         }
 
         public async Task<int> GetEffectiveRightsAsync(long subjectId, IEnumerable<long> entityIds, long key)
@@ -365,7 +364,7 @@ namespace BExIS.Security.Services.Authorization
                 rights = Math.Max(rights, await GetEffectiveRightsAsync(subjectId, entityId, key));
             }
 
-            return await Task.FromResult(rights);
+            return rights;
         }
 
         public async Task<List<long>> GetKeys(string userName, string entityName, Type entityType, RightType rightType)
@@ -380,26 +379,28 @@ namespace BExIS.Security.Services.Authorization
 
                 var entityRepository = uow.GetReadOnlyRepository<Entity>();
 
-                var entity = entityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault();
-                if (entity == null)
+                var entities = entityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType);
+
+                if (entities.Count() != 1)
                     return new List<long>();
+
+                var entity = entities.Single();
 
                 var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
                 var userRepository = uow.GetReadOnlyRepository<User>();
 
                 var user = userRepository.Query(s => s.Name.ToUpperInvariant() == userName.ToUpperInvariant()).FirstOrDefault();
                 if (user == null)
-                    return entityPermissionRepository
+                    return await Task.FromResult(entityPermissionRepository
                         .Query(e => e.Subject == null && e.Entity.Id == entity.Id).AsEnumerable()
                         .Where(e => (e.Rights & (int)rightType) > 0)
                         .Select(e => e.Key)
-                        .ToList();
+                        .ToList());
 
                 var subjectIds = new List<long>() { user.Id };
                 subjectIds.AddRange(user.Groups.Select(g => g.Id).ToList());
 
-                return
-                    entityPermissionRepository
+                return entityPermissionRepository
                         .Query(e => (subjectIds.Contains(e.Subject.Id) || e.Subject == null) && e.Entity.Id == entity.Id).AsEnumerable()
                         .Where(e => (e.Rights & (int)rightType) > 0)
                         .Select(e => e.Key)
@@ -414,13 +415,13 @@ namespace BExIS.Security.Services.Authorization
             {
                 var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
 
-                return await Task.FromResult(entityPermissionRepository.Query(e =>
+                return entityPermissionRepository.Query(e =>
                         e.Subject == null &&
                         e.Entity.Id == entityId &&
                         (e.Rights & (int)rightType) > 0
                         )
                     .Select(e => e.Key)
-                    .ToList());
+                    .ToList();
             }
         }
 
@@ -430,13 +431,13 @@ namespace BExIS.Security.Services.Authorization
             {
                 var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
 
-                return await Task.FromResult(entityPermissionRepository.Query(e =>
+                return entityPermissionRepository.Query(e =>
                     e.Subject.Id == subjectId &&
                     e.Entity.Id == entityId &&
                     (e.Rights & (int)rightType) > 0
                     )
                 .Select(e => e.Key)
-                .ToList());
+                .ToList();
             }
         }
 
@@ -463,8 +464,8 @@ namespace BExIS.Security.Services.Authorization
 
         public async Task<string[]> GetRightsAsync(short rights)
         {
-            return await Task.FromResult(Enum.GetNames(typeof(RightType)).Select(n => n)
-                .Where(n => (rights & (int)Enum.Parse(typeof(RightType), n)) > 0).ToArray());
+            return Enum.GetNames(typeof(RightType)).Select(n => n)
+                .Where(n => (rights & (int)Enum.Parse(typeof(RightType), n)) > 0).ToArray();
         }
 
         public async Task<Dictionary<long, int>> GetRightsAsync(List<long> subjectIds, long entityId, long key)
@@ -476,34 +477,39 @@ namespace BExIS.Security.Services.Authorization
                 rights.Add(subjectId, await GetRightsAsync(subjectId, entityId, key));
             }
 
-            return await Task.FromResult(rights);
+            return rights;
         }
 
         public async Task<int> GetRightsAsync(long entityId, long key)
         {
             var entityPermission = await FindAsync(entityId, key);
-            return entityPermission == null ? await Task.FromResult(0) : await Task.FromResult(entityPermission.Rights);
+            return entityPermission == null ? 0 : entityPermission.Rights;
         }
 
         public async Task<int> GetRightsAsync(long subjectId, long entityId, long key)
         {
             var entityPermission = await FindAsync(subjectId, entityId, key);
-            return entityPermission == null ? await Task.FromResult(0) : await Task.FromResult(entityPermission.Rights);
+            return entityPermission == null ? 0 : entityPermission.Rights;
         }
 
         public async Task<bool> HasEffectiveRightsAsync(string username, Type entityType, long key, RightType rightType)
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var userRepository = uow.GetReadOnlyRepository<User>();
-                var userIds = userRepository.Query(s => s.Name.ToLowerInvariant() == username.ToLowerInvariant()).Select(u => u.Id);
-                if (userIds.Count() != 1)
-                    return await Task.FromResult(false);
-
                 var entityRepository = uow.GetReadOnlyRepository<Entity>();
                 var entityIds = entityRepository.Query(e => e.EntityType == entityType).Select(e => e.Id).ToList();
-                if (entityIds.Count() == 0)
-                    return await Task.FromResult(false);
+                if (entityIds.Count == 0)
+                    return false;
+
+                if (string.IsNullOrEmpty(username))
+                {
+                    return await HasEffectiveRightsAsync(0, entityIds, key, rightType);
+                }
+
+                var userRepository = uow.GetReadOnlyRepository<User>();
+                var userIds = userRepository.Query(s => s.Name.ToLowerInvariant() == username.ToLowerInvariant()).Select(u => u.Id);
+                if(userIds.Count() != 1)
+                    return await HasEffectiveRightsAsync(0, entityIds, key, rightType);
 
                 return await HasEffectiveRightsAsync(userIds.Single(), entityIds, key, rightType);
             }
@@ -511,27 +517,27 @@ namespace BExIS.Security.Services.Authorization
 
         public async Task<bool> HasEffectiveRightsAsync(long entityId, long key, RightType rightType)
         {
-            return await Task.FromResult((await GetEffectiveRightsAsync(entityId, key) & (int)rightType) > 0);
+            return (await GetEffectiveRightsAsync(entityId, key) & (int)rightType) > 0;
         }
 
         public async Task<bool> HasEffectiveRightsAsync(long subjectId, long entityId, long key, RightType rightType)
         {
-            return await Task.FromResult((await GetEffectiveRightsAsync(subjectId, entityId, key) & (int)rightType) > 0);
+            return (await GetEffectiveRightsAsync(subjectId, entityId, key) & (int)rightType) > 0;
         }
 
         private async Task<bool> HasEffectiveRightsAsync(long subjectId, List<long> entityIds, long key, RightType rightType)
         {
-            return await Task.FromResult((await GetEffectiveRightsAsync(subjectId, entityIds, key) & (int)rightType) > 0);
+            return (await GetEffectiveRightsAsync(subjectId, entityIds, key) & (int)rightType) > 0;
         }
 
         public async Task<bool> HasRightsAsync(long entityId, long key, RightType rightType)
         {
-            return await Task.FromResult((await GetRightsAsync(entityId, key) & (int)rightType) > 0);
+            return (await GetRightsAsync(entityId, key) & (int)rightType) > 0;
         }
 
         public async Task<bool> HasRightsAsync(long subjectId, long entityId, long key, RightType rightType)
         {
-            return await Task.FromResult((await GetRightsAsync(subjectId, entityId, key) & (int)rightType) > 0);
+            return (await GetRightsAsync(subjectId, entityId, key) & (int)rightType) > 0;
         }
 
         public async Task<bool> IsPublicAsync(long entityId, long key)
@@ -542,9 +548,22 @@ namespace BExIS.Security.Services.Authorization
 
                 var permissions = entityPermissionRepository.Query(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key && p.Rights > (int)RightType.Read).ToList();
 
-                return await Task.FromResult(permissions.Count == 1);
+                return permissions.Count == 1;
             }
         }
+
+        public async Task<bool> IsPublicAsync(List<long> entityIds, long key)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+
+                var permissions = entityPermissionRepository.Query(p => p.Subject == null && entityIds.Contains(p.Entity.Id) && p.Key == key && p.Rights > (int)RightType.Read).ToList();
+
+                return permissions.Count == 1;
+            }
+        }
+
 
         public async Task UpdateAsync(EntityPermission entity)
         {
