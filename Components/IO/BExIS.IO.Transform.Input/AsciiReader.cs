@@ -599,15 +599,11 @@ namespace BExIS.IO.Transform.Input
                         return countLinesMaybe(file);
                     }
                 }
-
-                return count;
             }
             else
             {
                 throw new FileNotFoundException("file not found");
             }
-
-            return 0;
         }
 
         /// <summary>

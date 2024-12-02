@@ -144,7 +144,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     #region direct update
 
-                    var es = new EmailService();
                     UploadHelper uploadHelper = new UploadHelper();
 
                     try
@@ -280,11 +279,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             datasetManager.CheckInDataset(dataset.Id, data.Data.Length + " rows via api.", user.UserName);
 
                             //send email
-                            es.Send(MessageHelper.GetUpdateDatasetHeader(dataset.Id),
+
+                            using(var emailService = new EmailService())
+                            {
+                                emailService.Send(MessageHelper.GetUpdateDatasetHeader(dataset.Id),
                                 MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.DisplayName, typeof(Dataset).Name),
                                 new List<string>() { user.Email },
                                        new List<string>() { GeneralSettings.SystemEmail }
                                 );
+                            }
                         }
 
                         #endregion update data
@@ -293,12 +296,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
                     catch (Exception ex)
                     {
-                        //ToDo send email to user
-                        es.Send(MessageHelper.GetPushApiUploadFailHeader(dataset.Id, title),
+                        using(var emailService = new EmailService())
+                        {
+                            emailService.Send(MessageHelper.GetPushApiUploadFailHeader(dataset.Id, title),
                                    MessageHelper.GetPushApiUploadFailMessage(dataset.Id, user.UserName, new string[] { "Upload failed: " + ex.Message }),
                                    new List<string>() { user.Email },
                                    new List<string>() { GeneralSettings.SystemEmail }
                                    );
+                        }
 
                         return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
                     }

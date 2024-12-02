@@ -71,7 +71,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             using (MeaningManager meaningManager = new MeaningManager())
             {
-                return Json(convertToLinkItem(meaningManager.getExternalLinks().Where(el => el.Type.Equals(ExternalLinkType.link)).OrderBy(el => el.Id).ToList()), JsonRequestBehavior.AllowGet);
+                return Json(convertToLinkItem(meaningManager.GetExternalLinks().Where(el => el.Type.Equals(ExternalLinkType.link)).OrderBy(el => el.Id).ToList()), JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -123,7 +123,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         }
                         if (unitListItem.Link != null && unitListItem.Link.Id != 0)
                         {
-                            unit.ExternalLink = meaningManager.getExternalLink(unitListItem.Link.Id);
+                            unit.ExternalLink = meaningManager.GetExternalLink(unitListItem.Link.Id);
                         }
                         else
                         {

@@ -7,17 +7,23 @@ using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Web.Http;
 using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Web.Shell.Controllers.API
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class VersionsController : ApiController
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet, GetRoute("api/versions/database")]
-        public async Task<HttpResponseMessage> GetVersionFromDatabase()
+        public HttpResponseMessage GetVersionFromDatabase()
         {
             try
             {
@@ -33,8 +39,12 @@ namespace BExIS.Web.Shell.Controllers.API
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet, GetRoute("api/versions/site")]
-        public async Task<HttpResponseMessage> GetVersionFromSite()
+        public HttpResponseMessage GetVersionFromSite()
         {
             try
             {
@@ -49,8 +59,12 @@ namespace BExIS.Web.Shell.Controllers.API
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet, GetRoute("api/versions/workspace")]
-        public async Task<HttpResponseMessage> GetVersionFromWorkspace()
+        public HttpResponseMessage GetVersionFromWorkspace()
         {
             try
             {
@@ -68,8 +82,12 @@ namespace BExIS.Web.Shell.Controllers.API
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet, GetRoute("api/versions/")]
-        public async Task<HttpResponseMessage> GetVersions()
+        public HttpResponseMessage GetVersions()
         {
             try
             {

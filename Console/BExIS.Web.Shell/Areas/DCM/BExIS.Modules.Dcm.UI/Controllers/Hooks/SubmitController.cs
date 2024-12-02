@@ -87,14 +87,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Task.Run(() => asyncUploadHelper.FinishUpload(id, AuditActionType.Edit, model.StructureId));
 
                 // send email after starting the upload
-                var es = new EmailService();
+
                 var user = asyncUploadHelper.User;
 
-                es.Send(MessageHelper.GetASyncStartUploadHeader(id, model.Title),
+                using (var emailService = new EmailService())
+                {
+                    emailService.Send(MessageHelper.GetASyncStartUploadHeader(id, model.Title),
                     MessageHelper.GetASyncStartUploadMessage(id, model.Title, model.Files.Select(f => f.Name)),
                     new List<string>() { user.Email }, null,
                     new List<string>() { GeneralSettings.SystemEmail }
                     );
+                }
 
                 responce.Success = true;
                 responce.AsyncUpload = true;

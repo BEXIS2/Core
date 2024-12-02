@@ -34,7 +34,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             using (var _meaningManager = new MeaningManager())
             {
-                List<Meaning> res = _meaningManager.getMeanings();
+                List<Meaning> res = _meaningManager.GetMeanings();
                 List<MeaningModel> resModel = new List<MeaningModel>();
 
                 if (res.Any())
@@ -56,7 +56,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 using (var _meaningManager = new MeaningManager())
                 {
                     Meaning m = MeaningsHelper.ConvertTo(data);
-                    Meaning res = _meaningManager.addMeaning(m);
+                    Meaning res = _meaningManager.AddMeaning(m);
 
                     return Json(res);
                 }
@@ -77,7 +77,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 using (var _meaningManager = new MeaningManager())
                 {
                     Meaning m = MeaningsHelper.ConvertTo(data);
-                    Meaning res = _meaningManager.editMeaning(m);
+                    Meaning res = _meaningManager.EditMeaning(m);
                     return Json(res);
                 }
             }
@@ -96,7 +96,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (var _meaningManager = new MeaningManager())
                 {
-                    _meaningManager.deleteMeaning(id);
+                    _meaningManager.DeleteMeaning(id);
                     return Json(true);
                 }
             }
@@ -117,7 +117,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             using (var _meaningManager = new MeaningManager())
             {
-                List<ExternalLink> res = _meaningManager.getExternalLinks();
+                List<ExternalLink> res = _meaningManager.GetExternalLinks();
                 List<ExternalLinkModel> links = new List<ExternalLinkModel>();
                 res.ForEach(l => links.Add(MeaningsHelper.ConvertTo(l)));
                 return Json(links, JsonRequestBehavior.AllowGet);
@@ -131,7 +131,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             using (var _meaningManager = new MeaningManager())
             {
-                List<ExternalLink> res = _meaningManager.getExternalLinks();
+                List<ExternalLink> res = _meaningManager.GetExternalLinks();
                 List<ListItem> items = new List<ListItem>();
                 res.ForEach(l => items.Add(MeaningsHelper.ConvertToListItem(l)));
 
@@ -158,7 +158,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 using (var _meaningManager = new MeaningManager())
                 {
                     var link = MeaningsHelper.ConvertTo(data);
-                    ExternalLink res = _meaningManager.addExternalLink(link);
+                    ExternalLink res = _meaningManager.AddExternalLink(link);
                     return Json(res);
                 }
             }
@@ -178,7 +178,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 using (var _meaningManager = new MeaningManager())
                 {
                     var link = MeaningsHelper.ConvertTo(data);
-                    ExternalLink res = _meaningManager.editExternalLink(link);
+                    ExternalLink res = _meaningManager.EditExternalLink(link);
                     return Json(res);
                 }
             }
@@ -197,7 +197,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (var _meaningManager = new MeaningManager())
                 {
-                    _meaningManager.deleteExternalLink(id);
+                    _meaningManager.DeleteExternalLink(id);
                     return Json(true);
                 }
             }
@@ -218,7 +218,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             using (var _meaningManager = new MeaningManager())
             {
-                List<PrefixCategory> res = _meaningManager.getPrefixCategory();
+                List<PrefixCategory> res = _meaningManager.GetPrefixCategory();
                 return Json(res, JsonRequestBehavior.AllowGet);
             }
         }
@@ -232,7 +232,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (var _meaningManager = new MeaningManager())
                 {
-                    PrefixCategory res = _meaningManager.addPrefixCategory(data);
+                    PrefixCategory res = _meaningManager.AddPrefixCategory(data);
                     return Json(res, JsonRequestBehavior.AllowGet);
                 }
             }
@@ -252,7 +252,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (var _meaningManager = new MeaningManager())
                 {
-                    PrefixCategory res = _meaningManager.editPrefixCategory(data);
+                    PrefixCategory res = _meaningManager.EditPrefixCategory(data);
                     return Json(res);
                 }
             }
@@ -272,7 +272,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (var _meaningManager = new MeaningManager())
                 {
-                    List<PrefixCategory> res = _meaningManager.deletePrefixCategory(id);
+                    List<PrefixCategory> res = _meaningManager.DeletePrefixCategory(id);
                     return Json(res);
                 }
             }

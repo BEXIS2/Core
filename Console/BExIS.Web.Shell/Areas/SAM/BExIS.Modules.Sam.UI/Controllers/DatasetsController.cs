@@ -36,6 +36,29 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View();
         }
 
+        public ActionResult CountRows(long id)
+        {
+            int number = 0;
+
+            using (DatasetManager dm = new DatasetManager())
+            {
+                try
+                {
+                    if (id > 0)
+                    {
+                        Dataset ds = dm.GetDataset(id);
+                        number = ds.DataStructure.Self is StructuredDataStructure ? dm.GetDatasetLatestVersionEffectiveTupleCount(ds) : 0;
+                    }
+
+                    return Json(number, JsonRequestBehavior.AllowGet);
+                }
+                finally
+                {
+                    dm.Dispose();
+                }
+            }
+        }
+
         /// <summary>
         /// Deletes a dataset, which means the dataset is marked as deleted, but is not physically removed from the database.
         /// </summary>
@@ -67,11 +90,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
                             if (datasetManager.DeleteDataset(id, ControllerContext.HttpContext.User.Identity.Name, true))
                             {
                                 //send email
-                                var es = new EmailService();
-                                es.Send(MessageHelper.GetDeleteDatasetHeader(id, typeof(Dataset).Name),
+                                using (var emailService = new EmailService())
+                                {
+                                    emailService.Send(MessageHelper.GetDeleteDatasetHeader(id, typeof(Dataset).Name),
                                     MessageHelper.GetDeleteDatasetMessage(id, user.Name, typeof(Dataset).Name),
                                     GeneralSettings.SystemEmail
                                     );
+                                }
 
                                 //entityPermissionManager.Delete(typeof(Dataset), id); // This is not needed here.
 
@@ -85,22 +110,26 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         {
                             ViewData.ModelState.AddModelError("", $@"You do not have the permission to delete the record.");
 
-                            var es = new EmailService();
-                            es.Send(MessageHelper.GetTryToDeleteDatasetHeader(id, typeof(Dataset).Name),
+                            using (var emailService = new EmailService())
+                            {
+                                emailService.Send(MessageHelper.GetTryToDeleteDatasetHeader(id, typeof(Dataset).Name),
                                 MessageHelper.GetTryToDeleteDatasetMessage(id, GetUsernameOrDefault(), typeof(Dataset).Name),
                                 GeneralSettings.SystemEmail
                                 );
+                            }
                         }
                     }
                     else // no user exist
                     {
                         ViewData.ModelState.AddModelError("", $@"This function can only be executed with a logged-in user.");
 
-                        var es = new EmailService();
-                        es.Send(MessageHelper.GetTryToDeleteDatasetHeader(id, typeof(Dataset).Name),
-                            MessageHelper.GetTryToDeleteDatasetMessage(id, userName, typeof(Dataset).Name),
-                            GeneralSettings.SystemEmail
-                            );
+                        using (var emailService = new EmailService())
+                        {
+                            emailService.Send(MessageHelper.GetTryToDeleteDatasetHeader(id, typeof(Dataset).Name),
+                                                            MessageHelper.GetTryToDeleteDatasetMessage(id, userName, typeof(Dataset).Name),
+                                                            GeneralSettings.SystemEmail
+                                                            );
+                        }
                     }
                 }
                 catch (Exception e) //for technical reasons the dataset cannot be deleted
@@ -153,6 +182,18 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        public string GetUsernameOrDefault()
+        {
+            var username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+            }
+            catch { }
+
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
         /// <summary>
@@ -280,11 +321,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
                             {
                                 entityPermissionManager.DeleteAsync(typeof(Dataset), id);
 
-                                var es = new EmailService();
-                                es.Send(MessageHelper.GetPurgeDatasetHeader(id, typeof(Dataset).Name),
+                                using (var emailService = new EmailService())
+                                {
+                                    emailService.Send(MessageHelper.GetPurgeDatasetHeader(id, typeof(Dataset).Name),
                                     MessageHelper.GetPurgeDatasetMessage(id, user.Name, typeof(Dataset).Name),
                                     GeneralSettings.SystemEmail
                                     );
+                                }
 
                                 if (this.IsAccessible("DDM", "SearchIndex", "ReIndexUpdateSingle"))
                                 {
@@ -296,21 +339,25 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         {
                             ViewData.ModelState.AddModelError("", $@"You do not have the permission to purge the record.");
 
-                            var es = new EmailService();
-                            es.Send(MessageHelper.GetTryToPurgeDatasetHeader(id, typeof(Dataset).Name),
+                            using (var emailService = new EmailService())
+                            {
+                                emailService.Send(MessageHelper.GetTryToPurgeDatasetHeader(id, typeof(Dataset).Name),
                                 MessageHelper.GetTryToPurgeDatasetMessage(id, user.Name, typeof(Dataset).Name),
                                 GeneralSettings.SystemEmail
                                 );
+                            }
                         }
                     }
                     else // no user exist
                     {
                         ViewData.ModelState.AddModelError("", $@"This function can only be executed with a logged-in user.");
-                        var es = new EmailService();
-                        es.Send(MessageHelper.GetTryToPurgeDatasetHeader(id, typeof(Dataset).Name),
-                            MessageHelper.GetTryToPurgeDatasetMessage(id, userName, typeof(Dataset).Name),
-                            GeneralSettings.SystemEmail
-                            );
+                        using (var emailService = new EmailService())
+                        {
+                            emailService.Send(MessageHelper.GetTryToPurgeDatasetHeader(id, typeof(Dataset).Name),
+                                MessageHelper.GetTryToPurgeDatasetMessage(id, userName, typeof(Dataset).Name),
+                                GeneralSettings.SystemEmail
+                                );
+                        }
                     }
                 }
                 catch (Exception e)
@@ -359,29 +406,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     ViewData.ModelState.AddModelError("", $@"'{ex.Message}'");
                     return View("Sync");
-                }
-            }
-        }
-
-        public ActionResult CountRows(long id)
-        {
-            int number = 0;
-
-            using (DatasetManager dm = new DatasetManager())
-            {
-                try
-                {
-                    if (id > 0)
-                    {
-                        Dataset ds = dm.GetDataset(id);
-                        number = ds.DataStructure.Self is StructuredDataStructure ? dm.GetDatasetLatestVersionEffectiveTupleCount(ds) : 0;
-                    }
-
-                    return Json(number, JsonRequestBehavior.AllowGet);
-                }
-                finally
-                {
-                    dm.Dispose();
                 }
             }
         }
@@ -453,18 +477,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             needUpdate = false;
 
             return dateTime;
-        }
-
-        public string GetUsernameOrDefault()
-        {
-            var username = string.Empty;
-            try
-            {
-                username = HttpContext.User.Identity.Name;
-            }
-            catch { }
-
-            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
     }
 }

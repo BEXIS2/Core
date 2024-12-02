@@ -99,43 +99,43 @@ namespace Vaiona.PersistenceProviders.NH
         public void Ignore()
         {
             return;
-            lock (this)
-            {
-                try
-                {
-                    if (Session.Transaction.IsActive)
-                    {
-                        if (BeforeIgnore != null)
-                            BeforeIgnore(this, EventArgs.Empty);
-                        try
-                        {
-                            if (Session.IsDirty())
-                                Session.Transaction.Rollback();
-                        }
-                        catch (Exception ex)
-                        { }
-                        if (Session.Transaction.WasRolledBack)
-                        {
-                            if (AfterIgnore != null)
-                                AfterIgnore(this, EventArgs.Empty);
-                        }
-                    }
-                }
-                catch (ObjectDisposedException) // object is already disposed of
-                {
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    if (throwExceptionOnError)
-                        throw ex;
-                }
-                finally // reactivate the transaction for later use by following UoWs
-                {
-                    if (!Session.Transaction.IsActive)
-                        Session.Transaction.Begin(System.Data.IsolationLevel.ReadCommitted);
-                }
-            }
+            //lock (this)
+            //{
+            //    try
+            //    {
+            //        if (Session.Transaction.IsActive)
+            //        {
+            //            if (BeforeIgnore != null)
+            //                BeforeIgnore(this, EventArgs.Empty);
+            //            try
+            //            {
+            //                if (Session.IsDirty())
+            //                    Session.Transaction.Rollback();
+            //            }
+            //            catch (Exception ex)
+            //            { }
+            //            if (Session.Transaction.WasRolledBack)
+            //            {
+            //                if (AfterIgnore != null)
+            //                    AfterIgnore(this, EventArgs.Empty);
+            //            }
+            //        }
+            //    }
+            //    catch (ObjectDisposedException) // object is already disposed of
+            //    {
+            //        return;
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        if (throwExceptionOnError)
+            //            throw ex;
+            //    }
+            //    finally // reactivate the transaction for later use by following UoWs
+            //    {
+            //        if (!Session.Transaction.IsActive)
+            //            Session.Transaction.Begin(System.Data.IsolationLevel.ReadCommitted);
+            //    }
+            //}
         }
 
         public T Execute<T>(string queryName, Dictionary<string, object> parameters = null)

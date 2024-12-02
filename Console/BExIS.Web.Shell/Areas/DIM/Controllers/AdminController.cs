@@ -143,8 +143,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             {
                 return ex.Message;
             }
-
-            return "";
         }
 
         #region helper

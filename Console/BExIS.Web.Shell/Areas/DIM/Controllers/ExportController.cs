@@ -355,11 +355,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         versionNr, format);
                         LoggerFactory.LogCustom(message);
 
-                        var es = new EmailService();
-                        es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
+                        using (var emailService = new EmailService())
+                        {
+                            emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
                             MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), "zip - " + format, versionNr),
                             GeneralSettings.SystemEmail
                             );
+                        }
 
                         return File(zipFilePath, "application/zip", Path.GetFileName(zipFilePath));
                     }

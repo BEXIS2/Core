@@ -137,12 +137,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     dm.EditDatasetVersion(datasetVersion, null, null, null);
                     dm.CheckInDataset(dataset.Id, fileName, GetUsernameOrDefault(), ViewCreationBehavior.None);
 
-                    var es = new EmailService();
-
-                    es.Send(MessageHelper.GetAttachmentDeleteHeader(datasetId, typeof(Dataset).Name),
-                    MessageHelper.GetAttachmentDeleteMessage(datasetId, fileName, GetUsernameOrDefault()),
-                    GeneralSettings.SystemEmail
-                    );
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetAttachmentDeleteHeader(datasetId, typeof(Dataset).Name),
+                        MessageHelper.GetAttachmentDeleteMessage(datasetId, fileName, GetUsernameOrDefault()),
+                        GeneralSettings.SystemEmail
+                        );
+                    }
                 }
             }
 
@@ -222,8 +223,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     Session["FileInfos"] = attachments;
                     uploadFiles(attachments, datasetId, description);
 
-                    var es = new EmailService();
-                    var filemNames = "";
+                    
+                        var filemNames = "";
 
                     var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
                     userTask.Wait();
@@ -234,10 +235,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         var fileName = Path.GetFileName(file.FileName);
                         filemNames += fileName.ToString() + ",";
                     }
-                    es.Send(MessageHelper.GetAttachmentUploadHeader(datasetId, typeof(Dataset).Name),
+
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetAttachmentUploadHeader(datasetId, typeof(Dataset).Name),
                     MessageHelper.GetAttachmentUploadMessage(datasetId, filemNames, user.DisplayName),
                     GeneralSettings.SystemEmail
                     );
+                    }
+                    
                 }
 
                 // Redirect to a view showing the result of the form submission.

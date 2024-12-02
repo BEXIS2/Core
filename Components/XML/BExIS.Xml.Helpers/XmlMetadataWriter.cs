@@ -650,8 +650,6 @@ namespace BExIS.Xml.Helpers
             {
                 throw new Exception("attribute exist");
             }
-
-            return null;
         }
 
         private XElement addParameters(XElement current, ICollection<MetadataParameterUsage> parameterUsages)

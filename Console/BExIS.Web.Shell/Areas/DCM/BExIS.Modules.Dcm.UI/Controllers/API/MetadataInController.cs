@@ -250,11 +250,14 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     LoggerFactory.LogData(id.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
 
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetMetadataUpdatHeader(id, typeof(Dataset).Name),
-                        MessageHelper.GetUpdateDatasetMessage(id, title, user.DisplayName, typeof(Dataset).Name),
-                        GeneralSettings.SystemEmail
-                        );
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetMetadataUpdatHeader(id, typeof(Dataset).Name),
+                                                    MessageHelper.GetUpdateDatasetMessage(id, title, user.DisplayName, typeof(Dataset).Name),
+                                                    GeneralSettings.SystemEmail
+                                                    );
+                    }
+                        
                 }
 
                 return Request.CreateErrorResponse(HttpStatusCode.OK, "Metadata successfully updated via api.");
