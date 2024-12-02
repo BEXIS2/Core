@@ -908,11 +908,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         {
                             LoggerFactory.LogCustom(message);
 
-                            var es = new EmailService();
-                            es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
-                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
-                                GeneralSettings.SystemEmail
-                                );
+                            using (var emailService = new EmailService())
+                            {
+                                emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
+                                                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
+                                                                GeneralSettings.SystemEmail
+                                                                );
+                            }
                         }
 
                         return File(path, mimetype, title + ext);
@@ -920,12 +922,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
                 catch (Exception ex)
                 {
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNumber),
-                        ex.Message,
-                        GeneralSettings.SystemEmail
-                        );
-
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNumber),
+                            ex.Message,
+                            GeneralSettings.SystemEmail
+                            );
+                    }
+                        
                     throw ex;
                 }
                 finally
@@ -1061,23 +1065,28 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         path = outputDataManager.GenerateExcelFile(id, versionid, false, null, withUnits);
                         LoggerFactory.LogCustom(message);
 
-                        var es = new EmailService();
-                        es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
-                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
-                            GeneralSettings.SystemEmail
-                            );
+                        using (var emailService = new EmailService())
+                        {
+                            emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
+                                MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
+                                GeneralSettings.SystemEmail
+                                );
+                        }
+                            
 
                         return File(Path.Combine(AppConfiguration.DataPath, path), mimetype, title + ext);
                     }
                 }
                 catch (Exception ex)
                 {
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(id),
-                        ex.Message,
-                        GeneralSettings.SystemEmail
-                        );
-
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetUpdateDatasetHeader(id),
+                            ex.Message,
+                            GeneralSettings.SystemEmail
+                            );
+                    }
+                        
                     throw ex;
                 }
                 finally
@@ -1219,22 +1228,26 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         path = outputDataManager.GenerateExcelFile(id, versionid, true);
                         LoggerFactory.LogCustom(message);
 
-                        var es = new EmailService();
-                        es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
-                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
-                            GeneralSettings.SystemEmail
-                            );
+                        using (var emailService = new EmailService())
+                        {
+                            emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
+                                MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
+                                GeneralSettings.SystemEmail
+                                );
+                        }
 
                         return File(Path.Combine(AppConfiguration.DataPath, path), mimitype, title + ext);
                     }
                 }
                 catch (Exception ex)
                 {
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(id),
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetUpdateDatasetHeader(id),
                         ex.Message,
                         GeneralSettings.SystemEmail
                         );
+                    }
 
                     throw ex;
                 }
@@ -1412,21 +1425,25 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             versionNr);
                     LoggerFactory.LogCustom(message);
 
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
-                        MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), "zip", versionNr),
-                        GeneralSettings.SystemEmail
-                        );
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), "zip", versionNr),
+                            GeneralSettings.SystemEmail
+                            );
+                    }
 
                     return File(zipPath, "application/zip", title + ".zip");
                 }
                 catch (Exception ex)
                 {
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(id),
-                        ex.Message,
-                        GeneralSettings.SystemEmail
-                        );
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetUpdateDatasetHeader(id),
+                                                ex.Message,
+                                                GeneralSettings.SystemEmail
+                                                );
+                    }
 
                     throw ex;
                 }
@@ -1451,11 +1468,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     string message = string.Format("dataset {0} version {1} was downloaded as excel.", id, versionNr);
                     LoggerFactory.LogCustom(message);
 
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
                         MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), mimeType, versionNr),
-                        GeneralSettings.SystemEmail
-                        );
+                            GeneralSettings.SystemEmail
+                            );
+                    }
+                        
 
                     return File(Path.Combine(AppConfiguration.DataPath, path), mimeType, title);
                 }

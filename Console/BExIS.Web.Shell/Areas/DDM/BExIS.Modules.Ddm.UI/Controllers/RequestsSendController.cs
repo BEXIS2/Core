@@ -47,11 +47,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         string applicant = getPartyNameOrDefault();
 
                         //ToDo send emails to owner & requester
-                        var es = new EmailService();
-                        es.Send(MessageHelper.GetSendRequestHeader(id, applicant),
-                            MessageHelper.GetSendRequestMessage(id, title, applicant, intention, request.Applicant.Email),
-                            new List<string> { emailDescionMaker }, new List<string> { GeneralSettings.SystemEmail, request.Applicant.Email }, null, new List<string> { request.Applicant.Email }
-                            );
+                        using (var emailService = new EmailService())
+                        {
+                            emailService.Send(MessageHelper.GetSendRequestHeader(id, applicant),
+                                MessageHelper.GetSendRequestMessage(id, title, applicant, intention, request.Applicant.Email),
+                                new List<string> { emailDescionMaker }, new List<string> { GeneralSettings.SystemEmail, request.Applicant.Email }, null, new List<string> { request.Applicant.Email }
+                                );
+                        }
+                            
                     }
                 }
             }
@@ -59,11 +62,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 Json(e.Message, JsonRequestBehavior.AllowGet);
 
-                // send mail with error to sys admin
-                var es = new EmailService();
-                es.Send(MessageHelper.GetSendRequestHeader(id, getPartyNameOrDefault()),
+                using(var emailService = new EmailService())
+                {
+                    emailService.Send(MessageHelper.GetSendRequestHeader(id, getPartyNameOrDefault()),
                     MessageHelper.GetSendRequestMessage(id, "unknown", "unkown", e.Message + intention, "unknown"), new List<string> { GeneralSettings.SystemEmail }
                     );
+                }
             }
             finally
             {
