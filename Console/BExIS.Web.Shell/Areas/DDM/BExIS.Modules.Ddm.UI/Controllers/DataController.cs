@@ -232,8 +232,17 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             researchPlanId = dsv.Dataset.ResearchPlan.Id;
                             metadata = dsv.Metadata;
 
+                            // check is public
+                            long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
+                            entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
+
+                            isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
+
                             // check if the user has download rights
                             downloadAccess = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read).Result;
+
+                            // if the dataset is public, user or even no user has download rights
+                            if (isPublic) downloadAccess = isPublic;
 
                             // check if a reuqest of this dataset exist
                             if (!downloadAccess)
@@ -247,11 +256,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 }
                             }
 
-                            // check is public
-                            long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
-                            entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
-
-                            isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
+                            
 
                             // get data structure type
 
