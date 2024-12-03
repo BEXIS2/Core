@@ -81,7 +81,7 @@
 		<globalization uiCulture="en-US" culture="en-US" />
 		<sessionState timeout="120" />
 		<!-- 20 minutes session timeout, set the cookie name as a cobination of the appname + version-->
-		<compilation targetFramework="4.5.2" debug="true">
+		<compilation targetFramework="4.8" debug="false">
 			<assemblies>
 				<add assembly="System.Web.Abstractions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35" />
 				<add assembly="System.Web.Helpers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35" />
@@ -94,7 +94,7 @@
 		</compilation>
 		<authentication mode="None" />
                 <httpCookies requireSSL="true" httpOnlyCookies="true"/>
-		<httpRuntime targetFramework="4.5.2" maxRequestLength="1048576" executionTimeout="480" />
+		<httpRuntime targetFramework="4.8" maxRequestLength="1048576" executionTimeout="480" />
 		<pages controlRenderingCompatibilityVersion="4.0">
 			<namespaces>
 				<add namespace="System.Web.Helpers" />
@@ -173,17 +173,13 @@
 				<assemblyIdentity name="Microsoft.Practices.ServiceLocation" publicKeyToken="31bf3856ad364e35" culture="neutral" />
 				<bindingRedirect oldVersion="0.0.0.0-1.3.0.0" newVersion="1.3.0.0" />
 			</dependentAssembly>
-			<!--<dependentAssembly>
-        <assemblyIdentity name="System.Web.WebPages.Razor" publicKeyToken="31bf3856ad364e35" culture="neutral" />
-        <bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
-      </dependentAssembly>-->
 			<dependentAssembly>
 				<assemblyIdentity name="Microsoft.Web.Helpers" publicKeyToken="31bf3856ad364e35" culture="neutral" />
 				<bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
 			</dependentAssembly>
 			<dependentAssembly>
 				<assemblyIdentity name="PostSharp" publicKeyToken="b13fd38b8f9c99d7" culture="neutral" />
-				<bindingRedirect oldVersion="0.0.0.0-4.3.19.0" newVersion="4.3.19.0" />
+				<bindingRedirect oldVersion="0.0.0.0-4.3.48.0" newVersion="4.3.48.0" />
 			</dependentAssembly>
 			<dependentAssembly>
 				<assemblyIdentity name="Microsoft.Practices.Unity" publicKeyToken="31bf3856ad364e35" culture="neutral" />
@@ -214,10 +210,6 @@
 				<bindingRedirect oldVersion="0.0.0.0-4.2.2.0" newVersion="4.2.2.0" />
 			</dependentAssembly>
 			<dependentAssembly>
-				<assemblyIdentity name="NHibernate" publicKeyToken="aa95f207798dfdb4" culture="neutral" />
-				<bindingRedirect oldVersion="0.0.0.0-4.1.0.4000" newVersion="4.1.0.4000" />
-			</dependentAssembly>
-			<dependentAssembly>
 				<assemblyIdentity name="WebGrease" publicKeyToken="31bf3856ad364e35" culture="neutral" />
 				<bindingRedirect oldVersion="0.0.0.0-1.6.5135.21930" newVersion="1.6.5135.21930" />
 			</dependentAssembly>
@@ -246,10 +238,6 @@
 				<bindingRedirect oldVersion="0.0.0.0-6.0.0.0" newVersion="6.0.0.0" />
 			</dependentAssembly>
 			<dependentAssembly>
-				<assemblyIdentity name="Iesi.Collections" publicKeyToken="aa95f207798dfdb4" culture="neutral" />
-				<bindingRedirect oldVersion="0.0.0.0-4.0.0.0" newVersion="4.0.0.0" />
-			</dependentAssembly>
-			<dependentAssembly>
 				<assemblyIdentity name="MimeKit" publicKeyToken="bede1c8a46c66814" culture="neutral" />
 				<bindingRedirect oldVersion="0.0.0.0-2.15.0.0" newVersion="2.15.0.0" />
 			</dependentAssembly>
@@ -263,23 +251,11 @@
 			</dependentAssembly>
 			<dependentAssembly>
 				<assemblyIdentity name="Microsoft.Web.Infrastructure" publicKeyToken="31bf3856ad364e35" culture="neutral" />
-				<bindingRedirect oldVersion="0.0.0.0-2.0.0.0" newVersion="2.0.0.0" />
-			</dependentAssembly>
-						      <dependentAssembly>
-        <assemblyIdentity name="System.ComponentModel.Annotations" publicKeyToken="b03f5f7f11d50a3a" culture="neutral" />
-        <bindingRedirect oldVersion="0.0.0.0-4.2.0.0" newVersion="4.2.1.0" />
-      </dependentAssembly>
-			<dependentAssembly>
-				<assemblyIdentity name="System.Web.Helpers" publicKeyToken="31bf3856ad364e35" />
-				<bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+				<bindingRedirect oldVersion="1.0.0.0-2.0.0.0" newVersion="2.0.0.0" />
 			</dependentAssembly>
 			<dependentAssembly>
-				<assemblyIdentity name="System.Web.WebPages" publicKeyToken="31bf3856ad364e35" />
-				<bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
-			</dependentAssembly>
-			<dependentAssembly>
-				<assemblyIdentity name="System.Web.Mvc" publicKeyToken="31bf3856ad364e35" />
-				<bindingRedirect oldVersion="0.0.0.0-5.2.3.0" newVersion="5.2.3.0" />
+				<assemblyIdentity name="System.ComponentModel.Annotations" publicKeyToken="b03f5f7f11d50a3a" culture="neutral" />
+				<bindingRedirect oldVersion="0.0.0.0-4.2.1.0" newVersion="4.2.1.0" />
 			</dependentAssembly>
 			<dependentAssembly>
 				<assemblyIdentity name="System.Memory" publicKeyToken="cc7b13ffcd2ddd51" culture="neutral" />
@@ -320,6 +296,22 @@
 			<dependentAssembly>
 				<assemblyIdentity name="System.Web.WebPages.Razor" publicKeyToken="31bf3856ad364e35" culture="neutral" />
 				<bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+			</dependentAssembly>
+			<dependentAssembly>
+				<assemblyIdentity name="System.Web.Helpers" publicKeyToken="31bf3856ad364e35" />
+				<bindingRedirect oldVersion="1.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+			</dependentAssembly>
+			<dependentAssembly>
+				<assemblyIdentity name="System.Web.WebPages" publicKeyToken="31bf3856ad364e35" />
+				<bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+			</dependentAssembly>
+			<dependentAssembly>
+				<assemblyIdentity name="System.Web.Mvc" publicKeyToken="31bf3856ad364e35" />
+				<bindingRedirect oldVersion="0.0.0.0-5.2.3.0" newVersion="5.2.3.0" />
+			</dependentAssembly>
+			<dependentAssembly>
+				<assemblyIdentity name="Microsoft.Extensions.Primitives" publicKeyToken="adb9793829ddae60" culture="neutral" />
+				<bindingRedirect oldVersion="0.0.0.0-7.0.0.0" newVersion="7.0.0.0" />
 			</dependentAssembly>
 		</assemblyBinding>
 	</runtime>

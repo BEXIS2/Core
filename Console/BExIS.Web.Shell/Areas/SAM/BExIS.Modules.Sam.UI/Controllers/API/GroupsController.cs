@@ -69,7 +69,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
                         Name = model.Name
                     };
 
-                    var result = groupManager.CreateAsync(group);
+                    await groupManager.CreateAsync(group);
 
                     return Request.CreateResponse(HttpStatusCode.OK);
                 }

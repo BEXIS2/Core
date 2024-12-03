@@ -199,14 +199,26 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return PartialView("_dataRepositoryRequirementsView", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datasetId"></param>
+        /// <param name="datasetVersionId"></param>
+        /// <returns></returns>
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
-        public ActionResult publishData(long datasetId, long datasetVersionId = -1)
+        public ActionResult PublishData(long datasetId, long datasetVersionId = -1)
         {
             ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
 
             return View("_showPublishDataView", model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="brokerId"></param>
+        /// <param name="datasetId"></param>
+        /// <returns></returns>
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
         public async Task<ActionResult> SendDataToDataRepo(long brokerId, long datasetId)
         {
@@ -553,9 +565,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// tuple.item2 = mimetype
         /// </summary>
         /// <param name="datasetVersionId"></param>
-        /// <param name="datasetId"></param>
-        /// <param name="datarepo"></param>
-        /// <param name="broker"></param>
+        /// <param name="brokerId"></param>
         /// <returns></returns>
         private Tuple<string, string> PrepareData(long datasetVersionId, long brokerId)
         {
@@ -630,8 +640,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             {
                 throw ex;
             }
-
-            return null;
         }
 
         #region webservices calls STATUS
@@ -639,7 +647,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <summary>
         /// Get Status from publiction
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="publication"></param>
         /// <returns></returns>
         public async Task<string> GetStatus(Publication publication)
         {

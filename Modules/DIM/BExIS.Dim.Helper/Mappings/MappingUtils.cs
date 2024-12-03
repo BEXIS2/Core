@@ -1211,9 +1211,6 @@ namespace BExIS.Dim.Helpers.Mappings
                 return datatype;
 
             }
-
-            return string.Empty;
-
         }
 
         #endregion

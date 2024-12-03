@@ -202,7 +202,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 ExternalLink releation = new ExternalLink();
 
                 // prefix
-                if (!meaningManager.getPrefixes().Any(p => p.Name.Equals("dwc")))
+                if (!meaningManager.GetPrefixes().Any(p => p.Name.Equals("dwc")))
                 {
                     prefix.Name = "dwc";
                     prefix.URI = "http://rs.tdwg.org/dwc/terms/";
@@ -210,15 +210,15 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     prefix.Prefix = null;
                     prefix.prefixCategory = null;
 
-                    prefix = meaningManager.addExternalLink(prefix);
+                    prefix = meaningManager.AddExternalLink(prefix);
                 }
                 else
                 {
-                    prefix = meaningManager.getPrefixes().FirstOrDefault(p => p.Name.Equals("dwc"));
+                    prefix = meaningManager.GetPrefixes().FirstOrDefault(p => p.Name.Equals("dwc"));
                 }
 
                 // releation (hasDwcTerm)
-                if (!meaningManager.getExternalLinks().Any(p => p.Name.Equals("hasDwcTerm")))
+                if (!meaningManager.GetExternalLinks().Any(p => p.Name.Equals("hasDwcTerm")))
                 {
                     releation.Name = "hasDwcTerm";
                     releation.URI = "na";
@@ -226,11 +226,11 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     releation.Prefix = null;
                     releation.prefixCategory = null;
 
-                    releation = meaningManager.addExternalLink(releation);
+                    releation = meaningManager.AddExternalLink(releation);
                 }
                 else
                 {
-                    releation = meaningManager.getPrefixes().FirstOrDefault(p => p.Name.Equals("hasDwcTerm"));
+                    releation = meaningManager.GetPrefixes().FirstOrDefault(p => p.Name.Equals("hasDwcTerm"));
                 }
 
                 // links & meanings
@@ -267,7 +267,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 foreach (var l in links)
                 {
                     ExternalLink link = new ExternalLink();
-                    if (!meaningManager.getExternalLinks().Any(p => p.Name.Equals(l)))
+                    if (!meaningManager.GetExternalLinks().Any(p => p.Name.Equals(l)))
                     {
                         link.Name = l;
                         link.URI = l;
@@ -275,7 +275,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         link.Prefix = prefix;
                         link.prefixCategory = null;
 
-                        link = meaningManager.addExternalLink(link);
+                        link = meaningManager.AddExternalLink(link);
 
                         if (link.Id > 0)
                         {
@@ -284,9 +284,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
                             linkList.Add(link);
 
                             Meaning meaning = new Meaning();
-                            if (meaningManager.getMeanings().Any(m => m.Name.Equals(l)))
+                            if (meaningManager.GetMeanings().Any(m => m.Name.Equals(l)))
                             {
-                                meaning = meaningManager.getMeanings().FirstOrDefault(m => m.Name.Equals(l));
+                                meaning = meaningManager.GetMeanings().FirstOrDefault(m => m.Name.Equals(l));
                             }
 
                             meaning.Name = l;
@@ -294,7 +294,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                             meaning.Approved = true;
                             meaning.ExternalLinks.Add(new MeaningEntry(releation, linkList));
 
-                            meaningManager.addMeaning(meaning);
+                            meaningManager.AddMeaning(meaning);
                         }
                     }
                 }
@@ -310,7 +310,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 // prefix
                 string n = "i-adopt";
-                if (!meaningManager.getPrefixes().Any(p => p.Name.Equals(n)))
+                if (!meaningManager.GetPrefixes().Any(p => p.Name.Equals(n)))
                 {
                     prefix.Name = n;
                     prefix.URI = "https://i-adopt.github.io/#/";
@@ -318,11 +318,11 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     prefix.Prefix = null;
                     prefix.prefixCategory = null;
 
-                    prefix = meaningManager.addExternalLink(prefix);
+                    prefix = meaningManager.AddExternalLink(prefix);
                 }
                 else
                 {
-                    prefix = meaningManager.getPrefixes().FirstOrDefault(p => p.Name.Equals(n));
+                    prefix = meaningManager.GetPrefixes().FirstOrDefault(p => p.Name.Equals(n));
                 }
 
                 List<string> releationshiptypes = new List<string>();
@@ -333,7 +333,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 foreach (var c in releationshiptypes)
                 {
-                    if (!meaningManager.getExternalLinks().Any(p => p.Name.Equals(c)))
+                    if (!meaningManager.GetExternalLinks().Any(p => p.Name.Equals(c)))
                     {
                         releation = new ExternalLink();
                         releation.Name = c;
@@ -342,7 +342,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         releation.Prefix = prefix;
                         releation.prefixCategory = null;
 
-                        releation = meaningManager.addExternalLink(releation);
+                        releation = meaningManager.AddExternalLink(releation);
                     }
                 }
             }

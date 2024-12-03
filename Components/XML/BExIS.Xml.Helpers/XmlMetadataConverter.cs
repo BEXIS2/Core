@@ -372,8 +372,6 @@ namespace BExIS.Xml.Helpers
             // cardinality?
             // check if json object exist
             // transfer value
-
-            return null;
         }
 
         private Dictionary<string, string> getXPathMapping(XmlDocument document)

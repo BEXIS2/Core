@@ -78,8 +78,6 @@ namespace BExIS.Security.Services.Subjects
             {
                 throw new Exception(string.Format("Could not retrieve filtered subjects."), ex);
             }
-
-            return null;
         }
 
         public void Dispose()

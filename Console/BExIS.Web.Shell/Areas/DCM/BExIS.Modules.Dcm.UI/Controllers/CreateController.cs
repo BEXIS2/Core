@@ -157,11 +157,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // remove dubplicates
                 destinations = destinations.Distinct().ToList();
 
-                var es = new EmailService();
-                es.Send(MessageHelper.GetCreateDatasetHeader(ds.Id, entityTemplate.Name),
-                    MessageHelper.GetCreateDatasetMessage(ds.Id, datasetVersionToCopy.Title + "_copy", GetUsernameOrDefault(), entityTemplate.Name),
-                    destinations
-                    );
+                using (var emailService = new EmailService())
+                {
+                    emailService.Send(MessageHelper.GetCreateDatasetHeader(ds.Id, entityTemplate.Name),
+                        MessageHelper.GetCreateDatasetMessage(ds.Id, datasetVersionToCopy.Title + "_copy", GetUsernameOrDefault(), entityTemplate.Name),
+                        destinations
+                        );
+                }
+                    
 
                 //   #endregion
 
@@ -422,11 +425,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // remove dubplicates
                 destinations = destinations.Distinct().ToList();
 
-                var es = new EmailService();
-                es.Send(MessageHelper.GetCreateDatasetHeader(datasetId, entityTemplate.Name),
-                    MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityTemplate.Name),
-                    destinations
-                    );
+                using (var emailService = new EmailService())
+                {
+                    emailService.Send(MessageHelper.GetCreateDatasetHeader(datasetId, entityTemplate.Name),
+                                            MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityTemplate.Name),
+                                            destinations
+                                            );
+                }   
 
                 #endregion send notifications
             }
