@@ -54,14 +54,15 @@
     <Reference Include="Lucifron.ReST.Library, Version=1.0.0.11, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Lucifron.ReST.Library.1.0.0.11\lib\net48\Lucifron.ReST.Library.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="NameParser, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\NameParserSharp.1.5.0\lib\net45\NameParser.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate, Version=5.3.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\NHibernate.5.3.10\lib\net461\NHibernate.dll</HintPath>
+    <Reference Include="NHibernate, Version=5.4.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NHibernate.5.4.9\lib\net48\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=3.14.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\NUnit.3.14.0\lib\net45\nunit.framework.dll</HintPath>
@@ -79,6 +80,7 @@
     <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\System.ComponentModel.Annotations.5.0.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
     </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
@@ -86,9 +88,11 @@
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
     </Reference>
