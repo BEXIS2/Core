@@ -1,4 +1,5 @@
-﻿using BExIS.Dim.Entities.Mappings;
+﻿using BExIS.Dim.Entities.Export.GBIF;
+using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.GBIF;
 using BExIS.Dim.Helpers.Mappings;

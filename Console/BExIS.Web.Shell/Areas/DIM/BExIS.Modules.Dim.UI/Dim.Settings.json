@@ -52,7 +52,8 @@
         "organisationKey": "",
         "installationKey": "",
         "username": "",
-        "password": ""
+        "password": "",
+        "server": "https://api.gbif-uat.org/v1" // https://api.gbif.org/v1
       },
       "description": "..."
     }

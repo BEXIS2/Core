@@ -25,6 +25,11 @@
         controller="DataCiteDoi" action="index"
         extends="./settingsRoot" />
 
+		<Export tag="settings" id="gbifRequests" order="1"
+        title="GBIF Requests" description="Manage GBIF requests" icon=""
+        controller="Gbif" action=""
+        extends="./settingsRoot" />
+		
 		<Export tag="lunchbar" id="helpDim" order="5"
 				title="Data Dissemination" description="Data Dissemination Help Manual" icon=""
 				controller="Help" action="index"

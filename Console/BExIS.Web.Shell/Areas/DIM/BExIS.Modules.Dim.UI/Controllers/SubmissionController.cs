@@ -1,4 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dim.Entities.Export.GBIF;
 using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers;
 using BExIS.Dim.Helpers.Export;
@@ -284,7 +285,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         {
                             #region gbif
 
-                            publicationManager.CreatePublication(datasetVersion, broker, datasetVersion.Title, 0, zipfilepath, "", "created");
+                            publicationManager.CreatePublication(datasetVersion, broker, datasetVersion.Title, 0, zipfilepath, "", "pending");
 
                             #endregion gbif
                         }
@@ -304,7 +305,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 //new DataCiteDOIHelper().sendRequest(datasetVersion, datasetUrl);
 
                                 string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
-                                publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, "", "pending");
+                                publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, "", PublicationStatus.Open.ToString());
                             }
 
                             #endregion datacite

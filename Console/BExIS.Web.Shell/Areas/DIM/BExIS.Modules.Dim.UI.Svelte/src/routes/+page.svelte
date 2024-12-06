@@ -3,7 +3,7 @@
 
 </script>
 
-<Page title="System Administration">
+<Page title="Export">
 	<div class="grid grid-flow-col gap-10">
 		<a class="btn variant-filled-secondary" href="./gbif">gbif</a>
 

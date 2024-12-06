@@ -478,6 +478,7 @@
     <Compile Include="Controllers\BrokersController.cs" />
     <Compile Include="Controllers\DataCiteDOIController.cs" />
     <Compile Include="Controllers\ExportController.cs" />
+    <Compile Include="Controllers\GbifController.cs" />
     <Compile Include="Controllers\PublicationsController.cs" />
     <Compile Include="Controllers\API\DataOutController.cs" />
     <Compile Include="Controllers\ExportGFBIOController.cs" />
@@ -501,6 +502,7 @@
     <Compile Include="Models\DataCiteDOIModels.cs" />
     <Compile Include="Models\DatasetModel.cs" />
     <Compile Include="Models\DatasetVersionModel.cs" />
+    <Compile Include="Models\GbifModels.cs" />
     <Compile Include="Models\Export\SimpleDataStructureModel.cs" />
     <Compile Include="Models\Mapping\LinkElementModels.cs" />
     <Compile Include="Models\Mapping\MappingModel.cs" />
@@ -812,6 +814,7 @@
     <Content Include="Views\Publications\_Update.cshtml" />
     <Content Include="Views\Publications\Index.cshtml" />
     <Content Include="Web.config" />
+    <Content Include="Views\Gbif\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

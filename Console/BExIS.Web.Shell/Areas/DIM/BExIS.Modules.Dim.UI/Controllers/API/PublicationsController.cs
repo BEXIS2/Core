@@ -1,4 +1,5 @@
-﻿using BExIS.Dim.Entities.Publications;
+﻿using BExIS.Dim.Entities.Export.GBIF;
+using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.Export;
 using BExIS.Dim.Helpers.Models;
 using BExIS.Dim.Helpers.Vaelastrasz;
