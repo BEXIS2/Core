@@ -142,10 +142,10 @@
     <Compile Include="Export\GenericDataRepoConverter.cs" />
     <Compile Include="Export\IDataRepoConverter.cs" />
     <Compile Include="Export\PensoftDataRepoConverter.cs" />
+    <Compile Include="GBIF\GbifServiceManager.cs" />
     <Compile Include="GFBIO\GFBIOSubmissionHelper.cs" />
     <Compile Include="GFBIO\GFBIOWebserviceManager.cs" />
     <Compile Include="Mappings\MappingUtils.cs" />
-    <Compile Include="Models\GbifModels.cs" />
     <Compile Include="Models\PangeaModels.cs" />
     <Compile Include="Models\VaelastraszModels.cs" />
     <Compile Include="SubmissionManager.cs" />

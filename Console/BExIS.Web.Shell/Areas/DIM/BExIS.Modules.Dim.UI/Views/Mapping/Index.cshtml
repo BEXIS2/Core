@@ -1,5 +1,6 @@
 ﻿@using BExIS.Modules.Dim.UI.Models.Mapping
 @using Telerik.Web.Mvc.UI
+@using BExIS.Utils.Extensions
 @model MappingMainModel
 
 <div id="DIM_MappingContainer">
@@ -8,6 +9,14 @@
         ViewBag.Title = "Metadata Structure Mapping";
         ViewData["SelectionList"] = Model.SelectionList;
         Session["SelectionList"] = Model.SelectionList;
+
+        // because of the different folder structure from server and local, we need to change the path
+        // e.g. debug -> dcm/BExIS.Modules.Dcm.UI/scripts/.... || server -> dcm/scripts/
+        string debugPath = "";
+        if (Html.IsDebug())
+        {
+            debugPath = "BExIS.Modules.Dim.UI/";
+        }
     }
     @section Information
     {
@@ -17,11 +26,11 @@
 
     @section Scripts{
 
-        <link href="@Url.Content("~/Areas/DIM/Content/DIM/bexis-dim.css")" rel="stylesheet" type="text/css" />
+        <link href="@Url.Content("~/Areas/DIM/"+debugPath+"Content/DIM/bexis-dim.css")" rel="stylesheet" type="text/css" />
 
-        <script src="@Url.Content("~/Areas/DIM/Scripts/DIM/bexis.dim.mapping.js")"></script>
-        <script src="@Url.Content("~/Areas/DIM/Scripts/DIM/isotope.pkgd.min.js")"></script>
-        <script src="@Url.Content("~/Areas/DIM/Scripts/DIM/jsPlumb-2.2.8-min.js")"></script>
+        <script src="@Url.Content("~/Areas/DIM/"+debugPath+"Scripts/DIM/bexis.dim.mapping.js")"></script>
+        <script src="@Url.Content("~/Areas/DIM/"+debugPath+"Scripts/DIM/isotope.pkgd.min.js")"></script>
+        <script src="@Url.Content("~/Areas/DIM/"+debugPath+"Scripts/DIM/jsPlumb-2.2.8-min.js")"></script>
     }
 
     @section LeftPane
@@ -29,7 +38,7 @@
 
         @if (Model.Source != null)
         {
-        @Html.Partial("LinkElemenRoot", Model.Source)
+            @Html.Partial("LinkElemenRoot", Model.Source)
         }
     }
 
@@ -48,7 +57,7 @@
 
         @if (Model.Target != null)
         {
-        @Html.Partial("LinkElemenRoot", Model.Target, new ViewDataDictionary() { { "SelectionList", Model.SelectionList }, { "test", "test" } })
+            @Html.Partial("LinkElemenRoot", Model.Target, new ViewDataDictionary() { { "SelectionList", Model.SelectionList }, { "test", "test" } })
         }
     }
 </div>

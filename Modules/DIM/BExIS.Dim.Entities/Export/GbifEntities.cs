@@ -1,11 +1,18 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
-using static BExIS.Dim.Helpers.Export.GBIFDataRepoConverter;
 
-namespace BExIS.Dim.Helpers.Models
+
+namespace BExIS.Dim.Entities.Export.GBIF
 {
+
     public enum GbifDataType
     {
         metadata,
@@ -13,6 +20,60 @@ namespace BExIS.Dim.Helpers.Models
         checklist,
         samplingEvent
     }
+
+    public class GBFICrendentials
+    {
+        [JsonProperty("Server")]
+        public string Server { get; set; }
+
+
+        [JsonProperty("installationKey")]
+        public string InstallationKey { get; set; }
+
+        [JsonProperty("organisationKey")]
+        public string OrganisationKey { get; set; }
+
+        [JsonProperty("username")]
+        public string Username { get; set; }
+
+        [JsonProperty("password")]
+        public string Password { get; set; }
+    }
+
+    #region apis
+
+    public class GbifCreateDatasetRequest
+    {
+        [JsonProperty("installationKey")]
+        public string InstallationKey { get; set; }
+
+        [JsonProperty("publishingOrganizationKey")]
+        public string PublishingOrganizationKey { get; set; }
+
+        [JsonProperty("type")]
+        public GbifDataType Type { get; set; }
+
+        [JsonProperty("title")]
+        public string Title { get; set; }
+    }
+
+    public class GbifAddEndpointRequest
+    {
+        [JsonProperty("url")]
+        public string Url { get; set; }
+
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        public GbifAddEndpointRequest(string url)
+        {
+            Url = url; 
+            Type = "DWC_ARCHIVE";
+        }
+    }
+
+    #endregion
+
 
     #region xml
 
@@ -124,6 +185,7 @@ namespace BExIS.Dim.Helpers.Models
     }
 
     #endregion json
+
     public class ExtentionEntity
     {
         public int IdIndex { get; set; }
@@ -153,3 +215,4 @@ namespace BExIS.Dim.Helpers.Models
         }
     }
 }
+

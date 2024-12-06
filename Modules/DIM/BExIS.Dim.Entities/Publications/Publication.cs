@@ -97,6 +97,7 @@ namespace BExIS.Dim.Entities.Publications
     {
         Open = 0,
         Accepted = 1,
-        Rejected = 2
+        Rejected = 2,
+        Registered = 3
     }
 }

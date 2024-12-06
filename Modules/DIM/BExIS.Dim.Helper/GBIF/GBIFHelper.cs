@@ -1,5 +1,6 @@
 ﻿
 using BExIS.Dim.Entities.Export;
+using BExIS.Dim.Entities.Export.GBIF;
 using BExIS.Dim.Helpers.Export;
 using BExIS.Dim.Helpers.GFBIO;
 using BExIS.Dim.Helpers.Mappings;
@@ -22,7 +23,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using Vaiona.Utils.Cfg;
-using static BExIS.Dim.Helpers.Export.GBIFDataRepoConverter;
+
 
 
 namespace BExIS.Dim.Helpers.GBIF

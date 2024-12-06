@@ -1,6 +1,8 @@
 -- OPEN ISSUES
     -- DefaultValue within MetadataAttributeUsage: varchar(255) -> text (check MetadataAttributeUsage.hbm.xml)
     -- FixedValue within MetadataAttributeUsage: varchar(255) -> text (check MetadataAttributeUsage.hbm.xml)
+    -- add dim/gbif controller in operations
+
 
 -- DOI Mapping(s) Update
 INSERT INTO public.dim_mappingkeys (name, url, optional, iscomplex, concept, xpath)

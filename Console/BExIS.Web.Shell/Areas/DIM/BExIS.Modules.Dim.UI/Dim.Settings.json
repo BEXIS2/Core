@@ -42,6 +42,20 @@
       "type": "String",
       "value": "export/gbif",
       "description": "All created darwin core archive dataset exports are saved in this specified directory. It starts from the predifiend Data folder as default. It is also possible to specify a sequential folder path. default: {Data}/export/gbif"
+    },
+    {
+      "key": "gbifapicredentials",
+      "title": "GBIF API Credentials",
+      "options": [],
+      "type": "JSON",
+      "value": {
+        "organisationKey": "",
+        "installationKey": "",
+        "username": "",
+        "password": "",
+        "server": "https://api.gbif-uat.org/v1" // https://api.gbif.org/v1
+      },
+      "description": "..."
     }
   ]
 }
