@@ -250,9 +250,12 @@ namespace BExIS.Dim.Helpers.GBIF
             xsi.Value = "eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.2/eml.xsd";
             root.Attributes.Append(xsi);
 
-            root.SetAttribute("system", "https://demo.bexis2.uni-jena.de");
+            XmlAttribute dc = conceptOutput.CreateAttribute("xmlns", "dc", "http://purl.org/dc/terms/");
+            root.Attributes.Append(dc);
+
+            root.SetAttribute("system", "host");
             root.SetAttribute("scope", "system");
-            root.SetAttribute("xml:lang", "en");
+            root.SetAttribute("xml:lang", "eng");
             root.SetAttribute("packageId", "na");
 
             
