@@ -153,8 +153,8 @@ namespace BExIS.Dim.Helpers.GBIF
 
                 archive.Core.files.Add(dataFile);
                 archive.Core.Encoding = "UTF-8";
-                archive.Core.LinesTerminatedBy = ",";
-                archive.Core.FieldsTerminatedBy = @"\n";
+                archive.Core.FieldsTerminatedBy = ",";
+                archive.Core.LinesTerminatedBy = @"\n";
                 archive.Core.IgnoreHeaderLines = "1";
                 archive.Core.Id = new Id() { Index = 0 };
 
@@ -355,7 +355,7 @@ namespace BExIS.Dim.Helpers.GBIF
             string datapath = string.Empty;
 
             var outputDataManager = new OutputDataManager();
-            datapath = outputDataManager.GenerateAsciiFile(id, versionId,  "text/csv", false,true);
+            datapath = outputDataManager.GenerateAsciiFile(id, versionId,  "text/csv", false, false);
 
             return datapath;
         }
