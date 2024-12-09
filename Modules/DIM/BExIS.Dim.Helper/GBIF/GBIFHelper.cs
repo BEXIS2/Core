@@ -209,8 +209,8 @@ namespace BExIS.Dim.Helpers.GBIF
                     RowType = "https://rs.tdwg.org/dwc/terms/"+ extentionEntity.Extention.RowType.ToString(),
                     files = new List<string>() { extentionEntity.dataPath },
                     Encoding = "UTF-8",
-                    LinesTerminatedBy = ",",
-                    FieldsTerminatedBy = @"\n",
+                    FieldsTerminatedBy = ",",
+                    LinesTerminatedBy = @"\n",
                     IgnoreHeaderLines = "1",
                     CoreId = new Id() { Index= extentionEntity.IdIndex },
                     fields = dwterms.Field
