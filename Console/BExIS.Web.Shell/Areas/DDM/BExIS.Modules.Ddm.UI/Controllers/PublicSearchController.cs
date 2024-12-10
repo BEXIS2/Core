@@ -30,7 +30,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
             Session["SubmissionAction"] = "Query";
-            Session["Controller"] = "Search";
+            Session["Controller"] = "PublicSearch";
             Session["PropertiesDictionary"] = null;
 
 
