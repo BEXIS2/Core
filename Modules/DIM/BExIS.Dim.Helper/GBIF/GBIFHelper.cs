@@ -111,7 +111,7 @@ namespace BExIS.Dim.Helpers.GBIF
             // compare the list of existing terms with the rwuired onces
             List<string> required = new List<string>();
             switch (type)
-            { 
+            {
                 case GbifDataType.samplingEvent: required = SamplingEventRequiredDWTerms.ToList(); break;
                 case GbifDataType.occurrence: required = OccurrencesRequiredDWTerms.ToList(); break;
                 default: required = OccurrencesRequiredDWTerms.ToList(); break;

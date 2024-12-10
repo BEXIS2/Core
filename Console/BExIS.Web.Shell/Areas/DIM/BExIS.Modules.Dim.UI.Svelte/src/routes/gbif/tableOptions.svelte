@@ -58,7 +58,10 @@
 			type="button"
 			class="chip variant-filled-error shadow-md"
 			title="delete, {row.name}"
-			id="delete-{row.id}"	on:click={()=>alert("not implemented")}>
+			id="delete-{row.id}"	on:click|preventDefault={() =>
+				dispatchFn({
+					type: { action: 'delete', id: row.datasetId, version:row.datasetVersionNr, publicationId: row.publicationId }
+				})}>
 			<Fa icon={faTrash} /></button			>
 
 
