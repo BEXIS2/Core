@@ -215,7 +215,7 @@ namespace BExIS.Dim.Helpers.Export
                 List<ExtentionEntity> extentions = new List<ExtentionEntity>();
                 foreach (var r in refs)
                 {
-                    var ext = datasetManager.GetDataset(r.SourceId);
+                    var ext = datasetManager.GetDataset(r.TargetId);
                     var structureId = ext.DataStructure == null ? 0 : ext.DataStructure.Id;
 
                     // load structure and check if a dwc term id is available 
