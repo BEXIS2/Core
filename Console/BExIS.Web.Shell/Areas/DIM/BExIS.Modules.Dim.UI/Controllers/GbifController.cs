@@ -3,8 +3,10 @@ using BExIS.Dim.Entities.Export.GBIF;
 using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.GBIF;
 using BExIS.Dim.Services;
+using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dim.UI.Models.Export;
+using BExIS.Security.Entities.Requests;
 using BExIS.UI.Helpers;
 using System;
 using System.Collections.Generic;
@@ -85,6 +87,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 var datasetVersionId = publication.DatasetVersion.Id;
                 var url = Request.Url.Host;
                 var port = Request.Url.Port;
+                var protocol = Request.Url.Scheme;
 
                 // load settings
                 GBFICrendentials credentials = ModuleManager.GetModuleSettings("DIM").GetValueByKey<GBFICrendentials>("gbifapicredentials");
@@ -97,7 +100,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 if (res.IsSuccessStatusCode) // success
                 {
                     string result = res.Content.ReadAsStringAsync().Result;
-                    string downloadPath = string.Format("{0}:{1}/DIM/Submission/DownloadZip?brokerId={2}&datasetversionid={3}", url,port, brokerId, datasetVersionId);
+                    string downloadPath = Url.Action("DownloadZip", "Submission", new { brokerId = brokerId, datasetversionid = datasetVersionId });
+
+                    downloadPath = getDownloadUrl(Request.Url, brokerId, datasetVersionId);
 
 
                     // add endpoint
@@ -121,12 +126,27 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 { 
                     throw new Exception("Error: " + res.Content.ReadAsStringAsync().Result);
                 }
+            }
+        }
 
-              
+        private string getDownloadUrl(Uri url, long brokerId, long datasetVersionId)
+        {
+            string protocolAndHost = url.GetLeftPart(UriPartial.Authority);
 
+            // If the port is not the default port, it will be included.
+            // If you need to ensure the port is always included, you can manually append it.
+            if (url.Port != 80 && url.Scheme == "http" || url.Port != 443 && url.Scheme == "https")
+            {
+                protocolAndHost = $"{url.Scheme}://{url.Host}:{url.Port}";
+            }
+            else
+            {
+                protocolAndHost = $"{url.Scheme}://{url.Host}";
             }
 
-            
+          
+
+            return string.Format("{0}/DIM/Submission/DownloadZip?brokerId={1}&datasetversionid={2}", protocolAndHost, brokerId, datasetVersionId); ;
         }
     }
 }
