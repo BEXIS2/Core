@@ -129,6 +129,41 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
+        [JsonNetFilter]
+        [HttpPost]
+        public async Task<JsonResult> DeleteDataset(string key, long publicationId)
+        {
+            using (var publicationManager = new PublicationManager())
+            using (var datasetManager = new DatasetManager())
+            {
+                var publication = publicationManager.GetPublication(publicationId);
+
+                // load settings
+                GBFICrendentials credentials = ModuleManager.GetModuleSettings("DIM").GetValueByKey<GBFICrendentials>("gbifapicredentials");
+
+                // create dataset in gbif
+                GbifServiceManager gbifServiceManager = new GbifServiceManager(credentials);
+
+                // register dataset
+                HttpResponseMessage res = await gbifServiceManager.DeleteDataset(key);
+                if (res.IsSuccessStatusCode) // success
+                {
+                    string result = res.Content.ReadAsStringAsync().Result;
+                    publication.Status = PublicationStatus.Open.ToString();
+                    publication.FilePath = "";
+                    publication.Response = result.Replace('\"', ' ').Trim();
+                    publicationManager.UpdatePublication(publication);
+
+
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                else // fail
+                {
+                    throw new Exception("Error: " + res.Content.ReadAsStringAsync().Result);
+                }
+            }
+        }
+
         private string getDownloadUrl(Uri url, long brokerId, long datasetVersionId)
         {
             string protocolAndHost = url.GetLeftPart(UriPartial.Authority);
