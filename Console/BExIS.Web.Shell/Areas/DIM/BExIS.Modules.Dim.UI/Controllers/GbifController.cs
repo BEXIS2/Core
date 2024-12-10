@@ -172,11 +172,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
             // If you need to ensure the port is always included, you can manually append it.
             if (url.Port != 80 && url.Scheme == "http" || url.Port != 443 && url.Scheme == "https")
             {
-                protocolAndHost = $"{url.Scheme}://{url.Host}:{url.Port}";
+                protocolAndHost = $"https://{url.Host}:{url.Port}";
             }
             else
             {
-                protocolAndHost = $"{url.Scheme}://{url.Host}";
+                protocolAndHost = $"https://{url.Host}";
             }
 
           
