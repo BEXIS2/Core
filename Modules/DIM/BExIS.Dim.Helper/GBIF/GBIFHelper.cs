@@ -206,7 +206,7 @@ namespace BExIS.Dim.Helpers.GBIF
 
                 Extension ext = new Extension()
                 {
-                    RowType = "https://rs.tdwg.org/dwc/terms/"+ extentionEntity.Extention.RowType.ToString(),
+                    RowType = extentionEntity.Extention.RowType.ToString(),
                     files = new List<string>() { extentionEntity.dataPath },
                     Encoding = "UTF-8",
                     FieldsTerminatedBy = ",",
