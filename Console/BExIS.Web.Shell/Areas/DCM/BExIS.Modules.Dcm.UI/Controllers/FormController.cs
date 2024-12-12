@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.ServiceModel.Description;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
@@ -73,30 +74,34 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             TaskManager = AdvanceTaskManagerBasedOnExistingMetadata(metadataStructureId, TaskManager);
 
-            foreach (var stepInfo in TaskManager.StepInfos)
+            using (var mdsManager = new MetadataStructureManager())
+            using (var mdpManager = new MetadataPackageManager())
             {
-                var stepModelHelper = GetStepModelhelper(stepInfo.Id, TaskManager);
-
-                if (stepModelHelper.Model == null)
+                foreach (var stepInfo in TaskManager.StepInfos)
                 {
-                    if (stepModelHelper.UsageType.Equals(typeof(MetadataPackageUsage)))
+                    var stepModelHelper = GetStepModelhelper(stepInfo.Id, TaskManager);
+
+                    if (stepModelHelper.Model == null)
                     {
-                        stepModelHelper.Model = createPackageModel(stepInfo.Id, false);
-                        if (stepModelHelper.Model.StepInfo.IsInstanze)
-                            LoadSimpleAttributesForModelFromXml(stepModelHelper, TaskManager);
+                        if (stepModelHelper.UsageType.Equals(typeof(MetadataPackageUsage)))
+                        {
+                            stepModelHelper.Model = createPackageModel(stepInfo.Id, false, mdsManager, mdpManager);
+                            if (stepModelHelper.Model.StepInfo.IsInstanze)
+                                LoadSimpleAttributesForModelFromXml(stepModelHelper, TaskManager);
+                        }
+
+                        if (stepModelHelper.UsageType.Equals(typeof(MetadataNestedAttributeUsage)))
+                        {
+                            stepModelHelper.Model = createCompoundModel(stepInfo.Id, false);
+                            if (stepModelHelper.Model.StepInfo.IsInstanze)
+                                LoadSimpleAttributesForModelFromXml(stepModelHelper, TaskManager);
+                        }
+
+                        getChildModelsHelper(stepModelHelper, TaskManager);
                     }
 
-                    if (stepModelHelper.UsageType.Equals(typeof(MetadataNestedAttributeUsage)))
-                    {
-                        stepModelHelper.Model = createCompoundModel(stepInfo.Id, false);
-                        if (stepModelHelper.Model.StepInfo.IsInstanze)
-                            LoadSimpleAttributesForModelFromXml(stepModelHelper, TaskManager);
-                    }
-
-                    getChildModelsHelper(stepModelHelper, TaskManager);
+                    stepInfoModelHelpers.Add(stepModelHelper);
                 }
-
-                stepInfoModelHelpers.Add(stepModelHelper);
             }
 
             Model.StepModelHelpers = stepInfoModelHelpers;
@@ -450,31 +455,34 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         TaskManager.AddToBus(CreateTaskmanager.RESEARCHPLAN_ID, rpm.Repo.Get().First().Id);
 
                         TaskManager = AdvanceTaskManagerBasedOnExistingMetadata(metadatastructureId, TaskManager);
-
-                        foreach (var stepInfo in TaskManager.StepInfos)
+                        using (var mdsManager = new MetadataStructureManager())
+                        using (var mdpManager = new MetadataPackageManager())
                         {
-                            var stepModelHelper = GetStepModelhelper(stepInfo.Id, TaskManager);
-
-                            if (stepModelHelper.Model == null)
+                            foreach (var stepInfo in TaskManager.StepInfos)
                             {
-                                if (stepModelHelper.UsageType.Equals(typeof(MetadataPackageUsage)))
+                                var stepModelHelper = GetStepModelhelper(stepInfo.Id, TaskManager);
+
+                                if (stepModelHelper.Model == null)
                                 {
-                                    stepModelHelper.Model = createPackageModel(stepInfo.Id, false);
-                                    if (stepModelHelper.Model.StepInfo.IsInstanze)
-                                        LoadSimpleAttributesForModelFromXml(stepModelHelper, TaskManager);
+                                    if (stepModelHelper.UsageType.Equals(typeof(MetadataPackageUsage)))
+                                    {
+                                        stepModelHelper.Model = createPackageModel(stepInfo.Id, false, mdsManager,mdpManager);
+                                        if (stepModelHelper.Model.StepInfo.IsInstanze)
+                                            LoadSimpleAttributesForModelFromXml(stepModelHelper, TaskManager);
+                                    }
+
+                                    if (stepModelHelper.UsageType.Equals(typeof(MetadataNestedAttributeUsage)))
+                                    {
+                                        stepModelHelper.Model = createCompoundModel(stepInfo.Id, false);
+                                        if (stepModelHelper.Model.StepInfo.IsInstanze)
+                                            LoadSimpleAttributesForModelFromXml(stepModelHelper, TaskManager);
+                                    }
+
+                                    getChildModelsHelper(stepModelHelper, TaskManager);
                                 }
 
-                                if (stepModelHelper.UsageType.Equals(typeof(MetadataNestedAttributeUsage)))
-                                {
-                                    stepModelHelper.Model = createCompoundModel(stepInfo.Id, false);
-                                    if (stepModelHelper.Model.StepInfo.IsInstanze)
-                                        LoadSimpleAttributesForModelFromXml(stepModelHelper, TaskManager);
-                                }
-
-                                getChildModelsHelper(stepModelHelper, TaskManager);
+                                stepInfoModelHelpers.Add(stepModelHelper);
                             }
-
-                            stepInfoModelHelpers.Add(stepModelHelper);
                         }
 
                         if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
@@ -546,22 +554,26 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             var stepInfoModelHelpers = new List<StepModelHelper>();
 
-            foreach (var stepInfo in TaskManager.StepInfos)
+            using (var mdsManager = new MetadataStructureManager())
+            using (var mdpManager = new MetadataPackageManager())
             {
-                var stepModelHelper = GetStepModelhelper(stepInfo.Id, TaskManager);
-
-                if (stepModelHelper.Model == null)
+                foreach (var stepInfo in TaskManager.StepInfos)
                 {
-                    if (stepModelHelper.UsageType.Equals(typeof(MetadataPackageUsage)))
-                        stepModelHelper.Model = createPackageModel(stepInfo.Id, false);
+                    var stepModelHelper = GetStepModelhelper(stepInfo.Id, TaskManager);
 
-                    if (stepModelHelper.UsageType.Equals(typeof(MetadataNestedAttributeUsage)))
-                        stepModelHelper.Model = createCompoundModel(stepInfo.Id, false);
+                    if (stepModelHelper.Model == null)
+                    {
+                        if (stepModelHelper.UsageType.Equals(typeof(MetadataPackageUsage)))
+                            stepModelHelper.Model = createPackageModel(stepInfo.Id, false, mdsManager, mdpManager);
 
-                    getChildModelsHelper(stepModelHelper, TaskManager);
+                        if (stepModelHelper.UsageType.Equals(typeof(MetadataNestedAttributeUsage)))
+                            stepModelHelper.Model = createCompoundModel(stepInfo.Id, false);
+
+                        getChildModelsHelper(stepModelHelper, TaskManager);
+                    }
+
+                    stepInfoModelHelpers.Add(stepModelHelper);
                 }
-
-                stepInfoModelHelpers.Add(stepModelHelper);
             }
 
             var Model = new MetadataEditorModel();
@@ -655,82 +667,87 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (TaskManager != null)
             {
-                //load empty metadata xml if needed
-                if (!TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
+                using (MetadataStructureManager mdsManager = new MetadataStructureManager())
+                using (MetadataPackageManager mdpManager = new MetadataPackageManager())
                 {
-                    CreateXml(TaskManager);
-                }
 
-                var loaded = false;
-                //check if formsteps are loaded
-                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.FORM_STEPS_LOADED))
-                {
-                    loaded = (bool)TaskManager.Bus[CreateTaskmanager.FORM_STEPS_LOADED];
-                }
-
-                // load form steps
-                if (loaded == false && TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
-                {
-                    var metadataStrutureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
-                    // generate all steps
-                    // one step for each complex type  in the metadata structure
-                    AdvanceTaskManager(metadataStrutureId);
-                }
-
-                var stepInfoModelHelpers = new List<StepModelHelper>();
-
-                // foreach step and the childsteps... generate a stepModelhelper
-                foreach (var stepInfo in TaskManager.StepInfos)
-                {
-                    var stepModelHelper = GetStepModelhelper(stepInfo.Id, TaskManager);
-
-                    if (stepModelHelper.Model == null)
+                    //load empty metadata xml if needed
+                    if (!TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
                     {
-                        if (stepModelHelper.UsageType.Equals(typeof(MetadataPackageUsage)))
-                            stepModelHelper.Model = createPackageModel(stepInfo.Id, false);
-
-                        if (stepModelHelper.UsageType.Equals(typeof(MetadataNestedAttributeUsage)))
-                            stepModelHelper.Model = createCompoundModel(stepInfo.Id, false);
-
-                        getChildModelsHelper(stepModelHelper, TaskManager);
+                        CreateXml(TaskManager);
                     }
 
-                    stepInfoModelHelpers.Add(stepModelHelper);
-                }
+                    var loaded = false;
+                    //check if formsteps are loaded
+                    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.FORM_STEPS_LOADED))
+                    {
+                        loaded = (bool)TaskManager.Bus[CreateTaskmanager.FORM_STEPS_LOADED];
+                    }
 
-                Model.StepModelHelpers = stepInfoModelHelpers;
+                    // load form steps
+                    if (loaded == false && TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
+                    {
+                        var metadataStrutureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+                        // generate all steps
+                        // one step for each complex type  in the metadata structure
+                        AdvanceTaskManager(metadataStrutureId);
+                    }
 
-                //set import
-                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
-                {
-                    var id = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
-                    Model.Import = IsImportAvavilable(id);
-                }
+                    var stepInfoModelHelpers = new List<StepModelHelper>();
 
-                //set addtionaly functions
-                Model.Actions = getAddtionalActions(TaskManager);
+                    // foreach step and the childsteps... generate a stepModelhelper
+                    foreach (var stepInfo in TaskManager.StepInfos)
+                    {
+                        var stepModelHelper = GetStepModelhelper(stepInfo.Id, TaskManager);
 
-                //save with errors?
-                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.SAVE_WITH_ERRORS))
-                {
-                    Model.SaveWithErrors = (bool)TaskManager.Bus[CreateTaskmanager.SAVE_WITH_ERRORS];
-                }
+                        if (stepModelHelper.Model == null)
+                        {
+                            if (stepModelHelper.UsageType.Equals(typeof(MetadataPackageUsage)))
+                                stepModelHelper.Model = createPackageModel(stepInfo.Id, false, mdsManager, mdpManager);
 
-                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.NO_IMPORT_ACTION))
-                {
-                    Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
-                }
+                            if (stepModelHelper.UsageType.Equals(typeof(MetadataNestedAttributeUsage)))
+                                stepModelHelper.Model = createCompoundModel(stepInfo.Id, false);
 
-                //Replace the title of the info box on top
-                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_TITLE))
-                {
-                    ViewBag.Title = PresentationModel.GetViewTitleForTenant(Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_TITLE]), this.Session.GetTenant());
-                }
+                            getChildModelsHelper(stepModelHelper, TaskManager);
+                        }
 
-                //Replace the description in the info box on top
-                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_DESCRIPTION))
-                {
-                    Model.HeaderHelp = Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_DESCRIPTION]);
+                        stepInfoModelHelpers.Add(stepModelHelper);
+                    }
+
+                    Model.StepModelHelpers = stepInfoModelHelpers;
+
+                    //set import
+                    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
+                    {
+                        var id = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+                        Model.Import = IsImportAvavilable(id);
+                    }
+
+                    //set addtionaly functions
+                    Model.Actions = getAddtionalActions(TaskManager);
+
+                    //save with errors?
+                    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.SAVE_WITH_ERRORS))
+                    {
+                        Model.SaveWithErrors = (bool)TaskManager.Bus[CreateTaskmanager.SAVE_WITH_ERRORS];
+                    }
+
+                    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.NO_IMPORT_ACTION))
+                    {
+                        Model.Import = !(bool)TaskManager.Bus[CreateTaskmanager.NO_IMPORT_ACTION];
+                    }
+
+                    //Replace the title of the info box on top
+                    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_TITLE))
+                    {
+                        ViewBag.Title = PresentationModel.GetViewTitleForTenant(Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_TITLE]), this.Session.GetTenant());
+                    }
+
+                    //Replace the description in the info box on top
+                    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.INFO_ON_TOP_DESCRIPTION))
+                    {
+                        Model.HeaderHelp = Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_DESCRIPTION]);
+                    }
                 }
             }
 
@@ -2062,8 +2079,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             var stepInfoModelHelpers = new List<StepModelHelper>();
 
+            var p = FormHelper.InitMetadataPackageUsages(metadatastructureId);
+            var a = FormHelper.InitMetadataAttributeUsages(p.Select(u=>u.MetadataPackage.Id).ToList());
+            var n = FormHelper.InitMetadataNestedAttributeUsages(metadatastructureId);
+
             using (var dm = new DatasetManager())
             using (var rpm = new ResearchPlanManager())
+            using (var mdsManager = new MetadataStructureManager())
+            using (var mdpManager = new MetadataPackageManager())
             {
                 taskManager.AddToBus(CreateTaskmanager.METADATASTRUCTURE_ID, metadatastructureId);
                 if (researchplanId != -1) taskManager.AddToBus(CreateTaskmanager.RESEARCHPLAN_ID, researchplanId);
@@ -2086,7 +2109,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         if (stepModelHelper.UsageType.Equals(typeof(MetadataPackageUsage)))
                         {
-                            stepModelHelper.Model = createPackageModel(stepInfo.Id, false);
+                            stepModelHelper.Model = createPackageModel(stepInfo.Id, false, mdsManager, mdpManager);
                             if (stepModelHelper.Model.StepInfo.IsInstanze)
                                 LoadSimpleAttributesForModelFromXml(stepModelHelper, taskManager);
                         }
@@ -3351,12 +3374,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private AbstractMetadataStepModel createModel(int stepId, bool validateIt, Type usageType)
         {
-            if (usageType.Equals(typeof(MetadataPackageUsage)))
+            using (MetadataStructureManager mdsManager = new MetadataStructureManager())
+            using (MetadataPackageManager mdpManager= new MetadataPackageManager())
             {
-                return createPackageModel(stepId, validateIt);
-            }
+                if (usageType.Equals(typeof(MetadataPackageUsage)))
+                {
+                    return createPackageModel(stepId, validateIt, mdsManager, mdpManager);
+                }
 
-            return createCompoundModel(stepId, validateIt);
+                return createCompoundModel(stepId, validateIt);
+            }
         }
 
         private MetadataCompoundAttributeModel createCompoundModel(int stepId, bool validateIt)
@@ -3401,49 +3428,46 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return model;
         }
 
-        private MetadataPackageModel createPackageModel(int stepId, bool validateIt)
+        private MetadataPackageModel createPackageModel(int stepId, bool validateIt, MetadataStructureManager mdsManager, MetadataPackageManager mdpManager)
         {
-            using (var mdsManager = new MetadataStructureManager())
-            using (var mdpManager = new MetadataPackageManager())
+            var stepInfo = TaskManager.Get(stepId);
+            var stepModelHelper = GetStepModelhelper(stepId, TaskManager);
+
+            var metadataPackageId = stepModelHelper.UsageId;
+            var metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+
+            var mpu = (MetadataPackageUsage)loadUsage(stepModelHelper.UsageId, stepModelHelper.UsageType);
+            var model = new MetadataPackageModel();
+
+            model = FormHelper.CreateMetadataPackageModel(mpu, stepModelHelper.Number);
+            model.ConvertMetadataAttributeModels(mpu, metadataStructureId, stepId);
+            model.ConvertMetadataParameterModels(mpu, metadataStructureId, stepId);
+
+            if (stepInfo.IsInstanze == false)
             {
-                var stepInfo = TaskManager.Get(stepId);
-                var stepModelHelper = GetStepModelhelper(stepId, TaskManager);
-
-                var metadataPackageId = stepModelHelper.UsageId;
-                var metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
-
-                var mpu = (MetadataPackageUsage)loadUsage(stepModelHelper.UsageId, stepModelHelper.UsageType);
-                var model = new MetadataPackageModel();
-
-                model = FormHelper.CreateMetadataPackageModel(mpu, stepModelHelper.Number);
-                model.ConvertMetadataAttributeModels(mpu, metadataStructureId, stepId);
-                model.ConvertMetadataParameterModels(mpu, metadataStructureId, stepId);
-
-                if (stepInfo.IsInstanze == false)
+                //get Instance
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
                 {
-                    //get Instance
-                    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
-                    {
-                        var xMetadata = getMetadata(TaskManager);
-                        model.ConvertInstance(xMetadata, stepModelHelper.XPath);
-                    }
+                    var xMetadata = getMetadata(TaskManager);
+                    model.ConvertInstance(xMetadata, stepModelHelper.XPath);
+                }
+            }
+            else
+            {
+                if (stepModelHelper.Model != null)
+                {
+                    model = (MetadataPackageModel)stepModelHelper.Model;
                 }
                 else
                 {
-                    if (stepModelHelper.Model != null)
-                    {
-                        model = (MetadataPackageModel)stepModelHelper.Model;
-                    }
-                    else
-                    {
-                        stepModelHelper.Model = model;
-                    }
+                    stepModelHelper.Model = model;
                 }
-
-                model.StepInfo = stepInfo;
-
-                return model;
             }
+
+            model.StepInfo = stepInfo;
+
+            return model;
+            
         }
 
         /// <summary>
