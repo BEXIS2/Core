@@ -64,7 +64,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 using (var metadataStructureManager = new MetadataStructureManager())
                 {
                     // [2024-12-10][Sven]: Why does no function exists to get a certain metadata structure?
-                    var metadataStructure = metadataStructureManager.Repo.Get(id);
+                    var metadataStructure = metadataStructureManager.GetMetadataStructureById(id);
 
                     if (metadataStructure == null)
                         return HttpNotFound();
@@ -74,16 +74,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     if(!Directory.Exists(path))
                         return HttpNotFound();
 
-                    using (var memoryStream = new MemoryStream())
+                    
+                    var memoryStream = new MemoryStream();
+
                     using (var archive = ZipArchive.Create())
                     {
                         archive.AddAllFromDirectory(path);
                         archive.SaveTo(memoryStream, CompressionType.Deflate);
-
-                        var result = new FileStreamResult(memoryStream, "application/zip") { FileDownloadName = metadataStructure.Name + ".zip" };
-
-                        return result;
                     }
+
+                    memoryStream.Position = 0;
+
+                    return File(memoryStream, "application/zip", $"{metadataStructure.Name}.zip"); ;
                 }
             }
             catch (Exception ex)
