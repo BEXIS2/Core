@@ -8,6 +8,7 @@ using BExIS.IO.DataType.DisplayPattern;
 using BExIS.Modules.Dcm.UI.Models.Metadata;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
@@ -315,6 +316,16 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             System.Web.HttpContext.Current.Session["MetadataPackageUsages"] = null;
         }
 
+        public static IList<MetadataAttributeUsage> InitMetadataAttributeUsages(List<long> packages)
+        {
+            using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+            {
+                var usages = uow.GetReadOnlyRepository<MetadataAttributeUsage>().Query(mau => packages.Contains(mau.MetadataPackage.Id)).ToList();
+                System.Web.HttpContext.Current.Session["MetadataAttributeUsages"] = usages;
+                return usages;
+            }
+        }
+
         public static IList<MetadataAttributeUsage> CachedMetadataAttributeUsages()
         {
             string key = "MetadataAttributeUsages";
@@ -342,6 +353,21 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     return uow.GetReadOnlyRepository<MetadataAttributeUsage>().Get();
                 }
             }
+        }
+
+        public static IList<MetadataNestedAttributeUsage> InitMetadataNestedAttributeUsages(long metadataStructureId)
+        {
+            string key = "MetadataNestedAttributeUsages";
+
+            List<MetadataNestedAttributeUsage> usages = new List<MetadataNestedAttributeUsage>();
+
+            using (var metadataAttributeManager = new MetadataAttributeManager())
+            {
+                usages = metadataAttributeManager.GetEffectiveMetadataNestedAttributeUsages(metadataStructureId);
+                System.Web.HttpContext.Current.Session[key] = usages;
+            }
+
+            return usages;
         }
 
         public static IList<MetadataNestedAttributeUsage> CachedMetadataNestedAttributeUsages()
@@ -373,6 +399,16 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             }
         }
 
+        public static IList<MetadataPackageUsage> InitMetadataPackageUsages(long metadatastructureId)
+        {
+            using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+            {
+                var usages = uow.GetReadOnlyRepository<MetadataPackageUsage>().Query(p => p.MetadataStructure.Id == metadatastructureId).ToList();
+                System.Web.HttpContext.Current.Session["MetadataPackageUsages"] = usages;
+                return usages;
+            }
+        }
+
         public static IList<MetadataPackageUsage> CachedMetadataPackageUsages()
         {
             string key = "MetadataPackageUsages";
@@ -387,7 +423,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 {
                     using (IUnitOfWork uow = (new object()).GetUnitOfWork())
                     {
-                        var usages = uow.GetReadOnlyRepository<MetadataPackageUsage>().Get();
+                        var usages = uow.GetReadOnlyRepository<MetadataPackageUsage>().Query().ToList();
                         System.Web.HttpContext.Current.Session[key] = usages;
                         return usages;
                     }

@@ -151,22 +151,38 @@ namespace BExIS.Dim.Helpers.GBIF
                 dwterms.Type = type;
                 dwterms.Field = getDarwinCoreTermsFromDatastructure(structureId);
 
+               
+
                 archive.Core.files.Add(dataFile);
                 archive.Core.Encoding = "UTF-8";
                 archive.Core.FieldsTerminatedBy = ",";
                 archive.Core.LinesTerminatedBy = @"\n";
                 archive.Core.IgnoreHeaderLines = "1";
-                archive.Core.Id = new Id() { Index = 0 };
+       
+                // set coreId term
+                // set coreId term and rowType
+                string idTerm = "";
+                string rowType = "";
 
                 switch (type)
                 {
                     case GbifDataType.samplingEvent:
-                        archive.Core.RowType = "https://rs.tdwg.org/dwc/terms/Event"; break;
+                        idTerm = "eventID";
+                        rowType = "https://rs.tdwg.org/dwc/terms/Event";
+                        break;
                     case GbifDataType.occurrence:
-                        archive.Core.RowType = "https://rs.tdwg.org/dwc/terms/Occurrence"; break;
+                        idTerm = "occurrenceID";
+                        rowType = "https://rs.tdwg.org/dwc/terms/Occurrence";
+                        break;
                     default:
-                        archive.Core.RowType = ""; break;
+                        idTerm = "eventID";
+                        rowType = "";
+                        break;
                 }
+
+                int idIndex = dwterms.Field.FindIndex(f => f.Term.Split('/').Last().Equals(idTerm));
+
+                archive.Core.Id = new Id() { Index = idIndex };
 
                 // add fields
                 if (dwterms.Field.Any())
@@ -176,7 +192,7 @@ namespace BExIS.Dim.Helpers.GBIF
 
                 // end core
                 // start extentions
-                archive.Extension = GetExtentions(extentions, structureManager);
+                archive.Extension = GetExtentions(extentions, structureManager, idTerm);
                 // end extentions
 
 
@@ -192,7 +208,7 @@ namespace BExIS.Dim.Helpers.GBIF
             }
         }
 
-        private List<Extension> GetExtentions(List<ExtentionEntity> _extentionEntities, DataStructureManager structureManager)
+        private List<Extension> GetExtentions(List<ExtentionEntity> _extentionEntities, DataStructureManager structureManager, string idTerm)
         {
             List<Extension> exts = new List<Extension>();
             foreach (var extentionEntity in _extentionEntities)
@@ -203,6 +219,8 @@ namespace BExIS.Dim.Helpers.GBIF
                 DWExtTerms dwterms = new DWExtTerms();
                 dwterms.Type = extentionEntity.Extention.RowType;
                 dwterms.Field = getDarwinCoreTermsFromDatastructure(extentionEntity.StructureId);
+
+                extentionEntity.IdIndex = dwterms.Field.FindIndex(f => f.Term.Split('/').Last().Equals(idTerm));    
 
                 Extension ext = new Extension()
                 {
