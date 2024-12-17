@@ -183,6 +183,7 @@ namespace BExIS.Dim.Helpers.GBIF
                 int idIndex = dwterms.Field.FindIndex(f => f.Term.Split('/').Last().Equals(idTerm));
 
                 archive.Core.Id = new Id() { Index = idIndex };
+                archive.Core.RowType = rowType;
 
                 // add fields
                 if (dwterms.Field.Any())
