@@ -42,7 +42,11 @@
 	
 			let url= "/ddm/data/show?id="+type.id+"&version="+type.version;
 			goTo(url,);
-		}
+		}else		if(type.action === 'delete'){
+	
+	// let url= "/ddm/data/show?id="+type.id+"&version="+type.version;
+	// goTo(url,);
+}
 	}
 
 </script>

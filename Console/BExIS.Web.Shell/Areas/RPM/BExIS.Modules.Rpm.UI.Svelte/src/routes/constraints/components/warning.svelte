@@ -17,12 +17,12 @@
 
 <Fa
 	class="text-warning-500 shadow-md h3 m-1"
-	title="Changing the Contsraint may cause inconsistencies on Datasets."
+	title="Changing the constraint may cause inconsistencies in datasets."
 	icon={faTriangleExclamation}
 />
 <div class="max-h-40 overflow-scroll">
 	<div class="w-full mb-1 p-3 variant-ghost-warning card">
-		<p class="h4">Changing the Contsraint may cause inconsistencies on following Datasets.</p>
+		<p class="h4">Changing the constraint may cause inconsistencies in the following datasets.</p>
 		<ul class="text-sm mt-1">
 			{#each datasets as dataset}
 				<li>

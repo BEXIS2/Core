@@ -36,6 +36,8 @@
 			open = true;
 			try {
 				model = await load(e.detail.value, id, 0);
+				console.log("🚀 ~ selectFile ~ model:", model)
+				
 				target = undefined;
 			} catch (error) {
 				notificationStore.showNotification({
@@ -59,7 +61,6 @@
 		model = null;
 	}
 </script>
-
 <div class="card shadow-sm border-{style}-600 border-solid border">
 	<Accordion>
 		<AccordionItem {open}>
@@ -83,9 +84,7 @@
 					{loading}
 					placeholder="Please select a file to set/update the file reader information"
 				/>
-
-				{#if model && model.hasStructure}
-				
+				{#if model}
 					<FileReaderSelectionModal {model} on:close={close} />
 				{/if}
 			</svelte:fragment>

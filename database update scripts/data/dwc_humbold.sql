@@ -126,7 +126,7 @@ for i in array_lower(dwclinks, 1)..array_upper(dwclinks, 1) loop
 RAISE NOTICE 'name: %',dwclinks[i];
 
 INSERT INTO public.rpm_externallink(name, uri, type, prefix, prefixcategory, versionno)
-SELECT dwclinks[i],dwclinks[i], 5, 1, null,1
+SELECT dwclinks[i],dwclinks[i], 5, (SELECT b1.id FROM public.rpm_externallink b1 WHERE name='dwc_eco'), null,1
 WHERE NOT EXISTS (SELECT * FROM public.rpm_externallink WHERE name=dwclinks[i]);
 
 end loop;

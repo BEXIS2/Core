@@ -127,7 +127,7 @@
 			<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 				<div class="h3 h-9">
 					{#if dataType.id < 1}
-						Create neẇ Data Type
+						Create new Data Type
 					{:else}
 						{dataType.name}
 					{/if}

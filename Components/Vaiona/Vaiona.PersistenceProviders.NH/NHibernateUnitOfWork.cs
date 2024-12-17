@@ -195,7 +195,7 @@ namespace Vaiona.PersistenceProviders.NH
                     }
                     result = query.List<T>().ToList();
                 }
-                catch
+                catch(Exception ex)
                 {
                     throw new Exception(string.Format("Failed for execute named query '{0}'.", queryName));
                 }

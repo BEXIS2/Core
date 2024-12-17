@@ -159,6 +159,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 ViewData["use_tags"] = moduleSettings.GetValueByKey("use_tags");
                 ViewData["use_minor"] = moduleSettings.GetValueByKey("use_minor");
                 ViewData["check_public_metadata"] = moduleSettings.GetValueByKey("check_public_metadata");
+                Session["Filter"] = null;
 
                 Dataset researcobject = dm.GetDataset(id);
 
@@ -741,7 +742,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult _CustomPrimaryDataBinding(GridCommand command, string columns, int datasetId, int versionId)
         {
             GridModel model = new GridModel();
-            ViewData["Filter"] = command;
+            Session["Filter"] = command;
             DatasetManager dm = new DatasetManager();
 
             try

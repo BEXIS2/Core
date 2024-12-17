@@ -111,7 +111,7 @@ namespace BExIS.Dim.Helpers.GBIF
             // compare the list of existing terms with the rwuired onces
             List<string> required = new List<string>();
             switch (type)
-            { 
+            {
                 case GbifDataType.samplingEvent: required = SamplingEventRequiredDWTerms.ToList(); break;
                 case GbifDataType.occurrence: required = OccurrencesRequiredDWTerms.ToList(); break;
                 default: required = OccurrencesRequiredDWTerms.ToList(); break;
@@ -151,22 +151,38 @@ namespace BExIS.Dim.Helpers.GBIF
                 dwterms.Type = type;
                 dwterms.Field = getDarwinCoreTermsFromDatastructure(structureId);
 
+               
+
                 archive.Core.files.Add(dataFile);
                 archive.Core.Encoding = "UTF-8";
-                archive.Core.LinesTerminatedBy = ",";
-                archive.Core.FieldsTerminatedBy = @"\n";
+                archive.Core.FieldsTerminatedBy = ",";
+                archive.Core.LinesTerminatedBy = @"\n";
                 archive.Core.IgnoreHeaderLines = "1";
-                archive.Core.Id = new Id() { Index = 0 };
+       
+                // set coreId term
+                // set coreId term and rowType
+                string idTerm = "";
+                string rowType = "";
 
                 switch (type)
                 {
                     case GbifDataType.samplingEvent:
-                        archive.Core.RowType = "https://rs.tdwg.org/dwc/terms/Event"; break;
+                        idTerm = "eventID";
+                        rowType = "https://rs.tdwg.org/dwc/terms/Event";
+                        break;
                     case GbifDataType.occurrence:
-                        archive.Core.RowType = "https://rs.tdwg.org/dwc/terms/Occurrence"; break;
+                        idTerm = "occurrenceID";
+                        rowType = "https://rs.tdwg.org/dwc/terms/Occurrence";
+                        break;
                     default:
-                        archive.Core.RowType = ""; break;
+                        idTerm = "eventID";
+                        rowType = "";
+                        break;
                 }
+
+                int idIndex = dwterms.Field.FindIndex(f => f.Term.Split('/').Last().Equals(idTerm));
+
+                archive.Core.Id = new Id() { Index = idIndex };
 
                 // add fields
                 if (dwterms.Field.Any())
@@ -176,7 +192,7 @@ namespace BExIS.Dim.Helpers.GBIF
 
                 // end core
                 // start extentions
-                archive.Extension = GetExtentions(extentions, structureManager);
+                archive.Extension = GetExtentions(extentions, structureManager, idTerm);
                 // end extentions
 
 
@@ -192,7 +208,7 @@ namespace BExIS.Dim.Helpers.GBIF
             }
         }
 
-        private List<Extension> GetExtentions(List<ExtentionEntity> _extentionEntities, DataStructureManager structureManager)
+        private List<Extension> GetExtentions(List<ExtentionEntity> _extentionEntities, DataStructureManager structureManager, string idTerm)
         {
             List<Extension> exts = new List<Extension>();
             foreach (var extentionEntity in _extentionEntities)
@@ -204,13 +220,15 @@ namespace BExIS.Dim.Helpers.GBIF
                 dwterms.Type = extentionEntity.Extention.RowType;
                 dwterms.Field = getDarwinCoreTermsFromDatastructure(extentionEntity.StructureId);
 
+                extentionEntity.IdIndex = dwterms.Field.FindIndex(f => f.Term.Split('/').Last().Equals(idTerm));    
+
                 Extension ext = new Extension()
                 {
-                    RowType = "https://rs.tdwg.org/dwc/terms/"+ extentionEntity.Extention.RowType.ToString(),
+                    RowType = extentionEntity.Extention.RowType.ToString(),
                     files = new List<string>() { extentionEntity.dataPath },
                     Encoding = "UTF-8",
-                    LinesTerminatedBy = ",",
-                    FieldsTerminatedBy = @"\n",
+                    FieldsTerminatedBy = ",",
+                    LinesTerminatedBy = @"\n",
                     IgnoreHeaderLines = "1",
                     CoreId = new Id() { Index= extentionEntity.IdIndex },
                     fields = dwterms.Field
@@ -250,9 +268,12 @@ namespace BExIS.Dim.Helpers.GBIF
             xsi.Value = "eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.2/eml.xsd";
             root.Attributes.Append(xsi);
 
-            root.SetAttribute("system", "https://demo.bexis2.uni-jena.de");
+            //XmlAttribute dc = conceptOutput.CreateAttribute("xmlns", "dc", "http://purl.org/dc/terms/");
+            //root.Attributes.Append(dc);
+
+            root.SetAttribute("system", "host");
             root.SetAttribute("scope", "system");
-            root.SetAttribute("xml:lang", "en");
+            root.SetAttribute("xml:lang", "eng");
             root.SetAttribute("packageId", "na");
 
             
@@ -355,7 +376,7 @@ namespace BExIS.Dim.Helpers.GBIF
             string datapath = string.Empty;
 
             var outputDataManager = new OutputDataManager();
-            datapath = outputDataManager.GenerateAsciiFile(id, versionId,  "text/csv", false,true);
+            datapath = outputDataManager.GenerateAsciiFile(id, versionId,  "text/csv", false, false);
 
             return datapath;
         }

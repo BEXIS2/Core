@@ -12,13 +12,17 @@ using System.Xml.Serialization;
 
 namespace BExIS.Dim.Entities.Export.GBIF
 {
-
+    /*
+     OCCURRENCE, CHECKLIST, METADATA, SAMPLING_EVENT, MATERIAL_ENTITY
+    */
     public enum GbifDataType
     {
-        metadata,
+     
         occurrence,
         checklist,
-        samplingEvent
+        metadata,
+        samplingEvent,
+        materialEntity
     }
 
     public class GBFICrendentials
