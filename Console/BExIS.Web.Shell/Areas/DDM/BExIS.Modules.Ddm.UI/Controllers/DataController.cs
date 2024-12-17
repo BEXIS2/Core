@@ -23,14 +23,15 @@ using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
 using BExIS.UI.Models;
 using BExIS.Utils.Config;
+using BExIS.Utils.Extensions;
 using BExIS.Utils.NH.Querying;
 using BExIS.Xml.Helpers;
-using Ionic.Zip;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -1412,17 +1413,17 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         }
                     }
 
-                    using (ZipFile zip = new ZipFile())
+                    var memoryStream = new MemoryStream();
+
+                    using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
                     {
                         foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                         {
-                            string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
-                            string name = cd.URI.Split('\\').Last();
+                            string filePath = Path.Combine(AppConfiguration.DataPath, cd.URI);
+                            string fileName = cd.URI.Split('\\').Last();
 
-                            zip.AddFile(path, "");
+                            archive.AddFile(filePath);
                         }
-
-                        zip.Save(zipPath);
                     }
 
                     long versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);

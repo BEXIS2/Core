@@ -5,15 +5,14 @@ using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Security.Services.Objects;
+using BExIS.Utils.Extensions;
 using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
-using SharpCompress.Archives;
-using SharpCompress.Archives.Zip;
-using SharpCompress.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Web.Mvc;
 using System.Xml;
@@ -77,10 +76,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     
                     var memoryStream = new MemoryStream();
 
-                    using (var archive = ZipArchive.Create())
+                    using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
                     {
-                        archive.AddAllFromDirectory(path);
-                        archive.SaveTo(memoryStream, CompressionType.Deflate);
+                        // Add each file from the folder to the archive
+                        archive.AddAllFilesFromDirectory(path);
                     }
 
                     memoryStream.Position = 0;
