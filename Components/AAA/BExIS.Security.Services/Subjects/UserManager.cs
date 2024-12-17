@@ -40,37 +40,34 @@ namespace BExIS.Security.Services.Subjects
 
             try
             {
-                using (IUnitOfWork uow = this.GetUnitOfWork())
+                if (whereClause != null && orderBy != null)
                 {
-                    if (whereClause != null && orderBy != null)
-                    {
-                        var l = Users.Where(whereClause);
-                        var x = l.OrderBy(orderbyClause);
-                        var y = x.Skip((pageNumber - 1) * pageSize);
-                        var z = y.Take(pageSize);
+                    var l = Users.Where(whereClause);
+                    var x = l.OrderBy(orderbyClause);
+                    var y = x.Skip((pageNumber - 1) * pageSize);
+                    var z = y.Take(pageSize);
 
-                        count = l.Count();
+                    count = l.Count();
 
-                        return z.ToList();
-                    }
-                    else if (whereClause != null)
-                    {
-                        var filtered = Users.Where(whereClause);
-                        count = filtered.Count();
-
-                        return filtered.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-                    }
-
-                    if (orderBy != null)
-                    {
-                        count = Users.Count();
-                        return Users.OrderBy(orderbyClause).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-                    }
-
-                    count = Users.Count();
-
-                    return Users.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                    return z.ToList();
                 }
+                else if (whereClause != null)
+                {
+                    var filtered = Users.Where(whereClause);
+                    count = filtered.Count();
+
+                    return filtered.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                }
+
+                if (orderBy != null)
+                {
+                    count = Users.Count();
+                    return Users.OrderBy(orderbyClause).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                }
+
+                count = Users.Count();
+
+                return Users.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             }
             catch (Exception ex)
             {
@@ -123,31 +120,25 @@ namespace BExIS.Security.Services.Subjects
 
         public Task<User> FindByEmailAsync(string email)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
+            var userRepository = _guow.GetReadOnlyRepository<User>();
 
-                var users = userRepository.Query(u => u.Email.ToLowerInvariant() == email.ToLowerInvariant()).ToList();
+            var users = userRepository.Query(u => u.Email.ToLowerInvariant() == email.ToLowerInvariant()).ToList();
 
-                if (!users.Any())
-                    //return Task.FromException(new Exception());
-                    return Task.FromResult<User>(null);
+            if (!users.Any())
+                //return Task.FromException(new Exception());
+                return Task.FromResult<User>(null);
 
-                if (users.Count > 1)
-                    //return Task.FromException(new Exception());
-                    return Task.FromResult<User>(null);
+            if (users.Count > 1)
+                //return Task.FromException(new Exception());
+                return Task.FromResult<User>(null);
 
-                return Task.FromResult(users.Single());
-            }
+            return Task.FromResult(users.Single());
         }
 
         public Task<User> FindByIdAsync(long userId)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
-                return Task.FromResult(userRepository.Get(userId));
-            }
+            var userRepository = _guow.GetRepository<User>();
+            return Task.FromResult(userRepository.Get(userId));
         }
 
         public Task<User> FindByNameAsync(string userName)

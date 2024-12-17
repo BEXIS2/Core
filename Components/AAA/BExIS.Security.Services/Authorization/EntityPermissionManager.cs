@@ -38,7 +38,7 @@ namespace BExIS.Security.Services.Authorization
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                var entityPermissionRepository = _guow.GetRepository<EntityPermission>();
                 var result = entityPermissionRepository.Put(entityPermission);
                 uow.Commit();
 
