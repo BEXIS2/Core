@@ -34,8 +34,14 @@ namespace BExIS.Web.Shell.Controllers
                 }
             }
 
-            Menu menu = new Menu();
 
+            if (Session["Menu"] != null)
+            {
+                return Json((Menu)Session["Menu"], JsonRequestBehavior.AllowGet);
+            }
+
+
+            Menu menu = new Menu();
             // load logo
             if (Session.GetTenant() != null && !string.IsNullOrEmpty(Session.GetTenant().Brand))
             {
@@ -55,6 +61,8 @@ namespace BExIS.Web.Shell.Controllers
 
             if (Session.GetTenant().ExtendedMenus != null)
                 menu.Extended = MenuHelper.ExtendedMenu(Session.GetTenant().ExtendedMenus.Element("ExtendedMenu"));
+
+            Session["Menu"] = menu;
 
             return Json(menu, JsonRequestBehavior.AllowGet);
         }
