@@ -62,7 +62,8 @@ namespace BExIS.Web.Shell.Controllers
             if (Session.GetTenant().ExtendedMenus != null)
                 menu.Extended = MenuHelper.ExtendedMenu(Session.GetTenant().ExtendedMenus.Element("ExtendedMenu"));
 
-            Session["Menu"] = menu;
+            // set menu to session if user is authenticated
+            if(!string.IsNullOrEmpty(userName) && isAuthenticated) Session["Menu"] = menu;
 
             return Json(menu, JsonRequestBehavior.AllowGet);
         }
