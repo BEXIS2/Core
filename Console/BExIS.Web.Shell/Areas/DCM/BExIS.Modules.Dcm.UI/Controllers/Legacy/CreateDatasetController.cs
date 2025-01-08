@@ -28,6 +28,8 @@ using BExIS.Utils.Config;
 using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Extensions;
 using BExIS.Xml.Helpers;
+using BEXIS.JSON.Helpers;
+using Newtonsoft.Json.Schema;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -533,6 +535,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (MetadataStructureManager msm = new MetadataStructureManager())
             {
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+            
                 string title = "";
                 long datasetId = 0;
                 bool newDataset = true;
@@ -543,12 +546,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
                     {
+   
+                        long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+
+
                         // for e new dataset
                         if (!TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
                         {
                             long datastructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.DATASTRUCTURE_ID]);
                             long researchPlanId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.RESEARCHPLAN_ID]);
-                            long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
 
                             DataStructure dataStructure = dsm.StructuredDataStructureRepo.Get(datastructureId);
                             //if datastructure is not a structured one
@@ -586,6 +592,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
                             {
+
+
                                 XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
                                 workingCopy.Metadata = Xml.Helpers.XmlWriter.ToXmlDocument(xMetadata);
 
@@ -597,7 +605,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
 
                                 TaskManager.Bus[CreateTaskmanager.METADATA_XML] = setSystemValuesToMetadata(datasetId, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newDataset);
+
+
+                                // check if metadata is valid against the metadatastructure
+                                XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
+                                MetadataStructureConverter metadataStructureConverter = new MetadataStructureConverter();
+                                // check validation status
+                                var jsonSchema = metadataStructureConverter.ConvertToJsonSchema(metadataStructureId);
+                                var json = xmlMetadataConverter.ConvertTo(workingCopy.Metadata);
+                                valid = json.IsValid(jsonSchema);
+
                             }
+
+                
 
                             //set status
                             workingCopy = setStateInfo(workingCopy, valid);

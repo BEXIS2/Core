@@ -127,7 +127,7 @@ namespace BExIS.Dim.Entities.Export.GBIF
         [XmlArrayItem("location")]
         public List<string> files { get; set; }
 
-        [XmlArrayItem("field")]
+        [XmlElement("field")]
         public List<Field> fields { get; set; }
 
         public Base()

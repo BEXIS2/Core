@@ -50,7 +50,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@bexis2/bexis2-core-ui": "0.4.22",
+		"@bexis2/bexis2-core-ui": "0.4.24",
 		"@bexis2/bexis2-rpm-ui": "^0.2.7",
 		"@floating-ui/dom": "1.6.8",
 		"@fortawesome/free-solid-svg-icons": "6.6.0",

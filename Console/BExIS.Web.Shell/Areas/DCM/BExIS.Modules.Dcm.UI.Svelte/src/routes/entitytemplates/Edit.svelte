@@ -6,7 +6,7 @@
 	// ui Components
 	import Fa from 'svelte-fa';
 	import { DropdownKVP, MultiSelect, TextArea, TextInput, Spinner } from '@bexis2/bexis2-core-ui';
-	import { faSave, faXmark } from '@fortawesome/free-solid-svg-icons/index';
+	import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import ContentContainer from '../../lib/components/ContentContainer.svelte';
 	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
@@ -147,7 +147,7 @@
 {#if entityTemplate}
 	<ContentContainer>
 		<form on:submit|preventDefault={handleSubmit}>
-			<div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+			<div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
 				<TextInput
 					id="name"
 					label="Template Name"
@@ -189,10 +189,10 @@
 				/>
 			</div>
 
-			<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
-				<div class="flex flex-col space-y-4">
+
 					<h3 class="h3">Metadata</h3>
 
+					<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
 					<DropdownKVP
 						id="metadataStructure"
 						title="Metadata Schema"
@@ -206,7 +206,7 @@
 						required={true}
 						help={true}
 					/>
-
+					<div class="flex flex-col gap-4">
 					{#if systemKeys}
 						<EntryContainer>
 							<MultiSelect
@@ -223,9 +223,11 @@
 						</EntryContainer>
 					{/if}
 
+
 					<EntryContainer>
 						<div id="invalidSaveMode" />
 						<SlideToggle
+					  active="bg-primary-500"
 							name="Invalid-save-mode"
 							bind:checked={entityTemplate.metadataInvalidSaveMode}
 						>
@@ -233,30 +235,39 @@
 						</SlideToggle>
 					</EntryContainer>
 				</div>
-				<div class="flex flex-col space-y-4">
-					<h3 class="h3">Data Structure</h3>
-					<EntryContainer>
-						<div class="mt-7 space-y-5" on:mouseover={() => helpStore.show('hasDatastructure')}>
-							<SlideToggle name="use_data_structure" bind:checked={entityTemplate.hasDatastructure}>
-								Allow to use data structures
-							</SlideToggle>
-
-							{#if entityTemplate.hasDatastructure}
-								<MultiSelect
-									id="datastructures"
-									title="Limit the selection of allowed data structures"
-									source={dataStructures}
-									bind:target={entityTemplate.datastructureList}
-									itemId="key"
-									itemLabel="value"
-									complexSource={true}
-									help={true}
-								/>
-							{/if}
-						</div>
-					</EntryContainer>
 				</div>
+
+
+			<div class="flex flex-col space-y-4">
+					
+
+			<h3 class="h3">Data Structure</h3>
+			<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+				<EntryContainer>
+					<div role="group" class="flex flex-col gap-4"  on:mouseover={() => helpStore.show('hasDatastructure')} on:focus={() => helpStore.show('hasDatastructure')}>
+						<SlideToggle 
+						active="bg-primary-500"
+						name="use_data_structure" 
+						bind:checked={entityTemplate.hasDatastructure}>
+							Allow to use data structures
+						</SlideToggle>
+
+						{#if entityTemplate.hasDatastructure}
+							<MultiSelect
+								id="datastructures"
+								title="Limit the selection of allowed data structures"
+								source={dataStructures}
+								bind:target={entityTemplate.datastructureList}
+								itemId="key"
+								itemLabel="value"
+								complexSource={true}
+								help={true}
+							/>
+						{/if}
+					</div>
+				</EntryContainer>
 			</div>
+		</div>
 
 			<h3 class="h3">Administration</h3>
 			<p class="p">Set permissions per default to the following groups</p>
@@ -313,6 +324,7 @@
 					/>
 				</EntryContainer>
 			</div>
+			
 			<h3 class="h3">Notifications</h3>
 			<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
 				<EntryContainer>
@@ -354,7 +366,7 @@
 
 			<div class="py-5 grow text-right gap-2">
 				<button title="cancel" type="button" class="btn variant-filled-warning" on:click={onCancel}
-					><Fa icon={faXmark} /></button
+					><Fa icon={faTrash} /></button
 				>
 				<button title="save" type="submit" class="btn variant-filled-primary" {disabled}
 					><Fa icon={faSave} /></button
