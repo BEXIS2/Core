@@ -84,7 +84,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     memoryStream.Position = 0;
 
-                    return File(memoryStream, "application/zip", $"{metadataStructure.Name}.zip"); ;
+                    return File(memoryStream, "application/zip", $"{metadataStructure.Name}.zip");
                 }
             }
             catch (Exception ex)
