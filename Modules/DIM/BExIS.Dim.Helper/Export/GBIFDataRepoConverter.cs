@@ -11,11 +11,12 @@ using BExIS.Dlm.Services.Data;
 using BExIS.IO;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
-using Ionic.Zip;
+using BExIS.Utils.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -59,7 +60,6 @@ namespace BExIS.Dim.Helpers.Export
             using (var datasetManager = new DatasetManager())
             using (var conceptManager = new ConceptManager())
             using (var entityReferenceManager = new EntityReferenceManager())
-            using (ZipFile zip = new ZipFile())
             {
                 string dwcStorePath = ModuleManager.GetModuleSettings("DIM").GetValueByKey("gbifCollectionArea").ToString();
 
@@ -84,7 +84,6 @@ namespace BExIS.Dim.Helpers.Export
 
                 if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
 
-
                 // get metadata
                 var concept = conceptManager.MappingConceptRepository.Get().FirstOrDefault(c => c.Name.ToLower().Equals(_dataRepo.Name.ToLower()));
                 if (concept != null)
@@ -94,49 +93,50 @@ namespace BExIS.Dim.Helpers.Export
                     long versionId = datasetversion.Id;
                     string xsdPath = Path.Combine(AppConfiguration.WorkspaceRootPath, concept.XSD);
 
-                    // generate metadata
-                    string metadataFilePath = helper.GenerateResourceMetadata(concept.Id, metadatastructureId, datasetversion.Metadata, folder, xsdPath);
-                    if (File.Exists(metadataFilePath)) zip.AddFile(metadataFilePath, "");
-
-                    // get data
-                    string datapath = helper.GenerateData(id, versionId);
-                    if (File.Exists(datapath)) zip.AddFile(datapath, "");
-
-                    // has links to extentions? (IsDwcEventOf,IsDwcHumboltExtensionOf, IsEwcEMofExtensionOf)
-                    // has links?
-                    var links = helper.GetExtentions().Select(e=>e.LinkName);
-                    var refs = entityReferenceManager.ReferenceRepository.Get().Where(r => r.SourceEntityId == dataset.EntityTemplate.EntityType.Id && r.SourceId == dataset.Id && links.Contains(r.ReferenceType)).ToList();
-                    // add data from linked datasets links 
-                    List<ExtentionEntity> extentions = new List<ExtentionEntity>();
-                    foreach (var r in refs)
+                    using (var zipFileStream = new FileStream(zipfilepath, FileMode.Create))
+                    using (var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Update))
                     {
-                        if (links.Contains(r.ReferenceType))
+                        // generate metadata
+                        string metadataFilePath = helper.GenerateResourceMetadata(concept.Id, metadatastructureId, datasetversion.Metadata, folder, xsdPath);
+                        if (File.Exists(metadataFilePath)) archive.AddFileToArchive(metadataFilePath, "");
+
+                        // get data
+                        string datapath = helper.GenerateData(id, versionId);
+                        if (File.Exists(datapath)) archive.AddFileToArchive(datapath, "");
+
+                        // has links to extentions? (IsDwcEventOf,IsDwcHumboltExtensionOf, IsEwcEMofExtensionOf)
+                        // has links?
+                        var links = helper.GetExtentions().Select(e => e.LinkName);
+                        var refs = entityReferenceManager.ReferenceRepository.Get().Where(r => r.SourceEntityId == dataset.EntityTemplate.EntityType.Id && r.SourceId == dataset.Id && links.Contains(r.ReferenceType)).ToList();
+                        // add data from linked datasets links 
+                        List<ExtentionEntity> extentions = new List<ExtentionEntity>();
+                        foreach (var r in refs)
                         {
-                            var ext = datasetManager.GetDataset(r.TargetId);
-                            var structureId = ext.DataStructure == null?0: ext.DataStructure.Id;
-                            var refVersion = datasetManager.GetDatasetVersion(r.TargetId, r.TargetVersion);
-                            string rPath = helper.GenerateData(r.TargetId, refVersion.Id);
-
-                            if (File.Exists(rPath))
+                            if (links.Contains(r.ReferenceType))
                             {
-                                // how to find the position of id of the core
-                                // check links for the specifiy types
-                                var extention = helper.GetExtention(r.ReferenceType);
+                                var ext = datasetManager.GetDataset(r.TargetId);
+                                var structureId = ext.DataStructure == null ? 0 : ext.DataStructure.Id;
+                                var refVersion = datasetManager.GetDatasetVersion(r.TargetId, r.TargetVersion);
+                                string rPath = helper.GenerateData(r.TargetId, refVersion.Id);
 
-                                extentions.Add(new ExtentionEntity() { IdIndex = 0, Version = r.SourceVersion, StructureId = structureId, Extention = extention, dataPath = Path.GetFileName(rPath) });
-                                zip.AddFile(rPath, "");
+                                if (File.Exists(rPath))
+                                {
+                                    // how to find the position of id of the core
+                                    // check links for the specifiy types
+                                    var extention = helper.GetExtention(r.ReferenceType);
+
+                                    extentions.Add(new ExtentionEntity() { IdIndex = 0, Version = r.SourceVersion, StructureId = structureId, Extention = extention, dataPath = Path.GetFileName(rPath) });
+                                    archive.AddFileToArchive(rPath, "");
+                                }
                             }
                         }
+
+                        // generate meta file
+                        string metaFilePath = helper.GenerateMeta(_type, dataset.DataStructure.Id, folder, Path.GetFileName(datapath), extentions);
+                        if (File.Exists(metaFilePath)) archive.AddFileToArchive(metaFilePath, "");
                     }
 
-                    // generate meta file
-                    string metaFilePath = helper.GenerateMeta(_type, dataset.DataStructure.Id, folder, Path.GetFileName(datapath), extentions);
-                    if (File.Exists(metaFilePath)) zip.AddFile(metaFilePath, "");
-
-                    zip.Save(zipfilepath);
-
                     return zipfilepath;
-
                 }
             }
 
