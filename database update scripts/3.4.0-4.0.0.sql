@@ -1,7 +1,13 @@
 -- OPEN ISSUES
-    -- DefaultValue within MetadataAttributeUsage: varchar(255) -> text (check MetadataAttributeUsage.hbm.xml)
-    -- FixedValue within MetadataAttributeUsage: varchar(255) -> text (check MetadataAttributeUsage.hbm.xml)
-    -- add dim/gbif controller in operations
+ -- add dim/gbif controller in operations
+
+-- DefaultValue within MetadataAttributeUsage: varchar(255) -> text (check MetadataAttributeUsage.hbm.xml)
+ALTER TABLE public.metadataattributeusages
+ALTER COLUMN DefaultValue TYPE TEXT;
+
+-- FixedValue within MetadataAttributeUsage: varchar(255) -> text (check MetadataAttributeUsage.hbm.xml)
+ALTER TABLE public.metadataattributeusages
+ALTER COLUMN FixedValue TYPE TEXT;
 
 
 -- DOI Mapping(s) Update

@@ -33,7 +33,8 @@
       <column name="Description" sql-type="text" />
     </property>
 
-	<property name="DefaultValue" type="StringClob">
+	  
+	<property name="DefaultValue" type="StringClob"> <!-- change to trigger update -->
 		<column name="DefaultValue" sql-type="text" />
 	</property>
 
