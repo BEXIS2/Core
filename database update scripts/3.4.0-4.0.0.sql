@@ -9,6 +9,15 @@ ALTER COLUMN DefaultValue TYPE TEXT;
 ALTER TABLE public.metadataattributeusages
 ALTER COLUMN FixedValue TYPE TEXT;
 
+-- DefaultValue within MetadataNestedAttributeUsages: varchar(255) -> text (check MetadataAttributeUsage.hbm.xml)
+ALTER TABLE public.MetadataNestedAttributeUsages
+ALTER COLUMN DefaultValue TYPE TEXT;
+
+-- FixedValue within MetadataNestedAttributeUsages: varchar(255) -> text (check MetadataAttributeUsage.hbm.xml)
+ALTER TABLE public.MetadataNestedAttributeUsages
+ALTER COLUMN FixedValue TYPE TEXT;
+
+
 
 -- DOI Mapping(s) Update
 INSERT INTO public.dim_mappingkeys (name, url, optional, iscomplex, concept, xpath)
