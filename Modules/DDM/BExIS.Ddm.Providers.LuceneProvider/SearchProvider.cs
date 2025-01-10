@@ -5,6 +5,7 @@ using BExIS.Ddm.Providers.LuceneProvider.Indexer;
 using BExIS.Ddm.Providers.LuceneProvider.Searcher;
 using BExIS.Utils.Models;
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Shingle.Matrix;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
@@ -241,6 +242,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             getQueryFromCriteria(searchCriteria);
             this.WorkingSearchModel.ResultComponent = BexisIndexSearcher.search(bexisSearching, SearchConfig.headerItemXmlNodeList);
 
+
             return this.WorkingSearchModel;
         }
 
@@ -256,6 +258,9 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             this.WorkingSearchModel = Get(searchCriteria);
             this.WorkingSearchModel = UpdateFacets(searchCriteria);
             this.WorkingSearchModel = UpdateProperties(searchCriteria);
+            this.WorkingSearchModel.ResultComponent.Rows = this.WorkingSearchModel.ResultComponent.Rows.OrderByDescending(r => Convert.ToDecimal(r.Values.First()));
+            
+
         }
 
         /// <summary>
@@ -272,6 +277,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             this.WorkingSearchModel = Get(searchCriteria, pageSize, currentPage);
             this.WorkingSearchModel = UpdateFacets(searchCriteria);
             this.WorkingSearchModel = UpdateProperties(searchCriteria);
+            this.WorkingSearchModel.ResultComponent.Rows = this.WorkingSearchModel.ResultComponent.Rows.OrderByDescending(r => Convert.ToDecimal(r.Values.First())).ToList();
 
             return this.WorkingSearchModel;
         }

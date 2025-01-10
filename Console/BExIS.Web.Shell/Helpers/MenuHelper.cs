@@ -57,6 +57,7 @@ namespace BExIS.Web.Shell.Helpers
                             childItem.Title = getTitle(child);
                             childItem.Url = getUrl(child);
                             childItem.Module = getModule(child);
+                            childItem.Target = "_blank";
                             menuItem.Items.Add(childItem);
                         }
                     }
