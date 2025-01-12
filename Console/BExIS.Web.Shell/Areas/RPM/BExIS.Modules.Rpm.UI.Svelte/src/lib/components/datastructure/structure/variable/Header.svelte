@@ -55,10 +55,11 @@
 
 	<div class="flex-none flex-col text-right w-1/4">
 				<div class="flex gap-2 pb-2 justify-end">
-					<div>Mark a part of primary key</div>
+					<div>Mark as part of primary key</div>
 					<SlideToggle
 							size="sm"
 							name="isKey"
+							title={isKey ? "Part of primary key" : "Not part of primary key"}
 							bind:checked={isKey}
 							active="bg-primary-500"
 							disabled={blockDataRelevant && !changeablePrimaryKey}
@@ -67,10 +68,11 @@
 
 				</div>
 				<div class="flex gap-2 pb-2 justify-end">
-					<div> Value can be optional</div>
+					<div>Value can be optional</div>
 					<SlideToggle
 						size="sm"
 						name="isOptional"
+						title= {isOptional ? "Value can be optional" : "Value is required"}
 						active="bg-primary-500"
 						bind:checked={isOptional}
 						disabled={blockDataRelevant}></SlideToggle
