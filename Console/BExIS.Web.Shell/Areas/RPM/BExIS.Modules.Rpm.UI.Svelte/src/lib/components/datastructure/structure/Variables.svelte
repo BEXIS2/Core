@@ -274,7 +274,7 @@
 							<button
 								id="copy-next-{i}"
 								type="button"
-								title="copy to content to the next variable"
+								title="copy content (not name) to the next variable "
 								class="chip variant-filled-warning"
 								on:mouseover={() => helpStore.show('copy-next')}
 								on:click={() => copyNext(i)}><Fa icon={faShare} /></button
@@ -282,7 +282,7 @@
 							<button
 								id="copy-all-{i}"
 								type="button"
-								title="copy to all after this"
+								title="copy content (not name) to all after this"
 								class="chip variant-filled-warning"
 								on:mouseover={() => helpStore.show('copy-all')}
 								on:click={() => copyAll(i)}><Fa icon={faShareFromSquare} /></button

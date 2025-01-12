@@ -482,12 +482,12 @@
 						<Container>
 							<div slot="property">
 								<div class="flex w-full gap-1 py-1">
-									<div class="grow">Meanings</div>
+									<!--<div class="grow">Meanings</div>-->
 								</div>
 								<MultiSelect
 									id="meanings-{index}"
-									title="Semantic meaning"
 									source={meanings}
+									title="Meanings"
 									itemId="id"
 									itemLabel="text"
 									itemGroup="group"
