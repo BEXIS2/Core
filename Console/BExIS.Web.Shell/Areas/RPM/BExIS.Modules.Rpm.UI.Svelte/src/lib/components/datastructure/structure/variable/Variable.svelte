@@ -317,9 +317,9 @@
 									label="Name"
 									bind:value={variable.name}
 									on:input={onChangeHandler}
-									valid={res.isValid(`name-${index}`)}
-									invalid={res.hasErrors(`name-${index}`)}
-									feedback={res.getErrors(`name-${index}`)}
+									valid={res.isValid("name")}
+									invalid={res.hasErrors("name")}
+									feedback={res.getErrors("name")}
 									disabled={blockDataRelevant}
 								/>
 							</div>
@@ -352,8 +352,8 @@
 									clearable={true}
 									bind:target={variable.template}
 									placeholder="-- Please select --"
-									invalid={res.hasErrors(`variableTemplate-${index}`) && !blockDataRelevant}
-									feedback={res.getErrors(`variableTemplate-${index}`)}
+									invalid={res.hasErrors("variableTemplate") && !blockDataRelevant}
+									feedback={res.getErrors("variableTemplate")}
 									on:change={(e) => onSelectHandler(e, "variableTemplate-" + index)}
 									disabled={blockDataRelevant}
 								/>
@@ -378,9 +378,9 @@
 									label="Variable description"
 									bind:value={variable.description}
 									on:input={onChangeHandler}
-									valid={res.isValid(`description-${index}`)}
-									invalid={res.hasErrors(`description-${index}`)}
-									feedback={res.getErrors(`description-${index}`)}
+									valid={res.isValid("description")}
+									invalid={res.hasErrors("description")}
+									feedback={res.getErrors("description")}
 								/>
 							</div>
 							<div slot="description">
@@ -405,8 +405,8 @@
 									isMulti={false}
 									bind:target={variable.dataType}
 									placeholder="-- Please select --"
-									invalid={res.hasErrors(`dataType-${index}`)}
-									feedback={res.getErrors(`dataType-${index}`)}
+									invalid={res.hasErrors("dataType")}
+									feedback={res.getErrors("dataType")}
 									clearable={true}
 									on:change={(e) => onSelectHandler(e, `dataType-${index}`)}
 									disabled={blockDataRelevant}
@@ -429,8 +429,8 @@
 										clearable={false}
 										bind:target={variable.displayPattern}
 										placeholder="-- Please select --"
-										invalid={res.hasErrors(`displayPattern-${index}`)}
-										feedback={res.getErrors(`displayPattern-${index}`)}
+										invalid={res.hasErrors("displayPattern")}
+										feedback={res.getErrors("displayPattern")}
 										on:change={(e) => onSelectHandler(e, `displayPattern-${index}`)}
 									/>
 								{/if}
@@ -464,8 +464,8 @@
 									clearable={true}
 									bind:target={variable.unit}
 									placeholder="-- Please select --"
-									invalid={res.hasErrors(`unit-${index}`)}
-									feedback={res.getErrors(`unit-${index}`)}
+									invalid={res.hasErrors("unit")}
+									feedback={res.getErrors("unit")}
 									on:change={(e) => onSelectHandler(e, `unit-${index}`)}
 								/>
 							</div>
@@ -497,8 +497,8 @@
 									clearable={true}
 									bind:target={variable.meanings}
 									placeholder="-- Please select --"
-									invalid={res.hasErrors(`meanings-${index}`)}
-									feedback={res.getErrors(`meanings-${index}`)}
+									invalid={res.hasErrors("meanings")}
+									feedback={res.getErrors("meanings")}
 									on:change={(e) => onSelectHandler(e, `meanings-${index}`)}
 								/>
 							</div>
@@ -525,8 +525,8 @@
 									clearable={true}
 									bind:target={variable.constraints}
 									placeholder="-- Please select --"
-									invalid={res.hasErrors(`constraints-${index}`)}
-									feedback={res.getErrors(`constraints-${index}`)}
+									invalid={res.hasErrors("constraints")}
+									feedback={res.getErrors("constraints")}
 									on:change={(e) => onSelectHandler(e, `constraints-${index}`)}
 									disabled={blockDataRelevant}
 								/>
@@ -576,9 +576,9 @@
 									label="Name"
 									bind:value={variable.name}
 									on:input={onChangeHandler}
-									valid={res.isValid(`name-${index}`)}
-									invalid={res.hasErrors(`name-${index}`)}
-									feedback={res.getErrors(`name-${index}`)}
+									valid={res.isValid("name")}
+									invalid={res.hasErrors("name")}
+									feedback={res.getErrors("name")}
 									disabled={blockDataRelevant}
 								/>
 			</Overview>
@@ -592,3 +592,4 @@
 		</div>
 	{/if}
 </div>
+<div>{console.log(res)}</div>
