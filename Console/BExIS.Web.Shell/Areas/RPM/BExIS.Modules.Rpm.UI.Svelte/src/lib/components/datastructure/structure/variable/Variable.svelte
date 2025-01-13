@@ -90,7 +90,7 @@
 		suggestedUnits = variable.possibleUnits;
 		suggestedTemplates = variable.possibleTemplates;
 		console.log("🚀 ~ onMount ~ variable:", variable)
-		
+
 		// reset & reload validation
 		suite.reset();
 
@@ -144,12 +144,12 @@
 
 			// update display patter and reset it if it changed
 
-			if (id == 'dataType') {
+			if (id.includes('dataType')) {
 				updateDisplayPattern(variable.dataType);
 			}
 
 			console.log(id, e.detail, variable);
-			if (id == 'variableTemplate') {
+			if (id.includes('variableTemplate')) {
 				if (setByTemplate) {
 					// if true, update unit & datatype based on settings
 					if (variable.dataType == undefined || variable.dataType == '') {
@@ -169,7 +169,7 @@
 				variable.constraints = updateConstraints(variable, e.detail?.constraints);
 			}
 
-			if (id == 'meanings') {
+			if (id.includes('meanings')) {
 				var last = e.detail[e.detail.length - 1];
 				variable.constraints = updateConstraints(variable, last.constraints);
 			}
@@ -308,18 +308,18 @@
 							bind:expand
 							{blockDataRelevant}
 						>
-		
+
 						<Container name="Title" >
 							<div class="flex" slot="property">
 								<div class="grow">
 								<TextInput
-									id="name"
+									id="name-{index}"
 									label="Name"
 									bind:value={variable.name}
 									on:input={onChangeHandler}
-									valid={res.isValid('name')}
-									invalid={res.hasErrors('name')}
-									feedback={res.getErrors('name')}
+									valid={res.isValid("name")}
+									invalid={res.hasErrors("name")}
+									feedback={res.getErrors("name")}
 									disabled={blockDataRelevant}
 								/>
 							</div>
@@ -331,6 +331,7 @@
 									<div class="grow">Template (data is copied and changeable!)</div>
 									{#each suggestedTemplates.slice(0, 3) as t}
 										<button
+											title="Click to select"
 											class="badge"
 											class:variant-filled-primary={t.text == variable.template?.text}
 											class:variant-ghost-primary={t.text != variable.template?.text}
@@ -339,8 +340,8 @@
 									{/each}
 								</div>
 								<MultiSelect
-									id="variableTemplate"
-									title=""
+									id="variableTemplate-{index}"
+									title="Variable Template"
 									source={variableTemplates}
 									itemId="id"
 									itemLabel="text"
@@ -351,9 +352,9 @@
 									clearable={true}
 									bind:target={variable.template}
 									placeholder="-- Please select --"
-									invalid={res.hasErrors('variableTemplate') && !blockDataRelevant}
-									feedback={res.getErrors('variableTemplate')}
-									on:change={(e) => onSelectHandler(e, 'variableTemplate')}
+									invalid={res.hasErrors("variableTemplate") && !blockDataRelevant}
+									feedback={res.getErrors("variableTemplate")}
+									on:change={(e) => onSelectHandler(e, "variableTemplate-" + index)}
 									disabled={blockDataRelevant}
 								/>
 							</div>
@@ -366,20 +367,20 @@
 					</header>
 
 					<section class="py-2 px-10">
-						
+
 
 
 						<!--Description-->
 						<Container>
 							<div slot="property">
 								<TextArea
-									id="description"
-									label="Description"
+									id="description-{index}"
+									label="Variable description"
 									bind:value={variable.description}
 									on:input={onChangeHandler}
-									valid={res.isValid('description')}
-									invalid={res.hasErrors('description')}
-									feedback={res.getErrors('description')}
+									valid={res.isValid("description")}
+									invalid={res.hasErrors("description")}
+									feedback={res.getErrors("description")}
 								/>
 							</div>
 							<div slot="description">
@@ -393,7 +394,7 @@
 						<Container name="DataType">
 							<div slot="property">
 								<MultiSelect
-									id="dataType"
+									id="dataType-{index}"
 									title="Data Type"
 									source={datatypes}
 									itemId="id"
@@ -404,10 +405,10 @@
 									isMulti={false}
 									bind:target={variable.dataType}
 									placeholder="-- Please select --"
-									invalid={res.hasErrors('dataType')}
-									feedback={res.getErrors('dataType')}
+									invalid={res.hasErrors("dataType")}
+									feedback={res.getErrors("dataType")}
 									clearable={true}
-									on:change={(e) => onSelectHandler(e, 'dataType')}
+									on:change={(e) => onSelectHandler(e, `dataType-${index}`)}
 									disabled={blockDataRelevant}
 								/>
 							</div>
@@ -416,7 +417,7 @@
 								<!--Show only when display pattern exists-->
 								{#if displayPattern != undefined && displayPattern.length > 0}
 									<MultiSelect
-										id="displayPattern"
+										id="displayPattern-{index}"
 										title="Display Pattern"
 										source={displayPattern}
 										itemId="id"
@@ -428,9 +429,9 @@
 										clearable={false}
 										bind:target={variable.displayPattern}
 										placeholder="-- Please select --"
-										invalid={res.hasErrors('displayPattern')}
-										feedback={res.getErrors('displayPattern')}
-										on:change={(e) => onSelectHandler(e, 'displayPattern')}
+										invalid={res.hasErrors("displayPattern")}
+										feedback={res.getErrors("displayPattern")}
+										on:change={(e) => onSelectHandler(e, `displayPattern-${index}`)}
 									/>
 								{/if}
 							</div>
@@ -442,15 +443,16 @@
 										{#each suggestedUnits?.slice(0, 3) as u}
 											<button
 												class="badge"
-												class:variant-filled-primary={u.text == variable.unit?.text}
-												class:variant-ghost-primary={u.text != variable.unit?.text}
+												title="Click to select"
+												class:variant-filled-primary={u?.text == variable.unit?.text}
+												class:variant-ghost-primary={u?.text != variable.unit?.text}
 												on:click={() => (variable.unit = u)}>{u.text}</button
 											>
 										{/each}
 									{/if}
 								</div>
 								<MultiSelect
-									id="unit"
+									id="unit-{index}"
 									title=""
 									source={units}
 									itemId="id"
@@ -462,9 +464,9 @@
 									clearable={true}
 									bind:target={variable.unit}
 									placeholder="-- Please select --"
-									invalid={res.hasErrors('unit')}
-									feedback={res.getErrors('unit')}
-									on:change={(e) => onSelectHandler(e, 'unit')}
+									invalid={res.hasErrors("unit")}
+									feedback={res.getErrors("unit")}
+									on:change={(e) => onSelectHandler(e, `unit-${index}`)}
 								/>
 							</div>
 
@@ -480,12 +482,12 @@
 						<Container>
 							<div slot="property">
 								<div class="flex w-full gap-1 py-1">
-									<div class="grow">Meanings</div>
+									<!--<div class="grow">Meanings</div>-->
 								</div>
 								<MultiSelect
-									id="meanings"
-									title=""
+									id="meanings-{index}"
 									source={meanings}
+									title="Meanings"
 									itemId="id"
 									itemLabel="text"
 									itemGroup="group"
@@ -495,9 +497,9 @@
 									clearable={true}
 									bind:target={variable.meanings}
 									placeholder="-- Please select --"
-									invalid={res.hasErrors('meanings')}
-									feedback={res.getErrors('meanings')}
-									on:change={(e) => onSelectHandler(e, 'meanings')}
+									invalid={res.hasErrors("meanings")}
+									feedback={res.getErrors("meanings")}
+									on:change={(e) => onSelectHandler(e, `meanings-${index}`)}
 								/>
 							</div>
 							<div slot="description">
@@ -511,7 +513,7 @@
 									<div class="grow">Constraints</div>
 								</div>
 								<MultiSelect
-									id="constraints"
+									id="constraints-{index}"
 									title=""
 									source={constraints}
 									itemId="id"
@@ -523,9 +525,9 @@
 									clearable={true}
 									bind:target={variable.constraints}
 									placeholder="-- Please select --"
-									invalid={res.hasErrors('constraints')}
-									feedback={res.getErrors('constraints')}
-									on:change={(e) => onSelectHandler(e, 'constraints')}
+									invalid={res.hasErrors("constraints")}
+									feedback={res.getErrors("constraints")}
+									on:change={(e) => onSelectHandler(e, `constraints-${index}`)}
 									disabled={blockDataRelevant}
 								/>
 							</div>
@@ -570,13 +572,13 @@
 				>
 
 						<TextInput
-									id="name"
+									id="name-{index}"
 									label="Name"
 									bind:value={variable.name}
 									on:input={onChangeHandler}
-									valid={res.isValid('name')}
-									invalid={res.hasErrors('name')}
-									feedback={res.getErrors('name')}
+									valid={res.isValid("name")}
+									invalid={res.hasErrors("name")}
+									feedback={res.getErrors("name")}
 									disabled={blockDataRelevant}
 								/>
 			</Overview>
@@ -590,3 +592,4 @@
 		</div>
 	{/if}
 </div>
+<div>{console.log(res)}</div>

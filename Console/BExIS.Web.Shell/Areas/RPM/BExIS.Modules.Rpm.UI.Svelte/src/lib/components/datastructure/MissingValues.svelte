@@ -53,6 +53,7 @@
 				on:remove={() => remove(i)}
 				last={list.length - 1 === i}
 				{disabled}
+				index={i}
 			/>
 		{/each}
 	{/if}
