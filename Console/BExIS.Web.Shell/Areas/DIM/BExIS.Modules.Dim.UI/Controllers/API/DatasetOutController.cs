@@ -110,7 +110,8 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                 int versionNumber = dataset.Versions.Count;
 
                 // get content
-                ApiDatasetModel datasetModel = getContent(datasetVersion, id, versionNumber, dataset.MetadataStructure.Id, dataset.DataStructure.Id);
+                var datastructureId = dataset.DataStructure==null?0: dataset.DataStructure.Id;
+                ApiDatasetModel datasetModel = getContent(datasetVersion, id, versionNumber, dataset.MetadataStructure.Id, datastructureId);
 
                 // create response and return as JSON
                 var response = Request.CreateResponse(HttpStatusCode.OK);
