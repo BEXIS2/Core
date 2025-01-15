@@ -8,7 +8,7 @@
 </script>
 
 <tableOption>
-	<div class="w-22" id={row.id}>
+	<div class="w-24" id={row.id}>
 		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 		<button
 			type="button"
