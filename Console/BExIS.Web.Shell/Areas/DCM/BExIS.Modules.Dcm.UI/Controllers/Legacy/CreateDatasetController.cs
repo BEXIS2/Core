@@ -65,7 +65,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
         public ActionResult Index(long id = -1, string type = "")
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Edit Metadata", this.Session.GetTenant());
 
             Session["CreateDatasetTaskmanager"] = null;
             if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
