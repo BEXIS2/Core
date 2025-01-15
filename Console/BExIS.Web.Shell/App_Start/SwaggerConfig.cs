@@ -36,6 +36,18 @@ namespace BExIS.Web.Shell
                 c.Schemes(new[] { "https" });
 
                 if (!string.IsNullOrEmpty(rootUrl)) c.RootUrl(r => rootUrl);
+
+                c.GroupActionsBy(api =>
+                {
+                    var pathArray = api.RelativePath.Split('/');
+                    if (pathArray.Any())
+                    {
+                        var enity = pathArray[1].ToUpperInvariant().Split('?').First();
+                        return enity;
+                    }
+                    return "not grouped"; // Default group name
+                });
+
             }).EnableSwaggerUi("apihelp/{*assetPath}", c =>
             {
                 c.DocumentTitle("API´s");
