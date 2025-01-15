@@ -8,6 +8,7 @@
 	export let displayName = '';
 	export let description = '';
 	export let last = true;
+	export let index = 0;
 	export let disabled:boolean = false;
 
 
@@ -26,7 +27,7 @@
 	<!-- <Label>Name:</Label>  -->
 		<div class="grow">
 		<TextInput
-			id="missing-value-name"
+			id="missing-value-name-{index}"
 			bind:value={displayName}
 			on:change
 			placeholder="Missing Value"
@@ -38,7 +39,7 @@
 	<!-- <Label>Description:</Label>  -->
 	<div class="grow">
 	<TextInput
-		id="missing-value-description"
+		id="missing-value-description-{index}"
 		bind:value={description}
 		on:change
 		placeholder="Description"
@@ -50,7 +51,7 @@
 	{#if !disabled}
 	<div class="self-center text-xl mt-5 w-11">
 		<button
-			id="delete-missing-value"
+			id="delete-missing-value-{index}"
 			title="delete"
 			type="button"
 			on:mouseover={() => helpStore.show('delete-missing-value')}
@@ -58,7 +59,7 @@
 		>
 		{#if last}
 			<button
-				id="add-missing-value"
+				id="add-missing-value-{index}"
 				title="add"
 				class="add"
 				type="button"
