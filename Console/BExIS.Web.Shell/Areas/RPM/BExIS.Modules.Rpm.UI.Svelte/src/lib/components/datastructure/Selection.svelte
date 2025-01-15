@@ -10,7 +10,7 @@
 	import { store, load } from './services';
 
 	import Fa from 'svelte-fa';
-	import { faSave, faChevronRight, faArrowRotateLeft,faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+	import { faSave, faChevronRight, faArrowRotateLeft,faArrowLeft, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 	//types
 	import type { DataStructureCreationModel, markerType } from './types';
@@ -574,6 +574,9 @@
 							{/each}
 						</div>
 						<div class="text-right">
+							<button type="button" title="cancel" class="btn variant-filled-warning text-lg"  on:click={()=> goTo(document.referrer)}>
+								<Fa icon={faXmark} size="lg" />
+							</button>
 							<button title="save" class="btn variant-filled-primary text-lg" disabled={!isValid}>
 								<Fa icon={faSave} size="lg" />
 							</button>
