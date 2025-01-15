@@ -15,7 +15,7 @@
 	import * as apiCalls from './services/apiCalls';
 	import Form from './components/form.svelte';
 	import TableOption from './components/tableOptions.svelte';
-	import ConstrainElement from '../components/constrainElement.svelte';
+	import ConstraintElement from '../components/constraintElement.svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import Fa from 'svelte-fa';
 	import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
@@ -175,7 +175,7 @@
 							formalDescription: {
 								header: 'Formal Description',
 								instructions: {
-								renderComponent: ConstrainElement
+								renderComponent: ConstraintElement
 							}
 							},
 							negated: {
