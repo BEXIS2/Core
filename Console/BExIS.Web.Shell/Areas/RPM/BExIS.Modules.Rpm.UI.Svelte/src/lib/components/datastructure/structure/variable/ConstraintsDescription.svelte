@@ -9,7 +9,8 @@
 		{#each list as i}
 			<div class="flex flex-col gap-1">
 				<span class="text-xs font-semibold">{i.text}</span>
-				<span class="text-xs">- {i.description}</span>
+				<span class="text-xs break-words line-clamp-2" title="{i.description}"
+				>- {i.description}</span>
 			</div>
 		{/each}
 	{/if}

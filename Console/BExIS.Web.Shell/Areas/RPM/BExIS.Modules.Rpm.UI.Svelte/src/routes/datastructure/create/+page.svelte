@@ -36,6 +36,7 @@
 	import { dataStructureHelp } from '../help';
 	import { goTo } from '$services/BaseCaller';
 	import { goto } from '$app/navigation';
+	import { Modal } from '@skeletonlabs/skeleton';
 	let helpItems: helpItemType[] = dataStructureHelp;
 
 	// load attributes from div
@@ -188,3 +189,4 @@
 		<ErrorMessage {error} />
 	{/await}
 </Page>
+<Modal />

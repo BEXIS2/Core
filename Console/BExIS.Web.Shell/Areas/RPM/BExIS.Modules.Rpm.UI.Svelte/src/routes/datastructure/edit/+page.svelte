@@ -30,6 +30,7 @@
 
 	//help
 	import { dataStructureHelp } from '../help';
+	import { Modal } from '@skeletonlabs/skeleton';
 	let helpItems: helpItemType[] = dataStructureHelp;
 
 	// load attributes from div
@@ -126,3 +127,4 @@
 		<ErrorMessage {error} />
 	{/await}
 </Page>
+<Modal />

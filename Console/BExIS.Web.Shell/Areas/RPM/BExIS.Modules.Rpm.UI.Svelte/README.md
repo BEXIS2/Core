@@ -1,4 +1,6 @@
 # bexis2-rpm-ui
+## 0.2.8
+- add cancel button to file reader view 
 
 ## 0.2.5
 - refactor file reader view
