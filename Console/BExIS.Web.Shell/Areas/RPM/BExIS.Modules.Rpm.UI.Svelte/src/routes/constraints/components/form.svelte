@@ -282,7 +282,7 @@
 				<label>Formal Description</label>
 
 				{#if constraint.formalDescription && constraint.formalDescription != ''}
-					<p class="ml-2">
+					<p class="ml-2 break-words line-clamp-2" title={constraint.formalDescription}>
 						{constraint.formalDescription}
 					</p>
 				{:else}

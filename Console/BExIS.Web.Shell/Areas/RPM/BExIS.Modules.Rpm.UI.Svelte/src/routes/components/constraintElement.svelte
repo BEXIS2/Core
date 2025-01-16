@@ -14,7 +14,7 @@
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="break-words w-3/4 line-clamp-2"
+<div class="break-words w-modal line-clamp-2"
 	 title="{value}" 
 	 on:mouseover={() => {
 		helpStore.showHelpItem(helpitem);
