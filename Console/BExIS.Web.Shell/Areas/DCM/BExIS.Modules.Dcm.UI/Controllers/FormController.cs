@@ -60,7 +60,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult ImportMetadata(long metadataStructureId, bool edit = true, bool created = false, bool locked = false)
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Edit Metadata", this.Session.GetTenant());
 
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
@@ -201,7 +201,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             #region prepare model & View Data
 
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Edit Metadata", this.Session.GetTenant());
             ViewData["Locked"] = locked;
             ViewData["ShowOptional"] = false;
             ViewData["EntityId"] = entityId;
@@ -286,7 +286,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 ? (XmlDocument)Session[sessionKeyForMetadata]
                 : new XmlDocument();
 
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant()); ;
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Edit Metadata", this.Session.GetTenant()); ;
             ViewData["Locked"] = true;
             ViewData["ShowOptional"] = false;
             ViewData["isValid"] = isValid;
@@ -405,7 +405,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     metadata = dm.GetDatasetLatestMetadataVersion(entityId);
                 }
 
-                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant()); ;
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Edit Metadata", this.Session.GetTenant()); ;
                 ViewData["Locked"] = true;
                 ViewData["ShowOptional"] = false;
                 ViewData["EntityId"] = entityId;
@@ -547,7 +547,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             FormHelper.ClearCache();
 
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Edit Metadata", this.Session.GetTenant());
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
             //TaskManager?.AddToBus(CreateTaskmanager.SAVE_WITH_ERRORS, true);
@@ -655,7 +655,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult StartMetadataEditor()
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Edit Metadata", this.Session.GetTenant());
             ViewData["ShowOptional"] = true;
             ViewData["EntityId"] = (long)-1;
 

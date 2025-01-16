@@ -436,11 +436,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         updatedVariable.Unit = unit;
                         updatedVariable.DisplayPatternId = displayPattern;
                         updatedVariable.OrderNo = orderNo;
-                        updatedVariable.VariableTemplate = variableManager.GetVariableTemplate(variable.Template.Id);
+                    
                         updatedVariable.IsKey = variable.IsKey;
                         updatedVariable.IsValueOptional = variable.IsOptional;
                         updatedVariable.VariableConstraints = variableHelper.ConvertTo(variable.Constraints, constraintsManager);
                         updatedVariable.Meanings = variableHelper.ConvertTo(variable.Meanings, meaningManager);
+
+                        // template
+                        if (variable.Template != null) updatedVariable.VariableTemplate = variableManager.GetVariableTemplate(variable.Template.Id);
+                        else updatedVariable.VariableTemplate = null;
 
                         //add update of missing values
                         updatedVariable.MissingValues = variableHelper.Update(variable.MissingValues, updatedVariable.MissingValues);
@@ -449,6 +453,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     }
                     else // create
                     {
+                        long templateid = variable.Template != null ? variable.Template.Id : 0;
+
                         updatedVariable = variableManager.CreateVariable(
                             variable.Name,
                             dataType,
@@ -457,7 +463,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             variable.IsOptional,
                             variable.IsKey,
                             orderNo,
-                            variable.Template.Id,
+                            templateid,
                             variable.Description,
                             "",
                             "",
