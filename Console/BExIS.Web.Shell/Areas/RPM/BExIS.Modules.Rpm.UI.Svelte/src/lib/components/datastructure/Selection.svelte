@@ -20,6 +20,8 @@
 	import Attributes from './structure/Attributes.svelte';
 	import ConstraintsDescription from './structure/variable/ConstraintsDescription.svelte';
 	import { goTo } from './services';
+	import  { type ModalSettings, getModalStore } from '@skeletonlabs/skeleton';
+	const modalStore = getModalStore();
 
 	export let model: DataStructureCreationModel;
 	$: model;
@@ -442,6 +444,24 @@
 	function back() {
 		goTo("/rpm/datastructure/create");
 	}
+
+function cancelFn() {
+console.log("cancelFn");
+const confirm: ModalSettings = {
+		type: 'confirm',
+		title: 'Cancel data structure generation',
+		body:
+			'Are you sure you wish to cancel the data structure generation?',
+		// TRUE if confirm pressed, FALSE if cancel pressed
+		response: (r: boolean) => {
+			if (r === true) {
+				goTo(document.referrer);
+			}
+		}
+	};
+	modalStore.trigger(confirm);
+}
+
 </script>
 
 
@@ -574,7 +594,7 @@
 							{/each}
 						</div>
 						<div class="text-right">
-							<button type="button" title="cancel" class="btn variant-filled-warning text-lg"  on:click={()=> goTo(document.referrer)}>
+							<button type="button" title="cancel" class="btn variant-filled-warning text-lg"  on:click={cancelFn}>
 								<Fa icon={faXmark} size="lg" />
 							</button>
 							<button title="save" class="btn variant-filled-primary text-lg" disabled={!isValid}>
