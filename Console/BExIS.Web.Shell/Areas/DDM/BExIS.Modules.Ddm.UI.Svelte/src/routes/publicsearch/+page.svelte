@@ -149,7 +149,15 @@
 				data: tableStore,
 				search: false,
 				optionsComponent: ShowData as any,
-				columns
+				columns:
+					{
+						iD: {
+							header: 'Id',
+							instructions: {
+								toSortableValueFn: (id: string) => parseInt(id)
+							}
+					}
+				}
 			};
 		}
 	};
