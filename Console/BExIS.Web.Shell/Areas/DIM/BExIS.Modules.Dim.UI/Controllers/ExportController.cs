@@ -261,6 +261,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     string zipName = publishingManager.GetZipFileName(id, datasetVersionNumber);
                     string zipPath = Path.Combine(publishingManager.GetDirectoryPath(id, brokerName), zipName);
 
+     
                     using (var zipFileStream = new FileStream(zipPath, FileMode.Create))
                     using (var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Update))
                     {
