@@ -233,7 +233,7 @@
 			.map((header, index) => ({
 				header: header.DisplayName,
 				placeholder: header.Placeholder,
-				index
+				index:headers.indexOf(header)
 			}));
 
 		if (placeholders.length > 0) {
