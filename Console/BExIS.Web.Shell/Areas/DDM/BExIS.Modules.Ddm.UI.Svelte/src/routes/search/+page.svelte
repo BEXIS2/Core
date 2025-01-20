@@ -143,16 +143,26 @@
 
 		if (init) {
 			columns = mapping.columns;
+			console.log("🚀 ~ columns:", columns)
+
 
 			config = {
 				id: 'search-table',
 				data: tableStore,
 				search: false,
 				optionsComponent: ShowData as any,
-				columns
-			};
+				columns:
+					{
+						iD: {
+							header: 'Id',
+							instructions: {
+								toSortableValueFn: (id: string) => parseInt(id)
+							}
+					}
+				}
 		}
-	};
+	}
+};
 
 	const mapFacets = (facets: any, criteria: any) => {
 		const appliedFacets = criteria.filter((criterion: any) => criterion.SearchComponent.Type === 1);

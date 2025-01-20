@@ -592,4 +592,3 @@
 		</div>
 	{/if}
 </div>
-<div>{console.log(res)}</div>
