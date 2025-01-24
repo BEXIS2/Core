@@ -159,11 +159,11 @@ namespace BExIS.Dlm.Entities.DataStructure
             {
                 if (Negated)
                 {
-                    return (string.Format("The value must not be any of these items: {0}.", string.Join(",", Items.Select(p => p.Key))));
+                    return (string.Format("The value must not be any of these items: {0}.", string.Join(", ", Items.Select(p => p.Key))));
                 }
                 else
                 {
-                    return (string.Format("The value must be one of these items: {0}.", string.Join(",", Items.Select(p => p.Key))));
+                    return (string.Format("The value must be one of these items: {0}.", string.Join(", ", Items.Select(p => p.Key))));
                 }
             }
         }

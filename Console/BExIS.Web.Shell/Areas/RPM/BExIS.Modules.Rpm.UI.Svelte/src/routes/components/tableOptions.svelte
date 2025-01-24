@@ -8,7 +8,7 @@
 </script>
 
 <tableOption>
-	<div class="w-18" id={row.id}>
+	<div class="w-24" id={row.id}>
 		{#if row.inUse === false}
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<button
@@ -46,7 +46,7 @@
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<button
 				type="button"
-				class="chip variant-filled-primary shadow-md"
+				class="chip variant-filled-primary shadow-md bg-opacity-40 text-opacity-40 "
 				title="Edit, {row.name}"
 				id="edit"
 				disabled
@@ -59,7 +59,7 @@
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<button
 				type="button"
-				class="chip variant-filled-error shadow-md"
+				class="chip variant-filled-error shadow-md bg-opacity-40 text-opacity-40"
 				title="Delete, {row.name}"
 				id="delete"
 				disabled
