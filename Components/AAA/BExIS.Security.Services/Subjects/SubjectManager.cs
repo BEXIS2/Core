@@ -49,7 +49,7 @@ namespace BExIS.Security.Services.Subjects
                 {
                     if (whereClause != null && orderBy != null)
                     {
-                        var l = Subjects.Where(whereClause);
+                        var l = SubjectRepository.Query(whereClause);
                         var x = l.OrderBy(orderbyClause);
                         var y = x.Skip((pageNumber - 1) * pageSize);
                         var z = y.Take(pageSize);
