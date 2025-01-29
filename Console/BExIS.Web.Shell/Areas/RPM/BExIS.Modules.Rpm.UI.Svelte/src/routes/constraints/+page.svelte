@@ -56,7 +56,8 @@
 			formalDescription: '',
 			type: '',
 			negated: false,
-			inUse: false,
+			inUseByVariable: false,
+			inUseByMeaning: false,
 			variableIDs: []
 		};
 	}
@@ -175,14 +176,18 @@
 							formalDescription: {
 								header: 'Formal Description',
 								instructions: {
-								renderComponent: ConstraintElement
-							}
+									renderComponent: ConstraintElement
+								}
 							},
 							negated: {
 								disableFiltering: true,
 								exclude: true
 							},
-							inUse: {
+							inUseByVariable: {
+								disableFiltering: true,
+								exclude: true
+							},
+							inUseByMeaning: {
 								disableFiltering: true,
 								exclude: true
 							},

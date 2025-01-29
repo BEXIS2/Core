@@ -46,7 +46,7 @@
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<button
 				type="button"
-				class="chip variant-filled-primary shadow-md bg-opacity-40 text-opacity-40 "
+				class="chip variant-filled-primary shadow-md bg-opacity-40 text-opacity-40"
 				title="Edit, {row.name}"
 				id="edit"
 				disabled

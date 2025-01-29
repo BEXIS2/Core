@@ -89,7 +89,7 @@
 		suggestedDataType = variable.dataType;
 		suggestedUnits = variable.possibleUnits;
 		suggestedTemplates = variable.possibleTemplates;
-		console.log("🚀 ~ onMount ~ variable:", variable)
+		console.log('🚀 ~ onMount ~ variable:', variable);
 
 		// reset & reload validation
 		suite.reset();
@@ -308,68 +308,62 @@
 							bind:expand
 							{blockDataRelevant}
 						>
-
-						<Container name="Title" >
-							<div class="flex" slot="property">
-								<div class="grow">
-								<TextInput
-									id="name-{index}"
-									label="Name"
-									bind:value={variable.name}
-									on:input={onChangeHandler}
-									valid={res.isValid("name")}
-									invalid={res.hasErrors("name")}
-									feedback={res.getErrors("name")}
-									disabled={blockDataRelevant}
-								/>
-							</div>
-								<Status {isValid}></Status>
-							</div>
-
-							<div slot="template">
-								<div class="flex w-full gap-1 py-1">
-									<div class="grow">Template (data is copied and changeable!)</div>
-									{#each suggestedTemplates.slice(0, 3) as t}
-										<button
-											title="Click to select"
-											class="badge"
-											class:variant-filled-primary={t.text == variable.template?.text}
-											class:variant-ghost-primary={t.text != variable.template?.text}
-											on:click={() => (variable.template = t)}>{t.text}</button
-										>
-									{/each}
+							<Container name="Title">
+								<div class="flex" slot="property">
+									<div class="grow">
+										<TextInput
+											id="name-{index}"
+											label="Name"
+											bind:value={variable.name}
+											on:input={onChangeHandler}
+											valid={res.isValid('name')}
+											invalid={res.hasErrors('name')}
+											feedback={res.getErrors('name')}
+											disabled={blockDataRelevant}
+										/>
+									</div>
+									<Status {isValid}></Status>
 								</div>
-								<MultiSelect
-									id="variableTemplate-{index}"
-									title="Variable Template"
-									source={variableTemplates}
-									itemId="id"
-									itemLabel="text"
-									itemGroup="group"
-									complexSource={true}
-									complexTarget={true}
-									isMulti={false}
-									clearable={true}
-									bind:target={variable.template}
-									placeholder="-- Please select --"
-									invalid={res.hasErrors("variableTemplate") && !blockDataRelevant}
-									feedback={res.getErrors("variableTemplate")}
-									on:change={(e) => onSelectHandler(e, "variableTemplate-" + index)}
-									disabled={blockDataRelevant}
-								/>
-							</div>
 
-							<div slot="description">...</div>
+								<div slot="template">
+									<div class="flex w-full gap-1 py-1">
+										<div class="grow">Template (data is copied and changeable!)</div>
+										{#each suggestedTemplates.slice(0, 3) as t}
+											<button
+												title="Click to select"
+												class="badge"
+												class:variant-filled-primary={t.text == variable.template?.text}
+												class:variant-ghost-primary={t.text != variable.template?.text}
+												on:click={() => (variable.template = t)}>{t.text}</button
+											>
+										{/each}
+									</div>
+									<MultiSelect
+										id="variableTemplate-{index}"
+										title="Variable Template"
+										source={variableTemplates}
+										itemId="id"
+										itemLabel="text"
+										itemGroup="group"
+										complexSource={true}
+										complexTarget={true}
+										isMulti={false}
+										clearable={true}
+										bind:target={variable.template}
+										placeholder="-- Please select --"
+										invalid={res.hasErrors('variableTemplate') && !blockDataRelevant}
+										feedback={res.getErrors('variableTemplate')}
+										on:change={(e) => onSelectHandler(e, 'variableTemplate-' + index)}
+										disabled={blockDataRelevant}
+									/>
+								</div>
 
-
-						</Container>
+								<div slot="description">...</div>
+							</Container>
 						</Header>
 					</header>
 
 					<section class="py-2 px-10">
-
-
-
 						<!--Description-->
 						<Container>
 							<div slot="property">
@@ -378,9 +372,9 @@
 									label="Variable description"
 									bind:value={variable.description}
 									on:input={onChangeHandler}
-									valid={res.isValid("description")}
-									invalid={res.hasErrors("description")}
-									feedback={res.getErrors("description")}
+									valid={res.isValid('description')}
+									invalid={res.hasErrors('description')}
+									feedback={res.getErrors('description')}
 								/>
 							</div>
 							<div slot="description">
@@ -405,8 +399,8 @@
 									isMulti={false}
 									bind:target={variable.dataType}
 									placeholder="-- Please select --"
-									invalid={res.hasErrors("dataType")}
-									feedback={res.getErrors("dataType")}
+									invalid={res.hasErrors('dataType')}
+									feedback={res.getErrors('dataType')}
 									clearable={true}
 									on:change={(e) => onSelectHandler(e, `dataType-${index}`)}
 									disabled={blockDataRelevant}
@@ -429,8 +423,8 @@
 										clearable={false}
 										bind:target={variable.displayPattern}
 										placeholder="-- Please select --"
-										invalid={res.hasErrors("displayPattern")}
-										feedback={res.getErrors("displayPattern")}
+										invalid={res.hasErrors('displayPattern')}
+										feedback={res.getErrors('displayPattern')}
 										on:change={(e) => onSelectHandler(e, `displayPattern-${index}`)}
 									/>
 								{/if}
@@ -464,12 +458,11 @@
 									clearable={true}
 									bind:target={variable.unit}
 									placeholder="-- Please select --"
-									invalid={res.hasErrors("unit")}
-									feedback={res.getErrors("unit")}
+									invalid={res.hasErrors('unit')}
+									feedback={res.getErrors('unit')}
 									on:change={(e) => onSelectHandler(e, `unit-${index}`)}
 								/>
 							</div>
-
 
 							<div slot="description">
 								{#if variable.dataType}
@@ -477,7 +470,6 @@
 								{/if}
 							</div>
 						</Container>
-
 
 						<Container>
 							<div slot="property">
@@ -497,8 +489,8 @@
 									clearable={true}
 									bind:target={variable.meanings}
 									placeholder="-- Please select --"
-									invalid={res.hasErrors("meanings")}
-									feedback={res.getErrors("meanings")}
+									invalid={res.hasErrors('meanings')}
+									feedback={res.getErrors('meanings')}
 									on:change={(e) => onSelectHandler(e, `meanings-${index}`)}
 								/>
 							</div>
@@ -525,8 +517,8 @@
 									clearable={true}
 									bind:target={variable.constraints}
 									placeholder="-- Please select --"
-									invalid={res.hasErrors("constraints")}
-									feedback={res.getErrors("constraints")}
+									invalid={res.hasErrors('constraints')}
+									feedback={res.getErrors('constraints')}
 									on:change={(e) => onSelectHandler(e, `constraints-${index}`)}
 									disabled={blockDataRelevant}
 								/>
@@ -540,10 +532,13 @@
 								<div class="flex w-full gap-1 py-1">
 									<div class="grow">Missing Values</div>
 								</div>
-								<MissingValues bind:list={variable.missingValues} showTitle={false} disabled={blockDataRelevant}></MissingValues>
+								<MissingValues
+									bind:list={variable.missingValues}
+									showTitle={false}
+									disabled={blockDataRelevant}
+								></MissingValues>
 							</div>
-							<div slot="description">
-							</div>
+							<div slot="description"></div>
 						</Container>
 					</section>
 
@@ -570,18 +565,17 @@
 					description={variable.description}
 					datapreview={cutData(data).join(', ')}
 				>
-
-						<TextInput
-									id="name-{index}"
-									label="Name"
-									bind:value={variable.name}
-									on:input={onChangeHandler}
-									valid={res.isValid("name")}
-									invalid={res.hasErrors("name")}
-									feedback={res.getErrors("name")}
-									disabled={blockDataRelevant}
-								/>
-			</Overview>
+					<TextInput
+						id="name-{index}"
+						label="Name"
+						bind:value={variable.name}
+						on:input={onChangeHandler}
+						valid={res.isValid('name')}
+						invalid={res.hasErrors('name')}
+						feedback={res.getErrors('name')}
+						disabled={blockDataRelevant}
+					/>
+				</Overview>
 			{/if}
 		</div>
 		<div
