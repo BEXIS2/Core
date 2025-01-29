@@ -62,7 +62,7 @@ namespace BExIS.Security.Services.Subjects
                     }
                     else if (whereClause != null)
                     {
-                        var filtered = Groups.Where(whereClause);
+                        var filtered = GroupRepository.Query(whereClause);
                         count = filtered.Count();
 
                         return filtered.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
@@ -100,24 +100,18 @@ namespace BExIS.Security.Services.Subjects
                 //return Task.FromException(new Exception());
                 return Task.CompletedTask;
 
-            using (var uow = this.GetUnitOfWork())
-            {
-                var groupRepository = uow.GetRepository<Group>();
-                groupRepository.Put(role);
-                uow.Commit();
-            }
+            var groupRepository = _guow.GetRepository<Group>();
+            groupRepository.Put(role);
+            _guow.Commit();
 
             return Task.CompletedTask;
         }
 
         public Task DeleteAsync(Group role)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var groupRepository = uow.GetRepository<Group>();
-                groupRepository.Delete(role);
-                uow.Commit();
-            }
+            var groupRepository = _guow.GetRepository<Group>();
+            groupRepository.Delete(role);
+            _guow.Commit();
 
             return Task.CompletedTask;
         }
@@ -129,29 +123,20 @@ namespace BExIS.Security.Services.Subjects
 
         public Task<Group> FindByIdAsync(long roleId)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var groupRepository = uow.GetRepository<Group>();
-                return Task.FromResult(groupRepository.Get(roleId));
-            }
+            return Task.FromResult(GroupRepository.Get(roleId));
         }
 
         public Task<Group> FindByNameAsync(string roleName)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var groupRepository = uow.GetRepository<Group>();
+            var groups = GroupRepository.Query(u => u.Name.ToLowerInvariant() == roleName.ToLowerInvariant()).ToList();
 
-                var groups = groupRepository.Query(u => u.Name.ToLowerInvariant() == roleName.ToLowerInvariant()).ToList();
+            if (!groups.Any())
+                return Task.FromResult<Group>(null);
 
-                if(!groups.Any())
-                    return Task.FromResult<Group>(null);
+            if (groups.Count > 1)
+                return Task.FromResult<Group>(null);
 
-                if (groups.Count > 1)
-                    return Task.FromResult<Group>(null);
-
-                return Task.FromResult(groups.Single());
-            }
+            return Task.FromResult(groups.Single());
         }
 
         public Task UpdateAsync(Group role)
@@ -165,14 +150,10 @@ namespace BExIS.Security.Services.Subjects
             if (FindByIdAsync(role.Id)?.Result == null)
                 return Task.CompletedTask;
 
-            using (var uow = this.GetUnitOfWork())
-            {
-                var groupRepository = uow.GetRepository<Group>();
-                groupRepository.Merge(role);
-                var r = groupRepository.Get(role.Id);
-                groupRepository.Put(r);
-                uow.Commit();
-            }
+            _guow.GetRepository<Group>().Merge(role);
+            var merged = _guow.GetRepository<Group>().Get(role.Id);
+            _guow.GetRepository<Group>().Put(merged);
+            _guow.Commit();
 
             return Task.CompletedTask;
         }

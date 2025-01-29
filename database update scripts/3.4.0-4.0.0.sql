@@ -1,5 +1,9 @@
 -- OPEN ISSUES
  -- add dim/gbif controller in operations
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'DIM', 'Gbif', '*', null 
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='API' AND controller='DataTable');
+
 
 -- DefaultValue within MetadataAttributeUsage: varchar(255) -> text (check MetadataAttributeUsage.hbm.xml)
 ALTER TABLE public.metadataattributeusages
