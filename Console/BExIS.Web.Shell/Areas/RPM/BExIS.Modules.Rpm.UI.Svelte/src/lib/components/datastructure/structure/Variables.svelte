@@ -225,7 +225,7 @@
 		<button
 			id="variables-expander"
 			class="btn variant-filled-secondary"
-			title={expandAll ? "collapse all" : "expand all"}
+			title={expandAll ? 'collapse all' : 'expand all'}
 			on:mouseover={() => helpStore.show('variables-expander')}
 			on:click={() => (expandAll = !expandAll)}
 		>

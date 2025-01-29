@@ -50,7 +50,7 @@
 	$: model;
 
 	let selectionIsActive = true;
-	$:selectionIsActive;
+	$: selectionIsActive;
 	let init: boolean = true;
 
 	let loadingMessage = 'the data structure is loading';
@@ -132,29 +132,24 @@
 	}
 
 	async function update(e) {
-
 		console.log('🚀 ~ update ~ e.detail:', e.detail);
 		model = e.detail;
 
 		let res = await generate(e.detail);
 		selectionIsActive = true;
 
-		if (res && res.status ==	200) {	
+		if (res && res.status == 200) {
 			model = res.data;
 			selectionIsActive = false;
-		}
-		else
-		{
+		} else {
 			// got ot other page
-			console.log("error do something")
-			model = undefined
+			console.log('error do something');
+			model = undefined;
 			start();
 			selectionIsActive = false;
 			selectionIsActive = true;
-			init	= false;
+			init = false;
 		}
-		
-
 	}
 
 	function back() {
@@ -162,9 +157,6 @@
 		selectionIsActive = true;
 		init = false;
 	}
-
-	
-
 </script>
 
 <Page

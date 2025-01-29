@@ -109,6 +109,7 @@
 		init = false;
 	}
 </script>
+
 <Page
 	title="Data Structure"
 	note="This page allows you to create and edit data structures."
@@ -116,7 +117,6 @@
 	help={true}
 	footer={false}
 >
-
 	{#await start()}
 		<Spinner label="the data structure is loading" />
 	{:then}

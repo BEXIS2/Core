@@ -19,7 +19,7 @@
 
 	import type { DataStructureCreationModel } from '../types';
 	import { Alert, helpStore } from '@bexis2/bexis2-core-ui';
-	import  { type ModalSettings, getModalStore } from '@skeletonlabs/skeleton';
+	import { type ModalSettings, getModalStore } from '@skeletonlabs/skeleton';
 	const modalStore = getModalStore();
 
 	export let model: DataStructureCreationModel;
@@ -76,36 +76,33 @@
 	}
 
 	function cancelFn() {
-
 		const confirm: ModalSettings = {
-				type: 'confirm',
-				title: 'Cancel data structure generation',
-				body:
-					'Are you sure you wish to cancel the data structure generation?',
-				// TRUE if confirm pressed, FALSE if cancel pressed
-				response: (r: boolean) => {
-					if (r === true) {
-						goTo(document.referrer);
-					}
+			type: 'confirm',
+			title: 'Cancel data structure generation',
+			body: 'Are you sure you wish to cancel the data structure generation?',
+			// TRUE if confirm pressed, FALSE if cancel pressed
+			response: (r: boolean) => {
+				if (r === true) {
+					goTo(document.referrer);
 				}
-			};
-			modalStore.trigger(confirm);
+			}
+		};
+		modalStore.trigger(confirm);
 	}
-
 </script>
 
 <div>
 	<div transition:fade class="flex">
 		<div class="grow">
 			{#if model.file}
-			<button
-				id="back"
-				title="back"
-				class="btn variant-filled-warning"
-				on:mouseover={() => helpStore.show('back')}
-				on:focus={() => helpStore.show('back')}
-				on:click={() => back()}><Fa icon={faArrowLeft} /></button
-			>
+				<button
+					id="back"
+					title="back"
+					class="btn variant-filled-warning"
+					on:mouseover={() => helpStore.show('back')}
+					on:focus={() => helpStore.show('back')}
+					on:click={() => back()}><Fa icon={faArrowLeft} /></button
+				>
 			{/if}
 		</div>
 		<div class="flex-none text-end">
@@ -134,7 +131,8 @@
 
 	<Attributes {model} bind:valid={areAttributesValid} />
 	{#if enforcePrimaryKey && model.variables.length > 0 && !isPKSet}
-		<Alert message="Please select a (combined) primary key." cssClass="variant-filled-warning"></Alert>
+		<Alert message="Please select a (combined) primary key." cssClass="variant-filled-warning"
+		></Alert>
 	{/if}
 
 	<Variables
