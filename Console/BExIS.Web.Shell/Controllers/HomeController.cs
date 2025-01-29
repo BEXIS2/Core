@@ -113,6 +113,10 @@ namespace BExIS.Web.Shell.Controllers
         [DoesNotNeedDataAccess]
         public ActionResult Start()
         {
+            ViewData["ShowMenu"] = GeneralSettings.GetValueByKey("showMenuOnLandingPage");
+            ViewData["ShowHeader"] = GeneralSettings.GetValueByKey("showHeaderOnLandingPage");
+            ViewData["ShowFooter"] = GeneralSettings.GetValueByKey("showFooterOnLandingPage");
+
             return View("Start", null, Session.GetTenant().LandingPageFileNamePath);
         }
 

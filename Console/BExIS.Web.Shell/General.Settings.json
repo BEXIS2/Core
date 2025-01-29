@@ -95,6 +95,27 @@
       "description": "User is not logging in -> app goes to e.g. (ddm, publicsearch, index). If no destination is entered, the landingpage.htm is loaded from the tenant/content/landingpage.htm"
     },
     {
+      "key": "showMenuOnLandingPage",
+      "title": "Show menu on landing page",
+      "value": "true",
+      "type": "Boolean",
+      "description": "Show or hide menu on your own created landing page"
+    },
+    {
+      "key": "showHeaderOnLandingPage",
+      "title": "Show header on landing page",
+      "value": "true",
+      "type": "Boolean",
+      "description": "Show or hide header on your own created landing page"
+    },
+    {
+      "key": "showFooterOnLandingPage",
+      "title": "Show footer on landing page",
+      "value": "true",
+      "type": "Boolean",
+      "description": "Show or hide footer on your own created landing page"
+    },
+    {
       "key": "landingPageForUsers",
       "title": "Landing Page for Users",
       "value": "ddm, search, index",

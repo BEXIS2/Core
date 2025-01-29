@@ -35,14 +35,44 @@
 
 
     <link href="~/Content/docs.css" rel="stylesheet" />
+
+
 </head>
 
 <body>
-    @Html.RenderAuto("Header")
+    @{
+        bool showHeader = true;
+        if (ViewData["ShowHeader"] != null)
+        {
+            showHeader = (bool)ViewData["ShowHeader"];
+        }
+
+        bool showMenu = true;
+        if (ViewData["ShowMenu"] != null)
+        {
+            showMenu = (bool)ViewData["ShowMenu"];
+        }
+
+        bool showFooter = true;
+        if (ViewData["ShowFooter"] != null)
+        {
+            showFooter = (bool)ViewData["ShowFooter"];
+        }
+    }
+
+
+    @if (showHeader) // flag to hide the header where ever view data is set
+    {
+        @Html.RenderAuto("Header")
+    }
+
     <div id="informationContainer">
 
-        @*pass the ModuleManger.ExportTree to the layout's menu view, it must be populated by now!*@
-        @Html.RenderAuto("Menu")
+        @if (showMenu) // flag to hide the menu where ever view data is set
+        {
+            @*pass the ModuleManger.ExportTree to the layout's menu view, it must be populated by now!*@
+            @Html.RenderAuto("Menu")
+        }
 
         <div id="information-container" class="container-fluid" style="display:none">
             @*<a href="#information" data-toggle="collapse" style="color: white">@ViewBag.Title <i class="fa fa-angle-double-down"></i></a>*@
@@ -64,12 +94,12 @@
 
                 @if (IsSectionDefined("LeftPane"))
                 {
-                <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; width: 250px; max-width: 350px; vertical-align: top;">
-                    <div>
-                        @RenderSection("LeftPane", false)
-                    </div>
-                </td>
-                <td style="width: 20pt; border: none" />
+                    <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; width: 250px; max-width: 350px; vertical-align: top;">
+                        <div>
+                            @RenderSection("LeftPane", false)
+                        </div>
+                    </td>
+                    <td style="width: 20pt; border: none" />
                 }
 
                 <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; vertical-align: top;">
@@ -80,13 +110,13 @@
 
                 @if (IsSectionDefined("RightPane"))
                 {
-                <td style="width: 20pt; border: none" />
+                    <td style="width: 20pt; border: none" />
 
-                <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; width: 250px; max-width: 350px; vertical-align: top;">
-                    <div>
-                        @RenderSection("RightPane", false)
-                    </div>
-                </td>
+                    <td style="border-top: #9B9B9B solid thin; border-bottom: #9B9B9B solid thin; padding: 12pt 0 12pt 0; width: 250px; max-width: 350px; vertical-align: top;">
+                        <div>
+                            @RenderSection("RightPane", false)
+                        </div>
+                    </td>
                 }
             </tr>
         </table>
@@ -99,7 +129,11 @@
             .jQuery(false)
     )
 
-    @Html.RenderAuto("Footer")
+    @if (showHeader)
+    {
+        @Html.RenderAuto("Footer")
+    }
+
 
     <script type="text/javascript">
         var global_sess_expirationSeconds = @Session.Timeout*60;
