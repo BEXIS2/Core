@@ -178,9 +178,9 @@ namespace BExIS.Dlm.Services.Meanings
                     if (meaning_ids != null)
                         related_meanings = (List<Meaning>)repo.Get().Where(x => meaning_ids.Contains(x.Id)).ToList<Meaning>();
 
-                    List<Constraint> constraints = new List<Constraint>();
+                    ISet<Constraint> constraints = new HashSet<Constraint>();
                     if (constraint_ids != null)
-                        constraints = repoConstraints.Get().Where(x => constraint_ids.Contains(x.Id)).ToList<Constraint>();
+                        constraints = repoConstraints.Get().Where(x => constraint_ids.Contains(x.Id)).ToHashSet<Constraint>();
 
                     Meaning meaning = repo.Get().FirstOrDefault(x => id == x.Id);
 
@@ -191,6 +191,8 @@ namespace BExIS.Dlm.Services.Meanings
                     meaning.ExternalLinks = externalLinks;
                     meaning.Description = Description;
                     meaning.Approved = approved;
+                    meaning.Constraints = constraints;
+
                     repo.Merge(meaning);
                     uow.Commit();
                     var merged = repo.Get(meaning.Id);
@@ -245,7 +247,7 @@ namespace BExIS.Dlm.Services.Meanings
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
                     var repo = uow.GetReadOnlyRepository<Meaning>();
-                    List<Meaning> Meanings = repo.Get().ToList<Meaning>();
+                    List<Meaning> Meanings = repo.Get().OrderBy(m=>m.Id).ToList<Meaning>();
                     //IDictionary<long, Meaning> fooDict = Meanings.ToDictionary(f => f.Id, f => f);
                     return Meanings;
                 }

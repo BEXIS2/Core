@@ -176,6 +176,7 @@
 		showForm = false;
 		setTimeout(async () => {
 			reload();
+			clear();
 		}, 10);
 	}
 
