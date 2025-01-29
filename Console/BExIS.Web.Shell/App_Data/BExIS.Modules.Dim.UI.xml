@@ -479,13 +479,13 @@
              <summary>
              This class is designed as a Web API to access data sets externally.
              The provided HTTPGET functions provide an overview of all data records and basic information about a selected data record.
-
+            
              The information about a dataset shows the title, description, data structure, and metadata structure.
              </summary>
              <remarks>
              This class is designed as a Web API to access data sets externally.
              The provided HTTPGET functions provide an overview of all data records and basic information about a selected data record.
-
+            
              The information about a dataset shows the title, description, data structure, and metadata structure.
              </remarks>
         </member>
@@ -498,14 +498,14 @@
              <summary>
              Get dataset information of the latest version of a dataset by id.
              </summary>
-
+            
              <param name="id">Identifier of a dataset</param>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64,System.Int64)">
              <summary>
              Get dataset information of a specific version of a dataset by id and version id.
              </summary>
-
+            
              <param name="id">Identifier of a dataset</param>
              <param name="versionId">Version Id of a dataset</param>
         </member>
@@ -513,7 +513,7 @@
              <summary>
              Get dataset information of a specific version of a dataset by id and version number.
              </summary>
-
+            
              <param name="id">Identifier of a dataset</param>
              <param name="version_number">Version of a dataset</param>
         </member>
@@ -521,7 +521,7 @@
              <summary>
              Get dataset information of a specific version of a dataset by id and version name.
              </summary>
-
+            
              <param name="id">Identifier of a dataset</param>
              <param name="version_name">Version name of a dataset</param>
         </member>
@@ -600,7 +600,7 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.MappingOutController.Get(System.Int64,System.Int32,System.Int64,System.Int32)">
              <summary>
-
+            
              </summary>
              <param name="sourceElementId"></param>
              <param name="sourceElementType"></param>
@@ -644,7 +644,7 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.ExportController.GetZipOfDatasetVersion(System.Int64,System.String)">
              <summary>
-
+            
              </summary>
              <param name="datasetVersionId"></param>
              <param name="primaryDataFormat">mimetype like text/csv, text/plain</param>
@@ -782,16 +782,16 @@
              Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
              </summary>
              <remarks>
-
+            
              ## format
              Based on the existing transformation options, the converted metadata can be obtained via format.
-
-             ## simplfiedJson
+            
+             ## simplifiedJson
              if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
              0 = returns the metadata with full internal structure <br/>
              1 = returns a simplified form of the structure with all fields and attributes <br/>
              2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
-
+            
              </remarks>
              <param name="id">Dataset Id</param>
              <param name="format">Internal,External,Subset</param>
@@ -804,16 +804,16 @@
              Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
              </summary>
              <remarks>
-
+            
              ## format
              Based on the existing transformation options, the converted metadata can be obtained via format.
-
-             ## simplfiedJson
+            
+             ## simplifiedJson
              if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
              0 = returns the metadata with full internal structure <br/>
              1 = returns a simplified form of the structure with all fields and attributes <br/>
              2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
-
+            
              </remarks>
              <param name="id">Dataset Id</param>
              <param name="versionId">Version Id</param>
@@ -827,16 +827,16 @@
              Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
              </summary>
              <remarks>
-
+            
              ## format
              Based on the existing transformation options, the converted metadata can be obtained via format.
-
-             ## simplfiedJson
+            
+             ## simplifiedJson
              if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
              0 = returns the metadata with full internal structure <br/>
              1 = returns a simplified form of the structure with all fields and attributes <br/>
              2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
-
+            
              </remarks>
              <param name="id">Dataset Id</param>
              <param name="version_number">Version number</param>
@@ -850,16 +850,16 @@
              Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
              </summary>
              <remarks>
-
+            
              ## format
              Based on the existing transformation options, the converted metadata can be obtained via format.
-
-             ## simplfiedJson
+            
+             ## simplifiedJson
              if you set the accept of the request to return a json, you can manipulate the json with this parameter. <br/>
              0 = returns the metadata with full internal structure <br/>
              1 = returns a simplified form of the structure with all fields and attributes <br/>
              2 = returns the metadata in a simplified structure and does not add all fields and attributes that are empty.
-
+            
              </remarks>
              <param name="id">Dataset Id</param>
              <param name="version_name">Version name</param>
