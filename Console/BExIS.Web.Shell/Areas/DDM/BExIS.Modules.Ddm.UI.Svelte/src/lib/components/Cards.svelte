@@ -22,7 +22,7 @@
 	$: paginationSettings.size = $store.length;
 </script>
 
-<div class="flex flex-col gap-4 grow min-w-[500px] max-w-[800px]">
+<div class="flex flex-col gap-4 grow min-w-[500px]">
 	<p class="text-muted text-sm">
 		{$store.length}
 		{`dataset${$store.length !== 1 ? 's' : ''}`} found
@@ -39,10 +39,13 @@
 
 	{#if $store.length > 0}
 		<Paginator
-			bind:settings={paginationSettings}
-			showFirstLastButtons={false}
-			showPreviousNextButtons={true}
-			controlVariant="variant-filled-primary"
+			settings={paginationSettings}
+			buttonClasses="disabled:!variant-filled-surface !px-3 !py-1.5 !fill-current !variant-filled-primary"
+			active="!variant-filled-secondary"
+			controlVariant="text-on-primary-token"
+			select="!px-3 !py-1.5 select min-w-[150px]"
+			showFirstLastButtons
+			showPreviousNextButtons
 		/>
 	{/if}
 </div>

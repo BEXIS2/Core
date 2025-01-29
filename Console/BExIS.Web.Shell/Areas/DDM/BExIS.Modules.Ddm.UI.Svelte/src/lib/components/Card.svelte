@@ -24,8 +24,12 @@
 				{description}
 			</p>
 			<div class="flex items-center justify-between w-full">
-				<p class="text-sm">{license}</p>
-				<p class="text-sm">By <span class="font-semibold">{author}</span></p>
+				{#if license?.length}
+					<p class="text-sm">{license}</p>
+				{/if}
+				{#if author?.length}
+					<p class="text-sm">By <span class="font-semibold">{author}</span></p>
+				{/if}
 			</div>
 		</div>
 	</div>

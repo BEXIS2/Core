@@ -1,8 +1,10 @@
 <script lang="ts">
 	import Select from 'svelte-select';
+	import Fa from 'svelte-fa';
+	import { faTable, faBars } from '@fortawesome/free-solid-svg-icons';
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
-	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
+	import { RadioGroup, RadioItem, SlideToggle } from '@skeletonlabs/skeleton';
 	import { Api, Facets, Page, pageContentLayoutType, Table } from '@bexis2/bexis2-core-ui';
 	import type { Columns, FacetGroup, TableConfig } from '@bexis2/bexis2-core-ui';
 
@@ -13,7 +15,7 @@
 
 	let columns: Columns;
 	let config: TableConfig<any>;
-	let categories: { name: string; displayName: string }[] = [];
+	let categories: { [key: string]: string } = {};
 	let currentCategory = 'All';
 	let q = '';
 
@@ -53,7 +55,7 @@
 		}
 
 		const currentCategoryDisplayName =
-			categories.find((c) => c.name === currentCategory)?.displayName || currentCategory;
+			Object.keys(categories).find((c) => c === currentCategory) || currentCategory;
 
 		if (q.length !== 0) {
 			$criteria = {
@@ -69,16 +71,12 @@
 		const responseObject = response.data;
 
 		// Mapping categories
-		init &&
-			responseObject.SearchComponent.Categories.forEach((category: any) => {
-				categories = [
-					...categories,
-					{
-						name: category.Name,
-						displayName: category.DisplayName
-					}
-				];
-			});
+		if (init) {
+			categories = responseObject.SearchComponent.Categories.reduce((acc: any, cur: any) => {
+				acc[cur.Name] = cur.DisplayName;
+				return acc;
+			}, {});
+		}
 
 		// Mapping and updating table data
 		const {
@@ -196,6 +194,8 @@
 				});
 			});
 
+			console.log(appliedFacetsDict);
+
 			if (appliedFacetsDict[facet.Name]) {
 				$criteria = {
 					...$criteria,
@@ -223,7 +223,7 @@
 			.map((header, index) => ({
 				header: header.DisplayName,
 				placeholder: header.Placeholder,
-				index
+				index: headers.indexOf(header)
 			}));
 
 		// For debugging
@@ -249,7 +249,6 @@
 				),
 				id: row.Values[idIndex]
 			}));
-
 			placeholderStore.set(data);
 		}
 	};
@@ -295,6 +294,8 @@
 
 	const handleShowMoreSelect = async (e: { detail: { parent: string; selected: boolean[] }[] }) => {
 		const selected = e.detail[0].selected;
+
+		console.log(selected);
 
 		const formBody = new URLSearchParams();
 		selected.forEach((value, index) => {
@@ -410,49 +411,78 @@
 				/>
 			{/if}
 		</div>
-		<div class="flex flex-col gap-4">
-			<div class="flex flex-col gap-4">
-				<div class="flex gap-4">
-					<div class="w-min flex" title="Switch between table and card view">
-						<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
-							<RadioItem
-								bind:group={currentView}
-								name="currentView"
-								value="table"
-								title="Table view">Table</RadioItem
-							>
-							<RadioItem bind:group={currentView} name="currentView" value="cards" title="Card view"
-								>Cards</RadioItem
-							>
-						</RadioGroup>
-					</div>
 
-					<select class="input w-max" bind:value={currentCategory} title="Filter categories">
-						{#each categories as category (category.name)}
-							<option value={category.name}>{category.displayName}</option>
-						{/each}
-					</select>
-					<Select
-						loadOptions={setAutoCompleteValues}
-						class="input grow max-w-[500px] min-w-[500px]"
-						name="search"
-						bind:filterText={q}
-						on:select={handleAutoCompleteSelect}
-						clearFilterTextOnBlur={false}
-						hideEmptyState={true}
-						clearable={false}
-						value={undefined}
-						placeholder="Search within selected category"
-					/>
-					<button
-						title="Search"
-						class="btn variant-filled-primary"
-						on:click|preventDefault={async () => await handleSearch()}>Search</button
-					>
+		<div class="flex flex-col gap-4 overflow-x-auto">
+			<div class="flex flex-col gap-4">
+				<div class="flex gap-4 items-start">
+					<div class="flex flex-col gap-4 w-full">
+						<div
+							class="flex items-center w-full gap-16 p-2 bg-neutral-50 rounded-lg border-neutral-200 border px-6"
+						>
+							<div class="w-min flex h-full" title="Switch between table and card view">
+								<div class="flex gap-3 items-center">
+									<span>Layout: </span>
+									<RadioGroup
+										active="variant-filled-primary"
+										hover="hover:variant-soft-primary"
+										padding="py-1 px-2"
+										rounded="rounded-full"
+									>
+										<RadioItem
+											bind:group={currentView}
+											name="currentView"
+											value="table"
+											title="Table view"
+										>
+											<Fa icon={faTable} size="xs" />
+										</RadioItem>
+										<RadioItem
+											bind:group={currentView}
+											name="currentView"
+											value="cards"
+											title="Card view"
+										>
+											<Fa icon={faBars} size="xs" />
+										</RadioItem>
+									</RadioGroup>
+								</div>
+							</div>
+						</div>
+						<div class="flex gap-4 h-min items-stretch">
+							<select
+								class="bg-input rounded-md px-4 pr-7 py-2 text-sm w-min border-neutral-300"
+								bind:value={currentCategory}
+								title="Filter categories"
+							>
+								{#each Object.keys(categories) as category (category)}
+									<option value={category}>{categories[category]}</option>
+								{/each}
+							</select>
+							<div class="flex gap-4 items-center grow">
+								<Select
+									loadOptions={setAutoCompleteValues}
+									class="input rounded-md !border-neutral-300 grow max-w-[500px] min-w-[300px]"
+									name="search"
+									bind:filterText={q}
+									on:select={handleAutoCompleteSelect}
+									clearFilterTextOnBlur={false}
+									hideEmptyState={true}
+									clearable={false}
+									value={undefined}
+									placeholder="Search within selected category"
+								/>
+								<button
+									title="Search"
+									class="btn variant-filled-primary"
+									on:click|preventDefault={async () => await handleSearch()}>Search</button
+								>
+							</div>
+						</div>
+					</div>
 				</div>
 
 				<!-- Criteria and applied search queries -->
-				<div class="flex grow w-full">
+				<div class="flex grow w-full item-start">
 					<div class="flex gap-4 w-96 grow overflow-auto">
 						{#each Object.keys($criteria) as key, index (key)}
 							{#if $criteria[key].values.length > 0}
@@ -502,10 +532,9 @@
 					</div>
 				</div>
 			</div>
-
-			<div class="pt-8 grow">
+			<div class="pt-8 flex shrink">
 				{#if config}
-					<div class:hidden={currentView === 'cards'}>
+					<div class:hidden={currentView === 'cards'} class="">
 						<Table {config} />
 					</div>
 				{/if}
