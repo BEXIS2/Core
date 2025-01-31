@@ -452,7 +452,7 @@
 							<select
 								class="bg-input rounded-md px-4 pr-7 py-2 text-sm w-min border-neutral-300"
 								bind:value={currentCategory}
-								title="Filter categories"
+								title="Select category"
 							>
 								{#each Object.keys(categories) as category (category)}
 									<option value={category}>{categories[category]}</option>

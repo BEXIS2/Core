@@ -4,7 +4,6 @@ import { setApiConfig } from '@bexis2/bexis2-core-ui';
 export async function load({ fetch }) {
 	if (import.meta.env.DEV) {
 		setApiConfig('http://localhost:44345', 'admin', '123456');
-		// setApiConfig('https://idiv-biodivbank.uni-jena.de', 'admin', 'DWUm2bLgkvpJkPrhtDkY');
 	}
 
 	return {};
