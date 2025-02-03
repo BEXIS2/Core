@@ -28,6 +28,7 @@ using BExIS.Utils.Config;
 using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Extensions;
 using BExIS.Xml.Helpers;
+using NHibernate.Cfg.MappingSchema;
 using BEXIS.JSON.Helpers;
 using Newtonsoft.Json.Schema;
 using System;
@@ -1081,25 +1082,31 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 long partyid = Convert.ToInt64(item.Attribute("partyid").Value);
 
                                 LinkElementType sourceType = LinkElementType.MetadataNestedAttributeUsage;
-                                if (type.Equals("MetadataPackageUsage")) sourceType = LinkElementType.MetadataPackageUsage;
+
+                                List<LinkElementType> sourceTypes = new List<LinkElementType>();
+
+
+                                if (type.Equals("MetadataPackageUsage")) sourceTypes.Add(LinkElementType.MetadataPackageUsage);
+                                if (type.Equals("MetadataPackage")) sourceTypes.Add(LinkElementType.MetadataPackage);
+                                if (type.Equals("MetadataAttributeUsage"))
+                                {
+                                    sourceTypes.Add(LinkElementType.MetadataAttributeUsage);
+                                    sourceTypes.Add(LinkElementType.MetadataNestedAttributeUsage);
+                                }
+
+                                if (type.Equals("MetadataAttribute"))
+                                {
+                                    sourceTypes.Add(LinkElementType.MetadataAttributeUsage);
+                                    sourceTypes.Add(LinkElementType.MetadataNestedAttributeUsage);
+                                    sourceTypes.Add(LinkElementType.SimpleMetadataAttribute);
+                                    sourceTypes.Add(LinkElementType.ComplexMetadataAttribute);
+                                }
+
 
                                 foreach (var relationship in relationshipTypes)
                                 {
                                     // when mapping in both directions are exist
-                                    if ((MappingUtils.ExistMappings(id, sourceType, relationship.Id, LinkElementType.PartyRelationshipType) &&
-                                        MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, id, sourceType)) ||
-
-                                        (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataAttributeUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
-                                        MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataAttributeUsage)) ||
-
-                                        (MappingUtils.ExistMappings(sourceId, LinkElementType.ComplexMetadataAttribute, relationship.Id, LinkElementType.PartyRelationshipType) &&
-                                        MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.ComplexMetadataAttribute)) ||
-
-                                        (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataNestedAttributeUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
-                                        MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataNestedAttributeUsage)) ||
-
-                                        (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataPackageUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
-                                        MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataPackageUsage)))
+                                    if (mappingExist(sourceTypes,id, sourceId, relationship.Id))
                                     {
                                         // create releationship
 
@@ -1154,6 +1161,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     throw ex;
                 }
             }
+        }
+
+        private bool mappingExist(List<LinkElementType> list, long usageId, long typeId, long releationshipId)
+        {
+
+            foreach (var sourceType in list)
+            {
+                if (MappingUtils.ExistMappings(usageId, sourceType, releationshipId, LinkElementType.PartyRelationshipType) && MappingUtils.ExistMappings(releationshipId, LinkElementType.PartyRelationshipType, usageId, sourceType))
+                    return true;
+                if (MappingUtils.ExistMappings(typeId, sourceType, releationshipId, LinkElementType.PartyRelationshipType) && MappingUtils.ExistMappings(releationshipId, LinkElementType.PartyRelationshipType, typeId, sourceType))
+                    return true;
+            }
+
+            return false;
         }
 
         private XDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)

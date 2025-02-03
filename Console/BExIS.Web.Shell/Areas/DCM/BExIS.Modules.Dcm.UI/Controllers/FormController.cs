@@ -1427,10 +1427,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (partyId > 0)
                 {
                     LinkElementType let;
-                    if (MappingUtils.ExistMappingWithParty(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage))
-                        let = LinkElementType.MetadataNestedAttributeUsage;
-                    else
+
+                    //if (MappingUtils.ExistMappingWithParty(attrModel.Id, LinkElementType.MetadataNestedAttributeUsage))
+                    if (usage is MetadataPackageUsage)
                         let = LinkElementType.MetadataAttributeUsage;
+                    else
+                        let = LinkElementType.MetadataNestedAttributeUsage;
 
                     attrModel.Value = MappingUtils.GetValueFromSystem(partyId, attrModel.Id, let);
                     attrModel.MappingSelectionField = MappingUtils.PartyAttrIsMain(attrModel.Id, let);

@@ -647,7 +647,8 @@ namespace BExIS.Dim.Helpers.Mappings
                     if (mapping_result.Any())
                     {
                         string mask = "";
-                        mask = mapping_result.FirstOrDefault().TransformationRule.Mask;
+                        if (!String.IsNullOrEmpty(mapping_result.FirstOrDefault().TransformationRule.Mask))
+                         mask = mapping_result.FirstOrDefault().TransformationRule.Mask;
 
                         foreach (var mapping_element in mapping_result)
                         {
