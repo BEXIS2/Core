@@ -155,7 +155,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             var Model = new MetadataEditorModel();
 
-            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            if(fromEditMode)
+                TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            else
+                TaskManager = (CreateTaskmanager)Session["ViewDatasetTaskmanager"];
 
             FormHelper.ClearCache();
 
@@ -192,7 +195,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     TaskManager.AddToBus(CreateTaskmanager.ENTITY_ID, entityId);
 
-                    Session["ViewDatasetTaskmanager"] = TaskManager;
+                    if(fromEditMode)
+                        Session["CreateDatasetTaskmanager"] = TaskManager;
+                    else
+                        Session["ViewDatasetTaskmanager"] = TaskManager;
                 }
             }
 
@@ -265,7 +271,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             ViewData["MetadataStructureID"] = TaskManager.Bus["MetadataStructureId"];
 
-            Session["CreateDatasetTaskmanager"] = TaskManager;
+            if (fromEditMode)
+                Session["CreateDatasetTaskmanager"] = TaskManager;
+            else
+                Session["ViewDatasetTaskmanager"] = TaskManager;
 
             #endregion prepare model & View Data
 
