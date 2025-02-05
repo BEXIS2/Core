@@ -1,9 +1,11 @@
 ﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dcm.UI.Models.EntityTemplate;
 using BExIS.Security.Services.Objects;
 using BExIS.UI.Models;
+using BExIS.Xml.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -94,7 +96,12 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             model.NotificationGroups = entityTemplate.NotificationGroups != null ? entityTemplate.NotificationGroups : new List<long>();
             model.MetadataFields = entityTemplate.MetadataFields != null ? entityTemplate.MetadataFields : new List<int>();
 
-            model.MetadataStructure = new ListItem(entityTemplate.MetadataStructure.Id, entityTemplate.MetadataStructure.Name);
+
+            var xmlDatasetHelper = new XmlDatasetHelper();
+            var entity = xmlDatasetHelper.GetEntityNameFromMetadatStructure(entityTemplate.MetadataStructure.Id); // get entity name from metadata structure
+            model.MetadataStructure = new ListItem(entityTemplate.MetadataStructure.Id, entityTemplate.MetadataStructure.Name, entity);
+
+
             model.EntityType = new ListItem(entityTemplate.EntityType.Id, entityTemplate.EntityType.Name);
 
             // check if subject are allready created, and list them for the view

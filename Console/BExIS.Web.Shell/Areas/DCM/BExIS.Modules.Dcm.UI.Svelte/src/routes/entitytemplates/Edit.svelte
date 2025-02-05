@@ -40,6 +40,7 @@
 
 	export let hooks = [];
 	export let metadataStructures: listItemType[] = [];
+	let subsetMetadataStructures = metadataStructures;
 	export let dataStructures = [];
 	let systemKeys;
 	export let entities = [];
@@ -52,6 +53,7 @@
 
 	$: entityTemplate;
 	$: systemKeys;
+	$: subsetMetadataStructures;
 
 	$: loaded = false;
 
@@ -108,6 +110,18 @@
 
 		// if metadata structure selection changed,
 		updateSystemKeys(e.target.id);
+
+		// entity changed update metadata structure list
+	 if(entityTemplate.entityType)
+		{
+			subsetMetadataStructures	= metadataStructures.filter((item) => item.group == entityTemplate.entityType.text);
+			console.log("🚀 ~ onChangeHandler ~ metadataStructures:", metadataStructures, entityTemplate.entityType.text)
+		}
+		else
+		{
+			subsetMetadataStructures = metadataStructures;
+		}
+
 	}
 
 	async function updateSystemKeys(targetid) {
@@ -197,7 +211,7 @@
 						id="metadataStructure"
 						title="Metadata Schema"
 						bind:target={entityTemplate.metadataStructure}
-						source={metadataStructures}
+						source={subsetMetadataStructures}
 						valid={res.isValid('metadataStructure')}
 						invalid={res.hasErrors('metadataStructure')}
 						feedback={res.getErrors('metadataStructure')}
