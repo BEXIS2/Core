@@ -39,6 +39,13 @@ namespace BEXIS.JSON.Helpers
                 // check if metadat structure exist
                 if (metadataStructure == null) throw new ArgumentNullException("metadata structure with id " + id + " not exist");
 
+                // set schema title
+                schema.Title = metadataStructure.Name;
+                // set schema description
+                schema.Description = metadataStructure.Description;
+                // set schema root element type
+                schema.Type = JSchemaType.Object;
+
                 // first child level are the MetadataPackageUsages
                 // go to each MetadataPackageUsage and start recursive adding to schema
                 foreach (var pu in metadataStructure.MetadataPackageUsages)
