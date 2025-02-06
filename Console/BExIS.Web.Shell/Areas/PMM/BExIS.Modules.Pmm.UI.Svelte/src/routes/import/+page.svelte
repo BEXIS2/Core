@@ -16,21 +16,24 @@
 	import lineClamp from './components/lineClamp.svelte';
 	import error from './components/error.svelte';
 	import { invalidTableStore, validTableStore } from './stores';
-	import type { errorArray, errorItem, tableErrorItem, Mapping, MappingEntry } from './models';
+	import type {
+		errorArray,
+		errorItem,
+		tableErrorItem,
+		Mapping,
+		MappingEntry
+	} from './models';
 	import jMapping from './mapping.json';
 	import { onMount } from 'svelte';
 
 	import * as apiCalls from './services/apiCalls';
-	// import {promises as fs} from 'fs';
 
-	
 	let filename: string = '';
-	
-	// let dataStore = writable([]);
+
+	let schema: any;
 
 	let validData: any[] = [];
-	//let validDataCounter: number = 0;
-	let showValid:boolean = false;
+	let showValid: boolean = false;
 
 	let invalidData: any[] = [];
 	let invalidDataCounter: number = 0;
@@ -68,36 +71,30 @@
 
 	onMount(async () => {
 		clear();
-		let test = apiCalls.GetMetadataScheema(1);
-		console.log(test);
+		schema = await apiCalls.GetMetadataScheema(6);
+		console.log(schema);
 	});
 
 	function fillInvalidTableStore(data: any) {
-		// console.log('fillInvalidTableStore');
 		console.time('fillInvalidTableStore');
 		invalidTableStore.set(data);
 		let tableErrorItem: tableErrorItem;
 		let errorItem: errorItem;
 		for (let i: number = 0; i < errors.length; i++) {
-			// console.log('original row', errors[i].rowIndex);
 			for (let j: number = 0; j < errors[i].cellErrors.length; j++) {
 				errorItem = errors[i].cellErrors[j];
-				// console.log('errorItem', errorItem);
 				tableErrorItem = {
 					errorType: 'missmatch',
 					errorMsg: errorItem.errorMsg,
 					value: $invalidTableStore[i][errorItem.column]
 				};
 				$invalidTableStore[i][errorItem.column] = tableErrorItem;
-				//console.log('row ' + i + ', column ' + errorItem.column, tableErrorItem.value);
-				
 			}
 		}
 		console.timeEnd('fillInvalidTableStore');
 	}
 
-	function clear()
-	{
+	function clear() {
 		invalidDataCounter = 0;
 		invalidData = [];
 		validData = [];
@@ -106,6 +103,7 @@
 		showValid = false;
 		showInvalid = false;
 	}
+
 	// upload file and parse to json
 	function handleFileUpload(event: any) {
 		clear();
@@ -132,8 +130,6 @@
 				let jsonData: any = results.data;
 
 				processMappings(jMapping.Mappings, Sources);
-				//console.log('Sources',Sources)
-				console.time('start filter');
 				jsonData = jsonData.map((row: any) => {
 					const filteredRow: any = {};
 					Sources.forEach((header) => {
@@ -143,16 +139,11 @@
 					});
 					return filteredRow;
 				});
-				console.timeEnd('start filter');
 
-				//console.log('jsonData', jsonData);
-				
-				console.time('start sort');
 				let codeColumns = Object.keys(jsonData[0]).filter(
 					(key) =>
 						key.trim().toLocaleLowerCase().startsWith('code') &&
 						!['code', 'code present', 'code number'].includes(key.trim().toLowerCase())
-					// || key.startsWith('Data')
 				);
 				sortData(codeColumns, jsonData, 'Code URL');
 
@@ -160,24 +151,28 @@
 					(key) =>
 						key.trim().toLocaleLowerCase().startsWith('data') &&
 						!['data present'].includes(key.trim().toLowerCase())
-					// || key.startsWith('Data')
 				);
 				sortData(dataColumns, jsonData, 'Data URL');
 				fillInvalidTableStore(invalidData);
-				showInvalid = invalidData.length > 0 ? true: false;
+				showInvalid = invalidData.length > 0 ? true : false;
 				validTableStore.set(validData);
 
-				
-
 				console.timeEnd('start sort');
+				
+				const instance = generateJSONFromSchema(schema);
+				// const sortedJson = clearDescriptions(instance)
+				console.log('jSchema', JSON.stringify(instance));
+				console.log('jSchema', instance);
 				createDownloadLinks();
 			}
 		});
 	}
 
-	function processMappings(mappings: Mapping[], Sources: any)  {
-		let entries: any;
+	let SourceToTarget: any[] = [];
+
+	function processMappings(mappings: Mapping[], Sources: any) {
 		let nestedEntries: any;
+		let entries: any;
 
 		for (const mapping of mappings) {
 			for (const key in mapping) {
@@ -187,7 +182,13 @@
 						// Direkte Zuordnung von Source zu Target
 						if (entry.Source) {
 							Sources.add(entry.Source);
-							//console.log(`${prefix}${entry.Source} -> ${entry.Target}`);
+						}
+
+						if (entry.Source && entry.Target) {
+							let mapEntry = new Set<string>();
+							mapEntry.add(entry.Source);
+							mapEntry.add(entry.Target);
+							SourceToTarget.push(mapEntry);
 						}
 
 						// Dynamische Überprüfung aller Schlüssel im entry-Objekt
@@ -213,23 +214,17 @@
 
 	// sort data in 2 different files, 1 with vaild data and 1 with invalid data
 	function sortData(columns: any, data: any, refColumn: string) {
-		// console.log('columns', columns);
-		// console.log('refColumn', refColumn);
 		let columnErrors: { [key: string]: any[] } = {};
 		let cellError: errorItem[] = [];
 
 		data.forEach((row: any, rowIndex: number) => {
 			cellError = [];
 			const ref: string = row[refColumn];
-			//console.log('ref', ref);
 			if (ref) {
 				if (countCommas(ref) == 0) {
 					validData.push(row);
-					//validDataCounter++;
 				} else {
 					let numberOfCommas: number = countCommas(ref);
-					// console.log('commas', numberOfCommas);
-					// console.log('ref', ref);
 					let valid: boolean = true;
 
 					for (let i = 0; i < columns.length; i++) {
@@ -246,7 +241,7 @@
 							columnErrors[columns[i]].push(rowIndex);
 						}
 					}
-					//console.log('cellError',cellError);
+
 					if (!valid) {
 						let contains: boolean = false;
 						for (let i = 0; i < errors.length; i++) {
@@ -258,12 +253,10 @@
 						}
 						if (!contains) {
 							invalidDataCounter++;
-							//console.log('invDataCounter', invalidDataCounter)
 							invalidData.push(row);
 							errors.push({ rowIndex: rowIndex, cellErrors: cellError });
 						}
 					} else {
-						//validDataCounter++;
 						validData.push(row);
 					}
 				}
@@ -284,6 +277,147 @@
 		});
 	}
 
+	// function generateJSONFromSchema(schema: any): any {
+	// 	const result: { [key: string]: any } = {};
+
+	// 	Object.keys(schema.properties).forEach((key) => {
+	// 		const property = schema.properties[key];
+	// 		if (property.type === 'string') {
+	// 			result[key] = '';
+	// 		} else if (property.type === 'boolean') {
+	// 			result[key] = false;
+	// 		} else if (property.type === 'integer') {
+	// 			result[key] = 0;
+	// 		} else if (property.type === 'array') {
+	// 			result[key] = [];
+	// 		} else if (property.type === 'object') {
+	// 			result[key] = generateJSONFromSchema(property);
+	// 		}
+	// 	});
+
+	// 	return result;
+	// }
+
+// function generateJSONFromSchema(schema: any): any {
+// 	let result: { [key: string]: any } = {};
+
+//   Überprüfe, ob es eine properties-Eigenschaft gibt
+//   if (schema.properties) {
+//     Object.keys(schema.properties).forEach(key => {
+//       const property = schema.properties[key];
+
+//       Wenn es ein "title" und "description" gibt, füge es zum Resultat hinzu
+//       if (property.title && property.description !== undefined) {
+//         result[property.title] = property.description;
+//       }
+
+	  
+// 	  if (property.description !== undefined) {
+//         property.description = '';  // Description auf leeren String setzen
+//       }
+
+//       Falls es verschachtelte Eigenschaften gibt, rekursiv weiter verarbeiten
+//       if (property.properties) {
+//         const nestedResult = generateJSONFromSchema(property);
+//         result = { ...result, ...nestedResult };
+
+		
+//       }
+//     });
+//   }
+
+//   return result;
+// }
+
+interface PropertySchema {
+  type: string;
+  properties?: Record<string, PropertySchema>;
+}
+
+interface Schema {
+  properties: Record<string, PropertySchema>;
+}
+
+interface Result {
+  [key: string]: any;
+}
+
+function generateJSONFromSchema(schema: Schema): Result {
+  const result: Result = {};
+
+  // Rekursive Funktion zur Verarbeitung der Schema-Properties
+  function processProperties(properties: Record<string, PropertySchema>): Record<string, any> {
+    const obj: Record<string, any> = {};
+
+    for (const key in properties) {
+      const property = properties[key];
+
+      // Wenn die Property vom Typ 'object' ist, erstellen wir ein Objekt mit 'description'
+      if (property.type === 'object') {
+        obj[key] = { description: "" };
+      }
+      // Wenn die Property vom Typ 'array' ist, erstellen wir ein Array mit einem leeren Objekt mit 'description'
+      else if (property.type === 'array') {
+        obj[key] = [{}]; // Ein Array mit einem leeren Objekt
+      }
+      // Für alle anderen Typen setzen wir 'description' auf einen leeren String
+      else {
+        obj[key] = { description: "" };
+      }
+    }
+    return obj;
+  }
+
+  // Verarbeitung des gesamten Schemas und Erstellen der JSON-Struktur
+  for (const key in schema.properties) {
+    result[key] = [processProperties(schema.properties[key].properties || {})];
+  }
+
+  return result;
+}
+
+
+// function generateJSONFromSchema(schema: any): any {
+//   let result: { [key: string]: any } = {};
+
+//   // Überprüfe, ob es eine properties-Eigenschaft gibt
+//   if (schema.properties) {
+//     Object.keys(schema.properties).forEach(key => {
+//       const property = schema.properties[key];
+
+//       // Wenn es ein "title" und "description" gibt, füge es zum Resultat hinzu
+//       if (property.title && property.description !== undefined) {
+//         result[property.title] = property.description;
+//       }
+
+//       // Setze description auf leeren String
+//       if (property.description !== undefined) {
+//         property.description = '';  // Description auf leeren String setzen
+//       }
+
+//       // Falls es verschachtelte Eigenschaften gibt, rekursiv weiter verarbeiten
+//       if (property.properties) {
+//         // Rekursiv die Eigenschaften durchgehen und dort descriptions ebenfalls leeren
+//         const nestedResult = generateJSONFromSchema(property);
+//         result = { ...result, ...nestedResult };
+//       }
+//     });
+//   }
+
+//   return result;
+// }
+
+function clearDescriptions(json: any) {
+	console.log ('json instance', json)
+	for (let key in json) {
+		console.log(json[key])
+//   if (json.hasOwnProperty(key) && (json[key] === "" || json[key] == null || (Array.isArray(json[key]) && json[key].length === 0))) {
+//     console.log(json[key])
+	// json[key] = "";  // Setze den Wert auf einen leeren String
+  }
+// }
+}
+
 	// parse json back to csv and create download links
 	function createDownloadLinks() {
 		const validCSVString = Papa.unparse(validData, { delimiter: ',' }); // Ensure comma as separator
@@ -292,7 +426,7 @@
 
 		// fs.writeFile('valid_data', validData)
 		const validDataJson = JSON.stringify(validData);
-		const blobJson = new Blob([validDataJson], {type: "application/json"});
+		const blobJson = new Blob([validDataJson], { type: 'application/json' });
 		downloadLinkValidDataAsJson = URL.createObjectURL(blobJson);
 
 		const invalidCSVString = Papa.unparse(invalidData, { delimiter: ',' }); // Ensure comma as separator
@@ -372,138 +506,140 @@
 		{/if}
 	</div>
 
-	<!-- <div>
-			<button class="btn variant-filled-primary" on:click={downloadValidData}
-				><Fa icon={faFileArrowDown}></Fa></button>
-		</div> -->
-
-	<div class="card p-2">
-		{#if validData.length > 0}
-			<div class="grid gap-5 w-full">
-				<div class="text-left card variant-ghost-primary w-full flex gap-5 p-2 my-1">
-					{#if !showValid}
-						<div class="w-full align-middle">Show Valid Data</div>
-					{:else}
-						<div class="w-full align-middle">Hide Valid Data</div>
-					{/if}
-					<div class="w-8">
-						<button class="chip variant-filled-primary" on:click={downloadValidDataAsJson}
-							><Fa icon={faFileArrowDown}></Fa></button
-						>
-					</div>
-					<div class="w-9">
+	{#if validData.length > 0 || invalidData.length > 0}
+		<div class="card p-2">
+			{#if validData.length > 0}
+				<div class="grid gap-5 w-full">
+					<div class="text-left card variant-ghost-primary w-full flex gap-5 p-2 my-1">
 						{#if !showValid}
-							<button class="chip" on:click={toggleValidForm}><Fa icon={faChevronDown}></Fa></button
-							>
+							<div class="w-full align-middle">Show Valid Data</div>
 						{:else}
-							<button class="chip" on:click={toggleValidForm}><Fa icon={faChevronUp}></Fa></button>
+							<div class="w-full align-middle">Hide Valid Data</div>
 						{/if}
+						<div class="w-8">
+							<button class="chip variant-filled-primary" on:click={downloadValidDataAsJson}
+								><Fa icon={faFileArrowDown}></Fa></button
+							>
+						</div>
+						<div class="w-9">
+							{#if !showValid}
+								<button class="chip" on:click={toggleValidForm}
+									><Fa icon={faChevronDown}></Fa></button
+								>
+							{:else}
+								<button class="chip" on:click={toggleValidForm}><Fa icon={faChevronUp}></Fa></button
+								>
+							{/if}
+						</div>
 					</div>
-				</div>
 
-				{#if showValid}
-					<Table
-						config={{
-							height: 600,
-							id: 'Valid',
-							data: validTableStore,
-							columns: {
-								Author: {
-									minWidth: 300,
-									instructions: {
-										renderComponent: lineClamp
-									}
-								},
-								Title: {
-									minWidth: 300,
-									instructions: {
-										renderComponent: lineClamp
-									}
-								},
-								'Abstract Note': {
-									minWidth: 600,
-									instructions: {
-										renderComponent: lineClamp
+					{#if showValid}
+						<Table
+							config={{
+								height: 600,
+								id: 'Valid',
+								data: validTableStore,
+								columns: {
+									Author: {
+										minWidth: 300,
+										instructions: {
+											renderComponent: lineClamp
+										}
+									},
+									Title: {
+										minWidth: 300,
+										instructions: {
+											renderComponent: lineClamp
+										}
+									},
+									'Abstract Note': {
+										minWidth: 600,
+										instructions: {
+											renderComponent: lineClamp
+										}
 									}
 								}
-							}
-						}}
-					/>
-				{/if}
-			</div>
-		{/if}
-
-		{#if invalidData.length > 0}
-			<div class="w-full">
-				<div class="text-left card variant-ghost-warning w-full flex gap-5 p-2 my-1">
-					<div class="w-full align-middle">{invalidDataCounter} rows failed to import</div>
-					<div class="w-9">
-						{#if !showErrorMsg}
-							<button class="chip" on:click={toggleErrorMsg}><Fa icon={faChevronDown}></Fa></button>
-						{:else}
-							<button class="chip" on:click={toggleErrorMsg}><Fa icon={faChevronUp}></Fa></button>
-						{/if}
-					</div>
-				</div>
-				{#if showErrorMsg}
-					<div
-						class="grid grid-cols-5 gap-1 w-full card variant-ringed-warning p-5 text-xs"
-						in:slide={{ delay: 400 }}
-						out:slide
-					>
-						<div class="font-bold">Row</div>
-						<div class="font-bold">Column</div>
-						<div class="font-bold col-span-3">Error Messages</div>
-						{#each errors as error}
-							<div class="col-span-5"><hr /></div>
-							<div>{error.rowIndex}</div>
-							{#each error.cellErrors as cellError, i}
-								{#if i > 0}
-									<div></div>
-								{/if}
-								<div>{cellError.column}</div>
-								<div class="text-red-500 col-span-3">{cellError.errorMsg}</div>
-							{/each}
-						{/each}
-					</div>
-				{/if}
-
-				<div class="text-left card variant-ghost-primary w-full flex gap-5 p-2 my-1">
-					{#if !showInvalid}
-						<div class="w-full align-middle">Show invalid Data</div>
-					{:else}
-						<div class="w-full align-middle">Hide invalid Data</div>
+							}}
+						/>
 					{/if}
-					<div class="w-8">
-						<button class="chip variant-filled-primary" on:click={downloadInvalidData}
-							><Fa icon={faFileArrowDown}></Fa></button
-						>
-					</div>
-					<div class="w-9">
-						{#if !showInvalid}
-							<button class="chip" on:click={toggleInvalidForm}
-								><Fa icon={faChevronDown}></Fa></button
-							>
-						{:else}
-							<button class="chip" on:click={toggleInvalidForm}><Fa icon={faChevronUp}></Fa></button
-							>
-						{/if}
-					</div>
 				</div>
+			{/if}
 
-				{#if showInvalid}
-					<Table
-						config={{
-							height: 600,
-							id: 'Invalid',
-							data: invalidTableStore,
-							columns: columnCfg
-						}}
-					/>
-				{/if}
-			</div>
-		{/if}
-	</div>
+			{#if invalidData.length > 0}
+				<div class="w-full">
+					<div class="text-left card variant-ghost-warning w-full flex gap-5 p-2 my-1">
+						<div class="w-full align-middle">{invalidDataCounter} rows failed to import</div>
+						<div class="w-9">
+							{#if !showErrorMsg}
+								<button class="chip" on:click={toggleErrorMsg}
+									><Fa icon={faChevronDown}></Fa></button
+								>
+							{:else}
+								<button class="chip" on:click={toggleErrorMsg}><Fa icon={faChevronUp}></Fa></button>
+							{/if}
+						</div>
+					</div>
+					{#if showErrorMsg}
+						<div
+							class="grid grid-cols-5 gap-1 w-full card variant-ringed-warning p-5 text-xs"
+							in:slide={{ delay: 400 }}
+							out:slide
+						>
+							<div class="font-bold">Row</div>
+							<div class="font-bold">Column</div>
+							<div class="font-bold col-span-3">Error Messages</div>
+							{#each errors as error}
+								<div class="col-span-5"><hr /></div>
+								<div>{error.rowIndex}</div>
+								{#each error.cellErrors as cellError, i}
+									{#if i > 0}
+										<div></div>
+									{/if}
+									<div>{cellError.column}</div>
+									<div class="text-red-500 col-span-3">{cellError.errorMsg}</div>
+								{/each}
+							{/each}
+						</div>
+					{/if}
+
+					<div class="text-left card variant-ghost-primary w-full flex gap-5 p-2 my-1">
+						{#if !showInvalid}
+							<div class="w-full align-middle">Show invalid Data</div>
+						{:else}
+							<div class="w-full align-middle">Hide invalid Data</div>
+						{/if}
+						<div class="w-8">
+							<button class="chip variant-filled-primary" on:click={downloadInvalidData}
+								><Fa icon={faFileArrowDown}></Fa></button
+							>
+						</div>
+						<div class="w-9">
+							{#if !showInvalid}
+								<button class="chip" on:click={toggleInvalidForm}
+									><Fa icon={faChevronDown}></Fa></button
+								>
+							{:else}
+								<button class="chip" on:click={toggleInvalidForm}
+									><Fa icon={faChevronUp}></Fa></button
+								>
+							{/if}
+						</div>
+					</div>
+
+					{#if showInvalid}
+						<Table
+							config={{
+								height: 600,
+								id: 'Invalid',
+								data: invalidTableStore,
+								columns: columnCfg
+							}}
+						/>
+					{/if}
+				</div>
+			{/if}
+		</div>
+	{/if}
 </Page>
 
 <!-- C:\Users\xi68neg\Desktop\Bexis\repo\Console\BExIS.Web.Shell\Areas\RPM\BExIS.Modules.Rpm.UI.Svelte\src\routes\unit\+page.svelte -->

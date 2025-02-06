@@ -3,7 +3,7 @@ export interface errorItem {
 	errorMsg: string;
 }
 
-export interface tableErrorItem {
+export interface tableErrorItem{
 	errorType: string;
 	errorMsg: string;
 	value?: any;
