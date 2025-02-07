@@ -18,6 +18,7 @@
     bool locked = false;
     bool editMode = false;
     bool showOptional = false;
+    long entityId = Model.DatasetId;
 
     string showAllClass = " bx-toggle-on";
 
@@ -113,7 +114,7 @@
     }
 }
 
-<div id="MetadataEditor" style="width: 89%">
+<div id="MetadataEditor" style="width: 89%" entityid ="@Model.DatasetId">
     @if (Model.DatasetId != -1)
     {
     <span id="datasetId" style="display:none">@Model.DatasetId</span>
@@ -165,7 +166,7 @@
                                 .OnSelect("SelectFileProcess_OnSelect")
                                 .OnLoad("SelectFileUploader_OnLoad"))
                             .Async(async => async
-                                .Save("SelectFileProcess", "Form")
+                                .Save("SelectFileProcess", "Form",new { entityId })
                                 .AutoUpload(true))
 
                         )
@@ -183,24 +184,6 @@
                     <span id="preloaderContainer" style="float: right"></span>
                 </td>
 
-                @if (Model.Created && Model.DatasetId != -1 && !@Model.FromEditMode)
-                {
-
-                <td>You successfully created dataset: <br /><b>@Model.DatasetTitle</b></td>
-                <td id="upload">
-                    Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", null, new { title = "Link to upload wizard", @class = "bx-link" })</b><br />
-                    to add primary data to this dataset.
-                </td>
-
-                    if (Html.IsAccessible("DDM", "Data", "ShowData"))
-                    {
-                        if (@Model.DatasetId > 0)
-                        {
-                <td>Or see your dataset here <b>@Html.ActionLink(@Model.DatasetTitle, "ShowData", "Data", new { area = "DDM", id = @Model.DatasetId }, new { title = "Link to your dataset.", @class = "bx-link" })</b><br /></td>
-
-                        }
-                    }
-                }
             </tr>
         </table>
     </div>
@@ -291,7 +274,22 @@
     <script src="@Url.Content("~/ddm/Data/getFile/?id=" + Model.DatasetId)" type="text/javascript"></script>
     }
 
-    <script>
+<script type="text/javascript">
+
+
+    var entityId = 0;
+
+    function getId() {
+        console.log("load form.js");
+        const metadataContainer = document.getElementById("MetadataEditor");
+        console.log("metadataContainer", metadataContainer);
+        if (metadataContainer) { // Check if the element exists
+            entityId = metadataContainer.getAttribute("entityid"); // Get the value of the "data-value" attribute
+            console.log("entityId", entityId); // Output the value (e.g., "123")
+        }
+
+        return entityId;
+    }
 
     $("#MetadataEditor")
         .ready(function() {
@@ -304,6 +302,7 @@
                 120);
             //alert("start triggering");
             $(document).trigger("MetadataFormIsReady");
+
         });
 
     $(window).resize(function () {
@@ -352,41 +351,34 @@
             Is Extention from selected file
             in list of supported files
             */
-            function IsExtentionValid(fileExtention) {
-    var extListAsString = ".xml";
-    var extList = extListAsString.split(',');
+    function IsExtentionValid(fileExtention) {
+        var extListAsString = ".xml";
+        var extList = extListAsString.split(',');
 
-    for (var i = 0; i < extList.length; i++) {
-        if (fileExtention.toLowerCase() == extList[i]) {
-            return true;
-        }
-    }
-
-    return false;
+        for (var i = 0; i < extList.length; i++) {
+            if (fileExtention.toLowerCase() == extList[i]) {
+                return true;
             }
+        }
 
-            function OnSuccess(e) {
-    //alert("on success");
+        return false;
+                }
 
-    $.get('@Url.Action("ValidateExternalXml", "Form", new RouteValueDictionary {{"area", "DCM"}})',
+    function OnSuccess(e) {
+        //alert("on success");
+        entityId
+
+        $.get('@Url.Action("ValidateExternalXml", "Form", new RouteValueDictionary { { "area", "DCM" } })', { entityId },
         function(response) {
 
             loadExternalXml();
 
-            //if (response.length > 0) {
-            //    if (confirm('Warning:' + response + " Press OK if you want to import an invalid xml document.")) {
-            //        loadExternalXml();
-            //    }
-            //} else {
-            //    loadExternalXml();
-            //}
-            //}
         });
-        }
+}
 
     function loadExternalXml() {
 
-        $.get('@Url.Action("LoadExternalXml", "Form", new RouteValueDictionary {{"area", "DCM"}})',
+        $.get('@Url.Action("LoadExternalXml", "Form", new RouteValueDictionary {{"area", "DCM"}, { "entityId", @entityId } })',
             function(response) {
 
                 if (response.indexOf("error") > 0) {
@@ -414,7 +406,7 @@
 
         $("#root").preloader(20, "Is validating", 300);
 
-        $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}})',
+        $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}})', { entityId },
             function(response) {
 
                 console.log(response);
@@ -465,7 +457,7 @@
         if (confirm('Are you sure? All changes will be lost.')) {
 
             $
-                .get('@Url.Action(@reset.ActionName, @reset.ControllerName, new RouteValueDictionary {{"area", @reset.AreaName}})',
+                .get('@Url.Action(@reset.ActionName, @reset.ControllerName, new RouteValueDictionary {{"area", @reset.AreaName}})', { entityId },
                     function(response) {
                         $('#MetadataEditor').replaceWith(response);
                         bindMinimap(true);
@@ -487,11 +479,11 @@
 
     function submit() {
 
-  
+
         var commit_message = $('#commit_message').val();
         console.log("commit_message", commit_message)
 
-        $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}})',
+        $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}, { "entityId", @entityId } })',
             function(response) {
                 $('#MetadataEditor').replaceWith(response);
                 bindMinimap(true);
@@ -515,11 +507,10 @@
             })
     }
 
-        function callSubmitAction(valid, commit_message) {
+    function callSubmitAction(valid, commit_message) {
 
-           
-
-
+        var entityId = '@Model.DatasetId';
+         alert(entityId);
          $.get('@Url.Action(
                  @submit.ActionName,
                  @submit.ControllerName,
@@ -530,7 +521,8 @@
                  })',
             {
                 valid: valid,
-                commitMessage: commit_message
+                commitMessage: commit_message,
+                entityId
             },
             function (response) {
 
@@ -552,7 +544,7 @@
         var fromEditMode = '@Model.FromEditMode';
         var latest = '@Model.LatestVersion'
 
-  
+
         $.get('@Url.Action("SwitchVisibilityOfOptionalElements", "Form","DCM")',
             {
                 show: show,
@@ -573,20 +565,22 @@
 
 		$("#preloaderContainer").preloader(20, "Preparing html file...");
 
-        window.location = '@Url.Action("DownloadAsHtml", "Form")';
+        var x = entityId
+
+        window.location = '@Url.Action("DownloadAsHtml", "Form", new { @entityId })';
 
         $("#preloaderContainer").removePreloader();
 
-    };
+        };
 
-    function downloadXml() {
+        function downloadXml() {
 
 		$("#preloaderContainer").preloader(20, "Preparing xml file...");
 
-        window.location = '@Url.Action("DownloadAsXml", "Form")';
+            window.location = '@Url.Action("DownloadAsXml", "Form", new { @entityId })';
 
         $("#preloaderContainer").removePreloader();
 
-     };
-    </script>
+        };
+</script>
 </div>
