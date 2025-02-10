@@ -546,7 +546,7 @@ namespace BExIS.Security.Services.Authorization
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
 
-                var permissions = entityPermissionRepository.Query(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key && p.Rights > (int)RightType.Read).ToList();
+                var permissions = entityPermissionRepository.Query(p => p.Subject == null && p.Entity.Id == entityId && p.Key == key && p.Rights >= (int)RightType.Read).ToList();
 
                 return permissions.Count == 1;
             }
@@ -558,7 +558,7 @@ namespace BExIS.Security.Services.Authorization
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
 
-                var permissions = entityPermissionRepository.Query(p => p.Subject == null && entityIds.Contains(p.Entity.Id) && p.Key == key && p.Rights > (int)RightType.Read).ToList();
+                var permissions = entityPermissionRepository.Query(p => p.Subject == null && entityIds.Contains(p.Entity.Id) && p.Key == key && p.Rights >= (int)RightType.Read).ToList();
 
                 return permissions.Count == 1;
             }

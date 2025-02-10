@@ -1,4 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dim.Entities.Export.GBIF;
 using BExIS.Dim.Helpers.BIOSCHEMA;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -1955,8 +1956,35 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 var dataset = datasetManager.GetDataset(datasetId);
 
+  
                 // check if dataset is public
                 isPublic = await permissionManager.IsPublicAsync(dataset.EntityTemplate.EntityType.Id, datasetId);
+
+                // if dataset is deleted and public return the latest version
+                if (dataset.Status == DatasetStatus.Deleted && isPublic )
+                {
+                    if (tagNr > 0) 
+                    {
+                        return datasetManager.GetLatestVersionIdByTagNr(datasetId, tagNr);
+                    }
+                    else if (!string.IsNullOrEmpty(versionName)) // try use versionname !!obsolete , public, not public version & not public 
+                    {
+                        throw new NotImplementedException();
+                    }
+                    else if (versionNr > 0)
+                    {
+                        //get the latest version belong to the tag of the requested version
+                        var datasetVersionId = datasetManager.GetDatasetVersionId(datasetId, versionNr);
+                        return datasetVersionId;
+                    }
+                    else // use latest version
+                    {
+                        var datasetVersionId = datasetManager.GetDatasetLatestVersionId(datasetId, DatasetStatus.Deleted);
+                        return datasetVersionId;
+                    }
+                    
+                }
+
 
                 // get rights
                 bool hasEditRights = await permissionManager.HasEffectiveRightsAsync(username, typeof(Dataset), datasetId, RightType.Write);
@@ -1984,7 +2012,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
                 else if (hasReadRights)
                 {
-                        
+
                     if (tagNr > 0) // public, not public version & not public 
                     {
                         return datasetManager.GetLatestVersionIdByTagNr(datasetId, tagNr);
@@ -1995,11 +2023,33 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     }
                     else if (versionNr > 0) // public, not public version & not public 
                     {
-                        //get the latest version belong to the tag of the requested version
-                        var datasetVersionId = datasetManager.GetDatasetVersionId(datasetId, versionNr);
-                        var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
-                        var latest = datasetManager.GetLatestVersionIdByTagNr(datasetId, datasetVersion.Tag.Nr);
-                        return latest;
+            
+                        if (!useTags)
+                        {
+                            var datasetVersion = datasetManager.GetDatasetVersion(datasetId, versionNr);
+                            return datasetVersion.Id;
+                        }
+                        else
+                        {
+                            //get the latest version belong to the tag of the requested version
+                            var datasetVersionId = datasetManager.GetDatasetVersionId(datasetId, versionNr);
+                            var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+                            if (datasetVersion.Tag != null)// if a tag exist for the version
+                            {
+                                var latest = datasetManager.GetLatestVersionIdByTagNr(datasetId, datasetVersion.Tag.Nr);
+                                return latest;
+                            }
+                            else // if no tag exist for the version, get the latest version
+                            {
+                                var tag = datasetManager.GetLatestTag(datasetId, true);
+                                if (tag != null) // if any tag exist
+                                { 
+                                    var latest = datasetManager.GetLatestVersionIdByTagNr(datasetId, tag.Nr);
+                                    return latest;
+                                }
+
+                            }
+                        }
                     }
                     else // use latest version
                     {
@@ -2009,12 +2059,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
                 else // no rigths
                 {
- 
+
                     long datasetVersionId = -1;
                     DatasetVersion datasetVersion = null;
                     Tag tag = null;
 
-                    
                     if (isPublic || !string.IsNullOrEmpty(username))
                     {
                         if (tagNr > 0)
@@ -2037,18 +2086,25 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         }
                         else if (versionNr > 0) // public, not public version & not public 
                         {
-                            datasetVersion = datasetManager.GetDatasetVersion(datasetId, versionNr);
-                            datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, datasetVersion.Tag.Nr);
-
-                            if (datasetVersion.Tag != null && datasetVersion.Tag.Final)
+                            if (!useTags) // if tags are not used
+                            {
+                                datasetVersion = datasetManager.GetDatasetVersion(datasetId, versionNr);
                                 return datasetVersion.Id;
+                            }
+                            else // if tags  used
+                            {
+                                datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, datasetVersion.Tag.Nr);
 
-                            // if tag is not reachable
-                            tag = datasetManager.GetLatestTag(datasetId, true);
-                            datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, tag.Nr);
+                                if (datasetVersion.Tag != null && datasetVersion.Tag.Final)
+                                    return datasetVersion.Id;
 
-                            if (datasetVersion.Tag != null && datasetVersion.Tag.Final)
-                                return datasetVersion.Id;
+                                // if tag is not reachable
+                                tag = datasetManager.GetLatestTag(datasetId, true);
+                                datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, tag.Nr);
+
+                                if (datasetVersion.Tag != null && datasetVersion.Tag.Final)
+                                    return datasetVersion.Id;
+                            }
 
                         }
 
@@ -2061,11 +2117,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             if (tag == null) return -1;
                         }
                         else
-                        { 
+                        {
                             return datasetManager.GetDatasetLatestVersionId(datasetId);
                         }
                     }
                 }
+                
 
              }
 
