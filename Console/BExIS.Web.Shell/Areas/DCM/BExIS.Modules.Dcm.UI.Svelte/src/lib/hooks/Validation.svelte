@@ -72,7 +72,7 @@
 	
 			model = null;
 			model = await getHookStart(start, id, version);
-			console.log('validation end', model?.isValid);
+			console.log('validation end', model);
 			latestValidationDate.set(Date.now());
 		
 	}
@@ -83,7 +83,7 @@
 {:then a}
 	{#if model && model.fileResults}
 		{#each model.fileResults as fileResult}
-			<ValidationResult bind:sortedErrors={fileResult.sortedErrors} bind:file={fileResult.file} />
+			<ValidationResult bind:sortedErrors={fileResult.sortedErrors} bind:sortedWarnings={fileResult.sortedWarnings} bind:file={fileResult.file} />
 		{/each}
 	{/if}
 {:catch error}

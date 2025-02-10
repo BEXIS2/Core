@@ -181,6 +181,14 @@ namespace BExIS.Utils.Upload
 
                 Dictionary<string, DataTuple> newDTDic = new Dictionary<string, DataTuple>();
 
+                // if not pks exist, all incoming datatuples are new
+                if (!primaryKeys.Any())
+                {
+                    data.Add("new", incomingDatatuples);
+                    data.Add("edit", new List<DataTuple>());
+                    return data;
+                }
+
                 //iterating over incoming datatuples to gerenate the primary key and add it to a dictionary
                 for (int counter = 0; counter < incomingDatatuples.Count(); counter++)
                 {

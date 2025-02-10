@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
+using Telerik.Web.Mvc.Extensions;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -56,6 +57,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             HookManager hookManager = new HookManager();
             IOUtility iOUtility = new IOUtility();
             List<Error> errors = new List<Error>();
+            List<Warning> warnings = new List<Warning>();
 
             // load from settings
             bool enforcePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("enforcePrimaryKey");
@@ -153,6 +155,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 var fileName = Path.GetFileName(file.Name);
                                 var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "Temp", file.Name);
                                 List<Error> fileErrors = new List<Error>(); // collection of errors
+                                List<Warning> fileWarnings = new List<Warning>(); // collection of warnings
 
                                 try
                                 {
@@ -228,6 +231,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                                     if (fileErrors == null || fileErrors.Count == 0)
                                                     {
+                                                        // check if primary key is set
+                                                        if (!enforcePrimaryKey && !hasPrimaryKey)
+                                                        {
+                                                            fileWarnings.Add(new Warning(ErrorType.PrimaryKey, "No primary key has been defined for the selected data structure, which can lead to problems when updating data. To avoid this, define a primary key in the data structure above.", "Primary Key"));
+                                                        }
+
                                                         //check against primary key local file
                                                         unique = uploadWizardHelper.IsUnique(id, ext, fileName, filePath, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo, datastructureId, ref primaryKeyHashTable);
                                                         if (!unique)
@@ -249,6 +258,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                 {
                                                     fileErrors.AddRange(cacheFile.Errors);
                                                 }
+
+                                                if (cacheFile != null && cacheFile.Warnings.Any())
+                                                {
+                                                    fileWarnings.AddRange(cacheFile.Warnings);
+                                                }
                                             }
                                         }
                                         else
@@ -264,6 +278,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 finally
                                 {
                                     if (fileErrors != null) file.Errors = fileErrors;
+                                    if (fileWarnings != null) file.Warnings = fileWarnings;
 
                                     FileValidationResult result = new FileValidationResult();
                                     result.File = file.Name;
@@ -273,6 +288,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         file.Errors.ForEach(e => result.Errors.Add(e.ToHtmlString()));
                                         result.SortedErrors = EditHelper.SortFileErrors(file.Errors);
                                         errors.AddRange(file.Errors); // set to global error list
+                                    }
+
+                                    if (file.Warnings.Any())
+                                    {
+                                        file.Warnings.ForEach(e => result.Warnings.Add(e.ToHtmlString()));
+                                        result.SortedWarnings = EditHelper.SortFileWarnings(file.Warnings);
+                                        warnings.AddRange(file.Warnings); // set to global error list
                                     }
 
                                     model.FileResults.Add(result);
