@@ -12,7 +12,7 @@ namespace BExIS.Dlm.Entities.Meanings.Tests
     public class MeaningManagerTests
     {
         private TestSetupHelper helper = null;
-        private IMeaningManager _meaningManager = null;
+        private MeaningManager _meaningManager = null;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
