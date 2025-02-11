@@ -5,6 +5,7 @@ using BExIS.Dlm.Services.Meanings;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.UI.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BExIS.Modules.Rpm.UI.Helpers
@@ -53,7 +54,6 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 using (var meaningManager = new MeaningManager())
                 {
                     var ids = model.Related_meaning.Select(m => m.Id);
-
                     meaning.Related_meaning = meaningManager.GetMeanings().Where(m => ids.Contains(m.Id)).ToList();
                 }
             }
@@ -68,8 +68,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 using (var constraintManager = new ConstraintManager())
                 {
                     var ids = model.Constraints.Select(m => m.Id);
-                    var cs = constraintManager.ConstraintRepository.Query(c => ids.Contains(c.Id)).ToList();
-                    meaning.Constraints = cs;
+                    meaning.Constraints = constraintManager.ConstraintRepository.Query(c => ids.Contains(c.Id)).ToList<Constraint>();
                 }
             }
 
