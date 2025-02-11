@@ -34,8 +34,8 @@ namespace BExIS.IO.Tests.Transform.Input
         }
 
         [TestCase("11.12.2024","dd.MM.yyyy")]
-        [TestCase("11.12.2024 1:23", "M/d/yyyy h:m")]
-        [TestCase("11-12-2024T11:23:12", "yyyy-MM-ddThh:mm:ss")]
+        [TestCase("11/12/2024 1:23", "M/d/yyyy h:m")]
+        [TestCase("2024-12-12T11:23:12", "yyyy-MM-ddThh:mm:ss")]
         public void SuggestDisplayPattern_valid_DisplayPattern(string input,string displayPattern)
         {
             //Arrange
