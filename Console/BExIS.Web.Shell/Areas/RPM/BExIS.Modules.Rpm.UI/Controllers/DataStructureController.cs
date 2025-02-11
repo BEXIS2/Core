@@ -626,8 +626,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     if (systemTypes.ContainsKey(i))
                         var.SystemType = systemTypes[i].Name;
 
+                    // get example value
+                    var value = getValueFromMarkedRow(markerRows, model.Markers, "data", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
+
+
                     // get list of possible data types
-                    var.DataType = strutcureAnalyzer.SuggestDataType(var.SystemType).Select(d => new ListItem(d.Id, d.Name, "detect")).FirstOrDefault();
+                    var.DataType = strutcureAnalyzer.SuggestDataType(var.SystemType, value).Select(d => new ListItem(d.Id, d.Name, "detect")).FirstOrDefault();
 
                     // get list of possible units
                     var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
@@ -668,9 +672,21 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     // get suggested DisplayPattern / currently only for DateTime
                     if (var.SystemType.Equals(typeof(DateTime).Name))
                     {
-                        var.DisplayPattern = null; // here a suggestion of the display pattern is needed
                         var displayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.ToString().Equals(var.SystemType));
+
                         displayPattern.ToList().ForEach(d => var.PossibleDisplayPattern.Add(new ListItem(d.Id, d.DisplayPattern)));
+
+                        // sugest displaypattern
+                        //suggest display pattern
+                        var suggestedDisplayPattern = strutcureAnalyzer.SuggestDisplayPattern(value);
+                        // create listitem if display pattern exist
+                        ListItem dsp = null;
+                        if (suggestedDisplayPattern != null)
+                        {
+                            dsp = new ListItem(suggestedDisplayPattern.Id, suggestedDisplayPattern.DisplayPattern);
+                        }
+                        // set display pattern to variable
+                        var.DisplayPattern = dsp;
                     }
 
                     // variable template

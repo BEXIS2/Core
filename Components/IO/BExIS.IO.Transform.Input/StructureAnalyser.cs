@@ -215,7 +215,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="systemType"></param>
         /// <returns>DataType</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public List<Entites.DataType> SuggestDataType(string systemType)
+        public List<Entites.DataType> SuggestDataType(string systemType, string value="")
         {
             if (string.IsNullOrEmpty(systemType)) throw new ArgumentNullException(nameof(systemType), "system type should not be empty.");
 
@@ -224,6 +224,42 @@ namespace BExIS.IO.Transform.Input
             using (var dataTypeManager = new DataTypeManager())
             {
                 result = dataTypeManager.Repo.Query(d => d.SystemType.Equals(systemType)).ToList();
+
+
+                if (systemType.Equals("DateTime") && !string.IsNullOrEmpty(value))
+                {
+                    // filter all date time values
+                    // remove all unnecessary chars
+                    var patternSpecialChars = Regex.Replace(value, @"[a-zA-Z0-9\s]", string.Empty);
+
+                    //count full lenght and without time
+                    int lenght = patternSpecialChars.Count();
+                    int withoutTime = lenght;
+
+                    var newString  = patternSpecialChars.Replace(":","");
+                    withoutTime = newString.Length;
+                    //if (patternSpecialChars == ":" || patternSpecialChars == "::") withoutTime = 0;
+                    //else if(patternSpecialChars.Contains(":"))
+                    //    withoutTime = patternSpecialChars.Remove(':').Length;
+
+                    //if without time = 0 then it is a time
+                    if (withoutTime == 0)
+                    {
+                        return dataTypeManager.Repo.Query(d => d.SystemType.Equals(systemType) && d.Name.ToLower() == "time").ToList();
+                    }
+
+                    // if lenght =  without time  then it is a date
+                    if (lenght == withoutTime)
+                    {
+                        return dataTypeManager.Repo.Query(d => d.SystemType.Equals(systemType) && d.Name.ToLower()=="date").ToList();
+                    }
+
+                    //if lenght > without time  then it is a date and time
+                    if (lenght > withoutTime)
+                    {
+                        return dataTypeManager.Repo.Query(d => d.SystemType.Equals(systemType) && d.Name.ToLower() == "datetime").ToList();
+                    }
+                }
             }
 
             return result;
@@ -425,6 +461,22 @@ namespace BExIS.IO.Transform.Input
             }
 
             return result;
+        }
+
+        public DataTypeDisplayPattern SuggestDisplayPattern(string dateTimeValue)
+        {
+            // remove numbers from dateTimeValue to get only the seperator chars
+            var inputSpecialChars = Regex.Replace(dateTimeValue, @"[a-zA-Z0-9\s]", string.Empty);
+
+
+            foreach (var p in DataTypeDisplayPattern.Pattern)
+            { 
+                var patternSpecialChars = Regex.Replace(p.DisplayPattern, @"[a-zA-Z0-9\s]", string.Empty);
+                if (inputSpecialChars == patternSpecialChars)
+                    return p;
+            }
+
+            return null;
         }
 
         private List<Type> checkValue(string value, List<Type> types, List<string> missingValues)

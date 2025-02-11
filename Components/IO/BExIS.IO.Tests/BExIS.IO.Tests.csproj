@@ -162,6 +162,7 @@
     <Compile Include="IOUtilityTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Transform\Input\AsciiReaderEncodingTest.cs" />
+    <Compile Include="Transform\Input\StructureAnalyzer_SuggestDisplayPatternTests.cs" />
     <Compile Include="Transform\Input\StructureAnalyzer_SuggestUnitTests.cs" />
     <Compile Include="Transform\Input\StructureAnalyzer_SuggestDataTypeTests.cs" />
     <Compile Include="Transform\Input\StructureAnalyzerTest.cs" />
