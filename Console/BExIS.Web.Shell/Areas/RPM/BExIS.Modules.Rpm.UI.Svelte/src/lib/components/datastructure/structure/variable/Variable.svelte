@@ -150,6 +150,7 @@
 
 			console.log(id, e.detail, variable);
 			if (id.includes('variableTemplate')) {
+
 				if (setByTemplate) {
 					// if true, update unit & datatype based on settings
 					if (variable.dataType == undefined || variable.dataType == '') {
@@ -179,6 +180,7 @@
 
 			updateLists();
 		}, 100);
+			console.log("🚀 ~ setTimeout ~ e.detail:", e.detail)
 	}
 
 	// use the store to reset the lists for the dropdowns
@@ -213,9 +215,8 @@
 	}
 
 	function updateUnit(_variableTemplate: templateListItemType): unitListItemType | undefined {
-		console.log('🚀 ~e.details _variableTemplate.units:', _variableTemplate.units);
 		if (_variableTemplate.units) {
-			var firstUnit = _variableTemplate.units[0];
+			var firstUnit = _variableTemplate.unit;
 			var us = [...$unitStore.filter((u) => u.text == firstUnit)];
 			if (us != undefined) {
 				var u = us[0];
@@ -228,7 +229,7 @@
 
 	function updateDataType(_variableTemplate: templateListItemType): listItemType | undefined {
 		if (_variableTemplate.units) {
-			var ds = [...$dataTypeStore.filter((d) => _variableTemplate.dataTypes.includes(d.text))];
+			var ds = [...$dataTypeStore.filter((d) => _variableTemplate.dataType == d.text)];
 			if (ds != undefined) {
 				return ds[0];
 			}
