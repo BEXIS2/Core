@@ -40,7 +40,7 @@
 
 	export let variable: VariableInstanceModel = new VariableInstanceModel();
 	$: variable;
-	export let data: string[];
+	export let data: string[] = [];
 	$: data;
 
 	export let index: number;
@@ -282,15 +282,22 @@
 	}
 
 	function cutData(d: any) {
-		for (let index = 0; index < d.length; index++) {
-			let v = d[index];
 
-			if (v.length > 10) {
-				d[index] = v.slice(0, 10) + '...';
+		console.log("🚀 ~ cutData ~ d:", d)
+
+		if(d != undefined	&& d != null && d[0] !=	undefined && d[0] != null)
+		{
+			 console.log("🚀 ~ cutData in if ", d)
+				for (let index = 0; index < d.length; index++) {
+					let v = d[index];
+
+					if (v.length > 10) {
+						d[index] = v.slice(0, 10) + '...';
+					}
+				}
+				return d;
 			}
-		}
-
-		return d;
+		return [];
 	}
 </script>
 
