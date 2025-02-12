@@ -26,7 +26,7 @@
 			</div>
 			<div class="grow-0 w-42 text-right">
 				{#if linkedSubjects.length > 0}
-					<span class="badge variant-filled-error">in use</span>
+					<span class="badge variant-filled-success">in use</span>
 				{/if}
 				<span class="badge variant-filled-surface">{metadataStructure.text}</span>
 				<span class="badge variant-filled-secondary">{entityType.text}</span>
@@ -46,7 +46,7 @@
 		<!--linked subjects-->
 		{#if linkedSubjects.length > 0}
 			<i
-				>Show linked {entityType.text}:
+				>Show linked {entityType.text.toLowerCase()}:
 				<button class="btn-icon" on:click={() => (hidden = !hidden)}>
 					{#if hidden}
 						<Fa icon={faEye} />
