@@ -15,7 +15,7 @@ export function updateDisplayPattern(type, reset = true) {
 			//console.log('updateDisplayPattern', type);
 			// date without time
 			displayPattern = allDisplayPattern.filter(
-				(m) => m.group.toLowerCase().includes(type.text) && !m.text.toLowerCase().includes(':')
+				(m) => m.group.toLowerCase().includes(type.text) && !m.text.toLowerCase().includes(':') && !(m.text == 'mm') && !(m.text == 'HH') && !(m.text == 'ss')
 			);
 			displayPattern.forEach((m) => {
 				m.group = 'Date';
@@ -26,8 +26,8 @@ export function updateDisplayPattern(type, reset = true) {
 			displayPattern = allDisplayPattern.filter(
 				(m) =>
 					m.group.toLowerCase().includes(type.text) &&
-					(!m.text.toLowerCase().includes('d') || !m.text.toLowerCase().includes('y')) &&
-					m.text.toLowerCase().includes(':')
+					(!m.text.toLowerCase().includes('d') || !m.text.toLowerCase().includes('y')) && (
+					m.text.toLowerCase().includes(':') || m.text == 'mm'  || m.text == 'HH' || m.text == 'ss')
 			);
 
 			displayPattern.forEach((m) => {

@@ -139,6 +139,10 @@
 	//change event: if select change check also validation only on the field
 	// *** is the id of the input component
 	function onSelectHandler(e: any, id: string) {
+
+		console.log("🚀 ~ onSelectHandler ~ e.detail", e.detail, variable)
+		console.log("🚀 ~ displaypatterns", displayPattern)
+
 		setTimeout(async () => {
 			res = suite(variable, id);
 
@@ -283,11 +287,11 @@
 
 	function cutData(d: any) {
 
-		console.log("🚀 ~ cutData ~ d:", d)
+		//console.log("🚀 ~ cutData ~ d:", d)
 
 		if(d != undefined	&& d != null && d[0] !=	undefined && d[0] != null)
 		{
-			 console.log("🚀 ~ cutData in if ", d)
+			 //console.log("🚀 ~ cutData in if ", d)
 				for (let index = 0; index < d.length; index++) {
 					let v = d[index];
 
