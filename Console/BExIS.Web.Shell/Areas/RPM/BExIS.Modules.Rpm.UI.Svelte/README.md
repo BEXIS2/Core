@@ -1,4 +1,6 @@
 # bexis2-rpm-ui
+## 0.2.9
+- update bexis2.core.ui lib
 
 ## 0.2.8
 

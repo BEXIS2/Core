@@ -53,21 +53,22 @@
 
 {#if type}
 	<div class="flex gap-5">
+
 		<div class="self-center flex-none"><FileInfo {type} size="x-large" /></div>
 
-		<div class="{fileNameSpan} self-center grow">
+		<div class="{fileNameSpan} self-center w-1/4">
 			{file}
 		</div>
 
 		{#if withDescription}
 			<div class="{fileNameSpan} self-center grow">
-				<TextInput bind:value={description} on:change={handleSaveFileDescription} />
+				<TextInput bind:value={description} on:change={handleSaveFileDescription}  placeholder="file comments (e.g. revised version, ...)"/>
 			</div>
 		{:else}
 			<div />
 		{/if}
 
-		<div class="text-right">
+		<div class="self-end">
 			{#if loading}
 				<Spinner textCss="text-surface-500" />
 			{:else}

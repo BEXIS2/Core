@@ -37,7 +37,6 @@
 </script>
 
 	<div style="z-index:150">
-		<b>test c</b>
 <Drawer position="right" width="10"  on:backdrop={close} on:touchend={close}>
 	<div class="p-5 space-y-5">
 		<div class="flex">

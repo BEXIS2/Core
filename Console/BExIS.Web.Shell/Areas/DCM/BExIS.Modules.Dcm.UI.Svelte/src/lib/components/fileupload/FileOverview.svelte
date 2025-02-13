@@ -54,22 +54,39 @@
 </script>
 
 {#if files}
-	<div class="grid gap-2 divide-y-2 p-3 max-h-[180px] overflow-auto">
-		<!--<Container> -->
-		{#each files as file, index}
-			<FileOverviewItem
-				{id}
-				file={file.name}
-				{...file}
-				{save}
-				{remove}
-				on:removed={(e) => handleRemoveFile(e, index)}
-				on:saved={handleSave}
-				{withDescription}
-			/>
-		{/each}
-		<!-- </Container> -->
+	{#if files.length > 0}
+	<div class="flex-col">
+		<div class="pt-2">
+			<b>Uploaded File(s)</b>
+		</div>
+
+		<div class="flex gap-16">
+			<div class="w-1/4"></div>
+			<div class="text-sm">
+				File description (optional)
+			</div>
+			<div class="text-right w-10"></div>
+		</div>
+	
+		<div class="grid gap-2 divide-y-2 pb-3 max-h-[180px] overflow-auto">
+
+			<!--<Container> -->
+			{#each files as file, index}
+				<FileOverviewItem
+					{id}
+					file={file.name}
+					{...file}
+					{save}
+					{remove}
+					on:removed={(e) => handleRemoveFile(e, index)}
+					on:saved={handleSave}
+					{withDescription}
+				/>
+			{/each}
+			<!-- </Container> -->
+		</div>
 	</div>
+	{/if}
 {:else}
 	<!-- spinner here -->
 	<Spinner textCss="text-surface-800" label="loading files list" />
