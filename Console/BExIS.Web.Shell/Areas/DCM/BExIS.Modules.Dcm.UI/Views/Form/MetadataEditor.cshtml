@@ -128,23 +128,33 @@
                 <td style="width:500px;">
 
                     @if (Model.LatestVersion)
-                        {
+                    {
 
-                    <span class="dropdown">
-                        <button class="bx-button function" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            Download Metadata
-                            <span class="caret"></span>
+                        <span class="dropdown">
+                            <button class="bx-button function" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Download Metadata
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                <li><a id="downloadHtmlButton" onclick="downloadHtml()">... as Html</a></li>
+                                <li><a id="downloadXmlButton" onclick="downloadXml()">... as XML</a></li>
+                            </ul>
+                        </span>
+                    }
+                    else
+                    {
+                        <button class="bx-button function bx-disabled" disabled="disabled" title="You can only download the metadata of the latest version directly.">Download Metadata </button>
+                    }
+
+                    @if (Model.EditRight)
+                    {
+                        <button class="bx-button function" title="Edit Metadata" onclick="edit()">
+                            <span class="fa fa-pencil"></span>
+                            <span style="padding:5px;">
+                                Edit Metadata
+                            </span>
                         </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                            <li><a id="downloadHtmlButton" onclick="downloadHtml()">... as Html</a></li>
-                            <li><a id="downloadXmlButton" onclick="downloadXml()">... as XML</a></li>
-                        </ul>
-                    </span>
-                        }
-                        else
-                        {
-                    <button class="bx-button function bx-disabled" disabled="disabled" title="You can only download the metadata of the latest version directly.">Download Metadata </button>
-                        }
+                    }
 
                     @Html.CheckBox("showAll", @showOptional, new { OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll" })
 
@@ -469,12 +479,10 @@
     }
 
     function edit() {
-        $
-            .get('@Url.Action("EditMetadata", "Form", new RouteValueDictionary {{"area", "DCM"}, {"datasetId", @Model.DatasetId}, {"locked", false}, {"created", false}})',
-                function(response) {
-                    $('#MetadataEditor').replaceWith(response);
-                    bindMinimap(true);
-                })
+
+        const defaultFormUrl = "/dcm/metadata/loadform?id=@Model.DatasetId&version=0";
+        window.open(defaultFormUrl)?.focus();
+
     }
 
     function submit() {
@@ -482,6 +490,7 @@
 
         var commit_message = $('#commit_message').val();
         console.log("commit_message", commit_message)
+
 
         $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}, { "entityId", @entityId } })',
             function(response) {
@@ -510,7 +519,6 @@
     function callSubmitAction(valid, commit_message) {
 
         var entityId = '@Model.DatasetId';
-         alert(entityId);
          $.get('@Url.Action(
                  @submit.ActionName,
                  @submit.ControllerName,
@@ -563,7 +571,7 @@
 
     function downloadHtml() {
 
-		$("#preloaderContainer").preloader(20, "Preparing html file...");
+        $("#preloaderContainer").preloader(20, "Preparing html file...");
 
         var x = entityId
 
@@ -575,7 +583,7 @@
 
         function downloadXml() {
 
-		$("#preloaderContainer").preloader(20, "Preparing xml file...");
+        $("#preloaderContainer").preloader(20, "Preparing xml file...");
 
             window.location = '@Url.Action("DownloadAsXml", "Form", new { @entityId })';
 

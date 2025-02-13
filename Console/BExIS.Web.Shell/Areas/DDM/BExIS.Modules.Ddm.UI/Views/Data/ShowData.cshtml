@@ -196,13 +196,15 @@
 
             @if (Model.HasEditRight && ViewData["state"].ToString() != "hidden")
             {
-                <div class="datasetview_header-toggle" onclick="toogleToEdit()">
-                    <div class="switch">
-                        <input id="bx2-toggle" class="bx2-toggle bx2-toggle-round-flat" type="checkbox">
-                        <label for="bx2-toggle"></label>
-                    </div>
+                <div class="datasetview_header-toggle" >
+
+                    <button title="go to edit dataset" class="bx-button small function" type="button" onclick="toogleToEdit()">
+                        <span class="fa fa-pencil"></span>
+                        <span style="padding:5px;">
+                            Edit
+                        </span>
+                    </button>
                 </div>
-                <span class="datasetview_header-toggle-text">switch to edit</span>
             }
         </div>
 
@@ -617,7 +619,7 @@ else
 
     .datasetview_header {
         width: 100%;
-        min-height: 40px;
+        min-height: 50px;
     }
 
     .datasetview_header-title {
@@ -629,9 +631,9 @@ else
         }
 
     .datasetview_header-toggle-text {
-        padding: 5px;
+
         float: right;
-        color: rgb(98, 98, 98);
+
     }
 
     .datasetview_header-toggle {
