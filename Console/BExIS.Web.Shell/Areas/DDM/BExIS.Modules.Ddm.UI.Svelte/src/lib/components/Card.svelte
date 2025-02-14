@@ -1,4 +1,6 @@
 <script lang="ts">
+	// import { Api } from '@bexis2/bexis2-core-ui';
+
 	export let card: {
 		title: string;
 		description: string;
@@ -6,26 +8,105 @@
 		license: string;
 		id: string;
 	} = { title: '', description: '', author: '', license: '', id: '' };
+	console.log("🚀 ~ card:", card)
+	
+	let author = '';
+	let authorsLabel = 'Authors';
 
-	const { title, description, author, license, id } = card;
+	const { title, description, license, id } = card;
+
+
+	// const getAuthorText = (author: { firstName: string; initials: string; familyName: string }) =>
+	// 	`${author.familyName}, ${author.initials.length > 0 ? author.initials : ''} ${author.firstName[0] + '.'}`;
+
+	// // TODO: Ideally, we will get author info in bulk with the datasets info.
+	// // Currently, we are fetching author info for each dataset individually, which is highly inefficient.
+	// const getAuthors = async () => {
+	// 	try {
+	// 		const res = await fetch('/api/metadata/' + card?.id + '?simplifiedJson=1', {
+	// 			headers: {
+	// 				Accept: 'application/json',
+	// 				'Content-Type': 'application/json'
+	// 			}
+	// 		});
+
+	// 		if (!res.ok) {
+	// 			throw new Error('Failed to fetch authors');
+	// 		}
+
+	// 		const data = await res.json();
+
+	// 		const authorsData = data.generalInformation.authors;
+	// 		const authors: { firstName: string; initials: string; familyName: string }[] = [];
+
+	// 		for (let i = 0; i < authorsData.length; i++) {
+	// 			authors.push({
+	// 				firstName: authorsData[i].firstName['#text'],
+	// 				initials: authorsData[i].initials['#text'],
+	// 				familyName: authorsData[i].familyName['#text']
+	// 			});
+	// 		}
+
+	// 		if (authors.length > 2) {
+	// 			author = `${getAuthorText(authors[0])} et al.`;
+	// 		} else if (authors.length === 2) {
+	// 			author = `${getAuthorText(authors[0])} & ${getAuthorText(authors[1])}`;
+	// 		} else if (authors.length === 1) {
+	// 			author = getAuthorText(authors[0]);
+	// 			authorsLabel = 'Author';
+	// 		}
+	// 	} catch (e) {
+	// 		console.error(e);
+	// 	}
+	// };
+
+	// $: getAuthors();
 </script>
 
 <div class="flex grow">
 	<div
-		class="p-4 px-5 border rounded-md bg-surface-100 border-surface-500 grow cursor-pointer hover:border-primary-500"
+		class="p-4 px-5 border rounded-md bg-neutral-50 border-neutral-200 grow cursor-pointer hover:border-primary-500"
 		on:click={() => window.open(`/ddm/data/Showdata/${id}`)}
 		on:keydown={() => window.open(`/ddm/data/Showdata/${id}`)}
 		role="link"
 		tabindex="0"
 	>
-		<div class="flex flex-col w-full">
-			<h1 class="text-xl font-semibold">{title}</h1>
-			<p class=" line-clamp-3">
-				{description}
+		<div class="flex flex-col w-full gap-4">
+			<div class="justify-between flex gap-2">
+				<h1 class="text-xl font-semibold grow">
+					{#if description && description.length > 0}
+					 {title}
+				{:else}
+				  No title available
+				{/if}
+
+				</h1>
+				<p class="shrink">2024</p>
+			</div>
+
+			<p class="text-sm line-clamp-3">
+				{#if description && description.length > 0}
+						{description}
+				{:else}
+				  No description available
+				{/if}
+
 			</p>
+			{#if author.length > 0}
+				<div class="flex gap-2 items-center">
+					<span class="font-semibold">{authorsLabel}:</span>
+					<p class="text-sm italic text-neutral-600">{author}</p>
+				</div>
+			{/if}
+
 			<div class="flex items-center justify-between w-full">
-				<p class="text-sm">{license}</p>
-				<p class="text-sm">By <span class="font-semibold">{author}</span></p>
+				<div>
+					{#if license && license.length > 0}
+						<div class="rounded-md px-3 p-1 items-center flex bg-neutral-200">
+							<p class="text-sm">{license.replace('Open - ', '')}</p>
+						</div>
+					{/if}
+				</div>
 			</div>
 		</div>
 	</div>

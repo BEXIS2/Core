@@ -31,8 +31,7 @@
 	{#each cards as card (card.id)}
 		<Card
 			card={{
-				...card,
-				license: ''
+				...card
 			}}
 		/>
 	{/each}
