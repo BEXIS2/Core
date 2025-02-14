@@ -1187,6 +1187,17 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         false,
                         "dataset/license",
                         concept);
+
+                //doi
+                if (!keys.Any(k => k.Name.Equals("doi")))
+                    conceptManager.CreateMappingKey(
+                        "doi",
+                        "Placeholder for doi",
+                        "",
+                        false,
+                        false,
+                        "dataset/doi",
+                        concept);
             }
         }
 

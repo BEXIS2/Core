@@ -22,7 +22,7 @@
 	$: paginationSettings.size = $store.length;
 </script>
 
-<div class="flex flex-col gap-4 grow min-w-[500px] max-w-[800px]">
+<div class="flex flex-col gap-4 grow min-w-[500px]">
 	<p class="text-muted text-sm">
 		{$store.length}
 		{`dataset${$store.length !== 1 ? 's' : ''}`} found
@@ -31,17 +31,26 @@
 	{#each cards as card (card.id)}
 		<Card
 			card={{
-				...card
+				...card,
+				title: card.title || '',
+				description: card.description || '',
+				author: card.author || '',
+				license: card.license || '',
+				entity: card.entity || ''
 			}}
 		/>
 	{/each}
 
 	{#if $store.length > 0}
 		<Paginator
-			bind:settings={paginationSettings}
-			showFirstLastButtons={false}
-			showPreviousNextButtons={true}
-			controlVariant="variant-filled-primary"
+			settings={paginationSettings}
+			active="!variant-filled-secondary !text-on-secondary-token"
+			controlVariant="text-on-primary-token"
+			buttonClasses="!rounded-none !px-3 !py-1.5 fill-current bg-primary-500 hover:!bg-primary-600 text-on-primary-token disabled:grayscale disabled:!opacity-30"
+			regionControl="btn-group"
+			select="!px-3 !py-1.5 select min-w-[150px]"
+			showFirstLastButtons
+			showPreviousNextButtons
 		/>
 	{/if}
 </div>

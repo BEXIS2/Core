@@ -1,5 +1,5 @@
 <script lang="ts">
-	// import { Api } from '@bexis2/bexis2-core-ui';
+	import { Api } from '@bexis2/bexis2-core-ui';
 
 	export let card: {
 		title: string;
@@ -7,14 +7,14 @@
 		author: string;
 		license: string;
 		id: string;
-	} = { title: '', description: '', author: '', license: '', id: '' };
-	console.log("🚀 ~ card:", card)
-	
-	let author = '';
-	let authorsLabel = 'Authors';
+		doi: string;
+		entity: string;
+	} = { title: '', description: '', author: '', license: '', id: '', doi: 'yxl', entity: '' };
 
-	const { title, description, license, id } = card;
+	const { title, description, author, license, id, doi, entity } = card;
 
+	// let author = '';
+	// let authorsLabel = 'Authors';
 
 	// const getAuthorText = (author: { firstName: string; initials: string; familyName: string }) =>
 	// 	`${author.familyName}, ${author.initials.length > 0 ? author.initials : ''} ${author.firstName[0] + '.'}`;
@@ -73,39 +73,41 @@
 	>
 		<div class="flex flex-col w-full gap-4">
 			<div class="justify-between flex gap-2">
-				<h1 class="text-xl font-semibold grow">
-					{#if description && description.length > 0}
-					 {title}
-				{:else}
-				  No title available
-				{/if}
-
-				</h1>
+				<h1 class="text-xl font-semibold grow">{title}</h1>
 				<p class="shrink">2024</p>
 			</div>
 
 			<p class="text-sm line-clamp-3">
-				{#if description && description.length > 0}
-						{description}
-				{:else}
-				  No description available
-				{/if}
-
+				{description}
 			</p>
 			{#if author.length > 0}
 				<div class="flex gap-2 items-center">
-					<span class="font-semibold">{authorsLabel}:</span>
+					<span class="font-semibold">Author:</span>
 					<p class="text-sm italic text-neutral-600">{author}</p>
 				</div>
 			{/if}
 
-			<div class="flex items-center justify-between w-full">
-				<div>
+			<div class="flex">
+				<div class="w-auto">
 					{#if license && license.length > 0}
-						<div class="rounded-md px-3 p-1 items-center flex bg-neutral-200">
+						<div class="rounded-full px-3 p-1 items-center flex bg-neutral-200">
 							<p class="text-sm">{license.replace('Open - ', '')}</p>
 						</div>
 					{/if}
+				</div>
+				<div class="ml-auto flex gap-2">
+		
+					{#if entity && entity.length > 0}
+						<div class="rounded-full px-3 p-1 bg-primary-500">
+							<span class="text-sm font-semibold text-on-secondary-token"
+								>{entity.toLowerCase()}</span
+							>
+						</div>
+					{/if}
+
+					<div class="rounded-full px-3 p-1 items-center flex bg-secondary-500">
+						<span class="text-sm font-semibold text-on-secondary-token">DOI</span>
+					</div>
 				</div>
 			</div>
 		</div>

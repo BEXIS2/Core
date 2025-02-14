@@ -1,5 +1,12 @@
 -- OPEN ISSUES
- -- add dim/gbif controller in operations
+-- add doi as key in search concept
+-- search/doi
+INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept, xpath)
+    SELECT 'doi','Placeholder for doi', '', false, false, (select id from dim_mappingconcepts where name='Search'), 'dataset/doi'
+    WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='Search') AND xpath='dataset/doi');
+
+
+-- add dim/gbif controller in operations
 INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
 SELECT 1, NULL, 'DIM', 'Gbif', '*', null 
 WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='API' AND controller='DataTable');

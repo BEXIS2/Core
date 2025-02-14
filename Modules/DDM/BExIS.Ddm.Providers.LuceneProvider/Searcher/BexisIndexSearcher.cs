@@ -209,6 +209,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
             entity.DisplayName = "Type";
             entity.Name = "entity_name";
             entity.DataType = "string";
+            entity.Placeholder = "entity";
             Header.Add(entity);
 
             //DefaultHeader.Add(entity);

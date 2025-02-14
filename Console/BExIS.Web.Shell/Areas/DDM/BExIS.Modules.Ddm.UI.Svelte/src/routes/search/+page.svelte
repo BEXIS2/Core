@@ -1,8 +1,11 @@
 <script lang="ts">
 	import Select from 'svelte-select';
+	import Fa from 'svelte-fa';
+	import { PaneGroup, Pane, PaneResizer } from 'paneforge';
+	import { faFilter, faTable, faBars, faGripVertical } from '@fortawesome/free-solid-svg-icons';
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
-	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
+	import { RadioGroup, RadioItem, SlideToggle } from '@skeletonlabs/skeleton';
 	import { Api, Facets, Page, pageContentLayoutType, Table } from '@bexis2/bexis2-core-ui';
 	import type { Columns, FacetGroup, TableConfig } from '@bexis2/bexis2-core-ui';
 
@@ -13,13 +16,17 @@
 
 	let columns: Columns;
 	let config: TableConfig<any>;
-	let categories: { name: string; displayName: string }[] = [];
+	let categories: { [key: string]: string } = {};
 	let currentCategory = 'All';
 	let q = '';
 
 	let currentView: 'table' | 'cards' = 'table';
 
 	let facetsRef: any;
+
+	let mapFiltersOpen = false;
+	let timeFiltersOpen = false;
+	let filtersOpen = false;
 
 	const criteria = writable<{
 		[key: string]: {
@@ -53,7 +60,7 @@
 		}
 
 		const currentCategoryDisplayName =
-			categories.find((c) => c.name === currentCategory)?.displayName || currentCategory;
+			Object.keys(categories).find((c) => c === currentCategory) || currentCategory;
 
 		if (q.length !== 0) {
 			$criteria = {
@@ -69,16 +76,12 @@
 		const responseObject = response.data;
 
 		// Mapping categories
-		init &&
-			responseObject.SearchComponent.Categories.forEach((category: any) => {
-				categories = [
-					...categories,
-					{
-						name: category.Name,
-						displayName: category.DisplayName
-					}
-				];
-			});
+		if (init) {
+			categories = responseObject.SearchComponent.Categories.reduce((acc: any, cur: any) => {
+				acc[cur.Name] = cur.DisplayName;
+				return acc;
+			}, {});
+		}
 
 		// Mapping and updating table data
 		const {
@@ -143,26 +146,16 @@
 
 		if (init) {
 			columns = mapping.columns;
-			console.log("🚀 ~ columns:", columns)
-
 
 			config = {
 				id: 'search-table',
 				data: tableStore,
 				search: false,
 				optionsComponent: ShowData as any,
-				columns:
-					{
-						iD: {
-							header: 'Id',
-							instructions: {
-								toSortableValueFn: (id: string) => parseInt(id)
-							}
-					}
-				}
+				columns
+			};
 		}
-	}
-};
+	};
 
 	const mapFacets = (facets: any, criteria: any) => {
 		const appliedFacets = criteria.filter((criterion: any) => criterion.SearchComponent.Type === 1);
@@ -206,6 +199,8 @@
 				});
 			});
 
+			console.log(appliedFacetsDict);
+
 			if (appliedFacetsDict[facet.Name]) {
 				$criteria = {
 					...$criteria,
@@ -233,7 +228,7 @@
 			.map((header, index) => ({
 				header: header.DisplayName,
 				placeholder: header.Placeholder,
-				index:headers.indexOf(header)
+				index: headers.indexOf(header)
 			}));
 
 		// For debugging
@@ -259,7 +254,6 @@
 				),
 				id: row.Values[idIndex]
 			}));
-
 			placeholderStore.set(data);
 		}
 	};
@@ -305,6 +299,8 @@
 
 	const handleShowMoreSelect = async (e: { detail: { parent: string; selected: boolean[] }[] }) => {
 		const selected = e.detail[0].selected;
+
+		console.log(selected);
 
 		const formBody = new URLSearchParams();
 		selected.forEach((value, index) => {
@@ -400,136 +396,184 @@
 	onMount(async () => {
 		await handleSearch(true);
 	});
-
-	let links: any[] = [
-		{
-			label: 'public search',
-			url: '/ddm/publicsearch'
-		}]
 </script>
 
 <Page
 	title="Search"
 	note="Search over the data in this system."
 	contentLayoutType={pageContentLayoutType.full}
-	{links}
 >
-	<div class="flex gap-8 overflow-auto">
-		<div class="min-w-64">
-			{#if $facetGroups.length > 0}
-				<Facets
-					groups={facetGroups}
-					open
-					bind:this={facetsRef}
-					on:facetSelect={handleFacetSelect}
-					on:showMoreSelect={handleShowMoreSelect}
-					on:showMoreOpenChange={handleShowMoreOpenChange}
-				/>
-			{/if}
-		</div>
-		<div class="flex flex-col gap-4">
-			<div class="flex flex-col gap-4">
-				<div class="flex gap-4">
-					<div class="w-min flex" title="Switch between table and card view">
-						<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
-							<RadioItem
-								bind:group={currentView}
-								name="currentView"
-								value="table"
-								title="Table view">Table</RadioItem
-							>
-							<RadioItem bind:group={currentView} name="currentView" value="cards" title="Card view"
-								>Cards</RadioItem
-							>
-						</RadioGroup>
+	<PaneGroup direction="horizontal" class="w-full !text-sm lg:text-base">
+		<!-- Facets -->
+		<Pane defaultSize={100} class="min-w-[175px]">
+			<div class="pr-2">
+				<div
+					class="{filtersOpen
+						? 'min-w-32'
+						: 'min-w-32'} overflow-hidden flex flex-col gap-4 rounded-md"
+				>
+					<span class="flex gap-4 items-center text-primary-700 text-2xl font-semibold">
+						<Fa icon={faFilter} size="xs" />
+						<span>Filters</span>
+					</span>
+					<div class=" overflow-auto">
+						{#if $facetGroups.length > 0}
+							<Facets
+								groups={facetGroups}
+								open
+								bind:this={facetsRef}
+								on:facetSelect={handleFacetSelect}
+								on:showMoreSelect={handleShowMoreSelect}
+								on:showMoreOpenChange={handleShowMoreOpenChange}
+							/>
+						{/if}
 					</div>
+				</div>
+			</div>
+		</Pane>
 
-					<select class="input w-max" bind:value={currentCategory} title="Filter categories">
-						{#each categories as category (category.name)}
-							<option value={category.name}>{category.displayName}</option>
-						{/each}
-					</select>
-					<Select
-						loadOptions={setAutoCompleteValues}
-						class="input grow max-w-[500px] min-w-[500px]"
-						name="search"
-						bind:filterText={q}
-						on:select={handleAutoCompleteSelect}
-						clearFilterTextOnBlur={false}
-						hideEmptyState={true}
-						clearable={false}
-						value={undefined}
-						placeholder="Search within selected category"
-					/>
-					<button
-						title="Search"
-						class="btn variant-filled-primary"
-						on:click|preventDefault={async () => await handleSearch()}>Search</button
-					>
+		<PaneResizer class="relative flex w-4 items-center justify-center bg-background h-full">
+			<div class="absolute w-[1px] h-full bg-neutral-200"></div>
+		</PaneResizer>
+
+		<!-- Table/Cards -->
+		<Pane defaultSize={500} class="flex grow w-full px-2">
+
+			
+			<div class="flex flex-col gap-4 w-full">
+				<!-- options -->
+				<div class="flex items-center justify-end w-full gap-16 p-2 bg-neutral-50 rounded-lg border-neutral-200 border px-6">
+					<div class="w-min flex h-full" title="Switch between table and card view">
+						<div class="flex gap-3 items-center">
+							<span>Layout: </span>
+							<RadioGroup
+								active="variant-filled-primary"
+								hover="hover:variant-soft-primary"
+								padding="py-1 px-2"
+								rounded="rounded-full"
+							>
+								<RadioItem
+									bind:group={currentView}
+									name="currentView"
+									value="table"
+									title="Table view"
+								>
+									<Fa icon={faTable} size="xs" />
+								</RadioItem>
+								<RadioItem
+									bind:group={currentView}
+									name="currentView"
+									value="cards"
+									title="Card view"
+								>
+									<Fa icon={faBars} size="xs" />
+								</RadioItem>
+							</RadioGroup>
+						</div>
+					</div>
 				</div>
 
-				<!-- Criteria and applied search queries -->
-				<div class="flex grow w-full">
-					<div class="flex gap-4 w-96 grow overflow-auto">
-						{#each Object.keys($criteria) as key, index (key)}
-							{#if $criteria[key].values.length > 0}
-								<div class="flex items-center gap-4">
-									<div class="w-min font-bold text-nowrap text-xs">
-										{$criteria[key].displayName}:
-									</div>
 
-									{#if $criteria[key].values.length < 3}
-										{#each $criteria[key].values as value, index (`${key}-${value}`)}
-											<CriteriaChip
-												title="Click to remove search term {value}"
-												on:remove={async () => {
-													if ($criteria[key].type === 'Facet') {
-														await toggleFacet(key, value);
-													} else {
-														await removeCriterion(key, value);
-													}
-												}}
-												on:click={async () => {
-													if ($criteria[key].type === 'Facet') {
-														await toggleFacet(key, value);
-													} else {
-														await removeCriterion(key, value);
-													}
-												}}>{value}</CriteriaChip
-											>
-											{#if $criteria[key].operation && index !== $criteria[key].values.length - 1}
-												<div class="text-xs">{$criteria[key].operation}</div>
-											{/if}
-										{/each}
-									{:else}
-										<CriteriaChip
-											title="Click to show all options for criterion {key}"
-											removable={false}
-											on:click={async () => {
-												facetsRef && facetsRef.showMore(key);
-											}}>{$criteria[key].values.length} options</CriteriaChip
-										>
-									{/if}
-									{#if index !== Object.keys($criteria).length - 1}
-										<div class="border border-r h-full border-surface-900/10 mx-3"></div>
-									{/if}
+			<div class="flex flex-col gap-4 overflow-x-auto">
+				<div class="flex flex-col gap-4">
+					<div class="flex gap-4 items-start">
+						
+							<div class="flex gap-4 h-min items-stretch">
+								<select
+									class="bg-input rounded-md px-4 pr-7 py-2 text-sm w-min border-neutral-300"
+									bind:value={currentCategory}
+									title="Filter categories"
+								>
+									{#each Object.keys(categories) as category (category)}
+										<option value={category}>{categories[category]}</option>
+									{/each}
+								</select>
+								<div class="flex gap-4 items-center grow">
+									<Select
+										loadOptions={setAutoCompleteValues}
+										class="input rounded-md !border-neutral-300 grow max-w-[500px] min-w-[300px]"
+										name="search"
+										bind:filterText={q}
+										on:select={handleAutoCompleteSelect}
+										clearFilterTextOnBlur={false}
+										hideEmptyState={true}
+										clearable={false}
+										value={undefined}
+										placeholder="Search within selected category"
+									/>
+									<button
+										title="Search"
+										class="btn variant-filled-primary"
+										on:click|preventDefault={async () => await handleSearch()}>Search</button
+									>
 								</div>
-							{/if}
-						{/each}
+							</div>
+						</div>
 					</div>
-				</div>
-			</div>
 
-			<div class="pt-8 grow">
-				{#if config}
-					<div class:hidden={currentView === 'cards'}>
-						<Table {config} />
+					<!-- Criteria and applied search queries -->
+					<div class="flex grow w-full item-start">
+						<div class="flex gap-4 w-96 grow overflow-auto">
+							{#each Object.keys($criteria) as key, index (key)}
+								{#if $criteria[key].values.length > 0}
+									<div class="flex items-center gap-4">
+										<div class="w-min font-bold text-nowrap text-xs">
+											{$criteria[key].displayName}:
+										</div>
+
+										{#if $criteria[key].values.length < 3}
+											{#each $criteria[key].values as value, index (`${key}-${value}`)}
+												<CriteriaChip
+													title="Click to remove search term {value}"
+													on:remove={async () => {
+														if ($criteria[key].type === 'Facet') {
+															await toggleFacet(key, value);
+														} else {
+															await removeCriterion(key, value);
+														}
+													}}
+													on:click={async () => {
+														if ($criteria[key].type === 'Facet') {
+															await toggleFacet(key, value);
+														} else {
+															await removeCriterion(key, value);
+														}
+													}}>{value}</CriteriaChip
+												>
+												{#if $criteria[key].operation && index !== $criteria[key].values.length - 1}
+													<div class="text-xs">{$criteria[key].operation}</div>
+												{/if}
+											{/each}
+										{:else}
+											<CriteriaChip
+												title="Click to show all options for criterion {key}"
+												removable={false}
+												on:click={async () => {
+													facetsRef && facetsRef.showMore(key);
+												}}>{$criteria[key].values.length} options</CriteriaChip
+											>
+										{/if}
+										{#if index !== Object.keys($criteria).length - 1}
+											<div class="border border-r h-full border-surface-900/10 mx-3"></div>
+										{/if}
+									</div>
+								{/if}
+							{/each}
+						</div>
 					</div>
-				{/if}
-				<div class:hidden={currentView === 'table'}>
-					<Cards store={placeholderStore} />
+				</div>
+				<div class="pt-8">
+					{#if config}
+						<div class:hidden={currentView === 'cards'} class="">
+							<Table {config} />
+						</div>
+					{/if}
+					<div class:hidden={currentView === 'table'}>
+						<Cards store={placeholderStore} />
+					</div>
 				</div>
 			</div>
-		</div>
-	</div>
+		</Pane>
+
+	</PaneGroup>
 </Page>
