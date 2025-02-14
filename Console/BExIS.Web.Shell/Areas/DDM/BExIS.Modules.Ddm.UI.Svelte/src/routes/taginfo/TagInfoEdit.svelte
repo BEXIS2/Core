@@ -102,7 +102,7 @@
 
 				notificationStore.showNotification({
 					notificationType: notificationType.success,
-					message: 'Tag is created.'
+					message: 'Tag is generated.'
 				})
 
 				reload();
@@ -111,7 +111,7 @@
 		}else{
 			notificationStore.showNotification({
 					notificationType: notificationType.error,
-					message: 'Tag is not created.'
+					message: 'Tag is not generated.'
 				})
 		}
 	}
