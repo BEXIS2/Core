@@ -357,7 +357,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             #endregion set System value into metadata
 
                             // ToDo: Get Comment from ui and users
-
                             dm.CheckInDataset(id, numberOfRows + " rows", User.Name, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, TagType.None);
 
                             Cache.UpdateSetup.UpdateMethod = UpdateMethod.Update;

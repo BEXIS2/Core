@@ -90,7 +90,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // save version in database
                     dm.EditDatasetVersion(workingCopy, null, null, null);
                     // close check out
-                    dm.CheckInDataset(ds.Id, "", GetUsernameOrDefault(), ViewCreationBehavior.None);
+                    string comment = "dataset created based on dataset \""+ datasetVersionToCopy.Title + "\" ("+datasetToCopy.Id+")";
+
+                    dm.CheckInDataset(ds.Id, comment, GetUsernameOrDefault(), ViewCreationBehavior.None);
                 }
 
                 #endregion update version
