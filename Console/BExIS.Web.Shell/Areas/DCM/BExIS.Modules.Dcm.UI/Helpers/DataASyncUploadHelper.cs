@@ -348,7 +348,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             {
                                 Performer = User.Name,
                                 Comment = "Data",
-                                ActionType = newdataset ? AuditActionType.Create : AuditActionType.Edit
+                                ActionType = newdataset ? AuditActionType.Create : AuditActionType.Edit,
+                                Timestamp = DateTime.Now
                             };
 
                             workingCopy.Metadata = setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
@@ -428,7 +429,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             {
                                 Performer = User.Name,
                                 Comment = "File",
-                                ActionType = AuditActionType.Create
+                                ActionType = AuditActionType.Create,
+                                Timestamp = DateTime.Now
                             };
 
                             workingCopy.Metadata = setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);

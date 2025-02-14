@@ -322,7 +322,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         {
                             Performer = user.Name,
                             Comment = "Attachment",
-                            ActionType = AuditActionType.Create
+                            ActionType = AuditActionType.Create,
+                            Timestamp = DateTime.Now
                         };
 
                         dm.EditDatasetVersion(datasetVersion, null, null, null);
