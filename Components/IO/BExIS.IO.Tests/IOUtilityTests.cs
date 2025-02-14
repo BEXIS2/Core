@@ -95,7 +95,11 @@ namespace BExIS.IO.Tests
         private List<DateTimeHelperUTObject> generateDateTimeCases()
         {
             List<DateTimeHelperUTObject> cases = new List<DateTimeHelperUTObject>();
+            cases.Add(new DateTimeHelperUTObject("14", "MM", "10/1/0001 12:00:00 AM", false));
+            cases.Add(new DateTimeHelperUTObject("25", "hh", "1/1/0001 10:00:00 AM", false));
             cases.Add(new DateTimeHelperUTObject("2024", "yyyy", "1/1/2024 12:00:00 AM", true));
+            cases.Add(new DateTimeHelperUTObject("2024", "yyyy", "1/1/2024 12:00:00 AM", true));
+            cases.Add(new DateTimeHelperUTObject("1", "yyyy", "1/1/0001 12:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("10", "MM", "10/1/0001 12:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("10", "hh", "1/1/0001 10:00:00 AM", true));
             cases.Add(new DateTimeHelperUTObject("10", "mm", "1/1/0001 12:10:00 AM", true));
