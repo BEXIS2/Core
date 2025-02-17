@@ -34,8 +34,6 @@
 
 	//help
 	import { dataStructureHelp } from '../help';
-	import { goTo } from '$services/BaseCaller';
-	import { goto } from '$app/navigation';
 	import { Modal } from '@skeletonlabs/skeleton';
 	let helpItems: helpItemType[] = dataStructureHelp;
 
@@ -116,9 +114,10 @@
 			// copy structure
 			model = await copy(datastructureId);
 			selectionIsActive = false;
-		} else {
+		} 
+		else {
 			console.log('empty structure');
-			model = await empty(); // empty structure
+			model = await empty(entityId); // empty structure
 			selectionIsActive = false;
 		}
 

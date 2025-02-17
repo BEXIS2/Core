@@ -41,17 +41,9 @@
 	}
 
 	async function onSaveHandler() {
-		const res = await create(model);
-		console.log('save', res);
 
-		// here are 2 usecases
-		// 1. from edit dataset -> return to dataset edit page
-		// 2. create structure -> return to datastructure overview
-		if (model.entityId > 0) {
-			goTo('/dcm/edit?id=' + model.entityId);
-		} else {
-			goTo('/rpm/datastructure');
-		}
+		const res = await create(model);
+		goTo(document.referrer);
 	}
 
 	// preview data consit also aboutd varaibles, unit, description

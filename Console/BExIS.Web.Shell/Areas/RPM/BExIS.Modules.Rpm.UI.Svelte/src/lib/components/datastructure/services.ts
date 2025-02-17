@@ -93,16 +93,16 @@ export const checkPrimaryKeySet = async (id: number, primaryKeys: number[]) => {
 	}
 };
 
-export const empty = async () => {
+export const empty = async (id:number=0) => {
 	try {
-		const response = await Api.get('/rpm/DataStructure/empty');
+		const response = await Api.get('/rpm/DataStructure/empty?entityId=' + id);	
 		return response.data;
 	} catch (error) {
 		console.error(error);
 	}
 };
 
-export const copy = async (id) => {
+export const copy = async (id:number) => {
 	try {
 		const response = await Api.get('/rpm/DataStructure/copy?id=' + id);
 

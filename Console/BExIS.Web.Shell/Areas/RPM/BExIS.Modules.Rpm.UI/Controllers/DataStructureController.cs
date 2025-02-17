@@ -719,10 +719,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [JsonNetFilter]
         [HttpGet]
-        public JsonResult Empty()
+        public JsonResult Empty(long entityId = 0)
         {
             DataStructureCreationModel model = new DataStructureCreationModel();
-
+            model.EntityId = entityId;
             // get default missing values
             return Json(model, JsonRequestBehavior.AllowGet);
         }
