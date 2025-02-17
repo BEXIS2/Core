@@ -24,6 +24,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Routing;
@@ -219,6 +220,10 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                             #endregion excel reader
 
+                   
+                            // count rows per file for comment
+                            List<Tuple<string, int>> fileRowsInfoList = new List<Tuple<string, int>>();
+
                             foreach (var file in Cache.Files)
                             {
                                 var filepath = Path.Combine(getpath, file.Name);
@@ -297,6 +302,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                     numberOfSkippedRows = reader.NumberOSkippedfRows;
 
+                                    fileRowsInfoList.Add(new Tuple<string, int>(file.Name, numberOfRows));
+
                                     //Stream.Close();
                                 }
 
@@ -356,6 +363,15 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             dm.EditDatasetVersion(workingCopy, null, null, null);
 
                             #endregion set System value into metadata
+
+                            // create file comment
+                            string comment = Cache.Files.Count>1? "\"Files uploaded (" : "\"File uploaded (";
+                            
+                            foreach (var fileRowsInfo in fileRowsInfoList)
+                            {
+                                comment += fileRowsInfo.Item1 + " : " + fileRowsInfo.Item2 + " rows, ";
+                            }
+                            comment += ")";
 
                             // ToDo: Get Comment from ui and users
                             dm.CheckInDataset(id, numberOfRows + " rows", User.Name, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, TagType.None);
@@ -440,8 +456,15 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             //filenames
                             string fileNames = string.Join(",", Cache.Files.Select(f => f.Name).ToArray());
 
+                            // create file comment
+                            // single case
+                            string comment = "File uploaded (" + fileNames + ")";
+                            // multiple case
+                            if (Cache.Files.Count > 1)
+                                comment = "Files uploaded (" + fileNames + ")";
+
                             // ToDo: Get Comment from ui and users
-                            dm.CheckInDataset(id, fileNames, User.Name, ViewCreationBehavior.None, TagType.None);
+                            dm.CheckInDataset(id, comment, User.Name, ViewCreationBehavior.None, TagType.None);
                         }
                         catch (Exception ex)
                         {

@@ -16,6 +16,7 @@
 	export let descriptionType;
 	let withDescription: boolean;
 
+
 	const dispatch = createEventDispatcher();
 
 	let el;
@@ -51,6 +52,9 @@
 		if (type == 1) withDescription = true;
 		if (type == 2) withDescription = true;
 	}
+
+	const x = "max-h-[180px"
+
 </script>
 
 {#if files}
@@ -64,11 +68,12 @@
 			<div class="w-1/4"></div>
 			<div class="text-sm">
 				File description (optional)
+				<button on:click="{()=>colapsed!=colapsed}">xyz</button>
 			</div>
 			<div class="text-right w-10"></div>
 		</div>
-	
-		<div class="grid gap-2 divide-y-2 pb-3 max-h-[180px] overflow-auto">
+
+		<div class="grid gap-2 divide-y-2 pb-3 overflow-auto">
 
 			<!--<Container> -->
 			{#each files as file, index}
