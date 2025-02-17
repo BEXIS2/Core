@@ -501,6 +501,7 @@
     <Compile Include="Controllers\SubmissionController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DimModule.cs" />
+    <Compile Include="Helpers\ApiDatasetHelper.cs" />
     <Compile Include="Helpers\DimSeedDataGenerator.cs" />
     <Compile Include="Helpers\Helper.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtensions.cs" />
