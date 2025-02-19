@@ -3636,7 +3636,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             #endregion entity & Party mapping
 
                             // if at least on item has a value, the parent should be activated
-                            if (!string.IsNullOrEmpty(simpleMetadataAttributeModel.Value.ToString())) setStepModelActive(stepModelHelper);
+                            if (!simpleMetadataAttributeModel.IsEmpty) setStepModelActive(stepModelHelper);
                         }
                     }
                     else

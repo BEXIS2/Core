@@ -30,6 +30,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public String SystemType { get; set; }
         public string DisplayPattern { get; set; }
         public string DefaultValue { get; set; }
+        public string FixedValue { get; set; }
         public int NumberOfSourceInPackage { get; set; }
         public List<object> DomainList { get; set; }
         public List<Error> Errors { get; set; }
@@ -73,7 +74,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
             set
             {
                 _value = value;
-                IsEmpty = global::System.Convert.ChangeType(_value, _value.GetType()) == null || String.IsNullOrEmpty(_value.ToString());
+                IsEmpty = global::System.Convert.ChangeType(_value, _value.GetType()) == null || String.IsNullOrEmpty(_value.ToString()) || _value.Equals(DefaultValue) || _value.Equals(FixedValue) ;
             }
         }
 

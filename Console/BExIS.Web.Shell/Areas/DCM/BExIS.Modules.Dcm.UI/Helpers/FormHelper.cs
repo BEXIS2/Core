@@ -191,7 +191,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 LowerBoundary = lowerBoundary,
                 UpperBoundary = upperBoundary,
                 MappingSelectionField = mappingSelectionField,
-                Parameters = parameters
+                Parameters = parameters,
+                DefaultValue = current.DefaultValue,
+                FixedValue = current.FixedValue
             };
         }
 
