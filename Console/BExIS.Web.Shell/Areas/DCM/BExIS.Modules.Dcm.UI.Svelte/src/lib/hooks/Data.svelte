@@ -3,6 +3,7 @@
   import { getHookStart } from '$services/HookCaller';
   import type { DataModel } from '$models/Data';
   import Files from '$lib/components/data/Files.svelte';
+  import PrimaryData from '$lib/components/data/PrimaryData.svelte';
   import PlaceHolderHookContent from './placeholder/PlaceHolderHookContent.svelte';
   import {ErrorMessage} from '@bexis2/bexis2-core-ui';
 	 import { latestSubmitDate, latestDataDate } from '../../routes/edit/stores';
@@ -65,7 +66,7 @@
 	{:then result}
 
  {#if model.hasStructure}
-   <div>table needed</div>
+   <PrimaryData id={model.id}/>
  {:else}
 
   <Files id={model.id} 

@@ -12,7 +12,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
     {
         public long Id { get; set; }
         public int Version { get; set; }
-        public bool HasStrutcure { get; set; }
+        public bool HasStructure { get; set; }
         public List<FileInfo> ExistingFiles { get; set; }
         public List<FileInfo> DeleteFiles { get; set; }
 

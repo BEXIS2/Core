@@ -54,11 +54,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // check if dataset has structure
                     if (datasetversion.Dataset.DataStructure != null)
                     {
-                        model.HasStrutcure = true;
+                        model.HasStructure = true;
                     }
                     else
                     {
-                        model.HasStrutcure = false;
+                        model.HasStructure = false;
                         if (datasetversion.ContentDescriptors.Any()) // check if dataset has content
                         {
                             model.ExistingFiles = new List<FileInfo>();
