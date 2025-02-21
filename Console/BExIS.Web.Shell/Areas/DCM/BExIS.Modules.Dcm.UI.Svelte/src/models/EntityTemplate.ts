@@ -16,6 +16,7 @@ export interface EntityTemplateModel {
 	permissionGroups: permissionsType;
 	linkedSubjects: ListItem[];
 	inUse: boolean;
+	activated: boolean;
 }
 
 export interface permissionsType {

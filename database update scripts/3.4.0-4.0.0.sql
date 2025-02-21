@@ -1,6 +1,14 @@
 -- OPEN ISSUES
--- add Data Controller in dcm
 
+
+
+-- add activate to EntityTemplate
+--  add column activated to EntityTemplate
+ALTER TABLE public.entitytemplates
+ADD COLUMN activated BOOLEAN DEFAULT TRUE;
+
+
+-- add Data Controller in dcm
 INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
 SELECT 1, NULL, 'DCM', 'Data', '*', (Select id from features where name = 'Dataset Upload' AND parentref = (
 Select id from features where name = 'Data Collection') )

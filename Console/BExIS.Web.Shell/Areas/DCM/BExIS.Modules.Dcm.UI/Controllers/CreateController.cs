@@ -448,7 +448,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<EntityTemplateModel> entityTemplateModels = new List<EntityTemplateModel>();
             using (var entityTemplateManager = new EntityTemplateManager())
             {
-                foreach (var e in entityTemplateManager.Repo.Get())
+                foreach (var e in entityTemplateManager.Repo.Query(e=>e.Activated).ToList())
                 {
                     entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e, false));
                 }

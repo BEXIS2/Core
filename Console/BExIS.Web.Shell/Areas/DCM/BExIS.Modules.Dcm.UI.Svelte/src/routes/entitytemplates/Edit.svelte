@@ -378,7 +378,22 @@
 				</EntryContainer>
 			</div>
 
-			<div class="py-5 grow text-right gap-2">
+	
+			<div class="flex py-5 ">
+				<div  role="group"
+					on:mouseover={() => helpStore.show('activated')} 
+					on:focus={() => helpStore.show('activated')}
+					>
+					<SlideToggle
+						active="bg-primary-500"
+						name="activated"
+						bind:checked={entityTemplate.activated}
+
+					>
+						Activate
+					</SlideToggle>
+			</div>
+			<div class="grow text-right gap-2">
 				<button title="cancel" type="button" class="btn variant-filled-warning" on:click={onCancel}
 					><Fa icon={faTrash} /></button
 				>
@@ -386,6 +401,8 @@
 					><Fa icon={faSave} /></button
 				>
 			</div>
+			</div>
+
 		</form>
 	</ContentContainer>
 {:else}

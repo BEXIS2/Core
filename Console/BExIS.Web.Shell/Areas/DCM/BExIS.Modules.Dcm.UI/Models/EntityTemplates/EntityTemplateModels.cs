@@ -46,6 +46,11 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
         public virtual bool HasDatastructure { get; set; }
 
         /// <summary>
+        /// If this flag is true, user can use this tempate to create a entity
+        /// </summary>
+        public virtual bool Activated { get; set; }
+
+        /// <summary>
         /// List of available Datatructures
         /// </summary>
         public virtual List<long> DatastructureList { get; set; }
@@ -92,6 +97,7 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
             NotificationGroups = new List<long>();
             MetadataInvalidSaveMode = true;
             HasDatastructure = false;
+            Activated = false;
 
             LinkedSubjects = new List<ListItem>();
             InUse = false;
