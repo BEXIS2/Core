@@ -20,6 +20,11 @@ INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, 
     SELECT 'doi','Placeholder for doi', '', false, false, (select id from dim_mappingconcepts where name='Search'), 'dataset/doi'
     WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='Search') AND xpath='dataset/doi');
 
+-- search/date
+INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept, xpath)
+    SELECT 'date','Placeholder for date', '', false, false, (select id from dim_mappingconcepts where name='Search'), 'dataset/date'
+    WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='Search') AND xpath='dataset/date');
+
 
 -- add dim/gbif controller in operations
 INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
