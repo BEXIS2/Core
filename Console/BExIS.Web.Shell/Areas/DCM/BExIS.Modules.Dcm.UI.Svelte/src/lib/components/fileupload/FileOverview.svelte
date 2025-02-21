@@ -39,7 +39,7 @@
 		files.splice(index, 1);
 		files = [...files];
 
-		dispatch('warning', { text: e.detail.text });
+		dispatch('warning', { text: e.detail.text, file: e.detail.file });	
 	}
 
 	async function handleSave(e) {
@@ -60,27 +60,24 @@
 {#if files}
 	{#if files.length > 0}
 	<div class="flex-col">
-		<div class="pt-2">
-			<b>Uploaded File(s)</b>
-		</div>
+
 
 		<div class="flex gap-16">
 			<div class="w-1/4"></div>
 			<div class="text-sm">
-				File description (optional)
-				<button on:click="{()=>colapsed!=colapsed}">xyz</button>
+				{#if withDescription}
+					File description (optional)
+				{/if}
 			</div>
 			<div class="text-right w-10"></div>
 		</div>
 
 		<div class="grid gap-2 divide-y-2 pb-3 overflow-auto">
-
 			<!--<Container> -->
 			{#each files as file, index}
 				<FileOverviewItem
 					{id}
-					file={file.name}
-					{...file}
+					{file}
 					{save}
 					{remove}
 					on:removed={(e) => handleRemoveFile(e, index)}

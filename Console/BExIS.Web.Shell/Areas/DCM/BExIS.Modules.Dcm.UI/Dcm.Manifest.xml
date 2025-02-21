@@ -150,6 +150,15 @@
 			place="details"
 			module="dcm"
 			type="BExIS.Modules.Dcm.UI.Hooks.DataDescriptionHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+		
+		<Hook
+			name="data"
+			displayName ="Data"
+			mode="edit"
+			entity="dataset"
+			place="details"
+			module="dcm"
+			type="BExIS.Modules.Dcm.UI.Hooks.DataEditHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 
 		<Hook
 			name="validation"

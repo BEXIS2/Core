@@ -56,6 +56,7 @@
     <Compile Include="Controllers\CreateController.cs" />
     <Compile Include="Controllers\EditController.cs" />
     <Compile Include="Controllers\EntityTemplatesController.cs" />
+    <Compile Include="Controllers\Hooks\DataController.cs" />
     <Compile Include="Controllers\Hooks\DataDescriptionController.cs" />
     <Compile Include="Controllers\Hooks\AttachmentUploadController.cs" />
     <Compile Include="Controllers\Hooks\FileUploadController.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="Helpers\SystemMetadataHelper.cs" />
     <Compile Include="Helpers\UploadUIHelper.cs" />
     <Compile Include="Hooks\AttachmentViewHook.cs" />
+    <Compile Include="Hooks\DataEditHook.cs" />
     <Compile Include="Hooks\DataStructurePreviewHook.cs" />
     <Compile Include="Hooks\DataHook.cs" />
     <Compile Include="Hooks\DataDescriptionHook.cs" />
@@ -116,6 +118,7 @@
     <Compile Include="Models\Create\CreateModel.cs" />
     <Compile Include="Models\EasyUploadSummaryModel.cs" />
     <Compile Include="Models\Edit\DataDescriptionModel.cs" />
+    <Compile Include="Models\Edit\DataModel.cs" />
     <Compile Include="Models\Edit\EditModel.cs" />
     <Compile Include="Models\Edit\FileUploadModel.cs" />
     <Compile Include="Models\Edit\SubmitModel.cs" />
@@ -481,6 +484,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\Images\" />
+    <Folder Include="Views\Data\" />
     <Folder Include="Views\DcmAdmin\" />
     <Folder Include="Views\FileReaderInfo\" />
     <Folder Include="Views\FileUpload\" />

@@ -160,7 +160,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
-        public JsonResult RemoveFile(long id, string file)
+        public JsonResult RemoveFile(long id, BExIS.UI.Hooks.Caches.FileInfo file)
         {
             // load edit dataset cache
             HookManager hookManager = new HookManager();
@@ -171,7 +171,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
-                var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "Attachments", file);
+                var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "Attachments", file.Name);
                 FileHelper.Delete(filePath);
                 var dataset = dm.GetDataset(id);
       
@@ -180,7 +180,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     var datasetVersion = dm.GetDatasetWorkingCopy(dataset.Id);
 
-                    var contentDescriptor = datasetVersion.ContentDescriptors.FirstOrDefault(item => item.Name == file);
+                    var contentDescriptor = datasetVersion.ContentDescriptors.FirstOrDefault(item => item.Name == file.Name);
                     if (contentDescriptor == null)
                         throw new Exception("There is not any content descriptor having file name '" + file + "'. ");
 
@@ -205,7 +205,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     using (var emailService = new EmailService())
                     {
                         emailService.Send(MessageHelper.GetAttachmentDeleteHeader(id, typeof(Dataset).Name),
-                                        MessageHelper.GetAttachmentDeleteMessage(id, file, username),
+                                        MessageHelper.GetAttachmentDeleteMessage(id, file.Name, username),
                                         GeneralSettings.SystemEmail
                                         );
                     }

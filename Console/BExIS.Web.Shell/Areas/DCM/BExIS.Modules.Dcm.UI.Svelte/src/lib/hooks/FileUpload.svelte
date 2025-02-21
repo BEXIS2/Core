@@ -97,6 +97,9 @@
 			on:success
 		/>
 		{#if model.fileUploader.existingFiles.length}
+		<div class="pt-2">
+			<b>Uploaded File(s)</b>
+		</div>
 	<FileOverview
 				{id}
 				files={model.fileUploader.existingFiles}

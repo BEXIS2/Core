@@ -14,7 +14,8 @@
 		latestDataDescriptionDate,
 		latestFileReaderDate,
 		latestSubmitDate,
-		latestValidationDate
+		latestValidationDate,
+		latestDataDate
 	} from '../../routes/edit/stores';
 
 	import { onMount, createEventDispatcher } from 'svelte';
@@ -59,15 +60,30 @@
 				reload();
 			}
 		});
+
+		latestDataDate.subscribe((s) => {
+			console.log("🚀 ~ latestDataDate.subscribe ~ s:", s)
+			
+			if (s > 0) {
+				reload();
+			}
+		});
 	});
 
 	async function reload() {
 		console.log('reload submit', start, id, version);
+		console.log('latestDataDate', latestDataDate);
 
 		canSubmit = false;
+		console.log(' bevor hook');
+
 		model = await getHookStart(start, id, version);
+		console.log(' bevor activateSubmit',canSubmit);
+
 		canSubmit = activateSubmit();
-		console.log('reload submit');
+		console.log(' after activateSubmit',canSubmit);
+
+		console.log('reload submit', model);
 
 		return model;
 	}
@@ -118,11 +134,24 @@
 	//2. updload data with data structure
 	function activateSubmit() {
 		//check use case 1
+		console.log("🚀 ~ activateSubmit ~ model:", model)
 		if (model.hasStructrue == false && model.files.length > 0) {
 			return true;
 		}
 
 		//check use case 2
+		if (model.hasStructrue == false && model.modifiedFiles?.length > 0) {
+			return true;
+		}
+
+		//check use case 3
+		console.log("🚀 ~ activateSubmit ~ model.hasStructrue:", model.hasStructrue, model.deletedFiles)
+		if (model.hasStructrue == false && model.deleteFiles?.length > 0) {
+			return true;
+		}
+
+
+		//check use case 4
 		if (
 			model.hasStructrue == true &&
 			model.files.length > 0 &&

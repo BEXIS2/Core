@@ -1,4 +1,11 @@
 -- OPEN ISSUES
+-- add Data Controller in dcm
+
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'DCM', 'Data', '*', (Select id from features where name = 'Dataset Upload' AND parentref = (
+Select id from features where name = 'Data Collection') )
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DCM' AND controller='Data');
+
 -- add doi as key in search concept
 -- search/doi
 INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept, xpath)

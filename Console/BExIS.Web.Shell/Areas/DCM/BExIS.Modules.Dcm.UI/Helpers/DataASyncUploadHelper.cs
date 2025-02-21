@@ -1,4 +1,5 @@
-﻿using BExIS.Dcm.UploadWizard;
+﻿using BExIS.App.Bootstrap.Helpers;
+using BExIS.Dcm.UploadWizard;
 using BExIS.Dim.Entities.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -8,6 +9,7 @@ using BExIS.IO;
 using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Output;
 using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Hooks;
@@ -430,9 +432,41 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                 unitOfWork.GetReadOnlyRepository<DatasetVersion>().Load(workingCopy.ContentDescriptors);
 
+                                // save all incoming files in content descriptor
                                 foreach (var file in Cache.Files)
                                 {
                                     SaveFileInContentDiscriptor(workingCopy, file, Path.Combine(getpath, file.Name));
+                                }
+
+                                // update all files from content descriptor 
+                                foreach (var file in Cache.ModifiedFiles)
+                                {
+                                    string dynamicStorePath = Path.Combine("Datasets", workingCopy.Dataset.Id.ToString(), file.Name);
+                                    string storePath = Path.Combine(AppConfiguration.DataPath, dynamicStorePath);
+
+                                    var contentDescriptor = workingCopy.ContentDescriptors.FirstOrDefault(item => item.URI == dynamicStorePath);
+                                    if (contentDescriptor != null)
+                                    {
+                                        contentDescriptor.Description = file.Description;
+                                    }
+                                }
+
+                                // delete alle files from content descriptor 
+                                foreach (var file in Cache.DeleteFiles)
+                                {
+                                    string dynamicStorePath = Path.Combine("Datasets", workingCopy.Dataset.Id.ToString(), file.Name);
+                                    string storePath = Path.Combine(AppConfiguration.DataPath, dynamicStorePath);
+
+                                    var contentDescriptor = workingCopy.ContentDescriptors.FirstOrDefault(item => item.URI == dynamicStorePath);
+                                    if (contentDescriptor != null)
+                                    {
+                                        workingCopy.ContentDescriptors.Remove(contentDescriptor);
+                                    }
+
+                                    if (File.Exists(storePath))
+                                    { 
+                                        File.Delete(storePath);
+                                    }
                                 }
                             }
 
@@ -537,6 +571,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 if (temp.Count == 0)// reset cache if success, no errors in temp
                 {
                     Cache.Files = new List<BExIS.UI.Hooks.Caches.FileInfo>();
+                    Cache.DeleteFiles = new List<BExIS.UI.Hooks.Caches.FileInfo>();
+                    Cache.ModifiedFiles = new List<BExIS.UI.Hooks.Caches.FileInfo>();
                     //logs.Messages.Add(new LogMessage(DateTime.Now, messages, username, "Attachment upload","upload"));
                     Log.Messages.Add(new LogMessage(DateTime.Now, "data was successfully uploaded", User.Name, "Submit", "Upload"));
                 }
@@ -659,6 +695,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 return "";
             }
         }
+
+        
 
         private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)
         {
