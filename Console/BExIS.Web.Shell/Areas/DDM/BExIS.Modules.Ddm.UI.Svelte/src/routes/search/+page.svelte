@@ -387,6 +387,25 @@
 		}));
 	};
 
+	const load = async (input: string) => {
+
+		const data = [
+			{	Text: "a",	Value: "a"},
+			{	Text: "b",	Value: "b"},
+			{	Text: "c",	Value: "c"},
+			{	Text: "d",	Value: "d"},
+			{	Text: "e",	Value: "e"},
+			{	Text: "f",	Value: "f"},
+			{	Text: "g",	Value: "g"}
+		]
+
+
+		return data.map((item: any) => ({
+			label: item.Text,
+			value: item.Value
+		}));
+	};
+
 	const handleAutoCompleteSelect = async (e: { detail: { value: string; label: string } }) => {
 		q = e.detail.value;
 
@@ -474,10 +493,9 @@
 				</div>
 
 
-			<div class="flex flex-col gap-4 overflow-x-auto">
+			<div class="flex flex-col gap-4 ">
 				<div class="flex flex-col gap-4">
 					<div class="flex gap-4 items-start">
-						
 							<div class="flex gap-4 h-min items-stretch">
 								<select
 									class="bg-input rounded-md px-4 pr-7 py-2 text-sm w-min border-neutral-300"

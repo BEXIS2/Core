@@ -36,7 +36,10 @@
 				description: card.description || '',
 				author: card.author || '',
 				license: card.license || '',
-				entity: card.entity || ''
+				entity: card.entity || '',
+				doi: card.doi || '',
+				date: card.date || '',
+				entitytemplate: card.entitytemplate || '',
 			}}
 		/>
 	{/each}

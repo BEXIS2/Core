@@ -108,14 +108,14 @@ namespace BExIS.Ddm.Api
         /// Update a list of datasets to the index
         /// </summary>
         /// <param name="datasetsToIndex"></param>
-        void UpdateIndex(Dictionary<long, IndexingAction> datasetsToIndex);
+        void UpdateIndex(Dictionary<long, IndexingAction> datasetsToIndex, bool onlyReleasedTags);
 
         /// <summary>
         /// Update single Dataset to to the index
         /// </summary>
         /// <param name="datasetId"></param>
         /// <param name="indAction"></param>
-        void UpdateSingleDatasetIndex(long datasetId, IndexingAction indAction);
+        void UpdateSingleDatasetIndex(long datasetId, IndexingAction indAction, bool onlyReleasedTags);
 
         void Reload();
     }

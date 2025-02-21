@@ -10,9 +10,10 @@
 		doi: string;
 		entity: string;
 		date: string;
-	} = { title: '', description: '', author: '', license: '', id: '', doi: '', entity: '', date:'' };
+		entitytemplate: string;
+	} = { title: '', description: '', author: '', license: '', id: '', doi: '', entity: '', date:'', entitytemplate:'' };
 
-	const { title, description, author, license, id, doi, entity, date } = card;
+	const { title, description, author, license, id, doi, entity, date, entitytemplate } = card;
 
 	// let author = '';
 	// let authorsLabel = 'Authors';
@@ -65,7 +66,6 @@
 </script>
 
 <div class="flex grow">
-	{doi} {date}
 	<div
 		class="p-4 px-5 border rounded-md bg-neutral-50 border-neutral-200 grow cursor-pointer hover:border-primary-500"
 		on:click={() => window.open(`/ddm/data/Showdata/${id}`)}
@@ -76,7 +76,12 @@
 		<div class="flex flex-col w-full gap-4">
 			<div class="justify-between flex gap-2">
 				<h1 class="text-xl font-semibold grow">
-					{#if title && title.length > 0} {title} {:else} No title {/if}</h1>
+					{#if title && title.length > 0} 
+					{title} 
+					{:else} 
+					No title 
+					{/if}</h1>
+					<span class="chip"></span>
 				<p class="shrink">
 					{#if date && date.length > 0} {date} {/if}
 				</p>
@@ -86,7 +91,7 @@
 				{#if description && description.length > 0} {description} {:else} No description {/if}
 			</p>
 			{#if author.length > 0}
-				<div class="flex gap-2 items-center">
+				<div title="Author" class="flex gap-2 items-center">
 					<span class="font-semibold">Author:</span>
 					<p class="text-sm italic text-neutral-600">{author}</p>
 				</div>
@@ -95,24 +100,27 @@
 			<div class="flex">
 				<div class="w-auto">
 					{#if license && license.length > 0}
-						<div class="rounded-full px-3 p-1 items-center flex bg-neutral-200">
+						<div title="License" class="rounded-full px-3 p-1 items-center flex bg-neutral-200">
 							<p class="text-sm">{license.replace('Open - ', '')}</p>
 						</div>
 					{/if}
 				</div>
 				<div class="ml-auto flex gap-2">
 		
-					{#if entity && entity.length > 0}
-						<div class="rounded-full px-3 p-1 bg-primary-500">
-							<span class="text-sm font-semibold text-on-secondary-token"
-								>{entity.toLowerCase()}</span
-							>
+					{#if entitytemplate && entitytemplate.length > 0}
+						<div title="Entity Template" class="rounded-full px-3 p-1 bg-primary-500">
+							<span class="text-sm font-semibold text-on-secondary-token">{entitytemplate.toLowerCase()}</span>
 						</div>
 					{/if}
 
+					{#if entity && entity.length > 0}
+						<div title="Entity" class="rounded-full px-3 p-1 bg-primary-500">
+							<span class="text-sm font-semibold text-on-secondary-token">{entity.toLowerCase()}</span>
+						</div>
+					{/if}
 
 					{#if doi && doi.length > 0} 
-					<div class="rounded-full px-3 p-1 items-center flex bg-secondary-500">
+					<div title="DOI" class="rounded-full px-3 p-1 items-center flex bg-secondary-500">
 						<span class="text-sm font-semibold text-on-secondary-token">
 							doi
 						</span>
