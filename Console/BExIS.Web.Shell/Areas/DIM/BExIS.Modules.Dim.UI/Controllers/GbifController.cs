@@ -1,13 +1,16 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dim.Entities.Export.GBIF;
+using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.GBIF;
+using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dim.UI.Models.Export;
 using BExIS.Security.Entities.Requests;
 using BExIS.UI.Helpers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,6 +91,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 var url = Request.Url.Host;
                 var port = Request.Url.Port;
                 var protocol = Request.Url.Scheme;
+                string doi = "";
 
                 // load settings
                 GBFICrendentials credentials = ModuleManager.GetModuleSettings("DIM").GetValueByKey<GBFICrendentials>("gbifapicredentials");
@@ -99,11 +103,19 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 HttpResponseMessage res = await gbifServiceManager.CreateDataset(type, datasetVersion.Title);
                 if (res.IsSuccessStatusCode) // success
                 {
-                    string result = res.Content.ReadAsStringAsync().Result;
+                    string result = res.Content.ReadAsStringAsync().Result.Replace("\"", "");
                     string downloadPath = Url.Action("DownloadZip", "Submission", new { brokerId = brokerId, datasetversionid = datasetVersionId });
 
                     downloadPath = getDownloadUrl(Request.Url, brokerId, datasetVersionId);
 
+                    // get dataset
+                    // grab doi and store it in externel link + type
+                    HttpResponseMessage resGetDataset = await gbifServiceManager.GetDataset(result);
+                    if (res.IsSuccessStatusCode) // success
+                    {
+                        var gbfioGetDatasetResult = JsonConvert.DeserializeObject<GbifGetDatasetResponce>(resGetDataset.Content.ReadAsStringAsync().Result);
+                        doi = gbfioGetDatasetResult.DOI;
+                    }
 
                     // add endpoint
                     HttpResponseMessage resEndpoint = await gbifServiceManager.AddEndpoint(result, downloadPath);
@@ -112,7 +124,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         publication.Status = PublicationStatus.Registered.ToString();
                         publication.FilePath = downloadPath;
                         publication.Response = result.Replace('\"', ' ').Trim();
+                        publication.ExternalLink = doi;
+                        publication.ExternalLinkType = "DOI";
                         publicationManager.UpdatePublication(publication);
+
+                        // check if doi mapping to metadata exist, and add it also there
+                        setDoiInMetadataIfExist(datasetVersion, doi, datasetManager);
+
                     }
                     else // fail
                     { 
@@ -182,6 +200,25 @@ namespace BExIS.Modules.Dim.UI.Controllers
           
 
             return string.Format("{0}/DIM/Submission/DownloadZip?brokerId={1}&datasetversionid={2}", protocolAndHost, brokerId, datasetVersionId); ;
+        }
+
+        private bool setDoiInMetadataIfExist(DatasetVersion version, string doi, DatasetManager datasetManager)
+        {
+            var sourceId = (int)Key.DOI;
+            var sourceType = LinkElementType.Key;
+            var metadataStructureId = version.Dataset.MetadataStructure.Id;
+
+            LinkElement target = null;
+            MappingUtils.HasTarget(sourceId, metadataStructureId, out target);
+
+            if (target != null)
+            {
+                datasetManager.UpdateSingleValueInMetadata(version.Id, target.XPath, doi);
+
+                return true;
+            }
+
+            return false;
         }
     }
 }
