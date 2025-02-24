@@ -71,6 +71,7 @@ namespace BExIS.UI.Hooks.Caches
         {
             Files = new List<FileInfo>();
             DeleteFiles = new List<FileInfo>();
+            ModifiedFiles = new List<FileInfo>();
         }
 
         /// <summary>

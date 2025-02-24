@@ -59,7 +59,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
                         //ToDo implelemnt the data view and set the status to open if data is available
                         var count = datasetManager.RowCount(id);
                         if(count >0) Status = HookStatus.Open;
-                        else Status = HookStatus.Open;
+                        else Status = HookStatus.Disabled;
                     }
 
                     // check dataset status
