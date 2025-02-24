@@ -24,7 +24,7 @@
 
 		load();
 		latestSubmitDate.subscribe((s) => {
-
+				reload();
 		});
 
 	});
