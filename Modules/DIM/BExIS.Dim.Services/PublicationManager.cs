@@ -107,7 +107,8 @@ namespace BExIS.Dim.Services
             long researchObjectId,
             string filePath = "",
             string externalLink = "",
-            string status = "")
+            string status = "",
+            Tag tag = null)
         {
             Contract.Ensures(Contract.Result<Publication>() != null && Contract.Result<Publication>().Id >= 0);
 
@@ -115,6 +116,7 @@ namespace BExIS.Dim.Services
             publication.ResearchObjectId = researchObjectId;
             publication.Broker = broker;
             publication.DatasetVersion = datasetVersion;
+            publication.Dataset = datasetVersion.Dataset;
             publication.Repository = broker.Repository;
             publication.Timestamp = DateTime.Now;
             publication.Status = status;
@@ -137,7 +139,8 @@ namespace BExIS.Dim.Services
             long researchObjectId,
             string filePath = "",
             string externalLink = "",
-            string status = "")
+            string status = "",
+            Tag tag = null)
         {
             Contract.Ensures(Contract.Result<Publication>() != null && Contract.Result<Publication>().Id >= 0);
 
@@ -145,11 +148,13 @@ namespace BExIS.Dim.Services
             publication.ResearchObjectId = researchObjectId;
             publication.Broker = broker;
             publication.DatasetVersion = datasetVersion;
+            publication.Dataset = datasetVersion.Dataset;
             publication.Repository = repository;
             publication.Timestamp = DateTime.Now;
             publication.Status = status;
             publication.FilePath = filePath;
             publication.ExternalLink = externalLink;
+            publication.Tag = tag;
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
