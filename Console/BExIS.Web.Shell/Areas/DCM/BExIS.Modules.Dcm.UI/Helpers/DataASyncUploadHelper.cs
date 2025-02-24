@@ -408,6 +408,10 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     #endregion structured data
 
                     #region unstructured data
+                    string filecomment = "";
+                    string modcomments = "";
+                    string deletedComments = "";
+
 
                     if (structureId <= 0)
                     {
@@ -432,10 +436,16 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                 unitOfWork.GetReadOnlyRepository<DatasetVersion>().Load(workingCopy.ContentDescriptors);
 
+                          
+
                                 // save all incoming files in content descriptor
                                 foreach (var file in Cache.Files)
                                 {
                                     SaveFileInContentDiscriptor(workingCopy, file, Path.Combine(getpath, file.Name));
+
+                                    //filenames
+                                    string fileNames = string.Join(",", Cache.Files.Select(f => f.Name).ToArray());
+                                    filecomment = "File(s) uploaded (" + fileNames + ")";
                                 }
 
                                 // update all files from content descriptor 
@@ -444,11 +454,16 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     string dynamicStorePath = Path.Combine("Datasets", workingCopy.Dataset.Id.ToString(), file.Name);
                                     string storePath = Path.Combine(AppConfiguration.DataPath, dynamicStorePath);
 
+                                    //filenames
+                                    string fileNames = string.Join(",", Cache.ModifiedFiles.Select(f => f.Name).ToArray());
+                                    modcomments = "File(s) updated (" + fileNames + ")";
+
                                     var contentDescriptor = workingCopy.ContentDescriptors.FirstOrDefault(item => item.URI == dynamicStorePath);
                                     if (contentDescriptor != null)
                                     {
                                         contentDescriptor.Description = file.Description;
                                     }
+
                                 }
 
                                 // delete alle files from content descriptor 
@@ -467,6 +482,11 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     { 
                                         File.Delete(storePath);
                                     }
+
+                                    //filenames
+                                    string fileNames = string.Join(",", Cache.DeleteFiles.Select(f => f.Name).ToArray());
+                                    deletedComments = "File(s) deleted (" + fileNames + ")";
+
                                 }
                             }
 
@@ -487,15 +507,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                             dm.EditDatasetVersion(workingCopy, null, null, null);
 
-                            //filenames
-                            string fileNames = string.Join(",", Cache.Files.Select(f => f.Name).ToArray());
+                            List<string> c = new List<string>();
 
-                            // create file comment
-                            // single case
-                            string comment = "File uploaded (" + fileNames + ")";
-                            // multiple case
-                            if (Cache.Files.Count > 1)
-                                comment = "Files uploaded (" + fileNames + ")";
+                            if (!string.IsNullOrEmpty(filecomment)) c.Add(filecomment);
+                            if (!string.IsNullOrEmpty(modcomments)) c.Add(modcomments);
+                            if (!string.IsNullOrEmpty(deletedComments)) c.Add(deletedComments);
+
+                            string comment = string.Join(", ", c.ToArray());
 
                             // ToDo: Get Comment from ui and users
                             dm.CheckInDataset(id, comment, User.Name, ViewCreationBehavior.None, TagType.None);

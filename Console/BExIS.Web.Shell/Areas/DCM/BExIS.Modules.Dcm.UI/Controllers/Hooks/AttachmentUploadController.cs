@@ -197,7 +197,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     // create attachment comment
                     // single case
-                    string comment = "Attachment deleted (" + file + ")";
+                    string comment = "Attachment deleted (" + file.Name + ")";
 
                     dm.EditDatasetVersion(datasetVersion, null, null, null);
                     dm.CheckInDataset(dataset.Id, comment, username, ViewCreationBehavior.None);

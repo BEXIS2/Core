@@ -298,6 +298,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     entityTemplate.EntityType = entity;
                     
                     entityTemplate.MetadataInvalidSaveMode = true;
+                    entityTemplate.Activated = true;
 
                     entityTemplateManager.Create(entityTemplate);
                 }
@@ -317,6 +318,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     entityTemplate.HasDatastructure = true;
                     entityTemplate.DatastructureList = new List<long>();
                     entityTemplate.AllowedFileTypes = new List<string> { ".csv" };
+                    entityTemplate.Activated = true;
 
                     // set entity
                     entityTemplate.EntityType = entity;

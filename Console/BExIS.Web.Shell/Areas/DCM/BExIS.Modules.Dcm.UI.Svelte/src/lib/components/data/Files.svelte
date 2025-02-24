@@ -101,7 +101,7 @@ function handleRevert(e){
 
 <div>
  <div class="pt-4">
-  <b>Deleted File(s)</b>
+  <b>File(s) to delete</b>
  </div>
 
  <div class="grid gap-2 divide-y-2 pb-3 overflow-auto">

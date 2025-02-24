@@ -78,8 +78,6 @@
 				<h1 class="text-xl font-semibold grow">
 					{#if title && title.length > 0} 
 					{title} 
-					{:else} 
-					No title 
 					{/if}</h1>
 					<span class="chip"></span>
 				<p class="shrink">
@@ -88,7 +86,7 @@
 			</div>
 
 			<p class="text-sm line-clamp-3">
-				{#if description && description.length > 0} {description} {:else} No description {/if}
+				{#if description && description.length > 0} {description} {/if}
 			</p>
 			{#if author.length > 0}
 				<div title="Author" class="flex gap-2 items-center">
