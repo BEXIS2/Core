@@ -87,11 +87,10 @@
 			},
 			dataType: {
 				header: 'Data Type',
-				disableFiltering: true,
 				instructions: {
-					renderComponent: TableListItem,
+					toStringFn: (value: listItemType) => value.text,
 					toFilterableValueFn: (value: listItemType) => value.text,
-					toStringFn: (d: listItemType) => d.text
+					toSortableValueFn: (value: listItemType) => value.text
 				}
 			},
 			systemType: {
@@ -100,9 +99,9 @@
 			unit: {
 				header: 'Unit',
 				instructions: {
-					renderComponent: TableListItem,
 					toStringFn: (value: listItemType) => value.text,
-					toFilterableValueFn: (value: listItemType) => value.text
+					toFilterableValueFn: (value: listItemType) => value.text,
+					toSortableValueFn: (value: listItemType) => value.text
 				}
 			},
 			displayPattern: {
@@ -110,7 +109,8 @@
 				instructions: {
 					renderComponent: TableListItem,
 					toStringFn: (value: listItemType) => value.text,
-					toFilterableValueFn: (value: listItemType) => value.text
+					toFilterableValueFn: (value: listItemType) => value.text,
+					toSortableValueFn: (value: listItemType) => value.text
 				}
 			},
 			missingValues: {
