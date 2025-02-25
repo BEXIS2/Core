@@ -6,6 +6,7 @@ using BExIS.Dim.Helpers.GBIF;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dim.UI.Models.Export;
 using BExIS.Security.Entities.Requests;
@@ -209,6 +210,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
             var metadataStructureId = version.Dataset.MetadataStructure.Id;
 
             LinkElement target = null;
+
+            //// check if cardinality of target usage > 1
+
             MappingUtils.HasTarget(sourceId, metadataStructureId, out target);
 
             if (target != null)

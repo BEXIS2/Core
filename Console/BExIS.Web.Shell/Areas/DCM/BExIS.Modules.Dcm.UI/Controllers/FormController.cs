@@ -13,7 +13,7 @@ using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Services.TypeSystem;
 using BExIS.IO;
 using BExIS.IO.Transform.Output;
-using BExIS.IO.Transform.Validation.Exceptions;
+using BExISExceptions = BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.CreateDataset;
 using BExIS.Modules.Dcm.UI.Models.Metadata;
@@ -25,6 +25,8 @@ using BExIS.Security.Services.Objects;
 using BExIS.Utils.Data.MetadataStructure;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
+using BEXIS.JSON.Helpers;
+using JsonSchema = Newtonsoft.Json.Schema; 
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -42,6 +44,9 @@ using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
+using Newtonsoft.Json.Schema;
+using NHibernate.Util;
+using Telerik.Web.Mvc.Extensions;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -641,6 +646,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Model.HeaderHelp = Convert.ToString(TaskManager.Bus[CreateTaskmanager.INFO_ON_TOP_DESCRIPTION]);
             }
 
+            // rerun validation against schema if fromEditMode in ViewData
+            if (fromEditMode)
+            {
+                validationAgainstJsonSchema();
+            }
+
             Model.Created = created;
             Model.FromEditMode = fromEditMode;
             Model.DatasetId = entityId;
@@ -866,7 +877,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
-            return Content("Error Message :" + validationMessage);
+            return Content("BExISExceptions.Error Message :" + validationMessage);
         }
 
         /// <summary>
@@ -3020,15 +3031,40 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (TaskManager != null && TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_STEP_MODEL_HELPER))
             {
+         
                 var stepInfoModelHelpers = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
                 ValidateModels(stepInfoModelHelpers.Where(s => s.Activated && s.IsParentActive()).ToList());
+                validationAgainstJsonSchema();
+
+
             }
 
             return RedirectToAction("ReloadMetadataEditor", new
             {
                 fromEditMode = true,
-                entityId ,
+                entityId,
             });
+        }
+
+        private void validationAgainstJsonSchema()
+        {
+            // check if metadata is valid against the metadatastructure
+            XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
+            MetadataStructureConverter metadataStructureConverter = new MetadataStructureConverter();
+
+            var metadata = getMetadata(TaskManager);
+            var metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+
+            var jsonSchema = metadataStructureConverter.ConvertToJsonSchema(metadataStructureId);
+            var json = xmlMetadataConverter.ConvertTo(XmlUtility.ToXmlDocument(metadata));
+
+            IList<ValidationError> validationErrors;
+            bool valid = json.IsValid(jsonSchema, out validationErrors);
+            List<string> errors = new List<string>();
+
+            validationErrors.ForEach(e => errors.Add(e.Message.ToString()));
+
+            ViewData["ValidationErrors"] = errors;
         }
 
         //XX number of index des values nötig
@@ -3203,22 +3239,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return PartialView("_metadataParameterView", model);
         }
 
-        private List<Error> validateAttribute(MetadataAttributeModel aModel)
+        private List<BExISExceptions.Error> validateAttribute(MetadataAttributeModel aModel)
         {
-            var errors = new List<Error>();
+            var errors = new List<BExISExceptions.Error>();
             //optional check
             if (aModel.MinCardinality > 0 && (aModel.Value == null || String.IsNullOrEmpty(aModel.Value.ToString())))
-                errors.Add(new Error(ErrorType.MetadataAttribute, "is required", new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.ParentModelNumber, aModel.Parent.Label }));
+                errors.Add(new BExISExceptions.Error(BExISExceptions.ErrorType.MetadataAttribute, "is required", new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.ParentModelNumber, aModel.Parent.Label }));
             else
                 if (aModel.MinCardinality > 0 && String.IsNullOrEmpty(aModel.Value.ToString()))
-                errors.Add(new Error(ErrorType.MetadataAttribute, "is required", new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.ParentModelNumber, aModel.Parent.Label }));
+                errors.Add(new BExISExceptions.Error(BExISExceptions.ErrorType.MetadataAttribute, "is required", new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.ParentModelNumber, aModel.Parent.Label }));
 
             //check datatype
             if (aModel.Value != null && !String.IsNullOrEmpty(aModel.Value.ToString()))
             {
                 if (!DataTypeUtility.IsTypeOf(aModel.Value, aModel.SystemType))
                 {
-                    errors.Add(new Error(ErrorType.MetadataAttribute, "Value can´t convert to the type: " + aModel.SystemType + ".", new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.ParentModelNumber, aModel.Parent.Label }));
+                    errors.Add(new BExISExceptions.Error(BExISExceptions.ErrorType.MetadataAttribute, "Value can´t convert to the type: " + aModel.SystemType + ".", new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.ParentModelNumber, aModel.Parent.Label }));
                 }
                 else
                 {
@@ -3230,7 +3266,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         if (value != null && !constraint.IsSatisfied(value))
                         {
-                            errors.Add(new Error(ErrorType.MetadataAttribute, constraint.ErrorMessage, new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.ParentModelNumber, aModel.Parent.Label }));
+                            errors.Add(new BExISExceptions.Error(BExISExceptions.ErrorType.MetadataAttribute, constraint.ErrorMessage, new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.ParentModelNumber, aModel.Parent.Label }));
                         }
                     }
                 }
@@ -3251,24 +3287,24 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 return errors;
         }
 
-        private List<Error> validateParameter(MetadataParameterModel aModel)
+        private List<BExISExceptions.Error> validateParameter(MetadataParameterModel aModel)
         {
-            var errors = new List<Error>();
+            var errors = new List<BExISExceptions.Error>();
             if (aModel != null)
             {
                 //optional check
                 if (aModel.MinCardinality > 0 && (aModel.Value == null || String.IsNullOrEmpty(aModel.Value.ToString())))
-                    errors.Add(new Error(ErrorType.MetadataAttribute, "is required", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
+                    errors.Add(new BExISExceptions.Error(BExISExceptions.ErrorType.MetadataAttribute, "is required", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
                 else
                     if (aModel.MinCardinality > 0 && String.IsNullOrEmpty(aModel.Value.ToString()))
-                    errors.Add(new Error(ErrorType.MetadataAttribute, "is required", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
+                    errors.Add(new BExISExceptions.Error(BExISExceptions.ErrorType.MetadataAttribute, "is required", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
 
                 //check datatype
                 if (aModel.Value != null && !String.IsNullOrEmpty(aModel.Value.ToString()))
                 {
                     if (!DataTypeUtility.IsTypeOf(aModel.Value, aModel.SystemType))
                     {
-                        errors.Add(new Error(ErrorType.MetadataAttribute, "Value can´t convert to the type: " + aModel.SystemType + ".", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
+                        errors.Add(new BExISExceptions.Error(BExISExceptions.ErrorType.MetadataAttribute, "Value can´t convert to the type: " + aModel.SystemType + ".", new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
                     }
                     else
                     {
@@ -3280,7 +3316,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         {
                             if (value != null && !constraint.IsSatisfied(value))
                             {
-                                errors.Add(new Error(ErrorType.MetadataAttribute, constraint.ErrorMessage, new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
+                                errors.Add(new BExISExceptions.Error(BExISExceptions.ErrorType.MetadataAttribute, constraint.ErrorMessage, new object[] { aModel.DisplayName, aModel.Value, aModel.AttributeNumber, aModel.ParentModelNumber, aModel.Parent.Label }));
                             }
                         }
                     }
@@ -3292,7 +3328,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private void ValidateModels(List<StepModelHelper> stepModelHelpers)
         {
-            List<Error> tmp = new List<Error>();
+            List<BExISExceptions.Error> tmp = new List<BExISExceptions.Error>();
 
             foreach (var stepModelHelper in stepModelHelpers)
             {
@@ -3341,9 +3377,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             //    StepInfo step = TaskManager.Get(stepModeHelper.StepId);
                             //    if (step != null && step.IsInstanze)
                             //    {
-                            //        Error error = new Error(ErrorType.Other, String.Format("{0} : {1} {2}", "Step: ", stepModeHelper.Usage.Label, "is not valid. There are fields that are required and not yet completed are."));
+                            //        BExISExceptions.Error error = new BExISExceptions.Error(BExISExceptions.ErrorType.Other, String.Format("{0} : {1} {2}", "Step: ", stepModeHelper.Usage.Label, "is not valid. There are fields that are required and not yet completed are."));
 
-                            //        errors.Add(new Tuple<StepInfo, List<Error>>(step, tempErrors));
+                            //        errors.Add(new Tuple<StepInfo, List<BExISExceptions.Error>>(step, tempErrors));
 
                             //        step.stepStatus = StepStatus.error;
                             //    }
@@ -3354,9 +3390,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
-        private List<Error> validateStep(AbstractMetadataStepModel pModel)
+        private List<BExISExceptions.Error> validateStep(AbstractMetadataStepModel pModel)
         {
-            var errorList = new List<Error>();
+            var errorList = new List<BExISExceptions.Error>();
 
             if (pModel != null)
             {

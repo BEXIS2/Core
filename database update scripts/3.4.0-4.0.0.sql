@@ -1,5 +1,26 @@
 -- OPEN ISSUES
 
+-- metadata validation issues
+Update MetadataPackageUsages 
+set maxcardinality = 1
+where 
+label = 'keywordSet' AND metadatastructureref = (select id from metadatastructures where name = 'GBIF')
+
+-- update publication table
+ALTER TABLE IF EXISTS public.dim_publications
+    ADD COLUMN datasetref bigint;
+
+ALTER TABLE IF EXISTS public.dim_publications
+    ADD COLUMN externallinktype character varying(255) COLLATE pg_catalog."default";
+
+ALTER TABLE IF EXISTS public.dim_publications
+    ADD COLUMN tagref bigint;
+
+ALTER TABLE IF EXISTS public.dim_publications
+    ADD CONSTRAINT fk_aa06b8a FOREIGN KEY (datasetref)
+    REFERENCES public.datasets (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
 
 
 -- add activate to EntityTemplate

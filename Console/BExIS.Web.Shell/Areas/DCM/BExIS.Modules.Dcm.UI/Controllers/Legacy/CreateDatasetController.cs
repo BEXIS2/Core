@@ -172,8 +172,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             }
 
-                
-
                             //set status
                             workingCopy = setStateInfo(workingCopy, valid);
                             //set modifikation

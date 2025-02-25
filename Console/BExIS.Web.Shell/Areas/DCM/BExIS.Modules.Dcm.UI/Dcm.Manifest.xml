@@ -177,6 +177,7 @@
 			place="details"
 			module="dcm"
 			type="BExIS.Modules.Dcm.UI.Hooks.LinkEditHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+		
 		<Hook
 			name="attachments"
 			displayName="Attachments"
