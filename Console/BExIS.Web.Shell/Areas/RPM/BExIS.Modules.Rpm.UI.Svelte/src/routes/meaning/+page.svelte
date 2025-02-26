@@ -26,6 +26,7 @@
 	import TableMeaning from './table/tableMeaning.svelte';
 	import TableOptions from './table/tableOptions.svelte';
 	import Meaning from './Meaning.svelte';
+	import type { SvelteComponent } from 'svelte';
 
 	//stores
 	let meanings: MeaningModel[];
@@ -37,8 +38,6 @@
 	const modalStore = getModalStore();
 
 	async function reload() {
-		showForm = false;
-
 		// get meanings
 		meanings = await getMeanings();
 		meaningsStore.set(meanings);
@@ -57,12 +56,12 @@
 	const m: TableConfig<MeaningModel> = {
 		id: 'Meaning',
 		data: meaningsStore,
-		optionsComponent: TableOptions,
+		optionsComponent: TableOptions as unknown as typeof SvelteComponent,
 		columns: {
 			approved: {
 				disableFiltering: true,
 				instructions: {
-					renderComponent: TableIsApproved
+					renderComponent: TableIsApproved as unknown as typeof SvelteComponent
 				},
 				exclude: false
 			},
@@ -73,7 +72,7 @@
 			externalLinks: {
 				header: 'External Link',
 				instructions: {
-					renderComponent: TableExnternalLink
+					renderComponent: TableExnternalLink as unknown as typeof SvelteComponent
 				},
 				disableFiltering: true,
 				exclude: true
@@ -90,14 +89,14 @@
 			related_meaning: {
 				header: 'Related to',
 				instructions: {
-					renderComponent: TableMeaning
+					renderComponent: TableMeaning as unknown as typeof SvelteComponent
 				},
 				disableFiltering: true,
 				exclude: true
 			},
 			selectable: {
 				instructions: {
-					renderComponent: TableIsApproved
+					renderComponent: TableIsApproved as unknown as typeof SvelteComponent
 				},
 				disableFiltering: true,
 				exclude: false
@@ -121,7 +120,6 @@
 
 	function clear() {
 		meaning = new MeaningModel(null);
-		showForm = false;
 	}
 
 	function edit(type: any) {
@@ -131,14 +129,21 @@
 			showForm = true;
 		}
 		if (type.action == 'delete') {
+			let m: MeaningModel = $meaningsStore.find((u) => u.id === type.id)!;
 			const confirm: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete Meaning',
-				body: 'Are you sure you wish to delete Meaning ' + meaning.name + '?',
+				body: 'Are you sure you wish to delete Meaning ' + m.name + '?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
-				response: (r: boolean) => {
+				response: async (r: boolean) => {
 					if (r === true) {
-						deleteFn(type.id);
+						let success :boolean = await deleteFn(m.id);
+						if (success) {
+							reload();
+							if (m.id === meaning.id) {
+								toggleForm();
+							}
+						}
 					}
 				}
 			};
@@ -146,7 +151,7 @@
 		}
 	}
 
-	async function deleteFn(id) {
+	async function deleteFn(id: number): Promise<boolean> {
 		const res = await remove(id);
 		console.log('🚀 ~ file: +page.svelte:135 ~ deleteFn ~ res:', res);
 
@@ -156,16 +161,18 @@
 				message: 'Meaning deleted.'
 			});
 
-			reload();
+			return true;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
 				message: "Can't delete Meaning."
 			});
+
+			return false;
 		}
 	}
 
-	function onSuccessFn(id) {
+	function onSuccessFn(id: number) {
 		const message = id > 0 ? 'Meaning updated.' : 'Meaning created.';
 
 		notificationStore.showNotification({
@@ -232,7 +239,7 @@
 			<div in:slide out:slide>
 				<Meaning
 					{meaning}
-					on:cancel={() => clear()}
+					on:cancel={() => toggleForm()}
 					on:success={() => onSuccessFn(meaning.id)}
 					on:fail={onFailFn}
 				/>
