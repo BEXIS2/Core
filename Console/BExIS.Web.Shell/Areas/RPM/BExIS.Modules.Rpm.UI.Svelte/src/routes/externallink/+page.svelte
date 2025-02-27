@@ -46,15 +46,14 @@
 	import TableUri from './table/tableUri.svelte';
 	import { goTo } from '$services/BaseCaller';
 	import UrlPreview from './UrlPreview.svelte';
+	import type { SvelteComponent } from 'svelte';
 
 	let showForm = false;
 
 	async function reload() {
-		showForm = false;
 
 		// get external links
 		externalLinks = await getLinks();
-		externalLink = new externalLinkType();
 		externalLinksStore.set(externalLinks);
 		console.log('🚀 ~ file: +page.svelte:50 ~ reload ~ externalLinks:', externalLinks);
 
@@ -74,7 +73,7 @@
 	const m: TableConfig<externalLinkType> = {
 		id: 'ExternalLinks',
 		data: externalLinksStore,
-		optionsComponent: TableOptions,
+		optionsComponent: TableOptions as unknown as typeof SvelteComponent,
 		columns: {
 			id: {
 				fixedWidth: 30
@@ -121,8 +120,7 @@
 	}
 
 	function clear() {
-		externalLink = { id: 0, name: '', type: '', uri: '' };
-		showForm = false;
+		externalLink = new externalLinkType();
 	}
 
 	function edit(type: any) {
@@ -143,14 +141,23 @@
 		}
 
 		if (type.action == 'delete') {
+			let el: externalLinkType = $externalLinksStore.find((u) => u.id === type.id)!;
 			const confirm: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete External Link',
-				body: 'Are you sure you wish to delete external link ' + externalLink.name + '?',
+				body: 'Are you sure you wish to delete external link ' + el.name + '?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
-				response: (r: boolean) => {
+				response: async (r: boolean) => {
 					if (r === true) {
-						deleteFn(type.id);
+						let success :boolean = await deleteFn(el.id);
+						if (success)
+						{
+							reload();
+							if (el.id === externalLink.id) {
+								toggleForm();
+							}
+						}
+
 					}
 				}
 			};
@@ -158,7 +165,7 @@
 		}
 	}
 
-	async function deleteFn(id: number) {
+	async function deleteFn(id: number) : Promise<boolean> {
 		console.log('🚀 ~ file: +page.svelte:112 ~ deleteFn ~ id:', id);
 
 		const res = await remove(id);
@@ -168,13 +175,13 @@
 				notificationType: notificationType.success,
 				message: 'External Link deleted.'
 			});
-
-			reload();
+			return true;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
 				message: "Can't delete external link."
 			});
+			return false;
 		}
 	}
 
@@ -244,7 +251,7 @@
 			<div in:slide out:slide>
 				<ExternalLinkForm
 					link={externalLink}
-					on:cancel={() => clear()}
+					on:cancel={() => toggleForm()}
 					on:success={() => onSuccessFn(externalLink.id)}
 					on:fail={onFailFn}
 				/>

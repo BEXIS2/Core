@@ -142,13 +142,13 @@ namespace BExIS.Dlm.Entities.DataStructure
                 {
                     return (string.Format(
                         (!string.IsNullOrWhiteSpace(NegatedMessageTemplate) ? NegatedMessageTemplate : defaultNegatedMessageTemplate),
-                        string.Join(",", Items.Select(p => p.Key))));
+                        string.Join(", ", Items.Select(p => p.Key))));
                 }
                 else
                 {
                     return (string.Format(
                         (!string.IsNullOrWhiteSpace(MessageTemplate) ? MessageTemplate : defaultMessageTemplate),
-                        string.Join(",", Items.Select(p => p.Key))));
+                        string.Join(", ", Items.Select(p => p.Key))));
                 }
             }
         }

@@ -39,13 +39,18 @@
 
 	onMount(async () => {
 		helpStore.setHelpItemList(helpItems);
+		clear();
 		showForm = false;
 	});
 
 	async function reload() {
-		showForm = false;
 		u = await apiCalls.GetUnits();
-		clear();
+	}
+
+	async function save(): Promise<void> {
+		alert('save');
+		reload();
+		toggleForm();
 	}
 
 	function clear() {
@@ -63,20 +68,29 @@
 	}
 
 	function editUnit(type: any) {
-		unit = { ...units.find((u) => u.id === type.id)! };
 		if (type.action == 'edit') {
+			unit = { ...units.find((u) => u.id === type.id)! };
 			showForm = true;
 		}
 		if (type.action == 'delete') {
+			let u: UnitListItem = units.find((u) => u.id === type.id)!;
 			const confirm: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete Unit',
 				body:
 					'Are you sure you wish to delete Unit "' + unit.name + '" (' + unit.abbreviation + ')?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
-				response: (r: boolean) => {
+				response: async (r: boolean) => {
 					if (r === true) {
-						deleteUnit(type.id);
+						let success :boolean = await deleteUnit(u.id);
+						if (success)
+						{
+							reload();
+							if (u.id === unit.id)
+							{ 
+								toggleForm();
+							}
+						}
 					}
 				}
 			};
@@ -84,20 +98,21 @@
 		}
 	}
 
-	async function deleteUnit(id: number) {
+	async function deleteUnit(id: number): Promise<boolean> {
 		let success: boolean = await apiCalls.DeleteUnit(id);
 		if (success != true) {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
 				message: 'Can\'t delete Unit "' + unit.name + '" (' + unit.abbreviation + ').'
 			});
+			return false;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
 				message: 'Unit "' + unit.name + '" (' + unit.abbreviation + ') deleted.'
 			});
+			return true;
 		}
-		reload();
 	}
 
 	function toggleForm() {
@@ -152,7 +167,7 @@
 
 		{#if showForm}
 			<div in:slide out:slide>
-				<Form {unit} {units} on:cancel={toggleForm} on:save={reload} />
+				<Form {unit} {units} on:cancel={toggleForm} on:save={save} />
 			</div>
 		{/if}
 

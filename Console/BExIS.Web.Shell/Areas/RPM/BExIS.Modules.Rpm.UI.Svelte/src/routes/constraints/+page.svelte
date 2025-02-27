@@ -39,12 +39,16 @@
 	{
 		helpStore.setHelpItemList(helpItems);
 		showForm = false;
+		clear();
+	}
+
+	async function save(): Promise<void> {
+		reload();
+		toggleForm();
 	}
 
 	async function reload(): Promise<void> {
-		showForm = false;
 		cs = await apiCalls.GetConstraints();
-		clear();
 	}
 
 	async function clear() {
@@ -70,19 +74,26 @@
 	}
 
 	function editConstraint(type: any) {
-		constraint = { ...constraints.find((c) => c.id === type.id)! };
 		if (type.action == 'edit') {
+			constraint = { ...constraints.find((c) => c.id === type.id)! };
 			showForm = true;
 		}
 		if (type.action == 'delete') {
+			let c :ConstraintListItem = constraints.find((c) => c.id === type.id)!;
 			const modal: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete Constraint',
 				body: 'Are you sure you wish to delete Constraint "' + constraint.name + '?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
-				response: (r: boolean) => {
+				response: async (r: boolean) => {
 					if (r === true) {
-						deleteConstraint(type.id);
+						let success :boolean = await deleteConstraint(type.id);
+						if (success) {
+							reload();
+							if (c.id === constraint.id) {
+								toggleForm();
+							}
+						}
 					}
 				}
 			};
@@ -90,20 +101,21 @@
 		}
 	}
 
-	async function deleteConstraint(id: number) {
+	async function deleteConstraint(id: number): Promise<boolean> {
 		let success = await apiCalls.DeleteConstraint(id);
 		if (success != true) {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
 				message: 'Can\'t delete Constraint "' + constraint.name + '".'
 			});
+			return false;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
 				message: 'Constraint "' + constraint.name + '" deleted.'
 			});
+			return true;
 		}
-		reload();
 	}
 </script>
 
@@ -155,7 +167,7 @@
 
 			{#if showForm}
 				<div in:slide out:slide>
-					<Form {constraint} {constraints} on:cancel={toggleForm} on:save={reload} />
+					<Form {constraint} {constraints} on:cancel={toggleForm} on:save={save} />
 				</div>
 			{/if}
 

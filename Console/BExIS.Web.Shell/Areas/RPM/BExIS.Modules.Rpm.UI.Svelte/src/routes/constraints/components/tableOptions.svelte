@@ -30,7 +30,7 @@
 
 		{#if row.inUseByVariable === true || row.inUseByMeaning === true}
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-			<button
+			<!-- <button
 				type="button"
 				class="chip variant-filled-error shadow-md"
 				title="Delete, {row.name}"
@@ -41,7 +41,7 @@
 				}}
 			>
 				<Fa icon={faTrash} /></button
-			>
+			> -->
 			<span class="chip" title="{row.name} is in use"
 				><Fa class="text-warning-500 shadow-md" icon={faTriangleExclamation} /></span
 			>
@@ -49,7 +49,7 @@
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<button
 				type="button"
-				class="chip variant-filled-error shadow-md"
+				class="chip variant-filled-primary shadow-md"
 				title="Delete, {row.name}"
 				id="delete-{row.id}"
 				on:mouseover={() => {
