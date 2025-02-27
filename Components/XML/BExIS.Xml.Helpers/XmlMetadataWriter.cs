@@ -97,11 +97,22 @@ namespace BExIS.Xml.Helpers
                     package.SetAttributeValue("number", "1");
                     role.Add(package);
 
-                    setChildren(package, mpu, importXml);
+                    if(mpu.Extra == null || !IsChoice(mpu.Extra))
+                        setChildren(package, mpu, importXml);
                 }
 
                 return doc;
             }
+        }
+
+        private bool IsChoice(XmlNode xmlNode)
+        {
+            if (xmlNode != null)
+            {
+                XmlNode element = XmlUtility.GetXmlNodeByAttribute(xmlNode, "type", "name", "choice");
+                if (element != null) return true;
+            }
+            return false;
         }
 
         private XElement setChildren(XElement element, BaseUsage usage, XDocument importDocument = null)
@@ -248,10 +259,13 @@ namespace BExIS.Xml.Helpers
             {
                 role = Get(xpath);
             }
-            else
+            else // if element not exist, need to add into metadata before adding the package, path is
+                 // the element path but you need to get the parent to add the package
             {
                 // create the role
+                string parentXPath = xpath.Substring(0, xpath.LastIndexOf("//"));
                 role = CreateXElement(usage.Label, xmlUsageType);
+                XmlUtility.GetXElementByXPath(parentXPath, metadataXml).Add(role);
                 if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", usage.Label);
                 role.SetAttributeValue("id", usage.Id.ToString());
             }
@@ -307,9 +321,12 @@ namespace BExIS.Xml.Helpers
             {
                 XElement element = this._tempXDoc.XPathSelectElement(xpath);
 
-                XElement parent = element.Parent;
+                if (element!=null)
+                {
+                    XElement parent = element.Parent;
 
-                removeAndUpdate(element, parent);
+                    removeAndUpdate(element, parent);
+                }
             }
 
             return metadataXml;
@@ -317,14 +334,23 @@ namespace BExIS.Xml.Helpers
 
         private void removeAndUpdate(XElement element, XElement parent)
         {
-            int number = Convert.ToInt32(element.Attribute("number").Value);
-
-            List<XElement> listOfPackagesAfter = parent.Elements().Where(p => p.Attribute("number") != null && Convert.ToInt64(p.Attribute("number").Value) > number).ToList();
-
-            if (element != null)
+            if (element.Attribute("number")!=null)
             {
-                element.Remove();
-                listOfPackagesAfter.ForEach(p => p.Attribute("number").SetValue(Convert.ToInt64(p.Attribute("number").Value) - 1));
+                int number = Convert.ToInt32(element.Attribute("number").Value);
+                List<XElement> listOfPackagesAfter = parent.Elements().Where(p => p.Attribute("number") != null && Convert.ToInt64(p.Attribute("number").Value) > number).ToList();
+
+                if (element != null)
+                {
+                    element.Remove();
+                    listOfPackagesAfter.ForEach(p => p.Attribute("number").SetValue(Convert.ToInt64(p.Attribute("number").Value) - 1));
+                }
+            }
+            else
+            {
+                if (element != null)
+                {
+                    element.Remove();
+                }
             }
         }
 
@@ -482,6 +508,10 @@ namespace BExIS.Xml.Helpers
                         element = AddAttribute(element, baseUsage, 1);
                     }
                 }
+
+
+                if (!string.IsNullOrEmpty(attributeUsage.FixedValue)) element.SetValue(attributeUsage.FixedValue);
+                if (!string.IsNullOrEmpty(attributeUsage.DefaultValue)) element.SetValue(attributeUsage.DefaultValue);
 
                 role.Add(element);
                 current.Add(role);
