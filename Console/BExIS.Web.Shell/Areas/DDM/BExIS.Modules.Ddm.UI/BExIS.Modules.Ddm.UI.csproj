@@ -260,6 +260,7 @@
     <Content Include="Views\Data\_bioSchemaView.cshtml" />
     <Content Include="Views\Search\Index.cshtml" />
     <Content Include="Views\PublicSearch\Index.cshtml" />
+    <Content Include="Views\Data\_labelsView.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
