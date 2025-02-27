@@ -295,8 +295,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     {
                         publication.Status = "accepted";
                         publication.Response = JsonConvert.SerializeObject(dataCiteResponse.Data);
+                        publication.ExternalLink = dataCiteResponse.Data.Data.Attributes.Doi;
+                        publication.ExternalLinkType = "DOI";
 
                         publicationManager.Update(publication);
+
+                        // kritisch, dass hier der Manager weiter geleitet wird?!
+                        setDoiInMetadataIfExist(publication.DatasetVersion, dataCiteResponse.Data.Data.Attributes.Doi, datasetManager);
                     }
                     else
                     {
@@ -437,6 +442,26 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             return View();
         }
+
+        private bool setDoiInMetadataIfExist(DatasetVersion version, string doi, DatasetManager datasetManager)
+        {
+            var sourceId = (int)Key.DOI;
+            var sourceType = LinkElementType.Key;
+            var metadataStructureId = version.Dataset.MetadataStructure.Id;
+
+            LinkElement target = null;
+            MappingUtils.HasTarget(sourceId, metadataStructureId, out target);
+
+            if (target != null)
+            {
+                datasetManager.UpdateSingleValueInMetadata(version.Id, target.XPath, doi);
+
+                return true;
+            }
+
+            return false;
+        }
+
 
         [HttpPost]
         public ActionResult Delete(string s)
