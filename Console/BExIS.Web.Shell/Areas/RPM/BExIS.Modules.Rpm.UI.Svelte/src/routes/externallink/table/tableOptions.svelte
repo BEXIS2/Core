@@ -58,7 +58,7 @@
 		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 		<button
 			type="button"
-			class="chip variant-filled-error shadow-md"
+			class="chip variant-filled-primary shadow-md"
 			title="Delete External Link, {row.name}"
 			id="delete-{row.id}"
 			on:mouseover={() => {

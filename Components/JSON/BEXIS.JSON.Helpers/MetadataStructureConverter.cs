@@ -83,7 +83,7 @@ namespace BEXIS.JSON.Helpers
 
             // base information
             current.Title = usage.Label;
-            current.Type = JSchemaType.Object;
+            current.Type = usage.MaxCardinality > 1?JSchemaType.Array: JSchemaType.Object;
             current.Description = usage.Description;
 
             // set required

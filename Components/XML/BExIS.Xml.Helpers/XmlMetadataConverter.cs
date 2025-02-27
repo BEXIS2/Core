@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace BExIS.Xml.Helpers
 {
@@ -123,7 +124,7 @@ namespace BExIS.Xml.Helpers
                         for (int i = 0; i < tCHild.ChildNodes.Count; i++)
                         {
                             XmlNode child = tCHild.ChildNodes[i];
-                            var childUsage = children[i];
+                            var childUsage = children.FirstOrDefault(c=>c.Label.Equals(child.LocalName));
 
                             var childJson = _convertElementUsage(child, childUsage, includeEmpty);
 
@@ -151,6 +152,13 @@ namespace BExIS.Xml.Helpers
             }
 
             return null;
+        }
+
+        private bool isEmpty(XmlElement xmlElement)
+        {
+            
+
+            return true;
         }
 
         private JToken _convertElementUsage(XmlNode node, BaseUsage usage, bool includeEmpty = false)
@@ -210,7 +218,8 @@ namespace BExIS.Xml.Helpers
                             for (int i = 0; i < tCHild.ChildNodes.Count; i++)
                             {
                                 XmlNode child = tCHild.ChildNodes[i];
-                                var childUsage = children[i];
+                                //var childUsage = children[i];
+                                var childUsage = children.FirstOrDefault(c => c.Label.Equals(child.LocalName));
 
                                 var childJson = _convertElementUsage(child, childUsage, includeEmpty);
 

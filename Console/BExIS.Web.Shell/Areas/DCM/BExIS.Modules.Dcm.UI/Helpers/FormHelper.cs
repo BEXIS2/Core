@@ -32,6 +32,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 NumberOfSourceInPackage = 1,
                 first = true,
                 last = true
+         
             };
         }
 
@@ -159,6 +160,10 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 parameters.Add(FormHelper.CreateMetadataParameterModel(p, current, metadataStructureId, packageModelNumber, parentStepId));
             }
 
+            string value = "";
+            if(!string.IsNullOrEmpty(current.FixedValue)) value = current.FixedValue;
+            else if (!string.IsNullOrEmpty(current.DefaultValue)) value = current.DefaultValue; 
+
             return new MetadataAttributeModel
             {
                 Id = current.Id,
@@ -193,7 +198,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 MappingSelectionField = mappingSelectionField,
                 Parameters = parameters,
                 DefaultValue = current.DefaultValue,
-                FixedValue = current.FixedValue
+                FixedValue = current.FixedValue,
+                Value = value
             };
         }
 
