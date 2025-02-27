@@ -40,32 +40,37 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             // check if dataset has description
             using (var datasetManager = new DatasetManager())
             {
-                var dataset = datasetManager.GetDataset(id);
-                var version = datasetManager.GetDatasetLatestVersion(id);
+                if (datasetManager.IsDatasetCheckedIn(id))
+                {
+                    var dataset = datasetManager.GetDataset(id);
+                    var version = datasetManager.GetDatasetLatestVersion(id);
 
-                if (dataset != null && version != null)
-                { 
-                    if(dataset.DataStructure == null) // no structure 
+                    if (dataset != null && version != null)
                     {
-                        //checi if content exist
-                        if (!version.ContentDescriptors.Any() || !version.ContentDescriptors.Where(c => c.Name.Equals("unstructuredData")).Any()) //no content or files for unstructured data
-                            // has data files
+                        if (dataset.DataStructure == null) // no structure 
+                        {
+                            //checi if content exist
+                            if (!version.ContentDescriptors.Any() || !version.ContentDescriptors.Where(c => c.Name.Equals("unstructuredData")).Any()) //no content or files for unstructured data
+                                                                                                                                                      // has data files
                                 Status = HookStatus.Disabled;
                             else
                                 Status = HookStatus.Open;
-                    }
-                    else // has structure but data?
-                    {
-                        //ToDo implelemnt the data view and set the status to open if data is available
-                        var count = datasetManager.RowCount(id);
-                        if(count >0) Status = HookStatus.Open;
-                        else Status = HookStatus.Disabled;
-                    }
+                        }
+                        else // has structure but data?
+                        {
+                            //ToDo implelemnt the data view and set the status to open if data is available
+                            var count = datasetManager.RowCount(id);
+                            if (count > 0) Status = HookStatus.Open;
+                            else Status = HookStatus.Disabled;
+                        }
 
-                    // check dataset status
-                    if (dataset.Status != Dlm.Entities.Data.DatasetStatus.CheckedIn) Status = HookStatus.Disabled;
+                        // check dataset status
+                        if (dataset.Status != Dlm.Entities.Data.DatasetStatus.CheckedIn) Status = HookStatus.Disabled;
 
+                    }
                 }
+                else { Status = HookStatus.Disabled;}
+
             }
         }
     }
