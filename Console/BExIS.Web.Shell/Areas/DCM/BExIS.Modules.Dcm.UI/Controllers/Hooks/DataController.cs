@@ -47,56 +47,58 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             using (var datamanager = new DatasetManager())
             {
-                var datasetversion = datamanager.GetDatasetLatestVersion(id); // get latest version of dataset
+                if(datamanager.IsDatasetCheckedIn(id))
+                { 
+                    var datasetversion = datamanager.GetDatasetLatestVersion(id); // get latest version of dataset
 
-                if (datasetversion != null) // if dataset version  
-                {
-                    // check if dataset has structure
-                    if (datasetversion.Dataset.DataStructure != null)
+                    if (datasetversion != null) // if dataset version  
                     {
-                        model.HasStructure = true;
-                    }
-                    else
-                    {
-                        model.HasStructure = false;
-                        if (datasetversion.ContentDescriptors.Any()) // check if dataset has content
+                        // check if dataset has structure
+                        if (datasetversion.Dataset.DataStructure != null)
                         {
-                            model.ExistingFiles = new List<FileInfo>();
-                            foreach (var content in datasetversion.ContentDescriptors)
+                            model.HasStructure = true;
+                        }
+                        else
+                        {
+                            model.HasStructure = false;
+                            if (datasetversion.ContentDescriptors.Any()) // check if dataset has content
                             {
-                                if (content.Name.Equals("unstructuredData"))
+                                model.ExistingFiles = new List<FileInfo>();
+                                foreach (var content in datasetversion.ContentDescriptors)
                                 {
-                                    string name = System.IO.Path.GetFileName(content.URI);
-                                    if(cache.DeleteFiles == null) cache.DeleteFiles = new List<FileInfo>();
-                                    if(cache.ModifiedFiles == null) cache.ModifiedFiles = new List<FileInfo>();
-
-                                    // add only if not in delete list
-                                    if(!cache.DeleteFiles.Any(f=>f.Name.Equals(name)))
+                                    if (content.Name.Equals("unstructuredData"))
                                     {
-                                        // check if files allready modified
-                                        if (!cache.ModifiedFiles.Any(f => f.Name.Equals(name)))
-                                        {
-                                            // add file to list
-                                            model.ExistingFiles.Add(new FileInfo()
-                                            {
-                                                Name = name,
-                                                Description = content.Description,
-                                                Type = content.MimeType,
-                                                Lenght = content.FileSize
-                                            });
-                                        }
-                                        else // exist allready modified
-                                        {
-                                            model.ExistingFiles.Add(cache.ModifiedFiles.FirstOrDefault(f => f.Name.Equals(name)));
-                                        }
-                                    }
+                                        string name = System.IO.Path.GetFileName(content.URI);
+                                        if (cache.DeleteFiles == null) cache.DeleteFiles = new List<FileInfo>();
+                                        if (cache.ModifiedFiles == null) cache.ModifiedFiles = new List<FileInfo>();
 
-                                    model.DeleteFiles = cache.DeleteFiles;
+                                        // add only if not in delete list
+                                        if (!cache.DeleteFiles.Any(f => f.Name.Equals(name)))
+                                        {
+                                            // check if files allready modified
+                                            if (!cache.ModifiedFiles.Any(f => f.Name.Equals(name)))
+                                            {
+                                                // add file to list
+                                                model.ExistingFiles.Add(new FileInfo()
+                                                {
+                                                    Name = name,
+                                                    Description = content.Description,
+                                                    Type = content.MimeType,
+                                                    Lenght = content.FileSize
+                                                });
+                                            }
+                                            else // exist allready modified
+                                            {
+                                                model.ExistingFiles.Add(cache.ModifiedFiles.FirstOrDefault(f => f.Name.Equals(name)));
+                                            }
+                                        }
+
+                                        model.DeleteFiles = cache.DeleteFiles;
+                                    }
                                 }
                             }
                         }
                     }
-
                 }
             }
 
