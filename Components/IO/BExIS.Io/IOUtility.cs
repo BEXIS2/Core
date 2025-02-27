@@ -222,7 +222,7 @@ namespace BExIS.IO
             else if (pattern.Equals("MM") && int.TryParse(dateAsString, out int month))
             {
                 // month shouldnot be greater then 12
-                if (month > 12)
+                if (month==0 || month > 12)
                 {
                     dateTime = new DateTime();
                     return false;
