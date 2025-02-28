@@ -1,11 +1,5 @@
 -- OPEN ISSUES
 
--- metadata validation issues
-Update MetadataPackageUsages 
-set maxcardinality = 1
-where 
-label = 'keywordSet' AND metadatastructureref = (select id from metadatastructures where name = 'GBIF')
-
 -- update publication table
 ALTER TABLE IF EXISTS public.dim_publications
     ADD COLUMN datasetref bigint;

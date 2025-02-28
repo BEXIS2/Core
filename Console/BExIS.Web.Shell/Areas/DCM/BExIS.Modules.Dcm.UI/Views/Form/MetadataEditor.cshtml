@@ -306,7 +306,7 @@
         <script src="@Url.Content("~/ddm/Data/getFile/?id=" + Model.DatasetId)" type="text/javascript"></script>
     }
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
 
     var entityId = 0;
@@ -326,10 +326,13 @@
     $("#MetadataEditor")
         .ready(function() {
 
+
+
             setTimeout(function() {
                     //alert("r");
                 bindMinimap();
-                    $("#preloader_cotainer").removePreloader();
+                $("#preloader_cotainer").removePreloader();
+                getId();
                 },
                 120);
             //alert("start triggering");
@@ -438,7 +441,9 @@
 
         $("#root").preloader(20, "Is validating", 300);
 
-        $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}})', { entityId },
+    
+
+        $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM" }, { "entityId", entityId } })',
             function(response) {
 
                 console.log(response);
@@ -447,6 +452,7 @@
                     .text("");
 
                 $('#MetadataEditor').replaceWith(response);
+                getId();
                 $('html, body').animate({ scrollTop: 0 }, 'slow');
 
                 setTimeout(function () {
@@ -514,7 +520,7 @@
         console.log("commit_message", commit_message)
 
 
-        $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}, { "entityId", @entityId } })',
+        $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}, { "entityId", entityId } })',
             function(response) {
                 $('#MetadataEditor').replaceWith(response);
                 bindMinimap(true);
@@ -612,5 +618,5 @@
         $("#preloaderContainer").removePreloader();
 
         };
-    </script>
+</script>
 </div>

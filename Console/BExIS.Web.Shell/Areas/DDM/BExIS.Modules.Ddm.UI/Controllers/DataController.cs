@@ -1,6 +1,7 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dim.Entities.Export.GBIF;
 using BExIS.Dim.Helpers.BIOSCHEMA;
+using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.Party;
@@ -185,6 +186,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     long latestVersionNr = 0;
                     string isValid = "no";
                     bool isPublic = false;
+                    Dictionary<string, string> labels = new Dictionary<string, string>(); ;
 
                     XmlDocument metadata = new XmlDocument();
 
@@ -229,6 +231,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
                             title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
+                            labels = getLabels(id,versionId, tag, dsv.Dataset.EntityTemplate.Name);
                             if (dsv.Dataset.DataStructure != null)
                                 dataStructureId = dsv.Dataset.DataStructure.Id;
 
@@ -301,7 +304,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         RequestExist = requestExist,
                         RequestAble = requestAble,
                         HasRequestRight = hasRequestRight,
-                        IsPublic = isPublic
+                        IsPublic = isPublic,
+                        Labels = labels
                     };
 
                     //set metadata in session
@@ -2320,6 +2324,28 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             Session["SettingsDataset"] = dataset_settings_list;
             return dataset_settings_list;
+        }
+
+        public Dictionary<string, string> getLabels(long id, long versionId, double tag, string template)
+        {
+            using (var publicationManager = new PublicationManager())
+            {
+                Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
+
+                keyValuePairs.Add(template, "template");
+
+                var publications = publicationManager.PublicationRepo.Query(p => p.Dataset.Id == id && p.DatasetVersion.Id == versionId && p.ExternalLink != "");
+                if (publications != null && publications.Any())
+                {
+
+                    foreach (var item in publications)
+                    {
+                        keyValuePairs.Add(item.ExternalLink, item.ExternalLinkType);
+                    }
+                }
+
+                return keyValuePairs;
+            }
         }
 
         #endregion helper

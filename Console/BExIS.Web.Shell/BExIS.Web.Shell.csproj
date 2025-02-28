@@ -1110,12 +1110,12 @@
     <Content Include="Views\Tokens\GetToken.cshtml" />
     <Content Include="Views\Home\Start.cshtml" />
     <Content Include="Themes\Default\Layouts\_SimpleLayout.cshtml" />
+    <Content Include="Views\Help\Index.cshtml" />
     <None Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\" />
     <Folder Include="Scripts\svelte\" />
-    <Folder Include="Views\Help\" />
     <Folder Include="Views\Jwt\" />
   </ItemGroup>
   <ItemGroup>
