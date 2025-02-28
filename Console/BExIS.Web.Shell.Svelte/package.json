@@ -53,7 +53,7 @@
 	"type": "module",
 	"dependencies": {
 
-		"@bexis2/bexis2-core-ui": "0.4.37",
+		"@bexis2/bexis2-core-ui": "0.4.38",
 		"@sveltejs/adapter-static": "3.0.2",
 		"patch-package": "8.0.0",
 		"svelte-collapsible": "0.3.0",
