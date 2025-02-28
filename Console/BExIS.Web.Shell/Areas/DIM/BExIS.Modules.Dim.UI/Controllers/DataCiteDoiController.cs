@@ -71,7 +71,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 return PartialView("_requestRow", new PublicationModel()
                 {
-                    Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                    Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link, publication.Broker.Type),
                     DataRepo = publication.Repository.Name,
                     DatasetVersionId = publication.DatasetVersion.Id,
                     CreationDate = publication.Timestamp,
@@ -119,7 +119,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 return PartialView("_requestRow", new PublicationModel()
                 {
                     Id = publication.Id,
-                    Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                    Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link, publication.Broker.Type),
                     DataRepo = publication.Repository.Name,
                     DatasetVersionId = publication.DatasetVersion.Id,
                     CreationDate = publication.Timestamp,
@@ -150,7 +150,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         return PartialView("_requestRow", new PublicationModel()
                         {
                             Id = publication.Id,
-                            Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                            Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link, publication.Broker.Type),
                             DataRepo = publication.Repository.Name,
                             DatasetVersionId = publication.DatasetVersion.Id,
                             CreationDate = publication.Timestamp,
@@ -211,7 +211,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         return PartialView("_requestRow", new PublicationModel()
                         {
                             Id = publication.Id,
-                            Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                            Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link, publication.Broker.Type),
                             DataRepo = publication.Repository.Name,
                             DatasetVersionId = publication.DatasetVersion.Id,
                             CreationDate = publication.Timestamp,
@@ -249,7 +249,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         return PartialView("_requestRow", new PublicationModel()
                         {
                             Id = publication.Id,
-                            Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                            Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link, publication.Broker.Type),
                             DataRepo = publication.Repository.Name,
                             DatasetVersionId = publication.DatasetVersion.Id,
                             CreationDate = publication.Timestamp,
@@ -342,7 +342,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     return PartialView("_requestRow", new PublicationModel()
                     {
                         Id = publication.Id,
-                        Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                        Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link, publication.Broker.Type),
                         DataRepo = publication.Repository.Name,
                         DatasetVersionId = publication.DatasetVersion.Id,
                         CreationDate = publication.Timestamp,
@@ -398,7 +398,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     return PartialView("_requestRow", new PublicationModel()
                     {
                         Id = publication.Id,
-                        Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                        Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link, publication.Broker.Type),
                         DataRepo = publication.Repository.Name,
                         DatasetVersionId = publication.DatasetVersion.Id,
                         CreationDate = publication.Timestamp,
@@ -485,7 +485,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     model.Add(new PublicationModel()
                     {
                         Id = p.Id,
-                        Broker = new BrokerModel(p.Broker.Id, p.Broker.Name, new List<string>() { p.Repository.Name }, p.Broker.Link),
+                        Broker = new BrokerModel(p.Broker.Id, p.Broker.Name, new List<string>() { p.Repository.Name }, p.Broker.Link, p.Broker.Type ),
                         DataRepo = p.Repository.Name,
                         DatasetVersionId = p.DatasetVersion.Id,
                         CreationDate = p.Timestamp,

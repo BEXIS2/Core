@@ -899,7 +899,7 @@
             <param name="version"></param>
             <returns></returns>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.CheckExportPossibility(System.Int64,System.Int64)">
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.CheckExportPossibility(System.Int64,System.Int64,System.Int32,System.Double)">
             <summary>
             ToDo Refactor submission Commented by Javad due to modularity issues.
             Thes functions should call the APIs of the DIM module and get json objects back.
@@ -915,7 +915,7 @@
             <param name="datasetVersionId"></param>
             <returns></returns>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.SendDataToDataRepo(System.Int64,System.Int64)">
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.SendDataToDataRepo(System.Int64,System.Int64,System.Int32,System.Double)">
             <summary>
             
             </summary>

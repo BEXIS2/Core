@@ -107,8 +107,7 @@ namespace BExIS.Dim.Services
             long researchObjectId,
             string filePath = "",
             string externalLink = "",
-            string status = "",
-            Tag tag = null)
+            string status = "")
         {
             Contract.Ensures(Contract.Result<Publication>() != null && Contract.Result<Publication>().Id >= 0);
 
@@ -122,6 +121,7 @@ namespace BExIS.Dim.Services
             publication.Status = status;
             publication.FilePath = filePath;
             publication.ExternalLink = externalLink;
+            publication.Tag = datasetVersion.Tag;
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -139,8 +139,7 @@ namespace BExIS.Dim.Services
             long researchObjectId,
             string filePath = "",
             string externalLink = "",
-            string status = "",
-            Tag tag = null)
+            string status = "")
         {
             Contract.Ensures(Contract.Result<Publication>() != null && Contract.Result<Publication>().Id >= 0);
 
@@ -154,7 +153,7 @@ namespace BExIS.Dim.Services
             publication.Status = status;
             publication.FilePath = filePath;
             publication.ExternalLink = externalLink;
-            publication.Tag = tag;
+            publication.Tag = datasetVersion.Tag;
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
