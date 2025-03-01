@@ -57,7 +57,10 @@
 		"@sveltejs/adapter-static": "3.0.2",
 		"patch-package": "8.0.0",
 		"svelte-collapsible": "0.3.0",
-		"svelte-fa": "4.0.2"
+		"svelte-fa": "4.0.2",
+		"gray-matter": "4.0.3",
+		"marked": "15.0.7",
+		"buffer": "6.0.3"
 
 	}
 }
