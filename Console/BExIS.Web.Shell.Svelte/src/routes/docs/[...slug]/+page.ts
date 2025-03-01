@@ -1,7 +1,8 @@
 import { loadMDFiles } from './md.js';
 import { get, writable } from 'svelte/store';
 const store = writable({});
-// export const prerender = true;
+export const prerender = false; // Disable prerendering for this page
+
 
 let md;
 
