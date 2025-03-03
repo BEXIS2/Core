@@ -30,10 +30,12 @@ namespace BExIS.Modules.Dim.UI.Models
         public long Id { get; set; }
         public long DatasetVersionId { get; set; }
         public int DatasetVersionNr { get; set; }
+        public double Tag { get; set; }
         public BrokerModel Broker { get; set; }
         public string DataRepo { get; set; }
         public string FilePath { get; set; }
         public string ExternalLink { get; set; }
+        public string ExternalLinkType { get; set; }
         public string Status { get; set; }
         public List<string> DataRepos { get; set; }
         public DateTime CreationDate { get; set; }
@@ -50,6 +52,9 @@ namespace BExIS.Modules.Dim.UI.Models
         public List<string> DataRepos { get; set; }
         public string Link { get; set; }
 
+        public string Type { get; set; }
+
+
         public BrokerModel()
         {
             Id = 0;
@@ -58,12 +63,13 @@ namespace BExIS.Modules.Dim.UI.Models
             Link = "";
         }
 
-        public BrokerModel(long id, string name, List<string> datarepos, string link)
+        public BrokerModel(long id, string name, List<string> datarepos, string link, string type)
         {
             Id = id;
             Name = name;
             DataRepos = datarepos;
             Link = link;
+            Type = type;
         }
     }
 
