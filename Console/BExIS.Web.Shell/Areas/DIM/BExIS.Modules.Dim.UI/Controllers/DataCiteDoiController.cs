@@ -192,6 +192,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 placeholders[placeholder.Key] = publication.DatasetVersion.VersionName?.ToString();
                                 break;
 
+                            case "{Tag}":
+                                placeholders[placeholder.Key] = publication.DatasetVersion.Tag?.ToString();
+                                break;
+
                             default:
                                 break;
                         }
