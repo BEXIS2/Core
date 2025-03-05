@@ -15,19 +15,19 @@ $(document).ready(function (e) {
                     //console.log("done autosize");
                 });
             }
-        }, 10);
+        }, 1000);
 
     //setTabIndex();
     resetAllTelerikIconTitles();
     console.log("test");
-    getId();
+    if (entityId) { getId(); }
 });
 
-
+let entityId = 0;
 function getId() {
-    console.log("load form.js");
+
     const metadataContainer = document.getElementById("MetadataEditor");
-    console.log("metadataContainer", metadataContainer);
+
     if (metadataContainer) { // Check if the element exists
         entityId = metadataContainer.getAttribute("entityid"); // Get the value of the "data-value" attribute
         console.log("entityId", entityId); // Output the value (e.g., "123")

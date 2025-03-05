@@ -72,8 +72,13 @@ function successFuncTargetVersions(data, status) {
 
     for (var i = 0; i < data.length; i++) {
         var option = data[i];
+        console.log(data);
         $("#TargetVersion").append("<option value=" + option.Value + ">" + option.Text + "</option>");
+        //$("#TargetVersion").append("<option value=" + i + ">" + i + "</option>");
+
+        console.log($("#TargetVersion"));
     }
+
 
     $("#TargetVersion").prop("disabled", false);
     $("#TargetVersion").prop("selectedIndex", 0);

@@ -168,6 +168,8 @@
 
             $('#create-reference-bt')
                 .click(function () {
+                    console.log("create-reference-bt");
+     
                     $.ajax({
                         type: 'GET',
                         url: '@Url.Action("Create", "EntityReference")',
@@ -236,7 +238,9 @@
                         }
                     });
                 }
-            }
+        }
+
+        console.log("link ready")
         })
 </script>
 
