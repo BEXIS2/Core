@@ -134,41 +134,45 @@
                 {
 
                     <td style="width:500px;">
+                     
+                            @if (Model.LatestVersion)
+                            {
 
-                        @if (Model.LatestVersion)
-                        {
-
-                            <span class="dropdown">
-                                <button class="bx-button function" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    Download Metadata
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                    <li><a id="downloadHtmlButton" onclick="downloadHtml()">... as Html</a></li>
-                                    <li><a id="downloadXmlButton" onclick="downloadXml()">... as XML</a></li>
-                                </ul>
-                            </span>
-                        }
-                        else
-                        {
-                            <button class="bx-button function bx-disabled" disabled="disabled" title="You can only download the metadata of the latest version directly.">Download Metadata </button>
-                        }
-
-                        @if (Model.EditRight)
-                        {
-                            <button class="bx-button function" title="Edit Metadata" onclick="edit()">
-                                <span class="fa fa-pencil"></span>
-                                <span style="padding:5px;">
-                                    Edit Metadata
+                                <span class="dropdown">
+                                    <button class="bx-button small function" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        <span class="fa fa-download"></span>
+                                        <span style="padding:5px;">
+                                            Download Metadata
+                                        </span>
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                        <li><a id="downloadHtmlButton" onclick="downloadHtml()">... as Html</a></li>
+                                        <li><a id="downloadXmlButton" onclick="downloadXml()">... as XML</a></li>
+                                    </ul>
                                 </span>
-                            </button>
-                        }
+                            }
+                            else
+                            {
+                                <button class="bx-button function bx-disabled" disabled="disabled" title="You can only download the metadata of the latest version directly.">Download Metadata </button>
+                            }
 
-                        @Html.CheckBox("showAll", @showOptional, new { OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll" })
+                            @if (Model.EditRight)
+                            {
+                                <button class="bx-button small function" title="Edit Metadata" onclick="edit()">
+                                    <span class="fa fa-pencil"></span>
+                                    <span style="padding:5px;">
+                                        Edit Metadata
+                                    </span>
+                                </button>
+                            }
+                            
+                            @Html.CheckBox("showAll", @showOptional, new { OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll"})
 
-                        <b>show all fields</b>
+                            <b>show all fields</b>
+                      
+
                     </td>
-
                 }
 
                 @if (!Model.Created && !locked && Model.Import)
@@ -202,9 +206,9 @@
                     <span id="preloaderContainer" style="float: right"></span>
                 </td>
 
-            </tr>
-        </table>
-    </div>
+                </tr>
+                </table>
+            </div>
 
     @if (ViewBag.isValid == "no")
     {
@@ -325,8 +329,6 @@
 
     $("#MetadataEditor")
         .ready(function() {
-
-
 
             setTimeout(function() {
                     //alert("r");

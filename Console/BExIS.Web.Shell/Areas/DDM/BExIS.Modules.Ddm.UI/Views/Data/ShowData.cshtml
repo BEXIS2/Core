@@ -190,16 +190,116 @@
     @Html.Partial("_bioSchemaView", bioSchemaInfos)
 
 <div id="showData">
-    @Html.Partial("_labelsView", Model.Labels)
+
+    <div class="flex">
+        <div id="identifier-container">
+            <b>Id:</b> @Model.Id
+
+            @if (use_tags)
+            {
+                <div id="tags"></div>
+            }
+            else
+            {
+                <b style="padding-left: 5px;">Version:</b>
+                if (ViewData.ModelState.IsValid)
+                {
+                    @Html.DropDownListFor(m => m.VersionSelect, null, Model.LatestVersionNumber + " (Latest internal version)", new { @class = "bx-dropdown", @style = "border:none;" })
+                }
+                else
+                {
+                    @Html.DropDownListFor(m => m.VersionSelect, null, "Select version", new { @class = "bx-dropdown", @style = "border:none;" })
+
+                }
+            }
+        </div>
+        <div id="label-container" class="grow text-right align-middle padding-top-5 ">
+            @Html.Partial("_labelsView", Model.Labels)
+        </div>
+    </div>
+    
+
+   
     <div class="datasetview_header">
         <div class="datasetview_header-title">
             <h1>@Model.Title </h1>
         </div>
 
+        <div class="datasetview_header-toggle">
 
-        @if (Model.HasEditRight && ViewData["state"].ToString() != "hidden")
-        {
-            <div class="datasetview_header-toggle">
+            @if (Model.DownloadAccess)
+            {
+
+                if (Model.DataStructureType.ToLower().Equals("structured"))
+                {
+                    <span class="dropdown">
+                        <button class="bx-button function small" type="button" id="dropdownMenu1" data-toggle="dropdown" title="Download dataset with a selected dataformat for the primary data" aria-haspopup="true" aria-expanded="true">
+                            <span class="fa fa-download" style="padding-right: 5px;"></span>
+                            Download
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
+
+                            @if (@total < 1048576) // hide Excel download for bigger datasets, which exceed the max number of rows in excel
+                            {
+                                <li>@*<a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId })">... with Template</a>*@</li>
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId })">... with Excel</a></li>
+                            }
+                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })">... with CSV</a></li>
+                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv", version = Model.VersionId })">... with TSV</a></li>
+                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain", version = Model.VersionId })">... with TXT</a></li>
+                        </ul>
+                    </span>
+                }
+                else
+                {
+                    <a class="bx-button function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, version = Model.VersionId, format = "" })">Download Dataset</a>
+                }
+            }
+            else
+            {
+
+
+                if (Model.HasRequestRight)
+                {
+                    if (Model.RequestAble)
+                    {
+
+                        if (Model.RequestExist)
+                        {
+                            <button id="sendRequestBt" class="bx-button small function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
+                        }
+                        else
+                        {
+                            <div>
+                                @Html.TextArea("intention", new { @class = "bx-input", placeholder = "describe your intention " });
+                            </div>
+                            <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button small function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">
+                                <span class="fa fa-paper-plane" style="padding-right: 5px;"></span>
+                                Request Access
+                            </button>
+                        }
+
+                    }
+                    else
+                    {
+                        if (show_tabs["show_tabs_deactivated"] == "true")
+                        {
+                            <button id="sendRequestBt" class="bx-button small function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
+                        }
+                    }
+                }
+                else
+                {
+                    if (show_tabs["show_tabs_deactivated"] == "true")
+                    {
+                        <button id="sendRequestBt" class="bx-button small function bx-disabled" title="You have no right to make requests." disabled="disabled">Currently not available</button>
+                    }
+                }
+            }
+
+            @if (Model.HasEditRight && ViewData["state"].ToString() != "hidden")
+            {
 
                 <button title="go to edit dataset" class="bx-button small function" type="button" onclick="toogleToEdit()">
                     <span class="fa fa-pencil"></span>
@@ -207,8 +307,9 @@
                         Edit
                     </span>
                 </button>
-            </div>
-        }
+
+            }
+        </div>
     </div>
 
 
@@ -240,100 +341,13 @@
     @if (ViewData["state"].ToString() != "hidden")
     {
         <div id="view-header" class="row">
-            <div id="view-header-dataset-details" class="col-xs-6 col-md-6 col-lg-6">
-
-
-                <b>Dataset id:</b> @Model.Id
-
-                @if (use_tags)
-                {
-                    <div id="tags"></div>
-                }
-                else
-                {
-                    <b style="padding-left: 5px;">Version:</b>
-                    if (ViewData.ModelState.IsValid)
-                    {
-                        @Html.DropDownListFor(m => m.VersionSelect, null, Model.LatestVersionNumber + " (Latest internal version)", new { @class = "bx-dropdown", @style = "border:none;" })
-                    }
-                    else
-                    {
-                        @Html.DropDownListFor(m => m.VersionSelect, null, "Select version", new { @class = "bx-dropdown", @style = "border:none;" })
-
-                    }
-                }
-
-
-
-            </div>
-
-
             <div id="view-header-dataset-options" class="col-xs-4 col-md-4 col-lg-4 pull-right text-right">
 
-                @if (Model.DownloadAccess)
-                {
-
-                    if (Model.DataStructureType.ToLower().Equals("structured"))
-                    {
-                        <span class="dropdown">
-                            <button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" title="Download dataset with a selected dataformat for the primary data" aria-haspopup="true" aria-expanded="true">
-                                Download Dataset
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
-
-                                @if (@total < 1048576) // hide Excel download for bigger datasets, which exceed the max number of rows in excel
-                                {
-                                    <li>@*<a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId })">... with Template</a>*@</li>
-                                    <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId })">... with Excel</a></li>
-                                }
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })">... with CSV</a></li>
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv", version = Model.VersionId })">... with TSV</a></li>
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain", version = Model.VersionId })">... with TXT</a></li>
-                            </ul>
-                        </span>
-                    }
-                    else
-                    {
-                        <a class="bx-button function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, version = Model.VersionId, format = "" })">Download Dataset</a>
-                    }
-                }
-                else
-                {
-                    if (Model.HasRequestRight)
-                    {
-                        if (Model.RequestAble)
-                        {
-
-                            if (Model.RequestExist)
-                            {
-                                <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
-                            }
-                            else
-                            {
-                                @Html.TextArea("intention", new { @class = "bx-input", placeholder = "describe your intention " });
-                                <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">Request Access</button>
-                            }
-                        }
-                        else
-                        {
-                            if (show_tabs["show_tabs_deactivated"] == "true")
-                            {
-                                <button id="sendRequestBt" class="bx-button function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (show_tabs["show_tabs_deactivated"] == "true")
-                        {
-                            <button id="sendRequestBt" class="bx-button function bx-disabled" title="You have no right to make requests." disabled="disabled">Currently not available</button>
-                        }
-                    }
-                }
+                
             </div>
         </div>
     }
+
     @if (@Model != null)
     {
         <div id="initLoad" style="padding-bottom:20px;"></div>
@@ -647,4 +661,31 @@ else
     .tab-pane {
         min-height: 70px;
     }
+
+    .flex{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .grow {
+      flex-grow: 1;
+    }
+
+    .text-right {
+        text-align: right;
+    }
+
+    .align-middle {
+        vertical-align: middle;
+    }
+
+    .padding-top-5 {
+        padding-top: 5px;
+    }
+
+    #identifier-container {
+        padding-left:2px;
+    }
+
 </style>
