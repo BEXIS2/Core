@@ -2153,7 +2153,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
 
-                keyValuePairs.Add(template, "template");
+              
 
                 var publications = publicationManager.PublicationRepo.Query(p => p.Dataset.Id == id && p.DatasetVersion.Id == versionId && p.ExternalLink != "");
                 if (publications != null && publications.Any())
@@ -2164,6 +2164,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         keyValuePairs.Add(item.ExternalLink, item.ExternalLinkType);
                     }
                 }
+
+                keyValuePairs.Add(template, "template");
 
                 return keyValuePairs;
             }
