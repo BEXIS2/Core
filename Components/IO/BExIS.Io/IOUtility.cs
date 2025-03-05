@@ -222,7 +222,7 @@ namespace BExIS.IO
             else if (pattern.Equals("MM") && int.TryParse(dateAsString, out int month))
             {
                 // month shouldnot be greater then 12
-                if (month==0 || month > 12)
+                if (month<=0 || month > 12)
                 {
                     dateTime = new DateTime();
                     return false;
@@ -234,7 +234,7 @@ namespace BExIS.IO
             else if (pattern.Equals("MM") && int.TryParse(dateAsString, out int day))
             {
                 // day shouldnot be greater then 31
-                if (day > 31)
+                if (day <= 1 || day > 31)
                 {
                     dateTime = new DateTime();
                     return false;
@@ -247,7 +247,7 @@ namespace BExIS.IO
             else if (pattern.ToLower().Equals("hh") && int.TryParse(dateAsString, out int hour))
             {
                 // hours shouldnot be greater then 24
-                if (hour > 24)
+                if (hour <= 1 || hour > 24)
                 {
                     dateTime = new DateTime();
                     return false;
@@ -260,7 +260,7 @@ namespace BExIS.IO
             else if (pattern.Equals("mm") && int.TryParse(dateAsString, out int min))
             {
                 // minutes shouldnot be greater then 60
-                if (min > 60)
+                if (min<=0 || min > 60)
                 {
                     dateTime = new DateTime();
                     return false;
@@ -273,7 +273,7 @@ namespace BExIS.IO
             else if (pattern.Equals("ss") && int.TryParse(dateAsString, out int sec))
             {
                 // sec shouldnot be greater then 60
-                if (sec > 60)
+                if (sec <= 0 || sec > 60)
                 {
                     dateTime = new DateTime();
                     return false;

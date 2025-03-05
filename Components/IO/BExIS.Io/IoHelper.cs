@@ -50,6 +50,7 @@ namespace BExIS.IO
     public enum TextMarker
     {
         quotes,
-        doubleQuotes
+        doubleQuotes,
+        none
     }
 }

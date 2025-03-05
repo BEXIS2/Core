@@ -201,7 +201,7 @@ namespace BExIS.IO.Transform.Input
                 case TextMarker.doubleQuotes:
                     return TextMarker.doubleQuotes.ToString();
 
-                default: return TextMarker.doubleQuotes.ToString();
+                default: return TextMarker.none.ToString();
             }
         }
 
@@ -243,7 +243,10 @@ namespace BExIS.IO.Transform.Input
                 case TextMarker.doubleQuotes:
                     return '"';
 
-                default: return '"';
+                case TextMarker.none:
+                    return '\0';
+
+                default: return '\0';
             }
         }
 

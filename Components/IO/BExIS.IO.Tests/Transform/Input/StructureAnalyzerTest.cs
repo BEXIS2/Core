@@ -191,6 +191,20 @@ namespace BExIS.IO.Tests.Transform.Input
             Assert.AreEqual(expect, result, "text marker not expected");
         }
 
+        [TestCase("a,b,c", "2.23,text with and more chars,2", TextMarker.none)]
+        public void SuggestTextMarker_noTextMarker_ResultTextSeperator(string rowA, string rowB, TextMarker expect)
+        {
+            //Arrange
+            StructureAnalyser structureAnalyser = new StructureAnalyser();
+
+            //Act
+            var result = structureAnalyser.SuggestTextMarker(rowA, rowB);
+
+            //Assert
+            Assert.NotNull(result, "result should not be null.");
+            Assert.AreEqual(expect, result, "text marker not expected");
+        }
+
         [Test()]
         public void SuggestTextMarker_EmptyRows_ArgumentNullException()
         {

@@ -196,7 +196,7 @@ namespace BExIS.IO.Transform.Input
             }
 
             // return default
-            if (markerCounter.Count == 0) return TextMarker.doubleQuotes;
+            if (markerCounter.Count == 0) return TextMarker.none;
 
             // only one exist, return textseperator
             if (markerCounter.Count == 1) return markerCounter.First().Key;

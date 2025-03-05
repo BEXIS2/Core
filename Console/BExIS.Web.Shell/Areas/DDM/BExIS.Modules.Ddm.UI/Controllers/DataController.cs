@@ -930,6 +930,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             }
                         }
 
+                        if(string.IsNullOrEmpty(title)) title = "no title ("+id+")";
+
                         return File(path, mimetype, title + ext);
                     }
                 }

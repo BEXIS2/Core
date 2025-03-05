@@ -1049,6 +1049,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             list.Add(kvP);
 
+            // double quotes
+            c = AsciiFileReaderInfo.GetTextMarker(TextMarker.none);
+            kvP = new ListItem();
+            kvP.Id = Convert.ToInt32(c);
+            kvP.Text = AsciiFileReaderInfo.GetTextMarkerAsString(TextMarker.none);
+
+
+            list.Add(kvP);
+
             return list;
         }
 
