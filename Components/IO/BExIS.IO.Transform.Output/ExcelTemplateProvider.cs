@@ -237,7 +237,7 @@ namespace BExIS.IO.Transform.Output
 
                     // is key
                     cellRef = columnIndex + 7;
-                    rows.ElementAt(6).AppendChild(generateCell(cellRef, var.IsKey ? "key" : "", workbookPart, "ffd599", false, true));
+                    rows.ElementAt(6).AppendChild(generateCell(cellRef, var.IsKey ? "primary key" : "", workbookPart, "ffd599", false, true));
                 }
                 finally
                 {
