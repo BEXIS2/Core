@@ -617,24 +617,24 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 {
                     VariableInstanceModel var = new VariableInstanceModel();
 
-                    var.Name = getValueFromMarkedRow(markerRows, model.Markers, "variable", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
+                    var.Name = getValueFromMarkedRow(markerRows, model.Markers, "variable", (char)model.Delimeter, i, (char)model.TextMarker);
                     if (string.IsNullOrEmpty(var.Name)) throw new ArgumentException($"Variable name on (" + i + ") is empty");
 
-                    var.Description = getValueFromMarkedRow(markerRows, model.Markers, "description", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
+                    var.Description = getValueFromMarkedRow(markerRows, model.Markers, "description", (char)model.Delimeter, i, (char)model.TextMarker);
 
                     // check and get datatype
                     if (systemTypes.ContainsKey(i))
                         var.SystemType = systemTypes[i].Name;
 
                     // get example value
-                    var value = getValueFromMarkedRow(markerRows, model.Markers, "data", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
+                    var value = getValueFromMarkedRow(markerRows, model.Markers, "data", (char)model.Delimeter, i, (char)model.TextMarker);
 
 
                     // get list of possible data types
                     var.DataType = strutcureAnalyzer.SuggestDataType(var.SystemType, value).Select(d => new ListItem(d.Id, d.Name, "detect")).FirstOrDefault();
 
                     // get list of possible units
-                    var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
+                    var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i, (char)model.TextMarker);
 
                     // here we need 2 workflows
                     // 1. if unit is not empty -> start from unit

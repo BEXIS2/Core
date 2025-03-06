@@ -400,7 +400,7 @@ namespace BExIS.IO.Transform.Input
                     }
                     catch (Exception ex)
                     {
-                        Error e = new Error(ErrorType.Other, "Error : " + ex.Message);
+                        Error e = new Error(ErrorType.Value, "Error : " + ex.Message);
                         errors.Add(e);
                     }
                 }
@@ -408,7 +408,7 @@ namespace BExIS.IO.Transform.Input
             // different value lenght
             else
             {
-                Error e = new Error(ErrorType.Other, "Number of Values different as number of variables");
+                Error e = new Error(ErrorType.Other, "Number of Values different as number of variables in row: "+ indexOfRow);
                 errors.Add(e);
             }
 

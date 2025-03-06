@@ -205,6 +205,26 @@ namespace BExIS.IO.Tests.Transform.Input
             Assert.AreEqual(expect, result, "text marker not expected");
         }
 
+        [TestCase(34,TextMarker.doubleQuotes, '"')]
+        [TestCase(39,TextMarker.quotes, '\'')]
+        [TestCase(0,TextMarker.none, '0')]
+        public void GetTextMarker_basedOnInteger_ResultTextSeperator(int tMarker, TextMarker expect, char expectedChar)
+        {
+            //Arrange
+            AsciiFileReaderInfo asciiFileReaderInfoHelper = new AsciiFileReaderInfo();
+
+            //Act
+            var result = AsciiFileReaderInfo.GetTextMarker(tMarker);
+            var charResult = AsciiFileReaderInfo.GetTextMarker(result);
+
+
+
+            //Assert
+            Assert.NotNull(result, "result should not be null.");
+            Assert.AreEqual(expect, result, "text marker not expected");
+            Assert.AreEqual(expectedChar, charResult, "char not expected");
+        }
+
         [Test()]
         public void SuggestTextMarker_EmptyRows_ArgumentNullException()
         {
@@ -376,5 +396,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
             return rows;
         }
+
+
     }
 }

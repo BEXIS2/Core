@@ -21,8 +21,9 @@
 		errorType.FileReader,
 		errorType.Datastructure,
 		errorType.Value,
-		errorType.PrimaryKey
-	];
+		errorType.PrimaryKey,
+		errorType.Other
+]
 
 	let checkDisplayName = {
 		['Dataset']: 'Dataset',
@@ -30,7 +31,8 @@
 		['FileReader']: 'File Reader',
 		['Datastructure']: 'Data Structure',
 		['Value']: 'Value',
-		['PrimaryKey']: 'Primary Key'
+		['PrimaryKey']: 'Primary Key',
+		['Other']: 'Other',
 	};
 
 	let checks: Check[] = [];
