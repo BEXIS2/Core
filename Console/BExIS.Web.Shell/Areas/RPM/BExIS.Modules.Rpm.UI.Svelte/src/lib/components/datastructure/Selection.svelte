@@ -67,7 +67,7 @@
 	onMount(async () => {
 		console.log('start selection suggestion');
 		console.log('load selection', model.entityId, model.file);
-		setTableInfos(model.preview, String.fromCharCode(model.delimeter));
+		setTableInfos(model.preview);
 		setMarkers(model.markers, init);
 
 		delimeter = model.delimeter;
@@ -83,12 +83,12 @@
 				data = [...data, cv];
 			});
 
-			console.log('🚀 ~ onMount ~ model.preview:', model.preview);
-			console.log('🚀 ~ onMount ~ data:', data);
+			//console.log('🚀 ~ onMount ~ model.preview:', model.preview);
+			//console.log('🚀 ~ onMount ~ data:', data);
 		}
 	}
 
-	function setTableInfos(rows, delimeter) {
+	function setTableInfos(rows) {
 		console.log('set table infos');
 		//number of columns
 		cLength = textMarkerHandling(rows[0]).length; // 1,2,"3,4",5
@@ -354,9 +354,14 @@
 	}
 
 	// if you change the delimeter you need to change/update also the table information
-	function changeDelimiter() {
-		setTableInfos(model.preview, String.fromCharCode(model.delimeter));
-		prepareData(model.preview);
+	function changeDelimiter(e) {
+		// wait a little bit, because the value is not set yet in firefox
+		 setTimeout(async () => {
+				console.log("changeDelimiter", model.delimeter, e.currentTarget?.value);
+
+				setTableInfos(model.preview);
+				prepareData(model.preview);
+		 }, 10);
 	}
 
 	// ROW Selection
@@ -386,6 +391,8 @@
 	function textMarkerHandling(row: string): [] {
 		const d = String.fromCharCode(model.delimeter);
 		const t = String.fromCharCode(model.textMarker);
+
+
 		const values = row.split(d);
 
 		let temp = [];
