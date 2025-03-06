@@ -21,7 +21,7 @@
 </script>
 
 <tableOption>
-	<div class="w-18">
+	<div class="w-24">
 		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 		<button
 			type="button"
