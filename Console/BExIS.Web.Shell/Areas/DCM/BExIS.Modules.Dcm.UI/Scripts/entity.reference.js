@@ -23,7 +23,6 @@ $("#TargetType").on('change', function () {
 });
 
 function successFunc(data, status) {
-    console.log(data);
     $("#Target").append("<option value='' selected disabled hidden>Select a entity</option>");
 
     for (var i = 0; i < data.length; i++) {
@@ -68,11 +67,11 @@ $("#Target").on('change', function () {
 });
 
 function successFuncTargetVersions(data, status) {
-    console.log(data);
+    //console.log(data);
 
     for (var i = 0; i < data.length; i++) {
         var option = data[i];
-        console.log(data);
+        //console.log(data);
         $("#TargetVersion").append("<option value=" + option.Value + ">" + option.Text + "</option>");
         //$("#TargetVersion").append("<option value=" + i + ">" + i + "</option>");
 
@@ -98,8 +97,8 @@ $("#button_createEntityreference_cancel").click(function () {
 });
 
 function createEntityReference_OnSuccess(data) {
-    console.log("on success");
-    console.log(data);
+    //console.log("on success");
+    //console.log(data);
 
     if (data === true) {
         console.log("on success data = true");

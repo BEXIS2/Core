@@ -93,6 +93,7 @@
 
 }
 
+
 @section scripts
 {
     <script src="@Url.Content("~/Areas/DCM/" + debugPath + "Scripts/Form.js")" type="text/javascript"></script>
@@ -134,43 +135,43 @@
                 {
 
                     <td style="width:500px;">
-                     
-                            @if (Model.LatestVersion)
-                            {
 
-                                <span class="dropdown">
-                                    <button class="bx-button small function" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                        <span class="fa fa-download"></span>
-                                        <span style="padding:5px;">
-                                            Download Metadata
-                                        </span>
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                        <li><a id="downloadHtmlButton" onclick="downloadHtml()">... as Html</a></li>
-                                        <li><a id="downloadXmlButton" onclick="downloadXml()">... as XML</a></li>
-                                    </ul>
-                                </span>
-                            }
-                            else
-                            {
-                                <button class="bx-button function bx-disabled" disabled="disabled" title="You can only download the metadata of the latest version directly.">Download Metadata </button>
-                            }
+                        @if (Model.LatestVersion)
+                        {
 
-                            @if (Model.EditRight)
-                            {
-                                <button class="bx-button small function" title="Edit Metadata" onclick="edit()">
-                                    <span class="fa fa-pencil"></span>
+                            <span class="dropdown">
+                                <button class="bx-button small function" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    <span class="fa fa-download"></span>
                                     <span style="padding:5px;">
-                                        Edit Metadata
+                                        Download Metadata
                                     </span>
+                                    <span class="caret"></span>
                                 </button>
-                            }
-                            
-                            @Html.CheckBox("showAll", @showOptional, new { OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll"})
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                    <li><a id="downloadHtmlButton" onclick="downloadHtml()">... as Html</a></li>
+                                    <li><a id="downloadXmlButton" onclick="downloadXml()">... as XML</a></li>
+                                </ul>
+                            </span>
+                        }
+                        else
+                        {
+                            <button class="bx-button function bx-disabled" disabled="disabled" title="You can only download the metadata of the latest version directly.">Download Metadata </button>
+                        }
 
-                            <b>show all fields</b>
-                      
+                        @if (Model.EditRight)
+                        {
+                            <button class="bx-button small function" title="Edit Metadata" onclick="edit()">
+                                <span class="fa fa-pencil"></span>
+                                <span style="padding:5px;">
+                                    Edit Metadata
+                                </span>
+                            </button>
+                        }
+
+                        @Html.CheckBox("showAll", @showOptional, new { OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll" })
+
+                        <b>show all fields</b>
+
 
                     </td>
                 }
@@ -206,9 +207,9 @@
                     <span id="preloaderContainer" style="float: right"></span>
                 </td>
 
-                </tr>
-                </table>
-            </div>
+            </tr>
+        </table>
+    </div>
 
     @if (ViewBag.isValid == "no")
     {
@@ -310,8 +311,9 @@
         <script src="@Url.Content("~/ddm/Data/getFile/?id=" + Model.DatasetId)" type="text/javascript"></script>
     }
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
+    console.log("***************METADATAEDITOR");
 
     let entityId = 0;
 
@@ -444,7 +446,7 @@
 
         $("#root").preloader(20, "Is validating", 300);
 
-    
+
 
         $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM" }, { "entityId", entityId } })',
             function(response) {
@@ -621,5 +623,5 @@
         $("#preloaderContainer").removePreloader();
 
         };
-</script>
+    </script>
 </div>
