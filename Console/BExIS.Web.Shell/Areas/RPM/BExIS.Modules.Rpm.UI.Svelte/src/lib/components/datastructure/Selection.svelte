@@ -397,7 +397,11 @@
 
 		let temp = [];
 
-		if (row.includes(t)) {
+		console.log("🚀 ~ textMarkerHandling ~ t:", t, model.textMarker)
+	if (row.includes(t) && model.textMarker != 0) {
+
+		console.log("🚀 ~ in ~ model.textMarker:", model.textMarker)
+
 			let tempValue: string = '';
 			let startText: boolean = false;
 

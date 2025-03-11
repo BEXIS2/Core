@@ -265,9 +265,9 @@ namespace BExIS.IO.Transform.Input
                     return '"';
 
                 case TextMarker.none:
-                    return '0';
+                    return '\0';
 
-                default: return '0';
+                default: return '\0';
             }
         }
 
