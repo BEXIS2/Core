@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount} from 'svelte';
 	import { slide, fade } from 'svelte/transition';
 	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
 	import {
@@ -83,11 +83,11 @@
 			const modal: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete Constraint',
-				body: 'Are you sure you wish to delete Constraint "' + constraint.name + '?',
+				body: 'Are you sure you wish to delete Constraint "' + c.name + '?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
 				response: async (r: boolean) => {
 					if (r === true) {
-						let success :boolean = await deleteConstraint(type.id);
+						let success :boolean = await deleteConstraint(c);
 						if (success) {
 							reload();
 							if (c.id === constraint.id) {
@@ -101,18 +101,18 @@
 		}
 	}
 
-	async function deleteConstraint(id: number): Promise<boolean> {
-		let success = await apiCalls.DeleteConstraint(id);
+	async function deleteConstraint(c: ConstraintListItem): Promise<boolean> {
+		let success = await apiCalls.DeleteConstraint(c.id);
 		if (success != true) {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: 'Can\'t delete Constraint "' + constraint.name + '".'
+				message: 'Can\'t delete Constraint "' + c.name + '".'
 			});
 			return false;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'Constraint "' + constraint.name + '" deleted.'
+				message: 'Constraint "' + c.name + '" deleted.'
 			});
 			return true;
 		}
@@ -188,7 +188,7 @@
 							formalDescription: {
 								header: 'Formal Description',
 								instructions: {
-									renderComponent: ConstraintElement
+									renderComponent: ConstraintElement,
 								}
 							},
 							negated: {

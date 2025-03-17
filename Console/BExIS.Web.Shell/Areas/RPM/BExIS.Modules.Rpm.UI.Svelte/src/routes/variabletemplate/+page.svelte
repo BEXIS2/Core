@@ -195,19 +195,19 @@
 		});
 	}
 
-	async function deleteFn(id: number) :Promise<boolean> {
-		const success = await remove(id);
+	async function deleteFn(vt: VariableTemplateModel) :Promise<boolean> {
+		const success = await remove(vt.id);
 
 		if (success != true) {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: "Can't delete Variable Template."
+				message: 'Can\'t delete Variable Template."' + vt.name + '".'
 			});
 			return false;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'Variable Template deleted.'
+				message: 'Variable Template "' + vt.name + '" deleted.'
 			});
 			return true;
 		}
@@ -228,7 +228,7 @@
 				// TRUE if confirm pressed, FALSE if cancel pressed
 				response: async (r: boolean) => {
 					if (r === true) {
-						let success: boolean = await deleteFn(type.id);
+						let success: boolean = await deleteFn(vt);
 						if (success) {
 							reload();
 							if (vt.id === variableTemplate.id) {

@@ -137,7 +137,7 @@
 				// TRUE if confirm pressed, FALSE if cancel pressed
 				response: async (r: boolean) => {
 					if (r === true) {
-						let success :boolean = await deleteFn(m.id);
+						let success :boolean = await deleteFn(m);
 						if (success) {
 							reload();
 							if (m.id === meaning.id) {
@@ -151,21 +151,19 @@
 		}
 	}
 
-	async function deleteFn(id: number): Promise<boolean> {
-		const res = await remove(id);
-		console.log('🚀 ~ file: +page.svelte:135 ~ deleteFn ~ res:', res);
-
+	async function deleteFn(m: MeaningModel): Promise<boolean> {
+		const res = await remove(m.id);
 		if (res) {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'Meaning deleted.'
+				message: 'Meaning "' + m.name + '"  deleted.'
 			});
 
 			return true;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: "Can't delete Meaning."
+				message: 'Can\'t delete Meaning "' + m.name + '".'
 			});
 
 			return false;

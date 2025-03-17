@@ -149,7 +149,7 @@
 				// TRUE if confirm pressed, FALSE if cancel pressed
 				response: async (r: boolean) => {
 					if (r === true) {
-						let success :boolean = await deleteFn(el.id);
+						let success :boolean = await deleteFn(el);
 						if (success)
 						{
 							reload();
@@ -165,21 +165,21 @@
 		}
 	}
 
-	async function deleteFn(id: number) : Promise<boolean> {
-		console.log('🚀 ~ file: +page.svelte:112 ~ deleteFn ~ id:', id);
+	async function deleteFn(el: externalLinkType) : Promise<boolean> {
+		console.log('🚀 ~ file: +page.svelte:112 ~ deleteFn ~ id:', el.id);
 
-		const res = await remove(id);
+		const res = await remove(el.id);
 
 		if (res) {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'External Link deleted.'
+				message: 'External Link "'+ el.name +'" deleted.'
 			});
 			return true;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: "Can't delete external link."
+				message: 'Can\'t delete external link "'+ el.name +'".'
 			});
 			return false;
 		}

@@ -79,7 +79,7 @@
 				// TRUE if confirm pressed, FALSE if cancel pressed
 				response: async (r: boolean) => {
 					if (r === true) {
-						let success :boolean = await deleteDataType(dt.id);
+						let success :boolean = await deleteDataType(dt);
 						if (success)
 						{
 							reload();
@@ -94,18 +94,18 @@
 		}
 	}
 
-	async function deleteDataType(id: number): Promise<boolean> {
-		let success = await apiCalls.DeleteDataType(id);
+	async function deleteDataType(dt: DataTypeListItem): Promise<boolean> {
+		let success = await apiCalls.DeleteDataType(dt.id);
 		if (success != true) {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: 'Can\'t delete Data Type "' + dataType.name + '".'
+				message: 'Can\'t delete Data Type "' + dt.name + '".'
 			});
 			return false;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'Data Type "' + dataType.name + '" deleted.'
+				message: 'Data Type "' + dt.name + '" deleted.'
 			});
 			return true;
 		}

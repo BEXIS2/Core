@@ -61,6 +61,7 @@
 		>
 			<Fa icon={faPen} />
 		</button>
+		{#if disableBtn}
 		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 		<button
 			type="button"
@@ -74,9 +75,9 @@
 				dispatchFn({
 					type: { action: 'delete', id: row.id, title: row.title }
 				})}
-			disabled={disableBtn}
 		>
 			<Fa icon={faTrash} /></button
 		>
+		{/if}
 	</div>
 </tableOption>

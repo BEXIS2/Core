@@ -82,7 +82,7 @@
 				// TRUE if confirm pressed, FALSE if cancel pressed
 				response: async (r: boolean) => {
 					if (r === true) {
-						let success :boolean = await deleteUnit(u.id);
+						let success :boolean = await deleteUnit(u);
 						if (success)
 						{
 							reload();
@@ -98,18 +98,18 @@
 		}
 	}
 
-	async function deleteUnit(id: number): Promise<boolean> {
+	async function deleteUnit(u: UnitListItem): Promise<boolean> {
 		let success: boolean = await apiCalls.DeleteUnit(id);
 		if (success != true) {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: 'Can\'t delete Unit "' + unit.name + '" (' + unit.abbreviation + ').'
+				message: 'Can\'t delete Unit "' + u.name + '" (' + u.abbreviation + ').'
 			});
 			return false;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'Unit "' + unit.name + '" (' + unit.abbreviation + ') deleted.'
+				message: 'Unit "' + u.name + '" (' + u.abbreviation + ') deleted.'
 			});
 			return true;
 		}

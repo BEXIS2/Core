@@ -73,14 +73,14 @@
 				title: 'Delete Dimension',
 				body:
 					'Are you sure you wish to delete Dimension "' +
-					dimension.name +
+					d.name +
 					'" (' +
-					dimension.specification +
+					d.specification +
 					')?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
 				response: async (r: boolean) => {
 					if (r === true) {
-						let success: boolean = await deleteDimension(d.id);
+						let success: boolean = await deleteDimension(d);
 						if (success)
 						{
 							reload();
@@ -95,18 +95,18 @@
 		}
 	}
 
-	async function deleteDimension(id: number): Promise<boolean> {
-		let success = await apiCalls.DeleteDimension(id);
+	async function deleteDimension(d: DimensionListItem): Promise<boolean> {
+		let success = await apiCalls.DeleteDimension(d.id);
 		if (success != true) {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: 'Can\'t delete Dimension "' + dimension.name + '".'
+				message: 'Can\'t delete Dimension "' + d.name + '".'
 			});
 			return false;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'Dimension "' + dimension.name + '" deleted.'
+				message: 'Dimension "' + d.name + '" deleted.'
 			});
 			return true;
 		}

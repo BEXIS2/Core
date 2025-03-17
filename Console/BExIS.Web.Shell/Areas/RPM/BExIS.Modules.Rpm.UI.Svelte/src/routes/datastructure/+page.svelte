@@ -71,19 +71,19 @@
 		goTo('/rpm/datastructure/create?file=');
 	}
 
-	function copy(id) {
+	function copy(id: number) {
 		goTo('/rpm/datastructure/create?structureId=' + id + '&&file=');
 	}
 
-	function edit(id) {
+	function edit(id: number) {
 		goTo('/rpm/datastructure/edit?structureId=' + id);
 	}
 
-	function download(id) {
+	function download(id: number) {
 		goTo('/rpm/datastructure/downloadTemplate?id=' + id);
 	}
 
-	async function deleteFn(id) {
+	async function deleteFn(id: number) {
 		const success = await remove(id);
 
 		if (success != true) {
