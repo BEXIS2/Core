@@ -368,6 +368,7 @@
     <Compile Include="Controllers\API\PersonNameComponentsController.cs" />
     <Compile Include="Controllers\API\TokensController.cs" />
     <Compile Include="Controllers\API\VersionsController.cs" />
+    <Compile Include="Controllers\DocsController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FooterController.cs" />
     <Compile Include="Controllers\HeaderController.cs" />

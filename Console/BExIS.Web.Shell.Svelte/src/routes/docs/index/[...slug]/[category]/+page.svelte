@@ -37,7 +37,7 @@
 
 	onMount(() => {
 		// console.log('onmount');
-		console.log(data);
+		console.log("onmount", data);
 
 		// Sort the headings by position written in the md metadata
 		data.allHeadings = data.allHeadings.sort(
@@ -105,9 +105,10 @@
 	// Select and render the currently needed content
 	async function setContent(base_path: string) {
 		const data = get(store);
+		console.log("🚀 ~ setContent ~ data:", data)
 		for (let i = 0; i < data.data.length; i++) {
-			console.log(base_path);
-			console.log(data.data[i][1].title.toLowerCase());
+			console.log("base-path", base_path);
+			console.log("data-title",data.data[i][1].title.toLowerCase());
 			if (base_path.toLowerCase().includes(data.data[i][1].title.toLowerCase())) {
 				console.log('here');
 				content_complete = await marked(data.data[i][0], {
@@ -202,11 +203,19 @@
 			if (!window.location.pathname.includes(headings[index].base)) {
 				//console.log('here');
 				setContent(headings[index].base);
-				goto('/docs/' + headings[index].base + '#' + anchor);
+				//goto('/docs/index/' + headings[index].base + '#' + anchor);
+
+				document.querySelector('#'+anchor).scrollIntoView({
+    behavior: 'smooth'
+  });
+
 				return;
 				// if the current page is the same as the heading base, change the anchor
 			} else {
-				goto('#' + anchor);
+				//goto('#' + anchor);
+				document.querySelector('#'+anchor).scrollIntoView({
+    behavior: 'smooth'
+  });
 			}
 		} else {
 			// search for level 2 headings based on the current heading
@@ -298,6 +307,9 @@
 		//  content.style.marginTop = lastElementBottom + "px"; // Push content below last element
 		content.style.height = `calc(100vh - ${lastElementBottom + 50}px)`; // Adjust content height
 	}
+
+
+
 </script>
 
 <Page title="Docs" contentLayoutType={pageContentLayoutType.full}>
@@ -320,7 +332,7 @@
 								: ' text-base mt-1 '}{+heading.level < 3 ? ' font-semibold' : 'text-base'}"
 						>
 							<a
-								href="/docs/{heading.base}#{heading.text
+								href="/docs/index/{heading.base}#{heading.text
 									.toLowerCase()
 									.replace(/\s+/g, '-')
 									.replace(/[^a-z0-9\-]/g, '')}"
@@ -378,6 +390,7 @@
 </Page>
 
 <style>
+
 	.left-nav {
 		position: fixed;
 
@@ -391,24 +404,29 @@
 
 	.content {
 		margin-left: 300px; /* Same as the width of the left-nav */
-		/*padding: 20px;*/
+		padding: 20px;
 		flex-grow: 1;
 		overflow-y: auto;
 		width: calc(100% - 300px);
 
+
 		/*  height: calc(100vh - 180px); /* Subtracts header height set via function  */
 
-		padding: 20px;
+		/* padding-top: 20px; */
 		background: #f4f4f4;
 	}
+
+
 
 	a {
 		display: inline-block; /* Ensure anchors do not span full width */
 		max-width: 100%; /* Prevent anchors from exceeding the width of their container */
 		word-wrap: break-word; /* Break long URLs */
+		
 	}
 	/* Main content area */
 	.container {
+
 		display: flex;
 		flex: 1;
 		overflow: hidden; /* Prevents scrolling issues */

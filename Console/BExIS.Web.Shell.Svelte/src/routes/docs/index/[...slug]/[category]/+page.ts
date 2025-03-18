@@ -7,7 +7,7 @@ let md;
 
 export const load = async ({ params }) => {
 	const storedData = localStorage.getItem('mdData');
-	if (storedData) {
+	if (storedData ) {
 		md = JSON.parse(storedData);
 		store.set(md);
 	} else {

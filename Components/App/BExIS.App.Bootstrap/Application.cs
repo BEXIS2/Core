@@ -287,7 +287,7 @@ namespace BExIS.App.Bootstrap
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.IgnoreRoute("{file}.txt");
-
+            
             //if (!routes.Any(p => ((Route)p).DataTokens["__RouteName"].ToString().Equals("Default", StringComparison.InvariantCultureIgnoreCase)))
 
             foreach (Route item in routes)
@@ -301,9 +301,10 @@ namespace BExIS.App.Bootstrap
                 routes.MapRoute(
                    "Default", // Route name
                    "{controller}/{action}/{id}", // URL with parameters
-                   new { controller = "home", action = "index", id = UrlParameter.Optional } // Parameter defaults
+                   new { controller = "home", action = "index", id = UrlParameter.Optional} // Parameter defaults
                    , new[] { "BExIS.Web.Shell.Controllers" } // to prevent conflict between root controllers and area controllers that have same names
                );
+
             }
             // It should be a duplicate route or a double registration! It can happen during unit testing as the Application.Start may get called several times.
             catch (Exception ex)
@@ -311,6 +312,8 @@ namespace BExIS.App.Bootstrap
                 if (this.runStage == RunStage.Production)
                     throw ex;
             }
+
+            routes.MapMvcAttributeRoutes();
         }
     }
 }
