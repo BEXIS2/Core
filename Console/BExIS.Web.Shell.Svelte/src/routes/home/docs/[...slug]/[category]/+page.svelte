@@ -37,15 +37,14 @@
 
  let container;
 	let version;
+	$:version;
 
 	onMount(() => {
 
 			// get data from parent
 			container = document.getElementById('docs');
 			version = container?.getAttribute('version');
-
-		// console.log('onmount');
-		console.log("onmount", data);
+		
 
 		// Sort the headings by position written in the md metadata
 		data.allHeadings = data.allHeadings.sort(
@@ -145,7 +144,7 @@
 		console.log(url);
 		return `<img src="${url}" alt="${text}" title="${
 			title || ''
-		}" loading="lazy" >`;
+		}" loading="lazy" style="width:100%">`;
 	};
 
 	renderer.heading = ({ tokens, depth }) => {
@@ -176,7 +175,7 @@
 				.replace('[!SETTING]', '')
 				.replace('(', '')
 				.replace(')', '');
-			return `<blockquote class="not-prose border-l-4 p-4 border-blue-500 bg-surface-300"><div class="flex"><div class="mr-4">${svg}</div><div>${marked.parseInline(secondPart, { renderer })}</div><div class="ml-auto -mt-3 text-sm">${marked.parseInline(firstPart, { renderer })}</div></div></blockquote>`;
+			return `<blockquote class="not-prose border-l-4 p-4 border-blue-500 bg-surface-300"><div class="flex"><div class="mr-4 mt-2">${svg}</div><div>${marked.parseInline(secondPart, { renderer })}</div><div class="ml-auto -mt-3 text-sm">${marked.parseInline(firstPart, { renderer })}</div></div></blockquote>`;
 		}
 		if (quote && text.startsWith('[!ROLE]')) {
 			const svg =
@@ -209,21 +208,21 @@
 		if (!init) {
 			// if the current page is not the same as the heading base, change the page
 			if (!window.location.pathname.includes(headings[index].base)) {
-				//console.log('here');
+				console.log('here');
 				setContent(headings[index].base);
 				//goto('/home/docs/' + headings[index].base + '#' + anchor);
 
 				document.querySelector('#'+anchor).scrollIntoView({
-    behavior: 'smooth'
-  });
+						behavior: 'smooth'
+				});
 
-				return;
+
 				// if the current page is the same as the heading base, change the anchor
 			} else {
 				//goto('#' + anchor);
 				document.querySelector('#'+anchor).scrollIntoView({
     behavior: 'smooth'
-  });
+    });
 			}
 		} else {
 			// search for level 2 headings based on the current heading
@@ -321,9 +320,12 @@
 </script>
 
 <Page title="Docs" contentLayoutType={pageContentLayoutType.full} footer={false}>
-	<svelte:fragment slot="left">
-	<!-- using the left navigation -->
-	<div id="left-nav" class="left-nav mr-4 w-96">
+
+
+ <div class="container">
+
+		<!-- using the left navigation -->
+	<div id="left-nav" class="left-nav mr-4">
 		<div class="flex text-lg ml-4 mt-6">
 			<div class="mt-1 mr-2"><Fa icon={faBook} /></div>
 			<div>Documentation (v{version})</div>
@@ -353,14 +355,11 @@
 			</ul>
 		</nav>
 	</div>
-</svelte:fragment>
 
-
- <div class="container">
 		<div id="content" class="content">
 			<!-- using the content -->
-			<div>
-				<div class="prose prose-slate lg:prose-lg max-w-none ">
+
+				<div class="prose prose-slate lg:prose-lg max-w-none">
 					{@html content_complete}
 					<!--{@html sanitizeHtml(content_complete, {
 						allowedTags: [
@@ -394,9 +393,9 @@
 							'*': ['id', 'class'] // Allow `id` attributes for all elements
 						}
 				})}-->
-				</div>
+				<!-- </div> -->
 			</div>
-		</div>
+	</div>
 	</div>
 </Page>
 
@@ -405,30 +404,31 @@
 	.left-nav {
 		position: fixed;
 		left: 0;
-		/* width: 300px; */
+		width: 300px;
 		/*	height: calc(100vh - 180px); set vai function */
 		overflow-y: auto;
 		scrollbar-width: thin; /* Makes scrollbar smaller in Firefox */
 		scrollbar-color: rgba(0, 0, 0, 0.3) transparent; /* Colors scrollbar */
-		width: inherit;
 	}
 
 	.content {
 
 		flex-grow: 1;
 		overflow-y: auto;
-		width: calc(100%-300px); /* Subtract width of sidebar */
-
-
+		
 		/*  height: calc(100vh - 180px); /* Subtracts header height set via function  */
 
 		/* padding-top: 20px; */
 		/* background: #f4f4f4; */
-
+  width: calc(100% - 400px);
+  margin-left: 300px;
 		overflow-y: scroll; /* Allow scrolling */
 		scrollbar-width: none; /* Hide scrollbar (Firefox) */
 	}
-
+/* 
+	.test{
+		max-width: calc(100% - 400px);
+	} */
 
 
 	a {
