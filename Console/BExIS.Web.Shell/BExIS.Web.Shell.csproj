@@ -368,7 +368,6 @@
     <Compile Include="Controllers\API\PersonNameComponentsController.cs" />
     <Compile Include="Controllers\API\TokensController.cs" />
     <Compile Include="Controllers\API\VersionsController.cs" />
-    <Compile Include="Controllers\DocsController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FooterController.cs" />
     <Compile Include="Controllers\HeaderController.cs" />
@@ -1111,7 +1110,7 @@
     <Content Include="Views\Tokens\GetToken.cshtml" />
     <Content Include="Views\Home\Start.cshtml" />
     <Content Include="Themes\Default\Layouts\_SimpleLayout.cshtml" />
-    <Content Include="Views\Docs\Index.cshtml" />
+    <Content Include="Views\Home\Docs.cshtml" />
     <None Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

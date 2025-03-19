@@ -35,7 +35,15 @@
 	const store = writable<DataType>({ allHeadings: [], data: [] });
 	// const headingStore = writable([]);
 
+ let container;
+	let version;
+
 	onMount(() => {
+
+			// get data from parent
+			container = document.getElementById('docs');
+			version = Number(container?.getAttribute('version'));
+
 		// console.log('onmount');
 		console.log("onmount", data);
 
@@ -137,7 +145,7 @@
 		console.log(url);
 		return `<img src="${url}" alt="${text}" title="${
 			title || ''
-		}" loading="lazy" style="max-width: 100%; height: auto;">`;
+		}" loading="lazy" >`;
 	};
 
 	renderer.heading = ({ tokens, depth }) => {
@@ -173,7 +181,7 @@
 		if (quote && text.startsWith('[!ROLE]')) {
 			const svg =
 				'<svg class="svelte-fa svelte-fa-base undefined svelte-bvo74f" viewBox="0 0 448 512" aria-hidden="true" role="img" xmlns="http://www.w3.org/2000/svg"><g transform="translate(224 256)" transform-origin="112 0"><g transform="translate(0,0) scale(1,1)"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z" fill="currentColor" transform="translate(-224 -256)"></path></g></g></svg>';
-			return `<blockquote class="not-prose border-l-4 p-4 border-green-500 bg-surface-300"><div class="flex"><div class="mr-4">${svg}</div><div>${marked.parseInline(quote.replace('[!ROLE]', ''), { renderer })}</div></div></blockquote>`;
+			return `<blockquote class="not-prose border-l-4 p-4 border-green-500 bg-surface-300"><div class="flex"><div class="mr-4 mt-2">${svg}</div><div>${marked.parseInline(quote.replace('[!ROLE]', ''), { renderer })}</div></div></blockquote>`;
 		}
 		if (quote && quote.startsWith('[!ERROR]')) {
 			return `<blockquote class="error">${quote.replace('[!ERROR]', '').trim()}</blockquote>`;
@@ -203,7 +211,7 @@
 			if (!window.location.pathname.includes(headings[index].base)) {
 				//console.log('here');
 				setContent(headings[index].base);
-				//goto('/docs/index/' + headings[index].base + '#' + anchor);
+				//goto('/home/docs/' + headings[index].base + '#' + anchor);
 
 				document.querySelector('#'+anchor).scrollIntoView({
     behavior: 'smooth'
@@ -315,16 +323,16 @@
 <Page title="Docs" contentLayoutType={pageContentLayoutType.full} footer={false}>
 	<svelte:fragment slot="left">
 	<!-- using the left navigation -->
-	<div id="left-nav" class="left-nav mr-4 border-r-2">
+	<div id="left-nav" class="left-nav mr-4 w-96">
 		<div class="flex text-lg ml-4 mt-6">
 			<div class="mt-1 mr-2"><Fa icon={faBook} /></div>
-			<div>Documentation (v4.0)</div>
+			<div>Documentation (v{version})</div>
 		</div>
 		<nav>
 			<ul>
 				{#each headings as heading, index}
 					<li
-						style="margin-left: {heading.level * 10}px; display: {heading.isVisible
+						style="margin-left: {(heading.level * 10)+5}px; display: {heading.isVisible
 							? 'block'
 							: 'none'};"
 						class="{+heading.level === 1
@@ -332,7 +340,7 @@
 							: ' text-base mt-1 '}{+heading.level < 3 ? ' font-semibold' : 'text-base'}"
 					>
 						<a
-							href="/docs/index/{heading.base}#{heading.text
+							href="/home/docs/{heading.base}#{heading.text
 								.toLowerCase()
 								.replace(/\s+/g, '-')
 								.replace(/[^a-z0-9\-]/g, '')}"
@@ -348,7 +356,7 @@
 </svelte:fragment>
 
 
-	<!-- <div class="container"> -->
+ <div class="container">
 		<div id="content" class="content">
 			<!-- using the content -->
 			<div>
@@ -389,7 +397,7 @@
 				</div>
 			</div>
 		</div>
-	<!-- </div> -->
+	</div>
 </Page>
 
 <style>
@@ -407,16 +415,18 @@
 
 	.content {
 
-	
 		flex-grow: 1;
 		overflow-y: auto;
-		/* width: calc(100% - 300px); */
+		width: calc(100%-300px); /* Subtract width of sidebar */
 
 
 		/*  height: calc(100vh - 180px); /* Subtracts header height set via function  */
 
 		/* padding-top: 20px; */
 		/* background: #f4f4f4; */
+
+		overflow-y: scroll; /* Allow scrolling */
+		scrollbar-width: none; /* Hide scrollbar (Firefox) */
 	}
 
 
@@ -448,13 +458,10 @@
 		background: rgba(0, 0, 0, 0.5); /* Darker when hovered */
 	}
 
-	/* Hide scrollbar in the content area but keep scrolling */
-	.content {
-		overflow-y: scroll; /* Allow scrolling */
-		scrollbar-width: none; /* Hide scrollbar (Firefox) */
-	}
 
 	.content::-webkit-scrollbar {
 		display: none; /* Hide scrollbar (Chrome, Edge, Safari) */
 	}
+
+
 </style>
