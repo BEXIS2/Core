@@ -7,7 +7,7 @@
 	import { writable } from 'svelte/store';
 	import { RadioGroup, RadioItem, SlideToggle } from '@skeletonlabs/skeleton';
 	import { Api, Facets, Page, pageContentLayoutType, Table } from '@bexis2/bexis2-core-ui';
-	import type { Columns, FacetGroup, TableConfig } from '@bexis2/bexis2-core-ui';
+	import type { Columns, FacetGroup, linkType, TableConfig } from '@bexis2/bexis2-core-ui';
 
 	import ShowData from '$lib/components/ShowData.svelte';
 	import Cards from '$lib/components/Cards.svelte';
@@ -27,6 +27,10 @@
 	let mapFiltersOpen = false;
 	let timeFiltersOpen = false;
 	let filtersOpen = false;
+
+	const links:linkType[] = [
+		{ label: 'Manual', url: '/home/docs/configuration#search' }
+	];
 
 	const criteria = writable<{
 		[key: string]: {
@@ -421,6 +425,7 @@
 	title="Search"
 	note="Search over the data in this system."
 	contentLayoutType={pageContentLayoutType.full}
+	{links}
 >
 	<PaneGroup direction="horizontal" class="w-full !text-sm lg:text-base">
 		<!-- Facets -->

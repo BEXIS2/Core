@@ -1110,7 +1110,7 @@
     <Content Include="Views\Tokens\GetToken.cshtml" />
     <Content Include="Views\Home\Start.cshtml" />
     <Content Include="Themes\Default\Layouts\_SimpleLayout.cshtml" />
-    <Content Include="Views\Docs\Index.cshtml" />
+    <Content Include="Views\Home\Docs.cshtml" />
     <None Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

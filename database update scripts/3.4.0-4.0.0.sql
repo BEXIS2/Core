@@ -17,6 +17,7 @@ ALTER TABLE IF EXISTS public.dim_publications
     ON DELETE NO ACTION;
 
 
+
 -- add activate to EntityTemplate
 --  add column activated to EntityTemplate
 ALTER TABLE public.entitytemplates
@@ -41,10 +42,19 @@ INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, 
     WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='Search') AND xpath='dataset/date');
 
 
+--  perrmission 
 -- add dim/gbif controller in operations
 INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
 SELECT 1, NULL, 'DIM', 'Gbif', '*', null 
 WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='API' AND controller='DataTable');
+
+-- add docs operation
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'SHELL', 'docs', '*', null 
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='SHELL' AND controller='docs');
+
+
+
 
 
 -- DefaultValue within MetadataAttributeUsage: varchar(255) -> text (check MetadataAttributeUsage.hbm.xml)
