@@ -42,7 +42,7 @@
 
 			// get data from parent
 			container = document.getElementById('docs');
-			version = Number(container?.getAttribute('version'));
+			version = container?.getAttribute('version');
 
 		// console.log('onmount');
 		console.log("onmount", data);
