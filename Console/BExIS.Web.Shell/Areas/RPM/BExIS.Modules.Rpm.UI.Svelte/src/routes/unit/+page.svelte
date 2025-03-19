@@ -48,7 +48,6 @@
 	}
 
 	async function save(): Promise<void> {
-		alert('save');
 		reload();
 		toggleForm();
 	}
