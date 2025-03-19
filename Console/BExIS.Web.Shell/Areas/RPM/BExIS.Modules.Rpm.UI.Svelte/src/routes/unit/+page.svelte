@@ -77,7 +77,7 @@
 				type: 'confirm',
 				title: 'Delete Unit',
 				body:
-					'Are you sure you wish to delete Unit "' + unit.name + '" (' + unit.abbreviation + ')?',
+					'Are you sure you wish to delete Unit "' + u.name + '" (' + u.abbreviation + ')?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
 				response: async (r: boolean) => {
 					if (r === true) {
@@ -98,7 +98,7 @@
 	}
 
 	async function deleteUnit(u: UnitListItem): Promise<boolean> {
-		let success: boolean = await apiCalls.DeleteUnit(id);
+		let success: boolean = await apiCalls.DeleteUnit(u.id);
 		if (success != true) {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,

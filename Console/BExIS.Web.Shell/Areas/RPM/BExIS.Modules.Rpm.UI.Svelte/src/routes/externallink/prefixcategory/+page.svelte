@@ -31,12 +31,9 @@
 	let showForm = false;
 
 	async function reload() {
-		showForm = false;
-
 		// get external links
 		prefixCategories = await getPrefixCategories();
 		console.log('🚀 ~ file: +page.svelte:39 ~ reload ~ prefixCategories:', prefixCategories);
-		prefixCategory = { id: 0, name: '', description: '' };
 		prefixCategoryStore.set(prefixCategories);
 
 		console.log('store', $prefixCategoryStore);
@@ -75,7 +72,6 @@
 
 	function clear() {
 		prefixCategory = { id: 0, name: '', description: '' };
-		showForm = false;
 	}
 
 	function edit(type: any) {
@@ -89,14 +85,23 @@
 
 		if (type.action == 'delete') {
 			console.log('🚀 ~ file: +page.svelte:97 ~ edit ~ type.action:', type.action);
+			let pc: prefixCategoryType = $prefixCategoryStore.find((u) => u.id === type.id)!;
 			const confirm: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete Prefix Category',
-				body: 'Are you sure you wish to delete Prefix Category ' + prefixCategory.name + '?',
+				body: 'Are you sure you wish to delete Prefix Category ' + pc.name + '?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
-				response: (r: boolean) => {
+				response: async (r: boolean) => {
 					if (r === true) {
-						deleteFn(type.id);
+						let success :boolean = await deleteFn(pc);
+						if (success)
+						{
+							reload();
+							if (pc.id === prefixCategory.id)
+							{ 
+								toggleForm();
+							}
+						}
 					}
 				}
 			};
@@ -104,23 +109,23 @@
 		}
 	}
 
-	async function deleteFn(id: number) {
-		console.log('🚀 ~ file: +page.svelte:112 ~ deleteFn ~ id:', id);
+	async function deleteFn(pc: prefixCategoryType): Promise<boolean> {
+		console.log('🚀 ~ file: +page.svelte:112 ~ deleteFn ~ id:', pc.id);
 
-		const res = await remove(id);
+		const res = await remove(pc.id);
 
 		if (res) {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
 				message: 'Prefix Category deleted.'
 			});
-
-			reload();
+			return true;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
 				message: "Can't delete Prefix Category."
 			});
+			return false;
 		}
 	}
 
@@ -191,7 +196,7 @@
 			<div in:slide out:slide>
 				<PrefixCategoryForm
 					{prefixCategory}
-					on:cancel={() => clear()}
+					on:cancel={() => toggleForm()}
 					on:success={() => onSuccessFn(prefixCategory.id)}
 					on:fail={onFailFn}
 				/>
