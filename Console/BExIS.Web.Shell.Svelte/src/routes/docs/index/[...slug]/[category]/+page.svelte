@@ -312,44 +312,47 @@
 
 </script>
 
-<Page title="Docs" contentLayoutType={pageContentLayoutType.full}>
-	<div class="container">
-		<!-- using the left navigation -->
-		<div id="left-nav" class="left-nav mr-4 border-r-2">
-			<div class="flex text-lg ml-4 mt-2">
-				<div class="mt-1 mr-2"><Fa icon={faBook} /></div>
-				<div>Documentation (v4.0)</div>
-			</div>
-			<nav>
-				<ul>
-					{#each headings as heading, index}
-						<li
-							style="margin-left: {heading.level * 10}px; display: {heading.isVisible
-								? 'block'
-								: 'none'};"
-							class="{+heading.level === 1
-								? 'text-primary-700 text-xl font-semibold mt-6 '
-								: ' text-base mt-1 '}{+heading.level < 3 ? ' font-semibold' : 'text-base'}"
-						>
-							<a
-								href="/docs/index/{heading.base}#{heading.text
-									.toLowerCase()
-									.replace(/\s+/g, '-')
-									.replace(/[^a-z0-9\-]/g, '')}"
-								on:click|preventDefault={() => toggleVisibility(index)}
-							>
-								{heading.text}
-							</a>
-						</li>
-					{/each}
-				</ul>
-			</nav>
+<Page title="Docs" contentLayoutType={pageContentLayoutType.full} footer={false}>
+	<svelte:fragment slot="left">
+	<!-- using the left navigation -->
+	<div id="left-nav" class="left-nav mr-4 border-r-2">
+		<div class="flex text-lg ml-4 mt-6">
+			<div class="mt-1 mr-2"><Fa icon={faBook} /></div>
+			<div>Documentation (v4.0)</div>
 		</div>
+		<nav>
+			<ul>
+				{#each headings as heading, index}
+					<li
+						style="margin-left: {heading.level * 10}px; display: {heading.isVisible
+							? 'block'
+							: 'none'};"
+						class="{+heading.level === 1
+							? 'text-primary-700 text-xl font-semibold mt-4 '
+							: ' text-base mt-1 '}{+heading.level < 3 ? ' font-semibold' : 'text-base'}"
+					>
+						<a
+							href="/docs/index/{heading.base}#{heading.text
+								.toLowerCase()
+								.replace(/\s+/g, '-')
+								.replace(/[^a-z0-9\-]/g, '')}"
+							on:click|preventDefault={() => toggleVisibility(index)}
+						>
+							{heading.text}
+						</a>
+					</li>
+				{/each}
+			</ul>
+		</nav>
+	</div>
+</svelte:fragment>
 
+
+	<!-- <div class="container"> -->
 		<div id="content" class="content">
 			<!-- using the content -->
 			<div>
-				<div class="prose prose-slate lg:prose-lg max-w-none ml-7 pl-5 pr-10">
+				<div class="prose prose-slate lg:prose-lg max-w-none ">
 					{@html content_complete}
 					<!--{@html sanitizeHtml(content_complete, {
 						allowedTags: [
@@ -386,34 +389,34 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	<!-- </div> -->
 </Page>
 
 <style>
 
 	.left-nav {
 		position: fixed;
-
 		left: 0;
-		width: 300px;
+		/* width: 300px; */
 		/*	height: calc(100vh - 180px); set vai function */
 		overflow-y: auto;
 		scrollbar-width: thin; /* Makes scrollbar smaller in Firefox */
 		scrollbar-color: rgba(0, 0, 0, 0.3) transparent; /* Colors scrollbar */
+		width: inherit;
 	}
 
 	.content {
-		margin-left: 300px; /* Same as the width of the left-nav */
-		padding: 20px;
+
+	
 		flex-grow: 1;
 		overflow-y: auto;
-		width: calc(100% - 300px);
+		/* width: calc(100% - 300px); */
 
 
 		/*  height: calc(100vh - 180px); /* Subtracts header height set via function  */
 
 		/* padding-top: 20px; */
-		background: #f4f4f4;
+		/* background: #f4f4f4; */
 	}
 
 
