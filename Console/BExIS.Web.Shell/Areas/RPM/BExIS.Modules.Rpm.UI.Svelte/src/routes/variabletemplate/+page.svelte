@@ -243,7 +243,7 @@
 	}
 </script>
 
-<Page help={true} title="Manage Variable Template">
+<Page help={true} title="Manage Variable Template" >
 	{#await reload()}
 		<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h-9 w-96 placeholder animate-pulse" />
