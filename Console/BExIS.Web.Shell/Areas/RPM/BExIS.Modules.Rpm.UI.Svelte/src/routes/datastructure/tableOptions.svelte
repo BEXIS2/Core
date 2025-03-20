@@ -61,7 +61,7 @@
 		>
 			<Fa icon={faPen} />
 		</button>
-		{#if disableBtn}
+		{#if !disableBtn}
 		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 		<button
 			type="button"
