@@ -22,7 +22,8 @@
 		templateStore,
 		meaningsStore,
 		constraintsStore,
-		setByTemplateStore
+		setByTemplateStore,
+		updateDescriptionByTemplateStore
 	} from '../../store';
 
 	import { updateDisplayPattern, updateDatatypes, updateUnits, updateTemplates } from './helper';
@@ -80,6 +81,7 @@
 
 	const dispatch = createEventDispatcher();
 	const setByTemplate = get(setByTemplateStore);
+	const	updateDescriptionByTemplate = get(updateDescriptionByTemplateStore);
 
 	let x: listItemType = { id: 0, text: '', group: '', description: '' };
 
@@ -165,7 +167,7 @@
 						variable.unit = updateUnit(e.detail);
 					}
 
-					if (variable.description == undefined || variable.description == '') {
+					if ((variable.description == undefined || variable.description == '') && updateDescriptionByTemplate) {
 						variable.description = e.detail.description;
 					}
 				}
@@ -214,8 +216,8 @@
 		units.sort();
 
 		//console.log("updated units",units);
-		variableTemplates = updateTemplates(variable.unit, $templateStore, suggestedTemplates);
-		variableTemplates.sort();
+		variableTemplates = updateTemplates(variable.unit, variable.dataType, $templateStore, suggestedTemplates);
+		//variableTemplates.sort();
 	}
 
 	function updateUnit(_variableTemplate: templateListItemType): unitListItemType | undefined {
@@ -366,6 +368,7 @@
 										invalid={res.hasErrors('variableTemplate') && !blockDataRelevant}
 										feedback={res.getErrors('variableTemplate')}
 										on:change={(e) => onSelectHandler(e, 'variableTemplate-' + index)}
+										on:clear={(e) => onSelectHandler(e, 'variableTemplate-' + index)}
 										disabled={blockDataRelevant}
 									/>
 								</div>
@@ -415,6 +418,7 @@
 									feedback={res.getErrors('dataType')}
 									clearable={true}
 									on:change={(e) => onSelectHandler(e, `dataType-${index}`)}
+									on:clear = {(e) => onSelectHandler(e, `dataType-${index}`)}
 									disabled={blockDataRelevant}
 								/>
 							</div>
@@ -452,8 +456,7 @@
 												title="Click to select"
 												class:variant-filled-primary={u?.text == variable.unit?.text}
 												class:variant-ghost-primary={u?.text != variable.unit?.text}
-												on:click={() => (variable.unit = u)}>{u.text}</button
-											>
+												on:click={() => (variable.unit = u)}>{u.text}</button>
 										{/each}
 									{/if}
 								</div>
@@ -473,12 +476,13 @@
 									invalid={res.hasErrors('unit')}
 									feedback={res.getErrors('unit')}
 									on:change={(e) => onSelectHandler(e, `unit-${index}`)}
+									on:clear={(e) => onSelectHandler(e, `unit-${index}`)}
 								/>
 							</div>
 
 							<div slot="description">
 								{#if variable.dataType}
-									<DataTypeDescription type={variable.dataType.text} {missingValues} />
+									<DataTypeDescription type={variable.dataType.text} bind:missingValues={variable.missingValues} />
 								{/if}
 							</div>
 						</Container>

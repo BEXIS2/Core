@@ -150,6 +150,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             bool setByTemplate = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("setByTemplate");
             ViewData["setByTemplate"] = setByTemplate;
 
+            bool updateDescriptionByTemplate = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("updateDescriptionByTemplate");
+            ViewData["updateDescriptionByTemplate"] = setByTemplate;
+            
+
             bool changeablePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("changeablePrimaryKey");
             ViewData["changeablePrimaryKey"] = changeablePrimaryKey;
 
@@ -712,9 +716,18 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
             }
 
-            // get default missing values
-            return Json(model);
 
+            // set name if dataset belongs to
+            if (model.EntityId > 0)
+            {
+                using (var datasetManager = new DatasetManager())
+                {
+                    var v = datasetManager.GetDatasetLatestVersion(model.EntityId);
+                    model.Title = v.Title;
+                }
+            }
+
+            return Json(model);
         }
 
         [JsonNetFilter]

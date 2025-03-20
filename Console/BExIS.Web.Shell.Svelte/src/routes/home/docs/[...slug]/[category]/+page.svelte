@@ -191,7 +191,7 @@
 	renderer.link = ({ href, title, text }) => {
 		// If URL is absolute (http/https), use it directly; else prefix with repo URL
 		//const url = /^https?:\/\//.test(href) ? href : `${repoRawUrl}${href}`;
-		return `<a class="underline" href="${href}" title="${title || ''}">${text}</a>`;
+		return `<a class="underline" href="${href}" target="_blank" title="${title || ''}">${text}</a>`;
 	};
 
 	function toggleVisibility(index: number, init = false) {

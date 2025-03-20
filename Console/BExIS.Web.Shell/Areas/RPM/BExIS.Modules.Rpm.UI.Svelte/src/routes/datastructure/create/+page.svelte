@@ -27,6 +27,7 @@
 		isTemplateRequiredStore,
 		isMeaningRequiredStore,
 		setByTemplateStore,
+		updateDescriptionByTemplateStore,
 		enforcePrimaryKeyStore,
 		changeablePrimaryKeyStore
 	} from '$lib/components/datastructure/store';
@@ -96,6 +97,12 @@
 		const changeablePrimaryKey =
 			container?.getAttribute('changeablePrimaryKey')?.toLocaleLowerCase() == 'true' ? true : false;
 		changeablePrimaryKeyStore.set(changeablePrimaryKey);
+
+// get updateDescriptionByTemplate from settings and add it to store
+		// update or overwrite description	by template
+		const updateDescriptionByTemplate =
+			container?.getAttribute('updateDescriptionByTemplate')?.toLocaleLowerCase() == 'true' ? true : false;
+			updateDescriptionByTemplateStore.set(updateDescriptionByTemplate);
 
 		// 2 Usecases,
 		// 1. generate from file, selection needed -> load file
