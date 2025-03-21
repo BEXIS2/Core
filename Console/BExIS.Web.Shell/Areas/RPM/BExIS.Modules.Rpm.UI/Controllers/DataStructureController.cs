@@ -50,7 +50,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             using (var dataStructureManger = new DataStructureManager())
             using (var datasetManager = new DatasetManager())
             {
-                foreach (var entity in dataStructureManger.StructuredDataStructureRepo.Query().Select(e => new DataStructureModel() { Id = e.Id, Description = e.Description, Title = e.Name, LinkedTo = new List<long>() }).ToList())
+                var dataStructures = dataStructureManger.StructuredDataStructureRepo.Query().Select(e => new DataStructureModel() { Id = e.Id, Description = e.Description, Title = e.Name, LinkedTo = new List<long>() }).ToList().OrderByDescending(i => i.Id);
+
+                foreach (var entity in dataStructures)
                 {
                     entity.LinkedTo = datasetManager.DatasetRepo.Query().Where(d => (d.DataStructure != null && d.DataStructure.Id.Equals(entity.Id))).Select(d => d.Id).ToList();
                     tmp.Add(entity);
