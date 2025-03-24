@@ -305,6 +305,8 @@ namespace BExIS.App.Bootstrap
                    , new[] { "BExIS.Web.Shell.Controllers" } // to prevent conflict between root controllers and area controllers that have same names
                );
 
+                routes.MapMvcAttributeRoutes();
+
             }
             // It should be a duplicate route or a double registration! It can happen during unit testing as the Application.Start may get called several times.
             catch (Exception ex)
@@ -313,7 +315,6 @@ namespace BExIS.App.Bootstrap
                     throw ex;
             }
 
-            routes.MapMvcAttributeRoutes();
         }
     }
 }
