@@ -1,5 +1,15 @@
 -- OPEN ISSUES
 
+-- add datatype int64/long to datatypes
+INSERT INTO public.datatypes(
+	versionno, extra, name, description, systemtype)
+	VALUES ( 1, null , 'long', 'An 64 bit integer number', 'Int64');
+
+-- add long to none unit
+INSERT INTO public.units_datatypes(
+	datatyperef, unitref)
+	VALUES ((select id from datatypes where name = 'long'), (select id from units where name = 'none'));
+
 -- update publication table
 ALTER TABLE IF EXISTS public.dim_publications
     ADD COLUMN datasetref bigint;
