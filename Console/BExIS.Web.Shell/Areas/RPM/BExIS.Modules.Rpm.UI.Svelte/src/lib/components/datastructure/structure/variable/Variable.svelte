@@ -393,7 +393,7 @@
 								/>
 							</div>
 							<div slot="description">
-								{#if data}
+								{#if data && data.length > 0}
 									<b>Data preview: </b> {cutData(data).join(', ')}
 								{/if}
 							</div>
