@@ -126,7 +126,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public JsonResult _AutoCompleteAjaxLoading(string text)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
-            SearchModel model = provider.GetTextBoxSearchValues(text, GetFilterAC(), Session["SearchType"].ToString(), 10);
+            SearchModel model = provider.GetTextBoxSearchValues(text, GetFilterAC(), "new", 10);
             IEnumerable<TextValue> textvalues = model.SearchComponent.TextBoxSearchValues;
 
             return new JsonResult { Data = new SelectList(textvalues, "Value", "Name") };
