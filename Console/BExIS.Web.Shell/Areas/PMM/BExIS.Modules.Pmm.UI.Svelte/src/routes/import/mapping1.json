@@ -1,8 +1,8 @@
 {
     "Mappings": [
         {
-            "Source": "Publication Title",
-            "Target": "$['publication']['Publication Title']"
+            "Source": "Title",
+            "Target": "$['publication']['Title']"
         },
         {
             "Source": "Abstract Note",

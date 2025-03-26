@@ -31,10 +31,12 @@
 
 	let entities :any[] = [];
 	let transformedArray: any [] = [];
+	let tempTitle: string | null = null;
+	let csvInfo: any[] = [];
 	let dataset = {
     Title: "",
     Description: "",
-    DataStructureId: 1,
+    DataStructureId: 0,
     MetadataStructureId: 0,
     EntityTemplateId: 0
   };
@@ -85,7 +87,7 @@
 			id: entity.id,
 			text: entity.name
 		}));
-		console.log("transofrmden", transformedArray);
+		// console.log("transofrmden", transformedArray);
 		console.log("entity:",entities);
 	});
 
@@ -94,7 +96,7 @@
 	
 
 	function fillInvalidTableStore(data: any) {
-		console.time('fillInvalidTableStore');
+		// console.time('fillInvalidTableStore');
 		invalidTableStore.set(data);
 		let tableErrorItem: tableErrorItem;
 		let errorItem: errorItem;
@@ -109,7 +111,7 @@
 				$invalidTableStore[i][errorItem.column] = tableErrorItem;
 			}
 		}
-		console.timeEnd('fillInvalidTableStore');
+		// console.timeEnd('fillInvalidTableStore');
 	}
 
 	function clear() {
@@ -170,46 +172,93 @@
 	}
 
 	const mapToApiFormat = (csvRow: any, mapping: any) => {
-    const apiData: any = {};
+    	const apiData: any = {};
 
-    mapping.Mappings.forEach((map: any) => {
-        const sourceField = map.Source;
-		console.log("Map Target1:", map.Target);
-		const targetField = map.Target.match(/\$\[['"](.+)['"]\]/)?.[1];  // Extract full path after $
+		mapping.Mappings.forEach((map: any, index: number) => {
+			let sourceField = "";
+			sourceField = map.Source;
+			// console.log("Map Target1:", map.Target);
+			const targetField = map.Target.match(/\$\[['"](.+)['"]\]/)?.[1];  // Extract full path after $
+
+			if (sourceField) {
+				if (index % 2 === 0) {
+					// Jeder 1. Durchgang (Titel)
+					tempTitle = csvRow[sourceField];
+				} else {
+					// Jeder 2. Durchgang (Beschreibung)
+					if (tempTitle !== null) {
+						csvInfo.push({
+							title: tempTitle,
+							description: csvRow[sourceField],
+						});
+						tempTitle = null; // Zurücksetzen für das nächste Paar
+					}
+				}
+			}
 
  // Das API-Feld
 
-        if (csvRow[sourceField]) {
-            apiData[targetField] = csvRow[sourceField];
-            console.log(`Mapping - Source: ${sourceField}, Target: ${targetField}, Value: ${csvRow[sourceField]}`);
-        }
-    });
-
-    return apiData;
-};
+        // if (csvRow[sourceField]) {
+        //     apiData[targetField] = csvRow[sourceField];
+        //     console.log(`Mapping - Source: ${sourceField}, Target: ${targetField}, Value: ${csvRow[sourceField]}`);
+        // }
+		
+    	});
+		console.log("csv",csvInfo);
+    	return apiData;
+	};
 
 function onChangeHandler(event) {
-	let selectedEntity = event.target.value;
+	let selectedEntity: number;
+	selectedEntity = event.target.value;
 
 	let searchEntity = entities.find(entity => entity.id == selectedEntity)
 
 	dataset.EntityTemplateId = selectedEntity;
 	dataset.MetadataStructureId = searchEntity.metadataStructure.id;
-	console.log("dataset", dataset)
+	// console.log("dataset", dataset)
+
+}
+function create()
+{
+	createAllDatasets(dataset.MetadataStructureId, dataset.EntityTemplateId);
 }
 
-const createAllDatasets = async () => {
+async function createAllDatasets (metadataStructureId: number, entityTemplateId: number, dataStructureId: number = 0)
+{
 
     try {
         const mappedData = validData.map(row => {
             const mappedRow = mapToApiFormat(row, mappingJson);
-            console.log("Mapped Row:", mappedRow);  // Ausgabe der gemappten Zeile
-            return mappedRow;
+            // console.log("Mapped Row:", mappedRow);  // Ausgabe der gemappten Zeile
+      
         });
 
-        console.log("Mapped Data:", mappedData); // Alle gemappten Daten
+		let res: string;
 
-        await Promise.all(mappedData.map(dataset => apiCalls.createDataset(dataset)));
+		let ds = {
+			Title: "",
+			Description: "",
+			DataStructureId: dataStructureId,
+			MetadataStructureId: metadataStructureId,
+			EntityTemplateId: entityTemplateId
+		};
+
+
+		for(const data of csvInfo)
+		{
+			// console.log("title",data.title)
+			// console.log("",data[0][1])
+			
+				ds.Title = data.title;
+				ds.Description = data.description;
+				res = await apiCalls.createDataset(ds);
+				console.log("datasets",ds);			
+		}
+
+        // console.log("Mapped Data:", mappedData); // Alle gemappten Daten
+
+        // await Promise.all(mappedData.map(dataset => apiCalls.createDataset(dataset)));
 
         console.log("Alle Datensätze wurden erstellt!");
     } catch (error) {
@@ -341,7 +390,7 @@ const createAllDatasets = async () => {
 
 <Page help={true} title="Manage Publications">
 	<h1 class="h1">Import Publications</h1>
-	<button on:click={createAllDatasets}>Alle Datasets erstellen</button>
+	<button on:click={create}>Alle Datasets erstellen</button>
 
 
 	<div class="flex gap-5 w-full">
