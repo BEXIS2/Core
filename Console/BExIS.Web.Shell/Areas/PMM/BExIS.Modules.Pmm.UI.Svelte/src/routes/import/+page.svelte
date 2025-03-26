@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Page } from '@bexis2/bexis2-core-ui';
+	import { DropdownKVP, Page } from '@bexis2/bexis2-core-ui';
 	import Papa from 'papaparse';
 	import Fa from 'svelte-fa';
 	import {
@@ -20,17 +20,17 @@
 		errorArray,
 		errorItem,
 		tableErrorItem,
-		Mapping,
-		MappingEntry
 	} from './models';
-	import jMapping from './mapping.json';
 	import { onMount } from 'svelte';
 
 	import * as apiCalls from './services/apiCalls';
 
+	import mappingJson from "./mapping1.json";
+
 	let filename: string = '';
 
-	let schema: any;
+	let entities :any[] = [];
+	let transformedArray: any [] = [];
 
 	let validData: any[] = [];
 	let showValid: boolean = false;
@@ -71,9 +71,19 @@
 
 	onMount(async () => {
 		clear();
-		schema = await apiCalls.GetMetadataScheema(6);
-		console.log(schema);
+
+		entities = await apiCalls.getEntityTemplateList();
+		transformedArray = entities.map(entity => ({
+			id: entity.id,
+			text: entity.name
+		}));
+		console.log("transofrmden", transformedArray);
+		console.log("entity:",entities);
 	});
+
+	let target :number;
+
+	
 
 	function fillInvalidTableStore(data: any) {
 		console.time('fillInvalidTableStore');
@@ -129,17 +139,6 @@
 			complete: function (results) {
 				let jsonData: any = results.data;
 
-				processMappings(jMapping.Mappings, Sources);
-				jsonData = jsonData.map((row: any) => {
-					const filteredRow: any = {};
-					Sources.forEach((header) => {
-						if (header in row) {
-							filteredRow[header] = row[header];
-						}
-					});
-					return filteredRow;
-				});
-
 				let codeColumns = Object.keys(jsonData[0]).filter(
 					(key) =>
 						key.trim().toLocaleLowerCase().startsWith('code') &&
@@ -156,58 +155,31 @@
 				fillInvalidTableStore(invalidData);
 				showInvalid = invalidData.length > 0 ? true : false;
 				validTableStore.set(validData);
-
-				console.timeEnd('start sort');
 				
-				const instance = generateJSONFromSchema(schema);
-				// const sortedJson = clearDescriptions(instance)
-				console.log('jSchema', JSON.stringify(instance));
-				console.log('jSchema', instance);
 				createDownloadLinks();
 			}
 		});
 	}
 
-	let SourceToTarget: any[] = [];
+	const mapToApiFormat = (csvRow: any, mapping: any) => {
+    const apiData: any = {};
 
-	function processMappings(mappings: Mapping[], Sources: any) {
-		let nestedEntries: any;
-		let entries: any;
+    mapping.Mappings.forEach((map: any) => {
+        const sourceField = map.Source;
+		console.log("Map Target1:", map.Target);
+		const targetField = map.Target.match(/\$\[['"](.+)['"]\]/)?.[1];  // Extract full path after $
 
-		for (const mapping of mappings) {
-			for (const key in mapping) {
-				entries = mapping[key as keyof Mapping];
-				if (Array.isArray(entries)) {
-					for (const entry of entries) {
-						// Direkte Zuordnung von Source zu Target
-						if (entry.Source) {
-							Sources.add(entry.Source);
-						}
+ // Das API-Feld
 
-						if (entry.Source && entry.Target) {
-							let mapEntry = new Set<string>();
-							mapEntry.add(entry.Source);
-							mapEntry.add(entry.Target);
-							SourceToTarget.push(mapEntry);
-						}
+        if (csvRow[sourceField]) {
+            apiData[targetField] = csvRow[sourceField];
+            console.log(`Mapping - Source: ${sourceField}, Target: ${targetField}, Value: ${csvRow[sourceField]}`);
+        }
+    });
 
-						// Dynamische Überprüfung aller Schlüssel im entry-Objekt
-						for (const nestedKey in entry) {
-							nestedEntries = entry[nestedKey as keyof MappingEntry];
-
-							// Wenn der Wert ein Array ist, rufe processMappings rekursiv auf
-							if (Array.isArray(nestedEntries)) {
-								processMappings([{ publication: nestedEntries }], Sources);
-							}
-						}
-					}
-				}
-			}
-		}
-		return Sources;
-	}
-
-	// count commas
+    return apiData;
+};
+	
 	function countCommas(data: string): number {
 		return data.split(',').length - 1;
 	}
@@ -277,147 +249,6 @@
 		});
 	}
 
-	// function generateJSONFromSchema(schema: any): any {
-	// 	const result: { [key: string]: any } = {};
-
-	// 	Object.keys(schema.properties).forEach((key) => {
-	// 		const property = schema.properties[key];
-	// 		if (property.type === 'string') {
-	// 			result[key] = '';
-	// 		} else if (property.type === 'boolean') {
-	// 			result[key] = false;
-	// 		} else if (property.type === 'integer') {
-	// 			result[key] = 0;
-	// 		} else if (property.type === 'array') {
-	// 			result[key] = [];
-	// 		} else if (property.type === 'object') {
-	// 			result[key] = generateJSONFromSchema(property);
-	// 		}
-	// 	});
-
-	// 	return result;
-	// }
-
-// function generateJSONFromSchema(schema: any): any {
-// 	let result: { [key: string]: any } = {};
-
-//   Überprüfe, ob es eine properties-Eigenschaft gibt
-//   if (schema.properties) {
-//     Object.keys(schema.properties).forEach(key => {
-//       const property = schema.properties[key];
-
-//       Wenn es ein "title" und "description" gibt, füge es zum Resultat hinzu
-//       if (property.title && property.description !== undefined) {
-//         result[property.title] = property.description;
-//       }
-
-	  
-// 	  if (property.description !== undefined) {
-//         property.description = '';  // Description auf leeren String setzen
-//       }
-
-//       Falls es verschachtelte Eigenschaften gibt, rekursiv weiter verarbeiten
-//       if (property.properties) {
-//         const nestedResult = generateJSONFromSchema(property);
-//         result = { ...result, ...nestedResult };
-
-		
-//       }
-//     });
-//   }
-
-//   return result;
-// }
-
-interface PropertySchema {
-  type: string;
-  properties?: Record<string, PropertySchema>;
-}
-
-interface Schema {
-  properties: Record<string, PropertySchema>;
-}
-
-interface Result {
-  [key: string]: any;
-}
-
-function generateJSONFromSchema(schema: Schema): Result {
-  const result: Result = {};
-
-  // Rekursive Funktion zur Verarbeitung der Schema-Properties
-  function processProperties(properties: Record<string, PropertySchema>): Record<string, any> {
-    const obj: Record<string, any> = {};
-
-    for (const key in properties) {
-      const property = properties[key];
-
-      // Wenn die Property vom Typ 'object' ist, erstellen wir ein Objekt mit 'description'
-      if (property.type === 'object') {
-        obj[key] = { description: "" };
-      }
-      // Wenn die Property vom Typ 'array' ist, erstellen wir ein Array mit einem leeren Objekt mit 'description'
-      else if (property.type === 'array') {
-        obj[key] = [{}]; // Ein Array mit einem leeren Objekt
-      }
-      // Für alle anderen Typen setzen wir 'description' auf einen leeren String
-      else {
-        obj[key] = { description: "" };
-      }
-    }
-    return obj;
-  }
-
-  // Verarbeitung des gesamten Schemas und Erstellen der JSON-Struktur
-  for (const key in schema.properties) {
-    result[key] = [processProperties(schema.properties[key].properties || {})];
-  }
-
-  return result;
-}
-
-
-// function generateJSONFromSchema(schema: any): any {
-//   let result: { [key: string]: any } = {};
-
-//   // Überprüfe, ob es eine properties-Eigenschaft gibt
-//   if (schema.properties) {
-//     Object.keys(schema.properties).forEach(key => {
-//       const property = schema.properties[key];
-
-//       // Wenn es ein "title" und "description" gibt, füge es zum Resultat hinzu
-//       if (property.title && property.description !== undefined) {
-//         result[property.title] = property.description;
-//       }
-
-//       // Setze description auf leeren String
-//       if (property.description !== undefined) {
-//         property.description = '';  // Description auf leeren String setzen
-//       }
-
-//       // Falls es verschachtelte Eigenschaften gibt, rekursiv weiter verarbeiten
-//       if (property.properties) {
-//         // Rekursiv die Eigenschaften durchgehen und dort descriptions ebenfalls leeren
-//         const nestedResult = generateJSONFromSchema(property);
-//         result = { ...result, ...nestedResult };
-//       }
-//     });
-//   }
-
-//   return result;
-// }
-
-function clearDescriptions(json: any) {
-	console.log ('json instance', json)
-	for (let key in json) {
-		console.log(json[key])
-//   if (json.hasOwnProperty(key) && (json[key] === "" || json[key] == null || (Array.isArray(json[key]) && json[key].length === 0))) {
-//     console.log(json[key])
-	// json[key] = "";  // Setze den Wert auf einen leeren String
-  }
-// }
-}
-
 	// parse json back to csv and create download links
 	function createDownloadLinks() {
 		const validCSVString = Papa.unparse(validData, { delimiter: ',' }); // Ensure comma as separator
@@ -472,15 +303,16 @@ function clearDescriptions(json: any) {
 
 <Page help={true} title="Manage Publications">
 	<h1 class="h1">Import Publications</h1>
-
 	<div class="flex gap-5 w-full">
 		<div id="fileLabel" class="w-16">Entity :</div>
-		<div id="fileName" class="overflow-clip w-full">Entity name</div>
-		<div id="fileButton" class="w-16">
-			<FileButton button="btn variant-filled-primary h-9 w-16 shadow-md" name="chooseEntity"
-				><Fa icon={faPlus} />
-			</FileButton>
-		</div>
+			<div class="overflow-clip w-full">
+				<DropdownKVP
+				id="metadataStructure"
+				title=""
+				bind:target
+				source={transformedArray}
+				/>
+			</div>
 	</div>
 	<div class="flex gap-5 w-full">
 		{#if isLoading}

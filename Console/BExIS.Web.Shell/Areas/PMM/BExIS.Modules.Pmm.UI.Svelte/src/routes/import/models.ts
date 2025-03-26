@@ -29,3 +29,11 @@ export interface MappingEntry {
 	File?: MappingEntry[];
 	Code?: MappingEntry[];
 }
+
+export interface Dataset {
+	Title?: string;
+	Description?: string;
+	DataStructureId?: number;
+	MetadataStructureId?: number;
+	EntityTemplateId?: number;
+}
