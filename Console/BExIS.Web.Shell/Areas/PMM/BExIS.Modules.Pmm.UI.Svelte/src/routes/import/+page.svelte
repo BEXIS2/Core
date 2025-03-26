@@ -31,6 +31,14 @@
 
 	let entities :any[] = [];
 	let transformedArray: any [] = [];
+	let dataset = {
+    Title: "",
+    Description: "",
+    DataStructureId: 1,
+    MetadataStructureId: 0,
+    EntityTemplateId: 0
+  };
+
 
 	let validData: any[] = [];
 	let showValid: boolean = false;
@@ -179,6 +187,16 @@
 
     return apiData;
 };
+
+function onChangeHandler(event) {
+	let selectedEntity = event.target.value;
+
+	let searchEntity = entities.find(entity => entity.id == selectedEntity)
+
+	dataset.EntityTemplateId = selectedEntity;
+	dataset.MetadataStructureId = searchEntity.metadataStructure.id;
+	console.log("dataset", dataset)
+}
 
 const createAllDatasets = async () => {
 
@@ -330,10 +348,11 @@ const createAllDatasets = async () => {
 		<div id="fileLabel" class="w-16">Entity :</div>
 			<div class="overflow-clip w-full">
 				<DropdownKVP
-				id="metadataStructure"
-				title=""
-				bind:target
-				source={transformedArray}
+					id="metadataStructure"
+					title=""
+					bind:target
+					source={transformedArray}
+					on:change={onChangeHandler}
 				/>
 			</div>
 	</div>
