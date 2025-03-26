@@ -2,12 +2,12 @@ export const variableTemplateHelp = [
 	{
 		id: 'create',
 		name: 'Create neẇ Variable Template',
-		description: 'Click here to ceate a new Variable Template'
+		description: 'Click here to create a new Variable Template'
 	},
 	{
 		id: 'delete',
 		name: 'Delete Variable Template',
-		description: 'Click here to detete the Variable Template'
+		description: 'Click here to delete the Variable Template'
 	},
 	{
 		id: 'edit',
@@ -33,22 +33,22 @@ export const variableTemplateHelp = [
 		id: 'description',
 		name: 'Description',
 		description:
-			'Description of th Variable Template. <li>a short overview how the Variable Template shold be used.</li>'
+			'Description of th Variable Template. <li>a short overview how the Variable Template should be used.</li>'
 	},
 	{
 		id: 'dataType',
 		name: 'Data Type',
-		description: 'Type od the values <li>eg. number, text, boolean etc.</li>'
+		description: 'Type of the values <li>eg. number, text, boolean etc.</li>'
 	},
 	{
 		id: 'unit',
 		name: 'Unit',
-		description: 'Type od the values <li>eg. kg, cm, % etc.</li>'
+		description: 'Type of the values <li>eg. kg, cm, % etc.</li>'
 	},
 	{
 		id: 'missingvaluesContainer',
 		name: 'MissingValues',
 		description:
-			'Please insert placeholders here to describe that the value cannot be measured.</br> eg: <b>NA - Not available<b>'
+			'Please insert placeholders here to describe why a value was not measured.</br> eg: <b>NA - Not available<b>'
 	}
 ];

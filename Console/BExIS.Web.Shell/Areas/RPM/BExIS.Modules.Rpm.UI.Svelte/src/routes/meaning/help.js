@@ -2,12 +2,12 @@ export const helpInfoList = [
 	{
 		id: 'create',
 		name: 'Create neẇ Meaning',
-		description: 'Click here to ceate a new Meaning'
+		description: 'Click here to create a new Meaning'
 	},
 	{
 		id: 'delete',
 		name: 'Delete Meaning',
-		description: 'Click here to detete the Meaning'
+		description: 'Click here to delete the Meaning'
 	},
 	{
 		id: 'edit',
@@ -33,6 +33,6 @@ export const helpInfoList = [
 		id: 'description',
 		name: 'Description',
 		description:
-			'Description of th Meaning. <li>a short overview how the Meaning shold be used.</li>'
+			'Description of th Meaning. <li>a short overview how the Meaning should be used.</li>'
 	}
 ];

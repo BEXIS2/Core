@@ -38,22 +38,22 @@
 		{
 			"id": "abbreviation",
 			"name": "Abbreviation",
-			"description": "Abbreviation of the unit. <li>eg., m for meter, Kg for kg etc.</li>"
+			"description": "Abbreviation of the unit. <li>e.g., m for meter, Kg for kilogram etc.</li>"
 		},
 		{
 			"id": "dataTypes",
 			"name": "Data Types",
-			"description": "Type of the values <li>eg. number, text, boolean etc.</li>"
+			"description": "Allowed data types of the value <li>e.g., number, text, boolean etc.</li>"
 		},
 		{
 			"id": "dimension",
 			"name": "Dimension",
-			"description": "<li>eg. length, weight, volume etc.</li>"
+			"description": "<li>e.g., length, weight, volume etc.</li>"
 		},
 		{
 			"id": "measurementSystem",
 			"name": "Measurement System",
-			"description": "Is the system where the unit belongs to <li>eg. Metric, Nautical etc.</li>"
+			"description": "Measurement system where the unit belongs to <li>e.g., Metric, Nautical etc.</li>"
 		}
 	]
 }

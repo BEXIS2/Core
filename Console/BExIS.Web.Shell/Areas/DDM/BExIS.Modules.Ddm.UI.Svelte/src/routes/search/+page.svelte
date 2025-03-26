@@ -16,7 +16,7 @@ const controller = 'search';
 
 <Page
 	title="Search"
-	note="Search over the data in this system."
+	note="Search within data in this system."
 	contentLayoutType={pageContentLayoutType.full}
 	{links}
 >

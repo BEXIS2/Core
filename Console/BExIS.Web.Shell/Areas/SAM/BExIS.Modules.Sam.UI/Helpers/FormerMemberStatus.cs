@@ -50,7 +50,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
             using (var groupManager = new GroupManager())
             using (var alumniUsersGroupsRelationManager = new FormerMemberUsersGroupsRelationManager())
             {
-                //get former meber group
+                //get former member group
                 var group = groupManager.FindByNameAsync(formerMemberRole).Result;
                 if (!group.Users.Contains(user))
                 {
@@ -61,7 +61,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
                         //Create for each feature permission a alumni feature permission
                         featurePermissions.ForEach(u => alumniFeaturePermissionManager.Create(user, u.Feature, u.PermissionType));
 
-                        //Remove orginal feature permissions
+                        //Remove original feature permissions
                         for (int i = 0; i < featurePermissions.Count; i++)
                         {
                             var result_delete = featurePermissionManager.DeleteAsync(featurePermissions[i].Subject.Id, featurePermissions[i].Feature.Id).Result;
