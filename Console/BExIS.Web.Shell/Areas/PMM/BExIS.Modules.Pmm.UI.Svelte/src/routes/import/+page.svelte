@@ -179,6 +179,26 @@
 
     return apiData;
 };
+
+const createAllDatasets = async () => {
+
+    try {
+        const mappedData = validData.map(row => {
+            const mappedRow = mapToApiFormat(row, mappingJson);
+            console.log("Mapped Row:", mappedRow);  // Ausgabe der gemappten Zeile
+            return mappedRow;
+        });
+
+        console.log("Mapped Data:", mappedData); // Alle gemappten Daten
+
+        await Promise.all(mappedData.map(dataset => apiCalls.createDataset(dataset)));
+
+        console.log("Alle Datensätze wurden erstellt!");
+    } catch (error) {
+        console.error("Fehler beim Erstellen der Datensätze:", error);
+    }
+};
+
 	
 	function countCommas(data: string): number {
 		return data.split(',').length - 1;
@@ -303,6 +323,9 @@
 
 <Page help={true} title="Manage Publications">
 	<h1 class="h1">Import Publications</h1>
+	<button on:click={createAllDatasets}>Alle Datasets erstellen</button>
+
+
 	<div class="flex gap-5 w-full">
 		<div id="fileLabel" class="w-16">Entity :</div>
 			<div class="overflow-clip w-full">
