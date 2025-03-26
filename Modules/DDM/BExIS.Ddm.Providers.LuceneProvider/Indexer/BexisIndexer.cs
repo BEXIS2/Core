@@ -436,16 +436,21 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 var dataset = new Document();
                 List<XmlNode> facetNodes = facetXmlNodeList;
                 dataset.Add(new Field("doc_id", docId, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
+
                 ///
                 /// Add a field to indicte whether the dataset is public, this will be used for the public datasets' search page.
                 ///
                 dataset.Add(new Field("gen_isPublic", entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result ? "TRUE" : "FALSE", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
 
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-                dataset.Add(new Field("gen_entity_name", xmlDatasetHelper.GetEntityName(id), Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
+                var entityName = xmlDatasetHelper.GetEntityName(id);
+                dataset.Add(new Field("gen_entity_name", entityName, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
                 dataset.Add(new Field("gen_doi", doi, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
                 dataset.Add(new Field("gen_modifieddate", date, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
                 dataset.Add(new Field("gen_entitytemplate", entityTemplate, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
+
+                indexSystemInfos(id, doi, entityName, entityTemplate, ref dataset, docId);
+
 
                 foreach (XmlNode facet in facetNodes)
                 {
@@ -761,6 +766,69 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 writeAutoCompleteIndex(docId, lucene_name, pDataValue);
                 writeAutoCompleteIndex(docId, "ng_all", pDataValue);
             }
+        }
+
+        private void indexSystemInfos(long id, string doi, string entity, string template, ref Document dataset, string docId)
+        {
+   
+            String primitiveType = "string";
+            String analysing = "yes";
+            float boosting = 3;
+            var toAnalyse = Lucene.Net.Documents.Field.Index.NOT_ANALYZED;
+
+
+            // id
+            string pDataValue = id.ToString();
+            string key = "id";
+            Field a = new Field("category_"+ key, pDataValue, Lucene.Net.Documents.Field.Store.NO, toAnalyse);
+            a.Boost = boosting;
+            dataset.Add(a);
+            dataset.Add(new Field("ng_id", pDataValue,
+                Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+            dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES,
+                Lucene.Net.Documents.Field.Index.ANALYZED));
+            writeAutoCompleteIndex(docId, key, pDataValue);
+            writeAutoCompleteIndex(docId, "ng_all", pDataValue);
+
+            // doi
+            pDataValue = doi;
+            key = "doi";
+            a = new Field("category_"+key, pDataValue, Lucene.Net.Documents.Field.Store.NO, toAnalyse);
+            a.Boost = boosting;
+            dataset.Add(a);
+            dataset.Add(new Field("ng_" + key, pDataValue,
+                Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+            dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES,
+                Lucene.Net.Documents.Field.Index.ANALYZED));
+            writeAutoCompleteIndex(docId, key, pDataValue);
+            writeAutoCompleteIndex(docId, "ng_all", pDataValue);
+
+            // entity
+            pDataValue = entity;
+            key = "entity";
+            a = new Field("category_" + key, pDataValue, Lucene.Net.Documents.Field.Store.NO, toAnalyse);
+            a.Boost = boosting;
+            dataset.Add(a);
+            dataset.Add(new Field("ng_" + key, pDataValue,
+                Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+            dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES,
+                Lucene.Net.Documents.Field.Index.ANALYZED));
+            writeAutoCompleteIndex(docId, key, pDataValue);
+            writeAutoCompleteIndex(docId, "ng_all", pDataValue);
+
+            // entity template
+            pDataValue = template;
+            key = "template";
+            a = new Field("category_" + key, pDataValue, Lucene.Net.Documents.Field.Store.NO, toAnalyse);
+            a.Boost = boosting;
+            dataset.Add(a);
+            dataset.Add(new Field("ng_"+key, pDataValue,
+                Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+            dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES,
+                Lucene.Net.Documents.Field.Index.ANALYZED));
+            writeAutoCompleteIndex(docId, key, pDataValue);
+            writeAutoCompleteIndex(docId, "ng_all", pDataValue);
+
         }
 
         /// <summary>

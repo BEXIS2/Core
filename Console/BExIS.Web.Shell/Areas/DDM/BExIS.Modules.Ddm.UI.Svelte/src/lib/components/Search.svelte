@@ -381,7 +381,7 @@
 	};
 
 	const setAutoCompleteValues = async (input: string) => {
-		if (input.length < 3) return [];
+		if (input.length < 1) return [];
 
 		const response = await Api.post('/ddm/' + controller + '/_AutoCompleteAjaxLoading', {
 			text: input
