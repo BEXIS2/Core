@@ -24,7 +24,7 @@
       "value": "Dear",
       "type": "String",
       "options": [],
-      "description": "Title for mails"
+      "description": "Alternative subject for mails. If empty per default the instance short name as for all system mails as well."
     },
     {
       "key": "mailTextSubject",
