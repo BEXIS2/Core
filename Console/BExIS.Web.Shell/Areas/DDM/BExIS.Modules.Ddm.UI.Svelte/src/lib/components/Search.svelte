@@ -18,7 +18,7 @@
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 
-	export const controller: string = 'search';
+	export let controller: string = 'search';
 
 
 	let columns: Columns;
