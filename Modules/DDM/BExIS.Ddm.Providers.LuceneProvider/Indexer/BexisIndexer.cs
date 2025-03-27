@@ -431,6 +431,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     // doi
                     entityTemplate = version.Dataset.EntityTemplate.Name;
                     date = version.ModificationInfo?.Timestamp?.ToString("yyyy-MM-dd");
+                    if(date == null) version.CreationInfo?.Timestamp?.ToString("yyyy-MM-dd");
+                    if (date == null) date = "";
                 }
 
                 var dataset = new Document();
