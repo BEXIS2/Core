@@ -28,6 +28,9 @@ using BExIS.Utils.Config;
 using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Extensions;
 using BExIS.Xml.Helpers;
+using NHibernate.Cfg.MappingSchema;
+using BEXIS.JSON.Helpers;
+using Newtonsoft.Json.Schema;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,462 +53,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private CreateTaskmanager TaskManager;
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-        #region Create a Dataset Setup Page
-
-        //
-        // GET: /DCM/CreateDataset/
-        /// <summary>
-        /// Load the createDataset action with different parameter type options
-        /// type eg ("DataStructureId", "DatasetId", "MetadataStructureId")
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public ActionResult Index(long id = -1, string type = "")
-        {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
-
-            Session["CreateDatasetTaskmanager"] = null;
-            if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-
-            if (TaskManager == null)
-            {
-                TaskManager = new CreateTaskmanager();
-
-                Session["CreateDatasetTaskmanager"] = TaskManager;
-                Session["MetadataStructureViewList"] = LoadMetadataStructureViewList();
-                var datastructureViewList = LoadDataStructureViewList();
-                Session["DataStructureViewList_unstructured"] = datastructureViewList.Where(a => a.Type == "unstructured").ToList();
-                Session["DataStructureViewList_structured"] = datastructureViewList.Where(a => a.Type == "structured").ToList();
-
-                Session["DatasetViewList"] = LoadDatasetViewList();
-
-                setAdditionalFunctions();
-
-                //set Entity to TaskManager
-                TaskManager.AddToBus(CreateTaskmanager.ENTITY_CLASS_PATH, "BExIS.Dlm.Entities.Data.Dataset");
-
-                SetupModel Model = GetDefaultModel();
-
-                //if id is set and its type dataset
-                if (id != -1 && type.ToLower().Equals("datasetid"))
-                {
-                    ViewBag.Title = PresentationModel.GetViewTitleForTenant("Copy Dataset", this.Session.GetTenant());
-
-                    Dataset dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
-                    Model.SelectedDatasetId = id;
-                    Model.SelectedMetadataStructureId = dataset.MetadataStructure.Id;
-                    Model.SelectedDataStructureId = dataset.DataStructure.Id;
-                    Model.BlockMetadataStructureId = true;
-                    Model.BlockDatasetId = true;
-                }
-
-                if (id != -1 && type.ToLower().Equals("metadatastructureid"))
-                {
-                    ViewBag.Title = PresentationModel.GetViewTitleForTenant("Copy Dataset", this.Session.GetTenant());
-                    Model.SelectedMetadataStructureId = id;
-                }
-
-                if (id != -1 && type.ToLower().Equals("datastructureid"))
-                {
-                    ViewBag.Title = PresentationModel.GetViewTitleForTenant("Copy Dataset", this.Session.GetTenant());
-                    Model.SelectedDataStructureId = id;
-                    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
-                        Model.SelectedMetadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
-                }
-
-                return View(Model);
-            }
-
-            return View();
-        }
-
-        /// <summary>
-        /// ReLoad the createDataset action with different parameter type options
-        /// type eg ("DataStructureId", "DatasetId", "MetadataStructureId")
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public ActionResult ReloadIndex(long id = -1, string type = "")
-        {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("...", this.Session.GetTenant());
-
-            if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-
-            using (DatasetManager datasetManager = new DatasetManager())
-            {
-                SetupModel Model = GetDefaultModel();
-
-                //if id is set and its type dataset
-                if (id != -1 && type.ToLower().Equals("datasetid"))
-                {
-                    Dataset dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
-                    Model.SelectedDatasetId = id;
-                    Model.SelectedMetadataStructureId = dataset.MetadataStructure.Id;
-                    Model.SelectedDataStructureId = dataset.DataStructure.Id;
-                    Model.BlockMetadataStructureId = true;
-                    Model.BlockDatasetId = false;
-
-                    TaskManager.AddToBus(CreateTaskmanager.COPY_OF_ENTITY_ID, id);
-                }
-
-                if (id != -1 && type.ToLower().Equals("metadatastructureid"))
-                {
-                    TaskManager.AddToBus(CreateTaskmanager.METADATASTRUCTURE_ID, id);
-                    Model.SelectedMetadataStructureId = id;
-
-                    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.DATASTRUCTURE_ID))
-                        Model.SelectedDataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.DATASTRUCTURE_ID]);
-
-                    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.COPY_OF_ENTITY_ID))
-                    {
-                        Model.SelectedDatasetId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.COPY_OF_ENTITY_ID]);
-
-                        Dataset dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
-                        Model.BlockMetadataStructureId = true;
-                        Model.BlockDatasetId = false;
-                    }
-                }
-
-                if (id != -1 && type.ToLower().Equals("datastructureid"))
-                {
-                    TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_ID, id);
-                    Model.SelectedDataStructureId = id;
-
-                    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
-                        Model.SelectedMetadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
-
-                    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.COPY_OF_ENTITY_ID))
-                    {
-                        Model.SelectedDatasetId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.COPY_OF_ENTITY_ID]);
-
-                        Dataset dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
-                        Model.BlockMetadataStructureId = true;
-                        Model.BlockDatasetId = false;
-                    }
-                }
-
-                return View("Index", Model);
-            }
-        }
-
-        [HttpPost]
-        public ActionResult StoreSelectedDataset(long id)
-        {
-            if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-
-            Dataset dataset = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
-
-            SetupModel Model = GetDefaultModel();
-
-            if (id == -1)
-            {
-                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.DATASTRUCTURE_ID))
-                    Model.SelectedDataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.DATASTRUCTURE_ID]);
-
-                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
-                    Model.SelectedMetadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
-            }
-            else
-            {
-                Model.SelectedDatasetId = id;
-                Model.SelectedDataStructureId = dataset.DataStructure.Id;
-                Model.SelectedMetadataStructureId = dataset.MetadataStructure.Id;
-
-                Model.BlockMetadataStructureId = true;
-
-                Model.DataStructureOptions = DataStructureOptions.CreateNewStructure;
-
-                //add to Bus
-                TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_ID, dataset.DataStructure.Id);
-                TaskManager.AddToBus(CreateTaskmanager.METADATASTRUCTURE_ID, dataset.MetadataStructure.Id);
-                TaskManager.AddToBus(CreateTaskmanager.COPY_OF_ENTITY_ID, dataset.Id);
-            }
-
-            return PartialView("Index", Model);
-        }
-
-        public ActionResult StoreSelectedDatasetSetup(SetupModel model)
-        {
-            CreateTaskmanager TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-
-            using (DatasetManager datasetManager = new DatasetManager())
-            using (DataStructureManager dataStructureManager = new DataStructureManager())
-            using (ResearchPlanManager rpm = new ResearchPlanManager())
-            {
-                XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-                string username = GetUsernameOrDefault();
-
-                if (model.SelectedDataStructureId_ > 0)
-                {
-                    model.SelectedDataStructureId = model.SelectedDataStructureId_;
-                }
-
-                if (model == null)
-                {
-                    model = GetDefaultModel();
-                    return PartialView("Index", model);
-                }
-
-                model = LoadLists(model);
-
-                if ((model.DataStructureOptions == DataStructureOptions.Existing_structured || model.DataStructureOptions == DataStructureOptions.Existing_unstructured) && model.SelectedDataStructureId == 0)
-                    ModelState.AddModelError("SelectedDataStructureId", "Please select a data structure.");
-
-                if (ModelState.IsValid)
-                {
-                    // create new structure if its not exist
-                    if (model.DataStructureOptions != DataStructureOptions.Existing_structured && model.DataStructureOptions != DataStructureOptions.Existing_unstructured)
-                    {
-                        using (PartyManager partyManager = new PartyManager())
-                        using (var identityUserService = new IdentityUserService())
-                        {
-                            var user = identityUserService.FindByNameAsync(username);
-
-                            var name = "New data structure_" + DateTime.Now.ToString("dd_MM_yyyy_HH_mm");
-
-                            // Replace account name by party name if exists
-                            if (user != null)
-                            {
-                                Party party = partyManager.GetPartyByUser(user.Result.Id);
-                                if (party != null)
-                                {
-                                    name = "New created for " + party.Name + "_" + DateTime.Now.ToString("dd_MM_yyyy_HH_mm");
-                                }
-                            }
-
-                            //create unstructured
-                            if (model.DataStructureOptions == DataStructureOptions.CreateNewFile)
-                            {
-                                var d = dataStructureManager.CreateUnStructuredDataStructure(name, "");
-                                if (d != null) model.SelectedDataStructureId = d.Id;
-                            }
-
-                            //create structured
-                            if (model.DataStructureOptions == DataStructureOptions.CreateNewStructure)
-                            {
-                                var d = dataStructureManager.CreateStructuredDataStructure(name, "", "", "", DataStructureCategory.Generic);
-                                if (d != null) model.SelectedDataStructureId = d.Id;
-                            }
-
-                            if (model.SelectedDataStructureId <= 0)
-                            {
-                                ModelState.AddModelError("DataStructureOptions", "It was not possible to create a data structure");
-                                return View("Index", model);
-                            }
-                        }
-                    }
-
-                    //check combination of datatstructure options and data structure selection
-                    TaskManager.AddToBus(CreateTaskmanager.METADATASTRUCTURE_ID, model.SelectedMetadataStructureId);
-                    TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_ID, model.SelectedDataStructureId);
-
-                    // set datastructuretype
-                    TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_TYPE, GetDataStructureType(model.SelectedDataStructureId));
-
-                    //dataset is selected
-                    if (model.SelectedDatasetId != 0 && model.SelectedDatasetId != -1)
-                    {
-                        if (datasetManager.IsDatasetCheckedIn(model.SelectedDatasetId))
-                        {
-                            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(model.SelectedDatasetId);
-                            TaskManager.AddToBus(CreateTaskmanager.RESEARCHPLAN_ID,
-                                datasetVersion.Dataset.ResearchPlan.Id);
-                            TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, datasetVersion.Title);
-
-                            // set datastructuretype
-                            TaskManager.AddToBus(CreateTaskmanager.DATASTRUCTURE_TYPE,
-                                GetDataStructureType(model.SelectedDataStructureId));
-
-                            // set MetadataXml From selected existing Dataset
-                            XDocument metadata = XmlUtility.ToXDocument(datasetVersion.Metadata);
-                            SetXml(metadata);
-                        }
-                        else
-                        {
-                            ModelState.AddModelError(string.Empty, "Dataset is just in processing");
-                        }
-                    }
-                    else
-                    {
-                        TaskManager.AddToBus(CreateTaskmanager.RESEARCHPLAN_ID, rpm.Repo.Get().First().Id);
-                    }
-
-                    return RedirectToAction("StartMetadataEditor", "Form");
-                }
-
-                return View("Index", model);
-            }
-        }
-
-        [HttpPost]
-        public ActionResult StoreSelectedOption(long id, string type)
-        {
-            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-            string key = "";
-
-            switch (type)
-            {
-                case "ms": key = CreateTaskmanager.METADATASTRUCTURE_ID; break;
-                case "ds": key = CreateTaskmanager.DATASTRUCTURE_ID; break;
-            }
-
-            if (key != "")
-            {
-                if (TaskManager.Bus.ContainsKey(key))
-                    TaskManager.Bus[key] = id;
-                else
-                    TaskManager.Bus.Add(key, id);
-            }
-
-            return Content("");
-        }
-
-        #region setup parameter selection actions
-
-        [HttpGet]
-        public ActionResult ShowListOfDatasets()
-        {
-            List<ListViewItem> datasets = new List<ListViewItem>();
-
-            // Load list from Session, if exists
-            if (Session["DatasetViewList"] != null)
-            {
-                datasets = (List<ListViewItem>)Session["DatasetViewList"];
-            }
-            else
-            {
-                datasets = LoadDatasetViewList();
-                Session["DatasetViewList"] = datasets;
-            }
-
-            EntitySelectorModel model = BexisModelManager.LoadEntitySelectorModel(
-                datasets,
-                new EntitySelectorModelAction("ShowListOfDatasetsReciever", "CreateDataset", "DCM"));
-
-            model.Title = "Select a Dataset as Template";
-
-            return PartialView("_EntitySelectorInWindowView", model);
-        }
-
-        public ActionResult ShowListOfDatasetsReciever(long id)
-        {
-            return RedirectToAction("ReloadIndex", "CreateDataset", new { id = id, type = "Datasetid" });
-        }
-
-        [HttpGet]
-        public ActionResult ShowListOfDataStructures()
-        {
-            List<ListViewItemWithType> datastructures = LoadDataStructureViewList();
-
-            EntitySelectorModel model = BexisModelManager.LoadEntitySelectorModel(
-                 datastructures, new List<string> { "Id", "Title", "Description", "Type" },
-                 new EntitySelectorModelAction("ShowListOfDataStructuresReciever", "CreateDataset", "DCM"));
-
-            model.Title = "Select a Data Structure";
-
-            return PartialView("_EntitySelectorInWindowView", model);
-        }
-
-        public ActionResult ShowListOfDataStructuresReciever(long id)
-        {
-            return RedirectToAction("ReloadIndex", "CreateDataset", new { id = id, type = "DataStructureId" });
-        }
-
-        [HttpGet]
-        public ActionResult ShowListOfMetadataStructures()
-        {
-            List<ListViewItem> metadataStructures = LoadMetadataStructureViewList();
-
-            EntitySelectorModel model = BexisModelManager.LoadEntitySelectorModel(
-                 metadataStructures,
-                 new EntitySelectorModelAction("ShowListOfMetadataStructuresReciever", "CreateDataset", "DCM"));
-
-            model.Title = "Select a Metadata Structure";
-
-            return PartialView("_EntitySelectorInWindowView", model);
-        }
-
-        public ActionResult ShowListOfMetadataStructuresReciever(long id)
-        {
-            return RedirectToAction("ReloadIndex", "CreateDataset", new { id = id, type = "MetadataStructureId" });
-        }
-
-        #endregion setup parameter selection actions
-
-        private SetupModel GetDefaultModel()
-        {
-            SetupModel model = new SetupModel();
-
-            model = LoadLists(model);
-
-            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
-                model.SelectedMetadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
-
-            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
-                model.SelectedMetadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
-
-            model.BlockDatasetId = false;
-            model.BlockDatastructureId = false;
-            model.BlockMetadataStructureId = false;
-
-            return model;
-        }
-
-        /// <summary>
-        /// load all existing lists for this step
-        /// if there are stored in the session
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        private SetupModel LoadLists(SetupModel model)
-        {
-            if ((List<ListViewItem>)Session["MetadataStructureViewList"] != null) model.MetadataStructureViewList = (List<ListViewItem>)Session["MetadataStructureViewList"];
-            if ((List<ListViewItemWithType>)Session["DataStructureViewList_unstructured"] != null) model.DataStructureViewList_unstructured = (List<ListViewItemWithType>)Session["DataStructureViewList_unstructured"];
-            if ((List<ListViewItemWithType>)Session["DataStructureViewList_structured"] != null) model.DataStructureViewList_structured = (List<ListViewItemWithType>)Session["DataStructureViewList_structured"];
-            if ((List<ListViewItem>)Session["DatasetViewList"] != null) model.DatasetViewList = (List<ListViewItem>)Session["DatasetViewList"];
-
-            return model;
-        }
-
-        #endregion Create a Dataset Setup Page
-
-        /// <summary>
-        /// Store the incoming xmldocument in the bus of the Create TaskManager with
-        /// the METADATA_XML key
-        /// </summary>
-        /// <param name="metadataXml"></param>
-        private void SetXml(XDocument metadataXml)
-        {
-            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-
-            // load metadatastructure with all packages and attributes
-
-            if (metadataXml != null)
-            {
-                // locat path
-                //string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
-
-                TaskManager.AddToBus(CreateTaskmanager.METADATA_XML, metadataXml);
-
-                //setup loaded
-                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.SETUP_LOADED))
-                    TaskManager.Bus[CreateTaskmanager.SETUP_LOADED] = true;
-                else
-                    TaskManager.Bus.Add(CreateTaskmanager.SETUP_LOADED, true);
-            }
-        }
 
         #region Submit And Create And Finish And Cancel and Reset
 
-        public JsonResult Submit(bool valid, string commitMessage)
+        public JsonResult Submit(bool valid, string commitMessage, long entityId)
         {
             try
             {
                 // create and submit Dataset
 
-                long datasetId = SubmitDataset(valid, "Dataset", commitMessage);
+                long datasetId = SubmitDataset(entityId, valid, "Dataset", commitMessage);
 
                 return Json(new { result = "redirect", url = Url.Action("Show", "Data", new { area = "DDM", id = datasetId }) }, JsonRequestBehavior.AllowGet);
             }
@@ -519,7 +76,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// Submit a Dataset based on the imformations
         /// in the CreateTaskManager
         /// </summary>
-        public long SubmitDataset(bool valid, string entityname, string commitMessage = "")
+        public long SubmitDataset(long entityId, bool valid, string entityname, string commitMessage = "")
         {
             #region create dataset
 
@@ -533,22 +90,26 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (MetadataStructureManager msm = new MetadataStructureManager())
             {
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+            
                 string title = "";
                 long datasetId = 0;
                 bool newDataset = true;
 
                 try
                 {
-                    TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+                    TaskManager = FormHelper.GetTaskManager(entityId);
 
                     if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
                     {
+   
+                        long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+
+
                         // for e new dataset
                         if (!TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
                         {
                             long datastructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.DATASTRUCTURE_ID]);
                             long researchPlanId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.RESEARCHPLAN_ID]);
-                            long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
 
                             DataStructure dataStructure = dsm.StructuredDataStructureRepo.Get(datastructureId);
                             //if datastructure is not a structured one
@@ -578,7 +139,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             newDataset = false;
                         }
 
-                        TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+     
 
                         if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
                         {
@@ -586,6 +147,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
                             {
+
+
                                 XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
                                 workingCopy.Metadata = Xml.Helpers.XmlWriter.ToXmlDocument(xMetadata);
 
@@ -597,6 +160,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
 
                                 TaskManager.Bus[CreateTaskmanager.METADATA_XML] = setSystemValuesToMetadata(datasetId, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newDataset);
+
+
+                                // check if metadata is valid against the metadatastructure
+                                XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
+                                MetadataStructureConverter metadataStructureConverter = new MetadataStructureConverter();
+                                // check validation status
+                                var jsonSchema = metadataStructureConverter.ConvertToJsonSchema(metadataStructureId);
+                                var json = xmlMetadataConverter.ConvertTo(workingCopy.Metadata);
+                                valid = json.IsValid(jsonSchema);
+
                             }
 
                             //set status
@@ -638,37 +211,40 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
 
-                            if (newDataset)
+                            using(var emailService = new EmailService())
                             {
-                                var es = new EmailService();
-                                es.Send(MessageHelper.GetCreateDatasetHeader(datasetId, entityname),
-                                    MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
-                                    GeneralSettings.SystemEmail
-                                    );
-                            }
-                            else
-                            {
-                                var es = new EmailService();
-                                es.Send(MessageHelper.GetMetadataUpdatHeader(datasetId, entityname),
-                                    MessageHelper.GetUpdateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
-                                    GeneralSettings.SystemEmail
-                                    );
-                            }
+                                if (newDataset)
+                                {
+                                    emailService.Send(MessageHelper.GetCreateDatasetHeader(datasetId, entityname),
+                                        MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
+                                        GeneralSettings.SystemEmail
+                                        );
+                                }
+                                else
+                                {
+                                    emailService.Send(MessageHelper.GetMetadataUpdatHeader(datasetId, entityname),
+                                        MessageHelper.GetUpdateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
+                                        GeneralSettings.SystemEmail
+                                        );
+                                }
+                            }                            
                         }
 
-                        Session["CreateDatasetTaskManager"] = null;
+                        Session.Remove(FormHelper.GetTaskManagerKey(entityId));
 
                         return datasetId;
                     }
                 }
                 catch (Exception ex)
                 {
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetMetadataUpdatHeader(datasetId, entityname),
-                        ex.Message,
-                        GeneralSettings.SystemEmail
-                        );
-
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetMetadataUpdatHeader(datasetId, entityname),
+                            ex.Message,
+                            GeneralSettings.SystemEmail
+                            );
+                    }
+                        
                     string message = String.Format("error appears by create/update dataset with id: {0} , error: {1} ", datasetId.ToString(), ex.Message);
                     LoggerFactory.LogCustom(message);
                 }
@@ -685,7 +261,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             //public ActionResult LoadMetadata(long datasetId, bool locked = false, bool created = false, bool fromEditMode = false, bool resetTaskManager = false, XmlDocument newMetadata = null)
 
-            //TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            //TaskManager = FormHelper.GetTaskManager(entityId);
             //if (TaskManager != null)
             //{
             //    DatasetManager dm = new DatasetManager();
@@ -714,9 +290,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return null;
         }
 
-        public ActionResult Copy()
+        public ActionResult Copy(long entityId)
         {
-            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            TaskManager = FormHelper.GetTaskManager(entityId);
             if (TaskManager != null)
             {
                 if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
@@ -730,11 +306,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return RedirectToAction("Index", "CreateDataset", new { id = -1, type = "DatasetId" });
         }
 
-        public ActionResult Reset()
+        public ActionResult Reset(long entityId)
         {
             //public ActionResult LoadMetadata(long datasetId, bool locked = false, bool created = false, bool fromEditMode = false, bool resetTaskManager = false, XmlDocument newMetadata = null)
 
-            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            TaskManager = FormHelper.GetTaskManager(entityId);
             if (TaskManager != null)
             {
                 using (DatasetManager dm = new DatasetManager())
@@ -774,34 +350,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return this.Run("DDM", "Data", "ShowData", new RouteValueDictionary { { "id", id } });
         }
 
-        /// <summary>
-        /// Load the UploadWizard with preselected parameters
-        /// and redirect to "UploadWizard", "Submit", area = "Dcm"
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult StartUploadWizard()
-        {
-            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-
-            DataStructureType type = new DataStructureType();
-
-            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.DATASTRUCTURE_TYPE))
-            {
-                type = (DataStructureType)TaskManager.Bus[CreateTaskmanager.DATASTRUCTURE_TYPE];
-            }
-
-            long datasetid = 0;
-            // set parameters for upload process to pass it with the action
-            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
-            {
-                datasetid = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
-            }
-
-            Session["CreateDatasetTaskmanager"] = null;
-            TaskManager = null;
-
-            return RedirectToAction("UploadWizard", "Submit", new { type = type, datasetid = datasetid });
-        }
 
         #endregion Options
 
@@ -944,9 +492,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
-        private void setAdditionalFunctions()
+        private void setAdditionalFunctions(long entityId)
         {
-            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            TaskManager = FormHelper.GetTaskManager(entityId);
 
             //set function actions of COPY, RESET,CANCEL,SUBMIT
             ActionInfo copyAction = new ActionInfo();
@@ -1058,25 +606,31 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 long partyid = Convert.ToInt64(item.Attribute("partyid").Value);
 
                                 LinkElementType sourceType = LinkElementType.MetadataNestedAttributeUsage;
-                                if (type.Equals("MetadataPackageUsage")) sourceType = LinkElementType.MetadataPackageUsage;
+
+                                List<LinkElementType> sourceTypes = new List<LinkElementType>();
+
+
+                                if (type.Equals("MetadataPackageUsage")) sourceTypes.Add(LinkElementType.MetadataPackageUsage);
+                                if (type.Equals("MetadataPackage")) sourceTypes.Add(LinkElementType.MetadataPackage);
+                                if (type.Equals("MetadataAttributeUsage"))
+                                {
+                                    sourceTypes.Add(LinkElementType.MetadataAttributeUsage);
+                                    sourceTypes.Add(LinkElementType.MetadataNestedAttributeUsage);
+                                }
+
+                                if (type.Equals("MetadataAttribute"))
+                                {
+                                    sourceTypes.Add(LinkElementType.MetadataAttributeUsage);
+                                    sourceTypes.Add(LinkElementType.MetadataNestedAttributeUsage);
+                                    sourceTypes.Add(LinkElementType.SimpleMetadataAttribute);
+                                    sourceTypes.Add(LinkElementType.ComplexMetadataAttribute);
+                                }
+
 
                                 foreach (var relationship in relationshipTypes)
                                 {
                                     // when mapping in both directions are exist
-                                    if ((MappingUtils.ExistMappings(id, sourceType, relationship.Id, LinkElementType.PartyRelationshipType) &&
-                                        MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, id, sourceType)) ||
-
-                                        (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataAttributeUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
-                                        MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataAttributeUsage)) ||
-
-                                        (MappingUtils.ExistMappings(sourceId, LinkElementType.ComplexMetadataAttribute, relationship.Id, LinkElementType.PartyRelationshipType) &&
-                                        MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.ComplexMetadataAttribute)) ||
-
-                                        (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataNestedAttributeUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
-                                        MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataNestedAttributeUsage)) ||
-
-                                        (MappingUtils.ExistMappings(sourceId, LinkElementType.MetadataPackageUsage, relationship.Id, LinkElementType.PartyRelationshipType) &&
-                                        MappingUtils.ExistMappings(relationship.Id, LinkElementType.PartyRelationshipType, sourceId, LinkElementType.MetadataPackageUsage)))
+                                    if (mappingExist(sourceTypes,id, sourceId, relationship.Id))
                                     {
                                         // create releationship
 
@@ -1131,6 +685,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     throw ex;
                 }
             }
+        }
+
+        private bool mappingExist(List<LinkElementType> list, long usageId, long typeId, long releationshipId)
+        {
+
+            foreach (var sourceType in list)
+            {
+                if (MappingUtils.ExistMappings(usageId, sourceType, releationshipId, LinkElementType.PartyRelationshipType) && MappingUtils.ExistMappings(releationshipId, LinkElementType.PartyRelationshipType, usageId, sourceType))
+                    return true;
+                if (MappingUtils.ExistMappings(typeId, sourceType, releationshipId, LinkElementType.PartyRelationshipType) && MappingUtils.ExistMappings(releationshipId, LinkElementType.PartyRelationshipType, typeId, sourceType))
+                    return true;
+            }
+
+            return false;
         }
 
         private XDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)

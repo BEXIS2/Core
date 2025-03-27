@@ -4,7 +4,6 @@
 	import { helpStore } from '@bexis2/bexis2-core-ui';
 
 	export let row: any;
-
 	export let dispatchFn: any;
 
 	let inUse = false;
@@ -32,7 +31,7 @@
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<button
 				type="button"
-				class="chip variant-filled-error shadow-md"
+				class="chip variant-filled-primary shadow-md"
 				title="Delete Meaning, {row.Name}"
 				id="delete-{row.Id}"
 				on:mouseover={() => {
@@ -45,7 +44,7 @@
 			>
 				<Fa icon={faTrash} /></button
 			>
-		{:else}
+		<!-- {:else}
 			<button
 				type="button"
 				class="chip variant-filled-primary shadow-md"
@@ -64,7 +63,7 @@
 				disabled
 			>
 				<Fa icon={faTrash} /></button
-			>
+			> -->
 		{/if}
 	</div>
 </tableOption>

@@ -59,6 +59,10 @@
 		  <column name="JsonMetadataFields" />
 	  </property>
 
+	  <property name="Activated" type="Boolean">
+		  <column name="Activated" />
+	  </property>
+
 	<many-to-one name="EntityType" class="BExIS.Security.Entities.Objects.Entity" not-null="true" column="EntityRef" />
 
 	<many-to-one name="MetadataStructure" class="BExIS.Dlm.Entities.MetadataStructure.MetadataStructure" not-null="true" column="MetadataStructureRef" />

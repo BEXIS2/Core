@@ -50,7 +50,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             using (var dataStructureManger = new DataStructureManager())
             using (var datasetManager = new DatasetManager())
             {
-                foreach (var entity in dataStructureManger.StructuredDataStructureRepo.Query().Select(e => new DataStructureModel() { Id = e.Id, Description = e.Description, Title = e.Name, LinkedTo = new List<long>() }).ToList())
+                var dataStructures = dataStructureManger.StructuredDataStructureRepo.Query().Select(e => new DataStructureModel() { Id = e.Id, Description = e.Description, Title = e.Name, LinkedTo = new List<long>() }).ToList().OrderByDescending(i => i.Id);
+
+                foreach (var entity in dataStructures)
                 {
                     entity.LinkedTo = datasetManager.DatasetRepo.Query().Where(d => (d.DataStructure != null && d.DataStructure.Id.Equals(entity.Id))).Select(d => d.Id).ToList();
                     tmp.Add(entity);
@@ -149,6 +151,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             bool setByTemplate = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("setByTemplate");
             ViewData["setByTemplate"] = setByTemplate;
+
+            bool updateDescriptionByTemplate = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("updateDescriptionByTemplate");
+            ViewData["updateDescriptionByTemplate"] = setByTemplate;
+            
 
             bool changeablePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("changeablePrimaryKey");
             ViewData["changeablePrimaryKey"] = changeablePrimaryKey;
@@ -436,11 +442,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         updatedVariable.Unit = unit;
                         updatedVariable.DisplayPatternId = displayPattern;
                         updatedVariable.OrderNo = orderNo;
-                        updatedVariable.VariableTemplate = variableManager.GetVariableTemplate(variable.Template.Id);
+                    
                         updatedVariable.IsKey = variable.IsKey;
                         updatedVariable.IsValueOptional = variable.IsOptional;
                         updatedVariable.VariableConstraints = variableHelper.ConvertTo(variable.Constraints, constraintsManager);
                         updatedVariable.Meanings = variableHelper.ConvertTo(variable.Meanings, meaningManager);
+
+                        // template
+                        if (variable.Template != null) updatedVariable.VariableTemplate = variableManager.GetVariableTemplate(variable.Template.Id);
+                        else updatedVariable.VariableTemplate = null;
 
                         //add update of missing values
                         updatedVariable.MissingValues = variableHelper.Update(variable.MissingValues, updatedVariable.MissingValues);
@@ -449,6 +459,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     }
                     else // create
                     {
+                        long templateid = variable.Template != null ? variable.Template.Id : 0;
+
                         updatedVariable = variableManager.CreateVariable(
                             variable.Name,
                             dataType,
@@ -457,7 +469,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             variable.IsOptional,
                             variable.IsKey,
                             orderNo,
-                            variable.Template.Id,
+                            templateid,
                             variable.Description,
                             "",
                             "",
@@ -605,102 +617,136 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             var strutcureAnalyzer = new StructureAnalyser();
             VariableHelper helper = new VariableHelper();
 
-            for (int i = 0; i < cells; i++)
+            using (var unitManager = new UnitManager())
+            using (var dataTypeManager = new DataTypeManager())
+            using (var variableManager = new VariableManager())
             {
-                if (activeCells == null || activeCells[i]) // only create a var to the model if the cell is active or the list is null - means add everyone
+                var allUnits = unitManager.Repo.Query().ToList();
+                var allDataTypes = dataTypeManager.Repo.Query().ToList();
+                var allTemplates = variableManager.VariableTemplateRepo.Query().ToList();
+
+                for (int i = 0; i < cells; i++)
                 {
-                    VariableInstanceModel var = new VariableInstanceModel();
-
-                    var.Name = getValueFromMarkedRow(markerRows, model.Markers, "variable", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
-                    if (string.IsNullOrEmpty(var.Name)) throw new ArgumentException($"Variable name on (" + i + ") is empty");
-
-                    var.Description = getValueFromMarkedRow(markerRows, model.Markers, "description", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
-
-                    // check and get datatype
-                    if (systemTypes.ContainsKey(i))
-                        var.SystemType = systemTypes[i].Name;
-
-                    // get list of possible data types
-                    var.DataType = strutcureAnalyzer.SuggestDataType(var.SystemType).Select(d => new ListItem(d.Id, d.Name, "detect")).FirstOrDefault();
-
-                    // get list of possible units
-                    var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i, AsciiFileReaderInfo.GetTextMarker((TextMarker)model.TextMarker));
-
-                    // here we need 2 workflows
-                    // 1. if unit is not empty -> start from unit
-                    // 2. if unit is empty start from template
-
-                    List<VariableTemplate> templates = new List<VariableTemplate>();
-
-                    if (!string.IsNullOrEmpty(unitInput)) // has unit input
+                    if (activeCells == null || activeCells[i]) // only create a var to the model if the cell is active or the list is null - means add everyone
                     {
-                        strutcureAnalyzer.SuggestUnit(unitInput, var.Name, var.DataType.Text, similarityThreshold).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
-                        var.Unit = var.PossibleUnits.FirstOrDefault();
-                        if (var.Unit != null) templates = strutcureAnalyzer.SuggestTemplate(var.Name, var.Unit.Id, var.DataType.Id); // unit exist
-                        else // unit not exist
+                        VariableInstanceModel var = new VariableInstanceModel();
+
+                        var.Name = getValueFromMarkedRow(markerRows, model.Markers, "variable", (char)model.Delimeter, i, (char)model.TextMarker);
+                        if (string.IsNullOrEmpty(var.Name)) throw new ArgumentException($"Variable name on (" + i + ") is empty");
+
+                        var.Description = getValueFromMarkedRow(markerRows, model.Markers, "description", (char)model.Delimeter, i, (char)model.TextMarker);
+
+                        // check and get datatype
+                        if (systemTypes.ContainsKey(i))
+                            var.SystemType = systemTypes[i].Name;
+
+                        // get example value
+                        var value = getValueFromMarkedRow(markerRows, model.Markers, "data", (char)model.Delimeter, i, (char)model.TextMarker);
+
+
+                        // get list of possible data types
+                        var.DataType = strutcureAnalyzer.SuggestDataType(var.SystemType, value, allDataTypes).Select(d => new ListItem(d.Id, d.Name, "detect")).FirstOrDefault();
+
+                        // get list of possible units
+                        var unitInput = getValueFromMarkedRow(markerRows, model.Markers, "unit", (char)model.Delimeter, i, (char)model.TextMarker);
+
+                        // here we need 2 workflows
+                        // 1. if unit is not empty -> start from unit
+                        // 2. if unit is empty start from template
+
+                        List<VariableTemplate> templates = new List<VariableTemplate>();
+
+                        if (!string.IsNullOrEmpty(unitInput)) // has unit input
                         {
-                            templates = strutcureAnalyzer.SuggestTemplate(var.Name, 0, var.DataType.Id, similarityThreshold);
+                            strutcureAnalyzer.SuggestUnit(unitInput, var.Name, var.DataType.Text, similarityThreshold, allUnits, allDataTypes).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                            var.Unit = var.PossibleUnits.FirstOrDefault();
+                            if (var.Unit != null) templates = strutcureAnalyzer.SuggestTemplate(var.Name, var.Unit.Id, var.DataType.Id); // unit exist
+                            else // unit not exist
+                            {
+                                templates = strutcureAnalyzer.SuggestTemplate(var.Name, 0, var.DataType.Id, similarityThreshold, allTemplates);
+                                templates.Select(t => t.Unit).Distinct().ToList().ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                                var.Unit = var.PossibleUnits.FirstOrDefault();
+                            }
+                        }
+                        else // no unit input
+                        {
+
+                            templates = strutcureAnalyzer.SuggestTemplate(var.Name, 0, var.DataType.Id, similarityThreshold, allTemplates);
                             templates.Select(t => t.Unit).Distinct().ToList().ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
                             var.Unit = var.PossibleUnits.FirstOrDefault();
                         }
+
+                        // fallback if unit is null
+                        if (var.Unit == null) // if suggestion return null then set to unit none
+                        {
+                            strutcureAnalyzer.SuggestUnit("none", var.Name, var.DataType.Text, 1, allUnits, allDataTypes).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
+                            var.Unit = var.PossibleUnits.FirstOrDefault();
+                        }
+
+                        // get suggested DisplayPattern / currently only for DateTime
+                        if (var.SystemType.Equals(typeof(DateTime).Name))
+                        {
+                            var displayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.ToString().Equals(var.SystemType));
+
+                            displayPattern.ToList().ForEach(d => var.PossibleDisplayPattern.Add(new ListItem(d.Id, d.DisplayPattern)));
+
+                            // sugest displaypattern
+                            //suggest display pattern
+                            var suggestedDisplayPattern = strutcureAnalyzer.SuggestDisplayPattern(value);
+                            // create listitem if display pattern exist
+                            ListItem dsp = null;
+                            if (suggestedDisplayPattern != null)
+                            {
+                                dsp = new ListItem(suggestedDisplayPattern.Id, suggestedDisplayPattern.DisplayPattern);
+                            }
+                            // set display pattern to variable
+                            var.DisplayPattern = dsp;
+                        }
+
+                        // variable template
+                        templates.ForEach(t => var.PossibleTemplates.Add(helper.ConvertTo(t, "detect")));
+
+                        if (var.PossibleTemplates.Any())
+                            var.Template = var.PossibleTemplates.FirstOrDefault();
+
+                        // set meanings,constraints and description from template
+                        if (var.Template?.Id == 0) var.Template = null;
+                        if (var.Template != null)
+                        {
+                            var t = templates.Where(tx => tx.Id.Equals(var.Template.Id)).FirstOrDefault();
+                            var.Meanings = helper.ConvertTo(t.Meanings);
+                            var.Constraints = helper.ConvertTo(t.VariableConstraints);
+                            if (string.IsNullOrEmpty(var.Description)) var.Description = t.Description;
+                        }
+
+                        // add missing values
+                        model.MissingValues.ToList().ForEach(mv => var.MissingValues.Add(new MissingValueItem(0, mv.DisplayName, mv.Description)));
+
+                        model.Variables.Add(var);
                     }
-                    else // no unit input
-                    {
-
-                        templates = strutcureAnalyzer.SuggestTemplate(var.Name, 0, var.DataType.Id, similarityThreshold);
-                        templates.Select(t => t.Unit).Distinct().ToList().ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
-                        var.Unit = var.PossibleUnits.FirstOrDefault();
-                    }
-
-                    // fallback if unit is null
-                    if (var.Unit == null) // if suggestion return null then set to unit none
-                    {
-                        strutcureAnalyzer.SuggestUnit("none", var.Name, var.DataType.Text, 1).ForEach(u => var.PossibleUnits.Add(new UnitItem(u.Id, u.Abbreviation, u.AssociatedDataTypes.Select(x => x.Name).ToList(), "detect")));
-                        var.Unit = var.PossibleUnits.FirstOrDefault();
-                    }
-
-                    // get suggested DisplayPattern / currently only for DateTime
-                    if (var.SystemType.Equals(typeof(DateTime).Name))
-                    {
-                        var.DisplayPattern = null; // here a suggestion of the display pattern is needed
-                        var displayPattern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.ToString().Equals(var.SystemType));
-                        displayPattern.ToList().ForEach(d => var.PossibleDisplayPattern.Add(new ListItem(d.Id, d.DisplayPattern)));
-                    }
-
-                    // variable template
-                    templates.ForEach(t => var.PossibleTemplates.Add(helper.ConvertTo(t, "detect")));
-
-                    if (var.PossibleTemplates.Any())
-                        var.Template = var.PossibleTemplates.FirstOrDefault();
-
-                    // set meanings,constraints and description from template
-                    if (var.Template?.Id == 0) var.Template = null;
-                    if (var.Template != null)
-                    {
-                        var t = templates.Where(tx => tx.Id.Equals(var.Template.Id)).FirstOrDefault();
-                        var.Meanings = helper.ConvertTo(t.Meanings);
-                        var.Constraints = helper.ConvertTo(t.VariableConstraints);
-                        if (string.IsNullOrEmpty(var.Description)) var.Description = t.Description;
-                    }
-
-                    // add missing values
-                    model.MissingValues.ToList().ForEach(mv => var.MissingValues.Add(new MissingValueItem(0, mv.DisplayName, mv.Description)));
-
-                    model.Variables.Add(var);
                 }
             }
 
-            // get default missing values
-            return Json(model);
 
+            // set name if dataset belongs to
+            if (model.EntityId > 0)
+            {
+                using (var datasetManager = new DatasetManager())
+                {
+                    var v = datasetManager.GetDatasetLatestVersion(model.EntityId);
+                    model.Title = v.Title;
+                }
+            }
+
+            return Json(model);
         }
 
         [JsonNetFilter]
         [HttpGet]
-        public JsonResult Empty()
+        public JsonResult Empty(long entityId = 0)
         {
             DataStructureCreationModel model = new DataStructureCreationModel();
-
+            model.EntityId = entityId;
             // get default missing values
             return Json(model, JsonRequestBehavior.AllowGet);
         }
@@ -1027,6 +1073,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             list.Add(kvP);
 
+            // double quotes
+            c = AsciiFileReaderInfo.GetTextMarker(TextMarker.none);
+            kvP = new ListItem();
+            kvP.Id = Convert.ToInt32(c);
+            kvP.Text = AsciiFileReaderInfo.GetTextMarkerAsString(TextMarker.none);
+
+
+            list.Add(kvP);
+
             return list;
         }
 
@@ -1078,8 +1133,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         private string getValueFromMarkedRow(List<string> rows, List<Marker> markers, string type, char delimeter, int position, char textMarker)
         {
+            /**here it is assumed that the index of the line and the index of the maker match.
+                0 = variable marker & variable data
+                1 = descrption marker & descrption data 
+                2 = unit marker & unit data
+                *****
+            */
             var marker = markers.FirstOrDefault(m => m.Type.Equals(type));
-            int markerIndex = marker != null ? marker.Row : -1;
+            int markerIndex = marker != null ? markers.IndexOf(marker) : -1;
 
             if (markerIndex > -1)
             {

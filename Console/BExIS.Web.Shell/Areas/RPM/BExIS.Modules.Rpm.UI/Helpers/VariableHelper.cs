@@ -83,7 +83,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 {
                     foreach (var item in _model.Meanings)
                     {
-                        var meaning = meaningManager.getMeaning(item.Id);
+                        var meaning = meaningManager.GetMeaning(item.Id);
                         variableTemplate.Meanings.Add(meaning);
                     }
                 }
@@ -106,7 +106,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
         {
             using (var meaningsManager = new MeaningManager())
             {
-                var meanings = meaningsManager.getMeanings(); // get meanings from db
+                var meanings = meaningsManager.GetMeanings(); // get meanings from db
                 List<MeaningItem> list = new List<MeaningItem>();
 
                 if (meanings.Any())
@@ -158,7 +158,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                         {
                             label = label,
                             releation = entry.MappingRelation?.Name,
-                            link = meaningManager.getfullUri(l)
+                            link = meaningManager.GetfullUri(l)
                         });
                     }
                 }
@@ -174,10 +174,13 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 VariableTemplateItem item = new VariableTemplateItem();
                 item.Id = variableTemplate.Id;
                 item.Text = variableTemplate.Label;
+                item.DataType = variableTemplate.DataType.Name;
                 item.DataTypes = variableTemplate.Unit.AssociatedDataTypes.Select(x => x.Name).ToList();
                 item.Meanings = variableTemplate.Meanings.Select(x => x.Name).ToList();
                 item.Group = group;
                 item.Description = variableTemplate.Description;
+                item.Unit = variableTemplate.Unit.Abbreviation;
+
 
                 if (variableTemplate.VariableConstraints.Any())
                     item.Constraints = variableTemplate.VariableConstraints.Select(x => x.Name).ToList();
@@ -211,7 +214,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             item.Id = meaning.Id;
             item.Text = meaning.Name;
 
-            meaning = meaningsManager.getMeaning(meaning.Id);
+            meaning = meaningsManager.GetMeaning(meaning.Id);
 
             //links
             List<MeaningEntryItem> links = new List<MeaningEntryItem>();
@@ -259,7 +262,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
         {
             List<Meaning> list = new List<Meaning>();
             List<long> ids = meanings.Select(c => c.Id).ToList();
-            list = meaningManager.getMeanings().Where(c => ids.Contains(c.Id)).ToList();
+            list = meaningManager.GetMeanings().Where(c => ids.Contains(c.Id)).ToList();
             return list;
         }
 

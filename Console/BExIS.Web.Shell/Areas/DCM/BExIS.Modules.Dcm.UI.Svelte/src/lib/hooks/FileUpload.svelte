@@ -6,7 +6,7 @@
 
 	import FileOverview from '$lib/components/fileupload/FileOverview.svelte';
 
-	import FileReaderInformation from '$lib/components/fileupload/FileReaderInformation.svelte';
+	import FileReaderInformation from '$lib/components/fileupload/FileReaderInfo.svelte';
 
 	import {
 		latestFileUploadDate,
@@ -84,7 +84,7 @@
 	{#await load()}
 		<PlaceHolderHookContent />
 	{:then result}
-		<FileUploader
+	<FileUploader
 			{id}
 			{version}
 			{context}
@@ -97,7 +97,10 @@
 			on:success
 		/>
 		{#if model.fileUploader.existingFiles.length}
-			<FileOverview
+		<div class="pt-2">
+			<b>Uploaded File(s)</b>
+		</div>
+	<FileOverview
 				{id}
 				files={model.fileUploader.existingFiles}
 				descriptionType={model.fileUploader.descriptionType}

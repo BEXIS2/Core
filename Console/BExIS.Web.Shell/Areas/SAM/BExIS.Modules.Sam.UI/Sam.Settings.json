@@ -24,7 +24,7 @@
       "value": "Dear",
       "type": "String",
       "options": [],
-      "description": "Title for mails"
+      "description": "Alternative subject for mails. If empty per default the instance short name as for all system mails as well."
     },
     {
       "key": "mailTextSubject",
@@ -37,7 +37,7 @@
     {
       "key": "mailTextMainApplied",
       "title": "Former Member Mail: Main Text (applied)",
-      "value": "This implies that your access to some features in BExIS will be restricted. You have full access to your datasets and publications.",
+      "value": "This implies that your access to some features in BEXIS2 will be restricted. You have full access to your datasets and publications.",
       "type": "String",
       "options": [],
       "description": "Main text for former members mails (applied)."
@@ -45,7 +45,7 @@
     {
       "key": "mailTextMainRevoked",
       "title": "Former Member Mail: Main Text (revoked)",
-      "value": "This implies that your previous access rights to features and datasets in BEXIS have been re-applied.",
+      "value": "This implies that your previous access rights to features and datasets in BEXIS2 have been re-applied.",
       "type": "String",
       "options": [],
       "description": "Main text for former members mails (revoked)."
@@ -53,7 +53,7 @@
     {
       "key": "mailTextClosing",
       "title": "Former Member Mail: Closing",
-      "value": "Sincerely yours, System Team",
+      "value": "Sincerely yours BEXIS2 Team",
       "type": "String",
       "options": [],
       "description": "Closing for former members mails"

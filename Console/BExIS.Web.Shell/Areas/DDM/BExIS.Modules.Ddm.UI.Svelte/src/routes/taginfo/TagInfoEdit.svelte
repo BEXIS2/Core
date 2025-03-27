@@ -12,23 +12,40 @@
 	import TableDate from "./table/tableDate.svelte";
 	import  { type TagInfoEditModel, TagType } from "./types";
 	import TableReleaseNote from "./table/tableReleaseNote.svelte";
+	import { createEventDispatcher, onMount } from "svelte";
+
+	
 
 
 	let container;
 	let id: number = 0;
 	let withMinor: boolean = false;
+	let rows:number = 3;
 
+ let promise:Promise<TagInfoEditModel[]>;
+
+	const dispatch = createEventDispatcher();
+	
 	async function reload(){
 		container = document.getElementById('taginfo');
 		id = Number(container?.getAttribute('dataset'));
 		withMinor = Boolean(container?.getAttribute('withMinor'));
 
-		const tagInfos = await get(id);
+		promise = get(id);
+		const tagInfos = await promise;
+		rows = tagInfos.length;
 		tagInfoModelStore.set(tagInfos);
 		withMinorStore.set(withMinor);
 
 		console.log("🚀 ~ reload ~ tagInfoModelStore:", $tagInfoModelStore)
+		
 	}
+
+ onMount(() => {
+		reload();
+	});
+
+
 
  const tableActions = (action: CustomEvent<{ row: TagInfoEditModel; type: string }>) => {
 		// See tableCRUDActions tab for more details
@@ -57,8 +74,6 @@
 		
 		if(responce.status ===	200){
 
-			// trigger to update search index
-	
 				const res = await updateSearch(id);
 				console.log("🚀 ~ saveFn ~ res:", res)
 			
@@ -66,7 +81,9 @@
 					notificationType: notificationType.success,
 					message: 'Tag is saved.'
 				})
-			console.log('ok');
+
+				dispatch("reload");
+
 		}else{
 			notificationStore.showNotification({
 					notificationType: notificationType.error,
@@ -85,35 +102,30 @@
 
 				notificationStore.showNotification({
 					notificationType: notificationType.success,
-					message: 'Tag is created.'
+					message: 'Tag is generated.'
 				})
 
-
-			reload()
+				reload();
+				dispatch("reload");
 
 		}else{
 			notificationStore.showNotification({
 					notificationType: notificationType.error,
-					message: 'Tag is not created.'
+					message: 'Tag is not generated.'
 				})
 		}
-
 	}
-
-
-
 
 
 </script>
 
-
-{#await reload()}
+{#await promise}
 	<div class="table-container w-full">
-		<TablePlaceholder cols={7} />
+		<TablePlaceholder cols={7} {rows} />
 	</div>
 {:then model}
+<h2 class="h2">Tag Management</h2>
 <div class="table table-compact w-full">
-
 	<Table
 	 on:action={tableActions}
 		config={{
@@ -206,4 +218,5 @@
 {:catch error}
 		<ErrorMessage {error} />
 {/await}
+
 

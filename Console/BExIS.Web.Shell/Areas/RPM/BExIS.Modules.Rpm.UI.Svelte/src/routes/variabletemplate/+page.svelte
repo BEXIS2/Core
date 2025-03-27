@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, SvelteComponent } from 'svelte';
 	import { slide, fade } from 'svelte/transition';
 	import { Modal, getModalStore, Toast, type ModalSettings } from '@skeletonlabs/skeleton';
 	const modalStore = getModalStore();
@@ -63,7 +63,7 @@
 	const tc: TableConfig<VariableTemplateModel> = {
 		id: 'VariableTemplates',
 		data: variableTemplatesStore,
-		optionsComponent: TableOptions,
+		optionsComponent: TableOptions as unknown as typeof SvelteComponent,
 		columns: {
 			id: {
 				disableFiltering: true,
@@ -72,7 +72,7 @@
 			approved: {
 				header: 'Approved',
 				instructions: {
-					renderComponent: TableIsApproved
+					renderComponent: TableIsApproved  as unknown as typeof SvelteComponent
 				},
 				disableFiltering: true,
 				exclude: false
@@ -80,18 +80,17 @@
 			inUse: {
 				header: 'Approved',
 				instructions: {
-					renderComponent: TableIsApproved
+					renderComponent: TableIsApproved as unknown as typeof SvelteComponent
 				},
 				disableFiltering: true,
 				exclude: true
 			},
 			dataType: {
 				header: 'Data Type',
-				disableFiltering: true,
 				instructions: {
-					renderComponent: TableListItem,
+					toStringFn: (value: listItemType) => value.text,
 					toFilterableValueFn: (value: listItemType) => value.text,
-					toStringFn: (d: listItemType) => d.text
+					toSortableValueFn: (value: listItemType) => value.text
 				}
 			},
 			systemType: {
@@ -100,36 +99,37 @@
 			unit: {
 				header: 'Unit',
 				instructions: {
-					renderComponent: TableListItem,
 					toStringFn: (value: listItemType) => value.text,
-					toFilterableValueFn: (value: listItemType) => value.text
+					toFilterableValueFn: (value: listItemType) => value.text,
+					toSortableValueFn: (value: listItemType) => value.text
 				}
 			},
 			displayPattern: {
 				header: 'Display Pattern',
 				instructions: {
-					renderComponent: TableListItem,
+					renderComponent: TableListItem as unknown as typeof SvelteComponent,
 					toStringFn: (value: listItemType) => value.text,
-					toFilterableValueFn: (value: listItemType) => value.text
+					toFilterableValueFn: (value: listItemType) => value.text,
+					toSortableValueFn: (value: listItemType) => value.text
 				}
 			},
 			missingValues: {
 				instructions: {
-					renderComponent: TableListString
+					renderComponent: TableListString as unknown as typeof SvelteComponent
 				},
 				disableFiltering: true,
 				exclude: true
 			},
 			meanings: {
 				instructions: {
-					renderComponent: TableListString
+					renderComponent: TableListString as unknown as typeof SvelteComponent
 				},
 				disableFiltering: true,
 				exclude: true
 			},
 			constraints: {
 				instructions: {
-					renderComponent: TableListString
+					renderComponent: TableListString as unknown as typeof SvelteComponent
 				},
 				disableFiltering: true,
 				exclude: true
@@ -155,20 +155,18 @@
 		// load display pattern onces for all edit types
 		const displayPattern = await getDisplayPattern();
 		displayPatternStore.set(displayPattern);
-
+		clear();
 		showForm = false;
 	});
 
 	async function reload() {
-		showForm = false;
-		variableTemplate = new VariableTemplateModel();
 		vt = await getVariableTemplates();
 		console.log('variable templates', vt);
 		variableTemplatesStore.set(vt);
 		console.log('store', $variableTemplatesStore);
 	}
 
-	function onSuccessFn(id) {
+	function onSuccessFn(id: number) {
 		const message = id > 0 ? 'Variable Template updated.' : 'Variable Template created.';
 
 		notificationStore.showNotification({
@@ -188,7 +186,6 @@
 
 	function clear() {
 		variableTemplate = new VariableTemplateModel();
-		showForm = false;
 	}
 
 	function onFailFn() {
@@ -198,21 +195,21 @@
 		});
 	}
 
-	async function deleteFn(id) {
-		const success = await remove(id);
+	async function deleteFn(vt: VariableTemplateModel) :Promise<boolean> {
+		const success = await remove(vt.id);
 
 		if (success != true) {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: "Can't delete Variable Template."
+				message: 'Can\'t delete Variable Template."' + vt.name + '".'
 			});
+			return false;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'Variable Template deleted.'
+				message: 'Variable Template "' + vt.name + '" deleted.'
 			});
-
-			reload();
+			return true;
 		}
 	}
 
@@ -223,14 +220,21 @@
 			window.scrollTo({ top: 60, behavior: 'smooth' });
 		}
 		if (type.action == 'delete') {
+			let vt: VariableTemplateModel = $variableTemplatesStore.find((u) => u.id === type.id)!;
 			const confirm: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete Variable Template',
-				body: 'Are you sure you wish to delete variable template "' + variableTemplate.name + '"?',
+				body: 'Are you sure you wish to delete variable template "' + vt.name + '"?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
-				response: (r: boolean) => {
+				response: async (r: boolean) => {
 					if (r === true) {
-						deleteFn(type.id);
+						let success: boolean = await deleteFn(vt);
+						if (success) {
+							reload();
+							if (vt.id === variableTemplate.id) {
+								toggleForm();
+							}
+						}
 					}
 				}
 			};
@@ -239,7 +243,7 @@
 	}
 </script>
 
-<Page help={true} title="Manage Variable Template">
+<Page help={true} title="Manage Variable Template" >
 	{#await reload()}
 		<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h-9 w-96 placeholder animate-pulse" />
@@ -284,7 +288,7 @@
 				<VariableTemplate
 					variable={variableTemplate}
 					{missingValues}
-					on:cancel={() => clear()}
+					on:cancel={() => toggleForm()}
 					on:success={() => onSuccessFn(variableTemplate.id)}
 					on:fail={onFailFn}
 				/>

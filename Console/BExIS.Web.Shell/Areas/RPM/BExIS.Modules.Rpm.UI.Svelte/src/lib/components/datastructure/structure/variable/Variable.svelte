@@ -22,7 +22,8 @@
 		templateStore,
 		meaningsStore,
 		constraintsStore,
-		setByTemplateStore
+		setByTemplateStore,
+		updateDescriptionByTemplateStore
 	} from '../../store';
 
 	import { updateDisplayPattern, updateDatatypes, updateUnits, updateTemplates } from './helper';
@@ -40,7 +41,7 @@
 
 	export let variable: VariableInstanceModel = new VariableInstanceModel();
 	$: variable;
-	export let data: string[];
+	export let data: string[] = [];
 	$: data;
 
 	export let index: number;
@@ -80,6 +81,7 @@
 
 	const dispatch = createEventDispatcher();
 	const setByTemplate = get(setByTemplateStore);
+	const	updateDescriptionByTemplate = get(updateDescriptionByTemplateStore);
 
 	let x: listItemType = { id: 0, text: '', group: '', description: '' };
 
@@ -89,8 +91,8 @@
 		suggestedDataType = variable.dataType;
 		suggestedUnits = variable.possibleUnits;
 		suggestedTemplates = variable.possibleTemplates;
-		console.log("🚀 ~ onMount ~ variable:", variable)
-		
+		console.log('🚀 ~ onMount ~ variable:', variable);
+
 		// reset & reload validation
 		suite.reset();
 
@@ -139,17 +141,22 @@
 	//change event: if select change check also validation only on the field
 	// *** is the id of the input component
 	function onSelectHandler(e: any, id: string) {
+
+		console.log("🚀 ~ onSelectHandler ~ e.detail", e.detail, variable)
+		console.log("🚀 ~ display patterns", displayPattern)
+
 		setTimeout(async () => {
 			res = suite(variable, id);
 
 			// update display patter and reset it if it changed
 
-			if (id == 'dataType') {
+			if (id.includes('dataType')) {
 				updateDisplayPattern(variable.dataType);
 			}
 
 			console.log(id, e.detail, variable);
-			if (id == 'variableTemplate') {
+			if (id.includes('variableTemplate')) {
+
 				if (setByTemplate) {
 					// if true, update unit & datatype based on settings
 					if (variable.dataType == undefined || variable.dataType == '') {
@@ -160,7 +167,7 @@
 						variable.unit = updateUnit(e.detail);
 					}
 
-					if (variable.description == undefined || variable.description == '') {
+					if ((variable.description == undefined || variable.description == '') && updateDescriptionByTemplate) {
 						variable.description = e.detail.description;
 					}
 				}
@@ -169,7 +176,7 @@
 				variable.constraints = updateConstraints(variable, e.detail?.constraints);
 			}
 
-			if (id == 'meanings') {
+			if (id.includes('meanings')) {
 				var last = e.detail[e.detail.length - 1];
 				variable.constraints = updateConstraints(variable, last.constraints);
 			}
@@ -179,6 +186,7 @@
 
 			updateLists();
 		}, 100);
+			console.log("🚀 ~ setTimeout ~ e.detail:", e.detail)
 	}
 
 	// use the store to reset the lists for the dropdowns
@@ -208,14 +216,13 @@
 		units.sort();
 
 		//console.log("updated units",units);
-		variableTemplates = updateTemplates(variable.unit, $templateStore, suggestedTemplates);
-		variableTemplates.sort();
+		variableTemplates = updateTemplates(variable.unit, variable.dataType, $templateStore, suggestedTemplates);
+		//variableTemplates.sort();
 	}
 
 	function updateUnit(_variableTemplate: templateListItemType): unitListItemType | undefined {
-		console.log('🚀 ~e.details _variableTemplate.units:', _variableTemplate.units);
 		if (_variableTemplate.units) {
-			var firstUnit = _variableTemplate.units[0];
+			var firstUnit = _variableTemplate.unit;
 			var us = [...$unitStore.filter((u) => u.text == firstUnit)];
 			if (us != undefined) {
 				var u = us[0];
@@ -228,7 +235,7 @@
 
 	function updateDataType(_variableTemplate: templateListItemType): listItemType | undefined {
 		if (_variableTemplate.units) {
-			var ds = [...$dataTypeStore.filter((d) => _variableTemplate.dataTypes.includes(d.text))];
+			var ds = [...$dataTypeStore.filter((d) => _variableTemplate.dataType == d.text)];
 			if (ds != undefined) {
 				return ds[0];
 			}
@@ -281,15 +288,22 @@
 	}
 
 	function cutData(d: any) {
-		for (let index = 0; index < d.length; index++) {
-			let v = d[index];
 
-			if (v.length > 10) {
-				d[index] = v.slice(0, 10) + '...';
+		//console.log("🚀 ~ cutData ~ d:", d)
+
+		if(d != undefined	&& d != null && d[0] !=	undefined && d[0] != null)
+		{
+			 //console.log("🚀 ~ cutData in if ", d)
+				for (let index = 0; index < d.length; index++) {
+					let v = d[index];
+
+					if (v.length > 10) {
+						d[index] = v.slice(0, 10) + '...';
+					}
+				}
+				return d;
 			}
-		}
-
-		return d;
+		return [];
 	}
 </script>
 
@@ -308,73 +322,69 @@
 							bind:expand
 							{blockDataRelevant}
 						>
-		
-						<Container name="Title" >
-							<div class="flex" slot="property">
-								<div class="grow">
-								<TextInput
-									id="name"
-									label="Name"
-									bind:value={variable.name}
-									on:input={onChangeHandler}
-									valid={res.isValid('name')}
-									invalid={res.hasErrors('name')}
-									feedback={res.getErrors('name')}
-									disabled={blockDataRelevant}
-								/>
-							</div>
-								<Status {isValid}></Status>
-							</div>
-
-							<div slot="template">
-								<div class="flex w-full gap-1 py-1">
-									<div class="grow">Template (data is copied and changeable!)</div>
-									{#each suggestedTemplates.slice(0, 3) as t}
-										<button
-											class="badge"
-											class:variant-filled-primary={t.text == variable.template?.text}
-											class:variant-ghost-primary={t.text != variable.template?.text}
-											on:click={() => (variable.template = t)}>{t.text}</button
-										>
-									{/each}
+							<Container name="Title">
+								<div class="flex" slot="property">
+									<div class="grow">
+										<TextInput
+											id="name-{index}"
+											label="Name"
+											bind:value={variable.name}
+											on:input={onChangeHandler}
+											valid={res.isValid('name')}
+											invalid={res.hasErrors('name')}
+											feedback={res.getErrors('name')}
+											disabled={blockDataRelevant}
+										/>
+									</div>
+									<Status {isValid}></Status>
 								</div>
-								<MultiSelect
-									id="variableTemplate"
-									title=""
-									source={variableTemplates}
-									itemId="id"
-									itemLabel="text"
-									itemGroup="group"
-									complexSource={true}
-									complexTarget={true}
-									isMulti={false}
-									clearable={true}
-									bind:target={variable.template}
-									placeholder="-- Please select --"
-									invalid={res.hasErrors('variableTemplate') && !blockDataRelevant}
-									feedback={res.getErrors('variableTemplate')}
-									on:change={(e) => onSelectHandler(e, 'variableTemplate')}
-									disabled={blockDataRelevant}
-								/>
-							</div>
 
-							<div slot="description">...</div>
+								<div slot="template">
+									<div class="flex w-full gap-1 py-1">
+										<div class="grow">Template (data is copy and changeable!)</div>
+										{#each suggestedTemplates.slice(0, 3) as t}
+											<button
+												title="Click to select"
+												class="badge"
+												class:variant-filled-primary={t.text == variable.template?.text}
+												class:variant-ghost-primary={t.text != variable.template?.text}
+												on:click={() => (variable.template = t)}>{t.text}</button
+											>
+										{/each}
+									</div>
+									<MultiSelect
+										id="variableTemplate-{index}"
+										title="Variable Template"
+										source={variableTemplates}
+										itemId="id"
+										itemLabel="text"
+										itemGroup="group"
+										complexSource={true}
+										complexTarget={true}
+										isMulti={false}
+										clearable={true}
+										bind:target={variable.template}
+										placeholder="-- Please select --"
+										invalid={res.hasErrors('variableTemplate') && !blockDataRelevant}
+										feedback={res.getErrors('variableTemplate')}
+										on:change={(e) => onSelectHandler(e, 'variableTemplate-' + index)}
+										on:clear={(e) => onSelectHandler(e, 'variableTemplate-' + index)}
+										disabled={blockDataRelevant}
+									/>
+								</div>
 
-
-						</Container>
+								<div slot="description">...</div>
+							</Container>
 						</Header>
 					</header>
 
 					<section class="py-2 px-10">
-						
-
-
 						<!--Description-->
 						<Container>
 							<div slot="property">
 								<TextArea
-									id="description"
-									label="Description"
+									id="description-{index}"
+									label="Variable description"
 									bind:value={variable.description}
 									on:input={onChangeHandler}
 									valid={res.isValid('description')}
@@ -383,7 +393,7 @@
 								/>
 							</div>
 							<div slot="description">
-								{#if data}
+								{#if data && data.length > 0}
 									<b>Data preview: </b> {cutData(data).join(', ')}
 								{/if}
 							</div>
@@ -393,7 +403,7 @@
 						<Container name="DataType">
 							<div slot="property">
 								<MultiSelect
-									id="dataType"
+									id="dataType-{index}"
 									title="Data Type"
 									source={datatypes}
 									itemId="id"
@@ -407,7 +417,8 @@
 									invalid={res.hasErrors('dataType')}
 									feedback={res.getErrors('dataType')}
 									clearable={true}
-									on:change={(e) => onSelectHandler(e, 'dataType')}
+									on:change={(e) => onSelectHandler(e, `dataType-${index}`)}
+									on:clear = {(e) => onSelectHandler(e, `dataType-${index}`)}
 									disabled={blockDataRelevant}
 								/>
 							</div>
@@ -416,7 +427,7 @@
 								<!--Show only when display pattern exists-->
 								{#if displayPattern != undefined && displayPattern.length > 0}
 									<MultiSelect
-										id="displayPattern"
+										id="displayPattern-{index}"
 										title="Display Pattern"
 										source={displayPattern}
 										itemId="id"
@@ -430,7 +441,7 @@
 										placeholder="-- Please select --"
 										invalid={res.hasErrors('displayPattern')}
 										feedback={res.getErrors('displayPattern')}
-										on:change={(e) => onSelectHandler(e, 'displayPattern')}
+										on:change={(e) => onSelectHandler(e, `displayPattern-${index}`)}
 									/>
 								{/if}
 							</div>
@@ -442,15 +453,15 @@
 										{#each suggestedUnits?.slice(0, 3) as u}
 											<button
 												class="badge"
-												class:variant-filled-primary={u.text == variable.unit?.text}
-												class:variant-ghost-primary={u.text != variable.unit?.text}
-												on:click={() => (variable.unit = u)}>{u.text}</button
-											>
+												title="Click to select"
+												class:variant-filled-primary={u?.text == variable.unit?.text}
+												class:variant-ghost-primary={u?.text != variable.unit?.text}
+												on:click={() => (variable.unit = u)}>{u.text}</button>
 										{/each}
 									{/if}
 								</div>
 								<MultiSelect
-									id="unit"
+									id="unit-{index}"
 									title=""
 									source={units}
 									itemId="id"
@@ -464,28 +475,27 @@
 									placeholder="-- Please select --"
 									invalid={res.hasErrors('unit')}
 									feedback={res.getErrors('unit')}
-									on:change={(e) => onSelectHandler(e, 'unit')}
+									on:change={(e) => onSelectHandler(e, `unit-${index}`)}
+									on:clear={(e) => onSelectHandler(e, `unit-${index}`)}
 								/>
 							</div>
 
-
 							<div slot="description">
 								{#if variable.dataType}
-									<DataTypeDescription type={variable.dataType.text} {missingValues} />
+									<DataTypeDescription type={variable.dataType.text} bind:missingValues={variable.missingValues} />
 								{/if}
 							</div>
 						</Container>
 
-
 						<Container>
 							<div slot="property">
 								<div class="flex w-full gap-1 py-1">
-									<div class="grow">Meanings</div>
+									<!--<div class="grow">Meanings</div>-->
 								</div>
 								<MultiSelect
-									id="meanings"
-									title=""
+									id="meanings-{index}"
 									source={meanings}
+									title="Meanings"
 									itemId="id"
 									itemLabel="text"
 									itemGroup="group"
@@ -497,7 +507,7 @@
 									placeholder="-- Please select --"
 									invalid={res.hasErrors('meanings')}
 									feedback={res.getErrors('meanings')}
-									on:change={(e) => onSelectHandler(e, 'meanings')}
+									on:change={(e) => onSelectHandler(e, `meanings-${index}`)}
 								/>
 							</div>
 							<div slot="description">
@@ -511,7 +521,7 @@
 									<div class="grow">Constraints</div>
 								</div>
 								<MultiSelect
-									id="constraints"
+									id="constraints-{index}"
 									title=""
 									source={constraints}
 									itemId="id"
@@ -525,7 +535,7 @@
 									placeholder="-- Please select --"
 									invalid={res.hasErrors('constraints')}
 									feedback={res.getErrors('constraints')}
-									on:change={(e) => onSelectHandler(e, 'constraints')}
+									on:change={(e) => onSelectHandler(e, `constraints-${index}`)}
 									disabled={blockDataRelevant}
 								/>
 							</div>
@@ -538,10 +548,13 @@
 								<div class="flex w-full gap-1 py-1">
 									<div class="grow">Missing Values</div>
 								</div>
-								<MissingValues bind:list={variable.missingValues} showTitle={false} disabled={blockDataRelevant}></MissingValues>
+								<MissingValues
+									bind:list={variable.missingValues}
+									showTitle={false}
+									disabled={blockDataRelevant}
+								></MissingValues>
 							</div>
-							<div slot="description">
-							</div>
+							<div slot="description"></div>
 						</Container>
 					</section>
 
@@ -568,18 +581,17 @@
 					description={variable.description}
 					datapreview={cutData(data).join(', ')}
 				>
-
-						<TextInput
-									id="name"
-									label="Name"
-									bind:value={variable.name}
-									on:input={onChangeHandler}
-									valid={res.isValid('name')}
-									invalid={res.hasErrors('name')}
-									feedback={res.getErrors('name')}
-									disabled={blockDataRelevant}
-								/>
-			</Overview>
+					<TextInput
+						id="name-{index}"
+						label="Name"
+						bind:value={variable.name}
+						on:input={onChangeHandler}
+						valid={res.isValid('name')}
+						invalid={res.hasErrors('name')}
+						feedback={res.getErrors('name')}
+						disabled={blockDataRelevant}
+					/>
+				</Overview>
 			{/if}
 		</div>
 		<div

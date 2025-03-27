@@ -31,4 +31,24 @@
     order by hid.level DESC, u.id
     ;
   </sql-query>
+
+<sql-query name="GetEffectiveMetadataNestedUsages">
+	<return alias="metadataNestedAttributeUsage" class="BExIS.Dlm.Entities.MetadataStructure.MetadataNestedAttributeUsage" />
+
+
+	WITH RECURSIVE x AS (
+	SELECT id, label, metadataattributeref, metadatacompoundattributeref
+	FROM metadatanestedattributeusages
+	WHERE metadatacompoundattributeref = :attrid  -- Start from manager with ID 1
+	UNION ALL
+	SELECT c.id, c.label, c.metadataattributeref, c.metadatacompoundattributeref
+	FROM metadatanestedattributeusages c
+	JOIN x eh ON c.metadatacompoundattributeref = eh.metadataattributeref
+	)
+
+	SELECT * FROM metadatanestedattributeusages where id in (select id from x);
+
+
+</sql-query>
+	
 </hibernate-mapping>

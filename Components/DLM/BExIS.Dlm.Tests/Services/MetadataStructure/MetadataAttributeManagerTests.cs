@@ -152,5 +152,22 @@ namespace BExIS.Dlm.Tests.Services.Metadata
                 Assert.IsNull(deletedParameter);
             }
         }
+
+        [Test()]
+        public void GetEffectiveMetadataNestedAttributeUsages()
+        {
+            using (var metadataAttributeManager = new MetadataAttributeManager())
+            {
+                // Arrange
+
+                // Act
+              var x = metadataAttributeManager.GetEffectiveMetadataNestedAttributeUsages(1);
+
+
+                // Assert
+                Assert.That(x.Count==69);
+            }
+
+        }
     }
 }

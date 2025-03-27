@@ -1,6 +1,6 @@
 <script lang="ts">
 
-	import { TextInput} from '@bexis2/bexis2-core-ui'
+	import { TextArea} from '@bexis2/bexis2-core-ui'
 
 
 	export let value: string;
@@ -10,4 +10,4 @@
 let currentRow = row.original;
 
 </script>
-<TextInput bind:value={currentRow.releaseNote} > </TextInput>
+<TextArea bind:value={currentRow.releaseNote} > </TextArea>

@@ -73,14 +73,14 @@ namespace BExIS.App.Bootstrap.Attributes
 
                         if (!string.IsNullOrEmpty(jwt))
                         {
-                            principal = JwtHelper.Get(jwt);
+                            principal = JwtHelper.GetClaimsPrincipleByToken(jwt);
                         }
                     }
 
                     // 1.1. check basic auth in case of principal is empty!
                     if (principal == null || principal.Identity == null || !principal.Identity.IsAuthenticated)
                     {
-                        if (actionContext.Request.Headers.Authorization.Scheme.ToLower() == "basic")
+                        if (actionContext.Request.Headers.Authorization != null && actionContext.Request.Headers.Authorization.Scheme.ToLower() == "basic")
                         {
                             string basicParameter = actionContext.Request.Headers.Authorization.Parameter;
 
@@ -140,7 +140,7 @@ namespace BExIS.App.Bootstrap.Attributes
                     if (user != null)
                     {
                         var jwtConfiguration = GeneralSettings.JwtConfiguration;
-                        var jwt = JwtHelper.Get(user);
+                        var jwt = JwtHelper.GetTokenByUser(user);
               
                         // Create a new cookie
                         CookieHeaderValue cookie = new CookieHeaderValue("jwt", jwt);
@@ -151,7 +151,7 @@ namespace BExIS.App.Bootstrap.Attributes
                         cookie.Path = "/"; // Set the path
 
                         // Add the cookie to the response
-                        actionContext.Response.Headers.AddCookies(new[] { cookie });
+                        actionContext.Response?.Headers?.AddCookies(new[] { cookie });
                     }
 
                     return;

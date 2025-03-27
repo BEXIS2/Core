@@ -1,8 +1,10 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.Meanings;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
@@ -158,7 +160,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [JsonNetFilter]
         [HttpPost]
-        public JsonResult GetDatasetsByConstreint(long Id)
+        public JsonResult GetDatasetsByConstraint(long Id)
         {
             List<DatasetInfo> datasetInfos = new List<DatasetInfo>();
             if (Id > 0)
@@ -179,23 +181,50 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             {
                                 foreach (StructuredDataStructure structuredDataStructure in structuredDataStructures)
                                 {
+                                    structuredDataStructure.Materialize();
                                     if (structuredDataStructure.Datasets != null && structuredDataStructure.Datasets.Count > 0)
                                     {
                                         foreach (Dataset dataset in structuredDataStructure.Datasets)
                                         {
                                             string Name = String.IsNullOrEmpty(dataset.Versions.OrderBy(dv => dv.Id).Last().Title) ? "no Title" : dataset.Versions.OrderBy(dv => dv.Id).Last().Title;
-                                            datasetInfos.Add(new DatasetInfo() { Id = dataset.Id, Name = Name });
+                                            datasetInfos.Add(new DatasetInfo() { Id = dataset.Id, Name = Name, DatastructureId = structuredDataStructure.Id });
                                         }
                                         datasetInfos = datasetInfos.Distinct().ToList();
                                     }
-                                    break;
                                 }
                             }
                         }
                     }
                 }
             }
+            Response.StatusCode = 200;
             return Json(datasetInfos, JsonRequestBehavior.AllowGet);
+        }
+
+        [JsonNetFilter]
+        [HttpPost]
+        public JsonResult GetMeaningsByConstraint(long Id)
+        {
+            List<Info> MeaningInfos = new List<Info>();
+            if (Id > 0)
+            {
+                using (ConstraintManager constraintManager = new ConstraintManager())
+                {
+                    Dlm.Entities.DataStructure.Constraint constraint = constraintManager.Constraints.Where(c => c.Id == Id).FirstOrDefault();
+                    constraint.Materialize();
+                    using (MeaningManager meaningManager = new MeaningManager())
+                    {
+                        List<Meaning> meanings = new List<Meaning>();
+                        meanings = meaningManager.GetMeanings().Where(m => m.Constraints.Any(c => c.Id.Equals(Id))).ToList();
+                        foreach (Meaning meaning in meanings)
+                        {
+                            MeaningInfos.Add(new Info { Id = meaning.Id, Name = meaning.Name, Description = meaning.Description });
+                        }
+                    }
+                }
+            }
+            Response.StatusCode = 200;
+            return Json(MeaningInfos, JsonRequestBehavior.AllowGet);
         }
 
         [JsonNetFilter]

@@ -71,33 +71,33 @@
 		goTo('/rpm/datastructure/create?file=');
 	}
 
-	function copy(id) {
+	function copy(id: number) {
 		goTo('/rpm/datastructure/create?structureId=' + id + '&&file=');
 	}
 
-	function edit(id) {
+	function edit(id: number) {
 		goTo('/rpm/datastructure/edit?structureId=' + id);
 	}
 
-	function download(id) {
+	function download(id: number) {
 		goTo('/rpm/datastructure/downloadTemplate?id=' + id);
 	}
 
-	async function deleteFn(id) {
-		const success = await remove(id);
+	async function deleteFn(ds: DataStructureModel) {
+		const success = await remove(ds.id);
 
 		if (success != true) {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: "Can't delete Structure."
+				message: 'Can\'t delete Structure "'+ ds.title +'".'
 			});
+			return false;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'Structure deleted.'
+				message: 'Structure "'+ ds.title +'" deleted.'
 			});
-
-			reload();
+			return true;
 		}
 	}
 
@@ -121,16 +121,18 @@
 		// copy data data structure based on id
 		if (type.action == 'delete') {
 			console.log('delete');
-
+			let ds: DataStructureModel = structures.find((u) => u.id === type.id)!;
 			const confirm: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete Structure',
-				body: 'Are you sure you wish to delete structure with id"' + type.id + '?',
+				body: 'Are you sure you wish to delete structure "'+ds.title + ' (' + ds.id + ')"?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
-				response: (r: boolean) => {
-					if (r === true) {
-						deleteFn(type.id);
-					}
+				response: async (r: boolean) => {
+					let success :boolean = await deleteFn(ds);
+						if (success)
+						{
+							reload();							
+						}
 				}
 			};
 

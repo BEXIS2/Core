@@ -194,11 +194,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     if (duplicateUser != null) ModelState.AddModelError("Email", "The email address exists already.");
                     if (!ModelState.IsValid) return PartialView("_Update", model);
 
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetUpdateEmailHeader(),
-                        MessageHelper.GetUpdaterEmailMessage(user.DisplayName, user.Email, model.Email),
-                        GeneralSettings.SystemEmail
-                        );
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetUpdateEmailHeader(),
+                            MessageHelper.GetUpdaterEmailMessage(user.DisplayName, user.Email, model.Email),
+                            GeneralSettings.SystemEmail
+                            );
+                    }   
                 }
                 user.Email = model.Email.Trim();
 

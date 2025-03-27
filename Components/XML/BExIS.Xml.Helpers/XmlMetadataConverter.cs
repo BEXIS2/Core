@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace BExIS.Xml.Helpers
 {
@@ -73,16 +74,27 @@ namespace BExIS.Xml.Helpers
                     // check if metadat structure exist
                     if (metadataStructure == null) throw new ArgumentNullException("metadata structure with id " + metadataStructureId + " not exist");
 
-                    for (int i = 0; i < root.ChildNodes.Count; i++)
+
+                    foreach (var usage in metadataStructure.MetadataPackageUsages)
                     {
-                        XmlNode node = root.ChildNodes[i];
-                        long usageId = metadataStructure.MetadataPackageUsages.ElementAt(i).Id;
-                        var usage = metadataStructureManager.PackageUsageRepo.Get(usageId);
+                        XmlNode node = XmlUtility.FindNodeByLabel(root.ChildNodes, usage.Label);
 
                         var packageUsageJson = _convertPackageUsage(node, usage, includeEmpty);
                         if (packageUsageJson != null)
                             metadataJson.Add(usage.Label, packageUsageJson);
                     }
+
+
+                    //for (int i = 0; i < root.ChildNodes.Count; i++)
+                    //{
+                    //    XmlNode node = root.ChildNodes[i];
+                    //    long usageId = metadataStructure.MetadataPackageUsages.ElementAt(i).Id;
+                    //    var usage = metadataStructureManager.PackageUsageRepo.Get(usageId);
+
+                    //    var packageUsageJson = _convertPackageUsage(node, usage, includeEmpty);
+                    //    if (packageUsageJson != null)
+                    //        metadataJson.Add(usage.Label, packageUsageJson);
+                    //}
                 }
             }
 
@@ -112,7 +124,7 @@ namespace BExIS.Xml.Helpers
                         for (int i = 0; i < tCHild.ChildNodes.Count; i++)
                         {
                             XmlNode child = tCHild.ChildNodes[i];
-                            var childUsage = children[i];
+                            var childUsage = children.FirstOrDefault(c=>c.Label.Equals(child.LocalName));
 
                             var childJson = _convertElementUsage(child, childUsage, includeEmpty);
 
@@ -140,6 +152,13 @@ namespace BExIS.Xml.Helpers
             }
 
             return null;
+        }
+
+        private bool isEmpty(XmlElement xmlElement)
+        {
+            
+
+            return true;
         }
 
         private JToken _convertElementUsage(XmlNode node, BaseUsage usage, bool includeEmpty = false)
@@ -185,40 +204,44 @@ namespace BExIS.Xml.Helpers
 
                 List<BaseUsage> children = getChildren(usage);
 
-                foreach (XmlNode tCHild in element.ChildNodes) // loop over the list of entry
+                if (children.Any())
                 {
-                    if (tCHild != null && tCHild.HasChildNodes)
+                    foreach (XmlNode tCHild in element.ChildNodes) // loop over the list of entry
                     {
-                        // complex stuff
-                        // add all children nodes
-                        JObject complex = new JObject();
-                        setReference(complex, (XmlElement)tCHild, includeEmpty);
-
-                        for (int i = 0; i < tCHild.ChildNodes.Count; i++)
+                        if (tCHild != null && tCHild.HasChildNodes)
                         {
-                            XmlNode child = tCHild.ChildNodes[i];
-                            var childUsage = children[i];
+                            // complex stuff
+                            // add all children nodes
+                            JObject complex = new JObject();
+                            setReference(complex, (XmlElement)tCHild, includeEmpty);
 
-                            var childJson = _convertElementUsage(child, childUsage, includeEmpty);
-
-                            if (childJson != null)
+                            for (int i = 0; i < tCHild.ChildNodes.Count; i++)
                             {
-                                if (childJson is JProperty)
-                                    complex.Add(childJson);
+                                XmlNode child = tCHild.ChildNodes[i];
+                                //var childUsage = children[i];
+                                var childUsage = children.FirstOrDefault(c => c.Label.Equals(child.LocalName));
 
-                                if (childJson is JObject || childJson is JArray)
+                                var childJson = _convertElementUsage(child, childUsage, includeEmpty);
+
+                                if (childJson != null)
                                 {
-                                    complex.Add(child.Name, childJson);
+                                    if (childJson is JProperty)
+                                        complex.Add(childJson);
+
+                                    if (childJson is JObject || childJson is JArray)
+                                    {
+                                        complex.Add(child.Name, childJson);
+                                    }
                                 }
                             }
-                        }
 
-                        if (!complex.Children().Any()) return null;
+                            if (!complex.Children().Any()) return null;
 
-                        if (usage.MaxCardinality <= 1) return complex;
-                        else
-                        {
-                            array.Add(complex); // add each element to a array
+                            if (usage.MaxCardinality <= 1) return complex;
+                            else
+                            {
+                                array.Add(complex); // add each element to a array
+                            }
                         }
                     }
                 }
@@ -372,8 +395,6 @@ namespace BExIS.Xml.Helpers
             // cardinality?
             // check if json object exist
             // transfer value
-
-            return null;
         }
 
         private Dictionary<string, string> getXPathMapping(XmlDocument document)

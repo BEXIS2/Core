@@ -38,13 +38,17 @@
 
 	onMount(async () => {
 		helpStore.setHelpItemList(helpItems);
+		clear();
 		showForm = false;
 	});
 
 	async function reload(): Promise<void> {
-		showForm = false;
 		ds = await apiCalls.GetDimensions();
-		clear();
+	}
+
+	async function save(): Promise<void> {
+		reload();
+		toggleForm();
 	}
 
 	async function clear() {
@@ -57,25 +61,33 @@
 		};
 	}
 
-	function editDimension(type: any) {
-		dimension = { ...dimensions.find((d) => d.id === type.id)! };
+	function editDimension(type: any) {	
 		if (type.action == 'edit') {
+			dimension = { ...dimensions.find((d) => d.id === type.id)! };
 			showForm = true;
 		}
 		if (type.action == 'delete') {
+			let d: DimensionListItem = dimensions.find((d) => d.id === type.id)!;
 			const modal: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete Dimension',
 				body:
 					'Are you sure you wish to delete Dimension "' +
-					dimension.name +
+					d.name +
 					'" (' +
-					dimension.specification +
+					d.specification +
 					')?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
-				response: (r: boolean) => {
+				response: async (r: boolean) => {
 					if (r === true) {
-						deleteDimension(type.id);
+						let success: boolean = await deleteDimension(d);
+						if (success)
+						{
+							reload();
+							if (d.id === dimension.id) {
+								toggleForm();
+							}
+						}
 					}
 				}
 			};
@@ -83,20 +95,21 @@
 		}
 	}
 
-	async function deleteDimension(id: number) {
-		let success = await apiCalls.DeleteDimension(id);
+	async function deleteDimension(d: DimensionListItem): Promise<boolean> {
+		let success = await apiCalls.DeleteDimension(d.id);
 		if (success != true) {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: 'Can\'t delete Dimension "' + dimension.name + '".'
+				message: 'Can\'t delete Dimension "' + d.name + '".'
 			});
+			return false;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'Dimension "' + dimension.name + '" deleted.'
+				message: 'Dimension "' + d.name + '" deleted.'
 			});
+			return true;
 		}
-		reload();
 	}
 
 	function toggleForm() {
@@ -153,7 +166,7 @@
 
 			{#if showForm}
 				<div in:slide out:slide>
-					<Form {dimension} {dimensions} on:cancel={toggleForm} on:save={reload} />
+					<Form {dimension} {dimensions} on:cancel={toggleForm} on:save={save} />
 				</div>
 			{/if}
 

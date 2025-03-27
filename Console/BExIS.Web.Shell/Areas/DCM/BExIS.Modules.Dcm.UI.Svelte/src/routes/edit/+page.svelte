@@ -13,7 +13,8 @@
 		latestFileReaderDate,
 		latestSubmitDate,
 		hooksStatus,
-		latestValidationDate
+		latestValidationDate,
+		latestDataDate
 	} from './stores';
 
 	import type { EditModel, HookModel, ViewModel } from './types';
@@ -80,6 +81,9 @@
 		updateHookStatus();
 	});
 
+	latestDataDate.subscribe((e) => {
+		updateHookStatus();
+	});
 	async function load() {
 		console.log('LOAD EDIT', Date.now);
 
@@ -160,7 +164,8 @@
 				element.name == 'fileupload' ||
 				element.name == 'validation' ||
 				element.name == 'submit' ||
-				element.name == 'datadescription'
+				element.name == 'datadescription' ||
+				element.name == 'data'
 			) {
 				datasethooks.push(element);
 			} else {

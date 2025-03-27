@@ -4,6 +4,7 @@ import { get } from 'svelte/store';
 import type { templateListItemType, unitListItemType } from '../../types';
 
 export function updateDisplayPattern(type, reset = true) {
+	//console.log('updateDisplayPattern', type);
 	// currently only date, date tim e and time is use with display pattern.
 	// however the serve only now date time so we need to preselect the possible display pattern to date, time and date time
 	const allDisplayPattern = get(displayPatternStore);
@@ -11,19 +12,27 @@ export function updateDisplayPattern(type, reset = true) {
 
 	if (type != undefined && type != '') {
 		if (type.text.toLowerCase() === 'date') {
+			//console.log('updateDisplayPattern', type);
 			// date without time
 			displayPattern = allDisplayPattern.filter(
-				(m) =>
-					m.group.toLowerCase().includes(type.text) &&
-					(!m.text.toLowerCase().includes('h') || !m.text.toLowerCase().includes('s'))
+				(m) => m.group.toLowerCase().includes(type.text) && !m.text.toLowerCase().includes(':') && !(m.text == 'mm') && !(m.text == 'HH') && !(m.text == 'ss')
 			);
+			displayPattern.forEach((m) => {
+				m.group = 'Date';
+			});
+			//console.log('date patterns', displayPattern, type.text);
 		} else if (type.text.toLowerCase() === 'time') {
 			// time without date
 			displayPattern = allDisplayPattern.filter(
 				(m) =>
 					m.group.toLowerCase().includes(type.text) &&
-					(!m.text.toLowerCase().includes('d') || !m.text.toLowerCase().includes('y'))
+					(!m.text.toLowerCase().includes('d') || !m.text.toLowerCase().includes('y')) && (
+					m.text.toLowerCase().includes(':') || m.text == 'mm'  || m.text == 'HH' || m.text == 'ss')
 			);
+
+			displayPattern.forEach((m) => {
+				m.group = 'Time';
+			});
 		} else if (type.text.toLowerCase() === 'datetime') {
 			// both
 			displayPattern = allDisplayPattern.filter((m) => m.group.toLowerCase().includes(type.text));
@@ -78,7 +87,7 @@ export function updateDatatypes(
 		for (let index = 0; index < dts.length; index++) {
 			const datatype = dts[index];
 			if (unit.dataTypes.includes(datatype.text) && !datatype.group.includes(matchPhrase)) {
-				datatype.group = updateGroup(datatype.group,"Unit"); //matchPhrase);
+				datatype.group = updateGroup(datatype.group, 'Unit'); //matchPhrase);
 			}
 		}
 	}
@@ -95,7 +104,7 @@ export function updateDatatypes(
 				// each datatype
 				const datatype = dts[index];
 				if (u && u.dataTypes.includes(datatype.text) && !datatype.group.includes(matchPhrase)) {
-					datatype.group = updateGroup(datatype.group, "Template"); //matchPhrase);
+					datatype.group = updateGroup(datatype.group, 'Template'); //matchPhrase);
 				}
 			}
 		}
@@ -127,7 +136,7 @@ export function updateUnits(
 		// if datatype and units exist
 		_units.forEach((unit) => {
 			if (unit.dataTypes.includes(datatype.text) == true) {
-				unit.group = updateGroup(unit.group, "DataType"); //matchPhrase);
+				unit.group = updateGroup(unit.group, 'DataType'); //matchPhrase);
 			}
 		});
 	}
@@ -139,7 +148,7 @@ export function updateUnits(
 			matchPhrase = template?.text;
 			_units.forEach((unit) => {
 				if (unit.text == u) {
-					unit.group = updateGroup(unit.group, "Template"); //matchPhrase);
+					unit.group = updateGroup(unit.group, 'Template'); //matchPhrase);
 				}
 			});
 		}
@@ -154,6 +163,7 @@ export function updateUnits(
 
 export function updateTemplates(
 	unit: unitListItemType | undefined,
+	datatype: listItemType | undefined,
 	templates: templateListItemType[],
 	suggestedTemplates: templateListItemType[]
 ) {
@@ -172,11 +182,24 @@ export function updateTemplates(
 	const matchPhrase = '' + unit?.text;
 	const othersText = 'other';
 
+
+	console.log(" updateTemplates 🚀 ~ datatype:", datatype)
+	console.log("🚀 ~ _templates:", _templates)
+	if (datatype && _templates) {
+		
+		// if datatype and units exist
+		_templates.forEach((template) => {
+			if (template.dataType == datatype.text) {
+				template.group = updateGroup(template.group, 'DataType'); //matchPhrase);
+			}
+		});
+	}
+
 	if (unit && _templates) {
 		// if datatype and units exist
 		_templates.forEach((template) => {
 			if (template.units?.includes(unit.text)) {
-				template.group = updateGroup(template.group, "Unit"); //matchPhrase);
+				template.group = updateGroup(template.group, 'Unit'); //matchPhrase);
 			}
 		});
 	}

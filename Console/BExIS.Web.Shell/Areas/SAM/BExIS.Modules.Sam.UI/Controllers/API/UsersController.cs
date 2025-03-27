@@ -93,7 +93,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
                         Email = model.Email
                     };
 
-                    var result = userManager.CreateAsync(user);
+                    await userManager.CreateAsync(user);
 
                     return Request.CreateResponse(HttpStatusCode.OK);
                 }

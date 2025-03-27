@@ -16,6 +16,7 @@
 	export let descriptionType;
 	let withDescription: boolean;
 
+
 	const dispatch = createEventDispatcher();
 
 	let el;
@@ -38,7 +39,7 @@
 		files.splice(index, 1);
 		files = [...files];
 
-		dispatch('warning', { text: e.detail.text });
+		dispatch('warning', { text: e.detail.text, file: e.detail.file });	
 	}
 
 	async function handleSave(e) {
@@ -51,25 +52,43 @@
 		if (type == 1) withDescription = true;
 		if (type == 2) withDescription = true;
 	}
+
+	const x = "max-h-[180px"
+
 </script>
 
 {#if files}
-	<div class="grid gap-2 divide-y-2 p-3 max-h-[180px] overflow-auto">
-		<!--<Container> -->
-		{#each files as file, index}
-			<FileOverviewItem
-				{id}
-				file={file.name}
-				{...file}
-				{save}
-				{remove}
-				on:removed={(e) => handleRemoveFile(e, index)}
-				on:saved={handleSave}
-				{withDescription}
-			/>
-		{/each}
-		<!-- </Container> -->
+	{#if files.length > 0}
+	<div class="flex-col">
+
+
+		<div class="flex gap-16">
+			<div class="w-1/4"></div>
+			<div class="text-sm">
+				{#if withDescription}
+					File description (optional)
+				{/if}
+			</div>
+			<div class="text-right w-10"></div>
+		</div>
+
+		<div class="grid gap-2 divide-y-2 pb-3 overflow-auto">
+			<!--<Container> -->
+			{#each files as file, index}
+				<FileOverviewItem
+					{id}
+					{file}
+					{save}
+					{remove}
+					on:removed={(e) => handleRemoveFile(e, index)}
+					on:saved={handleSave}
+					{withDescription}
+				/>
+			{/each}
+			<!-- </Container> -->
+		</div>
 	</div>
+	{/if}
 {:else}
 	<!-- spinner here -->
 	<Spinner textCss="text-surface-800" label="loading files list" />

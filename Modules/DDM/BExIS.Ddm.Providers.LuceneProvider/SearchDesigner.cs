@@ -287,7 +287,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
             //placeholder
             xa = this._configXML.CreateAttribute("placeholder");
-            xa.Value = sa.placeholder.ToString();
+            xa.Value = sa.placeholder?.ToString();
             xmlElement.Attributes.Append(xa);
 
             // ResultView

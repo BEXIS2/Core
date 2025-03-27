@@ -5,6 +5,7 @@ using BExIS.Dlm.Services.Meanings;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.UI.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BExIS.Modules.Rpm.UI.Helpers
@@ -53,8 +54,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 using (var meaningManager = new MeaningManager())
                 {
                     var ids = model.Related_meaning.Select(m => m.Id);
-
-                    meaning.Related_meaning = meaningManager.getMeanings().Where(m => ids.Contains(m.Id)).ToList();
+                    meaning.Related_meaning = meaningManager.GetMeanings().Where(m => ids.Contains(m.Id)).ToList();
                 }
             }
 
@@ -68,8 +68,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 using (var constraintManager = new ConstraintManager())
                 {
                     var ids = model.Constraints.Select(m => m.Id);
-                    var cs = constraintManager.ConstraintRepository.Query(c => ids.Contains(c.Id)).ToList();
-                    meaning.Constraints = cs;
+                    meaning.Constraints = constraintManager.ConstraintRepository.Query(c => ids.Contains(c.Id)).ToList<Constraint>();
                 }
             }
 
@@ -83,13 +82,13 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             using (var meaningManager = new MeaningManager())
             {
                 if (model.MappingRelation != null)
-                    entry.MappingRelation = meaningManager.getExternalLink(model.MappingRelation.Id);
+                    entry.MappingRelation = meaningManager.GetExternalLink(model.MappingRelation.Id);
 
                 if (model.MappedLinks.Any())
                 {
                     var ids = model.MappedLinks.Select(m => m.Id);
 
-                    entry.MappedLinks = meaningManager.getExternalLinks().Where(e => ids.Contains(e.Id)).ToList();
+                    entry.MappedLinks = meaningManager.GetExternalLinks().Where(e => ids.Contains(e.Id)).ToList();
                 }
             }
             return entry;
@@ -185,12 +184,12 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 if (model.PrefixCategory != null)
                 {
-                    prefixCategory = meaningManager.getPrefixCategory(model.PrefixCategory.Id);
+                    prefixCategory = meaningManager.GetPrefixCategory(model.PrefixCategory.Id);
                 }
 
                 if (model.Prefix != null)
                 {
-                    prefix = meaningManager.getExternalLink(model.Prefix.Id);
+                    prefix = meaningManager.GetExternalLink(model.Prefix.Id);
                 }
 
                 link.Id = model.Id;

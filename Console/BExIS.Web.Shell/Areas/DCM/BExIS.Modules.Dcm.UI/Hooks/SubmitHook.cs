@@ -40,7 +40,11 @@ namespace BExIS.Modules.Dcm.UI.Hooks
                     if (dataset == null || template == null || (template.HasDatastructure == true && dataset.DataStructure == null)) { Status = HookStatus.Disabled; return; }
 
                     //// check if file not exist
-                    if (cache.Files == null || cache.Files.Any() == false) { Status = HookStatus.Inactive; return; }
+                    if ((cache.Files == null || cache.Files.Any() == false) && 
+                        (cache.ModifiedFiles == null || cache.ModifiedFiles.Any() == false) && 
+                        (cache.DeleteFiles == null || cache.DeleteFiles.Any() == false)) { 
+                        Status = HookStatus.Inactive; return; 
+                    }
 
                     // if dataset has structre && file is not valid
                     if (template.HasDatastructure == true)

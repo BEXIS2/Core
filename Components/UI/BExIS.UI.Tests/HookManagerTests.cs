@@ -14,13 +14,13 @@ namespace BExIS.UI.Tests
     [TestFixture()]
     public class HookManagerTests
     {
-        private TestSetupHelper helper = null;
+        //private TestSetupHelper helper = null;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             // because these tests are working on in-memory objects (datasets) only, there is no need to do the test app setup
-            helper = new TestSetupHelper(WebApiConfig.Register, false);
+            //helper = new TestSetupHelper(WebApiConfig.Register, false);
         }
 
         [SetUp]
@@ -136,13 +136,13 @@ namespace BExIS.UI.Tests
             cache.ExcelFileReaderInfo = new ExcelFileReaderInfo();
             cache.UpdateSetup = new UpdateSetup() { RowsCount = 1000, VariablesCount = 10 };
 
-            var list = new System.Collections.Generic.List<ResultMessage>();
-            for (int i = 0; i < 10; i++)
-            {
-                list.Add(new ResultMessage() { Messages = new List<string>() { i.ToString() + "_test" }, Timestamp = DateTime.Now }); ;
-            }
+            //var list = new System.Collections.Generic.List<ResultMessage>();
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    list.Add(new ResultMessage() { Messages = new List<string>() { i.ToString() + "_test" }, Timestamp = DateTime.Now }); ;
+            //}
 
-            cache.Messages = list;
+            //cache.Messages = list;
 
             //Act
             bool result = hookManager.SaveCache<EditDatasetDetailsCache>(cache, "dataset", "details", HookMode.edit, 1);
@@ -163,13 +163,13 @@ namespace BExIS.UI.Tests
             cache.ExcelFileReaderInfo = new ExcelFileReaderInfo();
             cache.UpdateSetup = new UpdateSetup() { RowsCount = 1000, VariablesCount = 10 };
 
-            var list = new System.Collections.Generic.List<ResultMessage>();
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    list.Add(new ResultMessage() { Messages = new List<string>() { i.ToString() + "_test" }, Timestamp = DateTime.Now }); ;
-            //}
+            //var list = new System.Collections.Generic.List<ResultMessage>();
+            ////for (int i = 0; i < 10; i++)
+            ////{
+            ////    list.Add(new ResultMessage() { Messages = new List<string>() { i.ToString() + "_test" }, Timestamp = DateTime.Now }); ;
+            ////}
 
-            cache.Messages = list;
+            //cache.Messages = list;
 
             //Act
             bool result = hookManager.SaveCache<EditDatasetDetailsCache>(cache, "dataset", "details", HookMode.edit, 1);
@@ -194,13 +194,13 @@ namespace BExIS.UI.Tests
             cache.AsciiFileReaderInfo = new AsciiFileReaderInfo();
             cache.UpdateSetup = new UpdateSetup() { RowsCount = 1000, VariablesCount = 10 };
 
-            var list = new System.Collections.Generic.List<ResultMessage>();
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    list.Add(new ResultMessage() { Messages = new List<string>() { i.ToString() + "_test" }, Timestamp = DateTime.Now }); ;
-            //}
+            //var list = new System.Collections.Generic.List<ResultMessage>();
+            ////for (int i = 0; i < 10; i++)
+            ////{
+            ////    list.Add(new ResultMessage() { Messages = new List<string>() { i.ToString() + "_test" }, Timestamp = DateTime.Now }); ;
+            ////}
 
-            cache.Messages = list;
+            //cache.Messages = list;
 
             //Act
             bool result = hookManager.SaveCache<EditDatasetDetailsCache>(cache, "dataset", "details", HookMode.edit, 1);
