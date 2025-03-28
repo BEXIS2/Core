@@ -1,7 +1,7 @@
 export const helpInfoList = [
 	{
 		id: 'create',
-		name: 'Create neẇ prefix category',
+		name: 'Create new prefix category',
 		description: 'Click here to ceate a new prefix category'
 	},
 	{

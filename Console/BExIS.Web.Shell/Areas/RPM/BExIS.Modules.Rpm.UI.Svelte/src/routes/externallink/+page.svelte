@@ -225,7 +225,7 @@
 		<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h3 h-9">
 				{#if externalLink.id < 1}
-					<span in:fade={{ delay: 400 }} out:fade>Create neẇ External link</span>
+					<span in:fade={{ delay: 400 }} out:fade>Create new External link</span>
 				{:else}
 					<span in:fade={{ delay: 400 }} out:fade>{externalLink.name}</span>
 				{/if}
@@ -236,7 +236,7 @@
 					<button
 						transition:fade
 						class="btn variant-filled-secondary shadow-md h-9 w-16"
-						title="Create neẇ External Link"
+						title="Create new External Link"
 						id="create"
 						on:mouseover={() => {
 							helpStore.show('create');

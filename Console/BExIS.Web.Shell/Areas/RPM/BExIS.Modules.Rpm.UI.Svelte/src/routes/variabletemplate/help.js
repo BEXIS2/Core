@@ -1,7 +1,7 @@
 export const variableTemplateHelp = [
 	{
 		id: 'create',
-		name: 'Create neẇ Variable Template',
+		name: 'Create new Variable Template',
 		description: 'Click here to ceate a new Variable Template'
 	},
 	{

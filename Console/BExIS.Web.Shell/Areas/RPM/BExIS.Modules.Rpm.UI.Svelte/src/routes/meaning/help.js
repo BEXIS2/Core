@@ -1,7 +1,7 @@
 export const helpInfoList = [
 	{
 		id: 'create',
-		name: 'Create neẇ Meaning',
+		name: 'Create new Meaning',
 		description: 'Click here to ceate a new Meaning'
 	},
 	{
