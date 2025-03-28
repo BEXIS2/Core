@@ -231,7 +231,7 @@ namespace BExIS.IO
                 dateTime = new DateTime().AddMonths(month - 1);
                 return true;
             }// special case is day only
-            else if (pattern.Equals("MM") && int.TryParse(dateAsString, out int day))
+            else if (pattern.Equals("dd") && int.TryParse(dateAsString, out int day))
             {
                 // day shouldnot be greater then 31
                 if (day <= 1 || day > 31)

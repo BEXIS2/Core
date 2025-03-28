@@ -270,7 +270,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             this.WorkingSearchModel = UpdateFacets(searchCriteria);
             this.WorkingSearchModel = UpdateProperties(searchCriteria);
             this.WorkingSearchModel.ResultComponent.Rows = this.WorkingSearchModel.ResultComponent.Rows.OrderByDescending(r => Convert.ToDecimal(r.Values.First()));
-            
 
         }
 

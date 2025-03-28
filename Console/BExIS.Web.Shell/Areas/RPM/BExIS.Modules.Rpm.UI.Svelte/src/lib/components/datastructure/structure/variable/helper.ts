@@ -163,6 +163,7 @@ export function updateUnits(
 
 export function updateTemplates(
 	unit: unitListItemType | undefined,
+	datatype: listItemType | undefined,
 	templates: templateListItemType[],
 	suggestedTemplates: templateListItemType[]
 ) {
@@ -180,6 +181,19 @@ export function updateTemplates(
 
 	const matchPhrase = '' + unit?.text;
 	const othersText = 'other';
+
+
+	console.log(" updateTemplates 🚀 ~ datatype:", datatype)
+	console.log("🚀 ~ _templates:", _templates)
+	if (datatype && _templates) {
+		
+		// if datatype and units exist
+		_templates.forEach((template) => {
+			if (template.dataType == datatype.text) {
+				template.group = updateGroup(template.group, 'DataType'); //matchPhrase);
+			}
+		});
+	}
 
 	if (unit && _templates) {
 		// if datatype and units exist

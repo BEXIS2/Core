@@ -23,6 +23,7 @@
 		isTemplateRequiredStore,
 		isMeaningRequiredStore,
 		setByTemplateStore,
+		updateDescriptionByTemplateStore,
 		enforcePrimaryKeyStore,
 		changeablePrimaryKeyStore
 	} from '$lib/components/datastructure/store';
@@ -51,12 +52,7 @@
 		container = document.getElementById('datastructure');
 		datastructureId = Number(container?.getAttribute('structure'));
 		dataExist = container?.getAttribute('dataExist')?.toLocaleLowerCase() === 'true';
-		console.log(
-			"🚀 ~ file: +page.svelte:32 ~ start ~ container?.getAttribute('dataExist'):",
-			container?.getAttribute('dataExist')
-		);
 
-		console.log('🚀 ~ file: +page.svelte:32 ~ start ~ dataExist:', dataExist);
 
 		// get isTemplateRequired from settings and add it to store
 		// is used by validation
@@ -89,7 +85,13 @@
 			container?.getAttribute('changeablePrimaryKey')?.toLocaleLowerCase() == 'true' ? true : false;
 		changeablePrimaryKeyStore.set(changeablePrimaryKey);
 
-		console.log('edit structure', datastructureId);
+	 // get updateDescriptionByTemplate from settings and add it to store
+		// update or overwrite description	by template
+		const updateDescriptionByTemplate =
+			container?.getAttribute('updateDescriptionByTemplate')?.toLocaleLowerCase() == 'true' ? true : false;
+			updateDescriptionByTemplateStore.set(updateDescriptionByTemplate);
+
+		//console.log('edit structure', datastructureId);
 
 		// copy structure
 		model = await get(datastructureId);

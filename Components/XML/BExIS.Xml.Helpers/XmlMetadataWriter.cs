@@ -105,6 +105,55 @@ namespace BExIS.Xml.Helpers
             }
         }
 
+        public XDocument CreateTempMetadataXmlWithChoiceChildrens(long metadataStructureId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
+            using (MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager())
+            {
+                _metadataAttrManager = metadataAttributeManager;
+
+                MetadataStructure metadataStructure = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(metadataStructureId);
+
+                List<Int64> packageIds = metadataStructureManager.GetEffectivePackageIds(metadataStructureId).ToList();
+
+                // Create xml Document
+                // Create the xml document containe
+                XDocument doc = new XDocument();// Create the XML Declaration, and append it to XML document
+                                                //XDeclaration dec = new XDeclaration("1.0", null, null);
+                                                //doc.Add(dec);// Create the root element
+                XElement root = new XElement("Metadata");
+                root.SetAttributeValue("id", metadataStructure.Id.ToString());
+                doc.Add(root);
+
+                IList<MetadataPackageUsage> packages = uow.GetReadOnlyRepository<MetadataPackageUsage>().Get(p => packageIds.Contains(p.Id));
+                List<MetadataAttributeUsage> attributes;
+                foreach (MetadataPackageUsage mpu in packages)
+                {
+                    XElement package;
+
+                    // create the role
+                    XElement role = CreateXElement(mpu.Label, XmlNodeType.MetadataPackageUsage);
+                    if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", mpu.Label);
+
+                    role.SetAttributeValue("id", mpu.Id.ToString());
+                    root.Add(role);
+
+                    // create the package
+                    package = CreateXElement(mpu.MetadataPackage.Name, XmlNodeType.MetadataPackage);
+                    if (_mode.Equals(XmlNodeMode.xPath)) package.SetAttributeValue("name", mpu.MetadataPackage.Name);
+                    package.SetAttributeValue("roleId", mpu.Id.ToString());
+                    package.SetAttributeValue("id", mpu.MetadataPackage.Id.ToString());
+                    package.SetAttributeValue("number", "1");
+                    role.Add(package);
+
+                    setChildren(package, mpu);
+                }
+
+                return doc;
+            }
+        }
+
         private bool IsChoice(XmlNode xmlNode)
         {
             if (xmlNode != null)

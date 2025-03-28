@@ -384,7 +384,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             using (var emailService = new EmailService())
                             {
                                 emailService.Send(MessageHelper.GetUpdateDatasetHeader(id),
-                                MessageHelper.GetUpdateDatasetMessage(id, title, User.DisplayName, typeof(Dataset).Name),
+                                MessageHelper.GetUpdateDatasetMessage(id, title, User.DisplayName, typeof(Dataset).Name, numberOfRows, numberOfSkippedRows),
                                 GeneralSettings.SystemEmail
                                 );
                             }
@@ -573,12 +573,12 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                         if (Cache.Files.Count == 1)
                             emailService.Send(MessageHelper.GeFileUpdatHeader(id),
-                                MessageHelper.GetFileUploaddMessage(id, user.Name, Cache.Files.FirstOrDefault().Name),
+                                MessageHelper.GetFileUploaddMessage(id,title, user.DisplayName, Cache.Files.FirstOrDefault().Name),
                                 new List<string> { user.Email }, null, new List<string> { GeneralSettings.SystemEmail });
 
                         if (Cache.Files.Count > 1)
                             emailService.Send(MessageHelper.GeFileUpdatHeader(id),
-                                MessageHelper.GetFilesUploaddMessage(id, user.Name, Cache.Files.Select(f => f.Name).ToArray()),
+                                MessageHelper.GetFilesUploaddMessage(id,title, user.DisplayName, Cache.Files.Select(f => f.Name).ToArray()),
                                 new List<string> { user.Email }, null, new List<string> { GeneralSettings.SystemEmail });
                     }
                 }

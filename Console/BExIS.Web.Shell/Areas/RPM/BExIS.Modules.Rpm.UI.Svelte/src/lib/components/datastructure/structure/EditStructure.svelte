@@ -55,12 +55,12 @@
 		});
 
 		isPKSet = pktemp;
-		console.log('🚀 ~ isPKSet:', isPKSet);
+		//console.log('🚀 ~ isPKSet:', isPKSet);
 
 		pksHasChanged = arraysAreEqual(initPks, currentPks) ? false : true;
 		pksValid = !pksHasChanged; // reset if pks has changed
 
-		console.log('🚀 ~ pksHasChanged:', pksHasChanged, currentPks, initPks);
+		//console.log('🚀 ~ pksHasChanged:', pksHasChanged, currentPks, initPks);
 	}
 
 	async function onSaveHandler() {
@@ -76,9 +76,9 @@
 	}
 
 	async function onCheckPKHandler() {
-		console.log('🚀 ~ currentPks:', currentPks);
+		//console.log('🚀 ~ currentPks:', currentPks);
 		const res = await checkPrimaryKeySet(model.id, currentPks);
-		console.log('🚀 ~ res:', res);
+		//console.log('🚀 ~ res:', res);
 		pksValid = res;
 
 		if (pksValid) {

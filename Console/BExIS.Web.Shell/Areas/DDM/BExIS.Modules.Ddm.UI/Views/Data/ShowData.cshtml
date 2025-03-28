@@ -8,6 +8,8 @@
     bool use_tags = false;
     bool use_minor = false;
     string bioSchemaInfos = "";
+    long total = 0;
+    bool has_data = false;
 
     if (ViewData["TabIndex"] != null)
     {
@@ -29,7 +31,15 @@
         bioSchemaInfos = ViewData["BioSchema"].ToString();
     }
 
+    if (ViewData["GridTotal"]!=null)
+    {
+        total = (Int64)ViewData["GridTotal"];
+    }
 
+    if (ViewData["has_data"] != null)
+    {
+        has_data = (bool)ViewData["has_data"];
+    }
 
     var show_tabs = new Dictionary<string, string>();
     bool check_public_metadata = false;
@@ -51,11 +61,7 @@
         show_tabs.Add("show_tabs_deactivated", "true"); // "false" = also hide request button, if not available in addition to deactivated tabs
     }
 
-    int total = 0;
-    if (ViewData["gridTotal"] != null)
-    {
-        total = Convert.ToInt32(ViewData["gridTotal"]); //  (int)Session["gridTotal"];
-    }
+
 
     if (ViewData["check_public_metadata"] != null)
     {
@@ -268,6 +274,11 @@
                         if (Model.RequestExist)
                         {
                             <button id="sendRequestBt" class="bx-button small function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
+                        }
+                        else if(!has_data)
+                        {
+                           <!-- if dataset has no data-->
+
                         }
                         else
                         {

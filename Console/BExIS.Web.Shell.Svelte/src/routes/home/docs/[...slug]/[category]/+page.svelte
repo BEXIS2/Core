@@ -35,16 +35,14 @@
 	const store = writable<DataType>({ allHeadings: [], data: [] });
 	// const headingStore = writable([]);
 
- let container;
+	let container;
 	let version;
-	$:version;
+	$: version;
 
 	onMount(() => {
-
-			// get data from parent
-			container = document.getElementById('docs');
-			version = container?.getAttribute('version');
-		
+		// get data from parent
+		container = document.getElementById('docs');
+		version = container?.getAttribute('version');
 
 		// Sort the headings by position written in the md metadata
 		data.allHeadings = data.allHeadings.sort(
@@ -107,15 +105,18 @@
 		// Run on page load and whenever window resizes
 		window.addEventListener('load', adjustLayout);
 		window.addEventListener('resize', adjustLayout);
+
+		// Add event listener to rendered content
+		document.getElementById('content').addEventListener('click', handleLinkClick);
 	});
 
 	// Select and render the currently needed content
 	async function setContent(base_path: string) {
 		const data = get(store);
-		console.log("🚀 ~ setContent ~ data:", data)
+		console.log('🚀 ~ setContent ~ data:', data);
 		for (let i = 0; i < data.data.length; i++) {
-			console.log("base-path", base_path);
-			console.log("data-title",data.data[i][1].title.toLowerCase());
+			console.log('base-path', base_path);
+			console.log('data-title', data.data[i][1].title.toLowerCase());
 			if (base_path.toLowerCase().includes(data.data[i][1].title.toLowerCase())) {
 				console.log('here');
 				content_complete = await marked(data.data[i][0], {
@@ -194,7 +195,7 @@
 		return `<a class="underline" href="${href}" title="${title || ''}">${text}</a>`;
 	};
 
-	function toggleVisibility(index: number, init = false) {
+	async function toggleVisibility(index: number, init = false) {
 		console.log(index);
 
 		const anchor = headings[index].text
@@ -209,20 +210,22 @@
 			// if the current page is not the same as the heading base, change the page
 			if (!window.location.pathname.includes(headings[index].base)) {
 				console.log('here');
-				setContent(headings[index].base);
+				await setContent(headings[index].base);
 				//goto('/home/docs/' + headings[index].base + '#' + anchor);
 
-				document.querySelector('#'+anchor).scrollIntoView({
-						behavior: 'smooth'
+				document.querySelector('#' + anchor).scrollIntoView({
+					behavior: 'smooth'
 				});
-
-
+				// change url, but do not reload
+				window.history.pushState(null, '', '/home/docs/' + headings[index].base + '#' + anchor);
 				// if the current page is the same as the heading base, change the anchor
 			} else {
 				//goto('#' + anchor);
-				document.querySelector('#'+anchor).scrollIntoView({
-    behavior: 'smooth'
-    });
+
+				document.querySelector('#' + anchor).scrollIntoView({
+					behavior: 'smooth'
+				});
+				window.history.pushState(null, '', '/home/docs/' + headings[index].base + '#' + anchor);
 			}
 		} else {
 			// search for level 2 headings based on the current heading
@@ -254,6 +257,8 @@
 			for (let i = level2; i <= level1; i++) {
 				headings[i].isVisible = true;
 			}
+
+			window.history.pushState(null, '', '/home/docs/' + headings[index].base + '#' + anchor);
 		}
 
 		const currentLevel = headings[index].level;
@@ -279,6 +284,7 @@
 				break;
 			}
 		}
+		window.history.pushState(null, '', '/home/docs/' + headings[index].base + '#' + anchor);
 	}
 	function adjustLayout() {
 		const elementsAbove = document.querySelectorAll('.top-div, .header, #shell-header'); // Select all elements above sidebar
@@ -315,53 +321,72 @@
 		content.style.height = `calc(100vh - ${lastElementBottom + 50}px)`; // Adjust content height
 	}
 
+	function handleLinkClick(event) {
+		const target = event.target;
 
-
+		if (target.tagName === 'A') {
+			const href = target.getAttribute('href');
+			console.log(href);
+			if (href && href.startsWith('../')) {
+				// If the link is a relative link, navigate to it
+				const anchor = href.split('#')[1];
+				const base = href.split('#')[0].split('/')[2];
+				const index = headings.findIndex(
+					(heading) =>
+						heading.text
+							.toLowerCase()
+							.replace(/\s+/g, '-')
+							.replace(/[^a-z0-9\-]/g, '') === anchor && heading.base === base
+				);
+				if (index !== -1) {
+					toggleVisibility(index);
+					event.preventDefault();
+				}
+			}
+		}
+	}
 </script>
 
 <Page title="Docs" contentLayoutType={pageContentLayoutType.full} footer={false}>
-
-
- <div class="container">
-
+	<div class="container">
 		<!-- using the left navigation -->
-	<div id="left-nav" class="left-nav mr-4">
-		<div class="flex text-lg ml-4 mt-6">
-			<div class="mt-1 mr-2"><Fa icon={faBook} /></div>
-			<div>Documentation (v{version})</div>
-		</div>
-		<nav>
-			<ul>
-				{#each headings as heading, index}
-					<li
-						style="margin-left: {(heading.level * 10)+5}px; display: {heading.isVisible
-							? 'block'
-							: 'none'};"
-						class="{+heading.level === 1
-							? 'text-primary-700 text-xl font-semibold mt-4 '
-							: ' text-base mt-1 '}{+heading.level < 3 ? ' font-semibold' : 'text-base'}"
-					>
-						<a
-							href="/home/docs/{heading.base}#{heading.text
-								.toLowerCase()
-								.replace(/\s+/g, '-')
-								.replace(/[^a-z0-9\-]/g, '')}"
-							on:click|preventDefault={() => toggleVisibility(index)}
+		<div id="left-nav" class="left-nav mr-4">
+			<div class="flex text-lg ml-4 mt-6">
+				<div class="mt-1 mr-2"><Fa icon={faBook} /></div>
+				<div>Documentation (v{version})</div>
+			</div>
+			<nav>
+				<ul>
+					{#each headings as heading, index}
+						<li
+							style="margin-left: {heading.level * 10 + 5}px; display: {heading.isVisible
+								? 'block'
+								: 'none'};"
+							class="{+heading.level === 1
+								? 'text-primary-700 text-xl font-semibold mt-4 '
+								: ' text-base mt-1 '}{+heading.level < 3 ? ' font-semibold' : 'text-base'}"
 						>
-							{heading.text}
-						</a>
-					</li>
-				{/each}
-			</ul>
-		</nav>
-	</div>
+							<a
+								href="/home/docs/{heading.base}#{heading.text
+									.toLowerCase()
+									.replace(/\s+/g, '-')
+									.replace(/[^a-z0-9\-]/g, '')}"
+								on:click|preventDefault={() => toggleVisibility(index)}
+							>
+								{heading.text}
+							</a>
+						</li>
+					{/each}
+				</ul>
+			</nav>
+		</div>
 
 		<div id="content" class="content">
 			<!-- using the content -->
 
-				<div class="prose prose-slate lg:prose-lg max-w-none">
-					{@html content_complete}
-					<!--{@html sanitizeHtml(content_complete, {
+			<div class="prose prose-slate lg:prose-lg max-w-none">
+				{@html content_complete}
+				<!--{@html sanitizeHtml(content_complete, {
 						allowedTags: [
 							'b',
 							'i',
@@ -395,12 +420,11 @@
 				})}-->
 				<!-- </div> -->
 			</div>
-	</div>
+		</div>
 	</div>
 </Page>
 
 <style>
-
 	.left-nav {
 		position: fixed;
 		left: 0;
@@ -412,34 +436,30 @@
 	}
 
 	.content {
-
 		flex-grow: 1;
 		overflow-y: auto;
-		
+
 		/*  height: calc(100vh - 180px); /* Subtracts header height set via function  */
 
 		/* padding-top: 20px; */
 		/* background: #f4f4f4; */
-  width: calc(100% - 400px);
-  margin-left: 300px;
+		width: calc(100% - 400px);
+		margin-left: 300px;
 		overflow-y: scroll; /* Allow scrolling */
 		scrollbar-width: none; /* Hide scrollbar (Firefox) */
 	}
-/* 
+	/*
 	.test{
 		max-width: calc(100% - 400px);
 	} */
-
 
 	a {
 		display: inline-block; /* Ensure anchors do not span full width */
 		max-width: 100%; /* Prevent anchors from exceeding the width of their container */
 		word-wrap: break-word; /* Break long URLs */
-		
 	}
 	/* Main content area */
 	.container {
-
 		display: flex;
 		flex: 1;
 		overflow: hidden; /* Prevents scrolling issues */
@@ -458,10 +478,7 @@
 		background: rgba(0, 0, 0, 0.5); /* Darker when hovered */
 	}
 
-
 	.content::-webkit-scrollbar {
 		display: none; /* Hide scrollbar (Chrome, Edge, Safari) */
 	}
-
-
 </style>

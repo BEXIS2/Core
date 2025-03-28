@@ -58,7 +58,7 @@
 
 <Page
 	title="Create a Dataset"
-	note="On this page you can create a dataset based on a template. please select on template and fill out the form."
+	note="This page allows you to create a digital object, such as a dataset, based on a template. Please select a template and fill in the required information."
 	{links}
 	contentLayoutType={pageContentLayoutType.full}
 >

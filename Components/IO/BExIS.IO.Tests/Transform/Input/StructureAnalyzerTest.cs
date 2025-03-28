@@ -207,7 +207,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
         [TestCase(34,TextMarker.doubleQuotes, '"')]
         [TestCase(39,TextMarker.quotes, '\'')]
-        [TestCase(0,TextMarker.none, '0')]
+        [TestCase(0,TextMarker.none, '\0')]
         public void GetTextMarker_basedOnInteger_ResultTextSeperator(int tMarker, TextMarker expect, char expectedChar)
         {
             //Arrange

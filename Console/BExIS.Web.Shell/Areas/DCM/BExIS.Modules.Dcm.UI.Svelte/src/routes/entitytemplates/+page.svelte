@@ -53,15 +53,15 @@
 	}
 
 	async function refresh(e: any) {
-		const newEnityTemplate = e.detail;
+		const newEntityTemplate = e.detail;
 		//console.log(newEnityTemplate);
 
 		//remove object from list & add to list again
 		$entityTemplatesStore = $entityTemplatesStore.filter((e) => {
-			return e.id !== newEnityTemplate.id;
+			return e.id !== newEntityTemplate.id;
 		});
 
-		$entityTemplatesStore = [...$entityTemplatesStore, newEnityTemplate];
+		$entityTemplatesStore = [...$entityTemplatesStore, newEntityTemplate];
 
 		// // update store
 		// entityTemplatesStore.set(entitytemplates);
@@ -98,7 +98,7 @@
 	const toggle = () => (isOpen = !isOpen);
 </script>
 
-<Page title="Entity Templates" note="On this page you can edit entity template." help={true}>
+<Page title="Entity Templates" note="This page allows you to edit the entity templates and create new ones." help={true}>
 	<svelte:fragment>
 		{#await load()}
 			<div class="text-surface-800">

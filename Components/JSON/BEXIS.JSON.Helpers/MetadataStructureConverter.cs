@@ -293,9 +293,10 @@ namespace BEXIS.JSON.Helpers
                         // the range of a string need to def as a length in json schema
                         if (current.Type == JSchemaType.String)
                         {
-                            current.MinimumLength = Convert.ToInt64(r.Lowerbound);
-
-                            long max = 0;
+                            long min = Int64.MinValue;
+                            if (Int64.TryParse(r.Lowerbound.ToString(), out min))
+                                current.MinimumLength = min; //may not exist
+                            long max = Int64.MaxValue;
                             if (Int64.TryParse(r.Upperbound.ToString(), out max))
                                 current.MaximumLength = max; //may not exist
                         }

@@ -37,7 +37,7 @@
 	let canSubmit: boolean = false;
 	$: canSubmit;
 
-	let isSubmiting: boolean = false;
+	let isSubmitting: boolean = false;
 
 	onMount(async () => {
 		latestFileUploadDate.subscribe((s) => {
@@ -63,7 +63,7 @@
 
 		latestDataDate.subscribe((s) => {
 			console.log("🚀 ~ latestDataDate.subscribe ~ s:", s)
-			
+
 			if (s > 0) {
 				reload();
 			}
@@ -75,10 +75,10 @@
 		console.log('latestDataDate', latestDataDate);
 
 		canSubmit = false;
-		console.log(' bevor hook');
+		console.log(' before hook');
 
 		model = await getHookStart(start, id, version);
-		console.log(' bevor activateSubmit',canSubmit);
+		console.log(' before activateSubmit',canSubmit);
 
 		canSubmit = activateSubmit();
 		console.log(' after activateSubmit',canSubmit);
@@ -105,13 +105,13 @@
 	const next: ModalSettings = {
 		type: 'alert',
 		title: 'Import started',
-		body: 'Editing will be disabled until completion. You will be informed via email once it is completed. <br>Please check the result and your provided metadata.',
+		body: 'Editing will be disabled until the upload is complete. If you are uploading a large amount of data, the upload will take a while, and you will be notified by email when it is complete. Please check the data you have uploaded. ',
 		buttonTextCancel: 'Ok'
 		// TRUE if confirm pressed, FALSE if cancel pressed
 	};
 
 	async function submitBt() {
-		isSubmiting = true;
+		isSubmitting = true;
 		canSubmit = false;
 		const res: submitResponceType = await submit(id);
 
@@ -125,7 +125,7 @@
 			}
 			// update store
 			latestSubmitDate.set(Date.now());
-			isSubmiting = false;
+			isSubmitting = false;
 		}
 	}
 
@@ -172,10 +172,10 @@
 		<button
 			type="button"
 			class="btn variant-filled-primary"
-			disabled={!canSubmit || isSubmiting}
+			disabled={!canSubmit || isSubmitting}
 			on:click={() => modalStore.trigger(confirm)}>Submit</button
 		>
-		{#if isSubmiting}
+		{#if isSubmitting}
 			<div class="flex-none">
 				<Spinner />
 			</div>

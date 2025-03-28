@@ -162,6 +162,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 ViewData["use_tags"] = moduleSettings.GetValueByKey("use_tags");
                 ViewData["use_minor"] = moduleSettings.GetValueByKey("use_minor");
                 ViewData["check_public_metadata"] = moduleSettings.GetValueByKey("check_public_metadata");
+                ViewData["has_data"] = false;
                 Session["Filter"] = null;
 
                 Dataset researcobject = dm.GetDataset(id);
@@ -270,11 +271,17 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             if (dsv.Dataset.DataStructure != null && dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
                             {
                                 dataStructureType = DataStructureType.Structured.ToString();
-                                ViewData["gridTotal"] = dm.RowCount(dsv.Dataset.Id, null);
+                                long c = dm.RowCount(dsv.Dataset.Id, null);
+                                ViewData["gridTotal"] = c;
+                                if(c>0) ViewData["has_data"] = true;
                             }
                             else
                             {
                                 dataStructureType = DataStructureType.Unstructured.ToString();
+                                if(dsv.ContentDescriptors.Where(c=>c.Name.Equals("unstructuredData")).Any())
+                                {
+                                    ViewData["has_data"] = true;
+                                }
                             }
 
                             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show " + typeof(Dataset).Name + ": " + title, this.Session.GetTenant());

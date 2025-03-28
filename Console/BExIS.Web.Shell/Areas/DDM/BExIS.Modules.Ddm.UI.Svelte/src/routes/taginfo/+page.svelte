@@ -5,16 +5,16 @@
 	import TagInfoView from "./TagInfoView.svelte";
 
 	let container;
- let id;	
+ let id;
 	let date = Date.now();
 
 	container = document.getElementById('taginfo');
 	id = Number(container?.getAttribute('dataset'));
 
 </script>
-<Page 
-	title="Tag Overview" 
-	note="Tag Infomations about a version"
+<Page
+	title="Tag Overview"
+	note="Manage and view tags of the dataset."
 	contentLayoutType={pageContentLayoutType.center}
 >
 	<TagInfoEdit on:reload={()=>date = Date.now()}/>
