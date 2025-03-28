@@ -34,6 +34,12 @@ namespace BExIS.IO.Tests
         {
         }
 
+        [TestCase("12:00 pm", "hh:mm tt", "1/1/0001 12:00:00 PM", true, "en-US")]
+        [TestCase("12:00:00 pm", "hh:mm:ss tt", "1/1/0001 12:00:00 PM", true, "en-US")]
+        [TestCase("2023-29-12", "yyyy-d-M", "12/29/2023 12:00:00 AM", true)]
+        [TestCase("02/29/24", "MM/dd/yy", "2/29/2024 12:00:00 AM", true, "en-US")]
+        [TestCase("02.12.24", "dd.MM.yy", "12/2/2024 12:00:00 AM", true, "en-US")]
+        [TestCase("85-11-07", "yy-MM-dd", "11/7/1985 12:00:00 AM", true, "en-US")]
         [TestCase("14", "MM", "10/1/0001 12:00:00 AM", false)]
         [TestCase("25", "hh", "1/1/0001 10:00:00 AM", false)]
         [TestCase("2024", "yyyy", "1/1/2024 12:00:00 AM", true)]
@@ -111,9 +117,13 @@ namespace BExIS.IO.Tests
                 if (result != null) result.ToString( new CultureInfo("en-US", false)).Should().NotMatch(output, "should not match :" + result + " - " + output);
                 else result.ToString( new CultureInfo("en-US", false)).Should().BeNullOrEmpty();
             }
-            
         }
-
+        [TestCase("12:00 pm", "hh:mm tt", "1/1/0001 12:00:00 PM", true, "en-US")]
+        [TestCase("12:00:00 pm", "hh:mm:ss tt", "1/1/0001 12:00:00 PM", true, "en-US")]
+        [TestCase("2023-29-12", "yyyy-d-M", "12/29/2023 12:00:00 AM", true)]
+        [TestCase("02/29/24", "MM/dd/yy", "2/29/2024 12:00:00 AM", true, "en-US")]
+        [TestCase("02.12.24", "dd.MM.yy", "12/2/2024 12:00:00 AM", true, "en-US")]
+        [TestCase("85-11-07", "yy-MM-dd", "11/7/1985 12:00:00 AM", true, "en-US")]
         [TestCase("14", "MM", "10/1/0001 12:00:00 AM", false)]
         [TestCase("25", "hh", "1/1/0001 10:00:00 AM", false)]
         [TestCase("2024", "yyyy", "1/1/2024 12:00:00 AM", true)]
