@@ -160,14 +160,14 @@
 	{:then}
 		<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h3 h-9">
-				<span in:fade={{ delay: 400 }} out:fade>Create neẇ Data Structure</span>
+				<span in:fade={{ delay: 400 }} out:fade>Create new Data Structure</span>
 			</div>
 			<div class="text-right">
 				{#if !showOptions}
 					<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 					<button
 						class="btn variant-filled-secondary shadow-md h-9 w-16"
-						title="Create neẇ Unit"
+						title="Create new Unit"
 						id="create"
 						on:mouseover={() => {
 							helpStore.show('create');

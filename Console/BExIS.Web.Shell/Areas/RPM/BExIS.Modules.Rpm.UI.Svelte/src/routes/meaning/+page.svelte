@@ -211,7 +211,7 @@
 		<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h3 h-9">
 				{#if meaning.id < 1}
-					<span in:fade={{ delay: 400 }} out:fade>Create neẇ Meaning</span>
+					<span in:fade={{ delay: 400 }} out:fade>Create new Meaning</span>
 				{:else}
 					<span in:fade={{ delay: 400 }} out:fade>{meaning.name}</span>
 				{/if}
@@ -222,7 +222,7 @@
 					<button
 						transition:fade
 						class="btn variant-filled-secondary shadow-md h-9 w-16"
-						title="Create neẇ Meaning"
+						title="Create new Meaning"
 						id="create"
 						on:mouseover={() => {
 							helpStore.show('create');

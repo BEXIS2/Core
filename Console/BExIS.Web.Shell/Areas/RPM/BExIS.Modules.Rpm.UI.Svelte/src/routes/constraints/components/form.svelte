@@ -88,7 +88,7 @@
 					domain: '',
 					negated: constraint.negated,
 					inUseByVariable: constraint.inUseByVariable,
-					inUseByMeanning: constraint.inUseByMeanning,
+					inUseByMeaning: constraint.inUseByMeaning,
 					variableIDs: constraint.variableIDs,
 					provider: '',
 					selectionPredicate: undefined
@@ -120,7 +120,7 @@
 					upperboundIncluded: true,
 					negated: constraint.negated,
 					inUseByVariable: constraint.inUseByVariable,
-					inUseByMeanning: constraint.inUseByMeanning,
+					inUseByMeaning: constraint.inUseByMeaning,
 					variableIDs: constraint.variableIDs
 				};
 				if (rangeConstraint.id != 0) {
@@ -147,7 +147,7 @@
 					pattern: '',
 					negated: constraint.negated,
 					inUseByVariable: constraint.inUseByVariable,
-					inUseByMeanning: constraint.inUseByMeanning,
+					inUseByMeaning: constraint.inUseByMeaning,
 					variableIDs: constraint.variableIDs
 				};
 				if (patternConstraint.id != 0) {
@@ -164,7 +164,7 @@
 	}
 
 	function submit() {
-		if (constraint.inUseByVariable || constraint.inUseByMeanning) {
+		if (constraint.inUseByVariable || constraint.inUseByMeaning) {
 			const modal: ModalSettings = {
 				type: 'confirm',
 				title: 'Save Constraint',

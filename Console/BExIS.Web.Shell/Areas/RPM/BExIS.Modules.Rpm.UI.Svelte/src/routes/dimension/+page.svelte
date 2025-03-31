@@ -141,7 +141,7 @@
 			<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 				<div class="h3 h-9">
 					{#if dimension.id < 1}
-						Create neẇ Dimension
+						Create new Dimension
 					{:else}
 						{dimension.name}
 					{/if}
@@ -153,7 +153,7 @@
 							in:fade
 							out:fade
 							class="btn variant-filled-secondary shadow-md h-9 w-16"
-							title="Create neẇ Dimension"
+							title="Create new Dimension"
 							id="create"
 							on:mouseover={() => {
 								helpStore.show('create');
