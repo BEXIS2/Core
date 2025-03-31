@@ -526,11 +526,12 @@
 
 
         $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}, { "entityId", entityId } })',
-            function(response) {
+            function (response) {
+                
                 $('#MetadataEditor').replaceWith(response);
                 bindMinimap(true);
                 var errors = $('.bx-input-error');
-
+                console.log(errors);
                 if (errors.length == 0) {
 
                     callSubmitAction(true, commit_message);
