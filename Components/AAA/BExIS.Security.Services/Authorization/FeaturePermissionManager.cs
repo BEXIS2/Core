@@ -87,19 +87,37 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
+        //public async Task<bool> DeleteAsync(long? subjectId, long featureId)
+        //{
+        //    using (var uow = this.GetUnitOfWork())
+        //    {
+        //        var featurePermission = await FindAsync(subjectId, featureId);
+
+        //        if (featurePermission == null) return await Task.FromResult(false);
+
+        //        var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
+        //        var result = featurePermissionRepository.Delete(featurePermission);
+        //        uow.Commit();
+
+        //        return await Task.FromResult(result);
+        //    }
+        //}
+
         public async Task<bool> DeleteAsync(long? subjectId, long featureId)
         {
-            using (var uow = this.GetUnitOfWork())
+            using (var uow = this.GetUnitOfWork()) // Keep using statement for UoW disposal
             {
-                var featurePermission = await FindAsync(subjectId, featureId);
-
-                if (featurePermission == null) return await Task.FromResult(false);
-
                 var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
-                var result = featurePermissionRepository.Delete(featurePermission);
-                uow.Commit();
 
-                return await Task.FromResult(result);
+                var featurePermission = await FindAsync(subjectId, featureId);
+                if (featurePermission == null)
+                    return false; // No need for Task.FromResult
+
+                featurePermissionRepository.Delete(featurePermission);
+
+                uow.Commit(); // Ensure this is a synchronous operation in .NET 4.8
+
+                return true;
             }
         }
 
