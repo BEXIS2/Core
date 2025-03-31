@@ -140,7 +140,7 @@ namespace BExIS.Xml.Helpers
 
                         if (!complex.Children().Any()) return null;
 
-                        if (usage.MaxCardinality <= 1) return complex;
+                        if (getMaxCardinality(usage) <= 1) return complex;
                         else
                         {
                             array.Add(complex); // add each element to a array
@@ -174,7 +174,7 @@ namespace BExIS.Xml.Helpers
                 if (isSimple(element.FirstChild))
                 {
                     //property or array
-                    if (usage.MaxCardinality <= 1) // property
+                    if (getMaxCardinality(usage) <= 1) // property
                     {
                         XmlNode type = element.FirstChild; // has also reference
                         //JProperty p = new JProperty(usage.Label, type.InnerText);
@@ -237,7 +237,7 @@ namespace BExIS.Xml.Helpers
 
                             if (!complex.Children().Any()) return null;
 
-                            if (usage.MaxCardinality <= 1) return complex;
+                            if (getMaxCardinality(usage) <= 1) return complex;
                             else
                             {
                                 array.Add(complex); // add each element to a array
@@ -624,6 +624,30 @@ namespace BExIS.Xml.Helpers
         }
 
         #endregion JSON to XML
+
+        #region helper
+
+
+        private int getMaxCardinality(BaseUsage usage)
+        {
+            if (usage.Extra == null) return usage.MaxCardinality;
+
+            // check for choice
+            var xmlnode = XmlUtility.GetXmlNodeByAttribute(usage.Extra, "type", "name", "choice");
+            if (xmlnode != null)
+            {
+                var XmlAttribute = xmlnode.Attributes["max"];
+                if (XmlAttribute != null)
+                {
+                    return int.Parse(XmlAttribute.Value);
+                }
+            }
+
+            return 1; // default
+        }
+
+
+        #endregion
 
         #region xml to xml based on xsd
 

@@ -1007,10 +1007,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var c = pStepModelHelper.Childrens.ElementAt(i);
                 var cStepModelHelper = GetStepModelhelper(c.StepId, TaskManager);
 
-                //var cStepModelHelper = GetStepModelhelper(cStepModelHelper.StepId, TaskManager);
-                //childStep.Activated = childStep.StepId.Equals(id);
-                cStepModelHelper.Activated = cStepModelHelper.StepId.Equals(id);
-                
+                // if only one choice is possible, reset all active steps before
+                if(cStepModelHelper.Activated)
+                    cStepModelHelper.Activated = pStepModelHelper.ChoiceMax <= 1? false :true;
+
+                if(cStepModelHelper.StepId.Equals(id)) cStepModelHelper.Activated = true;
+
+
                 if (!cStepModelHelper.Activated)
                 {
                     if (cStepModelHelper.Childrens.Any())
@@ -1024,8 +1027,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 } 
                 else // add
                 {
-                    if (cStepModelHelper.UsageType.Equals(typeof(MetadataAttributeUsage)) ||
-                        cStepModelHelper.UsageType.Equals(typeof(MetadataNestedAttributeUsage)))
+                    if (cStepModelHelper.StepId.Equals(id) &&
+                       (cStepModelHelper.UsageType.Equals(typeof(MetadataAttributeUsage)) ||
+                        cStepModelHelper.UsageType.Equals(typeof(MetadataNestedAttributeUsage))))
                     {
                         BaseUsage cUsage = loadUsage(cStepModelHelper.UsageId, cStepModelHelper.UsageType, TaskManager);
            
@@ -1042,6 +1046,50 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         setStepModelActive(cStepModelHelper);
                     }
                 }
+            }
+
+            return PartialView("_metadataCompoundAttributeUsageView", pStepModelHelper);
+        }
+
+        public ActionResult DeactivateComplexUsageInAChoice(int parentid, int id, long entityId)
+        {
+            TaskManager = FormHelper.GetTaskManager(entityId);
+
+            //var stepModelHelper = GetStepModelhelper(id, TaskManager);
+
+            var metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+            var metadata = getMetadata(TaskManager);
+            //var active = stepModelHelper.Activated ? false : true;
+            //stepModelHelper.Activated = active;
+            //stepModelHelper.Parent.Activated = active;
+
+            var pStepModelHelper = GetStepModelhelper(parentid, TaskManager);
+            pStepModelHelper.Activated = true;
+
+            //RemoveFromXml(pStepModelHelper.XPath, entityId);
+
+            //update stepModel to parentStepModel
+            for (var i = 0; i < pStepModelHelper.Childrens.Count; i++)
+            {
+                var c = pStepModelHelper.Childrens.ElementAt(i);
+                var cStepModelHelper = GetStepModelhelper(c.StepId, TaskManager);
+
+                if (cStepModelHelper.StepId.Equals(id))
+                {
+                    if (cStepModelHelper.Childrens.Any())
+                    {
+                        TaskManager.StepInfos.Remove(cStepModelHelper.Model.StepInfo);
+
+                        RemoveFromXml(cStepModelHelper.XPath, entityId);
+                        cleanMetadataAttributes(cStepModelHelper);
+
+
+                    }
+                    cStepModelHelper.Activated = false;
+                }
+                // if only one choice is possible, reset all active steps before
+                cStepModelHelper.Activated = pStepModelHelper.ChoiceMax <= 1 ? true : cStepModelHelper.StepId.Equals(id);
+
             }
 
             return PartialView("_metadataCompoundAttributeUsageView", pStepModelHelper);
@@ -3109,8 +3157,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var stepInfoModelHelpers = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
                 ValidateModels(stepInfoModelHelpers.Where(s => s.Activated && s.IsParentActive()).ToList());
                 validationAgainstJsonSchema();
-
-
             }
 
             return RedirectToAction("ReloadMetadataEditor", new

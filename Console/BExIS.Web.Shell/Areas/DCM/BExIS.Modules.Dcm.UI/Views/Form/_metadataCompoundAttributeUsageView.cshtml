@@ -220,8 +220,10 @@
                                             }
                                             else
                                             {
-                                                <span id="@choiceId" name="@id_choice" onclick="ActivateFromChoice(this)" class="bx bx-circle-o bx-mouse-choice bx-mouse-pointer"></span>
+                                                <span id="@choiceId" name="@id_choice" onclick="ActivateFromChoice(this)" checked class="bx bx-circle-o bx-mouse-choice bx-mouse-pointer"></span>
                                             }
+
+
 
                                             @element.DisplayName()
                                         }
@@ -233,6 +235,45 @@
                     </div>
                 </div>
             }
+            else if (Model.ChoiceMax > 1 && !locked)
+            {
+                <div class="contentContainer">
+                    <div class="metadataAttributeContent">
+                        <table style="background-color:white;">
+                            <tbody>
+                                <tr>
+                                    <td class="metadataAttributeLabel">
+
+                                        @if (Model.Model.MinCardinality > 0)
+                                        {
+                                            <b title="Required" style="color: red">*</b>
+                                            <b>Please select:</b>
+                                        }
+                                        else
+                                        {
+                                            <span>Please select:</span>
+                                        }
+                                    </td>
+                                    <td class="metadataAttributeInput">
+
+                                        @foreach (var element in Model.Childrens)
+                                        {
+                                            string choiceId = element.StepId +"_"+element.UsageId+"_choice";
+
+                                            <input id="@choiceId" type="checkbox" name="@id_choice" onclick="ChangeElementFromChoice(this)" checked="@element.Activated" />
+
+
+                                            @element.DisplayName()
+                                        }
+                                    </td>
+                                    <td class="metadataAttributeOption"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
         }
 
         @if (Model.Activated)
