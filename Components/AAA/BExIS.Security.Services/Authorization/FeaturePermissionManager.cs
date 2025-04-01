@@ -89,17 +89,19 @@ namespace BExIS.Security.Services.Authorization
 
         public async Task<bool> DeleteAsync(long? subjectId, long featureId)
         {
-            using (var uow = this.GetUnitOfWork())
+            using (var uow = this.GetUnitOfWork()) // Keep using statement for UoW disposal
             {
-                var featurePermission = await FindAsync(subjectId, featureId);
-
-                if (featurePermission == null) return await Task.FromResult(false);
-
                 var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
-                var result = featurePermissionRepository.Delete(featurePermission);
-                uow.Commit();
 
-                return await Task.FromResult(result);
+                var featurePermissionId = await FindIdAsync(subjectId, featureId);
+                if (!featurePermissionId.HasValue)
+                    return false; // No need for Task.FromResult
+
+                featurePermissionRepository.Delete(featurePermissionId.Value);
+
+                uow.Commit(); // Ensure this is a synchronous operation in .NET 4.8
+
+                return true;
             }
         }
 
@@ -150,6 +152,12 @@ namespace BExIS.Security.Services.Authorization
         {
             var featurePermissionRepository = _guow.GetReadOnlyRepository<FeaturePermission>();
             return subjectId == null ? await Task.FromResult(featurePermissionRepository.Query(f => f.Subject == null && f.Feature.Id == featureId).FirstOrDefault()) : await Task.FromResult(featurePermissionRepository.Query(f => f.Feature.Id == featureId && f.Subject.Id == subjectId).FirstOrDefault());
+        }
+
+        public async Task<long?> FindIdAsync(long? subjectId, long featureId)
+        {
+            var featurePermissionRepository = _guow.GetReadOnlyRepository<FeaturePermission>();
+            return subjectId == null ? await Task.FromResult(featurePermissionRepository.Query(f => f.Subject == null && f.Feature.Id == featureId).FirstOrDefault().Id) : await Task.FromResult(featurePermissionRepository.Query(f => f.Feature.Id == featureId && f.Subject.Id == subjectId).FirstOrDefault().Id);
         }
 
         public async Task<FeaturePermission> FindAsync(Subject subject, Feature feature)
