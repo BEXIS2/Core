@@ -1,5 +1,9 @@
 -- OPEN ISSUES
 
+-- entitytemplate - description column
+ALTER TABLE public.entitytemplates
+ALTER COLUMN description TYPE TEXT;
+
 -- add datatype int64/long to datatypes
 INSERT INTO public.datatypes (versionno, extra, name, description, systemtype)
 SELECT 1, null , 'long', 'An 64 bit integer number', 'Int64'
