@@ -117,16 +117,16 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 }
 
                 // publication
-                entity = entityManager.Entities.Where(e => e.Name.ToUpperInvariant() == "Publication".ToUpperInvariant()).FirstOrDefault();
+                var publication = entityManager.Entities.Where(e => e.Name.ToUpperInvariant() == "Publication".ToUpperInvariant()).FirstOrDefault();
 
-                if (entity == null)
+                if (publication == null)
                 {
-                    entity = new Entity();
-                    entity.Name = "Publication";
-                    entity.EntityType = typeof(Dataset);
-                    entity.EntityStoreType = typeof(Xml.Helpers.DatasetStore);
-                    entity.UseMetadata = true;
-                    entity.Securable = true;
+                    publication = new Entity();
+                    publication.Name = "Publication";
+                    publication.EntityType = typeof(Dataset);
+                    publication.EntityStoreType = typeof(Xml.Helpers.DatasetStore);
+                    publication.UseMetadata = true;
+                    publication.Securable = true;
 
                     //add to Extra
 
@@ -134,25 +134,25 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                     xmlDatasetHelper.AddReferenceToXml(xmlDoc, AttributeNames.name.ToString(), "ddm", AttributeType.parameter.ToString(), "extra/modules/module");
 
-                    entity.Extra = xmlDoc;
+                    publication.Extra = xmlDoc;
 
-                    entityManager.Create(entity);
+                    entityManager.Create(publication);
                 }
                 else
                 {
                     XmlDocument xmlDoc = new XmlDocument();
 
-                    if (entity.Extra != null)
-                        if (entity.Extra is XmlDocument) xmlDoc = entity.Extra as XmlDocument;
-                        else xmlDoc.AppendChild(entity.Extra);
+                    if (publication.Extra != null)
+                        if (publication.Extra is XmlDocument) xmlDoc = publication.Extra as XmlDocument;
+                        else xmlDoc.AppendChild(publication.Extra);
 
                     //update to Extra
                     XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                     xmlDatasetHelper.AddReferenceToXml(xmlDoc, AttributeNames.name.ToString(), "ddm", AttributeType.parameter.ToString(), "extra/modules/module");
 
-                    entity.Extra = xmlDoc;
+                    publication.Extra = xmlDoc;
 
-                    entityManager.Update(entity);
+                    entityManager.Update(publication);
                 }
 
                 #endregion create entities
