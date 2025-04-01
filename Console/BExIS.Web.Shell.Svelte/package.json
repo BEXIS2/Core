@@ -52,7 +52,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@bexis2/bexis2-core-ui": "0.4.41",
+		"@bexis2/bexis2-core-ui": "0.4.42",
 		"@sveltejs/adapter-static": "3.0.2",
 		"buffer": "6.0.3",
 		"gray-matter": "4.0.3",
