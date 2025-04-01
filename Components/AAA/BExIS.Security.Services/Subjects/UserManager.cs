@@ -109,7 +109,7 @@ namespace BExIS.Security.Services.Subjects
 
         public Task DeleteAsync(User user)
         {
-            _guow.GetRepository<User>().Delete(user);
+            _guow.GetRepository<User>().Delete(user.Id);
             _guow.Commit();
 
             return Task.CompletedTask;
