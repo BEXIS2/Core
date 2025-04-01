@@ -110,7 +110,7 @@ namespace BExIS.Security.Services.Subjects
         public Task DeleteAsync(Group role)
         {
             var groupRepository = _guow.GetRepository<Group>();
-            groupRepository.Delete(role);
+            var result = groupRepository.Delete(role.Id);
             _guow.Commit();
 
             return Task.CompletedTask;

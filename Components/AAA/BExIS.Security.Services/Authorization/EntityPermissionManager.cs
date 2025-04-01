@@ -143,7 +143,7 @@ namespace BExIS.Security.Services.Authorization
             using (var uow = this.GetUnitOfWork())
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                var result = entityPermissionRepository.Delete(entityPermission);
+                var result = entityPermissionRepository.Delete(entityPermission.Id);
                 uow.Commit();
 
                 return result;

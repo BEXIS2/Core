@@ -86,11 +86,11 @@ namespace BExIS.Security.Services.Authorization
                 if (featurePermission == null)
                     return false;
 
-                featurePermissionRepository.Delete(featurePermission.Id);
+                var result = featurePermissionRepository.Delete(featurePermission.Id);
 
                 uow.Commit();
 
-                return true;
+                return result;
             }
         }
 
