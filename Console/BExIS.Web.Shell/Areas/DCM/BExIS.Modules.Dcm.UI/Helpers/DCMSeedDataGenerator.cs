@@ -77,13 +77,52 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 #region create entities
 
-                // Entities
+                // Entities - Dataset
                 Entity entity = entityManager.Entities.Where(e => e.Name.ToUpperInvariant() == "Dataset".ToUpperInvariant()).FirstOrDefault();
 
                 if (entity == null)
                 {
                     entity = new Entity();
                     entity.Name = "Dataset";
+                    entity.EntityType = typeof(Dataset);
+                    entity.EntityStoreType = typeof(Xml.Helpers.DatasetStore);
+                    entity.UseMetadata = true;
+                    entity.Securable = true;
+
+                    //add to Extra
+
+                    XmlDocument xmlDoc = new XmlDocument();
+                    XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                    xmlDatasetHelper.AddReferenceToXml(xmlDoc, AttributeNames.name.ToString(), "ddm", AttributeType.parameter.ToString(), "extra/modules/module");
+
+                    entity.Extra = xmlDoc;
+
+                    entityManager.Create(entity);
+                }
+                else
+                {
+                    XmlDocument xmlDoc = new XmlDocument();
+
+                    if (entity.Extra != null)
+                        if (entity.Extra is XmlDocument) xmlDoc = entity.Extra as XmlDocument;
+                        else xmlDoc.AppendChild(entity.Extra);
+
+                    //update to Extra
+                    XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                    xmlDatasetHelper.AddReferenceToXml(xmlDoc, AttributeNames.name.ToString(), "ddm", AttributeType.parameter.ToString(), "extra/modules/module");
+
+                    entity.Extra = xmlDoc;
+
+                    entityManager.Update(entity);
+                }
+
+                // publication
+                entity = entityManager.Entities.Where(e => e.Name.ToUpperInvariant() == "Publication".ToUpperInvariant()).FirstOrDefault();
+
+                if (entity == null)
+                {
+                    entity = new Entity();
+                    entity.Name = "Publication";
                     entity.EntityType = typeof(Dataset);
                     entity.EntityStoreType = typeof(Xml.Helpers.DatasetStore);
                     entity.UseMetadata = true;
