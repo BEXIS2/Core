@@ -24,8 +24,8 @@
 		<column name="Name" />
 	</property>
 
-	<property name="Description" type="string">
-		<column name="Description" />
+	<property name="Description" type="StringClob">
+		<column name="Description"  sql-type="text" />
 	</property>
 
 	<property name="MetadataInvalidSaveMode" type="Boolean">
