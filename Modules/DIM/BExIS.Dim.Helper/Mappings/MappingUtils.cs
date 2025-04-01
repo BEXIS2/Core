@@ -850,17 +850,19 @@ namespace BExIS.Dim.Helpers.Mappings
                     if (m != null)
                     {
                         if (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
-                            m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage))
+                            m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage)||
+                            m.Source.Type.Equals(LinkElementType.MetadataParameterUsage))
                         {
-                            IEnumerable<XElement> elements = getXElementsFromAMapping(m, metadata);
+                            IEnumerable<XObject> elements = getXObjectsFromAMapping(m, metadata);
 
                             if (elements.Count() == 1)
                             {
                                 var element = elements.First();
+                                string value = getValue(element); // can be a element or attribute
                                 string mask = m.TransformationRule.Mask;
                                 // 1 - 1
                                 // x -> z1,z2,z3 (split)
-                                List<string> result = transform(element.Value, m.TransformationRule);
+                                List<string> result = transform(value, m.TransformationRule);
 
                                 if (result.Count == 1) // 1 - 1
                                 {
@@ -887,7 +889,8 @@ namespace BExIS.Dim.Helpers.Mappings
 
                                 foreach (var element in elements)
                                 {
-                                    tmp.AddRange(transform(element.Value, m.TransformationRule));
+                                    string value = getValue(element);// can be a element or attribute
+                                    tmp.AddRange(transform(value, m.TransformationRule));
                                 }
                             }
                         }
@@ -922,15 +925,17 @@ namespace BExIS.Dim.Helpers.Mappings
                             mask = "";
 
                             if (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
-                                m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage))
+                                m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage) ||
+                                m.Source.Type.Equals(LinkElementType.MetadataParameterUsage) )
                             {
-                                IEnumerable<XElement> elements = getXElementsFromAMapping(m, metadata);
+                                IEnumerable<XObject> objects = getXObjectsFromAMapping(m, metadata);
 
                                 //the elements are the result of one mapping
-                                foreach (var element in elements)
+                                foreach (var o in objects)
                                 {
+                                    string value = getValue(o);
                                     mask = m.TransformationRule.Mask;
-                                    List<string> regExResultList = transform(element.Value, m.TransformationRule);
+                                    List<string> regExResultList = transform(value, m.TransformationRule);
                                     string placeHolderName = m.Source.Name;
 
                                     mask = setOrReplace(mask, regExResultList, placeHolderName, m.TransformationRule.DefaultValue);
@@ -947,15 +952,17 @@ namespace BExIS.Dim.Helpers.Mappings
                                 if (string.IsNullOrEmpty(mask)) mask = tmpMappingsSubset.FirstOrDefault().TransformationRule.Mask;
 
                                 if (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
-                                    m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage))
+                                    m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage) ||
+                                    m.Source.Type.Equals(LinkElementType.MetadataParameterUsage) )
                                 {
-                                    IEnumerable<XElement> elements = getXElementsFromAMapping(m, metadata);
+                                    IEnumerable<XObject> objects = getXObjectsFromAMapping(m, metadata);
 
                                     //the elements are the result of one mapping
-                                    foreach (var element in elements)
+                                    foreach (var o in objects)
                                     {
-                                        List<string> regExResultList = transform(element.Value, m.TransformationRule);
-                                        string placeHolderName = m.Source.Name;
+                                        string value = getValue(o);
+                                        List<string> regExResultList = transform(value, m.TransformationRule);
+                                        string placeHolderName = m.Source.Name.Replace("@","");
 
                                         mask = setOrReplace(mask, regExResultList, placeHolderName, m.TransformationRule.DefaultValue);
                                     }
@@ -975,6 +982,22 @@ namespace BExIS.Dim.Helpers.Mappings
             }
         }
 
+        private static string getValue(XObject o)
+        {
+            string value = "";
+            if (o is XElement)
+            {
+                value = ((XElement)o).Value;
+            }
+
+            if (o is XAttribute)
+            {
+                value = ((XAttribute)o).Value;
+            }
+
+            return value;
+        }
+
         /// <summary>
         ///
         /// </summary>
@@ -983,7 +1006,7 @@ namespace BExIS.Dim.Helpers.Mappings
         /// <param name="sourceRootId"></param>
         /// <param name="metadata"></param>
         /// <returns></returns>
-        public static List<XElement> GetXElementFromMetadata(long targetElementId, LinkElementType targetType,
+        public static List<XObject> GetXObjectFromMetadata(long targetElementId, LinkElementType targetType,
             long sourceRootId, XDocument metadata)
         {
             //grab values from metadata where targetelementid and targetType is mapped
@@ -993,7 +1016,7 @@ namespace BExIS.Dim.Helpers.Mappings
 
             try
             {
-                List<XElement> tmp = new List<XElement>();
+                List<XObject> tmp = new List<XObject>();
 
                 var mappings = mappingManager.GetMappings().Where(m =>
                     m.Target.ElementId.Equals(targetElementId) &&
@@ -1020,20 +1043,22 @@ namespace BExIS.Dim.Helpers.Mappings
 
                     if (m != null &&
                         (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
-                         m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage)))
+                         m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage) || 
+                         m.Source.Type.Equals(LinkElementType.MetadataParameterUsage)
+                         ))
                     {
-                        IEnumerable<XElement> elements = getXElementsFromAMapping(m, metadata);
+                        IEnumerable<XObject> objects = getXObjectsFromAMapping(m, metadata);
 
-                        if (elements.Count() == 1)
+                        if (objects.Count() == 1)
                         {
-                            tmp.Add(elements.First());
+                            tmp.Add(objects.First());
                         }
                         else
                         {
                             // x1,x2,x3 -> z (join)
-                            foreach (var element in elements)
+                            foreach (var o in objects)
                             {
-                                tmp.Add(element);
+                                tmp.Add(o);
                             }
                         }
                     }
@@ -1057,14 +1082,15 @@ namespace BExIS.Dim.Helpers.Mappings
                             if (string.IsNullOrEmpty(mask)) mask = mappings.FirstOrDefault().TransformationRule.Mask;
 
                             if (m.Source.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
-                                m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage))
+                                m.Source.Type.Equals(LinkElementType.MetadataNestedAttributeUsage) ||
+                                m.Source.Type.Equals(LinkElementType.MetadataParameterUsage) )
                             {
-                                IEnumerable<XElement> elements = getXElementsFromAMapping(m, metadata);
+                                IEnumerable<XObject> objects = getXObjectsFromAMapping(m, metadata);
 
                                 //the elements are the result of one mapping
-                                foreach (var element in elements)
+                                foreach (var o in objects)
                                 {
-                                    tmp.Add(element);
+                                    tmp.Add(o);
                                 }
                             }
                         }
@@ -1080,10 +1106,10 @@ namespace BExIS.Dim.Helpers.Mappings
         }
 
 
-        private static IEnumerable<XElement> getXElementsFromAMapping(Mapping m, XDocument metadata)
+        private static IEnumerable<XObject> getXObjectsFromAMapping(Mapping m, XDocument metadata)
         {
             Dictionary<string, string> AttrDic = new Dictionary<string, string>();
-            List<XElement> elements = new List<XElement>();
+            //List<XElement> elements = new List<XElement>();
 
             //get parent element with parent mapping
             var parentMapping = m.Parent;
@@ -1092,34 +1118,17 @@ namespace BExIS.Dim.Helpers.Mappings
             // if the parent and the current source are equals, then the child can loaded directly
             if (parentMapping.Source.Id.Equals(m.Source.Id)) directSimpleMapping = true;
 
+            List<XObject> objects = new List<XObject>();
+
             if (directSimpleMapping)
             {
-                AttrDic = new Dictionary<string, string>();
-                AttrDic.Add("id", m.Source.ElementId.ToString());
-                AttrDic.Add("name", m.Source.Name);
-                AttrDic.Add("type", "MetadataAttributeUsage");
-
-                //the usage is the head node of a attr, if there are more then one, there are listed inside of the usage
-                // always :  usage/type/value
-                // if cardinality is more then 1 its listed like usage/type[0]/value, usage/type[n]/value
-                // in this case the children of the usage is needed
-                var usages = XmlUtility.GetXElementsByAttribute(AttrDic, metadata);
-                foreach (var u in usages)
+                //attribute or parameter usage
+                if (m.Source.Type == LinkElementType.MetadataParameterUsage)
                 {
-                    elements.AddRange(u.Elements());
+                    objects.Add(XmlUtility.GetXAttributeByXPath(m.Source.XPath, metadata));
                 }
-            }
-            else
-            {
-                AttrDic.Add("id", parentMapping.Source.ElementId.ToString());
-                AttrDic.Add("name", parentMapping.Source.Name);
-
-                //get parents from metadata
-                IEnumerable<XElement> parents = XmlUtility.GetXElementsByAttribute(AttrDic, metadata);
-
-                foreach (var parent in parents)
+                else
                 {
-                    //sett attrs for the child
                     AttrDic = new Dictionary<string, string>();
                     AttrDic.Add("id", m.Source.ElementId.ToString());
                     AttrDic.Add("name", m.Source.Name);
@@ -1129,14 +1138,49 @@ namespace BExIS.Dim.Helpers.Mappings
                     // always :  usage/type/value
                     // if cardinality is more then 1 its listed like usage/type[0]/value, usage/type[n]/value
                     // in this case the children of the usage is needed
-                    var usages = XmlUtility.GetXElementsByAttribute(AttrDic, parent);
+                    var usages = XmlUtility.GetXElementsByAttribute(AttrDic, metadata);
                     foreach (var u in usages)
                     {
-                        elements.AddRange(u.Elements());
+                        objects.AddRange(u.Elements());
                     }
                 }
             }
-            return elements;
+            else
+            {
+                if (m.Source.Type == LinkElementType.MetadataParameterUsage)
+                {
+                    objects.Add(XmlUtility.GetXAttributeByXPath(m.Source.XPath, metadata));
+                }
+                else
+                {
+
+                    AttrDic.Add("id", parentMapping.Source.ElementId.ToString());
+                    AttrDic.Add("name", parentMapping.Source.Name);
+
+                    //get parents from metadata
+                    IEnumerable<XElement> parents = XmlUtility.GetXElementsByAttribute(AttrDic, metadata);
+
+                    foreach (var parent in parents)
+                    {
+                        //sett attrs for the child
+                        AttrDic = new Dictionary<string, string>();
+                        AttrDic.Add("id", m.Source.ElementId.ToString());
+                        AttrDic.Add("name", m.Source.Name);
+                        AttrDic.Add("type", "MetadataAttributeUsage");
+
+                        // the usage is the head node of a attr, if there are more then one, there are listed inside of the usage
+                        // always :  usage/type/value
+                        // if cardinality is more then 1 its listed like usage/type[0]/value, usage/type[n]/value
+                        // in this case the children of the usage is needed
+                        var usages = XmlUtility.GetXElementsByAttribute(AttrDic, parent);
+                        foreach (var u in usages)
+                        {
+                            objects.AddRange(u.Elements());
+                        }
+                    }
+                }
+            }
+            return objects;
         }
 
         #endregion GET FROM Specific MetadataStructure // Source
