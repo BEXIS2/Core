@@ -158,6 +158,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var loadFromExternal = resetTaskManager;
             long metadataStructureId = -1;
             long dataStructureId = -1;
+            string isValid = "";
 
             var Model = new MetadataEditorModel();
 
@@ -172,9 +173,26 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     var dataset = datasetManager.GetDataset(entityId);
                     XmlDocument metadata = null;
-                        
-                     if(version==-1) metadata = datasetManager.GetDatasetLatestMetadataVersion(entityId);
-                     else metadata = datasetManager.GetDatasetVersion(entityId,version)?.Metadata;
+                   
+                     DatasetVersion dsv = null;
+
+                    if (version == -1)
+                    {
+                        dsv = datasetManager.GetDatasetLatestVersion(entityId);
+                    }
+                    else
+                    {
+                        dsv = datasetManager.GetDatasetVersion(entityId, version);
+                    }
+
+                   
+
+                    if (dsv != null && dsv.StateInfo != null)
+                    {
+                        metadata = dsv.Metadata;
+                        isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
+                        if(locked)ViewData["IsValid"] = isValid; // add only valid state to viewdata if locked  - only for view dataset
+                    }
 
 
                     metadataStructureId = dataset.MetadataStructure.Id;
@@ -297,7 +315,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Edit Metadata", this.Session.GetTenant()); ;
             ViewData["Locked"] = true;
             ViewData["ShowOptional"] = false;
-            ViewData["isValid"] = isValid;
+            ViewData["IsValid"] = isValid;
             ViewData["EntityId"] = entityId;
 
             TaskManager = FormHelper.GetTaskManager(entityId);

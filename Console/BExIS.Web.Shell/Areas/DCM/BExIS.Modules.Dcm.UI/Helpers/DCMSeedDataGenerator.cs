@@ -124,7 +124,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     publication = new Entity();
                     publication.Name = "Publication";
                     publication.EntityType = typeof(Dataset);
-                    publication.EntityStoreType = typeof(Xml.Helpers.DatasetStore);
+                    publication.EntityStoreType = typeof(Xml.Helpers.PublicationStore);
                     publication.UseMetadata = true;
                     publication.Securable = true;
 
