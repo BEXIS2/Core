@@ -18,8 +18,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Vaelastrasz.Library.Models;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc.Modularity;
 using static BExIS.Modules.Dim.UI.Controllers.ConceptOutController;
@@ -1458,7 +1460,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, mappingManager.CreateTransformationRule(@"\w+", "Author[1]"));
                     }
 
-                    if (Exist("title", LinkElementType.MetadataNestedAttributeUsage, uow) &&
+                    if (Exist("title", LinkElementType.MetadataAttributeUsage, uow) &&
                         Exist("project", LinkElementType.MetadataPackageUsage, uow))
                     {
                         createToKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootTo, metadataRef, mappingManager);
@@ -2282,13 +2284,13 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                     //identifier - dataset/identifier
                     //datasetGUID
-                    if (Exist("DatasetGUID", LinkElementType.MetadataNestedAttributeUsage, uow))
+                    if (Exist("DatasetGUID", LinkElementType.MetadataAttributeUsage, uow))
                     {
                         createMappingKeyMapping(
                             "DatasetGUID",
-                            LinkElementType.MetadataNestedAttributeUsage,
+                            LinkElementType.MetadataAttributeUsage,
                             "DatasetGUID",
-                            LinkElementType.MetadataNestedAttributeUsage,
+                            LinkElementType.MetadataAttributeUsage,
                             identifier,
                             null,
                             rootTo,
@@ -2318,7 +2320,19 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     }
 
                     //keywords - dataset/keywords
-                    // not map able
+                    var transformationRuleTo = new TransformationRule();
+                    transformationRuleTo.DefaultValue = "no keywords available";
+
+                    createDefaultMappingToMappingKey(
+                        keywords,
+                        null,
+                        rootTo,
+                        rootFrom,
+                        mappingManager,
+                        transformationRuleTo,
+                        null
+                        );
+
 
                     //url - dataset/url
                     if (Exist("URI", LinkElementType.MetadataNestedAttributeUsage, uow) &&
@@ -2403,11 +2417,11 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     }
 
                     //email - dataset/creator/email
-                    if (Exist("EmailAddress", LinkElementType.MetadataNestedAttributeUsage, uow) &&
+                    if (Exist("Address", LinkElementType.MetadataNestedAttributeUsage, uow) &&
                         Exist("EmailAddresses", LinkElementType.MetadataNestedAttributeUsage, uow))
                     {
                         createMappingKeyMapping(
-                            "EmailAddress",
+                            "Address",
                             LinkElementType.MetadataNestedAttributeUsage,
                             "EmailAddresses",
                             LinkElementType.ComplexMetadataAttribute,
@@ -2470,12 +2484,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
 
                     //name - dataset/name
-                    if (Exist("title", LinkElementType.MetadataNestedAttributeUsage, uow) &&
+                    if (Exist("title", LinkElementType.MetadataAttributeUsage, uow) &&
                         Exist("Basic", LinkElementType.MetadataPackageUsage, uow))
                     {
                         createMappingKeyMapping(
-                           "Title",
-                           LinkElementType.MetadataNestedAttributeUsage,
+                           "title",
+                           LinkElementType.MetadataAttributeUsage,
                            "Basic",
                            LinkElementType.MetadataPackageUsage,
                            name,
@@ -2487,12 +2501,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
                            );
                     }
                     //description - dataset/description
-                    if (Exist("para", LinkElementType.MetadataNestedAttributeUsage, uow) &&
+                    if (Exist("para", LinkElementType.MetadataAttributeUsage, uow) &&
                         Exist("abstract", LinkElementType.MetadataPackageUsage, uow))
                     {
                         createMappingKeyMapping(
                            "para",
-                           LinkElementType.MetadataNestedAttributeUsage,
+                           LinkElementType.MetadataAttributeUsage,
                            "abstract",
                            LinkElementType.MetadataPackageUsage,
                            description,
@@ -2600,6 +2614,21 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     }
 
                     //license - dataset/license
+
+                    var transformationRuleTo = new TransformationRule();
+                    transformationRuleTo.DefaultValue = "http://creativecommons.org/licenses/by/4.0/";
+
+                    createDefaultMappingToMappingKey(
+                        license,
+                        null,
+                        rootTo,
+                        rootFrom,
+                        mappingManager,
+                        transformationRuleTo,
+                        null
+                        );
+
+
                     //keywords - dataset/keywords
                     if (Exist("keyword", LinkElementType.MetadataAttributeUsage, uow))
                     {
@@ -2623,8 +2652,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         createMappingKeyMapping(
                            "url",
                            LinkElementType.MetadataNestedAttributeUsage,
-                           "Metadata/distribution/distributionType/online/onlineType",
-                           LinkElementType.MetadataNestedAttributeUsage,
+                           "Metadata/distribution/distributionType/online",
+                           LinkElementType.MetadataAttributeUsage,
                            url,
                            null,
                            rootTo,
@@ -2749,7 +2778,45 @@ namespace BExIS.Modules.Dim.UI.Helpers
             }
         }
 
-        #endregion 
+        private void createDefaultMappingToMappingKey(
+            MappingKey key,
+            MappingKey parentKey,
+            Mapping rootTo,
+            Mapping rootFrom,
+            MappingManager mappingManager,
+            TransformationRule transformationRuleTo = null,
+            TransformationRule transformationRuleFrom = null
+            )
+        {
+            if (transformationRuleTo == null) transformationRuleTo = new TransformationRule();
+            if (transformationRuleFrom == null) transformationRuleFrom = new TransformationRule();
+
+            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(key.Id),
+                    key.Name, LinkElementType.MappingKey, LinkElementComplexity.Simple, key.XPath);
+
+            LinkElement parentLe = null;
+
+            if (parentKey != null)
+                parentLe = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(parentKey.Id),
+                    parentKey.Name, LinkElementType.MappingKey, LinkElementComplexity.Complex, parentKey.XPath);
+
+
+                LinkElement defaultElement = createLinkELementIfNotExist(mappingManager, 1, "Default", LinkElementType.Default, LinkElementComplexity.Simple, "");
+
+                LinkElement p = parentLe == null ? le : parentLe;
+                // from metadata entry to mapping concept
+                Mapping toComplexMapping = MappingHelper.CreateIfNotExistMapping(defaultElement, p, 1, new TransformationRule(), rootTo, mappingManager);
+                // from  mapping concept to metadata entry
+                Mapping fromComplexMapping = MappingHelper.CreateIfNotExistMapping(p, defaultElement, 1, new TransformationRule(), rootFrom, mappingManager);
+
+                // from metadata entry to mapping concept
+                MappingHelper.CreateIfNotExistMapping(defaultElement, le, 2, transformationRuleTo, toComplexMapping, mappingManager);
+                MappingHelper.CreateIfNotExistMapping(le, defaultElement, 2, transformationRuleTo, fromComplexMapping, mappingManager);
+        }
+
+        #endregion
+
+
 
         private bool Exist(string name, LinkElementType type, IUnitOfWork uow)
         {
