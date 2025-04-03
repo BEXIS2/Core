@@ -293,17 +293,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         titleXPath, descriptionXpath);
                 }
 
-                //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Full ABCD")))
-                //{
-                //    string titleXPath =
-                //        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
-                //    string descriptionXpath =
-                //        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
 
-                //    ImportSchema("Full ABCD", "ABCD_2.06.XSD", "DataSet", entity.Name, entity.EntityType.FullName,
-                //        titleXPath, descriptionXpath);
-
-                //}
 
                 if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("GBIF")))
                 {
@@ -313,8 +303,14 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     ImportSchema("GBIF", "eml.xsd", "Dataset", entity.Name, entity.EntityType.FullName, titleXPath,
                         descriptionXpath);
                 }
-                //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic Eml")))
-                //    ImportSchema("Basic Eml", "eml-dataset.xsd", entity.Name, entity.Name, entity.EntityType.FullName);
+
+                if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Publication")))
+                {
+                    string titleXPath = "Metadata/publication/publicationType/Title/TitleType";
+                    string descriptionXpath = "Metadata/publication/publicationType/Abstract/AbstractType";
+
+                    ImportSchema("Publication", "BEXIS2-Publication-Schema-draft.xsd", "Metadata", publication.Name, publication.EntityType.FullName, titleXPath, descriptionXpath);
+                }
 
                 #endregion Add Metadata
 
@@ -361,6 +357,29 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                     // set entity
                     entityTemplate.EntityType = entity;
+
+                    entityTemplateManager.Create(entityTemplate);
+                }
+
+                if (!entityTemplateManager.Repo.Get().Any(d => d.Name.Equals("Publication")))
+
+                {
+                    EntityTemplate entityTemplate = new EntityTemplate();
+                    entityTemplate.Name = "Publication";
+                    entityTemplate.Description = "Create a publication";
+
+                    // set metadatastructure
+                    var metadataStructure = metadataStructureManager.Repo.Get().Where(m => m.Name.Equals("Publication")).FirstOrDefault();
+                    entityTemplate.MetadataStructure = metadataStructure;
+                    // default input fields , title, descritpion
+                    //entityTemplate.MetadataFields = new List<int>() { 4, 1 };
+                    entityTemplate.HasDatastructure = false;
+                    entityTemplate.DatastructureList = new List<long>();
+                    entityTemplate.AllowedFileTypes = new List<string>();
+                    entityTemplate.Activated = true;
+                    entityTemplate.MetadataFields = new List<int>() { 4, 1 };
+                    // set entity
+                    entityTemplate.EntityType = publication;
 
                     entityTemplateManager.Create(entityTemplate);
                 }
