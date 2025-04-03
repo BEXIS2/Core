@@ -1,4 +1,4 @@
-> This version mainly contains fixed bugs and usability improvements of the new functions and features, focusing on the area of dataset creation and upload introduced since version 3.0.0. and a refactored documentation. 
+> This version mainly contains fixed bugs and usability improvements of the new functions and features, focusing on the area of dataset creation and upload introduced since version 3.0.0. and a refactored documentation.
 
 <b>Important:</b> web.config.samples and the workspace contain important changes.
 
@@ -8,7 +8,7 @@
 ### Database Update(s):
 - Update script from version 3.4.3 to 4.0.0: [Update_Script_3.4.0_4.0.0.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/3.4.0-4.0.0.sql)
 
-### New Settings 
+### New Settings
 __gbifCollectionArea__ (_Settings -> Application Settings -> Data Dissemination_) (default: "export/gbif")
 
 All created Darwin Core archive dataset exports are saved in this specified directory. It starts from the predefined data folder as default. It is also possible to specify a sequential folder path. default: {Data}/export/gbif".
@@ -26,6 +26,9 @@ If the template support is activated, then empty unit & datatype fields with inf
 - **Load metadata email** Fix it breaks when email address has no "@" inside. ([#2058](https://github.com/BEXIS2/Core/issues/2058))
 - **Metadata Form**: Fix after selection of an autocomplete value; the reload gets stuck. ([#2031](https://github.com/BEXIS2/Core/issues/2031))
 - **Session Problems**: Fix when two different metadata forms open; save does not work correctly. ([#93](https://github.com/BEXIS2/Core/issues/93))
+  **Show Dataset**: Fix warning that metadata is not complete is missing. ([#2001](https://github.com/BEXIS2/Core/issues/2001))
+- **Metadata Validation**: Fix new validation against JSON schema not working with GBIF schema. ([#2043](https://github.com/BEXIS2/Core/issues/2043))
+- **Metadata View**: Fix last tag is always displayed. ([#2067](https://github.com/BEXIS2/Core/issues/2067))
 
 ## Links
 - **Link Dataset**: Fix cancel button does not work. ([#1569](https://github.com/BEXIS2/Core/issues/1569))
@@ -40,6 +43,7 @@ If the template support is activated, then empty unit & datatype fields with inf
 - **Entity Template**: Enhancement: Add option to de/activate. ([#1897](https://github.com/BEXIS2/Core/issues/1897))
 - **Manage Entity Templates**: Enhancement: Improvements. ([#1973](https://github.com/BEXIS2/Core/issues/1973))
 - **Reorder Entity Template Edit From**: Enhancement: reorder Edit view. ([#1972](https://github.com/BEXIS2/Core/issues/1972))
+- **Entity Template**: Fix description field is too short. ([#2072](https://github.com/BEXIS2/Core/issues/2072))
 
 ## Dataset Management
 - **Deleted Datasets**: Fix public datasets that got deleted are not visible anymore. ([#1812](https://github.com/BEXIS2/Core/issues/1812))
@@ -52,9 +56,12 @@ If the template support is activated, then empty unit & datatype fields with inf
 - **500 Error**: Fix if you open a dataset without permission. ([#1915](https://github.com/BEXIS2/Core/issues/1915))
 - **Edit Constraints**: Correct typos. ([#1977](https://github.com/BEXIS2/Core/issues/1977))
 - **Edit Dataset Changes**: ([#1898](https://github.com/BEXIS2/Core/issues/1898))
+- **New Primary Data View**: Fix header with "dot" inside breaks the table. ([#2074](https://github.com/BEXIS2/Core/issues/2074))
+- **Order of Action Buttons**: Adjust order of action buttons in "My Data".([#2064](https://github.com/BEXIS2/Core/issues/2064))
 
 ## Data Structure
 - **Date Pattern**: Fix using date pattern `yyyy,MM` creates invalid primary data display. ([#1870](https://github.com/BEXIS2/Core/issues/1870))
+- **Date Validation**: Fix validation not working for the format `yy-MM-dd`. ([#2063](https://github.com/BEXIS2/Core/issues/2063))
 - **Add Description**: Enhancement: Add description to data structure download. ([#1780](https://github.com/BEXIS2/Core/issues/1780))
 - **Change of Delimiter**: Fix change of delimiter while creating data structure doesn't work correctly. ([#2047](https://github.com/BEXIS2/Core/issues/2047))
 - **Error Message**: Fix the error message when creating a data structure. ([#2046](https://github.com/BEXIS2/Core/issues/2046))
@@ -68,7 +75,9 @@ If the template support is activated, then empty unit & datatype fields with inf
 - **Correct Encoding Typo**: Fix encoding typo in "New Data Type". ([#1962](https://github.com/BEXIS2/Core/issues/1962))
 - **Constraint Selection**: Fix constraints break layout. ([#1896](https://github.com/BEXIS2/Core/issues/1896))
 - **Edit Meaning Name**: Fix when editing a meaning, the name has to be changed to enable save. ([#1775](https://github.com/BEXIS2/Core/issues/1775))
-
+- **Help/Table View**: Enhancement: Add help/table view to templates during data structure edit. ([#1886](https://github.com/BEXIS2/Core/issues/1886))
+- **Improve Upload Mails**: Enhance the content and formatting of upload emails. ([#1854](https://github.com/BEXIS2/Core/issues/1854))
+- **Variable Template**: Fix sorting by data type and unit does not work. ([#1999](https://github.com/BEXIS2/Core/issues/1999))
 
 ## Search
 - **All IDs**: Fix all IDs (from every entity) should be part of the search by default. ([#1894](https://github.com/BEXIS2/Core/issues/1894))
@@ -113,6 +122,7 @@ If the template support is activated, then empty unit & datatype fields with inf
 - **Check/Get Entity Permission**: Based on entity type (and specific entity name). ([#1902](https://github.com/BEXIS2/Core/issues/1902))
 - **Retrieval of User**: Fix retrieval of user within feature permissions check fails. ([#1978](https://github.com/BEXIS2/Core/issues/1978))
 - **Wrong Return Value**: Fix the wrong return value for the feature permission manager function. ([#1922](https://github.com/BEXIS2/Core/issues/1922))
+- **Feature Permissions**: Fix cannot remove rights. ([#2066](https://github.com/BEXIS2/Core/issues/2066))
 
 ## General & Maintenance
 - **Check Libraries**: Check libraries for updates. ([#1991](https://github.com/BEXIS2/Core/issues/1991))
@@ -125,9 +135,13 @@ If the template support is activated, then empty unit & datatype fields with inf
 - **Version Reference**: Version reference of system.buffers differs. ([#1950](https://github.com/BEXIS2/Core/issues/1950))
 - **Prepare Solution**: Prepare solution with MVCBuildViews in release mode. ([#1846](https://github.com/BEXIS2/Core/issues/1846))
 - **Package Replacement**: Replace DotNetZip package. ([#1958](https://github.com/BEXIS2/Core/issues/1958))
+- **Documentation View**: Fix Requires login; adjust documentation link; fix rendering error. ([#2069](https://github.com/BEXIS2/Core/issues/2069))
+- **Add Publication to Seed Data**: Enhancement: Add publication to seed data for entity templates. ([#1990](https://github.com/BEXIS2/Core/issues/1990))
+- **Add Schema.org Seed Data**:Enhancement: Add seed data for Schema.org. ([#2073](https://github.com/BEXIS2/Core/issues/2073))
 
 ## API
 - **Improve Swagger API Action List View**. ([#2011](https://github.com/BEXIS2/Core/issues/2011))
 - **Dataset API**: Fix creating a dataset without a data structure is not possible. ([#2059](https://github.com/BEXIS2/Core/issues/2059))
 - **Dataset API**: Fix to throw an error if the dataset has no data structure. ([#2033](https://github.com/BEXIS2/Core/issues/2033))
 - **Metadata Schema**: Fix Out API JSON schema; type element in root node is missing. ([#1952](https://github.com/BEXIS2/Core/issues/1952))
+- **Data Structure API**: Fix meanings missing.([#2079](https://github.com/BEXIS2/Core/issues/2079))
