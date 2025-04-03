@@ -5,6 +5,10 @@
 	// UI Components
 	import { TextInput, TextArea, MultiSelect } from '@bexis2/bexis2-core-ui';
 
+// icons
+import Fa from 'svelte-fa';
+import { faTable } from '@fortawesome/free-solid-svg-icons';
+
 	//types
 	import type { listItemType } from '@bexis2/bexis2-core-ui';
 	import {
@@ -38,6 +42,7 @@
 	import MeaningsDescription from './MeaningsDescription.svelte';
 	import Status from './Status.svelte';
 	import MissingValues from '../../MissingValues.svelte';
+	import VariableTemplateSelection from './VariableTemplateSelection.svelte';
 
 	export let variable: VariableInstanceModel = new VariableInstanceModel();
 	$: variable;
@@ -45,6 +50,9 @@
 	$: data;
 
 	export let index: number;
+
+ let openTemplateModel: boolean = false;
+ $:	openTemplateModel;
 
 	let datatypes: listItemType[] = [];
 	$: datatypes;
@@ -155,25 +163,10 @@
 			}
 
 			console.log(id, e.detail, variable);
+
 			if (id.includes('variableTemplate')) {
 
-				if (setByTemplate) {
-					// if true, update unit & datatype based on settings
-					if (variable.dataType == undefined || variable.dataType == '') {
-						variable.dataType = updateDataType(e.detail);
-					}
-
-					if (variable.unit == undefined || variable.unit == '') {
-						variable.unit = updateUnit(e.detail);
-					}
-
-					if ((variable.description == undefined || variable.description == '') && updateDescriptionByTemplate) {
-						variable.description = e.detail.description;
-					}
-				}
-
-				variable.meanings = updateMeanings(variable, e.detail);
-				variable.constraints = updateConstraints(variable, e.detail?.constraints);
+				updateTemplateFn(e.detail);
 			}
 
 			if (id.includes('meanings')) {
@@ -187,6 +180,27 @@
 			updateLists();
 		}, 100);
 			console.log("🚀 ~ setTimeout ~ e.detail:", e.detail)
+	}
+
+	function updateTemplateFn(template:any)
+	{
+		if (setByTemplate) {
+					// if true, update unit & datatype based on settings
+					if (variable.dataType == undefined || variable.dataType == '') {
+						variable.dataType = updateDataType(template);
+					}
+
+					if (variable.unit == undefined || variable.unit == '') {
+						variable.unit = updateUnit(template);
+					}
+
+					if ((variable.description == undefined || variable.description == '') && updateDescriptionByTemplate) {
+						variable.description = template.description;
+					}
+				}
+
+				variable.meanings = updateMeanings(variable, template);
+				variable.constraints = updateConstraints(variable, template?.constraints);
 	}
 
 	// use the store to reset the lists for the dropdowns
@@ -305,6 +319,22 @@
 			}
 		return [];
 	}
+
+	function selectVariableTamplateFn(e) {
+		console.log('select template model',e.detail);
+		openTemplateModel = false;
+ 	const id = e.detail;
+  const template = $templateStore.find((t) => t.id == id);
+  console.log("🚀 ~ selectVariableTamplateFn ~ template:", template)
+		variable.template = template;
+		updateTemplateFn(template);
+	}
+
+	function test() {
+		console.log('close template model');
+		openTemplateModel = false;
+	}
+
 </script>
 
 <div id="variable-{variable.id}-container" class="flex gap-5">
@@ -352,26 +382,35 @@
 											>
 										{/each}
 									</div>
-									<MultiSelect
-										id="variableTemplate-{index}"
-										title="Variable Template"
-										source={variableTemplates}
-										itemId="id"
-										itemLabel="text"
-										itemGroup="group"
-										complexSource={true}
-										complexTarget={true}
-										isMulti={false}
-										clearable={true}
-										bind:target={variable.template}
-										placeholder="-- Please select --"
-										invalid={res.hasErrors('variableTemplate') && !blockDataRelevant}
-										feedback={res.getErrors('variableTemplate')}
-										on:change={(e) => onSelectHandler(e, 'variableTemplate-' + index)}
-										on:clear={(e) => onSelectHandler(e, 'variableTemplate-' + index)}
-										disabled={blockDataRelevant}
-									/>
-								</div>
+									<div class="flex gap-2">
+										<div class="grow">
+											<MultiSelect
+												id="variableTemplate-{index}"
+												title=""
+												source={variableTemplates}
+												itemId="id"
+												itemLabel="text"
+												itemGroup="group"
+												complexSource={true}
+												complexTarget={true}
+												isMulti={false}
+												clearable={true}
+												bind:target={variable.template}
+												placeholder="-- Please select --"
+												invalid={res.hasErrors('variableTemplate') && !blockDataRelevant}
+												feedback={res.getErrors('variableTemplate')}
+												on:change={(e) => onSelectHandler(e, 'variableTemplate-' + index)}
+												on:clear={(e) => onSelectHandler(e, 'variableTemplate-' + index)}
+												disabled={blockDataRelevant}
+											/>
+										</div>
+										<div class="">
+										<button class="chip variant-filled-primary flex-none" on:click={() => (openTemplateModel = true)}>
+											<Fa icon={faTable} />
+										</button>
+									</div>
+									</div>
+							</div>
 
 								<div slot="description">...</div>
 							</Container>
@@ -602,3 +641,7 @@
 		</div>
 	{/if}
 </div>
+
+{#if openTemplateModel}
+	<VariableTemplateSelection bind:list={variableTemplates} on:selected={selectVariableTamplateFn} on:close{test}/>
+{/if}
