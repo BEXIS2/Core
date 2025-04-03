@@ -2378,13 +2378,13 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
 
                     if (Exist("FullName", LinkElementType.MetadataNestedAttributeUsage, uow) &&
-                        Exist("PersonName", LinkElementType.ComplexMetadataAttribute, uow))
+                        Exist("PersonName", LinkElementType.MetadataNestedAttributeUsage, uow))
                     {
                         createMappingKeyMapping(
                             "FullName",
                             LinkElementType.MetadataNestedAttributeUsage,
                             "PersonName",
-                            LinkElementType.ComplexMetadataAttribute,
+                            LinkElementType.MetadataNestedAttributeUsage,
                             givenName,
                             creator,
                             rootTo,
@@ -2397,13 +2397,13 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     }
 
                     if (Exist("FullName", LinkElementType.MetadataNestedAttributeUsage, uow) &&
-                        Exist("PersonName", LinkElementType.ComplexMetadataAttribute, uow))
+                        Exist("PersonName", LinkElementType.MetadataNestedAttributeUsage, uow))
                     {
                         createMappingKeyMapping(
                             "FullName",
                             LinkElementType.MetadataNestedAttributeUsage,
                             "PersonName",
-                            LinkElementType.ComplexMetadataAttribute,
+                            LinkElementType.MetadataNestedAttributeUsage,
                             familyName,
                             creator,
                             rootTo,
@@ -2416,14 +2416,14 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     }
 
                     //email - dataset/creator/email
-                    if (Exist("Address", LinkElementType.MetadataNestedAttributeUsage, uow) &&
+                    if (Exist("EmailAddress", LinkElementType.MetadataNestedAttributeUsage, uow) &&
                         Exist("EmailAddresses", LinkElementType.MetadataNestedAttributeUsage, uow))
                     {
                         createMappingKeyMapping(
-                            "Address",
+                            "EmailAddress",
                             LinkElementType.MetadataNestedAttributeUsage,
                             "EmailAddresses",
-                            LinkElementType.ComplexMetadataAttribute,
+                            LinkElementType.MetadataNestedAttributeUsage,
                             email,
                             creator,
                             rootTo,
@@ -2441,7 +2441,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                             "Text",
                             LinkElementType.MetadataNestedAttributeUsage,
                             "EmailAddresses",
-                            LinkElementType.ComplexMetadataAttribute,
+                            LinkElementType.MetadataNestedAttributeUsage,
                             email,
                             creator,
                             rootTo,
