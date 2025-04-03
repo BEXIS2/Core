@@ -1432,18 +1432,17 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     Mapping rootTo = mappingManager.CreateMapping(gbifRoot, system, 0, null, null);
                     Mapping rootFrom = mappingManager.CreateMapping(system, gbifRoot, 0, null, null);
 
-                    if (Exist("title", LinkElementType.MetadataNestedAttributeUsage, uow) &&
-                        Exist("Basic", LinkElementType.MetadataPackageUsage, uow))
+                    if (Exist("title", LinkElementType.MetadataAttributeUsage, uow))
                     {
-                        createToKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "Basic", LinkElementType.MetadataPackageUsage, Key.Title, rootTo, metadataRef, mappingManager);
-                        createFromKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "Basic", LinkElementType.MetadataPackageUsage, Key.Title, rootFrom, metadataRef, mappingManager);
+                        createToKeyMapping("title", LinkElementType.MetadataAttributeUsage, "title", LinkElementType.MetadataAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager);
+                        createFromKeyMapping("title", LinkElementType.MetadataAttributeUsage, "title", LinkElementType.MetadataAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager);
                     }
 
-                    if (Exist("para", LinkElementType.MetadataNestedAttributeUsage, uow) &&
+                    if (Exist("para", LinkElementType.MetadataAttributeUsage, uow) &&
                         Exist("abstract", LinkElementType.MetadataPackageUsage, uow))
                     {
-                        createToKeyMapping("para", LinkElementType.MetadataNestedAttributeUsage, "abstract", LinkElementType.MetadataPackageUsage, Key.Description, rootTo, metadataRef, mappingManager);
-                        createFromKeyMapping("para", LinkElementType.MetadataNestedAttributeUsage, "abstract", LinkElementType.MetadataPackageUsage, Key.Description, rootFrom, metadataRef, mappingManager);
+                        createToKeyMapping("para", LinkElementType.MetadataAttributeUsage, "abstract", LinkElementType.MetadataPackageUsage, Key.Description, rootTo, metadataRef, mappingManager);
+                        createFromKeyMapping("para", LinkElementType.MetadataAttributeUsage, "abstract", LinkElementType.MetadataPackageUsage, Key.Description, rootFrom, metadataRef, mappingManager);
                     }
 
                     if (Exist("givenName", LinkElementType.MetadataNestedAttributeUsage, uow) &&
@@ -1463,8 +1462,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     if (Exist("title", LinkElementType.MetadataAttributeUsage, uow) &&
                         Exist("project", LinkElementType.MetadataPackageUsage, uow))
                     {
-                        createToKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootTo, metadataRef, mappingManager);
-                        createFromKeyMapping("title", LinkElementType.MetadataNestedAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootFrom, metadataRef, mappingManager);
+                        createToKeyMapping("title", LinkElementType.MetadataAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootTo, metadataRef, mappingManager);
+                        createFromKeyMapping("title", LinkElementType.MetadataAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootFrom, metadataRef, mappingManager);
                     }
 
                     #endregion mapping GBIF to System Keys
@@ -2069,14 +2068,14 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 pAttr => pAttr.Name.Equals("Name") && pAttr.PartyType.Id.Equals(partyType.Id));
 
                             createToPartyTypeMapping(
-                                "title", LinkElementType.MetadataNestedAttributeUsage,
+                                "title", LinkElementType.MetadataAttributeUsage,
                                 complexAttrName, LinkElementType.MetadataPackageUsage,
                                 partyCustomAttribute, partyType, rootTo, metadataRef,
                                 mappingManager,
                                 new TransformationRule());
 
                             createFromPartyTypeMapping(
-                                "title", LinkElementType.MetadataNestedAttributeUsage,
+                                "title", LinkElementType.MetadataAttributeUsage,
                                 complexAttrName, LinkElementType.MetadataPackageUsage,
                                 partyCustomAttribute, partyType, rootFrom, metadataRef,
                                 mappingManager,
