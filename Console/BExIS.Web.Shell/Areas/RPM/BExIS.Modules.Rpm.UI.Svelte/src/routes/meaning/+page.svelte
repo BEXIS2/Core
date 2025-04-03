@@ -27,6 +27,7 @@
 	import TableOptions from './table/tableOptions.svelte';
 	import Meaning from './Meaning.svelte';
 	import type { SvelteComponent } from 'svelte';
+	import type { linkType } from '@bexis2/bexis2-core-ui';
 
 	//stores
 	let meanings: MeaningModel[];
@@ -191,9 +192,16 @@
 			message: "Can't save Meaning."
 		});
 	}
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#meanings',
+		}
+	];
 </script>
 
-<Page help={true} title="Manage Meanings">
+<Page help={true} title="Manage Meanings" {links}>
 	{#await reload()}
 		<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h-9 w-96 placeholder animate-pulse" />

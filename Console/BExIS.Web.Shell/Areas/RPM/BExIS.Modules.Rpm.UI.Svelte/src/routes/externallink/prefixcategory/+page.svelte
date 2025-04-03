@@ -28,6 +28,8 @@
 	import { fade, slide } from 'svelte/transition';
 	import PrefixCategoryForm from './PrefixCategory.svelte';
 
+	import type { linkType } from '@bexis2/bexis2-core-ui';
+
 	let showForm = false;
 
 	async function reload() {
@@ -91,7 +93,7 @@
 						{
 							reload();
 							if (pc.id === prefixCategory.id)
-							{ 
+							{
 								toggleForm();
 							}
 						}
@@ -139,6 +141,13 @@
 			message: "Can't save Prefix Category."
 		});
 	}
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#prefix-categories',
+		}
+	];
 </script>
 
 <Page help={true} title="Manage External Links">

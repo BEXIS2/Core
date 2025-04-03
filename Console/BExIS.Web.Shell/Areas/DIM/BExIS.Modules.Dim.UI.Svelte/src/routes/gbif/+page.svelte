@@ -1,8 +1,10 @@
 <script lang="ts">
 
 	import { ErrorMessage, notificationStore, notificationType, Page, pageContentLayoutType, positionType, Spinner} from "@bexis2/bexis2-core-ui";
- import { goTo, load, register } from "./services";
+    import { goTo, load, register } from "./services";
 	import {type GbifPublicationModel } from "./types";
+
+	import type { linkType } from '@bexis2/bexis2-core-ui';
 
 	import { Table } from '@bexis2/bexis2-core-ui';
 	import type { TableConfig } from '@bexis2/bexis2-core-ui';
@@ -49,11 +51,19 @@
 }
 	}
 
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/MyData#GBIF',
+		}
+	];
+
 </script>
 <Page
 	title="GBIF Export Manager"
 	note="Manage all datasets ready to be exported to GBIF."
 	contentLayoutType={pageContentLayoutType.center}
+	{links}
 >
 {#await init()}
 			<div class="text-surface-800">
