@@ -115,7 +115,10 @@ If the template support is activated, then empty unit & datatype fields with inf
 ## DOI & Publishing
 - **DWC export with extensions** Enhancements and fixes ([#1911](https://github.com/BEXIS2/Core/issues/1911))
 - **Retrieval of Correct Broker**: Fix retrieval of the correct and appropriate broker. ([#1929](https://github.com/BEXIS2/Core/issues/1929))
-- **Refactor Publisher Preparing Page**: Refactor the publisher preparing page. ([#2044](https://github.com/BEXIS2/Core/issues/2044))
+- **Refactor Publisher Preparing Page**: Refactor the publisher preparing page. Enhancements
+- **DOI**: Enhancements: Functions to update single fields in metadata without new version ([#1111](https://github.com/BEXIS2/Core/issues/1111))
+- **Publishing**: Enhancements: Add external link type, dataset and tag for selection ([#1111](https://github.com/BEXIS2/Core/issues/1111))
+
 
 ## Permission & User
 - **Can't Delete User**: Cannot delete user. ([#2022](https://github.com/BEXIS2/Core/issues/2022))
@@ -144,4 +147,7 @@ If the template support is activated, then empty unit & datatype fields with inf
 - **Dataset API**: Fix creating a dataset without a data structure is not possible. ([#2059](https://github.com/BEXIS2/Core/issues/2059))
 - **Dataset API**: Fix to throw an error if the dataset has no data structure. ([#2033](https://github.com/BEXIS2/Core/issues/2033))
 - **Metadata Schema**: Fix Out API JSON schema; type element in root node is missing. ([#1952](https://github.com/BEXIS2/Core/issues/1952))
-- **Data Structure API**: Fix meanings missing.([#2079](https://github.com/BEXIS2/Core/issues/2079))
+- **Data Structure API**: Fix meanings and constraints missing.([#2079](https://github.com/BEXIS2/Core/issues/2079))
+
+## Documentation
+- **Docs**: Refactor documentation ([#2028](https://github.com/BEXIS2/Core/issues/2028))
