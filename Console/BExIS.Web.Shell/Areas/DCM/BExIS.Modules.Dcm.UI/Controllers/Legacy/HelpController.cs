@@ -13,16 +13,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult Index()
         {
-            // commentar
             string helpurl = ModuleManager.GetModuleSettings("DCM").GetValueByKey("help").ToString();
-
-            //add default link if not set
-            if (String.IsNullOrEmpty(helpurl))
-            {
-                helpurl = ManualHelper.GetUrl(GeneralSettings.ApplicationVersion, "DCM");
-            }
-
-            return Redirect(helpurl);
+            return Redirect(ManualHelper.GetUrl(helpurl));
         }
     }
 }

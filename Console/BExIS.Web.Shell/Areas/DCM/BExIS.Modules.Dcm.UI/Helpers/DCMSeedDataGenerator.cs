@@ -378,6 +378,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     entityTemplate.AllowedFileTypes = new List<string>();
                     entityTemplate.Activated = true;
                     entityTemplate.MetadataFields = new List<int>() { 4, 1 };
+                    entityTemplate.DisabledHooks = new List<string>() { "Publish" };
                     // set entity
                     entityTemplate.EntityType = publication;
 
