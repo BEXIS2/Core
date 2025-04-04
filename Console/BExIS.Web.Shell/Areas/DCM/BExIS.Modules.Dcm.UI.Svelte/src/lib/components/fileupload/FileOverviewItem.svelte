@@ -9,8 +9,7 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 
 	export let id;
-	export let file:FileInfo;
-
+	export let file: FileInfo;
 
 	export let withDescription;
 	const dispatch = createEventDispatcher();
@@ -23,7 +22,7 @@
 	// set if its possible to generate a structure based on that file
 	export let generateAble = false;
 
- export let faIcon: any = faTrash;
+	export let faIcon: any = faTrash;
 
 	let loading = false;
 	let fileNameSpan = 'col-span-7';
@@ -55,7 +54,6 @@
 
 {#if file.type}
 	<div class="flex gap-5">
-
 		<div class="self-center flex-none w-6"><FileInfo type={file.type} size="x-large" /></div>
 
 		<div class="{fileNameSpan} self-center w-1/4">
@@ -64,7 +62,11 @@
 
 		{#if withDescription}
 			<div class="{fileNameSpan} self-center grow">
-				<TextInput bind:value={file.description} on:change={handleSaveFileDescription}  placeholder="file comments (e.g. revised version, ...)"/>
+				<TextInput
+					bind:value={file.description}
+					on:change={handleSaveFileDescription}
+					placeholder="file comments (e.g. revised version, ...)"
+				/>
 			</div>
 		{:else}
 			<div />

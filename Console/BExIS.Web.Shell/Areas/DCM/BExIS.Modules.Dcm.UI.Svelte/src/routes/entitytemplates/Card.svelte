@@ -12,7 +12,7 @@
 	export let metadataStructure;
 	export let linkedSubjects = [];
 	export let allowedFileTypes = [];
-	export let activated	= false;
+	export let activated = false;
 
 	let hidden = true;
 

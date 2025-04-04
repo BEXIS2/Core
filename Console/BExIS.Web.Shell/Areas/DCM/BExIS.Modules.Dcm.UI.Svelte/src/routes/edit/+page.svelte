@@ -9,7 +9,6 @@
 	import Data from './Data.svelte';
 	import Hooks from './Hooks.svelte';
 
-
 	import {
 		latestFileUploadDate,
 		latestDataDescriptionDate,
@@ -206,12 +205,12 @@
 	// debug infos
 	let visible = false;
 
-	const links:linkType[] = [
-			{
+	const links: linkType[] = [
+		{
 			label: 'Manual',
-			url: '/home/docs/Datasets#dataset-edit-page' }
-		];
-
+			url: '/home/docs/Datasets#dataset-edit-page'
+		}
+	];
 </script>
 
 <Page title="Edit: ({id} | {title})" contentLayoutType={pageContentLayoutType.full} {links}>

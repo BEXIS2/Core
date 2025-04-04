@@ -98,14 +98,20 @@
 
 	const toggle = () => (isOpen = !isOpen);
 
-	const links:linkType[] = [
-			{
+	const links: linkType[] = [
+		{
 			label: 'Manual',
-			url: '/home/docs/Data%20Description#entity-templates' }
-		];
+			url: '/home/docs/Data%20Description#entity-templates'
+		}
+	];
 </script>
 
-<Page title="Entity Templates" note="This page allows you to edit the entity templates and create new ones." help={true} {links}>
+<Page
+	title="Entity Templates"
+	note="This page allows you to edit the entity templates and create new ones."
+	help={true}
+	{links}
+>
 	<svelte:fragment>
 		{#await load()}
 			<div class="text-surface-800">

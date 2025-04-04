@@ -70,6 +70,7 @@ export const editHelp = [
 	{
 		id: 'activated',
 		name: 'Visibility of entity templates when creating entities',
-		description: 'Only the activated entity templates are visible to users and they can only create entities based on these.'
+		description:
+			'Only the activated entity templates are visible to users and they can only create entities based on these.'
 	}
 ];
