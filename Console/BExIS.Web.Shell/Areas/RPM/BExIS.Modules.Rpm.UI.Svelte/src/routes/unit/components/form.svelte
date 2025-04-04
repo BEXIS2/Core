@@ -40,34 +40,33 @@
 	// use to actived save if form is valid
 	$: disabled = !res.isValid();
 
-
-
 	// init unit
 	export let unit: UnitListItem;
 	export let units: UnitListItem[];
 
-	let toggle = {dataTypes: false};
+	let toggle = { dataTypes: false };
 
-	let el: LinkItem[] =[]; 
+	let el: LinkItem[] = [];
 	let dt: DataTypeListItem[];
 	let ms: string[];
-	let ds: DimensionListItem[] = [];	
+	let ds: DimensionListItem[] = [];
 	let linkUrl: URL | null = null;
 	let dimensionlistItem: ListItem | undefined;
 	let linklistItem: ListItem | undefined;
-	setListItems()
+	setListItems();
 
 	$: dataTypes = dt;
 	$: measurementSystems = ms;
 	$: dimensions = ds.map(({ id, name }) => ({ id: id, text: name }));
 	$: externalLinks = el.map(({ id, name }) => ({ id: id, text: name }));
-	$: unit.dimension = dimensionlistItem === undefined ? undefined : ds.find((d) => d.id === dimensionlistItem?.id);
+	$: unit.dimension =
+		dimensionlistItem === undefined ? undefined : ds.find((d) => d.id === dimensionlistItem?.id);
 	$: unit.link = linklistItem === undefined ? undefined : el.find((e) => e.id === linklistItem?.id);
-	$: linkUrl = unit.link === undefined ? null : converttoURL (unit.link.uri);
-	$: unit.link, unit.description, setListItems(), setValidation(); 
+	$: linkUrl = unit.link === undefined ? null : converttoURL(unit.link.uri);
+	$: unit.link, unit.description, setListItems(), setValidation();
 
 	onMount(async () => {
-		setListItems()
+		setListItems();
 		setValidation();
 	});
 
@@ -84,7 +83,10 @@
 				suite.reset();
 			} else {
 				setTimeout(async () => {
-					res = suite({ unit: unit, units: units, measurementSystems: measurementSystems }, undefined);
+					res = suite(
+						{ unit: unit, units: units, measurementSystems: measurementSystems },
+						undefined
+					);
 				}, 100);
 			}
 		}
@@ -143,28 +145,21 @@
 		dispatch('cancel');
 	}
 
-	function converttoURL(uri:string): URL | null
-	{
-		try{
-			return new URL(uri,undefined );
-		}
-		catch
-		{
-			return null
+	function converttoURL(uri: string): URL | null {
+		try {
+			return new URL(uri, undefined);
+		} catch {
+			return null;
 		}
 	}
 
-	function setListItems()
-	{
-		if(unit)
-		{
-			if(unit.dimension)
-			{
+	function setListItems() {
+		if (unit) {
+			if (unit.dimension) {
 				dimensionlistItem = { id: unit.dimension.id, text: unit.dimension.name };
 				console.log('dimensionlistItem', dimensionlistItem);
 			}
-			if (unit.link)
-			{
+			if (unit.link) {
 				linklistItem = { id: unit.link.id, text: unit.link.name };
 				console.log('linklistItem', linklistItem);
 			}
@@ -383,23 +378,25 @@
 						}}
 					/>
 					{#if unit.link != undefined && unit.link != null}
-					<div class="card p-2 my-1 shadow-md" transition:slide>
-						<table class="table table-compact bg-tertiary-500/30">
-							<tr class="bg-primary-300">
-								<th class="text-left px-1">Name</th>
-								<th class="text-left px-1">Link</th>
-							</tr>
-							<tr>
-								<td class="text-left px-1">{unit.link.name}</td>
-								{#if linkUrl != null && (linkUrl.protocol == 'http:' ||  linkUrl.protocol == 'https:')}
-									<!-- svelte-ignore a11y-missing-content -->
-									<td class="text-left px-1"><a href="{unit.link.uri}" target="_blank">{unit.link.uri}</a></td>
-								{:else}
-									<td class="text-left px-1">{unit.link.uri}</td>
-								{/if}
-							</tr>
-						</table>
-					</div>
+						<div class="card p-2 my-1 shadow-md" transition:slide>
+							<table class="table table-compact bg-tertiary-500/30">
+								<tr class="bg-primary-300">
+									<th class="text-left px-1">Name</th>
+									<th class="text-left px-1">Link</th>
+								</tr>
+								<tr>
+									<td class="text-left px-1">{unit.link.name}</td>
+									{#if linkUrl != null && (linkUrl.protocol == 'http:' || linkUrl.protocol == 'https:')}
+										<!-- svelte-ignore a11y-missing-content -->
+										<td class="text-left px-1"
+											><a href={unit.link.uri} target="_blank">{unit.link.uri}</a></td
+										>
+									{:else}
+										<td class="text-left px-1">{unit.link.uri}</td>
+									{/if}
+								</tr>
+							</table>
+						</div>
 					{/if}
 				</div>
 

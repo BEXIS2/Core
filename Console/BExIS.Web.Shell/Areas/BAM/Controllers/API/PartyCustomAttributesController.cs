@@ -13,7 +13,7 @@ namespace BExIS.Modules.Bam.UI.Controllers.API
     public class PartyCustomAttributesController : ApiController
     {
         [HttpGet, Route("api/partyCustomAttributes/{partyTypeId}")]
-        public async Task<HttpResponseMessage> Get(long partyTypeId)
+        public async Task<HttpResponseMessage> GetByPartyTypeIdAsync(long partyTypeId)
         {
             try
             {

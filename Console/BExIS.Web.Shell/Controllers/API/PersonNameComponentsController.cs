@@ -3,11 +3,13 @@ using NameParser;
 using System;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace BExIS.Web.Shell.Controllers.API
 {
+    /// <summary>
+    ///
+    /// </summary>
     public class PersonNameComponentsController : ApiController
     {
         /// <summary>
@@ -16,7 +18,7 @@ namespace BExIS.Web.Shell.Controllers.API
         /// <param name="name">complete name of the person</param>
         /// <returns>separated person names (e.g. first, middle, last,...)</returns>
         [HttpPost, PostRoute("api/personNameComponents")]
-        public async Task<HttpResponseMessage> Post([FromBody] string name)
+        public HttpResponseMessage Post([FromBody] string name)
         {
             try
             {

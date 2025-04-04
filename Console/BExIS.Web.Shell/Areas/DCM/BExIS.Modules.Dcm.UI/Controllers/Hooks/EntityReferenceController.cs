@@ -156,10 +156,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             SelectList tmp = new SelectList(new List<SelectListItem>());
 
             if (id > 0)
-                tmp = helper.GetEntityVersions(id, type);
-            var tmpDecending = tmp.OrderByDescending(x => x.Value).ToList();
+                tmp = helper.GetEntityVersionsDesc(id, type);
+            //var tmpDecending = tmp.OrderByDescending(x => x.Value).ToList();
 
-            return Json(tmpDecending, JsonRequestBehavior.AllowGet);
+            return Json(tmp, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>

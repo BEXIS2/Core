@@ -8,7 +8,7 @@
 </script>
 
 <tableOption>
-	<div class="w-18">
+	<div class="w-24">
 		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 		<button
 			type="button"
@@ -30,7 +30,7 @@
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 			<button
 				type="button"
-				class="chip variant-filled-error shadow-md"
+				class="chip variant-filled-primary shadow-md"
 				title="Delete Variable Template, {row.name}"
 				id="delete-{row.id}"
 				on:mouseover={() => {
@@ -43,9 +43,9 @@
 			>
 				<Fa icon={faTrash} /></button
 			>
-		{:else}
+		<!-- {:else} -->
 			<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-			<button
+			<!-- <button
 				type="button"
 				class="chip variant-filled-error shadow-md"
 				title="Delete Variable Template, {row.name}"
@@ -53,7 +53,7 @@
 				disabled
 			>
 				<Fa icon={faTrash} /></button
-			>
+			> -->
 		{/if}
 	</div>
 </tableOption>

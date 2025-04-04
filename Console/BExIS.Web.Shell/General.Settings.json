@@ -1,14 +1,14 @@
 {
   "id": "shell",
   "name": "General",
-  "description": "The default landing page for the search in the form of <moduleId>, <controller>, <action>. The application's home page will redirect here.    The module must be avilable and active, otherwise another redirect happens to the home page, which causes a loop.     The designated action must be set to public in the feature permission mgmt, otherwise the request will be redirected to the login page.     The 'type' attribute must be compatible with the System.TypeCode case-sensitive.",
+  "description": "The default landing page for the search in the form of <moduleId>, <controller>, <action>. The application's home page will redirect here. The module must be available and active. Otherwise, another redirect happens to the home page, which causes a loop.     The designated action must be set to public in the feature permission mgmt, otherwise the request will be redirected to the login page.     The 'type' attribute must be compatible with the System.TypeCode case-sensitive.",
   "entries": [
     {
       "key": "applicationName",
       "title": "Application Name",
       "value": "AppLocal",
       "type": "String",
-      "description": "The application name is used in several places in the system. e.g. as title in the email"
+      "description": "(Short) name of the BEXIS2 instance. The name is e.g., used in the breadcrumb or as prefix in emails sent via the system. Avoid special characters or to long names."
     },
     {
       "key": "jwt",
@@ -23,11 +23,11 @@
         "validLifetime": 1
       },
       "type": "JSON",
-      "description": "The application name is used in several places in the system. e.g. as title in the email"
+      "description": "JWT settings. <br><b>Do not change any keys!</b>"
     },
     {
       "key": "smtp",
-      "title": "SMTP",
+      "title": "SMTP Configurations",
       "value": {
         "hostName": "smtp.uni-jena.de",
         "hostPort": 587,
@@ -40,7 +40,7 @@
         "fromAddress": "<from_address>"
       },
       "type": "JSON",
-      "description": "The application name is used in several places in the system. e.g. as title in the email"
+      "description": "SMPT settings. <br><b>Do not change any keys!</b>"
     },
     {
       "key": "ldaps",
@@ -48,7 +48,7 @@
       "value": [
         {
           "key": "ldap",
-          "title": "LDAP",
+          "title": "LDAP1",
           "value": {
             "host": "ldap1.uni-jena.de",
             "name": "LDAP",
@@ -62,11 +62,11 @@
             "enabled": true
           },
           "type": "JSON",
-          "description": "ldap configuration"
+          "description": "LDAP configuration"
         },
         {
           "key": "ldap",
-          "title": "LDAP",
+          "title": "LDAP2",
           "value": {
             "host": "",
             "name": "",
@@ -80,40 +80,54 @@
             "enabled": false
           },
           "type": "JSON",
-          "description": "ldap configuration"
+          "description": "LDAP configuration"
         }
       ],
-      "description": "...",
+      "description": "LDAP configuration.",
       "type": "EntryList",
       "options": []
     },
     {
       "key": "landingPage",
-      "title": "Landing Page",
+      "title": "Landing Page (without login)",
       "value": "ddm, publicsearch, index",
       "type": "String",
-      "description": "user is not logging in -> app goes to e.g. (ddm, publicsearch, index). if no destination is entered, the landingpage.htm is loaded from the tenant/content/landingpage.htm"
+      "description": "User is not logging in -> app goes to e.g. (ddm, publicsearch, index). If no destination is entered, the landingpage.htm is loaded from the tenant/content/landingpage.htm"
+    },
+    {
+      "key": "showMenuOnLandingPage",
+      "title": "Show menu on landing page",
+      "value": "true",
+      "type": "Boolean",
+      "description": "Show or hide menu on your own created landing page"
+    },
+    {
+      "key": "showHeaderOnLandingPage",
+      "title": "Show header on landing page",
+      "value": "true",
+      "type": "Boolean",
+      "description": "Show or hide header on your own created landing page"
+    },
+    {
+      "key": "showFooterOnLandingPage",
+      "title": "Show footer on landing page",
+      "value": "true",
+      "type": "Boolean",
+      "description": "Show or hide footer on your own created landing page"
     },
     {
       "key": "landingPageForUsers",
-      "title": "Landing Page for Users",
+      "title": "Landing Page after login for users with permission",
       "value": "ddm, search, index",
       "type": "String",
-      "description": "user logged in, but do not have permission to view the page; shell, home, nopermission is by default; Alternatives must be in a module NOT shell"
+      "description": "User logged in, but does not have permission to view the page; shell, home, nopermission is by default; Alternatives must be in a module NOT shell"
     },
     {
       "key": "landingPageForUsersNoPermission",
-      "title": "Landing Page for Users with no Permission",
+      "title": "Landing Page after login for users with no permission",
       "value": "shell, home, nopermission",
       "type": "String",
-      "description": "landing page for users , when they logged in successfully"
-    },
-    {
-      "key": "faq",
-      "title": "FAQ",
-      "value": "https://github.com/BEXIS2/Core/wiki/FAQ",
-      "type": "String",
-      "description": "landing page for users , when they logged in successfully"
+      "description": "Landing page for users, after logging in successfully without permission."
     },
     {
       "key": "systemEmail",
@@ -124,31 +138,38 @@
     },
     {
       "key": "sendExceptions",
-      "title": "Send Exceptions?",
+      "title": "Send Exceptions to system email address",
       "value": true,
       "type": "Boolean",
-      "description": "If this flag is set to true, all exceptions will be forwarded to SystemEmail."
-    },
-    {
-      "key": "useMultimediaModule",
-      "title": "Use Multimedia Module?",
-      "value": true,
-      "type": "Boolean",
-      "description": "This flag truns on/off the Multimedia Module."
+      "description": "If this flag is set to true, all exceptions will be forwarded to the system email address."
     },
     {
       "key": "usePersonEmailAttributeName",
       "title": "Use Person E-Mail Attribute Name",
       "value": false,
       "type": "Boolean",
-      "description": ""
+      "description": "To activate the linkage between between user email and a party email set Use Person E-Mail Attribute Name to true and define the party party attribute. If one of the email addresses is changed the other is changed as well."
     },
     {
       "key": "personEmailAttributeName",
       "title": "Person E-Mail Attribute Name",
       "value": "Email",
       "type": "String",
-      "description": "david.schoene@uni-jena.de"
+      "description": "To activate the linkage between between user email and a party email set Use Person E-Mail Attribute Name to true and define the party party attribute. If one of the email addresses is changed the other is changed as well."
+    },
+    {
+      "key": "useMultimediaModule",
+      "title": "Use Multimedia Module?",
+      "value": true,
+      "type": "Boolean",
+      "description": "This flag turns on/off the Multimedia Module."
+    },
+    {
+      "key": "faq",
+      "title": "FAQ",
+      "value": "https://github.com/BEXIS2/Core/wiki/FAQ",
+      "type": "String",
+      "description": "FAQ URL. Can link to an external page."
     }
 
   ]

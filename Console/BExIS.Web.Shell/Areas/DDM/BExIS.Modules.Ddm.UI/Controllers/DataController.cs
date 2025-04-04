@@ -1,5 +1,7 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dim.Entities.Export.GBIF;
 using BExIS.Dim.Helpers.BIOSCHEMA;
+using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.Party;
@@ -21,15 +23,18 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
+using BExIS.UI.Models;
 using BExIS.Utils.Config;
+using BExIS.Utils.Data;
+using BExIS.Utils.Extensions;
 using BExIS.Utils.NH.Querying;
 using BExIS.Xml.Helpers;
-using Ionic.Zip;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -157,6 +162,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 ViewData["use_tags"] = moduleSettings.GetValueByKey("use_tags");
                 ViewData["use_minor"] = moduleSettings.GetValueByKey("use_minor");
                 ViewData["check_public_metadata"] = moduleSettings.GetValueByKey("check_public_metadata");
+                ViewData["has_data"] = false;
+                Session["Filter"] = null;
 
                 Dataset researcobject = dm.GetDataset(id);
 
@@ -181,6 +188,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     long latestVersionNr = 0;
                     string isValid = "no";
                     bool isPublic = false;
+                    Dictionary<string, string> labels = new Dictionary<string, string>(); ;
 
                     XmlDocument metadata = new XmlDocument();
 
@@ -200,13 +208,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         latestVersionNr = dm.GetDatasetVersionNr(latestVersionId);
                         latestVersion = (versionId == latestVersionId);
                         // Get version number based on version id
-                        if (versionId != 0)
+                        if (versionId >= 0)
                         {
                             version = dm.GetDatasetVersionNr(versionId);
                         }
 
                         // Throw error if no version id was found.
-                        if (versionId == 0)
+                        if (versionId <= 0)
                         {
                             ModelState.AddModelError("", string.Format("The version with the requested name {1} or id {0} does not exist or is not publicly accessible", version, versionName));
                         }
@@ -225,14 +233,24 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
                             title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
+                            labels = getLabels(id,versionId, tag, dsv.Dataset.EntityTemplate.Name);
                             if (dsv.Dataset.DataStructure != null)
                                 dataStructureId = dsv.Dataset.DataStructure.Id;
 
                             researchPlanId = dsv.Dataset.ResearchPlan.Id;
                             metadata = dsv.Metadata;
 
+                            // check is public
+                            long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
+                            entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
+
+                            isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
+
                             // check if the user has download rights
                             downloadAccess = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read).Result;
+
+                            // if the dataset is public, user or even no user has download rights
+                            if (isPublic) downloadAccess = isPublic;
 
                             // check if a reuqest of this dataset exist
                             if (!downloadAccess)
@@ -246,22 +264,24 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 }
                             }
 
-                            // check is public
-                            long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
-                            entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
-
-                            isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
+                            
 
                             // get data structure type
 
                             if (dsv.Dataset.DataStructure != null && dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
                             {
                                 dataStructureType = DataStructureType.Structured.ToString();
-                                ViewData["gridTotal"] = dm.RowCount(dsv.Dataset.Id, null);
+                                long c = dm.RowCount(dsv.Dataset.Id, null);
+                                ViewData["gridTotal"] = c;
+                                if(c>0) ViewData["has_data"] = true;
                             }
                             else
                             {
                                 dataStructureType = DataStructureType.Unstructured.ToString();
+                                if(dsv.ContentDescriptors.Where(c=>c.Name.Equals("unstructuredData")).Any())
+                                {
+                                    ViewData["has_data"] = true;
+                                }
                             }
 
                             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show " + typeof(Dataset).Name + ": " + title, this.Session.GetTenant());
@@ -292,13 +312,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         RequestExist = requestExist,
                         RequestAble = requestAble,
                         HasRequestRight = hasRequestRight,
-                        IsPublic = isPublic
+                        IsPublic = isPublic,
+                        Labels = labels
                     };
 
                     //set metadata in session
                     Session["ShowDataMetadata"] = metadata;
                     ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
-                    ViewData["isValid"] = isValid;
+                    ViewData["IsValid"] = isValid;
                     ViewData["datasetSettings"] = getSettingsDataset();
                     ViewData["Message"] = "";
                     ViewData["State"] = "";
@@ -334,12 +355,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     }
 
 
-                    // load BioSchema Description if exist
-                    string bioschemadescription = getBioSchema(id, version);
-                    if (!string.IsNullOrEmpty(bioschemadescription))
-                        ViewData["BioSchema"] = bioschemadescription;
+                    if (version > 0)
+                    { 
+                        // load BioSchema Description if exist
+                        string bioschemadescription = getBioSchema(id, version);
+                        if (!string.IsNullOrEmpty(bioschemadescription))
+                            ViewData["BioSchema"] = bioschemadescription;
 
-
+                    }
                     if (asPartial) return PartialView(model);
 
                   
@@ -467,7 +490,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 //set metadata in session
                 Session["ShowDataMetadata"] = metadata;
                 ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
-                ViewData["isValid"] = isValid;
+                ViewData["IsValid"] = isValid;
                 ViewData["datasetSettings"] = getSettingsDataset();
 
                 return PartialView("ShowData", model);
@@ -732,7 +755,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult _CustomPrimaryDataBinding(GridCommand command, string columns, int datasetId, int versionId)
         {
             GridModel model = new GridModel();
-            ViewData["Filter"] = command;
+            Session["Filter"] = command;
             DatasetManager dm = new DatasetManager();
 
             try
@@ -905,24 +928,30 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         {
                             LoggerFactory.LogCustom(message);
 
-                            var es = new EmailService();
-                            es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
-                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
-                                GeneralSettings.SystemEmail
-                                );
+                            using (var emailService = new EmailService())
+                            {
+                                emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
+                                                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
+                                                                GeneralSettings.SystemEmail
+                                                                );
+                            }
                         }
+
+                        if(string.IsNullOrEmpty(title)) title = "no title ("+id+")";
 
                         return File(path, mimetype, title + ext);
                     }
                 }
                 catch (Exception ex)
                 {
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNumber),
-                        ex.Message,
-                        GeneralSettings.SystemEmail
-                        );
-
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNumber),
+                            ex.Message,
+                            GeneralSettings.SystemEmail
+                            );
+                    }
+                        
                     throw ex;
                 }
                 finally
@@ -1058,23 +1087,28 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         path = outputDataManager.GenerateExcelFile(id, versionid, false, null, withUnits);
                         LoggerFactory.LogCustom(message);
 
-                        var es = new EmailService();
-                        es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
-                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
-                            GeneralSettings.SystemEmail
-                            );
+                        using (var emailService = new EmailService())
+                        {
+                            emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
+                                MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
+                                GeneralSettings.SystemEmail
+                                );
+                        }
+                            
 
                         return File(Path.Combine(AppConfiguration.DataPath, path), mimetype, title + ext);
                     }
                 }
                 catch (Exception ex)
                 {
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(id),
-                        ex.Message,
-                        GeneralSettings.SystemEmail
-                        );
-
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetUpdateDatasetHeader(id),
+                            ex.Message,
+                            GeneralSettings.SystemEmail
+                            );
+                    }
+                        
                     throw ex;
                 }
                 finally
@@ -1216,22 +1250,26 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         path = outputDataManager.GenerateExcelFile(id, versionid, true);
                         LoggerFactory.LogCustom(message);
 
-                        var es = new EmailService();
-                        es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
-                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
-                            GeneralSettings.SystemEmail
-                            );
+                        using (var emailService = new EmailService())
+                        {
+                            emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
+                                MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
+                                GeneralSettings.SystemEmail
+                                );
+                        }
 
                         return File(Path.Combine(AppConfiguration.DataPath, path), mimitype, title + ext);
                     }
                 }
                 catch (Exception ex)
                 {
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(id),
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetUpdateDatasetHeader(id),
                         ex.Message,
                         GeneralSettings.SystemEmail
                         );
+                    }
 
                     throw ex;
                 }
@@ -1391,17 +1429,17 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         }
                     }
 
-                    using (ZipFile zip = new ZipFile())
+                    var memoryStream = new MemoryStream();
+
+                    using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
                     {
                         foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                         {
-                            string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
-                            string name = cd.URI.Split('\\').Last();
+                            string filePath = Path.Combine(AppConfiguration.DataPath, cd.URI);
+                            string fileName = cd.URI.Split('\\').Last();
 
-                            zip.AddFile(path, "");
+                            archive.AddFile(filePath);
                         }
-
-                        zip.Save(zipPath);
                     }
 
                     long versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
@@ -1409,21 +1447,25 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             versionNr);
                     LoggerFactory.LogCustom(message);
 
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
-                        MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), "zip", versionNr),
-                        GeneralSettings.SystemEmail
-                        );
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), "zip", versionNr),
+                            GeneralSettings.SystemEmail
+                            );
+                    }
 
                     return File(zipPath, "application/zip", title + ".zip");
                 }
                 catch (Exception ex)
                 {
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(id),
-                        ex.Message,
-                        GeneralSettings.SystemEmail
-                        );
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetUpdateDatasetHeader(id),
+                                                ex.Message,
+                                                GeneralSettings.SystemEmail
+                                                );
+                    }
 
                     throw ex;
                 }
@@ -1448,11 +1490,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     string message = string.Format("dataset {0} version {1} was downloaded as excel.", id, versionNr);
                     LoggerFactory.LogCustom(message);
 
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
                         MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), mimeType, versionNr),
-                        GeneralSettings.SystemEmail
-                        );
+                            GeneralSettings.SystemEmail
+                            );
+                    }
+                        
 
                     return File(Path.Combine(AppConfiguration.DataPath, path), mimeType, title);
                 }
@@ -1601,18 +1646,20 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public PartialViewResult Tags(long id,int version)
         {
             if (id <= 0) throw new ArgumentException("id is not valid");
-            ViewData["Id"] = id;
-     
 
+            ViewData["Id"] = id;
+            List<TagInfoViewModel> tags = new List<TagInfoViewModel>();
             bool hasEditRights = hasUserRights(id, RightType.Write);
 
+            if(version == 0) return PartialView("_tagsView", tags); // return empty list
 
-            List<TagInfoViewModel> tags = new List<TagInfoViewModel>();
+
 
             using (DatasetManager datasetmanager = new DatasetManager())
             {
                 TagInfoHelper _helper = new TagInfoHelper();
                 var versions = datasetmanager.GetDatasetVersions(id);
+
                 var currentVersion = datasetmanager.GetDatasetVersion(id, version);
                 ViewData["Tag"] = currentVersion.Tag?.Nr;
 
@@ -1905,129 +1952,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         private async Task<long> getVersionId(long datasetId,int versionNr=0, string versionName="",  double tagNr=0)
         {
-            // get entity by versionnr,versionName, tagnr
-            RightType rightType = RightType.Read;
-            bool isPublic = false;
-            bool isVerionReady = false;
-   
 
-            string username = GetUsernameOrDefault();
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            bool useTags = false;
+            bool.TryParse(moduleSettings.GetValueByKey("use_tags").ToString(),out useTags);
 
-            using (var permissionManager = new EntityPermissionManager())
-            using (var datasetManager = new  DatasetManager())
-            {
-                var dataset = datasetManager.GetDataset(datasetId);
-
-                // check if dataset is public
-                isPublic = await permissionManager.IsPublicAsync(dataset.EntityTemplate.EntityType.Id, datasetId);
-
-                // get rights
-                bool hasEditRights = await permissionManager.HasEffectiveRightsAsync(username, typeof(Dataset), datasetId, RightType.Write);
-                bool hasReadRights = await permissionManager.HasEffectiveRightsAsync(username, typeof(Dataset), datasetId, RightType.Read);
-
-                // if user has edit rights && public/ internal accessible dont matter
-                if (hasEditRights)
-                {
-                    if (tagNr > 0) // first try use tag
-                    {
-                        return datasetManager.GetLatestVersionIdByTagNr(datasetId, tagNr);
-                    }
-                    else if (!string.IsNullOrEmpty(versionName)) // try use versionname !!obsolete
-                    {
-                        throw new NotImplementedException();
-                    }
-                    else if (versionNr > 0) // try use versionnr
-                    {
-                        return datasetManager.GetDatasetVersionId(datasetId, versionNr);
-                    }
-                    else // use latest version
-                    {
-                        return datasetManager.GetDatasetLatestVersionId(datasetId);
-                    }
-                }
-                else if (hasReadRights)
-                {
-                        
-                    if (tagNr > 0) // public, not public version & not public 
-                    {
-                        return datasetManager.GetLatestVersionIdByTagNr(datasetId, tagNr);
-                    }
-                    else if (!string.IsNullOrEmpty(versionName)) // try use versionname !!obsolete , public, not public version & not public 
-                    {
-                        throw new NotImplementedException();
-                    }
-                    else if (versionNr > 0) // public, not public version & not public 
-                    {
-                        //get the latest version belong to the tag of the requested version
-                        var datasetVersionId = datasetManager.GetDatasetVersionId(datasetId, versionNr);
-                        var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
-                        var latest = datasetManager.GetLatestVersionIdByTagNr(datasetId, datasetVersion.Tag.Nr);
-                        return latest;
-                    }
-                    else // use latest version
-                    {
-                        throw new NotImplementedException();
-                    }
-                }
-                else // no rigths
-                {
- 
-                    long datasetVersionId = -1;
-                    DatasetVersion datasetVersion = null;
-                    Tag tag = null;
-
-                    
-                    if (isPublic || !string.IsNullOrEmpty(username))
-                    {
-                        if (tagNr > 0)
-                        {
-                            datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, tagNr);
-                            if (datasetVersion.Tag != null && datasetVersion.Tag.Final)
-                                return datasetVersion.Id;
-
-                            // if tag is not reachable
-                            tag = datasetManager.GetLatestTag(datasetId, true);
-                            datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, tag.Nr);
-                            if (datasetVersion.Tag != null && datasetVersion.Tag.Final)
-                                return datasetVersion.Id;
-
-                            return -1;
-                        }
-                        else if (!string.IsNullOrEmpty(versionName)) // try use versionname !!obsolete , public, not public version & not public 
-                        {
-                            throw new NotImplementedException();
-                        }
-                        else if (versionNr > 0) // public, not public version & not public 
-                        {
-                            datasetVersion = datasetManager.GetDatasetVersion(datasetId, versionNr);
-                            datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, datasetVersion.Tag.Nr);
-
-                            if (datasetVersion.Tag != null && datasetVersion.Tag.Final)
-                                return datasetVersion.Id;
-
-                            // if tag is not reachable
-                            tag = datasetManager.GetLatestTag(datasetId, true);
-                            datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, tag.Nr);
-
-                            if (datasetVersion.Tag != null && datasetVersion.Tag.Final)
-                                return datasetVersion.Id;
-
-                        }
-
-                        // get latest public
-                        tag = datasetManager.GetLatestTag(datasetId, true);
-                        if (tag == null) return -1;
-                        datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, tag.Nr);
-
-                        if (datasetVersion!=null&& datasetVersion.Tag != null && datasetVersion.Tag.Final)
-                            return datasetVersion.Id;
-
-                    }
-                }
-
-             }
-
-            return - 1;
+            return await DatasetVersionHelper.GetVersionId(datasetId, GetUsernameOrDefault(), versionNr, useTags, tagNr);
+            
         }
 
         public bool UserExist()
@@ -2221,6 +2152,30 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             Session["SettingsDataset"] = dataset_settings_list;
             return dataset_settings_list;
+        }
+
+        public Dictionary<string, string> getLabels(long id, long versionId, double tag, string template)
+        {
+            using (var publicationManager = new PublicationManager())
+            {
+                Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
+
+              
+
+                var publications = publicationManager.PublicationRepo.Query(p => p.Dataset.Id == id && p.DatasetVersion.Id == versionId && p.ExternalLink != "");
+                if (publications != null && publications.Any())
+                {
+
+                    foreach (var item in publications)
+                    {
+                        keyValuePairs.Add(item.ExternalLink, item.ExternalLinkType);
+                    }
+                }
+
+                keyValuePairs.Add(template, "template");
+
+                return keyValuePairs;
+            }
         }
 
         #endregion helper

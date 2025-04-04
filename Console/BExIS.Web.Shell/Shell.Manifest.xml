@@ -36,9 +36,14 @@
             extends="." />
 
     <!--FAQ-->
-    <Export tag="lunchbar" id="helpDdm" order="9"
+	  <Export tag="lunchbar" id="faq" order="2"
             title="FAQ" description="Link to the faq page" icon=""
             controller="help" action="faq"
+            extends="./lunchbarRoot/help" />
+	  
+    <Export tag="lunchbar" id="documentation" order="1"
+            title="Documentation" description="Link to the documentation" icon="fa-book"
+            controller="home" action="docs" argument="general"
             extends="./lunchbarRoot/help" />
 
 	<!--Settings-->

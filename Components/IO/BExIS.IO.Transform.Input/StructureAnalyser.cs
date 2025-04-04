@@ -196,7 +196,7 @@ namespace BExIS.IO.Transform.Input
             }
 
             // return default
-            if (markerCounter.Count == 0) return TextMarker.doubleQuotes;
+            if (markerCounter.Count == 0) return TextMarker.none;
 
             // only one exist, return textseperator
             if (markerCounter.Count == 1) return markerCounter.First().Key;
@@ -215,7 +215,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="systemType"></param>
         /// <returns>DataType</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public List<Entites.DataType> SuggestDataType(string systemType)
+        public List<Entites.DataType> SuggestDataType(string systemType, string value="", List<Entites.DataType> datatypes = null)
         {
             if (string.IsNullOrEmpty(systemType)) throw new ArgumentNullException(nameof(systemType), "system type should not be empty.");
 
@@ -223,7 +223,44 @@ namespace BExIS.IO.Transform.Input
 
             using (var dataTypeManager = new DataTypeManager())
             {
-                result = dataTypeManager.Repo.Query(d => d.SystemType.Equals(systemType)).ToList();
+                if (datatypes == null) datatypes = dataTypeManager.Repo.Query().ToList();
+
+                result = datatypes.Where(d => d.SystemType.Equals(systemType)).ToList();
+
+                if (systemType.Equals("DateTime") && !string.IsNullOrEmpty(value))
+                {
+                    // filter all date time values
+                    // remove all unnecessary chars
+                    var patternSpecialChars = Regex.Replace(value, @"[a-zA-Z0-9\s]", string.Empty);
+
+                    //count full lenght and without time
+                    int lenght = patternSpecialChars.Count();
+                    int withoutTime = lenght;
+
+                    var newString  = patternSpecialChars.Replace(":","");
+                    withoutTime = newString.Length;
+                    //if (patternSpecialChars == ":" || patternSpecialChars == "::") withoutTime = 0;
+                    //else if(patternSpecialChars.Contains(":"))
+                    //    withoutTime = patternSpecialChars.Remove(':').Length;
+
+                    //if without time = 0 then it is a time
+                    if (withoutTime == 0)
+                    {
+                        return dataTypeManager.Repo.Query(d => d.SystemType.Equals(systemType) && d.Name.ToLower() == "time").ToList();
+                    }
+
+                    // if lenght =  without time  then it is a date
+                    if (lenght == withoutTime)
+                    {
+                        return dataTypeManager.Repo.Query(d => d.SystemType.Equals(systemType) && d.Name.ToLower()=="date").ToList();
+                    }
+
+                    //if lenght > without time  then it is a date and time
+                    if (lenght > withoutTime)
+                    {
+                        return dataTypeManager.Repo.Query(d => d.SystemType.Equals(systemType) && d.Name.ToLower() == "datetime").ToList();
+                    }
+                }
             }
 
             return result;
@@ -237,23 +274,33 @@ namespace BExIS.IO.Transform.Input
         /// <param name="similarity"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public List<Entites.Unit> SuggestUnit(string input, string variable, string dataType, double similarity = 0.7)
+        public List<Entites.Unit> SuggestUnit(string input, string variable, string dataType, double similarity = 0.7, List<Unit> allUnits = null, List<Entites.DataType> allDatatypes = null)
         {
+            // init lists
+            List<Unit> units = new List<Unit>();
+            List<Entites.DataType> dataTypes = new List<Entites.DataType>();
+
+            // prepare lists
+            if(allDatatypes!=null) dataTypes = allDatatypes;
+            if(allUnits!=null) units = allUnits;
+
             if (string.IsNullOrEmpty(input) && string.IsNullOrEmpty(dataType)) throw new ArgumentNullException("input and data type should not be empty.");
 
             using (var dataTypeManager = new DataTypeManager())
             using (var unitManager = new UnitManager())
             {
-                List<Unit> units = new List<Unit>();
-
-                if (string.IsNullOrEmpty(dataType)) // no datatype exist
-                {
+                // load from db if empty
+                if(!units.Any())
                     units = unitManager.Repo.Get().ToList();
-                }
-                else // datatype is not empty
+
+                if (!string.IsNullOrEmpty(dataType))
                 {
-                    var dt = dataTypeManager.Repo.Query(d => d.Name.ToLower().Equals(dataType)).FirstOrDefault();
-                    if (dt != null) units = unitManager.Repo.Query(u => u.AssociatedDataTypes.Contains(dt)).ToList();
+                    // load from db if empty if datatype is not empty
+                    if (!dataTypes.Any())
+                        dataTypes = dataTypeManager.Repo.Get().ToList();
+
+                    var dt = dataTypes.FirstOrDefault(d => d.Name.ToLower().Equals(dataType));
+                    if (dt != null) units = units.Where(u => u.AssociatedDataTypes.Any(d=> d.Id.Equals(dt.Id))).ToList();
                 }
 
                 Dictionary<Unit, double> matches = new Dictionary<Unit, double>();
@@ -285,7 +332,7 @@ namespace BExIS.IO.Transform.Input
             }
         }
 
-        public List<Entites.VariableTemplate> SuggestTemplate(string input, long unitId, long dataTypeId, double similarity = 0.7)
+        public List<Entites.VariableTemplate> SuggestTemplate(string input, long unitId, long dataTypeId, double similarity = 0.7, IList<VariableTemplate> allTemplates = null)
         {
             if (string.IsNullOrEmpty(input)) throw new ArgumentNullException(nameof(input), "input should not be empty.");
 
@@ -304,7 +351,8 @@ namespace BExIS.IO.Transform.Input
             using (var variableManager = new VariableManager())
             using (var unitManager = new UnitManager())
             {
-                var allTemplates = variableManager.VariableTemplateRepo.Get();
+                if(allTemplates == null)
+                    allTemplates = variableManager.VariableTemplateRepo.Get();
 
                 // var template matches by name
                 var byNames = new List<VariableTemplate>();
@@ -425,6 +473,22 @@ namespace BExIS.IO.Transform.Input
             }
 
             return result;
+        }
+
+        public DataTypeDisplayPattern SuggestDisplayPattern(string dateTimeValue)
+        {
+            // remove numbers from dateTimeValue to get only the seperator chars
+            var inputSpecialChars = Regex.Replace(dateTimeValue, @"[a-zA-Z0-9\s]", string.Empty);
+
+
+            foreach (var p in DataTypeDisplayPattern.Pattern)
+            { 
+                var patternSpecialChars = Regex.Replace(p.DisplayPattern, @"[a-zA-Z0-9\s]", string.Empty);
+                if (inputSpecialChars == patternSpecialChars)
+                    return p;
+            }
+
+            return null;
         }
 
         private List<Type> checkValue(string value, List<Type> types, List<string> missingValues)

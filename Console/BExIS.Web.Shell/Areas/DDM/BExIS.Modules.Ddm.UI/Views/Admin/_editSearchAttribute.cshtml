@@ -54,9 +54,9 @@
     }
 
     List<string> placeholder = new List<string>();
-    if (ViewData["placeholder"] != null)
+    if (Session["placeholder"] != null)
     {
-        placeholder = (List<string>)ViewData["placeholder"];
+        placeholder = (List<string>)Session["placeholder"];
     }
 
 }

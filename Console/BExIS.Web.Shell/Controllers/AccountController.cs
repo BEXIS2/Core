@@ -21,6 +21,10 @@ namespace BExIS.Web.Shell.Controllers
 {
     public class AccountController : Controller
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult ClearSession()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
@@ -28,136 +32,154 @@ namespace BExIS.Web.Shell.Controllers
             return RedirectToAction("SessionTimeout", "Home", new { area = "" });
         }
 
-        //
-        // GET: /Account/ConfirmEmail
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="code"></param>
+        /// <returns></returns>
         public async Task<ActionResult> ConfirmEmail(long userId, string code)
         {
-            var identityUserService = new IdentityUserService();
-            var signInManager = new SignInManager(AuthenticationManager);
-
             try
             {
-                if (code == null)
+                if (String.IsNullOrEmpty(code))
                 {
                     return View("Error");
                 }
 
-                var result = await identityUserService.ConfirmEmailAsync(userId, code);
-                if (!result.Succeeded) return View("Error");
-                var user = await identityUserService.FindByIdAsync(userId);
-                await signInManager.SignInAsync(user, false, false);
+                using (var identityUserService = new IdentityUserService())
+                using (var signInManager = new SignInManager(AuthenticationManager))
+                {
+                    var result = await identityUserService.ConfirmEmailAsync(userId, code);
+                    if (!result.Succeeded) return View("Error");
 
-                var es = new EmailService();
-                es.Send(MessageHelper.GetRegisterUserHeader(),
-                    MessageHelper.GetRegisterUserMessage(user.Id, user.Name, user.Email),
-                    GeneralSettings.SystemEmail
-                    );
+                    var user = await identityUserService.FindByIdAsync(userId);
+                    await signInManager.SignInAsync(user, false, false);
 
-                return this.IsAccessible("bam", "PartyService", "UserRegistration")
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetRegisterUserHeader(), MessageHelper.GetRegisterUserMessage(user.Id, user.Name, user.Email), GeneralSettings.SystemEmail);
+                    }
+
+                    return this.IsAccessible("bam", "PartyService", "UserRegistration")
                     ? RedirectToAction("UserRegistration", "PartyService", new { area = "bam" })
                     : RedirectToAction("Index", "Home");
+                }
             }
-            finally
+            catch(Exception ex)
             {
-                identityUserService.Dispose();
-                signInManager.Dispose();
+                return View("Error");
             }
         }
 
-        //
-        // POST: /Account/ExternalLogin
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <param name="returnUrl"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ExternalLogin(string provider, string returnUrl)
+        public async Task<ActionResult> ExternalLogin(string provider, string returnUrl)
         {
-            //ControllerContext.HttpContext.Session.RemoveAll();
-            // Umleitung an den externen Anmeldeanbieter anfordern
-            return new ChallengeResult(provider, Url.Action("ExternalLogin", "Account", new { ReturnUrl = returnUrl }));
+            return await Task.FromResult(new ChallengeResult(provider, Url.Action("ExternalLogin", "Account", new { ReturnUrl = returnUrl })));
         }
 
-        //
-        // GET: /Account/ExternalLoginCallback
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="returnUrl"></param>
+        /// <returns></returns>
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
-            var signInManager = new SignInManager(AuthenticationManager);
-
             try
             {
-                var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
-                if (loginInfo == null)
+                using (var signInManager = new SignInManager(AuthenticationManager))
                 {
-                    return RedirectToAction("Login");
-                }
+                    var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
+                    if (loginInfo == null)
+                    {
+                        return RedirectToAction("Login");
+                    }
 
-                // Benutzer mit diesem externen Anmeldeanbieter anmelden, wenn der Benutzer bereits eine Anmeldung besitzt
-                var result = await signInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
-                switch (result)
-                {
-                    case SignInStatus.Success:
-                        return RedirectToLocal(returnUrl);
+                    var result = await signInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
+                    switch (result)
+                    {
+                        case SignInStatus.Success:
+                            return RedirectToLocal(returnUrl);
 
-                    case SignInStatus.LockedOut:
-                        return View("Lockout");
+                        case SignInStatus.LockedOut:
+                            return View("Lockout");
 
-                    case SignInStatus.RequiresVerification:
-                        return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
+                        case SignInStatus.RequiresVerification:
+                            return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
 
-                    case SignInStatus.Failure:
-                    default:
-                        // Benutzer auffordern, ein Konto zu erstellen, wenn er kein Konto besitzt
-                        ViewBag.ReturnUrl = returnUrl;
-                        ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                        return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel() { Email = loginInfo.Email });
+                        case SignInStatus.Failure:
+                        default:
+                            ViewBag.ReturnUrl = returnUrl;
+                            ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
+                            return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel() { Email = loginInfo.Email });
+                    }
                 }
             }
-            finally
+            catch(Exception ex)
             {
-                signInManager.Dispose();
+                return RedirectToAction("Login");
             }
         }
 
-        //
-        // POST: /Account/ExternalLoginConfirmation
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="returnUrl"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model,
-            string returnUrl)
+        public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
         {
-            using (var identityUserService = new IdentityUserService())
-            using (var signInManager = new SignInManager(AuthenticationManager))
+            try
             {
-                if (User.Identity.IsAuthenticated)
+                using (var identityUserService = new IdentityUserService())
+                using (var signInManager = new SignInManager(AuthenticationManager))
                 {
-                    return RedirectToAction("Index", "Manage");
-                }
-
-                if (ModelState.IsValid)
-                {
-                    // Informationen zum Benutzer aus dem externen Anmeldeanbieter abrufen
-                    var info = await AuthenticationManager.GetExternalLoginInfoAsync();
-                    if (info == null)
+                    if (User.Identity.IsAuthenticated)
                     {
-                        return View("ExternalLoginFailure");
+                        return RedirectToAction("Index", "Manage");
                     }
-                    var user = new User { UserName = model.Email, Email = model.Email };
 
-                    var result = await identityUserService.CreateAsync(user);
-                    if (result.Succeeded)
+                    if (ModelState.IsValid)
                     {
-                        result = await identityUserService.AddLoginAsync(user.Id, info.Login);
+                        // Informationen zum Benutzer aus dem externen Anmeldeanbieter abrufen
+                        var info = await AuthenticationManager.GetExternalLoginInfoAsync();
+                        if (info == null)
+                        {
+                            return View("ExternalLoginFailure");
+                        }
+                        var user = new User { UserName = model.Email, Email = model.Email };
+
+                        var result = await identityUserService.CreateAsync(user);
                         if (result.Succeeded)
                         {
-                            await signInManager.SignInAsync(user, false, false);
-                            return RedirectToLocal(returnUrl);
+                            result = await identityUserService.AddLoginAsync(user.Id, info.Login);
+                            if (result.Succeeded)
+                            {
+                                await signInManager.SignInAsync(user, false, false);
+                                return RedirectToLocal(returnUrl);
+                            }
                         }
+                        AddErrors(result);
                     }
-                    AddErrors(result);
-                }
 
-                ViewBag.ReturnUrl = returnUrl;
-                return View(model);
+                    ViewBag.ReturnUrl = returnUrl;
+                    return View(model);
+                }
             }
+            catch(Exception ex)
+            {
+                return null;
+            }
+            
         }
 
         //
@@ -268,7 +290,7 @@ namespace BExIS.Web.Shell.Controllers
                     // set-cookie
                     if (user != null)
                     {
-                        var jwt = JwtHelper.Get(user);
+                        var jwt = JwtHelper.GetTokenByUser(user);
 
                         // Create a new cookie
                         HttpCookie cookie = new HttpCookie("jwt", jwt);
@@ -318,14 +340,19 @@ namespace BExIS.Web.Shell.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        //
-        // GET: /Account/Register
-
-        public async Task<ActionResult> Profile()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public new async Task<ActionResult> Profile()
         {
-            return View();
+            return await Task.FromResult(View());
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Register()
         {
             return View();
@@ -360,12 +387,14 @@ namespace BExIS.Web.Shell.Controllers
                     var code = await identityUserService.GenerateEmailConfirmationTokenAsync(user.Id);
                     await SendEmailConfirmationTokenAsync(user.Id, "Account registration - Verify your email address");
 
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetTryToRegisterUserHeader(),
-                        MessageHelper.GetTryToRegisterUserMessage(user.Id, user.Name, user.Email),
-                        GeneralSettings.SystemEmail
-                        );
-
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetTryToRegisterUserHeader(),
+                            MessageHelper.GetTryToRegisterUserMessage(user.Id, user.Name, user.Email),
+                            GeneralSettings.SystemEmail
+                            );
+                    }
+                        
                     ViewBag.Message = "Before you can log in to complete your registration, please check your email and verify your email address. If you did not receive an email, please also check your spam folder.";
 
                     ExceptionlessClient.Default.SubmitLog("Account Registration", $"{user.Name} has registered sucessfully.", Exceptionless.Logging.LogLevel.Info);

@@ -107,9 +107,19 @@ export const GetConstraintTypes = async () => {
 	}
 };
 
-export const GetDatasetsByConstreint = async (id: number) => {
+export const GetDatasetsByConstraint = async (id: number) => {
 	try {
-		const response = await Api.post('/rpm/constraints/GetDatasetsByConstreint', { id });
+		const response = await Api.post('/rpm/constraints/GetDatasetsByConstraint', { id });
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
+export const GetMeaningsByConstraint = async (id: number) => {
+	try {
+		const response = await Api.post('/rpm/constraints/GetMeaningsByConstraint', { id });
 		return response.data;
 	} catch (error) {
 		console.error(error);

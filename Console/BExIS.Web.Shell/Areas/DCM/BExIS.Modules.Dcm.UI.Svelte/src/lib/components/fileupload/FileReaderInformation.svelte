@@ -2,7 +2,6 @@
 	import { MultiSelect, notificationStore, notificationType } from '@bexis2/bexis2-core-ui';
 
 	import type { DataStructureCreationModel } from '@bexis2/bexis2-rpm-ui';
-
 	import type { asciiFileReaderInfoType, fileInfoType } from '@bexis2/bexis2-core-ui';
 
 	import { load } from './services';
@@ -17,34 +16,18 @@
 	export let readableFiles: fileInfoType[] = [];
 	export let asciiFileReaderInfo: asciiFileReaderInfoType;
 
+	let loading: boolean = false;
+	let fileReaderInfoIsSet: boolean = isSet(asciiFileReaderInfo);
+	console.log('🚀 ~ fileReaderInfoIsSet:', fileReaderInfoIsSet);
+	let style: string = fileReaderInfoIsSet ? 'success' : 'warning';
+	let open: boolean = !fileReaderInfoIsSet;
+
 	export let target: string | undefined = undefined;
 	$: target;
 	let model: DataStructureCreationModel | null;
 	$: model;
 	let list: string[] = [];
 	$: list, update(readableFiles);
-
-	let loading = false;
-	let open = false;
-
-	let style = asciiFileReaderInfo ? 'success' : 'warning';
-
-	async function selectFile(e) {
-		console.log('file reader select file', e.detail.value);
-
-		if (e.detail.value) {
-			open = true;
-			try {
-				model = await load(e.detail.value, id, 0);
-				target = undefined;
-			} catch (error) {
-				notificationStore.showNotification({
-					notificationType: notificationType.error,
-					message: 'This file has not a proper structure, please try a other one.'
-				});
-			}
-		}
-	}
 
 	function update(files) {
 		loading = true;
@@ -53,39 +36,65 @@
 		loading = false;
 	}
 
-	// after closing the selection window reset values
-	function close() {
-		open = false;
-		model = null;
+	function isSet(type: any): boolean {
+		if (type === undefined) {
+			return false;
+		}
+
+		if (type.cells == undefined || type.cells.length == 0) {
+			return false;
+		}
+
+		return true;
+	}
+
+	async function selectFile(e) {
+		console.log('file reader select file', e.detail.value);
+
+		if (e.detail.value) {
+			open = true;
+			try {
+				model = await load(e.detail.value, id, 0);
+				console.log('🚀 ~ selectFile ~ model:', model);
+
+				target = undefined;
+			} catch (error) {
+				notificationStore.showNotification({
+					notificationType: notificationType.error,
+					message: 'This file does not have a proper structure; please try another one.'
+				});
+			}
+		}
 	}
 </script>
 
+<b>File Reader Information for tabular data import</b>
 <div class="card shadow-sm border-{style}-600 border-solid border">
-	<Accordion>
-		<AccordionItem {open}>
+	<Accordion {open}>
+		<AccordionItem>
 			<svelte:fragment slot="summary">
-				{#if asciiFileReaderInfo}
+				{#if fileReaderInfoIsSet}
 					<span class="variant-filled-surface text-{style}-500"><Fa icon={faCheck} /></span>
+				{:else}
+					<span class="text-success-900"><Fa icon={faXmark} /></span>
 				{/if}
 			</svelte:fragment>
-			<svelte:fragment slot="lead">File Reader Information</svelte:fragment>
+			<svelte:fragment slot="lead">Defined</svelte:fragment>
 			<svelte:fragment slot="content">
 				<FileReader {...asciiFileReaderInfo} />
 
 				<MultiSelect
 					id="fileselection"
-					title=""
+					title="test"
 					bind:target
 					source={list}
 					on:change={selectFile}
 					isMulti={false}
 					complexTarget={true}
 					{loading}
-					placeholder="please select a file to set/update the file reader information"
+					placeholder="Please select a file to set/update the file reader information"
 				/>
-
-				{#if model && model.hasStructure}
-				
+				{#if model}
 					<FileReaderSelectionModal {model} on:close={close} />
 				{/if}
 			</svelte:fragment>

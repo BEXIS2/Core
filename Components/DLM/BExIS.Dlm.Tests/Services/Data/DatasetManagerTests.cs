@@ -568,5 +568,128 @@ namespace BExIS.Dlm.Tests.Services.Data
                 }
             }
         }
+
+        [Test()]
+        public void UpdateSingleValueInMetadata_valid_updatedValue()
+        {
+            using (var dm = new DatasetManager())
+            using (var rsm = new ResearchPlanManager())
+            using (var mdm = new MetadataStructureManager())
+            using (var etm = new EntityTemplateManager())
+            {
+                try
+                {
+                    //Arrange
+                    var dsHelper = new DatasetHelper();
+
+                    var dataset = dsHelper.CreateDatasetWithMetadata();
+     
+                    var version = dm.GetDatasetLatestVersion(dataset.Id);
+                    // Act
+                    //string xpath = "Metadata/Basic/BasicType/alternateIdentifier/alternateIdentifierType";
+                    string xpath = "Metadata/Basic/BasicType/DatasetGUID/DatasetGUIDType";
+                    string value = "new doi"+DateTime.Now.ToString();
+
+                    dm.UpdateSingleValueInMetadata(version.Id, xpath, value);
+
+                    //assert
+                    version = dm.GetDatasetLatestVersion(dataset.Id);
+                    string valueFromDb = dm.GetMetadataValueFromDatasetVersion(version.Id, xpath);
+                    Assert.AreEqual(value, valueFromDb);
+
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
+        [Test()]
+        public void UpdateValueInMetadata_valid_updatedValue()
+        {
+            using (var dm = new DatasetManager())
+            using (var rsm = new ResearchPlanManager())
+            using (var mdm = new MetadataStructureManager())
+            using (var etm = new EntityTemplateManager())
+            {
+                try
+                {
+                    //Arrange
+                    var dsHelper = new DatasetHelper();
+
+                    var dataset = dsHelper.CreateDatasetWithMetadata();
+
+                    var version = dm.GetDatasetLatestVersion(dataset.Id);
+                    // Act
+                    //string xpath = "Metadata/Basic/BasicType/alternateIdentifier/alternateIdentifierType";
+                    string xpath = "Metadata/Basic/BasicType/DatasetGUID/DatasetGUIDType";
+                    string value = "new doi" + DateTime.Now.ToString();
+                    string value2 = "new doi new";
+
+                    dm.UpdateSingleValueInMetadata(version.Id, xpath, value);
+
+                    version = dm.GetDatasetLatestVersion(dataset.Id);
+                    dm.UpdateValueInMetadata(version.Id, xpath, value2);
+
+                    //assert
+                    version = dm.GetDatasetLatestVersion(dataset.Id);
+
+                    var l = version.Metadata.SelectNodes(xpath);
+                    Assert.AreEqual(l.Count, 2);
+
+
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
+        [Test()]
+        public void UpdateValueInMetadata_lastValueEmpty_updatedValueFromLast()
+        {
+            using (var dm = new DatasetManager())
+            using (var rsm = new ResearchPlanManager())
+            using (var mdm = new MetadataStructureManager())
+            using (var etm = new EntityTemplateManager())
+            {
+                try
+                {
+                    //Arrange
+                    var dsHelper = new DatasetHelper();
+
+                    var dataset = dsHelper.CreateDatasetWithMetadata();
+
+                    var version = dm.GetDatasetLatestVersion(dataset.Id);
+                    // Act
+                    //string xpath = "Metadata/Basic/BasicType/alternateIdentifier/alternateIdentifierType";
+                    string xpath = "Metadata/Basic/BasicType/DatasetGUID/DatasetGUIDType";
+                    string value = "";
+                    string value2 = "new doi new";
+
+                    dm.UpdateSingleValueInMetadata(version.Id, xpath, value);
+
+                    version = dm.GetDatasetLatestVersion(dataset.Id); // grab new version
+
+                    dm.UpdateValueInMetadata(version.Id, xpath, value2);
+
+                    //assert
+                    version = dm.GetDatasetLatestVersion(dataset.Id);
+
+                    var l = version.Metadata.SelectNodes(xpath);
+                    Assert.AreEqual(l.Count, 1);
+
+                    string valueFromDb = dm.GetMetadataValueFromDatasetVersion(version.Id, xpath);
+                    Assert.AreEqual(value2, valueFromDb);
+
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
     }
 }

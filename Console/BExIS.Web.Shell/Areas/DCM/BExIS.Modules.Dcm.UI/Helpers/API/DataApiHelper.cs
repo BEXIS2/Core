@@ -30,22 +30,21 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
 {
     public class DataApiHelper
     {
-        private DatasetManager datasetManager = new DatasetManager();
-        private UserManager userManager = new UserManager();
-        private EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-        private DataStructureManager dataStructureManager = new DataStructureManager();
-        private FileStream Stream = null;
-        private AsciiReader reader = null;
-        private AsciiWriter asciiWriter = null;
-        private UploadHelper uploadHelper = new UploadHelper();
-
-        private int packageSize = 10000;
-        private string _filepath = "";
+        private DataApiModel _data = null;
         private Dataset _dataset;
         private StructuredDataStructure _dataStructure;
-        private User _user;
-        private DataApiModel _data = null;
+        private string _filepath = "";
         private string _title = "";
+        private User _user;
+        private AsciiWriter asciiWriter = null;
+        private DatasetManager datasetManager = new DatasetManager();
+        private DataStructureManager dataStructureManager = new DataStructureManager();
+        private EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+        private int packageSize = 10000;
+        private AsciiReader reader = null;
+        private FileStream Stream = null;
+        private UploadHelper uploadHelper = new UploadHelper();
+        private UserManager userManager = new UserManager();
         private List<long> variableIds = new List<long>();
         //private UploadMethod _uploadMethod;
 
@@ -65,57 +64,6 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
 
             _dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(_dataset.DataStructure.Id);
             reader = new AsciiReader(_dataStructure, new AsciiFileReaderInfo());
-        }
-
-        /// <summary>
-        /// starting the upload process
-        /// </summary>
-        /// <returns></returns>
-        public async Task<bool> Run()
-        {
-            return await Store();
-        }
-
-        public async Task<bool> Store()
-        {
-            try
-            {
-                Debug.WriteLine("start storing data");
-
-                asciiWriter = new AsciiWriter(IO.TextSeperator.tab);
-                //create a file in a user tempfolder
-                _filepath = Path.Combine(AppConfiguration.DataPath, _user.UserName, "temp" + DateTime.Now.Millisecond + ".tsv");
-
-                FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(_filepath));
-                asciiWriter.CreateFile(Path.GetDirectoryName(_filepath), Path.GetFileName(_filepath));
-
-                //store data into file without units
-                asciiWriter.AddData(_data.Data, _data.Columns, _filepath, _dataset.DataStructure.Id);
-
-                //todo send email to user
-                var es = new EmailService();
-                es.Send(MessageHelper.GetPushApiStoreHeader(_dataset.Id, _title),
-                    MessageHelper.GetPushApiStoreMessage(_dataset.Id, _user.UserName),
-                    new List<string>() { _user.Email },
-                    new List<string>() { GeneralSettings.SystemEmail }
-                    );
-            }
-            catch (Exception ex)
-            {
-                //
-                var es = new EmailService();
-                es.Send(MessageHelper.GetPushApiStoreHeader(_data.DatasetId, _title),
-                    MessageHelper.GetPushApiStoreMessage(_dataset.Id, _user.UserName, new string[] { ex.Message }),
-                    new List<string>() { _user.Email },
-                    new List<string>() { GeneralSettings.SystemEmail }
-                    );
-
-                return false;
-            }
-
-            Debug.WriteLine("end storing data");
-
-            return await PKCheck();
         }
 
         public async Task<bool> PKCheck()
@@ -152,66 +100,70 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
             }
             finally
             {
-                var es = new EmailService();
-                es.Send(MessageHelper.GetPushApiPKCheckHeader(_dataset.Id, _title),
-                    MessageHelper.GetPushApiPKCheckMessage(_dataset.Id, _user.UserName, errors.ToArray()),
-                    new List<string>() { _user.Email },
-                    new List<string>() { GeneralSettings.SystemEmail }
-                    );
+                using (var emailService = new EmailService())
+                {
+                    emailService.Send(MessageHelper.GetPushApiPKCheckHeader(_dataset.Id, _title),
+                                            MessageHelper.GetPushApiPKCheckMessage(_dataset.Id, _user.UserName, errors.ToArray()),
+                                            new List<string>() { _user.Email },
+                                            new List<string>() { GeneralSettings.SystemEmail }
+                                            );
+                }
             }
         }
 
-        public async Task<bool> Validate()
+        /// <summary>
+        /// starting the upload process
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> Run()
         {
-            Debug.WriteLine("start validate data");
+            return await Store();
+        }
 
-            string error = "";
-            //load strutcured data structure
-
-            if (_dataStructure == null)
+        public async Task<bool> Store()
+        {
+            try
             {
-                // send email to user ("failed to load datatructure");
+                Debug.WriteLine("start storing data");
+
+                asciiWriter = new AsciiWriter(IO.TextSeperator.tab);
+                //create a file in a user tempfolder
+                _filepath = Path.Combine(AppConfiguration.DataPath, _user.UserName, "temp" + DateTime.Now.Millisecond + ".tsv");
+
+                FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(_filepath));
+                asciiWriter.CreateFile(Path.GetDirectoryName(_filepath), Path.GetFileName(_filepath));
+
+                //store data into file without units
+                asciiWriter.AddData(_data.Data, _data.Columns, _filepath, _dataset.DataStructure.Id);
+
+                //todo send email to user
+                using (var emailService = new EmailService())
+                {
+                    emailService.Send(MessageHelper.GetPushApiStoreHeader(_dataset.Id, _title),
+                        MessageHelper.GetPushApiStoreMessage(_dataset.Id, _user.UserName),
+                        new List<string>() { _user.Email },
+                        new List<string>() { GeneralSettings.SystemEmail }
+                        );
+                }
+            }
+            catch (Exception ex)
+            {
+                //
+                using (var emailService = new EmailService())
+                {
+                    emailService.Send(MessageHelper.GetPushApiStoreHeader(_data.DatasetId, _title),
+                                            MessageHelper.GetPushApiStoreMessage(_dataset.Id, _user.UserName, new string[] { ex.Message }),
+                                            new List<string>() { _user.Email },
+                                            new List<string>() { GeneralSettings.SystemEmail }
+                                            );
+                }
+
                 return false;
             }
 
-            // validate file
-            using (Stream = reader.Open(_filepath))
-            {
-                reader.ValidateFile(Stream, Path.GetFileName(_filepath), _dataset.Id);
-                List<Error> errors = reader.ErrorMessages;
+            Debug.WriteLine("end storing data");
 
-                // if errors exist -> send messages back
-                if (errors.Count > 0)
-                {
-                    List<string> errorArray = new List<string>();
-
-                    foreach (var e in errors)
-                    {
-                        errorArray.Add(e.GetMessage());
-                    }
-
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetPushApiValidateHeader(_dataset.Id, _title),
-                        MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.UserName, errorArray.ToArray()),
-                        new List<string>() { _user.Email },
-                        new List<string>() { GeneralSettings.SystemEmail }
-                        );
-
-                    return false;
-                }
-                else
-                {
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetPushApiValidateHeader(_dataset.Id, _title),
-                        MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.UserName),
-                        new List<string>() { _user.Email },
-                        new List<string>() { GeneralSettings.SystemEmail }
-                        );
-                }
-                Debug.WriteLine("end validate data");
-            }
-
-            return await Upload();
+            return await PKCheck();
         }
 
         public async Task<bool> Upload()
@@ -225,7 +177,6 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
 
             long id = _dataset.Id;
             string userName = _user.UserName;
-            var es = new EmailService();
 
             try
             {
@@ -271,12 +222,15 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                                 errorArray.Add(e.GetMessage());
                             }
 
-                            //send error messages
-                            es.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id, _title),
-                                MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.UserName, errorArray.ToArray()),
-                                new List<string>() { _user.Email },
-                                new List<string>() { GeneralSettings.SystemEmail }
-                                );
+                            using (var emailService = new EmailService())
+                            {
+                                //send error messages
+                                emailService.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id, _title),
+                                        MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.UserName, errorArray.ToArray()),
+                                        new List<string>() { _user.Email },
+                                        new List<string>() { GeneralSettings.SystemEmail }
+                                        );
+                            }
 
                             return false;
                         }
@@ -295,20 +249,26 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                     string title = workingCopy.Title;
 
                     //send email
-                    es.Send(MessageHelper.GetUpdateDatasetHeader(id),
-                        MessageHelper.GetUpdateDatasetMessage(id, title, _user.DisplayName, typeof(Dataset).Name),
-                        new List<string>() { _user.Email },
-                               new List<string>() { GeneralSettings.SystemEmail }
-                        );
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetUpdateDatasetHeader(id),
+                            MessageHelper.GetUpdateDatasetMessage(id, title, _user.DisplayName, typeof(Dataset).Name),
+                            new List<string>() { _user.Email },
+                                   new List<string>() { GeneralSettings.SystemEmail }
+                            );
+                    }
                 }
                 else
                 {
-                    //ToDo send email to user
-                    es.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id, _title),
-                               MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.UserName, new string[] { "The temporarily stored data could not be read or the dataset is already in checkout status." }),
-                               new List<string>() { _user.Email },
-                               new List<string>() { GeneralSettings.SystemEmail }
-                               );
+                    using (var emailService = new EmailService())
+                    {
+                        //ToDo send email to user
+                        emailService.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id, _title),
+                                   MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.UserName, new string[] { "The temporarily stored data could not be read or the dataset is already in checkout status." }),
+                                   new List<string>() { _user.Email },
+                                   new List<string>() { GeneralSettings.SystemEmail }
+                                   );
+                    }
                 }
 
                 return true;
@@ -318,12 +278,15 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 if (datasetManager.IsDatasetCheckedOutFor(id, userName))
                     datasetManager.UndoCheckoutDataset(id, userName);
 
-                //ToDo send email to user
-                es.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id, _title),
-                                MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.UserName, new string[] { ex.Message }),
-                                new List<string>() { _user.Email },
-                                new List<string>() { GeneralSettings.SystemEmail }
-                                );
+                using (var emailService = new EmailService())
+                {
+                    //ToDo send email to user
+                    emailService.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id, _title),
+                                    MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.UserName, new string[] { ex.Message }),
+                                    new List<string>() { _user.Email },
+                                    new List<string>() { GeneralSettings.SystemEmail }
+                                    );
+                }
 
                 return false;
             }
@@ -331,6 +294,63 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
             {
                 Debug.WriteLine("end of upload");
             }
+        }
+
+        public async Task<bool> Validate()
+        {
+            Debug.WriteLine("start validate data");
+
+            string error = "";
+            //load strutcured data structure
+
+            if (_dataStructure == null)
+            {
+                // send email to user ("failed to load datatructure");
+                return false;
+            }
+
+            // validate file
+            using (Stream = reader.Open(_filepath))
+            {
+                reader.ValidateFile(Stream, Path.GetFileName(_filepath), _dataset.Id);
+                List<Error> errors = reader.ErrorMessages;
+
+                // if errors exist -> send messages back
+                if (errors.Count > 0)
+                {
+                    List<string> errorArray = new List<string>();
+
+                    foreach (var e in errors)
+                    {
+                        errorArray.Add(e.GetMessage());
+                    }
+
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetPushApiValidateHeader(_dataset.Id, _title),
+                            MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.UserName, errorArray.ToArray()),
+                            new List<string>() { _user.Email },
+                            new List<string>() { GeneralSettings.SystemEmail }
+                            );
+                    }
+
+                    return false;
+                }
+                else
+                {
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetPushApiValidateHeader(_dataset.Id, _title),
+                            MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.UserName),
+                            new List<string>() { _user.Email },
+                            new List<string>() { GeneralSettings.SystemEmail }
+                            );
+                    }
+                }
+                Debug.WriteLine("end validate data");
+            }
+
+            return await Upload();
         }
 
         private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool updateData = false)

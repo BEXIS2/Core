@@ -63,8 +63,6 @@
 		}, 10);
 	}
 
-
-	
 	onMount(async () => {
 		ct = await apiCalls.GetConstraintTypes();
 
@@ -72,7 +70,7 @@
 
 		if (constraint.id > 0) {
 			setTimeout(async () => {
-				res = suite({ constraint: constraint, constraints: constraints },undefined);
+				res = suite({ constraint: constraint, constraints: constraints }, undefined);
 			}, 100);
 		}
 	});
@@ -89,7 +87,8 @@
 					type: constraint.type,
 					domain: '',
 					negated: constraint.negated,
-					inUse: constraint.inUse,
+					inUseByVariable: constraint.inUseByVariable,
+					inUseByMeaning: constraint.inUseByMeaning,
 					variableIDs: constraint.variableIDs,
 					provider: '',
 					selectionPredicate: undefined
@@ -120,7 +119,8 @@
 					lowerboundIncluded: true,
 					upperboundIncluded: true,
 					negated: constraint.negated,
-					inUse: constraint.inUse,
+					inUseByVariable: constraint.inUseByVariable,
+					inUseByMeaning: constraint.inUseByMeaning,
 					variableIDs: constraint.variableIDs
 				};
 				if (rangeConstraint.id != 0) {
@@ -146,7 +146,8 @@
 					type: constraint.type,
 					pattern: '',
 					negated: constraint.negated,
-					inUse: constraint.inUse,
+					inUseByVariable: constraint.inUseByVariable,
+					inUseByMeaning: constraint.inUseByMeaning,
 					variableIDs: constraint.variableIDs
 				};
 				if (patternConstraint.id != 0) {
@@ -163,7 +164,7 @@
 	}
 
 	function submit() {
-		if (constraint.inUse) {
+		if (constraint.inUseByVariable || constraint.inUseByMeaning) {
 			const modal: ModalSettings = {
 				type: 'confirm',
 				title: 'Save Constraint',
@@ -244,7 +245,7 @@
 </script>
 
 {#if constraint && constraintTypes}
-	{#if constraint.inUse}
+	{#if constraint.inUseByVariable || constraint.inUseByMeanning}
 		<Warning {constraint} />
 	{/if}
 	<form on:submit|preventDefault={submit}>
@@ -282,7 +283,7 @@
 				<label>Formal Description</label>
 
 				{#if constraint.formalDescription && constraint.formalDescription != ''}
-					<p class="ml-2">
+					<p class="ml-2 break-words line-clamp-2" title={constraint.formalDescription}>
 						{constraint.formalDescription}
 					</p>
 				{:else}

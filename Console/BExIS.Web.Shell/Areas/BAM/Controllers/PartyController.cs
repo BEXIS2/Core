@@ -185,11 +185,11 @@ namespace BExIS.Modules.Bam.UI.Controllers
                             // compare user and party email
                             if (user.Email != entity.Value)
                             {
-                                var es = new EmailService();
-                                es.Send(MessageHelper.GetUpdateEmailHeader(),
-                                    MessageHelper.GetUpdaterEmailMessage(user.DisplayName, user.Email, entity.Value),
-                                    GeneralSettings.SystemEmail
-                                    );
+                                using (var emailService = new EmailService())
+                                {
+                                    emailService.Send(MessageHelper.GetUpdateEmailHeader(), MessageHelper.GetUpdaterEmailMessage(user.DisplayName, user.Email, entity.Value), GeneralSettings.SystemEmail);
+                                }
+                                    
 
                                 // Update user email
                                 user.Email = entity.Value;

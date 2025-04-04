@@ -20,14 +20,18 @@
 	<header id="header_{index}" class="card-header pb-5">
 		<div id={name} class="flex gap-5">
 			<div class="flex gap-2 w-52">
-				<div class="cursor-pointer" on:click={() => (expand = !expand)} on:keypress={() => (expand = !expand)}>
+				<div
+					class="cursor-pointer"
+					on:click={() => (expand = !expand)}
+					on:keypress={() => (expand = !expand)}
+				>
 					{#if expand}<Fa icon={faAngleUp} />
 					{:else}
 						<Fa icon={faAngleDown} />
 					{/if}
 				</div>
 
-				<div class="grow"><slot/></div>
+				<div class="grow"><slot /></div>
 				<Status {isValid} />
 			</div>
 

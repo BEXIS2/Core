@@ -18,6 +18,9 @@ using System.Web.Http;
 
 namespace BExIS.Web.Shell.Controllers.API
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class TokensController : ApiController
     {
         // GET api/Token/
@@ -38,7 +41,7 @@ namespace BExIS.Web.Shell.Controllers.API
 
                     if (user != null)
                     {
-                        var jwt_token = JwtHelper.Get(user);
+                        var jwt_token = await Task.FromResult(JwtHelper.GetTokenByUser(user));
 
                         return Request.CreateResponse(HttpStatusCode.OK, new ReadJwtModel() { Jwt = jwt_token });
                     }
@@ -52,6 +55,11 @@ namespace BExIS.Web.Shell.Controllers.API
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         [HttpPost, PostRoute("api/tokens/verify"), BExISApiAuthorize]
         public async Task<HttpResponseMessage> Verify(string token)
         {
@@ -74,7 +82,7 @@ namespace BExIS.Web.Shell.Controllers.API
                 {
                     var TokenInfo = new Dictionary<string, string>();
                     var handler = new JwtSecurityTokenHandler();
-                    var jwtSecurityToken = handler.ReadJwtToken(token);
+                    var jwtSecurityToken = await Task.FromResult(handler.ReadJwtToken(token));
 
                     return Request.CreateResponse(HttpStatusCode.OK, jwtSecurityToken);
                 }

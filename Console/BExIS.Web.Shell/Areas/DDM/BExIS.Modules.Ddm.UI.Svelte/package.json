@@ -50,11 +50,12 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@bexis2/bexis2-core-ui": "^0.4.19",
+		"@bexis2/bexis2-core-ui": "0.4.44",
 		"@floating-ui/dom": "1.6.8",
 		"@fortawesome/free-solid-svg-icons": "6.6.0",
 		"@sveltejs/adapter-static": "3.0.2",
 		"@sveltejs/package": "2.3.2",
+		"paneforge": "^0.0.6",
 		"patch-package": "8.0.0",
 		"svelte-adapter-github": "1.0.0-next.0",
 		"svelte-fa": "4.0.2",

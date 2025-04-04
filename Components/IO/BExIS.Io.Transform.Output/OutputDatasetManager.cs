@@ -96,6 +96,8 @@ namespace BExIS.IO.Transform.Output
             root.AppendChild(manifest);
             return root;
         }
+
+    
     }
 
     public class OutputFormularObject

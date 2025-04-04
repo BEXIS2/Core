@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { Fa } from 'svelte-fa';
 
 	import { FileInfo, Spinner, TextInput } from '@bexis2/bexis2-core-ui';
@@ -9,9 +9,8 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 
 	export let id;
-	export let file;
-	export let type;
-	export let description;
+	export let file: FileInfo;
+
 	export let withDescription;
 	const dispatch = createEventDispatcher();
 
@@ -22,6 +21,8 @@
 
 	// set if its possible to generate a structure based on that file
 	export let generateAble = false;
+
+	export let faIcon: any = faTrash;
 
 	let loading = false;
 	let fileNameSpan = 'col-span-7';
@@ -35,43 +36,47 @@
 		//remove from server
 		const res = await removeFile(remove, id, file);
 		if (res == true) {
-			let message = file + ' removed.';
-			dispatch('removed', { text: message });
+			let message = file.name + ' removed.';
+			dispatch('removed', { text: message, file: file });
 		}
 		console.log('remove loading');
 		loading = false;
 	}
 
 	async function handleSaveFileDescription() {
-		const res = await saveFileDescription(save, id, file, description);
+		const res = await saveFileDescription(save, id, file);
 		if (res) {
-			let message = 'Description of ' + file + ' is updated.';
+			let message = 'Description of ' + file.name + ' is updated.';
 			dispatch('saved', { text: message });
 		}
 	}
 </script>
 
-{#if type}
+{#if file.type}
 	<div class="flex gap-5">
-		<div class="self-center flex-none"><FileInfo {type} size="x-large" /></div>
+		<div class="self-center flex-none w-6"><FileInfo type={file.type} size="x-large" /></div>
 
-		<div class="{fileNameSpan} self-center grow">
-			{file}
+		<div class="{fileNameSpan} self-center w-1/4">
+			{file.name}
 		</div>
 
 		{#if withDescription}
 			<div class="{fileNameSpan} self-center grow">
-				<TextInput bind:value={description} on:change={handleSaveFileDescription} />
+				<TextInput
+					bind:value={file.description}
+					on:change={handleSaveFileDescription}
+					placeholder="file comments (e.g. revised version, ...)"
+				/>
 			</div>
 		{:else}
 			<div />
 		{/if}
 
-		<div class="text-right">
+		<div class="self-end">
 			{#if loading}
 				<Spinner textCss="text-surface-500" />
 			{:else}
-				<button class="btn" on:click={(e) => handleRemoveFile(e)}><Fa icon={faTrash} /></button>
+				<button class="btn" on:click={(e) => handleRemoveFile(e)}><Fa icon={faIcon} /></button>
 			{/if}
 		</div>
 	</div>

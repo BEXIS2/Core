@@ -13,7 +13,7 @@ namespace BExIS.Modules.Bam.UI.Controllers.API
     public class PartiesController : ApiController
     {
         [HttpGet, GetRoute("api/parties/{partyId}")]
-        public async Task<HttpResponseMessage> GetById(long partyId)
+        public async Task<HttpResponseMessage> GetByIdAsync(long partyId)
         {
             try
             {

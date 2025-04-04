@@ -1,7 +1,7 @@
 export const dataStructureHelp = [
 	{
 		id: 'delimeter',
-		name: 'Delimeter',
+		name: 'Delimiter',
 		description: 'Please select the separator used in your file here'
 	},
 	{
@@ -60,7 +60,7 @@ export const dataStructureHelp = [
 		id: 'missing-value-description',
 		name: 'Missing Value Description',
 		description:
-			'Please enter the description of what this missing value means. (e.g. na - not available).'
+			'Please enter the description of what this missing value means (e.g. na - not available).'
 	},
 	{
 		id: 'delete-missing-value',
@@ -101,7 +101,7 @@ export const dataStructureHelp = [
 	{
 		id: 'copy-next',
 		name: 'Copy to Next',
-		description: 'Copy the content of this variable to the next.'
+		description: 'Copy the content of this variable to the next variable.'
 	},
 	{
 		id: 'copy-all',
@@ -111,7 +111,7 @@ export const dataStructureHelp = [
 	{
 		id: 'delete-var',
 		name: 'Delete variable',
-		description: 'Copy the content of this variable to all variable afterwards.'
+		description: 'Delete this variable.'
 	},
 	{
 		id: 'up-var',
@@ -126,6 +126,6 @@ export const dataStructureHelp = [
 	{
 		id: 'copy-var',
 		name: 'Copy variable',
-		description: 'Copy this variable after this.'
+		description: 'Copy this variable and add as new variable after this.'
 	}
 ];

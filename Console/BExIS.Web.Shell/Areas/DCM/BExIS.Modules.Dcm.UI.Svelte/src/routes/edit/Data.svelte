@@ -7,6 +7,7 @@
 	import DataDescription from '$lib/hooks/DataDescription.svelte';
 	import Submit from '$lib/hooks/Submit.svelte';
 	import Metadata from '$lib/hooks/Metadata.svelte';
+	import Data from '$lib/hooks/Data.svelte';
 	import { Spinner } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa';
 	import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
@@ -23,6 +24,7 @@
 	let fileUploadHook;
 	let validationHook;
 	let submitHook;
+	let dataHook;
 
 	$: hooks, setHooks(hooks);
 
@@ -33,6 +35,9 @@
 			}
 			if (h.name == 'fileupload') {
 				fileUploadHook = h;
+			}
+			if (h.name == 'data') {
+				dataHook = h;
 			}
 			if (h.name == 'validation') {
 				validationHook = h;
@@ -94,7 +99,17 @@
 			</div>
 		</HookContainer>
 
-		
+		<HookContainer {...dataHook} let:successHandler let:warningHandler let:dateChanged>
+			<div>
+				<Data
+					{id}
+					{version}
+					hook={dataHook}
+					on:success={(e) => successHandler(e)}
+					on:warning={(e) => warningHandler(e)}
+				/>
+			</div>
+		</HookContainer>
 
 		<HookContainer {...validationHook}>
 			<div>

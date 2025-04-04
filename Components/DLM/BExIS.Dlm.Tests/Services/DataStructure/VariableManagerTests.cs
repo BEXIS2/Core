@@ -169,7 +169,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 meaning.Name = "Test";
                 meaning.Description = "Test";
                 meaning.Selectable = true;
-                meaning = meaningManager.addMeaning(meaning);
+                meaning = meaningManager.AddMeaning(meaning);
 
                 var result = variableManager.CreateVariableTemplate(
                     "TestVariableTemplate",
@@ -310,7 +310,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 meaning.Name = "Test";
                 meaning.Description = "Test";
                 meaning.Selectable = true;
-                meaning = meaningManager.addMeaning(meaning);
+                meaning = meaningManager.AddMeaning(meaning);
 
                 var varTemp = variableManager.CreateVariableTemplate(
                     "TestVariableTemplate",
@@ -1346,7 +1346,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     );
 
                 //meaning
-                var meaning = meaningManager.addMeaning(
+                var meaning = meaningManager.AddMeaning(
                     "TestMeaning",
                     "",
                     "",
@@ -1431,7 +1431,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                     );
 
                 //meaning
-                var meaning = meaningManager.addMeaning(
+                var meaning = meaningManager.AddMeaning(
                     "TestMeaning",
                     "",
                     "",
