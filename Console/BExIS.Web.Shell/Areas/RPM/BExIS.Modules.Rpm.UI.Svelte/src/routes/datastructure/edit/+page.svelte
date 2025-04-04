@@ -32,6 +32,9 @@
 	//help
 	import { dataStructureHelp } from '../help';
 	import { Modal } from '@skeletonlabs/skeleton';
+
+	import type { linkType } from '@bexis2/bexis2-core-ui';
+
 	let helpItems: helpItemType[] = dataStructureHelp;
 
 	// load attributes from div
@@ -110,6 +113,13 @@
 	function back() {
 		init = false;
 	}
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#data-structures',
+		}
+	];
 </script>
 
 <Page
@@ -118,6 +128,7 @@
 	contentLayoutType={pageContentLayoutType.full}
 	help={true}
 	footer={false}
+	{links}
 >
 	{#await start()}
 		<Spinner label="the data structure is loading" />

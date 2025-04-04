@@ -2,6 +2,7 @@
 	import { fade } from 'svelte/transition';
 
 	import { positionType, ErrorMessage } from '@bexis2/bexis2-core-ui';
+	import type { linkType } from '@bexis2/bexis2-core-ui';
 
 	// ui components
 	import Fa from 'svelte-fa';
@@ -96,9 +97,15 @@
 	}
 
 	const toggle = () => (isOpen = !isOpen);
+
+	const links:linkType[] = [
+			{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#entity-templates' }
+		];
 </script>
 
-<Page title="Entity Templates" note="This page allows you to edit the entity templates and create new ones." help={true}>
+<Page title="Entity Templates" note="This page allows you to edit the entity templates and create new ones." help={true} {links}>
 	<svelte:fragment>
 		{#await load()}
 			<div class="text-surface-800">

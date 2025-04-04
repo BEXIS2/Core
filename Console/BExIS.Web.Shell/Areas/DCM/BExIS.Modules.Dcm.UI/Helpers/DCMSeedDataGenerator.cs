@@ -77,7 +77,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 #region create entities
 
-                // Entities
+                // Entities - Dataset
                 Entity entity = entityManager.Entities.Where(e => e.Name.ToUpperInvariant() == "Dataset".ToUpperInvariant()).FirstOrDefault();
 
                 if (entity == null)
@@ -114,6 +114,45 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     entity.Extra = xmlDoc;
 
                     entityManager.Update(entity);
+                }
+
+                // publication
+                var publication = entityManager.Entities.Where(e => e.Name.ToUpperInvariant() == "Publication".ToUpperInvariant()).FirstOrDefault();
+
+                if (publication == null)
+                {
+                    publication = new Entity();
+                    publication.Name = "Publication";
+                    publication.EntityType = typeof(Dataset);
+                    publication.EntityStoreType = typeof(Xml.Helpers.PublicationStore);
+                    publication.UseMetadata = true;
+                    publication.Securable = true;
+
+                    //add to Extra
+
+                    XmlDocument xmlDoc = new XmlDocument();
+                    XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                    xmlDatasetHelper.AddReferenceToXml(xmlDoc, AttributeNames.name.ToString(), "ddm", AttributeType.parameter.ToString(), "extra/modules/module");
+
+                    publication.Extra = xmlDoc;
+
+                    entityManager.Create(publication);
+                }
+                else
+                {
+                    XmlDocument xmlDoc = new XmlDocument();
+
+                    if (publication.Extra != null)
+                        if (publication.Extra is XmlDocument) xmlDoc = publication.Extra as XmlDocument;
+                        else xmlDoc.AppendChild(publication.Extra);
+
+                    //update to Extra
+                    XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                    xmlDatasetHelper.AddReferenceToXml(xmlDoc, AttributeNames.name.ToString(), "ddm", AttributeType.parameter.ToString(), "extra/modules/module");
+
+                    publication.Extra = xmlDoc;
+
+                    entityManager.Update(publication);
                 }
 
                 #endregion create entities
@@ -254,17 +293,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         titleXPath, descriptionXpath);
                 }
 
-                //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Full ABCD")))
-                //{
-                //    string titleXPath =
-                //        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
-                //    string descriptionXpath =
-                //        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
 
-                //    ImportSchema("Full ABCD", "ABCD_2.06.XSD", "DataSet", entity.Name, entity.EntityType.FullName,
-                //        titleXPath, descriptionXpath);
-
-                //}
 
                 if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("GBIF")))
                 {
@@ -274,8 +303,14 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     ImportSchema("GBIF", "eml.xsd", "Dataset", entity.Name, entity.EntityType.FullName, titleXPath,
                         descriptionXpath);
                 }
-                //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic Eml")))
-                //    ImportSchema("Basic Eml", "eml-dataset.xsd", entity.Name, entity.Name, entity.EntityType.FullName);
+
+                if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Publication")))
+                {
+                    string titleXPath = "Metadata/publication/publicationType/Title/TitleType";
+                    string descriptionXpath = "Metadata/publication/publicationType/Abstract/AbstractType";
+
+                    ImportSchema("Publication", "BEXIS2-Publication-Schema-draft.xsd", "Metadata", publication.Name, publication.EntityType.FullName, titleXPath, descriptionXpath);
+                }
 
                 #endregion Add Metadata
 
@@ -322,6 +357,29 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                     // set entity
                     entityTemplate.EntityType = entity;
+
+                    entityTemplateManager.Create(entityTemplate);
+                }
+
+                if (!entityTemplateManager.Repo.Get().Any(d => d.Name.Equals("Publication")))
+
+                {
+                    EntityTemplate entityTemplate = new EntityTemplate();
+                    entityTemplate.Name = "Publication";
+                    entityTemplate.Description = "Create a publication";
+
+                    // set metadatastructure
+                    var metadataStructure = metadataStructureManager.Repo.Get().Where(m => m.Name.Equals("Publication")).FirstOrDefault();
+                    entityTemplate.MetadataStructure = metadataStructure;
+                    // default input fields , title, descritpion
+                    //entityTemplate.MetadataFields = new List<int>() { 4, 1 };
+                    entityTemplate.HasDatastructure = false;
+                    entityTemplate.DatastructureList = new List<long>();
+                    entityTemplate.AllowedFileTypes = new List<string>();
+                    entityTemplate.Activated = true;
+                    entityTemplate.MetadataFields = new List<int>() { 4, 1 };
+                    // set entity
+                    entityTemplate.EntityType = publication;
 
                     entityTemplateManager.Create(entityTemplate);
                 }

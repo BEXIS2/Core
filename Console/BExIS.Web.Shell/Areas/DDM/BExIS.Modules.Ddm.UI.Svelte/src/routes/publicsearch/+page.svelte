@@ -1,13 +1,13 @@
 <script lang="ts">
 
 	import Search from "$lib/components/Search.svelte";
-		import {type linkType, Page, pageContentLayoutType } from "@bexis2/bexis2-core-ui";
+	import {type linkType, Page, pageContentLayoutType } from "@bexis2/bexis2-core-ui";
 
 
 	const controller = 'publicsearch';
 
 		const links:linkType[] = [
-			{ label: 'Manual', url: '/home/docs/configuration#search' }
+			{ label: 'Manual', url: '/home/docs/Search%20&%20Download%20Data' }
 		];
 
 

@@ -22,6 +22,8 @@
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import type { DimensionListItem } from './models';
 
+	import type { linkType } from '@bexis2/bexis2-core-ui';
+
 	// modal
 	const modalStore = getModalStore();
 
@@ -61,7 +63,7 @@
 		};
 	}
 
-	function editDimension(type: any) {	
+	function editDimension(type: any) {
 		if (type.action == 'edit') {
 			dimension = { ...dimensions.find((d) => d.id === type.id)! };
 			showForm = true;
@@ -118,9 +120,16 @@
 		}
 		showForm = !showForm;
 	}
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#dimensions',
+		}
+	];
 </script>
 
-<Page help={true} title="Manage Dimensions">
+<Page help={true} title="Manage Dimensions" {links}>
 	<div class="w-full">
 		<h1 class="h1">Dimensions</h1>
 

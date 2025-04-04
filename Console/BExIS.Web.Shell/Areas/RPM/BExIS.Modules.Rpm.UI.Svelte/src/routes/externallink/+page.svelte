@@ -48,6 +48,8 @@
 	import UrlPreview from './UrlPreview.svelte';
 	import type { SvelteComponent } from 'svelte';
 
+	import type { linkType } from '@bexis2/bexis2-core-ui';
+
 	let showForm = false;
 
 	async function reload() {
@@ -205,9 +207,17 @@
 			message: "Can't save external Link."
 		});
 	}
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#external-links',
+		}
+	];
+
 </script>
 
-<Page help={true} title="Manage External Links">
+<Page help={true} title="Manage External Links" {links}>
 	{#await reload()}
 		<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h-9 w-96 placeholder animate-pulse" />

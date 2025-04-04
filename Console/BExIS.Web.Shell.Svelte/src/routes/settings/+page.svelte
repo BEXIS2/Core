@@ -6,11 +6,14 @@
 
 	import { Page, notificationType, notificationStore, helpStore } from '@bexis2/bexis2-core-ui';
 	import type { helpItemType } from '@bexis2/bexis2-core-ui';
+	import type { linkType } from '@bexis2/bexis2-core-ui';
+
 	import Entry from '../../components/entry.svelte';
 	import { get, getByModuleId, putByModuleId } from '../../services/settingManager';
 	import { UpdateSettingModel } from '$models/settingModels';
 
 	import { ListBox, ListBoxItem } from '@skeletonlabs/skeleton';
+
 
 	onMount(async () => {
 		// module = await getModuleByName('sam');
@@ -69,9 +72,16 @@
 	}
 
 	let module: string = 'shell';
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Configuration#configuration-ui',
+		}
+	];
 </script>
 
-<Page help={true} fixLeft={false}>
+<Page help={true} fixLeft={false} {links}>
 	<div slot="left">
 		{#await getSettings()}
 			<div id="spinner">... loading ...</div>

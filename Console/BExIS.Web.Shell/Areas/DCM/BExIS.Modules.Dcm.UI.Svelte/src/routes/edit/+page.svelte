@@ -3,9 +3,12 @@
 	import { Page, ErrorMessage, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 	import { Modal } from '@skeletonlabs/skeleton';
 
+	import type { linkType } from '@bexis2/bexis2-core-ui';
+
 	import Header from './Header.svelte';
 	import Data from './Data.svelte';
 	import Hooks from './Hooks.svelte';
+
 
 	import {
 		latestFileUploadDate,
@@ -202,9 +205,16 @@
 
 	// debug infos
 	let visible = false;
+
+	const links:linkType[] = [
+			{
+			label: 'Manual',
+			url: '/home/docs/Datasets#dataset-edit-page' }
+		];
+
 </script>
 
-<Page title="Edit: ({id} | {title})" contentLayoutType={pageContentLayoutType.full}>
+<Page title="Edit: ({id} | {title})" contentLayoutType={pageContentLayoutType.full} {links}>
 	<Header {id} {version} {title} />
 	{#await load()}
 		<Placeholder />
