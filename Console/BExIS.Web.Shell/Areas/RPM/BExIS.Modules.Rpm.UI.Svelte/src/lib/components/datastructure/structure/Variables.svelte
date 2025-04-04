@@ -364,7 +364,10 @@
 				{/if}
 			</div>
 		{:else}
+		 {#if dataExist}
 			<Spinner label="loading suggested structure based on your file." />
+			{:else}
+			<Spinner label="loading structure." />
 		{/if}
 	</div>
 </div>
