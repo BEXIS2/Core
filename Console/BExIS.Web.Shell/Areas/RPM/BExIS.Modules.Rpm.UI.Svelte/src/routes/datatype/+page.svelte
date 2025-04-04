@@ -22,6 +22,7 @@
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import type { DataTypeListItem } from './models';
 
+	import type { linkType } from '@bexis2/bexis2-core-ui';
 	const modalStore = getModalStore();
 
 	let dts: DataTypeListItem[] = [];
@@ -38,7 +39,7 @@
 	onMount(async () => {
 		helpStore.setHelpItemList(helpItems);
 		showForm = false;
-		clear();	
+		clear();
 	});
 
 	async function reload(): Promise<void> {
@@ -60,7 +61,7 @@
 		};
 	}
 
-	function editDataType(type: any) {		
+	function editDataType(type: any) {
 		if (type.action == 'edit') {
 			dataType = { ...dataTypes.find((dt) => dt.id === type.id)! };
 			showForm = true;
@@ -86,7 +87,7 @@
 							if (dt.id === dataType.id) {
 								toggleForm();
 							}
-						}						
+						}
 					}
 				}
 			};
@@ -117,9 +118,16 @@
 		}
 		showForm = !showForm;
 	}
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#data-types',
+		}
+	];
 </script>
 
-<Page help={true} title="Manage Data Types">
+<Page help={true} title="Manage Data Types" {links}>
 	<div class="w-full">
 		<h1 class="h1">Data Types</h1>
 

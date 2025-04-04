@@ -16,7 +16,7 @@
       "value": "alumni",
       "type": "String",
       "options": [],
-      "description": "The role/group that is assigned to a user when he/she is no longer a member of the project."
+      "description": "The entry specifies the name of the group assigned to a user when they are no longer an active user of your instance. The user group needs to be created before."
     },
     {
       "key": "mailTextTitle",

@@ -28,15 +28,14 @@
 	import { fade, slide } from 'svelte/transition';
 	import PrefixCategoryForm from './PrefixCategory.svelte';
 
+	import type { linkType } from '@bexis2/bexis2-core-ui';
+
 	let showForm = false;
 
 	async function reload() {
 		// get external links
 		prefixCategories = await getPrefixCategories();
-		console.log('🚀 ~ file: +page.svelte:39 ~ reload ~ prefixCategories:', prefixCategories);
 		prefixCategoryStore.set(prefixCategories);
-
-		console.log('store', $prefixCategoryStore);
 	}
 
 	const m: TableConfig<prefixCategoryType> = {
@@ -75,16 +74,12 @@
 	}
 
 	function edit(type: any) {
-		console.log('🚀 ~ file: +page.svelte:88 ~ edit ~ type:', type);
-
 		if (type.action == 'edit') {
-			showForm = false;
 			prefixCategory = $prefixCategoryStore.find((u) => u.id === type.id)!;
 			showForm = true;
 		}
 
 		if (type.action == 'delete') {
-			console.log('🚀 ~ file: +page.svelte:97 ~ edit ~ type.action:', type.action);
 			let pc: prefixCategoryType = $prefixCategoryStore.find((u) => u.id === type.id)!;
 			const confirm: ModalSettings = {
 				type: 'confirm',
@@ -98,7 +93,7 @@
 						{
 							reload();
 							if (pc.id === prefixCategory.id)
-							{ 
+							{
 								toggleForm();
 							}
 						}
@@ -110,20 +105,18 @@
 	}
 
 	async function deleteFn(pc: prefixCategoryType): Promise<boolean> {
-		console.log('🚀 ~ file: +page.svelte:112 ~ deleteFn ~ id:', pc.id);
-
 		const res = await remove(pc.id);
 
 		if (res) {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'Prefix Category deleted.'
+				message: 'Prefix Category "' + pc.name + '" deleted.'
 			});
 			return true;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: "Can't delete Prefix Category."
+				message: 'Can\'t delete Prefix Category "' + pc.name + '".'
 			});
 			return false;
 		}
@@ -136,11 +129,9 @@
 			notificationType: notificationType.success,
 			message: message
 		});
-
-		showForm = false;
-
 		setTimeout(async () => {
 			reload();
+			toggleForm();
 		}, 10);
 	}
 
@@ -150,6 +141,13 @@
 			message: "Can't save Prefix Category."
 		});
 	}
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#prefix-categories',
+		}
+	];
 </script>
 
 <Page help={true} title="Manage External Links">
@@ -170,7 +168,7 @@
 		<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h3 h-9">
 				{#if prefixCategory.id < 1}
-					<span in:fade={{ delay: 400 }} out:fade>Create neẇ Prefix Category</span>
+					<span in:fade={{ delay: 400 }} out:fade>Create new Prefix Category</span>
 				{:else}
 					<span in:fade={{ delay: 400 }} out:fade>{prefixCategory.name}</span>
 				{/if}
@@ -181,7 +179,7 @@
 					<button
 						transition:fade
 						class="btn variant-filled-secondary shadow-md h-9 w-16"
-						title="Create neẇ Prefix Category"
+						title="Create new Prefix Category"
 						id="create"
 						on:mouseover={() => {
 							helpStore.show('create');

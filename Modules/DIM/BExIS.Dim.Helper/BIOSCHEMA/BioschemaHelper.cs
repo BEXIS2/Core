@@ -22,14 +22,13 @@ namespace BExIS.Dim.Helpers.BIOSCHEMA
         {
             try
             {
-
-
                 using (var conceptManager = new ConceptManager())
                 using (var datasetManager = new DatasetManager())
                 {
                     var dataset = datasetManager.GetDataset(id);
                     if (dataset == null) return string.Empty;
 
+                    var firstVersion = datasetManager.GetDatasetVersion(id, 1);
                     var version = datasetManager.GetDatasetVersion(id, versionNr);
                     if (version == null) return string.Empty;
 
@@ -44,12 +43,23 @@ namespace BExIS.Dim.Helpers.BIOSCHEMA
                     JsonExtensions.TransformToMatchClassTypes(jObject, typeof(BioSchema));
                     json = JsonConvert.SerializeObject(jObject, Newtonsoft.Json.Formatting.Indented);
 
+                    DateTime creationDate = (DateTime)firstVersion.ModificationInfo?.Timestamp;
+                    DateTime modificationDate = (DateTime)version?.ModificationInfo?.Timestamp;
+
                     BioSchema bioSchema = JsonConvert.DeserializeObject<BioSchema>(json);
                     if (bioSchema.Dataset != null)
                     {
                         bioSchema.Dataset.Id = url;
+                        bioSchema.Dataset.Version = "" + versionNr;
                         bioSchema.Dataset.Identifier = "" + id;
                         bioSchema.Dataset.Url = url;
+                        bioSchema.Dataset.DateCreated = creationDate.ToString();
+                        bioSchema.Dataset.DateModified = modificationDate.ToString();
+
+                        if (version.PublicAccess)
+                        {
+                            bioSchema.Dataset.DatePublished = version.ModificationInfo?.Timestamp.ToString();
+                        }
                     }
 
                     json = JsonConvert.SerializeObject(bioSchema.Dataset);

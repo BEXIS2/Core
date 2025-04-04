@@ -9,18 +9,16 @@
 	let container;
 	let id: number | undefined = undefined;
 
-
 	load();
 
 	async function load() {
 		// get data from parent
 		container = document.getElementById('test');
 		id = Number(container?.getAttribute('dataset'));
-
 	}
 </script>
 
-<Page contentLayoutType="{pageContentLayoutType.full}">
+<Page contentLayoutType={pageContentLayoutType.full}>
 	{#if id}
 		<PrimaryData {id} />
 	{/if}

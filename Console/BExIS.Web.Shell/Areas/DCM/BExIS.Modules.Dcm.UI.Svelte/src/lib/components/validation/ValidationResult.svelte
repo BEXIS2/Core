@@ -7,14 +7,13 @@
 	import { faCheck, faXmark, faBan } from '@fortawesome/free-solid-svg-icons';
 	import Message from './Message.svelte';
 
-
 	export let file;
 	export let sortedErrors: sortedError[];
 	$: sortedErrors;
-	
+
 	export let sortedWarnings: sortedWarning[];
 	$: sortedWarnings;
-	
+
 	let workflow: errorType[] = [
 		errorType.Dataset,
 		errorType.File,
@@ -23,7 +22,7 @@
 		errorType.Value,
 		errorType.PrimaryKey,
 		errorType.Other
-]
+	];
 
 	let checkDisplayName = {
 		['Dataset']: 'Dataset',
@@ -32,7 +31,7 @@
 		['Datastructure']: 'Data Structure',
 		['Value']: 'Value',
 		['PrimaryKey']: 'Primary Key',
-		['Other']: 'Other',
+		['Other']: 'Other'
 	};
 
 	let checks: Check[] = [];
@@ -45,18 +44,17 @@
 
 	onMount(async () => {
 		let faild: boolean = false;
-		console.log("🚀 ~ sortedWarnings:", sortedWarnings)
-		console.log("🚀 ~ sortedErrors:", sortedErrors)
+		console.log('🚀 ~ sortedWarnings:', sortedWarnings);
+		console.log('🚀 ~ sortedErrors:', sortedErrors);
 
 		for (let index = 0; index < workflow.length; index++) {
 			const type = workflow[index];
 			const name = errorType[type];
 			const errors = sortedErrors.filter((e) => e.type === type); // get list of sorted errors based on a type e.g. data structure or value
-			const warnings = sortedWarnings.filter((e) => e.type === type); // get list of sorted warnings based on a type e.g. data structure or value	
-			const style = getStyle(errors.length,warnings.length, faild);
+			const warnings = sortedWarnings.filter((e) => e.type === type); // get list of sorted warnings based on a type e.g. data structure or value
+			const style = getStyle(errors.length, warnings.length, faild);
 
 			let c: Check = { name, type, errors, warnings, style };
-
 
 			errorCount += errors.length;
 			warningCount += warnings.length;
@@ -85,7 +83,9 @@
 	}
 </script>
 
-<div class="variant-ghost-success variant-ghost-error variant-ghost-surface variant-ghost-warning hidden" />
+<div
+	class="variant-ghost-success variant-ghost-error variant-ghost-surface variant-ghost-warning hidden"
+/>
 
 <div class="card p-5 space-y-3 mb-5">
 	<div class="flex gap-1">

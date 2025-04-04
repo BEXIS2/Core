@@ -1110,7 +1110,9 @@ function ActivateFromChoice(e) {
     var v = tmp.split("_")[0];
     var temp = $(e).attr("name");
     var stepid = temp.split("_")[0];
-    var active = $(e).hasClass("bx-dot-circle-o");
+
+    var ischecked = document.getElementById(e.id).checked;
+    var active = ischecked;
     const entityId = getId();
 
     $.get('/DCM/Form/ActivateComplexUsageInAChoice',
@@ -1127,9 +1129,64 @@ function ActivateFromChoice(e) {
                 }, 'slow');
             }
 
-            resetAllTelerikIconTitles();
-            bindMinimap(true);
+            //resetAllTelerikIconTitles();
+            //bindMinimap(true);
         });
+}
+
+function ChangeElementFromChoice(e) {
+    var tmp = e.id;
+    var v = tmp.split("_")[0];
+    var temp = $(e).attr("name");
+    var stepid = temp.split("_")[0];
+
+    var ischecked = document.getElementById(e.id).checked;
+    var active = ischecked;
+    const entityId = getId();
+
+    if (active) { 
+        console.log("ChangeElementFromChoice", active);
+        $.get('/DCM/Form/ActivateComplexUsageInAChoice',
+        {
+            parentid: stepid, id: v, entityId
+        },
+
+        function (response) {
+            $('#' + stepid).replaceWith(response);
+
+            if (!active) {
+                $('html, body').animate({
+                    scrollTop: $('#' + stepid).offset().top - 70
+                }, 'slow');
+            }
+
+            //resetAllTelerikIconTitles();
+            //bindMinimap(true);
+        });
+    }
+    else
+    {
+        console.log("ChangeElementFromChoice", active);
+
+        $.get('/DCM/Form/DeactivateComplexUsageInAChoice',
+            {
+                parentid: stepid, id: v, entityId
+            },
+
+            function (response) {
+                $('#' + stepid).replaceWith(response);
+
+                if (!active) {
+                    $('html, body').animate({
+                        scrollTop: $('#' + stepid).offset().top - 70
+                    }, 'slow');
+                }
+
+                //resetAllTelerikIconTitles();
+                //bindMinimap(true);
+            });
+    }
+
 }
 
 function showHideClick(e) {

@@ -22,6 +22,8 @@
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import type { DimensionListItem } from './models';
 
+	import type { linkType } from '@bexis2/bexis2-core-ui';
+
 	// modal
 	const modalStore = getModalStore();
 
@@ -61,7 +63,7 @@
 		};
 	}
 
-	function editDimension(type: any) {	
+	function editDimension(type: any) {
 		if (type.action == 'edit') {
 			dimension = { ...dimensions.find((d) => d.id === type.id)! };
 			showForm = true;
@@ -118,9 +120,16 @@
 		}
 		showForm = !showForm;
 	}
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#dimensions',
+		}
+	];
 </script>
 
-<Page help={true} title="Manage Dimensions">
+<Page help={true} title="Manage Dimensions" {links}>
 	<div class="w-full">
 		<h1 class="h1">Dimensions</h1>
 
@@ -141,7 +150,7 @@
 			<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 				<div class="h3 h-9">
 					{#if dimension.id < 1}
-						Create neẇ Dimension
+						Create new Dimension
 					{:else}
 						{dimension.name}
 					{/if}
@@ -153,7 +162,7 @@
 							in:fade
 							out:fade
 							class="btn variant-filled-secondary shadow-md h-9 w-16"
-							title="Create neẇ Dimension"
+							title="Create new Dimension"
 							id="create"
 							on:mouseover={() => {
 								helpStore.show('create');

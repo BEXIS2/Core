@@ -355,7 +355,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 foreach (var mv in items)
                 {
-                    if(mv.Id==0)
+                    if(mv.Id==0 && !string.IsNullOrEmpty(mv.DisplayName))
                     {                        
                         list.Add(new MissingValue()
                         {

@@ -2,6 +2,7 @@
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Xml.Helpers;
 using Newtonsoft.Json.Linq;
 
 //using Newtonsoft.Json.Linq;
@@ -9,6 +10,7 @@ using Newtonsoft.Json.Schema;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 
 namespace BEXIS.JSON.Helpers
 {
@@ -83,7 +85,7 @@ namespace BEXIS.JSON.Helpers
 
             // base information
             current.Title = usage.Label;
-            current.Type = usage.MaxCardinality > 1?JSchemaType.Array: JSchemaType.Object;
+            current.Type = getMaxCardinality(usage) > 1?JSchemaType.Array: JSchemaType.Object;
             current.Description = usage.Description;
 
             // set required
@@ -196,7 +198,7 @@ namespace BEXIS.JSON.Helpers
             current = addAttributes(current);
 
             // check if usage has cardinality >1 then create a array before
-            if (usage.MaxCardinality > 1)
+            if (getMaxCardinality(usage)  > 1)
             {
                 JSchema array = new JSchema();
                 array.Type = JSchemaType.Array;
@@ -293,9 +295,10 @@ namespace BEXIS.JSON.Helpers
                         // the range of a string need to def as a length in json schema
                         if (current.Type == JSchemaType.String)
                         {
-                            current.MinimumLength = Convert.ToInt64(r.Lowerbound);
-
-                            long max = 0;
+                            long min = Int64.MinValue;
+                            if (Int64.TryParse(r.Lowerbound.ToString(), out min))
+                                current.MinimumLength = min; //may not exist
+                            long max = Int64.MaxValue;
                             if (Int64.TryParse(r.Upperbound.ToString(), out max))
                                 current.MaximumLength = max; //may not exist
                         }
@@ -322,6 +325,24 @@ namespace BEXIS.JSON.Helpers
             }
 
             return current;
+        }
+
+        private int getMaxCardinality(BaseUsage usage)
+        {
+            if(usage.Extra==null) return usage.MaxCardinality;
+
+            // check for choice
+            var xmlnode = XmlUtility.GetXmlNodeByAttribute(usage.Extra, "type","name","choice");
+            if (xmlnode != null)
+            {
+                var XmlAttribute = xmlnode.Attributes["max"];
+                if (XmlAttribute != null)
+                {
+                    return int.Parse(XmlAttribute.Value);
+                }
+            }
+
+            return 1; // default
         }
     }
 }

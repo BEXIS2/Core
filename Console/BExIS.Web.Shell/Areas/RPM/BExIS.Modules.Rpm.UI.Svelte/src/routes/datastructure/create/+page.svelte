@@ -36,6 +36,9 @@
 	//help
 	import { dataStructureHelp } from '../help';
 	import { Modal } from '@skeletonlabs/skeleton';
+
+	import type { linkType } from '@bexis2/bexis2-core-ui';
+
 	let helpItems: helpItemType[] = dataStructureHelp;
 
 	// load attributes from div
@@ -121,7 +124,7 @@
 			// copy structure
 			model = await copy(datastructureId);
 			selectionIsActive = false;
-		} 
+		}
 		else {
 			console.log('empty structure');
 			model = await empty(entityId); // empty structure
@@ -163,6 +166,13 @@
 		selectionIsActive = true;
 		init = false;
 	}
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#data-structures',
+		}
+	];
 </script>
 
 <Page
@@ -170,6 +180,7 @@
 	note="This page allows you to create and edit a selected data structure."
 	contentLayoutType={pageContentLayoutType.full}
 	help={true}
+	{links}
 >
 	{#await start()}
 		<Spinner label={loadingMessage} />

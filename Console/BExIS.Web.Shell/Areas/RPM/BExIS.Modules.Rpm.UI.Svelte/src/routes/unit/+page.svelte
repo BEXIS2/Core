@@ -25,6 +25,7 @@
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import type { UnitListItem } from './models';
 	import type { helpItemType } from '@bexis2/bexis2-core-ui';
+	import type { linkType } from '@bexis2/bexis2-core-ui';
 
 	//help
 	import help from './help/help.json';
@@ -86,7 +87,7 @@
 						{
 							reload();
 							if (u.id === unit.id)
-							{ 
+							{
 								toggleForm();
 							}
 						}
@@ -120,9 +121,17 @@
 		}
 		showForm = !showForm;
 	}
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#units',
+		}
+	];
+
 </script>
 
-<Page help={true} title="Manage Units">
+<Page help={true} title="Manage Units" {links}>
 	<h1 class="h1">Units</h1>
 	{#await reload()}
 		<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
@@ -142,7 +151,7 @@
 		<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h3 h-9">
 				{#if unit.id < 1}
-					<span in:fade={{ delay: 400 }} out:fade>Create neẇ Unit</span>
+					<span in:fade={{ delay: 400 }} out:fade>Create new Unit</span>
 				{:else}
 					<span in:fade={{ delay: 400 }} out:fade>{unit.name}</span>
 				{/if}
@@ -153,7 +162,7 @@
 					<button
 						transition:fade
 						class="btn variant-filled-secondary shadow-md h-9 w-16"
-						title="Create neẇ Unit"
+						title="Create new Unit"
 						id="create"
 						on:mouseover={() => {
 							helpStore.show('create');

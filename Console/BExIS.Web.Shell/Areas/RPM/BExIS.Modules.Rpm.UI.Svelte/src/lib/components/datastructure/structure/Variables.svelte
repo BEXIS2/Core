@@ -277,6 +277,7 @@
 								title="copy content (not name) to the next variable "
 								class="chip variant-filled-warning"
 								on:mouseover={() => helpStore.show('copy-next')}
+								on:focus={() => helpStore.show('copy-next')}
 								on:click={() => copyNext(i)}><Fa icon={faShare} /></button
 							>
 							<button
@@ -296,6 +297,7 @@
 								title="delete variable"
 								class="chip variant-filled-error"
 								on:mouseover={() => helpStore.show('delete-var')}
+								on:focus={() => helpStore.show('delete-var')}
 								on:click={() => deleteFn(i)}><Fa icon={faTrash}></Fa></button
 							>
 
@@ -305,6 +307,7 @@
 									title="move up"
 									class="chip variant-filled-surface"
 									on:mouseover={() => helpStore.show('up-var')}
+									on:focus={() => helpStore.show('up-var')}
 									on:click={() => upFn(i)}><Fa icon={faAngleUp}></Fa></button
 								>
 							{:else}
@@ -314,6 +317,7 @@
 									class="chip variant-filled-surface disbaled"
 									disabled
 									on:mouseover={() => helpStore.show('up-var')}
+									on:focus={() => helpStore.show('up-var')}
 									on:click={() => upFn(i)}><Fa icon={faAngleUp}></Fa></button
 								>
 							{/if}
@@ -323,6 +327,7 @@
 								title="copy"
 								class="chip variant-filled-primary"
 								on:mouseover={() => helpStore.show('copy-var')}
+								on:focus={() => helpStore.show('copy-var')}
 								on:click={() => copyFn(i)}><Fa icon={faCopy}></Fa></button
 							>
 
@@ -332,6 +337,7 @@
 									title="move down"
 									class="chip variant-filled-surface"
 									on:mouseover={() => helpStore.show('down-var')}
+								 on:focus={() => helpStore.show('down-var')}
 									on:click={() => downFn(i)}><Fa icon={faAngleDown}></Fa></button
 								>
 							{:else}
@@ -341,6 +347,7 @@
 									class="chip variant-filled-surface"
 									disabled
 									on:mouseover={() => helpStore.show('down-var')}
+									on:focus={() => helpStore.show('down-var')}
 									on:click={() => downFn(i)}><Fa icon={faAngleDown}></Fa></button
 								>
 							{/if}
@@ -357,7 +364,11 @@
 				{/if}
 			</div>
 		{:else}
+		 {#if dataExist}
 			<Spinner label="loading suggested structure based on your file." />
+			{:else}
+			<Spinner label="loading structure." />
+		{/if}
 		{/if}
 	</div>
 </div>

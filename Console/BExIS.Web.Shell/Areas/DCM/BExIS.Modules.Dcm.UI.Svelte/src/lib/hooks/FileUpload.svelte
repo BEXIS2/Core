@@ -42,7 +42,6 @@
 
 	onMount(async () => {
 		load();
-
 	});
 
 	$: loading = false;
@@ -84,7 +83,7 @@
 	{#await load()}
 		<PlaceHolderHookContent />
 	{:then result}
-	<FileUploader
+		<FileUploader
 			{id}
 			{version}
 			{context}
@@ -97,10 +96,10 @@
 			on:success
 		/>
 		{#if model.fileUploader.existingFiles.length}
-		<div class="pt-2">
-			<b>Uploaded File(s)</b>
-		</div>
-	<FileOverview
+			<div class="pt-2">
+				<b>Uploaded File(s)</b>
+			</div>
+			<FileOverview
 				{id}
 				files={model.fileUploader.existingFiles}
 				descriptionType={model.fileUploader.descriptionType}
@@ -109,14 +108,13 @@
 				on:success={success}
 				on:warning={warning}
 			/>
- 	{#if model.allFilesReadable && model.hasStructure}
-
-			<FileReaderInformation
-				{id}
-				bind:target={fileReaderSelectedFile}
-				bind:readableFiles={model.fileUploader.existingFiles}
-				bind:asciiFileReaderInfo={model.asciiFileReaderInfo}
-			/>
+			{#if model.allFilesReadable && model.hasStructure}
+				<FileReaderInformation
+					{id}
+					bind:target={fileReaderSelectedFile}
+					bind:readableFiles={model.fileUploader.existingFiles}
+					bind:asciiFileReaderInfo={model.asciiFileReaderInfo}
+				/>
 			{/if}
 		{/if}
 	{:catch error}
