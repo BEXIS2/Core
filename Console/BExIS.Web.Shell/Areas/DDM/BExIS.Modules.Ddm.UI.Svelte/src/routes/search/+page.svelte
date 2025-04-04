@@ -8,7 +8,7 @@ const controller = 'search';
 
 	const links:linkType[] = [
 		{ label: 'Public Search', url: '/ddm/publicsearch' },
-		{ label: 'Manual', url: '/home/docs/Search%20&%20Download%20Data/' }
+		{ label: 'Manual', url: '/home/docs/Search%20and%20Download%20Data/' }
 	];
 
 

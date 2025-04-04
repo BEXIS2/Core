@@ -49,7 +49,7 @@
 	let links: linkType[] = [
 		{
 			label: 'manual',
-			url: '/home/docs/Datasets#create-a-dataset'
+			url: '/home/docs/Datasets#create-a-datasets'
 		}
 	];
 
