@@ -1,0 +1,62 @@
+{
+  "description": "...",
+  "id": "dim",
+  "name": "Data Dissemination",
+  "entries": [
+    {
+      "key": "help",
+      "title": "Help URL",
+      "value": "",
+      "type": "String",
+      "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
+    },
+    {
+      "key": "datacitePlaceholders",
+      "title": "DataCite DOI Placeholders",
+      "options": [],
+      "type": "JSON",
+      "value": {
+        "{DatasetId}": "{DatasetId}",
+        "{VersionId}": "{VersionId}",
+        "{VersionNumber}": "{VersionNumber}",
+        "{VersionName}": "{VersionName}",
+        "{Tag}": "{Tag}"
+      },
+      "description": "These placeholders will be replaced automatically."
+    },
+    {
+      "key": "dataciteMappings",
+      "title": "DataCite DOI Mappings",
+      "options": [],
+      "type": "JSON",
+      "value":
+        {
+          "URL": "{DatasetId}?version={VersionNumber}",
+          "Version": "{VersionName}"
+        },
+      "description": "There are additional mappings for DOI DataCite."
+    },
+    {
+      "key": "gbifCollectionArea",
+      "title": "gbifCollectionArea",
+      "options": [],
+      "type": "String",
+      "value": "export/gbif",
+      "description": "All created darwin core archive dataset exports are saved in this specified directory. It starts from the predifiend Data folder as default. It is also possible to specify a sequential folder path. default: {Data}/export/gbif"
+    },
+    {
+      "key": "gbifapicredentials",
+      "title": "GBIF API Credentials",
+      "options": [],
+      "type": "JSON",
+      "value": {
+        "organisationKey": "",
+        "installationKey": "",
+        "username": "",
+        "password": "",
+        "server": "https://api.gbif-uat.org/v1" // https://api.gbif.org/v1
+      },
+      "description": "..."
+    }
+  ]
+}

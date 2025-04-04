@@ -278,7 +278,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 // Entity, Entity Party Type and Entity Party
                 var entity = entityManager.FindByName(entityname);
                 var entityPartyType = partyTypeManager.PartyTypeRepository.Get(p => p.Title == entity.Name).FirstOrDefault();
-                var entityPartyIds = partyManager.Parties.Where(p => p.PartyType.Id == entityPartyType.Id).Select(p => p.Id).ToList();
+                var entityPartyIds = entityPartyType != null ? partyManager.Parties.Where(p => p.PartyType.Id == entityPartyType.Id).Select(p => p.Id).ToList() : null ;
 
                 List<long> datasetIds = new List<long>();
 
@@ -294,7 +294,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     var userParty = partyManager.GetPartyByUser(user.Id);
 
-                    if (userParty != null)
+                    if (userParty != null && entityPartyIds!=null && entityPartyIds.Any())
                     {
                         // get datasets based on party relationships
                         List<long> partyIds = partyManager.PartyRelationshipRepository.Get(p => p.SourceParty.Id == userParty.Id && p.Permission >= (int)rightType).Select(p => p.TargetParty.Id).ToList();

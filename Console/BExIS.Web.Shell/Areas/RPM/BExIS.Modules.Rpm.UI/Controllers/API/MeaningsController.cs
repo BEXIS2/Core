@@ -14,9 +14,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class MeaningsController : ApiController
     {
-        private readonly ImeaningManagr _meaningManager;
+        private readonly MeaningManager _meaningManager;
 
-        public MeaningsController(ImeaningManagr _meaningManager)
+        public MeaningsController(MeaningManager _meaningManager)
         {
             this._meaningManager = _meaningManager;
         }
@@ -32,7 +32,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpGet, GetRoute("api/Meanings/Index")]
         public HttpResponseMessage Index()
         {
-            return cretae_response(_meaningManager.getMeanings());
+            return cretae_response(_meaningManager.GetMeanings());
         }
 
         [BExISApiAuthorize]
@@ -43,12 +43,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             string id = this.Request.Content.ReadAsStringAsync().Result.ToString();
             Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(id);
 
-            return cretae_response(_meaningManager.getMeaning(long.Parse(dict["id"])));
+            return cretae_response(_meaningManager.GetMeaning(long.Parse(dict["id"])));
         }
 
         public HttpResponseMessage getExternalLinks()
         {
-            return cretae_response(_meaningManager.getExternalLinks());
+            return cretae_response(_meaningManager.GetExternalLinks());
         }
 
         [BExISApiAuthorize]
@@ -59,7 +59,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             string id = this.Request.Content.ReadAsStringAsync().Result.ToString();
             Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(id);
 
-            return cretae_response(_meaningManager.getExternalLink(long.Parse(dict["id"])));
+            return cretae_response(_meaningManager.GetExternalLink(long.Parse(dict["id"])));
         }
 
         [BExISApiAuthorize]
@@ -67,7 +67,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpGet, GetRoute("api/Meanings/getPrefixes")]
         public HttpResponseMessage getPrefixes()
         {
-            return cretae_response(_meaningManager.getPrefixes());
+            return cretae_response(_meaningManager.GetPrefixes());
         }
 
         [BExISApiAuthorize]
@@ -76,7 +76,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public HttpResponseMessage getPrefixfromUri()
         {
             string uri = this.Request.Content.ReadAsStringAsync().Result.ToString();
-            return cretae_response(_meaningManager.getPrefixfromUri(uri));
+            return cretae_response(_meaningManager.GetPrefixfromUri(uri));
         }
 
         private HttpResponseMessage cretae_response(object return_object)

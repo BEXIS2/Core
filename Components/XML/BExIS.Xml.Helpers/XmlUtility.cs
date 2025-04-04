@@ -414,6 +414,24 @@ namespace BExIS.Xml.Helpers
             throw new ArgumentException("Couldn't find element within parent");
         }
 
+        public static XmlNode FindNodeByLabel(XmlNodeList nodeList, string labelName)
+        {
+            if (nodeList == null || string.IsNullOrEmpty(labelName))
+            {
+                return null;
+            }
+
+            foreach (XmlNode node in nodeList)
+            {
+                if (node.Name == labelName)
+                {
+                    return node;
+                }
+            }
+
+            return null;
+        }
+
         #region xdoc
 
         public static bool HasChildren(XElement element)

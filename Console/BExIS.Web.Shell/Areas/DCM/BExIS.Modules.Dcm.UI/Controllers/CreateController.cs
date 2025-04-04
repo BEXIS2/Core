@@ -90,7 +90,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // save version in database
                     dm.EditDatasetVersion(workingCopy, null, null, null);
                     // close check out
-                    dm.CheckInDataset(ds.Id, "", GetUsernameOrDefault(), ViewCreationBehavior.None);
+                    string comment = "dataset created based on dataset \""+ datasetVersionToCopy.Title + "\" ("+datasetToCopy.Id+")";
+
+                    dm.CheckInDataset(ds.Id, comment, GetUsernameOrDefault(), ViewCreationBehavior.None);
                 }
 
                 #endregion update version
@@ -157,11 +159,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // remove dubplicates
                 destinations = destinations.Distinct().ToList();
 
-                var es = new EmailService();
-                es.Send(MessageHelper.GetCreateDatasetHeader(ds.Id, entityTemplate.Name),
-                    MessageHelper.GetCreateDatasetMessage(ds.Id, datasetVersionToCopy.Title + "_copy", GetUsernameOrDefault(), entityTemplate.Name),
-                    destinations
-                    );
+                using (var emailService = new EmailService())
+                {
+                    emailService.Send(MessageHelper.GetCreateDatasetHeader(ds.Id, entityTemplate.Name),
+                        MessageHelper.GetCreateDatasetMessage(ds.Id, datasetVersionToCopy.Title + "_copy", GetUsernameOrDefault(), entityTemplate.Name),
+                        destinations
+                        );
+                }
+                    
 
                 //   #endregion
 
@@ -309,7 +314,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         // get XElement by XPath
                         if (!string.IsNullOrEmpty(target.XPath))
                         {
-                            var targetXElement = metadataXml.XPathSelectElement(target.XPath);
+                            string xpath = target.XPath;
+
+                            // if the mapping is on type, then it is the last element and the value should set there
+                            // e.g. mappingt to title is usage, set value to title/titleType = "title of the dataset"
+                            // if the mapping is on usage, then the value should set on type and this element is the child of the usage
+                            if (target.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
+                               target.Type.Equals(LinkElementType.MetadataNestedAttributeUsage))
+                                xpath = target.XPath+@"/"+ target.Name+"Type";
+
+                            var targetXElement = metadataXml.XPathSelectElement(xpath);
                             // set value
                             targetXElement.Value = item.Value;
                         }
@@ -355,7 +369,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     dm.EditDatasetVersion(workingCopy, null, null, null);
 
                     // close check out
-                    dm.CheckInDataset(datasetId, "Init creation a " + entityTemplate.EntityType.Name + " based on " + entityTemplate.Name + " Template", GetUsernameOrDefault(), ViewCreationBehavior.None, TagType.Copy);
+                    dm.CheckInDataset(datasetId, "Init creation a " + entityTemplate.EntityType.Name.ToLower() + " based on " + entityTemplate.Name.ToLower(), GetUsernameOrDefault(), ViewCreationBehavior.None, TagType.Copy);
                 }
 
                 #endregion update version
@@ -422,11 +436,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // remove dubplicates
                 destinations = destinations.Distinct().ToList();
 
-                var es = new EmailService();
-                es.Send(MessageHelper.GetCreateDatasetHeader(datasetId, entityTemplate.Name),
-                    MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityTemplate.Name),
-                    destinations
-                    );
+                using (var emailService = new EmailService())
+                {
+                    emailService.Send(MessageHelper.GetCreateDatasetHeader(datasetId, entityTemplate.Name),
+                                            MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityTemplate.Name),
+                                            destinations
+                                            );
+                }   
 
                 #endregion send notifications
             }
@@ -441,7 +457,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<EntityTemplateModel> entityTemplateModels = new List<EntityTemplateModel>();
             using (var entityTemplateManager = new EntityTemplateManager())
             {
-                foreach (var e in entityTemplateManager.Repo.Get())
+                foreach (var e in entityTemplateManager.Repo.Query(e=>e.Activated).ToList())
                 {
                     entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e, false));
                 }

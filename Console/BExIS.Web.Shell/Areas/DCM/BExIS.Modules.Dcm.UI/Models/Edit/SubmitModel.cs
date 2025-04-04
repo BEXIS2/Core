@@ -22,6 +22,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
         public bool AllFilesReadable { get; set; }
 
         public List<FileInfo> Files { get; set; }
+        public List<FileInfo> DeleteFiles { get; set; }
+        public List<FileInfo> ModifiedFiles { get; set; }
 
         public AsciiFileReaderInfo AsciiFileReaderInfo { get; set; }
 

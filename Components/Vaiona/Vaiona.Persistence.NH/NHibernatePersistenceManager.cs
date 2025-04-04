@@ -93,11 +93,11 @@ namespace Vaiona.Persistence.NH
                     IQuery query = session.CreateSQLQuery(line);
                     query.ExecuteUpdate();
                 }
-                session.Transaction.Commit();
+                session.GetCurrentTransaction().Commit();
             }
             catch
             {
-                session.Transaction.Rollback();
+                session.GetCurrentTransaction().Rollback();
             }
             finally
             {

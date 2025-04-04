@@ -1,4 +1,6 @@
-﻿using BExIS.Dim.Entities.Mappings;
+﻿using BExIS.Dcm.CreateDatasetWizard;
+using BExIS.Dcm.UploadWizard;
+using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.DataStructure;
@@ -8,6 +10,7 @@ using BExIS.IO.DataType.DisplayPattern;
 using BExIS.Modules.Dcm.UI.Models.Metadata;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
@@ -29,6 +32,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 NumberOfSourceInPackage = 1,
                 first = true,
                 last = true
+         
             };
         }
 
@@ -156,6 +160,10 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 parameters.Add(FormHelper.CreateMetadataParameterModel(p, current, metadataStructureId, packageModelNumber, parentStepId));
             }
 
+            string value = "";
+            if(!string.IsNullOrEmpty(current.FixedValue)) value = current.FixedValue;
+            else if (!string.IsNullOrEmpty(current.DefaultValue)) value = current.DefaultValue; 
+
             return new MetadataAttributeModel
             {
                 Id = current.Id,
@@ -188,7 +196,10 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 LowerBoundary = lowerBoundary,
                 UpperBoundary = upperBoundary,
                 MappingSelectionField = mappingSelectionField,
-                Parameters = parameters
+                Parameters = parameters,
+                DefaultValue = current.DefaultValue,
+                FixedValue = current.FixedValue,
+                Value = value
             };
         }
 
@@ -308,16 +319,70 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             return false;
         }
 
-        public static void ClearCache()
+        public static string GetTaskManagerKey(long entityId)
         {
-            System.Web.HttpContext.Current.Session["MetadataAttributeUsages"] = null;
-            System.Web.HttpContext.Current.Session["MetadataNestedAttributeUsages"] = null;
-            System.Web.HttpContext.Current.Session["MetadataPackageUsages"] = null;
+            return "DatasetTaskmanager_"+ entityId;
         }
 
-        public static IList<MetadataAttributeUsage> CachedMetadataAttributeUsages()
+        /// <summary>
+        /// get task manager from session
+        /// </summary>
+        /// <param name="entityId"></param>
+        /// <returns></returns>
+        public static CreateTaskmanager GetTaskManager(long entityId)
         {
-            string key = "MetadataAttributeUsages";
+            string key = GetTaskManagerKey(entityId);
+            CreateTaskmanager taskManager = (CreateTaskmanager)System.Web.HttpContext.Current.Session[key];
+            if (taskManager == null)
+            {
+                taskManager = new CreateTaskmanager();
+                System.Web.HttpContext.Current.Session[key] = taskManager;
+            }
+
+            return taskManager;
+        }
+
+        /// <summary>
+        /// update task manager in session
+        /// </summary>
+        /// <param name="entityId"></param>
+        /// <param name="taskmanager"></param>
+        /// <returns></returns>
+        public static bool UpdateTaskManager(long entityId, CreateTaskmanager taskmanager)
+        {
+            string key = GetTaskManagerKey(entityId);
+            System.Web.HttpContext.Current.Session[key] = taskmanager;
+
+            return true;
+        }
+
+        /// <summary>
+        /// remove usages from session
+        /// </summary>
+        /// <param name="entityId"></param>
+        public static void ClearCache(long metadataStructureId)
+        {
+            System.Web.HttpContext.Current.Session["MetadataAttributeUsages_"+ metadataStructureId] = null;
+            System.Web.HttpContext.Current.Session["MetadataNestedAttributeUsages_"+ metadataStructureId] = null;
+            System.Web.HttpContext.Current.Session["MetadataPackageUsages_"+ metadataStructureId] = null;
+        }
+
+        public static IList<MetadataAttributeUsage> InitMetadataAttributeUsages(List<long> packages, long metadatastructureId)
+        {
+            string key = "MetadataAttributeUsages_" + metadatastructureId;
+            using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+            {
+                var usages = uow.GetReadOnlyRepository<MetadataAttributeUsage>().Query(mau => packages.Contains(mau.MetadataPackage.Id)).ToList();
+                System.Web.HttpContext.Current.Session[key] = usages;
+                return usages;
+            }
+        }
+
+        public static IList<MetadataAttributeUsage> CachedMetadataAttributeUsages(CreateTaskmanager taskManager)
+        {
+            long metadataStructureId = getMetadataStructureId(taskManager); // get metadata structure id from task manager
+
+            string key = "MetadataAttributeUsages_"+ metadataStructureId;
             // System.Web.HttpContext may not existing during the async upload, so check wheter the context exist
             if (System.Web.HttpContext.Current != null)
             {
@@ -344,9 +409,26 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             }
         }
 
-        public static IList<MetadataNestedAttributeUsage> CachedMetadataNestedAttributeUsages()
+        public static IList<MetadataNestedAttributeUsage> InitMetadataNestedAttributeUsages(long metadataStructureId)
         {
-            string key = "MetadataNestedAttributeUsages";
+            string key = "MetadataNestedAttributeUsages_" + metadataStructureId;
+
+            List<MetadataNestedAttributeUsage> usages = new List<MetadataNestedAttributeUsage>();
+
+            using (var metadataAttributeManager = new MetadataAttributeManager())
+            {
+                usages = metadataAttributeManager.GetEffectiveMetadataNestedAttributeUsages(metadataStructureId);
+                System.Web.HttpContext.Current.Session[key] = usages;
+            }
+
+            return usages;
+        }
+
+        public static IList<MetadataNestedAttributeUsage> CachedMetadataNestedAttributeUsages(CreateTaskmanager taskManager)
+        {
+            long metadataStructureId = getMetadataStructureId(taskManager); // get metadata structure id from task manager
+
+            string key = "MetadataNestedAttributeUsages_" + metadataStructureId;
             // System.Web.HttpContext may not existing during the async upload, so check wheter the context exist
             if (System.Web.HttpContext.Current != null)
             {
@@ -373,9 +455,28 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             }
         }
 
-        public static IList<MetadataPackageUsage> CachedMetadataPackageUsages()
+        public static IList<MetadataPackageUsage> InitMetadataPackageUsages(long metadatastructureId)
         {
-            string key = "MetadataPackageUsages";
+            string key = "MetadataPackageUsages_" + metadatastructureId;
+
+            using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+            {
+                var usages = uow.GetReadOnlyRepository<MetadataPackageUsage>().Query(p => p.MetadataStructure.Id == metadatastructureId).ToList();
+                System.Web.HttpContext.Current.Session[key] = usages;
+                return usages;
+            }
+        }
+
+        /// <summary>
+        /// get cached metadata package usages for a metadata structure
+        /// </summary>
+        /// <param name="taskManager"></param>
+        /// <returns></returns>
+        public static  IList<MetadataPackageUsage> CachedMetadataPackageUsages(CreateTaskmanager taskManager)
+        {
+            long metadataStructureId = getMetadataStructureId(taskManager); // get metadata structure id from task manager
+
+            string key = "MetadataPackageUsages_"+ metadataStructureId;
             // System.Web.HttpContext may not existing during the async upload, so check wheter the context exist
             if (System.Web.HttpContext.Current != null)
             {
@@ -387,7 +488,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 {
                     using (IUnitOfWork uow = (new object()).GetUnitOfWork())
                     {
-                        var usages = uow.GetReadOnlyRepository<MetadataPackageUsage>().Get();
+                        var usages = uow.GetReadOnlyRepository<MetadataPackageUsage>().Query().ToList();
                         System.Web.HttpContext.Current.Session[key] = usages;
                         return usages;
                     }
@@ -400,6 +501,24 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     return uow.GetReadOnlyRepository<MetadataPackageUsage>().Get();
                 }
             }
+        }
+
+        /// <summary>
+        /// get metadata structure id from task manager
+        /// </summary>
+        /// <param name="taskManager"></param>
+        /// <returns></returns>
+        private static long getMetadataStructureId(CreateTaskmanager taskManager)
+        {
+            long id = 0;
+
+            if(taskManager != null && taskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
+            {
+                id = (long)taskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID];
+            }
+
+            return id;
+
         }
     }
 }

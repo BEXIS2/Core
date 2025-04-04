@@ -52,9 +52,11 @@ namespace BExIS.Security.Services.Tests.Utilities
             var files = new List<FileInfo>();
             files.Add(file);
 
-            EmailService emailService = new EmailService();
+            using (var emailService = new EmailService())
+            {
+                emailService.Send("subject_test", "Hallo again!? Emails are working now!", new List<string>() { "m6thsv2@googlemail.com" }, null, null, null, files);
 
-            emailService.Send("subject_test", "Hallo again!? Emails are working now!", new List<string>() { "m6thsv2@googlemail.com" }, null, null, null, files);
+            }
         }
 
         /*
@@ -64,57 +66,64 @@ namespace BExIS.Security.Services.Tests.Utilities
         //[Test]
         public void Send_EmailWithWhiteSpace_SendSuccess()
         {
-            EmailService emailService = new EmailService(_smtpConfiguration);
-            bool success = true;
-            try
+            using (var emailService = new EmailService(_smtpConfiguration))
             {
-                emailService.Send("subject_test", "Hallo again!? Emails are working now!", new List<string>() { "m6thsv2@googlemail.com" });
-            }
-            catch (Exception ex)
-            {
-                success = false;
-            }
-            finally
-            {
-                Assert.IsTrue(success, "send mail was not succesfull");
+                bool success = true;
+                try
+                {
+                    emailService.Send("subject_test", "Hallo again!? Emails are working now!", new List<string>() { "m6thsv2@googlemail.com" });
+                }
+                catch (Exception ex)
+                {
+                    success = false;
+                }
+                finally
+                {
+                    Assert.IsTrue(success, "send mail was not succesfull");
+                }
             }
         }
 
         //[Test]
         public void Send_EmailWithWhiteSpaceinCCs_SendSuccess()
         {
-            EmailService emailService = new EmailService();
-            bool success = true;
-            try
+            using (var emailService = new EmailService())
             {
-                emailService.Send("subject_test", "Hallo again!? Emails are working now!", new List<string>() { "david.blaa@googlemail.com" }, new List<string>() { "david.schoene@uni-jena.de " });
+                bool success = true;
+                try
+                {
+                    emailService.Send("subject_test", "Hallo again!? Emails are working now!", new List<string>() { "david.blaa@googlemail.com" }, new List<string>() { "david.schoene@uni-jena.de " });
+                }
+                catch (Exception ex)
+                {
+                    success = false;
+                }
+                finally
+                {
+                    Assert.IsTrue(success, "send mail was not succesfull");
+                }
             }
-            catch (Exception ex)
-            {
-                success = false;
-            }
-            finally
-            {
-                Assert.IsTrue(success, "send mail was not succesfull");
-            }
+
         }
 
         //[Test]
         public void Send_EmailWithWhiteSpaceinBCCs_SendSuccess()
         {
-            EmailService emailService = new EmailService();
-            bool success = true;
-            try
+            using (var emailService = new EmailService())
             {
-                emailService.Send("subject_test", "Hallo again!? Emails are working now!", new List<string>() { "david.blaa@googlemail.com" }, null, new List<string>() { "david.schoene@uni-jena.de " });
-            }
-            catch (Exception ex)
-            {
-                success = false;
-            }
-            finally
-            {
-                Assert.IsTrue(success, "send mail was not succesfull");
+                bool success = true;
+                try
+                {
+                    emailService.Send("subject_test", "Hallo again!? Emails are working now!", new List<string>() { "david.blaa@googlemail.com" }, null, new List<string>() { "david.schoene@uni-jena.de " });
+                }
+                catch (Exception ex)
+                {
+                    success = false;
+                }
+                finally
+                {
+                    Assert.IsTrue(success, "send mail was not succesfull");
+                }
             }
         }
     }

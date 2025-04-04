@@ -47,7 +47,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             SetSessionsToDefault();
 
-            return Json(provider.WorkingSearchModel);
+            var j = Json(provider.WorkingSearchModel, JsonRequestBehavior.AllowGet);
+            j.MaxJsonLength = int.MaxValue;
+            return j;
 
         }
 
@@ -86,10 +88,29 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
+            
+
+
+            // reset properties selected values if result is null and autocomplete is not empty
+            if (!string.IsNullOrEmpty(autoComplete) && !provider.WorkingSearchModel.ResultComponent.Rows.Any())
+            {
+               
+                Session["FilterAC"] = null;
+                Session["SelectedIndexFilterAC"] = 0;
+                Session["PropertiesDictionary"] = null;
+
+                provider.WorkingSearchModel.CriteriaComponent.Clear();
+                provider.WorkingSearchModel.UpdateSearchCriteria(FilterList, autoComplete, SearchComponentBaseType.Category);
+                provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
+            }
+
             //reset searchType
             // after every search - searchType must be based on
             SetSearchType("basedon");
-            return Json(provider.WorkingSearchModel);
+
+            var j = Json(provider.WorkingSearchModel, JsonRequestBehavior.AllowGet);
+            j.MaxJsonLength = int.MaxValue;
+            return j;
         }
 
         #region SearchHeader
@@ -108,7 +129,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             SetFilterAC(SelectedFilter);
 
-            return Json(provider.WorkingSearchModel);
+            var j = Json(provider.WorkingSearchModel, JsonRequestBehavior.AllowGet);
+            j.MaxJsonLength = int.MaxValue;
+            return j;
         }
 
         /// <summary>
@@ -120,7 +143,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public JsonResult _AutoCompleteAjaxLoading(string text)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
-            SearchModel model = provider.GetTextBoxSearchValues(text, GetFilterAC(), Session["SearchType"].ToString(), 10);
+            SearchModel model = provider.GetTextBoxSearchValues(text, GetFilterAC(), "new", 10);
             IEnumerable<TextValue> textvalues = model.SearchComponent.TextBoxSearchValues;
 
             return new JsonResult { Data = new SelectList(textvalues, "Value", "Name") };
@@ -160,14 +183,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
             //return PartialView("_searchFacets", Tuple.Create(provider.WorkingSearchModel, provider.DefaultSearchModel.SearchComponent.Facets));
-            return Json(provider.WorkingSearchModel);
+            var j = Json(provider.WorkingSearchModel, JsonRequestBehavior.AllowGet);
+            j.MaxJsonLength = int.MaxValue;
+            return j;
         }
 
         public JsonResult UpdateFacets()
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             //return PartialView("_searchFacets", Tuple.Create(provider.UpdateFacets(provider.WorkingSearchModel.CriteriaComponent), provider.DefaultSearchModel.SearchComponent.Facets));
-            return Json(provider.WorkingSearchModel);
+            var j = Json(provider.WorkingSearchModel, JsonRequestBehavior.AllowGet);
+            j.MaxJsonLength = int.MaxValue;
+            return j;
         }
 
         public JsonResult UpdateProperties()
@@ -188,14 +215,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
 
 
-            return Json(provider.WorkingSearchModel);
+            var j = Json(provider.WorkingSearchModel, JsonRequestBehavior.AllowGet);
+            j.MaxJsonLength = int.MaxValue;
+            return j;
         }
 
         public JsonResult GetDataForBreadCrumbView()
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
 
-            return Json(provider.WorkingSearchModel);
+            var j = Json(provider.WorkingSearchModel, JsonRequestBehavior.AllowGet);
+            j.MaxJsonLength = int.MaxValue;
+            return j;
         }
 
         //+++++++++++++++++++++ TreeView onSelect Action +++++++++++++++++++++++++++
@@ -215,7 +246,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             provider.WorkingSearchModel.UpdateSearchCriteria(Parent, SelectedItem, SearchComponentBaseType.Facet, true);
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
-            return Json(provider.WorkingSearchModel);
+            var j = Json(provider.WorkingSearchModel, JsonRequestBehavior.AllowGet);
+            j.MaxJsonLength = int.MaxValue;
+            return j;
         }
 
         /// <summary>
@@ -250,7 +283,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             provider.WorkingSearchModel.UpdateSearchCriteria(parent, selectedValues, SearchComponentBaseType.Facet, true);
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
-            return Json(provider.WorkingSearchModel);
+            var j = Json(provider.WorkingSearchModel, JsonRequestBehavior.AllowGet);
+            j.MaxJsonLength = int.MaxValue;
+            return j;
         }
 
         /// <summary>
@@ -274,7 +309,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             SetSelectAbleCategoryList(facet.Childrens.Where(p => p.Count > 0).OrderBy(p => p.Name.ToLower()).ToList());
 
-            return Json(provider.WorkingSearchModel);
+            var j = Json(provider.WorkingSearchModel, JsonRequestBehavior.AllowGet);
+            j.MaxJsonLength = int.MaxValue;
+            return j;
         }
 
         #endregion Treeview - _searchFacets
@@ -322,7 +359,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
             }
 
-            return Json(provider.WorkingSearchModel);
+            var j = Json(provider.WorkingSearchModel, JsonRequestBehavior.AllowGet);
+            j.MaxJsonLength = int.MaxValue;
+            return j;
         }
 
         #endregion BreadcrumbView
@@ -353,7 +392,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public JsonResult FilterByRangeSlider(int start, int end, string parent)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
-            return Json(provider.WorkingSearchModel);
+            var j = Json(provider.WorkingSearchModel, JsonRequestBehavior.AllowGet);
+            j.MaxJsonLength = int.MaxValue;
+            return j;
         }
 
         [HttpPost]

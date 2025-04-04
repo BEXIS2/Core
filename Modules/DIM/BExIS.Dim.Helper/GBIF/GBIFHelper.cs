@@ -1,4 +1,8 @@
 ﻿
+using BExIS.Dim.Entities.Export;
+using BExIS.Dim.Entities.Export.GBIF;
+using BExIS.Dim.Helpers.Export;
+using BExIS.Dim.Helpers.GFBIO;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Helpers.Models;
 using BExIS.Dlm.Entities.Meanings;
@@ -20,6 +24,8 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using Vaiona.Utils.Cfg;
 
+
+
 namespace BExIS.Dim.Helpers.GBIF
 {
     public class GbifHelper
@@ -27,6 +33,13 @@ namespace BExIS.Dim.Helpers.GBIF
         public string[] OccurrencesRequiredDWTerms = { "occurrenceID", "basisOfRecord", "scientificName", "eventDate" };
         public string[] SamplingEventRequiredDWTerms = { "eventID", "eventDate", "samplingProtocol", "sampleSizeValue", "sampleSizeUnit" };
         private string releation = "hasDwcTerm";
+
+        private List<DWCExtention> dWCExtentions = new List<DWCExtention>();
+
+        public GbifHelper()
+        {
+            dWCExtentions = LoadExtentionList();
+        }
 
         /// <summary>
         /// this function checks wheter there is in v2 a file for a datastructure 
@@ -98,7 +111,7 @@ namespace BExIS.Dim.Helpers.GBIF
             // compare the list of existing terms with the rwuired onces
             List<string> required = new List<string>();
             switch (type)
-            { 
+            {
                 case GbifDataType.samplingEvent: required = SamplingEventRequiredDWTerms.ToList(); break;
                 case GbifDataType.occurrence: required = OccurrencesRequiredDWTerms.ToList(); break;
                 default: required = OccurrencesRequiredDWTerms.ToList(); break;
@@ -115,52 +128,74 @@ namespace BExIS.Dim.Helpers.GBIF
         }
 
         // generate the metafile 
-        public string GenerateMeta(GbifDataType type, long structureId, string directory, string dataFile)
+        public string GenerateMeta(GbifDataType type, long structureId, string directory, string dataFile, List<ExtentionEntity> extentions)
         {
             if (structureId <= 0) throw new ArgumentNullException("structureId");
             if (string.IsNullOrEmpty(directory)) throw new ArgumentNullException("directory");
 
             using (var structureManager = new DataStructureManager())
             {
-                var structure = structureManager.StructuredDataStructureRepo.Get(structureId);
-
-                if (structure == null) throw new Exception("datastructure is not structured");
-
-                string structurePath = Path.Combine(AppConfiguration.DataPath, "DataStructures", structure.Id.ToString());
-                string dwtermsFilePath = Path.Combine(structurePath, "dw_terms.json");
-
-                GbifHelper helper = new GbifHelper();
-
-                // set dwc terms in meta
-                DWTerms dwterms = new DWTerms();
-                dwterms.Type = type;
-                dwterms.Field = getDarwinCoreTermsFromDatastructure(structureId);
 
                 Archive archive = new Archive();
 
                 archive.Xmlns = "http://rs.tdwg.org/dwc/text/";
                 archive.Metadata = "metadata.xml";
+
+                // core
+                // set dwc terms in meta
+
+                var structure = structureManager.StructuredDataStructureRepo.Get(structureId);
+                if (structure == null) throw new Exception("datastructure is not structured");
+
+                DWTerms dwterms = new DWTerms();
+                dwterms.Type = type;
+                dwterms.Field = getDarwinCoreTermsFromDatastructure(structureId);
+
+               
+
                 archive.Core.files.Add(dataFile);
                 archive.Core.Encoding = "UTF-8";
-                archive.Core.LinesTerminatedBy = ",";
-                archive.Core.FieldsTerminatedBy = @"\n";
+                archive.Core.FieldsTerminatedBy = ",";
+                archive.Core.LinesTerminatedBy = @"\n";
                 archive.Core.IgnoreHeaderLines = "1";
+       
+                // set coreId term
+                // set coreId term and rowType
+                string idTerm = "";
+                string rowType = "";
 
                 switch (type)
                 {
                     case GbifDataType.samplingEvent:
-                        archive.Core.RowType = "https://rs.tdwg.org/dwc/terms/Event"; break;
+                        idTerm = "eventID";
+                        rowType = "https://rs.tdwg.org/dwc/terms/Event";
+                        break;
                     case GbifDataType.occurrence:
-                        archive.Core.RowType = "https://rs.tdwg.org/dwc/terms/Occurrence"; break;
+                        idTerm = "occurrenceID";
+                        rowType = "https://rs.tdwg.org/dwc/terms/Occurrence";
+                        break;
                     default:
-                        archive.Core.RowType = ""; break;
+                        idTerm = "eventID";
+                        rowType = "";
+                        break;
                 }
+
+                int idIndex = dwterms.Field.FindIndex(f => f.Term.Split('/').Last().Equals(idTerm));
+
+                archive.Core.Id = new Id() { Index = idIndex };
+                archive.Core.RowType = rowType;
 
                 // add fields
                 if (dwterms.Field.Any())
                 {
                     archive.Core.fields = dwterms.Field;
                 }
+
+                // end core
+                // start extentions
+                archive.Extension = GetExtentions(extentions, structureManager, idTerm);
+                // end extentions
+
 
                 XmlSerializer serializer = new XmlSerializer(typeof(Archive));
                 string filepath = Path.Combine(directory, "meta.xml");
@@ -172,6 +207,38 @@ namespace BExIS.Dim.Helpers.GBIF
                 }
                 return filepath;
             }
+        }
+
+        private List<Extension> GetExtentions(List<ExtentionEntity> _extentionEntities, DataStructureManager structureManager, string idTerm)
+        {
+            List<Extension> exts = new List<Extension>();
+            foreach (var extentionEntity in _extentionEntities)
+            { 
+                var structure = structureManager.StructuredDataStructureRepo.Get(extentionEntity.StructureId);
+                if (structure == null) throw new Exception("datastructure is not structured");
+
+                DWExtTerms dwterms = new DWExtTerms();
+                dwterms.Type = extentionEntity.Extention.RowType;
+                dwterms.Field = getDarwinCoreTermsFromDatastructure(extentionEntity.StructureId);
+
+                extentionEntity.IdIndex = dwterms.Field.FindIndex(f => f.Term.Split('/').Last().Equals(idTerm));    
+
+                Extension ext = new Extension()
+                {
+                    RowType = extentionEntity.Extention.RowType.ToString(),
+                    files = new List<string>() { extentionEntity.dataPath },
+                    Encoding = "UTF-8",
+                    FieldsTerminatedBy = ",",
+                    LinesTerminatedBy = @"\n",
+                    IgnoreHeaderLines = "1",
+                    CoreId = new Id() { Index= extentionEntity.IdIndex },
+                    fields = dwterms.Field
+                    
+                };
+
+                exts.Add(ext);
+            }
+            return exts;
         }
 
         // generate the metafile 
@@ -202,9 +269,12 @@ namespace BExIS.Dim.Helpers.GBIF
             xsi.Value = "eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.2/eml.xsd";
             root.Attributes.Append(xsi);
 
-            root.SetAttribute("system", "https://demo.bexis2.uni-jena.de");
+            //XmlAttribute dc = conceptOutput.CreateAttribute("xmlns", "dc", "http://purl.org/dc/terms/");
+            //root.Attributes.Append(dc);
+
+            root.SetAttribute("system", "host");
             root.SetAttribute("scope", "system");
-            root.SetAttribute("xml:lang", "en");
+            root.SetAttribute("xml:lang", "eng");
             root.SetAttribute("packageId", "na");
 
             
@@ -259,14 +329,85 @@ namespace BExIS.Dim.Helpers.GBIF
             return existAllRequiredTerms;
         }
 
+        public bool ValidateExtension(long datasetId, long datastructureId, GbifDataType type, DWCExtention extention,  out List<string> errors)
+        {
+
+            errors = new List<string>();
+            // no extention now validation needed
+            if (extention == null)
+            {
+                return true;
+            }
+
+
+            // get all dwc terms from datastructure
+            List<Field> fields = getDarwinCoreTermsFromDatastructure(datastructureId);
+            List<string> fieldNames = fields.Select(f => f.Term.Split('/').Last()).ToList(); // get all names of the urls
+
+            string requiredIdDwcTerm = "";
+            // set reuired dwc term
+            switch (type)
+            {
+                case GbifDataType.samplingEvent: requiredIdDwcTerm = "eventID"; break;
+                case GbifDataType.occurrence: requiredIdDwcTerm = "occurrenceID"; break;
+                default: requiredIdDwcTerm = "eventID"; break;
+            }
+
+            List<string> required = extention.RequiredFields;
+            required.Add(requiredIdDwcTerm);
+
+            // check if required term exist
+            var missingFields = required.Except(fieldNames);
+            bool existAllRequiredTerms = !missingFields.Any();
+            // add error message
+            if (missingFields.Any())
+            {
+                foreach (var item in missingFields)
+                {
+                    errors.Add("dwc term " + item + " in extension " + extention.Name.ToString() + " with id " + datasetId + " is missing.");
+                }
+            }
+    
+
+            return existAllRequiredTerms;
+        }
+
         public string GenerateData(long id, long versionId)
         {
             string datapath = string.Empty;
 
             var outputDataManager = new OutputDataManager();
-            datapath = outputDataManager.GenerateAsciiFile(id, versionId,  "text/csv", false,true);
+            datapath = outputDataManager.GenerateAsciiFile(id, versionId,  "text/csv", false, false);
 
             return datapath;
+        }
+
+        public List<DWCExtention> LoadExtentionList()
+        { 
+            string root = AppConfiguration.GetModuleWorkspacePath("DIM");
+            string file = "DWCExtentions.json";
+            string path = Path.Combine(root, file);
+            List<DWCExtention> extentions = new List<DWCExtention>();
+
+            if (File.Exists(path))
+            {
+                string extJson = File.ReadAllText(path);
+                extentions = JsonConvert.DeserializeObject<List<DWCExtention>>(extJson);
+            }
+
+
+            return extentions;
+
+        }
+
+        public DWCExtention GetExtention(string linkName)
+        {
+            return dWCExtentions.FirstOrDefault(e => e.LinkName.Equals(linkName));
+        }
+
+        public List<DWCExtention> GetExtentions()
+        {
+            return dWCExtentions;
         }
     }
 

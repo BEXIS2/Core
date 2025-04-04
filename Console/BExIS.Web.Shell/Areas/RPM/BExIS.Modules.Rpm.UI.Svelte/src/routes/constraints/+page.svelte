@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount} from 'svelte';
 	import { slide, fade } from 'svelte/transition';
 	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
 	import {
@@ -15,12 +15,15 @@
 	import * as apiCalls from './services/apiCalls';
 	import Form from './components/form.svelte';
 	import TableOption from './components/tableOptions.svelte';
+	import ConstraintElement from '../components/constraintElement.svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import Fa from 'svelte-fa';
 	import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import type { ConstraintListItem } from './models';
+
+	import type { linkType } from '@bexis2/bexis2-core-ui';
 
 	const modalStore = getModalStore();
 	let cs: ConstraintListItem[] = [];
@@ -38,12 +41,16 @@
 	{
 		helpStore.setHelpItemList(helpItems);
 		showForm = false;
+		clear();
+	}
+
+	async function save(): Promise<void> {
+		reload();
+		toggleForm();
 	}
 
 	async function reload(): Promise<void> {
-		showForm = false;
 		cs = await apiCalls.GetConstraints();
-		clear();
 	}
 
 	async function clear() {
@@ -55,7 +62,8 @@
 			formalDescription: '',
 			type: '',
 			negated: false,
-			inUse: false,
+			inUseByVariable: false,
+			inUseByMeaning: false,
 			variableIDs: []
 		};
 	}
@@ -68,19 +76,26 @@
 	}
 
 	function editConstraint(type: any) {
-		constraint = { ...constraints.find((c) => c.id === type.id)! };
 		if (type.action == 'edit') {
+			constraint = { ...constraints.find((c) => c.id === type.id)! };
 			showForm = true;
 		}
 		if (type.action == 'delete') {
+			let c :ConstraintListItem = constraints.find((c) => c.id === type.id)!;
 			const modal: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete Constraint',
-				body: 'Are you sure you wish to delete Constraint "' + constraint.name + '?',
+				body: 'Are you sure you wish to delete Constraint "' + c.name + '?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
-				response: (r: boolean) => {
+				response: async (r: boolean) => {
 					if (r === true) {
-						deleteConstraint(type.id);
+						let success :boolean = await deleteConstraint(c);
+						if (success) {
+							reload();
+							if (c.id === constraint.id) {
+								toggleForm();
+							}
+						}
 					}
 				}
 			};
@@ -88,24 +103,32 @@
 		}
 	}
 
-	async function deleteConstraint(id: number) {
-		let success = await apiCalls.DeleteConstraint(id);
+	async function deleteConstraint(c: ConstraintListItem): Promise<boolean> {
+		let success = await apiCalls.DeleteConstraint(c.id);
 		if (success != true) {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: 'Can\'t delete Constraint "' + constraint.name + '".'
+				message: 'Can\'t delete Constraint "' + c.name + '".'
 			});
+			return false;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'Constraint "' + constraint.name + '" deleted.'
+				message: 'Constraint "' + c.name + '" deleted.'
 			});
+			return true;
 		}
-		reload();
 	}
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#constraints',
+		}
+	];
 </script>
 
-<Page help={true} title="Manage Constraints">
+<Page help={true} title="Manage Constraints" {links}>
 	<div class="w-full">
 		<h1 class="h1">Constraints</h1>
 		{#await reload()}
@@ -153,7 +176,7 @@
 
 			{#if showForm}
 				<div in:slide out:slide>
-					<Form {constraint} {constraints} on:cancel={toggleForm} on:save={reload} />
+					<Form {constraint} {constraints} on:cancel={toggleForm} on:save={save} />
 				</div>
 			{/if}
 
@@ -172,13 +195,20 @@
 								exclude: true
 							},
 							formalDescription: {
-								header: 'Formal Description'
+								header: 'Formal Description',
+								instructions: {
+									renderComponent: ConstraintElement,
+								}
 							},
 							negated: {
 								disableFiltering: true,
 								exclude: true
 							},
-							inUse: {
+							inUseByVariable: {
+								disableFiltering: true,
+								exclude: true
+							},
+							inUseByMeaning: {
 								disableFiltering: true,
 								exclude: true
 							},

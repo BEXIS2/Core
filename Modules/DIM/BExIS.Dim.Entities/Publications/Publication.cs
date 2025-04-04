@@ -53,6 +53,11 @@ namespace BExIS.Dim.Entities.Publications
         /// </summary>
         public virtual string ExternalLink { get; set; }
 
+        /// <summary>
+        /// Link to external Source
+        /// </summary>
+        public virtual string ExternalLinkType { get; set; }
+
         #endregion
 
         #region Associations        
@@ -62,8 +67,21 @@ namespace BExIS.Dim.Entities.Publications
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
+        public virtual Dataset Dataset { get; set; }
+
+        /// <summary>
+        /// inverse map
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual DatasetVersion DatasetVersion { get; set; }
 
+        /// <summary>
+        /// inverse map
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public virtual Tag Tag { get; set; }
 
         /// <summary>
         /// inverse map
@@ -97,6 +115,7 @@ namespace BExIS.Dim.Entities.Publications
     {
         Open = 0,
         Accepted = 1,
-        Rejected = 2
+        Rejected = 2,
+        Registered = 3
     }
 }

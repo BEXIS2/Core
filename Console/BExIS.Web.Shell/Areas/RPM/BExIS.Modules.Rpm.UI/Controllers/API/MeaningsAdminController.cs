@@ -17,9 +17,9 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
 {
     public class MeaningsAdminController : ApiController
     {
-        private readonly ImeaningManagr _meaningManager;
+        private readonly MeaningManager _meaningManager;
 
-        public MeaningsAdminController(ImeaningManagr _meaningManager)
+        public MeaningsAdminController(MeaningManager _meaningManager)
         {
             this._meaningManager = _meaningManager;
         }
@@ -68,7 +68,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         {
             try
             {
-                Meaning res = _meaningManager.addMeaning(data);
+                Meaning res = _meaningManager.AddMeaning(data);
                 return (cretae_response(res));
             }
             catch
@@ -85,7 +85,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         {
             try
             {
-                Meaning res = _meaningManager.editMeaning(data);
+                Meaning res = _meaningManager.EditMeaning(data);
                 return (cretae_response(res));
             }
             catch
@@ -103,7 +103,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         {
             try
             {
-                return (cretae_response(_meaningManager.deleteMeaning(id)));
+                return (cretae_response(_meaningManager.DeleteMeaning(id)));
             }
             catch
             {
@@ -134,7 +134,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
             {
                 String parentID = Convert.ToString(HttpContext.Current.Request.Form["parentID"]);
                 String childID = Convert.ToString(HttpContext.Current.Request.Form["childID"]);
-                return cretae_response(_meaningManager.updateRelatedManings(parentID, childID));
+                return cretae_response(_meaningManager.UpdateRelatedManings(parentID, childID));
             }
             catch (Exception exc)
             {
@@ -153,8 +153,8 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         {
             try
             {
-                ExternalLink res = _meaningManager.addExternalLink(data);
-                return (cretae_response(_meaningManager.addExternalLink(data)));
+                ExternalLink res = _meaningManager.AddExternalLink(data);
+                return (cretae_response(_meaningManager.AddExternalLink(data)));
             }
             catch
             {
@@ -170,7 +170,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
             ExternalLink m = null;
             try
             {
-                ExternalLink res = _meaningManager.editExternalLink(data);
+                ExternalLink res = _meaningManager.EditExternalLink(data);
                 return (cretae_response(res));
             }
             catch (Exception ex)
@@ -187,7 +187,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
             try
             {
                 Int64.TryParse(this.Request.Content.ReadAsStringAsync().Result.ToString(), out id);
-                return cretae_response(_meaningManager.deleteExternalLink(id));
+                return cretae_response(_meaningManager.DeleteExternalLink(id));
             }
             catch
             {
@@ -200,7 +200,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         [HttpPut, PutRoute("api/MeaningsAdmin/updatePreviousLinks")]
         public HttpResponseMessage updatePreviousLinks()
         {
-            return cretae_response(_meaningManager.updatePreviousLinks());
+            return cretae_response(_meaningManager.UpdatePreviousLinks());
         }
 
         #endregion external links
@@ -216,7 +216,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         {
             try
             {
-                PrefixCategory res = _meaningManager.addPrefixCategory(data);
+                PrefixCategory res = _meaningManager.AddPrefixCategory(data);
                 return (cretae_response(res));
             }
             catch
@@ -233,7 +233,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
             ExternalLink m = null;
             try
             {
-                PrefixCategory res = _meaningManager.editPrefixCategory(data);
+                PrefixCategory res = _meaningManager.EditPrefixCategory(data);
                 return (cretae_response(res));
             }
             catch (Exception ex)
@@ -249,7 +249,7 @@ namespace BExIS.Modules.Rpm.UI.Api.Controllers
         {
             try
             {
-                return cretae_response(_meaningManager.deletePrefixCategory(id));
+                return cretae_response(_meaningManager.DeletePrefixCategory(id));
             }
             catch
             {

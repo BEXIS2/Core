@@ -613,7 +613,7 @@ function Et(t, o) {
 		return (e == null ? void 0 : e.type) === 'data'
 			? e
 			: (e == null ? void 0 : e.type) === 'skip'
-				? n ?? null
+				? (n ?? null)
 				: null;
 	}
 	async function he({ id: e, invalidating: n, url: r, params: a, route: s }) {
@@ -675,7 +675,7 @@ function Et(t, o) {
 					return $e;
 				},
 				server_data_node: pe(
-					$ === void 0 && E[0] ? { type: 'skip' } : $ ?? null,
+					$ === void 0 && E[0] ? { type: 'skip' } : ($ ?? null),
 					E[0] ? (L == null ? void 0 : L.server) : void 0
 				)
 			});
@@ -932,9 +932,9 @@ function Et(t, o) {
 	function X(e, n) {
 		return e instanceof ee
 			? e.body
-			: t.hooks.handleError({ error: e, event: n }) ?? {
+			: (t.hooks.handleError({ error: e, event: n }) ?? {
 					message: n.route.id != null ? 'Internal Error' : 'Not Found'
-				};
+				});
 	}
 	return {
 		after_navigate: (e) => {

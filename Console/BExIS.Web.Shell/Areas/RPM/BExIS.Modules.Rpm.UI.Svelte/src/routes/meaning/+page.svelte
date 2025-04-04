@@ -26,6 +26,8 @@
 	import TableMeaning from './table/tableMeaning.svelte';
 	import TableOptions from './table/tableOptions.svelte';
 	import Meaning from './Meaning.svelte';
+	import type { SvelteComponent } from 'svelte';
+	import type { linkType } from '@bexis2/bexis2-core-ui';
 
 	//stores
 	let meanings: MeaningModel[];
@@ -37,8 +39,6 @@
 	const modalStore = getModalStore();
 
 	async function reload() {
-		showForm = false;
-
 		// get meanings
 		meanings = await getMeanings();
 		meaningsStore.set(meanings);
@@ -57,12 +57,12 @@
 	const m: TableConfig<MeaningModel> = {
 		id: 'Meaning',
 		data: meaningsStore,
-		optionsComponent: TableOptions,
+		optionsComponent: TableOptions as unknown as typeof SvelteComponent,
 		columns: {
 			approved: {
 				disableFiltering: true,
 				instructions: {
-					renderComponent: TableIsApproved
+					renderComponent: TableIsApproved as unknown as typeof SvelteComponent
 				},
 				exclude: false
 			},
@@ -73,7 +73,7 @@
 			externalLinks: {
 				header: 'External Link',
 				instructions: {
-					renderComponent: TableExnternalLink
+					renderComponent: TableExnternalLink as unknown as typeof SvelteComponent
 				},
 				disableFiltering: true,
 				exclude: true
@@ -90,14 +90,14 @@
 			related_meaning: {
 				header: 'Related to',
 				instructions: {
-					renderComponent: TableMeaning
+					renderComponent: TableMeaning as unknown as typeof SvelteComponent
 				},
 				disableFiltering: true,
 				exclude: true
 			},
 			selectable: {
 				instructions: {
-					renderComponent: TableIsApproved
+					renderComponent: TableIsApproved as unknown as typeof SvelteComponent
 				},
 				disableFiltering: true,
 				exclude: false
@@ -121,7 +121,6 @@
 
 	function clear() {
 		meaning = new MeaningModel(null);
-		showForm = false;
 	}
 
 	function edit(type: any) {
@@ -131,14 +130,21 @@
 			showForm = true;
 		}
 		if (type.action == 'delete') {
+			let m: MeaningModel = $meaningsStore.find((u) => u.id === type.id)!;
 			const confirm: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete Meaning',
-				body: 'Are you sure you wish to delete Meaning ' + meaning.name + '?',
+				body: 'Are you sure you wish to delete Meaning ' + m.name + '?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
-				response: (r: boolean) => {
+				response: async (r: boolean) => {
 					if (r === true) {
-						deleteFn(type.id);
+						let success :boolean = await deleteFn(m);
+						if (success) {
+							reload();
+							if (m.id === meaning.id) {
+								toggleForm();
+							}
+						}
 					}
 				}
 			};
@@ -146,26 +152,26 @@
 		}
 	}
 
-	async function deleteFn(id) {
-		const res = await remove(id);
-		console.log('🚀 ~ file: +page.svelte:135 ~ deleteFn ~ res:', res);
-
+	async function deleteFn(m: MeaningModel): Promise<boolean> {
+		const res = await remove(m.id);
 		if (res) {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'Meaning deleted.'
+				message: 'Meaning "' + m.name + '"  deleted.'
 			});
 
-			reload();
+			return true;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: "Can't delete Meaning."
+				message: 'Can\'t delete Meaning "' + m.name + '".'
 			});
+
+			return false;
 		}
 	}
 
-	function onSuccessFn(id) {
+	function onSuccessFn(id: number) {
 		const message = id > 0 ? 'Meaning updated.' : 'Meaning created.';
 
 		notificationStore.showNotification({
@@ -176,6 +182,7 @@
 		showForm = false;
 		setTimeout(async () => {
 			reload();
+			clear();
 		}, 10);
 	}
 
@@ -185,9 +192,16 @@
 			message: "Can't save Meaning."
 		});
 	}
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#meanings',
+		}
+	];
 </script>
 
-<Page help={true} title="Manage Meanings">
+<Page help={true} title="Manage Meanings" {links}>
 	{#await reload()}
 		<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h-9 w-96 placeholder animate-pulse" />
@@ -205,7 +219,7 @@
 		<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h3 h-9">
 				{#if meaning.id < 1}
-					<span in:fade={{ delay: 400 }} out:fade>Create neẇ Meaning</span>
+					<span in:fade={{ delay: 400 }} out:fade>Create new Meaning</span>
 				{:else}
 					<span in:fade={{ delay: 400 }} out:fade>{meaning.name}</span>
 				{/if}
@@ -216,7 +230,7 @@
 					<button
 						transition:fade
 						class="btn variant-filled-secondary shadow-md h-9 w-16"
-						title="Create neẇ Meaning"
+						title="Create new Meaning"
 						id="create"
 						on:mouseover={() => {
 							helpStore.show('create');
@@ -231,7 +245,7 @@
 			<div in:slide out:slide>
 				<Meaning
 					{meaning}
-					on:cancel={() => clear()}
+					on:cancel={() => toggleForm()}
 					on:success={() => onSuccessFn(meaning.id)}
 					on:fail={onFailFn}
 				/>

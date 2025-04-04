@@ -97,11 +97,71 @@ namespace BExIS.Xml.Helpers
                     package.SetAttributeValue("number", "1");
                     role.Add(package);
 
-                    setChildren(package, mpu, importXml);
+                    if(mpu.Extra == null || !IsChoice(mpu.Extra))
+                        setChildren(package, mpu, importXml);
                 }
 
                 return doc;
             }
+        }
+
+        public XDocument CreateTempMetadataXmlWithChoiceChildrens(long metadataStructureId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
+            using (MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager())
+            {
+                _metadataAttrManager = metadataAttributeManager;
+
+                MetadataStructure metadataStructure = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(metadataStructureId);
+
+                List<Int64> packageIds = metadataStructureManager.GetEffectivePackageIds(metadataStructureId).ToList();
+
+                // Create xml Document
+                // Create the xml document containe
+                XDocument doc = new XDocument();// Create the XML Declaration, and append it to XML document
+                                                //XDeclaration dec = new XDeclaration("1.0", null, null);
+                                                //doc.Add(dec);// Create the root element
+                XElement root = new XElement("Metadata");
+                root.SetAttributeValue("id", metadataStructure.Id.ToString());
+                doc.Add(root);
+
+                IList<MetadataPackageUsage> packages = uow.GetReadOnlyRepository<MetadataPackageUsage>().Get(p => packageIds.Contains(p.Id));
+                List<MetadataAttributeUsage> attributes;
+                foreach (MetadataPackageUsage mpu in packages)
+                {
+                    XElement package;
+
+                    // create the role
+                    XElement role = CreateXElement(mpu.Label, XmlNodeType.MetadataPackageUsage);
+                    if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", mpu.Label);
+
+                    role.SetAttributeValue("id", mpu.Id.ToString());
+                    root.Add(role);
+
+                    // create the package
+                    package = CreateXElement(mpu.MetadataPackage.Name, XmlNodeType.MetadataPackage);
+                    if (_mode.Equals(XmlNodeMode.xPath)) package.SetAttributeValue("name", mpu.MetadataPackage.Name);
+                    package.SetAttributeValue("roleId", mpu.Id.ToString());
+                    package.SetAttributeValue("id", mpu.MetadataPackage.Id.ToString());
+                    package.SetAttributeValue("number", "1");
+                    role.Add(package);
+
+                    setChildren(package, mpu);
+                }
+
+                return doc;
+            }
+        }
+
+        private bool IsChoice(XmlNode xmlNode)
+        {
+            if (xmlNode != null)
+            {
+                XmlNode element = XmlUtility.GetXmlNodeByAttribute(xmlNode, "type", "name", "choice");
+                if (element != null) return true;
+            }
+            return false;
         }
 
         private XElement setChildren(XElement element, BaseUsage usage, XDocument importDocument = null)
@@ -248,10 +308,13 @@ namespace BExIS.Xml.Helpers
             {
                 role = Get(xpath);
             }
-            else
+            else // if element not exist, need to add into metadata before adding the package, path is
+                 // the element path but you need to get the parent to add the package
             {
                 // create the role
+                string parentXPath = xpath.Substring(0, xpath.LastIndexOf("//"));
                 role = CreateXElement(usage.Label, xmlUsageType);
+                XmlUtility.GetXElementByXPath(parentXPath, metadataXml).Add(role);
                 if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", usage.Label);
                 role.SetAttributeValue("id", usage.Id.ToString());
             }
@@ -307,9 +370,12 @@ namespace BExIS.Xml.Helpers
             {
                 XElement element = this._tempXDoc.XPathSelectElement(xpath);
 
-                XElement parent = element.Parent;
+                if (element!=null)
+                {
+                    XElement parent = element.Parent;
 
-                removeAndUpdate(element, parent);
+                    removeAndUpdate(element, parent);
+                }
             }
 
             return metadataXml;
@@ -317,14 +383,23 @@ namespace BExIS.Xml.Helpers
 
         private void removeAndUpdate(XElement element, XElement parent)
         {
-            int number = Convert.ToInt32(element.Attribute("number").Value);
-
-            List<XElement> listOfPackagesAfter = parent.Elements().Where(p => p.Attribute("number") != null && Convert.ToInt64(p.Attribute("number").Value) > number).ToList();
-
-            if (element != null)
+            if (element.Attribute("number")!=null)
             {
-                element.Remove();
-                listOfPackagesAfter.ForEach(p => p.Attribute("number").SetValue(Convert.ToInt64(p.Attribute("number").Value) - 1));
+                int number = Convert.ToInt32(element.Attribute("number").Value);
+                List<XElement> listOfPackagesAfter = parent.Elements().Where(p => p.Attribute("number") != null && Convert.ToInt64(p.Attribute("number").Value) > number).ToList();
+
+                if (element != null)
+                {
+                    element.Remove();
+                    listOfPackagesAfter.ForEach(p => p.Attribute("number").SetValue(Convert.ToInt64(p.Attribute("number").Value) - 1));
+                }
+            }
+            else
+            {
+                if (element != null)
+                {
+                    element.Remove();
+                }
             }
         }
 
@@ -482,6 +557,10 @@ namespace BExIS.Xml.Helpers
                         element = AddAttribute(element, baseUsage, 1);
                     }
                 }
+
+
+                if (!string.IsNullOrEmpty(attributeUsage.FixedValue)) element.SetValue(attributeUsage.FixedValue);
+                if (!string.IsNullOrEmpty(attributeUsage.DefaultValue)) element.SetValue(attributeUsage.DefaultValue);
 
                 role.Add(element);
                 current.Add(role);
@@ -650,8 +729,6 @@ namespace BExIS.Xml.Helpers
             {
                 throw new Exception("attribute exist");
             }
-
-            return null;
         }
 
         private XElement addParameters(XElement current, ICollection<MetadataParameterUsage> parameterUsages)

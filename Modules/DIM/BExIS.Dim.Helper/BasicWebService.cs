@@ -60,16 +60,15 @@ namespace BExIS.Dim.Helpers
 
                     Debug.WriteLine(url);
 
-                    client.BaseAddress = new Uri(url);
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    string requesturl = url + parameters;
 
-                    //ToDO set data as json to body
-
-                    //client.
-                    var parameterDic = new Dictionary<string, string> { { "requestJson", body } };
-                    using (var encodedContent = new FormUrlEncodedContent(parameterDic))
+                    using (HttpContent content = new StringContent(body, Encoding.UTF8, "application/json"))
                     {
+
+                        client.BaseAddress = new Uri(url);
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
                         //test@testerer.de:WSTest
                         var byteArray = Encoding.ASCII.GetBytes(user + ":" + password);
 
@@ -77,15 +76,14 @@ namespace BExIS.Dim.Helpers
                         AuthenticationHeaderValue ahv = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
                         client.DefaultRequestHeaders.Authorization = ahv;
 
-                        string requesturl = url + parameters;
-
                         //HttpResponseMessage response = await client.PostAsync(requesturl, sContent);
-                        HttpResponseMessage response = await client.PostAsync(requesturl, encodedContent);
+                        HttpResponseMessage response = await client.PostAsync(requesturl, content);
                         Debug.WriteLine(requesturl);
                         //Debug.WriteLine(Server.UrlEncode(parameters));
                         response.EnsureSuccessStatusCode();
-                        returnValue = ((HttpResponseMessage)response).Content.ReadAsStringAsync().Result;
+                        return ((HttpResponseMessage)response).Content.ReadAsStringAsync().Result;
                     }
+                    
                 }
                 return returnValue;
             }

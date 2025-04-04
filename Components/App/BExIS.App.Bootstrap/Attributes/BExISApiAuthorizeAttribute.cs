@@ -1,13 +1,17 @@
-﻿using BExIS.Security.Entities.Subjects;
+﻿using BExIS.Security.Entities.Requests;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using BExIS.Utils.Config;
 using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.Remoting.Contexts;
 using System.Text;
+using System.Web;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 
@@ -48,20 +52,35 @@ namespace BExIS.App.Bootstrap.Attributes
                         {
                             foreach (CookieState state in cookie.Cookies)
                             {
-                                if (state.Name.Equals("jwt")) jwt = state.Value;
+                                if (state.Name.Equals("jwt"))
+                                {
+                                    jwt = state.Value;
+                                }
                             }
                         }
 
+                  
+                        //actionContext.Request.
+
+                        //HttpCookie cookie = actionContext.Request.Cookies["YourCookieName"];
+
+                        //if (cookie != null)
+                        //{
+                        //    // Extend the expiration by 30 minutes from the current time
+                        //    cookie.Expires = DateTime.Now.AddMinutes(30);
+                        //    context.Response.Cookies.Add(cookie);
+                        //}
+
                         if (!string.IsNullOrEmpty(jwt))
                         {
-                            principal = JwtHelper.Get(jwt);
+                            principal = JwtHelper.GetClaimsPrincipleByToken(jwt);
                         }
                     }
 
                     // 1.1. check basic auth in case of principal is empty!
                     if (principal == null || principal.Identity == null || !principal.Identity.IsAuthenticated)
                     {
-                        if (actionContext.Request.Headers.Authorization.Scheme.ToLower() == "basic")
+                        if (actionContext.Request.Headers.Authorization != null && actionContext.Request.Headers.Authorization.Scheme.ToLower() == "basic")
                         {
                             string basicParameter = actionContext.Request.Headers.Authorization.Parameter;
 
@@ -116,6 +135,25 @@ namespace BExIS.App.Bootstrap.Attributes
                     }
 
                     actionContext.ControllerContext.RouteData.Values.Add("user", user);
+
+                    // update jwt cookie
+                    if (user != null)
+                    {
+                        var jwtConfiguration = GeneralSettings.JwtConfiguration;
+                        var jwt = JwtHelper.GetTokenByUser(user);
+              
+                        // Create a new cookie
+                        CookieHeaderValue cookie = new CookieHeaderValue("jwt", jwt);
+
+                        // Set additional properties if needed
+                        cookie.Expires = jwtConfiguration.ValidLifetime > 0 ? DateTime.Now.AddHours(jwtConfiguration.ValidLifetime) : DateTime.MaxValue;
+                        cookie.Domain = actionContext.Request.RequestUri.Host; // Set the domain
+                        cookie.Path = "/"; // Set the path
+
+                        // Add the cookie to the response
+                        actionContext.Response?.Headers?.AddCookies(new[] { cookie });
+                    }
+
                     return;
                 }
             }
@@ -123,5 +161,6 @@ namespace BExIS.App.Bootstrap.Attributes
             {
             }
         }
+
     }
 }

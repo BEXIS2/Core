@@ -45,11 +45,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", instanceId } });
                     }
 
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetSetPublicHeader(instanceId, typeof(Dataset).Name),
-                        MessageHelper.GetSetPublicMessage(getPartyNameOrDefault(), instanceId, typeof(Dataset).Name),
-                        ConfigurationManager.AppSettings["SystemEmail"]
-                        );
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetSetPublicHeader(instanceId, typeof(Dataset).Name),
+                            MessageHelper.GetSetPublicMessage(getPartyNameOrDefault(), instanceId, typeof(Dataset).Name),
+                            ConfigurationManager.AppSettings["SystemEmail"]
+                            );
+                    }
                 }
             }
             finally
@@ -203,11 +205,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", instanceId } });
                 }
 
-                var es = new EmailService();
-                es.Send(MessageHelper.GetUnsetPublicHeader(instanceId, typeof(Dataset).Name),
-                    MessageHelper.GetUnsetPublicMessage(getPartyNameOrDefault(), instanceId, typeof(Dataset).Name),
-                    ConfigurationManager.AppSettings["SystemEmail"]
-                    );
+                using (var emailService = new EmailService())
+                {
+                    emailService.Send(MessageHelper.GetUnsetPublicHeader(instanceId, typeof(Dataset).Name),
+                        MessageHelper.GetUnsetPublicMessage(getPartyNameOrDefault(), instanceId, typeof(Dataset).Name),
+                        ConfigurationManager.AppSettings["SystemEmail"]
+                        );
+                }
             }
         }
 

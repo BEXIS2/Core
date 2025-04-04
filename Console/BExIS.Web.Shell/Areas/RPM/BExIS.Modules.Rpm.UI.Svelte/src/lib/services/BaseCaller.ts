@@ -3,6 +3,6 @@
 import { host } from '@bexis2/bexis2-core-ui';
 
 // go to a internal action
-export const goTo = async (url:string) => {
+export const goTo = async (url: string) => {
 	window.open(host + url, '_self')?.focus();
 };

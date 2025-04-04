@@ -1844,7 +1844,7 @@ namespace BExIS.Dlm.Services.Data
                 var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
                 var datasetVersions = datasetVersionRepo.Query().Where(dsv => dsv.Dataset.Id.Equals(id)).OrderBy(dsv => dsv.Timestamp);
 
-                if (datasetVersions.Any() && datasetVersions.Count() >= (versionNr - 1))
+                if (datasetVersions.Any() && versionNr>0 && datasetVersions.Count() >= (versionNr - 1) )
                 {
                     return datasetVersions.ToList().ElementAt(versionNr - 1);
                 }
@@ -1963,6 +1963,8 @@ namespace BExIS.Dlm.Services.Data
 
             return values;
         }
+
+
 
         #endregion DatasetVersion
 
@@ -4274,6 +4276,70 @@ namespace BExIS.Dlm.Services.Data
             }
 
             return tagNr;
+        }
+
+        #endregion
+
+        #region metadata
+
+        public void UpdateSingleValueInMetadata(long versionId, string xpath, string value)
+        {
+            if(versionId<=0) throw new ArgumentException("versionId must be greater than 0");
+            if (string.IsNullOrWhiteSpace(xpath)) throw new ArgumentException("xpath must not be null or empty");
+            //if (string.IsNullOrWhiteSpace(value)) throw new ArgumentException("value must not be null or empty");
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<DatasetVersion> datasetVersionRepo = uow.GetRepository<DatasetVersion>();
+                var version = datasetVersionRepo.Get(versionId);
+
+                if(version == null) throw new ArgumentException("versionId is not valid");
+
+                var node = version.Metadata.SelectSingleNode(xpath);
+
+                if (node != null)
+                {
+
+                    //node.Value = value;
+                    node.InnerText = value;
+
+                    datasetVersionRepo.Put(version);
+                    uow.Commit();
+
+                }
+            }
+        }
+
+        public void UpdateValueInMetadata(long versionId, string xpath, string value)
+        {
+            if (versionId <= 0) throw new ArgumentException("versionId must be greater than 0");
+            if (string.IsNullOrWhiteSpace(xpath)) throw new ArgumentException("xpath must not be null or empty");
+            if (string.IsNullOrWhiteSpace(value)) throw new ArgumentException("value must not be null or empty");
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<DatasetVersion> datasetVersionRepo = uow.GetRepository<DatasetVersion>();
+                var version = datasetVersionRepo.Get(versionId);
+
+                if (version == null) throw new ArgumentException("versionId is not valid");
+
+                XmlNodeList nodeList = version.Metadata.SelectNodes(xpath);
+
+                if (nodeList.Count >= 1)
+                {
+                    var last = nodeList[nodeList.Count - 1];
+                    if (string.IsNullOrEmpty(last.InnerText)) last.InnerText = value;
+                    else
+                    {
+                        var newNode = last.CloneNode(true);
+                        newNode.InnerText = value;
+                        last.ParentNode.AppendChild(newNode);
+                    }
+                }
+
+                datasetVersionRepo.Put(version);
+                uow.Commit();
+            }
         }
 
         #endregion

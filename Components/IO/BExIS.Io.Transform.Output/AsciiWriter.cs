@@ -298,9 +298,9 @@ namespace BExIS.IO.Transform.Output
                     {
                         value = formatValue(value, variable.DataType, variable.DisplayPatternId, GetStringFormat(variable.DisplayPatternId), variable.MissingValues);
                     }
-                    // add value to row
-                    line[j] = escapeValue(value);
                 }
+                // add value to row
+                line[j] = escapeValue(value);
             }
 
             // Add to result

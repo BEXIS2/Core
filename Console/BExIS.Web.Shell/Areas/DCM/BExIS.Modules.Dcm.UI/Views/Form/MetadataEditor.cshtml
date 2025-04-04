@@ -9,6 +9,7 @@
 @using Vaiona.Web.Mvc.Modularity
 @using System.Text.RegularExpressions
 @using BExIS.Utils.Extensions
+@using Newtonsoft.Json.Schema;
 
 @{
 
@@ -18,6 +19,7 @@
     bool locked = false;
     bool editMode = false;
     bool showOptional = false;
+    long entityId = Model.DatasetId;
 
     string showAllClass = " bx-toggle-on";
 
@@ -29,10 +31,17 @@
     string id_label_container = "";
     string displayName = "";
 
+    List<string> validationErrors = new List<string>();
+
     if (ViewData.Keys.Contains("Locked"))
     {
         locked = (bool)ViewData["Locked"];
         lockedClass = "bx-disabled";
+    }
+
+    if (ViewData.Keys.Contains("ValidationErrors"))
+    {
+        validationErrors = (List<string>)ViewData["ValidationErrors"];
     }
 
     if (ViewData.Keys.Contains("ShowOptional"))
@@ -84,6 +93,7 @@
 
 }
 
+
 @section scripts
 {
     <script src="@Url.Content("~/Areas/DCM/" + debugPath + "Scripts/Form.js")" type="text/javascript"></script>
@@ -96,27 +106,27 @@
 {
     @if (Model.HeaderHelp.Length > 2)
     {
-    @Html.Raw(Model.HeaderHelp);
+        @Html.Raw(Model.HeaderHelp);
     }
     else
     {
-    <p>
-        Here you can enter metadata for your new dataset. The form varies according to the metadata structure you selected in the first step.
-        Mandatory fields are indicated with an red asterisk.
-    </p>
-    <p>You can add, remove, or re-order elements (e.g. multiple Creators) using the buttons at the right.</p>
+        <p>
+            Here you can enter metadata for your new dataset. The form varies according to the metadata structure you selected in the first step.
+            Mandatory fields are indicated with an red asterisk.
+        </p>
+        <p>You can add, remove, or re-order elements (e.g. multiple Creators) using the buttons at the right.</p>
 
-    <p>
-        More information
-        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title = "go to help", target = "_blank" })
-    </p>
+        <p>
+            More information
+            @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title = "go to help", target = "_blank" })
+        </p>
     }
 }
 
-<div id="MetadataEditor" style="width: 89%">
+<div id="MetadataEditor" style="width: 89%" entityid="@Model.DatasetId">
     @if (Model.DatasetId != -1)
     {
-    <span id="datasetId" style="display:none">@Model.DatasetId</span>
+        <span id="datasetId" style="display:none">@Model.DatasetId</span>
     }
     <div>
         <table>
@@ -124,38 +134,52 @@
                 @if (locked)
                 {
 
-                <td style="width:500px;">
+                    <td style="width:500px;">
 
-                    @if (Model.LatestVersion)
+                        @if (Model.LatestVersion)
                         {
 
-                    <span class="dropdown">
-                        <button class="bx-button function" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            Download Metadata
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                            <li><a id="downloadHtmlButton" onclick="downloadHtml()">... as Html</a></li>
-                            <li><a id="downloadXmlButton" onclick="downloadXml()">... as XML</a></li>
-                        </ul>
-                    </span>
+                            <span class="dropdown">
+                                <button class="bx-button small function" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    <span class="fa fa-download"></span>
+                                    <span style="padding:5px;">
+                                        Download Metadata
+                                    </span>
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                    <li><a id="downloadHtmlButton" onclick="downloadHtml()">... as Html</a></li>
+                                    <li><a id="downloadXmlButton" onclick="downloadXml()">... as XML</a></li>
+                                </ul>
+                            </span>
                         }
                         else
                         {
-                    <button class="bx-button function bx-disabled" disabled="disabled" title="You can only download the metadata of the latest version directly.">Download Metadata </button>
+                            <button class="bx-button function bx-disabled" disabled="disabled" title="You can only download the metadata of the latest version directly.">Download Metadata </button>
                         }
 
-                    @Html.CheckBox("showAll", @showOptional, new { OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll" })
+                        @if (Model.EditRight)
+                        {
+                            <button class="bx-button small function" title="Edit Metadata" onclick="edit()">
+                                <span class="fa fa-pencil"></span>
+                                <span style="padding:5px;">
+                                    Edit Metadata
+                                </span>
+                            </button>
+                        }
 
-                    <b>show all fields</b>
-                </td>
+                        @Html.CheckBox("showAll", @showOptional, new { OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll" })
 
+                        <b>show all fields</b>
+
+
+                    </td>
                 }
 
                 @if (!Model.Created && !locked && Model.Import)
                 {
-                <td style="width: 100px">
-                    @(Html.Telerik().Upload()
+                    <td style="width: 100px">
+                        @(Html.Telerik().Upload()
                             .Name("SelectFileUploader")
                             .Multiple(false)
                             .ShowFileList(false)
@@ -165,11 +189,11 @@
                                 .OnSelect("SelectFileProcess_OnSelect")
                                 .OnLoad("SelectFileUploader_OnLoad"))
                             .Async(async => async
-                                .Save("SelectFileProcess", "Form")
+                                .Save("SelectFileProcess", "Form",new { entityId })
                                 .AutoUpload(true))
 
                         )
-                </td>
+                    </td>
                 }
 
                 <td id="form_message_container_Column" style="text-align: right">
@@ -183,36 +207,32 @@
                     <span id="preloaderContainer" style="float: right"></span>
                 </td>
 
-                @if (Model.Created && Model.DatasetId != -1 && !@Model.FromEditMode)
-                {
-
-                <td>You successfully created dataset: <br /><b>@Model.DatasetTitle</b></td>
-                <td id="upload">
-                    Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", null, new { title = "Link to upload wizard", @class = "bx-link" })</b><br />
-                    to add primary data to this dataset.
-                </td>
-
-                    if (Html.IsAccessible("DDM", "Data", "ShowData"))
-                    {
-                        if (@Model.DatasetId > 0)
-                        {
-                <td>Or see your dataset here <b>@Html.ActionLink(@Model.DatasetTitle, "ShowData", "Data", new { area = "DDM", id = @Model.DatasetId }, new { title = "Link to your dataset.", @class = "bx-link" })</b><br /></td>
-
-                        }
-                    }
-                }
             </tr>
         </table>
     </div>
 
-    @if (ViewBag.isValid == "no")
+    @if (ViewData["IsValid"] == "no")
     {
-    <div id="view-warning-container">
-        <div id="view-warning" class="alert alert-danger" role="alert" style="width: 100%;">
-            <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
-            The metadata for this dataset is not complete.
+        <div id="view-warning-container">
+            <div id="view-warning" class="alert alert-danger" role="alert" style="width: 100%;">
+                <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
+                The metadata for this dataset is not complete.
+            </div>
         </div>
-    </div>
+    }
+
+    @if (validationErrors.Any())
+    {
+        <div id="view-warning-container">
+            <div id="view-warning" class="alert alert-danger" role="alert" style="width: 100%;">
+                <ul>
+                    @foreach (var error in validationErrors)
+                    {
+                        <li>@error</li>
+                    }
+                </ul>
+            </div>
+        </div>
     }
 
     <div style="overflow: auto;">
@@ -258,40 +278,57 @@
 
     @if (!locked)
     {
-    <div class="bx-footer right">
+        <div class="bx-footer right">
 
-        <!-- only from editmode you have the option to reset-->
-        <button id="validate" onclick="validate()" class="bx-button function" style="float: left;">Validate</button>
+            <!-- only from editmode you have the option to reset-->
+            <button id="validate" onclick="validate()" class="bx-button function" style="float: left;">Validate</button>
 
-        @*@if (@Model.FromEditMode)
+            @*@if (@Model.FromEditMode)
+                {
+                    <button onclick="reset()" class="bx-button function" style="float: left;">Reset</button>
+                }*@
+
+            @if (@submit.IsComplete())
             {
-                <button onclick="reset()" class="bx-button function" style="float: left;">Reset</button>
-            }*@
-
-        @if (@submit.IsComplete())
-            {
-                    <input id="commit_message" class="bx-commit-message bx-input bx-metadataFormTextInput" placeholder="Please describe what you have changed" type="text" value="" />
-                    <button id="save" onclick="submit()" class="bx-button action">Save</button>
+                <input id="commit_message" class="bx-commit-message bx-input bx-metadataFormTextInput" placeholder="Please describe what you have changed" type="text" value="" />
+                <button id="save" onclick="submit()" class="bx-button action">Save</button>
             }
 
-        @if (@Model.FromEditMode)
+            @if (@Model.FromEditMode)
             {
-        <button id="cancel" onclick="cancel()" class="bx-button action">Cancel</button>
+                <button id="cancel" onclick="cancel()" class="bx-button action">Cancel</button>
             }
-    </div>
+        </div>
     }
 
     <!--include additional JavaScript file at the bottum-->
     @if (ViewData["MetadataStructureID"] != null && (long)ViewData["MetadataStructureID"] != -1)
     {
-    <script src="@Url.Content("~/ddm/Data/getFile/?metadataStructureId=" + (long)ViewData["MetadataStructureID"] )" type="text/javascript"></script>
+        <script src="@Url.Content("~/ddm/Data/getFile/?metadataStructureId=" + (long)ViewData["MetadataStructureID"] )" type="text/javascript"></script>
     }
     else
     {
-    <script src="@Url.Content("~/ddm/Data/getFile/?id=" + Model.DatasetId)" type="text/javascript"></script>
+        <script src="@Url.Content("~/ddm/Data/getFile/?id=" + Model.DatasetId)" type="text/javascript"></script>
     }
 
-    <script>
+    <script type="text/javascript">
+
+    console.log("***************METADATAEDITOR");
+
+    let entityId = 0;
+
+    function getId() {
+        console.log("load form.js");
+        const metadataContainer = document.getElementById("MetadataEditor");
+        console.log("metadataContainer", metadataContainer);
+
+
+        if (metadataContainer) { // Check if the element exists
+            entityId = metadataContainer.getAttribute("entityid"); // Get the value of the "data-value" attribute
+            console.log("entityId", entityId); // Output the value (e.g., "123")
+            return entityId;
+        }
+    }
 
     $("#MetadataEditor")
         .ready(function() {
@@ -299,11 +336,13 @@
             setTimeout(function() {
                     //alert("r");
                 bindMinimap();
-                    $("#preloader_cotainer").removePreloader();
+                $("#preloader_cotainer").removePreloader();
+                getId();
                 },
                 120);
             //alert("start triggering");
             $(document).trigger("MetadataFormIsReady");
+
         });
 
     $(window).resize(function () {
@@ -352,41 +391,34 @@
             Is Extention from selected file
             in list of supported files
             */
-            function IsExtentionValid(fileExtention) {
-    var extListAsString = ".xml";
-    var extList = extListAsString.split(',');
+    function IsExtentionValid(fileExtention) {
+        var extListAsString = ".xml";
+        var extList = extListAsString.split(',');
 
-    for (var i = 0; i < extList.length; i++) {
-        if (fileExtention.toLowerCase() == extList[i]) {
-            return true;
-        }
-    }
-
-    return false;
+        for (var i = 0; i < extList.length; i++) {
+            if (fileExtention.toLowerCase() == extList[i]) {
+                return true;
             }
+        }
 
-            function OnSuccess(e) {
-    //alert("on success");
+        return false;
+                }
 
-    $.get('@Url.Action("ValidateExternalXml", "Form", new RouteValueDictionary {{"area", "DCM"}})',
+    function OnSuccess(e) {
+        //alert("on success");
+        entityId
+
+        $.get('@Url.Action("ValidateExternalXml", "Form", new RouteValueDictionary { { "area", "DCM" } })', { entityId },
         function(response) {
 
             loadExternalXml();
 
-            //if (response.length > 0) {
-            //    if (confirm('Warning:' + response + " Press OK if you want to import an invalid xml document.")) {
-            //        loadExternalXml();
-            //    }
-            //} else {
-            //    loadExternalXml();
-            //}
-            //}
         });
-        }
+}
 
     function loadExternalXml() {
 
-        $.get('@Url.Action("LoadExternalXml", "Form", new RouteValueDictionary {{"area", "DCM"}})',
+        $.get('@Url.Action("LoadExternalXml", "Form", new RouteValueDictionary {{"area", "DCM"}, { "entityId", @entityId } })',
             function(response) {
 
                 if (response.indexOf("error") > 0) {
@@ -414,7 +446,9 @@
 
         $("#root").preloader(20, "Is validating", 300);
 
-        $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}})',
+
+
+        $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM" }, { "entityId", entityId } })',
             function(response) {
 
                 console.log(response);
@@ -423,6 +457,7 @@
                     .text("");
 
                 $('#MetadataEditor').replaceWith(response);
+                getId();
                 $('html, body').animate({ scrollTop: 0 }, 'slow');
 
                 setTimeout(function () {
@@ -465,7 +500,7 @@
         if (confirm('Are you sure? All changes will be lost.')) {
 
             $
-                .get('@Url.Action(@reset.ActionName, @reset.ControllerName, new RouteValueDictionary {{"area", @reset.AreaName}})',
+                .get('@Url.Action(@reset.ActionName, @reset.ControllerName, new RouteValueDictionary {{"area", @reset.AreaName}})', { entityId },
                     function(response) {
                         $('#MetadataEditor').replaceWith(response);
                         bindMinimap(true);
@@ -477,26 +512,26 @@
     }
 
     function edit() {
-        $
-            .get('@Url.Action("EditMetadata", "Form", new RouteValueDictionary {{"area", "DCM"}, {"datasetId", @Model.DatasetId}, {"locked", false}, {"created", false}})',
-                function(response) {
-                    $('#MetadataEditor').replaceWith(response);
-                    bindMinimap(true);
-                })
+
+        const defaultFormUrl = "/dcm/metadata/loadform?id=@Model.DatasetId&version=0";
+        window.open(defaultFormUrl)?.focus();
+
     }
 
     function submit() {
 
-  
+
         var commit_message = $('#commit_message').val();
         console.log("commit_message", commit_message)
 
-        $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}})',
-            function(response) {
+
+        $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}, { "entityId", entityId } })',
+            function (response) {
+                
                 $('#MetadataEditor').replaceWith(response);
                 bindMinimap(true);
                 var errors = $('.bx-input-error');
-
+                console.log(errors);
                 if (errors.length == 0) {
 
                     callSubmitAction(true, commit_message);
@@ -515,11 +550,9 @@
             })
     }
 
-        function callSubmitAction(valid, commit_message) {
+    function callSubmitAction(valid, commit_message) {
 
-           
-
-
+        var entityId = '@Model.DatasetId';
          $.get('@Url.Action(
                  @submit.ActionName,
                  @submit.ControllerName,
@@ -530,7 +563,8 @@
                  })',
             {
                 valid: valid,
-                commitMessage: commit_message
+                commitMessage: commit_message,
+                entityId
             },
             function (response) {
 
@@ -552,7 +586,7 @@
         var fromEditMode = '@Model.FromEditMode';
         var latest = '@Model.LatestVersion'
 
-  
+
         $.get('@Url.Action("SwitchVisibilityOfOptionalElements", "Form","DCM")',
             {
                 show: show,
@@ -571,22 +605,24 @@
 
     function downloadHtml() {
 
-		$("#preloaderContainer").preloader(20, "Preparing html file...");
+        $("#preloaderContainer").preloader(20, "Preparing html file...");
 
-        window.location = '@Url.Action("DownloadAsHtml", "Form")';
+        var x = entityId
 
-        $("#preloaderContainer").removePreloader();
-
-    };
-
-    function downloadXml() {
-
-		$("#preloaderContainer").preloader(20, "Preparing xml file...");
-
-        window.location = '@Url.Action("DownloadAsXml", "Form")';
+        window.location = '@Url.Action("DownloadAsHtml", "Form", new { @entityId })';
 
         $("#preloaderContainer").removePreloader();
 
-     };
+        };
+
+        function downloadXml() {
+
+        $("#preloaderContainer").preloader(20, "Preparing xml file...");
+
+            window.location = '@Url.Action("DownloadAsXml", "Form", new { @entityId })';
+
+        $("#preloaderContainer").removePreloader();
+
+        };
     </script>
 </div>

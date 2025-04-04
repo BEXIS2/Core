@@ -213,7 +213,7 @@ namespace BExIS.IO.Transform.Input
                         var variable = this.StructuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault();
                         Dlm.Entities.DataStructure.DataType dataType = variable.DataType;
 
-                        if (dataType != null && dataType.Extra != null)
+                        if (variable.DisplayPatternId>0)
                         {
                             DataTypeDisplayPattern dp = variable.DisplayPatternId > 0 ? DataTypeDisplayPattern.Get(variable.DisplayPatternId) : null;
                             if (dp != null && !string.IsNullOrEmpty(dp.StringPattern)) value = IOUtility.ConvertToDateUS(row[i], dp.StringPattern);
@@ -400,7 +400,7 @@ namespace BExIS.IO.Transform.Input
                     }
                     catch (Exception ex)
                     {
-                        Error e = new Error(ErrorType.Other, "Error : " + ex.Message);
+                        Error e = new Error(ErrorType.Value, "Error : " + ex.Message);
                         errors.Add(e);
                     }
                 }
@@ -408,7 +408,7 @@ namespace BExIS.IO.Transform.Input
             // different value lenght
             else
             {
-                Error e = new Error(ErrorType.Other, "Number of Values different as number of variables");
+                Error e = new Error(ErrorType.Other, "Number of Values different as number of variables in row: "+ indexOfRow);
                 errors.Add(e);
             }
 

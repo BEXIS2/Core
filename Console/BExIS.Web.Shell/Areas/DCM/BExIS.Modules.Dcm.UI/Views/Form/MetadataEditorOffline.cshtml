@@ -60,25 +60,6 @@
                     <div id="show_help_all"><button type="button" title="Show all help information." class="bx-function bx-disabled fa  fa-info " onclick="showHelpAll();"></button></div>
                     <div id="hide_help_all"><button type="button" title="Hide all help information." class="bx-function bx-disabled" onclick="hideHelpAll();"><i class="fa bx-info" id="help_container"></i><i class="fa fa-ban" id="help_nested"></i></button></div>
                 </td>
-
-                @if (Model.Created && Model.DatasetId != -1 && !@Model.FromEditMode)
-				{
-
-                @*<td>You successfully created dataset: <br /><b>@Model.DatasetTitle</b></td>
-                    <td>
-                        Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", null, new { title = "Link to upload wizard", @class = "bx-link" })</b><br />
-                        to add primary data to this dataset.
-                    </td>
-
-                    if (Html.IsAccessible("DDM", "Data", "ShowData"))
-                    {
-                        if (@Model.DatasetId > 0)
-                        {
-                            <td>Or see your dataset here <b>@Html.ActionLink(@Model.DatasetTitle, "ShowData", "Data", new { area = "DDM", id = @Model.DatasetId }, new { title = "Link to your dataset.", @class = "bx-link" })</b><br /></td>
-
-                        }
-                    }*@
-				}
             </tr>
         </table>
     </div>

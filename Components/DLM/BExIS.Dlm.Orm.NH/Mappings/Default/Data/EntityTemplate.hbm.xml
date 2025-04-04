@@ -24,8 +24,8 @@
 		<column name="Name" />
 	</property>
 
-	<property name="Description" type="string">
-		<column name="Description" />
+	<property name="Description" type="StringClob">
+		<column name="Description"  sql-type="text" />
 	</property>
 
 	<property name="MetadataInvalidSaveMode" type="Boolean">
@@ -57,6 +57,10 @@
 
 	  <property name="JsonMetadataFields" type="string">
 		  <column name="JsonMetadataFields" />
+	  </property>
+
+	  <property name="Activated" type="Boolean">
+		  <column name="Activated" />
 	  </property>
 
 	<many-to-one name="EntityType" class="BExIS.Security.Entities.Objects.Entity" not-null="true" column="EntityRef" />

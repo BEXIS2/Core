@@ -31,7 +31,7 @@
                     <div style="width: 100%;overflow-x: hidden">
                         <table>
                             <thead>
-                                <tr><th>No</th><th>File name</th><th>Type</th><th>Size</th><th></th></tr>
+                                <tr><th>No</th><th>File name</th><th>Type</th><th>Size</th></tr>
                             </thead>
                             <tbody>
 
@@ -48,12 +48,8 @@
                                         </td>
                                         <td class="filetype" fileName="@serverFile.Key.Name" style="font-size: 20pt;"></td>
                                         <td class="fileSize" size="@serverFile.Key.FileSize"></td>
-                                        <td>
-                                            @(Model.DeleteAccess ? Html.ActionLink(" ", "Delete", "Attachments", new { datasetId = @datasetId, fileName = @serverFile.Key.Name }, new { @class = "bx-trash bx-function", @onclick = "return confirm('The selected file will be deleted permanently. Are you sure?')" })
-                                                                     : Html.Raw(""))
-                                        @(string.IsNullOrEmpty(serverFile.Value) ? Html.Raw("") : Html.Raw("<span class='bx-info bx-function' data-toggle='tooltip' style='margin-left: 10px;' title='" + @serverFile.Value + "' ></span>"))
-                                    </td>
-                                </tr>
+                               
+                                 </tr>
                                 }
                             </tbody>
                         </table>
@@ -61,7 +57,7 @@
                 </div>
             </div>
         </td>
-        <td></td>
+
     </tr>
 </table>
 

@@ -20,7 +20,7 @@
 
 	function goToCreate() {
 		// if its possible the file will be used to start structure analyze
-		goTo('/rpm/datastructure/create?');
+		goTo('/rpm/datastructure/create?entityId=' + id);
 	}
 
 	export let id;
