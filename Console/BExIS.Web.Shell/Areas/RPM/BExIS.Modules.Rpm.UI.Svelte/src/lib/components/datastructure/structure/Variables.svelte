@@ -369,6 +369,7 @@
 			{:else}
 			<Spinner label="loading structure." />
 		{/if}
+		{/if}
 	</div>
 </div>
 
