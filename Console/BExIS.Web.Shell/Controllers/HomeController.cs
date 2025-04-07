@@ -3,6 +3,7 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Versions;
+using BExIS.UI.Helpers;
 using BExIS.Utils.Config;
 using BExIS.Web.Shell.Models;
 using System;
@@ -98,8 +99,12 @@ namespace BExIS.Web.Shell.Controllers
                 return View(); // open shell/home/index
 
             // return result of defined landing page
-            var result = this.Render(landingPage.Item1, landingPage.Item2, landingPage.Item3);
-            return Content(result.ToHtmlString(), "text/html");
+            string action = landingPage.Item3.ToLower().Equals("index")?"": landingPage.Item3;
+            var result = this.Render(landingPage.Item1.ToLower(), landingPage.Item2.ToLower(), action);
+
+            return RedirectToAction(action, landingPage.Item2.ToLower(), new { area = landingPage.Item1.ToLower() });
+
+            //return Content(result.ToHtmlString(), "text/html");
         }
 
         /// <summary>
@@ -109,6 +114,10 @@ namespace BExIS.Web.Shell.Controllers
         [DoesNotNeedDataAccess]
         public ActionResult Start()
         {
+            ViewData["ShowMenu"] = GeneralSettings.GetValueByKey("showMenuOnLandingPage");
+            ViewData["ShowHeader"] = GeneralSettings.GetValueByKey("showHeaderOnLandingPage");
+            ViewData["ShowFooter"] = GeneralSettings.GetValueByKey("showFooterOnLandingPage");
+
             return View("Start", null, Session.GetTenant().LandingPageFileNamePath);
         }
 
@@ -148,6 +157,18 @@ namespace BExIS.Web.Shell.Controllers
         public ActionResult Breadcrumb()
         {
             return View("");
+        }
+
+        public ActionResult Docs(string id)
+        {
+            string module = "Shell";
+
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
+            ViewData["ApplicationVersion"] = GeneralSettings.ApplicationVersion;
+
+
+            return View();
         }
 
         [DoesNotNeedDataAccess]
@@ -210,7 +231,7 @@ namespace BExIS.Web.Shell.Controllers
 
                 var result = userManager.FindByNameAsync(userName);
 
-                if (featurePermissionManager.HasAccess(result.Result?.Id, feature.Id))
+                if (featurePermissionManager.HasAccessAsync(result.Result?.Id, feature.Id).Result)
                 {
                     return true;
                 }

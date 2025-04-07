@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
+using System.Windows;
 using System.Xml.Linq;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -46,6 +47,9 @@ namespace BExIS.Utils.WebHelpers
                         if (!string.IsNullOrWhiteSpace(child.Attribute("action").Value))
                             sb.Append(@"/").Append(child.Attribute("action").Value.ToLower());
 
+                        if (child.Attribute("argument") != null &&  !string.IsNullOrWhiteSpace(child.Attribute("argument").Value))
+                            sb.Append(@"/").Append(child.Attribute("argument").Value.ToLower());
+
                         sb.Append("' target=\"_blank\" >").Append(child.Attribute("title").Value).Append("</a></li>");
                     }
 
@@ -62,6 +66,9 @@ namespace BExIS.Utils.WebHelpers
 
                     if (!string.IsNullOrWhiteSpace(launchBarItem.Attribute("action").Value))
                         sb.Append(@"/").Append(launchBarItem.Attribute("action").Value);
+
+                    if (!string.IsNullOrWhiteSpace(launchBarItem.Attribute("argument").Value))
+                        sb.Append(@"/").Append(launchBarItem.Attribute("argument").Value.ToLower());
 
                     sb.Append("'>").Append(launchBarItem.Attribute("title").Value).Append("</a></li>");
                 }
@@ -101,6 +108,9 @@ namespace BExIS.Utils.WebHelpers
                             if (!string.IsNullOrWhiteSpace(child.Attribute("action").Value))
                                 menuItemSb.Append(@"/").Append(child.Attribute("action").Value.ToLower());
 
+                            if (child.Attribute("argument") != null && !string.IsNullOrWhiteSpace(child.Attribute("argument").Value))
+                                sb.Append(@"/").Append(child.Attribute("argument").Value.ToLower());
+
                             menuItemSb.Append("'>").Append(child.Attribute("title").Value).Append("</a></li>");
                         }
                     }
@@ -122,6 +132,9 @@ namespace BExIS.Utils.WebHelpers
 
                         if (!string.IsNullOrWhiteSpace(menuBarItem.Attribute("action").Value))
                             sb.Append(@"/").Append(menuBarItem.Attribute("action").Value.ToLower());
+
+                        if (menuBarItem.Attribute("argument") != null && !string.IsNullOrWhiteSpace(menuBarItem.Attribute("argument").Value))
+                            sb.Append(@"/").Append(menuBarItem.Attribute("argument").Value.ToLower());
 
                         sb.Append("'>").Append(menuBarItem.Attribute("title").Value).Append("</a></li>");
                     }
@@ -184,6 +197,9 @@ namespace BExIS.Utils.WebHelpers
                     if (!string.IsNullOrWhiteSpace(child.Attribute("action").Value))
                         sb.Append(@"/").Append(child.Attribute("action").Value.ToLower());
 
+                    if (child.Attribute("argument") != null && !string.IsNullOrWhiteSpace(child.Attribute("argument").Value))
+                        sb.Append(@"/").Append(child.Attribute("argument").Value.ToLower());
+
                     sb.Append("'>").Append(child.Attribute("title").Value).Append("</a></li>");
                 }
             }
@@ -231,7 +247,7 @@ namespace BExIS.Utils.WebHelpers
 
                 ////or user has rights
                 //if (string.IsNullOrEmpty(userName)) return false;
-                bool permission = featurePermissionManager.HasAccess<User>(name, area, controller, action);
+                bool permission = featurePermissionManager.HasAccessAsync<User>(name, area, controller, action).Result;
 
                 System.Web.HttpContext.Current.Session[identifier] = permission;
 

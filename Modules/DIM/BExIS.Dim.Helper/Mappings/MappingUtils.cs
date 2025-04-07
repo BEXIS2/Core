@@ -73,7 +73,7 @@ namespace BExIS.Dim.Helpers.Mappings
             {
                 IList<Mapping> mapping = CachedMappings();
                 var mapping_result = mapping.Where(m =>
-                            m.Parent!=null && 
+                            m.Parent!=null &&
                             m.Parent.Id.Equals(parentMappingId)
                         ).ToList();
 
@@ -349,7 +349,7 @@ namespace BExIS.Dim.Helpers.Mappings
         }
 
         /// <summary>
-        /// if a simple attr is direct mapped to a PartyCustomType without context informations about th parent
+        /// if a simple attr is direct mapped to a PartyCustomType without context information about th parent
         /// in the database mappings for level 1 & 2 existing for the simple attribute
         /// level one means then simple to a complex
         /// level two means then simple to a complex/simple
@@ -387,7 +387,7 @@ namespace BExIS.Dim.Helpers.Mappings
         }
 
         /// <summary>
-        /// if a simple attr is mapped to a party with context informations about the parent
+        /// if a simple attr is mapped to a party with context information about the parent
         /// in the database mappings for level 1 & 2 existing for the simple attribute
         /// level one means then parent to a complex
         /// level two means then simple to a complex/simple
@@ -444,7 +444,7 @@ namespace BExIS.Dim.Helpers.Mappings
         }
 
         /// <summary>
-        /// if a simple attr is direct mapped to a party without context informations about th parent
+        /// if a simple attr is direct mapped to a party without context information about th parent
         /// in the database mappings for level 1 & 2 existing for the simple attribute
         /// level one means then simple to a complex
         /// level two means then simple to a complex/simple
@@ -465,7 +465,7 @@ namespace BExIS.Dim.Helpers.Mappings
                             m.Level.Equals(2)
                         ).ToList().Any();
 
-                //if party same lvel like target
+                //if party same level like target
                 bool mappingsWhenPartyIsParent = mapping.Where(m =>
                             m.Target.ElementId.Equals(targetId) &&
                             m.Target.Type.Equals(targetType) &&
@@ -482,7 +482,7 @@ namespace BExIS.Dim.Helpers.Mappings
         }
 
         /// <summary>
-        /// if a simple attr is mapped to a party with context informations about the parent
+        /// if a simple attr is mapped to a party with context information about the parent
         /// in the database mappings for level 1 & 2 existing for the simple attribute
         /// level one means then parent to a complex
         /// level two means then simple to a complex/simple
@@ -538,7 +538,7 @@ namespace BExIS.Dim.Helpers.Mappings
         }
 
         /// <summary>
-        /// get all values from systen parties values
+        /// get all values from system parties values
         ///
         /// </summary>
         /// <param name="mappings"></param>
@@ -647,7 +647,8 @@ namespace BExIS.Dim.Helpers.Mappings
                     if (mapping_result.Any())
                     {
                         string mask = "";
-                        mask = mapping_result.FirstOrDefault().TransformationRule.Mask;
+                        if (!String.IsNullOrEmpty(mapping_result.FirstOrDefault().TransformationRule.Mask))
+                         mask = mapping_result.FirstOrDefault().TransformationRule.Mask;
 
                         foreach (var mapping_element in mapping_result)
                         {
@@ -694,7 +695,7 @@ namespace BExIS.Dim.Helpers.Mappings
         {
             try
             {
-                //get all mapppings where target is mapped
+                //get all mappings where target is mapped
                 // LinkElementType.PartyCustomType is set because of the function name
                 // all mapped attributes are LinkElementType.PartyCustomType in this case
                 using (IUnitOfWork uow = (new object()).GetUnitOfWork())
@@ -736,7 +737,7 @@ namespace BExIS.Dim.Helpers.Mappings
             //MetadataCreationDate = 103,
             //MetadataLastModfied = 104,
             //DataFirstEntry = 105,
-            //DataLastModified = 106, // also for Dubline Core date
+            //DataLastModified = 106, // also for Dublin Core date
 
             try
             {
@@ -767,7 +768,7 @@ namespace BExIS.Dim.Helpers.Mappings
         ///
         public static IList<Mapping> CachedMappings()
         {
-            // System.Web.HttpContext may not existing during the async upload, so check wheter the context exist
+            // System.Web.HttpContext may not existing during the async upload, so check if the context exist
             if (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.Session != null)
             {
                 if (System.Web.HttpContext.Current.Session["mappings"] != null)
@@ -831,7 +832,7 @@ namespace BExIS.Dim.Helpers.Mappings
                     getRootMapping(m).Source.Type == LinkElementType.MetadataStructure &&
                     m.Level.Equals(2));
 
-                // possinle cases                   mapping count
+                // possible cases                   mapping count
                 // 1 - 1                            1
                 // x,y to z (combination merge)     2
                 // x -> z1,z2,z3 (split)            1
@@ -898,11 +899,11 @@ namespace BExIS.Dim.Helpers.Mappings
                     }
                 }
                 // x,y to z (combination merge)
-                // x1,x2, y to z list of  enties
+                // x1,x2, y to z list of  entries
                 // if multiply mappings to the same source, it is a merge
                 else
                 {
-                    // get all parent ids to collection mappings that belongs togehter
+                    // get all parent ids to collection mappings that belongs together
                     // if they belong to one parent, together then they should merge
                     IEnumerable<long> parentIds = mappings.Select(m => m.Parent.Id).Distinct();
 
@@ -1002,7 +1003,7 @@ namespace BExIS.Dim.Helpers.Mappings
                     getRootMapping(m).Source.Type == LinkElementType.MetadataStructure &&
                     m.Level.Equals(2));
 
-                // possinle cases                   mapping count
+                // possible cases                   mapping count
                 // 1 - 1                            1
                 // x,y to z (combination merge)     2
                 // x -> z1,z2,z3 (split)            1
@@ -1041,14 +1042,14 @@ namespace BExIS.Dim.Helpers.Mappings
                 // if multiply mappings to the same source, it is a merge
                 else
                 {
-                    // all mappings that have the same parent mapping should be handelt together
+                    // all mappings that have the same parent mapping should be handled together
                     IEnumerable<long> parentIds = mappings.Select(m => m.Parent.Id).Distinct();
 
                     foreach (int parentId in parentIds)
                     {
                         string mask = "";
 
-                        //load all maaping that belongs to the parent mapping with id -> parentId
+                        //load all mappings that belong to the parent mapping with id -> parentId
                         IEnumerable<Mapping> tmpMappings = mappings.Where(m => m.Parent.Id.Equals(parentId));
 
                         foreach (var m in tmpMappings)
@@ -1084,7 +1085,7 @@ namespace BExIS.Dim.Helpers.Mappings
             Dictionary<string, string> AttrDic = new Dictionary<string, string>();
             List<XElement> elements = new List<XElement>();
 
-            //get parent elemenet with parent mapping
+            //get parent element with parent mapping
             var parentMapping = m.Parent;
             // if a mapping is linked direct to a simple attribute, then lvl 1&2 are  connected to the same linkelement
             bool directSimpleMapping = false;
@@ -1100,8 +1101,8 @@ namespace BExIS.Dim.Helpers.Mappings
 
                 //the usage is the head node of a attr, if there are more then one, there are listed inside of the usage
                 // always :  usage/type/value
-                // if cardianlity is more then 1 its listed like usage/type[0]/value, usage/type[n]/value
-                // in this case the childs of the usage is needed
+                // if cardinality is more then 1 its listed like usage/type[0]/value, usage/type[n]/value
+                // in this case the children of the usage is needed
                 var usages = XmlUtility.GetXElementsByAttribute(AttrDic, metadata);
                 foreach (var u in usages)
                 {
@@ -1126,8 +1127,8 @@ namespace BExIS.Dim.Helpers.Mappings
 
                     //the usage is the head node of a attr, if there are more then one, there are listed inside of the usage
                     // always :  usage/type/value
-                    // if cardianlity is more then 1 its listed like usage/type[0]/value, usage/type[n]/value
-                    // in this case the childs of the usage is needed
+                    // if cardinality is more then 1 its listed like usage/type[0]/value, usage/type[n]/value
+                    // in this case the children of the usage is needed
                     var usages = XmlUtility.GetXElementsByAttribute(AttrDic, parent);
                     foreach (var u in usages)
                     {
@@ -1148,10 +1149,10 @@ namespace BExIS.Dim.Helpers.Mappings
             using (MappingManager mappingManager = new MappingManager())
             using (var metadataAttributeManager = new MetadataAttributeManager())
             {
-                // get link elements for mapping source and target 
+                // get link elements for mapping source and target
                 var systemLink = mappingManager.GetLinkElement(0, LinkElementType.System);
                 var metadataLink = mappingManager.GetLinkElement(metadataStrutcureId, LinkElementType.MetadataStructure);
-                
+
                 if(systemLink == null || metadataLink == null) return false;
 
                 // get mapping based on source and target link elements
@@ -1211,9 +1212,6 @@ namespace BExIS.Dim.Helpers.Mappings
                 return datatype;
 
             }
-
-            return string.Empty;
-
         }
 
         #endregion
@@ -1227,7 +1225,7 @@ namespace BExIS.Dim.Helpers.Mappings
         /// <param name="metadata"></param>
         /// <returns></returns>
         public static XmlDocument GetConcept(long metadataStructureId, long conceptId, XmlDocument metadata)
-        { 
+        {
             XmlDocument concept = new XmlDocument();
             concept.AppendChild(XmlUtility.CreateNode("concept", concept));
 
@@ -1247,9 +1245,9 @@ namespace BExIS.Dim.Helpers.Mappings
                 foreach (XmlNode xSource in xSourceList)
                 {
                     //create target complex element
-                    XmlNode xTarget = concept.CreateElement(cTarget.Name); //XmlUtility.GenerateNodeFromXPath(concept, concept.DocumentElement, cTarget.XPath); 
+                    XmlNode xTarget = concept.CreateElement(cTarget.Name); //XmlUtility.GenerateNodeFromXPath(concept, concept.DocumentElement, cTarget.XPath);
 
-                    // get childrens of complex mapping
+                    // get children of complex mapping
                     var simpleMappings = GetMappings(complexMapping.Id);
 
                     var listOfTargets = simpleMappings.Select(m => m.Target.Id);
@@ -1258,7 +1256,7 @@ namespace BExIS.Dim.Helpers.Mappings
 
                     foreach (var simpleMapping in simpleMappings)
                     {
-    
+
                         LinkElement sSource = simpleMapping.Source;
                         LinkElement sTarget = simpleMapping.Target;
 
@@ -1272,16 +1270,16 @@ namespace BExIS.Dim.Helpers.Mappings
                             xSimpleSource = XmlUtility.GetXmlNodeByName(xSource, sSource.Name);
 
 
-                        // result is the set value, based on previews runs it must becheck wheter
-                        // the xmlnode allready exist and have some value inside
+                        // result is the set value, based on previews runs it must be check if
+                        // the xmlnode already exist and have some value inside
                         // by the mapping thete is a complex to simple mapping possible
-                        // this means xTarget is allready the simple node where the value should be set, or get
+                        // this means xTarget is already the simple node where the value should be set, or get
                         string result = "";//xSimpleSource.InnerText; target
-                        if (xTarget.Value == null && xTarget.ChildNodes.Count == 0) // first run everythink is empty
+                        if (xTarget.Value == null && xTarget.ChildNodes.Count == 0) // first run everything is empty
                             result = String.Empty;
-                        else if (xTarget.Value != null) result = xTarget.Value; // xTarget allready simple target, so check value
+                        else if (xTarget.Value != null) result = xTarget.Value; // xTarget already simple target, so check value
                         else // xTarget is complex, get simple node by name and get value
-                        { 
+                        {
                             XmlNode simpleXTarget = XmlUtility.GetXmlNodeByName(xTarget, sTarget.Name);
                             if(simpleXTarget != null) result = simpleXTarget.InnerText;
                         }
@@ -1290,10 +1288,10 @@ namespace BExIS.Dim.Helpers.Mappings
                         // if the result is empty may its the first run, so set the mask
                         if (string.IsNullOrEmpty(result)) result = simpleMapping.TransformationRule.Mask;
 
-                        //tranform the value against the tarsnformation rules
+                        //tranform the value against the transformation rules
                         string value = xSimpleSource.InnerText!=null? xSimpleSource.InnerText : String.Empty;
                         List<string> regExResultList = transform(value, simpleMapping.TransformationRule);
-                  
+
                         if(string.IsNullOrEmpty(simpleMapping.TransformationRule.Mask))
                             result = result+ string.Join(", ", regExResultList.ToArray());
                         else
@@ -1323,7 +1321,7 @@ namespace BExIS.Dim.Helpers.Mappings
         }
 
         /// <summary>
-        /// Get Metadata of a dataset in a select concept and use the strutcure of the existing xpath 
+        /// Get Metadata of a dataset in a select concept and use the structure of the existing xpath
         /// </summary>
         /// <param name="metadataStructureId"></param>
         /// <param name="conceptId"></param>
@@ -1337,7 +1335,7 @@ namespace BExIS.Dim.Helpers.Mappings
             // get all complex mappings for the root
             var root = GetMappings(metadataStructureId, LinkElementType.MetadataStructure, conceptId, LinkElementType.MappingConcept).FirstOrDefault();
             if (root == null) return concept; // no mapping exist
-            
+
             var complexMappings = GetMappings(root.Id)?.OrderBy(m=>m.Target.ElementId);
 
 
@@ -1375,7 +1373,7 @@ namespace BExIS.Dim.Helpers.Mappings
                 foreach (XmlNode xSource in xSourceList)
                 {
                     //create target complex element
-                    // generate target if not exist otherwhise clone
+                    // generate target if not exist otherwise clone
                     XmlNode xTarget = null;
                     if (concept.SelectNodes(cTarget.XPath).Count == 0)
                         xTarget = XmlUtility.GenerateNodeFromXPath(concept, null, cTarget.XPath);
@@ -1388,7 +1386,7 @@ namespace BExIS.Dim.Helpers.Mappings
                     }
 
 
-                    // get childrens of complex mapping
+                    // get children of complex mapping
                     var simpleMappings = GetMappings(complexMapping.Id)?.OrderBy(m => m.Target.Id);
 
                     var listOfTargets = simpleMappings.Select(m => m.Target.ElementId);
@@ -1411,14 +1409,14 @@ namespace BExIS.Dim.Helpers.Mappings
                             xSimpleSource = XmlUtility.GetXmlNodeByName(xSource, sSource.Name);
 
 
-                        // result is the set value, based on previews runs it must becheck wheter
-                        // the xmlnode allready exist and have some value inside
+                        // result is the set value, based on previews runs it must be check if
+                        // the xmlnode already exist and have some value inside
                         // by the mapping thete is a complex to simple mapping possible
-                        // this means xTarget is allready the simple node where the value should be set, or get
+                        // this means xTarget is already the simple node where the value should be set, or get
                         string result = "";//xSimpleSource.InnerText; target
-                        if (xTarget.Value == null && xTarget.ChildNodes.Count == 0) // first run everythink is empty
+                        if (xTarget.Value == null && xTarget.ChildNodes.Count == 0) // first run everything is empty
                             result = String.Empty;
-                        else if (xTarget.Value != null) result = xTarget.Value; // xTarget allready simple target, so check value
+                        else if (xTarget.Value != null) result = xTarget.Value; // xTarget already simple target, so check value
                         else // xTarget is complex, get simple node by name and get value
                         {
                             XmlNode simpleXTarget = XmlUtility.GetXmlNodeByName(xTarget, sTarget.Name);
@@ -1429,7 +1427,7 @@ namespace BExIS.Dim.Helpers.Mappings
                         // if the result is empty may its the first run, so set the mask
                         if (string.IsNullOrEmpty(result)) result = simpleMapping.TransformationRule.Mask;
 
-                        //tranform the value against the tarsnformation rules
+                        //transform the value against the transformation rules
                         string value = xSimpleSource.InnerText != null ? xSimpleSource.InnerText : String.Empty;
                         List<string> regExResultList = transform(value, simpleMapping.TransformationRule);
 
@@ -1456,7 +1454,7 @@ namespace BExIS.Dim.Helpers.Mappings
 
 
                     }
-                    
+
                 }
 
             }
@@ -1469,9 +1467,9 @@ namespace BExIS.Dim.Helpers.Mappings
             if(source<=0) throw new ArgumentNullException("source");
             if(target<=0) throw new ArgumentNullException("target");
 
-            // if its not metadata strutcure against concept, its not impelmented
+            // if its not metadata structure against concept, its not implemented
             if (sourceType != LinkElementType.MetadataStructure || targetType != LinkElementType.MappingConcept)
-                throw new NotImplementedException("currently only check for metastructure against concept avaialble");
+                throw new NotImplementedException("currently only check for metadata structure against concept is available");
 
             errors = new List<string>();
             bool isValid = true;
@@ -1484,7 +1482,7 @@ namespace BExIS.Dim.Helpers.Mappings
                 errors.Add(String.Format("no root mapping exist between {0} and {1}", sourceType.ToString(), targetType.ToString()));
                 return false;
             }
-            
+
 
             var complexMappings = GetMappings(root.Id);
 
@@ -1492,11 +1490,11 @@ namespace BExIS.Dim.Helpers.Mappings
             List<Mapping> simpleMappings = new List<Mapping>();
             complexMappings.ForEach(c => simpleMappings.AddRange(GetMappings(c.Id)));
 
-            
+
 
             using (var conceptManager = new ConceptManager())
             {
-                // get all keys belongs to teh concep
+                // get all keys belongs to teh concept
                 var keys = conceptManager.MappingKeyRepo.Query(k => k.Concept.Id.Equals(target));
 
                 //get keys of concept from level 1
@@ -1610,13 +1608,13 @@ namespace BExIS.Dim.Helpers.Mappings
 
                         if (mask.Contains(completePlaceHolderName))
                             mask = mask.Replace(completePlaceHolderName, r);
- 
+
                     }
 
                     return mask;
                 }
                 else
-                { 
+                {
                     mask = string.Join(", ", replacers.ToArray());
                 }
 

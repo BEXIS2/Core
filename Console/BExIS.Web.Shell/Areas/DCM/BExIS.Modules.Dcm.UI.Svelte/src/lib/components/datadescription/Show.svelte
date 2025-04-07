@@ -26,7 +26,8 @@
 	const variableConfig: TableConfig<VariableModel> = {
 		id: 'variables',
 		data: variableStore,
-		height: 225,
+		defaultPageSize: 5,
+
 		columns: {
 			id: {
 				fixedWidth: 100
@@ -39,6 +40,9 @@
 			isKeys: {
 				exclude: true,
 				disableFiltering: true
+			},
+			dataType: {
+				header: 'Data Type'
 			}
 		}
 	};

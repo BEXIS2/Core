@@ -30,7 +30,7 @@ namespace BExIS.Ext.Services
                 if (feature == null) return;
 
                 var result = userManager.FindByNameAsync(username);
-                if (!featurePermissionManager.HasAccess(result.Result?.Id, feature.Id))
+                if (!featurePermissionManager.HasAccessAsync(result.Result?.Id, feature.Id).Result)
                 {
                     throw new UnauthorizedAccessException();
                 }

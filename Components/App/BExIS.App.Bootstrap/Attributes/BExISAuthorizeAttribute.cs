@@ -4,9 +4,11 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using BExIS.Utils.Config;
 using System;
 using System.Linq;
 using System.Net;
+using System.Web;
 using System.Web.Mvc;
 
 namespace BExIS.App.Bootstrap.Attributes
@@ -35,7 +37,7 @@ namespace BExIS.App.Bootstrap.Attributes
                     else
                     {
                         var feature = operation.Feature;
-                        if (feature != null && !featurePermissionManager.HasAccess(null, feature.Id))
+                        if (feature != null && !featurePermissionManager.HasAccessAsync(null, feature.Id).Result)
                         {
                             User user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(filterContext.HttpContext).Result;
 
@@ -45,9 +47,30 @@ namespace BExIS.App.Bootstrap.Attributes
                             }
                             else
                             {
-                                if (!featurePermissionManager.HasAccess(user.Id, feature.Id))
+                                if (!featurePermissionManager.HasAccessAsync(user.Id, feature.Id).Result)
                                 {
                                     filterContext.SetResponse(HttpStatusCode.Forbidden);
+
+                                    
+
+                                }
+
+                                // update jwt cookie
+                                if (user != null)
+                                {
+                                    var jwtConfiguration = GeneralSettings.JwtConfiguration;
+                                    var jwt = JwtHelper.GetTokenByUser(user);
+
+                                    // Create a new cookie
+                                    HttpCookie cookie = new HttpCookie("jwt", jwt);
+
+                                    // Set additional properties if needed
+                                    cookie.Expires = jwtConfiguration.ValidLifetime > 0 ? DateTime.Now.AddHours(jwtConfiguration.ValidLifetime) : DateTime.MaxValue;
+                                    cookie.Domain = filterContext.HttpContext.Request.Url.Host; // Set the domain
+                                    cookie.Path = "/"; // Set the path
+
+                                    // Add the cookie to the response
+                                    filterContext.HttpContext.Response.Cookies.Add(cookie);
                                 }
                             }
                         }

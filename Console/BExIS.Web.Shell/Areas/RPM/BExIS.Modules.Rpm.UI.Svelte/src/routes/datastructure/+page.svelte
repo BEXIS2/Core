@@ -31,6 +31,8 @@
 	// svelte
 	import { fade, slide } from 'svelte/transition';
 
+	import type { linkType } from '@bexis2/bexis2-core-ui';
+
 	// load data
 	let structures: DataStructureModel[];
 	const structuresStore = writable<DataStructureModel[]>([]);
@@ -71,33 +73,33 @@
 		goTo('/rpm/datastructure/create?file=');
 	}
 
-	function copy(id) {
+	function copy(id: number) {
 		goTo('/rpm/datastructure/create?structureId=' + id + '&&file=');
 	}
 
-	function edit(id) {
+	function edit(id: number) {
 		goTo('/rpm/datastructure/edit?structureId=' + id);
 	}
 
-	function download(id) {
+	function download(id: number) {
 		goTo('/rpm/datastructure/downloadTemplate?id=' + id);
 	}
 
-	async function deleteFn(id) {
-		const success = await remove(id);
+	async function deleteFn(ds: DataStructureModel) {
+		const success = await remove(ds.id);
 
 		if (success != true) {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: "Can't delete Structure."
+				message: 'Can\'t delete Structure "'+ ds.title +'".'
 			});
+			return false;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'Structure deleted.'
+				message: 'Structure "'+ ds.title +'" deleted.'
 			});
-
-			reload();
+			return true;
 		}
 	}
 
@@ -121,28 +123,38 @@
 		// copy data data structure based on id
 		if (type.action == 'delete') {
 			console.log('delete');
-
+			let ds: DataStructureModel = structures.find((u) => u.id === type.id)!;
 			const confirm: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete Structure',
-				body: 'Are you sure you wish to delete structure with id"' + type.id + '?',
+				body: 'Are you sure you wish to delete structure "'+ds.title + ' (' + ds.id + ')"?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
-				response: (r: boolean) => {
-					if (r === true) {
-						deleteFn(type.id);
-					}
+				response: async (r: boolean) => {
+					let success :boolean = await deleteFn(ds);
+						if (success)
+						{
+							reload();
+						}
 				}
 			};
 
 			modalStore.trigger(confirm);
 		}
 	}
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#data-structures',
+		}
+	];
 </script>
 
 <Page
-	title="Data structures"
-	note="overview about the data structures in bexis2."
+	title="Data Structures"
+	note="overview of data structures in the system"
 	contentLayoutType={pageContentLayoutType.center}
+	{links}
 >
 	{#await reload()}
 		<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
@@ -158,14 +170,14 @@
 	{:then}
 		<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h3 h-9">
-				<span in:fade={{ delay: 400 }} out:fade>Create neẇ Data Structure</span>
+				<span in:fade={{ delay: 400 }} out:fade>Create new Data Structure</span>
 			</div>
 			<div class="text-right">
 				{#if !showOptions}
 					<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 					<button
 						class="btn variant-filled-secondary shadow-md h-9 w-16"
-						title="Create neẇ Unit"
+						title="Create new Unit"
 						id="create"
 						on:mouseover={() => {
 							helpStore.show('create');

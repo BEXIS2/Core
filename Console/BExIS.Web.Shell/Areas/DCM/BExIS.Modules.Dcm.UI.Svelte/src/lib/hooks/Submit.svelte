@@ -14,7 +14,8 @@
 		latestDataDescriptionDate,
 		latestFileReaderDate,
 		latestSubmitDate,
-		latestValidationDate
+		latestValidationDate,
+		latestDataDate
 	} from '../../routes/edit/stores';
 
 	import { onMount, createEventDispatcher } from 'svelte';
@@ -36,7 +37,7 @@
 	let canSubmit: boolean = false;
 	$: canSubmit;
 
-	let isSubmiting: boolean = false;
+	let isSubmitting: boolean = false;
 
 	onMount(async () => {
 		latestFileUploadDate.subscribe((s) => {
@@ -59,15 +60,30 @@
 				reload();
 			}
 		});
+
+		latestDataDate.subscribe((s) => {
+			console.log('🚀 ~ latestDataDate.subscribe ~ s:', s);
+
+			if (s > 0) {
+				reload();
+			}
+		});
 	});
 
 	async function reload() {
 		console.log('reload submit', start, id, version);
+		console.log('latestDataDate', latestDataDate);
 
 		canSubmit = false;
+		console.log(' before hook');
+
 		model = await getHookStart(start, id, version);
+		console.log(' before activateSubmit', canSubmit);
+
 		canSubmit = activateSubmit();
-		console.log('reload submit');
+		console.log(' after activateSubmit', canSubmit);
+
+		console.log('reload submit', model);
 
 		return model;
 	}
@@ -75,7 +91,7 @@
 	const confirm: ModalSettings = {
 		type: 'confirm',
 		title: 'Submit',
-		body: 'Are you sure you wish to the data?',
+		body: 'Are you sure you wish to submit the data?',
 		// TRUE if confirm pressed, FALSE if cancel pressed
 		response: (r: boolean) => {
 			if (r === true) {
@@ -88,14 +104,15 @@
 
 	const next: ModalSettings = {
 		type: 'alert',
-		title: 'The import of your data has been started.',
-		body: 'The editing of your dataset will be disabled until completion.  You will be informed via email once completed. Please check the result and your provided metadata.',
-		buttonTextCancel: 'ok'
+		title: 'Import started',
+		body: 'Editing will be disabled until the upload is complete. If you are uploading a large amount of data, the upload will take a while, and you will be notified by email when it is complete. Please check the data you have uploaded. ',
+		buttonTextCancel: 'Ok'
 		// TRUE if confirm pressed, FALSE if cancel pressed
 	};
 
 	async function submitBt() {
-		isSubmiting = true;
+		isSubmitting = true;
+		canSubmit = false;
 		const res: submitResponceType = await submit(id);
 
 		//console.log("submit",res);
@@ -108,20 +125,36 @@
 			}
 			// update store
 			latestSubmitDate.set(Date.now());
-			isSubmiting = false;
+			isSubmitting = false;
 		}
 	}
 
-	// return a boolean value for 2 diffrent usecases for submit
+	// return a boolean value for 2 different cases for submit
 	//1. upload files only
-	//2. updload data with datastructure
+	//2. updload data with data structure
 	function activateSubmit() {
-		//check usecase 1
+		//check use case 1
+		console.log('🚀 ~ activateSubmit ~ model:', model);
 		if (model.hasStructrue == false && model.files.length > 0) {
 			return true;
 		}
 
-		//check usecase 2
+		//check use case 2
+		if (model.hasStructrue == false && model.modifiedFiles?.length > 0) {
+			return true;
+		}
+
+		//check use case 3
+		console.log(
+			'🚀 ~ activateSubmit ~ model.hasStructrue:',
+			model.hasStructrue,
+			model.deletedFiles
+		);
+		if (model.hasStructrue == false && model.deleteFiles?.length > 0) {
+			return true;
+		}
+
+		//check use case 4
 		if (
 			model.hasStructrue == true &&
 			model.files.length > 0 &&
@@ -142,10 +175,10 @@
 		<button
 			type="button"
 			class="btn variant-filled-primary"
-			disabled={!canSubmit || isSubmiting}
+			disabled={!canSubmit || isSubmitting}
 			on:click={() => modalStore.trigger(confirm)}>Submit</button
 		>
-		{#if isSubmiting}
+		{#if isSubmitting}
 			<div class="flex-none">
 				<Spinner />
 			</div>

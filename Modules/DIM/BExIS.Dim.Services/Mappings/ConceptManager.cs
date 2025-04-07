@@ -120,7 +120,7 @@ namespace BExIS.Dim.Services.Mappings
                 {
                     var mappingConceptRepository = uow.GetRepository<MappingConcept>();
 
-                    var mappingConcept = mappingConceptRepository.Query(u => u.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)).ToList();
+                    var mappingConcept = mappingConceptRepository.Query(u => u.Name.ToLower() == name.ToLower()).ToList();
 
                     if (mappingConcept.Count != 1)
                         return null;

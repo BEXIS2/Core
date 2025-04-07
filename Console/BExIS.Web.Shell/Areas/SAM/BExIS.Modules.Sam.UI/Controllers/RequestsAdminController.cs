@@ -21,6 +21,35 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class RequestsAdminController : Controller
     {
+        [HttpPost]
+        public void Accept(long decisionId)
+        {
+            using (var decisionManager = new DecisionManager())
+            using (var entityManager = new EntityManager())
+            using (var uow = this.GetUnitOfWork())
+            {
+                decisionManager.Accept(decisionId, "");
+
+                var requestRepository = uow.GetRepository<Request>();
+                var request = requestRepository.Get(decisionId);
+
+                if (request != null)
+                {
+                    var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(request.Entity.Id).EntityStoreType);
+                    string applicant = getPartyName(request.Applicant);
+                    string emailDescionMaker = request.Decisions.FirstOrDefault().DecisionMaker.Email;
+
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetAcceptRequestHeader(request.Key, applicant),
+                        MessageHelper.GetAcceptRequestMessage(request.Key, entityStore.GetTitleById(request.Key)),
+                        new List<string> { request.Applicant.Email }, null, new List<string> { GeneralSettings.SystemEmail, emailDescionMaker }
+                    );
+                    }
+                }
+            }
+        }
+
         public ActionResult Decisions(long entityId, string status = "")
         {
             using (var entityManager = new EntityManager())
@@ -54,7 +83,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         {
                             Id = m.Id,
                             RequestId = m.Request.Id,
-                            Rights = string.Join(", ", entityPermissionManager.GetRights(m.Request.Rights)), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
+                            Rights = string.Join(", ", entityPermissionManager.GetRightsAsync(m.Request.Rights).Result), //string.Join(",", Enum.GetNames(typeof(RightType)).Select(n => n).Where(n => (m.Request.Rights & (short)Enum.Parse(typeof(RightType), n)) > 0)),
                             Status = m.Status,
                             StatusAsText = Enum.GetName(typeof(DecisionStatus), m.Status),
                             InstanceId = m.Request.Key,
@@ -92,33 +121,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [HttpPost]
-        public void Accept(long decisionId)
-        {
-            using (var decisionManager = new DecisionManager())
-            using (var entityManager = new EntityManager())
-            using (var uow = this.GetUnitOfWork())
-            {
-                decisionManager.Accept(decisionId, "");
-
-                var es = new EmailService();
-                var requestRepository = uow.GetRepository<Request>();
-                var request = requestRepository.Get(decisionId);
-
-                if (request != null)
-                {
-                    var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(request.Entity.Id).EntityStoreType);
-                    string applicant = getPartyName(request.Applicant);
-                    string emailDescionMaker = request.Decisions.FirstOrDefault().DecisionMaker.Email;
-
-                    es.Send(MessageHelper.GetAcceptRequestHeader(request.Key, applicant),
-                        MessageHelper.GetAcceptRequestMessage(request.Key, entityStore.GetTitleById(request.Key)),
-                        new List<string> { request.Applicant.Email }, null, new List<string> { GeneralSettings.SystemEmail, emailDescionMaker }
-                    );
-                }
-            }
-        }
-
-        [HttpPost]
         public void Reject(long requestId)
         {
             using (var decisionManager = new DecisionManager())
@@ -129,7 +131,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     decisionManager.Reject(requestId, "");
 
-                    var es = new EmailService();
                     var requestRepository = uow.GetRepository<Request>();
                     var request = requestRepository.Get(requestId);
 
@@ -139,10 +140,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         string applicant = getPartyName(request.Applicant);
                         string emailDescionMaker = request.Decisions.FirstOrDefault().DecisionMaker.Email;
 
-                        es.Send(MessageHelper.GetRejectedRequestHeader(request.Key, applicant),
+                        using (var emailService = new EmailService())
+                        {
+                            emailService.Send(MessageHelper.GetRejectedRequestHeader(request.Key, applicant),
                         MessageHelper.GetRejectedRequestMessage(request.Key, entityStore.GetTitleById(request.Key)),
                         new List<string> { request.Applicant.Email }, null, new List<string> { GeneralSettings.SystemEmail, emailDescionMaker }
                         );
+                        }
                     }
                 }
                 catch (Exception e)
@@ -163,7 +167,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     decisionManager.Withdraw(requestId);
 
-                    var es = new EmailService();
                     var requestRepository = uow.GetRepository<Request>();
                     var request = requestRepository.Get(requestId);
 
@@ -174,10 +177,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         string emailDescionMaker = request.Decisions.FirstOrDefault().DecisionMaker.Email;
                         string applicant = getPartyName(request.Applicant);
 
-                        es.Send(MessageHelper.GetWithdrawRequestHeader(request.Key, applicant),
+                        using (var emailService = new EmailService())
+                        {
+                            emailService.Send(MessageHelper.GetWithdrawRequestHeader(request.Key, applicant),
                         MessageHelper.GetWithdrawRequestMessage(request.Key, entityStore.GetTitleById(request.Key), applicant),
                         new List<string> { emailDescionMaker }, null, new List<string> { GeneralSettings.SystemEmail, request.Applicant.Email }
                         );
+                        }
                     }
                 }
                 catch (Exception e)

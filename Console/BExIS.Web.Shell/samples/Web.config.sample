@@ -203,7 +203,7 @@
       </dependentAssembly>
       <dependentAssembly>
         <assemblyIdentity name="NHibernate" publicKeyToken="aa95f207798dfdb4" culture="neutral" />
-        <bindingRedirect oldVersion="0.0.0.0-4.1.0.4000" newVersion="4.1.0.4000" />
+        <bindingRedirect oldVersion="0.0.0.0-5.3.0.0" newVersion="5.3.0.0" />
       </dependentAssembly>
       <dependentAssembly>
         <assemblyIdentity name="WebGrease" publicKeyToken="31bf3856ad364e35" culture="neutral" />

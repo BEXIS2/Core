@@ -76,7 +76,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
             DatasetManager datasetManager = new DatasetManager();
             UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-
+            XmlMetadataConverter converter = new XmlMetadataConverter();
+            MetadataStructureConverter metadataStructureConverter = new MetadataStructureConverter();
+            JSchema schema;
             try
             {
                 #region security
@@ -95,7 +97,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     if (d == null)
                         return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + id + ") does not exist.");
 
-                    if (!entityPermissionManager.HasEffectiveRight(user.Name, typeof(Dataset), id, RightType.Write))
+                    if (!entityPermissionManager.HasEffectiveRightsAsync(user.Name, typeof(Dataset), id, RightType.Write).Result)
                         return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "The token is not authorized to write into the dataset.");
                 }
 
@@ -187,15 +189,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             {
                                 if (Int64.TryParse(metadataJson.Property("@id").Value.ToString(), out mdid))
                                 {
-                                    MetadataStructureConverter metadataStructureConverter = new MetadataStructureConverter();
-                                    JSchema schema = metadataStructureConverter.ConvertToJsonSchema(mdid);
-
-                                    XmlMetadataConverter converter = new XmlMetadataConverter();
+                                    schema = metadataStructureConverter.ConvertToJsonSchema(mdid);
 
                                     List<string> notAllowedElements = new List<string>();
                                     if (converter.HasValidStructure(metadataJson, mdid, out notAllowedElements))
                                     {
                                         completeMetadata = converter.ConvertTo(metadataJson);
+;
                                     }
                                     else
                                     {
@@ -238,8 +238,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
 
                         //set status
+                        var jsonSchema = metadataStructureConverter.ConvertToJsonSchema(workingCopy.Dataset.MetadataStructure.Id);
+                        var json = converter.ConvertTo(workingCopy.Metadata);
+                        bool valid = json.IsValid(jsonSchema);
+
+                        //set state based on valid or not valid
                         if (workingCopy.StateInfo == null) workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo();
-                        workingCopy.StateInfo.State = DatasetStateInfo.NotValid.ToString();
+                        workingCopy.StateInfo.State = valid ? DatasetStateInfo.Valid.ToString() : DatasetStateInfo.NotValid.ToString();
 
                         title = workingCopy.Title;
                         if (string.IsNullOrEmpty(title)) title = "No Title available.";
@@ -250,11 +255,14 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     LoggerFactory.LogData(id.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
 
-                    var es = new EmailService();
-                    es.Send(MessageHelper.GetMetadataUpdatHeader(id, typeof(Dataset).Name),
-                        MessageHelper.GetUpdateDatasetMessage(id, title, user.DisplayName, typeof(Dataset).Name),
-                        GeneralSettings.SystemEmail
-                        );
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetMetadataUpdatHeader(id, typeof(Dataset).Name),
+                                                    MessageHelper.GetUpdateDatasetMessage(id, title, user.DisplayName, typeof(Dataset).Name),
+                                                    GeneralSettings.SystemEmail
+                                                    );
+                    }
+                        
                 }
 
                 return Request.CreateErrorResponse(HttpStatusCode.OK, "Metadata successfully updated via api.");

@@ -4,8 +4,13 @@
 	export let app;
 	export let url;
 
+	let loaded = false;
+
 	onMount(() => {
 		console.log(`Mounted ${app}`);
+		loaded = true;
+		// if window change, resize the iframe
+		window.addEventListener('resize', sendHeight);
 	});
 
 	afterUpdate(() => {
@@ -15,13 +20,30 @@
 	onDestroy(() => {
 		console.log(`Destroyed ${app}`);
 	});
+
+	function sendHeight() {
+		// get windows height
+		const height = window.innerHeight;
+		// get iframe id
+		const iframeid = 'microapp-' + app;
+		// set iframe height
+		document.getElementById(iframeid).style.height = height + 'px';
+	}
 </script>
 
-<iframe title={app} id="microapp-{app}" frameborder="0" scrolling="no" src={url}></iframe>
+{#if loaded}
+	<iframe
+		title={app}
+		id="microapp-{app}"
+		frameborder="0"
+		scrolling="auto"
+		src={url}
+		on:load={sendHeight}
+	></iframe>
+{/if}
 
 <style>
 	iframe {
 		width: 100%;
-		height: 1000px;
 	}
 </style>

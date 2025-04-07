@@ -137,12 +137,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     dm.EditDatasetVersion(datasetVersion, null, null, null);
                     dm.CheckInDataset(dataset.Id, fileName, GetUsernameOrDefault(), ViewCreationBehavior.None);
 
-                    var es = new EmailService();
-
-                    es.Send(MessageHelper.GetAttachmentDeleteHeader(datasetId, typeof(Dataset).Name),
-                    MessageHelper.GetAttachmentDeleteMessage(datasetId, fileName, GetUsernameOrDefault()),
-                    GeneralSettings.SystemEmail
-                    );
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetAttachmentDeleteHeader(datasetId, typeof(Dataset).Name),
+                        MessageHelper.GetAttachmentDeleteMessage(datasetId, fileName, GetUsernameOrDefault()),
+                        GeneralSettings.SystemEmail
+                        );
+                    }
                 }
             }
 
@@ -172,9 +173,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var user = userTask.Result;
                 int rights = 0;
                 if (user == null)
-                    rights = entityPermissionManager.GetEffectiveRights(subjectId: null, entity.Id, datasetVersion.Dataset.Id);
+                    rights = entityPermissionManager.GetEffectiveRightsAsync(entity.Id, datasetVersion.Dataset.Id).Result;
                 else
-                    rights = entityPermissionManager.GetEffectiveRights(user.Id, entity.Id, datasetVersion.Dataset.Id);
+                    rights = entityPermissionManager.GetEffectiveRightsAsync(user.Id, entity.Id, datasetVersion.Dataset.Id).Result;
                 model.UploadAccess = (((rights & (int)RightType.Write) > 0) || ((rights & (int)RightType.Grant) > 0));
                 model.DeleteAccess = (((rights & (int)RightType.Delete) > 0) || ((rights & (int)RightType.Grant) > 0));
                 model.DownloadAccess = ((rights & (int)RightType.Read) > 0 || ((rights & (int)RightType.Grant) > 0));
@@ -222,8 +223,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     Session["FileInfos"] = attachments;
                     uploadFiles(attachments, datasetId, description);
 
-                    var es = new EmailService();
-                    var filemNames = "";
+                    
+                        var filemNames = "";
 
                     var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
                     userTask.Wait();
@@ -234,10 +235,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         var fileName = Path.GetFileName(file.FileName);
                         filemNames += fileName.ToString() + ",";
                     }
-                    es.Send(MessageHelper.GetAttachmentUploadHeader(datasetId, typeof(Dataset).Name),
+
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetAttachmentUploadHeader(datasetId, typeof(Dataset).Name),
                     MessageHelper.GetAttachmentUploadMessage(datasetId, filemNames, user.DisplayName),
                     GeneralSettings.SystemEmail
                     );
+                    }
+                    
                 }
 
                 // Redirect to a view showing the result of the form submission.

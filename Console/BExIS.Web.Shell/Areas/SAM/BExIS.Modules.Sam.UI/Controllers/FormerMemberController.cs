@@ -14,6 +14,118 @@ namespace BEXIS.Modules.SAM.UI.Controllers
 {
     public class FormerMemberController : Controller
     {
+        /// <summary>
+        /// Change status to defined former member role
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        public void ChangeStatusToFormerMember(string userName)
+        {
+            SettingsHelper helper = new SettingsHelper();
+            string formerMemberRole = helper.GetValue("formerMemberRole").ToString();
+
+            if (userName != null)
+            {
+                using (UserManager userManager = new UserManager())
+                {
+                    var userTask = userManager.FindByNameAsync(userName);
+                    userTask.Wait();
+                    var user = userTask.Result;
+                    bool isAlumni = FormerMemberStatus.IsFormerMember(user.Id, formerMemberRole);
+                    if (!isAlumni)
+                    {
+                        FormerMemberStatus.ChangeToFormerMember(user, formerMemberRole);
+
+                        //build email with text blocks from the settings file
+                        string mailTextBody = helper.GetValue("mailTextTitle").ToString() + " " + user.DisplayName + "," + "<br/><br/>" +
+                                                helper.GetValue("mailTextMainApplied").ToString() + "<br/><br/>" +
+                                                helper.GetValue("mailTextClosing").ToString();
+
+                        //if there is no subject defined in settings use system subject
+                        string subject;
+                        if (!string.IsNullOrEmpty(helper.GetValue("mailTextSubject").ToString()))
+                            subject = helper.GetValue("mailTextSubject").ToString();
+                        else
+                            subject = MessageHelper.GetChangedRoleHeader(user.DisplayName, formerMemberRole, "set to");
+
+                        using (var emailService = new EmailService())
+                        {
+                            emailService.Send(subject,
+                                mailTextBody,
+                                new List<string>() { user.Email },
+                                new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
+                                );
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Remove status to defined former member role
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        public void ChangeStatusToNonFormerMember(string userName)
+        {
+            SettingsHelper helper = new SettingsHelper();
+            string formerMemberRole = helper.GetValue("formerMemberRole").ToString();
+
+            if (userName != null)
+            {
+                using (UserManager userManager = new UserManager())
+                {
+                    var userTask = userManager.FindByNameAsync(userName);
+                    userTask.Wait();
+                    var user = userTask.Result;
+                    bool isAlumni = FormerMemberStatus.IsFormerMember(user.Id, formerMemberRole);
+                    if (isAlumni)
+                    {
+                        FormerMemberStatus.ChangeToNonFormerMember(user, formerMemberRole);
+
+                        //build email with text blocks from the settings file
+                        string mailTextBody = helper.GetValue("mailTextTitle").ToString() + " " + user.DisplayName + "," + "<br/><br/>" +
+                                              helper.GetValue("mailTextMainRevoked").ToString() + "<br/><br/>" +
+                                             helper.GetValue("mailTextClosing").ToString();
+
+                        string subject = MessageHelper.GetChangedRoleHeader(user.DisplayName, formerMemberRole, "revoke from");
+
+                        using (var emailService = new EmailService())
+                        {
+                            emailService.Send(subject,
+                                mailTextBody,
+                                new List<string>() { user.Email },
+                                new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
+                                );
+                        }
+                    }
+                }
+            }
+        }
+
+        [WebMethod]
+        public JsonResult GetAllUsers()
+        {
+            List<FormerMemberUserModel> model = new List<FormerMemberUserModel>();
+
+            using (UserManager userManager = new UserManager())
+            using (var partyManager = new PartyManager())
+            {
+                List<FormerMemberUserModel> users = new List<FormerMemberUserModel>();
+
+                foreach (User user in userManager.Users)
+                {
+                    var party = partyManager.GetPartyByUser(user.Id);
+                    if (party != null)
+                        users.Add(new FormerMemberUserModel(user, false, party));
+                    else
+                        users.Add(new FormerMemberUserModel(user, false));
+                }
+
+                return Json(users, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         public ActionResult Index()
         {
             SettingsHelper helper = new SettingsHelper();
@@ -45,116 +157,6 @@ namespace BEXIS.Modules.SAM.UI.Controllers
                 }
 
                 return View("ManageFormerMembers", model);
-            }
-        }
-
-        /// <summary>
-        /// Change status to defined former member role
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <returns></returns>
-        public void ChangeStatusToFormerMember(string userName)
-        {
-            SettingsHelper helper = new SettingsHelper();
-            string formerMemberRole = helper.GetValue("formerMemberRole").ToString();
-
-            if (userName != null)
-            {
-                using (UserManager userManager = new UserManager())
-                {
-                    var userTask = userManager.FindByNameAsync(userName);
-                    userTask.Wait();
-                    var user = userTask.Result;
-                    bool isAlumni = FormerMemberStatus.IsFormerMember(user.Id, formerMemberRole);
-                    if (!isAlumni)
-                    {
-                        FormerMemberStatus.ChangeToFormerMember(user, formerMemberRole);
-
-                        //send mail
-                        var es = new EmailService();
-                        //build email with text blocks from the settings file
-                        string mailTextBody = helper.GetValue("mailTextTitle").ToString() + " " + user.DisplayName + "," + "<br/><br/>" +
-                                                helper.GetValue("mailTextMainApplied").ToString() + "<br/><br/>" +
-                                                helper.GetValue("mailTextClosing").ToString();
-
-                        //if there is no subject defined in settings use system subject
-                        string subject;
-                        if (!string.IsNullOrEmpty(helper.GetValue("mailTextSubject").ToString()))
-                            subject = helper.GetValue("mailTextSubject").ToString();
-                        else
-                            subject = MessageHelper.GetChangedRoleHeader(user.DisplayName, formerMemberRole, "set to");
-
-                        es.Send(subject,
-                                mailTextBody,
-                                new List<string>() { user.Email },
-                                new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
-                                );
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Remove status to defined former member role
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <returns></returns>
-        public void ChangeStatusToNonFormerMember(string userName)
-        {
-            SettingsHelper helper = new SettingsHelper();
-            string formerMemberRole = helper.GetValue("formerMemberRole").ToString();
-
-            if (userName != null)
-            {
-                using (UserManager userManager = new UserManager())
-                {
-                    var userTask = userManager.FindByNameAsync(userName);
-                    userTask.Wait();
-                    var user = userTask.Result;
-                    bool isAlumni = FormerMemberStatus.IsFormerMember(user.Id, formerMemberRole);
-                    if (isAlumni)
-                    {
-                        FormerMemberStatus.ChangeToNonFormerMember(user, formerMemberRole);
-
-                        //send mail
-                        var es = new EmailService();
-                        //build email with text blocks from the settings file
-                        string mailTextBody = helper.GetValue("mailTextTitle").ToString() + " " + user.DisplayName + "," + "<br/><br/>" +
-                                              helper.GetValue("mailTextMainRevoked").ToString() + "<br/><br/>" +
-                                             helper.GetValue("mailTextClosing").ToString();
-
-                        string subject = MessageHelper.GetChangedRoleHeader(user.DisplayName, formerMemberRole, "revoke from");
-
-                        es.Send(subject,
-                                mailTextBody,
-                                new List<string>() { user.Email },
-                                new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
-                                );
-                    }
-                }
-            }
-        }
-
-        [WebMethod]
-        public JsonResult GetAllUsers()
-        {
-            List<FormerMemberUserModel> model = new List<FormerMemberUserModel>();
-
-            using (UserManager userManager = new UserManager())
-            using (var partyManager = new PartyManager())
-            {
-                List<FormerMemberUserModel> users = new List<FormerMemberUserModel>();
-
-                foreach (User user in userManager.Users)
-                {
-                    var party = partyManager.GetPartyByUser(user.Id);
-                    if (party != null)
-                        users.Add(new FormerMemberUserModel(user, false, party));
-                    else
-                        users.Add(new FormerMemberUserModel(user, false));
-                }
-
-                return Json(users, JsonRequestBehavior.AllowGet);
             }
         }
     }

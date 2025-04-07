@@ -334,11 +334,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (operation.Feature == null) return true;
 
                 // if feature is public
-                if (featurePermissionManager.Exists(null, feature.Id)) return true;
+                if (featurePermissionManager.ExistsAsync(null, feature.Id).Result) return true;
 
                 // feature and user exist
-                if (feature != null && !featurePermissionManager.Exists(null, feature.Id))
-                    if (featurePermissionManager.HasAccess(user.Id, feature.Id))
+                if (feature != null && !featurePermissionManager.ExistsAsync(null, feature.Id).Result)
+                    if (featurePermissionManager.HasAccessAsync(user.Id, feature.Id).Result)
                         return true;
 
                 return false;

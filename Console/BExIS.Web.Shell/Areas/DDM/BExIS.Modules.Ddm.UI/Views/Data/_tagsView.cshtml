@@ -1,0 +1,140 @@
+﻿@model List<BExIS.Modules.Ddm.UI.Models.TagInfoViewModel>
+
+@{
+    ViewBag.Title = "Tags View";
+    string url = "/ddm/data/showdata?id=";
+    Boolean hasEditRigths = false;
+    if (ViewData.ContainsKey("Id"))
+    {
+        url += ViewData["Id"];
+    }
+    else
+    {
+        url += "0";
+    }
+
+    double tagNr = 0;
+
+    if (ViewData.ContainsKey("Tag") && ViewData["Tag"] != null)
+    {
+        tagNr = (double)ViewData["Tag"];
+    }
+
+    if (ViewData.ContainsKey("HasEditRight"))
+    {
+        hasEditRigths = (Boolean)ViewData["HasEditRight"];
+    }
+
+}
+
+@if (Model != null && Model.Any())
+{
+    <div id="tagsinfo-container">
+        <div id="tagsview" style="display: none;">
+            <div>
+                <table>
+                    <tbody>
+                        @foreach (var tag in Model)
+                        {
+                            <tr id="@tag.Version">
+                                <td><a href="@url&tag=@tag.Version"> @tag.Version</a></td>
+                                <td>
+                                    @foreach (var note in tag.ReleaseNotes)
+                                    {
+                                        <div>@note</div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <div id="tagview">
+            <div>
+                <table>
+                    <tbody>
+                        @{
+                            var singletag = Model.FirstOrDefault(t=>t.Version == tagNr);
+
+                            <tr id="@singletag.Version" class="selected">
+                                <td><a href="@url&tag=@singletag.Version"> @singletag.Version</a></td>
+                                <td>
+                                    @foreach (var note in singletag.ReleaseNotes)
+                                    {
+                                        <div>@note</div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <div>
+            <button id="showTags" class="bx bx-function fa-arrow-down small" onclick="onClickFn()"></button>
+            @if (hasEditRigths)
+            {
+                <button id="editTags" class="bx bx-function fa-tag small"></button>
+            }
+        </div>
+    </div>
+}
+
+<style type="text/css">
+    #tagsinfo-container {
+        display: flex;
+        flex: 1 1 auto;
+    }
+
+    #tagsview {
+        padding: 1px;
+        display: flex;
+        flex: 1 1 auto;
+        max-height: 90px;
+        overflow-y: auto;
+    }
+
+    .selected {
+        background-color: #f0f0f0;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        const trElement = document.getElementById('@tagNr');
+        console.log(trElement)
+        //console.log('@tagNr')
+        // Check if the TD element exists
+        if (trElement) {
+            // Add the new class
+            trElement.classList.add("selected");
+            trElement.scrollIntoView({ behavior: "smooth" });
+            //const scrollPosition = elementTop - viewHeight / 2;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    });
+
+    function onClickFn(){
+
+        var tagview = document.getElementById("tagview");
+        var tagsview = document.getElementById("tagsview");
+
+        if (tagview.style.display === "none") {
+            tagview.style.display = "block";
+            tagsview.style.display = "none";
+        } else {
+            tagview.style.display = "none";
+            tagsview.style.display = "block";
+        }
+
+        const element = document.getElementById("showTags");
+        element.classList.toggle("fa-arrow-up");
+        element.classList.toggle("fa-arrow-down");
+
+    }
+</script>

@@ -18,19 +18,19 @@ namespace BExIS.UI.Hooks.Caches
         public bool IsDataValid { get; set; }
 
         /// <summary>
-        /// after a successful validation runs a hash will be genereated
-        /// it combines the file-names, changedates and data description
+        /// after a successful validation runs a hash will be generated
+        /// it combines the file-names, change dates and data description
         /// check the hash before you go on to be sure that nothings changed
         /// </summary>
         public byte[] ValidationHash { get; set; }
 
         /// <summary>
-        /// contains all reader needed informations about the incoming file from type excel
+        /// contains all reader needed information about the incoming file from type excel
         /// </summary>
         public ExcelFileReaderInfo ExcelFileReaderInfo { get; set; }
 
         /// <summary>
-        /// contains all reader needed informations about the incoming file from type ascii
+        /// contains all reader needed information about the incoming file from type ascii
         /// </summary>
         public AsciiFileReaderInfo AsciiFileReaderInfo { get; set; }
 
@@ -40,6 +40,17 @@ namespace BExIS.UI.Hooks.Caches
         public List<FileInfo> Files { get; set; }
 
         /// <summary>
+        /// contains all filename that should be updated in the next submit
+        /// </summary>
+        public List<FileInfo> ModifiedFiles { get; set; }
+
+
+        /// <summary>
+        /// contains all filename that should be deleted in the next submit
+        /// </summary>
+        public List<FileInfo> DeleteFiles { get; set; }
+
+        /// <summary>
         /// this dictionary store the last modifications of the changed hooks
         /// string = hook name
         /// DateTime = Last Modification
@@ -47,23 +58,25 @@ namespace BExIS.UI.Hooks.Caches
         public Dictionary<string, DateTime> LastModifications { get; set; }
 
         /// <summary>
-        /// Collect all informations to fine the data in the sheet
+        /// Collect all information to fine the data in the sheet
         /// </summary>
         public ExcelSetup ExcelSetup { get; set; }
 
         /// <summary>
-        /// contains update informations like method, rows count, variable count
+        /// contains update information like method, rows count, variable count
         /// </summary>
         public UpdateSetup UpdateSetup { get; set; }
 
         public EditDatasetDetailsCache()
         {
             Files = new List<FileInfo>();
+            DeleteFiles = new List<FileInfo>();
+            ModifiedFiles = new List<FileInfo>();
         }
 
         /// <summary>
-        /// when this function is called the LastModification Dicionary will be updated based on the type of a hook.
-        /// the value, the date wiill be set to datetime now
+        /// when this function is called the LastModification Dictionary will be updated based on the type of a hook.
+        /// the value, the date will be set to datetime now
         /// </summary>
         /// <param name="type"></param>
         public void UpdateLastModificarion(Type type)
@@ -139,17 +152,18 @@ namespace BExIS.UI.Hooks.Caches
         public string Description { get; set; }
 
         /// <summary>
-        /// after a successful validation runs a hash will be genereated
-        /// it combines the file-names, changedates and data description
+        /// after a successful validation runs a hash will be generated
+        /// it combines the file-names, change dates and data description
         /// check the hash before you go on to be sure that nothings changed
         /// </summary>
         public string ValidationHash { get; set; }
 
         /// <summary>
-        /// if a validation faild, then errors are stored here
-        /// if no errors, validation sucess
+        /// if a validation failed, then errors are stored here
+        /// if no errors, validation success
         /// </summary>
         public List<Error> Errors { get; set; }
+        public List<Warning> Warnings { get; set; }
 
         public FileInfo()
         {
@@ -158,6 +172,7 @@ namespace BExIS.UI.Hooks.Caches
             Lenght = 0;
             Description = string.Empty;
             Errors = new List<Error>();
+            Warnings = new List<Warning>();
         }
 
         public FileInfo(string name, string type, int length, string description)
@@ -167,6 +182,7 @@ namespace BExIS.UI.Hooks.Caches
             Lenght = length;
             Description = description;
             Errors = new List<Error>();
+            Warnings = new List<Warning>();
         }
     }
 }

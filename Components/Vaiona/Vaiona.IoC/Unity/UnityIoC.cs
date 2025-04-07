@@ -31,7 +31,10 @@ namespace Vaiona.IoC.Unity
 
         public void RegisterHeirarchical(Type from, Type to)
         {
-            this.container.RegisterType(from, to, new HierarchicalLifetimeManager());
+            using (var hierarchicalLifetimeManager = new HierarchicalLifetimeManager())
+            {
+                this.container.RegisterType(from, to, hierarchicalLifetimeManager);
+            }
         }
 
         public void Register(Type from, Type to)
@@ -122,8 +125,8 @@ namespace Vaiona.IoC.Unity
 
         public void StartSessionLevelContainer()
         {
-            string key = HttpContext.Current?.Session.SessionID;
-            if (!children.ContainsKey(key))
+            string key = HttpContext.Current?.Session?.SessionID;
+            if (!string.IsNullOrEmpty(key) && !children.ContainsKey(key))
             {
                 UnityIoC child = new UnityIoC(container.CreateChildContainer());
                 children.Add(key, child);
@@ -134,7 +137,7 @@ namespace Vaiona.IoC.Unity
         {
             try
             {
-                string key = HttpContext.Current?.Session.SessionID;
+                string key = HttpContext.Current?.Session?.SessionID;
                 if (!string.IsNullOrEmpty(key) && this.children.ContainsKey(key))
                     children.Remove(key);
             }

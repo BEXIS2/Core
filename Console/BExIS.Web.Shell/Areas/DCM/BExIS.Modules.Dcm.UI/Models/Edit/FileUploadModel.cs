@@ -11,6 +11,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
         // this value is a flag to check wheter all files from upload is readable or not
         // if not the ui should hide data description at all
         public bool AllFilesReadable { get; set; }
+        public bool HasStructure { get; set; }
 
         public AsciiFileReaderInfo AsciiFileReaderInfo { get; set; }
         public DateTime? LastModification { get; set; }
@@ -19,6 +20,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
         {
             FileUploader = new FileUploader();
             AllFilesReadable = false;
+            HasStructure = false;
             AsciiFileReaderInfo = null;
         }
     }

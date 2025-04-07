@@ -1,0 +1,419 @@
+﻿@model ShowPrimaryDataModel
+@using System.Data;
+@using BExIS.Dlm.Entities.DataStructure;
+@using BExIS.Modules.Ddm.UI.Models
+@using Telerik.Web.Mvc.UI;
+@using System.Linq;
+
+@{
+    ViewBag.Title = "Primary Data";
+
+    bool fullDataset = false;
+    bool latestVersion = Model.LatestVersion;
+
+    long id = Model.DatasetId;
+    StructuredDataStructure dataStructure = (StructuredDataStructure)Model.DataStructure;
+
+    GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
+    pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
+    pagerStyles |= GridPagerStyles.Numeric;
+
+    int total = 0;
+    if (ViewData["gridTotal"] != null)
+    {
+        total = Convert.ToInt32(ViewData["gridTotal"]); //  (int)Session["gridTotal"];
+    }
+
+    string compareValues = String.Join(";", Model.CompareValuesOfDataTypes.ToArray());
+
+    bool fitToScreen = true;
+
+    string tableClass = "fit_to_screen";
+
+    if (Model.Data.Columns.Count > 8)
+    {
+        fitToScreen = false;
+        tableClass = "scroll_in_screen";
+    }
+
+}
+
+@section Scripts{
+    @*<link href="@Url.Content(Themes.GetResourcePath("Styles", "images.css"))" rel="stylesheet" type="text/css" />*@
+    <script type="text/javascript" src="/Areas/ddm/Scripts/ddm.js"></script>
+    @*<script type="text/javascript" src="/Areas/ddm/Views/Shared/ddm.js"></script>*@
+}
+
+@section information
+{
+    <p>To download the entire dataset choose one of the following formats.</p>
+
+    <p>
+        Note: If you are the first one to download this dataset it may take a
+        little longer, because the file has to be created.
+    </p>
+    <p>
+        <a href="/DCM/Help/Index/#_Toc451435014" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
+}
+<div id="downloadOptions" style="text-align:left;">
+
+    @if (Model.DownloadAccess && Model.Data != null && Model.Data.Rows.Count > 0)
+    {
+
+        @*<button id="downloadExcelTemplateButton" class="bx-button function" title="Xlsx download" onclick="downloadExcelTemplate(@Model.DatasetId)">Download Template</button>
+
+            <button id="downloadExcelButton" class="bx-button function" title="Xlsx download" onclick="downloadExcel(@Model.DatasetId)">Download Excel</button>*@
+
+        if (@total < 1048576) // hide Excel download for bigger datasets, which exceed the max number of rows in excel
+        {
+            <span class="dropdown">
+                <button class="bx-button function" type="button" onclick="downloadExcel(@Model.DatasetId)">
+                    Download Excel
+                </button>
+                @*<button class="bx-button function" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Download Excel
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                    <li><a id="downloadExcelTemplateButton" onclick="downloadExcelTemplate(@Model.DatasetId)">Template (.xlsm)</a></li>
+                    <li><a id="downloadExcelButton" onclick="downloadExcel(@Model.DatasetId)">Excel (.xlsx)</a></li>
+                </ul>*@
+            </span>
+        }
+
+        <span class="dropdown">
+            <button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                Download Text
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+
+                @foreach (KeyValuePair<string, string> fileType in Model.AsciiFileDownloadSupport)
+                {
+                    <li><a class="file-type-download-entry" ext="@fileType.Value"> @fileType.Key (@fileType.Value)</a></li>
+                }
+            </ul>
+        </span>
+
+        <span>
+            @Html.CheckBox("WithUnits", false, new { text = "download data with units", @id = "WithUnits" })
+            Download data with units.
+        </span>
+        }
+    else
+    {
+
+        <button title="Download Excel"
+                name="Download Excel"
+                class="t-button t-state-disabled margin"
+                disabled="disabled">
+            Download Excel
+        </button>
+        <button title="Download Comma Separated"
+                name="Download Comma Separated"
+                class="t-button t-state-disabled margin"
+                disabled="disabled">
+            Download Text
+        </button>
+    }
+
+    <span>
+        @Html.CheckBox("FitToScreen", fitToScreen, new { text = "Fit table to screen", @id = "FitToScreen" })
+        Fit table to screen.
+    </span>
+
+    <span id="preloaderContainer" style="float: right"></span>
+</div>
+<br />
+@(Html.Telerik().Grid(Model.Data)
+                .Name("PrimaryDataResultGrid")
+                    .DataBinding(dataBinding => dataBinding
+                    .Ajax()
+                    .Select("_CustomPrimaryDataBinding", "Data", new RouteValueDictionary { { "area", "ddm" }, { "datasetId", id }, { "versionId", Model.VersionId } })
+                    .OperationMode(GridOperationMode.Server)
+                    )
+
+                .EnableCustomBinding(true)
+                .HtmlAttributes(new { @class = "primaryDataResultGrid " + @tableClass })
+                .ClientEvents(events => events
+                            .OnLoad("PrimaryDataResultGrid_OnLoad")
+                            .OnDataBound("PrimaryData_OnCommand")
+                            .OnColumnHide("PrimaryData_OnCommand")
+                            .OnColumnShow("PrimaryData_OnCommand")
+                    )
+
+            .Columns(columns =>
+            {
+            for (int i = 0; i < Model.Data.Columns.Count; i++)
+            {
+
+                DataColumn column = Model.Data.Columns[i];
+
+                string title;
+                bool visible = false;
+
+                if (column.Caption == "")
+                {
+                    title = column.ColumnName;
+                }
+                else
+                {
+                    title = column.Caption;
+                }
+
+                if (column.ColumnName.ToLower().StartsWith("var"))
+                {
+                    visible = true;
+
+                    DisplayFormatObject dfo = Model.DisplayFormats.FirstOrDefault(a => a.Column.Equals(title));
+
+                    string format = "";
+
+                    if (dfo != null && !string.IsNullOrEmpty(dfo.Format))
+                    {
+                        //string unit = "";
+                        //if (dfo.Unit != "None") unit = dfo.Unit;
+
+                        format = "{0:" + dfo.Format + "}";
+
+                        columns.Bound(column.DataType, column.ColumnName)
+                .Title(title)
+                .Format(format)
+                .Hidden(!visible)
+                .Sortable(latestVersion)
+                .Filterable(latestVersion);
+                    }
+                    else
+                    {
+                        columns.Bound(column.DataType, column.ColumnName)
+                .Title(title)
+                .Hidden(!visible)
+                .Sortable(latestVersion)
+                .Filterable(latestVersion);
+                    }
+                }
+            }
+        })
+
+        .Pageable(paging =>
+            paging.PageSize(10, new int[] { 10, 20, 50, 100, 500 })
+                .Style(pagerStyles)
+                .Position(GridPagerPosition.Both)
+                .Total(total)
+                )
+
+        .Sortable()
+        .Filterable()
+        .ColumnContextMenu()
+
+    //.Groupable()
+
+)
+
+<br />
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+
+		OnDataBound();
+	})
+
+	$("#FitToScreen").change(function () {
+		var fitToScreen = $('#FitToScreen').is(":checked");
+
+		if (fitToScreen === true) {
+			$("#PrimaryDataResultGrid").addClass("fit_to_screen");
+			$("#PrimaryDataResultGrid").removeClass("scroll_in_screen");
+		}
+		else {
+			$("#PrimaryDataResultGrid").removeClass("fit_to_screen");
+			$("#PrimaryDataResultGrid").addClass("scroll_in_screen");
+		}
+	});
+
+	function PrimaryDataResultGrid_OnLoad(e) {
+		$('.t-grid .t-status').hide();
+	}
+
+	function PrimaryData_OnCommand(e) {
+
+		var grid = $("#PrimaryDataResultGrid").data("tGrid");
+
+		var columns = grid.columns;
+
+		var currentFilter = grid.filterBy;
+		var currentOrder = grid.orderBy;
+
+		var visibleColumns ="";
+		jQuery.each(columns, function (index) {
+			if (!this.hidden) {
+				if (visibleColumns != "")
+
+					visibleColumns += "," + this.member;
+				else
+					visibleColumns = this.member;
+			}
+		});
+
+		$.post('@Url.Action("SetGridCommand", "Data", new RouteValueDictionary { { "area", "ddm" } })', { filters: currentFilter, orders: currentOrder, columns: visibleColumns }, function (response) {
+		//alert("set grid");
+		OnDataBound();
+		})
+
+		resetAllTelerikIconTitles();
+		addTooltips();
+
+	}
+
+	function OnDataBound() {
+		addTooltips();
+		resetAllTelerikIconTitles();
+        //console.log("OnDataBound");
+        //  $("table.scrollable td:nth-child(" + lastIndex + ")").addClass(rightStyle);
+
+        var allMissingValuesString = '@compareValues';
+        var allMissingValuesArray = allMissingValuesString.split(";")
+		$("#PrimaryDataResultGrid tr")
+			.each(function() {
+
+                //go throw all the cells
+                $(this).find("td").each(function (index, element) {
+
+                    // get missing values
+                    var currentMVSString = allMissingValuesArray[index];
+                    var currentMVSArray = currentMVSString.split("#%#");
+
+                    var i;
+                    for (i = 0; i < currentMVSArray.length; i++) {
+
+                        var kvpString = currentMVSArray[i];
+                        var displayname = kvpString.split("|")[0]
+                        var placeholder = kvpString.split("|")[1]
+                        //console.log("pdatatest","c" + i + "-" + displayname + " - " + placeholder + " " + this.innerHTML);
+
+                        //check if the value is a missing value and replace it
+                        if (this.innerHTML.toUpperCase() == placeholder) {
+                            this.innerHTML = displayname;
+                        }
+
+                        // check for dates
+                        let v = this.innerHTML.toUpperCase();
+                        if ((v.includes("9999") || v.includes("9998") || v.includes("9997")) && v.includes("31") && v.includes("12")) {
+                            this.innerHTML = displayname;
+                        }
+
+                    }
+
+                })
+			})
+
+		$("#PrimaryDataResultGrid .t-grouping-row .t-reset")
+			.each(function() {
+
+				var valueArray = this.innerHTML.split(": ");
+				//alert(valueArray);
+				var value = valueArray[valueArray.length - 1];
+
+				//alert(value);
+				for (var i = 0; i < compareValuesArray.length; i = i + 1) {
+
+					if (value == compareValuesArray[i]) {
+
+						var newValue = valueArray[0] + ": ";
+						this.innerHTML = newValue;
+					}
+				}
+
+            })
+
+        setTimeout(function () {
+            var tablewidth = $("#PrimaryDataResultGrid table").width()
+            var rowwidth = $("#PrimaryDataResultGrid table tr").width()
+
+            console.log("rowwidth < tablewidth | " + rowwidth + "<" + tablewidth)
+
+            if (rowwidth < tablewidth) {
+                console.log("inside baby")
+                $("#PrimaryDataResultGrid").addClass("fit_to_screen");
+                $("#PrimaryDataResultGrid").removeClass("scroll_in_screen");
+                $('#FitToScreen').attr("checked", "checked");
+            }
+
+        }, 200);
+
+	}
+
+	$(".file-type-download-entry").click(function (id) {
+
+		var ext = $(this).attr("ext");
+        var withunits = $("#WithUnits").prop('checked');
+        console.log(withunits);
+		$("#preloaderContainer").preloader(20, "Preparing file...");
+
+        $.ajax({
+            url: '@Url.Action("DownloadAscii", "Data", new { id = @Model.DatasetId })' + "?ext=" + ext + "&versionid=" + '@Model.VersionId' + "&latest=" + '@Model.LatestVersion' + "&withUnits=" + withunits,
+			contentType: 'application/json; charset=utf-8',
+			datatype: 'json',
+			type: "GET",
+			success: function(e) {
+
+				if (e) {
+                    window.location = '@Url.Action("DownloadAscii", "Data", new { id = @Model.DatasetId})' + "?ext=" + ext + "&versionid=" + '@Model.VersionId' + "&latest=" + '@Model.LatestVersion' + "&withUnits=" + withunits + "&download=true";
+				}
+				else {
+					alert(e);
+				}
+
+				$("#preloaderContainer").removePreloader();
+			}
+		})
+	})
+
+	function downloadExcelTemplate(id) {
+
+		$("#preloaderContainer").preloader(20, "Preparing excel file...");
+		//"DownloadAsExcelData", "Data", new { id = @Model.DatasetId }
+		$.ajax({
+			url: '@Url.Action("PrepareExcelTemplateData", "Data", new { id = @Model.DatasetId })'+"?versionid="+'@Model.VersionId'+"&latest="+'@Model.LatestVersion',
+			contentType: 'application/json; charset=utf-8',
+			datatype: 'json',
+			type: "GET",
+			success: function(e) {
+
+				if (e) {
+					window.location = '@Url.Action("DownloadAsExcelTemplateData", "Data", new { id = @Model.DatasetId })' + "?versionid=" + '@Model.VersionId' + "&latest=" + '@Model.LatestVersion';
+				}
+				else {
+					alert(e);
+				}
+
+				$("#preloaderContainer").removePreloader();
+			}
+		})}
+
+	function downloadExcel(id) {
+
+        var withunits = $("#WithUnits").prop('checked');
+
+		$("#preloaderContainer").preloader(20, "Preparing excel file...");
+		//"DownloadAsExcelData", "Data", new { id = @Model.DatasetId }
+		$.ajax({
+			url: '@Url.Action("PrepareExcelData", "Data", new { id = @Model.DatasetId })'+"?versionid="+'@Model.VersionId'+"&latest="+'@Model.LatestVersion' + "&withUnits=" + withunits,
+			contentType: 'application/json; charset=utf-8',
+			datatype: 'json',
+			type: "GET",
+			success: function(e) {
+
+				if (e) {
+                    window.location = '@Url.Action("DownloadAsExcelData", "Data", new { id = @Model.DatasetId })' + "?versionid=" + '@Model.VersionId' + "&latest=" + '@Model.LatestVersion' + "&withUnits=" + withunits;
+				}
+				else {
+					alert(e);
+				}
+
+				$("#preloaderContainer").removePreloader();
+			}
+		})}
+</script>

@@ -8,8 +8,8 @@
 <div class="space-y-2">
 	{#if type === 'string' && missingValues}
 		<div>
-			<b>String detected: </b> If not correct, please check if placeholder for missing values provided
-			correctly.
+			<b>String detected: </b> If not correct, please check if the placeholder for missing values is
+			provided correctly.
 		</div>
 		<div>
 			<b>Missing values: </b>

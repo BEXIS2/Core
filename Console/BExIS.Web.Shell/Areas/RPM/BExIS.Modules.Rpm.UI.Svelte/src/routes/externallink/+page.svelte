@@ -46,15 +46,16 @@
 	import TableUri from './table/tableUri.svelte';
 	import { goTo } from '$services/BaseCaller';
 	import UrlPreview from './UrlPreview.svelte';
+	import type { SvelteComponent } from 'svelte';
+
+	import type { linkType } from '@bexis2/bexis2-core-ui';
 
 	let showForm = false;
 
 	async function reload() {
-		showForm = false;
 
 		// get external links
 		externalLinks = await getLinks();
-		externalLink = new externalLinkType();
 		externalLinksStore.set(externalLinks);
 		console.log('🚀 ~ file: +page.svelte:50 ~ reload ~ externalLinks:', externalLinks);
 
@@ -74,7 +75,7 @@
 	const m: TableConfig<externalLinkType> = {
 		id: 'ExternalLinks',
 		data: externalLinksStore,
-		optionsComponent: TableOptions,
+		optionsComponent: TableOptions as unknown as typeof SvelteComponent,
 		columns: {
 			id: {
 				fixedWidth: 30
@@ -121,8 +122,7 @@
 	}
 
 	function clear() {
-		externalLink = { id: 0, name: '', type: '', uri: '' };
-		showForm = false;
+		externalLink = new externalLinkType();
 	}
 
 	function edit(type: any) {
@@ -143,14 +143,23 @@
 		}
 
 		if (type.action == 'delete') {
+			let el: externalLinkType = $externalLinksStore.find((u) => u.id === type.id)!;
 			const confirm: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete External Link',
-				body: 'Are you sure you wish to delete external link ' + externalLink.name + '?',
+				body: 'Are you sure you wish to delete external link ' + el.name + '?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
-				response: (r: boolean) => {
+				response: async (r: boolean) => {
 					if (r === true) {
-						deleteFn(type.id);
+						let success :boolean = await deleteFn(el);
+						if (success)
+						{
+							reload();
+							if (el.id === externalLink.id) {
+								toggleForm();
+							}
+						}
+
 					}
 				}
 			};
@@ -158,23 +167,23 @@
 		}
 	}
 
-	async function deleteFn(id: number) {
-		console.log('🚀 ~ file: +page.svelte:112 ~ deleteFn ~ id:', id);
+	async function deleteFn(el: externalLinkType) : Promise<boolean> {
+		console.log('🚀 ~ file: +page.svelte:112 ~ deleteFn ~ id:', el.id);
 
-		const res = await remove(id);
+		const res = await remove(el.id);
 
 		if (res) {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'External Link deleted.'
+				message: 'External Link "'+ el.name +'" deleted.'
 			});
-
-			reload();
+			return true;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: "Can't delete external link."
+				message: 'Can\'t delete external link "'+ el.name +'".'
 			});
+			return false;
 		}
 	}
 
@@ -198,9 +207,17 @@
 			message: "Can't save external Link."
 		});
 	}
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#external-links',
+		}
+	];
+
 </script>
 
-<Page help={true} title="Manage External Links">
+<Page help={true} title="Manage External Links" {links}>
 	{#await reload()}
 		<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h-9 w-96 placeholder animate-pulse" />
@@ -218,7 +235,7 @@
 		<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h3 h-9">
 				{#if externalLink.id < 1}
-					<span in:fade={{ delay: 400 }} out:fade>Create neẇ External link</span>
+					<span in:fade={{ delay: 400 }} out:fade>Create new External link</span>
 				{:else}
 					<span in:fade={{ delay: 400 }} out:fade>{externalLink.name}</span>
 				{/if}
@@ -229,7 +246,7 @@
 					<button
 						transition:fade
 						class="btn variant-filled-secondary shadow-md h-9 w-16"
-						title="Create neẇ External Link"
+						title="Create new External Link"
 						id="create"
 						on:mouseover={() => {
 							helpStore.show('create');
@@ -244,7 +261,7 @@
 			<div in:slide out:slide>
 				<ExternalLinkForm
 					link={externalLink}
-					on:cancel={() => clear()}
+					on:cancel={() => toggleForm()}
 					on:success={() => onSuccessFn(externalLink.id)}
 					on:fail={onFailFn}
 				/>

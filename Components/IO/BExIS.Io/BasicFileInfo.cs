@@ -1,7 +1,7 @@
 ﻿namespace BExIS.IO
 {
     /// <summary>
-    /// Basic informations of a file
+    /// Basic information of a file
     /// </summary>
     public class BasicFileInfo
     {

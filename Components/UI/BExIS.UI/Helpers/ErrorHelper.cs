@@ -10,13 +10,16 @@ namespace BExIS.UI.Helpers
         {
             try
             {
-                var es = new EmailService();
                 var subject = "Error in system";
 
-                es.Send(subject,
+                using(var emailService = new EmailService())
+                {
+                    emailService.Send(subject,
                     result,
                     GeneralSettings.SystemEmail
                     );
+                }
+                
             }
             catch (System.Web.HttpException ehttp)
             {

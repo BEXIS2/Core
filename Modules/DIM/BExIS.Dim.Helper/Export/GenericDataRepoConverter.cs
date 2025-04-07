@@ -6,11 +6,12 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO;
 using BExIS.IO.Transform.Output;
+using BExIS.Utils.Extensions;
 using BExIS.Xml.Helpers;
-using Ionic.Zip;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Xml;
 using Vaiona.Logging;
@@ -33,7 +34,6 @@ namespace BExIS.Dim.Helpers.Export
             using (DatasetManager datasetManager = new DatasetManager())
             using (DataStructureManager dataStructureManager = new DataStructureManager())
             using (PublicationManager publicationManager = new PublicationManager())
-            using (ZipFile zip = new ZipFile())
             {
                 DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
                 long datasetId = datasetVersion.Dataset.Id;
@@ -113,41 +113,41 @@ namespace BExIS.Dim.Helpers.Export
 
                         #endregion datatructure
 
-                        foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                        using (var zipFileStream = new FileStream(zipFilePath, FileMode.Create))
+                        using (var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Update))
                         {
-                            string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
-                            string name = cd.URI.Split('\\').Last();
-
-                            if (FileHelper.FileExist(path))
+                            foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                             {
-                                zip.AddFile(path, "");
+                                string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
+                                string name = cd.URI.Split('\\').Last();
+
+                                if (FileHelper.FileExist(path))
+                                {
+                                    archive.AddFileToArchive(path, "");
+                                }
                             }
+
+                            // add xsd of the metadata schema
+                            string xsdDirectoryPath = OutputMetadataManager.GetSchemaDirectoryPath(datasetId);
+                            if (Directory.Exists(xsdDirectoryPath))
+                                archive.AddFolderToArchive(xsdDirectoryPath, "Schema");
+
+                            XmlDocument manifest = OutputDatasetManager.GenerateManifest(datasetId, datasetVersion.Id);
+
+                            if (manifest != null)
+                            {
+                                string dynamicManifestFilePath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId,
+                                    versionNr, "manifest", ".xml");
+                                string fullFilePath = Path.Combine(AppConfiguration.DataPath, dynamicManifestFilePath);
+
+                                manifest.Save(fullFilePath);
+                                archive.AddFileToArchive(fullFilePath, "");
+                            }
+
+                            string message = string.Format("dataset {0} version {1} was published for repository {2}", datasetId,
+                                datasetVersion.Id, broker.Name);
+                            LoggerFactory.LogCustom(message);
                         }
-
-                        // add xsd of the metadata schema
-                        string xsdDirectoryPath = OutputMetadataManager.GetSchemaDirectoryPath(datasetId);
-                        if (Directory.Exists(xsdDirectoryPath))
-                            zip.AddDirectory(xsdDirectoryPath, "Schema");
-
-                        XmlDocument manifest = OutputDatasetManager.GenerateManifest(datasetId, datasetVersion.Id);
-
-                        if (manifest != null)
-                        {
-                            string dynamicManifestFilePath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId,
-                                versionNr, "manifest", ".xml");
-                            string fullFilePath = Path.Combine(AppConfiguration.DataPath, dynamicManifestFilePath);
-
-                            manifest.Save(fullFilePath);
-                            zip.AddFile(fullFilePath, "");
-                        }
-
-                        string message = string.Format("dataset {0} version {1} was published for repository {2}", datasetId,
-                            datasetVersion.Id, broker.Name);
-                        LoggerFactory.LogCustom(message);
-
-                        //Session["ZipFilePath"] = dynamicFilePath;
-
-                        zip.Save(zipFilePath);
 
                         return zipFilePath;
                     }

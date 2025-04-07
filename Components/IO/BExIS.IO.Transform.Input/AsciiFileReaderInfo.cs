@@ -201,7 +201,7 @@ namespace BExIS.IO.Transform.Input
                 case TextMarker.doubleQuotes:
                     return TextMarker.doubleQuotes.ToString();
 
-                default: return TextMarker.doubleQuotes.ToString();
+                default: return TextMarker.none.ToString();
             }
         }
 
@@ -222,7 +222,28 @@ namespace BExIS.IO.Transform.Input
                 case "doubleQuotes":
                     return TextMarker.doubleQuotes;
 
-                default: return TextMarker.quotes;
+                default: return TextMarker.none;
+            }
+        }
+
+        /// <summary>
+        /// Get a Textmarker based on the textmarker number input
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="textMarker"> integer from textmarker</param>
+        /// <returns>TextMarker based on name</returns>
+        public static TextMarker GetTextMarker(int textMarker)
+        {
+            switch (textMarker)
+            {
+                case 39:
+                    return TextMarker.quotes;
+
+                case 34:
+                    return TextMarker.doubleQuotes;
+
+                default: return TextMarker.none;
             }
         }
 
@@ -243,9 +264,14 @@ namespace BExIS.IO.Transform.Input
                 case TextMarker.doubleQuotes:
                     return '"';
 
-                default: return '"';
+                case TextMarker.none:
+                    return '\0';
+
+                default: return '\0';
             }
         }
+
+
 
         /// <summary>
         /// Get Encoding based on the EncodingType enum type

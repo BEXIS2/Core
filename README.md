@@ -1,30 +1,20 @@
 # Core 
-This is the public code repository of the BEXIS 2 data management software. It contains only modules, components, and packages of the core system. Contributed modules and components will be available in separate repositories. For more information on BEXIS 2, please visit our website.  
+This is the public code repository of the BEXIS2 data management software. It contains only modules, components, and packages of the core system. Contributed modules and components will be available in separate repositories. For more information on BEXIS2, please visit our [website](https://bexis2.uni-jena.de).  
 
 # License
-BEXIS 2 is published under a GNU LESSER GENERAL PUBLIC LICENSE Version 3
+BEXIS2 is published under a GNU LESSER GENERAL PUBLIC LICENSE Version 3
 
 # Release
 
-> In the release notes you can find a list of all the current versions. 
+> In the release notes, you will find a list of all changes to the current version and updated scripts. 
 
-[RELEASE NOTES](https://github.com/BEXIS2/Core/blob/3.3.1/Release%20Notes/Release_Notes.md)
-
-> A more detailed list of the changes is available for the co-developers. It mentions the changed libraries and important feature changes.
-
-[CHANGES](https://github.com/BEXIS2/Core/blob/3.3.1/Release%20Notes/changes.md)
-
->if a running instance is updated, an update to the database is required.
-
-- STEP BY STEP
-
-[UPDATE SCRIPTS](https://github.com/BEXIS2/Core/blob/3.3.1/database%20update%20scripts)
+[RELEASE NOTES](https://github.com/BEXIS2/Core/blob/4.0.0/Release%20Notes/Release_Notes.md)
 
 # Installation
 
-For the preparation of Bexis 2 on a server a guide is available here.
+A guide for the preparation of BEXIS2 on a server is available here.
 
-[Installation Manual](https://github.com/BEXIS2/Documents/blob/3.3.1/Guides/Installation/installation.md)
+[Installation Manual](https://github.com/BEXIS2/Documents/blob/4.0.0/Guides/Installation/installation.md)
 
 
 # Help for Users/Admins/Developers
@@ -42,13 +32,13 @@ The page is divided into:
 
 # Workspace
 
->The application needs a workspace where files are stored that are used for configuration.
+>The application needs a workspace where files are stored for configuration.
 
 The initial version of the workspace can be found here:
 
-- [Workspace 3.3.1 Repo](https://github.com/BEXIS2/Workspace/tree/3.3.1)
-- [Workspace 3.3.1 Release](https://github.com/BEXIS2/Workspace/releases/tag/3.3.1)
+- [Workspace 4.0.0 Repo](https://github.com/BEXIS2/Workspace/tree/4.0.0)
+- [Workspace 4.0.0 Release](https://github.com/BEXIS2/Workspace/releases/tag/4.0.0)
 
-# List of new Modules
+# List of Modules
 
-- [Modules Overview](https://github.com/BEXIS2/Core/blob/3.3.1/MODULES.md)
+- [Modules Overview](https://github.com/BEXIS2/Core/blob/4.0.0/MODULES.md)

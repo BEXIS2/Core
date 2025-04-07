@@ -10,7 +10,13 @@
 	import { store, load } from './services';
 
 	import Fa from 'svelte-fa';
-	import { faSave, faChevronRight, faArrowRotateLeft,faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+	import {
+		faSave,
+		faChevronRight,
+		faArrowRotateLeft,
+		faArrowLeft,
+		faXmark
+	} from '@fortawesome/free-solid-svg-icons';
 
 	//types
 	import type { DataStructureCreationModel, markerType } from './types';
@@ -19,7 +25,9 @@
 	import Controls from './Controls.svelte';
 	import Attributes from './structure/Attributes.svelte';
 	import ConstraintsDescription from './structure/variable/ConstraintsDescription.svelte';
-	import { goTo } from '$services/BaseCaller';
+	import { goTo } from './services';
+	import { type ModalSettings, getModalStore } from '@skeletonlabs/skeleton';
+	const modalStore = getModalStore();
 
 	export let model: DataStructureCreationModel;
 	$: model;
@@ -37,7 +45,7 @@
 
 	let selectedRowIndex: number = 0;
 	let data = [];
-	$:data;
+	$: data;
 
 	let errors: string[] = [];
 	$: errors;
@@ -59,37 +67,33 @@
 	onMount(async () => {
 		console.log('start selection suggestion');
 		console.log('load selection', model.entityId, model.file);
-		setTableInfos(model.preview, String.fromCharCode(model.delimeter));
+		setTableInfos(model.preview);
 		setMarkers(model.markers, init);
 
 		delimeter = model.delimeter;
-	 prepareData(model.preview)
+		prepareData(model.preview);
 		checkStatus();
-
 	});
 
-
-	function prepareData(rows:string[])
-	{
+	function prepareData(rows: string[]) {
 		data = [];
-		if(rows)
-		{
-			rows.forEach(r=>{
-					const cv = textMarkerHandling(r);
-					data = [...data,cv]
-			})
+		if (rows) {
+			rows.forEach((r) => {
+				const cv = textMarkerHandling(r);
+				data = [...data, cv];
+			});
 
-			console.log("🚀 ~ onMount ~ model.preview:", model.preview)
-			console.log("🚀 ~ onMount ~ data:", data)
+			//console.log('🚀 ~ onMount ~ model.preview:', model.preview);
+			//console.log('🚀 ~ onMount ~ data:', data);
 		}
 	}
 
-	function setTableInfos(rows, delimeter) {
+	function setTableInfos(rows) {
 		console.log('set table infos');
 		//number of columns
 		cLength = textMarkerHandling(rows[0]).length; // 1,2,"3,4",5
 
-		console.log("🚀 ~ setTableInfos ~ cLength:", cLength)
+		console.log('🚀 ~ setTableInfos ~ cLength:', cLength);
 		//number of rows
 		rLength = rows.length;
 
@@ -331,27 +335,33 @@
 		generate = true;
 
 		model.markers = selection;
-
+		console.log('save');
 		// if model entityid == 0, means subject id is not set and store to cache is not needed
 		if (model.entityId > 0) {
 			console.log('save selection', model);
 			let res = await store(model);
 			console.log(res);
-			if (res != false) {
+			if (res.status == 200 && res.data != false) {
 				console.log('selection', res);
 				dispatch('saved', model);
 				generate = false;
 			}
 		} else {
+			console.log('saved');
 			dispatch('saved', model);
 			generate = false;
 		}
 	}
 
-	// if you change the delimeter you need to change/update also the table informations
-	function changeDelimeter() {
-		setTableInfos(model.preview, String.fromCharCode(model.delimeter));
-		prepareData(model.preview)
+	// if you change the delimeter you need to change/update also the table information
+	function changeDelimiter(e) {
+		// wait a little bit, because the value is not set yet in firefox
+		 setTimeout(async () => {
+				console.log("changeDelimiter", model.delimeter, e.currentTarget?.value);
+
+				setTableInfos(model.preview);
+				prepareData(model.preview);
+		 }, 10);
 	}
 
 	// ROW Selection
@@ -378,75 +388,79 @@
 		model.preview = m.preview;
 	}
 
- 
-	function textMarkerHandling(row:string):[]
-	{
-		 const d = String.fromCharCode(model.delimeter);
-		 const t = String.fromCharCode(model.textMarker);
-			const values = row.split(d);
+	function textMarkerHandling(row: string): [] {
+		const d = String.fromCharCode(model.delimeter);
+		const t = String.fromCharCode(model.textMarker);
 
-			let temp=[]; 
 
-			if(row.includes(t))
-			{
-				 let tempValue:string = "";
-					let startText:boolean = false;
+		const values = row.split(d);
 
-					values.forEach(v => {
+		let temp = [];
 
-							if(v.includes(t))
-							{
-										if(v.startsWith(t) && v.endsWith(t))
-										{
-												temp = [...temp,v]
-										}
-										else
-										{
-													if (v.startsWith(t))
-													{
-																	tempValue = v;
-																	startText = true;
-													}
+		console.log("🚀 ~ textMarkerHandling ~ t:", t, model.textMarker)
+	if (row.includes(t) && model.textMarker != 0) {
 
-													if (v.endsWith(t))
-													{
-																	tempValue += d + v;
-																	temp = [...temp,tempValue];
-																	startText = false;
-													}
-										}
-							}
-							else
-							{
-								if (startText){
-									tempValue += d + v;
-								}
-								else{
-									temp = [...temp, v];
-								}
-							}
-						
-							
-					});
-					
-					return temp;
-			}
-			else
-			{
-				return values;
-			}
+		console.log("🚀 ~ in ~ model.textMarker:", model.textMarker)
 
+			let tempValue: string = '';
+			let startText: boolean = false;
+
+			values.forEach((v) => {
+				if (v.includes(t)) {
+					if (v.startsWith(t) && v.endsWith(t)) {
+						temp = [...temp, v];
+					} else {
+						if (v.startsWith(t)) {
+							tempValue = v;
+							startText = true;
+						}
+
+						if (v.endsWith(t)) {
+							tempValue += d + v;
+							temp = [...temp, tempValue];
+							startText = false;
+						}
+					}
+				} else {
+					if (startText) {
+						tempValue += d + v;
+					} else {
+						temp = [...temp, v];
+					}
+				}
+			});
+
+			return temp;
+		} else {
+			return values;
+		}
 	}
 
 	function back() {
-		goTo("/rpm/datastructure/create");
+		goTo('/rpm/datastructure/create');
+	}
+
+	function cancelFn() {
+		console.log('cancelFn');
+		const confirm: ModalSettings = {
+			type: 'confirm',
+			title: 'Cancel data structure generation',
+			body: 'Are you sure you wish to cancel the data structure generation?',
+			// TRUE if confirm pressed, FALSE if cancel pressed
+			response: (r: boolean) => {
+				if (r === true) {
+					goTo(document.referrer);
+				}
+			}
+		};
+		modalStore.trigger(confirm);
 	}
 </script>
 
-
 {#if !model || state.length == 0 || generate == false}
-<button title="back" class="btn variant-filled-warning" on:click={() => back()}
-	><Fa icon={faArrowLeft} /></button>
+	<button title="back" class="btn variant-filled-warning" on:click={() => back()}
+		><Fa icon={faArrowLeft} /></button
+	>
 	<!--if the model == false, access denied-->
 	{#if !model || state.length == 0 || generate == false}
 		<div class="h-full w-full text-surface-700">
@@ -469,22 +483,23 @@
 			on:mousedown={beginDrag}
 			on:mouseup={endDrag}
 		>
+			<label id="title"><b>File Structure</b></label>
 			<div class="flex gap-5">
 				<div id="edit" class="flex flex-col grow gap-2">
 					<div id="reader selections" class="flex flex-none gap-2">
 						<DropdownKVP
 							id="delimeter"
-							title="Delimeter"
+							title="Delimiter"
 							bind:target={model.delimeter}
 							source={model.delimeters}
 							complexTarget={false}
-							on:change={changeDelimeter}
+							on:change={changeDelimiter}
 							help={true}
 						/>
 
 						<DropdownKVP
 							id="decimal"
-							title="Decimal"
+							title="Decimal Separator"
 							bind:target={model.decimal}
 							source={model.decimals}
 							complexTarget={false}
@@ -493,7 +508,7 @@
 
 						<DropdownKVP
 							id="textMarker"
-							title="TextMarker"
+							title="Text Marker"
 							bind:target={model.textMarker}
 							source={model.textMarkers}
 							complexTarget={false}
@@ -511,7 +526,13 @@
 						/>
 					</div>
 
-					<div id="markers" class="py-5 flex gap-1">
+					<div id="missingvalues" class="py-4 grow w-1/2">
+						<!-- Missing Values-->
+						<MissingValues bind:list={model.missingValues} />
+					</div>
+
+					<span id="title"><b>Mark at least Variable and Data</b></span>
+					<div id="markers" class="flex gap-1">
 						<button
 							class="btn variant-filled-error"
 							id="selectVar"
@@ -548,34 +569,38 @@
 							on:mouseover={() => helpStore.show('selectData')}
 							on:click={() => onclickHandler(MARKER_TYPE.DATA)}>Data</button
 						>
+						<div class="ml-10">
+							<button
+								title="reset selection"
+								id="resetSelection"
+								class="btn variant-ghost-surface text-lg"
+								type="button"
+								on:mouseover={() => helpStore.show('resetSelection')}
+								on:click={resetSelection}>Reset</button
+							>
+						</div>
 
-						<button
-							title="reset selection"
-							id="resetSelection"
-							class="btn variant-filled-warning text-lg"
-							type="button"
-							on:mouseover={() => helpStore.show('resetSelection')}
-							on:click={resetSelection}><Fa icon={faArrowRotateLeft} /></button
-						>
-					</div>
-
-					<div id="missingvalues" class="grow">
-						<!-- Missing Values-->
-						<MissingValues bind:list={model.missingValues} />
-					</div>
-
-					<div class="flex">
 						<div id="errors" class="m-2 text-sm grow text-right">
 							{#each errors as error}
 								<label class="text-error-500">{error}</label>
 							{/each}
 						</div>
 						<div class="text-right">
+							<button
+								type="button"
+								title="cancel"
+								class="btn variant-filled-warning text-lg"
+								on:click={cancelFn}
+							>
+								<Fa icon={faXmark} size="lg" />
+							</button>
 							<button title="save" class="btn variant-filled-primary text-lg" disabled={!isValid}>
-								<Fa icon={faSave} />
+								<Fa icon={faSave} size="lg" />
 							</button>
 						</div>
 					</div>
+
+					<div class="flex"></div>
 				</div>
 
 				<div class="controls"><Controls /></div>

@@ -209,7 +209,32 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
             entity.DisplayName = "Type";
             entity.Name = "entity_name";
             entity.DataType = "string";
+            entity.Placeholder = "entity";
             Header.Add(entity);
+
+            // create entitytemplate
+            HeaderItem entitytemplate = new HeaderItem();
+            entitytemplate.DisplayName = "Template";
+            entitytemplate.Name = "entitytemplate";
+            entitytemplate.DataType = "string";
+            entitytemplate.Placeholder = "entitytemplate";
+            Header.Add(entitytemplate);
+
+            // create date
+            HeaderItem modifieddate = new HeaderItem();
+            modifieddate.DisplayName = "Last modified date";
+            modifieddate.Name = "modifieddate";
+            modifieddate.DataType = "string";
+            modifieddate.Placeholder = "date";
+            Header.Add(modifieddate);
+
+            // create date
+            HeaderItem doi = new HeaderItem();
+            doi.DisplayName = "DOI";
+            doi.Name = "doi";
+            doi.DataType = "string";
+            doi.Placeholder = "doi";
+            Header.Add(doi);
 
             //DefaultHeader.Add(entity);
 
@@ -219,6 +244,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 hi = new HeaderItem();
                 hi.Name = ade.Attributes.GetNamedItem("lucene_name").Value;
                 hi.DisplayName = ade.Attributes.GetNamedItem("display_name").Value;
+                hi.Placeholder = ade.Attributes.GetNamedItem("placeholder").Value;
                 Header.Add(hi);
 
                 if (ade.Attributes.GetNamedItem("default_visible_item").Value.ToLower().Equals("yes"))
@@ -239,6 +265,9 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 ValueList = new List<object>();
                 ValueList.Add(doc.Get("doc_id"));
                 ValueList.Add(doc.Get("gen_entity_name"));
+                ValueList.Add(doc.Get("gen_entitytemplate"));
+                ValueList.Add(doc.Get("gen_modifieddate"));
+                ValueList.Add(doc.Get("gen_doi"));
 
                 // check if there are more than one entities in the result list
                 if (moreThanOneEntityFound == false && ValueList[1].ToString() != valueLastEntity && valueLastEntity != "")

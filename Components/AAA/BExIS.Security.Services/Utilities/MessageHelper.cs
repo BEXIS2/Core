@@ -8,12 +8,12 @@ namespace BExIS.Security.Services.Utilities
     {
         public static string GetCreateDatasetHeader(long datasetid, string entityname)
         {
-            return $"{entityname}: Created (Id: {datasetid})";
+            return $"{entityname}: Created (ID {datasetid})";
         }
 
         public static string GetCreateDatasetMessage(long datasetid, string title, string userName, string entityname)
         {
-            string message = $"{entityname} <b>\"{title}\"</b> with id <b>({datasetid})</b> was created";
+            string message = $"{entityname} <b>\"{title}\"</b> with ID <b>{datasetid}</b> was created";
 
             if (!string.IsNullOrEmpty(userName))
 
@@ -24,12 +24,12 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetDeleteDatasetHeader(long datasetid, string entityname)
         {
-            return $"{entityname}: Deleted (Id: {datasetid})";
+            return $"{entityname}: Deleted (ID {datasetid})";
         }
 
         public static string GetDeleteDatasetMessage(long datasetid, string userName, string entityname)
         {
-            string message = $"{entityname} with id <b>({datasetid})</b> was deleted";
+            string message = $"{entityname} with ID <b>{datasetid}</b> was deleted";
 
             if (!string.IsNullOrEmpty(userName))
 
@@ -40,12 +40,12 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetTryToDeleteDatasetHeader(long datasetid, string entityname)
         {
-            return $"{entityname}: Try to delete (Id: {datasetid})";
+            return $"{entityname}: Try to delete ID {datasetid}";
         }
 
         public static string GetTryToDeleteDatasetMessage(long datasetid, string userName, string entityname)
         {
-            string message = $"An unsuccessful attempt was made to delete a {entityname} with id <b>({datasetid})</b>";
+            string message = $"An unsuccessful attempt was made to delete a {entityname} with ID <b>{datasetid}</b>";
 
             if (!string.IsNullOrEmpty(userName))
 
@@ -56,12 +56,12 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetPurgeDatasetHeader(long datasetid, string entityname)
         {
-            return $"{entityname}: Purged (Id: {datasetid})";
+            return $"{entityname}: Purged (ID {datasetid})";
         }
 
         public static string GetPurgeDatasetMessage(long datasetid, string userName, string entityname)
         {
-            string message = $"{entityname} with id <b>({datasetid})</b> was purged";
+            string message = $"{entityname} with ID <b>{datasetid}</b> was purged";
 
             if (!string.IsNullOrEmpty(userName))
 
@@ -72,12 +72,12 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetTryToPurgeDatasetHeader(long datasetid, string entityname)
         {
-            return $"{entityname}: Try to purge (Id: {datasetid})";
+            return $"{entityname}: Try to purge (ID {datasetid})";
         }
 
         public static string GetTryToPurgeDatasetMessage(long datasetid, string userName, string entityname)
         {
-            string message = $"An unsuccessful attempt was made to purge a {entityname} with id <b>({datasetid})</b>";
+            string message = $"An unsuccessful attempt was made to purge a {entityname} with ID <b>{datasetid}</b>";
 
             if (!string.IsNullOrEmpty(userName))
 
@@ -88,17 +88,17 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetDownloadDatasetHeader(long datasetid, long version)
         {
-            return $"File was downloaded (Id: {datasetid}, Version: {version})";
+            return $"File was downloaded (ID {datasetid}, Version: {version})";
         }
 
         public static string GetFileDatasetHeader(long datasetid, long version, string v)
         {
-            return $"Dataset was downloaded (Id: {datasetid}, Version: {version})";
+            return $"Dataset was downloaded (ID {datasetid}, Version: {version})";
         }
 
         public static string GetDownloadDatasetMessage(long datasetid, string title, string userName, string format, long version)
         {
-            string message = $"Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b> version <b>({version})</b> was downloaded as <b>{format}</b>";
+            string message = $"Dataset <b>\"{title}\"</b> with ID <b>{datasetid}</b> version <b>({version})</b> was downloaded as <b>{format}</b>";
 
             if (!string.IsNullOrEmpty(userName))
 
@@ -119,23 +119,23 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetRegisterUserMessage(long userId, string userName, string email)
         {
-            return $"User <b>\"{userName}\"</b>(Id: {userId}) with email <b>({email})</b> has registered.";
+            return $"User <b>\"{userName}\"</b>(ID {userId}) with email <b>({email})</b> has registered.";
         }
 
         public static string GetSendRequestHeader(long datasetid, string requester)
         {
-            return $"Data request from {requester} for dataset with id = {datasetid}";
+            return $"Data request from {requester} for dataset with ID = {datasetid}";
         }
 
         public static string GetSendRequestMessage(long datasetid, string title, string requester)
         {
-            return $"User \"{requester}\" sent a data request for Dataset <b>\"{title}\"</b> with id <b>({datasetid})</b>";
+            return $"User \"{requester}\" sent a data request for dataset <b>\"{title}\"</b> with ID <b>{datasetid}</b>";
         }
 
         public static string GetSendRequestMessage(long datasetid, string title, string requester, string reason, string email)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"User \"{requester}\" (\"{email}\") sent a data request for dataset <b>\"{title}\"</b> with id <b>{datasetid}</b> <br/>");
+            stringBuilder.AppendLine($"User \"{requester}\" (\"{email}\") sent a data request for dataset <b>\"{title}\"</b> with ID <b>{datasetid}</b> <br/>");
             stringBuilder.AppendLine($"<b>Intention:</b> \"{reason}\" <br/><br/>");
             stringBuilder.AppendLine("To decide on this request login to  " + ConfigurationManager.AppSettings["ApplicationName"] + ". You will find all pending requests under My Data/Dashboard -> Datasets -> Decisions.");
 
@@ -144,39 +144,39 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetWithdrawRequestHeader(long datasetid, string requester)
         {
-            return $"Data request from {requester} for dataset with id = {datasetid} withdrawn";
+            return $"Data request from {requester} for dataset with ID <b>{datasetid}</b> withdrawn";
         }
 
         public static string GetWithdrawRequestMessage(long datasetid, string title, string requester)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"Dataset request from User \"{requester}\" for dataset <b>\"{title}\"</b> with id <b>{datasetid}</b> was withdrawn.<br/>");
+            stringBuilder.AppendLine($"Dataset request from user \"{requester}\" for dataset <b>\"{title}\"</b> with ID <b>{datasetid}</b> was withdrawn.<br/>");
 
             return stringBuilder.ToString();
         }
 
         public static string GetAcceptRequestHeader(long datasetid, string requester)
         {
-            return $"Data request from {requester} for dataset with id = {datasetid} granted";
+            return $"Data request from {requester} for dataset with ID <b>{datasetid}</b> granted";
         }
 
         public static string GetAcceptRequestMessage(long datasetid, string title)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"Permission for Dataset <b>\"{title}\"</b> with id <b>{datasetid}</b> granted.<br/>");
+            stringBuilder.AppendLine($"Permission for dataset <b>\"{title}\"</b> with ID <b>{datasetid}</b> granted.<br/>");
 
             return stringBuilder.ToString();
         }
 
         public static string GetRejectedRequestHeader(long datasetid, string requester)
         {
-            return $"Data request from {requester} for dataset with id = {datasetid} rejected";
+            return $"Data request from {requester} for dataset with ID <b>{datasetid}</b> rejected";
         }
 
         public static string GetRejectedRequestMessage(long datasetid, string title)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"Data request for dataset <b>\"{title}\"</b> with id <b>{datasetid}</b> rejected.<br/>");
+            stringBuilder.AppendLine($"Data request for dataset <b>\"{title}\"</b> with ID <b>{datasetid}</b> rejected.<br/>");
 
             return stringBuilder.ToString();
         }
@@ -188,64 +188,66 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetTryToRegisterUserMessage(long userId, string userName, string email)
         {
-            return $"User <b>\"{userName}\"</b>(Id: {userId}) with email <b>({email})</b> tries to register.";
+            return $"User <b>\"{userName}\"</b>(ID {userId}) with email <b>({email})</b> tries to register.";
         }
 
         public static string GetMetadataUpdatHeader(long datasetid, string entityname)
         {
-            return $"{entityname}: Metadata updated (Id: {datasetid})";
+            return $"{entityname}: Metadata updated (ID {datasetid})";
         }
 
         public static string GeFileUpdatHeader(long datasetid)
         {
-            return $"File was uploaded (Id: {datasetid})";
+            return $"File was uploaded (ID {datasetid})";
         }
 
-        public static string GetFileUploaddMessage(long userId, string userName, string filename)
+        public static string GetFileUploaddMessage(long userId, string title, string userName, string filename)
         {
-            return $"User <b>\"{userName}\"</b>(Id: {userId}) has uploaded a file: <b>{filename}</b>.";
+            return $"User <b>\"{userName}\"</b>(ID {userId}) has uploaded to the dataset <b>\"{title}\"</b> a file: <b>{filename}</b>.";
         }
 
-        public static string GetFilesUploaddMessage(long userId, string userName, string[] filenames)
+        public static string GetFilesUploaddMessage(long userId,string title, string userName, string[] filenames)
         {
             var fnames = string.Join(",", filenames);
-            return $"User <b>\"{userName}\"</b>(Id: {userId}) has uploaded this files: <b>{fnames}</b>.";
+            return $"User <b>\"{userName}\"</b>(ID {userId}) has uploaded to the dataset <b>\"{title}\"</b> this files: <b>{fnames}</b>.";
         }
 
         public static string GetFileDownloadHeader(long datasetid, long version)
         {
-            return $"File was downloaded (Id: {datasetid}, Version: {version})";
+            return $"File was downloaded (ID {datasetid}, Version: {version})";
         }
 
         public static string GetFileDownloadMessage(string userName, long id, string filename)
         {
-            return $"User <b>\"{userName}\"</b> has downloaded a file: <b>{filename}</b> (Id: {id}).";
+            return $"User <b>\"{userName}\"</b> has downloaded a file: <b>{filename}</b> (ID {id}).";
         }
 
         public static string GetUpdateDatasetHeader(long datasetid)
         {
-            return $"Data uploaded (Id: {datasetid})";
+            return $"Data uploaded (ID {datasetid})";
         }
 
-        public static string GetUpdateDatasetMessage(long datasetid, string title, string userName, string entityname)
+        public static string GetUpdateDatasetMessage(long datasetid, string title, string userName, string entityname, int numberOfRows = 0, int numberOfSkippedRows = 0)
         {
-            string message = $"{entityname} <b>\"{title}\"</b> with id <b>({datasetid})</b> was updated";
 
-            if (!string.IsNullOrEmpty(userName))
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine($"{entityname} <b>\"{title}\"</b> with ID <b>{datasetid}</b> was updated");
+            if(numberOfRows>0)
+                stringBuilder.AppendLine($"<b>\"{numberOfRows}\"</b> rows have been successfully added/edited.");
+            if(numberOfSkippedRows>0)
+                stringBuilder.AppendLine($"<b>\"{numberOfSkippedRows}\"</b> rows were be skipped.");
 
-                return message += $" by <b>{userName}</b>";
-
-            return message + ".";
+            return stringBuilder.ToString();
         }
 
         public static string GetAttachmentUploadHeader(long datasetid, string entityname)
         {
-            return $"{entityname}: Attachment uploaded (Id: {datasetid})";
+            return $"{entityname}: Attachment uploaded (ID {datasetid})";
         }
 
         public static string GetAttachmentUploadMessage(long datasetid, string fileNames, string userName)
         {
-            string message = $"Attachments <b>\"{fileNames}\"</b> uploaded at id <b>({datasetid})</b>";
+            string message = $"Attachments <b>\"{fileNames}\"</b> uploaded at ID <b>{datasetid}</b>";
 
             if (!string.IsNullOrEmpty(userName))
 
@@ -256,12 +258,12 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetAttachmentDeleteHeader(long datasetid, string entityname)
         {
-            return $"{entityname}: Attachment deleted (Id: {datasetid})";
+            return $"{entityname}: Attachment deleted (ID {datasetid})";
         }
 
         public static string GetAttachmentDeleteMessage(long datasetid, string fileName, string userName)
         {
-            string message = $"Attachments <b>\"{fileName}\"</b> deleted at id <b>({datasetid})</b>";
+            string message = $"Attachments <b>\"{fileName}\"</b> deleted at ID <b>{datasetid}</b>";
 
             if (!string.IsNullOrEmpty(userName))
 
@@ -277,7 +279,7 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetUpdaterProfileMessage(long userId, string userName)
         {
-            return $"User <b>\"{userName}\"</b>(Id: {userId}) has updated his/her profile.";
+            return $"User <b>\"{userName}\"</b>(ID {userId}) has updated his/her profile.";
         }
 
         public static string GetUpdateEmailHeader()
@@ -302,34 +304,34 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetSetPublicHeader(long datasetid, string entityname)
         {
-            return $"{entityname}: Set public (Id: {datasetid})";
+            return $"{entityname}: Set public (ID {datasetid})";
         }
 
         public static string GetSetPublicMessage(string userName, long datasetid, string entityname)
         {
-            return $"The {entityname} with id {datasetid} was set to public by {userName}.";
+            return $"The {entityname} with ID <b>{datasetid}</b> was set to public by {userName}.";
         }
 
         public static string GetUnsetPublicHeader(long datasetid, string entityname)
         {
-            return $"{entityname}: Unset public (Id: {datasetid}";
+            return $"{entityname}: Unset public (ID {datasetid})";
         }
 
         public static string GetUnsetPublicMessage(string userName, long datasetid, string entityname)
         {
-            return $"The {entityname} with id {datasetid} was unset from public by {userName}.";
+            return $"The {entityname} with ID {datasetid} was unset from public by {userName}.";
         }
 
         #region upload api
 
         public static string GetPushApiStoreHeader(long datasetid, string title)
         {
-            return $"Receive data for dataset '{title}' ({datasetid})";
+            return $"Receive data for dataset '{title}' with ID <b>{datasetid}</b>";
         }
 
         public static string GetPushApiStoreMessage(long datasetid, string userName, string[] errors = null)
         {
-            if (errors == null) return $"Data for dataset with id: {datasetid} received and successfully buffered.";
+            if (errors == null) return $"Data for dataset with ID <b>{datasetid}</b> received and successfully buffered.";
             else
             {
                 StringBuilder builder = new StringBuilder($"An error has occurred during the transmission of the data.");
@@ -346,7 +348,7 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetPushApiValidateHeader(long datasetid, string title)
         {
-            return $"Validation completed for dataset '{title}' ({datasetid})";
+            return $"Validation completed for dataset '{title}' {datasetid}";
         }
 
         public static string GetPushApiValidateMessage(long datasetid, string userName, string[] errors = null)
@@ -368,7 +370,7 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetPushApiUploadSuccessHeader(long datasetid, string title)
         {
-            return $"Upload <b>completed</b> for dataset: '{title}' ({datasetid})";
+            return $"Upload <b>completed</b> for dataset: '{title}' with ID <b>{datasetid}</b>";
         }
 
         public static string GetPushApiUploadSuccessMessage(long datasetid, string userName)
@@ -378,12 +380,12 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetPushApiUploadFailHeader(long datasetid, string title)
         {
-            return $"Upload  was not successful for dataset '{title}' ({datasetid})";
+            return $"Upload  was not successful for dataset '{title}' with ID <b>{datasetid}</b>";
         }
 
         public static string GetPushApiUploadFailMessage(long datasetid, string userName, string[] errors)
         {
-            StringBuilder builder = new StringBuilder($"The data for the dataset <b>{datasetid}</b> sent by the user <b><{userName}/b> not uploaded. <br>");
+            StringBuilder builder = new StringBuilder($"The data for the dataset with ID <b>{datasetid}</b> sent by the user <b><{userName}/b> not uploaded. <br>");
             builder.Append("Errors: <br>");
 
             foreach (string error in errors)
@@ -396,7 +398,7 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetPushApiPKCheckHeader(long datasetid, string title)
         {
-            return $"The verification of the primary key/s for the dataset '{title}' ({datasetid}) is completed.";
+            return $"The verification of the primary key/s for the dataset '{title}' with ID <b>{datasetid}</b> is completed.";
         }
 
         public static string GetPushApiPKCheckMessage(long datasetid, string userName, string[] errors)
@@ -423,31 +425,31 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetASyncStartUploadHeader(long datasetid, string title)
         {
-            return $"Data upload started (Id: {datasetid})";
+            return $"Data upload started (ID {datasetid})";
         }
 
         public static string GetASyncStartUploadMessage(long datasetid, string title, IEnumerable<string> files)
         {
-            string fNames = string.Join(",", files);
+            string fNames = string.Join(", ", files);
 
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"Your upload to the dataset <b>\"{title}\"</b> with id <b>(\"{datasetid}\")</b> has started. <br/>");
-            stringBuilder.AppendLine($"<b>\"{fNames}\"</b> will be uploaded.");
+            stringBuilder.AppendLine($"The upload of the file(s) <b>\"{fNames}\"</b> to your dataset <b>\"{title}\"</b> with ID <b>{datasetid}</b> has started.");
+
 
             return stringBuilder.ToString();
         }
 
         public static string GetASyncFinishUploadHeader(long datasetid, string title)
         {
-            return $"Data upload completed (Id: {datasetid})";
+            return $"Data upload completed (ID {datasetid})";
         }
 
         public static string GetASyncFinishUploadMessage(long datasetid, string title, int numberOfRows, int numberOfSkippedRows)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"Your upload to the dataset <b>\"{title}\"</b> with id <b>(\"{datasetid}\")</b> is completed. <br/>");
-            stringBuilder.AppendLine($"<b>\"{numberOfRows}\"</b> lines have been successfully added/edited.");
-            stringBuilder.AppendLine($"<b>\"{numberOfSkippedRows}\"</b> lines will be skipped.");
+            stringBuilder.AppendLine($"Your upload of the file(s) to the dataset <b>\"{title}\"</b> with ID <b>\"{datasetid}\"</b> is complete. <br/>");
+            stringBuilder.AppendLine($"<b>\"{numberOfRows}\"</b> rows have been successfully added/edited.");
+            stringBuilder.AppendLine($"<b>\"{numberOfSkippedRows}\"</b> rows were skipped.");
 
             return stringBuilder.ToString();
         }

@@ -1,16 +1,18 @@
-﻿using BExIS.Dlm.Entities.MetadataStructure;
+﻿using BExIS.Dim.Entities.Export.GBIF;
+using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Security.Services.Objects;
+using BExIS.Utils.Extensions;
 using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
-using Ionic.Zip;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Web.Mvc;
 using System.Xml;
@@ -52,33 +54,42 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
+        // [2024-12-10][Sven]: The function will return a zip, even though the directory does not exist? 
+        // [2024-12-10][Sven]: The function will return a zip, even though the schema does not exist? 
         public ActionResult DownloadSchema(long id)
         {
-            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            ZipFile zip = new ZipFile();
-
             try
             {
-                MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
-                string name = metadataStructure.Name;
+                using (var metadataStructureManager = new MetadataStructureManager())
+                {
+                    // [2024-12-10][Sven]: Why does no function exists to get a certain metadata structure?
+                    var metadataStructure = metadataStructureManager.GetMetadataStructureById(id);
 
-                string path = OutputMetadataManager.GetSchemaDirectoryPathFromMetadataStructure(id, metadataStructureManager);
+                    if (metadataStructure == null)
+                        return HttpNotFound();
 
-                if (Directory.Exists(path))
-                    zip.AddDirectory(path);
+                    string path = OutputMetadataManager.GetSchemaDirectoryPathFromMetadataStructure(id, metadataStructureManager);
 
-                MemoryStream stream = new MemoryStream();
-                zip.Save(stream);
-                stream.Position = 0;
-                var result = new FileStreamResult(stream, "application/zip")
-                { FileDownloadName = name + ".zip" };
+                    if(!Directory.Exists(path))
+                        return HttpNotFound();
 
-                return result;
+                    
+                    var memoryStream = new MemoryStream();
+
+                    using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+                    {
+                        // Add each file from the folder to the archive
+                        archive.AddAllFilesFromDirectory(path);
+                    }
+
+                    memoryStream.Position = 0;
+
+                    return File(memoryStream, "application/zip", $"{metadataStructure.Name}.zip");
+                }
             }
-            finally
+            catch (Exception ex)
             {
-                metadataStructureManager.Dispose();
-                zip.Dispose();
+                return HttpNotFound();
             }
         }
 

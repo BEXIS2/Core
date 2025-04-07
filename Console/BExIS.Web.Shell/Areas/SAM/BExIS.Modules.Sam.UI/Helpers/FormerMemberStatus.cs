@@ -50,7 +50,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
             using (var groupManager = new GroupManager())
             using (var alumniUsersGroupsRelationManager = new FormerMemberUsersGroupsRelationManager())
             {
-                //get former meber group
+                //get former member group
                 var group = groupManager.FindByNameAsync(formerMemberRole).Result;
                 if (!group.Users.Contains(user))
                 {
@@ -61,10 +61,10 @@ namespace BExIS.Modules.SAM.UI.Helpers
                         //Create for each feature permission a alumni feature permission
                         featurePermissions.ForEach(u => alumniFeaturePermissionManager.Create(user, u.Feature, u.PermissionType));
 
-                        //Remove orginal feature permissions
+                        //Remove original feature permissions
                         for (int i = 0; i < featurePermissions.Count; i++)
                         {
-                            featurePermissionManager.Delete(featurePermissions[i].Subject.Id, featurePermissions[i].Feature.Id);
+                            var result_delete = featurePermissionManager.DeleteAsync(featurePermissions[i].Subject.Id, featurePermissions[i].Feature.Id).Result;
                         }
                     }
 
@@ -116,7 +116,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
                     var alumniFeaturePermissions = alumniFeaturePermissionManager.FormerMemberFeaturePermissionRepository.Get(a => a.Subject.Id == user.Id).ToList();
                     if (alumniFeaturePermissions.Count > 0)
                     {
-                        alumniFeaturePermissions.ForEach(u => featurePermissionManager.Create(user, u.Feature, u.PermissionType));
+                        alumniFeaturePermissions.ForEach(async u => await featurePermissionManager.CreateAsync(user, u.Feature, u.PermissionType));
                         //remove
                         for (int i = 0; i < alumniFeaturePermissions.Count; i++)
                         {

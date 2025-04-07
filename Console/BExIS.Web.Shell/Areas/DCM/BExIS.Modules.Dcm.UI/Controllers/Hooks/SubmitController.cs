@@ -13,15 +13,19 @@ using BExIS.Utils.Config;
 using BExIS.Utils.Upload;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.Routing;
 using Vaiona.Entities.Common;
+using Vaiona.Web.Mvc;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class SubmitController : Controller
+    public class SubmitController : BaseController
     {
         private User _user;
         private FileStream Stream;
@@ -51,7 +55,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [JsonNetFilter]
         public JsonResult Load(long id, int version = 0)
         {
-            if (id <= 0) throw new ArgumentException(nameof(id), "id should be greater then 0");
+            if (id <= 0) throw new ArgumentException(nameof(id), "id should be greater than 0");
 
             SubmitHelper helper = new SubmitHelper();
             SubmitModel model = helper.GetModel(id);
@@ -70,7 +74,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             SubmitResponce responce = new SubmitResponce();
 
             HookManager hookManager = new HookManager();
-            // load cache to get informations about the current upload workflow
+            // load cache to get information about the current upload workflow
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
             EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
 
@@ -83,14 +87,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Task.Run(() => asyncUploadHelper.FinishUpload(id, AuditActionType.Edit, model.StructureId));
 
                 // send email after starting the upload
-                var es = new EmailService();
+
                 var user = asyncUploadHelper.User;
 
-                es.Send(MessageHelper.GetASyncStartUploadHeader(id, model.Title),
+                using (var emailService = new EmailService())
+                {
+                    emailService.Send(MessageHelper.GetASyncStartUploadHeader(id, model.Title),
                     MessageHelper.GetASyncStartUploadMessage(id, model.Title, model.Files.Select(f => f.Name)),
                     new List<string>() { user.Email }, null,
                     new List<string>() { GeneralSettings.SystemEmail }
                     );
+                }
 
                 responce.Success = true;
                 responce.AsyncUpload = true;
@@ -102,6 +109,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 responce.Errors = EditHelper.SortFileErrors(errors);
                 responce.Success = responce.Errors.Any() ? false : true;
             }
+
+            // load settings
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            bool use_tags = (bool)moduleSettings.GetValueByKey("use_tags");
+
+            // Reindexes a single item in the search index if the "DDM" module is accessible and the "use_tags" setting is false.
+            if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle") && !use_tags)
+            {
+                var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", id } });
+            }
+
 
             return Json(responce, JsonRequestBehavior.AllowGet);
         }

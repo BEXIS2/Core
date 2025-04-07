@@ -241,7 +241,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         /// <summary>
-        /// returns true if Extention in the Bus will supported
+        /// returns true if Extension in the Bus will supported
         /// </summary>
         /// <param name="taskManager"></param>
         /// <returns></returns>

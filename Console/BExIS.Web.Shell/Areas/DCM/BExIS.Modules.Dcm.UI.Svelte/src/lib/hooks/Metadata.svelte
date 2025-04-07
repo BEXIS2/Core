@@ -23,6 +23,7 @@
 	let isEnabled = setEnable(status);
 
 	onMount(async () => {
+		console.log('onMount MetadataHook');
 		load();
 	});
 

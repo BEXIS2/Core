@@ -41,6 +41,11 @@
 			<column name="ExternalLink" />
 		</property>
 
+		<property name="ExternalLinkType" type="string">
+			<column name="ExternalLinkType" />
+		</property>
+
+
 		<property name="Status" type="string">
 			<column name="Status" />
 		</property>
@@ -52,6 +57,10 @@
 		<!-- Associations -->
 
 		<many-to-one class="BExIS.Dlm.Entities.Data.DatasetVersion" name="DatasetVersion" column="DatasetVersionRef" />
+
+		<many-to-one class="BExIS.Dlm.Entities.Data.Dataset" name="Dataset" column="DatasetRef" />
+		
+		<many-to-one class="BExIS.Dlm.Entities.Data.Tag" name="Tag" column="TagRef" />
 
 		<many-to-one class="Broker" name="Broker" column="BrokerRef" />
 

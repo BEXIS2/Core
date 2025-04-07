@@ -1,7 +1,12 @@
 ﻿var minimapOriginalTop = 0;
+
+console.log("***************FORM");
+
 $(document).ready(function (e) {
+
     setTimeout(
         function () {
+
             //do something special
             //console.log("doc ready before autosize");
             //console.log($('textarea'));
@@ -12,11 +17,27 @@ $(document).ready(function (e) {
                     //console.log("done autosize");
                 });
             }
-        }, 10);
+        }, 1000);
 
     //setTabIndex();
     resetAllTelerikIconTitles();
+    const id = getId();
 });
+
+/*let entityId = 0;*/
+function getId() {
+
+    const metadataContainer = document.getElementById("MetadataEditor");
+    console.log("get id ", metadataContainer);
+
+    let id = 0;
+    if (metadataContainer) { // Check if the element exists
+        id = metadataContainer.getAttribute("entityid"); // Get the value of the "data-value" attribute
+        console.log("id", id); // Output the value (e.g., "123")
+    }
+
+    return id;
+}
 
 function setTabIndex() {
     var list = $(".metadataAttributeInput .t-input");
@@ -163,10 +184,6 @@ function inputToTextArea(input) {
 }
 
 function OnKeyUpTextArea(e) {
-    //console.log("OnKeyDownTextArea");
-    //console.log(e.id);
-    //console.log(e.value.length);
-    //console.log(e.value);
 
     var length = e.value.length;
 
@@ -189,9 +206,7 @@ function OnKeyUpTextArea(e) {
 }
 
 function textareaToInput(textarea) {
-    //<input    id="310_161_1_1_1_286_Input" name="310_161_1_1_1_286_Input" onkeyup="OnKeyUpTextInput(this)"                   title="" class="t-widget t-autocomplete t-input bx-metadataFormTextInput"  type="text" value="dassssss" autocomplete="off">
-    //<textarea id="310_161_1_1_1_380_Input" name="Title"                   onchange="OnChange(this)" packageid="161"          title="" class="bx-textarea bx-metadataFormTextInput"                      cols="20" rows="2" style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 75px;">dassssssggggggggggggggggggggggggggggggggggggggggggggggggggggg</textarea>
-    var input = "<input " +
+  var input = "<input " +
         "id='" + $("#" + textarea.id).attr("id") + "'" +
         "name='" + $("#" + textarea.id).attr("name") + "'" +
         "onkeyup=\"OnKeyUpTextInput(this)\"" +
@@ -248,10 +263,8 @@ function OnChangeTextInput(e, ui) {
         }
     }
 
-    //alert(parentid);
-    //alert(metadataStructureId);
-    //alert(ParentStepID);
-    //object value,  int id, int parentid,       string parentname,     int number, int parentModelNumber,                    int parentStepId)
+    const entityId = getId();
+
     $.post('/DCM/Form/ValidateMetadataAttributeUsage',
         {
             value: value,
@@ -260,10 +273,11 @@ function OnChangeTextInput(e, ui) {
             parentname: parentname,
             number: number,
             parentModelNumber: ParentModelNumber,
-            ParentStepId: ParentStepID
+            ParentStepId: ParentStepID,
+            entityId
         },
         function (response) {
-            console.log(response);
+            //console.log(response);
 
             // after the on close event from the autocomplete component, the values change in the input fields
             // after this changes again this change event is triggered
@@ -302,7 +316,7 @@ function OnChangeTextInput(e, ui) {
                 console.log("partyid", partyid);
                 console.log("partyidConverted", partyidConverted);
 
-                //delete party informations when a party was selected before
+                //delete party information when a party was selected before
                 if (partyidConverted !== null && partyidConverted > 0 && afterClosed === false && isMappingSelection !== null) {
                     console.log("go delete it");
                     //console.log(ParentStepID);
@@ -332,6 +346,7 @@ function OnChange(e) {
     var number = substr[2];
     var ParentModelNumber = substr[3];
     var ParentStepID = substr[5];
+    const entityId = getId();
 
     $.post("/DCM/Form/ValidateMetadataAttributeUsage",
         {
@@ -341,7 +356,8 @@ function OnChange(e) {
             parentname: parentname,
             number: number,
             parentModelNumber: ParentModelNumber,
-            ParentStepId: ParentStepID
+            ParentStepId: ParentStepID,
+            entityId
         },
         function (response) {
             var index = e.id.lastIndexOf("_");
@@ -366,6 +382,7 @@ function OnChangeParameter(e) {
     var number = substr[2];
     var ParentModelNumber = substr[3];
     var ParentStepID = substr[5];
+    const entityId = getId();
 
     $.post("/DCM/Form/ValidateMetadataParameterUsage",
         {
@@ -374,7 +391,8 @@ function OnChangeParameter(e) {
             attrUsageId: parentid,
             number: number,
             parentModelNumber: ParentModelNumber,
-            ParentStepId: ParentStepID
+            ParentStepId: ParentStepID,
+            entityId
         },
         function (response) {
             var index = e.id.lastIndexOf("_");
@@ -400,7 +418,7 @@ function OnChangeCheckBox(e) {
     var number = substr[2];
     var ParentModelNumber = substr[3];
     var ParentStepID = substr[5];
-
+    const entityId = getId();
     var value;
 
     if ($("#" + e.id).attr('checked')) {
@@ -417,7 +435,8 @@ function OnChangeCheckBox(e) {
             parentname: parentname,
             number: number,
             parentModelNumber: ParentModelNumber,
-            ParentStepId: ParentStepID
+            ParentStepId: ParentStepID,
+            entityId
         },
         function (response) {
             //alert(e.value);
@@ -439,7 +458,7 @@ function OnChangeParameterCheckBox(e) {
     var number = substr[2];
     var ParentModelNumber = substr[3];
     var ParentStepID = substr[5];
-
+    const entityId = getId();
     var value;
 
     if ($("#" + e.id).attr('checked')) {
@@ -455,7 +474,8 @@ function OnChangeParameterCheckBox(e) {
             attrUsageId: parentid,
             number: number,
             parentModelNumber: ParentModelNumber,
-            ParentStepId: ParentStepID
+            ParentStepId: ParentStepID,
+            entityId
         },
         function (response) {
             var index = e.id.lastIndexOf("_");
@@ -475,6 +495,7 @@ function OnChangeDropDown(e) {
     var number = substr[2];
     var ParentModelNumber = substr[3];
     var ParentStepID = substr[5];
+    const entityId = getId();
 
     $.post("/DCM/Form/ValidateMetadataAttributeUsage",
         {
@@ -484,7 +505,8 @@ function OnChangeDropDown(e) {
             parentname: parentname,
             number: number,
             parentModelNumber: ParentModelNumber,
-            ParentStepId: ParentStepID
+            ParentStepId: ParentStepID,
+            entityId
         },
         function (response) {
             var index = idParentDiv.lastIndexOf("_");
@@ -504,6 +526,7 @@ function OnChangeParameterDropDown(e) {
     var number = substr[2];
     var ParentModelNumber = substr[3];
     var ParentStepID = substr[5];
+    const entityId = getId();
 
     $.post("/DCM/Form/ValidateMetadataParameterUsage",
         {
@@ -512,7 +535,8 @@ function OnChangeParameterDropDown(e) {
             attrUsageId: parentid,
             number: number,
             parentModelNumber: ParentModelNumber,
-            ParentStepId: ParentStepID
+            ParentStepId: ParentStepID,
+            entityId
         },
         function (response) {
             var index = idParentDiv.lastIndexOf("_");
@@ -535,6 +559,7 @@ function OnChangeNumbers(e) {
     var number = substr[3];
     var ParentModelNumber = substr[4];
     var ParentStepID = substr[5];
+    const entityId = getId();
 
     $.post("/DCM/Form/ValidateMetadataAttributeUsage",
         {
@@ -544,7 +569,8 @@ function OnChangeNumbers(e) {
             parentname: parentname,
             number: number,
             parentModelNumber: ParentModelNumber,
-            ParentStepId: ParentStepID
+            ParentStepId: ParentStepID,
+            entityId
         },
         function (response) {
             var index = idParentDiv.lastIndexOf("_");
@@ -566,6 +592,7 @@ function OnChangeParameterNumbers(e) {
     var number = substr[3];
     var ParentModelNumber = substr[4];
     var ParentStepID = substr[5];
+    const entityId = getId();
 
     $.post("/DCM/Form/ValidateMetadataParameterUsage",
         {
@@ -574,7 +601,8 @@ function OnChangeParameterNumbers(e) {
             attrUsageId: parentid,
             number: number,
             parentModelNumber: ParentModelNumber,
-            ParentStepId: ParentStepID
+            ParentStepId: ParentStepID,
+            entityId
         },
         function (response) {
             var index = idParentDiv.lastIndexOf("_");
@@ -598,6 +626,7 @@ function OnChangeDatePicker(e) {
     var number = substr[2];
     var ParentModelNumber = substr[3];
     var ParentStepID = substr[5];
+    const entityId = getId();
 
     $.post("/DCM/Form/ValidateMetadataAttributeUsage",
         {
@@ -607,7 +636,8 @@ function OnChangeDatePicker(e) {
             parentname: parentname,
             number: number,
             parentModelNumber: ParentModelNumber,
-            ParentStepId: ParentStepID
+            ParentStepId: ParentStepID,
+            entityId
         },
         function (response) {
             var index = idParentDiv.lastIndexOf("_");
@@ -630,6 +660,7 @@ function OnChangeParameterDatePicker(e) {
     var number = substr[2];
     var ParentModelNumber = substr[3];
     var ParentStepID = substr[5];
+    const entityId = getId();
 
     $.post("/DCM/Form/ValidateMetadataParameterUsage",
         {
@@ -638,7 +669,8 @@ function OnChangeParameterDatePicker(e) {
             attrUsageId: parentid,
             number: number,
             parentModelNumber: ParentModelNumber,
-            ParentStepId: ParentStepID
+            ParentStepId: ParentStepID,
+            entityId
         },
         function (response) {
             var index = idParentDiv.lastIndexOf("_");
@@ -660,6 +692,7 @@ function OnClickAdd(e, max) {
     var ParentStepID = substr[5];
 
     var maxcardinality = max;
+    const entityId = getId();
 
     if (NumberOfSourceInPackage <= parseInt(maxcardinality)) {
         $.post('/DCM/Form/AddMetadataAttributeUsage',
@@ -668,7 +701,8 @@ function OnClickAdd(e, max) {
                 parentid: parentid,
                 number: number,
                 parentModelNumber: ParentModelNumber,
-                ParentStepId: ParentStepID
+                ParentStepId: ParentStepID,
+                entityId
             },
             function (response) {
                 var id = ParentStepID;
@@ -694,6 +728,7 @@ function OnClickRemove(e) {
         var ParentModelNumber = substr[3];
         var NumberOfSourceInPackage = substr[4];
         var ParentStepID = substr[5];
+        const entityId = getId();
 
         if (NumberOfSourceInPackage > 1) {
             var data = {
@@ -701,7 +736,8 @@ function OnClickRemove(e) {
                 id: id,
                 parentid: parentid,
                 number: number,
-                ParentModelNumber: ParentModelNumber
+                ParentModelNumber: ParentModelNumber,
+                entityId
             };
 
             $
@@ -711,7 +747,8 @@ function OnClickRemove(e) {
                         parentid: parentid,
                         number: number,
                         parentModelNumber: ParentModelNumber,
-                        ParentStepId: ParentStepID
+                        ParentStepId: ParentStepID,
+                        entityId
                     },
                     function (response) {
                         $("#" + ParentStepID).replaceWith(response);
@@ -732,6 +769,7 @@ function OnClickUp(e) {
         var number = substr[2];
         var ParentModelNumber = substr[3];
         var ParentStepID = substr[5];
+        const entityId = getId();
 
         $.post('/DCM/Form/UpMetadataAttributeUsage',
             {
@@ -739,7 +777,8 @@ function OnClickUp(e) {
                 parentid: parentid,
                 number: number,
                 ParentModelNumber: ParentModelNumber,
-                ParentStepId: ParentStepID
+                ParentStepId: ParentStepID,
+                entityId
             },
             function (response) {
                 var id = ParentStepID;
@@ -757,14 +796,9 @@ function OnClickDown(e) {
         var number = substr[2];
         var ParentModelNumber = substr[3];
         var ParentStepID = substr[5];
+        const entityId = getId();
 
-        var data = {
-            value: value,
-            id: id,
-            parentid: parentid,
-            number: number,
-            ParentModelNumber: ParentModelNumber
-        };
+
 
         $.post('/DCM/Form/DownMetadataAttributeUsage',
             {
@@ -772,7 +806,8 @@ function OnClickDown(e) {
                 parentid: parentid,
                 number: number,
                 ParentModelNumber: ParentModelNumber,
-                ParentStepId: ParentStepID
+                ParentStepId: ParentStepID,
+                entityId
             },
             function (response) {
                 var id = ParentStepID;
@@ -905,7 +940,7 @@ function UpdateWithEntity(componentId, number, inputid, inputattrnumber, entityi
     var attrId = inputid.split("_")[0];
 
     if (inputattrnumber === undefined) inputattrnumber = 1;
-
+   
     //$("#" + componentId).find(".metadataAttributeInput").each(function () {
     //    $(this).preloader(12, "...loading");
     //})
@@ -935,6 +970,7 @@ function UpdateWithEntity(componentId, number, inputid, inputattrnumber, entityi
 function UpdateWithParty(componentId, number, partyid) {
     console.log("update with complex mapping");
     //console.log(componentId + "-" + number + "-" + partyid);
+    const entityId = getId();
 
     $("#" + componentId).find(".metadataAttributeInput").each(function () {
         $(this).preloader(12, "...loading");
@@ -944,7 +980,8 @@ function UpdateWithParty(componentId, number, partyid) {
         {
             stepId: componentId,
             number: number,
-            partyId: partyid
+            partyId: partyid,
+            entityId
         },
         function (response) {
             //console.log(componentId);
@@ -966,11 +1003,13 @@ function UpdateSimpleMappingWithParty(componentId, xpath, partyid, value) {
     console.log(value);
     console.log($("#" + componentId));
     console.log("----------------------");
+    const entityId = getId();
 
     $.post('/DCM/Form/UpdateSimpleUsageWithParty',
         {
             xpath: xpath,
-            partyId: partyid
+            partyId: partyid,
+            entityId
         },
         function (response) {
             if (response) {
@@ -988,11 +1027,11 @@ function Add(e) {
     var temp = e.id;
     var parentId = temp.split("_")[0];
     var number = temp.split("_")[1];
-
+    const entityId = getId();
     //alert(e.id);
     //alert(parentId);
     $.get('/DCM/Form/AddComplexUsage',
-        { parentStepId: parentId, number: number },
+        { parentStepId: parentId, number: number, entityId },
         function (response) {
             //alert(parentId);
             $('#' + parentId).replaceWith(response);
@@ -1005,9 +1044,9 @@ function Remove(e) {
     var temp = e.id;
     var parentId = temp.split("_")[0];
     var number = temp.split("_")[1];
-
+    const entityId = getId();
     $.get('/DCM/Form/RemoveComplexUsage',
-        { parentStepId: parentId, number: number },
+        { parentStepId: parentId, number: number, entityId },
         function (response) {
             $('#' + parentId).replaceWith(response);
             bindMinimap(true);
@@ -1018,9 +1057,9 @@ function Up(e) {
     var temp = e.id;
     var parentId = temp.split("_")[0];
     var number = temp.split("_")[1];
-
+    const entityId = getId();
     $.get('/DCM/Form/UpComplexUsage',
-        { parentStepId: parentId, number: number },
+        { parentStepId: parentId, number: number, entityId },
         function (response) {
             $('#' + parentId).replaceWith(response);
             bindMinimap(true);
@@ -1031,9 +1070,9 @@ function Down(e) {
     var temp = e.id;
     var parentId = temp.split("_")[0];
     var number = temp.split("_")[1];
-
+    const entityId = getId();
     $.get('/DCM/Form/DownComplexUsage',
-        { parentStepId: parentId, number: number },
+        { parentStepId: parentId, number: number, entityId },
         function (response) {
             $('#' + parentId).replaceWith(response);
             bindMinimap(true);
@@ -1044,10 +1083,12 @@ function Activate(e) {
     var temp = e.id;
     var stepid = temp.split("_")[0];
     var active = $(e).hasClass("bx-check-square-o");
+    const entityId = getId();
 
     $.get('/DCM/Form/ActivateComplexUsage',
         {
-            id: stepid
+            id: stepid,
+            entityId
         },
         function (response) {
             console.log(response);
@@ -1069,11 +1110,14 @@ function ActivateFromChoice(e) {
     var v = tmp.split("_")[0];
     var temp = $(e).attr("name");
     var stepid = temp.split("_")[0];
-    var active = $(e).hasClass("bx-dot-circle-o");
+
+    var ischecked = document.getElementById(e.id).checked;
+    var active = ischecked;
+    const entityId = getId();
 
     $.get('/DCM/Form/ActivateComplexUsageInAChoice',
         {
-            parentid: stepid, id: v
+            parentid: stepid, id: v, entityId
         },
 
         function (response) {
@@ -1085,9 +1129,64 @@ function ActivateFromChoice(e) {
                 }, 'slow');
             }
 
-            resetAllTelerikIconTitles();
-            bindMinimap(true);
+            //resetAllTelerikIconTitles();
+            //bindMinimap(true);
         });
+}
+
+function ChangeElementFromChoice(e) {
+    var tmp = e.id;
+    var v = tmp.split("_")[0];
+    var temp = $(e).attr("name");
+    var stepid = temp.split("_")[0];
+
+    var ischecked = document.getElementById(e.id).checked;
+    var active = ischecked;
+    const entityId = getId();
+
+    if (active) { 
+        console.log("ChangeElementFromChoice", active);
+        $.get('/DCM/Form/ActivateComplexUsageInAChoice',
+        {
+            parentid: stepid, id: v, entityId
+        },
+
+        function (response) {
+            $('#' + stepid).replaceWith(response);
+
+            if (!active) {
+                $('html, body').animate({
+                    scrollTop: $('#' + stepid).offset().top - 70
+                }, 'slow');
+            }
+
+            //resetAllTelerikIconTitles();
+            //bindMinimap(true);
+        });
+    }
+    else
+    {
+        console.log("ChangeElementFromChoice", active);
+
+        $.get('/DCM/Form/DeactivateComplexUsageInAChoice',
+            {
+                parentid: stepid, id: v, entityId
+            },
+
+            function (response) {
+                $('#' + stepid).replaceWith(response);
+
+                if (!active) {
+                    $('html, body').animate({
+                        scrollTop: $('#' + stepid).offset().top - 70
+                    }, 'slow');
+                }
+
+                //resetAllTelerikIconTitles();
+                //bindMinimap(true);
+            });
+    }
+
 }
 
 function showHideClick(e) {

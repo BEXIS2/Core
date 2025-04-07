@@ -8,7 +8,9 @@ using BExIS.Modules.Rpm.UI.Models.DataStructure;
 using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace BExIS.Modules.Rpm.UI.Helpers
 {
@@ -81,7 +83,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 {
                     foreach (var item in _model.Meanings)
                     {
-                        var meaning = meaningManager.getMeaning(item.Id);
+                        var meaning = meaningManager.GetMeaning(item.Id);
                         variableTemplate.Meanings.Add(meaning);
                     }
                 }
@@ -104,7 +106,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
         {
             using (var meaningsManager = new MeaningManager())
             {
-                var meanings = meaningsManager.getMeanings(); // get meanings from db
+                var meanings = meaningsManager.GetMeanings(); // get meanings from db
                 List<MeaningItem> list = new List<MeaningItem>();
 
                 if (meanings.Any())
@@ -156,7 +158,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                         {
                             label = label,
                             releation = entry.MappingRelation?.Name,
-                            link = meaningManager.getfullUri(l)
+                            link = meaningManager.GetfullUri(l)
                         });
                     }
                 }
@@ -172,10 +174,13 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 VariableTemplateItem item = new VariableTemplateItem();
                 item.Id = variableTemplate.Id;
                 item.Text = variableTemplate.Label;
+                item.DataType = variableTemplate.DataType.Name;
                 item.DataTypes = variableTemplate.Unit.AssociatedDataTypes.Select(x => x.Name).ToList();
                 item.Meanings = variableTemplate.Meanings.Select(x => x.Name).ToList();
                 item.Group = group;
                 item.Description = variableTemplate.Description;
+                item.Unit = variableTemplate.Unit.Abbreviation;
+
 
                 if (variableTemplate.VariableConstraints.Any())
                     item.Constraints = variableTemplate.VariableConstraints.Select(x => x.Name).ToList();
@@ -209,7 +214,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             item.Id = meaning.Id;
             item.Text = meaning.Name;
 
-            meaning = meaningsManager.getMeaning(meaning.Id);
+            meaning = meaningsManager.GetMeaning(meaning.Id);
 
             //links
             List<MeaningEntryItem> links = new List<MeaningEntryItem>();
@@ -257,7 +262,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
         {
             List<Meaning> list = new List<Meaning>();
             List<long> ids = meanings.Select(c => c.Id).ToList();
-            list = meaningManager.getMeanings().Where(c => ids.Contains(c.Id)).ToList();
+            list = meaningManager.GetMeanings().Where(c => ids.Contains(c.Id)).ToList();
             return list;
         }
 
@@ -274,7 +279,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 IsKey = variable.IsKey,
                 IsOptional = variable.IsValueOptional,
                 Meanings = ConvertTo(variable.Meanings),
-                Constraints = ConvertTo(variable.VariableConstraints)
+                Constraints = ConvertTo(variable.VariableConstraints),
+                MissingValues = ConvertTo(variable.MissingValues)
             };
 
             // add template if exist
@@ -345,9 +351,62 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             using (var missingValueManager = new MissingValueManager())
             {
                 List<long> ids = items.Select(m => m.Id).ToList();
-                missingValueManager.Repo.Query(m => ids.Contains(m.Id));
+                list = missingValueManager.Repo.Query(m => ids.Contains(m.Id)).ToList();
+
+                foreach (var mv in items)
+                {
+                    if(mv.Id==0 && !string.IsNullOrEmpty(mv.DisplayName))
+                    {                        
+                        list.Add(new MissingValue()
+                        {
+                            DisplayName = mv.DisplayName,
+                            Description = mv.Description,
+                        });
+                    }
+     
+                }
+
                 return list;
             }
+        }
+
+        public List<MissingValueItem> ConvertTo(ICollection<MissingValue> items)
+        {
+            List<MissingValueItem> list = new List<MissingValueItem>();
+            foreach (var mv in items)
+            {
+                list.Add(new MissingValueItem()
+                {
+                    Id = mv.Id,
+                    DisplayName = mv.DisplayName,
+                    Description = mv.Description,
+                });
+            }
+
+            return list;
+        }
+
+
+        public ICollection<MissingValue> Update(ICollection<MissingValueItem> source, ICollection<MissingValue> target)
+        {
+            target.Clear();
+
+            using (var missingValueManager = new MissingValueManager())
+            {
+                foreach (var item in source)
+                {
+                    if (!string.IsNullOrEmpty(item.DisplayName))
+                    {
+                        target.Add(new MissingValue()
+                        {
+                            DisplayName = item.DisplayName,
+                            Description = item.Description
+                        });
+                    }
+                }
+            }
+
+            return target;
         }
 
         private string getConstraintType(Constraint c)

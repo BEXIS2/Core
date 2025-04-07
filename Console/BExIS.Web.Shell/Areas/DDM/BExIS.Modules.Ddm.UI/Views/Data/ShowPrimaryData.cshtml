@@ -1,0 +1,39 @@
+﻿@model ShowPrimaryDataModel
+
+@using System.Data;
+@using BExIS.Dlm.Entities.DataStructure;
+@using Telerik.Web.Mvc.UI;
+@using BExIS.Modules.Ddm.UI.Models;
+
+@{
+
+}
+
+<div class="ShowData_Main">
+    @if (@Model != null)
+    {
+
+    <div class="ShowDataContent">
+
+    @if (Html.ValidationSummary(true) != null)
+    {
+        @Html.Raw(HttpUtility.HtmlDecode(Html.ValidationSummary(true).ToString()));
+    }
+
+        @if (Model.DataStructureType == DataStructureType.Structured && Model.Data != null)
+        {
+            @Html.Partial("_structuredDataView", Model)
+
+        }
+
+        @if (Model.DataStructureType == DataStructureType.Unstructured && Model.Data == null)
+        {
+            @Html.Partial("_unstructuredDataView", Model)
+
+        }
+    </div>
+    }
+    else {
+        <span>no data available</span>
+    }
+</div>

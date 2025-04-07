@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
+using Telerik.Web.Mvc.Extensions;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -56,11 +57,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             HookManager hookManager = new HookManager();
             IOUtility iOUtility = new IOUtility();
             List<Error> errors = new List<Error>();
+            List<Warning> warnings = new List<Warning>();
 
             // load from settings
             bool enforcePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("enforcePrimaryKey");
 
-            // load cache to get informations about the current upload workflow
+            // load cache to get information about the current upload workflow
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
             EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
             if (log == null) log = new EditDatasetDetailsLog();
@@ -81,7 +83,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     if (id <= 0)
                         errors.Add(new Error(ErrorType.Other, "The validation cannot be executed because a dataset with id " + id + " not exist."));
 
-                    //check dataset and datastructure
+                    //check dataset and data structure
                     var dataset = datasetManager.GetDataset(id); ;
                     if (dataset == null)
                     {
@@ -91,12 +93,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         #region file error
 
-                        // if datastructue is null
+                        // if data structure is null
                         if (dataset.DataStructure == null)
                         {
                             errors.Add(new Error(ErrorType.Datastructure, "The validation cannot be executed because a dataset has no structure.", "Datastructure"));
                         }
-                        else // datastrutcure exist
+                        else // data structure exist
                         {
                             long datastructureId = dataset.DataStructure.Id;
 
@@ -110,7 +112,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 cache.UpdateSetup.VariablesCount = sds.Variables.Count;
                             }
 
-                            // check data and primary key usecases before reading files
+                            // check data and primary key use cases before reading files
                             // 1. no data, no pk -> (check for duplicates, all vars are the primary key) - is checked by UploadHelper.IsUnique fn
                             // 2. exist data & no pk -> force pk - info : change data or structure pk
                             bool hasData = false;
@@ -132,11 +134,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             var pks = sds.Variables.Where(v => v.IsKey.Equals(true))?.Select(v => v.Id);
                             string varIdsAsString = pks == null ? "" : string.Join(",", pks.ToArray());
 
-                            //update primaryKeys if chaneged
+                            //update primaryKeys if changed
                             cache.UpdateSetup.PrimaryKeys = pks.ToList();
 
                             // optionals
                             var optionals = string.Join(",", sds.Variables.Where(v => v.IsValueOptional).Select(v => v.Id));
+                            var varVersions = string.Join(",", sds.Variables.Select(v => v.VersionNo));
+                        
 
                             // check against primary key in db
                             // this check happens outside of the files,
@@ -146,11 +150,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             // read all files
                             foreach (var file in cache.Files)
                             {
-                                // get extention, name & path
+                                // get extension, name & path
                                 var ext = Path.GetExtension(file.Name);
                                 var fileName = Path.GetFileName(file.Name);
                                 var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "Temp", file.Name);
                                 List<Error> fileErrors = new List<Error>(); // collection of errors
+                                List<Warning> fileWarnings = new List<Warning>(); // collection of warnings
 
                                 try
                                 {
@@ -159,15 +164,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     if (cache.AsciiFileReaderInfo == null)
                                     {
                                         existReaderInfo = false;
-                                        fileErrors.Add(new Error(ErrorType.FileReader, "File reader informations missing.", "FileReader"));
+                                        fileErrors.Add(new Error(ErrorType.FileReader, "File reader information missing.", "FileReader"));
                                     }
                                     else
                                     {
                                         if (System.IO.File.Exists(filePath))
                                         {
                                             // check if hash of file has changed or not exist
-                                            // if so, then valdiate and overide hash if not set results to model
-                                            // the hash value need to be abot: name, lenght, structure id, ascci reader info;
+                                            // if so, then validate and override hash if not set results to model
+                                            // the hash value need to be about: name, length, structure id, ascii reader info;
                                             // if something has changed also validation need to repeat
                                             string readerInfo = cache.AsciiFileReaderInfo != null ? cache.AsciiFileReaderInfo.ToJson() : "";
                                             string incomingHash = HashHelper.CreateMD5Hash(
@@ -178,10 +183,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                 cache.Files.Count.ToString(),
                                                 varIdsAsString,
                                                 sds.VersionNo.ToString(),
-                                                optionals
+                                                optionals,
+                                                varVersions
                                                 );
 
-                                            // if a validation is allready run and the file has not changed, skip validation
+                                            // if a validation is already run and the file has not changed, skip validation
                                             if (file.ValidationHash != incomingHash)
                                             {
                                                 if (ext.Equals(".xlsm")) // excel Template
@@ -225,6 +231,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                                                     if (fileErrors == null || fileErrors.Count == 0)
                                                     {
+                                                        // check if primary key is set
+                                                        if (!enforcePrimaryKey && !hasPrimaryKey)
+                                                        {
+                                                            fileWarnings.Add(new Warning(ErrorType.PrimaryKey, "No primary key has been defined for the selected data structure, which can lead to problems when updating data. To avoid this, define a primary key in the data structure above.", "Primary Key"));
+                                                        }
+
                                                         //check against primary key local file
                                                         unique = uploadWizardHelper.IsUnique(id, ext, fileName, filePath, (AsciiFileReaderInfo)cache.AsciiFileReaderInfo, datastructureId, ref primaryKeyHashTable);
                                                         if (!unique)
@@ -246,6 +258,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                 {
                                                     fileErrors.AddRange(cacheFile.Errors);
                                                 }
+
+                                                if (cacheFile != null && cacheFile.Warnings.Any())
+                                                {
+                                                    fileWarnings.AddRange(cacheFile.Warnings);
+                                                }
                                             }
                                         }
                                         else
@@ -261,6 +278,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 finally
                                 {
                                     if (fileErrors != null) file.Errors = fileErrors;
+                                    if (fileWarnings != null) file.Warnings = fileWarnings;
 
                                     FileValidationResult result = new FileValidationResult();
                                     result.File = file.Name;
@@ -270,6 +288,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         file.Errors.ForEach(e => result.Errors.Add(e.ToHtmlString()));
                                         result.SortedErrors = EditHelper.SortFileErrors(file.Errors);
                                         errors.AddRange(file.Errors); // set to global error list
+                                    }
+
+                                    if (file.Warnings.Any())
+                                    {
+                                        file.Warnings.ForEach(e => result.Warnings.Add(e.ToHtmlString()));
+                                        result.SortedWarnings = EditHelper.SortFileWarnings(file.Warnings);
+                                        warnings.AddRange(file.Warnings); // set to global error list
                                     }
 
                                     model.FileResults.Add(result);

@@ -1,4 +1,6 @@
 ﻿using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.Meanings;
+using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Meanings;
 using System;
 using System.Collections.Generic;
@@ -15,7 +17,8 @@ namespace BExIS.Modules.Rpm.UI.Models
         public string FormalDescription { get; set; }
         public string Type { get; set; }
         public bool Negated { get; set; }
-        public bool InUse { get; set; }
+        public bool InUseByVariable { get; set; }
+        public bool InUseByMeaning { get; set; }
         public List<long> VariableIDs { get; set; }
         public string CreationDate { get; set; }
         public string LastModified { get; set; }
@@ -31,7 +34,8 @@ namespace BExIS.Modules.Rpm.UI.Models
                 FormalDescription = constraint.FormalDescription,
                 Type = type,
                 Negated = constraint.Negated,
-                InUse = inUseChecker.isConstrainInUse(constraint),
+                InUseByVariable = inUseChecker.isConstrainInUseByVariable(constraint),
+                InUseByMeaning = inUseChecker.isConstrainInUseByMeaning(constraint),
                 VariableIDs = constraint.VariableConstraints.Select(v => v.Id).ToList(),
                 CreationDate = constraint.CreationDate != null ? constraint.CreationDate.ToString("MMMM d, HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) : "",
                 LastModified = constraint.LastModified != null ? constraint.LastModified.ToString("MMMM d, HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) : "",
@@ -72,7 +76,8 @@ namespace BExIS.Modules.Rpm.UI.Models
                 Description = string.IsNullOrEmpty(constraint.Description) ? "Constraint " + constraint.Id : constraint.Description,
                 FormalDescription = constraint.FormalDescription,
                 Negated = constraint.Negated,
-                InUse = inUseChecker.isConstrainInUse(constraint),
+                InUseByVariable = inUseChecker.isConstrainInUseByVariable(constraint),
+                InUseByMeaning = inUseChecker.isConstrainInUseByMeaning(constraint),
                 VariableIDs = constraint.VariableConstraints.Select(v => v.Id).ToList(),
                 Domain = DomainConverter.convertDomainItemsToDomain(constraint.Items),
                 Provider = constraint.Provider != null ? constraint.Provider.ToString() : null,
@@ -95,7 +100,8 @@ namespace BExIS.Modules.Rpm.UI.Models
                 Description = string.IsNullOrEmpty(constraint.Description) ? "Constraint " + constraint.Id : constraint.Description,
                 FormalDescription = constraint.FormalDescription,
                 Negated = constraint.Negated,
-                InUse = inUseChecker.isConstrainInUse(constraint),
+                InUseByVariable = inUseChecker.isConstrainInUseByVariable(constraint),
+                InUseByMeaning = inUseChecker.isConstrainInUseByMeaning(constraint),
                 VariableIDs = constraint.VariableConstraints.Select(v => v.Id).ToList(),
                 Pattern = constraint.MatchingPhrase
             };
@@ -119,7 +125,8 @@ namespace BExIS.Modules.Rpm.UI.Models
                 Description = string.IsNullOrEmpty(constraint.Description) ? "Constraint " + constraint.Id : constraint.Description,
                 FormalDescription = constraint.FormalDescription,
                 Negated = constraint.Negated,
-                InUse = inUseChecker.isConstrainInUse(constraint),
+                InUseByVariable = inUseChecker.isConstrainInUseByVariable(constraint),
+                InUseByMeaning = inUseChecker.isConstrainInUseByMeaning(constraint),
                 VariableIDs = constraint.VariableConstraints.Select(v => v.Id).ToList(),
                 Lowerbound = constraint.Lowerbound,
                 Upperbound = constraint.Upperbound,
@@ -168,15 +175,37 @@ namespace BExIS.Modules.Rpm.UI.Models
 
     public static class inUseChecker
     {
-        public static bool isConstrainInUse(Constraint constraint)
+        public static bool isConstrainInUseByVariable(Constraint constraint)
+        {
+            bool inUse = false;
+            if(constraint != null) 
+            {
+                List<long> variableIds = constraint.VariableConstraints.Select(v => v.Id).ToList();
+                using (DataStructureManager dataStructureManager = new DataStructureManager())
+                {
+                    List<StructuredDataStructure> structuredDataStructures = dataStructureManager.StructuredDataStructureRepo.Query(s => s.Variables.Any(v => variableIds.Contains(v.Id))).ToList();
+
+                    if (structuredDataStructures != null && structuredDataStructures.Count > 0)
+                    {
+                        foreach (StructuredDataStructure structuredDataStructure in structuredDataStructures)
+                        {
+                            inUse = structuredDataStructure.Datasets.Any();
+                        }
+                    }
+                }
+            }                    
+            return inUse;
+        }
+
+        public static bool isConstrainInUseByMeaning(Constraint constraint)
         {
             bool inUse = false;
             using (MeaningManager meaningManager = new MeaningManager())
             {
-                if(constraint != null) 
+                if (constraint != null)
                 {
-                    inUse = constraint.DataContainer != null && constraint.DataContainer.Id > 0 || constraint.VariableConstraints.Any() || meaningManager.getMeanings().Where(m => m.Constraints.Any(c => c.Id.Equals(constraint.Id))).Any();
-                }                
+                    inUse = meaningManager.GetMeanings().Where(m => m.Constraints.Any(c => c.Id.Equals(constraint.Id))).Any();
+                }
             }
             return inUse;
         }

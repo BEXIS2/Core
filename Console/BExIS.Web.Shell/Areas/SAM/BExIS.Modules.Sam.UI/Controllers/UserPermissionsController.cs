@@ -7,6 +7,7 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 
@@ -23,55 +24,43 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
         }
 
-        public void AddRightToEntityPermission(long subjectId, long entityId, long instanceId, int rightType)
+        public async Task AddRightToEntityPermission(long subjectId, long entityId, long instanceId, int rightType)
         {
-            var entityPermissionManager = new EntityPermissionManager();
-
-            try
+            using (var entityPermissionManager = new EntityPermissionManager())
             {
-                var entityPermission = entityPermissionManager.Find(subjectId, entityId, instanceId);
+                var entityPermission = await entityPermissionManager.FindAsync(subjectId, entityId, instanceId);
 
                 if (entityPermission == null)
                 {
-                    entityPermissionManager.Create(subjectId, entityId, instanceId, rightType);
+                    await entityPermissionManager.CreateAsync(subjectId, entityId, instanceId, rightType);
                 }
                 else
                 {
                     if ((entityPermission.Rights & rightType) != 0) return;
                     entityPermission.Rights += rightType;
-                    entityPermissionManager.Update(entityPermission);
+                    await entityPermissionManager.UpdateAsync(entityPermission);
                 }
-            }
-            finally
-            {
-                entityPermissionManager.Dispose();
             }
         }
 
-        public void RemoveRightFromEntityPermission(long subjectId, long entityId, long instanceId, int rightType)
+        public async Task RemoveRightFromEntityPermission(long subjectId, long entityId, long instanceId, int rightType)
         {
-            var entityPermissionManager = new EntityPermissionManager();
-
-            try
+            using (var entityPermissionManager = new EntityPermissionManager())
             {
-                var entityPermission = entityPermissionManager.Find(subjectId, entityId, instanceId);
+                var entityPermission = await entityPermissionManager.FindAsync(subjectId, entityId, instanceId);
 
                 if (entityPermission == null) return;
 
                 if (entityPermission.Rights == rightType)
                 {
-                    entityPermissionManager.Delete(entityPermission);
+                    await entityPermissionManager.DeleteAsync(entityPermission);
                 }
                 else
                 {
                     if ((entityPermission.Rights & rightType) == 0) return;
                     entityPermission.Rights -= rightType;
-                    entityPermissionManager.Update(entityPermission);
+                    await entityPermissionManager.UpdateAsync(entityPermission);
                 }
-            }
-            finally
-            {
-                entityPermissionManager.Dispose();
             }
         }
 
@@ -93,8 +82,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                     foreach (var subject in subjectManager.Subjects)
                     {
-                        var rights = entityPermissionManager.GetRights(subject.Id, entityId, instanceId);
-                        var effectiveRights = entityPermissionManager.GetEffectiveRights(subject.Id, entityId, instanceId);
+                        var rights = entityPermissionManager.GetRightsAsync(subject.Id, entityId, instanceId).Result;
+                        var effectiveRights = entityPermissionManager.GetEffectiveRightsAsync(subject.Id, entityId, instanceId).Result;
 
                         subjects.Add(EntityPermissionGridRowModel.Convert(subject, rights, effectiveRights));
                     }

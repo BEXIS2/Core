@@ -108,6 +108,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
                     datastructureType = DataStructureType.Structured;
 
+                model.HasStructure = datastructureType != DataStructureType.None;
+
                 // get default list of allowed file types
                 model.FileUploader.Accept = UploadHelper.GetExtentionList(datastructureType, this.Session.GetTenant());
 
@@ -195,10 +197,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
-        public JsonResult RemoveFile(long id, string file)
+        public JsonResult RemoveFile(long id, BExIS.UI.Hooks.Caches.FileInfo file)
         {
             // remove file from server
-            string path = Path.Combine(AppConfiguration.DataPath, "datasets", id.ToString(), "Temp", file);
+            string path = Path.Combine(AppConfiguration.DataPath, "datasets", id.ToString(), "Temp", file.Name);
             if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
 
             // remove file from cache
@@ -207,9 +209,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
             var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
-            if (cache.Files.Any(f => f.Name == file))
+            if (cache.Files.Any(f => f.Name == file.Name))
             {
-                var f = cache.Files.Where(x => x.Name == file).FirstOrDefault();
+                var f = cache.Files.Where(x => x.Name == file.Name).FirstOrDefault();
                 if (f != null) cache.Files.Remove(f);
             }
 
@@ -222,7 +224,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
-        public JsonResult SaveFileDescription(long id, string file, string description)
+        public JsonResult SaveFileDescription(long id, BExIS.UI.Hooks.Caches.FileInfo file, string description)
         {
             // remove file from cache
             HookManager hookManager = new HookManager();
@@ -231,9 +233,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
-            if (cache.Files.Any(f => f.Name == file))
+            if (cache.Files.Any(f => f.Name == file.Name))
             {
-                var f = cache.Files.Where(x => x.Name == file).FirstOrDefault();
+                var f = cache.Files.Where(x => x.Name == file.Name).FirstOrDefault();
                 if (f != null) f.Description = description;
             }
 

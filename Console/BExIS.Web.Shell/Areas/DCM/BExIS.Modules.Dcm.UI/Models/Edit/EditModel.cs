@@ -51,4 +51,32 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
             Errors = errors;
         }
     }
+
+    public class SortedWarning
+    {
+        public string Name { get; set; }
+        public int Count { get; set; }
+        public string Issue { get; set; }
+        public ErrorType Type { get; set; }
+
+        public List<string> Warnings { get; set; }
+
+        public SortedWarning()
+        {
+            Name = string.Empty;
+            Count = 0;
+            Issue = string.Empty;
+            Type = ErrorType.Other;
+            Warnings = new List<string>();
+        }
+
+        public SortedWarning(string name, int count, string issue, ErrorType type, List<string> warnings)
+        {
+            Name = name;
+            Count = count;
+            Issue = issue;
+            Type = type;
+            Warnings = warnings;
+        }
+    }
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Fa from 'svelte-fa';
-	import { faCheck, faAngleUp, faAngleDown, faXmark } from '@fortawesome/free-solid-svg-icons';
+	import { faCheck, faAngleUp, faAngleDown } from '@fortawesome/free-solid-svg-icons';
 	import Status from './Status.svelte';
 
 	export let index: number;
@@ -20,15 +20,18 @@
 	<header id="header_{index}" class="card-header pb-5">
 		<div id={name} class="flex gap-5">
 			<div class="flex gap-2 w-52">
-				<div class="cursor-pointer" on:click={() => (expand = !expand)}>
-					<!--		<div class="cursor-pointer"  on:click={() => expand = !expand}> -->
+				<div
+					class="cursor-pointer"
+					on:click={() => (expand = !expand)}
+					on:keypress={() => (expand = !expand)}
+				>
 					{#if expand}<Fa icon={faAngleUp} />
 					{:else}
 						<Fa icon={faAngleDown} />
 					{/if}
 				</div>
 
-				<h2 class="h2">{name}</h2>
+				<div class="grow"><slot /></div>
 				<Status {isValid} />
 			</div>
 

@@ -1,0 +1,106 @@
+﻿@using Telerik.Web.Mvc.UI;
+@using System.Data;
+@using BExIS.Dlm.Entities.DataStructure;
+@using BExIS.Modules.Ddm.UI.Helpers;
+
+@model Tuple<DataStructure, long, string>
+
+@{
+    GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
+    pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
+    pagerStyles |= GridPagerStyles.Numeric;
+
+}
+
+<script type="text/javascript">
+    function dataStructureGrid_onDataBound()
+    {
+
+        resetAllTelerikIconTitles();
+        addTooltips();
+
+        for (var i = 0; i < $(".bx-ddm-checkbox").length; i++)
+        {
+            if ($(".bx-ddm-checkbox")[i].getAttribute('value') == "True")
+            {
+                $(".bx-ddm-checkbox")[i].setAttribute('checked','checked')
+            }
+        }
+    }
+</script>
+
+@if (@Model.Item1 != null)
+{
+<div style="text-align:left">
+
+    <h2>@Model.Item1.Self.Name (@Model.Item1.Self.Id)</h2>
+
+    <p>@Model.Item1.Self.Description</p>
+</div>
+
+}
+
+@if (Model.Item1 != null && Model.Item1.Self is StructuredDataStructure)
+{
+    long id = Model.Item2;
+    DataTable dt = new DataTable();
+    if (Model.Item1 != null)
+    {
+        if (Model.Item2 > 0)
+        {
+            SearchUIHelper suiHelper = new SearchUIHelper();
+            dt = suiHelper.ConvertStructuredDataStructureToDataTable((StructuredDataStructure)Model.Item1.Self);//Model.Item1.ConvertToDataTable();
+        }
+    }
+
+    if (Model.Item2 > 0)
+    {
+        @(Html.Telerik().Grid<System.Data.DataRow>()
+                    .Name("dataStructureGrid")
+
+                        .DataBinding(dataBinding => dataBinding
+                            .Ajax()
+                            .OperationMode(GridOperationMode.Client)
+                            .Select("_CustomDataStructureBinding", "Data", new { datasetID = id })
+                        )
+                        .HtmlAttributes(new { @class = ".t-grid-without-filter" })
+                        .EnableCustomBinding(true)
+
+                        .Columns(columns =>
+                        {
+                            for (int i = 0; i < dt.Columns.Count; i++)
+                            {
+                                DataColumn column = dt.Columns[i];
+
+                                if (column.ColumnName.ToLower() == "optional")
+                                {
+                                    columns.Bound(column.DataType, column.ColumnName)
+                                    .ClientTemplate("<input id='<#= " + column.ColumnName + "#>' name='<#= " + column.ColumnName + "#>' type='checkbox' value='<#= " + @dt.Columns["Optional"] + "#>' class='bx-disabled bx-ddm-checkbox' disabled = 'disabled' />").Title(column.ColumnName).Width("5%");
+                                }
+                                else
+                                {
+                                    columns.Bound(column.DataType, column.ColumnName);
+                                }
+                            }
+                        })
+                        .ClientEvents(events => events
+                                .OnDataBound("" +
+                                             "dataStructureGrid_onDataBound" +
+                                             "")
+                            )
+
+                        .Pageable(paging =>
+                            paging.PageSize(10, new int[] { 10, 20, 50, 100, 500 })
+                            .Style(pagerStyles)
+                            .Position(GridPagerPosition.Both)
+                            .Total(dt.Rows.Count)
+                        )
+
+                        .ColumnContextMenu()
+        )
+    }
+}
+else
+{
+    <span>no datastructure available</span>
+}

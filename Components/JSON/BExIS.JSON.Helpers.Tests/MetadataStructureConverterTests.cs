@@ -38,7 +38,6 @@ namespace BExIS.JSON.Helpers.Tests
             var schema = metadataStructureConverter.ConvertToJsonSchema(1);
 
             //Assert
-
             using (StreamReader file = File.OpenText(schemaPath))
             {
                 JSchema jsonSchemaStandard = JSchema.Parse(file.ReadToEnd());

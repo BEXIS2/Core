@@ -82,7 +82,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
                     if (dataset.Title == null) error += "title not existing.";
                     if (dataset.Description == null) error += "description not existing.";
                     if (dataset.MetadataStructureId == 0) error += "metadata structure id should not be null. ";
-                    if (dataset.DataStructureId == 0) error += "datastructure id should not be null. ";
+                    //if (dataset.DataStructureId == 0) error += "datastructure id should not be null. ";
 
                     if (!string.IsNullOrEmpty(error))
                     {
@@ -95,15 +95,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
 
                     #region create dataset
 
-                    DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructureId);
-                    //if datastructure is not a structured one
-                    if (dataStructure == null) dataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(dataset.DataStructureId);
+                    DataStructure dataStructure = null;
+                    
+                    if(dataset.DataStructureId != null && dataset.DataStructureId > 0)
+                        dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructureId);
 
-                    if (dataStructure == null)
-                    {
-                        request.Content = new StringContent("A data structure with id " + dataset.DataStructureId + "does not exist.");
-                        return request;
-                    }
+                    //if datastructure is not a structured one
+                    //if (dataStructure == null) dataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(dataset.DataStructureId);
+
+                    //if (dataStructure == null)
+                    //{
+                    //    request.Content = new StringContent("A data structure with id " + dataset.DataStructureId + "does not exist.");
+                    //    return request;
+                    //}
 
                     ResearchPlan rp = researchPlanManager.Repo.Get(researchPlanId);
 
@@ -123,7 +127,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
 
                     EntityTemplate entityTemplate = entityTemplateManager.Repo.Get(dataset.EntityTemplateId);
 
-                    if (metadataStructure == null)
+                    if (entityTemplate == null)
                     {
                         request.Content = new StringContent("A EntityTemplate with id " + dataset.EntityTemplateId + "does not exist.");
                         return request;
@@ -133,7 +137,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
                     datasetId = newDataset.Id;
 
                     // add security
-                    entityPermissionManager.Create<User>(user.UserName, "Dataset", typeof(Dataset), newDataset.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                    entityPermissionManager.CreateAsync<User>(user.UserName, "Dataset", typeof(Dataset), newDataset.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
 
                     //add title and description to the metadata
 

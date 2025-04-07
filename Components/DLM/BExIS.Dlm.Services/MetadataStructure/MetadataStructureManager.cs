@@ -59,6 +59,11 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
         #region MetadataStructure
 
+        public MDS.MetadataStructure GetMetadataStructureById(long id)
+        {
+            return Repo.Get(id);
+        }
+
         public List<MetadataPackageUsage> GetEffectivePackages(MDS.MetadataStructure structure)
         {
             return GetEffectivePackages(structure.Id);

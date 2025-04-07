@@ -89,6 +89,25 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             }
         }
 
+        public SelectList GetEntityVersionsDesc(long id, long typeId)
+        {
+            EntityManager entityManager = new EntityManager();
+            List<SelectListItem> list = new List<SelectListItem>();
+
+            try
+            {
+                var instanceStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(typeId).EntityStoreType);
+
+                instanceStore.GetVersionsById(id).OrderByDescending(l=>l.Version).ToList().ForEach(v => list.Add(new SelectListItem() { Text = v.Version + " :  " + v.CommitComment, Value = v.Version.ToString() }));
+
+                return new SelectList(list, "Value", "Text");
+            }
+            finally
+            {
+                entityManager.Dispose();
+            }
+        }
+
         public string GetEntityTypeName(long id)
         {
             EntityManager entityManager = new EntityManager();

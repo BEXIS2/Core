@@ -17,7 +17,7 @@ namespace BExIS.Ddm.Api
 
         void Reset();
 
-        void Reload();
+        void Reload(bool onlyReleasedTags);
 
         void Dispose();
 

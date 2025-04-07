@@ -481,44 +481,47 @@ namespace BExIS.Dlm.Services.DataStructure
 
         public MissingValue Create(string displayName, string description, Variable variable, string placeholder = null)
         {
-            Contract.Requires(!string.IsNullOrWhiteSpace(displayName));
-            Contract.Requires(variable != null);
+            throw new NotImplementedException("never used and worked");
 
-            Contract.Ensures(Contract.Result<MissingValue>() != null && Contract.Result<MissingValue>().Id >= 0);
+            //Contract.Requires(!string.IsNullOrWhiteSpace(displayName));
+            //Contract.Requires(variable != null);
 
-            TypeCode typecode = new TypeCode();
+            //Contract.Ensures(Contract.Result<MissingValue>() != null && Contract.Result<MissingValue>().Id >= 0);
 
-            foreach (DataTypeCode tc in Enum.GetValues(typeof(DataTypeCode)))
-            {
-                if (tc.ToString() == variable.DataType.SystemType)
-                {
-                    typecode = (TypeCode)tc;
-                    break;
-                }
-            }
+            //TypeCode typecode = new TypeCode();
 
-            if (String.IsNullOrEmpty(placeholder))
-            {
-                placeholder = getPlaceholder(typecode, variable.Id);
-            }
+            //foreach (DataTypeCode tc in Enum.GetValues(typeof(DataTypeCode)))
+            //{
+            //    if (tc.ToString() == variable.DataType.SystemType)
+            //    {
+            //        typecode = (TypeCode)tc;
+            //        break;
+            //    }
+            //}
 
-            if (!String.IsNullOrEmpty(placeholder) && ValidatePlaceholder(typecode, placeholder, variable.Id))
-            {
-                using (IUnitOfWork uow = this.GetUnitOfWork())
-                {
-                    IRepository<MissingValue> repo = uow.GetRepository<MissingValue>();
+            //if (String.IsNullOrEmpty(placeholder))
+            //{
+            //    placeholder = getPlaceholder(typecode, variable.Id);
+            //}
 
-                    MissingValue missingValue = new MissingValue()
-                    {
-                        DisplayName = displayName,
-                        Placeholder = placeholder
-                    };
-                    repo.Put(missingValue);
-                    uow.Commit();
-                    return (missingValue);
-                }
-            }
-            return null;
+            //if (!String.IsNullOrEmpty(placeholder) && ValidatePlaceholder(typecode, placeholder, variable.Id))
+            //{
+            //    using (IUnitOfWork uow = this.GetUnitOfWork())
+            //    {
+            //        IRepository<MissingValue> repo = uow.GetRepository<MissingValue>();
+
+            //        MissingValue missingValue = new MissingValue()
+            //        {
+            //            DisplayName = displayName,
+            //            Description = description,
+            //            Placeholder = placeholder
+            //        };
+            //        repo.Put(missingValue);
+            //        uow.Commit();
+            //        return (missingValue);
+            //    }
+            //}
+            //return null;
         }
 
         public bool Delete(MissingValue entity)

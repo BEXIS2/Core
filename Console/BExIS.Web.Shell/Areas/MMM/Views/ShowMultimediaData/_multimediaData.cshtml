@@ -1,7 +1,6 @@
 ﻿@using System.Globalization
 @using IDIV.Modules.Mmm.UI.Models
 @using IDIV.Modules.Mmm.UI.Converter
-@using BExIS.Utils.Data.Upload
 
 @model List<FileInformation>
 
@@ -295,10 +294,7 @@ else
                                 break;
                         }
                 <td class="mmm-functions">
-                    @if (datasetInfo.Deleteable && datasetInfo.IsLatestVersion)
-                            {
-                    <span class="bx bx-grid-function bx fa-trash-o bx-mmm-delete" value="@fi.Path"></span>
-                            }
+       
                     @if (datasetInfo.Downloadable)
                             {
                     @Html.ActionLink(" ", "getFile", "ShowMultimediaData", new { path = @Server.UrlEncode(fi.Path) }, new { area = "MMM", @class = "bx bx-grid-function bx-download" })

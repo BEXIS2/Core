@@ -23,6 +23,7 @@
 		isTemplateRequiredStore,
 		isMeaningRequiredStore,
 		setByTemplateStore,
+		updateDescriptionByTemplateStore,
 		enforcePrimaryKeyStore,
 		changeablePrimaryKeyStore
 	} from '$lib/components/datastructure/store';
@@ -30,11 +31,15 @@
 
 	//help
 	import { dataStructureHelp } from '../help';
+	import { Modal } from '@skeletonlabs/skeleton';
+
+	import type { linkType } from '@bexis2/bexis2-core-ui';
+
 	let helpItems: helpItemType[] = dataStructureHelp;
 
 	// load attributes from div
 	let container;
-	let datastructureId: number = 0;
+	let datastructureId: number = 6;
 
 	let model: DataStructureEditModel;
 	$: model;
@@ -45,15 +50,12 @@
 	async function start() {
 		helpStore.setHelpItemList(helpItems);
 		// get data from parent
+		//<div id="datastructure" structure="9" dataexist="False" istemplaterequired="False" ismeaningrequired="False" setbytemplate="True" enforceprimarykey="True" changeableprimarykey="False"></div>
+
 		container = document.getElementById('datastructure');
 		datastructureId = Number(container?.getAttribute('structure'));
 		dataExist = container?.getAttribute('dataExist')?.toLocaleLowerCase() === 'true';
-		console.log(
-			"🚀 ~ file: +page.svelte:32 ~ start ~ container?.getAttribute('dataExist'):",
-			container?.getAttribute('dataExist')
-		);
 
-		console.log('🚀 ~ file: +page.svelte:32 ~ start ~ dataExist:', dataExist);
 
 		// get isTemplateRequired from settings and add it to store
 		// is used by validation
@@ -86,7 +88,13 @@
 			container?.getAttribute('changeablePrimaryKey')?.toLocaleLowerCase() == 'true' ? true : false;
 		changeablePrimaryKeyStore.set(changeablePrimaryKey);
 
-		console.log('edit structure', datastructureId);
+	 // get updateDescriptionByTemplate from settings and add it to store
+		// update or overwrite description	by template
+		const updateDescriptionByTemplate =
+			container?.getAttribute('updateDescriptionByTemplate')?.toLocaleLowerCase() == 'true' ? true : false;
+			updateDescriptionByTemplateStore.set(updateDescriptionByTemplate);
+
+		//console.log('edit structure', datastructureId);
 
 		// copy structure
 		model = await get(datastructureId);
@@ -105,16 +113,25 @@
 	function back() {
 		init = false;
 	}
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#data-structures',
+		}
+	];
 </script>
 
 <Page
-	title="Data structure"
+	title="Data Structure"
 	note="This page allows you to create and edit data structures."
 	contentLayoutType={pageContentLayoutType.full}
 	help={true}
+	footer={false}
+	{links}
 >
 	{#await start()}
-		<Spinner label="the structure is loading" />
+		<Spinner label="the data structure is loading" />
 	{:then}
 		{#if model}
 			<Structure {model} {dataExist} on:back={back} />
@@ -123,3 +140,4 @@
 		<ErrorMessage {error} />
 	{/await}
 </Page>
+<Modal />

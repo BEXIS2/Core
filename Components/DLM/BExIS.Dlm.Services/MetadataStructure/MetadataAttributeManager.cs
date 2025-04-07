@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Security.Cryptography;
 using Vaiona.Persistence.Api;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Dlm.Services.MetadataStructure
 {
@@ -67,6 +69,35 @@ namespace BExIS.Dlm.Services.MetadataStructure
         public IReadOnlyRepository<MetadataParameterUsage> MetadataParameterUsageRepo { get; private set; }
 
         #endregion Data Readers
+
+        #region getter
+
+        public List<MetadataNestedAttributeUsage> GetEffectiveMetadataNestedAttributeUsages(Int64 metadatastructureId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IReadOnlyRepository<MetadataNestedAttributeUsage> repo = uow.GetReadOnlyRepository<MetadataNestedAttributeUsage>();
+                IReadOnlyRepository<MetadataPackageUsage> repoMPU = uow.GetReadOnlyRepository<MetadataPackageUsage>();
+                IReadOnlyRepository<MetadataAttributeUsage> repoMAU = uow.GetReadOnlyRepository<MetadataAttributeUsage>();
+
+                var mpIds = repoMPU.Query(p => p.MetadataStructure.Id == metadatastructureId).Select(p=>p.MetadataPackage.Id);
+                var maIds = repoMAU.Query(p => mpIds.Contains(p.MetadataPackage.Id)).Select(p => p.MetadataAttribute.Id);
+                List<MetadataNestedAttributeUsage> usages = new List<MetadataNestedAttributeUsage>();
+
+                foreach (var parentId in maIds)
+                {
+                    Dictionary<string, object> parameters = new Dictionary<string, object>();
+                    parameters.Add("attrid", parentId);
+                    List<MetadataNestedAttributeUsage> usagesTemp = repo.Get("GetEffectiveMetadataNestedUsages", parameters).ToList();
+                    usages = usages.Union(usagesTemp).ToList();
+                }
+
+                return usages; // structure.MetadataPackageUsages.ToList(); // plus all the packages of the parents
+                
+            }
+        }
+
+        #endregion
 
         #region MetadataAttribute
 

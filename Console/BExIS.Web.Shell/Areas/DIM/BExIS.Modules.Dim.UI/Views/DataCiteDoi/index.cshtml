@@ -1,0 +1,117 @@
+﻿@using BExIS.Modules.Dim.UI.Models;
+
+@model List<PublicationModel>
+
+@{
+    List<PublicationModel> pending = new List<PublicationModel>();
+    List<PublicationModel> registered = new List<PublicationModel>();
+    List<PublicationModel> denied = new List<PublicationModel>();
+
+    foreach (PublicationModel p in Model.ToList())
+    {
+        if (!p.Status.ToLower().Contains("registered") && !p.Status.ToLower().Contains("denied"))
+        {
+            pending.Add(p);
+        }
+        else if (p.Status.ToLower().Contains("registered") && !p.Status.ToLower().Contains("denied"))
+        {
+            registered.Add(p);
+        }
+        else if (!p.Status.ToLower().Contains("registered") && p.Status.ToLower().Contains("denied"))
+        {
+            denied.Add(p);
+        }
+    }
+}
+
+<div>
+    @if (pending.ToList().Count > 0)
+    {
+        <h2>Pending</h2>
+        <table>
+            <tr>
+                <th>Broker</th>
+                <th>DataRepo</th>
+                <th>DOI</th>
+                <th>Dataset</th>
+                <th>Creation Date</th>
+                <th>Status</th>
+                <th>Response</th>
+                <th></th>
+            </tr>
+            @foreach (PublicationModel p in pending.ToList())
+            {
+                @Html.Partial("_requestRow", p)
+            }
+        </table>
+    }
+
+    @if (registered.ToList().Count > 0)
+    {
+        <h2>Registered</h2>
+        <table>
+            <tr>
+                <th>Id</th>
+                <th>Broker</th>
+                <th>DataRepo</th>
+                <th>DOI</th>
+                <th>Dataset</th>
+                <th>Creation Date</th>
+                <th>Status</th>
+                <th>Response</th>
+                <th></th>
+            </tr>
+            @foreach (PublicationModel p in registered.ToList())
+            {
+                @Html.Partial("_requestRow", p)
+            }
+        </table>
+    }
+
+    @if (denied.ToList().Count > 0)
+    {
+        <h2>Denied</h2>
+        <table>
+            <tr>
+                <th>Id</th>
+                <th>Broker</th>
+                <th>DataRepo</th>
+                <th>DOI</th>
+                <th>Dataset</th>
+                <th>Creation Date</th>
+                <th>Status</th>
+                <th>Response</th>
+                <th></th>
+            </tr>
+            @foreach (PublicationModel p in denied.ToList())
+            {
+                @Html.Partial("_requestRow", p)
+            }
+        </table>
+    }
+</div>
+<script>
+    $(function() {
+        init();
+    });
+
+    function init() {
+        $('.doi-grant').on('click', function () {
+            var id = $(this).parents('.doi-row').attr('id');
+            var parameters = '?publicationId=' + id;
+            $.get('@Url.Action("Accept", "DataCiteDoi", new { area = "DIM"} )' + parameters, function (data) {
+                $(data).replaceAll('#' + id);
+                init();
+            });
+        });
+
+        $('.doi-deny').on('click', function () {
+            var id = $(this).parents('.doi-row').attr('id');
+            var parameters = '?publicationId=' + id;
+            $.get('@Url.Action("Reject", "DataCiteDoi", new { area = "DIM"} )' + parameters, function (data) {
+                $(data).replaceAll('#' + id);
+                init();
+            });
+        });
+    }
+</script>

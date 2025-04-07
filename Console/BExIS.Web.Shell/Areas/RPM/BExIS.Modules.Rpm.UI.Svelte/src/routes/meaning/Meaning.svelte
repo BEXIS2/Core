@@ -46,11 +46,14 @@
 		// reset & reload validation
 		suite.reset();
 
-		setTimeout(async () => {
-			if (meaning.id > 0) {
-				res = suite(meaning, '');
-			} // run validation only if start with an existing
-		}, 10);
+		// run validation only if start with an existing
+		if (meaning.id == 0) {
+			suite.reset();
+		} else {
+			setTimeout(async () => {
+				res = suite(meaning, undefined);
+			}, 10);
+		}
 	});
 
 	//change event: if input change check also validation only on the field

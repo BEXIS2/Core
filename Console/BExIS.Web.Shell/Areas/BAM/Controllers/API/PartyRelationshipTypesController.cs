@@ -12,7 +12,7 @@ namespace BExIS.Modules.Bam.UI.Controllers.API
     public class PartyRelationshipTypesController : ApiController
     {
         [HttpGet, Route("api/partyRelationshipTypes")]
-        public async Task<HttpResponseMessage> Get()
+        public async Task<HttpResponseMessage> GetAsync()
         {
             try
             {
@@ -30,7 +30,7 @@ namespace BExIS.Modules.Bam.UI.Controllers.API
         }
 
         [HttpGet, Route("api/partyRelationshipTypes/{partyRelationshipTypeId}")]
-        public async Task<HttpResponseMessage> GetById(long partyRelationshipTypeId)
+        public async Task<HttpResponseMessage> GetByPartyRelationshipTypeIdAsync(long partyRelationshipTypeId)
         {
             try
             {

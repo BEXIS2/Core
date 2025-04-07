@@ -33,6 +33,7 @@ using Vaiona.Web.Mvc.Modularity;
 using BExIS.Modules.Dcm.UI.Helpers;
 using System.Xml;
 using BExIS.Dim.Entities.Mappings;
+using Remotion.Linq.Parsing.Structure.NodeTypeProviders;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -96,7 +97,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     if (d == null)
                         return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + data.DatasetId + ") does not exist.");
 
-                    if (!entityPermissionManager.HasEffectiveRight(user.Name, typeof(Dataset), data.DatasetId, RightType.Write))
+                    if (!entityPermissionManager.HasEffectiveRightsAsync(user.Name, typeof(Dataset), data.DatasetId, RightType.Write).Result)
                         return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "The token is not authorized to write into the dataset.");
                 }
 
@@ -143,7 +144,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     #region direct update
 
-                    var es = new EmailService();
                     UploadHelper uploadHelper = new UploadHelper();
 
                     try
@@ -165,19 +165,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         pkVariables = dataStructure.Variables.Where(v => v.IsKey).ToList();
 
                         // prepare pk index list from data
-                        int[] primaryKeyIndexes = new int[pkVariables.Count];
+                        List<int> primaryKeyIndexes = new List<int>();
                         for (int i = 0; i <= dataStructure.Variables.Count - 1; i++)
                         {
                             var variable = dataStructure.Variables.ElementAt(i);
                             if (variable.IsKey)
                             {
-                                primaryKeyIndexes[i] = data.Columns.ToList().IndexOf(variable.Label);
+                                primaryKeyIndexes.Add(data.Columns.ToList().IndexOf(variable.Label));
                             }
                         }
 
                         //check primary with data : uniqueness
                         //bool IsUniqueInDb = uploadHelper.IsUnique2(dataset.Id, variables.Select(v=>v.Id).ToList()); // may can removed
-                        bool IsUniqueInData = uploadHelper.IsUnique(primaryKeyIndexes, data.Data);
+
+                        bool IsUniqueInData = uploadHelper.IsUnique(primaryKeyIndexes.ToArray(), data.Data);
+
 
                         if (!IsUniqueInData)
                         {
@@ -277,11 +279,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             datasetManager.CheckInDataset(dataset.Id, data.Data.Length + " rows via api.", user.UserName);
 
                             //send email
-                            es.Send(MessageHelper.GetUpdateDatasetHeader(dataset.Id),
+
+                            using(var emailService = new EmailService())
+                            {
+                                emailService.Send(MessageHelper.GetUpdateDatasetHeader(dataset.Id),
                                 MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.DisplayName, typeof(Dataset).Name),
                                 new List<string>() { user.Email },
                                        new List<string>() { GeneralSettings.SystemEmail }
                                 );
+                            }
                         }
 
                         #endregion update data
@@ -290,12 +296,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
                     catch (Exception ex)
                     {
-                        //ToDo send email to user
-                        es.Send(MessageHelper.GetPushApiUploadFailHeader(dataset.Id, title),
+                        using(var emailService = new EmailService())
+                        {
+                            emailService.Send(MessageHelper.GetPushApiUploadFailHeader(dataset.Id, title),
                                    MessageHelper.GetPushApiUploadFailMessage(dataset.Id, user.UserName, new string[] { "Upload failed: " + ex.Message }),
                                    new List<string>() { user.Email },
                                    new List<string>() { GeneralSettings.SystemEmail }
                                    );
+                        }
 
                         return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
                     }

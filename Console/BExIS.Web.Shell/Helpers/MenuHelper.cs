@@ -57,6 +57,7 @@ namespace BExIS.Web.Shell.Helpers
                             childItem.Title = getTitle(child);
                             childItem.Url = getUrl(child);
                             childItem.Module = getModule(child);
+                            childItem.Target = "_blank";
                             menuItem.Items.Add(childItem);
                         }
                     }
@@ -157,8 +158,8 @@ namespace BExIS.Web.Shell.Helpers
             }
             else
             {
-                MenuItem register = new MenuItem("Register", "account/register", "shell");
-                MenuItem login = new MenuItem("Login", "account/login", "shell");
+                MenuItem register = new MenuItem("Register", "/account/register", "shell");
+                MenuItem login = new MenuItem("Login", "/account/login", "shell");
 
                 menuItems.Add(register);
                 menuItems.Add(login);
@@ -227,6 +228,9 @@ namespace BExIS.Web.Shell.Helpers
             if (!string.IsNullOrWhiteSpace(element.Attribute("action").Value))
                 sb.Append(@"/").Append(element.Attribute("action").Value.ToLower());
 
+            if (element.Attribute("argument")!=null && !string.IsNullOrWhiteSpace(element.Attribute("argument").Value))
+                sb.Append(@"/").Append(element.Attribute("argument").Value.ToLower());
+
             return sb.ToString();
         }
 
@@ -272,7 +276,7 @@ namespace BExIS.Web.Shell.Helpers
                 if (string.IsNullOrEmpty(operation.Attribute("area").Value)) area = "shell";
                 else area = operation.Attribute("area").Value.ToLower();
 
-                bool permission = featurePermissionManager.HasAccess<User>(name, area, controller, action);
+                bool permission = featurePermissionManager.HasAccessAsync<User>(name, area, controller, action).Result;
 
                 System.Web.HttpContext.Current.Session[identifier] = permission;
 

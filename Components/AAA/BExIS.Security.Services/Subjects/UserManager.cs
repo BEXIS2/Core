@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
 
@@ -22,6 +20,8 @@ namespace BExIS.Security.Services.Subjects
         {
             _guow = this.GetIsolatedUnitOfWork();
             UserRepository = _guow.GetReadOnlyRepository<User>();
+            LoginRepository = _guow.GetReadOnlyRepository<Login>();
+            GroupRepository = _guow.GetReadOnlyRepository<Group>();
         }
 
         ~UserManager()
@@ -31,18 +31,16 @@ namespace BExIS.Security.Services.Subjects
 
         public IQueryable<User> Users => UserRepository.Query();
 
+        public IQueryable<Login> Logins => LoginRepository.Query();
+
+        public IQueryable<Group> Groups => GroupRepository.Query();
+
         private IReadOnlyRepository<User> UserRepository { get; }
 
-        /// <summary>
-        /// returns subset of users based on the parameters
-        /// and also count of filtered list
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <param name="orderBy"></param>
-        /// <param name="pageNumber"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="count"></param>
-        /// <returns></returns>
+        private IReadOnlyRepository<Group> GroupRepository { get; }
+
+        private IReadOnlyRepository<Login> LoginRepository { get; }
+
         public List<User> GetUsers(FilterExpression filter, OrderByExpression orderBy, int pageNumber, int pageSize, out int count)
         {
             var orderbyClause = orderBy?.ToLINQ();
@@ -52,37 +50,34 @@ namespace BExIS.Security.Services.Subjects
 
             try
             {
-                using (IUnitOfWork uow = this.GetUnitOfWork())
+                if (whereClause != null && orderBy != null)
                 {
-                    if (whereClause != null && orderBy != null)
-                    {
-                        var l = Users.Where(whereClause);
-                        var x = l.OrderBy(orderbyClause);
-                        var y = x.Skip((pageNumber - 1) * pageSize);
-                        var z = y.Take(pageSize);
+                    var l = UserRepository.Query(whereClause);
+                    var x = l.OrderBy(orderbyClause);
+                    var y = x.Skip((pageNumber - 1) * pageSize);
+                    var z = y.Take(pageSize);
 
-                        count = l.Count();
+                    count = l.Count();
 
-                        return z.ToList();
-                    }
-                    else if (whereClause != null)
-                    {
-                        var filtered = Users.Where(whereClause);
-                        count = filtered.Count();
-
-                        return filtered.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-                    }
-
-                    if (orderBy != null)
-                    {
-                        count = Users.Count();
-                        return Users.OrderBy(orderbyClause).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-                    }
-
-                    count = Users.Count();
-
-                    return Users.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                    return z.ToList();
                 }
+                else if (whereClause != null)
+                {
+                    var filtered = Users.Where(whereClause);
+                    count = filtered.Count();
+
+                    return filtered.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                }
+
+                if (orderBy != null)
+                {
+                    count = Users.Count();
+                    return Users.OrderBy(orderbyClause).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                }
+
+                count = Users.Count();
+
+                return Users.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             }
             catch (Exception ex)
             {
@@ -92,171 +87,124 @@ namespace BExIS.Security.Services.Subjects
 
         #region IUserEmailStore
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
         public Task CreateAsync(User user)
         {
             if (user == null)
-                return Task.FromResult(0);
+                //return Task.FromException(new Exception());
+                return Task.CompletedTask;
 
             if (string.IsNullOrEmpty(user.UserName))
-                return Task.FromResult(0);
+                //return Task.FromException(new Exception());
+                return Task.CompletedTask;
 
             if (FindByNameAsync(user.UserName)?.Result != null)
-                return Task.FromResult(0);
+                //return Task.FromException(new Exception());
+                return Task.CompletedTask;
 
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
-                userRepository.Put(user);
-                uow.Commit();
-            }
+            var userRepository = _guow.GetRepository<User>().Put(user);
+            _guow.Commit();
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
         public Task DeleteAsync(User user)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
-                userRepository.Delete(user);
-                uow.Commit();
-            }
+            _guow.GetRepository<User>().Delete(user.Id);
+            _guow.Commit();
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
+        public Task DeleteByIdAsync(long userId)
+        {
+            _guow.GetRepository<User>().Delete(userId);
+            _guow.Commit();
+
+            return Task.CompletedTask;
+        }
+
         public void Dispose()
         {
             Dispose(true);
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="email"></param>
-        /// <returns></returns>
         public Task<User> FindByEmailAsync(string email)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
-                return Task.FromResult(userRepository.Query().FirstOrDefault(u => u.Email.ToUpperInvariant() == email.ToUpperInvariant()));
-            }
+            var users = UserRepository.Query(u => u.Email.ToLowerInvariant() == email.ToLowerInvariant()).ToList();
+
+            if (!users.Any())
+                //return Task.FromException(new Exception());
+                return Task.FromResult<User>(null);
+
+            if (users.Count > 1)
+                //return Task.FromException(new Exception());
+                return Task.FromResult<User>(null);
+
+            return Task.FromResult(users.Single());
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
         public Task<User> FindByIdAsync(long userId)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
-                return Task.FromResult(userRepository.Get(userId));
-            }
+            return Task.FromResult(UserRepository.Get(userId));
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <returns></returns>
         public Task<User> FindByNameAsync(string userName)
         {
-            userName = userName.Trim();
+            var users = UserRepository.Query().Where(u => u.Name.ToLowerInvariant() == userName.ToLowerInvariant()).ToList();
 
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
-                return Task.FromResult(userRepository.Query().FirstOrDefault(u => u.Name.ToUpperInvariant() == userName.ToUpperInvariant()));
-            }
+            if (!users.Any())
+                //return Task.FromException(new Exception());
+                return Task.FromResult<User>(null);
+
+            if (users.Count > 1)
+                //return Task.FromException(new Exception());
+                return Task.FromResult<User>(null);
+
+            return Task.FromResult(users.Single());
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
         public Task<string> GetEmailAsync(User user)
         {
             return Task.FromResult(user.Email);
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
         public Task<bool> GetEmailConfirmedAsync(User user)
         {
             return Task.FromResult(user.IsEmailConfirmed);
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="email"></param>
-        /// <returns></returns>
         public Task SetEmailAsync(User user, string email)
         {
             user.Email = email;
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="confirmed"></param>
-        /// <returns></returns>
         public Task SetEmailConfirmedAsync(User user, bool confirmed)
         {
             user.IsEmailConfirmed = confirmed;
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
         public Task UpdateAsync(User user)
         {
             if (user == null)
-                return Task.FromResult(0);
+                //return Task.FromException(new Exception());
+                return Task.CompletedTask;
 
             if (string.IsNullOrEmpty(user.UserName))
-                return Task.FromResult(0);
+                //return Task.FromException(new Exception());
+                return Task.CompletedTask;
 
             if (FindByIdAsync(user.Id)?.Result == null)
-                return Task.FromResult(0);
+                //return Task.FromException(new Exception());
+                return Task.CompletedTask;
 
-            using (var uow = this.GetUnitOfWork())
-            {
-                var repo = uow.GetRepository<User>();
-                repo.Merge(user);
-                var merged = repo.Get(user.Id);
-                repo.Put(merged);
-                uow.Commit();
-            }
+            _guow.GetRepository<User>().Merge(user);
+            var merged = _guow.GetRepository<User>().Get(user.Id);
+            _guow.GetRepository<User>().Put(merged);
+            _guow.Commit();
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         protected virtual void Dispose(bool disposing)
@@ -278,74 +226,55 @@ namespace BExIS.Security.Services.Subjects
 
         public Task AddLoginAsync(User user, UserLoginInfo login)
         {
-            using (var uow = this.GetUnitOfWork())
+            var loginRepository = _guow.GetRepository<Login>();
+
+            user = UserRepository.Get(user.Id);
+            var userLogin = new Login()
             {
-                var userRepository = uow.GetReadOnlyRepository<User>();
-                var loginRepository = uow.GetRepository<Login>();
+                ProviderKey = login.ProviderKey,
+                LoginProvider = login.LoginProvider,
+                User = user
+            };
 
-                user = userRepository.Get(user.Id);
-                var userLogin = new Login()
-                {
-                    ProviderKey = login.ProviderKey,
-                    LoginProvider = login.LoginProvider,
-                    User = user
-                };
+            loginRepository.Put(userLogin);
+            _guow.Commit();
 
-                loginRepository.Put(userLogin);
-                uow.Commit();
-
-                return Task.FromResult(0);
-            }
+            return Task.CompletedTask;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="login"></param>
-        /// <returns></returns>
         public Task<User> FindAsync(UserLoginInfo login)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var loginRepository = uow.GetRepository<Login>();
-                var user = loginRepository.Query(m => m.LoginProvider == login.LoginProvider && m.ProviderKey == login.ProviderKey).Select(m => m.User).FirstOrDefault();
+            var users = LoginRepository.Query(m => m.LoginProvider.ToLowerInvariant() == login.LoginProvider.ToLowerInvariant() && m.ProviderKey.ToLowerInvariant() == login.ProviderKey.ToLowerInvariant()).Select(m => m.User).ToList();
 
-                return Task.FromResult(user);
-            }
+            if (!users.Any())
+                //return Task.FromException(new Exception());
+                return Task.FromResult<User>(null);
+
+            if (users.Count > 1)
+                //return Task.FromException(new Exception());
+                return Task.FromResult<User>(null);
+
+            return Task.FromResult(users.Single());
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
         public Task<IList<UserLoginInfo>> GetLoginsAsync(User user)
         {
             return Task.FromResult<IList<UserLoginInfo>>((user.Logins).Select(login => new UserLoginInfo(login.LoginProvider, login.ProviderKey)).ToList());
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="login"></param>
-        /// <returns></returns>
         public Task RemoveLoginAsync(User user, UserLoginInfo login)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
+            var userRepository = _guow.GetRepository<User>();
 
-                user = userRepository.Get(user.Id);
-                var info = user.Logins.SingleOrDefault(x => x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
-                if (info == null) return Task.FromResult(0);
+            user = userRepository.Get(user.Id);
+            var info = user.Logins.SingleOrDefault(x => x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
+            if (info == null) return Task.FromResult(0);
 
-                user.Logins.Remove(info);
-                userRepository.Put(user);
-                uow.Commit();
+            user.Logins.Remove(info);
+            userRepository.Put(user);
+            _guow.Commit();
 
-                return Task.FromResult(0);
-            }
+            return Task.CompletedTask;
         }
 
         #endregion IUserLoginStore
@@ -365,38 +294,23 @@ namespace BExIS.Security.Services.Subjects
         public Task SetPasswordHashAsync(User user, string passwordHash)
         {
             user.Password = passwordHash;
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         #endregion IUserPasswordStore
 
         #region IUserLockoutStore
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
         public Task<int> GetAccessFailedCountAsync(User user)
         {
             return Task.FromResult(user.AccessFailedCount);
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
         public Task<bool> GetLockoutEnabledAsync(User user)
         {
             return Task.FromResult(user.LockoutEnabled);
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
         public Task<DateTimeOffset> GetLockoutEndDateAsync(User user)
         {
             DateTimeOffset dateTimeOffset;
@@ -413,164 +327,105 @@ namespace BExIS.Security.Services.Subjects
             return Task.FromResult(dateTimeOffset); throw new NotImplementedException();
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
         public Task<int> IncrementAccessFailedCountAsync(User user)
         {
             user.AccessFailedCount = user.AccessFailedCount + 1;
             return Task.FromResult(user.AccessFailedCount);
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
         public Task ResetAccessFailedCountAsync(User user)
         {
             user.AccessFailedCount = 0;
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="enabled"></param>
-        /// <returns></returns>
         public Task SetLockoutEnabledAsync(User user, bool enabled)
         {
             user.LockoutEnabled = enabled;
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="lockoutEnd"></param>
-        /// <returns></returns>
         public Task SetLockoutEndDateAsync(User user, DateTimeOffset lockoutEnd)
         {
-            DateTime? nullable;
-
-            if (lockoutEnd == DateTimeOffset.MinValue)
-            {
-                nullable = null;
-            }
-            else
-            {
-                nullable = lockoutEnd.UtcDateTime;
-            }
-            user.LockoutEndDate = nullable;
-            return Task.FromResult(0);
+            user.LockoutEndDate = lockoutEnd.UtcDateTime; ;
+            return Task.CompletedTask;
         }
 
         #endregion IUserLockoutStore
 
         #region IUserRoleStore
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="roleName"></param>
-        /// <returns></returns>
         public Task AddToRoleAsync(User user, string roleName)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var groupRepository = uow.GetReadOnlyRepository<Group>();
-                var userRepository = uow.GetRepository<User>();
-                var group = groupRepository.Query(g => g.Name.ToUpperInvariant() == roleName.ToUpperInvariant()).FirstOrDefault();
+            var groups = GroupRepository.Query(g => g.Name.ToLowerInvariant() == roleName.ToLowerInvariant()).ToList();
 
-                //// [Sven][Workaround][2017/10/09]
-                //// It is necessary to "re-get" the object. Other than that, "Load", "Reload" or other functions are not working here.
-                //// In general, there is an issue with the sessions. The primary error message was
-                ////  "reassociated object has dirty collection: BExIS.Security.Entities.Subjects.User.Groups"
-                //// but with "Load" or "Reload" it changed to
-                ////  "a different object with the same identifier value was already associated with the session: 32768, of entity: BExIS.Security.Entities.Subjects.User".
-                //// At https://forum.hibernate.org/viewtopic.php?t=934551 is claimed to change "session.Lock()" to "session.Update" which should be done at Vaiona.
-                ///
-                user = userRepository.Get(user.Id);
-                if (group == null) return Task.FromResult(0);
-                user.Groups.Add(group);
+            if (!groups.Any())
+                //return Task.FromException(new Exception());
+                return Task.FromResult(false);
 
-                userRepository.Put(user);
-                uow.Commit();
+            if (groups.Count > 1)
+                //return Task.FromException(new Exception());
+                return Task.FromResult(false);
 
-                return Task.FromResult(0);
-            }
+            var group = groups.Single();
+
+            //// [Sven][Workaround][2017/10/09]
+            //// It is necessary to "re-get" the object. Other than that, "Load", "Reload" or other functions are not working here.
+            //// In general, there is an issue with the sessions. The primary error message was
+            ////  "reassociated object has dirty collection: BExIS.Security.Entities.Subjects.User.Groups"
+            //// but with "Load" or "Reload" it changed to
+            ////  "a different object with the same identifier value was already associated with the session: 32768, of entity: BExIS.Security.Entities.Subjects.User".
+            //// At https://forum.hibernate.org/viewtopic.php?t=934551 is claimed to change "session.Lock()" to "session.Update" which should be done at Vaiona.
+            ///
+
+            user = UserRepository.Get(user.Id);
+            if (user == null) return Task.FromResult(false);
+
+            var userRepository = _guow.GetRepository<User>();
+            user.Groups.Add(group);
+            userRepository.Put(user);
+            _guow.Commit();
+
+            return Task.FromResult(true);
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
         public Task<IList<string>> GetRolesAsync(User user)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var groupRepository = uow.GetRepository<Group>();
-                return Task.FromResult((IList<string>)groupRepository.Query(g => g.Users.Any(u => u.Id == user.Id)).Select(m => m.Name).ToList());
-            }
+            user = UserRepository.Get(user.Id);
+
+            var groups = user.Groups.Select(m => m.Name).ToList();
+
+            return Task.FromResult((IList<string>)groups);
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="roleName"></param>
-        /// <returns></returns>
         public Task<bool> IsInRoleAsync(User user, string roleName)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
-                user = userRepository.Get(user.Id);
+            user = UserRepository.Get(user.Id);
 
-                return Task.FromResult(user.Groups.Any(m => m.Name.ToLowerInvariant() == roleName.ToLowerInvariant()));
-            }
+            return Task.FromResult(user.Groups.Any(m => m.Name.ToLowerInvariant() == roleName.ToLowerInvariant()));
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="roleName"></param>
-        /// <returns></returns>
         public Task RemoveFromRoleAsync(User user, string roleName)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var groupRepository = uow.GetRepository<Group>();
-                var userRepository = uow.GetRepository<User>();
-                var group = groupRepository.Query(g => g.Name.ToUpperInvariant() == roleName.ToUpperInvariant()).FirstOrDefault();
+            var group = GroupRepository.Query(g => g.Name.ToUpperInvariant() == roleName.ToUpperInvariant()).FirstOrDefault();
 
-                if (group == null) return Task.FromResult(0);
+            if (group == null) return Task.FromResult(false);
 
-                user = userRepository.Get(user.Id);
-                user.Groups.Remove(group);
-                userRepository.Put(user);
-                uow.Commit();
+            user = UserRepository.Get(user.Id);
+            if (user == null) return Task.FromResult(false);
 
-                return Task.FromResult(0);
-            }
+            var userRepository = _guow.GetRepository<User>();
+            user.Groups.Remove(group);
+            userRepository.Put(user);
+            _guow.Commit();
+
+            return Task.FromResult(true);
         }
 
         #endregion IUserRoleStore
 
         #region IUserTwoFactorStore
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
         public Task<bool> GetTwoFactorEnabledAsync(User user)
         {
             return Task.FromResult(false);
@@ -584,7 +439,8 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public Task SetTwoFactorEnabledAsync(User user, bool enabled)
         {
-            throw new NotImplementedException();
+            user.IsTwoFactorEnabled = false;
+            return Task.CompletedTask;
         }
 
         #endregion IUserTwoFactorStore
@@ -599,36 +455,9 @@ namespace BExIS.Security.Services.Subjects
         public Task SetSecurityStampAsync(User user, string stamp)
         {
             user.SecurityStamp = stamp;
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         #endregion IUserSecurityStampStore
-
-        public Task SetTokenAsync(User user)
-        {
-            user.Token = generate(64);
-            return UpdateAsync(user);
-        }
-
-        private static string generate(int size)
-        {
-            // Characters except I, l, O, 1, and 0 to decrease confusion when hand typing tokens
-            var charSet = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-            var chars = charSet.ToCharArray();
-            var data = new byte[1];
-
-            using (var crypto = new RNGCryptoServiceProvider())
-            {
-                crypto.GetNonZeroBytes(data);
-                data = new byte[size];
-                crypto.GetNonZeroBytes(data);
-                var result = new StringBuilder(size);
-                foreach (var b in data)
-                {
-                    result.Append(chars[b % (chars.Length)]);
-                }
-                return result.ToString();
-            }
-        }
     }
 }

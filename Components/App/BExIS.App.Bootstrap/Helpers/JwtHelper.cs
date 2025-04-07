@@ -1,5 +1,4 @@
 ﻿using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Config;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -17,60 +16,65 @@ namespace BExIS.App.Bootstrap
         /// </summary>
         /// <param name="user"></param>
         /// <returns>JwtToken</returns>
-        public static string Get(User user)
+        public static string GetTokenByUser(User user)
         {
             try
             {
                 var jwtConfiguration = GeneralSettings.JwtConfiguration;
 
-                using (var userManager = new UserManager())
-                {
-                    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey));
-                    var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey));
+                var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-                    //Create a List of Claims, Keep claims name short
-                    var permClaims = new List<Claim>
+                //Create a List of Claims, Keep claims name short
+                var permClaims = new List<Claim>
                     {
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                         new Claim(ClaimTypes.Name, user.UserName)
                     };
 
-                    //Create Security Token object by giving required parameters
-                    var token = new JwtSecurityToken(jwtConfiguration.ValidIssuer,
-                        jwtConfiguration.ValidAudience,
-                        permClaims,
-                        notBefore: DateTime.Now,
-                        expires: jwtConfiguration.ValidLifetime > 0 ? DateTime.Now.AddHours(jwtConfiguration.ValidLifetime) : DateTime.MaxValue,
-                        signingCredentials: credentials);
+                //Create Security Token object by giving required parameters
+                var token = new JwtSecurityToken(jwtConfiguration.ValidIssuer,
+                    jwtConfiguration.ValidAudience,
+                    permClaims,
+                    notBefore: DateTime.Now,
+                    expires: jwtConfiguration.ValidLifetime > 0 ? DateTime.Now.AddHours(jwtConfiguration.ValidLifetime) : DateTime.MaxValue,
+                    signingCredentials: credentials);
 
-                    var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
+                var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
 
-                    return jwt_token;
-                }
+                return jwt_token;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return String.Empty;
+                return string.Empty;
             }
         }
 
-        public static ClaimsPrincipal Get(string token)
+        public static ClaimsPrincipal GetClaimsPrincipleByToken(string token)
         {
-            var jwtConfiguration = GeneralSettings.JwtConfiguration;
-
-            var tokenValidationParameters = new TokenValidationParameters()
+            try
             {
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey)),
-                RequireExpirationTime = jwtConfiguration.RequireExpirationTime,
-                ValidateLifetime = jwtConfiguration.ValidateLifetime,
-                ValidateAudience = jwtConfiguration.ValidateAudience,
-                ValidateIssuer = jwtConfiguration.ValidateAudience,
-                ValidIssuer = jwtConfiguration.ValidIssuer,
-                ValidAudience = jwtConfiguration.ValidAudience
-            };
+                var jwtConfiguration = GeneralSettings.JwtConfiguration;
 
-            return validateToken(token, tokenValidationParameters);
+                var tokenValidationParameters = new TokenValidationParameters()
+                {
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey)),
+                    RequireExpirationTime = jwtConfiguration.RequireExpirationTime,
+                    ValidateLifetime = jwtConfiguration.ValidateLifetime,
+                    ValidateAudience = jwtConfiguration.ValidateAudience,
+                    ValidateIssuer = jwtConfiguration.ValidateAudience,
+                    ValidIssuer = jwtConfiguration.ValidIssuer,
+                    ValidAudience = jwtConfiguration.ValidAudience
+                };
+
+                return validateToken(token, tokenValidationParameters);
+            }
+            catch(Exception)
+            {
+                return null;
+            }
+            
         }
 
         private static ClaimsPrincipal validateToken(string token, TokenValidationParameters tokenValidationParameters)
@@ -78,12 +82,10 @@ namespace BExIS.App.Bootstrap
             try
             {
                 var handler = new JwtSecurityTokenHandler();
-                SecurityToken securityToken;
-                return handler.ValidateToken(token, tokenValidationParameters, out securityToken);
+                return handler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine(ex.Message);
                 return null;
             }
         }

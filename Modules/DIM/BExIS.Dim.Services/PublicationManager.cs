@@ -115,11 +115,13 @@ namespace BExIS.Dim.Services
             publication.ResearchObjectId = researchObjectId;
             publication.Broker = broker;
             publication.DatasetVersion = datasetVersion;
+            publication.Dataset = datasetVersion.Dataset;
             publication.Repository = broker.Repository;
             publication.Timestamp = DateTime.Now;
             publication.Status = status;
             publication.FilePath = filePath;
             publication.ExternalLink = externalLink;
+            publication.Tag = datasetVersion.Tag;
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -145,11 +147,13 @@ namespace BExIS.Dim.Services
             publication.ResearchObjectId = researchObjectId;
             publication.Broker = broker;
             publication.DatasetVersion = datasetVersion;
+            publication.Dataset = datasetVersion.Dataset;
             publication.Repository = repository;
             publication.Timestamp = DateTime.Now;
             publication.Status = status;
             publication.FilePath = filePath;
             publication.ExternalLink = externalLink;
+            publication.Tag = datasetVersion.Tag;
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {

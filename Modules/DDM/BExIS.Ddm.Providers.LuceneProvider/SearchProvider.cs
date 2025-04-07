@@ -5,6 +5,7 @@ using BExIS.Ddm.Providers.LuceneProvider.Indexer;
 using BExIS.Ddm.Providers.LuceneProvider.Searcher;
 using BExIS.Utils.Models;
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Shingle.Matrix;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
@@ -127,7 +128,13 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                         { new General()
                                 { Name="gen_isPublic", DefaultValue = "FALSE", DisplayName = "Is dataset public", Value = "FALSE", IsVisible = false},
                           new General()
-                                { Name="gen_entity_name", DefaultValue = "", DisplayName = "Type", Value = "", IsVisible = true}
+                                { Name="gen_entity_name", DefaultValue = "", DisplayName = "Type", Value = "", IsVisible = true},
+                          new General()
+                                { Name="gen_doi", DefaultValue = "", DisplayName = "DOI", Value = "FALSE", IsVisible = true},
+                          new General()
+                                { Name="gen_modifieddate", DefaultValue = "", DisplayName = "Last modified date", Value = "", IsVisible = true},
+                        new General()
+                                { Name="gen_entitytemplate", DefaultValue = "", DisplayName = "Template", Value = "", IsVisible = true},
                         };
 
             return model;
@@ -159,10 +166,15 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             model.SearchComponent.Generals = new List<General>()
                         { new General()
                                 { Name="gen_isPublic", DefaultValue = "FALSE", DisplayName = "Is dataset public", Value = "FALSE", IsVisible = false},
-                         new General()
-                                { Name="gen_entity_name", DefaultValue = "", DisplayName = "Type", Value = "", IsVisible = true}
+                          new General()
+                                { Name="gen_entity_name", DefaultValue = "", DisplayName = "Type", Value = "", IsVisible = true},
+                          new General()
+                                { Name="gen_doi", DefaultValue = "", DisplayName = "DOI", Value = "FALSE", IsVisible = true},
+                          new General()
+                                { Name="gen_modifieddate", DefaultValue = "", DisplayName = "Last modified date", Value = "", IsVisible = true},
+                        new General()
+                                { Name="gen_entitytemplate", DefaultValue = "", DisplayName = "Template", Value = "", IsVisible = true},
                         };
-
             return model;
             //throw new NotImplementedException();
         }
@@ -241,6 +253,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             getQueryFromCriteria(searchCriteria);
             this.WorkingSearchModel.ResultComponent = BexisIndexSearcher.search(bexisSearching, SearchConfig.headerItemXmlNodeList);
 
+
             return this.WorkingSearchModel;
         }
 
@@ -256,6 +269,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             this.WorkingSearchModel = Get(searchCriteria);
             this.WorkingSearchModel = UpdateFacets(searchCriteria);
             this.WorkingSearchModel = UpdateProperties(searchCriteria);
+            this.WorkingSearchModel.ResultComponent.Rows = this.WorkingSearchModel.ResultComponent.Rows.OrderByDescending(r => Convert.ToDecimal(r.Values.First()));
+
         }
 
         /// <summary>
@@ -272,22 +287,23 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             this.WorkingSearchModel = Get(searchCriteria, pageSize, currentPage);
             this.WorkingSearchModel = UpdateFacets(searchCriteria);
             this.WorkingSearchModel = UpdateProperties(searchCriteria);
+            this.WorkingSearchModel.ResultComponent.Rows = this.WorkingSearchModel.ResultComponent.Rows.OrderByDescending(r => Convert.ToDecimal(r.Values.First())).ToList();
 
             return this.WorkingSearchModel;
         }
 
-        public void UpdateIndex(Dictionary<long, IndexingAction> datasetsToIndex)
+        public void UpdateIndex(Dictionary<long, IndexingAction> datasetsToIndex, bool onlyReleasedTags)
         {
             BexisIndexer bexisIndexer = new BexisIndexer();
-            bexisIndexer.updateIndex(datasetsToIndex);
+            bexisIndexer.updateIndex(datasetsToIndex, onlyReleasedTags);
 
             Reload();
         }
 
-        public void UpdateSingleDatasetIndex(long datasetId, IndexingAction indAction)
+        public void UpdateSingleDatasetIndex(long datasetId, IndexingAction indAction, bool onlyReleasedTags)
         {
             BexisIndexer bexisIndexer = new BexisIndexer();
-            bexisIndexer.updateSingleDatasetIndex(datasetId, indAction);
+            bexisIndexer.updateSingleDatasetIndex(datasetId, indAction, onlyReleasedTags);
 
             Reload();
         }
@@ -371,6 +387,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                                 {
                                     try
                                     {
+                                        // check if range values are dates
                                         DateTime dateValue_;
                                         DateTime.TryParse(list_values[0], out dateValue_);
                                         DateTime dateValue__;
@@ -383,18 +400,24 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                                                 bexisSearchingFacet.Add(rangeQuery, Occur.MUST);
                                             else bexisSearchingFacet.Add(rangeQuery, Occur.SHOULD);
                                         }
-                                        else
+                                        else // check if range values are numbers
                                         {
                                             double out_;
-                                            double.TryParse(encodedValue.Split('-')[0].Trim(), out out_);
                                             double out__;
-                                            double.TryParse(encodedValue.Split('-')[1].Trim(), out out__);
-                                            if ((out_ != null) && (out__ != null))
+
+                                            if (double.TryParse(encodedValue.Split('-')[0].Trim(), out out_) && double.TryParse(encodedValue.Split('-')[1].Trim(), out out__))
                                             {
                                                 Query rangeQuery = NumericRangeQuery.NewDoubleRange(fieldName, out_, out__, true, true);
                                                 if (sco.ValueSearchOperation == "AND")
                                                     bexisSearchingFacet.Add(rangeQuery, Occur.MUST);
                                                 else bexisSearchingFacet.Add(rangeQuery, Occur.SHOULD);
+                                            }
+                                            else
+                                            {                                                
+                                                Query query = new TermQuery(new Term(fieldName, encodedValue));
+                                                if (sco.ValueSearchOperation == "AND")
+                                                    bexisSearchingFacet.Add(query, Occur.MUST);
+                                                else bexisSearchingFacet.Add(query, Occur.SHOULD);
                                             }
                                         }
                                     }
