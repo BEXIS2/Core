@@ -27,13 +27,21 @@
 
 	import mappingJson from "./mapping1.json";
 
+	type dataSetType = {
+		Title: string,
+    	Description: string,
+    	DataStructureId: number,
+    	MetadataStructureId: number,
+    	EntityTemplateId: number;
+};
+
 	let filename: string = '';
 
 	let entities :any[] = [];
 	let transformedArray: any [] = [];
 	let tempTitle: string | null = null;
 	let csvInfo: any[] = [];
-	let dataset = {
+	let dataset: dataSetType = {
     Title: "",
     Description: "",
     DataStructureId: 0,
@@ -96,6 +104,7 @@
 	
 
 	function fillInvalidTableStore(data: any) {
+		
 		// console.time('fillInvalidTableStore');
 		invalidTableStore.set(data);
 		let tableErrorItem: tableErrorItem;
@@ -143,7 +152,7 @@
 
 	// function that parses csv to json
 	function parseCSVToJson(data: any) {
-		let Sources = new Set<string>();
+		// let Sources = new Set<string>();
 		Papa.parse(data, {
 			header: true,
 			complete: function (results) {
@@ -165,14 +174,21 @@
 				fillInvalidTableStore(invalidData);
 				showInvalid = invalidData.length > 0 ? true : false;
 				validTableStore.set(validData);
-				
+		
 				createDownloadLinks();
 			}
 		});
 	}
 
-	const mapToApiFormat = (csvRow: any, mapping: any) => {
-    	const apiData: any = {};
+	function mapToApiFormat (csvRow: any, mapping: any) 
+	{
+		let ds: dataSetType = {
+			Title: "",
+			Description: "",
+			DataStructureId: 0,
+			MetadataStructureId: 0,
+			EntityTemplateId: 0
+		};
 
 		mapping.Mappings.forEach((map: any, index: number) => {
 			let sourceField = "";
@@ -180,21 +196,25 @@
 			// console.log("Map Target1:", map.Target);
 			const targetField = map.Target.match(/\$\[['"](.+)['"]\]/)?.[1];  // Extract full path after $
 
-			if (sourceField) {
-				if (index % 2 === 0) {
+			if (sourceField) 
+			{
+				if (index % 2 === 0) 
+				{
 					// Jeder 1. Durchgang (Titel)
-					tempTitle = csvRow[sourceField];
-				} else {
-					// Jeder 2. Durchgang (Beschreibung)
-					if (tempTitle !== null) {
-						csvInfo.push({
-							title: tempTitle,
-							description: csvRow[sourceField],
-						});
-						tempTitle = null; // Zurücksetzen für das nächste Paar
-					}
+					ds.Title = csvRow[sourceField];
+				} 
+				else if (ds.Title !== null) // Jeder 2. Durchgang (Beschreibung)
+				{
+							ds.Title = ds.Title;
+							ds.Description = csvRow[sourceField];
 				}
+				else
+				{
+					tempTitle = null; // Zurücksetzen für das nächste Paar	
+				}
+										
 			}
+		});
 
  // Das API-Feld
 
@@ -202,11 +222,8 @@
         //     apiData[targetField] = csvRow[sourceField];
         //     console.log(`Mapping - Source: ${sourceField}, Target: ${targetField}, Value: ${csvRow[sourceField]}`);
         // }
-		
-    	});
-		console.log("csv",csvInfo);
-    	return apiData;
-	};
+    	return ds;	
+    }
 
 function onChangeHandler(event) {
 	let selectedEntity: number;
@@ -221,6 +238,7 @@ function onChangeHandler(event) {
 }
 function create()
 {
+	console.log('click');
 	createAllDatasets(dataset.MetadataStructureId, dataset.EntityTemplateId);
 }
 
@@ -228,32 +246,26 @@ async function createAllDatasets (metadataStructureId: number, entityTemplateId:
 {
 
     try {
-        const mappedData = validData.map(row => {
-            const mappedRow = mapToApiFormat(row, mappingJson);
-            // console.log("Mapped Row:", mappedRow);  // Ausgabe der gemappten Zeile
-      
-        });
+		let dss : dataSetType[]=[];
 
-		let res: string;
-
-		let ds = {
-			Title: "",
-			Description: "",
-			DataStructureId: dataStructureId,
-			MetadataStructureId: metadataStructureId,
-			EntityTemplateId: entityTemplateId
-		};
-
-
-		for(const data of csvInfo)
+		console.log('validData', validData);
+		for(const row of validData)
+		{
+			
+			dss.push(mapToApiFormat(row, mappingJson));
+		
+        }
+		console.log("datasets",dss);
+		for(const ds of dss)
 		{
 			// console.log("title",data.title)
 			// console.log("",data[0][1])
 			
-				ds.Title = data.title;
-				ds.Description = data.description;
-				res = await apiCalls.createDataset(ds);
-				console.log("datasets",ds);			
+				ds.MetadataStructureId = metadataStructureId;
+				ds.EntityTemplateId = entityTemplateId;
+				ds.DataStructureId = dataStructureId;
+				// res = await apiCalls.createDataset(ds);
+				console.log("dataset",ds);		
 		}
 
         // console.log("Mapped Data:", mappedData); // Alle gemappten Daten
@@ -275,6 +287,9 @@ async function createAllDatasets (metadataStructureId: number, entityTemplateId:
 	function sortData(columns: any, data: any, refColumn: string) {
 		let columnErrors: { [key: string]: any[] } = {};
 		let cellError: errorItem[] = [];
+		let seenKeys = new Set();
+
+		console.log("data",data)
 
 		data.forEach((row: any, rowIndex: number) => {
 			cellError = [];
