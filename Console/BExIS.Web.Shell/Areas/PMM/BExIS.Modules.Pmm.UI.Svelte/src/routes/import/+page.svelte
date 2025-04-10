@@ -5,7 +5,6 @@
 	import {
 		faFileArrowDown,
 		faArrowUpFromBracket,
-		faPlus,
 		faChevronDown,
 		faChevronUp
 	} from '@fortawesome/free-solid-svg-icons';
@@ -22,9 +21,7 @@
 		tableErrorItem,
 	} from './models';
 	import { onMount } from 'svelte';
-
 	import * as apiCalls from './services/apiCalls';
-
 	import mappingJson from "./mapping1.json";
 
 	type dataSetType = {
@@ -33,21 +30,22 @@
     	DataStructureId: number,
     	MetadataStructureId: number,
     	EntityTemplateId: number;
-};
+	};
 
 	let filename: string = '';
 
 	let entities :any[] = [];
 	let transformedArray: any [] = [];
+	let target :number;
 	let tempTitle: string | null = null;
 	let csvInfo: any[] = [];
 	let dataset: dataSetType = {
-    Title: "",
-    Description: "",
-    DataStructureId: 0,
-    MetadataStructureId: 0,
-    EntityTemplateId: 0
-  };
+		Title: "",
+		Description: "",
+		DataStructureId: 0,
+		MetadataStructureId: 0,
+		EntityTemplateId: 0
+  	};
 
 
 	let validData: any[] = [];
@@ -95,33 +93,7 @@
 			id: entity.id,
 			text: entity.name
 		}));
-		// console.log("transofrmden", transformedArray);
-		console.log("entity:",entities);
 	});
-
-	let target :number;
-
-	
-
-	function fillInvalidTableStore(data: any) {
-		
-		// console.time('fillInvalidTableStore');
-		invalidTableStore.set(data);
-		let tableErrorItem: tableErrorItem;
-		let errorItem: errorItem;
-		for (let i: number = 0; i < errors.length; i++) {
-			for (let j: number = 0; j < errors[i].cellErrors.length; j++) {
-				errorItem = errors[i].cellErrors[j];
-				tableErrorItem = {
-					errorType: 'missmatch',
-					errorMsg: errorItem.errorMsg,
-					value: $invalidTableStore[i][errorItem.column]
-				};
-				$invalidTableStore[i][errorItem.column] = tableErrorItem;
-			}
-		}
-		// console.timeEnd('fillInvalidTableStore');
-	}
 
 	function clear() {
 		invalidDataCounter = 0;
@@ -133,10 +105,11 @@
 		showInvalid = false;
 	}
 
-	// upload file and parse to json
 	function handleFileUpload(event: any) {
 		clear();
+
 		let csvData: any;
+
 		isLoading = true;
 		if (event.target.files[0]) {
 			let file: File = event.target.files[0];
@@ -150,27 +123,26 @@
 		}
 	}
 
-	// function that parses csv to json
 	function parseCSVToJson(data: any) {
-		// let Sources = new Set<string>();
 		Papa.parse(data, {
 			header: true,
 			complete: function (results) {
 				let jsonData: any = results.data;
-
+				
 				let codeColumns = Object.keys(jsonData[0]).filter(
 					(key) =>
 						key.trim().toLocaleLowerCase().startsWith('code') &&
 						!['code', 'code present', 'code number'].includes(key.trim().toLowerCase())
 				);
-				sortData(codeColumns, jsonData, 'Code URL');
 
 				let dataColumns = Object.keys(jsonData[0]).filter(
 					(key) =>
 						key.trim().toLocaleLowerCase().startsWith('data') &&
 						!['data present'].includes(key.trim().toLowerCase())
 				);
-				sortData(dataColumns, jsonData, 'Data URL');
+
+				validateRows(jsonData, codeColumns, dataColumns)
+
 				fillInvalidTableStore(invalidData);
 				showInvalid = invalidData.length > 0 ? true : false;
 				validTableStore.set(validData);
@@ -180,8 +152,137 @@
 		});
 	}
 
-	function mapToApiFormat (csvRow: any, mapping: any) 
-	{
+	function validateRows(data: any[], codeColumns: string[], dataColumns: string[]) {
+		let columnErrors: { [key: string]: any[] } = {};
+
+		data.forEach((row: any, rowIndex: number) => {
+			let rowValid = true;
+			let cellError: errorItem[] = [];
+
+			if (!row || Object.values(row).every(val => (val ?? '').toString().trim() === '')) {
+				return;
+			}
+
+			const checkColumns = [
+				{ columns: codeColumns, refColumn: 'Code URL' },
+				{ columns: dataColumns, refColumn: 'Data URL' }
+			];
+
+			checkColumns.forEach(({ columns, refColumn }) => {
+				const ref = row[refColumn];
+				if (!ref) return;
+
+				const commaCount = countCommas(ref);
+
+				if (commaCount === 0) return; // gilt als valide
+
+				columns.forEach((col) => {
+					if (commaCount !== countCommas(row[col])) {
+						cellError.push({
+							column: col,
+							errorMsg: `Number of entries does not match with ${refColumn}`
+						});
+						rowValid = false;
+
+						if (!columnErrors[col]) columnErrors[col] = [];
+						columnErrors[col].push(rowIndex);
+					}
+				});
+			});
+
+			if (rowValid) {
+				validData.push(row);
+			} else {
+				invalidDataCounter++;
+				invalidData.push(row);
+				errors.push({ rowIndex, cellErrors: cellError });
+			}
+			console.log("valid", validData)
+		});
+
+		// Fehlerhafte Spalten konfigurieren
+		[...codeColumns, ...dataColumns].forEach((columnHeader: string) => {
+			if (!columnCfg[columnHeader]) {
+				columnCfg[columnHeader] = {
+					...(columnCfg[columnHeader] || {}),
+					disableFiltering: true,
+					instructions: {
+						renderComponent: error
+					}
+				};
+			}
+		});
+	}
+
+	function countCommas(data: string): number {
+		return data.split(',').length - 1;
+	}
+
+	function fillInvalidTableStore(data: any) {
+		invalidTableStore.set(data);
+		let tableErrorItem: tableErrorItem;
+		let errorItem: errorItem;
+
+		for (let i: number = 0; i < errors.length; i++) {
+			for (let j: number = 0; j < errors[i].cellErrors.length; j++) {
+				errorItem = errors[i].cellErrors[j];
+				tableErrorItem = {
+					errorType: 'missmatch',
+					errorMsg: errorItem.errorMsg,
+					value: $invalidTableStore[i][errorItem.column]
+				};
+				$invalidTableStore[i][errorItem.column] = tableErrorItem;
+			}
+		}
+	}
+
+	function createDownloadLinks() {
+		const validCSVString = Papa.unparse(validData, { delimiter: ',' }); // Ensure comma as separator
+		const blobValid = new Blob([validCSVString], { type: 'text/csv' });
+		downloadLinkValidData = URL.createObjectURL(blobValid);
+
+		// fs.writeFile('valid_data', validData)
+		const validDataJson = JSON.stringify(validData);
+		const blobJson = new Blob([validDataJson], { type: 'application/json' });
+		downloadLinkValidDataAsJson = URL.createObjectURL(blobJson);
+
+		const invalidCSVString = Papa.unparse(invalidData, { delimiter: ',' }); // Ensure comma as separator
+		const blobInvalid = new Blob([invalidCSVString], { type: 'text/csv' });
+		downloadLinkInvalidData = URL.createObjectURL(blobInvalid);
+
+		isLoading = false;
+	}
+
+	function create() {
+		console.log('click');
+		createAllDatasets(dataset.MetadataStructureId, dataset.EntityTemplateId);
+	}
+
+	async function createAllDatasets (metadataStructureId: number, entityTemplateId: number, dataStructureId: number = 0) {
+    	try {
+			let dss : dataSetType[]=[];
+
+			console.log('validData', validData);
+
+			for(const row of validData) {
+				dss.push(mapToApiFormat(row, mappingJson));
+			}
+
+			console.log("datasets",dss);
+
+			for(const ds of dss) {	
+				ds.MetadataStructureId = metadataStructureId;
+				ds.EntityTemplateId = entityTemplateId;
+				ds.DataStructureId = dataStructureId;
+				// console.log("datensätze", ds)
+				let res = await apiCalls.createDataset(ds);	
+			}
+    	} catch (error) {
+        	console.error("Fehler beim Erstellen der Datensätze:", error);
+    	}
+	};
+
+	function mapToApiFormat (csvRow: any, mapping: any) {
 		let ds: dataSetType = {
 			Title: "",
 			Description: "",
@@ -193,8 +294,7 @@
 		mapping.Mappings.forEach((map: any, index: number) => {
 			let sourceField = "";
 			sourceField = map.Source;
-			// console.log("Map Target1:", map.Target);
-			const targetField = map.Target.match(/\$\[['"](.+)['"]\]/)?.[1];  // Extract full path after $
+			// const targetField = map.Target.match(/\$\[['"](.+)['"]\]/)?.[1];  // Extract full path after $
 
 			if (sourceField) 
 			{
@@ -212,162 +312,10 @@
 				{
 					tempTitle = null; // Zurücksetzen für das nächste Paar	
 				}
-										
 			}
 		});
-
- // Das API-Feld
-
-        // if (csvRow[sourceField]) {
-        //     apiData[targetField] = csvRow[sourceField];
-        //     console.log(`Mapping - Source: ${sourceField}, Target: ${targetField}, Value: ${csvRow[sourceField]}`);
-        // }
     	return ds;	
     }
-
-function onChangeHandler(event) {
-	let selectedEntity: number;
-	selectedEntity = event.target.value;
-
-	let searchEntity = entities.find(entity => entity.id == selectedEntity)
-
-	dataset.EntityTemplateId = selectedEntity;
-	dataset.MetadataStructureId = searchEntity.metadataStructure.id;
-	// console.log("dataset", dataset)
-
-}
-function create()
-{
-	console.log('click');
-	createAllDatasets(dataset.MetadataStructureId, dataset.EntityTemplateId);
-}
-
-async function createAllDatasets (metadataStructureId: number, entityTemplateId: number, dataStructureId: number = 0)
-{
-
-    try {
-		let dss : dataSetType[]=[];
-
-		console.log('validData', validData);
-		for(const row of validData)
-		{
-			
-			dss.push(mapToApiFormat(row, mappingJson));
-		
-        }
-		console.log("datasets",dss);
-		for(const ds of dss)
-		{
-			// console.log("title",data.title)
-			// console.log("",data[0][1])
-			
-				ds.MetadataStructureId = metadataStructureId;
-				ds.EntityTemplateId = entityTemplateId;
-				ds.DataStructureId = dataStructureId;
-				// res = await apiCalls.createDataset(ds);
-				console.log("dataset",ds);		
-		}
-
-        // console.log("Mapped Data:", mappedData); // Alle gemappten Daten
-
-        // await Promise.all(mappedData.map(dataset => apiCalls.createDataset(dataset)));
-
-        console.log("Alle Datensätze wurden erstellt!");
-    } catch (error) {
-        console.error("Fehler beim Erstellen der Datensätze:", error);
-    }
-};
-
-	
-	function countCommas(data: string): number {
-		return data.split(',').length - 1;
-	}
-
-	// sort data in 2 different files, 1 with vaild data and 1 with invalid data
-	function sortData(columns: any, data: any, refColumn: string) {
-		let columnErrors: { [key: string]: any[] } = {};
-		let cellError: errorItem[] = [];
-		let seenKeys = new Set();
-
-		console.log("data",data)
-
-		data.forEach((row: any, rowIndex: number) => {
-			cellError = [];
-			const ref: string = row[refColumn];
-			if (ref) {
-				if (countCommas(ref) == 0) {
-					validData.push(row);
-				} else {
-					let numberOfCommas: number = countCommas(ref);
-					let valid: boolean = true;
-
-					for (let i = 0; i < columns.length; i++) {
-						if (numberOfCommas != countCommas(row[columns[i]])) {
-							cellError.push({
-								column: columns[i],
-								errorMsg: 'Number of entries dose not match with Data URL'
-							});
-							valid = false;
-
-							if (!columnErrors[columns[i]]) {
-								columnErrors[columns[i]] = [];
-							}
-							columnErrors[columns[i]].push(rowIndex);
-						}
-					}
-
-					if (!valid) {
-						let contains: boolean = false;
-						for (let i = 0; i < errors.length; i++) {
-							if (rowIndex == errors[i].rowIndex) {
-								errors[i].cellErrors.concat(cellError);
-								contains = true;
-								break;
-							}
-						}
-						if (!contains) {
-							invalidDataCounter++;
-							invalidData.push(row);
-							errors.push({ rowIndex: rowIndex, cellErrors: cellError });
-						}
-					} else {
-						validData.push(row);
-					}
-				}
-			}
-		});
-
-		columns.forEach((columnHeader: string) => {
-			if (!columnCfg[columnHeader]) {
-				// WenncolumnsWithError eine Spalte bereits existiert, füge den renderComponent hinzu
-				columnCfg[columnHeader] = {
-					...(columnCfg[columnHeader] || {}),
-					disableFiltering: true,
-					instructions: {
-						renderComponent: error // Setzt den error renderComponent für diese Spalte
-					}
-				};
-			}
-		});
-	}
-
-	// parse json back to csv and create download links
-	function createDownloadLinks() {
-		const validCSVString = Papa.unparse(validData, { delimiter: ',' }); // Ensure comma as separator
-		const blobValid = new Blob([validCSVString], { type: 'text/csv' });
-		downloadLinkValidData = URL.createObjectURL(blobValid);
-
-		// fs.writeFile('valid_data', validData)
-		const validDataJson = JSON.stringify(validData);
-		const blobJson = new Blob([validDataJson], { type: 'application/json' });
-		downloadLinkValidDataAsJson = URL.createObjectURL(blobJson);
-
-		const invalidCSVString = Papa.unparse(invalidData, { delimiter: ',' }); // Ensure comma as separator
-		const blobInvalid = new Blob([invalidCSVString], { type: 'text/csv' });
-		downloadLinkInvalidData = URL.createObjectURL(blobInvalid);
-
-		isLoading = false;
-	}
 
 	// function downloadValidData() {
 	// 	const link = document.createElement('a');
@@ -388,6 +336,16 @@ async function createAllDatasets (metadataStructureId: number, entityTemplateId:
 		link.href = downloadLinkInvalidData;
 		link.download = 'invalid__data.csv';
 		link.click();
+	}
+
+	function onChangeHandler(event) {
+		let selectedEntity: number;
+		selectedEntity = event.target.value;
+
+		let searchEntity = entities.find(entity => entity.id == selectedEntity)
+
+		dataset.EntityTemplateId = selectedEntity;
+		dataset.MetadataStructureId = searchEntity.metadataStructure.id;
 	}
 
 	function toggleValidForm() {
