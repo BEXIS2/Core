@@ -11,7 +11,17 @@
 		entity: string;
 		date: string;
 		entitytemplate: string;
-	} = { title: '', description: '', author: '', license: '', id: '', doi: '', entity: '', date:'', entitytemplate:'' };
+	} = {
+		title: '',
+		description: '',
+		author: '',
+		license: '',
+		id: '',
+		doi: '',
+		entity: '',
+		date: '',
+		entitytemplate: ''
+	};
 
 	const { title, description, author, license, id, doi, entity, date, entitytemplate } = card;
 
@@ -76,17 +86,22 @@
 		<div class="flex flex-col w-full gap-4">
 			<div class="justify-between flex gap-2">
 				<h1 class="text-xl font-semibold grow">
-					{#if title && title.length > 0} 
-					{title} 
-					{/if}</h1>
-					<span class="chip"></span>
+					{#if title && title.length > 0}
+						{title}
+					{/if}
+				</h1>
+				<span class="chip"></span>
 				<p class="shrink">
-					{#if date && date.length > 0} {date} {/if}
+					{#if date && date.length > 0}
+						{date}
+					{/if}
 				</p>
 			</div>
 
 			<p class="text-sm line-clamp-3">
-				{#if description && description.length > 0} {description} {/if}
+				{#if description && description.length > 0}
+					{description}
+				{/if}
 			</p>
 			{#if author.length > 0}
 				<div title="Author" class="flex gap-2 items-center">
@@ -104,25 +119,26 @@
 					{/if}
 				</div>
 				<div class="ml-auto flex gap-2">
-		
 					{#if entitytemplate && entitytemplate.length > 0}
 						<div title="Entity Template" class="rounded-full px-3 p-1 bg-primary-500">
-							<span class="text-sm font-semibold text-on-secondary-token">{entitytemplate.toLowerCase()}</span>
+							<span class="text-sm font-semibold text-on-secondary-token"
+								>{entitytemplate.toLowerCase()}</span
+							>
 						</div>
 					{/if}
 
 					{#if entity && entity.length > 0}
 						<div title="Entity" class="rounded-full px-3 p-1 bg-primary-500">
-							<span class="text-sm font-semibold text-on-secondary-token">{entity.toLowerCase()}</span>
+							<span class="text-sm font-semibold text-on-secondary-token"
+								>{entity.toLowerCase()}</span
+							>
 						</div>
 					{/if}
 
-					{#if doi && doi.length > 0} 
-					<div title="DOI" class="rounded-full px-3 p-1 items-center flex bg-secondary-500">
-						<span class="text-sm font-semibold text-on-secondary-token">
-							doi
-						</span>
-					</div>
+					{#if doi && doi.length > 0}
+						<div title="DOI" class="rounded-full px-3 p-1 items-center flex bg-secondary-500">
+							<span class="text-sm font-semibold text-on-secondary-token"> doi </span>
+						</div>
 					{/if}
 				</div>
 			</div>

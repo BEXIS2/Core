@@ -28,7 +28,6 @@
 		data: variableStore,
 		defaultPageSize: 5,
 
-	
 		columns: {
 			id: {
 				fixedWidth: 100

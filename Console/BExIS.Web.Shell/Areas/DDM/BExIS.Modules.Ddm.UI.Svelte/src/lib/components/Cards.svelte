@@ -39,7 +39,7 @@
 				entity: card.entity || '',
 				doi: card.doi || '',
 				date: card.date || '',
-				entitytemplate: card.entitytemplate || '',
+				entitytemplate: card.entitytemplate || ''
 			}}
 		/>
 	{/each}

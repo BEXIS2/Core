@@ -17,39 +17,36 @@
 	export let asciiFileReaderInfo: asciiFileReaderInfoType;
 
 	let loading: boolean = false;
-  let fileReaderInfoIsSet: boolean = isSet(asciiFileReaderInfo);
-  console.log("🚀 ~ fileReaderInfoIsSet:", fileReaderInfoIsSet);
-  let style: string = fileReaderInfoIsSet ? 'success' : 'warning';
-  let open: boolean = !fileReaderInfoIsSet;
-
+	let fileReaderInfoIsSet: boolean = isSet(asciiFileReaderInfo);
+	console.log('🚀 ~ fileReaderInfoIsSet:', fileReaderInfoIsSet);
+	let style: string = fileReaderInfoIsSet ? 'success' : 'warning';
+	let open: boolean = !fileReaderInfoIsSet;
 
 	export let target: string | undefined = undefined;
-  $: target;
-  let model: DataStructureCreationModel | null;
-  $: model;
-  let list: string[] = [];
-  $: list, update(readableFiles);
-
+	$: target;
+	let model: DataStructureCreationModel | null;
+	$: model;
+	let list: string[] = [];
+	$: list, update(readableFiles);
 
 	function update(files) {
-    loading = true;
-    list = files.map((f) => f.name);
-    target = undefined;
-    loading = false;
-  }
+		loading = true;
+		list = files.map((f) => f.name);
+		target = undefined;
+		loading = false;
+	}
 
-	
 	function isSet(type: any): boolean {
-    if (type === undefined) {
-      return false;
-    }
+		if (type === undefined) {
+			return false;
+		}
 
-    if (type.cells == undefined || type.cells.length == 0) {
-      return false;
-    }
+		if (type.cells == undefined || type.cells.length == 0) {
+			return false;
+		}
 
-    return true;
-  }
+		return true;
+	}
 
 	async function selectFile(e) {
 		console.log('file reader select file', e.detail.value);
@@ -69,19 +66,17 @@
 			}
 		}
 	}
-
-
 </script>
 
 <b>File Reader Information for tabular data import</b>
 <div class="card shadow-sm border-{style}-600 border-solid border">
 	<Accordion {open}>
-		<AccordionItem >
+		<AccordionItem>
 			<svelte:fragment slot="summary">
 				{#if fileReaderInfoIsSet}
-						<span class="variant-filled-surface text-{style}-500"><Fa icon={faCheck} /></span>
-					{:else}
-						<span class="text-success-900"><Fa icon={faXmark} /></span>
+					<span class="variant-filled-surface text-{style}-500"><Fa icon={faCheck} /></span>
+				{:else}
+					<span class="text-success-900"><Fa icon={faXmark} /></span>
 				{/if}
 			</svelte:fragment>
 			<svelte:fragment slot="lead">Defined</svelte:fragment>

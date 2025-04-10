@@ -14,7 +14,6 @@
 
 	import { ListBox, ListBoxItem } from '@skeletonlabs/skeleton';
 
-
 	onMount(async () => {
 		// module = await getModuleByName('sam');
 	});
@@ -73,10 +72,10 @@
 
 	let module: string = 'shell';
 
-	let links:linkType[] = [
+	let links: linkType[] = [
 		{
 			label: 'Manual',
-			url: '/home/docs/Configuration#configuration-ui',
+			url: '/home/docs/Configuration#configuration-ui'
 		}
 	];
 </script>

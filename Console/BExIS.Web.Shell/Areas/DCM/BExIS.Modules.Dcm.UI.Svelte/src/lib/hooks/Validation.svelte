@@ -11,7 +11,7 @@
 		latestSubmitDate,
 		latestValidationDate
 	} from '../../routes/edit/stores';
-	
+
 	import { hooksStatus } from '../../routes/edit/stores';
 	import { onMount } from 'svelte';
 
@@ -69,12 +69,10 @@
 	});
 
 	async function reload(type) {
-	
-			model = null;
-			model = await getHookStart(start, id, version);
-			console.log('validation end', model);
-			latestValidationDate.set(Date.now());
-		
+		model = null;
+		model = await getHookStart(start, id, version);
+		console.log('validation end', model);
+		latestValidationDate.set(Date.now());
 	}
 </script>
 
@@ -83,7 +81,11 @@
 {:then a}
 	{#if model && model.fileResults}
 		{#each model.fileResults as fileResult}
-			<ValidationResult bind:sortedErrors={fileResult.sortedErrors} bind:sortedWarnings={fileResult.sortedWarnings} bind:file={fileResult.file} />
+			<ValidationResult
+				bind:sortedErrors={fileResult.sortedErrors}
+				bind:sortedWarnings={fileResult.sortedWarnings}
+				bind:file={fileResult.file}
+			/>
 		{/each}
 	{/if}
 {:catch error}

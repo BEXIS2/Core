@@ -101,14 +101,13 @@
 
 		<HookContainer {...dataHook} let:successHandler let:warningHandler let:dateChanged>
 			<div>
-				<Data 			
-				{id}
-				{version}
-				hook={dataHook}
-				on:success={(e) => successHandler(e)}
-				on:warning={(e) => warningHandler(e)}
+				<Data
+					{id}
+					{version}
+					hook={dataHook}
+					on:success={(e) => successHandler(e)}
+					on:warning={(e) => warningHandler(e)}
 				/>
-	
 			</div>
 		</HookContainer>
 
