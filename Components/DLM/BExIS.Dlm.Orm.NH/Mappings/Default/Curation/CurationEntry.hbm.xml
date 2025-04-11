@@ -81,7 +81,7 @@
 
 	  <!--Notes-->
 	  
-	<set name="Notes" inverse="false" lazy="false" cascade="all-delete-orphan">
+	<set name="Notes" inverse="false" lazy="false" cascade="all">
 		<key>
 		<column name="CurationEntryRef" />
 		</key>

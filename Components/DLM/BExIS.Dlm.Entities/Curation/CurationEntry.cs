@@ -2,6 +2,7 @@
 using BExIS.Security.Entities.Subjects;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.Curation
@@ -29,7 +30,7 @@ namespace BExIS.Dlm.Entities.Curation
             LastChangeDatetime_Curator = DateTime.MinValue;
         }
 
-        public CurationEntry(string topic, CurationEntryType type, Dataset dataset, string name, string description, string solution, int position, string source, IEnumerable<CurationNote> notes, DateTime creationDate, User creator, bool userlsDone, bool isApproved)
+        public CurationEntry(string topic, CurationEntryType type, Dataset dataset, string name, string description, string solution, int position, string source, IEnumerable<CurationNote> notes, DateTime creationDate, User creator, bool userlsDone, bool isApproved, DateTime lastChangeDatetime_User, DateTime lastChangeDatetime_Curator)
         {
             Id = 0;
             Topic = topic;
@@ -45,6 +46,8 @@ namespace BExIS.Dlm.Entities.Curation
             Creator = creator;
             UserlsDone = userlsDone;
             IsApproved = isApproved;
+            LastChangeDatetime_User = lastChangeDatetime_User;
+            LastChangeDatetime_Curator = lastChangeDatetime_Curator;
         }
 
         public virtual string Topic { get; set; }
@@ -62,6 +65,14 @@ namespace BExIS.Dlm.Entities.Curation
         public virtual bool IsApproved { get; set; }
         public virtual DateTime LastChangeDatetime_User { get; set; }
         public virtual DateTime LastChangeDatetime_Curator { get; set; }
+        public static CurationUserType GetCurationUserType(User user)
+        {
+            if (user.Groups.Any(g => g.Name.Equals("curator", StringComparison.CurrentCultureIgnoreCase)))
+            {
+                return CurationUserType.Curator;
+            }
+            return CurationUserType.User;
+        }
     }
 
     #region curation types
@@ -69,6 +80,7 @@ namespace BExIS.Dlm.Entities.Curation
     public enum CurationEntryType
     { 
         None,
+        StatusEntryItem,
         MetadataEntryItem,
         PrimaryDataEntryItem,
         DatastrutcureEntryItem

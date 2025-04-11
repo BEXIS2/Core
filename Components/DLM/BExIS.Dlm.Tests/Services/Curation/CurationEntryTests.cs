@@ -94,22 +94,22 @@ namespace BExIS.Dlm.Tests.Services.Curation
                 var user = userManager.Users.FirstOrDefault();
 
                 var curationEntry = curationEntryManager.Create(
-                    "Test", 
+                    "Test Topic", 
                     CurationEntryType.None, 
-                    ds.Id, "Test", "Test", "Test", 1, "Test", new List<CurationNote>(), user.Id, false, false);
+                    ds.Id, "Test Name", "Test Description", "Test Solution", 1, "Test Source", new List<CurationNote>(), false, false, user);
 
 
                 //Assert
                 curationEntry.Should().NotBeNull();
                 curationEntry.Id.Should().BeGreaterThan(0);
-                curationEntry.Topic.Should().Be("Test");
+                curationEntry.Topic.Should().Be("Test Topic");
                 curationEntry.Type.Should().Be(CurationEntryType.None);
                 curationEntry.Dataset.Should().Be(ds);
-                curationEntry.Name.Should().Be("Test");
-                curationEntry.Description.Should().Be("Test");
-                curationEntry.Solution.Should().Be("Test");
+                curationEntry.Name.Should().Be("Test Name");
+                curationEntry.Description.Should().Be("Test Description");
+                curationEntry.Solution.Should().Be("Test Solution");
                 curationEntry.Position.Should().Be(1);
-                curationEntry.Source.Should().Be("Test");
+                curationEntry.Source.Should().Be("Test Source");
                 curationEntry.Notes.Should().NotBeNull();
   
                 curationEntry.UserlsDone.Should().BeFalse();
@@ -132,9 +132,9 @@ namespace BExIS.Dlm.Tests.Services.Curation
                 var user = userManager.Users.FirstOrDefault();
 
                 var curationEntry = curationEntryManager.Create(
-                    "Test",
+                    "Test Topic",
                     CurationEntryType.None,
-                    ds.Id, "Test", "Test", "Test", 1, "Test", new List<CurationNote>(), user.Id, false, false);
+                    ds.Id, "Test Name", "Test Description", "Test Solution", 1, "Test Source", new List<CurationNote>(), false, false, user);
 
 
                 //Assert

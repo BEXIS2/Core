@@ -1,14 +1,14 @@
 ﻿using BExIS.Dlm.Entities.Curation;
 using BExIS.Dlm.Entities.Data;
-using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.ExceptionServices;
 using Vaiona.Persistence.Api;
-using Vaiona.Utils.Cfg;
 
 namespace BExIS.Dlm.Services.Curation
 {
@@ -33,36 +33,49 @@ namespace BExIS.Dlm.Services.Curation
 
         public IReadOnlyRepository<CurationEntry> CurationEntryRepository { get; }
 
-        public CurationEntry Create(string topic, CurationEntryType type, long datasetId, string name, string description, string solution, int position, string source, IEnumerable<CurationNote> notes, long creatorId, bool userlsDone, bool isApproved)
+        public CurationEntry Create(string topic, CurationEntryType type, long datasetId, string name, string description, string solution, int position, string source, IEnumerable<CurationNote> notes, bool userlsDone, bool isApproved, User user)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "name is empty but is required.");
             if (string.IsNullOrEmpty(source)) throw new ArgumentNullException(nameof(source), "source is empty but is required.");
+
+            DateTime lastChangeDatetime_User;
+            DateTime lastChangeDatetime_Curator;
+
+            if (CurationEntry.GetCurationUserType(user) == CurationUserType.Curator)
+            {
+                lastChangeDatetime_User = DateTime.MinValue;
+                lastChangeDatetime_Curator = DateTime.Now;
+            } 
+            else
+            {
+                lastChangeDatetime_User = DateTime.Now;
+                lastChangeDatetime_Curator = DateTime.MinValue;
+            }
 
             using (var uow = this.GetUnitOfWork())
             {
                 var repo = uow.GetRepository<CurationEntry>();
                 var repoDataset = uow.GetRepository<Dataset>();
-                var repoUser = uow.GetRepository<User>();
 
-                var ds = repoDataset.Get(datasetId);
-                var creator = repoUser.Get().FirstOrDefault();
+                var dataset = repoDataset.Get(datasetId);
 
                 CurationEntry curationEntry = new CurationEntry(
-                   topic,
-                   type,
-                   ds,
-                   name,
-                   description,
-                   solution,
-                   position,
-                   source,
-                   notes,
-                   DateTime.Now,
-                   creator,
-                   userlsDone,
-                   isApproved
-                   );
-
+                    topic,
+                    type,
+                    dataset,
+                    name,
+                    description,
+                    solution,
+                    position,
+                    source,
+                    notes,
+                    DateTime.Now,
+                    user,
+                    userlsDone,
+                    isApproved,
+                    lastChangeDatetime_User,
+                    lastChangeDatetime_Curator
+                );
 
                 repo.Put(curationEntry);
                 uow.Commit();
@@ -71,26 +84,68 @@ namespace BExIS.Dlm.Services.Curation
             }
         }
 
-        public CurationEntry Update(long id, string topic, string name, string description, string solution, int position, string source, IEnumerable<CurationNote> notes, bool userlsDone, bool isApproved )
+        public CurationEntry Update(long id, string topic, string name, string description, string solution, int position, string source, IEnumerable<CurationNote> notes, bool userlsDone, bool isApproved, User user)
         {
-          
-            if (id <= 0) throw new ArgumentException("id must be greater then 0.");
+            if (id <= 0) throw new ArgumentException("id must be greater than 0.");
+
+            var isCurator = CurationEntry.GetCurationUserType(user) == CurationUserType.Curator;
 
             using (var uow = this.GetUnitOfWork())
             {
-                var repo = uow.GetRepository<CurationEntry>();
+                var repoEntries = uow.GetRepository<CurationEntry>();
+                var repoNotes = uow.GetRepository<CurationNote>();
 
-                var merged = repo.Get(id);
-                merged.Topic = topic;
-                merged.Name = name;
-                merged.Description = description;
-                merged.Solution = solution;
-                merged.Position = position;
-                merged.Source = source;
-                merged.Notes = notes;
+                var merged = repoEntries.Get(id);
+
+                var currentNotes = merged.Notes.ToList();
+                
+                var incomingIds = new HashSet<long>(notes.Select(n => n.Id));
+                incomingIds.Remove(0);
+                var deletedNotes = merged.Notes.Where(n => !incomingIds.Contains(n.Id)).ToList();
+                foreach (var note in deletedNotes)
+                {
+                    // if (user.Id != note.User.Id) continue; // do not delete notes from other users
+                    currentNotes.Remove(note);
+                    repoNotes.Delete(note);
+                }
+
+                foreach (var incomingNote in notes)
+                {
+                    var existingNote = currentNotes.FirstOrDefault(n => n.Id == incomingNote.Id);
+                    if (incomingNote.Id == 0 || existingNote == null)
+                    {
+                        var newNote = new CurationNote(user, incomingNote.Comment);
+                        currentNotes.Add(newNote);
+                    }
+                    else
+                    {
+                        // if (user.Id != existingNote.User.Id) continue; // do not change notes from other users
+                        existingNote.Comment = incomingNote.Comment;
+                    }
+                }
+
                 merged.UserlsDone = userlsDone;
+                merged.Notes = currentNotes;
 
-                repo.Put(merged);
+                if (isCurator)
+                {
+                    merged.Topic = topic;
+                    merged.Name = name;
+                    merged.Description = description;
+                    merged.Solution = solution;
+                    merged.Position = position;
+                    merged.Source = source;
+                    merged.LastChangeDatetime_Curator = DateTime.Now;
+                    merged.IsApproved = isApproved;
+                }
+                else
+                {
+                    merged.LastChangeDatetime_User = DateTime.Now;
+                    if (!isApproved) merged.IsApproved = isApproved;
+                }
+                
+
+                repoEntries.Put(merged);
                 uow.Commit();
 
                 return merged;
@@ -114,7 +169,7 @@ namespace BExIS.Dlm.Services.Curation
 
         public CurationEntry AddNote(long id, CurationNote note)
         {
-            if (id <= 0) throw new ArgumentException("id must be greater then 0.");
+            if (id <= 0) throw new ArgumentException("id must be greater than 0.");
             if (note == null) throw new ArgumentException("note is required");
 
 
@@ -138,8 +193,7 @@ namespace BExIS.Dlm.Services.Curation
 
         public CurationEntry DeleteNote(long id, long noteId)
         {
-            if (id <= 0) throw new ArgumentException("id must be greater then 0.");
-            if (noteId == null) throw new ArgumentException("noteId must be greater then 0.");
+            if (id <= 0) throw new ArgumentException("id must be greater than 0.");
 
 
             using (var uow = this.GetUnitOfWork())
@@ -174,8 +228,7 @@ namespace BExIS.Dlm.Services.Curation
             {
                 if (disposing)
                 {
-                    if (_guow != null)
-                        _guow.Dispose();
+                    _guow?.Dispose();
                     _isDisposed = true;
                 }
             }
