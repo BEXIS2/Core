@@ -1019,7 +1019,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             //RemoveFromXml(pStepModelHelper.XPath, entityId);
 
-            //update stepModel to parentStepModel
+            //update stepModel to parentSte5pModel
             for (var i = 0; i < pStepModelHelper.Childrens.Count; i++)
             {
                 var c = pStepModelHelper.Childrens.ElementAt(i);
@@ -1030,7 +1030,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     cStepModelHelper.Activated = pStepModelHelper.ChoiceMax <= 1? false :true;
 
                 if(cStepModelHelper.StepId.Equals(id)) cStepModelHelper.Activated = true;
-
+     
 
                 if (!cStepModelHelper.Activated)
                 {
@@ -1062,6 +1062,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         cStepModelHelper = getChildModelsHelper(cStepModelHelper, TaskManager);
                        
                         setStepModelActive(cStepModelHelper);
+
+                        // wenn das cStepModelHelper (usage) activiert wird und das objekt required ist, dann muss der type auch aktiviert werden.
+                        if (cStepModelHelper.Model.MinCardinality > 0 && cStepModelHelper.Childrens.Any())
+                        {
+                            var instance = cStepModelHelper.Childrens.FirstOrDefault();
+                            if (instance != null) instance.Activated = true;
+                        }
+
                     }
                 }
             }
@@ -1100,13 +1108,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         RemoveFromXml(cStepModelHelper.XPath, entityId);
                         cleanMetadataAttributes(cStepModelHelper);
-
+                       
 
                     }
                     cStepModelHelper.Activated = false;
+
+                    var stepInfo = cStepModelHelper.Model.StepInfo.Children.FirstOrDefault(s=> s.Id.Equals(id));
+                    cStepModelHelper.Model.StepInfo.Children = new List<StepInfo>();
+                    cStepModelHelper.Childrens = new List<StepModelHelper>();
+
+                    //cStepModelHelper.Model = null;
                 }
-                // if only one choice is possible, reset all active steps before
-                cStepModelHelper.Activated = pStepModelHelper.ChoiceMax <= 1 ? true : cStepModelHelper.StepId.Equals(id);
+                //else
+                //{
+                //    // if only one choice is possible, reset all active steps before
+                //    cStepModelHelper.Activated = pStepModelHelper.ChoiceMax <= 1 ? true : cStepModelHelper.StepId.Equals(id);
+                //}
 
             }
 
@@ -2503,6 +2520,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
 
                     childStepModelHelper = getChildModelsHelper(childStepModelHelper, taskManager);
+
+                    //check if the child step model helper is already in the list and activates
+                    // if the usage is active and themin cardinality is 1, also activate the types
+                    if (childStepModelHelper.Model.MinCardinality == 1)
+                        childStepModelHelper.Childrens.ForEach(c => c.Activated = true);
 
                     if(!stepModelHelper.Childrens.Any(c=> c.UsageId.Equals(childStepModelHelper.UsageId) && c.Number.Equals(childStepModelHelper.Number)))
                         stepModelHelper.Childrens.Add(childStepModelHelper);

@@ -741,6 +741,20 @@ namespace BExIS.Xml.Helpers
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static XAttribute GetXAttributeByXPath(string xpath, XDocument xDoc)
+        {
+            var tmp =  (IEnumerable<object>)xDoc.XPathEvaluate(xpath.Replace(" ", string.Empty));
+            var x = tmp.FirstOrDefault();
+            return x as XAttribute;
+        }
+
+        /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
