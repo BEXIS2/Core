@@ -107,6 +107,14 @@
       "description": "if the template support is activated, then empty unit & datatype fields with information from the template are set when the data structure is created.",
       "type": "Boolean",
       "options": []
+    },
+    {
+      "key": "updateDescriptionByTemplate",
+      "title": "Update Variable Description by Template selection",
+      "value": true,
+      "description": "if this setting is activated, then empty description field from the template is set when is suggested or selected.",
+      "type": "Boolean",
+      "options": []
     }
   ]
 }

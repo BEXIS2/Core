@@ -13,6 +13,7 @@ using BExIS.Security.Services.Subjects;
 using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
 using BExIS.UI.Models;
+using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -116,9 +117,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<ListItem> tmp = new List<ListItem>();
             using (var metadataStrutcureManager = new MetadataStructureManager())
             {
-                foreach (var entity in metadataStrutcureManager.Repo.Get())
+                foreach (var metadataStructure in metadataStrutcureManager.Repo.Get())
                 {
-                    tmp.Add(new ListItem(entity.Id, entity.Name));
+                    var xmlDatasetHelper = new XmlDatasetHelper();
+                    var entity = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStructure.Id);
+
+                    tmp.Add(new ListItem(metadataStructure.Id, metadataStructure.Name, entity));
                 }
             }
 

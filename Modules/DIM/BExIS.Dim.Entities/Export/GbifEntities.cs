@@ -61,6 +61,17 @@ namespace BExIS.Dim.Entities.Export.GBIF
         public string Title { get; set; }
     }
 
+
+    public class GbifGetDatasetResponce
+    {
+        [JsonProperty("key")]
+        public string Key { get; set; }
+
+        [JsonProperty("doi")]
+        public string DOI { get; set; }
+
+    }
+
     public class GbifAddEndpointRequest
     {
         [JsonProperty("url")]

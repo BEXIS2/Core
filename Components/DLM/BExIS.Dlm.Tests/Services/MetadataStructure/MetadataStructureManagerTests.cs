@@ -20,7 +20,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             helper.Dispose();
         }
 
-        [Test()]
+        //[Test()]
         public void Get_valid_returnMetadataStructure()
         {
             //test

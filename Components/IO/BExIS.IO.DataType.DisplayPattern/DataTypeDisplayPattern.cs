@@ -37,6 +37,9 @@ namespace BExIS.IO.DataType.DisplayPattern
             new DataTypeDisplayPattern() {Id=23, Systemtype = DataTypeCode.DateTime,   Name = "M/d/yyyy h:mm:ss tt",             ExcelPattern=@"M\/d\/yyyy hh:mm:ss tt",                  DisplayPattern="M/d/yyyy h:mm:ss tt",                        StringPattern = "M/d/yyyy h:mm:ss tt", RegexPattern = null},
             new DataTypeDisplayPattern() {Id=24, Systemtype = DataTypeCode.DateTime,   Name = "DateTimeIso without T",       ExcelPattern=@"yyyy-MM-dd hh:mm:ss", DisplayPattern = "yyyy-MM-dd hh:mm:ss",     StringPattern = "yyyy-MM-dd HH:mm:ss",      RegexPattern = null},
             new DataTypeDisplayPattern() {Id=25,Systemtype = DataTypeCode.DateTime,   Name = "DateEu with time",            ExcelPattern=@"dd\.MM\.yyyy hh:mm:ss",          DisplayPattern="dd.MM.yyyy hh:mm:ss",                StringPattern = "dd.MM.yyyy hh:mm:ss",              RegexPattern = null},
+            new DataTypeDisplayPattern() {Id=26,Systemtype = DataTypeCode.DateTime,   Name = "Hour",            ExcelPattern=@"HH",          DisplayPattern="HH",                StringPattern = "HH",              RegexPattern = null},
+            new DataTypeDisplayPattern() {Id=27,Systemtype = DataTypeCode.DateTime,   Name = "Minute",            ExcelPattern=@"mm",          DisplayPattern="mm",                StringPattern = "mm",              RegexPattern = null},
+            new DataTypeDisplayPattern() {Id=28,Systemtype = DataTypeCode.DateTime,   Name = "Secound",            ExcelPattern=@"ss",          DisplayPattern="ss",                StringPattern = "ss",              RegexPattern = null}
         };
 
         public DataTypeCode Systemtype { get; set; }

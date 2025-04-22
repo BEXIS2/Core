@@ -108,8 +108,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var errors = asyncUploadHelper.FinishUpload(id, AuditActionType.Edit, model.StructureId).Result;
                 responce.Errors = EditHelper.SortFileErrors(errors);
                 responce.Success = responce.Errors.Any() ? false : true;
-
-
             }
 
             // load settings

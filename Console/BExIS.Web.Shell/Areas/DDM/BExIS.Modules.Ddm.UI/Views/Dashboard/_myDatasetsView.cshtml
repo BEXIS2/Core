@@ -2,7 +2,7 @@
 
 @model List<MyDatasetsModel>
 
-@{ 
+@{
     bool use_tags = false;
 
     if (ViewData["use_tags"] != null)
@@ -41,19 +41,19 @@
                 <a class="bx bx-grid-function bx-show" href="/ddm/Data/Show/@m.Id" target="_blank" title="View details" style="text-decoration: none;"> </a>
                 @if (m.IsOwn)
                 {
-                    <a class="bx bx-grid-function bx-copy" href="/dcm/create/copy?id=@m.Id" target="_blank" title="Copy " style="text-decoration: none;"> </a>
-
                     <a class="bx bx-grid-function bx-edit" href="/dcm/edit/?id=@m.Id" target="_blank" title="Edit " style="text-decoration: none;"> </a>
+
+                    <a class="bx bx-grid-function bx-copy" href="/dcm/create/copy?id=@m.Id" target="_blank" title="Copy " style="text-decoration: none;"> </a>
 
                     if (use_tags)
                     {
                         <a class="bx bx-grid-function fa-tag" href="/ddm/taginfo/?id=@m.Id" target="_blank" title="Tags " style="text-decoration: none;"> </a>
                     }
 
-                    if (m.Type == "tabular")
+                   @* if (m.Type == "tabular")
                     {
                         <a class="bx bx-grid-function fa-bars" href="/dcm/test/?id=@m.Id" target="_blank" title="Show data (BETA)" style="text-decoration: none;"> </a>
-                    }
+                    }*@
                 }
             </td>
         </tr>

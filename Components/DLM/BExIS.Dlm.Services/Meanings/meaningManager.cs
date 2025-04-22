@@ -6,11 +6,12 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.Meanings
 {
-    public class MeaningManager : IMeaningManager, IDisposable
+    public class MeaningManager : IDisposable
     {
         // Track whether Dispose has been called.
         private bool disposedValue;
@@ -59,10 +60,19 @@ namespace BExIS.Dlm.Services.Meanings
             }
         }
 
-        public Meaning AddMeaning(string Name, String ShortName, String Description, bool selectable, bool approved, List<MeaningEntry> externalLinks, List<long> meaning_ids, List<long> constraint_ids)
+        public Meaning AddMeaning(string name, String shortName, String description, bool selectable, bool approved, List<MeaningEntry> externalLinks, List<long> meaning_ids, List<long> constraint_ids)
         {
             Contract.Requires(externalLinks != null);
             Contract.Requires(GetWrongMappings(externalLinks).Count() == 0);
+
+            Meaning meaning = new Meaning() 
+            {
+                Name = name,
+                ShortName = shortName,
+                Description = description,
+                Selectable = selectable,
+                Approved = approved
+            };
             try
             {
                 using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -80,16 +90,18 @@ namespace BExIS.Dlm.Services.Meanings
                     List<Meaning> related_meanings = new List<Meaning>();
                     if (meaning_ids != null)
                     {
-                        related_meanings = (List<Meaning>)repo.Get().Where(x => meaning_ids.Contains(x.Id)).ToList<Meaning>();
+                        related_meanings = repo.Get().Where(x => meaning_ids.Contains(x.Id)).ToList();
                     }
 
                     List<Constraint> constraints = new List<Constraint>();
                     if (constraint_ids != null)
                     {
-                        constraints = repoConstraints.Get().Where(x => constraint_ids.Contains(x.Id)).ToList<Constraint>();
+                        constraints = repoConstraints.Get().Where(x => constraint_ids.Contains(x.Id)).ToList();
                     }
 
-                    Meaning meaning = new Meaning(Name, ShortName, Description, selectable, approved, externalLinks, related_meanings, constraints);
+                    meaning.ExternalLinks = externalLinks;
+                    meaning.Related_meaning = related_meanings;
+                    meaning.Constraints = constraints;
 
                     repo.Put(meaning);
                     uow.Commit();
@@ -154,10 +166,29 @@ namespace BExIS.Dlm.Services.Meanings
 
         public Meaning EditMeaning(Meaning meaning)
         {
-            return EditMeaning(meaning.Id, meaning.Name, meaning.ShortName, meaning.Description, meaning.Selectable, meaning.Approved, meaning.ExternalLinks.ToList(), meaning.Related_meaning?.Select(m => m.Id).ToList(), meaning.Constraints?.Select(c => c.Id).ToList());
+            return EditMeaning(meaning.Id, meaning.Name, meaning.ShortName, meaning.Description, meaning.Selectable, meaning.Approved, meaning.ExternalLinks, meaning.Related_meaning, meaning.Constraints);
         }
 
-        public Meaning EditMeaning(long id, string Name, String ShortName, String Description, bool selectable, bool approved, List<MeaningEntry> externalLinks, List<long> meaning_ids, List<long> constraint_ids)
+        public Meaning EditMeaning(long id, string Name, string ShortName, string Description, bool selectable, bool approved, List<MeaningEntry> externalLinks, List<long> meaning_ids, List<long> constriant_ids)
+        {   
+            List<Constraint> constraints = new List<Constraint>();
+            List<Meaning> related_meaning = new List<Meaning>();
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Constraint> constraintRepo = uow.GetRepository<Constraint>();
+                IRepository<Meaning> meaningRepo = uow.GetRepository<Meaning>();
+
+                if (constriant_ids != null && constriant_ids.Any())
+                    constraints = constraintRepo.Get().Where(x => constriant_ids.Contains(x.Id)).ToList();
+
+                if (constriant_ids != null && constriant_ids.Any())
+                    related_meaning = meaningRepo.Get().Where(x => meaning_ids.Contains(x.Id)).ToList();
+            }
+            return EditMeaning(id, Name, ShortName, Description, selectable, approved, externalLinks, related_meaning, constraints);
+        }
+
+        public Meaning EditMeaning(long id, string Name, String ShortName, String Description, bool selectable, bool approved, ICollection<MeaningEntry> externalLinks =null, ICollection<Meaning> related_meanings = null, ICollection <Constraint>constraints = null)
         {
             Contract.Requires(externalLinks != null);
             try
@@ -165,37 +196,32 @@ namespace BExIS.Dlm.Services.Meanings
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
                     IRepository<Meaning> repo = uow.GetRepository<Meaning>();
-                    IRepository<Constraint> repoConstraints = uow.GetRepository<Constraint>();
 
                     var externalLinksDictionary = externalLinks.Select(entry => new MeaningEntry
                     {
-                        MappingRelation = GetOrCreateExternalLink(entry?.MappingRelation),
+                        MappingRelation = GetOrCreateExternalLink(entry.MappingRelation),
                         MappedLinks = entry.MappedLinks.Select(value => GetOrCreateExternalLink(value)).ToList()
                     }).ToList();
-
                     externalLinks = externalLinksDictionary;
-                    List<Meaning> related_meanings = new List<Meaning>();
-                    if (meaning_ids != null)
-                        related_meanings = (List<Meaning>)repo.Get().Where(x => meaning_ids.Contains(x.Id)).ToList<Meaning>();
-
-                    List<Constraint> constraints = new List<Constraint>();
-                    if (constraint_ids != null)
-                        constraints = repoConstraints.Get().Where(x => constraint_ids.Contains(x.Id)).ToList<Constraint>();
 
                     Meaning meaning = repo.Get().FirstOrDefault(x => id == x.Id);
 
                     meaning.Name = Name;
                     meaning.Related_meaning = related_meanings;
                     meaning.Selectable = selectable;
-                    meaning.ShortName = ShortName;
-                    meaning.ExternalLinks = externalLinks;
+                    meaning.ShortName = ShortName;          
                     meaning.Description = Description;
                     meaning.Approved = approved;
+                    meaning.ExternalLinks = externalLinks;
+                    meaning.Constraints = constraints.ToHashSet();
+
                     repo.Merge(meaning);
                     uow.Commit();
-                    var merged = repo.Get(meaning.Id);
+                    Meaning merged = repo.Get(meaning.Id);
                     UpdateMeaningEntry();
-                    return merged;
+                    
+                    meaning = repo.Get().FirstOrDefault(x => id == x.Id);
+                    return meaning;
                 }
             }
             catch (Exception exc)
@@ -245,7 +271,7 @@ namespace BExIS.Dlm.Services.Meanings
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
                     var repo = uow.GetReadOnlyRepository<Meaning>();
-                    List<Meaning> Meanings = repo.Get().ToList<Meaning>();
+                    List<Meaning> Meanings = repo.Get().OrderBy(m=>m.Id).ToList<Meaning>();
                     //IDictionary<long, Meaning> fooDict = Meanings.ToDictionary(f => f.Id, f => f);
                     return Meanings;
                 }
@@ -754,5 +780,7 @@ namespace BExIS.Dlm.Services.Meanings
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+
+
     }
 }

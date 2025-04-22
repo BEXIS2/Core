@@ -55,10 +55,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (var _meaningManager = new MeaningManager())
                 {
-                    Meaning m = MeaningsHelper.ConvertTo(data);
-                    Meaning res = _meaningManager.AddMeaning(m);
-
-                    return Json(res);
+                    return Json(MeaningsHelper.ConvertTo(_meaningManager.AddMeaning(MeaningsHelper.ConvertTo(data))), JsonRequestBehavior.AllowGet);
                 }
             }
             catch (Exception ex)
@@ -74,11 +71,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             try
             {
-                using (var _meaningManager = new MeaningManager())
+                using (MeaningManager _meaningManager = new MeaningManager())
                 {
-                    Meaning m = MeaningsHelper.ConvertTo(data);
-                    Meaning res = _meaningManager.EditMeaning(m);
-                    return Json(res);
+                    return Json(MeaningsHelper.ConvertTo(_meaningManager.EditMeaning(MeaningsHelper.ConvertTo(data))), JsonRequestBehavior.AllowGet);
                 }
             }
             catch (Exception ex)
@@ -97,7 +92,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 using (var _meaningManager = new MeaningManager())
                 {
                     _meaningManager.DeleteMeaning(id);
-                    return Json(true);
+                    return Json(true, JsonRequestBehavior.AllowGet);
                 }
             }
             catch (Exception ex)

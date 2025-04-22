@@ -39,17 +39,17 @@
             {
                 if (child.Complexity.Equals(LinkElementComplexity.Simple))
                 {
-        <div class="le-simple le-simple-selector @selectorClass" title="@child.Description">
-            @Html.Partial("MappingSimpleLinkElement", child)
-        </div>
-                }
-                else
-                {
-        <div class="le-complex" title="@child.Description">
-            <div class="le-complex-header">
-                @child.Name
-            </div>
-        </div>
+                <div class="le-simple le-simple-selector @selectorClass" title="@child.Description">
+                    @Html.Partial("MappingSimpleLinkElement", child)
+                </div>
+                        }
+                        else
+                        {
+                <div class="le-complex" title="@child.Description">
+                    <div class="le-complex-header">
+                        @child.Name
+                    </div>
+                </div>
                 }
             }
 

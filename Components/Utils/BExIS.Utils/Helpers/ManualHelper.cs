@@ -2,12 +2,20 @@
 {
     public class ManualHelper
     {
-        public static string GetUrl(string version, string module)
+        public static string GetUrl(string url)
         {
-            if (string.IsNullOrEmpty(version) || string.IsNullOrEmpty(module)) return "";
+            string docsUrl = "/home/docs/";
 
-            //https://github.com/BEXIS2/Documents/blob/2.15/Manuals/BAM/Manual.md
-            return string.Format("{0}://github.com/BEXIS2/Documents/blob/{1}/Manuals/{2}/Manual.md", "https", version, module);
+            // 3 different usecases
+            if (string.IsNullOrEmpty(url)) return docsUrl+"general";
+
+            //2. URL is set and no url -> generate link to internal documentation
+
+            if (url.Contains("http")) return url;
+
+
+            //3. empty URL -> generate link to internal documentation
+            return docsUrl+url;
         }
     }
 }

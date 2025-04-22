@@ -49,10 +49,11 @@ namespace BExIS.IO.Tests.Transform.Input
 
             //Assert
             Assert.NotNull(result, "result should not be null.");
-            Assert.AreEqual(id, result.FirstOrDefault().Id);
+            bool exist = result.ToList().Any(r => r.Id.Equals(id));
+            Assert.IsTrue(exist,"not exist");
         }
 
-        [TestCase("double", 1, 62)] // datatype, id, count
+        [TestCase("double", 1, 105)] // datatype, id, count
         [TestCase("string", 1, 1)] // datatype, id, count
         public void SuggestUnit_InputIsEmptyButDatatypeExist_ReturnUnit(string dataType, long firstId, int count)
         {

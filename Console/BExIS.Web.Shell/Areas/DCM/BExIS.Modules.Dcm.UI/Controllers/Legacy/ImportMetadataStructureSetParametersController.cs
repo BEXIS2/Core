@@ -42,7 +42,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     string title = unitOfWork.GetReadOnlyRepository<MetadataStructure>().Get(metadataStrutureId).Name;
 
                     XmlMetadataWriter xmlMetadatWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
-                    XDocument metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStrutureId);
+                    XDocument metadataXml = xmlMetadatWriter.CreateTempMetadataXmlWithChoiceChildrens(metadataStrutureId);
 
                     List<XElement> elements = metadataXml.Root.Descendants().Where(e => e.HasElements.Equals(false)).ToList();
 

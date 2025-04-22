@@ -9,6 +9,7 @@ namespace BExIS.Security.Services.Subjects
 {
     public class IdentityUserService : UserManager<User, long>
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
         public IdentityUserService() : base(new UserManager())
         {
             // Configure validation logic for usernames

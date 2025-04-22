@@ -228,6 +228,9 @@ namespace BExIS.Web.Shell.Helpers
             if (!string.IsNullOrWhiteSpace(element.Attribute("action").Value))
                 sb.Append(@"/").Append(element.Attribute("action").Value.ToLower());
 
+            if (element.Attribute("argument")!=null && !string.IsNullOrWhiteSpace(element.Attribute("argument").Value))
+                sb.Append(@"/").Append(element.Attribute("argument").Value.ToLower());
+
             return sb.ToString();
         }
 

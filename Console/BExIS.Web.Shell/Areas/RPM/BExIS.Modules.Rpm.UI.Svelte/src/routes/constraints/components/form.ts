@@ -7,7 +7,6 @@ type dataType = {
 };
 
 const suite = create((data: dataType, fieldName) => {
-
 	only(fieldName);
 
 	test('name', 'name is required', () => {
@@ -30,8 +29,6 @@ const suite = create((data: dataType, fieldName) => {
 	test('description', 'description is required', () => {
 		enforce(data.constraint.description).isNotBlank();
 	});
-
-
 });
 
 export default suite;

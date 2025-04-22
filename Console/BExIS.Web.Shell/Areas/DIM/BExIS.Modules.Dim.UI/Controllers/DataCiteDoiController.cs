@@ -71,7 +71,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 return PartialView("_requestRow", new PublicationModel()
                 {
-                    Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                    Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link, publication.Broker.Type),
                     DataRepo = publication.Repository.Name,
                     DatasetVersionId = publication.DatasetVersion.Id,
                     CreationDate = publication.Timestamp,
@@ -119,7 +119,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 return PartialView("_requestRow", new PublicationModel()
                 {
                     Id = publication.Id,
-                    Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                    Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link, publication.Broker.Type),
                     DataRepo = publication.Repository.Name,
                     DatasetVersionId = publication.DatasetVersion.Id,
                     CreationDate = publication.Timestamp,
@@ -150,7 +150,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         return PartialView("_requestRow", new PublicationModel()
                         {
                             Id = publication.Id,
-                            Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                            Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link, publication.Broker.Type),
                             DataRepo = publication.Repository.Name,
                             DatasetVersionId = publication.DatasetVersion.Id,
                             CreationDate = publication.Timestamp,
@@ -192,6 +192,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 placeholders[placeholder.Key] = publication.DatasetVersion.VersionName?.ToString();
                                 break;
 
+                            case "{Tag}":
+                                placeholders[placeholder.Key] = publication.DatasetVersion.Tag?.ToString();
+                                break;
+
                             default:
                                 break;
                         }
@@ -211,7 +215,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         return PartialView("_requestRow", new PublicationModel()
                         {
                             Id = publication.Id,
-                            Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                            Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link, publication.Broker.Type),
                             DataRepo = publication.Repository.Name,
                             DatasetVersionId = publication.DatasetVersion.Id,
                             CreationDate = publication.Timestamp,
@@ -249,7 +253,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         return PartialView("_requestRow", new PublicationModel()
                         {
                             Id = publication.Id,
-                            Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                            Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link, publication.Broker.Type),
                             DataRepo = publication.Repository.Name,
                             DatasetVersionId = publication.DatasetVersion.Id,
                             CreationDate = publication.Timestamp,
@@ -295,8 +299,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     {
                         publication.Status = "accepted";
                         publication.Response = JsonConvert.SerializeObject(dataCiteResponse.Data);
+                        publication.ExternalLink = dataCiteResponse.Data.Data.Attributes.Doi;
+                        publication.ExternalLinkType = "DOI";
 
                         publicationManager.Update(publication);
+
+                        // kritisch, dass hier der Manager weiter geleitet wird?!
+                        setDoiInMetadataIfExist(publication.DatasetVersion, dataCiteResponse.Data.Data.Attributes.Doi, datasetManager);
                     }
                     else
                     {
@@ -337,7 +346,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     return PartialView("_requestRow", new PublicationModel()
                     {
                         Id = publication.Id,
-                        Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                        Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link, publication.Broker.Type),
                         DataRepo = publication.Repository.Name,
                         DatasetVersionId = publication.DatasetVersion.Id,
                         CreationDate = publication.Timestamp,
@@ -393,7 +402,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     return PartialView("_requestRow", new PublicationModel()
                     {
                         Id = publication.Id,
-                        Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                        Broker = new BrokerModel(publication.Broker.Id, publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link, publication.Broker.Type),
                         DataRepo = publication.Repository.Name,
                         DatasetVersionId = publication.DatasetVersion.Id,
                         CreationDate = publication.Timestamp,
@@ -438,6 +447,26 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return View();
         }
 
+        private bool setDoiInMetadataIfExist(DatasetVersion version, string doi, DatasetManager datasetManager)
+        {
+            var sourceId = (int)Key.DOI;
+            var sourceType = LinkElementType.Key;
+            var metadataStructureId = version.Dataset.MetadataStructure.Id;
+
+            LinkElement target = null;
+            MappingUtils.HasTarget(sourceId, metadataStructureId, out target);
+
+            if (target != null)
+            {
+                datasetManager.UpdateSingleValueInMetadata(version.Id, target.XPath, doi);
+
+                return true;
+            }
+
+            return false;
+        }
+
+
         [HttpPost]
         public ActionResult Delete(string s)
         {
@@ -460,7 +489,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     model.Add(new PublicationModel()
                     {
                         Id = p.Id,
-                        Broker = new BrokerModel(p.Broker.Id, p.Broker.Name, new List<string>() { p.Repository.Name }, p.Broker.Link),
+                        Broker = new BrokerModel(p.Broker.Id, p.Broker.Name, new List<string>() { p.Repository.Name }, p.Broker.Link, p.Broker.Type ),
                         DataRepo = p.Repository.Name,
                         DatasetVersionId = p.DatasetVersion.Id,
                         CreationDate = p.Timestamp,

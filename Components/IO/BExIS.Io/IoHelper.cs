@@ -49,7 +49,8 @@ namespace BExIS.IO
     /// <remarks></remarks>
     public enum TextMarker
     {
-        quotes,
-        doubleQuotes
+        quotes = 39,
+        doubleQuotes = 34,
+        none = 0,
     }
 }

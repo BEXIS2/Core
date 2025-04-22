@@ -11,6 +11,7 @@
     string isTemplateRequired = "false";
     string isMeaningRequired = "false";
     string setByTemplate = "false";
+    string updateDescriptionByTemplate = "false";
     string enforcePrimaryKey = "false";
     string changeablePrimaryKey = "false";
 
@@ -19,11 +20,14 @@
     if (ViewData["isTemplateRequired"] != null) { isTemplateRequired = ViewData["isTemplateRequired"].ToString(); }
     if (ViewData["isMeaningRequired"] != null) { isMeaningRequired = ViewData["isMeaningRequired"].ToString(); }
     if (ViewData["setByTemplate"] != null) { setByTemplate = ViewData["setByTemplate"].ToString(); }
+    if (ViewData["updateDescriptionByTemplate"] != null) { setByTemplate = ViewData["updateDescriptionByTemplate"].ToString(); }
     if (ViewData["enforcePrimaryKey"] != null) { enforcePrimaryKey = ViewData["enforcePrimaryKey"].ToString(); }
     if (ViewData["changeablePrimaryKey"] != null) { changeablePrimaryKey = ViewData["changeablePrimaryKey"].ToString(); }
 
+
+
 }
 
-<div id="datastructure" structure="@structureId" dataExist="@dataExist" isTemplateRequired="@isTemplateRequired" isMeaningRequired="@isMeaningRequired" setByTemplate="@setByTemplate" enforcePrimaryKey="@enforcePrimaryKey" changeablePrimaryKey="@changeablePrimaryKey">
+<div id="datastructure" structure="@structureId" dataExist="@dataExist" isTemplateRequired="@isTemplateRequired" isMeaningRequired="@isMeaningRequired" setByTemplate="@setByTemplate" updateDescriptionByTemplate="@updateDescriptionByTemplate" enforcePrimaryKey="@enforcePrimaryKey" changeablePrimaryKey="@changeablePrimaryKey">
     @Html.Partial("_sveltePage")
 </div>

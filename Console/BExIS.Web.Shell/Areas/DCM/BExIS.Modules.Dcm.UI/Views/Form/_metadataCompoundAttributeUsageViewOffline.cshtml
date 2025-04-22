@@ -23,9 +23,6 @@
     bool locked = false;
     bool showOptional = false;
 
-    string displayName = "";
-    displayName = char.ToUpper(Model.DisplayName()[0]) + Model.DisplayName().Substring(1);
-
     string lvl = Model.Level.ToString();
     if (Model.Level >= 9)
     {
@@ -55,7 +52,7 @@
         <div class="header @headerClass ">
             <div id="@id_label_container" class="labelContainer" onclick="showHideClick(this)">
                 <b>
-                    @displayName
+                    @Html.Partial("_displayname", Model.DisplayName())
 
                     @if (Model.Model.MaxCardinality > 1)
                     {
@@ -103,36 +100,36 @@
                     {
                         if (Model.ChoiceMax <= 1)
                         {
-                            <div class="metadata-choice-container">
-                                @if (!locked)
-                                {
-                                    foreach (var element in Model.Childrens)
-                                    {
-                                        string choiceId = element.StepId + "_choice";
+            <div class="metadata-choice-container">
+                @if (!locked)
+                {
+                    foreach (var element in Model.Childrens)
+                    {
+                        string choiceId = element.StepId + "_choice";
 
-                                        if (element.Activated)
-                                        {
-                                            <span id="@choiceId" name="@id_choice" class="bx bx-dot-circle-o bx-mouse-pointer"></span>
-                                        }
-                                        else
-                                        {
-                                            <span id="@choiceId" name="@id_choice" class="bx bx-circle-o bx-mouse-choice bx-mouse-pointer"></span>
-                                        }
+                        if (element.Activated)
+                        {
+                            <span id="@choiceId" name="@id_choice" class="bx bx-dot-circle-o bx-mouse-pointer"></span>
+                        }
+                        else
+                        {
+                            <span id="@choiceId" name="@id_choice" class="bx bx-circle-o bx-mouse-choice bx-mouse-pointer"></span>
+                        }
 
-                                        @element.DisplayName()
-                                    }
-                                }
-                                else
-                                {
-                                    foreach (var element in Model.Childrens)
-                                    {
-                                        if (element.Activated)
-                                        {
-                                            @element.DisplayName()
-                                        }
-                                    }
-                                }
-                            </div>
+                        @element.DisplayName()
+                    }
+                }
+                else
+                {
+                    foreach (var element in Model.Childrens)
+                    {
+                        if (element.Activated)
+                        {
+                            @Html.Partial("_displayname", element.DisplayName())
+                        }
+                    }
+                }
+            </div>
                         }
                     }
 

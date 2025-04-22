@@ -14,6 +14,7 @@ using BExIS.Modules.Dim.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Versions;
 using BExIS.Security.Services.Authorization;
+using BExIS.Utils.Data;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -21,11 +22,13 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -44,7 +47,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// Other mosules who consume the API results of a module, should only expect .NET types, DLM types, json, xml, CSV, or Html.
         /// </summary>
 
-        public JsonResult CheckExportPossibility(long brokerId, long datasetId)
+        public async Task<JsonResult> CheckExportPossibility(long brokerId, long datasetId, int versionNr = 0, double tagNr = 0)
         {
             bool isDataConvertable = false;
             bool isMetadataConvertable = false;
@@ -56,13 +59,20 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (PublicationManager publicationManager = new PublicationManager())
             using (DatasetManager dm = new DatasetManager())
             {
+                // use tags?
+                var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+                bool useTags = false;
+                bool.TryParse(moduleSettings.GetValueByKey("use_tags").ToString(), out useTags);
+
+                // get version based on situtaion / tags, versions, etc.    
+                long version = await DatasetVersionHelper.GetVersionId(datasetId, GetUsernameOrDefault(), versionNr, useTags, tagNr);
+                DatasetVersion datasetVersion = dm.GetDatasetVersion(version);
+                Dataset dataset = datasetVersion.Dataset;
+
                 Broker broker = publicationManager.BrokerRepo.Get(brokerId);
 
                 if (broker == null) throw new NullReferenceException("Broker is null");
 
-                // datasetversion
-                Dataset dataset = dm.GetDataset(datasetId);
-                long version = dm.GetDatasetLatestVersion(datasetId).Id;
 
                 Publication publication =
                     publicationManager.PublicationRepo.Get()
@@ -132,13 +142,16 @@ namespace BExIS.Modules.Dim.UI.Controllers
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Read)]
         public ActionResult getPublishDataPartialView(long datasetId, long datasetVersionId = -1)
         {
+            setViewData(datasetId);
             ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
 
             return PartialView("_showPublishDataView", model);
         }
 
-        public ActionResult LoadRequirementView(long brokerId, long datasetId)
+        public async Task<ActionResult> LoadRequirementView(long brokerId, long datasetId, int versionNr = 0, double tagNr = 0)
         {
+            setViewData(datasetId);
+
             DataRepoRequirentModel model = new DataRepoRequirentModel();
             List<string> errors = new List<string>();
 
@@ -147,8 +160,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (DatasetManager dm = new DatasetManager())
             using (PublicationManager publicationManager = new PublicationManager())
             {
-                long version = dm.GetDatasetLatestVersionId(datasetId);
-                model.DatasetVersionId = version;
+                DatasetVersion datasetVersion = await getDatasetVersion(datasetId, versionNr, tagNr, dm);
+                model.DatasetVersionId = datasetVersion.Id;
 
                 var broker = publicationManager.BrokerRepo.Get(brokerId);
 
@@ -156,7 +169,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     Publication publication =
                         publicationManager.PublicationRepo.Get()
-                            .Where(p => p.Broker.Id.Equals(broker.Id) && p.DatasetVersion.Id.Equals(version))
+                            .Where(p => p.Broker.Id.Equals(broker.Id) && p.DatasetVersion.Id.Equals(datasetVersion.Id))
                             .FirstOrDefault();
 
                     if (publication != null && !String.IsNullOrEmpty(publication.FilePath)
@@ -188,7 +201,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                         #region validation from converter
 
-                        model.IsValid = isEntityValidAgainstBroker(broker, version, out errors);
+                        model.IsValid = isEntityValidAgainstBroker(broker, datasetVersion.Id, out errors);
 
                         #endregion validation from converter
                     }
@@ -221,8 +234,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <param name="datasetId"></param>
         /// <returns></returns>
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
-        public async Task<ActionResult> SendDataToDataRepo(long brokerId, long datasetId)
+        public async Task<ActionResult> SendDataToDataRepo(long brokerId, long datasetId, int versionNr = 0, double tagNr = 0)
         {
+            setViewData(datasetId);
+
             using (PublicationManager publicationManager = new PublicationManager())
             using (DatasetManager datasetManager = new DatasetManager())
             {
@@ -232,7 +247,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     if (Session["ZipFilePath"] != null)
                         zipfilepath = Session["ZipFilePath"].ToString();
 
-                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                    DatasetVersion datasetVersion = await getDatasetVersion(datasetId, versionNr, tagNr, datasetManager);
+
                     Broker broker = publicationManager.BrokerRepo.Get(brokerId);
 
                     Publication publication =
@@ -475,14 +491,16 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     model.Publications.Add(new PublicationModel()
                     {
-                        Broker = new BrokerModel(broker.Id, broker.Name, repos, broker.Link),
+                        Broker = new BrokerModel(broker.Id, broker.Name, repos, broker.Link, broker.Type),
                         DataRepo = dataRepoName,
                         DatasetVersionId = pub.DatasetVersion.Id,
                         CreationDate = pub.Timestamp,
                         ExternalLink = pub.ExternalLink,
+                        ExternalLinkType = pub.ExternalLinkType,
                         FilePath = pub.FilePath,
                         Status = pub.Status,
-                        DatasetVersionNr = versionNr
+                        DatasetVersionNr = versionNr,
+                        Tag = pub.DatasetVersion.Tag != null ? pub.DatasetVersion.Tag.Nr : 0,
                     });
                 }
 
@@ -580,7 +598,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     switch (_broker.Name.ToLower())
                     {
                         case "gfbio":
-                            { 
+                            {
                                 switch (_broker.Type.ToLower())
                                 {
                                     case "observations":
@@ -598,7 +616,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                             return tmp;
                                         }
                                 }
-                            }   
+                            }
                         case "pensoft":
                             {
                                 PensoftDataRepoConverter dataRepoConverter = new PensoftDataRepoConverter(_broker);
@@ -840,6 +858,66 @@ namespace BExIS.Modules.Dim.UI.Controllers
         }
 
         #endregion GFBIO
+
+        public string GetUsernameOrDefault()
+        {
+            var username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+            }
+            catch { }
+
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+        }
+
+
+        private async Task<DatasetVersion> getDatasetVersion(long datasetId, int versionNr, double tagNr, DatasetManager datasetManager)
+        {
+            string username = GetUsernameOrDefault();
+
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            bool useTags = false;
+            bool.TryParse(moduleSettings.GetValueByKey("use_tags").ToString(), out useTags);
+
+            ViewData["UseTags"] = useTags;
+
+            // get version based on situtaion / tags, versions, etc.    
+            long versionId = await DatasetVersionHelper.GetVersionId(datasetId, username, versionNr, useTags, tagNr);
+            DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(versionId);
+
+            return datasetVersion;
+        }
+
+        private void setViewData(long datasetId)
+        {
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            bool useTags = false;
+            bool.TryParse(moduleSettings.GetValueByKey("use_tags").ToString(), out useTags);
+
+            ViewData["UseTags"] = useTags;
+
+
+            using (var datasetManager = new DatasetManager())
+            {
+                var versions = datasetManager.GetDatasetVersions(datasetId);
+
+                List<int> versionNumbers = new List<int>();
+                List<double> tags = new List<double>();
+
+                for (int i = 0; i < versions.Count; i++)
+                {
+                    var v = versions[i];
+                    versionNumbers.Add(i + 1);
+                    if (v != null && v.Tag != null && !tags.Contains(v.Tag.Nr)) tags.Add(v.Tag.Nr);
+
+                }
+
+                ViewData["VersionNrs"] = versionNumbers;
+                ViewData["Tags"] = tags;
+                
+            }
+        }
     }
 
     #endregion submission

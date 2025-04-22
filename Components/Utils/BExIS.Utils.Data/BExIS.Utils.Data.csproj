@@ -45,6 +45,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatasetVersionHelper.cs" />
     <Compile Include="Helpers\ShellSeedDataGenerator.cs" />
     <Compile Include="MetadataStructure\MetadataStructureUsageHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

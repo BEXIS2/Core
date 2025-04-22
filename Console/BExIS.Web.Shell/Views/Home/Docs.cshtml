@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "Documentation";
+    Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
+
+    string version = "";
+
+    if (ViewData["ApplicationVersion"] != null)
+    {
+        version = ViewData["ApplicationVersion"].ToString();
+    }
+
+}
+
+<div id="docs" version="@version">
+    @Html.Partial("_sveltePage")
+</div>

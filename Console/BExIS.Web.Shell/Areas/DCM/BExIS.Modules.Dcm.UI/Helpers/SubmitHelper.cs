@@ -2,6 +2,7 @@
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
+using NHibernate.Util;
 using System;
 using System.IO;
 using Vaiona.Utils.Cfg;
@@ -64,6 +65,20 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                     #endregion file information
 
+
+                    #region existing and deleted files
+
+                    if (cache.DeleteFiles.Any())
+                    { 
+                        model.DeleteFiles = cache.DeleteFiles;
+                    }
+
+                    if (cache.ModifiedFiles.Any())
+                    { 
+                        model.ModifiedFiles = cache.ModifiedFiles;
+                    }
+
+                    #endregion
                     model.IsDataValid = cache.IsDataValid;
                 }
 

@@ -21,7 +21,7 @@ module.exports = {
 	theme: {
 		extend: {
 			height: {
-				'custom-height': '200px',
+				'custom-height': '200px'
 			}
 		}
 	},

@@ -15,6 +15,7 @@ namespace BExIS.Modules.Ddm.UI.Models
         public long MetadataStructureId { get; set; }
         public long DataStructureId { get; set; }
         public long ResearchPlanId { get; set; }
+        public Dictionary<string, string> Labels { get; set; }
 
         public string Title { get; set; }
         public bool ViewAccess { get; set; }

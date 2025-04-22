@@ -15,7 +15,7 @@ namespace BExIS.IO.Transform.Input
         public ApiFileReaderInfo()
         {
             Decimal = DecimalCharacter.point;
-            TextMarker = TextMarker.quotes;
+            TextMarker = TextMarker.none;
             Variables = 0;
             Data = 1;
         }

@@ -13,13 +13,13 @@
         <!-- CONTENT -->
     <div id="@contentId" class="content">
         @if (Model.Childrens.Any())
+        {
+            for (int i = 1; i <= Model.Childrens.Count; i++)
             {
-                for (int i = 1; i <= Model.Childrens.Count; i++)
-                {
-                    var item = Model.Childrens.ElementAt(i - 1);
-                    @Html.Partial("_metadataCompoundAttributeUsageView", item)
-                }
+                var item = Model.Childrens.ElementAt(i - 1);
+                @Html.Partial("_metadataCompoundAttributeUsageView", item)
             }
+        }
     </div>
     }
 </div>

@@ -174,10 +174,13 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 VariableTemplateItem item = new VariableTemplateItem();
                 item.Id = variableTemplate.Id;
                 item.Text = variableTemplate.Label;
+                item.DataType = variableTemplate.DataType.Name;
                 item.DataTypes = variableTemplate.Unit.AssociatedDataTypes.Select(x => x.Name).ToList();
                 item.Meanings = variableTemplate.Meanings.Select(x => x.Name).ToList();
                 item.Group = group;
                 item.Description = variableTemplate.Description;
+                item.Unit = variableTemplate.Unit.Abbreviation;
+
 
                 if (variableTemplate.VariableConstraints.Any())
                     item.Constraints = variableTemplate.VariableConstraints.Select(x => x.Name).ToList();
@@ -352,7 +355,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 foreach (var mv in items)
                 {
-                    if(mv.Id==0)
+                    if(mv.Id==0 && !string.IsNullOrEmpty(mv.DisplayName))
                     {                        
                         list.Add(new MissingValue()
                         {

@@ -19,7 +19,8 @@
         "{DatasetId}": "{DatasetId}",
         "{VersionId}": "{VersionId}",
         "{VersionNumber}": "{VersionNumber}",
-        "{VersionName}": "{VersionName}"
+        "{VersionName}": "{VersionName}",
+        "{Tag}": "{Tag}"
       },
       "description": "These placeholders will be replaced automatically."
     },

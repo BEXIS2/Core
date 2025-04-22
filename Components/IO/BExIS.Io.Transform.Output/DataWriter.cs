@@ -214,6 +214,7 @@ namespace BExIS.IO.Transform.Output
             }
 
             // replace special chars to avoid invaild path names
+            if(string.IsNullOrEmpty(title)) title = "NoTitle";
             string pathSaveTitle = string.Join("_", title.Split(Path.GetInvalidFileNameChars()));
 
             return Path.Combine(storePath, pathSaveTitle + extension);

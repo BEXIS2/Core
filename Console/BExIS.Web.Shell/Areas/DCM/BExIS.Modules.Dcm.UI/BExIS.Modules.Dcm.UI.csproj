@@ -56,6 +56,7 @@
     <Compile Include="Controllers\CreateController.cs" />
     <Compile Include="Controllers\EditController.cs" />
     <Compile Include="Controllers\EntityTemplatesController.cs" />
+    <Compile Include="Controllers\Hooks\DataController.cs" />
     <Compile Include="Controllers\Hooks\DataDescriptionController.cs" />
     <Compile Include="Controllers\Hooks\AttachmentUploadController.cs" />
     <Compile Include="Controllers\Hooks\FileUploadController.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="Helpers\SystemMetadataHelper.cs" />
     <Compile Include="Helpers\UploadUIHelper.cs" />
     <Compile Include="Hooks\AttachmentViewHook.cs" />
+    <Compile Include="Hooks\DataEditHook.cs" />
     <Compile Include="Hooks\DataStructurePreviewHook.cs" />
     <Compile Include="Hooks\DataHook.cs" />
     <Compile Include="Hooks\DataDescriptionHook.cs" />
@@ -116,6 +118,7 @@
     <Compile Include="Models\Create\CreateModel.cs" />
     <Compile Include="Models\EasyUploadSummaryModel.cs" />
     <Compile Include="Models\Edit\DataDescriptionModel.cs" />
+    <Compile Include="Models\Edit\DataModel.cs" />
     <Compile Include="Models\Edit\EditModel.cs" />
     <Compile Include="Models\Edit\FileUploadModel.cs" />
     <Compile Include="Models\Edit\SubmitModel.cs" />
@@ -469,6 +472,7 @@
     <Content Include="Views\Form\_number.cshtml" />
     <Content Include="Views\Form\_metadataParameterViewOffline.cshtml" />
     <Content Include="Web.config" />
+    <Content Include="Views\Form\_displayname.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -481,6 +485,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\Images\" />
+    <Folder Include="Views\Data\" />
     <Folder Include="Views\DcmAdmin\" />
     <Folder Include="Views\FileReaderInfo\" />
     <Folder Include="Views\FileUpload\" />
@@ -496,6 +501,7 @@
     </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.4.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Iesi.Collections.4.0.4\lib\net461\Iesi.Collections.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.Identity.Core.2.2.4\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>

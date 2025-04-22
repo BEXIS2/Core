@@ -1,5 +1,7 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dim.Entities.Export.GBIF;
 using BExIS.Dim.Helpers.BIOSCHEMA;
+using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.Party;
@@ -23,6 +25,7 @@ using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
 using BExIS.UI.Models;
 using BExIS.Utils.Config;
+using BExIS.Utils.Data;
 using BExIS.Utils.Extensions;
 using BExIS.Utils.NH.Querying;
 using BExIS.Xml.Helpers;
@@ -159,6 +162,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 ViewData["use_tags"] = moduleSettings.GetValueByKey("use_tags");
                 ViewData["use_minor"] = moduleSettings.GetValueByKey("use_minor");
                 ViewData["check_public_metadata"] = moduleSettings.GetValueByKey("check_public_metadata");
+                ViewData["has_data"] = false;
                 Session["Filter"] = null;
 
                 Dataset researcobject = dm.GetDataset(id);
@@ -184,6 +188,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     long latestVersionNr = 0;
                     string isValid = "no";
                     bool isPublic = false;
+                    Dictionary<string, string> labels = new Dictionary<string, string>(); ;
 
                     XmlDocument metadata = new XmlDocument();
 
@@ -228,6 +233,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
                             title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
+                            labels = getLabels(id,versionId, tag, dsv.Dataset.EntityTemplate.Name);
                             if (dsv.Dataset.DataStructure != null)
                                 dataStructureId = dsv.Dataset.DataStructure.Id;
 
@@ -265,11 +271,17 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             if (dsv.Dataset.DataStructure != null && dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
                             {
                                 dataStructureType = DataStructureType.Structured.ToString();
-                                ViewData["gridTotal"] = dm.RowCount(dsv.Dataset.Id, null);
+                                long c = dm.RowCount(dsv.Dataset.Id, null);
+                                ViewData["gridTotal"] = c;
+                                if(c>0) ViewData["has_data"] = true;
                             }
                             else
                             {
                                 dataStructureType = DataStructureType.Unstructured.ToString();
+                                if(dsv.ContentDescriptors.Where(c=>c.Name.Equals("unstructuredData")).Any())
+                                {
+                                    ViewData["has_data"] = true;
+                                }
                             }
 
                             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show " + typeof(Dataset).Name + ": " + title, this.Session.GetTenant());
@@ -300,13 +312,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         RequestExist = requestExist,
                         RequestAble = requestAble,
                         HasRequestRight = hasRequestRight,
-                        IsPublic = isPublic
+                        IsPublic = isPublic,
+                        Labels = labels
                     };
 
                     //set metadata in session
                     Session["ShowDataMetadata"] = metadata;
                     ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
-                    ViewData["isValid"] = isValid;
+                    ViewData["IsValid"] = isValid;
                     ViewData["datasetSettings"] = getSettingsDataset();
                     ViewData["Message"] = "";
                     ViewData["State"] = "";
@@ -477,7 +490,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 //set metadata in session
                 Session["ShowDataMetadata"] = metadata;
                 ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
-                ViewData["isValid"] = isValid;
+                ViewData["IsValid"] = isValid;
                 ViewData["datasetSettings"] = getSettingsDataset();
 
                 return PartialView("ShowData", model);
@@ -923,6 +936,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                                                 );
                             }
                         }
+
+                        if(string.IsNullOrEmpty(title)) title = "no title ("+id+")";
 
                         return File(path, mimetype, title + ext);
                     }
@@ -1937,139 +1952,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         private async Task<long> getVersionId(long datasetId,int versionNr=0, string versionName="",  double tagNr=0)
         {
-            // get entity by versionnr,versionName, tagnr
-            RightType rightType = RightType.Read;
-            bool isPublic = false;
-            bool isVerionReady = false;
 
             var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
             bool useTags = false;
-
             bool.TryParse(moduleSettings.GetValueByKey("use_tags").ToString(),out useTags);
 
-
-            string username = GetUsernameOrDefault();
-
-            using (var permissionManager = new EntityPermissionManager())
-            using (var datasetManager = new  DatasetManager())
-            {
-                var dataset = datasetManager.GetDataset(datasetId);
-
-                // check if dataset is public
-                isPublic = await permissionManager.IsPublicAsync(dataset.EntityTemplate.EntityType.Id, datasetId);
-
-                // get rights
-                bool hasEditRights = await permissionManager.HasEffectiveRightsAsync(username, typeof(Dataset), datasetId, RightType.Write);
-                bool hasReadRights = await permissionManager.HasEffectiveRightsAsync(username, typeof(Dataset), datasetId, RightType.Read);
-
-                // if user has edit rights && public/ internal accessible dont matter
-                if (hasEditRights)
-                {
-                    if (tagNr > 0) // first try use tag
-                    {
-                        return datasetManager.GetLatestVersionIdByTagNr(datasetId, tagNr);
-                    }
-                    else if (!string.IsNullOrEmpty(versionName)) // try use versionname !!obsolete
-                    {
-                        throw new NotImplementedException();
-                    }
-                    else if (versionNr > 0) // try use versionnr
-                    {
-                        return datasetManager.GetDatasetVersionId(datasetId, versionNr);
-                    }
-                    else // use latest version
-                    {
-                        return datasetManager.GetDatasetLatestVersionId(datasetId);
-                    }
-                }
-                else if (hasReadRights)
-                {
-                        
-                    if (tagNr > 0) // public, not public version & not public 
-                    {
-                        return datasetManager.GetLatestVersionIdByTagNr(datasetId, tagNr);
-                    }
-                    else if (!string.IsNullOrEmpty(versionName)) // try use versionname !!obsolete , public, not public version & not public 
-                    {
-                        throw new NotImplementedException();
-                    }
-                    else if (versionNr > 0) // public, not public version & not public 
-                    {
-                        //get the latest version belong to the tag of the requested version
-                        var datasetVersionId = datasetManager.GetDatasetVersionId(datasetId, versionNr);
-                        var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
-                        var latest = datasetManager.GetLatestVersionIdByTagNr(datasetId, datasetVersion.Tag.Nr);
-                        return latest;
-                    }
-                    else // use latest version
-                    {
-                        var datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
-                        return datasetVersion.Id;
-                    }
-                }
-                else // no rigths
-                {
- 
-                    long datasetVersionId = -1;
-                    DatasetVersion datasetVersion = null;
-                    Tag tag = null;
-
-                    
-                    if (isPublic || !string.IsNullOrEmpty(username))
-                    {
-                        if (tagNr > 0)
-                        {
-                            datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, tagNr);
-                            if (datasetVersion.Tag != null && datasetVersion.Tag.Final)
-                                return datasetVersion.Id;
-
-                            // if tag is not reachable
-                            tag = datasetManager.GetLatestTag(datasetId, true);
-                            datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, tag.Nr);
-                            if (datasetVersion.Tag != null && datasetVersion.Tag.Final)
-                                return datasetVersion.Id;
-
-                            return -1;
-                        }
-                        else if (!string.IsNullOrEmpty(versionName)) // try use versionname !!obsolete , public, not public version & not public 
-                        {
-                            throw new NotImplementedException();
-                        }
-                        else if (versionNr > 0) // public, not public version & not public 
-                        {
-                            datasetVersion = datasetManager.GetDatasetVersion(datasetId, versionNr);
-                            datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, datasetVersion.Tag.Nr);
-
-                            if (datasetVersion.Tag != null && datasetVersion.Tag.Final)
-                                return datasetVersion.Id;
-
-                            // if tag is not reachable
-                            tag = datasetManager.GetLatestTag(datasetId, true);
-                            datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, tag.Nr);
-
-                            if (datasetVersion.Tag != null && datasetVersion.Tag.Final)
-                                return datasetVersion.Id;
-
-                        }
-
-                        // check in the settings if tags are active
-
-                        if (useTags)
-                        {
-                            // get latest public
-                            tag = datasetManager.GetLatestTag(datasetId, true);
-                            if (tag == null) return -1;
-                        }
-                        else
-                        { 
-                            return datasetManager.GetDatasetLatestVersionId(datasetId);
-                        }
-                    }
-                }
-
-             }
-
-            return - 1;
+            return await DatasetVersionHelper.GetVersionId(datasetId, GetUsernameOrDefault(), versionNr, useTags, tagNr);
+            
         }
 
         public bool UserExist()
@@ -2263,6 +2152,30 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             Session["SettingsDataset"] = dataset_settings_list;
             return dataset_settings_list;
+        }
+
+        public Dictionary<string, string> getLabels(long id, long versionId, double tag, string template)
+        {
+            using (var publicationManager = new PublicationManager())
+            {
+                Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
+
+              
+
+                var publications = publicationManager.PublicationRepo.Query(p => p.Dataset.Id == id && p.DatasetVersion.Id == versionId && p.ExternalLink != "");
+                if (publications != null && publications.Any())
+                {
+
+                    foreach (var item in publications)
+                    {
+                        keyValuePairs.Add(item.ExternalLink, item.ExternalLinkType);
+                    }
+                }
+
+                keyValuePairs.Add(template, "template");
+
+                return keyValuePairs;
+            }
         }
 
         #endregion helper

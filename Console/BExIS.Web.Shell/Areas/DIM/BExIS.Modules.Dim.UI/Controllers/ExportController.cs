@@ -11,6 +11,8 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Party;
 using BExIS.IO;
 using BExIS.IO.Transform.Output;
+using BExIS.Modules.Dim.UI.Helpers;
+using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Modules.Dim.UI.Models.Export;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Entities.Versions;
@@ -19,7 +21,9 @@ using BExIS.Utils.Config;
 using BExIS.Utils.Extensions;
 using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
+using Newtonsoft.Json;
 using System;
+using System.Data;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -31,6 +35,7 @@ using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -193,6 +198,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 using (var datasetManager = new DatasetManager())
                 {
                     long datasetVersionId = versionid;
+                    long dataStructureId = 0;
                     int datasetVersionNumber = dm.GetDatasetVersionNr(datasetVersionId);
                     DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
@@ -232,18 +238,20 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         }
                     }
 
+                 
+
                     #endregion
 
                     #region data structure
 
                     if (datasetVersion.Dataset.DataStructure != null)
                     {
-                        long dataStructureId = datasetVersion.Dataset.DataStructure.Id;
+                        dataStructureId = datasetVersion.Dataset.DataStructure.Id;
                         DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
 
                         string dataStructurePath = "";
                         dataStructurePath = storeGeneratedFilePathToContentDiscriptor(id, datasetVersion,
-                            "datastructure", ".txt");
+                            "datastructure", ".json");
                         string datastructureFilePath = AsciiWriter.CreateFile(dataStructurePath);
 
                         string json = OutputDataStructureManager.GetDataStructureAsJson(dataStructureId);
@@ -260,17 +268,21 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     string zipName = publishingManager.GetZipFileName(id, datasetVersionNumber);
                     string zipPath = Path.Combine(publishingManager.GetDirectoryPath(id, brokerName), zipName);
-
                     FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipPath));
 
                     using (var zipFileStream = new FileStream(zipPath, FileMode.Create))
                     using (var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Update))
                     {
+                        // stored contentdescriptior key name in db for the format and the dataname
+                        string dataName = getCDTypeName(format);
+
                         // content descriptors
                         foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                         {
                             string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
                             string name = cd.URI.Split('\\').Last();
+
+                            if(cd.Name.StartsWith("generated") && !cd.Name.Equals(dataName)) continue;
 
                             if (FileHelper.FileExist(path))
                             {
@@ -285,15 +297,23 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             archive.AddFolderToArchive(xsdPath, "Schema");
 
                         // manifest
-                        XmlDocument manifest = OutputDatasetManager.GenerateManifest(id, datasetVersion.Id);
+                        ApiDatasetHelper apiDatasetHelper = new ApiDatasetHelper();
+                        // get content
+                        ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, datasetVersionNumber, datasetVersion.Dataset.MetadataStructure.Id, dataStructureId);
+                        string manifest = JsonConvert.SerializeObject(datasetModel);
+
                         if (manifest != null)
                         {
                             string manifestPath = OutputDatasetManager.GetDynamicDatasetStorePath(id,
-                                datasetVersionNumber, "manifest", ".xml");
+                                datasetVersionNumber, "manifest", ".json");
                             string fullFilePath = Path.Combine(AppConfiguration.DataPath, manifestPath);
+                            string directory = Path.GetDirectoryName(fullFilePath);
+                            if (!Directory.Exists(directory))
+                                FileHelper.CreateDicrectoriesIfNotExist(directory);
 
-                            manifest.Save(fullFilePath);
-                            archive.AddFileToArchive(fullFilePath, "Manifest.xml");
+                           System.IO.File.WriteAllText(fullFilePath, manifest, System.Text.Encoding.UTF8);
+
+                            archive.AddFileToArchive(fullFilePath, "manifest.json");
                         }
 
                         string title = datasetVersion.Title;
@@ -328,6 +348,32 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 dm.Dispose();
                 dataStructureManager.Dispose();
                 publicationManager.Dispose();
+            }
+        }
+
+        private string getCDTypeName(string mimeType)
+        {
+            switch (mimeType)
+            {
+                case "text/csv":
+                case "text/comma-separated-values":
+                case "application/octet-stream":
+                    /* of course this is a wrong  mimetype for csv.
+                    but the c# class MimeMapping.GetMimeMapping(ext) currently returns this as a result for .csv.
+                    since we don't use the datatype at the moment,
+                    it will be rebuilt into the case here*/
+                    {
+                        return "generatedCSV";
+                    }
+                case "text/tsv":
+                case "text/tab-separated-values":
+                    {
+                        return "generatedTSV";
+                    }
+                default:
+                    {
+                        return "generatedTXT";
+                    }
             }
         }
 

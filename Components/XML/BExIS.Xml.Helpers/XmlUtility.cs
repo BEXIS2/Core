@@ -414,6 +414,24 @@ namespace BExIS.Xml.Helpers
             throw new ArgumentException("Couldn't find element within parent");
         }
 
+        public static XmlNode FindNodeByLabel(XmlNodeList nodeList, string labelName)
+        {
+            if (nodeList == null || string.IsNullOrEmpty(labelName))
+            {
+                return null;
+            }
+
+            foreach (XmlNode node in nodeList)
+            {
+                if (node.Name == labelName)
+                {
+                    return node;
+                }
+            }
+
+            return null;
+        }
+
         #region xdoc
 
         public static bool HasChildren(XElement element)
@@ -720,6 +738,20 @@ namespace BExIS.Xml.Helpers
         public static XElement GetXElementByXPath(string xpath, XDocument xDoc)
         {
             return xDoc.XPathSelectElement(xpath.Replace(" ", string.Empty));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static XAttribute GetXAttributeByXPath(string xpath, XDocument xDoc)
+        {
+            var tmp =  (IEnumerable<object>)xDoc.XPathEvaluate(xpath.Replace(" ", string.Empty));
+            var x = tmp.FirstOrDefault();
+            return x as XAttribute;
         }
 
         /// <summary>

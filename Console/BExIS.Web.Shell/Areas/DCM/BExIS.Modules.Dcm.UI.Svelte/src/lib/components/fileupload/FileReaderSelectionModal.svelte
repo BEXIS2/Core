@@ -36,20 +36,19 @@
 	}
 </script>
 
-	<div style="z-index:150">
-		<b>test c</b>
-<Drawer position="right" width="10"  on:backdrop={close} on:touchend={close}>
-	<div class="p-5 space-y-5">
-		<div class="flex">
-			<div class="grow"><h2 class="h2">File reader information</h2></div>
-			<div class="text-right flex-none w-15">
-				<button class="chip variant-filled-warning" on:click={close}>
-					<Fa icon={faXmark} />
-				</button>
+<div style="z-index:150">
+	<Drawer position="right" width="10" on:backdrop={close} on:touchend={close}>
+		<div class="p-5 space-y-5">
+			<div class="flex">
+				<div class="grow"><h1 class="h2">File reader information</h1></div>
+				<div class="text-right flex-none w-15">
+					<button class="chip variant-filled-warning" on:click={close}>
+						<Fa icon={faXmark} />
+					</button>
+				</div>
 			</div>
-		</div>
 
-		<Selection {model} on:saved={close} on:error={() => alert('error')} />
-	</div>
-</Drawer>
+			<Selection {model} on:saved={close} on:error={() => alert('error')} />
+		</div>
+	</Drawer>
 </div>

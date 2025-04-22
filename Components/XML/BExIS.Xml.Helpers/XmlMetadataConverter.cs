@@ -1,12 +1,16 @@
 ﻿using BExIS.Dlm.Entities.Common;
+using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.ValueCheck;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace BExIS.Xml.Helpers
 {
@@ -73,16 +77,27 @@ namespace BExIS.Xml.Helpers
                     // check if metadat structure exist
                     if (metadataStructure == null) throw new ArgumentNullException("metadata structure with id " + metadataStructureId + " not exist");
 
-                    for (int i = 0; i < root.ChildNodes.Count; i++)
+
+                    foreach (var usage in metadataStructure.MetadataPackageUsages)
                     {
-                        XmlNode node = root.ChildNodes[i];
-                        long usageId = metadataStructure.MetadataPackageUsages.ElementAt(i).Id;
-                        var usage = metadataStructureManager.PackageUsageRepo.Get(usageId);
+                        XmlNode node = XmlUtility.FindNodeByLabel(root.ChildNodes, usage.Label);
 
                         var packageUsageJson = _convertPackageUsage(node, usage, includeEmpty);
                         if (packageUsageJson != null)
                             metadataJson.Add(usage.Label, packageUsageJson);
                     }
+
+
+                    //for (int i = 0; i < root.ChildNodes.Count; i++)
+                    //{
+                    //    XmlNode node = root.ChildNodes[i];
+                    //    long usageId = metadataStructure.MetadataPackageUsages.ElementAt(i).Id;
+                    //    var usage = metadataStructureManager.PackageUsageRepo.Get(usageId);
+
+                    //    var packageUsageJson = _convertPackageUsage(node, usage, includeEmpty);
+                    //    if (packageUsageJson != null)
+                    //        metadataJson.Add(usage.Label, packageUsageJson);
+                    //}
                 }
             }
 
@@ -112,7 +127,7 @@ namespace BExIS.Xml.Helpers
                         for (int i = 0; i < tCHild.ChildNodes.Count; i++)
                         {
                             XmlNode child = tCHild.ChildNodes[i];
-                            var childUsage = children[i];
+                            var childUsage = children.FirstOrDefault(c=>c.Label.Equals(child.LocalName));
 
                             var childJson = _convertElementUsage(child, childUsage, includeEmpty);
 
@@ -128,7 +143,7 @@ namespace BExIS.Xml.Helpers
 
                         if (!complex.Children().Any()) return null;
 
-                        if (usage.MaxCardinality <= 1) return complex;
+                        if (getMaxCardinality(usage) <= 1) return complex;
                         else
                         {
                             array.Add(complex); // add each element to a array
@@ -140,6 +155,13 @@ namespace BExIS.Xml.Helpers
             }
 
             return null;
+        }
+
+        private bool isEmpty(XmlElement xmlElement)
+        {
+            
+
+            return true;
         }
 
         private JToken _convertElementUsage(XmlNode node, BaseUsage usage, bool includeEmpty = false)
@@ -155,12 +177,12 @@ namespace BExIS.Xml.Helpers
                 if (isSimple(element.FirstChild))
                 {
                     //property or array
-                    if (usage.MaxCardinality <= 1) // property
+                    if (getMaxCardinality(usage) <= 1) // property
                     {
                         XmlNode type = element.FirstChild; // has also reference
                         //JProperty p = new JProperty(usage.Label, type.InnerText);
                         if (!string.IsNullOrEmpty(type.InnerText) || includeEmpty)
-                            return addSimple(usage.Label, type.InnerText, (XmlElement)type, includeEmpty);
+                            return addSimple(usage, type.InnerText, (XmlElement)type, includeEmpty);
                         else
                             return null;
                     }
@@ -170,7 +192,7 @@ namespace BExIS.Xml.Helpers
                         {
                             if (!string.IsNullOrEmpty(type.InnerText) || includeEmpty)
                                 // check if
-                                array.Add(addSimple(usage.Label, type.InnerText, (XmlElement)type, includeEmpty));
+                                array.Add(addSimple(usage, type.InnerText, (XmlElement)type, includeEmpty));
                         }
 
                         if (array.Count == 0) return null;
@@ -185,40 +207,44 @@ namespace BExIS.Xml.Helpers
 
                 List<BaseUsage> children = getChildren(usage);
 
-                foreach (XmlNode tCHild in element.ChildNodes) // loop over the list of entry
+                if (children.Any())
                 {
-                    if (tCHild != null && tCHild.HasChildNodes)
+                    foreach (XmlNode tCHild in element.ChildNodes) // loop over the list of entry
                     {
-                        // complex stuff
-                        // add all children nodes
-                        JObject complex = new JObject();
-                        setReference(complex, (XmlElement)tCHild, includeEmpty);
-
-                        for (int i = 0; i < tCHild.ChildNodes.Count; i++)
+                        if (tCHild != null && tCHild.HasChildNodes)
                         {
-                            XmlNode child = tCHild.ChildNodes[i];
-                            var childUsage = children[i];
+                            // complex stuff
+                            // add all children nodes
+                            JObject complex = new JObject();
+                            setReference(complex, (XmlElement)tCHild, includeEmpty);
 
-                            var childJson = _convertElementUsage(child, childUsage, includeEmpty);
-
-                            if (childJson != null)
+                            for (int i = 0; i < tCHild.ChildNodes.Count; i++)
                             {
-                                if (childJson is JProperty)
-                                    complex.Add(childJson);
+                                XmlNode child = tCHild.ChildNodes[i];
+                                //var childUsage = children[i];
+                                var childUsage = children.FirstOrDefault(c => c.Label.Equals(child.LocalName));
 
-                                if (childJson is JObject || childJson is JArray)
+                                var childJson = _convertElementUsage(child, childUsage, includeEmpty);
+
+                                if (childJson != null)
                                 {
-                                    complex.Add(child.Name, childJson);
+                                    if (childJson is JProperty)
+                                        complex.Add(childJson);
+
+                                    if (childJson is JObject || childJson is JArray)
+                                    {
+                                        complex.Add(child.Name, childJson);
+                                    }
                                 }
                             }
-                        }
 
-                        if (!complex.Children().Any()) return null;
+                            if (!complex.Children().Any()) return null;
 
-                        if (usage.MaxCardinality <= 1) return complex;
-                        else
-                        {
-                            array.Add(complex); // add each element to a array
+                            if (getMaxCardinality(usage) <= 1) return complex;
+                            else
+                            {
+                                array.Add(complex); // add each element to a array
+                            }
                         }
                     }
                 }
@@ -281,11 +307,24 @@ namespace BExIS.Xml.Helpers
             return false;
         }
 
-        private JObject addSimple(string label, string value, XmlElement reference, bool includeEmpty)
+        private JObject addSimple(BaseUsage usage, string valueAsString, XmlElement reference, bool includeEmpty)
         {
             JObject simple = new JObject();
 
+            object value = valueAsString;
+
+            DataType dataType = getDataType(usage);
+
+            if(dataType!=null && !dataType.SystemType.Contains("String")) // if ther is a datatype , try to convert 
+            { 
+                DataTypeCheck dataTypeChecker = new DataTypeCheck("", dataType.SystemType,IO.DecimalCharacter.point);
+                var result = dataTypeChecker.Execute(valueAsString);
+                // if value is a error or datytpe is dateteim tehn not replace value
+                if ((result is ErrorType) == false && !dataType.SystemType.Contains("DateTime")) value = result;
+            }
+
             setReference(simple, reference, includeEmpty);
+
             simple.Add(new JProperty("#text", value));
 
             return simple;
@@ -601,6 +640,49 @@ namespace BExIS.Xml.Helpers
         }
 
         #endregion JSON to XML
+
+        #region helper
+
+
+        private int getMaxCardinality(BaseUsage usage)
+        {
+            if (usage.Extra == null) return usage.MaxCardinality;
+
+            // check for choice
+            var xmlnode = XmlUtility.GetXmlNodeByAttribute(usage.Extra, "type", "name", "choice");
+            if (xmlnode != null)
+            {
+                var XmlAttribute = xmlnode.Attributes["max"];
+                if (XmlAttribute != null)
+                {
+                    return int.Parse(XmlAttribute.Value);
+                }
+            }
+
+            return 1; // default
+        }
+
+        private DataType getDataType(BaseUsage usage)
+        {
+            if (usage is MetadataAttributeUsage)
+            { 
+                return ((MetadataAttributeUsage)usage).MetadataAttribute.DataType;
+            }
+
+            if (usage is MetadataNestedAttributeUsage)
+            {
+                return ((MetadataNestedAttributeUsage)usage).Member.DataType;
+            }
+
+            if (usage is MetadataParameterUsage)
+            {
+                return ((MetadataParameterUsage)usage).Member.DataType;
+            }
+
+            return null; 
+        }
+
+        #endregion
 
         #region xml to xml based on xsd
 

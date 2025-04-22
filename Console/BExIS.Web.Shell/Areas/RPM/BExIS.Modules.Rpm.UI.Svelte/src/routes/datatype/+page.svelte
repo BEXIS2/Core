@@ -22,6 +22,7 @@
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import type { DataTypeListItem } from './models';
 
+	import type { linkType } from '@bexis2/bexis2-core-ui';
 	const modalStore = getModalStore();
 
 	let dts: DataTypeListItem[] = [];
@@ -38,12 +39,16 @@
 	onMount(async () => {
 		helpStore.setHelpItemList(helpItems);
 		showForm = false;
+		clear();
 	});
 
 	async function reload(): Promise<void> {
-		showForm = false;
 		dts = await apiCalls.GetDataTypes();
-		clear();
+	}
+
+	async function save(): Promise<void> {
+		reload();
+		toggleForm();
 	}
 
 	async function clear() {
@@ -57,24 +62,32 @@
 	}
 
 	function editDataType(type: any) {
-		dataType = { ...dataTypes.find((dt) => dt.id === type.id)! };
 		if (type.action == 'edit') {
+			dataType = { ...dataTypes.find((dt) => dt.id === type.id)! };
 			showForm = true;
 		}
 		if (type.action == 'delete') {
+			let dt: DataTypeListItem = dataTypes.find((dt) => dt.id === type.id)!;
 			const modal: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete Data Type',
 				body:
 					'Are you sure you wish to delete Data Type "' +
-					dataType.name +
+					dt.name +
 					'" (' +
-					dataType.systemType +
+					dt.systemType +
 					')?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
-				response: (r: boolean) => {
+				response: async (r: boolean) => {
 					if (r === true) {
-						deleteDataType(type.id);
+						let success :boolean = await deleteDataType(dt);
+						if (success)
+						{
+							reload();
+							if (dt.id === dataType.id) {
+								toggleForm();
+							}
+						}
 					}
 				}
 			};
@@ -82,20 +95,21 @@
 		}
 	}
 
-	async function deleteDataType(id: number) {
-		let success = await apiCalls.DeleteDataType(id);
+	async function deleteDataType(dt: DataTypeListItem): Promise<boolean> {
+		let success = await apiCalls.DeleteDataType(dt.id);
 		if (success != true) {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: 'Can\'t delete Data Type "' + dataType.name + '".'
+				message: 'Can\'t delete Data Type "' + dt.name + '".'
 			});
+			return false;
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'Data Type "' + dataType.name + '" deleted.'
+				message: 'Data Type "' + dt.name + '" deleted.'
 			});
+			return true;
 		}
-		reload();
 	}
 
 	function toggleForm() {
@@ -104,9 +118,16 @@
 		}
 		showForm = !showForm;
 	}
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#data-types',
+		}
+	];
 </script>
 
-<Page help={true} title="Manage Data Types">
+<Page help={true} title="Manage Data Types" {links}>
 	<div class="w-full">
 		<h1 class="h1">Data Types</h1>
 
@@ -152,7 +173,7 @@
 
 			{#if showForm}
 				<div in:slide out:slide>
-					<Form {dataType} {dataTypes} on:cancel={toggleForm} on:save={reload} />
+					<Form {dataType} {dataTypes} on:cancel={toggleForm} on:save={save} />
 				</div>
 			{/if}
 

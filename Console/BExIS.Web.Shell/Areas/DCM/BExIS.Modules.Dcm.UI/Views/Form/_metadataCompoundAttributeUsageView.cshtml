@@ -23,9 +23,6 @@
     bool locked = false;
     bool showOptional = false;
 
-    string displayName = "";
-    displayName = char.ToUpper(Model.DisplayName()[0]) + Model.DisplayName().Substring(1).Replace("_", " ");
-
     string lvl = Model.Level.ToString();
     if (Model.Level >= 9)
     {
@@ -76,7 +73,7 @@
                 }
 
                 <b>
-                    @displayName
+                    @Html.Partial("_displayname", Model.DisplayName())
 
                     @if (Model.Model.MaxCardinality > 1)
                     {
@@ -210,21 +207,28 @@
                                     </td>
                                     <td class="metadataAttributeInput">
 
-                                        @foreach (var element in Model.Childrens)
-                                        {
-                                            string choiceId = element.StepId + "_choice";
-
-                                            if (element.Activated)
+                                        <ul style="list-style:none">
+                                            @foreach (var element in Model.Childrens)
                                             {
-                                                <span id="@choiceId" name="@id_choice" class="bx bx-dot-circle-o bx-mouse-pointer"></span>
-                                            }
-                                            else
-                                            {
-                                                <span id="@choiceId" name="@id_choice" onclick="ActivateFromChoice(this)" class="bx bx-circle-o bx-mouse-choice bx-mouse-pointer"></span>
-                                            }
+                                                <li>
+                                                   @{ 
+                                                       string choiceId = element.StepId + "_choice";
 
-                                            @element.DisplayName()
-                                        }
+                                                       if (element.Activated)
+                                                       {
+                                                            <span id="@choiceId" name="@id_choice" class="bx bx-dot-circle-o bx-mouse-pointer"></span>
+                                                       }
+                                                       else
+                                                       {
+                                                            <span id="@choiceId" name="@id_choice" onclick="ActivateFromChoice(this)" checked class="bx bx-circle-o bx-mouse-choice bx-mouse-pointer"></span>
+                                                        }
+                                                    }
+
+                                                    @Html.Partial("_displayname", element.DisplayName())
+                                                    
+                                                </li>
+                                            }
+                                        </ul>
                                     </td>
                                     <td class="metadataAttributeOption"></td>
                                 </tr>
@@ -233,6 +237,51 @@
                     </div>
                 </div>
             }
+            else if (Model.ChoiceMax > 1 && !locked)
+            {
+                <div class="contentContainer">
+                    <div class="metadataAttributeContent">
+                        <table style="background-color:white;">
+                            <tbody>
+                                <tr>
+                                    <td class="metadataAttributeLabel">
+
+                                        @if (Model.Model.MinCardinality > 0)
+                                        {
+                                            <b title="Required" style="color: red">*</b>
+                                            <b>Please select:</b>
+                                        }
+                                        else
+                                        {
+                                            <span>Please select:</span>
+                                        }
+                                    </td>
+                                    <td class="metadataAttributeInput">
+                                        <ul style="list-style:none">
+
+                                            @foreach (var element in Model.Childrens)
+                                            {
+                                                <li>
+                                                    @{ 
+                                                        string choiceId = element.StepId + "_" + element.UsageId + "_choice";
+                                                        <input id="@choiceId" type="checkbox" name="@id_choice" onclick="ChangeElementFromChoice(this)" checked="@element.Activated" />
+                                                    }
+                                                    
+                                                    @Html.Partial("_displayname", element.DisplayName())
+
+                                                </li>
+
+                                            }
+                                        </ul>
+                                    </td>
+                                    <td class="metadataAttributeOption"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
         }
 
         @if (Model.Activated)

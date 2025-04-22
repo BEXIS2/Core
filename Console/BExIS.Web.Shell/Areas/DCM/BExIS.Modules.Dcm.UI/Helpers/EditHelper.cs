@@ -73,5 +73,64 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
             return new List<SortedError>();
         }
+
+        public static List<SortedError> SortFileWarnings(List<Warning> warnings)
+        {
+            if (warnings.Count > 0)
+            {
+                // split up the error messages for a btter overview-- >
+                // set all value error with the same var name, datatypoe and issue-- >
+                // create a dictionary for error messages
+
+                // variable issues
+                var varNames = warnings.Where(e => e.GetType().Equals(ErrorType.Value)).Select(e => e.getName()).Distinct();
+                var varIssues = warnings.Where(e => e.GetType().Equals(ErrorType.Value)).Select(e => e.GetMessage()).Distinct();
+
+                List<SortedError> sortedErrors = new List<SortedError>();
+
+                foreach (string vn in varNames)
+                {
+                    foreach (string i in varIssues)
+                    {
+                        int c = warnings.Where(e => e.getName().Equals(vn) && e.GetMessage().Equals(i)).Count();
+
+                        if (c > 0)
+                        {
+                            var errs = warnings.Where(e => e.getName().Equals(vn) && e.GetMessage().Equals(i));
+                            List<string> errorMessages = new List<string>();
+                            errs.ToList().ForEach(e => errorMessages.Add(e.ToHtmlString()));
+                            sortedErrors.Add(new SortedError(vn, c, i, errs.FirstOrDefault().GetType(), errorMessages));
+                        }
+                    }
+                }
+
+                // others
+                var othersNames = warnings.Where(e => e.GetType() != ErrorType.Value).Select(e => e.getName()).Distinct();
+                var othersIssues = warnings.Where(e => e.GetType() != ErrorType.Value).Select(e => e.GetMessage()).Distinct();
+
+                foreach (string vn in othersNames)
+                {
+                    foreach (string i in othersIssues)
+                    {
+                        int c = warnings.Where(e => e.getName().Equals(vn) && e.GetMessage().Equals(i)).Count();
+
+                        if (c > 0)
+                        {
+                            var errs = warnings.Where(e => e.getName().Equals(vn) && e.GetMessage().Equals(i));
+                            List<string> errorMessages = new List<string>();
+                            errs.ToList().ForEach(e => errorMessages.Add(e.ToHtmlString()));
+                            sortedErrors.Add(new SortedError(vn, c, i, errs.FirstOrDefault().GetType(), errorMessages));
+                        }
+                    }
+                }
+
+                if (sortedErrors.Count > 0)
+                {
+                    return sortedErrors;
+                }
+            }
+
+            return new List<SortedError>();
+        }
     }
 }

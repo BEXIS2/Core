@@ -106,6 +106,10 @@
     margin: 0;
 }
 
+.le-simple-parameter {
+    margin-left:10px;
+}
+
 .mapping_container {
     border: 1px solid #afb0b1;
 }

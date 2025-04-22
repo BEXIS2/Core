@@ -1,0 +1,23 @@
+﻿@model Dictionary<string, string>
+
+<div class="publication-container">
+    @foreach (var label in Model)
+    {
+        if (@label.Value == "template")
+        {
+            <a href="" class="label label-info">@label.Key</a>
+        }
+        else
+        {
+            <a href="@label.Key" class="label label-success">@label.Value: @label.Key</a>
+        }
+
+
+    }
+
+</div>
+<style>
+    .publication-container {
+        padding-bottom:10px;
+    }
+</style>

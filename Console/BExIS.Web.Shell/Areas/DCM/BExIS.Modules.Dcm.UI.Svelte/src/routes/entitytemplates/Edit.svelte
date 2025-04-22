@@ -40,6 +40,7 @@
 
 	export let hooks = [];
 	export let metadataStructures: listItemType[] = [];
+	let subsetMetadataStructures = metadataStructures;
 	export let dataStructures = [];
 	let systemKeys;
 	export let entities = [];
@@ -52,6 +53,7 @@
 
 	$: entityTemplate;
 	$: systemKeys;
+	$: subsetMetadataStructures;
 
 	$: loaded = false;
 
@@ -108,6 +110,20 @@
 
 		// if metadata structure selection changed,
 		updateSystemKeys(e.target.id);
+
+		// entity changed update metadata structure list
+		if (entityTemplate.entityType) {
+			subsetMetadataStructures = metadataStructures.filter(
+				(item) => item.group == entityTemplate.entityType.text
+			);
+			console.log(
+				'🚀 ~ onChangeHandler ~ metadataStructures:',
+				metadataStructures,
+				entityTemplate.entityType.text
+			);
+		} else {
+			subsetMetadataStructures = metadataStructures;
+		}
 	}
 
 	async function updateSystemKeys(targetid) {
@@ -189,24 +205,23 @@
 				/>
 			</div>
 
+			<h3 class="h3">Metadata</h3>
 
-					<h3 class="h3">Metadata</h3>
-
-					<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
-					<DropdownKVP
-						id="metadataStructure"
-						title="Metadata Schema"
-						bind:target={entityTemplate.metadataStructure}
-						source={metadataStructures}
-						valid={res.isValid('metadataStructure')}
-						invalid={res.hasErrors('metadataStructure')}
-						feedback={res.getErrors('metadataStructure')}
-						on:change={onChangeHandler}
-						complexTarget={true}
-						required={true}
-						help={true}
-					/>
-					<div class="flex flex-col gap-4">
+			<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+				<DropdownKVP
+					id="metadataStructure"
+					title="Metadata Schema"
+					bind:target={entityTemplate.metadataStructure}
+					source={subsetMetadataStructures}
+					valid={res.isValid('metadataStructure')}
+					invalid={res.hasErrors('metadataStructure')}
+					feedback={res.getErrors('metadataStructure')}
+					on:change={onChangeHandler}
+					complexTarget={true}
+					required={true}
+					help={true}
+				/>
+				<div class="flex flex-col gap-4">
 					{#if systemKeys}
 						<EntryContainer>
 							<MultiSelect
@@ -223,11 +238,10 @@
 						</EntryContainer>
 					{/if}
 
-
 					<EntryContainer>
 						<div id="invalidSaveMode" />
 						<SlideToggle
-					  active="bg-primary-500"
+							active="bg-primary-500"
 							name="Invalid-save-mode"
 							bind:checked={entityTemplate.metadataInvalidSaveMode}
 						>
@@ -235,39 +249,42 @@
 						</SlideToggle>
 					</EntryContainer>
 				</div>
-				</div>
-
+			</div>
 
 			<div class="flex flex-col space-y-4">
-					
+				<h3 class="h3">Data Structure</h3>
+				<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+					<EntryContainer>
+						<div
+							role="group"
+							class="flex flex-col gap-4"
+							on:mouseover={() => helpStore.show('hasDatastructure')}
+							on:focus={() => helpStore.show('hasDatastructure')}
+						>
+							<SlideToggle
+								active="bg-primary-500"
+								name="use_data_structure"
+								bind:checked={entityTemplate.hasDatastructure}
+							>
+								Allow to use data structures
+							</SlideToggle>
 
-			<h3 class="h3">Data Structure</h3>
-			<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
-				<EntryContainer>
-					<div role="group" class="flex flex-col gap-4"  on:mouseover={() => helpStore.show('hasDatastructure')} on:focus={() => helpStore.show('hasDatastructure')}>
-						<SlideToggle 
-						active="bg-primary-500"
-						name="use_data_structure" 
-						bind:checked={entityTemplate.hasDatastructure}>
-							Allow to use data structures
-						</SlideToggle>
-
-						{#if entityTemplate.hasDatastructure}
-							<MultiSelect
-								id="datastructures"
-								title="Limit the selection of allowed data structures"
-								source={dataStructures}
-								bind:target={entityTemplate.datastructureList}
-								itemId="key"
-								itemLabel="value"
-								complexSource={true}
-								help={true}
-							/>
-						{/if}
-					</div>
-				</EntryContainer>
+							{#if entityTemplate.hasDatastructure}
+								<MultiSelect
+									id="datastructures"
+									title="Limit the selection of allowed data structures"
+									source={dataStructures}
+									bind:target={entityTemplate.datastructureList}
+									itemId="key"
+									itemLabel="value"
+									complexSource={true}
+									help={true}
+								/>
+							{/if}
+						</div>
+					</EntryContainer>
+				</div>
 			</div>
-		</div>
 
 			<h3 class="h3">Administration</h3>
 			<p class="p">Set permissions per default to the following groups</p>
@@ -324,7 +341,7 @@
 					/>
 				</EntryContainer>
 			</div>
-			
+
 			<h3 class="h3">Notifications</h3>
 			<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
 				<EntryContainer>
@@ -364,13 +381,31 @@
 				</EntryContainer>
 			</div>
 
-			<div class="py-5 grow text-right gap-2">
-				<button title="cancel" type="button" class="btn variant-filled-warning" on:click={onCancel}
-					><Fa icon={faTrash} /></button
+			<div class="flex py-5">
+				<div
+					role="group"
+					on:mouseover={() => helpStore.show('activated')}
+					on:focus={() => helpStore.show('activated')}
 				>
-				<button title="save" type="submit" class="btn variant-filled-primary" {disabled}
-					><Fa icon={faSave} /></button
-				>
+					<SlideToggle
+						active="bg-primary-500"
+						name="activated"
+						bind:checked={entityTemplate.activated}
+					>
+						Activate
+					</SlideToggle>
+				</div>
+				<div class="grow text-right gap-2">
+					<button
+						title="cancel"
+						type="button"
+						class="btn variant-filled-warning"
+						on:click={onCancel}><Fa icon={faTrash} /></button
+					>
+					<button title="save" type="submit" class="btn variant-filled-primary" {disabled}
+						><Fa icon={faSave} /></button
+					>
+				</div>
 			</div>
 		</form>
 	</ContentContainer>

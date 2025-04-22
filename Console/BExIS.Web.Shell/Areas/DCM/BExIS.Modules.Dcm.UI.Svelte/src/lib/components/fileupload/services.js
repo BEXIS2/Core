@@ -7,12 +7,11 @@ export const load = async (file, entityId, version) => {
 		const response = await Api.get(
 			'/rpm/DataStructure/load?file=' + file + '&&entityId=' + entityId + '&&version=' + version
 		);
-		console.log("🚀 ~ load ~ response:", response)
-		
+		console.log('🚀 ~ load ~ response:', response);
+
 		return response.data;
 	} catch (error) {
 		console.error('ERROR : LOAD', error);
 		throw error;
 	}
-
 };

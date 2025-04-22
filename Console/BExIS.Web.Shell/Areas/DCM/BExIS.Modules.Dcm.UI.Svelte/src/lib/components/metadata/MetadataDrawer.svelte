@@ -45,9 +45,9 @@
 	}
 </script>
 
-<div id="metadata-drawer-container" >
-<Drawer  position="right" width="w-11/12" on:backdrop={close} on:touchend={close} >
-	<!-- <div class="">
+<div id="metadata-drawer-container">
+	<Drawer position="right" width="w-11/12" on:backdrop={close} on:touchend={close}>
+		<!-- <div class="">
 		<div class="flex">
 			<div class="grow"></div>
 			<div class="text-right flex-none w-15 h-10 p-2">
@@ -58,7 +58,6 @@
 		</div> -->
 
 		<IFrame app="test" {url} on:close={close}></IFrame>
-	<!-- </div> -->
-</Drawer>
+		<!-- </div> -->
+	</Drawer>
 </div>
-

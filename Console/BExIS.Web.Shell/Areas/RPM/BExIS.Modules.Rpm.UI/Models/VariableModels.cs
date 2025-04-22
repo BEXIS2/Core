@@ -1,6 +1,7 @@
 ﻿using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 
 namespace BExIS.Modules.Rpm.UI.Models
 {
@@ -75,6 +76,7 @@ namespace BExIS.Modules.Rpm.UI.Models
 
         public List<string> DataTypes { get; set; }
 
+
         public UnitItem()
         {
             Id = 0;
@@ -99,6 +101,9 @@ namespace BExIS.Modules.Rpm.UI.Models
         public string Group { get; set; }
         public string Description { get; set; }
 
+        public string DataType { get; set; }
+        public string Unit { get; set; }
+
         public List<string> DataTypes { get; set; }
         public List<string> Units { get; set; }
         public List<string> Meanings { get; set; }
@@ -110,17 +115,21 @@ namespace BExIS.Modules.Rpm.UI.Models
             Text = "";
             Group = "";
             Description = "";
+            DataType = "";
+            Unit = "";  
             DataTypes = new List<string>();
             Units = new List<string>();
             Meanings = new List<string>();
             Constraints = new List<string>();
         }
 
-        public VariableTemplateItem(long key, string value, List<string> units, List<string> dataTypes, List<string> meanings, List<string> constraints = null, string group = "", string description = "")
+        public VariableTemplateItem(long key, string value, string dataType, string unit, List<string> units, List<string> dataTypes, List<string> meanings, List<string> constraints = null, string group = "", string description = "")
         {
             Id = key;
             Text = value;
             Group = group;
+            DataType = dataType;
+            Unit = unit;
             DataTypes = dataTypes;
             Units = units;
             Meanings = meanings;

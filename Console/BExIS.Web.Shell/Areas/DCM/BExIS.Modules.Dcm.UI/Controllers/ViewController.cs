@@ -99,7 +99,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             //throw new NotImplementedException();
 
-            return RedirectToAction("LoadMetadataByVersion", "Form", new { area = "DCM", entityId = id, version, locked = true, created = false, fromEditMode = true });
+            return RedirectToAction("LoadMetadataByVersion", "Form", new { area = "DCM", entityId = id, version, locked = true, created = false, fromEditMode = false });
         }
 
         /// <summary>

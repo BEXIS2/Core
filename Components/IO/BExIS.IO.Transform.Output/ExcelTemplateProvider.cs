@@ -179,7 +179,7 @@ namespace BExIS.IO.Transform.Output
             ExcelHelper.UpdateStylesheet(dataStructureFile.WorkbookPart.WorkbookStylesPart.Stylesheet, out styleIndex);
 
             Worksheet worksheet = dataStructureFile.WorkbookPart.WorksheetParts.First().Worksheet;
-            List<Row> rows = GetRows(worksheet, 1, 5);
+            List<Row> rows = GetRows(worksheet, 1, 7);
 
             List<VariableInstance> variables = this.GetUnitOfWork().GetReadOnlyRepository<VariableInstance>()
                                                             .Query(p => variableIds.Contains(p.Id))
@@ -204,22 +204,40 @@ namespace BExIS.IO.Transform.Output
                     rows.ElementAt(0).AppendChild(generateCell(cellRef, var.Label, workbookPart, "ff9700", true, false, true));
 
                     //unit
-                    string unit = var.Unit != null ? var.Unit.Name : "";
+                    string unit = var.Unit != null && var.Unit.Name != "none" ? var.Unit.Abbreviation : "";
                     cellRef = columnIndex + 2;
                     rows.ElementAt(1).AppendChild(generateCell(cellRef, unit, workbookPart, "ffd599"));
 
+                    //description
+                    cellRef = columnIndex + 3;
+                    rows.ElementAt(2).AppendChild(generateCell(cellRef, var.Description, workbookPart, "ffd599"));
+
                     // datatype
                     string dataType = var.DataType != null ? var.DataType.Name : "";
-                    cellRef = columnIndex + 3;
-                    rows.ElementAt(2).AppendChild(generateCell(cellRef, dataType, workbookPart, "ffd599"));
+                    cellRef = columnIndex + 4;
+                    rows.ElementAt(3).AppendChild(generateCell(cellRef, dataType, workbookPart, "ffd599"));
 
                     // optional
-                    cellRef = columnIndex + 4;
-                    rows.ElementAt(3).AppendChild(generateCell(cellRef, var.IsValueOptional ? "optional" : "mandatory", workbookPart, "ffd599"));
+                    cellRef = columnIndex + 5;
+                    rows.ElementAt(4).AppendChild(generateCell(cellRef, var.IsValueOptional ? "optional" : "mandatory", workbookPart, "ffd599"));
+
+                    // missing values
+                    var mvs = new List<string>();
+                    if (var.MissingValues != null)
+                    {
+                        foreach (var mv in var.MissingValues)
+                        {
+                            mvs.Add(mv.DisplayName);
+                        }
+                    }
+                    string mvsToString = string.Join(", ", mvs);
+
+                    cellRef = columnIndex + 6;
+                    rows.ElementAt(5).AppendChild(generateCell(cellRef, mvsToString, workbookPart, "ffd599"));
 
                     // is key
-                    cellRef = columnIndex + 5;
-                    rows.ElementAt(4).AppendChild(generateCell(cellRef, var.IsKey ? "key" : "", workbookPart, "ffd599", false, true));
+                    cellRef = columnIndex + 7;
+                    rows.ElementAt(6).AppendChild(generateCell(cellRef, var.IsKey ? "primary key" : "", workbookPart, "ffd599", false, true));
                 }
                 finally
                 {

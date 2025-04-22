@@ -9,7 +9,8 @@ export interface ConstraintListItem {
 	formalDescription: string;
 	type: string;
 	negated: boolean;
-	inUse: boolean;
+	inUseByVariable: boolean;
+	inUseByMeaning: boolean;
 	variableIDs: number[];
 	creationDate?: string;
 	lastModified?: string;

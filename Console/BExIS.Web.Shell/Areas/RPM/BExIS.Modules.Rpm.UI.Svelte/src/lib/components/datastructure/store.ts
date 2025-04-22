@@ -10,6 +10,7 @@ export const templateStore = writable<templateListItemType[]>([]);
 export const isTemplateRequiredStore = writable<boolean>(false);
 export const isMeaningRequiredStore = writable<boolean>(false);
 export const setByTemplateStore = writable<boolean>(false);
+export const updateDescriptionByTemplateStore = writable<boolean>(false);
 export const enforcePrimaryKeyStore = writable<boolean>(false);
 export const changeablePrimaryKeyStore = writable<boolean>(false);
 export const meaningsStore = writable<meaningListItemType[]>([]);

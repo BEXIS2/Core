@@ -50,6 +50,7 @@
     </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.4.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Iesi.Collections.4.0.4\lib\net461\Iesi.Collections.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Lucifron.ReST.Library, Version=1.0.0.11, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Lucifron.ReST.Library.1.0.0.11\lib\net48\Lucifron.ReST.Library.dll</HintPath>

@@ -47,13 +47,12 @@
 		suite.reset();
 
 		// run validation only if start with an existing
-		if(meaning.id == 0){
+		if (meaning.id == 0) {
 			suite.reset();
-		}
-		else{
+		} else {
 			setTimeout(async () => {
 				res = suite(meaning, undefined);
-		}, 10);
+			}, 10);
 		}
 	});
 

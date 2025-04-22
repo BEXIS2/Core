@@ -37,7 +37,7 @@ export class meaningEntryType {
 	mappedLinks: listItemType[];
 
 	public constructor() {
-		this.mappingRelation = { id: -1, text: '', group: '' };
+		this.mappingRelation = { id: -1, text: '', group: '', description: '' };
 		this.mappedLinks = [];
 	}
 }

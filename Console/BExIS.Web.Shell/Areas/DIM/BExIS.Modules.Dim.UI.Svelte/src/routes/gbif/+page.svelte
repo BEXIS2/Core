@@ -1,8 +1,10 @@
 <script lang="ts">
 
 	import { ErrorMessage, notificationStore, notificationType, Page, pageContentLayoutType, positionType, Spinner} from "@bexis2/bexis2-core-ui";
- import { goTo, load, register } from "./services";
+    import { goTo, load, register } from "./services";
 	import {type GbifPublicationModel } from "./types";
+
+	import type { linkType } from '@bexis2/bexis2-core-ui';
 
 	import { Table } from '@bexis2/bexis2-core-ui';
 	import type { TableConfig } from '@bexis2/bexis2-core-ui';
@@ -14,7 +16,7 @@
 	let publications:GbifPublicationModel[] = [];
 
 	async function init() {
-		
+
 		const res = await load();
 		if(res.status===200){
 			publications	= res.data;
@@ -37,27 +39,35 @@
 
 			init();
 			}
-			
+
 		}else	if(type.action === 'show'){
-	
+
 			let url= "/ddm/data/show?id="+type.id+"&version="+type.version;
 			goTo(url,);
 		}else		if(type.action === 'delete'){
-	
+
 	// let url= "/ddm/data/show?id="+type.id+"&version="+type.version;
 	// goTo(url,);
 }
 	}
 
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/MyData#GBIF',
+		}
+	];
+
 </script>
-<Page 
+<Page
 	title="GBIF Export Manager"
-	note="Manage all datasets that are ready to exported to GBIF."
+	note="Manage all datasets ready to be exported to GBIF."
 	contentLayoutType={pageContentLayoutType.center}
+	{links}
 >
 {#await init()}
 			<div class="text-surface-800">
-				<Spinner position={positionType.center} label="loading darwin core archive ready publications for gbif" />
+				<Spinner position={positionType.center} label="loading Darwin Core archives ready for publication to GBIF" />
 			</div>
 		{:then result}
 			<Table
@@ -67,8 +77,8 @@
 					data: publicationStore,
 					optionsComponent: TableOption,
 					columns:{
-						publicationId: {								
-							exclude:true		
+						publicationId: {
+							exclude:true
 						},
 						datasetId:{
 							header: 'dataset',

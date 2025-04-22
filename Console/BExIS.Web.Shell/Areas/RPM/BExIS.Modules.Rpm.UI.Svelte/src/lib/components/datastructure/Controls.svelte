@@ -5,20 +5,6 @@
 		<div>
 			<span class="badge bg-primary-500" />
 			<span class="flex-auto">
-				<dt class="font-bold">Selection Column(s)</dt>
-				<dd>left mouse button (click or drag)</dd>
-			</span>
-		</div>
-		<div>
-			<span class="badge bg-primary-500" />
-			<span class="flex-auto">
-				<dt class="font-bold">Deselect Column(s)</dt>
-				<dd>right mouse button (click or drag)</dd>
-			</span>
-		</div>
-		<div>
-			<span class="badge bg-primary-500" />
-			<span class="flex-auto">
 				<dt class="font-bold">Select Row</dt>
 				<dd>double click left mouse button or click arrow</dd>
 			</span>
@@ -28,6 +14,20 @@
 			<span class="flex-auto">
 				<dt class="font-bold">Deselect Row</dt>
 				<dd>right mouse button click on arrow</dd>
+			</span>
+		</div>
+		<div>
+			<span class="badge bg-primary-500" />
+			<span class="flex-auto">
+				<dt class="font-bold">Selection Column(s)</dt>
+				<dd>left mouse button (click or drag)</dd>
+			</span>
+		</div>
+		<div>
+			<span class="badge bg-primary-500" />
+			<span class="flex-auto">
+				<dt class="font-bold">Deselect Column(s)</dt>
+				<dd>right mouse button (click or drag)</dd>
 			</span>
 		</div>
 		<!-- ... -->

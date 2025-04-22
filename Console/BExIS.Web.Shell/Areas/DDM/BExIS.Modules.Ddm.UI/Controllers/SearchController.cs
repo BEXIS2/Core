@@ -88,9 +88,26 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
 
+            
+
+
+            // reset properties selected values if result is null and autocomplete is not empty
+            if (!string.IsNullOrEmpty(autoComplete) && !provider.WorkingSearchModel.ResultComponent.Rows.Any())
+            {
+               
+                Session["FilterAC"] = null;
+                Session["SelectedIndexFilterAC"] = 0;
+                Session["PropertiesDictionary"] = null;
+
+                provider.WorkingSearchModel.CriteriaComponent.Clear();
+                provider.WorkingSearchModel.UpdateSearchCriteria(FilterList, autoComplete, SearchComponentBaseType.Category);
+                provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
+            }
+
             //reset searchType
             // after every search - searchType must be based on
             SetSearchType("basedon");
+
             var j = Json(provider.WorkingSearchModel, JsonRequestBehavior.AllowGet);
             j.MaxJsonLength = int.MaxValue;
             return j;
@@ -126,7 +143,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public JsonResult _AutoCompleteAjaxLoading(string text)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
-            SearchModel model = provider.GetTextBoxSearchValues(text, GetFilterAC(), Session["SearchType"].ToString(), 10);
+            SearchModel model = provider.GetTextBoxSearchValues(text, GetFilterAC(), "new", 10);
             IEnumerable<TextValue> textvalues = model.SearchComponent.TextBoxSearchValues;
 
             return new JsonResult { Data = new SelectList(textvalues, "Value", "Name") };

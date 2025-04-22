@@ -17,36 +17,36 @@ namespace BExIS.Utils.Tests
         }
 
         [Test]
-        public void GetUrl_VersionIsEmpty_EmptyString()
+        public void GetUrl_IsEmpty_FallBackString()
         {
             //Arrange
             //Act
-            string url = ManualHelper.GetUrl(string.Empty, "");
+            string url = ManualHelper.GetUrl(string.Empty);
             //Assert
 
-            Assert.That(url, Is.Empty);
+            Assert.AreEqual(url,"/home/docs/general");
         }
 
         [Test]
-        public void GetUrl_ModuleIsEmpty_EmptyString()
+        public void GetUrl_NoUrl_DocumentationLink()
         {
             //Arrange
             //Act
-            string url = ManualHelper.GetUrl("2.15", "");
+            string url = ManualHelper.GetUrl("search");
             //Assert
 
-            Assert.That(url, Is.Empty);
+            Assert.AreEqual(url, "/home/docs/search");
         }
 
-        //https://github.com/BEXIS2/Documents/blob/2.15/Manuals/BAM/Manual.md
+
         [Test]
         public void GetUrl_Valid_GetUrl()
         {
             //Arrange
-            string expected = "https://github.com/BEXIS2/Documents/blob/2.15/Manuals/BAM/Manual.md";
+            string expected = "http://www.google.de";
 
             //Act
-            string url = ManualHelper.GetUrl("2.15", "BAM");
+            string url = ManualHelper.GetUrl(expected);
             //Assert
 
             Assert.AreEqual(expected, url);

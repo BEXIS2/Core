@@ -5,6 +5,13 @@
 
 @{
     List<BExIS.UI.Models.ListItem> datarepolist = Model.Brokers;
+    List<int> versionNrs = new List<int>();
+    List<double> tags = new List<double>();
+    bool useTags = false;
+    if (ViewData["VersionNrs"] != null) { versionNrs = (List<int>)ViewData["VersionNrs"]; }
+    if (ViewData["Tags"] != null) { tags = (List<double>)ViewData["Tags"]; }
+    if (ViewData["UseTags"] != null) { useTags = (bool)ViewData["UseTags"]; }
+
 }
 <script type="text/javascript">
 
@@ -13,26 +20,47 @@
                 resetAllTelerikIconTitles();
             });
 
-        function onSelectDataRepositoryDropDownChange(e) {
+
+
+
+        function onChangeSettings(e) {
 
             console.log(e.value)
 
             var id = '@Model.DatasetId';
 
-            if(e.value !="")
+            let version = 0
+            if (document.getElementById("SelectVersion")) {
+                version = document.getElementById("SelectVersion").value
+            }
+
+            let tag = 0
+            if (document.getElementById("SelectTag")) {
+                tag = document.getElementById("SelectTag").value
+            }
+
+            const broker = document.getElementById("SelectDataRepository")?.value
+
+            console.log("settings", broker, version, tag)
+
+            if (broker !="")
             {
+                var jsonObject = {
+                    "brokerId": broker,
+                    "datasetid": id,
+                    "versionNr": version,
+                    "tagNr": tag
+                };
+
+
                 $.post('@Url.Action("LoadRequirementView", "Submission")',
-                    { brokerId: e.value, datasetid: id },
+                    jsonObject,
                     function(response) {
                         //$("#requirementsContainer").html(response);
 
                         $("#preloader").preloader(14, "Please wait...");
 
-                        var jsonObject = {
-                            "brokerId": e.value,
-                            "datasetid": id
-                        };
-
+                    
                         jQuery.ajax({
                             type: "POST",
                             url: "@Url.Action("CheckExportPossibility", "Submission")",
@@ -175,8 +203,27 @@
 
         console.log("sendDataToDataRepo", id, input);
 
+        let version = 0
+        if (document.getElementById("SelectVersion")) {
+            version = document.getElementById("SelectVersion").value
+        }
+
+        let tag = 0
+        if (document.getElementById("SelectTag")) {
+            tag = document.getElementById("SelectTag").value
+        }
+
+        const broker = document.getElementById("SelectDataRepository")?.value
+
+        var jsonObject = {
+            "brokerId": broker,
+            "datasetid": id,
+            "versionNr": version,
+            "tagNr": tag
+        };
+
         $.post('@Url.Action("SendDataToDataRepo", "Submission", new RouteValueDictionary {{"area", "dim"}})',
-            { brokerId: input, datasetId: id },
+            jsonObject,
             function(response) {
 
                // alert("end send data to repo ");
@@ -234,12 +281,36 @@
                 <tr>
                     <td style="width: 100px;">
                         @(Html.Telerik().DropDownList()
-                      .Placeholder("Select")
-                      .Name("SelectDataRepository")
-                      .HtmlAttributes(new { title = "Select a repository for publishing this dataset" })
-                      .ClientEvents(events => events.OnChange("onSelectDataRepositoryDropDownChange"))
-                      .BindTo(new SelectList(datarepolist,"Id","Text")))
+      .Placeholder("Select a publisher and type")
+      .Name("SelectDataRepository")
+      .HtmlAttributes(new { title = "Select a repository for publishing this dataset" })
+      .ClientEvents(events => events.OnChange("onChangeSettings"))
+      .BindTo(new SelectList(datarepolist, "Id", "Text")))
                     </td>
+
+                    <td style="width: 100px;">
+                        @{
+                            if (useTags)
+                            {
+                                @(Html.Telerik().DropDownList()
+                                             .Placeholder("Select a tag")
+                                             .Name("SelectTag")
+                                             .HtmlAttributes(new { title = "Select a tag" })
+                                             .ClientEvents(events => events.OnChange("onChangeSettings"))
+                                             .BindTo(new SelectList(tags)))
+                            }
+                            else
+                            {
+                                @(Html.Telerik().DropDownList()
+                                            .Placeholder("Select a version")
+                                            .Name("SelectVersion")
+                                            .HtmlAttributes(new { title = "Select a version" })
+                                            .ClientEvents(events => events.OnChange("onChangeSettings"))
+                                            .BindTo(new SelectList(versionNrs)))
+
+                                }
+                            }
+                        </td>
 
                     <td style="width: 100px;">
                         <button id="submitPublishBt" class="bx-button small function bx-disabled" onClick="onSubmitPublishBtClick(this)" disabled="disabled" title="Prepare Publication Package (NOTE: there is currently no direct submission in place)">Publish</button>
@@ -273,12 +344,24 @@
     <div>
         <table>
             <tr>
-                <th style="width: 80px;">Version</th>
+
+                @if (useTags)
+                {
+                    <th style="width: 80px;">
+                        <span>Tag</span>
+                    </th>
+
+                }
+                <th style="width: 80px;">
+                    Version
+                </th>
                 <th>Publisher</th>
-                <th>Data Repository</th>
+                <th>Type</th>
                 <th>Creation Date</th>
                 <th>Status</th>
-                <th>Link</th>
+                <th>Destination</th>
+                <th>Reference Type</th>
+                <th>Reference</th>
                 <th style="width: 30px;"></th>
             </tr>
             @if (Model.Publications.Count > 0)
@@ -286,12 +369,21 @@
                 foreach (var publication in Model.Publications)
                 {
                     <tr>
+                        @if (useTags)
+                        {
+                            <td >
+                                <span>@publication.Tag</span>
+                            </td>
+
+                        }
                         <td>@publication.DatasetVersionNr</td>
                         <td>@publication.Broker.Name</td>
-                        <td>@publication.DataRepo</td>
+                        <td>@publication.Broker.Type</td>
                         <td>@publication.CreationDate.ToLocalTime()</td>
-                        <td>@publication.Status</td>
+                        <td>@publication.Status.ToLower()</td>
                         <td><a href="@publication.Broker.Link" target="_blank">Website</a></td>
+                        <td>@publication.ExternalLinkType</td>
+                        <td><a href="@publication.ExternalLink" target="_blank">@publication.ExternalLink</a></td>
 
                         <td>
                             @foreach (var datarepo in publication.Broker.DataRepos)

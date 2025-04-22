@@ -57,7 +57,7 @@
                 <table>
                     <tbody>
                         @{
-                            var singletag = Model.First();
+                            var singletag = Model.FirstOrDefault(t=>t.Version == tagNr);
 
                             <tr id="@singletag.Version" class="selected">
                                 <td><a href="@url&tag=@singletag.Version"> @singletag.Version</a></td>

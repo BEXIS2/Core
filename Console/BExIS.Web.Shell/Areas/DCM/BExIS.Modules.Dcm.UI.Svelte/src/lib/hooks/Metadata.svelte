@@ -23,7 +23,7 @@
 	let isEnabled = setEnable(status);
 
 	onMount(async () => {
-		console.log("onMount MetadataHook");
+		console.log('onMount MetadataHook');
 		load();
 	});
 
@@ -61,7 +61,9 @@
 
 <div class="flex-col space-y-1">
 	<div class="flex gap-3 justify-left">
-		<button class="chip variant-filled-secondary flex-none" on:click={editFn}><Fa icon={faPen} /></button>
+		<button class="chip variant-filled-secondary flex-none" on:click={editFn}
+			><Fa icon={faPen} /></button
+		>
 	</div>
 </div>
 {#if open}

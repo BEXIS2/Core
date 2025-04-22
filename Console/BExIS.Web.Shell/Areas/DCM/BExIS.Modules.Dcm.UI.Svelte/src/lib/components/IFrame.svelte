@@ -4,13 +4,13 @@
 	export let app;
 	export let url;
 
-	let loaded	= false;
+	let loaded = false;
 
 	onMount(() => {
 		console.log(`Mounted ${app}`);
-		loaded	= true;
+		loaded = true;
 		// if window change, resize the iframe
-		window.addEventListener("resize", sendHeight);
+		window.addEventListener('resize', sendHeight);
 	});
 
 	afterUpdate(() => {
@@ -21,22 +21,27 @@
 		console.log(`Destroyed ${app}`);
 	});
 
-function sendHeight() {
-
-	 // get windows height
-  const height = window.innerHeight;
+	function sendHeight() {
+		// get windows height
+		const height = window.innerHeight;
 		// get iframe id
-		const iframeid = "microapp-"+app;
+		const iframeid = 'microapp-' + app;
 		// set iframe height
-		document.getElementById(iframeid).style.height = height+"px";
+		document.getElementById(iframeid).style.height = height + 'px';
 	}
-
-
 </script>
 
 {#if loaded}
-<iframe title={app} id="microapp-{app}" frameborder="0" scrolling="auto" src={url} on:load={sendHeight}></iframe>
+	<iframe
+		title={app}
+		id="microapp-{app}"
+		frameborder="0"
+		scrolling="auto"
+		src={url}
+		on:load={sendHeight}
+	></iframe>
 {/if}
+
 <style>
 	iframe {
 		width: 100%;

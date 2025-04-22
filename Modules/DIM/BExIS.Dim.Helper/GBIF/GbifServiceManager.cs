@@ -69,6 +69,44 @@ namespace BExIS.Dim.Helpers.GBIF
             }
         }
 
+        // Get Dataset
+        public async Task<HttpResponseMessage> GetDataset(string key)
+        {
+            try
+            {
+                string requestUrl = _crendentials.Server + "/dataset";
+
+
+ 
+                using (var client = new HttpClient())
+                {
+                    string requesturl = _crendentials.Server + "/dataset/"+key;
+
+
+                        client.BaseAddress = new Uri(requesturl);
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        //test@testerer.de:WSTest
+                        var byteArray = Encoding.ASCII.GetBytes(_crendentials.Username + ":" + _crendentials.Password);
+
+                        // "basic "+ Convert.ToBase64String(byteArray)
+                        AuthenticationHeaderValue ahv = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                        client.DefaultRequestHeaders.Authorization = ahv;
+
+                        //HttpResponseMessage response = await client.PostAsync(requesturl, sContent);
+                        HttpResponseMessage response = await client.GetAsync(requesturl);
+                        response.EnsureSuccessStatusCode();
+                        return ((HttpResponseMessage)response);
+                }
+
+            }
+            catch (Exception e)
+            {
+                throw (e);
+            }
+        }
+
         // Update Dataset
 
         // Delete Dataset

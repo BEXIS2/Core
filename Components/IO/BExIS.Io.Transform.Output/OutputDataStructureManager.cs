@@ -1,7 +1,9 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.Meanings;
 using BExIS.IO.DataType.DisplayPattern;
 using Newtonsoft.Json;
 using System;
@@ -13,11 +15,19 @@ namespace BExIS.IO.Transform.Output
 {
     public class DataStructureDataTable
     {
+        [JsonProperty("id")]
         public long Id { get; set; }
+
+        [JsonProperty("title")]
         public string Title { get; set; }
+
+        [JsonProperty("desciption")]
         public string Description { get; set; }
+
+        [JsonProperty("inUse")]
         public bool inUse { get; set; }
-        public bool Structured { get; set; }
+
+        [JsonProperty("variables")]
         public DataTable Variables { get; set; }
 
         public DataStructureDataTable()
@@ -26,69 +36,77 @@ namespace BExIS.IO.Transform.Output
             this.Title = null;
             this.Description = null;
             this.inUse = false;
-            this.Structured = false;
-            this.Variables = new DataTable("Variables");
+            this.Variables = new DataTable("variables");
         }
 
         public DataStructureDataTable(long id) : this()
         {
-            DataStructureManager dataStructureManager = null;
-            try
+
+            using (MeaningManager meaningManager = new MeaningManager())
+            using (DataStructureManager dataStructureManager = new DataStructureManager())
             {
-                dataStructureManager = new DataStructureManager();
                 DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(id);
                 if (dataStructure != null)
                 {
                     this.Id = dataStructure.Id;
                     this.Title = dataStructure.Name;
-                    this.Description = dataStructure.Description;
+                    this.Description = string.IsNullOrEmpty(dataStructure.Description) ? "" :  dataStructure.Description;
 
                     if (dataStructure.Datasets.Count > 0)
                         this.inUse = true;
                     else
                         this.inUse = false;
 
-                    this.Structured = false;
+
 
                     if (dataStructureManager.StructuredDataStructureRepo.Get(id) != null)
                     {
                         this.Variables = new DataTable("Variables");
 
-                        this.Variables.Columns.Add("Id", typeof(Int64));
-                        this.Variables.Columns.Add("Label");
-                        this.Variables.Columns.Add("Description");
+                        this.Variables.Columns.Add("id", typeof(Int64));
+                        this.Variables.Columns.Add("label");
+                        this.Variables.Columns.Add("description");
                         this.Variables.Columns.Add("isOptional", typeof(Boolean));
-                        this.Variables.Columns.Add("Unit");
-                        this.Variables.Columns.Add("DataType");
-                        this.Variables.Columns.Add("SystemType");
-                        this.Variables.Columns.Add("AttributeName");
-                        this.Variables.Columns.Add("AttributeDescription");
-                        this.Variables.Columns.Add("DisplayPattern");
-                        this.Variables.Columns.Add("MissingValues", typeof(DataTable));
+                        this.Variables.Columns.Add("dataType");
+                        this.Variables.Columns.Add("systemType");
+                        this.Variables.Columns.Add("displayPattern");
+                        this.Variables.Columns.Add("unit", typeof(UnitElement));
+                        this.Variables.Columns.Add("missingValues", typeof(DataTable));
+                        // template
+                        this.Variables.Columns.Add("template",typeof(Template));
+                        this.Variables.Columns.Add("meanings", typeof(DataTable));
+                        this.Variables.Columns.Add("constraints", typeof(DataTable));
 
                         StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
-                        this.Structured = true;
+         
                         DataRow dataRow;
                         foreach (VariableInstance vs in structuredDataStructure.Variables)
                         {
                             dataRow = this.Variables.NewRow();
-                            dataRow["Id"] = vs.Id;
-                            dataRow["Label"] = vs.Label;
-                            dataRow["Description"] = vs.Description;
+                            dataRow["id"] = vs.Id;
+                            dataRow["label"] = vs.Label;
+                            dataRow["description"] = vs.Description;
                             dataRow["isOptional"] = vs.IsValueOptional;
-                            dataRow["Unit"] = vs.Unit.Name;
-                            dataRow["DataType"] = vs.DataType.Name;
-                            dataRow["SystemType"] = vs.DataType.SystemType;
-                            dataRow["AttributeName"] = vs.VariableTemplate?.Label;
-                            dataRow["AttributeDescription"] = vs.VariableTemplate?.Description;
+                            dataRow["dataType"] = vs.DataType.Name;
 
                             DataTypeDisplayPattern dtdp = DataTypeDisplayPattern.Get(vs.DisplayPatternId);
                             string displayPattern = "";
                             if (dtdp != null) displayPattern = dtdp.StringPattern;
+                            dataRow["displayPattern"] = displayPattern;
 
-                            dataRow["DisplayPattern"] = displayPattern;
+                            dataRow["systemType"] = vs.DataType.SystemType;
+                            dataRow["unit"] = new UnitElement(vs.Unit.Id);
 
-                            DataTable dtMissingValues = new DataTable("MissingValues");
+                            // template
+                            Template dtTepmplate = new Template();
+                            dtTepmplate.Id = vs.VariableTemplate?.Id ?? 0;
+                            dtTepmplate.Name = vs.VariableTemplate?.Label;
+                            dtTepmplate.Description = vs.VariableTemplate?.Description;
+
+                            dataRow["template"] = dtTepmplate;
+
+                            // displayPattern
+                            DataTable dtMissingValues = new DataTable("missingValues");
                             dtMissingValues.Columns.Add("placeholder", typeof(String));
                             dtMissingValues.Columns.Add("displayName", typeof(String));
 
@@ -101,16 +119,93 @@ namespace BExIS.IO.Transform.Output
                             }
                             dataRow["missingValues"] = dtMissingValues;
 
+                            // meanings
+                            DataTable dtMeanings = new DataTable("meanings");
+                            dtMeanings.Columns.Add("id", typeof(Int64));
+                            dtMeanings.Columns.Add("name", typeof(String));
+                            dtMeanings.Columns.Add("description", typeof(String));
+                            dtMeanings.Columns.Add("externallinks", typeof(DataTable));
+
+                            foreach (var meaning in vs.Meanings)
+                            {
+                                DataRow workRowMeaning = dtMeanings.NewRow();
+                                workRowMeaning["id"] = meaning.Id;
+                                workRowMeaning["name"] = meaning.Name;
+                                workRowMeaning["description"] = string.IsNullOrEmpty(meaning.Description) ? "" : meaning.Description;
+
+                                DataTable dtExternalLinks = new DataTable("externalLinks");
+                                dtExternalLinks.Columns.Add("label", typeof(String));
+                                dtExternalLinks.Columns.Add("releation", typeof(String));
+                                dtExternalLinks.Columns.Add("link", typeof(String));
+
+                                foreach (var el in meaning.ExternalLinks)
+                                {
+                                    foreach (var l in el.MappedLinks)
+                                    {
+                                        string label = l.Name;
+                                        if (l.Prefix != null) label = l.Prefix.Name + ":" + l.Name;
+                                        DataRow workRow = dtExternalLinks.NewRow();
+                                        workRow["label"] = label;
+                                        workRow["releation"] = el.MappingRelation?.Name;
+                                        workRow["link"] = meaningManager.GetfullUri(l);
+                                        dtExternalLinks.Rows.Add(workRow);
+                                    }
+                                }
+
+                                workRowMeaning["externallinks"] = dtExternalLinks;
+
+                                dtMeanings.Rows.Add(workRowMeaning);
+                            }
+
+                            dataRow["Meanings"] = dtMeanings;
+
+                            // constrains
+                            DataTable dtConstraints = new DataTable("constrants");
+                            dtConstraints.Columns.Add("id", typeof(Int64));
+                            dtConstraints.Columns.Add("name", typeof(String));
+                            dtConstraints.Columns.Add("type", typeof(String));
+                            dtConstraints.Columns.Add("description", typeof(String));
+
+                            foreach (var constraint in vs.VariableConstraints)
+                            {
+                                DataRow workRow = dtConstraints.NewRow();
+                                workRow["id"] = constraint.Id;
+                                workRow["name"] = constraint.Name;
+                                workRow["type"] = getConstraintType(constraint);
+                                workRow["description"] = constraint.FormalDescription;
+                                dtConstraints.Rows.Add(workRow);
+                            }
+
+                            dataRow["Constraints"] = dtConstraints;
+
                             this.Variables.Rows.Add(dataRow);
                         }
                     }
                 }
-            }
-            finally
-            {
-                dataStructureManager.Dispose();
+
             }
         }
+
+        private string getConstraintType(Dlm.Entities.DataStructure.Constraint c)
+        {
+            if (c is DomainConstraint) return "Domain";
+            if (c is RangeConstraint) return "Range";
+            if (c is PatternConstraint) return "Pattern";
+
+            return string.Empty;
+        }
+
+    }
+
+    public class Template
+    {
+        [JsonProperty("id")]
+        public long Id { get; set; }
+        [JsonProperty("name")]
+        public string Name { get; set; }
+        [JsonProperty("description")]
+
+        public string Description { get; set; }
     }
 
     public class VariableElement
@@ -145,10 +240,21 @@ namespace BExIS.IO.Transform.Output
 
     public class UnitElement
     {
+        [JsonProperty("id")]
         public long Id { get; set; }
+
+        [JsonProperty("name")]
         public string Name { get; set; }
+        [JsonProperty("abbrevation")]
+
+        public string Abbrevation { get; set; }
+        [JsonProperty("description")]
         public string Description { get; set; }
+
+        [JsonProperty("dimension")]
         public DimensionElement Dimension { get; set; }
+        
+        [JsonProperty("measurementSystem")]
         public string MeasurementSystem { get; set; }
 
         public UnitElement(long unitId)
@@ -162,6 +268,7 @@ namespace BExIS.IO.Transform.Output
 
                 Id = unit.Id;
                 Name = unit.Name;
+                Abbrevation = unit.Abbreviation;
                 Description = unit.Description;
                 Dimension = new DimensionElement(dim.Name, dim.Description, dim.Specification);
                 MeasurementSystem = unit.MeasurementSystem.ToString();
@@ -175,8 +282,14 @@ namespace BExIS.IO.Transform.Output
 
     public class DimensionElement
     {
+        [JsonProperty("name")]
+
         public string Name { get; set; }
+        [JsonProperty("description")]
+
         public string Description { get; set; }
+        [JsonProperty("specification")]
+
         public string Specification { get; set; }
 
         public DimensionElement(string name, string description, string specification)

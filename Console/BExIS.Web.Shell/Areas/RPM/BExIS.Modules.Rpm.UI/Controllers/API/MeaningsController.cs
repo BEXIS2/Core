@@ -14,9 +14,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class MeaningsController : ApiController
     {
-        private readonly IMeaningManager _meaningManager;
+        private readonly MeaningManager _meaningManager;
 
-        public MeaningsController(IMeaningManager _meaningManager)
+        public MeaningsController(MeaningManager _meaningManager)
         {
             this._meaningManager = _meaningManager;
         }

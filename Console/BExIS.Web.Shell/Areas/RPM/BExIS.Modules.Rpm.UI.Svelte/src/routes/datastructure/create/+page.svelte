@@ -27,6 +27,7 @@
 		isTemplateRequiredStore,
 		isMeaningRequiredStore,
 		setByTemplateStore,
+		updateDescriptionByTemplateStore,
 		enforcePrimaryKeyStore,
 		changeablePrimaryKeyStore
 	} from '$lib/components/datastructure/store';
@@ -34,9 +35,10 @@
 
 	//help
 	import { dataStructureHelp } from '../help';
-	import { goTo } from '$services/BaseCaller';
-	import { goto } from '$app/navigation';
 	import { Modal } from '@skeletonlabs/skeleton';
+
+	import type { linkType } from '@bexis2/bexis2-core-ui';
+
 	let helpItems: helpItemType[] = dataStructureHelp;
 
 	// load attributes from div
@@ -50,7 +52,7 @@
 	$: model;
 
 	let selectionIsActive = true;
-	$:selectionIsActive;
+	$: selectionIsActive;
 	let init: boolean = true;
 
 	let loadingMessage = 'the data structure is loading';
@@ -99,6 +101,12 @@
 			container?.getAttribute('changeablePrimaryKey')?.toLocaleLowerCase() == 'true' ? true : false;
 		changeablePrimaryKeyStore.set(changeablePrimaryKey);
 
+// get updateDescriptionByTemplate from settings and add it to store
+		// update or overwrite description	by template
+		const updateDescriptionByTemplate =
+			container?.getAttribute('updateDescriptionByTemplate')?.toLocaleLowerCase() == 'true' ? true : false;
+			updateDescriptionByTemplateStore.set(updateDescriptionByTemplate);
+
 		// 2 Usecases,
 		// 1. generate from file, selection needed -> load file
 		// 2. create empty datastructure -> jump direct to generate
@@ -116,9 +124,10 @@
 			// copy structure
 			model = await copy(datastructureId);
 			selectionIsActive = false;
-		} else {
+		}
+		else {
 			console.log('empty structure');
-			model = await empty(); // empty structure
+			model = await empty(entityId); // empty structure
 			selectionIsActive = false;
 		}
 
@@ -132,29 +141,24 @@
 	}
 
 	async function update(e) {
-
 		console.log('🚀 ~ update ~ e.detail:', e.detail);
 		model = e.detail;
 
 		let res = await generate(e.detail);
 		selectionIsActive = true;
 
-		if (res && res.status ==	200) {	
+		if (res && res.status == 200) {
 			model = res.data;
 			selectionIsActive = false;
-		}
-		else
-		{
+		} else {
 			// got ot other page
-			console.log("error do something")
-			model = undefined
+			console.log('error do something');
+			model = undefined;
 			start();
 			selectionIsActive = false;
 			selectionIsActive = true;
-			init	= false;
+			init = false;
 		}
-		
-
 	}
 
 	function back() {
@@ -163,8 +167,12 @@
 		init = false;
 	}
 
-	
-
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#data-structures',
+		}
+	];
 </script>
 
 <Page
@@ -172,6 +180,7 @@
 	note="This page allows you to create and edit a selected data structure."
 	contentLayoutType={pageContentLayoutType.full}
 	help={true}
+	{links}
 >
 	{#await start()}
 		<Spinner label={loadingMessage} />

@@ -9,8 +9,7 @@
 	export let description = '';
 	export let last = true;
 	export let index = 0;
-	export let disabled:boolean = false;
-
+	export let disabled: boolean = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -25,7 +24,7 @@
 
 <div class="flex space-x-3 content-center">
 	<!-- <Label>Name:</Label>  -->
-		<div class="grow">
+	<div class="grow">
 		<TextInput
 			id="missing-value-name-{index}"
 			bind:value={displayName}
@@ -34,39 +33,39 @@
 			help={true}
 			{disabled}
 		/>
-</div>
+	</div>
 
 	<!-- <Label>Description:</Label>  -->
 	<div class="grow">
-	<TextInput
-		id="missing-value-description-{index}"
-		bind:value={description}
-		on:change
-		placeholder="Description"
-		help={true}
-		{disabled}
-	/>
+		<TextInput
+			id="missing-value-description-{index}"
+			bind:value={description}
+			on:change
+			placeholder="Description"
+			help={true}
+			{disabled}
+		/>
 	</div>
 
 	{#if !disabled}
-	<div class="self-center text-xl mt-5 w-11">
-		<button
-			id="delete-missing-value-{index}"
-			title="delete"
-			type="button"
-			on:mouseover={() => helpStore.show('delete-missing-value')}
-			on:click={remove}><Fa icon={faTrashAlt} /></button
-		>
-		{#if last}
+		<div class="self-center text-xl mt-5 w-11">
 			<button
-				id="add-missing-value-{index}"
-				title="add"
-				class="add"
+				id="delete-missing-value-{index}"
+				title="delete"
 				type="button"
-				on:mouseover={() => helpStore.show('add-missing-value')}
-				on:click={add}><Fa icon={faPlus} /></button
+				on:mouseover={() => helpStore.show('delete-missing-value')}
+				on:click={remove}><Fa icon={faTrashAlt} /></button
 			>
-		{/if}
-	</div>
+			{#if last}
+				<button
+					id="add-missing-value-{index}"
+					title="add"
+					class="add"
+					type="button"
+					on:mouseover={() => helpStore.show('add-missing-value')}
+					on:click={add}><Fa icon={faPlus} /></button
+				>
+			{/if}
+		</div>
 	{/if}
 </div>

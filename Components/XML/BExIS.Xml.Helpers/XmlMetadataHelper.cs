@@ -25,7 +25,7 @@ namespace BExIS.Xml.Helpers
                 string title = uow.GetReadOnlyRepository<MetadataStructure>().Get(id).Name;
 
                 XmlMetadataWriter xmlMetadatWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
-                XDocument metadataXml = xmlMetadatWriter.CreateMetadataXml(id);
+                XDocument metadataXml = xmlMetadatWriter.CreateTempMetadataXmlWithChoiceChildrens(id);
 
                 List<XElement> elements = metadataXml.Root.Descendants().Where(e => e.HasElements.Equals(false)).ToList();
 

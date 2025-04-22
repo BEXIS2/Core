@@ -1,0 +1,10 @@
+﻿
+@model String
+@using System.Text.RegularExpressions
+
+@{ 
+    string elementDisplayName = Regex.Replace(Model, "((?<=[a-z])[A-Z])", " $1");
+    elementDisplayName = char.ToUpper(Model[0]) + Model.Substring(1).Replace("_"," ");
+}
+
+@elementDisplayName

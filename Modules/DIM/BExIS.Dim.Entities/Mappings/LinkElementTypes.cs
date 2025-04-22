@@ -10,6 +10,7 @@
         ProjectTitle = 3,
         Title = 4,
         Email = 5,
+        DOI = 6,
 
         //Automatic System Keys starts at 100
         Id = 100,
@@ -53,6 +54,10 @@
         MinEvelation = 712,
         MaxEvelation = 713,
         Platform = 714
+
+
+       
+
     }
 
     public enum LinkElementComplexity

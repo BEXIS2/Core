@@ -76,7 +76,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
         /// <param name="value"></param>
         /// <param name="row"></param>
         /// <returns></returns>
-        public object Execute(string value, int row)
+        public object Execute(string value, int row=0)
         {
             if (!String.IsNullOrEmpty(value))
             {

@@ -116,7 +116,9 @@ export interface unitListItemType extends listItemType {
 
 export interface templateListItemType extends listItemType {
 	description: string;
+	dataType: string;
 	dataTypes: string[];
+	unit: string;
 	units: string[];
 	meanings: string[];
 	constraints: string[];

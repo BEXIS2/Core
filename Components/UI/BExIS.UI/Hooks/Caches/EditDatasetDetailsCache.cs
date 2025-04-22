@@ -40,6 +40,17 @@ namespace BExIS.UI.Hooks.Caches
         public List<FileInfo> Files { get; set; }
 
         /// <summary>
+        /// contains all filename that should be updated in the next submit
+        /// </summary>
+        public List<FileInfo> ModifiedFiles { get; set; }
+
+
+        /// <summary>
+        /// contains all filename that should be deleted in the next submit
+        /// </summary>
+        public List<FileInfo> DeleteFiles { get; set; }
+
+        /// <summary>
         /// this dictionary store the last modifications of the changed hooks
         /// string = hook name
         /// DateTime = Last Modification
@@ -59,6 +70,8 @@ namespace BExIS.UI.Hooks.Caches
         public EditDatasetDetailsCache()
         {
             Files = new List<FileInfo>();
+            DeleteFiles = new List<FileInfo>();
+            ModifiedFiles = new List<FileInfo>();
         }
 
         /// <summary>
@@ -150,6 +163,7 @@ namespace BExIS.UI.Hooks.Caches
         /// if no errors, validation success
         /// </summary>
         public List<Error> Errors { get; set; }
+        public List<Warning> Warnings { get; set; }
 
         public FileInfo()
         {
@@ -158,6 +172,7 @@ namespace BExIS.UI.Hooks.Caches
             Lenght = 0;
             Description = string.Empty;
             Errors = new List<Error>();
+            Warnings = new List<Warning>();
         }
 
         public FileInfo(string name, string type, int length, string description)
@@ -167,6 +182,7 @@ namespace BExIS.UI.Hooks.Caches
             Lenght = length;
             Description = description;
             Errors = new List<Error>();
+            Warnings = new List<Warning>();
         }
     }
 }

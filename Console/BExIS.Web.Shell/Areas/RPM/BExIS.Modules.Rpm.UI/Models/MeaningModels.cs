@@ -12,9 +12,9 @@ namespace BExIS.Modules.Rpm.UI.Models
         public virtual String Description { get; set; }
         public virtual bool Selectable { get; set; }
         public virtual bool Approved { get; set; }
-        public virtual IList<MeaningEntryModel> ExternalLinks { get; set; }
-        public virtual IList<MeaningModel> Related_meaning { get; set; }
-        public virtual IList<ListItem> Constraints { get; set; }
+        public virtual List<MeaningEntryModel> ExternalLinks { get; set; }
+        public virtual List<MeaningModel> Related_meaning { get; set; }
+        public virtual List<ListItem> Constraints { get; set; }
 
         public MeaningModel()
         {

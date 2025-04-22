@@ -43,12 +43,12 @@
 		{
 			"id": "uploadCsv",
 			"name": "Upload CSV",
-			"description": "Uploade a CSV file to fill the Domain list"
+			"description": "Upload a CSV file to fill the Domain list"
 		},
 		{
 			"id": "domain",
 			"name": "Domain List",
-			"description": "Put here your dmain entries (one by line)"
+			"description": "Put here your domain entries (one by line)"
 		},
 		{
 			"id": "domainList",
@@ -63,42 +63,42 @@
 		{
 			"id": "includeLowerbound",
 			"name": "Include Lower Bound",
-			"description": "Includes the lower bound value"
+			"description": "Include the lower bound value"
 		},
 		{
 			"id": "lowerbound",
 			"name": "Lower Bound",
-			"description": "the lower bound value"
+			"description": "Lower bound value"
 		},
 		{
 			"id": "includeUpperbound",
 			"name": "Include Upper Bound",
-			"description": "Includes the lower bound value"
+			"description": "Include the upper bound value"
 		},
 		{
 			"id": "upperbound",
 			"name": "Upper Bound",
-			"description": "the upper bound value"
+			"description": "Upper bound value"
 		},
 		{
 			"id": "pattern",
 			"name": "Regex Pattern",
-			"description": "use Regex to descripe a pattern"
+			"description": "Regex to describe a pattern"
 		},
 		{
 			"id": "example",
 			"name": "Example",
-			"description": "A example string to test the pattern"
+			"description": "An example string to test the pattern"
 		},
 		{
 			"id": "result",
 			"name": "Result",
-			"description": "Shows the result of pattern executed on the example"
+			"description": "Shows the result of the pattern executed on the example"
 		},
 		{
 			"id": "importDs",
 			"name": "Import from dataset",
-			"description": "Import a column here from a dataset on which you have read rights or which is publicly available."
+			"description": "Import a column here from a dataset on which you have read permission or which is publicly available."
 		}
 	]
 }

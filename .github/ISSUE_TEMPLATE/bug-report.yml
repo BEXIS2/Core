@@ -1,6 +1,6 @@
 name: 🐞 Bug Report
 description: You discovered something that does not work as desired/expected? Please report that bug!
-labels: 'Type: Bug Report'
+type: 'Bug'
 projects: [BEXIS2/8]
 assignees: 
   - sventhiel
