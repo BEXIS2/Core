@@ -319,7 +319,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     //set metadata in session
                     Session["ShowDataMetadata"] = metadata;
                     ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
-                    ViewData["isValid"] = isValid;
+                    ViewData["IsValid"] = isValid;
                     ViewData["datasetSettings"] = getSettingsDataset();
                     ViewData["Message"] = "";
                     ViewData["State"] = "";
@@ -490,7 +490,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 //set metadata in session
                 Session["ShowDataMetadata"] = metadata;
                 ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
-                ViewData["isValid"] = isValid;
+                ViewData["IsValid"] = isValid;
                 ViewData["datasetSettings"] = getSettingsDataset();
 
                 return PartialView("ShowData", model);

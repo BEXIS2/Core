@@ -12,14 +12,9 @@ namespace BExIS.Modules.Bam.UI.Controllers
         public ActionResult Index()
         {
             string helpurl = ModuleManager.GetModuleSettings("BAM").GetValueByKey("help").ToString();
+            ManualHelper.GetUrl(helpurl);
 
-            //add default link if not set
-            if (String.IsNullOrEmpty(helpurl))
-            {
-                helpurl = ManualHelper.GetUrl(GeneralSettings.ApplicationVersion, "BAM");
-            }
-
-            return Redirect(helpurl);
+            return Redirect(ManualHelper.GetUrl(helpurl));
         }
     }
 }

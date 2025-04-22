@@ -11,14 +11,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Index()
         {
             string helpurl = ModuleManager.GetModuleSettings("SAM").GetValueByKey("help").ToString();
-
-            //add default link if not set
-            if (String.IsNullOrEmpty(helpurl))
-            {
-                helpurl = ManualHelper.GetUrl(GeneralSettings.ApplicationVersion, "SAM");
-            }
-
-            return Redirect(helpurl);
+            return Redirect(ManualHelper.GetUrl(helpurl));
         }
     }
 }

@@ -14,14 +14,7 @@ namespace BExIS.Modules.Vim.UI.Controllers
         public ActionResult Index()
         {
             string helpurl = ModuleManager.GetModuleSettings("VIM").GetValueByKey("help").ToString();
-
-            //add default link if not set
-            if (String.IsNullOrEmpty(helpurl))
-            {
-                helpurl = ManualHelper.GetUrl(GeneralSettings.ApplicationVersion, "VIM");
-            }
-
-            return Redirect(helpurl);
+            return Redirect(ManualHelper.GetUrl(helpurl));
         }
     }
 }

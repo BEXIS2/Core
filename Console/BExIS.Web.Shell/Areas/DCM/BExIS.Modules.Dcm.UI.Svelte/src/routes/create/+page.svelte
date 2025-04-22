@@ -23,7 +23,7 @@
 
 	async function load() {
 		entitytemplates = await getEntityTemplateList();
-		console.log("🚀 ~ load ~ entitytemplates:", entitytemplates)
+		console.log('🚀 ~ load ~ entitytemplates:', entitytemplates);
 	}
 	function handleSelect(e) {
 		console.log('on select');
@@ -49,7 +49,7 @@
 	let links: linkType[] = [
 		{
 			label: 'manual',
-			url: 'https://github.com/BEXIS2/Documents/blob/master/Manuals/DCM/Manual.md'
+			url: '/home/docs/Datasets#create-a-datasets'
 		}
 	];
 
@@ -58,7 +58,7 @@
 
 <Page
 	title="Create a Dataset"
-	note="This page allows you to create a digital object, such as a dataset, based on a template. Please select a template and fill in the required information."
+	note="On this page you can create a dataset based on a template. Please select one template and fill out the form."
 	{links}
 	contentLayoutType={pageContentLayoutType.full}
 >

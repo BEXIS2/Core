@@ -1,6 +1,7 @@
 ﻿using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
+using Org.BouncyCastle.Bcpg.Sig;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,33 +76,21 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        public async Task<bool> DeleteAsync(FeaturePermission featurePermission)
+        public async Task<bool> DeleteAsync(long? subjectId, long featureId)
         {
             using (var uow = this.GetUnitOfWork())
             {
                 var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
-                var result = featurePermissionRepository.Delete(featurePermission);
+
+                var featurePermission = await FindAsync(subjectId, featureId);
+                if (featurePermission == null)
+                    return false;
+
+                var result = featurePermissionRepository.Delete(featurePermission.Id);
+
                 uow.Commit();
 
-                return await Task.FromResult(result);
-            }
-        }
-
-        public async Task<bool> DeleteAsync(long? subjectId, long featureId)
-        {
-            using (var uow = this.GetUnitOfWork()) // Keep using statement for UoW disposal
-            {
-                var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
-
-                var featurePermissionId = await FindIdAsync(subjectId, featureId);
-                if (!featurePermissionId.HasValue)
-                    return false; // No need for Task.FromResult
-
-                featurePermissionRepository.Delete(featurePermissionId.Value);
-
-                uow.Commit(); // Ensure this is a synchronous operation in .NET 4.8
-
-                return true;
+                return result;
             }
         }
 
@@ -150,8 +139,7 @@ namespace BExIS.Security.Services.Authorization
 
         public async Task<FeaturePermission> FindAsync(long? subjectId, long featureId)
         {
-            var featurePermissionRepository = _guow.GetReadOnlyRepository<FeaturePermission>();
-            return subjectId == null ? await Task.FromResult(featurePermissionRepository.Query(f => f.Subject == null && f.Feature.Id == featureId).FirstOrDefault()) : await Task.FromResult(featurePermissionRepository.Query(f => f.Feature.Id == featureId && f.Subject.Id == subjectId).FirstOrDefault());
+            return subjectId == null ? await Task.FromResult(FeaturePermissionRepository.Query(f => f.Subject == null && f.Feature.Id == featureId).FirstOrDefault()) : await Task.FromResult(FeaturePermissionRepository.Query(f => f.Feature.Id == featureId && f.Subject.Id == subjectId).FirstOrDefault());
         }
 
         public async Task<long?> FindIdAsync(long? subjectId, long featureId)

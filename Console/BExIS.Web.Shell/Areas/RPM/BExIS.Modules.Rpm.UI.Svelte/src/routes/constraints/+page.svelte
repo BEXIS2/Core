@@ -23,6 +23,8 @@
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import type { ConstraintListItem } from './models';
 
+	import type { linkType } from '@bexis2/bexis2-core-ui';
+
 	const modalStore = getModalStore();
 	let cs: ConstraintListItem[] = [];
 	const tableStore = writable<ConstraintListItem[]>([]);
@@ -117,9 +119,16 @@
 			return true;
 		}
 	}
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#constraints',
+		}
+	];
 </script>
 
-<Page help={true} title="Manage Constraints">
+<Page help={true} title="Manage Constraints" {links}>
 	<div class="w-full">
 		<h1 class="h1">Constraints</h1>
 		{#await reload()}

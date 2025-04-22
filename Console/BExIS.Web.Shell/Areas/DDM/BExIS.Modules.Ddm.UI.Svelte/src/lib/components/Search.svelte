@@ -20,7 +20,6 @@
 
 	export let controller: string = 'search';
 
-
 	let columns: Columns;
 	let config: TableConfig<any>;
 	let categories: { [key: string]: string } = {};
@@ -381,7 +380,6 @@
 	};
 
 	const setAutoCompleteValues = async (input: string) => {
-		
 		if (input.length < 1) return [];
 
 		const response = await Api.post('/ddm/' + controller + '/_AutoCompleteAjaxLoading', {

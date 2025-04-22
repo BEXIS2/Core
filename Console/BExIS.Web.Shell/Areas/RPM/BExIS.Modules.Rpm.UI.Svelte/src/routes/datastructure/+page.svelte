@@ -31,6 +31,8 @@
 	// svelte
 	import { fade, slide } from 'svelte/transition';
 
+	import type { linkType } from '@bexis2/bexis2-core-ui';
+
 	// load data
 	let structures: DataStructureModel[];
 	const structuresStore = writable<DataStructureModel[]>([]);
@@ -131,7 +133,7 @@
 					let success :boolean = await deleteFn(ds);
 						if (success)
 						{
-							reload();							
+							reload();
 						}
 				}
 			};
@@ -139,12 +141,20 @@
 			modalStore.trigger(confirm);
 		}
 	}
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#data-structures',
+		}
+	];
 </script>
 
 <Page
 	title="Data Structures"
 	note="overview of data structures in the system"
 	contentLayoutType={pageContentLayoutType.center}
+	{links}
 >
 	{#await reload()}
 		<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">

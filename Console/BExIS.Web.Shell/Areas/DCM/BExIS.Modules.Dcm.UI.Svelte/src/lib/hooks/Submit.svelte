@@ -62,7 +62,7 @@
 		});
 
 		latestDataDate.subscribe((s) => {
-			console.log("🚀 ~ latestDataDate.subscribe ~ s:", s)
+			console.log('🚀 ~ latestDataDate.subscribe ~ s:', s);
 
 			if (s > 0) {
 				reload();
@@ -78,10 +78,10 @@
 		console.log(' before hook');
 
 		model = await getHookStart(start, id, version);
-		console.log(' before activateSubmit',canSubmit);
+		console.log(' before activateSubmit', canSubmit);
 
 		canSubmit = activateSubmit();
-		console.log(' after activateSubmit',canSubmit);
+		console.log(' after activateSubmit', canSubmit);
 
 		console.log('reload submit', model);
 
@@ -134,7 +134,7 @@
 	//2. updload data with data structure
 	function activateSubmit() {
 		//check use case 1
-		console.log("🚀 ~ activateSubmit ~ model:", model)
+		console.log('🚀 ~ activateSubmit ~ model:', model);
 		if (model.hasStructrue == false && model.files.length > 0) {
 			return true;
 		}
@@ -145,11 +145,14 @@
 		}
 
 		//check use case 3
-		console.log("🚀 ~ activateSubmit ~ model.hasStructrue:", model.hasStructrue, model.deletedFiles)
+		console.log(
+			'🚀 ~ activateSubmit ~ model.hasStructrue:',
+			model.hasStructrue,
+			model.deletedFiles
+		);
 		if (model.hasStructrue == false && model.deleteFiles?.length > 0) {
 			return true;
 		}
-
 
 		//check use case 4
 		if (

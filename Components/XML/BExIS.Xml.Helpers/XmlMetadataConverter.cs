@@ -1,6 +1,9 @@
 ﻿using BExIS.Dlm.Entities.Common;
+using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.ValueCheck;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -179,7 +182,7 @@ namespace BExIS.Xml.Helpers
                         XmlNode type = element.FirstChild; // has also reference
                         //JProperty p = new JProperty(usage.Label, type.InnerText);
                         if (!string.IsNullOrEmpty(type.InnerText) || includeEmpty)
-                            return addSimple(usage.Label, type.InnerText, (XmlElement)type, includeEmpty);
+                            return addSimple(usage, type.InnerText, (XmlElement)type, includeEmpty);
                         else
                             return null;
                     }
@@ -189,7 +192,7 @@ namespace BExIS.Xml.Helpers
                         {
                             if (!string.IsNullOrEmpty(type.InnerText) || includeEmpty)
                                 // check if
-                                array.Add(addSimple(usage.Label, type.InnerText, (XmlElement)type, includeEmpty));
+                                array.Add(addSimple(usage, type.InnerText, (XmlElement)type, includeEmpty));
                         }
 
                         if (array.Count == 0) return null;
@@ -304,11 +307,24 @@ namespace BExIS.Xml.Helpers
             return false;
         }
 
-        private JObject addSimple(string label, string value, XmlElement reference, bool includeEmpty)
+        private JObject addSimple(BaseUsage usage, string valueAsString, XmlElement reference, bool includeEmpty)
         {
             JObject simple = new JObject();
 
+            object value = valueAsString;
+
+            DataType dataType = getDataType(usage);
+
+            if(dataType!=null && !dataType.SystemType.Contains("String")) // if ther is a datatype , try to convert 
+            { 
+                DataTypeCheck dataTypeChecker = new DataTypeCheck("", dataType.SystemType,IO.DecimalCharacter.point);
+                var result = dataTypeChecker.Execute(valueAsString);
+                // if value is a error or datytpe is dateteim tehn not replace value
+                if ((result is ErrorType) == false && !dataType.SystemType.Contains("DateTime")) value = result;
+            }
+
             setReference(simple, reference, includeEmpty);
+
             simple.Add(new JProperty("#text", value));
 
             return simple;
@@ -646,6 +662,25 @@ namespace BExIS.Xml.Helpers
             return 1; // default
         }
 
+        private DataType getDataType(BaseUsage usage)
+        {
+            if (usage is MetadataAttributeUsage)
+            { 
+                return ((MetadataAttributeUsage)usage).MetadataAttribute.DataType;
+            }
+
+            if (usage is MetadataNestedAttributeUsage)
+            {
+                return ((MetadataNestedAttributeUsage)usage).Member.DataType;
+            }
+
+            if (usage is MetadataParameterUsage)
+            {
+                return ((MetadataParameterUsage)usage).Member.DataType;
+            }
+
+            return null; 
+        }
 
         #endregion
 

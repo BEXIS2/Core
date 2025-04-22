@@ -53,6 +53,8 @@
 	} from '$lib/components/datastructure/store';
 	import { variableTemplatesStore, meaningsStore } from './stores';
 
+	import type { linkType } from '@bexis2/bexis2-core-ui';
+
 	let vt: VariableTemplateModel[] = [new VariableTemplateModel()];
 	let variableTemplate: VariableTemplateModel = new VariableTemplateModel();
 
@@ -241,9 +243,17 @@
 			modalStore.trigger(confirm);
 		}
 	}
+
+	let links:linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Data%20Description#variable-templates',
+		}
+	];
+
 </script>
 
-<Page help={true} title="Manage Variable Template" >
+<Page help={true} title="Manage Variable Template" {links}>
 	{#await reload()}
 		<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h-9 w-96 placeholder animate-pulse" />

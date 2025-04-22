@@ -839,7 +839,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                                 attr.Id,
                                 type,
                                 attr.Label,
-                                xpath,
+                                attrXPath,
                                 pos,
                                 complexity,
                                 attr.Description)
