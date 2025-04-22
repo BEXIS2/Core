@@ -1,3 +1,4 @@
+BEGIN TRANSACTION;
 -- OPEN ISSUES
 
 -- entitytemplate - description column
