@@ -236,7 +236,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (cache.Files.Any(f => f.Name == file.Name))
             {
                 var f = cache.Files.Where(x => x.Name == file.Name).FirstOrDefault();
-                if (f != null) f.Description = description;
+                if (f != null) f.Description = file.Description;
             }
 
             log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { file + " description updated" }, username, "File upload", "save file description"));
