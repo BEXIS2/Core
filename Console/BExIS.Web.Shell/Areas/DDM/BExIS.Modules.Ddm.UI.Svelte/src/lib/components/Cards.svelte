@@ -54,6 +54,7 @@
 			select="!px-3 !py-1.5 select min-w-[150px]"
 			showFirstLastButtons
 			showPreviousNextButtons
+			on:page ={e => paginationSettings.page = e.detail}
 		/>
 	{/if}
 </div>
