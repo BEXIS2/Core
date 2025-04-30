@@ -1,4 +1,6 @@
-﻿using BExIS.Security.Entities.Authorization;
+﻿using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Services.Mappings;
+using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
@@ -158,10 +160,64 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
                 #endregion SECURITY
             }
+
+            #region Mapping
+
+            createCitationMappingConcept();
+
+            #endregion
         }
 
         public void Dispose()
         {
+        }
+
+        private void createCitationMappingConcept()
+        {
+            using (var conceptManager = new ConceptManager())
+            {
+                // check if concept exist
+                var concept = conceptManager.MappingConceptRepository.Query(c => c.Name.Equals("Citation")).FirstOrDefault();
+
+                var keys = new List<MappingKey>();
+
+                if (concept == null) //if not create
+                    concept = conceptManager.CreateMappingConcept("Citation", "The concept is needed to create a citation string", "", "");
+                else // if exist load available keys
+                {
+                    keys = conceptManager.MappingKeyRepo.Query(k => k.Concept.Id.Equals(concept.Id)).ToList();
+                }
+
+                //title
+                if (!keys.Any(k => k.Name.Equals("data/title")))
+                    conceptManager.CreateMappingKey("Title", "", "", false, false, "data/title", concept);
+                //version
+                if (!keys.Any(k => k.Name.Equals("data/version")))
+                    conceptManager.CreateMappingKey("Version", "", "", false, false, "data/version", concept);
+                //date
+                if (!keys.Any(k => k.Name.Equals("data/date")))
+                    conceptManager.CreateMappingKey("Date", "", "", false, false, "data/date", concept);
+
+                //doi
+                if (!keys.Any(k => k.Name.Equals("data/doi")))
+                    conceptManager.CreateMappingKey("Doi", "", "", true, false, "data/doi", concept);
+
+                //projects
+                MappingKey projects = null;
+                if (!keys.Any(k => k.Name.Equals("data/projects")))
+                    projects = conceptManager.CreateMappingKey("Projects", "", "", true, false, "data/projects", concept);
+
+                if (!keys.Any(k => k.Name.Equals("data/projects/project")))
+                    conceptManager.CreateMappingKey("Project", "", "", true, false, "data/projects/project", concept, projects);
+
+                //authors
+                MappingKey authors = null;
+                if (!keys.Any(k => k.Name.Equals("data/authorNames")))
+                    authors = conceptManager.CreateMappingKey("AuthorNames", "", "", false, true, "data/authorNames", concept);
+
+                if (!keys.Any(k => k.Name.Equals("data/authorNames/authorName")))
+                    conceptManager.CreateMappingKey("AuthorName", "", "", false, false, "data/authorNames/authorName", concept, authors);
+            }
         }
     }
 }
