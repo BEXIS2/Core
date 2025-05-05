@@ -69,6 +69,9 @@ namespace BExIS.IO.Transform.Output
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
                     XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
+                    // if no mapping name  is provided, use the metadata structure name
+                    if(string.IsNullOrEmpty(mappingName)) mappingName = datasetVersion.Dataset.MetadataStructure.Name;
+
                     string mappingFileName = xmlDatasetHelper.GetTransmissionInformation(datasetVersion.Id, type, mappingName);
                     // no mapping files with mappingName exist
                     if (string.IsNullOrEmpty(mappingFileName)) return null;
