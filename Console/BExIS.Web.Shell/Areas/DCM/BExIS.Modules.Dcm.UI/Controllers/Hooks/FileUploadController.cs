@@ -2,6 +2,7 @@
 using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.IO.Transform.Input;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.Edit;
@@ -15,8 +16,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Modularity;
@@ -245,6 +248,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
 
             return Json(true);
+        }
+
+        public JsonResult FileReader(string file, long entityId, long version = -1)
+        {
+            //var x =  RedirectToAction("Load", "DataStructure", new { area = "RPM", file, entityId, version });
+
+            //if (this.IsAccessible("RPM", "DataStructure", "Load"))
+            //{
+            //    var actionresult = this.Run("RPM", "DataStructure", "Load", new RouteValueDictionary() { { "file", file }, { "version", version }, { "entityId", entityId } { "encoding", EncodingType.UTF8 } });
+
+            //   // return Json("");
+            //}
+
+            return Json(new
+            {
+                redirectUrl = Url.Action("test", " DataStructure", new { area = "RPM" })
+            });
+
+            //return Json(new { redirect = true, url = Url.Action("Load", "DataStructure", new { area = "RPM", file, version, entityId, encoding = EncodingType.UTF8 }) } );
         }
 
         private string getFileName(HttpPostedFileBase file)

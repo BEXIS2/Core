@@ -10,6 +10,10 @@ set xpath =
     END
 where complexity = 1 and type in (5,6);
 
+--- RPM  TeFilest --
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'RPM', 'File', '*', null 
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='RPM' AND controller='File');
 
 -- BEXIS2 Version Update
 INSERT INTO public.versions(
