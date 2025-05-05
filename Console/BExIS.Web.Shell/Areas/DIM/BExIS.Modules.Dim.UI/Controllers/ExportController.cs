@@ -1,4 +1,5 @@
-﻿using BExIS.Dim.Entities.Publications;
+﻿using BExIS.App.Bootstrap;
+using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers;
 using BExIS.Dim.Helpers.Export;
 using BExIS.Dim.Services;
@@ -369,6 +370,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 case "text/tab-separated-values":
                     {
                         return "generatedTSV";
+                    }
+                case "application/xlsx":
+                    {
+                        return "generatedExcel";
                     }
                 default:
                     {
