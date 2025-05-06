@@ -46,6 +46,7 @@
 	const facetGroups = writable<FacetGroup[]>([]);
 	const tableStore = writable<any>([]);
 	const placeholderStore = writable<any>([]);
+	let authorLabel = 'Authors';
 
 	const handleSearch = async (init: boolean = false) => {
 		const response = await Api.post(
@@ -248,7 +249,7 @@
 
 		if (placeholders.length > 0) {
 			const idIndex = headers.findIndex((header) => header.Name === 'ID');
-
+   authorLabel = headers[headers.findIndex((header) => header.Placeholder === 'author')]?.DisplayName
 			const data = rows.map((row) => ({
 				...placeholders.reduce(
 					(acc, item) => {
@@ -261,9 +262,15 @@
 				),
 				id: row.Values[idIndex]
 			}));
+
 			placeholderStore.set(data);
+
+			console.log("🚀 ~ data ~ data:", data, authorLabel)
 		}
 	};
+
+
+
 
 	const deleteCriteriaKey = (criterion: string, value: string) => {
 		const temp = { ...$criteria };
@@ -587,7 +594,7 @@
 					</div>
 				{/if}
 				<div class:hidden={currentView === 'table'}>
-					<Cards store={placeholderStore} />
+					<Cards store={placeholderStore} {authorLabel}/>
 				</div>
 			</div>
 		</div>

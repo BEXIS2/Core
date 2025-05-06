@@ -1,24 +1,28 @@
 > this is a small update that rounds up version 4.
 
 ### Workspace changes:
-- Workspace changes: [4.0.0..4.0.1](https://github.com/BEXIS2/Workspace/compare/4.0.0..4.0.1)
+- Workspace changes: [4.0.1..4.0.2](https://github.com/BEXIS2/Workspace/compare/4.0.1..4.0.2)
 
 ### Database Update(s):
-- Update script from version 4.0.0 to 4.0.1: [Update_Script_4.0.0_4.0.1.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/4.0.0-4.0.1.sql)
+- Update script from version 4.0.1 to 4.0.2: [Update_Script_4.0.1_4.0.2.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/4.0.1-4.0.2.sql)
 
 
 # Bugfixes 
-## Metadata
-- **JSON Schema metadata validation fails for numbers** ([#2086](https://github.com/BEXIS2/Core/issues/2086))
-- **Rendering of "choice" structure works incorrectly** ([#2065](https://github.com/BEXIS2/Core/issues/2065))
+## Edit
+- **FileUpload: Comment reset after deselect the input field** ([#2100](https://github.com/BEXIS2/Core/issues/2100))
+- **FileUpload: change file reader information in edit needs manage data structure right** ([#2105](https://github.com/BEXIS2/Core/issues/2105))
 
 ## Search
-- **No search index init on first start in version 4.0.0** ([#2085](https://github.com/BEXIS2/Core/issues/2085))
+- **Card paging is not working** ([#2098](https://github.com/BEXIS2/Core/issues/2098))
+- **Only the first person is displayed in the search results** ([#2105](https://github.com/BEXIS2/Core/issues/2105))
 
-# Enhancements
+# View
+- **user with read or no rights can´t see dataset view** ([#2105](https://github.com/BEXIS2/Core/issues/2105))
+- **download excel ist not working** ([#2105](https://github.com/BEXIS2/Core/issues/2105))
 
-## Export
-- **DOI: add concept keys to seed data** ([#2089](https://github.com/BEXIS2/Core/issues/2089))
+## Menu
+- **Settings gear in menu is available when no user is logged in and no feature is listed** ([#2105](https://github.com/BEXIS2/Core/issues/2105))
 
-## Mapping
-- **Enhance Mapping with Parameters** ([#1582](https://github.com/BEXIS2/Core/issues/1582))
+## Create
+- **Create a dataset in exiting instances and allready used metadata structures throw error**  ([#2105](https://github.com/BEXIS2/Core/issues/2105))
+
