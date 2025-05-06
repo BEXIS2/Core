@@ -18,6 +18,8 @@
 
 	import sanitizeHtml from 'sanitize-html';
 	import { marked } from 'marked';
+	import { time } from 'console';
+	import { TIMEOUT } from 'dns';
 
 	export let data;
 	let content_complete = '';
@@ -41,6 +43,9 @@
 	$: version;
 
 	onMount(() => {
+
+		setTimeout(() => {
+			
 		// get data from parent
 		container = document.getElementById('docs');
 		version = container?.getAttribute('version');
@@ -109,6 +114,8 @@
 
 		// Add event listener to rendered content
 		document.getElementById('content').addEventListener('click', handleLinkClick);
+		}, 1000);
+
 	});
 
 	// Select and render the currently needed content

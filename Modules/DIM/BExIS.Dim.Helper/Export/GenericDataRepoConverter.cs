@@ -1,4 +1,5 @@
-﻿using BExIS.Dim.Entities.Publications;
+﻿using BExIS.Dim.Entities.Export.GBIF;
+using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -13,6 +14,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Text;
+using System.Web.Routing;
 using System.Xml;
 using Vaiona.Logging;
 using Vaiona.Utils.Cfg;
@@ -37,6 +40,7 @@ namespace BExIS.Dim.Helpers.Export
             {
                 DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
                 long datasetId = datasetVersion.Dataset.Id;
+                string metadataStructureName = datasetVersion.Dataset.MetadataStructure.Name;
 
                 Publication publication =
                     publicationManager.GetPublication()
@@ -58,7 +62,7 @@ namespace BExIS.Dim.Helpers.Export
 
                         // get primary data
                         // check the data sturcture type ...
-                        if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                        if (datasetVersion.Dataset.DataStructure != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                         {
                             OutputDataManager odm = new OutputDataManager();
                             // apply selection and projection
@@ -89,26 +93,22 @@ namespace BExIS.Dim.Helpers.Export
 
                         #region datatructure
 
-                        long dataStructureId = datasetVersion.Dataset.DataStructure.Id;
-                        DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
-
-                        if (dataStructure != null)
+                        if (datasetVersion.Dataset.DataStructure != null)
                         {
-                            try
-                            {
-                                string dynamicPathOfDS = "";
-                                dynamicPathOfDS = storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion,
-                                    "datastructure", ".txt");
-                                string datastructureFilePath = AsciiWriter.CreateFile(dynamicPathOfDS);
+                            long dataStructureId = datasetVersion.Dataset.DataStructure.Id;
+                            DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
 
-                                string json = OutputDataStructureManager.GetDataStructureAsJson(dataStructureId);
+                            string dataStructurePath = "";
+                            dataStructurePath = storeGeneratedFilePathToContentDiscriptor(datasetVersion.Dataset.Id, datasetVersion,
+                                "datastructure", ".json");
+                            string datastructureFilePath = AsciiWriter.CreateFile(dataStructurePath);
 
-                                AsciiWriter.AllTextToFile(datastructureFilePath, json);
-                            }
-                            catch (Exception ex)
-                            {
-                                throw ex;
-                            }
+                            string json = OutputDataStructureManager.GetDataStructureAsJson(dataStructureId);
+
+                            AsciiWriter.AllTextToFile(datastructureFilePath, json);
+
+                            ////generate data structure as html 
+                            //generateDataStructureHtml(datasetVersion);
                         }
 
                         #endregion datatructure
@@ -116,14 +116,19 @@ namespace BExIS.Dim.Helpers.Export
                         using (var zipFileStream = new FileStream(zipFilePath, FileMode.Create))
                         using (var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Update))
                         {
+                            datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+
                             foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                             {
                                 string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
                                 string name = cd.URI.Split('\\').Last();
 
+                                if (cd.Name.StartsWith("generated") && !cd.Name.Equals("text/csv")) continue;
+
                                 if (FileHelper.FileExist(path))
                                 {
-                                    archive.AddFileToArchive(path, "");
+                                    if (!archive.Entries.Any(entry => entry.Name.EndsWith(name)))
+                                        archive.AddFileToArchive(path, name);
                                 }
                             }
 
@@ -141,7 +146,7 @@ namespace BExIS.Dim.Helpers.Export
                                 string fullFilePath = Path.Combine(AppConfiguration.DataPath, dynamicManifestFilePath);
 
                                 manifest.Save(fullFilePath);
-                                archive.AddFileToArchive(fullFilePath, "");
+                                archive.AddFileToArchive(fullFilePath, "manifest.xml");
                             }
 
                             string message = string.Format("dataset {0} version {1} was published for repository {2}", datasetId,

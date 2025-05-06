@@ -362,7 +362,7 @@
     @if (@Model != null)
     {
         <div id="initLoad" style="padding-bottom:20px;"></div>
-        <div id="tab-container" style="display:none">
+        <div id="tab-container" style="display: none;">
             @if (ViewData.ModelState.IsValid)
             {
                 <ul class="nav nav-tabs">
@@ -411,7 +411,7 @@
                 <!--load hooks in tab content-->
                 <!--dataset hooks-->
 
-                <div class="tab-content">
+                <div class="tab-content" style="padding-top:10px;">
 
                     @foreach (var hook in datasetHooks)
                     {
