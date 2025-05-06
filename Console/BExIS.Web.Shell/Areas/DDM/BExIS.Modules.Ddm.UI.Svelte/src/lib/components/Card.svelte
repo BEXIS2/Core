@@ -23,6 +23,8 @@
 		entitytemplate: ''
 	};
 
+ export let authorLabel = 'Authors';
+
 	const { title, description, author, license, id, doi, entity, date, entitytemplate } = card;
 
 	// let author = '';
@@ -105,7 +107,7 @@
 			</p>
 			{#if author.length > 0}
 				<div title="Author" class="flex gap-2 items-center">
-					<span class="font-semibold">Author:</span>
+					<span class="font-semibold">{authorLabel}:</span>
 					<p class="text-sm italic text-neutral-600">{author}</p>
 				</div>
 			{/if}

@@ -6,6 +6,7 @@
 	import Card from './Card.svelte';
 
 	export let store: Writable<any[]> = writable([]);
+	export let authorLabel = 'Authors';
 
 	let paginationSettings = {
 		page: 0,
@@ -41,6 +42,7 @@
 				date: card.date || '',
 				entitytemplate: card.entitytemplate || ''
 			}}
+			{authorLabel}
 		/>
 	{/each}
 
