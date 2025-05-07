@@ -63,7 +63,7 @@ namespace BExIS.Security.Services.Subjects
                 }
                 else if (whereClause != null)
                 {
-                    var filtered = Users.Where(whereClause);
+                    var filtered = UserRepository.Query(whereClause);
                     count = filtered.Count();
 
                     return filtered.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
