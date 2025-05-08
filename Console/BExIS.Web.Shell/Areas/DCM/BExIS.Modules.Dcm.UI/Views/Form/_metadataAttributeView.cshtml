@@ -143,7 +143,11 @@
 
 <div id="@id" class="metadataAttributeContent" onload="metadataAttributeOnLoad(this, @hasErrors)">
 
-    @if (@Model != null && !(!showOptional && Model.IsEmpty && (Model.MinCardinality == 0) && locked))
+    @if (@Model != null && 
+        !(
+        !showOptional && 
+        (Model.IsEmpty && string.IsNullOrEmpty(Model.FixedValue)) && 
+        (Model.MinCardinality == 0) && locked))
     {
     <table>
         <tr><td></td><td><div id="help_@idInput" class="help" style="display: none;">@Html.Raw(Model.Discription)</div></td></tr>
