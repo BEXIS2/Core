@@ -129,6 +129,10 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 if (SearchApi == null) SearchApi = featureManager.Create("Search Api", "Search Api", DataDiscovery);
                 if (!operationManager.Exists("api", "SearchApi", "*")) operationManager.Create("api", "SearchApi", "*", SearchApi);
 
+                Feature CitationApi = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Citation Api") && f.Parent.Equals(DataDiscovery));
+                if (CitationApi == null) CitationApi = featureManager.Create("Citation Api", "Citation Api", DataDiscovery);
+                if (!operationManager.Exists("api", "Citation", "*")) operationManager.Create("api", "Citation", "*", CitationApi);
+
                 Feature DataTable = features.FirstOrDefault(f =>
                    f.Name.Equals("Api") &&
                    f.Parent != null &&
