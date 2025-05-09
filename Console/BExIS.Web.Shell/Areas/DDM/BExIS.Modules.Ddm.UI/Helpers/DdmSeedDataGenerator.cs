@@ -131,7 +131,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
                 Feature CitationApi = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Citation Api") && f.Parent.Equals(DataDiscovery));
                 if (CitationApi == null) CitationApi = featureManager.Create("Citation Api", "Citation Api", DataDiscovery);
-                if (!operationManager.Exists("api", "Citation", "*")) operationManager.Create("api", "Citation", "*", CitationApi);
+                if (!operationManager.Exists("API", "Citation", "*")) operationManager.Create("api", "Citation", "*", CitationApi);
 
                 Feature DataTable = features.FirstOrDefault(f =>
                    f.Name.Equals("Api") &&
