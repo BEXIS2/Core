@@ -1,12 +1,8 @@
 ﻿using BExIS.Dlm.Entities.Curation;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Curation;
 using BExIS.Security.Entities.Subjects;
-using DocumentFormat.OpenXml.ExtendedProperties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace BExIS.Modules.Dcm.UI.Models.Curation
 {

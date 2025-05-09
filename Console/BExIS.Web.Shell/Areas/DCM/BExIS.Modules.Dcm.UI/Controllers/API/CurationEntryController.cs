@@ -1,28 +1,19 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.Curation;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Curation;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Models.Curation;
 using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
-using DocumentFormat.OpenXml.Spreadsheet;
 using NHibernate.Util;
-using System;
-using System.CodeDom;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
-using System.Web.Http.Controllers;
-using System.Web.Routing;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -200,6 +191,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var newCurationEntry = curationManager.Update(
                         curationEntryModel.Id,
                         curationEntryModel.Topic,
+                        curationEntryModel.Type,
                         curationEntryModel.Name,
                         curationEntryModel.Description,
                         curationEntryModel.Solution,
