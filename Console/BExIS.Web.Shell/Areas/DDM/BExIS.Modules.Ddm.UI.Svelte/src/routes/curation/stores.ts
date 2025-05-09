@@ -1,6 +1,6 @@
 import { derived, writable, type Readable } from 'svelte/store';
-import { getCurationDataset, putCurationEntry } from './services';
-import { CurationUserType } from './types';
+import { getCurationDataset, postCurationEntry, putCurationEntry } from './services';
+import { CurationEntryType, CurationUserType } from './types';
 import { CurationClass, CurationEntryClass } from './CurationEntries';
 
 class CurationStore {
@@ -30,6 +30,7 @@ class CurationStore {
 	public get entryFilters(): Readable<((entry: CurationEntryClass) => boolean)[]> {
 		return this._entryFilters;
 	}
+	public readonly editMode = writable<boolean>(false);
 
 	constructor() {
 		this.datasetId.subscribe((datasetId) => {
@@ -129,6 +130,7 @@ class CurationStore {
 	}
 
 	public addNote(entryId: number, userType: CurationUserType, comment: string) {
+		if (entryId <= 0) return;
 		this.applyAndSaveEntry(entryId, (entry) => entry.addNote(userType, comment, true));
 	}
 
@@ -148,14 +150,65 @@ class CurationStore {
 		this.applyAndSaveEntry(entryId, (entry) => entry.toggleStatus(), true);
 	}
 
+	public updateEntryPosition(entryId: number, position: number) {
+		this._curation.update((curation) => {
+			let oldPosition = curation?.getEntryById(entryId)?.position;
+			let newCuration = curation?.updateEntryPosition(entryId, position);
+			if (!newCuration || newCuration == curation) return curation;
+			if (newCuration.getEntryById(entryId)?.position === oldPosition) return curation;
+			this.saveEntry(newCuration.getEntryById(entryId)!);
+			return newCuration;
+		});
+	}
+
+	public addEmptyEntry(position: number) {
+		this._curation.update((curation) => {
+			if (!curation) return curation;
+			return curation.addEmptyEntry(position);
+		});
+	}
+
+	public updateEntry(
+		entryId: number,
+		topic: string,
+		type: CurationEntryType,
+		name: string,
+		description: string,
+		solution: string,
+		source: string
+	) {
+		this._curation.update((curation) => {
+			let newCuration = curation?.updateEntry(
+				entryId,
+				topic,
+				type,
+				name,
+				description,
+				solution,
+				source
+			);
+			if (!newCuration || newCuration == curation) return curation;
+			if (!newCuration.getEntryById(entryId)) return curation;
+			this.saveEntry(newCuration.getEntryById(entryId)!);
+			return newCuration;
+		});
+	}
+
 	public saveEntry(entry: CurationEntryClass) {
-		this.setEntryLoading(entry.id, true);
-		putCurationEntry(entry)
+		const draftEntryId = entry.id;
+		this.setEntryLoading(draftEntryId, true);
+		let f = draftEntryId <= 0 ? postCurationEntry : putCurationEntry;
+		f(entry)
 			.then((response) => {
 				this._curation.update((curation) => {
 					if (!curation) return curation;
 					const newEntry = new CurationEntryClass(response, curation.currentUserType);
-					let newCuration = curation.addEntry(newEntry);
+					let newCuration = curation;
+					if (draftEntryId <= 0) {
+						newCuration = curation.removeEntry(entry.id);
+						this.setEntryLoading(draftEntryId, false);
+					}
+					newCuration = newCuration.addEntry(newEntry);
 					this.setEntryLoading(newEntry.id, false);
 					return newCuration;
 				});
@@ -205,7 +258,6 @@ class CurationStore {
 	}
 
 	public clearEntryFilters() {
-		console.log('clearing Entry Filters');
 		this._entryFilters.set([]);
 	}
 
@@ -218,6 +270,16 @@ class CurationStore {
 			});
 		});
 	}
+
+	public deleteEntry(entryId: number) {
+		if (entryId >= 0) return;
+		this._curation.update((curation) => {
+			if (!curation) return curation;
+			return curation.removeEntry(entryId);
+		});
+	}
+
+	public startCuration() {}
 }
 
 export const curationStore = new CurationStore();

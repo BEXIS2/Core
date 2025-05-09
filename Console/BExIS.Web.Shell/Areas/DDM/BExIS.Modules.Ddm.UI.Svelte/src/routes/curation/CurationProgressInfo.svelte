@@ -16,9 +16,8 @@
 	import type { CurationEntryClass } from './CurationEntries';
 
 	export let progress: number[];
+	export let totalIssues: number = 0;
 	export let label: string = 'Curation Progress';
-
-	let totalIssues = progress.reduce((a, b) => a + b, 0);
 
 	const myFilter = writable<((entry: CurationEntryClass) => boolean) | null>(null);
 	const appliedFilter = writable<CurationEntryStatus | null>(null);
@@ -87,8 +86,8 @@
 
 <div class="curation-status-progress-card p-2">
 	<h3>
-		<span class="text-surface-800 mr-2 font-semibold">{label}</span>
-		<span class="text-surface-600 whitespace-nowrap text-right text-sm font-normal">
+		<span class="mr-2 font-semibold text-surface-800">{label}</span>
+		<span class="whitespace-nowrap text-right text-sm font-normal text-surface-600">
 			Total Issues: {totalIssues}
 		</span>
 	</h3>
@@ -133,7 +132,7 @@
 							{/if}
 							{CurationEntryStatusNames[index]}: {p}
 						</span>
-						<span class="text-surface-800 text-xs">{((p / totalIssues) * 100).toFixed(2)}%</span>
+						<span class="text-xs text-surface-800">{((p / totalIssues) * 100).toFixed(2)}%</span>
 					</button>
 				</li>
 			{/if}

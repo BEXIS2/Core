@@ -73,6 +73,8 @@ export const putCurationEntry = async (model: CurationEntryModel) => {
 
 export const postCurationEntry = async (model: CurationEntryModel) => {
 	try {
+		model.id = 0; // Set id to 0 to create a new entry
+
 		const response = await Api.post('/api/curationentries', model);
 
 		console.log('🎈 ~ POST ~ response:', response);

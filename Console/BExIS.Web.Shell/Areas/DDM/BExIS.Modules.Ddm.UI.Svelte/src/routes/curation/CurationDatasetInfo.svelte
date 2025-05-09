@@ -9,7 +9,7 @@
 	let curationLabel = 'None';
 </script>
 
-<div class="border-surface-500 w-full border-b">
+<div class="w-full">
 	{#if $loadingCuration}
 		<div class="f-width flex animate-pulse flex-wrap justify-stretch gap-2 p-2">
 			<div class="placeholder grow basis-10/12"></div>
@@ -23,22 +23,22 @@
 	{:else if $loadingError}
 		<h1>Error: {$loadingError}</h1>
 	{:else if $curation}
-		<div class="row border-surface-500 flex w-full flex-nowrap justify-between border-b p-2">
+		<div class="row flex w-full flex-nowrap justify-between border-b border-surface-500 p-2">
 			<h1 class="flex-shrink flex-grow-0 overflow-hidden text-ellipsis text-xl">
-				<span class="text-surface-800 text-base">
+				<span class="text-base text-surface-800">
 					#{$datasetId}:
 				</span>
 				{$curation?.datasetTitle}
 			</h1>
 			{#if $uploadingEntries.length > 0}
 				<span
-					class="bg-surface-400 ml-2 h-7 w-20 animate-pulse rounded-full px-4 py-1 text-sm text-white"
+					class="ml-2 h-7 w-20 animate-pulse rounded-full bg-surface-400 px-4 py-1 text-sm text-white"
 				>
 					...
 				</span>
 			{:else}
 				<span
-					class="bg-primary-400 ml-2 h-7 max-w-48 overflow-hidden text-ellipsis rounded-full px-4 py-1 text-sm text-white"
+					class="ml-2 h-7 max-w-48 overflow-hidden text-ellipsis rounded-full bg-primary-400 px-4 py-1 text-sm text-white"
 				>
 					{curationLabel}
 				</span>
@@ -47,33 +47,43 @@
 		<div class="relative">
 			<!-- Dates -->
 			<div
-				class="row border-surface-500 flex w-full flex-wrap justify-between gap-x-4 gap-y-2 border-b p-2"
+				class="row flex w-full flex-wrap justify-between gap-x-4 gap-y-2 border-b border-surface-500 p-2"
 			>
 				<div class="grid grid-cols-1">
-					<span class="text-surface-800 text-sm font-semibold">Last Dataset Change</span>
-					<RelativeDate date={$curation?.datasetVersionDateObj} class="text-surface-800 text-sm" />
+					<span class="text-sm font-semibold text-surface-800">Last Dataset Change</span>
+					<RelativeDate date={$curation?.datasetVersionDateObj} class="text-sm text-surface-800" />
 				</div>
-				<div class="grid grid-cols-1">
-					<span class="text-surface-800 text-sm font-semibold">Begin of Curation</span>
-					<RelativeDate date={$curation?.creationDate} class="text-surface-800 text-sm" />
-				</div>
-				<div class="grid grid-cols-1">
-					<span class="text-surface-800 text-sm font-semibold">Last User Change</span>
-					<RelativeDate date={$curation?.lastUserChangedDate} class="text-surface-800 text-sm" />
-				</div>
-				<div class="grid grid-cols-1">
-					<span class="text-surface-800 text-sm font-semibold">Last Curator Change</span>
-					<RelativeDate date={$curation?.lastCuratorChangedDate} class="text-surface-800 text-sm" />
-				</div>
+				{#if $curation.curationEntries.length > 0}
+					<div class="grid grid-cols-1">
+						<span class="text-sm font-semibold text-surface-800">Begin of Curation</span>
+						<RelativeDate date={$curation?.creationDate} class="text-sm text-surface-800" />
+					</div>
+					<div class="grid grid-cols-1">
+						<span class="text-sm font-semibold text-surface-800">Last User Change</span>
+						<RelativeDate date={$curation?.lastUserChangedDate} class="text-sm text-surface-800" />
+					</div>
+					<div class="grid grid-cols-1">
+						<span class="text-sm font-semibold text-surface-800">Last Curator Change</span>
+						<RelativeDate
+							date={$curation?.lastCuratorChangedDate}
+							class="text-sm text-surface-800"
+						/>
+					</div>
+				{/if}
 			</div>
-			<!-- Curation Progress -->
-			<CurationProgressInfo
-				progress={$curation?.curationProgressTotal}
-				label="Curation Progress Test"
-			/>
-			<!-- Spinner overlay -->
-			{#if $uploadingEntries.length > 0}
-				<SpinnerOverlay />
+			{#if $curation.curationEntries.length > 0}
+				<div class="border-b border-surface-500">
+					<!-- Curation Progress -->
+					<CurationProgressInfo
+						progress={$curation?.curationProgressTotal}
+						totalIssues={$curation?.curationProgressTotal.reduce((a, b) => a + b, 0)}
+						label="Curation Progress Test"
+					/>
+					<!-- Spinner overlay -->
+					{#if $uploadingEntries.length > 0}
+						<SpinnerOverlay />
+					{/if}
+				</div>
 			{/if}
 		</div>
 	{/if}

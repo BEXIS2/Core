@@ -44,7 +44,7 @@ export enum CurationEntryType {
 	StatusEntryItem,
 	MetadataEntryItem,
 	PrimaryDataEntryItem,
-	DatastrutcureEntryItem
+	DatastructureEntryItem
 }
 
 export const CurationEntryTypeNames: string[] = [

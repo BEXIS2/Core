@@ -5,14 +5,20 @@
 	import RelativeDate from '$lib/components/RelativeDate.svelte';
 	import { CurationUserType } from './types';
 	import { derived, type Writable } from 'svelte/store';
-	import { CurationNoteClass, CurationUserClass, fixedCurationUserId } from './CurationEntries';
+	import { CurationNoteClass, fixedCurationUserId } from './CurationEntries';
 
 	export let note: CurationNoteClass;
 	export let entryId: number;
 	export let parentText: Writable<string>;
 
 	function deleteNote() {
-		curationStore.deleteNote(entryId, note.id);
+		if (
+			confirm(
+				`Are you sure you want to delete this note:\n\n"${note.comment}"\n\nThis action cannot be undone. Maybe you want to reply to the note instead?`
+			)
+		) {
+			curationStore.deleteNote(entryId, note.id);
+		}
 	}
 
 	const userColorList = [
@@ -64,18 +70,18 @@
 					(You)
 				{/if}
 			</span>
-			<span class="text-surface-600 ml-1 text-xs">
+			<span class="ml-1 text-xs text-surface-600">
 				[{note.userType === CurationUserType.Curator ? 'Curator' : 'User'}]
 			</span>
 			<RelativeDate
 				date={note.creationDateObj}
 				label="Note created"
-				class="badge text-surface-600 ml-1 text-xs"
+				class="badge ml-1 text-xs text-surface-600"
 			/>
 		</p>
 		<div class="flex items-center gap-x-1">
 			<button
-				class="text-surface-600 hover:bg-primary-400 hover:text-primary-800 cursor-pointer rounded p-1"
+				class="cursor-pointer rounded p-1 text-surface-600 hover:bg-primary-400 hover:text-primary-800"
 				on:click={() => parentText.set(note.comment)}
 				title="Reply to Note"
 				name="Reply to Note"
@@ -92,7 +98,7 @@
 					<Fa icon={faPen} />
 				</button> -->
 				<button
-					class="text-surface-600 hover:bg-error-400 hover:text-error-800 cursor-pointer rounded p-1"
+					class="cursor-pointer rounded p-1 text-surface-600 hover:bg-error-400 hover:text-error-800"
 					on:click={deleteNote}
 					title="Delete Note"
 					name="Delete Note"
@@ -105,7 +111,7 @@
 	<p class="break words overflow-hidden text-wrap">
 		{#each commentLinesGrouped as group}
 			{#if group.length > 1 && group[0].startsWith('| ')}
-				<p class="bg-surface-200 border-surface-600 my-0.5 w-full rounded border-l-4 px-2 py-0.5">
+				<p class="my-0.5 w-full rounded border-l-4 border-surface-600 bg-surface-200 px-2 py-0.5">
 					{#each group as line}
 						{line.slice(2)}
 						<br />

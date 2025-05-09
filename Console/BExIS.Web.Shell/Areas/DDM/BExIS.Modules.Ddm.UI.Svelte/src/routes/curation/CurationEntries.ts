@@ -18,6 +18,7 @@ export class CurationClass {
 	public readonly datasetTitle: string;
 	public readonly datasetVersionDate: string;
 	public readonly curationEntries: CurationEntryClass[];
+	public readonly visiblecurationEntries: CurationEntryClass[];
 	public readonly curationUsers: CurationUserClass[];
 
 	// Additional properties
@@ -32,6 +33,8 @@ export class CurationClass {
 	public readonly curationProgressPerType: number[][];
 
 	public readonly currentUserType: CurationUserType;
+
+	public readonly draftCount: number;
 
 	constructor(curation: CurationModel) {
 		// create user map and set current user type
@@ -49,8 +52,10 @@ export class CurationClass {
 		this.datasetVersionDate = curation.datasetVersionDate || 'None';
 
 		// curation entries
-		this.curationEntries = (curation.curationEntries || []).map(
-			(entry) => new CurationEntryClass(entry, this.currentUserType)
+		this.curationEntries = CurationClass.sortedCurationEntries(
+			(curation.curationEntries || []).map(
+				(entry) => new CurationEntryClass(entry, this.currentUserType)
+			)
 		);
 
 		// Additional properties
@@ -59,7 +64,11 @@ export class CurationClass {
 		[this.creationDate, this.lastUserChangedDate, this.lastCuratorChangedDate] =
 			this.getCalculatedDates();
 
+		this.visiblecurationEntries = this.curationEntries.filter((entry) => entry.isVisible());
+
 		[this.curationProgressTotal, this.curationProgressPerType] = this.getCurationProgress();
+
+		this.draftCount = this.curationEntries.filter((entry) => entry.isDraft()).length;
 	}
 
 	public addEntry(entry: CurationEntryClass): CurationClass {
@@ -71,6 +80,37 @@ export class CurationClass {
 		} else {
 			newEntries.push(entry);
 		}
+
+		return new CurationClass({
+			...this,
+			curationEntries: newEntries
+		});
+	}
+
+	public updateEntryPosition(entryId: number, newPosition: number): CurationClass {
+		if (newPosition < 1) return this;
+		if (newPosition > this.curationEntries.length) newPosition = this.curationEntries.length;
+
+		const oldEntry = this.getEntryById(entryId);
+		const oldPosition = oldEntry?.position ?? 0;
+		if (!oldEntry || oldPosition === newPosition) return this;
+
+		let newEntries = this.curationEntries.filter((entry) => entry.id !== entryId);
+
+		newEntries = newEntries
+			.slice(0, newPosition - 1)
+			.concat(oldEntry, newEntries.slice(newPosition - 1));
+		let passedDrafts = 0;
+		newEntries = newEntries.map((entry, index) => {
+			if (entry.isDraft()) passedDrafts++;
+			return new CurationEntryClass(
+				{
+					...entry,
+					position: index + 1 - passedDrafts
+				},
+				this.currentUserType
+			);
+		});
 
 		return new CurationClass({
 			...this,
@@ -105,12 +145,78 @@ export class CurationClass {
 			.fill(0)
 			.map(() => new Array(CurationEntryStatusNames.length).fill(0));
 
-		this.curationEntries.forEach((entry) => {
+		this.visiblecurationEntries.forEach((entry) => {
 			progressTotal[entry.status]++;
 			progressPerType[entry.type][entry.status]++;
 		});
 
 		return [progressTotal, progressPerType];
+	}
+
+	public getEntryById(entryId: number): CurationEntryClass | null {
+		const entry = this.curationEntries.find((entry) => entry.id === entryId);
+		if (!entry) return null;
+		return entry;
+	}
+
+	public updateEntry(
+		entryId: number,
+		topic: string,
+		type: CurationEntryType,
+		name: string,
+		description: string,
+		solution: string,
+		source: string
+	): CurationClass {
+		const entry = this.getEntryById(entryId);
+		if (!entry) return this;
+		const newEntry = new CurationEntryClass(
+			{
+				...entry,
+				topic: topic,
+				type: type,
+				name: name,
+				description: description,
+				solution: solution,
+				source: source
+			},
+			this.currentUserType
+		);
+		return this.addEntry(newEntry).updateEntryPosition(entryId, entry.position);
+	}
+
+	public addEmptyEntry(position: number) {
+		if (position < 1) return this;
+		let newEntry = CurationEntryClass.emptyEntry(this.datasetId, -this.draftCount - 1, position);
+		return new CurationClass({
+			...this,
+			curationEntries: [...this.curationEntries, newEntry]
+		}).updateEntryPosition(newEntry.id, position);
+	}
+
+	private static sortedCurationEntries(
+		curationEntries: CurationEntryClass[]
+	): CurationEntryClass[] {
+		return curationEntries.toSorted(
+			(a, b) =>
+				a.position - b.position || // most important is the position
+				a.id - b.id || // if position is the same, sort by id
+				(a.topic + a.name + a.description).localeCompare(b.topic + b.name + b.description) // if position and id are the same, sort by topic, name and description
+		);
+	}
+
+	/**
+	 * Only for removing the entry locally. An entry can not be removed from the backend, only updated to be hidden.
+	 *
+	 * @param entryId - The id of the entry to be removed
+	 * @returns CurationClass - A new CurationClass object with the entry removed
+	 */
+	public removeEntry(entryId: number): CurationClass {
+		const newEntries = this.curationEntries.filter((entry) => entry.id !== entryId);
+		return new CurationClass({
+			...this,
+			curationEntries: newEntries
+		});
 	}
 }
 
@@ -410,6 +516,18 @@ export class CurationEntryClass implements CurationEntryModel {
 		);
 	}
 
+	public setPosition(position: number): CurationEntryClass {
+		if (position < 1) return this;
+		if (this.position === position) return this;
+		return new CurationEntryClass(
+			{
+				...this,
+				position: position
+			},
+			this.currentUserType
+		);
+	}
+
 	public getNextStatus(): CurationEntryStatus {
 		if (this.currentUserType === CurationUserType.User)
 			return CurationEntryClass.getStatus(!this.userlsDone, false);
@@ -424,5 +542,41 @@ export class CurationEntryClass implements CurationEntryModel {
 
 	public toggleStatus(): CurationEntryClass {
 		return this.setStatus(this.getNextStatus());
+	}
+
+	public static emptyEntry(datasetId: number, id: number, position: number): CurationEntryClass {
+		return new CurationEntryClass(
+			{
+				id: id,
+				datasetId: datasetId,
+				topic: '',
+				type: CurationEntryType.None,
+				name: '',
+				description: '',
+				solution: '',
+				position: position,
+				source: '',
+				notes: [],
+				creationDate: new Date().toISOString(),
+				creatorId: fixedCurationUserId,
+				userlsDone: false,
+				isApproved: false,
+				lastChangeDatetime_User: new Date().toISOString(),
+				lastChangeDatetime_Curator: new Date().toISOString()
+			},
+			CurationUserType.User
+		);
+	}
+
+	public isHidden(): boolean {
+		return this.type === CurationEntryType.None;
+	}
+
+	public isDraft(): boolean {
+		return this.id < 0;
+	}
+
+	public isVisible(): boolean {
+		return !this.isHidden() && !this.isDraft();
 	}
 }
