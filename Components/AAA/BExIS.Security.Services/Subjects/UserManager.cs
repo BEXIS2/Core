@@ -52,7 +52,7 @@ namespace BExIS.Security.Services.Subjects
             {
                 if (whereClause != null && orderBy != null)
                 {
-                    var l = UserRepository.Query(whereClause);
+                    var l = Users.Where(whereClause);
                     var x = l.OrderBy(orderbyClause);
                     var y = x.Skip((pageNumber - 1) * pageSize);
                     var z = y.Take(pageSize);

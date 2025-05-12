@@ -228,7 +228,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Edit Metadata", this.Session.GetTenant());
             ViewData["Locked"] = locked;
-            ViewData["ShowOptional"] = false;
+            ViewData["ShowOptional"] = fromEditMode;
             ViewData["EntityId"] = entityId;
 
             // Set dataset Title to Model
