@@ -161,7 +161,7 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
             {
                 if (Model != null &&
                     Model.MinCardinality > 0 &&
-                    Model.MaxCardinality == 1)
+                    Model.MaxCardinality >= 1)
                 {
                     Activated = true;
                 }
