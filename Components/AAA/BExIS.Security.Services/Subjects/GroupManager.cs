@@ -116,6 +116,25 @@ namespace BExIS.Security.Services.Subjects
             return Task.CompletedTask;
         }
 
+        public Task<bool> DeleteByIdAsync(long roleId)
+        {
+            var groupRepository = _guow.GetRepository<Group>();
+            var group = groupRepository.Get(roleId);
+            
+            var userRepository = _guow.GetRepository<User>();
+            foreach (var user in group.Users)
+            {
+                user.Groups.Remove(group);
+                userRepository.Put(user);
+            }
+
+            var result = groupRepository.Delete(group);
+
+            _guow.Commit();
+
+            return Task.FromResult(result);
+        }
+
         public void Dispose()
         {
             this.Dispose(true);
