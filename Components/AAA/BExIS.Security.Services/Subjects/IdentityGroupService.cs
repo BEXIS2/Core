@@ -12,7 +12,7 @@ namespace BExIS.Security.Services.Subjects
         private readonly GroupManager _groupManager;
         private bool _disposed;
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
+        //[System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
         public IdentityGroupService(GroupManager groupManager) : base(groupManager)
         {
             _groupManager = groupManager ?? throw new ArgumentNullException(nameof(groupManager));
