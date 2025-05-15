@@ -21,7 +21,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public async Task<bool> AddUserToGroupAsync(long userId, string groupName)
         {
-            using (var identityUserService = new IdentityUserService())
+            using (var userManager = new UserManager())
+            using (var identityUserService = new IdentityUserService(userManager))
             {
                 try
                 {
@@ -29,7 +30,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     var result = await identityUserService.AddToRoleAsync(user.Id, groupName);
                     return result.Succeeded;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     return false;
                 }
@@ -149,7 +150,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public async Task<bool> RemoveUserFromGroupAsync(long userId, string groupName)
         {
-            using (var identityUserService = new IdentityUserService())
+            using (var userManager = new UserManager())
+            using (var identityUserService = new IdentityUserService(userManager))
             {
                 try
                 {
@@ -157,7 +159,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     var result = await identityUserService.RemoveFromRoleAsync(user.Id, groupName);
                     return result.Succeeded;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     return false;
                 }
