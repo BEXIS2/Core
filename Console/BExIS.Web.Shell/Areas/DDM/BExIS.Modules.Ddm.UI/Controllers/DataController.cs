@@ -1787,8 +1787,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         private string createEditedBy(string performer)
         {
-            using (PartyManager partyManager = new PartyManager())
-            using (var identityUserService = new IdentityUserService())
+            using (var partyManager = new PartyManager())
+            using (var userManager = new UserManager())
+            using (var identityUserService = new IdentityUserService(userManager))
             {
                 var user_performer = identityUserService.FindByNameAsync(performer);
 

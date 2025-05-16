@@ -3,7 +3,7 @@
 
 @model BExIS.Modules.Sam.UI.Models.UpdateGroupModel
 
-@using (Ajax.BeginForm("Update", "Groups", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_updateGroup", OnSuccess = "updateGroup_onSuccess" }))
+@using (Ajax.BeginForm("UpdateAsync", "Groups", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_updateGroup", OnSuccess = "updateGroup_onSuccess" }))
 {
 @Html.ValidationSummary(true)
 

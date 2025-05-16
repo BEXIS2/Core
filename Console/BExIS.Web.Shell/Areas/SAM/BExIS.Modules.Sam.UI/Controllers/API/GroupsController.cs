@@ -15,17 +15,18 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
     public class GroupsController : ApiController
     {
         // GET: Groups
-        [HttpGet, GetRoute("api/groups/{id}")]
-        public async Task<HttpResponseMessage> GetById(long id)
+        [HttpGet, GetRoute("api/groups/{groupId}")]
+        public async Task<HttpResponseMessage> GetById(long groupId)
         {
             try
             {
                 using (var groupManager = new GroupManager())
+                using (var identityGroupService = new IdentityGroupService(groupManager))
                 {
-                    var group = await groupManager.FindByIdAsync(id);
+                    var group = await identityGroupService.FindByIdAsync(groupId);
 
                     if (group == null)
-                        return Request.CreateResponse(HttpStatusCode.BadRequest, $"group with id: {id} does not exist.");
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, $"group with id: {groupId} does not exist.");
 
                     return Request.CreateResponse(HttpStatusCode.OK, ReadGroupModel.Convert(group));
                 }
@@ -42,8 +43,9 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             try
             {
                 using (var groupManager = new GroupManager())
+                using (var identityGroupService = new IdentityGroupService(groupManager))
                 {
-                    var groups = groupManager.Groups.ToList();
+                    var groups = identityGroupService.Roles.ToList();
 
                     var model = groups.Select(g => ReadGroupModel.Convert(g));
 
@@ -62,6 +64,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             try
             {
                 using (var groupManager = new GroupManager())
+                using (var identityGroupService = new IdentityGroupService(groupManager))
                 {
                     var group = new Group()
                     {
@@ -69,7 +72,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
                         Name = model.Name
                     };
 
-                    await groupManager.CreateAsync(group);
+                    await identityGroupService.CreateAsync(group);
 
                     return Request.CreateResponse(HttpStatusCode.OK);
                 }
@@ -80,29 +83,30 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             }
         }
 
-        [HttpPut, PutRoute("api/groups/{id}")]
+        [HttpPut, PutRoute("api/groups/{groupId}")]
         public async Task<HttpResponseMessage> PutByIdAsync(long groupId, UpdateGroupModel model)
         {
             using (var groupManager = new GroupManager())
+            using (var identityGroupService = new IdentityGroupService(groupManager))
             {
-                var group = await groupManager.FindByIdAsync(groupId) ?? throw new ArgumentNullException();
+                var group = await identityGroupService.FindByIdAsync(groupId) ?? throw new ArgumentNullException();
 
                 group.Name = model.Name;
                 group.Description = model.Description;
 
-                await groupManager.UpdateAsync(group);
+                await identityGroupService.UpdateAsync(group);
 
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
         }
 
-        [HttpDelete, DeleteRoute("api/groups/{id}")]
+        [HttpDelete, DeleteRoute("api/groups/{groupId}")]
         public async Task<HttpResponseMessage> DeleteByIdAsync(long groupId)
         {
             using (var groupManager = new GroupManager())
+            using (var identityGroupService = new IdentityGroupService(groupManager))
             {
-                var group = await groupManager.FindByIdAsync(groupId) ?? throw new ArgumentNullException();
-                await groupManager.DeleteAsync(group);
+                await identityGroupService.DeleteByIdAsync(groupId);
 
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
