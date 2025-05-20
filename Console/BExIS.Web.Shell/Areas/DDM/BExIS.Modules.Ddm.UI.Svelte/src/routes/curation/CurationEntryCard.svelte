@@ -25,7 +25,6 @@
 	} from './types';
 	import type { CurationEntryClass } from './CurationEntries';
 	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
-	import AddCurationEntry from './AddCurationEntry.svelte';
 	import CurationEntryInput from './CurationEntryInput.svelte';
 
 	export let entry: CurationEntryClass;
@@ -148,27 +147,27 @@
 	{#if $editMode && $editEntryMode}
 		<CurationEntryInput {entry} {editEntryMode} />
 	{:else}
-		<div class="relative my-1 grow">
-			<h2
-				class="ml-1 border-b border-surface-400 px-1"
-				class:font-semibold={$isExpanded && !combined}
-			>
-				{#if combined}
-					{#if entry.name}
-						<span class="font-semibold" class:text-primary-500={entry.isDraft()}>{entry.name}</span
-						>:
-					{/if}
-				{/if}
-				{#if entry.description}
+		<div class="relative my-1 grow" class:text-primary-500={entry.isDraft()}>
+			{#if combined && entry.name}
+				<h3 class="px-2 font-semibold" class:text-surface-500={entry.isHidden()}>
+					<span>{entry.name}</span>
+				</h3>
+			{/if}
+
+			{#if entry.description}
+				<p class="border-b border-surface-400 px-2" class:text-surface-500={entry.isHidden()}>
 					{entry.description}
-				{/if}
-			</h2>
+				</p>
+			{/if}
 
 			{#if $isExpanded}
 				<CurationNotes {entry} />
 			{/if}
 			<div class="row flex justify-between gap-x-3">
-				<ul class="row flex items-center gap-x-3 px-2 text-xs font-semibold text-surface-700">
+				<ul
+					class="row flex items-center gap-x-3 px-2 text-xs font-semibold text-surface-700"
+					class:text-surface-500={entry.isHidden()}
+				>
 					<li
 						class:text-warning-500={entry.hasUnreadNotes}
 						class:font-semibold={entry.hasUnreadNotes}
@@ -218,7 +217,7 @@
 		</div>
 	{/if}
 
-	{#if $editMode}1
+	{#if $editMode}
 		<div class="no-wrap absolute right-0 top-0 flex gap-x-1">
 			{#if entry.isHidden() || entry.isDraft()}
 				<div class="row mr-2 flex gap-x-1">
@@ -261,8 +260,6 @@
 		</div>
 	{/if}
 </li>
-
-<AddCurationEntry position={entry.position + (entry.isDraft() ? 0 : 1)} />
 
 <style lang="postcss">
 	.curation-entry-card .curation-entry-change-status {

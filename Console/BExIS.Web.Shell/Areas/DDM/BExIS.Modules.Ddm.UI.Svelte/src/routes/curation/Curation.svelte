@@ -6,14 +6,51 @@
 	import CurationGroupCard from './CurationGroupCard.svelte';
 	import Fa from 'svelte-fa';
 	import { faBroom, faExpand, faPen, faPlay } from '@fortawesome/free-solid-svg-icons';
-	import { CurationUserType } from './types';
+	import { CurationEntryType, CurationEntryTypeNames, CurationUserType } from './types';
 	import AddCurationEntry from './AddCurationEntry.svelte';
+	import { derived } from 'svelte/store';
+	import { CurationEntryClass } from './CurationEntries';
 
 	export let datasetId: number;
 
 	const { loadingCuration, loadingError, entryFilters, curation, editMode } = curationStore;
 
 	const filteredEntries = curationStore.getFilteredEntriesReadable();
+
+	const groupedFilteredEntries = derived(filteredEntries, ($filteredEntries) => {
+		// empty list for each entry of CurationEntryTypeNames
+		let typeGroupedEntries: CurationEntryClass[][] = Array.from(
+			{ length: CurationEntryTypeNames.length },
+			() => []
+		);
+		$filteredEntries.forEach((e) => {
+			typeGroupedEntries[e.type as number].push(e);
+		});
+		let groupedEntries: CurationEntryClass[][][] = [];
+		typeGroupedEntries.forEach((entrygroup, index) => {
+			groupedEntries.push([]);
+			entrygroup.forEach((entry) => {
+				if (groupedEntries[index].length === 0) {
+					groupedEntries[index].push([entry]);
+				} else {
+					const lastEntry = groupedEntries[index].at(-1)!.at(-1)!;
+					if (
+						(lastEntry.position === entry.position - 1 || lastEntry.position === entry.position) &&
+						lastEntry.name === entry.name
+					) {
+						groupedEntries[index].at(-1)!.push(entry);
+					} else {
+						groupedEntries[index].push([entry]);
+					}
+				}
+			});
+		});
+		return groupedEntries;
+	});
+
+	groupedFilteredEntries.subscribe((groupedEntries) => {
+		console.log('Grouped Entries:', groupedEntries);
+	});
 
 	onMount(async () => {
 		if (datasetId) {
@@ -83,12 +120,25 @@
 			{/if}
 		</div>
 		<div class="grid grid-cols-1 gap-2 py-2">
-			<AddCurationEntry position={1} />
-			{#each $filteredEntries as entry (entry.id)}
-				{#if $editMode || entry.isVisible()}
-					<CurationGroupCard entries={[entry]} />
+			{#each $groupedFilteredEntries as entryTypeGroup, index}
+				{#if index > CurationEntryType.StatusEntryItem && ($editMode || entryTypeGroup.some( (entry) => entry[0].isVisible() ))}
+					<h2 class="mx-2 text-xl font-semibold">{CurationEntryTypeNames[index]}</h2>
+					<AddCurationEntry position={entryTypeGroup.at(0)?.at(0)?.position ?? 1} type={index} />
+					{#each entryTypeGroup as entryNameGroup (entryNameGroup[0].id)}
+						{#if $editMode || entryNameGroup.some((entry) => entry.isVisible())}
+							<CurationGroupCard entries={entryNameGroup} />
+						{/if}
+					{/each}
 				{/if}
 			{/each}
+			{#if $editMode}
+				<h2 class="mx-2 text-xl font-semibold">
+					{CurationEntryTypeNames[CurationEntryType.None]} (Hidden)
+				</h2>
+				{#each $groupedFilteredEntries[CurationEntryType.None] as hiddenGroup (hiddenGroup[0].id)}
+					<CurationGroupCard entries={hiddenGroup} />
+				{/each}
+			{/if}
 		</div>
 	{/if}
 </div>

@@ -161,10 +161,10 @@ class CurationStore {
 		});
 	}
 
-	public addEmptyEntry(position: number) {
+	public addEmptyEntry(position: number, name = '', type = CurationEntryType.None) {
 		this._curation.update((curation) => {
 			if (!curation) return curation;
-			return curation.addEmptyEntry(position);
+			return curation.addEmptyEntry(position, name, type);
 		});
 	}
 

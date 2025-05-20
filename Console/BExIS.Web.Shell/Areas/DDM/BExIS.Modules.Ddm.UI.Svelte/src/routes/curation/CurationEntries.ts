@@ -52,9 +52,11 @@ export class CurationClass {
 		this.datasetVersionDate = curation.datasetVersionDate || 'None';
 
 		// curation entries
-		this.curationEntries = CurationClass.sortedCurationEntries(
-			(curation.curationEntries || []).map(
-				(entry) => new CurationEntryClass(entry, this.currentUserType)
+		this.curationEntries = CurationClass.applyPositioning(
+			CurationClass.sortedCurationEntries(
+				(curation.curationEntries || []).map(
+					(entry) => new CurationEntryClass(entry, this.currentUserType)
+				)
 			)
 		);
 
@@ -92,25 +94,35 @@ export class CurationClass {
 		if (newPosition > this.curationEntries.length) newPosition = this.curationEntries.length;
 
 		const oldEntry = this.getEntryById(entryId);
-		const oldPosition = oldEntry?.position ?? 0;
-		if (!oldEntry || oldPosition === newPosition) return this;
+		if (!oldEntry) return this;
+
+		console.log(`Updating entry ${entryId} from position ${oldEntry.position} to ${newPosition}`);
 
 		let newEntries = this.curationEntries.filter((entry) => entry.id !== entryId);
 
-		newEntries = newEntries
-			.slice(0, newPosition - 1)
-			.concat(oldEntry, newEntries.slice(newPosition - 1));
-		let passedDrafts = 0;
-		newEntries = newEntries.map((entry, index) => {
-			if (entry.isDraft()) passedDrafts++;
-			return new CurationEntryClass(
-				{
-					...entry,
-					position: index + 1 - passedDrafts
-				},
-				this.currentUserType
-			);
-		});
+		if (!oldEntry.isDraft()) {
+			newEntries = newEntries.map((entry) => {
+				let p = entry.position;
+				if (entry.position === newPosition) {
+					p = entry.position <= oldEntry.position ? newPosition + 1 : newPosition - 1;
+				} else if (entry.position > oldEntry.position) {
+					p = entry.position + 1;
+				}
+				return new CurationEntryClass(
+					{
+						...entry,
+						position: p
+					},
+					this.currentUserType
+				);
+			});
+		}
+
+		let newEntryIndex = newEntries.findIndex((entry) => entry.position >= newPosition);
+		if (newEntryIndex === -1) {
+			newEntryIndex = newEntries.length;
+		}
+		newEntries.splice(newEntryIndex, 0, oldEntry.setPosition(newPosition));
 
 		return new CurationClass({
 			...this,
@@ -185,9 +197,15 @@ export class CurationClass {
 		return this.addEntry(newEntry).updateEntryPosition(entryId, entry.position);
 	}
 
-	public addEmptyEntry(position: number) {
+	public addEmptyEntry(position: number, name = '', type = CurationEntryType.None) {
 		if (position < 1) return this;
-		let newEntry = CurationEntryClass.emptyEntry(this.datasetId, -this.draftCount - 1, position);
+		let newEntry = CurationEntryClass.emptyEntry(
+			this.datasetId,
+			-this.draftCount - 1,
+			position,
+			name,
+			type
+		);
 		return new CurationClass({
 			...this,
 			curationEntries: [...this.curationEntries, newEntry]
@@ -203,6 +221,26 @@ export class CurationClass {
 				a.id - b.id || // if position is the same, sort by id
 				(a.topic + a.name + a.description).localeCompare(b.topic + b.name + b.description) // if position and id are the same, sort by topic, name and description
 		);
+	}
+
+	private static applyPositioning(curationEntries: CurationEntryClass[]): CurationEntryClass[] {
+		let newEntries: CurationEntryClass[] = [];
+		let nextPosition = 1;
+		for (const entry of curationEntries) {
+			newEntries.push(
+				new CurationEntryClass(
+					{
+						...entry,
+						position: nextPosition
+					},
+					entry.currentUserType
+				)
+			);
+			if (!entry.isDraft()) {
+				nextPosition++;
+			}
+		}
+		return newEntries;
 	}
 
 	/**
@@ -544,14 +582,20 @@ export class CurationEntryClass implements CurationEntryModel {
 		return this.setStatus(this.getNextStatus());
 	}
 
-	public static emptyEntry(datasetId: number, id: number, position: number): CurationEntryClass {
+	public static emptyEntry(
+		datasetId: number,
+		id: number,
+		position: number,
+		name = '',
+		type = CurationEntryType.None
+	): CurationEntryClass {
 		return new CurationEntryClass(
 			{
 				id: id,
 				datasetId: datasetId,
 				topic: '',
-				type: CurationEntryType.None,
-				name: '',
+				type: type,
+				name: name,
 				description: '',
 				solution: '',
 				position: position,
