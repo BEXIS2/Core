@@ -160,6 +160,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 // load settings
                 var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
                 ViewData["use_tags"] = moduleSettings.GetValueByKey("use_tags");
+                bool useTags = (bool)ViewData["use_tags"];
                 ViewData["use_minor"] = moduleSettings.GetValueByKey("use_minor");
                 ViewData["check_public_metadata"] = moduleSettings.GetValueByKey("check_public_metadata");
                 ViewData["has_data"] = false;
@@ -203,10 +204,24 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         // Public access has higher priority as major/minor versions
                         versionId = getVersionId(id, version, versionName, tag).Result;
 
-                        // Set if the latest version is selected. Compare current version id against unfiltered max id
-                        latestVersionId = datasetVersions.OrderByDescending(d => d.Timestamp).Select(d => d.Id).FirstOrDefault();
-                        latestVersionNr = dm.GetDatasetVersionNr(latestVersionId);
-                        latestVersion = (versionId == latestVersionId);
+
+                        if (useTags)
+                        {
+                            // compare the current version with the latest version id also based on tags
+                            var x = dm.GetLatestTag(id);
+                            latestVersionId = dm.GetLatestVersionIdByTagNr(id, x.Nr);
+                            latestVersion = (versionId >= latestVersionId);
+
+                        }
+                        else
+                        {
+                            // Set if the latest version is selected. Compare current version id against unfiltered max id
+
+                            latestVersionId = datasetVersions.OrderByDescending(d => d.Timestamp).Select(d => d.Id).FirstOrDefault();
+                            latestVersionNr = dm.GetDatasetVersionNr(latestVersionId);
+                            latestVersion = (versionId == latestVersionId);
+
+                        }
                         // Get version number based on version id
                         if (versionId >= 0)
                         {
