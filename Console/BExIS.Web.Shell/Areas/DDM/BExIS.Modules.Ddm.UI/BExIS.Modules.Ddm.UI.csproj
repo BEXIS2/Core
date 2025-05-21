@@ -143,7 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\Api\CitationController.cs" />
+    <Compile Include="Controllers\Api\CitationsController.cs" />
     <Compile Include="Controllers\Api\DataTableController.cs" />
     <Compile Include="Controllers\Api\SearchApiController.cs" />
     <Compile Include="Controllers\Api\TagInfoController.cs" />
@@ -166,7 +166,7 @@
     <Compile Include="Helpers\SearchUIHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\TagInfoHelper.cs" />
-    <Compile Include="Models\CitationModel.cs" />
+    <Compile Include="Models\CitationModels.cs" />
     <Compile Include="Models\DashboardModel.cs" />
     <Compile Include="Models\DatasetPermissionModels.cs" />
     <Compile Include="Models\DecisionModels.cs" />
