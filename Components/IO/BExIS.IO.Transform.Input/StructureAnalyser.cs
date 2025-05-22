@@ -562,10 +562,10 @@ namespace BExIS.IO.Transform.Input
 
             types.Add(typeof(Boolean));
             types.Add(typeof(DateTime));
-            types.Add(typeof(Decimal));
+            //types.Add(typeof(Decimal));
             types.Add(typeof(Double));
             types.Add(typeof(Int64));
-            types.Add(typeof(UInt32));
+            //types.Add(typeof(UInt32));
 
             return types;
         }
@@ -579,10 +579,10 @@ namespace BExIS.IO.Transform.Input
         {
             if (types.Any())
             {
-                if (types.Contains(typeof(UInt32))) return typeof(UInt32);
+                if (types.Contains(typeof(UInt32))) return typeof(Int64);
                 if (types.Contains(typeof(Int64))) return typeof(Int64);
                 if (types.Contains(typeof(Double))) return typeof(Double);
-                if (types.Contains(typeof(Decimal))) return typeof(Decimal);
+                if (types.Contains(typeof(Decimal))) return typeof(Double);
                 if (types.Contains(typeof(DateTime))) return typeof(DateTime);
                 if (types.Contains(typeof(Boolean))) return typeof(Boolean);
             }
