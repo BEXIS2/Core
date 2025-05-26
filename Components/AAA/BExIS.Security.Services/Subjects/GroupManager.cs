@@ -62,7 +62,7 @@ namespace BExIS.Security.Services.Subjects
                     }
                     else if (whereClause != null)
                     {
-                        var filtered = GroupRepository.Query(whereClause);
+                        var filtered = Groups.Where(whereClause);
                         count = filtered.Count();
 
                         return filtered.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();

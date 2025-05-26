@@ -88,7 +88,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                     }
                 }
 
-                IsEmpty = global::System.Convert.ChangeType(_value, _value.GetType()) == null || String.IsNullOrEmpty(_value.ToString()) || _value.Equals(DefaultValue) || _value.Equals(FixedValue) ;
+                IsEmpty = global::System.Convert.ChangeType(_value, _value.GetType()) == null || String.IsNullOrEmpty(_value.ToString()); /*|| _value.Equals(DefaultValue) || _value.Equals(FixedValue)*/ ;
             }
         }
 
