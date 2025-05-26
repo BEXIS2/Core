@@ -164,6 +164,11 @@ namespace BExIS.Utils.Data
                             // get latest public
                             tag = datasetManager.GetLatestTag(datasetId, true);
                             if (tag == null) return -1;
+                            else
+                            {
+                                datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, tag.Nr);
+                                return datasetVersion.Id;
+                            }
                         }
                         else
                         {

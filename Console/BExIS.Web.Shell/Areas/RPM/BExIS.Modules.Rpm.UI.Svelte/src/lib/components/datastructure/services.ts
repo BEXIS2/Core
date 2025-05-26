@@ -32,7 +32,7 @@ export const load = async (file: string, entityId: number, encoding: number, ver
 	console.log(file, entityId, version);
 	try {
 		const response = await Api.get(
-			'/rpm/DataStructure/load?file=' +
+			'/rpm/File/load?file=' +
 				file +
 				'&&encoding=' +
 				encoding +
@@ -124,7 +124,7 @@ export const remove = async (id) => {
 
 export const store = async (data) => {
 	try {
-		const response = await Api.post('/rpm/DataStructure/store', data);
+		const response = await Api.post('/rpm/File/store', data);
 		return response;
 	} catch (error) {
 		console.error(error);
