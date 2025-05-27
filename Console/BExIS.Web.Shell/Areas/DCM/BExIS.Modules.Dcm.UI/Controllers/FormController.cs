@@ -185,13 +185,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         dsv = datasetManager.GetDatasetVersion(entityId, version);
                     }
 
-                   
 
-                    if (dsv != null && dsv.StateInfo != null)
+
+                    if (dsv != null)
                     {
                         metadata = dsv.Metadata;
-                        isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
-                        if(locked)ViewData["IsValid"] = isValid; // add only valid state to viewdata if locked  - only for view dataset
+                        if (dsv.StateInfo != null)
+                        { 
+                            isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
+                            if (locked) ViewData["IsValid"] = isValid; // add only valid state to viewdata if locked  - only for view dataset
+                        }
                     }
 
 
