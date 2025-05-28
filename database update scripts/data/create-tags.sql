@@ -1,3 +1,6 @@
+-- last version is major version 1
+-- 
+
 update datasetversions
 set tagref = NULL;
 

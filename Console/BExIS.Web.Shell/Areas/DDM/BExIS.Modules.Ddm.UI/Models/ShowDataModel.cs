@@ -33,5 +33,11 @@ namespace BExIS.Modules.Ddm.UI.Models
         public bool IsPublic { get; set; }
 
         public List<Hook> Hooks { get; set; }
+
+        public ShowDataModel()
+        {
+            Hooks = new List<Hook>();
+            Labels = new Dictionary<string, string>();
+          }
     }
 }

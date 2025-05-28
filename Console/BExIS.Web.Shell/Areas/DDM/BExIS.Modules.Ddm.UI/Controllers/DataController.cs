@@ -209,8 +209,16 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         {
                             // compare the current version with the latest version id also based on tags
                             var x = dm.GetLatestTag(id);
-                            latestVersionId = dm.GetLatestVersionIdByTagNr(id, x.Nr);
-                            latestVersion = (versionId >= latestVersionId);
+                            if (x != null)
+                            {
+                                latestVersionId = dm.GetLatestVersionIdByTagNr(id, x.Nr);
+                                latestVersion = (versionId >= latestVersionId);
+                            }
+                            else
+                            {
+                                latestVersionId = dm.GetDatasetLatestVersionId(id);
+                                latestVersion = (versionId >= latestVersionId);
+                            }
 
                         }
                         else
@@ -387,7 +395,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 ModelState.AddModelError("", string.Format("The dataset with the id {0} does not exist", id));
 
-                return View();
+                return View(new ShowDataModel());
             }
         }
 
