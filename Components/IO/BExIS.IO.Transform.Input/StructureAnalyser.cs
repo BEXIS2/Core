@@ -258,7 +258,7 @@ namespace BExIS.IO.Transform.Input
                     //if lenght > without time  then it is a date and time
                     if (lenght > withoutTime)
                     {
-                        return dataTypeManager.Repo.Query(d => d.SystemType.Equals(systemType) && d.Name.ToLower() == "datetime").ToList();
+                        return dataTypeManager.Repo.Query(d => d.SystemType.Equals(systemType) && d.Name.ToLower().Contains("date") && d.Name.ToLower().Contains("time")).ToList();
                     }
                 }
             }
@@ -299,7 +299,7 @@ namespace BExIS.IO.Transform.Input
                     if (!dataTypes.Any())
                         dataTypes = dataTypeManager.Repo.Get().ToList();
 
-                    var dt = dataTypes.FirstOrDefault(d => d.Name.ToLower().Equals(dataType));
+                    var dt = dataTypes.FirstOrDefault(d => d.Name.ToLower().Equals(dataType.ToLower()));
                     if (dt != null) units = units.Where(u => u.AssociatedDataTypes.Any(d=> d.Id.Equals(dt.Id))).ToList();
                 }
 

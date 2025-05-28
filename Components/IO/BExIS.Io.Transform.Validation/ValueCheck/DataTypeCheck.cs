@@ -117,8 +117,8 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                         if (!temp[temp.Length - 1].Contains(','))
                                         {
                                             //check lenght of the string and compare to the max storage of the datatype
-                                            if (value.Length > 15)
-                                                return new Error(ErrorType.Value, "The value of the number is outside the value range of double. Change it do decimal.", new object[] { name, value, row, dataType });
+                                            //if (value.Length > 17)
+                                                //return new Error(ErrorType.Value, "The value of the number is outside the value range of double. Change it do decimal.", new object[] { name, value, row, dataType });
 
                                             double d = 0;
 
@@ -144,8 +144,8 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                         if (!temp[temp.Length - 1].Contains('.'))
                                         {
                                             //chek lenght of the string and compare to the max storage of the datatype
-                                            if (value.Length > 15)
-                                                return new Error(ErrorType.Value, "the value of the number is outside the value range of double. Change it do decimal.", new object[] { name, value, row, dataType });
+                                            //if (value.Length > 17)
+                                                //return new Error(ErrorType.Value, "the value of the number is outside the value range of double. Change it do decimal.", new object[] { name, value, row, dataType });
 
                                             double d = 0;
                                             if (double.TryParse(value, NumberStyles.Any, new CultureInfo("de-DE"), out d))
