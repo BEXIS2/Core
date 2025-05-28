@@ -196,7 +196,6 @@
     <Content Include="Ddm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="LICENSE.txt" />
     <Content Include="Scripts\ddm.js" />
     <Content Include="Ddm.Settings.json" />
     <None Include="packages.config" />
