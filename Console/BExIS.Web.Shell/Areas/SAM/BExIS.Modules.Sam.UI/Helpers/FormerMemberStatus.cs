@@ -111,13 +111,17 @@ namespace BExIS.Modules.SAM.UI.Helpers
             using (var alumniUsersGroupsRelationManager = new FormerMemberUsersGroupsRelationManager())
             {
                 var group = groupManager.FindByNameAsync(formerMemberRole).Result;
-                if (group.Users.Contains(user))
+                if (group.Users.Any(u => u.Id == user.Id))
                 {
                     //transfer all feature permission
                     var alumniFeaturePermissions = alumniFeaturePermissionManager.FormerMemberFeaturePermissionRepository.Get(a => a.Subject.Id == user.Id).ToList();
                     if (alumniFeaturePermissions.Count > 0)
                     {
-                        alumniFeaturePermissions.ForEach(async u => await featurePermissionManager.CreateAsync(user, u.Feature, u.PermissionType));
+                        foreach (var permission in alumniFeaturePermissions)
+                        {
+                            var r = featurePermissionManager.CreateAsync(user, permission.Feature, permission.PermissionType).Result;
+                        }
+
                         //remove
                         for (int i = 0; i < alumniFeaturePermissions.Count; i++)
                         {
