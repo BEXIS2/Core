@@ -58,7 +58,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
             //Assert
             Assert.NotNull(result, "result should not be null.");
-            Assert.NotNull(result.Name, "number");
+            Assert.NotNull(result.Name, "Integer");
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
             //Assert
             Assert.NotNull(result, "result should not be null.");
-            Assert.NotNull(result.Name, "integer");
+            Assert.NotNull(result.Name, "Integer");
         }
 
         [Test]
@@ -100,7 +100,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
             //Assert
             Assert.NotNull(result, "result should not be null.");
-            Assert.NotNull(result.Name, "decimal");
+            Assert.NotNull(result.Name, "Floating Point Number");
         }
 
         [Test]
@@ -114,7 +114,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
             //Assert
             Assert.NotNull(result, "result should not be null.");
-            Assert.NotNull(result.Name, "double");
+            Assert.NotNull(result.Name, "Floating Point Number");
         }
 
         [Test()]
