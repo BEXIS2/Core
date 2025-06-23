@@ -14,7 +14,7 @@
 	function deleteNote() {
 		if (
 			confirm(
-				`Are you sure you want to delete this note:\n\n"${note.comment}"\n\nThis action cannot be undone. Maybe you want to reply to the note instead?`
+				`Are you sure you want to delete this note:\n\n"${note.comment}"\n\nThis action cannot be undone. Maybe use the "reply to note"-action instead?`
 			)
 		) {
 			curationStore.deleteNote(entryId, note.id);
@@ -45,6 +45,7 @@
 	const commentLines = note.comment.split('\n');
 	const commentLinesGrouped: string[][] = [];
 	let inQuote = false;
+	// Group consecutive lines that start with '| ' into a single group
 	commentLines.forEach((line) => {
 		if (line.startsWith('| ')) {
 			if (!inQuote) {
@@ -63,7 +64,9 @@
 
 <li class="note-card rounded px-2 py-1">
 	<div class="flex items-center justify-between gap-x-2">
-		<p>
+		<!-- Header -->
+		<h4>
+			<!-- User and Message Info -->
 			<span style="color: {getUserColor(note.userId)}">
 				{$userName}
 				{#if note.userId === fixedCurationUserId}
@@ -76,32 +79,25 @@
 			<RelativeDate
 				date={note.creationDateObj}
 				label="Note created"
-				class="badge ml-1 text-xs text-surface-600"
+				class="ml-1 text-xs text-surface-600"
 			/>
-		</p>
+		</h4>
 		<div class="flex items-center gap-x-1">
+			<!-- Action buttons -->
 			<button
-				class="cursor-pointer rounded p-1 text-surface-600 hover:bg-primary-400 hover:text-primary-800"
+				class="rounded p-1 text-surface-600 hover:bg-primary-400 hover:text-primary-800 active:bg-primary-500 active:text-primary-900"
 				on:click={() => parentText.set(note.comment)}
-				title="Reply to Note"
-				name="Reply to Note"
+				title="Reply to note"
+				name="Reply to note"
 			>
 				<Fa icon={faReply} />
 			</button>
 			{#if note.userId === fixedCurationUserId}
-				<!-- <button
-					class="text-surface-600 hover:bg-secondary-400 hover:text-secondary-800 cursor-pointer rounded p-1"
-					on:click={editNote}
-					title="Edit Note"
-					name="Edit Note"
-				>
-					<Fa icon={faPen} />
-				</button> -->
 				<button
-					class="cursor-pointer rounded p-1 text-surface-600 hover:bg-error-400 hover:text-error-800"
+					class="rounded p-1 text-surface-600 hover:bg-error-400 hover:text-error-800 active:bg-error-500 active:text-error-900"
 					on:click={deleteNote}
-					title="Delete Note"
-					name="Delete Note"
+					title="Delete note"
+					name="Delete note"
 				>
 					<Fa icon={faTrash} />
 				</button>
@@ -109,8 +105,9 @@
 		</div>
 	</div>
 	<p class="break words overflow-hidden text-wrap">
+		<!-- Note Content -->
 		{#each commentLinesGrouped as group}
-			{#if group.length > 1 && group[0].startsWith('| ')}
+			{#if group.length > 0 && group[0].startsWith('| ')}
 				<p class="my-0.5 w-full rounded border-l-4 border-surface-600 bg-surface-200 px-2 py-0.5">
 					{#each group as line}
 						{line.slice(2)}
@@ -127,7 +124,7 @@
 
 <style lang="postcss">
 	.note-card:has(*:hover) {
-		@apply bg-surface-300;
+		@apply bg-surface-400;
 	}
 
 	.note-card:has(*:hover) button.text-surface-600:not(:hover) {

@@ -9,7 +9,7 @@
 		faCircleCheck,
 		faCircleDot,
 		faCircleExclamation,
-		faPersonCircleCheck
+		faCirclePause
 	} from '@fortawesome/free-solid-svg-icons';
 	import { curationStore } from './stores';
 	import { derived, writable } from 'svelte/store';
@@ -74,7 +74,6 @@
 		[appliedFilter, hoveredStatus],
 		([appliedFilter, hoveredStatus]) => {
 			if (hoveredStatus === null && appliedFilter === null) {
-				console.log('No filter applied or hovered');
 				return progress.map(() => false);
 			}
 			return progress.map((_, index) => {
@@ -122,11 +121,11 @@
 					>
 						<span class="font-semibold" style="color: {CurationEntryStatusColors[index]}">
 							{#if index === CurationEntryStatus.Ok}
-								<Fa icon={faCircleDot} class="inline-block" />
+								<Fa icon={faCirclePause} class="inline-block" />
 							{:else if index === CurationEntryStatus.Open}
 								<Fa icon={faCircleExclamation} class="inline-block" />
 							{:else if index === CurationEntryStatus.Fixed}
-								<Fa icon={faPersonCircleCheck} class="inline-block" />
+								<Fa icon={faCircleDot} class="inline-block" />
 							{:else if index === CurationEntryStatus.Closed}
 								<Fa icon={faCircleCheck} class="inline-block" />
 							{/if}

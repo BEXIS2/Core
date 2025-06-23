@@ -1,16 +1,14 @@
 <script lang="ts">
 	import Fa from 'svelte-fa';
 	import {
-		faAngleDown,
-		faArrowDown,
 		faCircleCheck,
 		faCircleDot,
 		faCircleExclamation,
+		faCirclePause,
 		faEyeSlash,
 		faFileLines,
-		faNoteSticky,
+		faMessage,
 		faPen,
-		faPersonCircleCheck,
 		faTrash,
 		faXmark
 	} from '@fortawesome/free-solid-svg-icons';
@@ -21,7 +19,8 @@
 	import {
 		CurationEntryStatus,
 		CurationEntryStatusColors,
-		CurationEntryStatusNames
+		CurationEntryStatusNames,
+		CurationUserType
 	} from './types';
 	import type { CurationEntryClass } from './CurationEntries';
 	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
@@ -31,6 +30,7 @@
 	export let combined: boolean;
 	export let isExpanded = writable(false);
 	export let editEntryMode = writable(entry.id <= 0); // true if entry is a draft
+	export let tag: string | null = 'div'; // if set, use this tag instead of the default <div>
 
 	const { curation, editMode } = curationStore;
 
@@ -43,18 +43,16 @@
 
 	const entryReadable = curationStore.getEntryReadable(entry.id);
 
-	const nextStatus = derived(entryReadable, ($entry) => {
-		return $entry?.getNextStatus() ?? CurationEntryStatus.Ok;
-	});
-
 	entryReadable.subscribe((entry) => {
 		if (entry) {
 			position = entry.position;
 		}
 	});
 
-	const toggleStatus = () => {
-		curationStore.toggleStatus(entry.id);
+	const setStatus = (status: CurationEntryStatus) => {
+		if (entry.status !== status) {
+			curationStore.setStatus(entry.id, status);
+		}
 	};
 
 	const positionUpdateDebounce = () => {
@@ -82,248 +80,236 @@
 			curationStore.deleteEntry(entry.id);
 		}
 	};
+
+	const toggleExpand = () => {
+		isExpanded.update((v) => !v);
+	};
 </script>
 
-<li
-	class="curation-entry-card relative mx-2 flex items-stretch justify-stretch overflow-hidden"
-	class:curation-entry-card-expanded={$isExpanded && $editMode}
+<svelte:element
+	this={tag}
+	class="relative flex flex-col gap-y-1 overflow-hidden rounded py-0.5 transition-all"
+	class:px-2={combined}
+	class:border={combined}
+	class:border-surface-400={combined}
+	class:text-primary-500={entry.isDraft()}
 >
-	<button
-		class="grow-0 rounded-l p-2 text-surface-800 hover:bg-surface-200 disabled:bg-surface-50 disabled:text-surface-400 disabled:hover:bg-surface-50"
-		on:click={() => isExpanded.update((o) => !o)}
-		name="{$isExpanded ? 'Collapse' : 'Expand'} entry: {`"${entry.name}"`}"
-		title="{$isExpanded ? 'Collapse' : 'Expand'} entry: {`"${entry.name}"`}"
-		disabled={$editEntryMode || entry.isDraft()}
-	>
-		<Fa icon={faAngleDown} class="transition-transform {$isExpanded ? 'rotate-180' : ''}" />
-	</button>
-
-	<button
-		class="curation-entry-change-status"
-		style="background-color: {CurationEntryStatusColors[entry.status]};"
-		name="Toggle Status"
-		title="Toggle Status ({CurationEntryStatusNames[entry.status]} to {CurationEntryStatusNames[
-			$nextStatus
-		]})"
-		on:click={toggleStatus}
-		disabled={$editEntryMode || entry.isDraft()}
-	>
-		<!-- current status -->
-		<div
-			class="curation-entry-change-status-current"
-			style="color: {CurationEntryStatusColors[entry.status]}"
-		>
-			{#if entry.status === CurationEntryStatus.Ok}
-				<Fa icon={faCircleDot} />
-			{:else if entry.status === CurationEntryStatus.Open}
-				<Fa icon={faCircleExclamation} />
-			{:else if entry.status === CurationEntryStatus.Fixed}
-				<Fa icon={faPersonCircleCheck} />
-			{:else if entry.status === CurationEntryStatus.Closed}
-				<Fa icon={faCircleCheck} />
-			{/if}
-		</div>
-
-		<div class="text-xs">
-			<Fa icon={faArrowDown} />
-		</div>
-		<!-- next status -->
-		<div
-			class="curation-entry-change-status-next"
-			style="color: {CurationEntryStatusColors[$nextStatus]}"
-		>
-			{#if $nextStatus === CurationEntryStatus.Ok}
-				<Fa icon={faCircleDot} />
-			{:else if $nextStatus === CurationEntryStatus.Open}
-				<Fa icon={faCircleExclamation} />
-			{:else if $nextStatus === CurationEntryStatus.Fixed}
-				<Fa icon={faPersonCircleCheck} />
-			{:else if $nextStatus === CurationEntryStatus.Closed}
-				<Fa icon={faCircleCheck} />
-			{/if}
-		</div>
-	</button>
-
 	{#if $editMode && $editEntryMode}
 		<CurationEntryInput {entry} {editEntryMode} />
 	{:else}
-		<div class="relative my-1 grow" class:text-primary-500={entry.isDraft()}>
-			{#if combined && entry.name}
-				<h3 class="px-2 font-semibold" class:text-surface-500={entry.isHidden()}>
-					<span>{entry.name}</span>
-				</h3>
-			{/if}
+		<div class="items-top flex flex-row gap-x-2">
+			<div class="grow">
+				<!-- Title -->
+				{#if combined}
+					<h3
+						class="font-semibold"
+						class:text-surface-500={entry.isHidden()}
+						style="margin-bottom: -0.25em;"
+					>
+						{entry.name}
+					</h3>
+				{/if}
 
-			{#if entry.description}
-				<p class="border-b border-surface-400 px-2" class:text-surface-500={entry.isHidden()}>
+				<!-- Description -->
+				<p class="mb-0.5 text-sm" class:text-surface-500={entry.isHidden()}>
 					{entry.description}
 				</p>
-			{/if}
+			</div>
+			<RelativeDate
+				class="hidden text-nowrap border-surface-300 pr-1 text-xs text-surface-600 sm:block"
+				date={entry.lastChangedDate}
+				label="Last updated"
+				showIcon={true}
+			/>
+		</div>
 
+		<!-- Notes -->
+		<div class="max-h-0 overflow-hidden transition-all" class:!max-h-80={$isExpanded}>
 			{#if $isExpanded}
 				<CurationNotes {entry} />
-			{/if}
-			<div class="row flex justify-between gap-x-3">
-				<ul
-					class="row flex items-center gap-x-3 px-2 text-xs font-semibold text-surface-700"
-					class:text-surface-500={entry.isHidden()}
-				>
-					<li
-						class:text-warning-500={entry.hasUnreadNotes}
-						class:font-semibold={entry.hasUnreadNotes}
-					>
-						<button class="flex items-center gap-x-1" on:click={() => isExpanded.update((o) => !o)}>
-							{#if entry.hasUnreadNotes}
-								<Fa icon={faNoteSticky} class="absolute animate-ping" />
-							{/if}
-							<Fa icon={faNoteSticky} />
-							{entry.visibleNotes ? entry.visibleNotes?.length : 0} Note{entry.visibleNotes
-								?.length == 1
-								? ''
-								: 's'}
-						</button>
-					</li>
-					<RelativeDate
-						tag="li"
-						class="flex items-center gap-x-1"
-						date={entry.lastChangedDate}
-						label="Last updated"
-						showIcon={true}
-					/>
-				</ul>
-				{#if $editMode}
-					<label>
-						<span class="text-xs font-semibold text-surface-700">Position</span>
-						<input
-							type="number"
-							bind:value={position}
-							class="ml-0.5 w-12 rounded border border-surface-500 px-1 py-0.5 text-xs text-surface-800 focus-visible:border-surface-700 focus-visible:outline-none"
-							min="1"
-							on:change={positionUpdateDebounce}
-							on:blur={positionUpdateImmediate}
-							on:keydown={(e) => {
-								if (e.key === 'Enter') {
-									positionUpdateImmediate();
-								}
-							}}
-						/>
-					</label>
-				{/if}
-			</div>
-
-			{#if $isUploading}
-				<SpinnerOverlay />
+			{:else}
+				<p class="h-80 rounded-t bg-surface-300"></p>
 			{/if}
 		</div>
-	{/if}
 
-	{#if $editMode}
-		<div class="no-wrap absolute right-0 top-0 flex gap-x-1">
-			{#if entry.isHidden() || entry.isDraft()}
-				<div class="row mr-2 flex gap-x-1">
-					{#if entry.isHidden()}
-						<div class="rounded bg-tertiary-700 p-1 pr-0.5 text-xs text-surface-50" title="Hidden">
-							<Fa icon={faEyeSlash} class="block size-4" />
-						</div>
+		<!-- Status and Actions -->
+		<div class="mb-1 flex flex-row items-center justify-stretch gap-x-1 text-sm">
+			<!-- Status change -->
+			<div class="status-button-container" class:flex={!$editMode} class:hidden={$editMode}>
+				{#each CurationEntryStatusNames as statusName, index}
+					{#if $curation?.currentUserType === CurationUserType.Curator || (index !== CurationEntryStatus.Ok && index !== CurationEntryStatus.Closed) || index === entry.status}
+						<button
+							class="status-change-button"
+							class:active={index === entry.status}
+							class:opacity-10={entry.isDraft()}
+							class:cursor-not-allowed={entry.isDraft()}
+							disabled={index === entry.status || $editMode || entry.isDraft()}
+							style="--status-color: {CurationEntryStatusColors[index]};"
+							title="Change Entry Status to {statusName}"
+							name="Change Entry Status to {statusName}"
+							on:click={() => setStatus(index)}
+						>
+							{#if index === CurationEntryStatus.Open}
+								<Fa icon={faCircleCheck} class="inline-block" />
+							{:else if index === CurationEntryStatus.Fixed}
+								<Fa icon={faCircleDot} class="inline-block" />
+							{:else if index === CurationEntryStatus.Closed}
+								<Fa icon={faCircleExclamation} class="inline-block" />
+							{:else if index === CurationEntryStatus.Ok}
+								<Fa icon={faCirclePause} class="inline-block" />
+							{/if}
+							{statusName}
+						</button>
 					{/if}
-					{#if entry.isDraft()}
-						<div class="rounded bg-primary-400 p-1 pr-0.5 text-xs text-surface-50" title="Draft">
-							<Fa icon={faFileLines} class="block size-4" />
-						</div>
-					{/if}
+				{/each}
+			</div>
+
+			<!-- Chat Button -->
+			<button
+				class="chat-button w-24 overflow-hidden text-ellipsis text-nowrap rounded border border-surface-300 bg-surface-300 px-2 py-0.5 text-surface-900 hover:border-surface-400 hover:bg-surface-400"
+				class:active={$isExpanded}
+				class:hidden={$editMode}
+				class:opacity-10={entry.isDraft()}
+				class:cursor-not-allowed={entry.isDraft()}
+				disabled={$editMode || entry.isDraft()}
+				title="Toggle Chat"
+				name="Toggle Chat"
+				on:click={toggleExpand}
+			>
+				<Fa icon={$isExpanded ? faXmark : faMessage} class="inline-block" />
+				{#if entry.hasUnreadNotes && !$isExpanded}
+					<span class="notification-badge"><span>&nbsp;</span></span>
+				{/if}
+				Chat
+				{#if !$isExpanded && entry.visibleNotes.length > 0}
+					({entry.visibleNotes.length})
+				{/if}
+			</button>
+
+			<!-- EDIT MODE -->
+
+			<!-- Hidden or Draft Badges -->
+			{#if entry.isHidden()}
+				<div
+					class="rounded bg-tertiary-700 px-2 py-0.5 text-surface-50 opacity-70"
+					class:hidden={!$editMode}
+					title="Entry is hidden"
+				>
+					<Fa icon={faEyeSlash} class="inline-block" />
+					Hidden
+				</div>
+			{/if}
+			{#if entry.isDraft()}
+				<div
+					class="rounded bg-primary-400 px-2 py-0.5 text-surface-50 opacity-70"
+					class:hidden={!$editMode}
+					title="Entry is a draft"
+				>
+					<Fa icon={faFileLines} class="inline-block" />
+					Draft
 				</div>
 			{/if}
 
 			{#if entry.isDraft()}
 				<button
-					class="rounded bg-error-400 p-1 text-xs text-error-700 hover:bg-error-700 hover:text-error-900"
+					class="rounded bg-error-300 px-2 py-0.5 text-error-700 hover:bg-error-400 hover:text-error-900"
 					title="Delete Draft"
 					on:click={deleteEntry}
 					name="Delete Draft"
 				>
-					<Fa icon={faTrash} class="block size-4" />
+					<Fa icon={faTrash} class="inline-block" />
+					Delete
 				</button>
 			{/if}
 
+			<!-- Edit Entry -->
 			<button
-				class="rounded bg-secondary-400 p-1 text-xs text-secondary-700 hover:bg-secondary-700 hover:text-secondary-900"
-				title="Toggle Edit Entry"
+				class="grow rounded bg-secondary-200 px-2 py-0.5 text-secondary-700 hover:bg-secondary-400 hover:text-secondary-800"
+				class:hidden={!$editMode}
+				disabled={!$editMode}
 				on:click={() => editEntryMode.update((o) => !o)}
-				name="Toggle Edit Entry"
+				name="Edit Entry"
+				title="Edit Entry"
 			>
-				{#if !$editEntryMode}
-					<Fa icon={faPen} class="block size-4" />
-				{:else}
-					<Fa icon={faXmark} class="block size-4" />
-				{/if}
+				<Fa icon={faPen} class="inline-block" />
+				Edit Entry
 			</button>
+
+			<!-- Position Input -->
+			<div class="row flex h-full items-center justify-between gap-x-3" class:hidden={!$editMode}>
+				<label class="ml-2">
+					<span class="text-surface-700">Position</span>
+					<input
+						type="number"
+						bind:value={position}
+						class="ml-0.5 w-12 rounded border border-surface-500 px-1 py-0.5 text-xs text-surface-800 focus-visible:border-surface-700 focus-visible:outline-none"
+						min="1"
+						on:change={positionUpdateDebounce}
+						on:blur={positionUpdateImmediate}
+						on:keydown={(e) => {
+							if (e.key === 'Enter') {
+								positionUpdateImmediate();
+							}
+						}}
+						disabled={!$editMode}
+					/>
+				</label>
+			</div>
 		</div>
 	{/if}
-</li>
+
+	{#if $isUploading}
+		<SpinnerOverlay />
+	{/if}
+</svelte:element>
 
 <style lang="postcss">
-	.curation-entry-card .curation-entry-change-status {
-		/* button */
-		@apply w-2 shrink-0 grow-0 gap-1 overflow-hidden rounded text-surface-800 transition-all;
+	.status-button-container {
+		@apply grow flex-row items-center justify-stretch gap-x-1;
 	}
 
-	.curation-entry-card .curation-entry-change-status > div {
-		/* button all icon divs */
-		@apply ml-10 flex items-center justify-center transition-all;
+	.status-change-button {
+		@apply overflow-hidden text-ellipsis text-nowrap px-2 py-0.5;
+		@apply grow rounded border px-1;
+		color: var(--status-color, inherit);
+		border: 1px solid var(--status-color, transparent);
 	}
 
-	.curation-entry-card
-		.curation-entry-change-status:not(:hover):not(:focus-visible):not(:disabled)
-		> div,
-	.curation-entry-card .curation-entry-change-status:not(:disabled):active > div {
-		/* button normal state all icon divs */
-		color: white !important;
+	.status-change-button.active {
+		@apply cursor-not-allowed text-white;
+		background-color: var(--status-color, transparent);
 	}
 
-	.curation-entry-card .curation-entry-change-status:not(:disabled):hover:not(:active),
-	.curation-entry-card .curation-entry-change-status:not(:disabled):focus-visible:not(:active) {
-		/* button hover state (not active) */
-		background-color: rgb(216, 216, 216) !important; /* bg-surface-400 with !important */
+	.status-change-button:hover,
+	.status-change-button:focus {
+		@apply text-white;
+		background-color: var(--status-color, transparent);
 	}
 
-	.curation-entry-card
-		.curation-entry-change-status:not(:disabled)
-		.curation-entry-change-status-current {
-		/* current status icon div */
-		@apply mb-1 h-full text-lg;
+	.status-button-container:not(.active):hover .status-change-button.active,
+	.status-button-container:not(.active):focus .status-change-button.active {
+		@apply opacity-30;
 	}
 
-	.curation-entry-card
-		.curation-entry-change-status:not(:disabled):hover
-		.curation-entry-change-status-current,
-	.curation-entry-card
-		.curation-entry-change-status:not(:disabled):focus-visible
-		.curation-entry-change-status-current {
-		/* current status icon div hover state */
-		@apply h-4 duration-200;
-		animation: pulse 1s ease-in-out infinite;
+	.notification-badge,
+	.notification-badge * {
+		@apply inline-block rounded-full bg-warning-500;
 	}
 
-	.curation-entry-card
-		.curation-entry-change-status:not(:disabled)
-		.curation-entry-change-status-next {
-		/* next status icon div */
-		@apply mt-0.5 h-3 text-xs opacity-30;
+	.notification-badge {
+		@apply border border-surface-300;
+		width: 0.5rem;
+		height: 0.5rem;
+		margin-left: -0.55rem;
 	}
 
-	.curation-entry-card.curation-entry-card-expanded .curation-entry-change-status:not(:disabled),
-	.curation-entry-card:hover .curation-entry-change-status:not(:disabled),
-	.curation-entry-card:has(*:focus-visible) .curation-entry-change-status:not(:disabled) {
-		/* button expanded state */
-		@apply w-8;
+	.notification-badge * {
+		@apply size-full animate-ping;
 	}
 
-	.curation-entry-card.curation-entry-card-expanded
-		.curation-entry-change-status:not(:disabled)
-		> div,
-	.curation-entry-card:hover .curation-entry-change-status:not(:disabled) > div,
-	.curation-entry-card:has(*:focus-visible) .curation-entry-change-status:not(:disabled) > div {
-		/* button expanded state all icon divs */
-		@apply ml-0;
+	.chat-button.active {
+		@apply rounded-t-none;
+		margin-top: -0.25rem;
+		border-top-width: 0.5rem;
 	}
 </style>

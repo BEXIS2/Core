@@ -6,11 +6,13 @@
 	import { writable } from 'svelte/store';
 	import CurationNote from './CurationNote.svelte';
 	import { fixedCurationUserId, type CurationEntryClass } from './CurationEntries';
+	import { onMount } from 'svelte';
 
 	export let entry: CurationEntryClass;
 
 	let new_note = '';
 	let textarea: HTMLTextAreaElement | null = null;
+	let noteList: HTMLUListElement | null = null;
 
 	const parentText = writable('');
 	parentText.subscribe((text) => {
@@ -22,6 +24,17 @@
 		}
 	});
 
+	function scrollToBottom() {
+		if (noteList) {
+			noteList.scrollTop = noteList.scrollHeight;
+		}
+	}
+
+	onMount(() => {
+		scrollToBottom();
+	});
+
+	// Add a note to the entry
 	function addNote() {
 		new_note = new_note.trim();
 		if (new_note === '') return;
@@ -30,48 +43,59 @@
 	}
 
 	function textareaKeydown(event: KeyboardEvent) {
+		// Handle Ctrl+Enter or Cmd+Enter to add a note
 		if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
 			event.preventDefault();
 			addNote();
 		}
 	}
+
+	// Scroll to bottom when a new note is added
+	$: if (entry.visibleNotes.length > 0) {
+		scrollToBottom();
+	}
 </script>
 
-<div class="border-surface-500 grid grid-cols-1 border-b p-1 pl-2 text-sm">
-	{#if entry.visibleNotes.length === 0}
-		<p class="text-surface-700">No notes available</p>
-	{:else}
-		<ul>
+<div class="flex flex-col gap-y-1 overflow-hidden rounded-t rounded-bl bg-surface-300 p-1 text-sm">
+	<ul class="flex h-32 flex-col gap-y-1 overflow-y-auto rounded" bind:this={noteList}>
+		<!-- Notes or message area -->
+		{#if entry.visibleNotes.length === 0}
+			<li class="mx-2 my-auto text-center text-surface-700">
+				Add a note to start the conversation about this entry.
+			</li>
+		{:else}
 			{#each entry.visibleNotes as note}
 				<CurationNote {note} entryId={entry.id} {parentText} />
 			{/each}
-		</ul>
-	{/if}
+		{/if}
+	</ul>
 	{#if entry.visibleNotes.length > 0 || entry.notes.filter((note) => note.userId === fixedCurationUserId).length > 0}
 		<button
 			on:click={() => curationStore.setUnread(entry.id, !entry.hasUnreadNotes)}
-			class="hover:bg-surface-300 text-surface-800 flex cursor-pointer items-center justify-center gap-x-1 rounded p-1 text-sm"
+			class="flex cursor-pointer items-center justify-center gap-x-1 rounded p-1 text-surface-800 hover:bg-surface-400"
+			title="Mark this conversation as {!entry.hasUnreadNotes ? 'unread' : 'read'}"
+			name="Mark as read/unread"
 		>
 			{#if !entry.hasUnreadNotes}
 				<Fa icon={faBookmark} />
-				<span>Mark as Unread</span>
+				<span>Mark as unread</span>
 			{:else}
 				<Fa icon={faCheckDouble} />
-				<span>Mark as Read</span>
+				<span>Mark as read</span>
 			{/if}
 		</button>
 	{/if}
-	<div class="border-surface-500 mt-1 flex flex-row rounded border">
+	<div class="flex flex-row rounded border border-surface-500">
 		<textarea
 			bind:this={textarea}
 			bind:value={new_note}
 			on:keydown={textareaKeydown}
-			class="border-surface-500 min-h-16 grow resize-y rounded-l border-0 border-r p-2"
+			class="max-h-32 min-h-16 grow resize-y rounded-l border-0 border-r border-surface-500 p-2"
 			placeholder="Add a note..."
 			rows="1"
 		></textarea>
 		<button
-			class="hover:bg-surface-200 text-surface-800 disabled:bg-surface-200 disabled:text-surface-500 grow-0 cursor-pointer p-2 disabled:cursor-default"
+			class="grow-0 cursor-pointer p-2 text-surface-800 hover:bg-surface-400 disabled:cursor-default disabled:bg-surface-400 disabled:text-surface-500"
 			type="button"
 			name="Send Note"
 			title="Send Note"

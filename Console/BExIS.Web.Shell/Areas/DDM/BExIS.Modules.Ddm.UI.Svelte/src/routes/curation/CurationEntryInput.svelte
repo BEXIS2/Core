@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { faFloppyDisk, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
+	import { faFloppyDisk, faSquarePlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 	import type { CurationEntryClass } from './CurationEntries';
 	import { curationStore } from './stores';
 	import Fa from 'svelte-fa';
@@ -24,7 +24,7 @@
 </script>
 
 <form
-	class="ml-2 flex flex-wrap gap-x-2 gap-y-1 overflow-hidden"
+	class="my-1 flex flex-wrap gap-x-2 gap-y-1 overflow-hidden text-surface-900"
 	on:submit|preventDefault={saveChanges}
 >
 	<!-- <label class="grow basis-2/5">
@@ -32,12 +32,13 @@
 		<input type="text" bind:value={topic} class="input" placeholder="Enter topic" required />
 	</label> -->
 
-	<label class="grow basis-2/5">
+	<label class="min-w-32 grow basis-2/5">
 		<span class="label-text">Type:</span>
 		<select bind:value={type} class="input" required>
 			<option value="" disabled>Select type</option>
 			<option value={CurationEntryType.None}>None (Hidden)</option>
-			<option value={CurationEntryType.StatusEntryItem}>Status</option>
+			<!-- Status should not be created created this way -->
+			<!-- <option value={CurationEntryType.StatusEntryItem}>Status</option> -->
 			<option value={CurationEntryType.MetadataEntryItem}>Metadata</option>
 			<option value={CurationEntryType.PrimaryDataEntryItem}>Primary Data</option>
 			<option value={CurationEntryType.DatastructureEntryItem}>Data Structure</option>
@@ -72,18 +73,31 @@
 		></textarea>
 	</label> -->
 
-	<button
-		type="submit"
-		name="save-entry"
-		title="Save entry"
-		class="h-8 basis-full rounded bg-success-500 px-2 py-1 text-surface-100 hover:bg-success-600 focus-visible:bg-success-600 active:bg-success-700"
-	>
-		{#if entry.isDraft()}
-			<Fa icon={faSquarePlus} class="mr-1 inline-block" />
-			Create
-		{:else}
-			<Fa icon={faFloppyDisk} class="mr-1 inline-block" />
-			Save
-		{/if}
-	</button>
+	<div class="flex grow basis-full flex-wrap gap-x-2 gap-y-1">
+		<button
+			type="button"
+			on:click={() => editEntryMode.set(false)}
+			name="cancel-edit"
+			title="Cancel edit"
+			class="grow text-nowrap rounded bg-surface-300 px-2 py-1 hover:bg-surface-500 focus-visible:bg-surface-500 active:bg-surface-600"
+		>
+			<Fa icon={faXmark} class="mr-1 inline-block" />
+			Cancel
+		</button>
+
+		<button
+			type="submit"
+			name="save-entry"
+			title="Save entry"
+			class="grow text-nowrap rounded bg-success-500 px-2 py-1 text-surface-100 hover:bg-success-600 focus-visible:bg-success-600 active:bg-success-700"
+		>
+			{#if entry.isDraft()}
+				<Fa icon={faSquarePlus} class="mr-1 inline-block" />
+				Create
+			{:else}
+				<Fa icon={faFloppyDisk} class="mr-1 inline-block" />
+				Save
+			{/if}
+		</button>
+	</div>
 </form>

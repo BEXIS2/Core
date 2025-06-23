@@ -48,10 +48,6 @@
 		return groupedEntries;
 	});
 
-	groupedFilteredEntries.subscribe((groupedEntries) => {
-		console.log('Grouped Entries:', groupedEntries);
-	});
-
 	onMount(async () => {
 		if (datasetId) {
 			console.log('Curation datasetId:', datasetId);
@@ -119,25 +115,33 @@
 				</button>
 			{/if}
 		</div>
-		<div class="grid grid-cols-1 gap-2 py-2">
+		<div class="py-2">
 			{#each $groupedFilteredEntries as entryTypeGroup, index}
 				{#if index > CurationEntryType.StatusEntryItem && ($editMode || entryTypeGroup.some( (entry) => entry[0].isVisible() ))}
-					<h2 class="mx-2 text-xl font-semibold">{CurationEntryTypeNames[index]}</h2>
-					<AddCurationEntry position={entryTypeGroup.at(0)?.at(0)?.position ?? 1} type={index} />
-					{#each entryTypeGroup as entryNameGroup (entryNameGroup[0].id)}
-						{#if $editMode || entryNameGroup.some((entry) => entry.isVisible())}
-							<CurationGroupCard entries={entryNameGroup} />
-						{/if}
-					{/each}
+					<h2 class="m-2 mt-3 text-xl font-semibold">{CurationEntryTypeNames[index]}</h2>
+					<ul class="flex flex-col gap-2 p-2">
+						<AddCurationEntry
+							position={entryTypeGroup.at(0)?.at(0)?.position ?? 1}
+							type={index}
+							tag="li"
+						/>
+						{#each entryTypeGroup as entryNameGroup (entryNameGroup[0].id)}
+							{#if $editMode || entryNameGroup.some((entry) => entry.isVisible())}
+								<CurationGroupCard entries={entryNameGroup} />
+							{/if}
+						{/each}
+					</ul>
 				{/if}
 			{/each}
 			{#if $editMode}
-				<h2 class="mx-2 text-xl font-semibold">
+				<h2 class="m-2 text-xl font-semibold">
 					{CurationEntryTypeNames[CurationEntryType.None]} (Hidden)
 				</h2>
-				{#each $groupedFilteredEntries[CurationEntryType.None] as hiddenGroup (hiddenGroup[0].id)}
-					<CurationGroupCard entries={hiddenGroup} />
-				{/each}
+				<ul class="flex flex-col gap-2 p-2">
+					{#each $groupedFilteredEntries[CurationEntryType.None] as hiddenGroup (hiddenGroup[0].id)}
+						<CurationGroupCard entries={hiddenGroup} />
+					{/each}
+				</ul>
 			{/if}
 		</div>
 	{/if}

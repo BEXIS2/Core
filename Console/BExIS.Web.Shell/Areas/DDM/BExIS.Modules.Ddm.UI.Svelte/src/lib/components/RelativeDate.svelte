@@ -53,13 +53,13 @@
 		title={(label ? `${label}: ` : '') + dateToReadable(date)}
 	>
 		{#if showIcon}
-			<Fa icon={faClockRotateLeft} class="inline" />
+			<Fa icon={faClockRotateLeft} class="inline-block" />
 		{/if}
 		{dateToRelative(date)}
 	</svelte:element>
 {:else}
 	{#if showIcon}
-		<Fa icon={faClockRotateLeft} class="inline" />
+		<Fa icon={faClockRotateLeft} class="inline-block" />
 	{/if}
 	{dateToRelative(date)}
 {/if}
