@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BExIS.Xml.Models.Mapping;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -116,6 +117,42 @@ namespace BExIS.Xml.Helpers
             else return false;
         }
 
+        //public static XmlNode GetXmlAttributeByName(XmlNode parentNode, string name, bool recursiv = true)
+        //{
+        //    if (parentNode == null || string.IsNullOrWhiteSpace(name)) return null;
+
+        //    return getXmlAttributeByName(parentNode, name, recursiv);
+        //}
+
+        //private static XmlNode getXmlAttributeByName(XmlNode node, string name, bool recursiv = true)
+        //{
+        //    if (node.LocalName.Equals(name))
+        //        return node;
+        //    else
+        //    {
+        //        if (node.HasChildNodes)
+        //        {
+        //            foreach (XmlNode child in node.ChildNodes)
+        //            {
+        //                if (recursiv)
+        //                {
+        //                    var tmp = getXmlNodeByName(child, name);
+
+        //                    if (tmp != null)
+        //                        return tmp;
+        //                }
+        //                else
+        //                {
+        //                    if (child.LocalName.Equals(name))
+        //                        return node;
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    return null;
+        //}
+
         public static XmlNode GetXmlNodeByName(XmlNode parentNode, string name, bool recursiv = true)
         {
             if (parentNode == null || string.IsNullOrWhiteSpace(name)) return null;
@@ -184,6 +221,12 @@ namespace BExIS.Xml.Helpers
             }
 
             return null;
+        }
+
+        public static XmlNode GetXmlNodeByAttribute(string path, XmlDocument metadata)
+        {
+            var n = metadata.SelectSingleNode(path);
+            return n;
         }
 
         public static XmlNode CreateNode(string nodeName, XmlDocument doc)

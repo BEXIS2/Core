@@ -131,7 +131,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
 
                     //add all groups to user again
                     var relations = alumniUsersGroupsRelationManager.FormerMemberFeaturePermissions.Where(r => r.UserRef == user.Id).ToList();
-                    
+
                     using (var userManager = new UserManager())
                     using (var identityUserService = new IdentityUserService(userManager))
                     {

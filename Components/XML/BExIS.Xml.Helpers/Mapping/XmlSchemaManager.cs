@@ -2131,17 +2131,13 @@ namespace BExIS.Xml.Helpers.Mapping
                         dataType =
                             dataTypeManager.Repo.Query()
                                 .Where(
-                                    d =>
-                                        d.SystemType.Equals(c.ToString()) &&
+                                    d =>                         
                                         d.Name.ToLower().Equals(label.ToString().ToLower()))
                                 .FirstOrDefault();
 
                     if (dataType == null)
                     {
-                        
-
-                        dataType = dataTypeManager.Create(label, c.ToString(),
-                            c);
+                        dataType = dataTypeManager.Create(label, c.ToString(),c);
                     }
 
                     return dataType;
