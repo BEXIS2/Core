@@ -256,7 +256,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
                             title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
-                            labels = getLabels(id,versionId, tag, dsv.Dataset.EntityTemplate.Name);
+                            labels = getLabels(id, versionId, tag, dsv.Dataset.EntityTemplate.Name);
                             if (dsv.Dataset.DataStructure != null)
                                 dataStructureId = dsv.Dataset.DataStructure.Id;
 
@@ -287,7 +287,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 }
                             }
 
-                            
+
 
                             // get data structure type
 
@@ -296,12 +296,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 dataStructureType = DataStructureType.Structured.ToString();
                                 long c = dm.RowCount(dsv.Dataset.Id, null);
                                 ViewData["gridTotal"] = c;
-                                if(c>0) ViewData["has_data"] = true;
+                                if (c > 0) ViewData["has_data"] = true;
                             }
                             else
                             {
                                 dataStructureType = DataStructureType.Unstructured.ToString();
-                                if(dsv.ContentDescriptors.Where(c=>c.Name.Equals("unstructuredData")).Any())
+                                if (dsv.ContentDescriptors.Where(c => c.Name.Equals("unstructuredData")).Any())
                                 {
                                     ViewData["has_data"] = true;
                                 }
@@ -379,7 +379,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
 
                     if (version > 0)
-                    { 
+                    {
                         // load BioSchema Description if exist
                         string bioschemadescription = getBioSchema(id, version);
                         if (!string.IsNullOrEmpty(bioschemadescription))
@@ -388,7 +388,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     }
                     if (asPartial) return PartialView(model);
 
-                  
+
 
                     return View(model);
                 }
@@ -960,7 +960,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             }
                         }
 
-                        if(string.IsNullOrEmpty(title)) title = "no title ("+id+")";
+                        if (string.IsNullOrEmpty(title)) title = "no title (" + id + ")";
 
                         return File(path, mimetype, title + ext);
                     }
@@ -974,7 +974,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             GeneralSettings.SystemEmail
                             );
                     }
-                        
+
                     throw ex;
                 }
                 finally
@@ -1117,7 +1117,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 GeneralSettings.SystemEmail
                                 );
                         }
-                            
+
 
                         return File(Path.Combine(AppConfiguration.DataPath, path), mimetype, title + ext);
                     }
@@ -1131,7 +1131,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             GeneralSettings.SystemEmail
                             );
                     }
-                        
+
                     throw ex;
                 }
                 finally
@@ -1520,7 +1520,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             GeneralSettings.SystemEmail
                             );
                     }
-                        
+
 
                     return File(Path.Combine(AppConfiguration.DataPath, path), mimeType, title);
                 }
@@ -1666,7 +1666,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region tags only for old view
 
-        public PartialViewResult Tags(long id,int version)
+        public PartialViewResult Tags(long id, int version)
         {
             if (id <= 0) throw new ArgumentException("id is not valid");
 
@@ -1674,7 +1674,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             List<TagInfoViewModel> tags = new List<TagInfoViewModel>();
             bool hasEditRights = hasUserRights(id, RightType.Write);
 
-            if(version == 0) return PartialView("_tagsView", tags); // return empty list
+            if (version == 0) return PartialView("_tagsView", tags); // return empty list
 
 
 
@@ -1974,15 +1974,15 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
 
 
-        private async Task<long> getVersionId(long datasetId,int versionNr=0, string versionName="",  double tagNr=0)
+        private async Task<long> getVersionId(long datasetId, int versionNr = 0, string versionName = "", double tagNr = 0)
         {
 
             var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
             bool useTags = false;
-            bool.TryParse(moduleSettings.GetValueByKey("use_tags").ToString(),out useTags);
+            bool.TryParse(moduleSettings.GetValueByKey("use_tags").ToString(), out useTags);
 
             return await DatasetVersionHelper.GetVersionId(datasetId, GetUsernameOrDefault(), versionNr, useTags, tagNr);
-            
+
         }
 
         public bool UserExist()
@@ -2184,7 +2184,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
 
-              
+
 
                 var publications = publicationManager.PublicationRepo.Query(p => p.Dataset.Id == id && p.DatasetVersion.Id == versionId && p.ExternalLink != "");
                 if (publications != null && publications.Any())
