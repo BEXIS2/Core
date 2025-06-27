@@ -8,7 +8,7 @@
 
 	export let curationStatusEntry: CurationEntryClass;
 	export let labelNote: CurationNoteClass | undefined = undefined;
-	export let labelSelectContent: { name: string; color: string }[] | undefined = undefined;
+	export let remainingLabels: { name: string; color: string }[] | undefined = undefined;
 
 	if (!curationStatusEntry || curationStatusEntry.type !== CurationEntryType.StatusEntryItem) {
 		throw new Error('Invalid CurationStatusEntry provided');
@@ -102,7 +102,7 @@
 	// --------------------------------------------------------------
 </script>
 
-{#if !labelNote && !labelSelectContent}
+{#if !labelNote && !remainingLabels}
 	<div>
 		<div
 			class="relative rounded-full bg-primary-500"
@@ -141,7 +141,7 @@
 			<Fa icon={faTrash} class="inline-block px-3 py-0.5" />
 		</div>
 	</button>
-{:else if labelSelectContent}
+{:else if remainingLabels && remainingLabels.length > 0}
 	<div>
 		<div class="relative rounded-full bg-surface-300">
 			<select
@@ -150,7 +150,7 @@
 				bind:value={$currentLabel}
 			>
 				<option value={undefined}>Add label</option>
-				{#each labelSelectContent as label}
+				{#each remainingLabels as label}
 					<option class="bg-white text-surface-900" value={label}>{label.name}</option>
 				{/each}
 			</select>

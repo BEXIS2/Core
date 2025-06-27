@@ -444,7 +444,25 @@ export class CurationEntryClass implements CurationEntryModel {
 	 */
 	public updateNote(noteId: number, comment: string, escape: boolean = true): CurationEntryClass {
 		if (!comment.trim().length) {
-			throw new Error('Comment cannot be empty');
+			console.warn('Comment cannot be empty');
+			return this;
+		}
+		if (this.type === CurationEntryType.StatusEntryItem) {
+			// note is a label and should be checked
+			if (!/^\S*\s#[0-9a-fA-F]+$/.test(comment)) {
+				console.warn(
+					'Note for MetadataEntryItem should correspond to the following regex: /^\\S*\\s#[0-9a-fA-F]+$/'
+				);
+				return this;
+			}
+			if (
+				this.visibleNotes
+					.map((n) => /^\S*\s/.exec(n.comment)?.toString().trim())
+					.includes(/^\S*\s/.exec(comment)?.toString().trim())
+			) {
+				console.warn('A note that contains this label already exists on this MetadataEntryItem.');
+				return this;
+			}
 		}
 		const note = new CurationNoteClass(
 			{

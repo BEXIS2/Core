@@ -77,20 +77,39 @@
 	let highlightOpen: string | undefined = undefined;
 
 	const labelSelectContent = [
+		// need to be included in the first fetch of curation entries
 		{ name: 'custom-1', color: '#03fcad' },
 		{ name: 'custom-2', color: '#03a5fc' },
 		{ name: 'doi::custom-3', color: '#034afc' }
 	];
+
+	$: remainingLabels = Array.from(
+		new Set(labelSelectContent.map((l) => l.name)).difference(
+			new Set(
+				curationStatusEntry.visibleNotes.map((n) =>
+					n.comment
+						.match(/^\S*\s/)
+						?.toString()
+						.trim()
+				)
+			)
+		)
+	)
+		.toSorted((a, b) => a.localeCompare(b))
+		.map((name) => labelSelectContent.find((l) => l.name === name)!);
 </script>
 
 <!-- Status and Badges -->
 {#if $curation?.currentUserType === CurationUserType.Curator}
 	<div class="relative flex flex-wrap gap-2 overflow-x-hidden border-b border-surface-500 p-2">
+		<!-- Status -->
 		<CurationLabel {curationStatusEntry} />
+		<!-- Custom Labels -->
 		{#each curationStatusEntry.visibleNotes.toSorted( (a, b) => a.comment.localeCompare(b.comment) ) as labelNote ((labelNote.comment, labelNote.creationDateObj))}
 			<CurationLabel {curationStatusEntry} {labelNote} />
 		{/each}
-		<CurationLabel {curationStatusEntry} {labelSelectContent} />
+		<!-- Custom Label Creation -->
+		<CurationLabel {curationStatusEntry} {remainingLabels} />
 		<div class="flex grow items-center justify-center px-1 py-0.5 text-xs text-surface-600">
 			<span>Click on a label to remove it</span>
 		</div>
@@ -104,6 +123,7 @@
 <!-- Introduction and Tasks -->
 <div class="relative overflow-x-hidden border-b border-surface-500 p-2">
 	{#if $curation?.currentUserType === CurationUserType.Curator}
+		<!-- Tabs -->
 		<div
 			class="tab-switch relative flex items-center gap-1 rounded border border-surface-300 bg-surface-200 p-0.5"
 		>
