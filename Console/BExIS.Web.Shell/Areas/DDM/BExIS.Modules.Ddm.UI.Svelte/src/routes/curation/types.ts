@@ -1,3 +1,10 @@
+import {
+	faCircleCheck,
+	faCircleDot,
+	faCircleExclamation,
+	faCirclePause
+} from '@fortawesome/free-solid-svg-icons';
+
 export interface CurationModel {
 	datasetId: number;
 	datasetTitle: string;
@@ -61,12 +68,51 @@ export enum CurationUserType {
 }
 
 export enum CurationEntryStatus {
-	Open,
-	Fixed,
-	Ok,
-	Closed
+	Open = 0,
+	Fixed = 1,
+	Ok = 2,
+	Closed = 3
 }
 
-export const CurationEntryStatusNames: string[] = ['Open', 'Fixed', 'Ok', 'Closed'];
+export const CurationEntryStatusDetails = [
+	{
+		status: CurationEntryStatus.Open,
+		name: 'Open',
+		icon: faCircleExclamation
+	},
+	{
+		status: CurationEntryStatus.Fixed,
+		name: 'Changed',
+		icon: faCircleDot
+	},
+	{
+		status: CurationEntryStatus.Ok,
+		name: 'Paused',
+		icon: faCirclePause
+	},
+	{
+		status: CurationEntryStatus.Closed,
+		name: 'Approved',
+		icon: faCircleCheck
+	}
+];
 
-export const CurationEntryStatusColors: string[] = ['#D55E00', '#56B4E9', '#CC79A7', '#004D40'];
+export const CurationEntryStatusColorPalettes = [
+	{
+		name: 'Default',
+		colors: [
+			'hsl(330deg 100% 30%)',
+			'hsl(150deg 100% 35%)',
+			'hsl(150deg 100% 25%)',
+			'hsl(150deg 100% 15%)'
+		]
+	},
+	{
+		name: 'Gray',
+		colors: ['#555555', '#888888', '#aaaaaa', '#cccccc']
+	},
+	{
+		name: 'Colorful',
+		colors: ['#D55E00', '#56B4E9', '#CC79A7', '#004D40']
+	}
+];

@@ -58,8 +58,6 @@
 			commentLinesGrouped.push([line]);
 		}
 	});
-
-	console.log(commentLinesGrouped);
 </script>
 
 <li class="note-card rounded px-2 py-1">

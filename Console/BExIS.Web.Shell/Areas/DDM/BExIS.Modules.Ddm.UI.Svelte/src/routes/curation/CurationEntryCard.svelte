@@ -1,10 +1,6 @@
 <script lang="ts">
 	import Fa from 'svelte-fa';
 	import {
-		faCircleCheck,
-		faCircleDot,
-		faCircleExclamation,
-		faCirclePause,
 		faEyeSlash,
 		faFileLines,
 		faMessage,
@@ -16,12 +12,7 @@
 	import { curationStore } from './stores';
 	import RelativeDate from '$lib/components/RelativeDate.svelte';
 	import CurationNotes from './CurationNotes.svelte';
-	import {
-		CurationEntryStatus,
-		CurationEntryStatusColors,
-		CurationEntryStatusNames,
-		CurationUserType
-	} from './types';
+	import { CurationEntryStatus, CurationEntryStatusDetails, CurationUserType } from './types';
 	import type { CurationEntryClass } from './CurationEntries';
 	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
 	import CurationEntryInput from './CurationEntryInput.svelte';
@@ -32,7 +23,7 @@
 	export let editEntryMode = writable(entry.id <= 0); // true if entry is a draft
 	export let tag: string | null = 'div'; // if set, use this tag instead of the default <div>
 
-	const { curation, editMode } = curationStore;
+	const { curation, editMode, statusColorPalette } = curationStore;
 
 	let position = entry.position;
 	let positiontimer: NodeJS.Timeout | null = null;
@@ -133,34 +124,26 @@
 		</div>
 
 		<!-- Status and Actions -->
-		<div
-			class="mb-1 flex flex-row flex-wrap items-center justify-stretch gap-1 overflow-hidden text-sm"
-		>
+		<div class="mb-1 flex flex-wrap items-center justify-stretch gap-1 overflow-x-hidden text-sm">
 			<!-- Status change -->
-			<div class="status-button-container" class:flex={!$editMode} class:hidden={$editMode}>
-				{#each CurationEntryStatusNames as statusName, index}
+			<div
+				class="status-button-container flex w-60 grow items-center justify-stretch gap-x-1 overflow-x-hidden"
+				class:hidden={$editMode}
+			>
+				{#each CurationEntryStatusDetails as statusDetails, index}
 					{#if $curation?.currentUserType === CurationUserType.Curator || (index !== CurationEntryStatus.Ok && index !== CurationEntryStatus.Closed) || index === entry.status}
 						<button
-							class="status-change-button"
+							class="status-change-button grow overflow-x-hidden text-ellipsis text-nowrap rounded border px-1 py-0.5"
 							class:active={index === entry.status}
 							class:opacity-10={entry.isDraft()}
 							class:cursor-not-allowed={entry.isDraft()}
 							disabled={index === entry.status || $editMode || entry.isDraft()}
-							style="--status-color: {CurationEntryStatusColors[index]};"
-							title="Change Entry Status to {statusName}"
-							name="Change Entry Status to {statusName}"
+							style="--status-color: {$statusColorPalette.colors[index]};"
+							title="Change Entry Status to {statusDetails.name}"
 							on:click={() => setStatus(index)}
 						>
-							{#if index === CurationEntryStatus.Open}
-								<Fa icon={faCircleCheck} class="inline-block" />
-							{:else if index === CurationEntryStatus.Fixed}
-								<Fa icon={faCircleDot} class="inline-block" />
-							{:else if index === CurationEntryStatus.Closed}
-								<Fa icon={faCircleExclamation} class="inline-block" />
-							{:else if index === CurationEntryStatus.Ok}
-								<Fa icon={faCirclePause} class="inline-block" />
-							{/if}
-							{statusName}
+							<Fa icon={statusDetails.icon} class="inline-block" />
+							{statusDetails.name}
 						</button>
 					{/if}
 				{/each}
@@ -265,13 +248,7 @@
 </svelte:element>
 
 <style lang="postcss">
-	.status-button-container {
-		@apply grow flex-row items-center justify-stretch gap-x-1 overflow-hidden;
-	}
-
 	.status-change-button {
-		@apply overflow-hidden text-ellipsis text-nowrap px-2 py-0.5;
-		@apply grow rounded border px-1;
 		color: var(--status-color, inherit);
 		border: 1px solid var(--status-color, transparent);
 	}

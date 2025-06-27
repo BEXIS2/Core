@@ -1,6 +1,6 @@
 import { derived, writable, type Readable } from 'svelte/store';
 import { getCurationDataset, postCurationEntry, putCurationEntry } from './services';
-import { CurationEntryStatus, CurationEntryType } from './types';
+import { CurationEntryStatus, CurationEntryStatusColorPalettes, CurationEntryType } from './types';
 import { CurationClass, CurationEntryClass } from './CurationEntries';
 
 class CurationStore {
@@ -31,6 +31,7 @@ class CurationStore {
 		return this._entryFilters;
 	}
 	public readonly editMode = writable<boolean>(false);
+	public readonly statusColorPalette = writable(CurationEntryStatusColorPalettes[0]);
 
 	constructor() {
 		this.datasetId.subscribe((datasetId) => {

@@ -1,6 +1,6 @@
 import {
 	CurationEntryStatus,
-	CurationEntryStatusNames,
+	CurationEntryStatusDetails,
 	CurationEntryType,
 	CurationEntryTypeNames,
 	CurationUserType,
@@ -155,10 +155,10 @@ export class CurationClass {
 	}
 
 	private getCurationProgress(): [number[], number[][]] {
-		const progressTotal = new Array(CurationEntryStatusNames.length).fill(0);
+		const progressTotal = new Array(CurationEntryStatusDetails.length).fill(0);
 		const progressPerType = new Array(CurationEntryTypeNames.length)
 			.fill(0)
-			.map(() => new Array(CurationEntryStatusNames.length).fill(0));
+			.map(() => new Array(CurationEntryStatusDetails.length).fill(0));
 
 		this.visiblecurationEntries.forEach((entry) => {
 			progressTotal[entry.status]++;

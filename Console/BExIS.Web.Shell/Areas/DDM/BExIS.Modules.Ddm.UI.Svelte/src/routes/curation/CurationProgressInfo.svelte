@@ -1,16 +1,6 @@
 <script lang="ts">
 	import Fa from 'svelte-fa';
-	import {
-		CurationEntryStatus,
-		CurationEntryStatusColors,
-		CurationEntryStatusNames
-	} from './types';
-	import {
-		faCircleCheck,
-		faCircleDot,
-		faCircleExclamation,
-		faCirclePause
-	} from '@fortawesome/free-solid-svg-icons';
+	import { CurationEntryStatus, CurationEntryStatusDetails } from './types';
 	import { curationStore } from './stores';
 	import { derived, writable } from 'svelte/store';
 	import type { CurationEntryClass } from './CurationEntries';
@@ -22,6 +12,8 @@
 	const myFilter = writable<((entry: CurationEntryClass) => boolean) | null>(null);
 	const appliedFilter = writable<CurationEntryStatus | null>(null);
 	const hoveredStatus = writable<CurationEntryStatus | null>(null);
+
+	const { statusColorPalette } = curationStore;
 
 	curationStore.entryFilters.subscribe((filters) => {
 		if (filters.length === 0) {
@@ -97,7 +89,7 @@
 			{#if p > 0}
 				<button
 					class="h-full transition-all"
-					style="flex-grow: {p}; background-color: {CurationEntryStatusColors[index]}"
+					style="flex-grow: {p}; background-color: {$statusColorPalette.colors[index]}"
 					on:click={() => handleClick(index)}
 					class:opacity-50={$hasLowOpacity[index]}
 					on:mouseenter={() => handleMouseEnter(index)}
@@ -119,17 +111,9 @@
 						on:mouseleave={handleMouseLeave}
 						class:opacity-50={$hasLowOpacity[index]}
 					>
-						<span class="font-semibold" style="color: {CurationEntryStatusColors[index]}">
-							{#if index === CurationEntryStatus.Ok}
-								<Fa icon={faCirclePause} class="inline-block" />
-							{:else if index === CurationEntryStatus.Open}
-								<Fa icon={faCircleExclamation} class="inline-block" />
-							{:else if index === CurationEntryStatus.Fixed}
-								<Fa icon={faCircleDot} class="inline-block" />
-							{:else if index === CurationEntryStatus.Closed}
-								<Fa icon={faCircleCheck} class="inline-block" />
-							{/if}
-							{CurationEntryStatusNames[index]}: {p}
+						<span class="font-semibold" style="color: {$statusColorPalette.colors[index]}">
+							<Fa icon={CurationEntryStatusDetails[index].icon} class="inline-block" />
+							{CurationEntryStatusDetails[index].name}: {p}
 						</span>
 						<span class="text-xs text-surface-800">{((p / totalIssues) * 100).toFixed(2)}%</span>
 					</button>

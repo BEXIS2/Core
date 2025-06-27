@@ -6,7 +6,12 @@
 	import CurationGroupCard from './CurationGroupCard.svelte';
 	import Fa from 'svelte-fa';
 	import { faBroom, faExpand, faPen, faPlay } from '@fortawesome/free-solid-svg-icons';
-	import { CurationEntryType, CurationEntryTypeNames, CurationUserType } from './types';
+	import {
+		CurationEntryStatusColorPalettes,
+		CurationEntryType,
+		CurationEntryTypeNames,
+		CurationUserType
+	} from './types';
 	import AddCurationEntry from './AddCurationEntry.svelte';
 	import { derived } from 'svelte/store';
 	import { CurationEntryClass } from './CurationEntries';
@@ -16,8 +21,15 @@
 
 	export let datasetId: number;
 
-	const { loadingCuration, loadingError, uploadingEntries, entryFilters, curation, editMode } =
-		curationStore;
+	const {
+		loadingCuration,
+		loadingError,
+		uploadingEntries,
+		entryFilters,
+		curation,
+		editMode,
+		statusColorPalette
+	} = curationStore;
 
 	const filteredEntries = curationStore.getFilteredEntriesReadable();
 
@@ -100,6 +112,28 @@
 	{:else}
 		<!-- Status Entry -->
 		<CurationStatusEntryCard curationStatusEntry={$curation.curationStatusEntry} />
+		<!-- Color Palette Picker -->
+		<div class="overflow-x-hidden border-b border-surface-500 p-2">
+			<label class="flex">
+				<span>Color palette for the entry status:</span>
+				<select
+					bind:value={$statusColorPalette}
+					title="Change color palette of entry status"
+					class="rounded-l py-0.5 text-sm"
+				>
+					{#each CurationEntryStatusColorPalettes as colorPalette}
+						<option value={colorPalette}>{colorPalette.name}</option>
+					{/each}
+				</select>
+				<div
+					class="flex items-center gap-x-1 overflow-hidden rounded-r border-y border-r border-surface-500 px-2"
+				>
+					{#each $statusColorPalette.colors as c}
+						<div class="inline size-2 rounded-full" style="background-color: {c}">&nbsp;</div>
+					{/each}
+				</div>
+			</label>
+		</div>
 		<!-- Progress -->
 		{#if $curation.curationEntries.length > 0}
 			<div class="border-b border-surface-500">
