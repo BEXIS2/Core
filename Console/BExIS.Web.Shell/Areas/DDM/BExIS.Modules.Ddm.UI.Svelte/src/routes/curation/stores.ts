@@ -26,9 +26,17 @@ class CurationStore {
 	private timer: NodeJS.Timeout | null = null;
 	private readonly debounceTime = 1000; // 1 second
 
-	private readonly _entryFilters = writable<((entry: CurationEntryClass) => boolean)[]>([]);
-	public get entryFilters(): Readable<((entry: CurationEntryClass) => boolean)[]> {
+	private readonly _entryFilters = writable<
+		{ id: string; filter: (entry: CurationEntryClass) => boolean }[]
+	>([]);
+	public get entryFilters(): Readable<
+		{ id: string; filter: (entry: CurationEntryClass) => boolean }[]
+	> {
 		return this._entryFilters;
+	}
+	private readonly _statusFilter = writable<Set<CurationEntryStatus>>(new Set());
+	public get statusFilter(): Readable<Set<CurationEntryStatus>> {
+		return this._statusFilter;
 	}
 	public readonly editMode = writable<boolean>(false);
 	public readonly statusColorPalette = writable(CurationEntryStatusColorPalettes[0]);
@@ -296,33 +304,60 @@ class CurationStore {
 		});
 	}
 
-	public addEntryFilter(filter: (entry: CurationEntryClass) => boolean) {
+	public addEntryFilter(filterId: string, filter: (entry: CurationEntryClass) => boolean) {
 		this._entryFilters.update((filters) => {
-			if (!filters.includes(filter)) {
-				return [...filters, filter];
+			if (!filters.map((f) => f.id).includes(filterId)) {
+				return [...filters, { id: filterId, filter }];
 			}
 			return filters;
 		});
 	}
 
-	public removeEntryFilter(filter: (entry: CurationEntryClass) => boolean) {
+	public toggleStatusFilter(status: CurationEntryStatus) {
+		this._statusFilter.update((statusFilter) => {
+			if (statusFilter.has(status)) statusFilter.delete(status);
+			else statusFilter.add(status);
+			return statusFilter;
+		});
+	}
+
+	public removeEntryFilter(filterId: string) {
 		this._entryFilters.update((filters) => {
-			return filters.filter((f) => f !== filter);
+			return filters.filter((f) => f.id !== filterId);
+		});
+	}
+
+	public updateFilter(filterId: string, filter: (entry: CurationEntryClass) => boolean) {
+		this._entryFilters.update((filters) => {
+			return [...filters.filter((f) => f.id !== filterId), { id: filterId, filter }];
 		});
 	}
 
 	public clearEntryFilters() {
 		this._entryFilters.set([]);
+		this._statusFilter.set(new Set());
 	}
 
+	public readonly hasFiltersApplied = derived(
+		[this._entryFilters, this._statusFilter],
+		([filters, statusFilter]) => filters.length > 0 || statusFilter.size > 0
+	);
+
 	public getFilteredEntriesReadable(): Readable<CurationEntryClass[]> {
-		return derived([this._curation, this._entryFilters], ([$curation, $filters]) => {
-			if (!$curation) return [];
-			if ($filters.length === 0) return $curation.curationEntries;
-			return $curation.curationEntries.filter((entry) => {
-				return $filters.every((filter) => filter(entry));
-			});
-		});
+		return derived(
+			[this._curation, this._entryFilters, this._statusFilter],
+			([curation, filters, statusFilter]) => {
+				if (!curation) return [];
+				if (filters.length === 0 && (statusFilter.size <= 0 || statusFilter.size >= 4))
+					return curation.curationEntries;
+				return curation.curationEntries.filter((entry) => {
+					return (
+						filters.every((f) => f.filter(entry)) &&
+						(statusFilter.size <= 0 || statusFilter.size >= 4 || statusFilter.has(entry.status))
+					);
+				});
+			}
+		);
 	}
 
 	public deleteEntry(entryId: number) {

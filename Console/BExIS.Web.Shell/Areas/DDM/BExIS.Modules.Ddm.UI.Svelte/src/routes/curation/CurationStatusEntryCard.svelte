@@ -133,6 +133,7 @@
 			>
 				<input
 					type="radio"
+					class="pointer-events-none absolute opacity-0"
 					name="Introduction Tab Button"
 					checked
 					bind:group={$currentTab}
@@ -147,6 +148,7 @@
 			>
 				<input
 					type="radio"
+					class="pointer-events-none absolute opacity-0"
 					name="Task Tab Button"
 					bind:group={$currentTab}
 					value={CurationTab.Tasks}
@@ -160,6 +162,7 @@
 			>
 				<input
 					type="radio"
+					class="pointer-events-none absolute opacity-0"
 					name="Hide Tabs Button"
 					bind:group={$currentTab}
 					value={CurationTab.Hide}
@@ -326,11 +329,5 @@
 
 	.tab-switch label:has(:checked) {
 		@apply bg-surface-400 text-surface-900;
-	}
-
-	.tab-switch input {
-		position: fixed;
-		opacity: 0;
-		pointer-events: none;
 	}
 </style>

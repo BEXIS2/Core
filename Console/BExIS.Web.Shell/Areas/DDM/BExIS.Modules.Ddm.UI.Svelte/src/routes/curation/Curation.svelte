@@ -8,6 +8,7 @@
 	import { faBroom, faExpand, faPen, faPlay } from '@fortawesome/free-solid-svg-icons';
 	import {
 		CurationEntryStatusColorPalettes,
+		CurationEntryStatusDetails,
 		CurationEntryType,
 		CurationEntryTypeNames,
 		CurationUserType
@@ -18,6 +19,7 @@
 	import CurationStatusEntryCard from './CurationStatusEntryCard.svelte';
 	import CurationProgressInfo from './CurationProgressInfo.svelte';
 	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
+	import CurationFilter from './CurationFilter.svelte';
 
 	export let datasetId: number;
 
@@ -25,10 +27,11 @@
 		loadingCuration,
 		loadingError,
 		uploadingEntries,
-		entryFilters,
 		curation,
 		editMode,
-		statusColorPalette
+		statusColorPalette,
+		statusFilter,
+		hasFiltersApplied
 	} = curationStore;
 
 	const filteredEntries = curationStore.getFilteredEntriesReadable();
@@ -149,14 +152,18 @@
 				{/if}
 			</div>
 		{/if}
-		<!-- Curation Entries -->
+		<!-- Filter and search -->
+		<div class="border-b border-surface-500 text-sm">
+			<CurationFilter />
+		</div>
+		<!-- Curation Entry Actions -->
 		<div class="flex flex-wrap items-center justify-between gap-1 border-b border-surface-500 p-1">
 			<button
 				on:click={clearFilters}
-				disabled={$entryFilters.length === 0}
+				disabled={!$hasFiltersApplied}
 				class="grow basis-3/4 rounded bg-surface-200 px-2 py-1 enabled:hover:bg-surface-400 enabled:focus-visible:bg-surface-400 disabled:text-surface-500"
 			>
-				{#if $entryFilters.length > 0}
+				{#if $hasFiltersApplied}
 					<Fa icon={faBroom} class="mr-1 inline-block" />
 					Clear Applied Filters
 				{:else}
@@ -173,6 +180,7 @@
 				</button>
 			{/if}
 		</div>
+		<!-- Curation Entries -->
 		<div class="py-2">
 			{#each $groupedFilteredEntries as entryTypeGroup, index}
 				{#if index > CurationEntryType.StatusEntryItem && ($editMode || entryTypeGroup.some( (entry) => entry[0].isVisible() ))}
