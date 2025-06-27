@@ -40,11 +40,11 @@ export interface CurationNoteModel {
 }
 
 export enum CurationEntryType {
-	None,
-	StatusEntryItem,
-	MetadataEntryItem,
-	PrimaryDataEntryItem,
-	DatastructureEntryItem
+	None = 0,
+	StatusEntryItem = 1,
+	MetadataEntryItem = 2,
+	PrimaryDataEntryItem = 3,
+	DatastructureEntryItem = 4
 }
 
 export const CurationEntryTypeNames: string[] = [

@@ -5,6 +5,7 @@
 	import Fa from 'svelte-fa';
 	import { CurationEntryType } from './types';
 	import { writable } from 'svelte/store';
+	import CurationEntryTemplateTool from './CurationEntryTemplateTool.svelte';
 
 	export let entry: CurationEntryClass;
 	export let editEntryMode = writable(false);
@@ -77,7 +78,6 @@
 		<button
 			type="button"
 			on:click={() => editEntryMode.set(false)}
-			name="cancel-edit"
 			title="Cancel edit"
 			class="grow text-nowrap rounded bg-surface-300 px-2 py-1 hover:bg-surface-500 focus-visible:bg-surface-500 active:bg-surface-600"
 		>
@@ -85,9 +85,10 @@
 			Cancel
 		</button>
 
+		<CurationEntryTemplateTool {type} {name} {description} />
+
 		<button
 			type="submit"
-			name="save-entry"
 			title="Save entry"
 			class="grow text-nowrap rounded bg-success-500 px-2 py-1 text-surface-100 hover:bg-success-600 focus-visible:bg-success-600 active:bg-success-700"
 		>

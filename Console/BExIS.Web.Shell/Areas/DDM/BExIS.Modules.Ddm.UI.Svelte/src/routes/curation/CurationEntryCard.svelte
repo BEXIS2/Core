@@ -133,7 +133,9 @@
 		</div>
 
 		<!-- Status and Actions -->
-		<div class="mb-1 flex flex-row items-center justify-stretch gap-x-1 text-sm">
+		<div
+			class="mb-1 flex flex-row flex-wrap items-center justify-stretch gap-1 overflow-hidden text-sm"
+		>
 			<!-- Status change -->
 			<div class="status-button-container" class:flex={!$editMode} class:hidden={$editMode}>
 				{#each CurationEntryStatusNames as statusName, index}
@@ -166,14 +168,13 @@
 
 			<!-- Chat Button -->
 			<button
-				class="chat-button w-24 overflow-hidden text-ellipsis text-nowrap rounded border border-surface-300 bg-surface-300 px-2 py-0.5 text-surface-900 hover:border-surface-400 hover:bg-surface-400"
+				class="chat-button w-24 grow overflow-hidden text-ellipsis text-nowrap rounded-lg border border-surface-300 bg-surface-300 px-2 py-0.5 text-surface-900 hover:border-surface-400 hover:bg-surface-400"
 				class:active={$isExpanded}
 				class:hidden={$editMode}
 				class:opacity-10={entry.isDraft()}
 				class:cursor-not-allowed={entry.isDraft()}
 				disabled={$editMode || entry.isDraft()}
 				title="Toggle Chat"
-				name="Toggle Chat"
 				on:click={toggleExpand}
 			>
 				<Fa icon={$isExpanded ? faXmark : faMessage} class="inline-block" />
@@ -265,7 +266,7 @@
 
 <style lang="postcss">
 	.status-button-container {
-		@apply grow flex-row items-center justify-stretch gap-x-1;
+		@apply grow flex-row items-center justify-stretch gap-x-1 overflow-hidden;
 	}
 
 	.status-change-button {
@@ -309,7 +310,5 @@
 
 	.chat-button.active {
 		@apply rounded-t-none;
-		margin-top: -0.25rem;
-		border-top-width: 0.5rem;
 	}
 </style>

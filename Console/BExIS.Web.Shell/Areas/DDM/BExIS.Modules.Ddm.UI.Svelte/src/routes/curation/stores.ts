@@ -57,7 +57,6 @@ class CurationStore {
 
 		getCurationDataset(datasetId)
 			.then((response) => {
-				console.log('🎈 ~ getCurationDataset ~ response:', response);
 				this.setState(new CurationClass(response), false, null);
 			})
 			.catch((error) => {
@@ -150,8 +149,29 @@ class CurationStore {
 		this.applyAndSaveEntry(entryId, (entry) => entry.toggleStatus(), true);
 	}
 
+	public setStatusBoolean(
+		entryId: number,
+		newUserlsDone: boolean,
+		newIsApproved: boolean,
+		debounce = true
+	) {
+		this.applyAndSaveEntry(
+			entryId,
+			(entry) => entry.setStatusBoolean(newUserlsDone, newIsApproved),
+			debounce
+		);
+	}
+
 	public setStatus(entryId: number, status: CurationEntryStatus) {
 		this.applyAndSaveEntry(entryId, (entry) => entry.setStatus(status), true);
+	}
+
+	public setName(entryId: number, name: string, debounce: boolean = false) {
+		this.applyAndSaveEntry(entryId, (entry) => entry.setName(name), debounce);
+	}
+
+	public setDescription(entryId: number, description: string, debounce: boolean = false) {
+		this.applyAndSaveEntry(entryId, (entry) => entry.setDescription(description), debounce);
 	}
 
 	public updateEntryPosition(entryId: number, position: number) {
@@ -165,11 +185,28 @@ class CurationStore {
 		});
 	}
 
-	public addEmptyEntry(position: number, name = '', type = CurationEntryType.None) {
+	public addEmptyEntry(
+		position: number,
+		name = '',
+		type = CurationEntryType.None,
+		description = '',
+		acceptCurationStatusEntry = false
+	) {
+		if (!acceptCurationStatusEntry && type === CurationEntryType.StatusEntryItem) return;
 		this._curation.update((curation) => {
 			if (!curation) return curation;
-			return curation.addEmptyEntry(position, name, type);
+			return curation.addEmptyEntry(position, name, type, description);
 		});
+	}
+
+	public addEmptyEntryFromJson(json: {
+		position?: number;
+		type?: CurationEntryType;
+		name?: string;
+		description?: string;
+	}) {
+		const { position = 1, type = CurationEntryType.None, name = '', description = '' } = json;
+		this.addEmptyEntry(position, name, type, description);
 	}
 
 	public updateEntry(
@@ -196,6 +233,18 @@ class CurationStore {
 			this.saveEntry(newCuration.getEntryById(entryId)!);
 			return newCuration;
 		});
+	}
+
+	public updateEntryFromEntry(entry: CurationEntryClass) {
+		this.updateEntry(
+			entry.id,
+			entry.topic,
+			entry.type,
+			entry.name,
+			entry.description,
+			entry.solution,
+			entry.source
+		);
 	}
 
 	public saveEntry(entry: CurationEntryClass) {
@@ -283,7 +332,22 @@ class CurationStore {
 		});
 	}
 
-	public startCuration() {}
+	public startCuration() {
+		this.addEmptyEntry(1, 'Test', CurationEntryType.StatusEntryItem, undefined, true);
+
+		this._curation.subscribe((curation) => {
+			if (!curation) return;
+			if (!curation.curationStatusEntry) return;
+			const unsubscribe = this._curation.subscribe((curation) => {
+				if (!curation) return;
+				if (!curation.curationStatusEntry) return;
+				if (curation.curationStatusEntry.id < 0) {
+					this.saveEntry(curation.curationStatusEntry);
+					unsubscribe();
+				}
+			});
+		});
+	}
 }
 
 export const curationStore = new CurationStore();

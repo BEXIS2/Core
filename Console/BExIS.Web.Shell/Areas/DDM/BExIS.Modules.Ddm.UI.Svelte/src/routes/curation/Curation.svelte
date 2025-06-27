@@ -10,10 +10,14 @@
 	import AddCurationEntry from './AddCurationEntry.svelte';
 	import { derived } from 'svelte/store';
 	import { CurationEntryClass } from './CurationEntries';
+	import CurationStatusEntryCard from './CurationStatusEntryCard.svelte';
+	import CurationProgressInfo from './CurationProgressInfo.svelte';
+	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
 
 	export let datasetId: number;
 
-	const { loadingCuration, loadingError, entryFilters, curation, editMode } = curationStore;
+	const { loadingCuration, loadingError, uploadingEntries, entryFilters, curation, editMode } =
+		curationStore;
 
 	const filteredEntries = curationStore.getFilteredEntriesReadable();
 
@@ -50,8 +54,7 @@
 
 	onMount(async () => {
 		if (datasetId) {
-			console.log('Curation datasetId:', datasetId);
-			curationStore.datasetId.set(datasetId); // automatically fetches dataset
+			curationStore.datasetId.set(datasetId);
 		}
 	});
 
@@ -80,18 +83,39 @@
 		<div>
 			<p class="text-red-500">Error loading curation entries</p>
 		</div>
-	{:else if $curation?.curationEntries.length === 0}
+	{:else if $curation?.curationEntries.length === 0 || !$curation?.curationStatusEntry}
 		<div class="flex h-48 items-center justify-center">
-			<p class="text-surface-800">No curation entries available</p>
+			<p class="text-surface-800">The curation process has not started yet.</p>
 		</div>
-		<button
-			on:click={startCuration}
-			class="m-1 rounded bg-success-500 p-1 text-surface-100 hover:bg-success-600 focus-visible:bg-success-600"
-		>
-			<Fa icon={faPlay} class="mr-1 inline-block" />
-			Start Curation
-		</button>
+		<!-- TODO: TEMPLATE -->
+		{#if $curation?.currentUserType === CurationUserType.Curator}
+			<button
+				on:click={startCuration}
+				class="m-1 rounded bg-success-500 p-1 text-surface-100 hover:bg-success-600 focus-visible:bg-success-600"
+			>
+				<Fa icon={faPlay} class="mr-1 inline-block" />
+				Start Curation
+			</button>
+		{/if}
 	{:else}
+		<!-- Status Entry -->
+		<CurationStatusEntryCard curationStatusEntry={$curation.curationStatusEntry} />
+		<!-- Progress -->
+		{#if $curation.curationEntries.length > 0}
+			<div class="border-b border-surface-500">
+				<!-- Curation Progress -->
+				<CurationProgressInfo
+					progress={$curation?.curationProgressTotal}
+					totalIssues={$curation?.curationProgressTotal.reduce((a, b) => a + b, 0)}
+					label="Curation Progress Test"
+				/>
+				<!-- Spinner overlay -->
+				{#if $uploadingEntries.length > 0}
+					<SpinnerOverlay />
+				{/if}
+			</div>
+		{/if}
+		<!-- Curation Entries -->
 		<div class="flex flex-wrap items-center justify-between gap-1 border-b border-surface-500 p-1">
 			<button
 				on:click={clearFilters}

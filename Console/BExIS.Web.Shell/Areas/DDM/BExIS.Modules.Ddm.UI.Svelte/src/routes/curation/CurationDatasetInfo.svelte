@@ -1,12 +1,8 @@
 <script lang="ts">
 	import { curationStore } from './stores';
 	import RelativeDate from '$lib/components/RelativeDate.svelte';
-	import CurationProgressInfo from './CurationProgressInfo.svelte';
-	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
 
 	const { datasetId, curation, loadingCuration, loadingError, uploadingEntries } = curationStore;
-
-	let curationLabel = 'None';
 </script>
 
 <div class="w-full">
@@ -29,20 +25,8 @@
 					#{$datasetId}:
 				</span>
 				{$curation?.datasetTitle}
+				<!-- There would be space for a label or badge here as well -->
 			</h1>
-			{#if $uploadingEntries.length > 0}
-				<span
-					class="ml-2 h-7 w-20 animate-pulse rounded-full bg-surface-400 px-4 py-1 text-sm text-white"
-				>
-					...
-				</span>
-			{:else}
-				<span
-					class="ml-2 h-7 max-w-48 overflow-hidden text-ellipsis rounded-full bg-primary-400 px-4 py-1 text-sm text-white"
-				>
-					{curationLabel}
-				</span>
-			{/if}
 		</div>
 		<div class="relative">
 			<!-- Dates -->
@@ -71,20 +55,6 @@
 					</div>
 				{/if}
 			</div>
-			{#if $curation.curationEntries.length > 0}
-				<div class="border-b border-surface-500">
-					<!-- Curation Progress -->
-					<CurationProgressInfo
-						progress={$curation?.curationProgressTotal}
-						totalIssues={$curation?.curationProgressTotal.reduce((a, b) => a + b, 0)}
-						label="Curation Progress Test"
-					/>
-					<!-- Spinner overlay -->
-					{#if $uploadingEntries.length > 0}
-						<SpinnerOverlay />
-					{/if}
-				</div>
-			{/if}
 		</div>
 	{/if}
 </div>

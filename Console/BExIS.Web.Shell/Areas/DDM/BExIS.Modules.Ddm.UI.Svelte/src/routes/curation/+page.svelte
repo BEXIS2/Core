@@ -2,10 +2,9 @@
 	import { Page, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 	import CurationsOverview from './CurationsOverview.svelte';
 	import Curation from './Curation.svelte';
+	import { page } from '$app/stores';
 
-	const urlParams = new URLSearchParams(window.location.search);
-
-	const datasetIdPar = urlParams.get('curationDatasetId');
+	$: datasetIdPar = $page.url.searchParams.get('curationDatasetId');
 </script>
 
 <Page title="Curation" contentLayoutType={pageContentLayoutType.full}>

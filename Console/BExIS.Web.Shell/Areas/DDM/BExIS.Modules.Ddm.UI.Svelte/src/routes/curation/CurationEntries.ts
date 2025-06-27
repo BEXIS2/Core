@@ -18,6 +18,7 @@ export class CurationClass {
 	public readonly datasetTitle: string;
 	public readonly datasetVersionDate: string;
 	public readonly curationEntries: CurationEntryClass[];
+	public readonly curationStatusEntry: CurationEntryClass | null = null;
 	public readonly visiblecurationEntries: CurationEntryClass[];
 	public readonly curationUsers: CurationUserClass[];
 
@@ -59,6 +60,10 @@ export class CurationClass {
 				)
 			)
 		);
+
+		this.curationStatusEntry =
+			this.curationEntries.find((entry) => entry.type === CurationEntryType.StatusEntryItem) ||
+			null;
 
 		// Additional properties
 		this.datasetVersionDateObj = new Date(curation.datasetVersionDate);
@@ -197,14 +202,20 @@ export class CurationClass {
 		return this.addEntry(newEntry).updateEntryPosition(entryId, entry.position);
 	}
 
-	public addEmptyEntry(position: number, name = '', type = CurationEntryType.None) {
+	public addEmptyEntry(
+		position: number,
+		name = '',
+		type = CurationEntryType.None,
+		description = ''
+	) {
 		if (position < 1) return this;
 		let newEntry = CurationEntryClass.emptyEntry(
 			this.datasetId,
 			-this.draftCount - 1,
 			position,
 			name,
-			type
+			type,
+			description
 		);
 		return new CurationClass({
 			...this,
@@ -535,20 +546,41 @@ export class CurationEntryClass implements CurationEntryModel {
 		return CurationEntryClass.getStatus(this.userlsDone, this.isApproved);
 	}
 
-	public setStatus(status: CurationEntryStatus): CurationEntryClass {
-		let [newUserlsDone, newIsApproved] = [false, false];
-		if (status === CurationEntryStatus.Fixed) {
-			[newUserlsDone, newIsApproved] = [true, false];
-		} else if (status === CurationEntryStatus.Ok) {
-			[newUserlsDone, newIsApproved] = [false, true];
-		} else if (status === CurationEntryStatus.Closed) {
-			[newUserlsDone, newIsApproved] = [true, true];
-		}
+	public setStatusBoolean(newUserlsDone: boolean, newIsApproved: boolean): CurationEntryClass {
 		return new CurationEntryClass(
 			{
 				...this,
 				userlsDone: newUserlsDone,
 				isApproved: newIsApproved
+			},
+			this.currentUserType
+		);
+	}
+
+	public setStatus(status: CurationEntryStatus): CurationEntryClass {
+		if (status === CurationEntryStatus.Fixed) return this.setStatusBoolean(true, false);
+		if (status === CurationEntryStatus.Ok) return this.setStatusBoolean(false, true);
+		if (status === CurationEntryStatus.Closed) return this.setStatusBoolean(true, true);
+		return this.setStatusBoolean(false, false);
+	}
+
+	public setName(name: string): CurationEntryClass {
+		if (this.name === name) return this;
+		return new CurationEntryClass(
+			{
+				...this,
+				name: name
+			},
+			this.currentUserType
+		);
+	}
+
+	public setDescription(description: string): CurationEntryClass {
+		if (this.description === description) return this;
+		return new CurationEntryClass(
+			{
+				...this,
+				description: description
 			},
 			this.currentUserType
 		);
@@ -587,7 +619,8 @@ export class CurationEntryClass implements CurationEntryModel {
 		id: number,
 		position: number,
 		name = '',
-		type = CurationEntryType.None
+		type = CurationEntryType.None,
+		description = ''
 	): CurationEntryClass {
 		return new CurationEntryClass(
 			{
@@ -596,7 +629,7 @@ export class CurationEntryClass implements CurationEntryModel {
 				topic: '',
 				type: type,
 				name: name,
-				description: '',
+				description: description,
 				solution: '',
 				position: position,
 				source: '',
@@ -621,6 +654,6 @@ export class CurationEntryClass implements CurationEntryModel {
 	}
 
 	public isVisible(): boolean {
-		return !this.isHidden() && !this.isDraft();
+		return !this.isHidden() && !this.isDraft() && this.type !== CurationEntryType.StatusEntryItem;
 	}
 }
