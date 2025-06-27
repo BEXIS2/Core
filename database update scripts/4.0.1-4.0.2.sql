@@ -1,14 +1,14 @@
 BEGIN TRANSACTION;
 
--- xpath changes for all older linkelements
-update dim_linkelements
-set xpath =
-    CASE
-        WHEN xpath LIKE '%/%' and xpath like '%Type'
-        THEN reverse(substring(reverse(xpath) FROM position('/' in reverse(xpath)) + 1))
-        ELSE xpath
-    END
-where complexity = 1 and type in (5,6);
+-- -- xpath changes for all older linkelements
+-- update dim_linkelements
+-- set xpath =
+--     CASE
+--         WHEN xpath LIKE '%/%' and xpath like '%Type'
+--         THEN reverse(substring(reverse(xpath) FROM position('/' in reverse(xpath)) + 1))
+--         ELSE xpath
+--     END
+-- where complexity = 1 and type in (5,6);
 
 --- RPM  TeFilest --
 INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
