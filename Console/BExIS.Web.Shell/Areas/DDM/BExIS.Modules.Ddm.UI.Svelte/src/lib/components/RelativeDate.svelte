@@ -6,6 +6,8 @@
 	export let showIcon: boolean = false;
 	export let label: string | undefined = undefined;
 	export let tag: string | null = 'span';
+	export let prefix: string = '';
+	export let suffix: string = '';
 
 	let className: string | undefined = undefined;
 	export { className as class };
@@ -55,11 +57,11 @@
 		{#if showIcon}
 			<Fa icon={faClockRotateLeft} class="inline-block" />
 		{/if}
-		{dateToRelative(date)}
+		{`${prefix}${dateToRelative(date)}${suffix}`}
 	</svelte:element>
 {:else}
 	{#if showIcon}
 		<Fa icon={faClockRotateLeft} class="inline-block" />
 	{/if}
-	{dateToRelative(date)}
+	{`${prefix}${dateToRelative(date)}${suffix}`}
 {/if}

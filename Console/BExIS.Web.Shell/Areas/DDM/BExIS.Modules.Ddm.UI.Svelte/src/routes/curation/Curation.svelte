@@ -115,7 +115,7 @@
 		<!-- Color Palette Picker -->
 		<div class="overflow-x-hidden border-b border-surface-500 p-2">
 			<label class="flex">
-				<span>Color palette for the entry status:</span>
+				<span class="mr-1">Color palette for the entry status:</span>
 				<select
 					bind:value={$statusColorPalette}
 					title="Change color palette of entry status"

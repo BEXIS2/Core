@@ -13,13 +13,13 @@
 	let textarea: HTMLTextAreaElement | null = null;
 	let noteList: HTMLUListElement | null = null;
 
-	const parentText = writable('');
-	parentText.subscribe((text) => {
+	const replyText = writable('');
+	replyText.subscribe((text) => {
 		if (text.trim() !== '') {
 			new_note = '| ' + text.split('\n').join('\n| ') + '\n' + new_note;
 			textarea?.focus();
 			textarea?.setSelectionRange(new_note.length, new_note.length);
-			parentText.set('');
+			replyText.set('');
 		}
 	});
 
@@ -55,8 +55,8 @@
 	}
 </script>
 
-<div class="flex flex-col gap-y-1 overflow-hidden rounded-t rounded-bl bg-surface-300 p-1 text-sm">
-	<ul class="flex h-32 flex-col gap-y-1 overflow-y-auto rounded" bind:this={noteList}>
+<div class="flex h-full flex-col gap-y-1 overflow-hidden p-1 text-sm">
+	<ul class="node-box flex grow flex-col gap-y-1 overflow-y-auto rounded" bind:this={noteList}>
 		<!-- Notes or message area -->
 		{#if entry.visibleNotes.length === 0}
 			<li class="mx-2 my-auto text-center text-surface-700">
@@ -64,14 +64,14 @@
 			</li>
 		{:else}
 			{#each entry.visibleNotes as note}
-				<CurationNote {note} entryId={entry.id} {parentText} />
+				<CurationNote {note} entryId={entry.id} {replyText} />
 			{/each}
 		{/if}
 	</ul>
 	{#if entry.visibleNotes.length > 0 || entry.notes.filter((note) => note.userId === fixedCurationUserId).length > 0}
 		<button
 			on:click={() => curationStore.setUnread(entry.id, !entry.hasUnreadNotes)}
-			class="flex cursor-pointer items-center justify-center gap-x-1 rounded p-1 text-surface-800 hover:bg-surface-400"
+			class="flex cursor-pointer items-center justify-center gap-x-1 overflow-hidden text-ellipsis text-nowrap rounded px-2 py-1 text-surface-800 hover:bg-surface-400"
 			title="Mark this conversation as {!entry.hasUnreadNotes ? 'unread' : 'read'}"
 			name="Mark as read/unread"
 		>

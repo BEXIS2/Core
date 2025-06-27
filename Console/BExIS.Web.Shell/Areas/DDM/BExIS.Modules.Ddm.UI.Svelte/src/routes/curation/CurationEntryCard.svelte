@@ -16,6 +16,7 @@
 	import type { CurationEntryClass } from './CurationEntries';
 	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
 	import CurationEntryInput from './CurationEntryInput.svelte';
+	import CurationNote from './CurationNote.svelte';
 
 	export let entry: CurationEntryClass;
 	export let combined: boolean;
@@ -75,6 +76,8 @@
 	const toggleExpand = () => {
 		isExpanded.update((v) => !v);
 	};
+
+	$: showCollapsedNotes = !$isExpanded && entry.visibleNotes.length > 0;
 </script>
 
 <svelte:element
@@ -115,11 +118,28 @@
 		</div>
 
 		<!-- Notes -->
-		<div class="max-h-0 overflow-hidden transition-all" class:!max-h-80={$isExpanded}>
+		<div
+			class="mb-1 h-0 overflow-hidden rounded-t rounded-bl border-surface-300 transition-all"
+			class:h-52={$isExpanded}
+			class:h-12={showCollapsedNotes}
+			class:md:h-7={showCollapsedNotes}
+			class:bg-surface-300={$isExpanded}
+			class:rounded-br={!$isExpanded}
+		>
 			{#if $isExpanded}
 				<CurationNotes {entry} />
-			{:else}
-				<p class="h-80 rounded-t bg-surface-300"></p>
+			{:else if entry.visibleNotes.length > 0}
+				<button
+					class="h-full w-full overflow-hidden rounded border px-1 py-0.5 text-left text-sm text-surface-700"
+					title="Open Chat"
+					on:click={toggleExpand}
+				>
+					<CurationNote
+						note={entry.visibleNotes[entry.visibleNotes.length - 1]}
+						entryId={entry.id}
+						shortForm={true}
+					/>
+				</button>
 			{/if}
 		</div>
 

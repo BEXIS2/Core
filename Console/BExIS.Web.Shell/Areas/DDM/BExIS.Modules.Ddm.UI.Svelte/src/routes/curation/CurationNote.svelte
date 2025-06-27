@@ -6,20 +6,12 @@
 	import { CurationUserType } from './types';
 	import { derived, type Writable } from 'svelte/store';
 	import { CurationNoteClass, fixedCurationUserId } from './CurationEntries';
+	import { split } from 'postcss/lib/list';
 
 	export let note: CurationNoteClass;
 	export let entryId: number;
-	export let parentText: Writable<string>;
-
-	function deleteNote() {
-		if (
-			confirm(
-				`Are you sure you want to delete this note:\n\n"${note.comment}"\n\nThis action cannot be undone. Maybe use the "reply to note"-action instead?`
-			)
-		) {
-			curationStore.deleteNote(entryId, note.id);
-		}
-	}
+	export let replyText: Writable<string> | undefined = undefined;
+	export let shortForm: boolean = false;
 
 	const userColorList = [
 		'#003f5c',
@@ -30,6 +22,16 @@
 		'#ff764a',
 		'#ffa600'
 	];
+
+	function deleteNote() {
+		if (
+			confirm(
+				`Are you sure you want to delete this note:\n\n"${note.comment}"\n\nThis action cannot be undone. Maybe use the "reply to note"-action instead?`
+			)
+		) {
+			curationStore.deleteNote(entryId, note.id);
+		}
+	}
 
 	const userName = derived(curationStore.curation, (curation) => {
 		return curation?.userMap.get(note.userId)?.displayName ?? 'Unknown User';
@@ -58,67 +60,85 @@
 			commentLinesGrouped.push([line]);
 		}
 	});
+
+	const reply = () => {
+		if (!replyText) return;
+		replyText.set(note.comment);
+	};
 </script>
 
-<li class="note-card rounded px-2 py-1">
-	<div class="flex items-center justify-between gap-x-2">
-		<!-- Header -->
-		<h4>
-			<!-- User and Message Info -->
-			<span style="color: {getUserColor(note.userId)}">
-				{$userName}
-				{#if note.userId === fixedCurationUserId}
-					(You)
-				{/if}
-			</span>
-			<span class="ml-1 text-xs text-surface-600">
-				[{note.userType === CurationUserType.Curator ? 'Curator' : 'User'}]
-			</span>
-			<RelativeDate
-				date={note.creationDateObj}
-				label="Note created"
-				class="ml-1 text-xs text-surface-600"
-			/>
-		</h4>
-		<div class="flex items-center gap-x-1">
-			<!-- Action buttons -->
-			<button
-				class="rounded p-1 text-surface-600 hover:bg-primary-400 hover:text-primary-800 active:bg-primary-500 active:text-primary-900"
-				on:click={() => parentText.set(note.comment)}
-				title="Reply to note"
-				name="Reply to note"
-			>
-				<Fa icon={faReply} />
-			</button>
+{#if shortForm}
+	<p class="line-clamp-2 h-full max-h-full overflow-hidden text-ellipsis sm:line-clamp-1">
+		<span>
+			{$userName}
 			{#if note.userId === fixedCurationUserId}
-				<button
-					class="rounded p-1 text-surface-600 hover:bg-error-400 hover:text-error-800 active:bg-error-500 active:text-error-900"
-					on:click={deleteNote}
-					title="Delete note"
-					name="Delete note"
-				>
-					<Fa icon={faTrash} />
-				</button>
+				(You)
 			{/if}
-		</div>
-	</div>
-	<p class="break words overflow-hidden text-wrap">
-		<!-- Note Content -->
-		{#each commentLinesGrouped as group}
-			{#if group.length > 0 && group[0].startsWith('| ')}
-				<p class="my-0.5 w-full rounded border-l-4 border-surface-600 bg-surface-200 px-2 py-0.5">
-					{#each group as line}
-						{line.slice(2)}
-						<br />
-					{/each}
-				</p>
-			{:else}
-				{group[0]}
-				<br />
-			{/if}
-		{/each}
+		</span>
+		<RelativeDate date={note.creationDateObj} label="Note created" prefix="(" suffix=")" />:
+		{note.comment}
 	</p>
-</li>
+{:else}
+	<li class="note-card rounded px-2 py-1">
+		<div class="flex items-center justify-between gap-x-2">
+			<!-- Header -->
+			<h4>
+				<!-- User and Message Info -->
+				<span style="color: {getUserColor(note.userId)}">
+					{$userName}
+					{#if note.userId === fixedCurationUserId}
+						(You)
+					{/if}
+				</span>
+				<span class="ml-1 text-xs text-surface-600">
+					[{note.userType === CurationUserType.Curator ? 'Curator' : 'User'}]
+				</span>
+				<RelativeDate
+					date={note.creationDateObj}
+					label="Note created"
+					class="ml-1 text-xs text-surface-600"
+				/>
+			</h4>
+			<div class="flex items-center gap-x-1">
+				<!-- Action buttons -->
+				<button
+					class="rounded p-1 text-surface-600 hover:bg-primary-400 hover:text-primary-800 active:bg-primary-500 active:text-primary-900"
+					on:click={reply}
+					title="Reply to note"
+					name="Reply to note"
+				>
+					<Fa icon={faReply} />
+				</button>
+				{#if note.userId === fixedCurationUserId}
+					<button
+						class="rounded p-1 text-surface-600 hover:bg-error-400 hover:text-error-800 active:bg-error-500 active:text-error-900"
+						on:click={deleteNote}
+						title="Delete note"
+						name="Delete note"
+					>
+						<Fa icon={faTrash} />
+					</button>
+				{/if}
+			</div>
+		</div>
+		<p class="break words overflow-hidden text-wrap">
+			<!-- Note Content -->
+			{#each commentLinesGrouped as group}
+				{#if group.length > 0 && group[0].startsWith('| ')}
+					<p class="my-0.5 w-full rounded border-l-4 border-surface-600 bg-surface-200 px-2 py-0.5">
+						{#each group as line}
+							{line.slice(2)}
+							<br />
+						{/each}
+					</p>
+				{:else}
+					{group[0]}
+					<br />
+				{/if}
+			{/each}
+		</p>
+	</li>
+{/if}
 
 <style lang="postcss">
 	.note-card:has(*:hover) {
