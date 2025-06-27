@@ -101,8 +101,6 @@ export class CurationClass {
 		const oldEntry = this.getEntryById(entryId);
 		if (!oldEntry) return this;
 
-		console.log(`Updating entry ${entryId} from position ${oldEntry.position} to ${newPosition}`);
-
 		let newEntries = this.curationEntries.filter((entry) => entry.id !== entryId);
 
 		if (!oldEntry.isDraft()) {
@@ -444,19 +442,14 @@ export class CurationEntryClass implements CurationEntryModel {
 	 * @returns CurationEntryClass
 	 * @throws Error if the comment is empty
 	 */
-	public updateNote(
-		noteId: number,
-		userType: CurationUserType,
-		comment: string,
-		escape: boolean = true
-	): CurationEntryClass {
+	public updateNote(noteId: number, comment: string, escape: boolean = true): CurationEntryClass {
 		if (!comment.trim().length) {
 			throw new Error('Comment cannot be empty');
 		}
 		const note = new CurationNoteClass(
 			{
 				id: noteId,
-				userType: userType,
+				userType: this.currentUserType,
 				creationDate: new Date().toISOString(),
 				comment: comment,
 				userId: fixedCurationUserId
@@ -475,7 +468,7 @@ export class CurationEntryClass implements CurationEntryModel {
 			newNotes = newNotes.filter((note) => note.id !== newNotes[myLastNoteIndex].id);
 		}
 		newNotes.push(note);
-		if (userType === CurationUserType.Curator) {
+		if (this.currentUserType === CurationUserType.Curator) {
 			return new CurationEntryClass(
 				{
 					...this,
@@ -495,12 +488,8 @@ export class CurationEntryClass implements CurationEntryModel {
 		);
 	}
 
-	public addNote(
-		userType: CurationUserType,
-		comment: string,
-		escape: boolean = true
-	): CurationEntryClass {
-		return this.updateNote(0, userType, comment, escape);
+	public addNote(comment: string, escape: boolean = true): CurationEntryClass {
+		return this.updateNote(0, comment, escape);
 	}
 
 	public deleteNote(noteId: number): CurationEntryClass {
@@ -524,7 +513,7 @@ export class CurationEntryClass implements CurationEntryModel {
 			const note = this.notes[i];
 			if (note.hidden) {
 				if (note.userId === fixedCurationUserId && note.command === oppositeCommand) {
-					return this.updateNote(note.id, CurationUserType.User, commandComment, false);
+					return this.updateNote(note.id, commandComment, false);
 				}
 			} else if (note.userId === fixedCurationUserId && unread) {
 				break;
@@ -532,7 +521,7 @@ export class CurationEntryClass implements CurationEntryModel {
 				break;
 			}
 		}
-		return this.addNote(CurationUserType.User, commandComment, false);
+		return this.addNote(commandComment, false);
 	}
 
 	public static getStatus(userlsDone: boolean, isApproved: boolean): CurationEntryStatus {

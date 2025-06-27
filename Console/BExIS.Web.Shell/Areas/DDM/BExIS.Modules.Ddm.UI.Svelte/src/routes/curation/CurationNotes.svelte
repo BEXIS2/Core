@@ -2,7 +2,6 @@
 	import { curationStore } from './stores';
 	import { faBookmark, faCheckDouble, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
-	import { CurationUserType } from './types';
 	import { writable } from 'svelte/store';
 	import CurationNote from './CurationNote.svelte';
 	import { fixedCurationUserId, type CurationEntryClass } from './CurationEntries';
@@ -38,7 +37,7 @@
 	function addNote() {
 		new_note = new_note.trim();
 		if (new_note === '') return;
-		curationStore.addNote(entry.id, CurationUserType.Curator, new_note);
+		curationStore.addNote(entry.id, new_note);
 		new_note = '';
 	}
 

@@ -1,6 +1,6 @@
 import { derived, writable, type Readable } from 'svelte/store';
 import { getCurationDataset, postCurationEntry, putCurationEntry } from './services';
-import { CurationEntryStatus, CurationEntryType, CurationUserType } from './types';
+import { CurationEntryStatus, CurationEntryType } from './types';
 import { CurationClass, CurationEntryClass } from './CurationEntries';
 
 class CurationStore {
@@ -128,13 +128,13 @@ class CurationStore {
 		});
 	}
 
-	public addNote(entryId: number, userType: CurationUserType, comment: string) {
+	public addNote(entryId: number, comment: string) {
 		if (entryId <= 0) return;
-		this.applyAndSaveEntry(entryId, (entry) => entry.addNote(userType, comment, true));
+		this.applyAndSaveEntry(entryId, (entry) => entry.addNote(comment, true));
 	}
 
-	public updateNote(entryId: number, noteId: number, userType: CurationUserType, comment: string) {
-		this.applyAndSaveEntry(entryId, (entry) => entry.updateNote(noteId, userType, comment, true));
+	public updateNote(entryId: number, noteId: number, comment: string) {
+		this.applyAndSaveEntry(entryId, (entry) => entry.updateNote(noteId, comment, true));
 	}
 
 	public deleteNote(entryId: number, noteId: number) {

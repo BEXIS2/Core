@@ -30,7 +30,7 @@ export const get = async () => {
 	try {
 		const response = await Api.get('/api/curationentries');
 
-		console.log('🎈 ~ get ~ response:', response);
+		console.log('🎈 ~ GET ~ response:', response);
 
 		response.data = response.data.map(firstLetterToLowerCase);
 
@@ -45,7 +45,7 @@ export const getCurationDataset = async (id: number) => {
 	try {
 		const response = await Api.get(`/api/datasets/${id}/curation`);
 
-		console.log('🎈 ~ getByDataset ~ response:', response);
+		console.log('🎈 ~ GET by dataset ~ response:', response);
 
 		response.data = firstLetterToLowerCase(response.data);
 

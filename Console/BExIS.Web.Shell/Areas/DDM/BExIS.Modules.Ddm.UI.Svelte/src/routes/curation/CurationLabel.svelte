@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { faAngleDown, faPlus, faTrash, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+	import { faAngleDown, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import type { CurationEntryClass, CurationNoteClass } from './CurationEntries';
-	import { CurationEntryType, CurationUserType } from './types';
+	import { CurationEntryType } from './types';
 	import { curationStore } from './stores';
 	import { writable } from 'svelte/store';
 
@@ -77,11 +77,7 @@
 
 	currentLabel.subscribe((label) => {
 		if (!label) return;
-		curationStore.addNote(
-			curationStatusEntry.id,
-			CurationUserType.User,
-			`${label.name} ${label.color}`
-		);
+		curationStore.addNote(curationStatusEntry.id, `${label.name} ${label.color}`);
 		currentLabel.set(undefined);
 	});
 

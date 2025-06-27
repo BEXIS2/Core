@@ -1,15 +1,14 @@
 <script lang="ts">
 	import Fa from 'svelte-fa';
 	import type { CurationEntryClass } from './CurationEntries';
-	import { CurationEntryType, CurationUserType, type CurationEntryModel } from './types';
+	import { CurationEntryType, CurationUserType } from './types';
 	import {
 		faDoorOpen,
 		faListCheck,
 		faPen,
 		faFloppyDisk,
 		faEyeSlash,
-		faXmark,
-		faPlus
+		faXmark
 	} from '@fortawesome/free-solid-svg-icons';
 	import { derived, writable } from 'svelte/store';
 	import { curationStore } from './stores';
