@@ -4,6 +4,7 @@ import {
 	faCircleExclamation,
 	faCirclePause
 } from '@fortawesome/free-solid-svg-icons';
+import type { CurationEntryClass } from './CurationEntries';
 
 export interface CurationModel {
 	datasetId: number;
@@ -55,11 +56,11 @@ export enum CurationEntryType {
 }
 
 export const CurationEntryTypeNames: string[] = [
-	'None',
-	'Status Entry Item',
-	'Metadata Entry Item',
-	'Primary Data Entry Item',
-	'Datastructure Entry Item'
+	'Hidden',
+	'Status',
+	'Metadata',
+	'Primary Data',
+	'Datastructure'
 ];
 
 export enum CurationUserType {
@@ -116,3 +117,10 @@ export const CurationEntryStatusColorPalettes = [
 		colors: ['#D55E00', '#56B4E9', '#CC79A7', '#004D40']
 	}
 ];
+
+export type FilterModel<TData> = {
+	id: string;
+	data: TData;
+	fn: (entry: CurationEntryClass, data: TData) => boolean;
+	isClearedFn: (data: TData) => boolean;
+};

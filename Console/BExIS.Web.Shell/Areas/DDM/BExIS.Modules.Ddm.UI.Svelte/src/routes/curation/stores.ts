@@ -1,6 +1,11 @@
 import { derived, writable, type Readable } from 'svelte/store';
 import { getCurationDataset, postCurationEntry, putCurationEntry } from './services';
-import { CurationEntryStatus, CurationEntryStatusColorPalettes, CurationEntryType } from './types';
+import {
+	CurationEntryStatus,
+	CurationEntryStatusColorPalettes,
+	CurationEntryType,
+	type FilterModel
+} from './types';
 import { CurationClass, CurationEntryClass } from './CurationEntries';
 
 class CurationStore {
@@ -26,18 +31,8 @@ class CurationStore {
 	private timer: NodeJS.Timeout | null = null;
 	private readonly debounceTime = 1000; // 1 second
 
-	private readonly _entryFilters = writable<
-		{ id: string; filter: (entry: CurationEntryClass) => boolean }[]
-	>([]);
-	public get entryFilters(): Readable<
-		{ id: string; filter: (entry: CurationEntryClass) => boolean }[]
-	> {
-		return this._entryFilters;
-	}
-	private readonly _statusFilter = writable<Set<CurationEntryStatus>>(new Set());
-	public get statusFilter(): Readable<Set<CurationEntryStatus>> {
-		return this._statusFilter;
-	}
+	private readonly _entryFilters = writable<FilterModel<any>[]>([]);
+
 	public readonly editMode = writable<boolean>(false);
 	public readonly statusColorPalette = writable(CurationEntryStatusColorPalettes[0]);
 
@@ -304,20 +299,30 @@ class CurationStore {
 		});
 	}
 
-	public addEntryFilter(filterId: string, filter: (entry: CurationEntryClass) => boolean) {
+	public updateEntryFilter<TData>(
+		filterId: string,
+		dataUpdateFn: (data: TData | undefined) => TData,
+		fn: (entry: CurationEntryClass, data: TData) => boolean,
+		isClearedFn: (data: TData) => boolean
+	) {
 		this._entryFilters.update((filters) => {
 			if (!filters.map((f) => f.id).includes(filterId)) {
-				return [...filters, { id: filterId, filter }];
+				// create filter
+				return [...filters, { id: filterId, data: dataUpdateFn(undefined), fn, isClearedFn }];
 			}
-			return filters;
-		});
-	}
-
-	public toggleStatusFilter(status: CurationEntryStatus) {
-		this._statusFilter.update((statusFilter) => {
-			if (statusFilter.has(status)) statusFilter.delete(status);
-			else statusFilter.add(status);
-			return statusFilter;
+			// update filter data
+			const currentFilter = filters.find((f) => f.id === filterId)!;
+			const newData = dataUpdateFn(currentFilter.data);
+			if (newData === currentFilter.data) return filters;
+			return [
+				...filters.filter((f) => f.id !== filterId),
+				{
+					id: filterId,
+					data: newData,
+					fn: currentFilter.fn,
+					isClearedFn: currentFilter.isClearedFn
+				}
+			];
 		});
 	}
 
@@ -327,37 +332,25 @@ class CurationStore {
 		});
 	}
 
-	public updateFilter(filterId: string, filter: (entry: CurationEntryClass) => boolean) {
-		this._entryFilters.update((filters) => {
-			return [...filters.filter((f) => f.id !== filterId), { id: filterId, filter }];
-		});
-	}
-
 	public clearEntryFilters() {
 		this._entryFilters.set([]);
-		this._statusFilter.set(new Set());
 	}
 
-	public readonly hasFiltersApplied = derived(
-		[this._entryFilters, this._statusFilter],
-		([filters, statusFilter]) => filters.length > 0 || statusFilter.size > 0
-	);
+	public readonly hasFiltersApplied = derived(this._entryFilters, (filters) => {
+		return filters.length > 0 && filters.some((f) => !f.isClearedFn(f.data));
+	});
+
+	public getEntryFilterData(filterId: string) {
+		return derived(this._entryFilters, (filters) => filters.find((f) => f.id === filterId));
+	}
 
 	public getFilteredEntriesReadable(): Readable<CurationEntryClass[]> {
-		return derived(
-			[this._curation, this._entryFilters, this._statusFilter],
-			([curation, filters, statusFilter]) => {
-				if (!curation) return [];
-				if (filters.length === 0 && (statusFilter.size <= 0 || statusFilter.size >= 4))
-					return curation.curationEntries;
-				return curation.curationEntries.filter((entry) => {
-					return (
-						filters.every((f) => f.filter(entry)) &&
-						(statusFilter.size <= 0 || statusFilter.size >= 4 || statusFilter.has(entry.status))
-					);
-				});
-			}
-		);
+		return derived([this._curation, this._entryFilters], ([curation, filters]) => {
+			if (!curation) return [];
+			return curation.curationEntries.filter((entry) => {
+				return filters.every((f) => f.fn(entry, f.data));
+			});
+		});
 	}
 
 	public deleteEntry(entryId: number) {

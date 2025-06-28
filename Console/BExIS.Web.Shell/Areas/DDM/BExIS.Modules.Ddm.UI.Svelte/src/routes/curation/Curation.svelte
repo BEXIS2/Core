@@ -5,7 +5,7 @@
 	import { Spinner } from '@bexis2/bexis2-core-ui';
 	import CurationGroupCard from './CurationGroupCard.svelte';
 	import Fa from 'svelte-fa';
-	import { faBroom, faExpand, faPen, faPlay } from '@fortawesome/free-solid-svg-icons';
+	import { faBan, faBroom, faExpand, faPen, faPlay } from '@fortawesome/free-solid-svg-icons';
 	import {
 		CurationEntryStatusColorPalettes,
 		CurationEntryType,
@@ -180,6 +180,14 @@
 		</div>
 		<!-- Curation Entries -->
 		<div class="py-2">
+			{#if $filteredEntries.length === 0}
+				<div class="flex h-64 w-full items-center justify-center">
+					<span class="m-auto text-surface-700">
+						<Fa icon={faBan} class="inline-block" />
+						No entries match your applied filters
+					</span>
+				</div>
+			{/if}
 			{#each $groupedFilteredEntries as entryTypeGroup, index}
 				{#if index > CurationEntryType.StatusEntryItem && ($editMode || entryTypeGroup.some( (entry) => entry[0].isVisible() ))}
 					<h2 class="m-2 mt-3 text-xl font-semibold">{CurationEntryTypeNames[index]}</h2>

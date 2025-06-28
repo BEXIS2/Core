@@ -3,7 +3,6 @@
 	import { CurationEntryStatus, CurationEntryStatusDetails } from './types';
 	import { curationStore } from './stores';
 	import { derived, writable } from 'svelte/store';
-	import type { CurationEntryClass } from './CurationEntries';
 
 	export let progress: number[];
 	export let totalIssues: number = 0;
@@ -11,11 +10,9 @@
 
 	const hoveredStatus = writable<CurationEntryStatus | null>(null);
 
-	const { statusColorPalette, statusFilter } = curationStore;
+	const { statusColorPalette } = curationStore;
 
-	const handleClick = (status: CurationEntryStatus) => {
-		curationStore.toggleStatusFilter(status);
-	};
+	const statusFilterId = 'status';
 
 	const handleMouseEnter = (status: CurationEntryStatus) => {
 		hoveredStatus.set(status);
@@ -25,14 +22,19 @@
 		hoveredStatus.set(null);
 	};
 
-	const hasLowOpacity = derived([statusFilter, hoveredStatus], ([statusFilter, hoveredStatus]) => {
-		if (hoveredStatus === null && statusFilter.size === 0) {
-			return progress.map(() => false);
+	const statusFilter = curationStore.getEntryFilterData(statusFilterId);
+
+	const hasLowOpacity = derived(
+		[statusFilter, hoveredStatus],
+		([$statusFilter, $hoveredStatus]) => {
+			if ($hoveredStatus === null && (!$statusFilter || $statusFilter?.data.size === 0)) {
+				return progress.map(() => false);
+			}
+			return progress.map((_, index) => {
+				return index !== $hoveredStatus && !$statusFilter?.data.has(index);
+			});
 		}
-		return progress.map((_, index) => {
-			return index !== hoveredStatus && !statusFilter.has(index);
-		});
-	});
+	);
 </script>
 
 <div class="curation-status-progress-card p-2">

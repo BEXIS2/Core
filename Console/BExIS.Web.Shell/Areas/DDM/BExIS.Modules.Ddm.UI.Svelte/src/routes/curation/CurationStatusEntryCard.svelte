@@ -134,7 +134,7 @@
 				<input
 					type="radio"
 					class="pointer-events-none absolute opacity-0"
-					name="Introduction Tab Button"
+					title="Activate Introduction Tab"
 					checked
 					bind:group={$currentTab}
 					value={CurationTab.Introduction}
@@ -149,7 +149,7 @@
 				<input
 					type="radio"
 					class="pointer-events-none absolute opacity-0"
-					name="Task Tab Button"
+					title="Activate Task Tab"
 					bind:group={$currentTab}
 					value={CurationTab.Tasks}
 				/>
@@ -163,10 +163,9 @@
 				<input
 					type="radio"
 					class="pointer-events-none absolute opacity-0"
-					name="Hide Tabs Button"
+					title="Hide Tabs"
 					bind:group={$currentTab}
 					value={CurationTab.Hide}
-					aria-label="Hide Tabs"
 				/>
 				<Fa icon={faEyeSlash} class="inline-block" />
 				<span class="font-semibold">Hide</span>
