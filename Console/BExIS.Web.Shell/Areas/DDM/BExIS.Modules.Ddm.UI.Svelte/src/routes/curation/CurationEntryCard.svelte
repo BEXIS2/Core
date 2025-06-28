@@ -192,6 +192,17 @@
 
 			<!-- EDIT MODE -->
 
+			<!-- Status -->
+			<div
+				class="pointer-events-none w-24 overflow-hidden text-ellipsis rounded bg-surface-700 px-1 py-0.5 text-center text-surface-50"
+				class:hidden={!$editMode}
+				title="Entry is hidden"
+				style="background-color: {$statusColorPalette.colors[entry.status]}"
+			>
+				<Fa icon={CurationEntryStatusDetails[entry.status].icon} class="inline-block" />
+				{CurationEntryStatusDetails[entry.status].name}
+			</div>
+
 			<!-- Hidden or Draft Badges -->
 			{#if entry.isHidden()}
 				<div
