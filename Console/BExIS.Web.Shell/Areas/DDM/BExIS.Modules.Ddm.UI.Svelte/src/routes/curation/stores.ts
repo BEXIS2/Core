@@ -319,8 +319,8 @@ class CurationStore {
 				{
 					id: filterId,
 					data: newData,
-					fn: currentFilter.fn,
-					isClearedFn: currentFilter.isClearedFn
+					fn,
+					isClearedFn
 				}
 			];
 		});
