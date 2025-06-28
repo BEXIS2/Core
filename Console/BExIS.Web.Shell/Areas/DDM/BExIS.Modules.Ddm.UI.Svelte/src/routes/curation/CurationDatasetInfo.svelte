@@ -2,18 +2,27 @@
 	import { curationStore } from './stores';
 	import RelativeDate from '$lib/components/RelativeDate.svelte';
 
-	const { datasetId, curation, loadingCuration, loadingError, uploadingEntries } = curationStore;
+	const { datasetId, curation, loadingCuration, loadingError } = curationStore;
 </script>
 
 <div class="w-full">
 	{#if $loadingCuration}
 		<div class="f-width flex animate-pulse flex-wrap justify-stretch gap-2 p-2">
-			<div class="placeholder grow basis-10/12"></div>
-			<div class="placeholder grow basis-1/12"></div>
-			<div class="placeholder grow basis-2/5"></div>
-			<div class="placeholder grow basis-2/5"></div>
-			<div class="placeholder grow basis-2/5"></div>
-			<div class="placeholder grow basis-2/5"></div>
+			<h1 class="just no-wrap flex basis-full gap-2 overflow-hidden text-xl">
+				<div class="h-full">
+					{#if $datasetId}
+						<span class="text-base text-surface-800">
+							#{$datasetId}:
+						</span>
+					{/if}
+				</div>
+				<div class="placeholder h-full grow basis-8/12"></div>
+				<div class="placeholder h-full grow basis-1/12"></div>
+			</h1>
+			<div class="placeholder min-w-24 grow"></div>
+			<div class="placeholder min-w-24 grow"></div>
+			<div class="placeholder min-w-24 grow"></div>
+			<div class="placeholder min-w-24 grow"></div>
 			<div class="placeholder grow basis-full"></div>
 		</div>
 	{:else if $loadingError}

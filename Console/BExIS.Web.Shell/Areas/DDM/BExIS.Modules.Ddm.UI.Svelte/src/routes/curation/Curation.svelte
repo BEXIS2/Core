@@ -8,7 +8,6 @@
 	import { faBroom, faExpand, faPen, faPlay } from '@fortawesome/free-solid-svg-icons';
 	import {
 		CurationEntryStatusColorPalettes,
-		CurationEntryStatusDetails,
 		CurationEntryType,
 		CurationEntryTypeNames,
 		CurationUserType
@@ -30,7 +29,6 @@
 		curation,
 		editMode,
 		statusColorPalette,
-		statusFilter,
 		hasFiltersApplied
 	} = curationStore;
 
