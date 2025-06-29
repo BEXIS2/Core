@@ -6,6 +6,24 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import type { CurationEntryClass } from './CurationEntries';
 
+export const curationDataSetIdSearchParam = 'curationDatasetId';
+export interface CurationsOverviewModel {
+	datasets: CurationDetailModel[];
+	curationLabels: CurationLabel[];
+}
+
+export interface CurationDetailModel {
+	datasetId: number;
+	datasetName: string;
+	notesComments: string[];
+	curationStarted: boolean;
+	userIsDone: boolean;
+	isApproved: boolean;
+	lastChangeDatetime_Curator: string;
+	lastChangeDatetime_User: string;
+	statusCounts: number[];
+}
+
 export interface CurationModel {
 	datasetId: number;
 	datasetTitle: string;
@@ -34,7 +52,7 @@ export interface CurationEntryModel {
 	notes: CurationNoteModel[];
 	creationDate: string;
 	creatorId: number;
-	userlsDone: boolean;
+	userIsDone: boolean;
 	isApproved: boolean;
 	lastChangeDatetime_User: string;
 	lastChangeDatetime_Curator: string;
@@ -130,3 +148,40 @@ export type CurationLabel = {
 	name: string;
 	color: string;
 };
+
+// Curation Status (for full curation not for entries)
+export enum CurationStatus {
+	Check = 0,
+	Back = 1,
+	Changes = 2,
+	Finished = 3
+}
+
+export const CurationStatusLabels = [
+	{ name: 'check', bgColor: '#D55E00', fontColor: 'white' },
+	{ name: 'back-to-author', bgColor: '#56B4E9', fontColor: 'white' },
+	{ name: 'changes', bgColor: '#CC79A7', fontColor: 'white' },
+	{ name: 'finished', bgColor: '#004D40', fontColor: 'white' }
+];
+
+export function getCurationStatusFromBoolean(
+	userIsDone: boolean,
+	isApproved: boolean
+): CurationStatus {
+	if (userIsDone && isApproved) return 3;
+	if (userIsDone && !isApproved) return 2;
+	if (!userIsDone && isApproved) return 1;
+	return 0;
+}
+
+export function getBooleanFromCurationStatus(statusIndex: CurationStatus) {
+	if (statusIndex === 0) {
+		return { userIsDone: false, isApproved: false };
+	} else if (statusIndex === 1) {
+		return { userIsDone: false, isApproved: true };
+	} else if (statusIndex === 2) {
+		return { userIsDone: true, isApproved: false };
+	} else if (statusIndex === 3) {
+		return { userIsDone: true, isApproved: true };
+	}
+}

@@ -1,9 +1,11 @@
 import { derived, writable, type Readable } from 'svelte/store';
-import { getCurationDataset, postCurationEntry, putCurationEntry } from './services';
+import { get, getCurationDataset, postCurationEntry, putCurationEntry } from './services';
 import {
 	CurationEntryStatus,
 	CurationEntryStatusColorPalettes,
 	CurationEntryType,
+	type CurationDetailModel,
+	type CurationLabel,
 	type FilterModel
 } from './types';
 import { CurationClass, CurationEntryClass } from './CurationEntries';
@@ -155,13 +157,13 @@ class CurationStore {
 
 	public setStatusBoolean(
 		entryId: number,
-		newUserlsDone: boolean,
+		newuserIsDone: boolean,
 		newIsApproved: boolean,
 		debounce = true
 	) {
 		this.applyAndSaveEntry(
 			entryId,
-			(entry) => entry.setStatusBoolean(newUserlsDone, newIsApproved),
+			(entry) => entry.setStatusBoolean(newuserIsDone, newIsApproved),
 			debounce
 		);
 	}
@@ -379,4 +381,38 @@ class CurationStore {
 	}
 }
 
+class OverviewStore {
+	private readonly _curationDetails = writable<CurationDetailModel[]>([]);
+	public get curationDetails(): Readable<CurationDetailModel[]> {
+		return this._curationDetails;
+	}
+	private readonly _curationLabels = writable<CurationLabel[]>([]);
+	public get curationLabels(): Readable<CurationLabel[]> {
+		return this._curationLabels;
+	}
+	private readonly _isLoading = writable<boolean>(true);
+	public get isLoading(): Readable<boolean> {
+		return this._isLoading;
+	}
+	private readonly _errorMessage = writable<string | undefined>();
+	public get errorMessage(): Readable<string | undefined> {
+		return this._errorMessage;
+	}
+
+	public fetch() {
+		get()
+			.then((response) => {
+				this._curationDetails.set(response.datasets);
+				this._curationLabels.set(response.curationLabels);
+				this._isLoading.set(false);
+			})
+			.catch((error) => {
+				this._errorMessage.set(error.message);
+				console.error('🎈 ~ Error fetching curation dataset:', error);
+				this._isLoading.set(false);
+			});
+	}
+}
+
 export const curationStore = new CurationStore();
+export const overviewStore = new OverviewStore();

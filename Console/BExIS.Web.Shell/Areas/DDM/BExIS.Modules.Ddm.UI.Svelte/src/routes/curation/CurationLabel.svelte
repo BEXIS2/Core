@@ -1,8 +1,17 @@
 <script lang="ts">
 	import { faAngleDown, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
-	import type { CurationEntryClass, CurationNoteClass } from './CurationEntries';
-	import { CurationEntryType } from './types';
+	import {
+		getContrastColor,
+		type CurationEntryClass,
+		type CurationNoteClass
+	} from './CurationEntries';
+	import {
+		CurationEntryType,
+		CurationStatusLabels,
+		getBooleanFromCurationStatus,
+		getCurationStatusFromBoolean
+	} from './types';
 	import { curationStore } from './stores';
 	import { writable } from 'svelte/store';
 
@@ -14,35 +23,16 @@
 		throw new Error('Invalid CurationStatusEntry provided');
 	}
 
-	const statusLabels = [
-		{ name: 'check', bgColor: '#D55E00', fontColor: 'white' },
-		{ name: 'back-to-author', bgColor: '#56B4E9', fontColor: 'white' },
-		{ name: 'changes', bgColor: '#CC79A7', fontColor: 'white' },
-		{ name: 'finished', bgColor: '#004D40', fontColor: 'white' }
-	];
-
-	function getStatus(userlsDone: boolean, isApproved: boolean) {
-		if (userlsDone && isApproved) return 3;
-		if (userlsDone && !isApproved) return 2;
-		if (!userlsDone && isApproved) return 1;
-		return 0;
-	}
-
 	function setStatus(statusIndex: number) {
-		if (statusIndex < 0 || statusIndex > 3) return;
-
-		if (statusIndex === 0) {
-			curationStore.setStatusBoolean(curationStatusEntry.id, false, false, false);
-		} else if (statusIndex === 1) {
-			curationStore.setStatusBoolean(curationStatusEntry.id, false, true, false);
-		} else if (statusIndex === 2) {
-			curationStore.setStatusBoolean(curationStatusEntry.id, true, false, false);
-		} else {
-			curationStore.setStatusBoolean(curationStatusEntry.id, true, true, false);
-		}
+		const cs = getBooleanFromCurationStatus(statusIndex);
+		if (!cs) return;
+		curationStore.setStatusBoolean(curationStatusEntry.id, cs.userIsDone, cs.isApproved, false);
 	}
 
-	let statusIndex = getStatus(curationStatusEntry.userlsDone, curationStatusEntry.isApproved);
+	let statusIndex = getCurationStatusFromBoolean(
+		curationStatusEntry.userIsDone,
+		curationStatusEntry.isApproved
+	);
 
 	const statusChange = () => {
 		setStatus(statusIndex);
@@ -65,7 +55,7 @@
 			.match(/\s#[0-9a-fA-F]+$/)
 			?.toString()
 			.slice(1, 8);
-		noteTextColor = noteLabelColor ? getContrastColor(noteLabelColor) : '#ffffff';
+		noteTextColor = getContrastColor(noteLabelColor);
 	}
 
 	const deleteLabel = () => {
@@ -80,35 +70,14 @@
 		curationStore.addNote(curationStatusEntry.id, `${label.name} ${label.color}`);
 		currentLabel.set(undefined);
 	});
-
-	// -------------------- Copilot with GPT-4.1 --------------------
-	function getContrastColor(hex: string) {
-		// Remove hash if present
-		hex = hex.replace('#', '');
-		// Expand shorthand form (e.g. "03F") to full form ("0033FF")
-		if (hex.length === 3) {
-			hex = hex
-				.split('')
-				.map((x) => x + x)
-				.join('');
-		}
-		const r = parseInt(hex.substring(0, 2), 16);
-		const g = parseInt(hex.substring(2, 4), 16);
-		const b = parseInt(hex.substring(4, 6), 16);
-		// Calculate luminance
-		const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
-		return luminance > 186 ? '#000000' : '#ffffff';
-	}
-	// --------------------------------------------------------------
 </script>
 
 {#if !labelNote && !remainingLabels}
 	<div>
 		<div
 			class="relative rounded-full bg-primary-500"
-			style="background-color: {statusLabels[statusIndex].bgColor}; color: {statusLabels[
-				statusIndex
-			].fontColor};"
+			style="background-color: {CurationStatusLabels[statusIndex]
+				.bgColor}; color: {CurationStatusLabels[statusIndex].fontColor};"
 		>
 			<select
 				class="size-full cursor-pointer rounded-full border-none bg-transparent bg-none py-0.5 text-center font-semibold focus-visible:ring-2 focus-visible:ring-black"
@@ -116,7 +85,7 @@
 				bind:value={statusIndex}
 				on:change={statusChange}
 			>
-				{#each statusLabels as sl, index}
+				{#each CurationStatusLabels as sl, index}
 					<option class="bg-white text-surface-900" value={index}>{sl.name}</option>
 				{/each}
 			</select>

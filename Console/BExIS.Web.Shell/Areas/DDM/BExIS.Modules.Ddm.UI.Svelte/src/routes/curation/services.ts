@@ -1,29 +1,28 @@
-import type { CurationEntryModel, CurationModel } from './types';
+import type { CurationEntryModel, CurationModel, CurationsOverviewModel } from './types';
 import { Api } from '@bexis2/bexis2-core-ui';
 
 /**
- * Translate first letter of the keys to lowercase
+ * Translate first letter of the keys to lowercase.
+ * This may not be needed if the backend returns the keys as lowerCase
  *
  * @param response - response object (could be an array or an object)
  * @returns - new object with first letter of the keys in lowercase
  */
-const firstLetterToLowerCase = (response: any) => {
-	const newEntry: any = {};
-	for (const key in response) {
-		newEntry[key.charAt(0).toLowerCase() + key.slice(1)] = response[key];
-		if (response[key] && typeof response[key] === 'object') {
-			if (Array.isArray(response[key])) {
-				newEntry[key.charAt(0).toLowerCase() + key.slice(1)] = response[key].map(
-					firstLetterToLowerCase as any
-				);
-			} else {
-				newEntry[key.charAt(0).toLowerCase() + key.slice(1)] = firstLetterToLowerCase(
-					response[key]
-				);
-			}
+const firstLetterToLowerCase: (response: any) => any = (response: any) => {
+	if (Array.isArray(response)) {
+		// Only process array elements if they are objects (not strings, numbers, etc.)
+		return response.map((item) =>
+			typeof item === 'object' && item !== null ? firstLetterToLowerCase(item) : item
+		);
+	} else if (response && typeof response === 'object') {
+		const newEntry: any = {};
+		for (const key in response) {
+			const newKey = key.charAt(0).toLowerCase() + key.slice(1);
+			newEntry[newKey] = firstLetterToLowerCase(response[key]);
 		}
+		return newEntry;
 	}
-	return newEntry;
+	return response;
 };
 
 export const get = async () => {
@@ -32,9 +31,9 @@ export const get = async () => {
 
 		console.log('🎈 ~ GET ~ response:', response);
 
-		response.data = response.data.map(firstLetterToLowerCase);
+		response.data = firstLetterToLowerCase(response.data);
 
-		return response.data as CurationEntryModel[];
+		return response.data as CurationsOverviewModel;
 	} catch (error) {
 		console.error(error);
 		throw error;

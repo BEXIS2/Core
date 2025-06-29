@@ -365,7 +365,7 @@ export class CurationEntryClass implements CurationEntryModel {
 	public readonly notes: CurationNoteClass[];
 	public readonly creationDate: string;
 	public readonly creatorId: number;
-	public readonly userlsDone: boolean;
+	public readonly userIsDone: boolean;
 	public readonly isApproved: boolean;
 	public readonly lastChangeDatetime_User: string;
 	public readonly lastChangeDatetime_Curator: string;
@@ -396,7 +396,7 @@ export class CurationEntryClass implements CurationEntryModel {
 			.sort((a, b) => a.creationDateObj.getTime() - b.creationDateObj.getTime());
 		this.creationDate = curationEntry.creationDate || 'None';
 		this.creatorId = curationEntry.creatorId || 0;
-		this.userlsDone = curationEntry.userlsDone || false;
+		this.userIsDone = curationEntry.userIsDone || false;
 		this.isApproved = curationEntry.isApproved || false;
 		this.lastChangeDatetime_User = curationEntry.lastChangeDatetime_User || 'None';
 		this.lastChangeDatetime_Curator = curationEntry.lastChangeDatetime_Curator || 'None';
@@ -546,22 +546,22 @@ export class CurationEntryClass implements CurationEntryModel {
 		return this.addNote(commandComment, false);
 	}
 
-	public static getStatus(userlsDone: boolean, isApproved: boolean): CurationEntryStatus {
-		if (userlsDone && !isApproved) return CurationEntryStatus.Fixed;
-		if (!userlsDone && isApproved) return CurationEntryStatus.Ok;
-		if (userlsDone && isApproved) return CurationEntryStatus.Closed;
+	public static getStatus(userIsDone: boolean, isApproved: boolean): CurationEntryStatus {
+		if (userIsDone && !isApproved) return CurationEntryStatus.Fixed;
+		if (!userIsDone && isApproved) return CurationEntryStatus.Ok;
+		if (userIsDone && isApproved) return CurationEntryStatus.Closed;
 		return CurationEntryStatus.Open;
 	}
 
 	private _getStatus(): CurationEntryStatus {
-		return CurationEntryClass.getStatus(this.userlsDone, this.isApproved);
+		return CurationEntryClass.getStatus(this.userIsDone, this.isApproved);
 	}
 
-	public setStatusBoolean(newUserlsDone: boolean, newIsApproved: boolean): CurationEntryClass {
+	public setStatusBoolean(newuserIsDone: boolean, newIsApproved: boolean): CurationEntryClass {
 		return new CurationEntryClass(
 			{
 				...this,
-				userlsDone: newUserlsDone,
+				userIsDone: newuserIsDone,
 				isApproved: newIsApproved
 			},
 			this.currentUserType
@@ -611,7 +611,7 @@ export class CurationEntryClass implements CurationEntryModel {
 
 	public getNextStatus(): CurationEntryStatus {
 		if (this.currentUserType === CurationUserType.User)
-			return CurationEntryClass.getStatus(!this.userlsDone, false);
+			return CurationEntryClass.getStatus(!this.userIsDone, false);
 		if (this.currentUserType === CurationUserType.Curator) {
 			if (this.status === CurationEntryStatus.Ok) return CurationEntryStatus.Closed;
 			if (this.status === CurationEntryStatus.Closed) return CurationEntryStatus.Open;
@@ -647,7 +647,7 @@ export class CurationEntryClass implements CurationEntryModel {
 				notes: [],
 				creationDate: new Date().toISOString(),
 				creatorId: fixedCurationUserId,
-				userlsDone: false,
+				userIsDone: false,
 				isApproved: false,
 				lastChangeDatetime_User: new Date().toISOString(),
 				lastChangeDatetime_Curator: new Date().toISOString()
@@ -668,3 +668,24 @@ export class CurationEntryClass implements CurationEntryModel {
 		return !this.isHidden() && !this.isDraft() && this.type !== CurationEntryType.StatusEntryItem;
 	}
 }
+
+// -------------------- Copilot with GPT-4.1 --------------------
+export function getContrastColor(hex: string | undefined) {
+	if (!hex) return '#000000';
+	// Remove hash if present
+	hex = hex.replace('#', '');
+	// Expand shorthand form (e.g. "03F") to full form ("0033FF")
+	if (hex.length === 3) {
+		hex = hex
+			.split('')
+			.map((x) => x + x)
+			.join('');
+	}
+	const r = parseInt(hex.substring(0, 2), 16);
+	const g = parseInt(hex.substring(2, 4), 16);
+	const b = parseInt(hex.substring(4, 6), 16);
+	// Calculate luminance
+	const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+	return luminance > 186 ? '#000000' : '#ffffff';
+}
+// --------------------------------------------------------------
