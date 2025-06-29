@@ -21,7 +21,10 @@ export interface CurationDetailModel {
 	isApproved: boolean;
 	lastChangeDatetime_Curator: string;
 	lastChangeDatetime_User: string;
-	statusCounts: number[];
+	count_UserIsDone_True_IsApproved_True: number;
+	count_UserIsDone_True_IsApproved_False: number;
+	count_UserIsDone_False_IsApproved_True: number;
+	count_UserIsDone_False_IsApproved_False: number;
 }
 
 export interface CurationModel {

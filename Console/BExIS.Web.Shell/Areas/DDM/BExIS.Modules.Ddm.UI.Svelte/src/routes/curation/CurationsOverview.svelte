@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
-	import { Table, type TableConfig } from '@bexis2/bexis2-core-ui';
+	import { Spinner, Table, type TableConfig } from '@bexis2/bexis2-core-ui';
 	import TableLabelFilter from './TableLabelFilter.svelte';
 	import { overviewStore } from './stores';
 	import TableLabelCell from './TableLabelCell.svelte';
@@ -13,8 +13,9 @@
 	import TableOptions from './TableOptions.svelte';
 	import { goto } from '$app/navigation';
 	import { noteCommentToLabel } from './CurationEntries';
+	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
 
-	const { curationDetails, curationLabels, isLoading, errorMessage } = overviewStore;
+	const { curationDetails, isLoading, errorMessage } = overviewStore;
 
 	overviewStore.fetch();
 
@@ -31,8 +32,8 @@
 		labels: string[];
 		curationEntryCount: number;
 		progress_0: number; // Open Entries
-		progress_2: number; // Changed Entries
-		progress_1: number; // Paused Entries
+		progress_1: number; // Changed Entries
+		progress_2: number; // Paused Entries
 		progress_3: number; // Approved Entries
 		lastChangeDatetime_User: Date;
 		lastChangeDatetime_Curator: Date;
@@ -51,11 +52,15 @@
 					isApproved: c.isApproved
 				},
 				labels: c.notesComments,
-				curationEntryCount: c.statusCounts?.reduce((sum, val) => sum + val, 0) || 0,
-				progress_0: c.statusCounts?.at(0) || 0,
-				progress_2: c.statusCounts?.at(2) || 0,
-				progress_1: c.statusCounts?.at(1) || 0,
-				progress_3: c.statusCounts?.at(3) || 0,
+				curationEntryCount:
+					c.count_UserIsDone_False_IsApproved_False +
+					c.count_UserIsDone_False_IsApproved_True +
+					c.count_UserIsDone_True_IsApproved_False +
+					c.count_UserIsDone_True_IsApproved_True,
+				progress_0: c.count_UserIsDone_False_IsApproved_False, // Open Entries
+				progress_1: c.count_UserIsDone_True_IsApproved_False, // Changed Entries
+				progress_2: c.count_UserIsDone_False_IsApproved_True, // Paused Entries
+				progress_3: c.count_UserIsDone_True_IsApproved_True, // Approved Entries
 				lastChangeDatetime_User: new Date(c.lastChangeDatetime_User || 0),
 				lastChangeDatetime_Curator: new Date(c.lastChangeDatetime_Curator || 0)
 			}))
@@ -104,12 +109,12 @@
 				// Open Entries
 				header: `${CurationEntryStatusDetails[0].name} Entries`
 			},
-			progress_2: {
-				// Changed Entries
-				header: `${CurationEntryStatusDetails[1].name} Entries`
-			},
 			progress_1: {
 				// Paused Entries
+				header: `${CurationEntryStatusDetails[1].name} Entries`
+			},
+			progress_2: {
+				// Changed Entries
 				header: `${CurationEntryStatusDetails[2].name} Entries`
 			},
 			progress_3: {
@@ -161,4 +166,16 @@
 
 <h1>Curations Overview</h1>
 
-<Table config={curationsConfig} on:action={(obj) => openCuration(obj.detail.datasetId)} />
+{#if !$errorMessage || $isLoading}
+	<div class="relative">
+		<Table config={curationsConfig} on:action={(obj) => openCuration(obj.detail.datasetId)} />
+
+		{#if $isLoading}
+			<SpinnerOverlay label="Loading Curation Overview" />
+		{/if}
+	</div>
+{:else}
+	<div>
+		<p class="text-red-500">Error loading curation entries</p>
+	</div>
+{/if}

@@ -400,6 +400,10 @@ class OverviewStore {
 	}
 
 	public fetch() {
+		this._curationDetails.set([]);
+		this._curationLabels.set([]);
+		this._isLoading.set(true);
+		this._errorMessage.set(undefined);
 		get()
 			.then((response) => {
 				this._curationDetails.set(response.datasets);
