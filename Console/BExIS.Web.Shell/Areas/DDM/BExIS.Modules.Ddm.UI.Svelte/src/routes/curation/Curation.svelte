@@ -136,13 +136,13 @@
 			</label>
 		</div>
 		<!-- Progress -->
-		{#if $curation.curationEntries.length > 0}
+		{#if $curation.curationEntries.length > 1}
 			<div class="border-b border-surface-500">
 				<!-- Curation Progress -->
 				<CurationProgressInfo
 					progress={$curation?.curationProgressTotal}
 					totalIssues={$curation?.curationProgressTotal.reduce((a, b) => a + b, 0)}
-					label="Curation Progress Test"
+					label="Curation Progress"
 				/>
 				<!-- Spinner overlay -->
 				{#if $uploadingEntries.length > 0}
@@ -180,11 +180,15 @@
 		</div>
 		<!-- Curation Entries -->
 		<div class="py-2">
-			{#if $filteredEntries.length === 0}
+			{#if !$editMode && ($filteredEntries.length === 0 || $curation.curationEntries.length <= 1)}
 				<div class="flex h-64 w-full items-center justify-center">
 					<span class="m-auto text-surface-700">
 						<Fa icon={faBan} class="inline-block" />
-						No entries match your applied filters
+						{#if $curation.curationEntries.length <= 1}
+							There are no entries to show for this dataset
+						{:else}
+							No entries match your applied filters
+						{/if}
 					</span>
 				</div>
 			{/if}
@@ -193,7 +197,7 @@
 					<h2 class="m-2 mt-3 text-xl font-semibold">{CurationEntryTypeNames[index]}</h2>
 					<ul class="flex flex-col gap-2 p-2">
 						<AddCurationEntry
-							position={entryTypeGroup.at(0)?.at(0)?.position ?? 1}
+							position={entryTypeGroup.at(0)?.at(0)?.position ?? 2}
 							type={index}
 							tag="li"
 						/>
@@ -210,6 +214,11 @@
 					{CurationEntryTypeNames[CurationEntryType.None]} (Hidden)
 				</h2>
 				<ul class="flex flex-col gap-2 p-2">
+					<AddCurationEntry
+						position={$groupedFilteredEntries[CurationEntryType.None].at(0)?.at(0)?.position ?? 2}
+						type={CurationEntryType.None}
+						tag="li"
+					/>
 					{#each $groupedFilteredEntries[CurationEntryType.None] as hiddenGroup (hiddenGroup[0].id)}
 						<CurationGroupCard entries={hiddenGroup} />
 					{/each}
