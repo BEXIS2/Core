@@ -669,6 +669,16 @@ export class CurationEntryClass implements CurationEntryModel {
 	}
 }
 
+export function noteCommentToLabel(noteComment: string) {
+	return {
+		name: /^\S*\s/.exec(noteComment)?.toString().trim(),
+		color: RegExp(/\s#[0-9a-fA-F]+$/)
+			.exec(noteComment)
+			?.toString()
+			.slice(1, 8)
+	} as CurationLabel;
+}
+
 // -------------------- Copilot with GPT-4.1 --------------------
 export function getContrastColor(hex: string | undefined) {
 	if (!hex) return '#000000';

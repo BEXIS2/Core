@@ -2,8 +2,9 @@
 	import { faFilter } from '@fortawesome/free-solid-svg-icons';
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	import Fa from 'svelte-fa';
-	import { writable, type Readable, type Writable } from 'svelte/store';
+	import { derived, writable, type Readable, type Writable } from 'svelte/store';
 	import { overviewStore } from './stores';
+	import { getContrastColor } from './CurationEntries';
 
 	export let id: string;
 	export let tableId: string;
@@ -24,10 +25,10 @@
 
 	const { curationLabels } = overviewStore;
 
-	const filter = writable<string | undefined>(undefined);
+	const filter = writable<Set<string> | undefined>(undefined);
 
 	filter.subscribe((f) => {
-		filterValue.set({ c: f });
+		filterValue.set({ i: f });
 	});
 
 	const popupId = `${tableId}-${id}`;
@@ -35,13 +36,26 @@
 	const popupFeatured: PopupSettings = {
 		event: 'click',
 		target: popupId,
-		placement: 'bottom-start'
+		placement: 'bottom-end'
+	};
+
+	function toggleLabelFilter(name: string) {
+		filter.update((f) => {
+			if (!f) f = new Set();
+			if (f.has(name)) f.delete(name);
+			else f.add(name);
+			return f;
+		});
+	}
+
+	const clearFilter = () => {
+		filter.set(undefined);
 	};
 </script>
 
 <div id="parent-{popupId}">
 	<button
-		class:variant-filled-primary={$filter !== undefined}
+		class:variant-filled-primary={$filter !== undefined && $filter.size > 0}
 		class="btn w-max p-2 text-xs"
 		type="button"
 		use:popup={popupFeatured}
@@ -50,21 +64,48 @@
 	>
 		<Fa icon={faFilter} />
 	</button>
-	<div data-popup={popupId} id={popupId} class="z-50">
-		<div class="bg-base-100 card max-w-64 p-3 shadow-lg">
+	<div data-popup={popupId} id={popupId} class="z-50 font-normal">
+		<div class="bg-base-100 card grid max-w-64 gap-2 p-3 shadow-lg">
+			<button
+				class="variant-filled-primary btn btn-sm"
+				type="button"
+				title="Clear filters"
+				on:click|preventDefault={clearFilter}>Clear Filters</button
+			>
+
 			<label class="label flex flex-col text-sm normal-case">
-				<span>Only show datasets with label:</span>
-				<select
-					bind:value={$filter}
-					class="select border border-primary-500 p-1 text-sm"
-					title="Pick curation status to show"
-				>
-					<option value={undefined}>All</option>
+				<span>Only show datasets with labels:</span>
+				<div class="label-container flex flex-wrap justify-around gap-1 rounded p-1">
 					{#each $curationLabels as label}
-						<option value={label.name}>{label.name}</option>
+						<label
+							class="cursor-pointer rounded-full bg-surface-300 px-2 py-0.5 transition-opacity"
+							style="background-color: {label.color}; color: {getContrastColor(label.color)};"
+						>
+							<input
+								class="pointer-events-none absolute opacity-0"
+								type="checkbox"
+								title="Hide/Show '{label.name}' entries"
+								checked={$filter?.has(label.name)}
+								on:click={() => toggleLabelFilter(label.name)}
+							/>
+							<span>{label.name}</span>
+						</label>
 					{/each}
-				</select>
+				</div>
 			</label>
+			<span class="text-center text-xs normal-case text-surface-600">
+				Click on the labels to toggle them
+			</span>
 		</div>
 	</div>
 </div>
+
+<style lang="postcss">
+	.label-container label:has(:focus-visible) {
+		@apply shadow-sm ring-4 ring-blue-500;
+	}
+
+	.label-container:has(input:checked) label:not(:has(input:checked)) {
+		@apply opacity-25;
+	}
+</style>

@@ -12,6 +12,7 @@
 	import TableStatusFilter from './TableStatusFilter.svelte';
 	import TableOptions from './TableOptions.svelte';
 	import { goto } from '$app/navigation';
+	import { noteCommentToLabel } from './CurationEntries';
 
 	const { curationDetails, curationLabels, isLoading, errorMessage } = overviewStore;
 
@@ -29,10 +30,10 @@
 		curationStatus: CurationStatus;
 		labels: string[];
 		curationEntryCount: number;
-		progress_0: number;
-		progress_2: number;
-		progress_1: number;
-		progress_3: number;
+		progress_0: number; // Open Entries
+		progress_2: number; // Changed Entries
+		progress_1: number; // Paused Entries
+		progress_3: number; // Approved Entries
 		lastChangeDatetime_User: Date;
 		lastChangeDatetime_Curator: Date;
 	};
@@ -64,39 +65,55 @@
 	const curationsConfig: TableConfig<tableDetails> = {
 		id: 'curationsOverview',
 		data: curationDetailsPartial,
-		toggle: true,
+		search: false,
+		toggle: false,
+		showColumnsMenu: true,
 		optionsComponent: TableOptions as any,
 		columns: {
 			curationStatus: {
 				instructions: {
 					toFilterableValueFn: (s: CurationStatus) =>
-						s.curationStarted ? getCurationStatusFromBoolean(s.userIsDone, s.isApproved) + 2 : 1,
+						// not started equals -1
+						s.curationStarted ? getCurationStatusFromBoolean(s.userIsDone, s.isApproved) : -1,
 					renderComponent: TableLabelCell as any
 				},
 				disableSorting: true,
+				colFilterFn: (f: { filterValue: any | undefined; value: Set<number> }) => {
+					if (!f.filterValue.i || f.filterValue.i.size === 0) return true;
+					return f.filterValue.i.has(f.value);
+				},
 				colFilterComponent: TableStatusFilter as any
 			},
 			labels: {
 				instructions: {
-					toFilterableValueFn: (l: string[]) => l.join(' '),
+					toFilterableValueFn: (l: string[]) =>
+						new Set(l.map((a) => noteCommentToLabel(a).name)) as any,
 					renderComponent: TableLabelCell as any
 				},
 				disableSorting: true,
+				colFilterFn: (f: { filterValue: any | undefined; value: Set<string> }) => {
+					if (!f.filterValue.i || f.filterValue.i.size === 0) return true;
+					return f.filterValue.i.intersection(f.value).size > 0;
+				},
 				colFilterComponent: TableLabelFilter as any
 			},
 			curationEntryCount: {
 				header: 'All Entries'
 			},
 			progress_0: {
+				// Open Entries
 				header: `${CurationEntryStatusDetails[0].name} Entries`
 			},
 			progress_2: {
+				// Changed Entries
 				header: `${CurationEntryStatusDetails[1].name} Entries`
 			},
 			progress_1: {
+				// Paused Entries
 				header: `${CurationEntryStatusDetails[2].name} Entries`
 			},
 			progress_3: {
+				// Approved Entries
 				header: `${CurationEntryStatusDetails[3].name} Entries`
 			},
 			lastChangeDatetime_User: {
