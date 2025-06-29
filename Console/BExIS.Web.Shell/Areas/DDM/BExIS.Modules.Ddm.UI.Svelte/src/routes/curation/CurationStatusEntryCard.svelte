@@ -76,27 +76,25 @@
 
 	let highlightOpen: string | undefined = undefined;
 
-	const labelSelectContent = [
-		// need to be included in the first fetch of curation entries
-		{ name: 'custom-1', color: '#03fcad' },
-		{ name: 'custom-2', color: '#03a5fc' },
-		{ name: 'doi::custom-3', color: '#034afc' }
-	];
+	const labelSelectContent = derived(curation, (c) => c?.curationLabels || []);
 
-	$: remainingLabels = Array.from(
-		new Set(labelSelectContent.map((l) => l.name)).difference(
-			new Set(
-				curationStatusEntry.visibleNotes.map((n) =>
-					n.comment
-						.match(/^\S*\s/)
-						?.toString()
-						.trim()
+	const remainingLabels = derived([labelSelectContent, curation], ([labels, c]) => {
+		if (!labels || !c) return [];
+		return Array.from(
+			new Set(labels.map((l) => l.name)).difference(
+				new Set(
+					curationStatusEntry.visibleNotes.map((n) =>
+						n.comment
+							.match(/^\S*\s/)
+							?.toString()
+							.trim()
+					)
 				)
 			)
 		)
-	)
-		.toSorted((a, b) => a.localeCompare(b))
-		.map((name) => labelSelectContent.find((l) => l.name === name)!);
+			.toSorted((a, b) => a.localeCompare(b))
+			.map((name) => labels.find((l) => l.name === name)!);
+	});
 </script>
 
 <!-- Status and Badges -->
@@ -109,10 +107,12 @@
 			<CurationLabel {curationStatusEntry} {labelNote} />
 		{/each}
 		<!-- Custom Label Creation -->
-		<CurationLabel {curationStatusEntry} {remainingLabels} />
-		<div class="flex grow items-center justify-center px-1 py-0.5 text-xs text-surface-600">
-			<span>Click on a label to remove it</span>
-		</div>
+		<CurationLabel {curationStatusEntry} remainingLabels={$remainingLabels} />
+		{#if curationStatusEntry.visibleNotes.length > 0}
+			<div class="flex grow items-center justify-center px-1 py-0.5 text-xs text-surface-600">
+				<span>Click on a label to remove it</span>
+			</div>
+		{/if}
 
 		<!-- Spinner overlay -->
 		{#if $isUploadingStatus}

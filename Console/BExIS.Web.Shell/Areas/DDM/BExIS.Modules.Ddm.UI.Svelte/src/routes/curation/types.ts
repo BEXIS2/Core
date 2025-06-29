@@ -12,6 +12,7 @@ export interface CurationModel {
 	datasetVersionDate: string;
 	curationEntries: CurationEntryModel[];
 	curationUsers: CurationUserModel[];
+	curationLabels: CurationLabel[];
 }
 
 export interface CurationUserModel {
@@ -123,4 +124,9 @@ export type FilterModel<TData> = {
 	data: TData;
 	fn: (entry: CurationEntryClass, data: TData) => boolean;
 	isClearedFn: (data: TData) => boolean;
+};
+
+export type CurationLabel = {
+	name: string;
+	color: string;
 };

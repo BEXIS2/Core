@@ -5,6 +5,7 @@ import {
 	CurationEntryTypeNames,
 	CurationUserType,
 	type CurationEntryModel,
+	type CurationLabel,
 	type CurationModel,
 	type CurationNoteModel,
 	type CurationUserModel
@@ -21,6 +22,7 @@ export class CurationClass {
 	public readonly curationStatusEntry: CurationEntryClass | null = null;
 	public readonly visiblecurationEntries: CurationEntryClass[];
 	public readonly curationUsers: CurationUserClass[];
+	public readonly curationLabels: CurationLabel[];
 
 	// Additional properties
 	public readonly userMap: Map<number, CurationUserModel>;
@@ -64,6 +66,8 @@ export class CurationClass {
 		this.curationStatusEntry =
 			this.curationEntries.find((entry) => entry.type === CurationEntryType.StatusEntryItem) ||
 			null;
+
+		this.curationLabels = curation.curationLabels || [];
 
 		// Additional properties
 		this.datasetVersionDateObj = new Date(curation.datasetVersionDate);
