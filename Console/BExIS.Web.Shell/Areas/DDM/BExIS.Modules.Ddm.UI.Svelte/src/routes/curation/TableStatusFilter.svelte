@@ -3,8 +3,7 @@
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	import Fa from 'svelte-fa';
 	import { writable, type Readable, type Writable } from 'svelte/store';
-	import { overviewStore } from './stores';
-	import { CurationStatus, CurationStatusLabels } from './types';
+	import { CurationStatusLabels } from './types';
 
 	export let id: string;
 	export let tableId: string;
@@ -53,7 +52,7 @@
 
 <div id="parent-{popupId}">
 	<button
-		class:variant-filled-primary={$filter !== undefined}
+		class:variant-filled-primary={$filter !== undefined && $filter?.size > 0}
 		class="btn w-max p-2 text-xs"
 		type="button"
 		use:popup={popupFeatured}
