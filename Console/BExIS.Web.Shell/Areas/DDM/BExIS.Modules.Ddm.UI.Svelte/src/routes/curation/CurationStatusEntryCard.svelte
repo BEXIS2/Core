@@ -95,6 +95,21 @@
 			.toSorted((a, b) => a.localeCompare(b))
 			.map((name) => labels.find((l) => l.name === name)!);
 	});
+
+	const taskInfoString = derived(curation, (c) => {
+		const taskString = c?.curationStatusEntry?.description || '';
+		let open = 0;
+		let closed = 0;
+		for (const match of taskString.matchAll(/(^|\n)\s*[-\*]?\s*\[( ?|x|X)\]/g)) {
+			if (match[2] === ' ' || match[2] === '') open++;
+			else closed++;
+		}
+		if (open === 0) {
+			if (closed === 0) return 'None';
+			else return 'Done';
+		}
+		return `(${closed} von ${closed + open})`;
+	});
 </script>
 
 <!-- Status and Badges -->
@@ -155,6 +170,7 @@
 				/>
 				<Fa icon={faListCheck} class="inline-block" />
 				<span class="font-semibold">Curation Tasks</span>
+				<span class="text-sm text-surface-700">{$taskInfoString}</span>
 			</label>
 			<label
 				title="Hide Tabs"

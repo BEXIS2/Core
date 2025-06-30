@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
+	import { type Writable, writable } from 'svelte/store';
 	import type { CurationEntryClass } from './CurationEntries';
 	import TaskLine from './TaskLine.svelte';
 	import { CurationEntryType } from './types';
@@ -44,24 +44,15 @@
 			if (helper.indentation < minIndentation + 2) {
 				// first level of indentation
 				const last = taskContent.at(-1);
-				if (Array.isArray(last)) {
-					// this check is only necessary to make the compiler happy
-					last.push(helper.trimmedLine.slice(1).trim());
-				}
+				Array.isArray(last) && last.push(helper.trimmedLine.slice(1).trim());
 			} else {
 				// second level of indentation
 				if (taskContent.at(-1)!.length === 0 || typeof taskContent.at(-1)!.at(-1) === 'string') {
 					const last = taskContent.at(-1);
-					if (Array.isArray(last)) {
-						// this check is only necessary to make the compiler happy
-						last.push([]);
-					}
+					Array.isArray(last) && last.push([]);
 				}
 				const last = taskContent.at(-1)!.at(-1);
-				if (Array.isArray(last)) {
-					// this check is only necessary to make the compiler happy
-					last.push(helper.trimmedLine.slice(1).trim());
-				}
+				Array.isArray(last) && last.push(helper.trimmedLine.slice(1).trim());
 			}
 		}
 	}
