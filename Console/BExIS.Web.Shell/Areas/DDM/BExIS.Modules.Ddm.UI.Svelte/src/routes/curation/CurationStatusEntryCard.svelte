@@ -140,11 +140,11 @@
 	{#if $curation?.currentUserType === CurationUserType.Curator}
 		<!-- Tabs -->
 		<div
-			class="tab-switch relative flex items-center gap-1 rounded border border-surface-300 bg-surface-200 p-0.5"
+			class="tab-switch relative flex items-stretch gap-1 rounded border border-surface-300 bg-surface-200 p-0.5"
 		>
 			<label
 				title="Introduction tab"
-				class="grow cursor-pointer rounded px-2 py-0.5 text-center text-surface-800 transition-all"
+				class="flex grow cursor-pointer flex-wrap content-center items-center justify-center gap-x-1 rounded px-2 py-0.5 text-center text-surface-800 transition-all"
 			>
 				<input
 					type="radio"
@@ -159,7 +159,7 @@
 			</label>
 			<label
 				title="Tasks tab"
-				class="grow cursor-pointer rounded px-2 py-0.5 text-center text-surface-800 transition-all"
+				class="flex grow cursor-pointer flex-wrap content-center items-center justify-center gap-x-1 rounded px-2 py-0.5 text-center text-surface-800 transition-all"
 			>
 				<input
 					type="radio"
@@ -174,7 +174,7 @@
 			</label>
 			<label
 				title="Hide Tabs"
-				class="cursor-pointer rounded px-3 py-0.5 text-center text-surface-800 transition-all"
+				class="flex cursor-pointer flex-wrap content-center items-center justify-center gap-x-1 rounded px-3 py-0.5 text-center text-surface-800 transition-all"
 			>
 				<input
 					type="radio"

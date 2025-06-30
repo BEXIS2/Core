@@ -99,7 +99,7 @@
 <div class="flex flex-wrap items-center gap-2 p-2">
 	<Fa icon={faFilter} class="inline-block" />
 	<span>Filter:</span>
-	<div class="flex items-center gap-1 rounded border border-surface-400 p-1">
+	<div class="flex flex-wrap items-center gap-1 rounded border border-surface-400 p-1">
 		<span>Status:</span>
 		{#key $statusFilter?.data.toString}
 			{#each CurationEntryStatusDetails as statusDetails, index}
@@ -118,7 +118,7 @@
 			{/each}
 		{/key}
 	</div>
-	<div class="flex items-center gap-1 rounded border border-surface-400 p-1">
+	<div class="flex flex-wrap items-center gap-1 rounded border border-surface-400 p-1">
 		<span>Type:</span>
 		<label
 			class="button-label cursor-pointer rounded border border-surface-500 bg-surface-300 px-2 py-0.5"
