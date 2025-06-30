@@ -188,3 +188,15 @@ export function getBooleanFromCurationStatus(statusIndex: CurationStatus) {
 		return { userIsDone: true, isApproved: true };
 	}
 }
+
+export type taskLine = {
+	id: string;
+	fullString: string;
+	text: string;
+	indentation: number;
+	isListItem: boolean;
+	isBold: boolean;
+	isCheckbox: boolean;
+	isChecked: boolean | undefined;
+	linkString: string | undefined;
+};

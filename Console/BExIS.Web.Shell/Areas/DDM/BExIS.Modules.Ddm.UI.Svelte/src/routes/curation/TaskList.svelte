@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { type Writable, writable } from 'svelte/store';
 	import type { CurationEntryClass } from './CurationEntries';
-	import TaskLine from './TaskLine.svelte';
-	import { CurationEntryType } from './types';
+	import { CurationEntryType, type taskLine } from './types';
 	import { curationStore } from './stores';
+	import CurationEntryTemplateTool from './CurationEntryTemplateTool.svelte';
 
 	export let curationStatusEntry: CurationEntryClass;
 	export let highlightOpen: string | undefined = undefined;
@@ -12,107 +11,102 @@
 		throw new Error('Invalid CurationStatusEntry provided');
 	}
 
-	// Split tasks into lines
-	let taskLines = curationStatusEntry.description.split('\n');
+	const idPrefix = 'task-list-entry-';
 
-	// Calculate the needed information for each line once
-	const taskLinesHelper = taskLines.map((line) => {
+	// Split tasks into lines
+	let taskLinesString = curationStatusEntry.description.split('\n');
+	let taskLines: taskLine[] = taskLinesString.map((line, index) => {
 		const trimmedLine = line.trimStart();
 		const isListItem = trimmedLine.startsWith('- ') || trimmedLine.startsWith('* ');
 		const indentation = line.length - trimmedLine.length;
-		return { trimmedLine, isListItem, indentation };
+		const isCheckbox = /^\s*(- |\* )?\s*\[[xX ]?\]/.test(line);
+		const mdLinkString = line.match(/\[*\]\(\?createEntryFromJSON=.*\)/)?.toString();
+		return {
+			id: idPrefix + index.toString(),
+			fullString: line,
+			text: line
+				.replaceAll(/^\s*(- |\* )?\s*(\[[xX ]?\])?|\*\*|__|\[.*\]\(\?createEntryFromJSON=.*\)/g, '')
+				.trim(),
+			indentation: Math.floor(indentation / 2),
+			isListItem: isListItem,
+			isBold: /\*\*.*\*\*|__.*__/.test(line),
+			isCheckbox: isCheckbox,
+			isChecked: isCheckbox ? /^\s*(- |\* )?\s*(\[[xX]\])/.test(line) : undefined,
+			linkString: mdLinkString?.match(/\?.[^)]*/)?.toString()
+		};
 	});
 
-	// find default indentation for first level (maximum is set to 4)
-	let minIndentation = 4;
-	for (const helper of taskLinesHelper) {
-		if (helper.indentation < minIndentation) minIndentation = helper.indentation;
-		if (minIndentation === 0) break;
-	}
-
-	let taskContent: (string | (string | string[])[])[] = [];
-
-	for (const helper of taskLinesHelper) {
-		if (!helper.isListItem) {
-			// normal text
-			taskContent.push(helper.trimmedLine.trim());
-		} else {
-			// is list item
-			if (taskContent.length === 0 || typeof taskContent.at(-1) === 'string') {
-				taskContent.push([]);
-			}
-			if (helper.indentation < minIndentation + 2) {
-				// first level of indentation
-				const last = taskContent.at(-1);
-				Array.isArray(last) && last.push(helper.trimmedLine.slice(1).trim());
-			} else {
-				// second level of indentation
-				if (taskContent.at(-1)!.length === 0 || typeof taskContent.at(-1)!.at(-1) === 'string') {
-					const last = taskContent.at(-1);
-					Array.isArray(last) && last.push([]);
-				}
-				const last = taskContent.at(-1)!.at(-1);
-				Array.isArray(last) && last.push(helper.trimmedLine.slice(1).trim());
-			}
-		}
-	}
-
-	const taskCheckingQueue = writable<[string, boolean][]>([]);
-
-	taskCheckingQueue.subscribe((queue) => {
-		if (queue.length === 0) return;
-		taskCheckingQueue.update((q) => {
-			if (q.length === 0) return [];
-
-			// find line and replace checkbox
-			const line = q[0][0];
-			const newLine = line.replace(/^\[[xX ]?\]/, q[0][1] ? '[X]' : '[ ]');
-			const newDescription = curationStatusEntry.description.replaceAll(line, newLine);
-
-			curationStore.setDescription(curationStatusEntry.id, newDescription, true);
-
-			return q.slice(1);
+	function toggleChecked(id: string) {
+		const newLines = taskLines.map((tl) => {
+			if (!tl.isCheckbox || tl.id !== id) return tl.fullString;
+			const isChecked = /^\s*(- |\* )?\s*(\[[xX]\])/.test(tl.fullString);
+			return tl.fullString.replace(/\[[xX ]?\]/, isChecked ? '[ ]' : '[X]');
 		});
-	});
+		const newDescription = newLines.join('\n');
+		console.log(newDescription);
+		curationStore.setDescription(curationStatusEntry.id, newDescription, true);
+	}
 </script>
 
 <p>
-	{#each taskContent as tc}
-		{#if typeof tc === 'string'}
-			<TaskLine line={tc} {taskCheckingQueue} {highlightOpen} />
-		{:else if Array.isArray(tc)}
-			<ul>
-				{#each tc as tc2}
-					<li>
-						{#if typeof tc2 === 'string'}
-							<TaskLine line={tc2} {taskCheckingQueue} {highlightOpen} />
-						{:else if Array.isArray(tc2)}
-							<ul>
-								{#each tc2 as tc3}
-									<li>
-										<TaskLine line={tc3} {taskCheckingQueue} {highlightOpen} />
-									</li>
-								{/each}
-							</ul>
+	{#each taskLines as tl}
+		{#if tl.isListItem}
+			<ul
+				class:ps-8={tl.indentation === 0}
+				class="list-disc"
+				style:list-style-type={tl.indentation > 0 ? 'circle' : undefined}
+				class:ps-16={tl.indentation === 1}
+				class:ps-24={tl.indentation > 1}
+			>
+				<li class:font-semibold={tl.isBold}>
+					{#if !tl.isCheckbox || tl.isChecked === undefined}
+						{tl.text}
+					{:else}
+						<label
+							id={tl.id}
+							class="inline"
+							style={!tl.isChecked && highlightOpen ? `color: ${highlightOpen}` : ''}
+						>
+							<input
+								id={`${tl.id}-checkbox`}
+								type="checkbox"
+								class="size-3 rounded checked:bg-surface-800 hover:bg-primary-300 hover:checked:bg-primary-500 focus:ring-primary-500 focus-visible:ring-primary-500"
+								bind:checked={tl.isChecked}
+								on:change={() => toggleChecked(tl.id)}
+							/>
+							{tl.text}
+						</label>
+						{#if tl.linkString}
+							<CurationEntryTemplateTool linkString={tl.linkString} />
 						{/if}
-					</li>
-				{/each}
+					{/if}
+				</li>
 			</ul>
+		{:else}
+			<span class:font-semibold={tl.isBold}>
+				{#if !tl.isCheckbox || tl.isChecked === undefined}
+					{tl.text}
+				{:else}
+					<label
+						id={tl.id}
+						class="inline"
+						style={!tl.isChecked && highlightOpen ? `color: ${highlightOpen}` : ''}
+					>
+						<input
+							id={`${tl.id}-checkbox`}
+							type="checkbox"
+							class="size-3 rounded checked:bg-surface-800 hover:bg-primary-300 hover:checked:bg-primary-500 focus:ring-primary-500 focus-visible:ring-primary-500"
+							bind:checked={tl.isChecked}
+							on:change={() => toggleChecked(tl.id)}
+						/>
+						{tl.text}
+					</label>
+				{/if}
+			</span>
+			{#if tl.linkString}
+				<CurationEntryTemplateTool linkString={tl.linkString} />
+			{/if}
+			<br />
 		{/if}
 	{/each}
 </p>
-
-<style lang="postcss">
-	ul {
-		list-style-type: disc;
-		padding-inline-start: 2rem;
-	}
-
-	ul ul {
-		list-style-type: circle;
-	}
-
-	ul li:has(ul) {
-		list-style-type: none;
-	}
-</style>
