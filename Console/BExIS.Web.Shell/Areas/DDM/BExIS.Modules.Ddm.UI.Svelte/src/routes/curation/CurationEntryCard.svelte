@@ -20,12 +20,13 @@
 
 	export let entry: CurationEntryClass;
 	export let combined: boolean;
-	export let isExpanded = writable(false);
-	export let editEntryMode = writable(entry.id <= 0); // true if entry is a draft
 	export let tag: string | null = 'div'; // if set, use this tag instead of the default <div>
 
 	const { curation, editMode, statusColorPalette } = curationStore;
 
+	const cardState = curationStore.getEntryCardState(entry.id);
+
+	const prevPos = entry.position;
 	let position = entry.position;
 	let positiontimer: NodeJS.Timeout | null = null;
 
@@ -52,15 +53,9 @@
 			clearTimeout(positiontimer);
 		}
 		positiontimer = setTimeout(() => {
+			if (position === prevPos) return;
 			curationStore.updateEntryPosition(entry.id, position);
 		}, 1000);
-	};
-
-	const positionUpdateImmediate = () => {
-		if (positiontimer) {
-			clearTimeout(positiontimer);
-		}
-		curationStore.updateEntryPosition(entry.id, position);
 	};
 
 	const deleteEntry = () => {
@@ -74,10 +69,10 @@
 	};
 
 	const toggleExpand = () => {
-		isExpanded.update((v) => !v);
+		cardState.update((v) => ({ ...v, isExpanded: !v.isExpanded }));
 	};
 
-	$: showCollapsedNotes = !$isExpanded && entry.visibleNotes.length > 0;
+	$: showCollapsedNotes = !$cardState.isExpanded && entry.visibleNotes.length > 0;
 </script>
 
 <svelte:element
@@ -88,11 +83,11 @@
 	class:border-surface-400={combined}
 	class:text-primary-500={entry.isDraft()}
 >
-	{#if $editMode && $editEntryMode}
-		<CurationEntryInput {entry} {editEntryMode} />
+	{#if $editMode && $cardState.editEntryMode}
+		<CurationEntryInput {entry} />
 	{:else}
-		<div class="items-top flex flex-row gap-x-2">
-			<div class="grow">
+		<div class="items-top flex flex-row gap-x-2 overflow-hidden">
+			<div class="grow overflow-hidden">
 				<!-- Title -->
 				{#if combined}
 					<h3
@@ -105,7 +100,10 @@
 				{/if}
 
 				<!-- Description -->
-				<p class="mb-0.5 text-sm" class:text-surface-500={entry.isHidden()}>
+				<p
+					class="mb-0.5 overflow-hidden break-words text-sm"
+					class:text-surface-500={entry.isHidden()}
+				>
 					{entry.description}
 				</p>
 			</div>
@@ -120,13 +118,13 @@
 		<!-- Notes -->
 		<div
 			class="mb-1 h-0 overflow-hidden rounded-t rounded-bl border-surface-300 transition-all"
-			class:h-52={$isExpanded}
+			class:h-52={$cardState.isExpanded}
 			class:h-12={showCollapsedNotes}
 			class:md:h-7={showCollapsedNotes}
-			class:bg-surface-300={$isExpanded}
-			class:rounded-br={!$isExpanded}
+			class:bg-surface-300={$cardState.isExpanded}
+			class:rounded-br={!$cardState.isExpanded}
 		>
-			{#if $isExpanded}
+			{#if $cardState.isExpanded}
 				<CurationNotes {entry} />
 			{:else if entry.visibleNotes.length > 0}
 				<button
@@ -172,7 +170,7 @@
 			<!-- Chat Button -->
 			<button
 				class="chat-button w-24 grow overflow-hidden text-ellipsis text-nowrap rounded-lg border border-surface-300 bg-surface-300 px-2 py-0.5 text-surface-900 hover:border-surface-400 hover:bg-surface-400"
-				class:active={$isExpanded}
+				class:active={$cardState.isExpanded}
 				class:hidden={$editMode}
 				class:opacity-10={entry.isDraft()}
 				class:cursor-not-allowed={entry.isDraft()}
@@ -180,12 +178,12 @@
 				title="Toggle Chat"
 				on:click={toggleExpand}
 			>
-				<Fa icon={$isExpanded ? faXmark : faMessage} class="inline-block" />
-				{#if entry.hasUnreadNotes && !$isExpanded}
+				<Fa icon={$cardState.isExpanded ? faXmark : faMessage} class="inline-block" />
+				{#if entry.hasUnreadNotes && !$cardState.isExpanded}
 					<span class="notification-badge"><span>&nbsp;</span></span>
 				{/if}
 				Chat
-				{#if !$isExpanded && entry.visibleNotes.length > 0}
+				{#if !$cardState.isExpanded && entry.visibleNotes.length > 0}
 					({entry.visibleNotes.length})
 				{/if}
 			</button>
@@ -242,7 +240,7 @@
 				class="grow rounded bg-secondary-200 px-2 py-0.5 text-secondary-700 hover:bg-secondary-400 hover:text-secondary-800"
 				class:hidden={!$editMode}
 				disabled={!$editMode}
-				on:click={() => editEntryMode.update((o) => !o)}
+				on:click={() => cardState.update((cs) => ({ ...cs, editEntryMode: true }))}
 				name="Edit Entry"
 				title="Edit Entry"
 			>
@@ -260,12 +258,6 @@
 						class="ml-0.5 w-12 rounded border border-surface-500 px-1 py-0.5 text-xs text-surface-800 focus-visible:border-surface-700 focus-visible:outline-none"
 						min="1"
 						on:change={positionUpdateDebounce}
-						on:blur={positionUpdateImmediate}
-						on:keydown={(e) => {
-							if (e.key === 'Enter') {
-								positionUpdateImmediate();
-							}
-						}}
 						disabled={!$editMode}
 					/>
 				</label>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { faFilter } from '@fortawesome/free-solid-svg-icons';
+	import { faArrowDownAZ, faFilter, faSearch } from '@fortawesome/free-solid-svg-icons';
 	import { curationStore } from './stores';
 	import {
 		CurationEntryStatus,
@@ -97,10 +97,9 @@
 </script>
 
 <div class="flex flex-wrap items-center gap-2 p-2">
-	<Fa icon={faFilter} class="inline-block" />
-	<span>Filter:</span>
-	<div class="flex flex-wrap items-center gap-1 rounded border border-surface-400 p-1">
-		<span>Status:</span>
+	<div class="flex flex-wrap items-center gap-1 rounded border border-surface-400 px-2 py-1">
+		<Fa icon={faFilter} class="inline-block text-xs" />
+		<span>Filter by Status:</span>
 		{#key $statusFilter?.data.toString}
 			{#each CurationEntryStatusDetails as statusDetails, index}
 				<label
@@ -118,8 +117,9 @@
 			{/each}
 		{/key}
 	</div>
-	<div class="flex flex-wrap items-center gap-1 rounded border border-surface-400 p-1">
-		<span>Type:</span>
+	<div class="flex flex-wrap items-center gap-1 rounded border border-surface-400 px-2 py-1">
+		<Fa icon={faFilter} class="inline-block text-xs" />
+		<span>Filter by Type:</span>
 		<label
 			class="button-label cursor-pointer rounded border border-surface-500 bg-surface-300 px-2 py-0.5"
 		>
@@ -147,7 +147,8 @@
 			</label>
 		{/each}
 	</div>
-	<label class="flex items-center gap-1 rounded border border-surface-400 p-1">
+	<label class="flex items-center gap-1 rounded border border-surface-400 px-2 py-1">
+		<Fa icon={faSearch} class="inline-block text-xs" />
 		<span>Search:</span>
 		<input class="rounded-sm px-1 py-0.5 text-sm" type="text" bind:value={$searchInput} />
 	</label>

@@ -28,7 +28,7 @@
 				class="mb-2"
 				tag="li"
 			/>
-			{#each entries as entry (entry.id)}
+			{#each entries as entry}
 				<CurationEntryCard {entry} combined={false} tag="li" />
 
 				<AddCurationEntry

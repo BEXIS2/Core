@@ -1,9 +1,10 @@
-import { derived, writable, type Readable } from 'svelte/store';
+import { derived, writable, type Readable, type Writable } from 'svelte/store';
 import { get, getCurationDataset, postCurationEntry, putCurationEntry } from './services';
 import {
 	CurationEntryStatus,
 	CurationEntryStatusColorPalettes,
 	CurationEntryType,
+	CurationEntryTypeViewOrders,
 	type CurationDetailModel,
 	type CurationLabel,
 	type FilterModel
@@ -37,6 +38,11 @@ class CurationStore {
 
 	public readonly editMode = writable<boolean>(false);
 	public readonly statusColorPalette = writable(CurationEntryStatusColorPalettes[0]);
+
+	private readonly _entryCardStates = new Map<
+		number,
+		Writable<{ isExpanded: boolean; editEntryMode: boolean }>
+	>();
 
 	constructor() {
 		this.datasetId.subscribe((datasetId) => {
@@ -181,9 +187,11 @@ class CurationStore {
 	}
 
 	public updateEntryPosition(entryId: number, position: number) {
+		console.log('update position: ', position);
+		if (position <= 0) return;
 		this._curation.update((curation) => {
 			let oldPosition = curation?.getEntryById(entryId)?.position;
-			let newCuration = curation?.updateEntryPosition(entryId, position);
+			let newCuration = curation?.updateEntry(entryId, { position });
 			if (!newCuration || newCuration == curation) return curation;
 			if (newCuration.getEntryById(entryId)?.position === oldPosition) return curation;
 			this.saveEntry(newCuration.getEntryById(entryId)!);
@@ -217,23 +225,18 @@ class CurationStore {
 
 	public updateEntry(
 		entryId: number,
-		topic: string,
-		type: CurationEntryType,
-		name: string,
-		description: string,
-		solution: string,
-		source: string
+		updates: Partial<{
+			position: number;
+			topic: string;
+			type: CurationEntryType;
+			name: string;
+			description: string;
+			solution: string;
+			source: string;
+		}>
 	) {
 		this._curation.update((curation) => {
-			let newCuration = curation?.updateEntry(
-				entryId,
-				topic,
-				type,
-				name,
-				description,
-				solution,
-				source
-			);
+			let newCuration = curation?.updateEntry(entryId, updates);
 			if (!newCuration || newCuration == curation) return curation;
 			if (!newCuration.getEntryById(entryId)) return curation;
 			this.saveEntry(newCuration.getEntryById(entryId)!);
@@ -242,15 +245,15 @@ class CurationStore {
 	}
 
 	public updateEntryFromEntry(entry: CurationEntryClass) {
-		this.updateEntry(
-			entry.id,
-			entry.topic,
-			entry.type,
-			entry.name,
-			entry.description,
-			entry.solution,
-			entry.source
-		);
+		this.updateEntry(entry.id, {
+			position: entry.position,
+			topic: entry.topic,
+			type: entry.type,
+			name: entry.name,
+			description: entry.description,
+			solution: entry.solution,
+			source: entry.source
+		});
 	}
 
 	public saveEntry(entry: CurationEntryClass) {
@@ -347,12 +350,27 @@ class CurationStore {
 	}
 
 	public getFilteredEntriesReadable(): Readable<CurationEntryClass[]> {
-		return derived([this._curation, this._entryFilters], ([curation, filters]) => {
-			if (!curation) return [];
-			return curation.curationEntries.filter((entry) => {
-				return filters.every((f) => f.fn(entry, f.data));
-			});
-		});
+		return derived(
+			[this._curation, this._entryFilters, this.editMode],
+			([curation, filters, editMode]) => {
+				if (!curation) return [];
+				const typeSet = new Set(
+					!editMode ? CurationEntryTypeViewOrders.default : CurationEntryTypeViewOrders.editMode
+				);
+				return curation.curationEntries
+					.filter((entry) => typeSet.has(entry.type))
+					.filter((entry) => filters.every((f) => f.fn(entry, f.data)));
+			}
+		);
+	}
+
+	public getEntryCardState(entryId: number) {
+		if (!this._entryCardStates.has(entryId))
+			this._entryCardStates.set(
+				entryId,
+				writable({ isExpanded: false, editEntryMode: entryId <= 0 })
+			);
+		return this._entryCardStates.get(entryId)!;
 	}
 
 	public deleteEntry(entryId: number) {
@@ -364,7 +382,7 @@ class CurationStore {
 	}
 
 	public startCuration() {
-		this.addEmptyEntry(1, 'Test', CurationEntryType.StatusEntryItem, undefined, true);
+		this.addEmptyEntry(0, 'Test', CurationEntryType.StatusEntryItem, undefined, true);
 
 		this._curation.subscribe((curation) => {
 			if (!curation) return;

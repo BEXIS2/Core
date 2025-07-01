@@ -43,7 +43,6 @@
 			return tl.fullString.replace(/\[[xX ]?\]/, isChecked ? '[ ]' : '[X]');
 		});
 		const newDescription = newLines.join('\n');
-		console.log(newDescription);
 		curationStore.setDescription(curationStatusEntry.id, newDescription, true);
 	}
 </script>

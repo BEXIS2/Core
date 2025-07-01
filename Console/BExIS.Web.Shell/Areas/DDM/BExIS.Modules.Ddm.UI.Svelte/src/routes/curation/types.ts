@@ -77,6 +77,20 @@ export enum CurationEntryType {
 	DatastructureEntryItem = 4
 }
 
+export const CurationEntryTypeViewOrders = {
+	default: [
+		CurationEntryType.MetadataEntryItem,
+		CurationEntryType.DatastructureEntryItem,
+		CurationEntryType.PrimaryDataEntryItem
+	],
+	editMode: [
+		CurationEntryType.MetadataEntryItem,
+		CurationEntryType.DatastructureEntryItem,
+		CurationEntryType.PrimaryDataEntryItem,
+		CurationEntryType.None
+	]
+};
+
 export const CurationEntryTypeNames: string[] = [
 	'Hidden',
 	'Status',
@@ -200,3 +214,10 @@ export type taskLine = {
 	isChecked: boolean | undefined;
 	linkString: string | undefined;
 };
+
+export enum helpType {
+	empty = 0,
+	mainResearcher = 1,
+	mainCurator = 2,
+	tasks = 3
+}

@@ -8,17 +8,17 @@
 	import { faBan, faBroom, faExpand, faPen, faPlay } from '@fortawesome/free-solid-svg-icons';
 	import {
 		CurationEntryStatusColorPalettes,
-		CurationEntryType,
 		CurationEntryTypeNames,
+		CurationEntryTypeViewOrders,
 		CurationUserType
 	} from './types';
-	import AddCurationEntry from './AddCurationEntry.svelte';
 	import { derived } from 'svelte/store';
 	import { CurationEntryClass } from './CurationEntries';
 	import CurationStatusEntryCard from './CurationStatusEntryCard.svelte';
 	import CurationProgressInfo from './CurationProgressInfo.svelte';
 	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
 	import CurationFilter from './CurationFilter.svelte';
+	import CurationEntryList from './CurationEntryList.svelte';
 
 	export let datasetId: number;
 
@@ -34,36 +34,20 @@
 
 	const filteredEntries = curationStore.getFilteredEntriesReadable();
 
-	const groupedFilteredEntries = derived(filteredEntries, ($filteredEntries) => {
+	const typeGroupedEntries = derived(filteredEntries, ($filteredEntries) => {
 		// empty list for each entry of CurationEntryTypeNames
-		let typeGroupedEntries: CurationEntryClass[][] = Array.from(
-			{ length: CurationEntryTypeNames.length },
-			() => []
-		);
+		let groupedEntries: CurationEntryClass[][] = CurationEntryTypeNames.map((_) => []);
+		let previousPos: (number | undefined)[] = groupedEntries.map((_) => 2);
 		$filteredEntries.forEach((e) => {
-			typeGroupedEntries[e.type as number].push(e);
+			groupedEntries[e.type as number].push(e);
 		});
-		let groupedEntries: CurationEntryClass[][][] = [];
-		typeGroupedEntries.forEach((entrygroup, index) => {
-			groupedEntries.push([]);
-			entrygroup.forEach((entry) => {
-				if (groupedEntries[index].length === 0) {
-					groupedEntries[index].push([entry]);
-				} else {
-					const lastEntry = groupedEntries[index].at(-1)!.at(-1)!;
-					if (
-						(lastEntry.position === entry.position - 1 || lastEntry.position === entry.position) &&
-						lastEntry.name === entry.name
-					) {
-						groupedEntries[index].at(-1)!.push(entry);
-					} else {
-						groupedEntries[index].push([entry]);
-					}
-				}
-			});
-		});
-		return groupedEntries;
+		groupedEntries.slice(0, -1).forEach((ge, i) => (previousPos[i + 1] = ge.at(-1)?.position ?? 2));
+		return { entries: groupedEntries, previousPos: previousPos };
 	});
+
+	const curationTypeViewOrder = derived(editMode, ($editMode) =>
+		!$editMode ? CurationEntryTypeViewOrders.default : CurationEntryTypeViewOrders.editMode
+	);
 
 	onMount(async () => {
 		if (datasetId) {
@@ -85,7 +69,7 @@
 	};
 </script>
 
-<div class="container mx-auto grid max-w-3xl rounded border border-surface-500">
+<div class="container mx-auto grid max-w-3xl overflow-hidden rounded border border-surface-500">
 	<CurationDatasetInfo />
 
 	{#if $loadingCuration}
@@ -179,7 +163,7 @@
 			{/if}
 		</div>
 		<!-- Curation Entries -->
-		<div class="py-2">
+		<div class="overflow-hidden py-2">
 			{#if !$editMode && ($filteredEntries.length === 0 || $curation.curationEntries.length <= 1)}
 				<div class="flex h-64 w-full items-center justify-center">
 					<span class="m-auto text-surface-700">
@@ -192,38 +176,16 @@
 					</span>
 				</div>
 			{/if}
-			{#each $groupedFilteredEntries as entryTypeGroup, index}
-				{#if index > CurationEntryType.StatusEntryItem && ($editMode || entryTypeGroup.some( (entry) => entry[0].isVisible() ))}
-					<h2 class="m-2 mt-3 text-xl font-semibold">{CurationEntryTypeNames[index]}</h2>
-					<ul class="flex flex-col gap-2 p-2">
-						<AddCurationEntry
-							position={entryTypeGroup.at(0)?.at(0)?.position ?? 2}
-							type={index}
-							tag="li"
-						/>
-						{#each entryTypeGroup as entryNameGroup (entryNameGroup[0].id)}
-							{#if $editMode || entryNameGroup.some((entry) => entry.isVisible())}
-								<CurationGroupCard entries={entryNameGroup} />
-							{/if}
-						{/each}
-					</ul>
-				{/if}
-			{/each}
-			{#if $editMode}
-				<h2 class="m-2 text-xl font-semibold">
-					{CurationEntryTypeNames[CurationEntryType.None]} (Hidden)
-				</h2>
-				<ul class="flex flex-col gap-2 p-2">
-					<AddCurationEntry
-						position={$groupedFilteredEntries[CurationEntryType.None].at(0)?.at(0)?.position ?? 2}
-						type={CurationEntryType.None}
-						tag="li"
+			{#each $curationTypeViewOrder as type}
+				{#key ($typeGroupedEntries.entries, $typeGroupedEntries.previousPos)}
+					<CurationEntryList
+						heading={CurationEntryTypeNames[type]}
+						curationEntries={$typeGroupedEntries.entries[type]}
+						prevPosition={$typeGroupedEntries.previousPos[type]}
+						{type}
 					/>
-					{#each $groupedFilteredEntries[CurationEntryType.None] as hiddenGroup (hiddenGroup[0].id)}
-						<CurationGroupCard entries={hiddenGroup} />
-					{/each}
-				</ul>
-			{/if}
+				{/key}
+			{/each}
 		</div>
 	{/if}
 </div>

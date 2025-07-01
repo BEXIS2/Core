@@ -4,11 +4,11 @@
 	import { curationStore } from './stores';
 	import Fa from 'svelte-fa';
 	import { CurationEntryType } from './types';
-	import { writable } from 'svelte/store';
 	import CurationEntryTemplateTool from './CurationEntryTemplateTool.svelte';
 
 	export let entry: CurationEntryClass;
-	export let editEntryMode = writable(false);
+
+	const cardState = curationStore.getEntryCardState(entry.id);
 
 	let topic = entry.topic;
 	let type = entry.type;
@@ -18,9 +18,19 @@
 	let position = entry.position;
 	let source = entry.source;
 
+	const closeEditMode = () => cardState.update((cs) => ({ ...cs, editEntryMode: false }));
+
 	const saveChanges = () => {
-		curationStore.updateEntry(entry.id, topic, type, name, description, solution, source);
-		editEntryMode.set(false);
+		curationStore.updateEntry(entry.id, {
+			position,
+			topic,
+			type,
+			name,
+			description,
+			solution,
+			source
+		});
+		closeEditMode();
 	};
 </script>
 
@@ -48,13 +58,7 @@
 
 	<label class="grow basis-1/6">
 		<span class="label-text">Position:</span>
-		<input
-			type="number"
-			bind:value={position}
-			class="input"
-			placeholder="Enter position"
-			disabled
-		/>
+		<input type="number" bind:value={position} class="input" placeholder="Enter position" />
 	</label>
 
 	<label class="grow basis-full">
@@ -77,7 +81,7 @@
 	<div class="flex grow basis-full flex-wrap gap-x-2 gap-y-1">
 		<button
 			type="button"
-			on:click={() => editEntryMode.set(false)}
+			on:click={closeEditMode}
 			title="Cancel edit"
 			class="grow text-nowrap rounded bg-surface-300 px-2 py-1 hover:bg-surface-500 focus-visible:bg-surface-500 active:bg-surface-600"
 		>

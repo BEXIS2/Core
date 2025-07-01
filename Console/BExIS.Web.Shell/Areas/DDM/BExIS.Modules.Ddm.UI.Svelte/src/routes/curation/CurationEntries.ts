@@ -20,7 +20,6 @@ export class CurationClass {
 	public readonly datasetVersionDate: string;
 	public readonly curationEntries: CurationEntryClass[];
 	public readonly curationStatusEntry: CurationEntryClass | null = null;
-	public readonly visiblecurationEntries: CurationEntryClass[];
 	public readonly curationUsers: CurationUserClass[];
 	public readonly curationLabels: CurationLabel[];
 
@@ -39,7 +38,11 @@ export class CurationClass {
 
 	public readonly draftCount: number;
 
-	constructor(curation: CurationModel) {
+	constructor(
+		curation: CurationModel | CurationClass,
+		doNotSort: boolean | undefined = undefined,
+		changedEntryPos: CurationEntryClass | undefined = undefined
+	) {
 		// create user map and set current user type
 		this.curationUsers = (curation.curationUsers || []).map((user) => new CurationUserClass(user));
 		this.userMap = new Map<number, CurationUserClass>();
@@ -55,17 +58,15 @@ export class CurationClass {
 		this.datasetVersionDate = curation.datasetVersionDate || 'None';
 
 		// curation entries
-		this.curationEntries = CurationClass.applyPositioning(
-			CurationClass.sortedCurationEntries(
-				(curation.curationEntries || []).map(
-					(entry) => new CurationEntryClass(entry, this.currentUserType)
-				)
-			)
+		const allEntries = (curation.curationEntries || []).map(
+			(entry) => new CurationEntryClass(entry, this.currentUserType)
 		);
 
 		this.curationStatusEntry =
-			this.curationEntries.find((entry) => entry.type === CurationEntryType.StatusEntryItem) ||
-			null;
+			allEntries.find((entry) => entry.type === CurationEntryType.StatusEntryItem) || null;
+
+		if (doNotSort) this.curationEntries = allEntries;
+		else this.curationEntries = CurationClass.applyPositioning(allEntries, changedEntryPos);
 
 		this.curationLabels = curation.curationLabels || [];
 
@@ -74,8 +75,6 @@ export class CurationClass {
 
 		[this.creationDate, this.lastUserChangedDate, this.lastCuratorChangedDate] =
 			this.getCalculatedDates();
-
-		this.visiblecurationEntries = this.curationEntries.filter((entry) => entry.isVisible());
 
 		[this.curationProgressTotal, this.curationProgressPerType] = this.getCurationProgress();
 
@@ -86,55 +85,23 @@ export class CurationClass {
 		const index = this.curationEntries.findIndex((e) => e.id === entry.id);
 		const newEntries = [...this.curationEntries];
 
+		let updatedPosition = true;
+
 		if (index !== -1) {
+			updatedPosition = newEntries[index].position !== entry.position;
 			newEntries[index] = entry;
 		} else {
 			newEntries.push(entry);
 		}
 
-		return new CurationClass({
-			...this,
-			curationEntries: newEntries
-		});
-	}
-
-	public updateEntryPosition(entryId: number, newPosition: number): CurationClass {
-		if (newPosition < 1) return this;
-		if (newPosition > this.curationEntries.length) newPosition = this.curationEntries.length;
-
-		const oldEntry = this.getEntryById(entryId);
-		if (!oldEntry) return this;
-
-		let newEntries = this.curationEntries.filter((entry) => entry.id !== entryId);
-
-		if (!oldEntry.isDraft()) {
-			newEntries = newEntries.map((entry) => {
-				let p = entry.position;
-				if (entry.position === newPosition) {
-					p = entry.position <= oldEntry.position ? newPosition + 1 : newPosition - 1;
-				} else if (entry.position > oldEntry.position) {
-					p = entry.position + 1;
-				}
-				return new CurationEntryClass(
-					{
-						...entry,
-						position: p
-					},
-					this.currentUserType
-				);
-			});
-		}
-
-		let newEntryIndex = newEntries.findIndex((entry) => entry.position >= newPosition);
-		if (newEntryIndex === -1) {
-			newEntryIndex = newEntries.length;
-		}
-		newEntries.splice(newEntryIndex, 0, oldEntry.setPosition(newPosition));
-
-		return new CurationClass({
-			...this,
-			curationEntries: newEntries
-		});
+		return new CurationClass(
+			{
+				...this,
+				curationEntries: newEntries
+			},
+			!updatedPosition,
+			updatedPosition ? entry : undefined
+		);
 	}
 
 	private getCalculatedDates(): [Date, Date, Date] {
@@ -164,7 +131,8 @@ export class CurationClass {
 			.fill(0)
 			.map(() => new Array(CurationEntryStatusDetails.length).fill(0));
 
-		this.visiblecurationEntries.forEach((entry) => {
+		this.curationEntries.forEach((entry) => {
+			if (!entry.isVisible()) return;
 			progressTotal[entry.status]++;
 			progressPerType[entry.type][entry.status]++;
 		});
@@ -180,28 +148,26 @@ export class CurationClass {
 
 	public updateEntry(
 		entryId: number,
-		topic: string,
-		type: CurationEntryType,
-		name: string,
-		description: string,
-		solution: string,
-		source: string
+		updates: Partial<{
+			position: number;
+			topic: string;
+			type: CurationEntryType;
+			name: string;
+			description: string;
+			solution: string;
+			source: string;
+		}>
 	): CurationClass {
 		const entry = this.getEntryById(entryId);
 		if (!entry) return this;
 		const newEntry = new CurationEntryClass(
 			{
 				...entry,
-				topic: topic,
-				type: type,
-				name: name,
-				description: description,
-				solution: solution,
-				source: source
+				...updates
 			},
 			this.currentUserType
 		);
-		return this.addEntry(newEntry).updateEntryPosition(entryId, entry.position);
+		return this.addEntry(newEntry);
 	}
 
 	public addEmptyEntry(
@@ -219,10 +185,14 @@ export class CurationClass {
 			type,
 			description
 		);
-		return new CurationClass({
-			...this,
-			curationEntries: [...this.curationEntries, newEntry]
-		}).updateEntryPosition(newEntry.id, position);
+		return new CurationClass(
+			{
+				...this,
+				curationEntries: [...this.curationEntries, newEntry]
+			},
+			false,
+			newEntry
+		);
 	}
 
 	private static sortedCurationEntries(
@@ -236,22 +206,65 @@ export class CurationClass {
 		);
 	}
 
-	private static applyPositioning(curationEntries: CurationEntryClass[]): CurationEntryClass[] {
+	/**
+	 *
+	 * @param curationEntries the full current list of curationEntries
+	 * @param entry a specific entry, that already has its new wanted position (the previous position does not matter as well as if it is inside the curationEntries or not)
+	 * @returns the new sorted list of entries
+	 */
+	private static applyPositioning(
+		curationEntries: CurationEntryClass[],
+		entry: CurationEntryClass | undefined = undefined
+	): CurationEntryClass[] {
 		let newEntries: CurationEntryClass[] = [];
-		let nextPosition = 1;
-		for (const entry of curationEntries) {
+		let nextPositions = CurationEntryTypeNames.map((_) => 1);
+		let addedEntry = false;
+		const sortedCurationEntries = this.sortedCurationEntries(curationEntries);
+		console.log('Apply positioning: ', entry);
+		for (const e of sortedCurationEntries) {
+			if (!addedEntry && entry && entry.position === nextPositions[entry.type]) {
+				// add entry add correct position
+				newEntries.push(entry);
+				nextPositions[entry.type]++;
+				addedEntry = true;
+			}
+			if (e.type !== CurationEntryType.StatusEntryItem && e.id !== entry?.id) {
+				newEntries.push(
+					new CurationEntryClass(
+						{
+							...e,
+							position: nextPositions[e.type]
+						},
+						e.currentUserType
+					)
+				);
+				if (!e.isDraft()) {
+					// if entry is a draft the counter should not be increased because they are not in the backend
+					nextPositions[e.type]++;
+				}
+			} else if (e.type === CurationEntryType.StatusEntryItem) {
+				newEntries.push(
+					new CurationEntryClass(
+						{
+							...e,
+							position: 0
+						},
+						e.currentUserType
+					)
+				);
+			}
+		}
+		if (!addedEntry && entry) {
+			// push entry to end if not prviously added
 			newEntries.push(
 				new CurationEntryClass(
 					{
 						...entry,
-						position: nextPosition
+						position: nextPositions[entry.type]
 					},
 					entry.currentUserType
 				)
 			);
-			if (!entry.isDraft()) {
-				nextPosition++;
-			}
 		}
 		return newEntries;
 	}
@@ -666,6 +679,10 @@ export class CurationEntryClass implements CurationEntryModel {
 
 	public isVisible(): boolean {
 		return !this.isHidden() && !this.isDraft() && this.type !== CurationEntryType.StatusEntryItem;
+	}
+
+	public isEditable(): boolean {
+		return this.type !== CurationEntryType.StatusEntryItem;
 	}
 }
 

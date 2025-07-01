@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { curationStore } from './stores';
 	import RelativeDate from '$lib/components/RelativeDate.svelte';
+	import CurationHelp from './CurationHelp.svelte';
+	import { CurationUserType, helpType } from './types';
 
 	const { datasetId, curation, loadingCuration, loadingError } = curationStore;
 </script>
@@ -28,7 +30,7 @@
 	{:else if $loadingError}
 		<h1>Error: {$loadingError}</h1>
 	{:else if $curation}
-		<div class="row flex w-full flex-nowrap justify-between border-b border-surface-500 p-2">
+		<div class="row flex w-full flex-wrap justify-between gap-1 border-b border-surface-500 p-2">
 			<h1 class="flex-shrink flex-grow-0 overflow-hidden text-ellipsis text-xl">
 				<span class="text-base text-surface-800">
 					#{$datasetId}:
@@ -36,6 +38,14 @@
 				{$curation?.datasetTitle}
 				<!-- There would be space for a label or badge here as well -->
 			</h1>
+			<div class="flex grow flex-row-reverse">
+				<CurationHelp
+					popupId="curationHelpMain"
+					type={$curation?.currentUserType === CurationUserType.Curator
+						? helpType.mainCurator
+						: helpType.mainResearcher}
+				/>
+			</div>
 		</div>
 		<div class="relative">
 			<!-- Dates -->
