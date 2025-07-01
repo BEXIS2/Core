@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppConfigHelper.cs" />
+    <Compile Include="Configurations\CurationConfiguration.cs" />
     <Compile Include="Configurations\JwtConfiguration.cs" />
     <Compile Include="Configurations\LdapConfiguration.cs" />
     <Compile Include="Configurations\SmtpConfiguration.cs" />

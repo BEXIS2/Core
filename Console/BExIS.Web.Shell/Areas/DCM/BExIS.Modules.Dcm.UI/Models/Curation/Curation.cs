@@ -1,6 +1,7 @@
 ﻿using BExIS.Dim.Entities.Publications;
 using BExIS.Dlm.Entities.Curation;
 using BExIS.Security.Entities.Subjects;
+using BExIS.Utils.Config.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -127,18 +128,6 @@ namespace BExIS.Modules.Dcm.UI.Models.Curation
             Id = id;
             DisplayName = user.DisplayName;
             CurationUserType = CurationEntry.GetCurationUserType(user);
-        }
-    }
-
-    public class CurationLabel
-    {
-        public string name { get; set; }
-        public string color { get; set; }
-
-        public CurationLabel(string name, string color)
-        {
-            this.name = name;
-            this.color = color;
         }
     }
 

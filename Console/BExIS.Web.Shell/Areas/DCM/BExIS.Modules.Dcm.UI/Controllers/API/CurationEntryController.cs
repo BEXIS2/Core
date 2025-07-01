@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dim.Entities.Export.GBIF;
 using BExIS.Dlm.Entities.Curation;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -13,9 +14,11 @@ using BExIS.Dlm.Services.Curation;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Models.Curation;
 using BExIS.Security.Entities.Subjects;
+using BExIS.Utils.Config.Configurations;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using NHibernate.Util;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -88,12 +91,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
-            // TODO: get curationLabels from settings
-            var curationLabels = new List<CurationLabel>() {
-                new CurationLabel("custom-label-1", "#ff0000"),
-                new CurationLabel("custom-label-2", "#00ff00"),
-                new CurationLabel("custom-label-3", "#0000ff")
-            };
+            var curationLabels = ModuleManager.GetModuleSettings("DDM").GetValueByKey<CurationConfiguration>("curation")?.CurationLabels;
+
+            curationLabels = curationLabels == null ? new List<CurationLabel>() : curationLabels;
 
             return new CurationModel(datasetVersion.Id, datasetVersion.Title, datasetVersion.Timestamp, responseEntries, userMap.Values, curationLabels);
         }
@@ -239,12 +239,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 Count_UserIsDone_False_IsApproved_False = temp.FilteredEntries
                                     .Count(e => !e.UserIsDone && !e.IsApproved)
                             };
-                // TODO: get curationLabels from settings
-                var curationLabels = new List<CurationLabel>() {
-                    new CurationLabel("custom-label-1", "#ff0000"),
-                    new CurationLabel("custom-label-2", "#00ff00"),
-                    new CurationLabel("custom-label-3", "#0000ff")
-                };
+
+                var curationLabels = ModuleManager.GetModuleSettings("DDM").GetValueByKey<CurationConfiguration>("curation")?.CurationLabels;
+
+                curationLabels = curationLabels == null ? new List<CurationLabel>() : curationLabels;
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { datasets = query.ToList(), curationLabels });
 
