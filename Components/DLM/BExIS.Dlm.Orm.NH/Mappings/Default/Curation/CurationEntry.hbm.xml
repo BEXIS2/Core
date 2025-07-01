@@ -56,8 +56,8 @@
 		  <column name="CreationDate" />
 	  </property>
 
-	  <property name="UserlsDone" type="Boolean">
-		  <column name="UserlsDone" />
+	  <property name="UserIsDone" type="Boolean">
+		  <column name="UserIsDone" />
 	  </property>
 
 	  <property name="IsApproved" type="Boolean">

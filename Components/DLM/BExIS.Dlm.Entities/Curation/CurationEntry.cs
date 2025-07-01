@@ -24,13 +24,13 @@ namespace BExIS.Dlm.Entities.Curation
             Notes = new List<CurationNote>();
             CreationDate = DateTime.MinValue;
             Creator = null;
-            UserlsDone = false;
+            UserIsDone = false;
             IsApproved = false;
             LastChangeDatetime_User = DateTime.MinValue;
             LastChangeDatetime_Curator = DateTime.MinValue;
         }
 
-        public CurationEntry(string topic, CurationEntryType type, Dataset dataset, string name, string description, string solution, int position, string source, IEnumerable<CurationNote> notes, DateTime creationDate, User creator, bool userlsDone, bool isApproved, DateTime lastChangeDatetime_User, DateTime lastChangeDatetime_Curator)
+        public CurationEntry(string topic, CurationEntryType type, Dataset dataset, string name, string description, string solution, int position, string source, IEnumerable<CurationNote> notes, DateTime creationDate, User creator, bool userIsDone, bool isApproved, DateTime lastChangeDatetime_User, DateTime lastChangeDatetime_Curator)
         {
             Id = 0;
             Topic = topic;
@@ -44,7 +44,7 @@ namespace BExIS.Dlm.Entities.Curation
             Notes = notes;
             CreationDate = creationDate;
             Creator = creator;
-            UserlsDone = userlsDone;
+            UserIsDone = userIsDone;
             IsApproved = isApproved;
             LastChangeDatetime_User = lastChangeDatetime_User;
             LastChangeDatetime_Curator = lastChangeDatetime_Curator;
@@ -61,7 +61,7 @@ namespace BExIS.Dlm.Entities.Curation
         public virtual IEnumerable<CurationNote> Notes { get; set; }
         public virtual DateTime CreationDate { get; set; }
         public virtual User Creator { get; set; }
-        public virtual bool UserlsDone { get; set; }
+        public virtual bool UserIsDone { get; set; }
         public virtual bool IsApproved { get; set; }
         public virtual DateTime LastChangeDatetime_User { get; set; }
         public virtual DateTime LastChangeDatetime_Curator { get; set; }

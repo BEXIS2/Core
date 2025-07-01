@@ -1,6 +1,14 @@
-﻿using BExIS.App.Bootstrap.Attributes;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web.Http;
+using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Curation;
 using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Curation;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Models.Curation;
@@ -8,12 +16,6 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using NHibernate.Util;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web.Http;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -41,13 +43,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     userSet.Add(curationEntry.Creator.Id);
                     userList.Add(curationEntry.Creator);
                 }
-                // The users (who are not curators) will not receive status entry items
+                // The users (who are not curators) will not receive the description of the status entry item
                 if (!userIsCurator && curationEntry.Type.Equals(CurationEntryType.StatusEntryItem))
                 {
-                    continue;
+                    responseEntries.Add(new CurationEntryModel(curationEntry)
+                    {
+                        Description = string.Empty
+                    });
+                } else {
+                    // add the curationEntryModel
+                    responseEntries.Add(new CurationEntryModel(curationEntry));
                 }
-                // add the curationEntryModel
-                responseEntries.Add(new CurationEntryModel(curationEntry));
                 // add the users from the notes to the seen users
                 foreach (var note in curationEntry.Notes)
                 {
@@ -82,7 +88,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
-            return new CurationModel(datasetVersion.Id, datasetVersion.Title, datasetVersion.Timestamp, responseEntries, userMap.Values);
+            // TODO: get curationLabels from settings
+            var curationLabels = new List<CurationLabel>() {
+                new CurationLabel("custom-label-1", "#ff0000"),
+                new CurationLabel("custom-label-2", "#00ff00"),
+                new CurationLabel("custom-label-3", "#0000ff")
+            };
+
+            return new CurationModel(datasetVersion.Id, datasetVersion.Title, datasetVersion.Timestamp, responseEntries, userMap.Values, curationLabels);
         }
 
         private static CurationEntryModel AnonymizeCurationEntryModel(CurationEntryModel knownCurationEntry, CurationEntry curationEntry, User user)
@@ -149,18 +162,93 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (!ActionContext.ControllerContext.RouteData.Values.TryGetValue("user", out object userObject) || !(userObject is User user))
                 return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "User not found");
 
-            IEnumerable<CurationEntryModel> responseContent;
-
             // get CurationEntries
-            List<CurationEntry> curationEntries = new List<CurationEntry>();
             using (var curationManager = new CurationManager())
+            using (var datasetManager = new DatasetManager())
             {
-                curationEntries = curationManager.CurationEntryRepository.Get().ToList();
-                responseContent = curationEntries.Select(e => new CurationEntryModel(e)).ToList();
-            }
 
-            var response = Request.CreateResponse(HttpStatusCode.OK, responseContent);
-            return response;
+                // ------ simpler query that only uses the CurationEntryType.StatusEntryItem
+                //var query = from d in datasetManager.DatasetRepo.Get()
+                //            join c in curationManager.CurationEntryRepository.Get()
+                //                on d.Id equals c.Dataset.Id into gj
+                //            from c in gj.Where(x => x.Type == CurationEntryType.StatusEntryItem).DefaultIfEmpty()
+                //            select new
+                //            {
+                //                DatasetId = d.Id,
+                //                NotesComments = c != null && c.Notes != null
+                //                    ? c.Notes.Select(n => n.Comment).ToList()
+                //                    : new List<string>(),
+                //                UserIsDone = c != null ? c.UserIsDone : false,
+                //                IsApproved = c != null ? c.IsApproved : false,
+                //                LastChangeDatetime_Curator = c != null ? c.LastChangeDatetime_Curator : (DateTime?)null,
+                //                LastChangeDatetime_User = c != null ? c.LastChangeDatetime_User : (DateTime?)null
+                //            };
+                // ------
+
+                var datasets = datasetManager.DatasetRepo.Get();
+                var versions = datasetManager.DatasetVersionRepo.Get();
+                var curationEntries = curationManager.CurationEntryRepository.Get();
+
+                var query = from d in datasets
+                            join v in versions
+                                on d.Id equals v.Dataset.Id into versionGroup
+                            join ce in curationEntries
+                                on d.Id equals ce.Dataset.Id into curationGroup
+                            select new
+                            {
+                                DatasetId = d.Id,
+                                DatasetName = versionGroup
+                                    .Where(v => v.Status == DatasetVersionStatus.CheckedIn)
+                                    .OrderByDescending(v => v.Timestamp)
+                                    .Select(v => v.Title)
+                                    .FirstOrDefault() ?? string.Empty,
+                                StatusEntry = curationGroup
+                                    .FirstOrDefault(x => x.Type == CurationEntryType.StatusEntryItem),
+                                AllEntries = curationGroup,
+                                FilteredEntries = curationGroup
+                                    .Where(e => e.Type != CurationEntryType.StatusEntryItem && e.Type != CurationEntryType.None)
+                            } into temp
+                            select new
+                            {
+                                temp.DatasetId,
+                                temp.DatasetName,
+                                notesComments = temp.StatusEntry != null && temp.StatusEntry.Notes != null
+                                    ? temp.StatusEntry.Notes.Select(n => n.Comment).ToList()
+                                    : new List<string>(),
+                                CurationStarted = temp.StatusEntry != null,
+                                UserIsDone = temp.StatusEntry != null ? temp.StatusEntry.UserIsDone : false,
+                                IsApproved = temp.StatusEntry != null ? temp.StatusEntry.IsApproved : false,
+                                LastChangeDatetime_Curator = temp.AllEntries.Any()
+                                    ? temp.AllEntries.Max(e => e.LastChangeDatetime_Curator)
+                                    : (DateTime?)null,
+                                LastChangeDatetime_User = temp.AllEntries.Any()
+                                    ? temp.AllEntries.Max(e => e.LastChangeDatetime_User)
+                                    : (DateTime?)null,
+                                //statusCounts = new List<int>(){
+                                //    temp.FilteredEntries.Count(e => !e.UserIsDone && !e.IsApproved),
+                                //    temp.FilteredEntries.Count(e => !e.UserIsDone && e.IsApproved),
+                                //    temp.FilteredEntries.Count(e => e.UserIsDone && !e.IsApproved),
+                                //    temp.FilteredEntries.Count(e => e.UserIsDone && e.IsApproved),
+                                //},
+                                Count_UserIsDone_True_IsApproved_True = temp.FilteredEntries
+                                    .Count(e => e.UserIsDone && e.IsApproved),
+                                Count_UserIsDone_True_IsApproved_False = temp.FilteredEntries
+                                    .Count(e => e.UserIsDone && !e.IsApproved),
+                                Count_UserIsDone_False_IsApproved_True = temp.FilteredEntries
+                                    .Count(e => !e.UserIsDone && e.IsApproved),
+                                Count_UserIsDone_False_IsApproved_False = temp.FilteredEntries
+                                    .Count(e => !e.UserIsDone && !e.IsApproved)
+                            };
+                // TODO: get curationLabels from settings
+                var curationLabels = new List<CurationLabel>() {
+                    new CurationLabel("custom-label-1", "#ff0000"),
+                    new CurationLabel("custom-label-2", "#00ff00"),
+                    new CurationLabel("custom-label-3", "#0000ff")
+                };
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { datasets = query.ToList(), curationLabels });
+
+            }
         }
 
         // PUT: api/data/5
@@ -198,7 +286,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         curationEntryModel.Position,
                         curationEntryModel.Source,
                         notes,
-                        curationEntryModel.UserlsDone,
+                        curationEntryModel.UserIsDone,
                         curationEntryModel.IsApproved,
                         user
                 );
@@ -235,20 +323,32 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             using (var curationManager = new CurationManager())
             {
-                var newCurationEntry = curationManager.Create(
-                    curationEntryModel.Topic,
-                    curationEntryModel.Type,
-                    curationEntryModel.DatasetId,
-                    curationEntryModel.Name,
-                    curationEntryModel.Description,
-                    curationEntryModel.Solution,
-                    curationEntryModel.Position,
-                    curationEntryModel.Source,
-                    notes,
-                    curationEntryModel.UserlsDone,
-                    curationEntryModel.IsApproved,
-                    user
-                );
+                if (curationEntryModel.Type == CurationEntryType.StatusEntryItem)
+                {
+                    if (curationManager.CurationEntries.Any(ce => ce.Dataset.Id == curationEntryModel.DatasetId && ce.Type == CurationEntryType.StatusEntryItem))
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.Conflict, "A status entry item already exists for this dataset. Only one status entry item is allowed per dataset.");
+                    }
+                }
+                else if (!curationManager.CurationEntries.Any(ce => ce.Dataset.Id == curationEntryModel.DatasetId))
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.Conflict, "No curation entry exists for this dataset. A status entry item is required before creating other curation entries.");
+                }
+
+                    var newCurationEntry = curationManager.Create(
+                        curationEntryModel.Topic,
+                        curationEntryModel.Type,
+                        curationEntryModel.DatasetId,
+                        curationEntryModel.Name,
+                        curationEntryModel.Description,
+                        curationEntryModel.Solution,
+                        curationEntryModel.Position,
+                        curationEntryModel.Source,
+                        notes,
+                        curationEntryModel.UserIsDone,
+                        curationEntryModel.IsApproved,
+                        user
+                    );
 
                 var response = AnonymizeCurationEntryModel(curationEntryModel, newCurationEntry, user);
 

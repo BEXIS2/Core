@@ -1,4 +1,5 @@
-﻿using BExIS.Dlm.Entities.Curation;
+﻿using BExIS.Dim.Entities.Publications;
+using BExIS.Dlm.Entities.Curation;
 using BExIS.Security.Entities.Subjects;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Curation
         public IEnumerable<CurationNoteModel> Notes { get; set; }
         public DateTime CreationDate { get; set; }
         public long CreatorId { get; set; }
-        public bool UserlsDone { get; set; }
+        public bool UserIsDone { get; set; }
         public bool IsApproved { get; set; }
         public DateTime LastChangeDatetime_User { get; set; }
         public DateTime LastChangeDatetime_Curator { get; set; }
@@ -39,7 +40,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Curation
             Notes = new List<CurationNoteModel>();
             CreationDate = DateTime.MinValue;
             CreatorId = 0;
-            UserlsDone = false;
+            UserIsDone = false;
             IsApproved = false;
             LastChangeDatetime_User = DateTime.MinValue;
             LastChangeDatetime_Curator = DateTime.MinValue;
@@ -58,7 +59,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Curation
             Source = curationEntry.Source;
             CreationDate = curationEntry.CreationDate;
             CreatorId = curationEntry.Creator.Id;
-            UserlsDone = curationEntry.UserlsDone;
+            UserIsDone = curationEntry.UserIsDone;
             IsApproved = curationEntry.IsApproved;
             LastChangeDatetime_User = curationEntry.LastChangeDatetime_User;
             LastChangeDatetime_Curator = curationEntry.LastChangeDatetime_Curator;
@@ -129,6 +130,18 @@ namespace BExIS.Modules.Dcm.UI.Models.Curation
         }
     }
 
+    public class CurationLabel
+    {
+        public string name { get; set; }
+        public string color { get; set; }
+
+        public CurationLabel(string name, string color)
+        {
+            this.name = name;
+            this.color = color;
+        }
+    }
+
     public class CurationModel
     {
         public long DatasetId { get; set; }
@@ -137,6 +150,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Curation
         public IEnumerable<CurationEntryModel> CurationEntries { get; set; }
         public IEnumerable<CurationUserModel> CurationUsers { get; set; }
 
+        public IEnumerable<CurationLabel> CurationLabels { get; set; }
+
         public CurationModel()
         {
             DatasetId = 0;
@@ -144,15 +159,17 @@ namespace BExIS.Modules.Dcm.UI.Models.Curation
             DatasetVersionDate = DateTime.MinValue;
             CurationEntries = new List<CurationEntryModel>();
             CurationUsers = new List<CurationUserModel>();
+            CurationLabels = new List<CurationLabel>();
         }
 
-        public CurationModel(long datasetId, string datasetTitle, DateTime datasetVersionDate, IEnumerable<CurationEntryModel> curationEntries, IEnumerable<CurationUserModel> curationUsers)
+        public CurationModel(long datasetId, string datasetTitle, DateTime datasetVersionDate, IEnumerable<CurationEntryModel> curationEntries, IEnumerable<CurationUserModel> curationUsers, IEnumerable<CurationLabel> curationLabels)
         {
             DatasetId = datasetId;
             DatasetTitle = datasetTitle;
             DatasetVersionDate = datasetVersionDate;
             CurationEntries = curationEntries;
             CurationUsers = curationUsers;
+            CurationLabels = curationLabels;
         }
 
     }

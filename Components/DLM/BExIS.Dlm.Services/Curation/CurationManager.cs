@@ -31,28 +31,34 @@ namespace BExIS.Dlm.Services.Curation
 
         private static void FixPositions(IEnumerable<CurationEntry> entries, CurationEntry entry)
         {
-            if (entry.Position < 0) throw new ArgumentException("Position must be greater than 0.");
+            if (entry.Type == CurationEntryType.StatusEntryItem) return;
 
-            var entryList = entries.OrderBy(e => e.Topic + e.Name + e.Description).OrderBy(e => e.Position).ToList();
+            if (entry.Position <= 0) throw new ArgumentException("Position must be greater than 0.");
+
+            // take all entries of the same type
+            var entryList = entries.Where(e => e.Type == entry.Type)
+                .OrderBy(e => e.Topic + e.Name + e.Description).OrderBy(e => e.Position).ToList();
 
             if (entry.Position <= entryList.Count)
             {
+                // place entry at the correct place inside the list
                 entryList.Remove(entry);
                 entryList.Insert(entry.Position - 1, entry);
             }
 
             for (var i = 0; i < entryList.Count; i++)
             {
+                // override every position according to the new list
                 entryList[i].Position = i + 1;
             }
-
-            return;
         }
 
-        public CurationEntry Create(string topic, CurationEntryType type, long datasetId, string name, string description, string solution, int position, string source, IEnumerable<CurationNote> notes, bool userlsDone, bool isApproved, User user)
+        public CurationEntry Create(string topic, CurationEntryType type, long datasetId, string name, string description, string solution, int position, string source, IEnumerable<CurationNote> notes, bool userIsDone, bool isApproved, User user)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "name is empty but is required.");
             if (string.IsNullOrEmpty(source)) throw new ArgumentNullException(nameof(source), "source is empty but is required.");
+
+            if (type == CurationEntryType.StatusEntryItem && position != 0) throw new ArgumentException("Position for StatusEntryItem must be 0.");
 
             DateTime lastChangeDatetime_User;
             DateTime lastChangeDatetime_Curator;
@@ -87,7 +93,7 @@ namespace BExIS.Dlm.Services.Curation
                     notes,
                     DateTime.Now,
                     user,
-                    userlsDone,
+                    userIsDone,
                     isApproved,
                     lastChangeDatetime_User,
                     lastChangeDatetime_Curator
@@ -97,7 +103,10 @@ namespace BExIS.Dlm.Services.Curation
 
                 // check/fix positions
                 var datasetEntries = repoEntries.Get(e => e.Dataset == dataset);
-                FixPositions(datasetEntries, curationEntry);
+                if (type != CurationEntryType.StatusEntryItem) 
+                { 
+                    FixPositions(datasetEntries, curationEntry);
+                }
 
                 uow.Commit();
 
@@ -105,11 +114,12 @@ namespace BExIS.Dlm.Services.Curation
             }
         }
 
-        public CurationEntry Update(long id, string topic, CurationEntryType type, string name, string description, string solution, int position, string source, IEnumerable<CurationNote> notes, bool userlsDone, bool isApproved, User user)
+        public CurationEntry Update(long id, string topic, CurationEntryType type, string name, string description, string solution, int position, string source, IEnumerable<CurationNote> notes, bool userIsDone, bool isApproved, User user)
         {
             if (id <= 0) throw new ArgumentException("id must be greater than 0.");
 
-            if (position <= 0) throw new ArgumentException("Position must be greater than 0.");
+            if (type == CurationEntryType.StatusEntryItem && position != 0) throw new ArgumentException("Position for StatusEntryItem must be 0.");
+            if (type != CurationEntryType.StatusEntryItem && position <= 0) throw new ArgumentException("Position for none StatusEntryItem must be greater than 0.");
 
             var isCurator = CurationEntry.GetCurationUserType(user) == CurationUserType.Curator;
 
@@ -147,7 +157,7 @@ namespace BExIS.Dlm.Services.Curation
                     }
                 }
 
-                merged.UserlsDone = userlsDone;
+                merged.UserIsDone = userIsDone;
                 merged.Notes = currentNotes;
 
                 if (isCurator)

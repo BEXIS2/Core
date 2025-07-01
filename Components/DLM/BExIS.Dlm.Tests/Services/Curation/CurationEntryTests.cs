@@ -112,7 +112,7 @@ namespace BExIS.Dlm.Tests.Services.Curation
                 curationEntry.Source.Should().Be("Test Source");
                 curationEntry.Notes.Should().NotBeNull();
   
-                curationEntry.UserlsDone.Should().BeFalse();
+                curationEntry.UserIsDone.Should().BeFalse();
                 curationEntry.IsApproved.Should().BeFalse();
             }
         }
