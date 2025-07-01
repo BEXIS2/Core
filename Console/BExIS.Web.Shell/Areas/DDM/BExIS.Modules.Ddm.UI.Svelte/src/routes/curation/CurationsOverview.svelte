@@ -15,6 +15,8 @@
 	import { noteCommentToLabel } from './CurationEntries';
 	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
 
+	export let datasetId: number;
+
 	const { curationDetails, isLoading, errorMessage } = overviewStore;
 
 	overviewStore.fetch();
@@ -155,11 +157,13 @@
 		}
 	};
 
-	function openCuration(datasetId: any) {
-		if (!datasetId) return;
-		if (typeof datasetId === 'number') {
+	function openCuration(id: any) {
+		if (!id) return;
+		if (typeof id === 'number') {
 			const a = curationDataSetIdSearchParam;
-			goto(`/curation?${curationDataSetIdSearchParam}=${datasetId}`);
+			datasetId = id;
+			console.log(id);
+			// goto(`/curation?${curationDataSetIdSearchParam}=${datasetId}`);
 		}
 	}
 </script>

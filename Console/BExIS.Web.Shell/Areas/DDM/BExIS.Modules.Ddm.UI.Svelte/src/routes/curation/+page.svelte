@@ -5,13 +5,17 @@
 	import { page } from '$app/stores';
 	import { curationDataSetIdSearchParam } from './types';
 
-	$: datasetIdPar = $page.url.searchParams.get(curationDataSetIdSearchParam);
+	let container = document.getElementById('curation');
+	let datasetIdPar = Number(container?.getAttribute('dataset-id'));
+
+	console.log('datasetId:', datasetIdPar);
+	// $page.url.searchParams.get(curationDataSetIdSearchParam);
 </script>
 
 <Page title="Curation" contentLayoutType={pageContentLayoutType.full}>
-	{#if !datasetIdPar}
-		<CurationsOverview />
+	{#if datasetIdPar === 0}
+		<CurationsOverview bind:datasetId={datasetIdPar} />
 	{:else}
-		<Curation datasetId={parseInt(datasetIdPar)} />
+		<Curation bind:datasetId={datasetIdPar} />
 	{/if}
 </Page>

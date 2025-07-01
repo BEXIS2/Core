@@ -156,6 +156,16 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 #endregion Requests
 
 
+                #region Curation
+
+                Feature curationFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Curation") && f.Parent.Equals(DataDiscovery));
+                if (curationFeature == null) curationFeature = featureManager.Create("Curation", "Curation", DataDiscovery);
+
+                operationManager.Create("DDM", "Curation", "*", curationFeature);
+
+                #endregion
+
+
                 #endregion SECURITY
             }
         }

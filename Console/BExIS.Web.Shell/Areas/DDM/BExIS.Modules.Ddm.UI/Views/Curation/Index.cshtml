@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewBag.Title = "curation";
+    Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
+
+    long id = 0;
+    bool use_minor = false;
+
+    if (ViewData["id"] != null)
+    {
+        id = (long)ViewData["id"];
+    }
+
+    //if (ViewData["use_minor"] != null)
+    //{
+    //    use_minor = (Boolean)ViewData["use_minor"];
+    //}
+
+}
+
+<div id="curation" dataset-id="@id">
+    @Html.Partial("_sveltePage")
+</div>
