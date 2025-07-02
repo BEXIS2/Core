@@ -1,26 +1,25 @@
 <script lang="ts">
-	import { faArrowDownAZ, faFilter, faSearch } from '@fortawesome/free-solid-svg-icons';
+	import { faFilter, faSearch } from '@fortawesome/free-solid-svg-icons';
 	import { curationStore } from './stores';
 	import {
 		CurationEntryStatus,
 		CurationEntryStatusDetails,
 		CurationEntryType,
-		CurationEntryTypeNames
+		CurationEntryTypeNames,
+		FilterType
 	} from './types';
 	import Fa from 'svelte-fa';
 	import { writable } from 'svelte/store';
 	import type { CurationEntryClass } from './CurationEntries';
 
-	const statusFilterId = 'status';
-
-	const statusFilter = curationStore.getEntryFilterData(statusFilterId);
+	const statusFilter = curationStore.getEntryFilterData(FilterType.status);
 
 	const statusFilterFn = (entry: CurationEntryClass, data: Set<CurationEntryStatus>) =>
 		data.size === 0 || data.has(entry.status);
 
 	function toggleStatusFilter(status: CurationEntryStatus) {
 		curationStore.updateEntryFilter(
-			statusFilterId,
+			FilterType.status,
 			(data: Set<CurationEntryStatus> | undefined) => {
 				if (!data) return new Set([status]);
 				if (data.has(status)) data.delete(status);
@@ -40,9 +39,7 @@
 		CurationEntryType.PrimaryDataEntryItem
 	];
 
-	const typeFilterId = 'type';
-
-	const typeFilter = curationStore.getEntryFilterData(typeFilterId);
+	const typeFilter = curationStore.getEntryFilterData(FilterType.type);
 
 	const typeFilterGroup = writable<CurationEntryType | undefined>(undefined);
 
@@ -53,7 +50,7 @@
 
 	typeFilterGroup.subscribe((type) => {
 		curationStore.updateEntryFilter(
-			typeFilterId,
+			FilterType.type,
 			(data: CurationEntryType | undefined) => {
 				if (data === undefined || data !== type) return type;
 				return undefined;
@@ -65,9 +62,7 @@
 
 	// Search
 
-	const searchFilterId = 'search';
-
-	const searchFilter = curationStore.getEntryFilterData(searchFilterId);
+	const searchFilter = curationStore.getEntryFilterData(FilterType.search);
 
 	let timer: NodeJS.Timeout | undefined = undefined;
 	const searchInput = writable('');
@@ -87,7 +82,7 @@
 		clearTimeout(timer);
 		timer = setTimeout(() => {
 			curationStore.updateEntryFilter(
-				searchFilterId,
+				FilterType.search,
 				(_: string | undefined) => si,
 				searchFilterFn,
 				(data) => !data || data.trim().length === 0

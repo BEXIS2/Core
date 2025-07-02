@@ -77,11 +77,11 @@
 
 <svelte:element
 	this={tag}
-	class="relative flex flex-col gap-y-1 overflow-hidden rounded py-0.5 transition-all"
-	class:px-2={combined}
+	class="curation-entry-card relative flex flex-col gap-y-1 overflow-hidden rounded px-2 py-0.5 transition-all"
 	class:border={combined}
 	class:border-surface-400={combined}
 	class:text-primary-500={entry.isDraft()}
+	style:--current-status-color={$statusColorPalette.colors[entry.status]}
 >
 	{#if $editMode && $cardState.editEntryMode}
 		<CurationEntryInput {entry} />
@@ -271,6 +271,13 @@
 </svelte:element>
 
 <style lang="postcss">
+	.curation-entry-card:hover,
+	.curation-entry-card:has(*:hover),
+	.curation-entry-card:has(*:focus-visible) {
+		@apply bg-surface-200 ring-1;
+		--tw-ring-color: var(--current-status-color);
+	}
+
 	.status-change-button {
 		color: var(--status-color, inherit);
 		border: 1px solid var(--status-color, transparent);

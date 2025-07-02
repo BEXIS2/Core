@@ -3,14 +3,14 @@
 	import CurationDatasetInfo from './CurationDatasetInfo.svelte';
 	import { curationStore } from './stores';
 	import { Spinner } from '@bexis2/bexis2-core-ui';
-	import CurationGroupCard from './CurationGroupCard.svelte';
 	import Fa from 'svelte-fa';
-	import { faBan, faBroom, faExpand, faPen, faPlay } from '@fortawesome/free-solid-svg-icons';
+	import { faBroom, faExpand, faPen, faPlay } from '@fortawesome/free-solid-svg-icons';
 	import {
 		CurationEntryStatusColorPalettes,
 		CurationEntryTypeNames,
 		CurationEntryTypeViewOrders,
-		CurationUserType
+		CurationUserType,
+		FilterType
 	} from './types';
 	import { derived } from 'svelte/store';
 	import { CurationEntryClass } from './CurationEntries';
@@ -34,6 +34,8 @@
 
 	const filteredEntries = curationStore.getFilteredEntriesReadable();
 
+	const typeFilter = curationStore.getEntryFilterData(FilterType.type);
+
 	const typeGroupedEntries = derived(filteredEntries, ($filteredEntries) => {
 		// empty list for each entry of CurationEntryTypeNames
 		let groupedEntries: CurationEntryClass[][] = CurationEntryTypeNames.map((_) => []);
@@ -42,7 +44,7 @@
 			groupedEntries[e.type as number].push(e);
 		});
 		groupedEntries.slice(0, -1).forEach((ge, i) => (previousPos[i + 1] = ge.at(-1)?.position ?? 2));
-		return { entries: groupedEntries, previousPos: previousPos };
+		return groupedEntries;
 	});
 
 	const curationTypeViewOrder = derived(editMode, ($editMode) =>
@@ -164,27 +166,16 @@
 		</div>
 		<!-- Curation Entries -->
 		<div class="overflow-hidden py-2">
-			{#if !$editMode && ($filteredEntries.length === 0 || $curation.curationEntries.length <= 1)}
-				<div class="flex h-64 w-full items-center justify-center">
-					<span class="m-auto text-surface-700">
-						<Fa icon={faBan} class="inline-block" />
-						{#if $curation.curationEntries.length <= 1}
-							There are no entries to show for this dataset
-						{:else}
-							No entries match your applied filters
-						{/if}
-					</span>
-				</div>
-			{/if}
 			{#each $curationTypeViewOrder as type}
-				{#key ($typeGroupedEntries.entries, $typeGroupedEntries.previousPos)}
-					<CurationEntryList
-						heading={CurationEntryTypeNames[type]}
-						curationEntries={$typeGroupedEntries.entries[type]}
-						prevPosition={$typeGroupedEntries.previousPos[type]}
-						{type}
-					/>
-				{/key}
+				{#if $typeFilter?.data !== undefined ? $typeFilter.data === type : true}
+					{#key $typeGroupedEntries[type]}
+						<CurationEntryList
+							heading={CurationEntryTypeNames[type]}
+							curationEntries={$typeGroupedEntries[type]}
+							{type}
+						/>
+					{/key}
+				{/if}
 			{/each}
 		</div>
 	{/if}

@@ -220,7 +220,6 @@ export class CurationClass {
 		let nextPositions = CurationEntryTypeNames.map((_) => 1);
 		let addedEntry = false;
 		const sortedCurationEntries = this.sortedCurationEntries(curationEntries);
-		console.log('Apply positioning: ', entry);
 		for (const e of sortedCurationEntries) {
 			if (!addedEntry && entry && entry.position === nextPositions[entry.type]) {
 				// add entry add correct position

@@ -12,8 +12,8 @@
 {#if entries.length === 1}
 	<CurationEntryCard entry={entries[0]} combined={true} tag="li" />
 {:else}
-	<li class="rounded border border-surface-400 p-2">
-		<h2 class="mb-1">
+	<li class="rounded border border-surface-400">
+		<h2 class="mb-1 mt-2 px-2">
 			<span class="font-semibold">{groupName}</span>
 			<span class="text-sm text-surface-600"
 				>[{entries.length} {entries.length === 1 ? 'Entry' : 'Entries'}]</span

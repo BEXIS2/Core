@@ -5,6 +5,7 @@ import {
 	CurationEntryStatusColorPalettes,
 	CurationEntryType,
 	CurationEntryTypeViewOrders,
+	FilterType,
 	type CurationDetailModel,
 	type CurationLabel,
 	type FilterModel
@@ -41,7 +42,13 @@ class CurationStore {
 
 	private readonly _entryCardStates = new Map<
 		number,
-		Writable<{ isExpanded: boolean; editEntryMode: boolean }>
+		Writable<{
+			isExpanded: boolean;
+			editEntryMode: boolean;
+			inputData:
+				| { type: CurationEntryType; position: number; name: string; description: string }
+				| undefined;
+		}>
 	>();
 
 	constructor() {
@@ -187,7 +194,6 @@ class CurationStore {
 	}
 
 	public updateEntryPosition(entryId: number, position: number) {
-		console.log('update position: ', position);
 		if (position <= 0) return;
 		this._curation.update((curation) => {
 			let oldPosition = curation?.getEntryById(entryId)?.position;
@@ -305,24 +311,24 @@ class CurationStore {
 	}
 
 	public updateEntryFilter<TData>(
-		filterId: string,
+		type: FilterType,
 		dataUpdateFn: (data: TData | undefined) => TData,
 		fn: (entry: CurationEntryClass, data: TData) => boolean,
 		isClearedFn: (data: TData) => boolean
 	) {
 		this._entryFilters.update((filters) => {
-			if (!filters.map((f) => f.id).includes(filterId)) {
+			if (!filters.map((f) => f.type).includes(type)) {
 				// create filter
-				return [...filters, { id: filterId, data: dataUpdateFn(undefined), fn, isClearedFn }];
+				return [...filters, { type: type, data: dataUpdateFn(undefined), fn, isClearedFn }];
 			}
 			// update filter data
-			const currentFilter = filters.find((f) => f.id === filterId)!;
+			const currentFilter = filters.find((f) => f.type === type)!;
 			const newData = dataUpdateFn(currentFilter.data);
 			if (newData === currentFilter.data) return filters;
 			return [
-				...filters.filter((f) => f.id !== filterId),
+				...filters.filter((f) => f.type !== type),
 				{
-					id: filterId,
+					type: type,
 					data: newData,
 					fn,
 					isClearedFn
@@ -331,9 +337,9 @@ class CurationStore {
 		});
 	}
 
-	public removeEntryFilter(filterId: string) {
+	public removeEntryFilter(type: FilterType) {
 		this._entryFilters.update((filters) => {
-			return filters.filter((f) => f.id !== filterId);
+			return filters.filter((f) => f.type !== type);
 		});
 	}
 
@@ -345,8 +351,8 @@ class CurationStore {
 		return filters.length > 0 && filters.some((f) => !f.isClearedFn(f.data));
 	});
 
-	public getEntryFilterData(filterId: string) {
-		return derived(this._entryFilters, (filters) => filters.find((f) => f.id === filterId));
+	public getEntryFilterData(filterType: FilterType) {
+		return derived(this._entryFilters, (filters) => filters.find((f) => f.type === filterType));
 	}
 
 	public getFilteredEntriesReadable(): Readable<CurationEntryClass[]> {
@@ -368,7 +374,7 @@ class CurationStore {
 		if (!this._entryCardStates.has(entryId))
 			this._entryCardStates.set(
 				entryId,
-				writable({ isExpanded: false, editEntryMode: entryId <= 0 })
+				writable({ isExpanded: false, editEntryMode: entryId <= 0, inputData: undefined })
 			);
 		return this._entryCardStates.get(entryId)!;
 	}
