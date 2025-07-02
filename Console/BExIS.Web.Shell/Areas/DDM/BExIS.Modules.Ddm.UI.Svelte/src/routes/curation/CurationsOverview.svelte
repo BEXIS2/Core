@@ -1,21 +1,15 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
-	import { Spinner, Table, type TableConfig } from '@bexis2/bexis2-core-ui';
+	import { Table, type TableConfig } from '@bexis2/bexis2-core-ui';
 	import TableLabelFilter from './TableLabelFilter.svelte';
 	import { overviewStore } from './stores';
 	import TableLabelCell from './TableLabelCell.svelte';
-	import {
-		curationDataSetIdSearchParam,
-		CurationEntryStatusDetails,
-		getCurationStatusFromBoolean
-	} from './types';
+	import { CurationEntryStatusDetails, getCurationStatusFromBoolean } from './types';
 	import TableStatusFilter from './TableStatusFilter.svelte';
 	import TableOptions from './TableOptions.svelte';
 	import { goto } from '$app/navigation';
 	import { noteCommentToLabel } from './CurationEntries';
 	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
-
-	export let datasetId: number;
 
 	const { curationDetails, isLoading, errorMessage } = overviewStore;
 
@@ -157,14 +151,11 @@
 		}
 	};
 
-	function openCuration(id: any) {
+	function openCuration(id: number) {
 		if (!id) return;
-		if (typeof id === 'number') {
-			const a = curationDataSetIdSearchParam;
-			datasetId = id;
-			console.log(id);
-			// goto(`/curation?${curationDataSetIdSearchParam}=${datasetId}`);
-		}
+		const params = new URLSearchParams(window.location.search);
+		params.set('id', id.toString());
+		goto(`${window.location.pathname}?${params.toString()}`);
 	}
 </script>
 

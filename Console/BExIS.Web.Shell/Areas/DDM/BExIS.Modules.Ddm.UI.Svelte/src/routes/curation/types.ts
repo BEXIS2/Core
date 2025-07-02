@@ -6,7 +6,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import type { CurationEntryClass } from './CurationEntries';
 
-export const curationDataSetIdSearchParam = 'curationDatasetId';
 export interface CurationsOverviewModel {
 	datasets: CurationDetailModel[];
 	curationLabels: CurationLabel[];

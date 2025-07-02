@@ -3,19 +3,17 @@
 	import CurationsOverview from './CurationsOverview.svelte';
 	import Curation from './Curation.svelte';
 	import { page } from '$app/stores';
-	import { curationDataSetIdSearchParam } from './types';
 
-	let container = document.getElementById('curation');
-	let datasetIdPar = Number(container?.getAttribute('dataset-id'));
+	// const container = document.getElementById('curation');
+	// $: datasetIdPar = Number(container?.getAttribute('dataset-id'));
 
-	console.log('datasetId:', datasetIdPar);
-	// $page.url.searchParams.get(curationDataSetIdSearchParam);
+	$: searchParDatasetId = Number($page.url.searchParams.get('id'));
 </script>
 
 <Page title="Curation" contentLayoutType={pageContentLayoutType.full}>
-	{#if datasetIdPar === 0}
-		<CurationsOverview bind:datasetId={datasetIdPar} />
+	{#if !searchParDatasetId}
+		<CurationsOverview />
 	{:else}
-		<Curation bind:datasetId={datasetIdPar} />
+		<Curation datasetId={searchParDatasetId} />
 	{/if}
 </Page>
