@@ -168,13 +168,13 @@
 		<div class="overflow-hidden py-2">
 			{#each $curationTypeViewOrder as type}
 				{#if $typeFilter?.data !== undefined ? $typeFilter.data === type : true}
-					{#key $typeGroupedEntries[type]}
-						<CurationEntryList
-							heading={CurationEntryTypeNames[type]}
-							curationEntries={$typeGroupedEntries[type]}
-							{type}
-						/>
-					{/key}
+					<!-- {#key $typeGroupedEntries[type]} -->
+					<CurationEntryList
+						heading={CurationEntryTypeNames[type]}
+						curationEntries={$typeGroupedEntries[type]}
+						{type}
+					/>
+					<!-- {/key} -->
 				{/if}
 			{/each}
 		</div>

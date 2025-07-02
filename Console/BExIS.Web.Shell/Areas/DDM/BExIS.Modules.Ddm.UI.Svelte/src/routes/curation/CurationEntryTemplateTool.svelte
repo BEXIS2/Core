@@ -48,7 +48,7 @@
 	<button
 		class="inline-block rounded px-1 text-sm text-surface-400 hover:text-success-500 active:text-success-700"
 		title="Create curation entry from task"
-		on:click={createEntryFromTemplate}
+		on:click|preventDefault={createEntryFromTemplate}
 	>
 		<Fa icon={faCirclePlus} class="inline-block" />
 		Create
@@ -56,7 +56,7 @@
 {:else}
 	<button
 		type="button"
-		on:click={copyEntryTemplateLink}
+		on:click|preventDefault={copyEntryTemplateLink}
 		title="Copy markdown link for template"
 		class="text-nowrap rounded bg-surface-300 px-2 py-1 hover:bg-surface-500 focus-visible:bg-surface-500 active:bg-surface-600"
 	>

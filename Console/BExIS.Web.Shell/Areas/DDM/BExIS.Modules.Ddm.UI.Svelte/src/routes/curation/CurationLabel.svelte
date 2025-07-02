@@ -105,7 +105,7 @@
 	>
 		<span style="color: {noteTextColor}">{noteLabelText}</span>
 		<div
-			class="pointer-events-none absolute left-0 top-0 size-full bg-black bg-opacity-50 text-white opacity-0 transition-all"
+			class="pointer-events-none absolute left-0 top-0 size-full bg-black bg-opacity-50 text-white opacity-0 transition-opacity"
 		>
 			<Fa icon={faTrash} class="inline-block px-3 py-0.5" />
 		</div>

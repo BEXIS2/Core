@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Fa from 'svelte-fa';
-	import { CurationEntryStatus, CurationEntryStatusDetails } from './types';
+	import { CurationEntryStatus, CurationEntryStatusDetails, FilterType } from './types';
 	import { curationStore } from './stores';
 	import { derived, writable } from 'svelte/store';
 
@@ -12,8 +12,6 @@
 
 	const { statusColorPalette } = curationStore;
 
-	const statusFilterId = 'status';
-
 	const handleMouseEnter = (status: CurationEntryStatus) => {
 		hoveredStatus.set(status);
 	};
@@ -22,7 +20,7 @@
 		hoveredStatus.set(null);
 	};
 
-	const statusFilter = curationStore.getEntryFilterData(statusFilterId);
+	const statusFilter = curationStore.getEntryFilterData(FilterType.status);
 
 	const hasLowOpacity = derived(
 		[statusFilter, hoveredStatus],

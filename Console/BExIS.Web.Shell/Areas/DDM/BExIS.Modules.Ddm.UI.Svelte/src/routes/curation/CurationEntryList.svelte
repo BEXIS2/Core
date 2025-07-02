@@ -15,7 +15,7 @@
 	const { editMode } = curationStore;
 
 	// sorted Entries is always a list of lists of CurationEntries
-	let sortedEntries: CurationEntryClass[][] = combineNames
+	$: sortedEntries = combineNames
 		? curationEntries.reduce((acc, entry) => {
 				if (!acc.length || acc[acc.length - 1][0].name !== entry.name) acc.push([entry]);
 				else acc[acc.length - 1].push(entry);
@@ -29,15 +29,14 @@
 {/if}
 {#if curationEntries.some((entry) => entry.isVisible()) || $editMode}
 	<ul class="flex flex-col gap-2 overflow-hidden p-2">
-		<AddCurationEntry position={curationEntries.at(0)?.position} {type} tag="li" />
-		{#each sortedEntries as entryNameGroup}
+		{#if $editMode}
+			<AddCurationEntry position={curationEntries.at(0)?.position} {type} tag="li" />
+		{/if}
+		{#each sortedEntries as entryNameGroup (entryNameGroup.map((e) => e.id).join(' '))}
 			{#if $editMode || entryNameGroup.some((entry) => entry.isVisible())}
 				<CurationGroupCard entries={entryNameGroup} />
 			{/if}
 		{/each}
-		{#if curationEntries.some((entry) => entry.isVisible())}
-			<AddCurationEntry position={(curationEntries.at(-1)?.position || 0) + 1} {type} tag="li" />
-		{/if}
 	</ul>
 {:else}
 	<div class="flex h-16 w-full items-center justify-center">

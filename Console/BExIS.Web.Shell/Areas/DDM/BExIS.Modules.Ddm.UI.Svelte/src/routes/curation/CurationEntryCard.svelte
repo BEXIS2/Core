@@ -77,7 +77,7 @@
 
 <svelte:element
 	this={tag}
-	class="curation-entry-card relative flex flex-col gap-y-1 overflow-hidden rounded px-2 py-0.5 transition-all"
+	class="curation-entry-card relative flex flex-col gap-y-1 overflow-hidden rounded px-2 py-0.5"
 	class:border={combined}
 	class:border-surface-400={combined}
 	class:text-primary-500={entry.isDraft()}
@@ -117,14 +117,15 @@
 
 		<!-- Notes -->
 		<div
-			class="mb-1 h-0 overflow-hidden rounded-t rounded-bl border-surface-300 transition-all"
-			class:h-52={$cardState.isExpanded}
-			class:h-12={showCollapsedNotes}
-			class:md:h-7={showCollapsedNotes}
+			class="mb-1 h-0 overflow-hidden rounded-t rounded-bl border-surface-300"
+			class:h-52={$cardState.isExpanded && !$editMode}
+			class:h-12={showCollapsedNotes && !$editMode}
+			class:md:h-7={showCollapsedNotes && !$editMode}
 			class:bg-surface-300={$cardState.isExpanded}
 			class:rounded-br={!$cardState.isExpanded}
+			style:transition="height 0.15s"
 		>
-			{#if $cardState.isExpanded}
+			{#if $cardState.isExpanded && !$editMode}
 				<CurationNotes {entry} />
 			{:else if entry.visibleNotes.length > 0}
 				<button
@@ -145,24 +146,28 @@
 		<div class="mb-1 flex flex-wrap items-center justify-stretch gap-1 overflow-x-hidden text-sm">
 			<!-- Status change -->
 			<div
-				class="status-button-container flex w-60 grow items-center justify-stretch gap-x-1 overflow-x-hidden"
-				class:hidden={$editMode}
+				class="status-button-container flex w-80 shrink grow gap-x-1 overflow-hidden"
+				class:gap-x-0={$editMode}
+				class:!w-24={$editMode}
+				class:!grow-0={$editMode}
 			>
 				{#each CurationEntryStatusDetails as statusDetails, index}
-					{#if $curation?.currentUserType === CurationUserType.Curator || (index !== CurationEntryStatus.Ok && index !== CurationEntryStatus.Closed) || index === entry.status}
-						<button
-							class="status-change-button grow overflow-x-hidden text-ellipsis text-nowrap rounded border px-1 py-0.5"
-							class:active={index === entry.status}
-							class:opacity-10={entry.isDraft()}
-							class:cursor-not-allowed={entry.isDraft()}
-							disabled={index === entry.status || $editMode || entry.isDraft()}
-							style="--status-color: {$statusColorPalette.colors[index]};"
-							title="Change Entry Status to {statusDetails.name}"
-							on:click={() => setStatus(index)}
-						>
-							<Fa icon={statusDetails.icon} class="inline-block" />
-							{statusDetails.name}
-						</button>
+					{#if $curation?.currentUserType === CurationUserType.Curator || (index !== CurationEntryStatus.Ok && index !== CurationEntryStatus.Closed)}
+						{#if !$editMode || index === entry.status}
+							<button
+								class="status-change-button shrink grow basis-1/4 overflow-x-hidden text-ellipsis text-nowrap rounded border px-1 py-0.5"
+								class:active={index === entry.status}
+								class:opacity-10={entry.isDraft()}
+								class:cursor-not-allowed={entry.isDraft()}
+								disabled={index === entry.status || $editMode || entry.isDraft()}
+								style="--status-color: {$statusColorPalette.colors[index]};"
+								title="Change Entry Status to {statusDetails.name}"
+								on:click={() => setStatus(index)}
+							>
+								<Fa icon={statusDetails.icon} class="inline-block" />
+								{statusDetails.name}
+							</button>
+						{/if}
 					{/if}
 				{/each}
 			</div>
@@ -189,17 +194,6 @@
 			</button>
 
 			<!-- EDIT MODE -->
-
-			<!-- Status -->
-			<div
-				class="pointer-events-none w-24 overflow-hidden text-ellipsis rounded bg-surface-700 px-1 py-0.5 text-center text-surface-50"
-				class:hidden={!$editMode}
-				title="Entry is hidden"
-				style="background-color: {$statusColorPalette.colors[entry.status]}"
-			>
-				<Fa icon={CurationEntryStatusDetails[entry.status].icon} class="inline-block" />
-				{CurationEntryStatusDetails[entry.status].name}
-			</div>
 
 			<!-- Hidden or Draft Badges -->
 			{#if entry.isHidden()}
