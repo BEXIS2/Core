@@ -22,9 +22,22 @@
 	export let combined: boolean;
 	export let tag: string | null = 'div'; // if set, use this tag instead of the default <div>
 
-	const { curation, editMode, statusColorPalette } = curationStore;
+	const { curation, editMode, statusColorPalette, jumpToEntryWhere } = curationStore;
 
 	const cardState = curationStore.getEntryCardState(entry.id);
+
+	// Jump to this card
+	let cardElement: HTMLElement | null = null;
+
+	$: {
+		const jumpHere = $jumpToEntryWhere ? $jumpToEntryWhere(entry) : false;
+		if (jumpHere && cardElement) {
+			cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			cardElement.classList.add('blink');
+			setTimeout(() => cardElement?.classList.remove('blink'), 3000);
+			jumpToEntryWhere.set(undefined);
+		}
+	}
 
 	const prevPos = entry.position;
 	let position = entry.position;
@@ -75,35 +88,31 @@
 	$: showCollapsedNotes = !$cardState.isExpanded && entry.visibleNotes.length > 0;
 </script>
 
+<!-- class blink will be tongled automatically in the script -->
 <svelte:element
 	this={tag}
-	class="curation-entry-card relative flex flex-col gap-y-1 overflow-hidden rounded px-2 py-0.5"
+	bind:this={cardElement}
+	class="curation-entry-card relative overflow-hidden rounded px-2 py-0.5"
 	class:border={combined}
 	class:border-surface-400={combined}
 	class:text-primary-500={entry.isDraft()}
+	class:blink={false}
 	style:--current-status-color={$statusColorPalette.colors[entry.status]}
 >
 	{#if $editMode && $cardState.editEntryMode}
 		<CurationEntryInput {entry} />
 	{:else}
-		<div class="items-top flex flex-row gap-x-2 overflow-hidden">
+		<div class="items-top no-wrap mb-2 flex gap-x-2 overflow-hidden">
 			<div class="grow overflow-hidden">
 				<!-- Title -->
 				{#if combined}
-					<h3
-						class="font-semibold"
-						class:text-surface-500={entry.isHidden()}
-						style="margin-bottom: -0.25em;"
-					>
+					<h3 class="font-semibold" class:text-surface-500={entry.isHidden()}>
 						{entry.name}
 					</h3>
 				{/if}
 
 				<!-- Description -->
-				<p
-					class="mb-0.5 overflow-hidden break-words text-sm"
-					class:text-surface-500={entry.isHidden()}
-				>
+				<p class="overflow-hidden break-words" class:text-surface-500={entry.isHidden()}>
 					{entry.description}
 				</p>
 			</div>
@@ -117,12 +126,13 @@
 
 		<!-- Notes -->
 		<div
-			class="mb-1 h-0 overflow-hidden rounded-t rounded-bl border-surface-300"
+			class="h-0 overflow-hidden rounded-t rounded-bl border-surface-300"
 			class:h-52={$cardState.isExpanded && !$editMode}
 			class:h-12={showCollapsedNotes && !$editMode}
 			class:md:h-7={showCollapsedNotes && !$editMode}
 			class:bg-surface-300={$cardState.isExpanded}
 			class:rounded-br={!$cardState.isExpanded}
+			class:mb-2={!$editMode && (entry.visibleNotes.length > 0 || $cardState.isExpanded)}
 			style:transition="height 0.15s"
 		>
 			{#if $cardState.isExpanded && !$editMode}
@@ -270,6 +280,22 @@
 	.curation-entry-card:has(*:focus-visible) {
 		@apply bg-surface-200 ring-1;
 		--tw-ring-color: var(--current-status-color);
+	}
+
+	.curation-entry-card.blink {
+		animation: blink-bg 3s;
+	}
+
+	@keyframes blink-bg {
+		0%,
+		30%,
+		100% {
+			background-color: inherit;
+		}
+		15%,
+		45% {
+			background-color: rgba(255, 166, 0, 0.3);
+		}
 	}
 
 	.status-change-button {

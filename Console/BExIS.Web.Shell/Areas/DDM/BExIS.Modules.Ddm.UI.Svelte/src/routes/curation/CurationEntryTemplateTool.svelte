@@ -41,6 +41,17 @@
 		const json = decodeEntry(templateString);
 		curationStore.addEmptyEntryFromJson(json);
 		editMode.set(true);
+		setTimeout(
+			() =>
+				curationStore.jumpToEntryWhere.set(
+					(entry) =>
+						entry.isDraft() &&
+						(json.type === undefined || entry.type === json.type) &&
+						(json.name === undefined || entry.name === json.name) &&
+						(json.description === undefined || entry.description === json.description)
+				),
+			500
+		);
 	};
 </script>
 

@@ -12,7 +12,7 @@
 		CurationUserType,
 		FilterType
 	} from './types';
-	import { derived } from 'svelte/store';
+	import { derived, type Writable } from 'svelte/store';
 	import { CurationEntryClass } from './CurationEntries';
 	import CurationStatusEntryCard from './CurationStatusEntryCard.svelte';
 	import CurationProgressInfo from './CurationProgressInfo.svelte';
@@ -21,6 +21,9 @@
 	import CurationEntryList from './CurationEntryList.svelte';
 
 	export let datasetId: number;
+	export let jumpToEntryWhere: ((entry: CurationEntryClass) => boolean) | undefined = undefined;
+
+	$: jumpToEntryWhere && curationStore.jumpToEntryWhere.set(jumpToEntryWhere);
 
 	const {
 		loadingCuration,

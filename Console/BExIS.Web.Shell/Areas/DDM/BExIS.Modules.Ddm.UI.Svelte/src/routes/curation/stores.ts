@@ -40,6 +40,11 @@ class CurationStore {
 	public readonly editMode = writable<boolean>(false);
 	public readonly statusColorPalette = writable(CurationEntryStatusColorPalettes[0]);
 
+	public readonly jumpToEntryWhere = writable<
+		((entry: CurationEntryClass) => boolean) | undefined
+	>();
+	private jumpToEntryWhereTimer: NodeJS.Timeout | null = null;
+
 	private readonly _entryCardStates = new Map<
 		number,
 		Writable<{
@@ -58,6 +63,14 @@ class CurationStore {
 				return;
 			}
 			this.fetch(datasetId);
+		});
+		this.jumpToEntryWhere.subscribe((fn) => {
+			if (this.jumpToEntryWhereTimer) clearTimeout(this.jumpToEntryWhereTimer);
+			if (fn !== undefined) {
+				this.jumpToEntryWhereTimer = setTimeout(() => {
+					this.jumpToEntryWhere.set(undefined);
+				}, 1000);
+			}
 		});
 	}
 
@@ -379,8 +392,13 @@ class CurationStore {
 		return this._entryCardStates.get(entryId)!;
 	}
 
+	public resetCardState(entryId: number) {
+		this._entryCardStates.delete(entryId);
+	}
+
 	public deleteEntry(entryId: number) {
 		if (entryId >= 0) return;
+		this.resetCardState(entryId);
 		this._curation.update((curation) => {
 			if (!curation) return curation;
 			return curation.removeEntry(entryId);

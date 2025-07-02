@@ -18,9 +18,10 @@
 	<li class="rounded border border-surface-400">
 		<h2 class="mb-1 mt-2 px-2">
 			<span class="font-semibold">{groupName}</span>
-			<span class="text-sm text-surface-600"
-				>[{entries.length} {entries.length === 1 ? 'Entry' : 'Entries'}]</span
-			>
+			<span class="text-sm text-surface-600">
+				[{entries.length}
+				{entries.length === 1 ? 'Entry' : 'Entries'}]
+			</span>
 		</h2>
 
 		<ul class="my-2 flex flex-col gap-2">
