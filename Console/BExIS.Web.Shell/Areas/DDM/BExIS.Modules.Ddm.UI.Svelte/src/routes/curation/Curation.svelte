@@ -7,12 +7,13 @@
 	import { faBroom, faExpand, faPen, faPlay } from '@fortawesome/free-solid-svg-icons';
 	import {
 		CurationEntryStatusColorPalettes,
+		CurationEntryType,
 		CurationEntryTypeNames,
 		CurationEntryTypeViewOrders,
 		CurationUserType,
-		FilterType
+		CurationFilterType
 	} from './types';
-	import { derived, type Writable } from 'svelte/store';
+	import { derived } from 'svelte/store';
 	import { CurationEntryClass } from './CurationEntries';
 	import CurationStatusEntryCard from './CurationStatusEntryCard.svelte';
 	import CurationProgressInfo from './CurationProgressInfo.svelte';
@@ -22,8 +23,25 @@
 
 	export let datasetId: number;
 	export let jumpToEntryWhere: ((entry: CurationEntryClass) => boolean) | undefined = undefined;
+	export let applyTypeFilter: CurationEntryType | undefined = undefined;
 
-	$: jumpToEntryWhere && curationStore.jumpToEntryWhere.set(jumpToEntryWhere);
+	// Apply jump to entry and reset
+	$: if (jumpToEntryWhere) {
+		curationStore.jumpToEntryWhere.set(jumpToEntryWhere);
+		jumpToEntryWhere = undefined;
+	}
+
+	// Apply type filter and reset
+	$: if (applyTypeFilter !== undefined) {
+		curationStore.updateEntryFilter(
+			CurationFilterType.type,
+			(_) => applyTypeFilter,
+			(entry: CurationEntryClass, data: CurationEntryType | undefined) =>
+				data === undefined || entry.type === data,
+			(data) => data === undefined
+		);
+		applyTypeFilter = undefined;
+	}
 
 	const {
 		loadingCuration,
@@ -37,7 +55,7 @@
 
 	const filteredEntries = curationStore.getFilteredEntriesReadable();
 
-	const typeFilter = curationStore.getEntryFilterData(FilterType.type);
+	const typeFilter = curationStore.getEntryFilterData(CurationFilterType.type);
 
 	const typeGroupedEntries = derived(filteredEntries, ($filteredEntries) => {
 		// empty list for each entry of CurationEntryTypeNames

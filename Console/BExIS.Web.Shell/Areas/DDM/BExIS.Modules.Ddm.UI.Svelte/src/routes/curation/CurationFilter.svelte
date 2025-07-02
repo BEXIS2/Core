@@ -6,20 +6,20 @@
 		CurationEntryStatusDetails,
 		CurationEntryType,
 		CurationEntryTypeNames,
-		FilterType
+		CurationFilterType
 	} from './types';
 	import Fa from 'svelte-fa';
 	import { writable } from 'svelte/store';
 	import type { CurationEntryClass } from './CurationEntries';
 
-	const statusFilter = curationStore.getEntryFilterData(FilterType.status);
+	const statusFilter = curationStore.getEntryFilterData(CurationFilterType.status);
 
 	const statusFilterFn = (entry: CurationEntryClass, data: Set<CurationEntryStatus>) =>
 		data.size === 0 || data.has(entry.status);
 
 	function toggleStatusFilter(status: CurationEntryStatus) {
 		curationStore.updateEntryFilter(
-			FilterType.status,
+			CurationFilterType.status,
 			(data: Set<CurationEntryStatus> | undefined) => {
 				if (!data) return new Set([status]);
 				if (data.has(status)) data.delete(status);
@@ -39,30 +39,41 @@
 		CurationEntryType.PrimaryDataEntryItem
 	];
 
-	const typeFilter = curationStore.getEntryFilterData(FilterType.type);
+	const typeFilter = curationStore.getEntryFilterData(CurationFilterType.type);
 
 	const typeFilterGroup = writable<CurationEntryType | undefined>(undefined);
 
-	typeFilter.subscribe((tf) => typeFilterGroup.set(tf?.data));
+	// Keep track of the last value to avoid feedback loop
+	let lastTypeFilterValue: CurationEntryType | undefined = undefined;
+
+	// Update local group when store changes (from outside)
+	typeFilter.subscribe((tf) => {
+		const newValue = tf?.data;
+		lastTypeFilterValue = newValue;
+		typeFilterGroup.set(newValue);
+	});
 
 	const typeFilterFn = (entry: CurationEntryClass, data: CurationEntryType | undefined) =>
 		data === undefined || entry.type === data;
 
+	// Only update store if value actually changed by user
 	typeFilterGroup.subscribe((type) => {
+		if (type === lastTypeFilterValue) return;
+		lastTypeFilterValue = type;
 		curationStore.updateEntryFilter(
-			FilterType.type,
+			CurationFilterType.type,
 			(data: CurationEntryType | undefined) => {
 				if (data === undefined || data !== type) return type;
 				return undefined;
 			},
 			typeFilterFn,
-			(data) => !data
+			(data) => data === undefined
 		);
 	});
 
 	// Search
 
-	const searchFilter = curationStore.getEntryFilterData(FilterType.search);
+	const searchFilter = curationStore.getEntryFilterData(CurationFilterType.search);
 
 	let timer: NodeJS.Timeout | undefined = undefined;
 	const searchInput = writable('');
@@ -82,7 +93,7 @@
 		clearTimeout(timer);
 		timer = setTimeout(() => {
 			curationStore.updateEntryFilter(
-				FilterType.search,
+				CurationFilterType.search,
 				(_: string | undefined) => si,
 				searchFilterFn,
 				(data) => !data || data.trim().length === 0

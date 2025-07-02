@@ -153,14 +153,14 @@ export const CurationEntryStatusColorPalettes = [
 	}
 ];
 
-export enum FilterType {
+export enum CurationFilterType {
 	status,
 	type,
 	search
 }
 
-export type FilterModel<TData> = {
-	type: FilterType;
+export type CurationFilterModel<TData> = {
+	type: CurationFilterType;
 	data: TData;
 	fn: (entry: CurationEntryClass, data: TData) => boolean;
 	isClearedFn: (data: TData) => boolean;

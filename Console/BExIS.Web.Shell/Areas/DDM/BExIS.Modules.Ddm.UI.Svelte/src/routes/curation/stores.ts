@@ -5,10 +5,10 @@ import {
 	CurationEntryStatusColorPalettes,
 	CurationEntryType,
 	CurationEntryTypeViewOrders,
-	FilterType,
+	CurationFilterType,
 	type CurationDetailModel,
 	type CurationLabel,
-	type FilterModel
+	type CurationFilterModel
 } from './types';
 import { CurationClass, CurationEntryClass } from './CurationEntries';
 
@@ -35,7 +35,7 @@ class CurationStore {
 	private timer: NodeJS.Timeout | null = null;
 	private readonly debounceTime = 1000; // 1 second
 
-	private readonly _entryFilters = writable<FilterModel<any>[]>([]);
+	private readonly _entryFilters = writable<CurationFilterModel<any>[]>([]);
 
 	public readonly editMode = writable<boolean>(false);
 	public readonly statusColorPalette = writable(CurationEntryStatusColorPalettes[0]);
@@ -324,7 +324,7 @@ class CurationStore {
 	}
 
 	public updateEntryFilter<TData>(
-		type: FilterType,
+		type: CurationFilterType,
 		dataUpdateFn: (data: TData | undefined) => TData,
 		fn: (entry: CurationEntryClass, data: TData) => boolean,
 		isClearedFn: (data: TData) => boolean
@@ -350,7 +350,7 @@ class CurationStore {
 		});
 	}
 
-	public removeEntryFilter(type: FilterType) {
+	public removeEntryFilter(type: CurationFilterType) {
 		this._entryFilters.update((filters) => {
 			return filters.filter((f) => f.type !== type);
 		});
@@ -361,10 +361,10 @@ class CurationStore {
 	}
 
 	public readonly hasFiltersApplied = derived(this._entryFilters, (filters) => {
-		return filters.length > 0 && filters.some((f) => !f.isClearedFn(f.data));
+		return filters.length > 0 && filters.some((f) => f.isClearedFn && !f.isClearedFn(f.data));
 	});
 
-	public getEntryFilterData(filterType: FilterType) {
+	public getEntryFilterData(filterType: CurationFilterType) {
 		return derived(this._entryFilters, (filters) => filters.find((f) => f.type === filterType));
 	}
 
@@ -378,7 +378,7 @@ class CurationStore {
 				);
 				return curation.curationEntries
 					.filter((entry) => typeSet.has(entry.type))
-					.filter((entry) => filters.every((f) => f.fn(entry, f.data)));
+					.filter((entry) => filters.every((f) => !f.fn || f.fn(entry, f.data)));
 			}
 		);
 	}
