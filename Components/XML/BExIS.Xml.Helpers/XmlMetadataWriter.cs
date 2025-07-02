@@ -230,7 +230,9 @@ namespace BExIS.Xml.Helpers
                         List<XElement> typeList = new List<XElement>();
 
                         typeList = addAndReturnAttribute(element, nestedUsage, 1, 1);
-                        setChildren(typeList.FirstOrDefault(), nestedUsage, importDocument);
+
+                        if (nestedUsage.Extra == null || !IsChoice(nestedUsage.Extra))
+                            setChildren(typeList.FirstOrDefault(), nestedUsage, importDocument);
                     }
                 }
             }
@@ -279,7 +281,9 @@ namespace BExIS.Xml.Helpers
                             List<XElement> typeList = new List<XElement>();
 
                             typeList = addAndReturnAttribute(element, attrUsage, 1, 1);
-                            setChildren(typeList.FirstOrDefault(), attrUsage, importDocument);
+
+                            if (attrUsage.Extra == null || !IsChoice(attrUsage.Extra))
+                                setChildren(typeList.FirstOrDefault(), attrUsage, importDocument);
                         }
                     }
                 }
