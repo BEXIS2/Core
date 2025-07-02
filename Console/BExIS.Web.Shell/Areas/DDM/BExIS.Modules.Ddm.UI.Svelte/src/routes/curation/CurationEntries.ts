@@ -58,9 +58,10 @@ export class CurationClass {
 		this.datasetVersionDate = curation.datasetVersionDate || 'None';
 
 		// curation entries
-		const allEntries = (curation.curationEntries || []).map(
-			(entry) => new CurationEntryClass(entry, this.currentUserType)
-		);
+		const allEntries = (curation.curationEntries || []).map((entry) => {
+			if (entry instanceof CurationEntryClass) return entry;
+			return new CurationEntryClass(entry, this.currentUserType);
+		});
 
 		this.curationStatusEntry =
 			allEntries.find((entry) => entry.type === CurationEntryType.StatusEntryItem) || null;
@@ -393,7 +394,10 @@ export class CurationEntryClass implements CurationEntryModel {
 	public readonly status: CurationEntryStatus;
 	public readonly currentUserType: CurationUserType;
 
-	constructor(curationEntry: CurationEntryModel, currentUserType: CurationUserType) {
+	constructor(
+		curationEntry: CurationEntryModel | CurationEntryClass,
+		currentUserType: CurationUserType
+	) {
 		this.id = curationEntry.id || 0;
 		this.topic = curationEntry.topic || 'None';
 		this.type = curationEntry.type || CurationEntryType.None;
@@ -612,6 +616,7 @@ export class CurationEntryClass implements CurationEntryModel {
 	public setPosition(position: number): CurationEntryClass {
 		if (position < 1) return this;
 		if (this.position === position) return this;
+
 		return new CurationEntryClass(
 			{
 				...this,
