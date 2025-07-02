@@ -48,14 +48,16 @@
     {
         "key": "curation",
         "title": "Configuration Settings for Curation",
-        "value": { "curationLabels": [
-            {
-                "name": "custom-label-1",
-                "color": "#ff0000"
-            }
-        ],
+        "value": {
+            "curationLabels": [
+                {
+                    "name": "custom-label-1",
+                    "color": "#ff0000"
+                }
+            ]
+        },
         "type": "JSON",
-        "description": "This is the description"
+        "description": "Customize the labels that can be used in the curation. \nExample: \"curationLabels\": [ { \"name\": \"custom-label-1\", \"color\": \"#ff0000\" }, ... ]"
     }
   ]
 }
