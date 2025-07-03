@@ -8,7 +8,8 @@ import {
 	CurationFilterType,
 	type CurationDetailModel,
 	type CurationLabel,
-	type CurationFilterModel
+	type CurationFilterModel,
+	CurationStatusEntryTab
 } from './types';
 import { CurationClass, CurationEntryClass } from './CurationEntries';
 
@@ -56,6 +57,12 @@ class CurationStore {
 		}>
 	>();
 
+	public readonly currentStatusEntryTab = writable<CurationStatusEntryTab>(
+		CurationStatusEntryTab.Tasks
+	);
+
+	public readonly curationInfoExpanded = writable(true);
+
 	constructor() {
 		this.datasetId.subscribe((datasetId) => {
 			if (!datasetId) {
@@ -71,6 +78,9 @@ class CurationStore {
 					this.jumpToEntryWhere.set(undefined);
 				}, 1000);
 			}
+		});
+		this.curationInfoExpanded.subscribe((expanded) => {
+			if (!expanded) this.currentStatusEntryTab.set(CurationStatusEntryTab.Hide);
 		});
 	}
 

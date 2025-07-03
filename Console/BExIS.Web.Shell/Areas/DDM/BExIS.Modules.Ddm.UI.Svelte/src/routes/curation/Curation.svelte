@@ -4,7 +4,7 @@
 	import { curationStore } from './stores';
 	import { Spinner } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa';
-	import { faBroom, faExpand, faPen } from '@fortawesome/free-solid-svg-icons';
+	import { faAngleUp, faBroom, faExpand, faPen } from '@fortawesome/free-solid-svg-icons';
 	import {
 		CurationEntryStatusColorPalettes,
 		CurationEntryType,
@@ -21,6 +21,7 @@
 	import CurationFilter from './CurationFilter.svelte';
 	import CurationEntryList from './CurationEntryList.svelte';
 	import StartCuration from './StartCuration.svelte';
+	import { slide } from 'svelte/transition';
 
 	export let datasetId: number;
 	export let jumpToEntryWhere: ((entry: CurationEntryClass) => boolean) | undefined = undefined;
@@ -51,7 +52,8 @@
 		curation,
 		editMode,
 		statusColorPalette,
-		hasFiltersApplied
+		hasFiltersApplied,
+		curationInfoExpanded
 	} = curationStore;
 
 	const filteredEntries = curationStore.getFilteredEntriesReadable();
@@ -86,9 +88,13 @@
 	const toggleEditMode = () => {
 		editMode.update((value) => !value);
 	};
+
+	const toggleCurationInfoExpand = () => {
+		curationInfoExpanded.update((i) => !i);
+	};
 </script>
 
-<div class="container mx-auto grid max-w-3xl overflow-hidden rounded border border-surface-500">
+<div class="w-full overflow-x-hidden rounded">
 	<CurationDatasetInfo />
 
 	{#if $loadingCuration}
@@ -105,27 +111,33 @@
 		<!-- Status Entry -->
 		<CurationStatusEntryCard curationStatusEntry={$curation.curationStatusEntry} />
 		<!-- Color Palette Picker -->
-		<div class="overflow-x-hidden border-b border-surface-500 p-2">
-			<label class="flex">
-				<span class="mr-1">Color palette for the entry status:</span>
-				<select
-					bind:value={$statusColorPalette}
-					title="Change color palette of entry status"
-					class="rounded-l py-0.5 text-sm"
-				>
-					{#each CurationEntryStatusColorPalettes as colorPalette}
-						<option value={colorPalette}>{colorPalette.name}</option>
-					{/each}
-				</select>
-				<div
-					class="flex items-center gap-x-1 overflow-hidden rounded-r border-y border-r border-surface-500 px-2"
-				>
-					{#each $statusColorPalette.colors as c}
-						<div class="inline size-2 rounded-full" style="background-color: {c}">&nbsp;</div>
-					{/each}
-				</div>
-			</label>
-		</div>
+		{#if $curationInfoExpanded}
+			<div
+				class="overflow-x-hidden border-b border-surface-500 p-2"
+				in:slide={{ duration: 150 }}
+				out:slide={{ duration: 150 }}
+			>
+				<label class="flex">
+					<span class="mr-1">Color palette for the entry status:</span>
+					<select
+						bind:value={$statusColorPalette}
+						title="Change color palette of entry status"
+						class="rounded-l py-0.5 text-sm"
+					>
+						{#each CurationEntryStatusColorPalettes as colorPalette}
+							<option value={colorPalette}>{colorPalette.name}</option>
+						{/each}
+					</select>
+					<div
+						class="flex items-center gap-x-1 overflow-hidden rounded-r border-y border-r border-surface-500 px-2"
+					>
+						{#each $statusColorPalette.colors as c}
+							<div class="inline size-2 rounded-full" style="background-color: {c}">&nbsp;</div>
+						{/each}
+					</div>
+				</label>
+			</div>
+		{/if}
 		<!-- Progress -->
 		{#if $curation.curationEntries.length > 1}
 			<div class="border-b border-surface-500">
@@ -142,15 +154,35 @@
 			</div>
 		{/if}
 		<!-- Filter and search -->
-		<div class="border-b border-surface-500 text-sm">
-			<CurationFilter />
-		</div>
+		{#if $curationInfoExpanded}
+			<div
+				class="border-b border-surface-500 text-sm"
+				in:slide={{ duration: 150 }}
+				out:slide={{ duration: 150 }}
+			>
+				<CurationFilter />
+			</div>
+		{/if}
 		<!-- Curation Entry Actions -->
 		<div class="flex flex-wrap items-center justify-between gap-1 border-b border-surface-500 p-1">
 			<button
+				on:click={toggleCurationInfoExpand}
+				class="variant-filled-surface btn overflow-hidden text-ellipsis text-wrap px-2 py-1 enabled:text-surface-800"
+			>
+				<Fa
+					icon={faAngleUp}
+					class="mr-2 inline-block transition-transform {$curationInfoExpanded ? '' : 'rotate-180'}"
+				/>
+				{#if $curationInfoExpanded}
+					Contract
+				{:else}
+					Expand
+				{/if}
+			</button>
+			<button
 				on:click={clearFilters}
 				disabled={!$hasFiltersApplied}
-				class="variant-soft-tertiary btn grow basis-3/4 px-2 py-1 enabled:text-surface-800"
+				class="variant-soft-tertiary btn grow px-2 py-1 enabled:text-surface-800"
 			>
 				{#if $hasFiltersApplied}
 					<Fa icon={faBroom} class="mr-2 inline-block" />

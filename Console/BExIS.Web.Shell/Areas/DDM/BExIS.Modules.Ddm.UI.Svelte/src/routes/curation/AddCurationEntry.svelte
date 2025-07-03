@@ -25,7 +25,7 @@
 	this={tag}
 	class={className}
 	in:slide={{ duration: 150 }}
-	out:slide={{ duration: 300 }}
+	out:slide={{ duration: 150 }}
 >
 	<button
 		class="btn size-full overflow-hidden border-2 border-dashed border-surface-500 px-2 py-0.5 text-surface-600"

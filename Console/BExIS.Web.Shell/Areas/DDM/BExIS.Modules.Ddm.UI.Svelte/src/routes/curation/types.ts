@@ -226,3 +226,9 @@ export enum helpType {
 	mainCurator = 2,
 	tasks = 3
 }
+
+export enum CurationStatusEntryTab {
+	Introduction,
+	Tasks,
+	Hide
+}
