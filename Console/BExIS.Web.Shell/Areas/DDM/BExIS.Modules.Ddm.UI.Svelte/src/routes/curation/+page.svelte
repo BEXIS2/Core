@@ -4,10 +4,10 @@
 	import Curation from './Curation.svelte';
 	import { page } from '$app/stores';
 	import type { CurationEntryClass } from './CurationEntries';
-	import { CurationEntryType } from './types';
+	import { CurationEntryType, type CurationEntryModel } from './types';
 	import { RadioGroup, RadioItem, SlideToggle } from '@skeletonlabs/skeleton';
 	import Fa from 'svelte-fa';
-	import { faAngleLeft, faAngleRight, faCircleDot } from '@fortawesome/free-solid-svg-icons';
+	import { faAngleLeft, faCircleDot, faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { fade, slide } from 'svelte/transition';
 
 	// const container = document.getElementById('curation');
@@ -17,7 +17,7 @@
 
 	// Mock and Example Additions
 
-	let showMock = false;
+	let showMock = true;
 
 	let jumpToEntryWhereExample: ((entry: CurationEntryClass) => boolean) | undefined = undefined;
 
@@ -32,6 +32,8 @@
 		// applies entry filter to curation so that only Datastructure Items are shown
 		typeFilterExample = CurationEntryType.DatastructureEntryItem;
 	};
+
+	let addEntryExample: Partial<CurationEntryModel> | undefined = undefined;
 
 	const typeViews = [
 		{ value: CurationEntryType.MetadataEntryItem, name: 'Metadata' },
@@ -71,6 +73,25 @@
 	const toggleOverlayPosition = () => {
 		overlayPosition = overlayPosition === 'right' ? 'left' : 'right';
 	};
+
+	const exampleMetadataInputs = [
+		{
+			name: 'Abstract',
+			type: CurationEntryType.MetadataEntryItem
+		},
+		{
+			name: 'Keywords',
+			type: CurationEntryType.MetadataEntryItem
+		},
+		{
+			name: 'Study Design',
+			type: CurationEntryType.MetadataEntryItem
+		}
+	];
+
+	function addEntryClick(entry: Partial<CurationEntryModel>) {
+		addEntryExample = entry;
+	}
 </script>
 
 <Page title="Curation" contentLayoutType={pageContentLayoutType.full}>
@@ -85,6 +106,7 @@
 						datasetId={searchParDatasetId}
 						bind:jumpToEntryWhere={jumpToEntryWhereExample}
 						bind:applyTypeFilter={typeFilterExample}
+						bind:addEntry={addEntryExample}
 					/>
 				{/key}
 			</div>
@@ -113,7 +135,21 @@
 					</div>
 
 					{#if currentTypeView === CurationEntryType.MetadataEntryItem}
-						<div></div>
+						<div class="m-2">
+							{#each exampleMetadataInputs as metadataInput}
+								<label class="relative mt-96">
+									<span>{metadataInput.name}</span>
+									<input type="text" class="input" />
+									<button
+										class="variant-ghost-primary btn btn-icon absolute right-3 top-3 !size-6"
+										title="Create entry for {metadataInput.name}"
+										on:click={() => addEntryClick(metadataInput)}
+									>
+										<Fa icon={faPlus} />
+									</button>
+								</label>
+							{/each}
+						</div>
 					{:else if currentTypeView === CurationEntryType.DatastructureEntryItem}
 						<div></div>
 					{:else if currentTypeView === CurationEntryType.PrimaryDataEntryItem}
@@ -183,6 +219,7 @@
 										datasetId={searchParDatasetId}
 										bind:jumpToEntryWhere={jumpToEntryWhereExample}
 										bind:applyTypeFilter={typeFilterExample}
+										bind:addEntry={addEntryExample}
 									/>
 								{/key}
 							</div>
@@ -223,6 +260,7 @@
 								datasetId={searchParDatasetId}
 								bind:jumpToEntryWhere={jumpToEntryWhereExample}
 								bind:applyTypeFilter={typeFilterExample}
+								bind:addEntry={addEntryExample}
 							/>
 						{/key}
 					</div>

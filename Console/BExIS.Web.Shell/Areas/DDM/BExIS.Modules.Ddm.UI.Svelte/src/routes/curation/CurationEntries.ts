@@ -229,8 +229,8 @@ export class CurationClass {
 			if (!addedEntry && entry && entry.position === nextPositions[entry.type]) {
 				// add entry add correct position
 				newEntries.push(entry);
-				nextPositions[entry.type]++;
 				addedEntry = true;
+				if (entry.isNoDraft()) nextPositions[entry.type]++;
 			}
 			if (e.type === CurationEntryType.StatusEntryItem) {
 				newEntries.push(

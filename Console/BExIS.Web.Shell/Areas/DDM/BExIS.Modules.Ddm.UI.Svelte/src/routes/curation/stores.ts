@@ -9,7 +9,8 @@ import {
 	type CurationDetailModel,
 	type CurationLabel,
 	type CurationFilterModel,
-	CurationStatusEntryTab
+	CurationStatusEntryTab,
+	type CurationEntryModel
 } from './types';
 import { CurationClass, CurationEntryClass } from './CurationEntries';
 
@@ -242,7 +243,7 @@ class CurationStore {
 		});
 	}
 
-	public addEmptyEntryFromJson(json: {
+	public addEmptyEntryFromModel(json: {
 		position?: number;
 		type?: CurationEntryType;
 		name?: string;
@@ -415,6 +416,23 @@ class CurationStore {
 			if (!curation) return curation;
 			return curation.removeEntry(entryId);
 		});
+	}
+
+	public createAndJumpToEntry(entryModel: Partial<CurationEntryModel>) {
+		this.addEmptyEntryFromModel(entryModel);
+		this.editMode.set(true);
+		setTimeout(
+			() =>
+				curationStore.jumpToEntryWhere.set(
+					(entry) =>
+						entry.isDraft() &&
+						(entryModel.type === undefined || entry.type === entryModel.type) &&
+						(entryModel.name === undefined || entry.name === entryModel.name) &&
+						(entryModel.description === undefined || entry.description === entryModel.description)
+					// needs to be updated if other parts of the entries are used
+				),
+			500
+		);
 	}
 }
 

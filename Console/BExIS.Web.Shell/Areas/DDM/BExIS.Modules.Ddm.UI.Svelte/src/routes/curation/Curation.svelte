@@ -11,7 +11,8 @@
 		CurationEntryTypeNames,
 		CurationEntryTypeViewOrders,
 		CurationUserType,
-		CurationFilterType
+		CurationFilterType,
+		type CurationEntryModel
 	} from './types';
 	import { derived } from 'svelte/store';
 	import { CurationEntryClass } from './CurationEntries';
@@ -26,6 +27,7 @@
 	export let datasetId: number;
 	export let jumpToEntryWhere: ((entry: CurationEntryClass) => boolean) | undefined = undefined;
 	export let applyTypeFilter: CurationEntryType | undefined = undefined;
+	export let addEntry: Partial<CurationEntryModel> | undefined = undefined;
 
 	// Apply jump to entry and reset
 	$: if (jumpToEntryWhere) {
@@ -43,6 +45,11 @@
 			(data) => data === undefined
 		);
 		applyTypeFilter = undefined;
+	}
+
+	$: if (addEntry) {
+		curationStore.createAndJumpToEntry(addEntry);
+		addEntry = undefined;
 	}
 
 	const {
