@@ -276,18 +276,20 @@ class CurationStore {
 	}
 
 	public saveEntry(entry: CurationEntryClass) {
-		const draftEntryId = entry.id;
-		this.setEntryLoading(draftEntryId, true);
-		let f = draftEntryId <= 0 ? postCurationEntry : putCurationEntry;
+		const prevEntryId = entry.id;
+		const entryWasDraft = entry.isDraft();
+		this.setEntryLoading(prevEntryId, true);
+		let f = entryWasDraft ? postCurationEntry : putCurationEntry;
 		f(entry)
 			.then((response) => {
 				this._curation.update((curation) => {
 					if (!curation) return curation;
 					const newEntry = new CurationEntryClass(response, curation.currentUserType);
 					let newCuration = curation;
-					if (draftEntryId <= 0) {
+					if (entryWasDraft) {
 						newCuration = curation.removeEntry(entry.id);
-						this.setEntryLoading(draftEntryId, false);
+						this._entryCardStates.delete(prevEntryId);
+						this.setEntryLoading(prevEntryId, false);
 					}
 					newCuration = newCuration.addEntry(newEntry);
 					this.setEntryLoading(newEntry.id, false);
@@ -402,23 +404,6 @@ class CurationStore {
 		this._curation.update((curation) => {
 			if (!curation) return curation;
 			return curation.removeEntry(entryId);
-		});
-	}
-
-	public startCuration() {
-		this.addEmptyEntry(0, 'Test', CurationEntryType.StatusEntryItem, undefined, true);
-
-		this._curation.subscribe((curation) => {
-			if (!curation) return;
-			if (!curation.curationStatusEntry) return;
-			const unsubscribe = this._curation.subscribe((curation) => {
-				if (!curation) return;
-				if (!curation.curationStatusEntry) return;
-				if (curation.curationStatusEntry.id < 0) {
-					this.saveEntry(curation.curationStatusEntry);
-					unsubscribe();
-				}
-			});
 		});
 	}
 }

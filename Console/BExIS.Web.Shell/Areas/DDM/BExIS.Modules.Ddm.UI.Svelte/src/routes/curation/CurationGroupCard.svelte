@@ -53,7 +53,7 @@
 
 {#if $editMode}
 	<AddCurationEntry
-		position={entries[0].position + (entries[0].isDraft() ? 0 : 1)}
+		position={(entries?.at(-1)?.position || 0) + (entries?.at(-1)?.isDraft() ? 0 : 1)}
 		type={entries[0].type}
 		tag="li"
 	/>

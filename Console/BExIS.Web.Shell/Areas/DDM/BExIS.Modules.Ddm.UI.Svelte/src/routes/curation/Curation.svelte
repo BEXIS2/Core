@@ -4,7 +4,7 @@
 	import { curationStore } from './stores';
 	import { Spinner } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa';
-	import { faBroom, faExpand, faPen, faPlay } from '@fortawesome/free-solid-svg-icons';
+	import { faBroom, faExpand, faPen } from '@fortawesome/free-solid-svg-icons';
 	import {
 		CurationEntryStatusColorPalettes,
 		CurationEntryType,
@@ -20,6 +20,7 @@
 	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
 	import CurationFilter from './CurationFilter.svelte';
 	import CurationEntryList from './CurationEntryList.svelte';
+	import StartCuration from './StartCuration.svelte';
 
 	export let datasetId: number;
 	export let jumpToEntryWhere: ((entry: CurationEntryClass) => boolean) | undefined = undefined;
@@ -85,11 +86,6 @@
 	const toggleEditMode = () => {
 		editMode.update((value) => !value);
 	};
-
-	const startCuration = () => {
-		curationStore.startCuration();
-		editMode.set(true);
-	};
 </script>
 
 <div class="container mx-auto grid max-w-3xl overflow-hidden rounded border border-surface-500">
@@ -103,20 +99,8 @@
 		<div>
 			<p class="text-red-500">Error loading curation entries</p>
 		</div>
-	{:else if $curation?.curationEntries.length === 0 || !$curation?.curationStatusEntry}
-		<div class="flex h-48 items-center justify-center">
-			<p class="text-surface-800">The curation process has not started yet.</p>
-		</div>
-		<!-- TODO: TEMPLATE -->
-		{#if $curation?.currentUserType === CurationUserType.Curator}
-			<button
-				on:click={startCuration}
-				class="m-1 rounded bg-success-500 p-1 text-surface-100 hover:bg-success-600 focus-visible:bg-success-600"
-			>
-				<Fa icon={faPlay} class="mr-1 inline-block" />
-				Start Curation
-			</button>
-		{/if}
+	{:else if !$curation?.curationStatusEntry?.isNoDraft()}
+		<StartCuration />
 	{:else}
 		<!-- Status Entry -->
 		<CurationStatusEntryCard curationStatusEntry={$curation.curationStatusEntry} />

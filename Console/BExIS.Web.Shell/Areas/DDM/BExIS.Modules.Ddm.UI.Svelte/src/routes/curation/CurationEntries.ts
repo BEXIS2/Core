@@ -177,7 +177,11 @@ export class CurationClass {
 		type = CurationEntryType.None,
 		description = ''
 	) {
-		if (position < 1) return this;
+		const isStatusEntry = type === CurationEntryType.StatusEntryItem;
+		const invalidPosition =
+			(isStatusEntry && (position !== 0 || this.curationStatusEntry)) ||
+			(!isStatusEntry && position < 1);
+		if (invalidPosition) return this;
 		let newEntry = CurationEntryClass.emptyEntry(
 			this.datasetId,
 			-this.draftCount - 1,
@@ -219,7 +223,7 @@ export class CurationClass {
 	): CurationEntryClass[] {
 		let newEntries: CurationEntryClass[] = [];
 		let nextPositions = CurationEntryTypeNames.map((_) => 1);
-		let addedEntry = false;
+		let addedEntry = entry?.type === CurationEntryType.StatusEntryItem; // is false if entry is not a StatusEntryItem
 		const sortedCurationEntries = this.sortedCurationEntries(curationEntries);
 		for (const e of sortedCurationEntries) {
 			if (!addedEntry && entry && entry.position === nextPositions[entry.type]) {
@@ -228,7 +232,17 @@ export class CurationClass {
 				nextPositions[entry.type]++;
 				addedEntry = true;
 			}
-			if (e.type !== CurationEntryType.StatusEntryItem && e.id !== entry?.id) {
+			if (e.type === CurationEntryType.StatusEntryItem) {
+				newEntries.push(
+					new CurationEntryClass(
+						{
+							...e,
+							position: 0
+						},
+						e.currentUserType
+					)
+				);
+			} else if (e.id !== entry?.id) {
 				newEntries.push(
 					new CurationEntryClass(
 						{
@@ -242,16 +256,6 @@ export class CurationClass {
 					// if entry is a draft the counter should not be increased because they are not in the backend
 					nextPositions[e.type]++;
 				}
-			} else if (e.type === CurationEntryType.StatusEntryItem) {
-				newEntries.push(
-					new CurationEntryClass(
-						{
-							...e,
-							position: 0
-						},
-						e.currentUserType
-					)
-				);
 			}
 		}
 		if (!addedEntry && entry) {
@@ -679,6 +683,10 @@ export class CurationEntryClass implements CurationEntryModel {
 
 	public isDraft(): boolean {
 		return this.id < 0;
+	}
+
+	public isNoDraft() {
+		return !this.isDraft();
 	}
 
 	public isVisible(): boolean {
