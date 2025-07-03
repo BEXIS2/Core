@@ -17,6 +17,8 @@
 	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
 	import CurationEntryInput from './CurationEntryInput.svelte';
 	import CurationNote from './CurationNote.svelte';
+	import { tick } from 'svelte';
+	import Confetti from '$lib/components/Confetti.svelte';
 
 	export let entry: CurationEntryClass;
 	export let combined: boolean;
@@ -86,6 +88,10 @@
 	};
 
 	$: showCollapsedNotes = !$cardState.isExpanded && entry.visibleNotes.length > 0;
+
+	let confettiRef: Confetti;
+
+	const confettiTypeSet = new Set([CurationEntryStatus.Fixed, CurationEntryStatus.Closed]);
 </script>
 
 <!-- class blink will be tongled automatically in the script -->
@@ -160,22 +166,33 @@
 				class:gap-x-0={$editMode}
 				class:!w-24={$editMode}
 				class:!grow-0={$editMode}
+				class:opacity-10={entry.isDraft()}
+				class:cursor-not-allowed={entry.isDraft()}
 			>
 				{#each CurationEntryStatusDetails as statusDetails, index}
 					{#if $curation?.currentUserType === CurationUserType.Curator || (index !== CurationEntryStatus.Ok && index !== CurationEntryStatus.Closed)}
 						{#if !$editMode || index === entry.status}
 							<button
-								class="status-change-button shrink grow basis-1/4 overflow-x-hidden text-ellipsis text-nowrap rounded px-1 py-0.5"
+								class="status-change-button relative shrink grow basis-1/4 overflow-hidden text-ellipsis text-nowrap rounded p-0"
 								class:active={index === entry.status}
-								class:opacity-10={entry.isDraft()}
-								class:cursor-not-allowed={entry.isDraft()}
 								disabled={index === entry.status || $editMode || entry.isDraft()}
 								style="--status-color: {$statusColorPalette.colors[index]};"
 								title="Change Entry Status to {statusDetails.name}"
-								on:click={() => setStatus(index)}
+								on:click={(e) => {
+									if (confettiTypeSet.has(index)) confettiRef.trigger(e);
+									setStatus(index);
+								}}
 							>
-								<Fa icon={statusDetails.icon} class="inline-block" />
-								{statusDetails.name}
+								<div class="inactive-content size-full px-1 py-0.5">
+									<Fa icon={statusDetails.icon} class="mr-1 inline-block" />
+									{statusDetails.name}
+								</div>
+								<div
+									class="active-content pointer-events-none absolute left-0 top-0 size-full overflow-hidden px-1 py-0.5"
+								>
+									<Fa icon={statusDetails.icon} class="mr-1 inline-block" />
+									{statusDetails.name}
+								</div>
 							</button>
 						{/if}
 					{/if}
@@ -271,6 +288,8 @@
 	{#if $isUploading}
 		<SpinnerOverlay />
 	{/if}
+
+	<Confetti bind:this={confettiRef} />
 </svelte:element>
 
 <style lang="postcss">
@@ -300,20 +319,46 @@
 	.status-change-button {
 		color: var(--status-color, inherit);
 		box-shadow: 0 0 0 1px var(--status-color, transparent) inset;
+		transition:
+			opacity 0.15s,
+			filter 0.15s,
+			transform 0.15s;
+		z-index: 1;
+	}
+
+	.status-change-button:active {
+		transform: scale(95%, 95%);
+		filter: brightness(0.9);
+	}
+
+	.status-change-button:hover {
+		/* box-shadow: 0 0 0 2px var(--status-color, transparent) inset; */
+		opacity: 0.7;
 	}
 
 	.status-change-button.active {
 		@apply cursor-not-allowed text-white;
-		background-color: var(--status-color, transparent);
 	}
 
-	.status-change-button:hover,
-	.status-change-button:focus {
-		@apply text-white;
+	.status-change-button .active-content {
+		opacity: 0;
 		background-color: var(--status-color, transparent);
+		transform: scale(0.2);
+		clip-path: circle(0% at 50% 50%);
+		transition:
+			opacity 0.3s,
+			clip-path 0.3s;
 	}
 
-	.status-button-container:not(.active):hover .status-change-button.active,
+	.status-change-button.active .active-content {
+		opacity: 1;
+		transform: scale(1);
+		clip-path: circle(150% at 50% 50%);
+	}
+
+	.status-change-button.active
+		.status-button-container:not(.active):hover
+		.status-change-button.active,
 	.status-button-container:not(.active):focus .status-change-button.active {
 		@apply opacity-30;
 	}
