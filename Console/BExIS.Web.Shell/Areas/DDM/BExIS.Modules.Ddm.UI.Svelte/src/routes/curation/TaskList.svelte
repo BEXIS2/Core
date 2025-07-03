@@ -69,7 +69,7 @@
 							<input
 								id={`${tl.id}-checkbox`}
 								type="checkbox"
-								class="size-3 rounded checked:bg-surface-800 hover:bg-primary-300 hover:checked:bg-primary-500 focus:ring-primary-500 focus-visible:ring-primary-500"
+								class="input variant-soft-primary size-3"
 								bind:checked={tl.isChecked}
 								on:change={() => toggleChecked(tl.id)}
 							/>
@@ -94,7 +94,7 @@
 						<input
 							id={`${tl.id}-checkbox`}
 							type="checkbox"
-							class="size-3 rounded checked:bg-surface-800 hover:bg-primary-300 hover:checked:bg-primary-500 focus:ring-primary-500 focus-visible:ring-primary-500"
+							class="input variant-soft-primary size-3"
 							bind:checked={tl.isChecked}
 							on:change={() => toggleChecked(tl.id)}
 						/>

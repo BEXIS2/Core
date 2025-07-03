@@ -122,7 +122,7 @@
 			type="button"
 			on:click|preventDefault={closeEditMode}
 			title="Cancel edit"
-			class="grow text-nowrap rounded bg-surface-300 px-2 py-1 hover:bg-surface-500 focus-visible:bg-surface-500 active:bg-surface-600"
+			class="variant-ghost-surface btn grow text-nowrap px-2 py-1 text-surface-800"
 		>
 			<Fa icon={faXmark} class="mr-1 inline-block" />
 			Cancel
@@ -137,7 +137,7 @@
 		<button
 			type="submit"
 			title="Save entry"
-			class="grow text-nowrap rounded bg-success-500 px-2 py-1 text-surface-100 hover:bg-success-600 focus-visible:bg-success-600 active:bg-success-700"
+			class="variant-filled-success btn grow text-nowrap px-2 py-1"
 		>
 			{#if entry.isDraft()}
 				<Fa icon={faSquarePlus} class="mr-1 inline-block" />

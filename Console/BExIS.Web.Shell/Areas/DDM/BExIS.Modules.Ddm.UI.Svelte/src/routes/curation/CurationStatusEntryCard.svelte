@@ -204,11 +204,11 @@
 				</p>
 				<div class="flex flex-row-reverse justify-between">
 					<button
-						class="mb-1 mt-2 flex items-center rounded bg-secondary-200 px-2 py-0.5 text-secondary-800 hover:bg-secondary-400 hover:text-secondary-900"
+						class="variant-soft-secondary btn mb-1 mt-2 px-2 py-0.5"
 						on:click={editIntroduction}
 						title="Edit Introduction"
 					>
-						<Fa icon={faPen} class="inline-block" />
+						<Fa icon={faPen} class="mr-1 inline-block" />
 						<span class="ml-1">Edit Introduction</span>
 					</button>
 				</div>
@@ -226,20 +226,20 @@
 				<div class="mb-1 mt-2 flex flex-row justify-between">
 					<!-- Cancel button -->
 					<button
-						class="rounded bg-surface-300 px-2 py-1 text-surface-800 hover:bg-surface-500 active:bg-surface-700"
+						class="variant-ghost-surface btn px-2 py-1"
 						on:click={cancelIntroductionEdit}
 						title="Cancel introduction editing"
 					>
-						<Fa icon={faXmark} class="inline-block" />
+						<Fa icon={faXmark} class="mr-2 inline-block" />
 						<span class="ml-1">Cancel Editing</span>
 					</button>
 					<!-- Save button -->
 					<button
-						class="rounded bg-success-500 px-2 py-1 text-surface-100 hover:bg-success-600 focus-visible:bg-success-600 active:bg-success-700"
+						class="variant-filled-success btn px-2 py-1"
 						on:click={saveIntroduction}
 						title="Save Introduction"
 					>
-						<Fa icon={faFloppyDisk} class="inline-block" />
+						<Fa icon={faFloppyDisk} class="mr-2 inline-block" />
 						<span class="ml-1">Save Introduction</span>
 					</button>
 				</div>
@@ -270,11 +270,11 @@
 						</select>
 					</label>
 					<button
-						class="mb-1 mt-2 flex items-center rounded bg-secondary-200 px-2 py-0.5 text-secondary-800 hover:bg-secondary-400 hover:text-secondary-900"
+						class="variant-soft-secondary btn mb-1 mt-2 px-2 py-0.5"
 						on:click={editTasks}
 						title="Edit Tasks"
 					>
-						<Fa icon={faPen} class="inline-block" />
+						<Fa icon={faPen} class="mr-1 inline-block" />
 						<span class="ml-1">Edit Tasks</span>
 					</button>
 				</div>
@@ -293,20 +293,20 @@
 				<div class="mb-1 mt-2 flex flex-row justify-between">
 					<!-- Cancel button -->
 					<button
-						class="rounded bg-surface-300 px-2 py-1 text-surface-800 hover:bg-surface-500 active:bg-surface-700"
+						class="variant-ghost-surface btn px-2 py-1"
 						on:click={cancelTasksEdit}
 						title="Cancel tasks editing"
 					>
-						<Fa icon={faXmark} class="inline-block" />
+						<Fa icon={faXmark} class="mr-2 inline-block" />
 						<span class="ml-1">Cancel Editing</span>
 					</button>
 					<!-- Save button -->
 					<button
-						class="rounded bg-success-500 px-2 py-1 text-surface-100 hover:bg-success-600 focus-visible:bg-success-600 active:bg-success-700"
+						class="variant-filled-success btn px-2 py-1"
 						on:click={saveTasks}
 						title="Save Tasks"
 					>
-						<Fa icon={faFloppyDisk} class="inline-block" />
+						<Fa icon={faFloppyDisk} class="mr-2 inline-block" />
 						<span class="ml-1">Save Tasks</span>
 					</button>
 				</div>

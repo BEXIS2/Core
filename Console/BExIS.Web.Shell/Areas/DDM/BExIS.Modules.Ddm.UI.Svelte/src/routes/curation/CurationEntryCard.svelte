@@ -139,7 +139,7 @@
 				<CurationNotes {entry} />
 			{:else if entry.visibleNotes.length > 0}
 				<button
-					class="h-full w-full overflow-hidden rounded border px-1 py-0.5 text-left text-sm text-surface-700"
+					class="variant-soft-surface btn size-full overflow-hidden border border-surface-500 px-1 py-0.5 text-left text-sm text-surface-700"
 					title="Open Chat"
 					on:click={toggleExpand}
 				>
@@ -165,7 +165,7 @@
 					{#if $curation?.currentUserType === CurationUserType.Curator || (index !== CurationEntryStatus.Ok && index !== CurationEntryStatus.Closed)}
 						{#if !$editMode || index === entry.status}
 							<button
-								class="status-change-button shrink grow basis-1/4 overflow-x-hidden text-ellipsis text-nowrap rounded border px-1 py-0.5"
+								class="status-change-button shrink grow basis-1/4 overflow-x-hidden text-ellipsis text-nowrap rounded px-1 py-0.5"
 								class:active={index === entry.status}
 								class:opacity-10={entry.isDraft()}
 								class:cursor-not-allowed={entry.isDraft()}
@@ -184,8 +184,7 @@
 
 			<!-- Chat Button -->
 			<button
-				class="chat-button w-24 grow overflow-hidden text-ellipsis text-nowrap rounded-lg border border-surface-300 bg-surface-300 px-2 py-0.5 text-surface-900 hover:border-surface-400 hover:bg-surface-400"
-				class:active={$cardState.isExpanded}
+				class="variant-ghost-surface btn w-24 grow overflow-hidden text-ellipsis text-nowrap px-2 py-0.5 text-sm"
 				class:hidden={$editMode}
 				class:opacity-10={entry.isDraft()}
 				class:cursor-not-allowed={entry.isDraft()}
@@ -193,7 +192,7 @@
 				title="Toggle Chat"
 				on:click={toggleExpand}
 			>
-				<Fa icon={$cardState.isExpanded ? faXmark : faMessage} class="inline-block" />
+				<Fa icon={$cardState.isExpanded ? faXmark : faMessage} class="mr-2 inline-block" />
 				{#if entry.hasUnreadNotes && !$cardState.isExpanded}
 					<span class="notification-badge"><span>&nbsp;</span></span>
 				{/if}
@@ -229,26 +228,26 @@
 
 			{#if entry.isDraft()}
 				<button
-					class="rounded bg-error-300 px-2 py-0.5 text-error-700 hover:bg-error-400 hover:text-error-900"
+					class="variant-soft-error btn px-2 py-0.5 text-sm"
 					title="Delete Draft"
 					on:click={deleteEntry}
 					name="Delete Draft"
 				>
-					<Fa icon={faTrash} class="inline-block" />
+					<Fa icon={faTrash} class="mr-2 inline-block" />
 					Delete
 				</button>
 			{/if}
 
 			<!-- Edit Entry -->
 			<button
-				class="grow rounded bg-secondary-200 px-2 py-0.5 text-secondary-700 hover:bg-secondary-400 hover:text-secondary-800"
+				class="variant-soft-secondary btn grow px-2 py-0.5 text-sm"
 				class:hidden={!$editMode}
 				disabled={!$editMode}
 				on:click={() => cardState.update((cs) => ({ ...cs, editEntryMode: true }))}
 				name="Edit Entry"
 				title="Edit Entry"
 			>
-				<Fa icon={faPen} class="inline-block" />
+				<Fa icon={faPen} class="mr-2 inline-block" />
 				Edit Entry
 			</button>
 
@@ -259,7 +258,7 @@
 					<input
 						type="number"
 						bind:value={position}
-						class="ml-0.5 w-12 rounded border border-surface-500 px-1 py-0.5 text-xs text-surface-800 focus-visible:border-surface-700 focus-visible:outline-none"
+						class="input ml-0.5 w-12 px-1 py-0.5 text-xs text-surface-800"
 						min="1"
 						on:change={positionUpdateDebounce}
 						disabled={!$editMode}
@@ -300,7 +299,7 @@
 
 	.status-change-button {
 		color: var(--status-color, inherit);
-		border: 1px solid var(--status-color, transparent);
+		box-shadow: 0 0 0 1px var(--status-color, transparent) inset;
 	}
 
 	.status-change-button.active {
@@ -328,14 +327,11 @@
 		@apply border border-surface-300;
 		width: 0.5rem;
 		height: 0.5rem;
-		margin-left: -0.55rem;
+		margin-left: -0.8rem;
+		margin-top: -0.65rem;
 	}
 
 	.notification-badge * {
 		@apply size-full animate-ping;
-	}
-
-	.chat-button.active {
-		@apply rounded-t-none;
 	}
 </style>

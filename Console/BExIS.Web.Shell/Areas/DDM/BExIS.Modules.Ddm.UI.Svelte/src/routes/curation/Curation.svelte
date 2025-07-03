@@ -150,21 +150,18 @@
 			<button
 				on:click={clearFilters}
 				disabled={!$hasFiltersApplied}
-				class="grow basis-3/4 rounded bg-surface-200 px-2 py-1 enabled:hover:bg-surface-400 enabled:focus-visible:bg-surface-400 disabled:text-surface-500"
+				class="variant-soft-tertiary btn grow basis-3/4 px-2 py-1 enabled:text-surface-800"
 			>
 				{#if $hasFiltersApplied}
-					<Fa icon={faBroom} class="mr-1 inline-block" />
+					<Fa icon={faBroom} class="mr-2 inline-block" />
 					Clear Applied Filters
 				{:else}
 					No Filters Applied
 				{/if}
 			</button>
 			{#if $curation?.currentUserType === CurationUserType.Curator}
-				<button
-					on:click={toggleEditMode}
-					class="grow rounded bg-secondary-200 px-2 py-1 text-secondary-800 hover:bg-secondary-400 hover:text-secondary-900 focus-visible:bg-secondary-400"
-				>
-					<Fa icon={$editMode ? faExpand : faPen} class="mr-1 inline-block" />
+				<button on:click={toggleEditMode} class="variant-soft-secondary btn grow px-2 py-1">
+					<Fa icon={$editMode ? faExpand : faPen} class="mr-2 inline-block" />
 					Go to {$editMode ? 'View' : 'Edit'} Mode
 				</button>
 			{/if}

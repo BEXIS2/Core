@@ -3,7 +3,7 @@
 	import { curationStore } from './stores';
 	import Fa from 'svelte-fa';
 	import { CurationEntryType } from './types';
-	import { fade, fly, slide } from 'svelte/transition';
+	import { slide } from 'svelte/transition';
 
 	export let tag: string | undefined = 'div'; // if set, use this tag instead of the default <div>
 
@@ -28,7 +28,7 @@
 	out:slide={{ duration: 300 }}
 >
 	<button
-		class="flex size-full items-center justify-center overflow-hidden rounded border-2 border-dashed border-surface-300 text-surface-400 hover:border-surface-500 hover:bg-surface-300 hover:text-surface-600 focus-visible:bg-surface-300 focus-visible:text-surface-800 active:bg-surface-400"
+		class="btn size-full overflow-hidden border-2 border-dashed border-surface-500 px-2 py-0.5 text-surface-600"
 		on:click={addNewEntry}
 		title="Add new entry at position {position}"
 		disabled={!$editMode}

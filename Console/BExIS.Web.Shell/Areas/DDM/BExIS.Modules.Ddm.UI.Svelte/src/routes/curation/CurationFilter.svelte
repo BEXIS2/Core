@@ -156,7 +156,12 @@
 	<label class="flex items-center gap-1 rounded border border-surface-400 px-2 py-1">
 		<Fa icon={faSearch} class="inline-block text-xs" />
 		<span>Search:</span>
-		<input class="rounded-sm px-1 py-0.5 text-sm" type="text" bind:value={$searchInput} />
+		<input
+			class="input px-1 py-0.5 text-sm placeholder:text-surface-600"
+			type="text"
+			bind:value={$searchInput}
+			placeholder="Contained word group"
+		/>
 	</label>
 </div>
 

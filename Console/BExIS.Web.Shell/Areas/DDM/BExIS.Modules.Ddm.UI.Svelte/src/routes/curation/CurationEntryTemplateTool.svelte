@@ -69,7 +69,7 @@
 		type="button"
 		on:click|preventDefault={copyEntryTemplateLink}
 		title="Copy markdown link for template"
-		class="text-nowrap rounded bg-surface-300 px-2 py-1 hover:bg-surface-500 focus-visible:bg-surface-500 active:bg-surface-600"
+		class="variant-ghost-surface btn px-2 py-1"
 	>
 		<Fa icon={faCopy} class="inline-block" />
 	</button>
