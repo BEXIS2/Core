@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Fa from 'svelte-fa';
 	import type { CurationEntryClass } from './CurationEntries';
-	import { CurationEntryType, CurationStatusEntryTab, CurationUserType } from './types';
+	import { CurationEntryType, CurationStatusEntryTab } from './types';
 	import {
 		faDoorOpen,
 		faListCheck,
@@ -106,7 +106,7 @@
 </script>
 
 <!-- Status and Badges -->
-{#if $curation?.currentUserType === CurationUserType.Curator}
+{#if $curation?.isCurator}
 	<div class="relative flex flex-wrap gap-2 overflow-x-hidden border-b border-surface-500 p-2">
 		<!-- Status -->
 		<CurationLabel {curationStatusEntry} />
@@ -131,7 +131,7 @@
 
 <!-- Introduction and Tasks -->
 <div class="relative overflow-x-hidden border-b border-surface-500 p-2">
-	{#if $curation?.currentUserType === CurationUserType.Curator}
+	{#if $curation?.isCurator}
 		<!-- Tabs -->
 		<div
 			class="tab-switch relative flex items-stretch gap-1 rounded border border-surface-300 bg-surface-200 p-0.5"

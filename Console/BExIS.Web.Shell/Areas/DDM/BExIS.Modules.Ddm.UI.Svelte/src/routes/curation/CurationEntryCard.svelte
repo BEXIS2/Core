@@ -8,11 +8,11 @@
 		faTrash,
 		faXmark
 	} from '@fortawesome/free-solid-svg-icons';
-	import { derived, writable } from 'svelte/store';
+	import { derived } from 'svelte/store';
 	import { curationStore } from './stores';
 	import RelativeDate from '$lib/components/RelativeDate.svelte';
 	import CurationNotes from './CurationNotes.svelte';
-	import { CurationEntryStatus, CurationEntryStatusDetails, CurationUserType } from './types';
+	import { CurationEntryStatus, CurationEntryStatusDetails } from './types';
 	import type { CurationEntryClass } from './CurationEntries';
 	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
 	import CurationEntryInput from './CurationEntryInput.svelte';
@@ -170,7 +170,7 @@
 				class:cursor-not-allowed={entry.isDraft()}
 			>
 				{#each CurationEntryStatusDetails as statusDetails, index}
-					{#if $curation?.currentUserType === CurationUserType.Curator || (index !== CurationEntryStatus.Ok && index !== CurationEntryStatus.Closed)}
+					{#if $curation?.isCurator || (index !== CurationEntryStatus.Ok && index !== CurationEntryStatus.Closed)}
 						{#if !$editMode || index === entry.status}
 							<button
 								class="status-change-button relative shrink grow basis-1/4 overflow-hidden text-ellipsis text-nowrap rounded p-0"

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Fa from 'svelte-fa';
 	import { curationStore } from './stores';
-	import { CurationEntryType, CurationUserType } from './types';
+	import { CurationEntryType } from './types';
 	import { faPlay, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 
 	const { curation, editMode } = curationStore;
@@ -22,7 +22,7 @@
 	}
 
 	const startCuration = () => {
-		if (!$curation?.curationStatusEntry?.isDraft()) return;
+		if (!$curation?.curationStatusEntry?.isDraft() || !$curation?.isCurator) return;
 		curationStore.updateEntry($curation?.curationStatusEntry.id, {
 			name: introduction,
 			description: tasks
@@ -35,7 +35,7 @@
 	<Fa icon={faCircleInfo} class="mr-1 inline-block" />The curation process has not started yet.
 </p>
 
-{#if $curation?.currentUserType === CurationUserType.Curator}
+{#if $curation?.isCurator}
 	<form class="mx-2 mt-2 flex flex-col items-stretch gap-2 sm:mx-24">
 		<button
 			on:click|preventDefault={startCuration}

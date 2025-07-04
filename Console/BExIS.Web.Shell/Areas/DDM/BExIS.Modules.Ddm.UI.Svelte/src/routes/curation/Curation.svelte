@@ -10,7 +10,6 @@
 		CurationEntryType,
 		CurationEntryTypeNames,
 		CurationEntryTypeViewOrders,
-		CurationUserType,
 		CurationFilterType,
 		type CurationEntryModel
 	} from './types';
@@ -28,6 +27,17 @@
 	export let jumpToEntryWhere: ((entry: CurationEntryClass) => boolean) | undefined = undefined;
 	export let applyTypeFilter: CurationEntryType | undefined = undefined;
 	export let addEntry: Partial<CurationEntryModel> | undefined = undefined;
+
+	const {
+		loadingCuration,
+		loadingError,
+		uploadingEntries,
+		curation,
+		editMode,
+		statusColorPalette,
+		hasFiltersApplied,
+		curationInfoExpanded
+	} = curationStore;
 
 	// Apply jump to entry and reset
 	$: if (jumpToEntryWhere) {
@@ -47,21 +57,11 @@
 		applyTypeFilter = undefined;
 	}
 
+	// add and jump to entry and reset (only if the user is a curator)
 	$: if (addEntry) {
-		curationStore.createAndJumpToEntry(addEntry);
+		if ($curation?.isCurator) curationStore.createAndJumpToEntry(addEntry);
 		addEntry = undefined;
 	}
-
-	const {
-		loadingCuration,
-		loadingError,
-		uploadingEntries,
-		curation,
-		editMode,
-		statusColorPalette,
-		hasFiltersApplied,
-		curationInfoExpanded
-	} = curationStore;
 
 	const filteredEntries = curationStore.getFilteredEntriesReadable();
 
@@ -93,7 +93,10 @@
 	};
 
 	const toggleEditMode = () => {
-		editMode.update((value) => !value);
+		editMode.update((value) => {
+			if (!value && $curation?.isCurator) return true;
+			else return false;
+		});
 	};
 
 	const toggleCurationInfoExpand = () => {
@@ -198,7 +201,7 @@
 					No Filters Applied
 				{/if}
 			</button>
-			{#if $curation?.currentUserType === CurationUserType.Curator}
+			{#if $curation?.isCurator}
 				<button on:click={toggleEditMode} class="variant-soft-secondary btn grow px-2 py-1">
 					<Fa icon={$editMode ? faExpand : faPen} class="mr-2 inline-block" />
 					Go to {$editMode ? 'View' : 'Edit'} Mode

@@ -35,6 +35,7 @@ export class CurationClass {
 	public readonly curationProgressPerType: number[][];
 
 	public readonly currentUserType: CurationUserType;
+	public readonly isCurator: boolean;
 
 	public readonly draftCount: number;
 
@@ -51,6 +52,7 @@ export class CurationClass {
 		});
 		this.currentUserType =
 			this.userMap.get(fixedCurationUserId)?.curationUserType ?? CurationUserType.User;
+		this.isCurator = this.currentUserType === CurationUserType.Curator;
 
 		// dataset information
 		this.datasetId = curation.datasetId || 0;

@@ -2,7 +2,7 @@
 	import { curationStore } from './stores';
 	import RelativeDate from '$lib/components/RelativeDate.svelte';
 	import CurationHelp from './CurationHelp.svelte';
-	import { CurationUserType, helpType } from './types';
+	import { helpType } from './types';
 	import { slide } from 'svelte/transition';
 
 	const { datasetId, curation, loadingCuration, loadingError, curationInfoExpanded } =
@@ -43,9 +43,7 @@
 			<div class="flex grow flex-row-reverse">
 				<CurationHelp
 					popupId="curationHelpMain"
-					type={$curation?.currentUserType === CurationUserType.Curator
-						? helpType.mainCurator
-						: helpType.mainResearcher}
+					type={$curation?.isCurator ? helpType.mainCurator : helpType.mainResearcher}
 				/>
 			</div>
 		</div>
