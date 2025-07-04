@@ -38,10 +38,13 @@
 	// Jump to this card
 	let cardElement: HTMLElement | null = null;
 
+	const scrollCardIntoView = () =>
+		cardElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
 	$: {
 		const jumpHere = $jumpToEntryWhere ? $jumpToEntryWhere(entry) : false;
 		if (jumpHere && cardElement) {
-			cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			scrollCardIntoView();
 			cardElement.classList.add('blink');
 			setTimeout(() => cardElement?.classList.remove('blink'), 3000);
 			jumpToEntryWhere.set(undefined);
@@ -157,9 +160,12 @@
 				<CurationNotes {entry} />
 			{:else if entry.visibleNotes.length > 0}
 				<button
-					class="variant-soft-surface btn size-full overflow-hidden border border-surface-500 px-1 py-0.5 text-left text-sm text-surface-700"
+					class="variant-soft-surface btn size-full !justify-start overflow-hidden border border-surface-500 px-1.5 py-0.5 text-left text-sm text-surface-700"
 					title="Open Chat"
-					on:click={toggleExpand}
+					on:click={() => {
+						toggleExpand();
+						scrollCardIntoView();
+					}}
 				>
 					<CurationNote
 						note={entry.visibleNotes[entry.visibleNotes.length - 1]}
@@ -229,7 +235,10 @@
 				class:cursor-not-allowed={entry.isDraft()}
 				disabled={$editMode || entry.isDraft()}
 				title="Toggle Chat"
-				on:click={toggleExpand}
+				on:click={() => {
+					toggleExpand();
+					if ($cardState.isExpanded) scrollCardIntoView();
+				}}
 			>
 				<Fa icon={$cardState.isExpanded ? faXmark : faMessage} class="mr-2 inline-block" />
 				{#if entry.hasUnreadNotes && !$cardState.isExpanded}

@@ -17,7 +17,6 @@
 	import { CurationEntryClass } from './CurationEntries';
 	import CurationStatusEntryCard from './CurationStatusEntryCard.svelte';
 	import CurationProgressInfo from './CurationProgressInfo.svelte';
-	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
 	import CurationFilter from './CurationFilter.svelte';
 	import CurationEntryList from './CurationEntryList.svelte';
 	import StartCuration from './StartCuration.svelte';
@@ -33,7 +32,6 @@
 	const {
 		loadingCuration,
 		loadingError,
-		uploadingEntries,
 		curation,
 		editMode,
 		statusColorPalette,
@@ -170,10 +168,6 @@
 					totalIssues={$curation?.curationProgressTotal.reduce((a, b) => a + b, 0)}
 					label="Curation Progress"
 				/>
-				<!-- Spinner overlay -->
-				{#if $uploadingEntries.length > 0}
-					<SpinnerOverlay />
-				{/if}
 			</div>
 		{/if}
 		<!-- Filter and search -->

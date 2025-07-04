@@ -20,9 +20,7 @@
 	let form: HTMLFormElement;
 
 	onMount(() => {
-		if (form && typeof form.scrollIntoView === 'function') {
-			form.scrollIntoView({ behavior: 'smooth', block: 'center' });
-		}
+		form?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 	});
 
 	let inputData = $cardState.inputData || {

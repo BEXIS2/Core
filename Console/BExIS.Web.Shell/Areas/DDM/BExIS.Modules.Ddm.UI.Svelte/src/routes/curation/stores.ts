@@ -341,13 +341,14 @@ class CurationStore {
 
 	public updateEntryFilter<TData>(
 		type: CurationFilterType,
-		dataUpdateFn: (data: TData | undefined) => TData,
-		fn: (entry: CurationEntryClass, data: TData) => boolean,
-		isClearedFn: (data: TData) => boolean
+		dataUpdateFn: (data: TData | undefined) => TData | undefined,
+		fn: ((entry: CurationEntryClass, data: TData) => boolean) | undefined = undefined,
+		isClearedFn: ((data: TData) => boolean) | undefined = undefined
 	) {
 		this._entryFilters.update((filters) => {
 			if (!filters.map((f) => f.type).includes(type)) {
 				// create filter
+				if (!fn || !isClearedFn) return filters;
 				return [...filters, { type: type, data: dataUpdateFn(undefined), fn, isClearedFn }];
 			}
 			// update filter data
@@ -359,8 +360,8 @@ class CurationStore {
 				{
 					type: type,
 					data: newData,
-					fn,
-					isClearedFn
+					fn: fn || currentFilter.fn,
+					isClearedFn: isClearedFn || currentFilter.isClearedFn
 				}
 			];
 		});
@@ -369,6 +370,13 @@ class CurationStore {
 	public removeEntryFilter(type: CurationFilterType) {
 		this._entryFilters.update((filters) => {
 			return filters.filter((f) => f.type !== type);
+		});
+	}
+
+	public removeEntryFilters(types: CurationFilterType[]) {
+		this._entryFilters.update((filters) => {
+			const typeSet = new Set(types);
+			return filters.filter((f) => !typeSet.has(f.type));
 		});
 	}
 
@@ -424,6 +432,14 @@ class CurationStore {
 	public createAndJumpToEntry(entryModel: Partial<CurationEntryModel>) {
 		this.addEmptyEntryFromModel(entryModel);
 		this.editMode.set(true);
+		if (entryModel.type) {
+			this.updateEntryFilter(
+				CurationFilterType.type,
+				(type: (CurationEntryType | undefined) | undefined) =>
+					type === entryModel.type ? type : undefined
+			);
+			this.removeEntryFilters([CurationFilterType.status, CurationFilterType.search]);
+		} else this.clearEntryFilters();
 		setTimeout(
 			() =>
 				curationStore.jumpToEntryWhere.set(
