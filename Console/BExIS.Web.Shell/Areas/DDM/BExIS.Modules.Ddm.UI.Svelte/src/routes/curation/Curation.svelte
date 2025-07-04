@@ -68,7 +68,11 @@
 	// Move to data
 	$: curationStore.moveToDataFunction.set(moveToDataFunction);
 	const moveToDataStore = curationStore.moveToData;
-	$: if ($moveToDataStore) moveToData = $moveToDataStore;
+	moveToDataStore.subscribe((mtds) => {
+		if (!mtds) return;
+		moveToDataStore.set(undefined);
+		moveToData = mtds;
+	});
 
 	// ---
 

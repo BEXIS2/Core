@@ -172,6 +172,16 @@
 
 		<!-- Status and Actions -->
 		<div class="mb-1 flex flex-wrap items-center justify-stretch gap-1 overflow-x-hidden text-sm">
+			<!-- link button -->
+			{#if $moveToDataFunction}
+				<button
+					class="variant-filled-surface btn hidden px-1 py-0.5 text-sm text-surface-800 sm:block"
+					title="Show linked data"
+					on:click={jumpToDataClick}
+				>
+					<Fa icon={faLink} class="inline-block" />
+				</button>
+			{/if}
 			<!-- Status change -->
 			<div
 				class="status-button-container flex w-80 shrink grow gap-x-1 overflow-hidden"
@@ -181,15 +191,6 @@
 				class:opacity-10={entry.isDraft()}
 				class:cursor-not-allowed={entry.isDraft()}
 			>
-				{#if $moveToDataFunction}
-					<button
-						class="bt-icon variant-filled-surface btn hidden !rounded p-0.5 text-sm text-surface-800 sm:block"
-						title="Show linked data"
-						on:click={jumpToDataClick}
-					>
-						<Fa icon={faLink} class="inline-block" />
-					</button>
-				{/if}
 				{#each CurationEntryStatusDetails as statusDetails, index}
 					{#if $curation?.isCurator || (index !== CurationEntryStatus.Ok && index !== CurationEntryStatus.Closed)}
 						{#if !$editMode || index === entry.status}

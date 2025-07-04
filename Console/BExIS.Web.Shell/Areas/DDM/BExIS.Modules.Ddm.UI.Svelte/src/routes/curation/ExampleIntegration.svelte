@@ -89,20 +89,21 @@
 		overlayPosition = overlayPosition === 'right' ? 'left' : 'right';
 	};
 
+	const type = CurationEntryType.MetadataEntryItem;
+	const position = 999;
+
 	const exampleMetadataInputs = [
-		{
-			name: 'Abstract',
-			type: CurationEntryType.MetadataEntryItem
-		},
-		{
-			name: 'Keywords',
-			type: CurationEntryType.MetadataEntryItem
-		},
-		{
-			name: 'Study design',
-			type: CurationEntryType.MetadataEntryItem,
-			position: 9999
-		}
+		{ name: 'Abstract', type },
+		{ name: 'Content type', type },
+		{ name: 'Equipment', type },
+		{ name: 'Number of plots', type },
+		{ name: 'Keywords', type },
+		{ name: 'Sampling design', type },
+		{ name: 'Title', type },
+		{ name: 'Data analysis', type },
+		{ name: 'Study design', type },
+		{ name: 'Process and service', type },
+		{ name: 'Data upload status', type, position }
 	];
 
 	function addEntryClick(entry: Partial<CurationEntryModel>) {
@@ -139,7 +140,7 @@
 		{#if currentTypeView === CurationEntryType.MetadataEntryItem}
 			<div class="m-2">
 				{#each exampleMetadataInputs as metadataInput}
-					<label class="relative mt-96" data-name={metadataInput.name}>
+					<label class="relative mt-24" data-name={metadataInput.name}>
 						<span>{metadataInput.name}</span>
 						<input type="text" class="input" />
 						<button
