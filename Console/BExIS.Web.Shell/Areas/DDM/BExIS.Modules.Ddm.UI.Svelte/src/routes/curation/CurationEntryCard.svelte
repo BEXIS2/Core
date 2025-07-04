@@ -3,6 +3,7 @@
 	import {
 		faEyeSlash,
 		faFileLines,
+		faLink,
 		faMessage,
 		faPen,
 		faTrash,
@@ -17,14 +18,20 @@
 	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
 	import CurationEntryInput from './CurationEntryInput.svelte';
 	import CurationNote from './CurationNote.svelte';
-	import { tick } from 'svelte';
 	import Confetti from '$lib/components/Confetti.svelte';
 
 	export let entry: CurationEntryClass;
 	export let combined: boolean;
 	export let tag: string | null = 'div'; // if set, use this tag instead of the default <div>
 
-	const { curation, editMode, statusColorPalette, jumpToEntryWhere } = curationStore;
+	const {
+		curation,
+		editMode,
+		statusColorPalette,
+		jumpToEntryWhere,
+		moveToDataFunction,
+		moveToData
+	} = curationStore;
 
 	const cardState = curationStore.getEntryCardState(entry.id);
 
@@ -92,6 +99,11 @@
 	let confettiRef: Confetti;
 
 	const confettiTypeSet = new Set([CurationEntryStatus.Fixed, CurationEntryStatus.Closed]);
+
+	const jumpToDataClick = () => {
+		if (!$moveToDataFunction) return;
+		moveToData.set($moveToDataFunction(entry));
+	};
 </script>
 
 <!-- class blink will be tongled automatically in the script -->
@@ -169,6 +181,15 @@
 				class:opacity-10={entry.isDraft()}
 				class:cursor-not-allowed={entry.isDraft()}
 			>
+				{#if $moveToDataFunction}
+					<button
+						class="bt-icon variant-filled-surface btn hidden !rounded p-0.5 text-sm text-surface-800 sm:block"
+						title="Show linked data"
+						on:click={jumpToDataClick}
+					>
+						<Fa icon={faLink} class="inline-block" />
+					</button>
+				{/if}
 				{#each CurationEntryStatusDetails as statusDetails, index}
 					{#if $curation?.isCurator || (index !== CurationEntryStatus.Ok && index !== CurationEntryStatus.Closed)}
 						{#if !$editMode || index === entry.status}

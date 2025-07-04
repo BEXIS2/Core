@@ -27,6 +27,8 @@
 	export let jumpToEntryWhere: ((entry: CurationEntryClass) => boolean) | undefined = undefined;
 	export let applyTypeFilter: CurationEntryType | undefined = undefined;
 	export let addEntry: Partial<CurationEntryModel> | undefined = undefined;
+	export let moveToDataFunction: ((entry: CurationEntryClass) => any) | undefined = undefined;
+	export let moveToData: any = undefined;
 
 	const {
 		loadingCuration,
@@ -62,6 +64,13 @@
 		if ($curation?.isCurator) curationStore.createAndJumpToEntry(addEntry);
 		addEntry = undefined;
 	}
+
+	// Move to data
+	$: curationStore.moveToDataFunction.set(moveToDataFunction);
+	const moveToDataStore = curationStore.moveToData;
+	$: if ($moveToDataStore) moveToData = $moveToDataStore;
+
+	// ---
 
 	const filteredEntries = curationStore.getFilteredEntriesReadable();
 

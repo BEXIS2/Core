@@ -10,10 +10,20 @@
 	import Fa from 'svelte-fa';
 	import { CurationEntryType } from './types';
 	import CurationEntryTemplateTool from './CurationEntryTemplateTool.svelte';
+	import { onMount } from 'svelte';
+	import { slide } from 'svelte/transition';
 
 	export let entry: CurationEntryClass;
 
 	const cardState = curationStore.getEntryCardState(entry.id);
+
+	let form: HTMLFormElement;
+
+	onMount(() => {
+		if (form && typeof form.scrollIntoView === 'function') {
+			form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		}
+	});
 
 	let inputData = $cardState.inputData || {
 		type: entry.type,
@@ -36,6 +46,9 @@
 <form
 	class="my-1 flex flex-wrap gap-x-2 gap-y-1 overflow-hidden text-surface-900"
 	on:submit|preventDefault={saveChanges}
+	bind:this={form}
+	in:slide={{ duration: 150 }}
+	out:slide={{ duration: 150 }}
 >
 	<label class="min-w-32 grow basis-2/5">
 		<span class="label-text">Type:</span>

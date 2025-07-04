@@ -64,6 +64,9 @@ class CurationStore {
 
 	public readonly curationInfoExpanded = writable(true);
 
+	public readonly moveToDataFunction = writable<((entry: CurationEntryClass) => any) | undefined>();
+	public readonly moveToData = writable<any>();
+
 	constructor() {
 		this.datasetId.subscribe((datasetId) => {
 			if (!datasetId) {

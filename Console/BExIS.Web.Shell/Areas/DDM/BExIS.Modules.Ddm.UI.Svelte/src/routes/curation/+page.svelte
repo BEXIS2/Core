@@ -17,7 +17,7 @@
 
 	// Mock and Example Additions
 
-	let showMock = true;
+	let showMock = false;
 
 	let jumpToEntryWhereExample: ((entry: CurationEntryClass) => boolean) | undefined = undefined;
 
@@ -34,6 +34,29 @@
 	};
 
 	let addEntryExample: Partial<CurationEntryModel> | undefined = undefined;
+
+	// move to data
+	const moveToDataFunctionExample = (entry: CurationEntryClass) => {
+		return { name: entry.name, type: entry.type };
+	};
+
+	let moveToData: { name: string; type: CurationEntryType } | undefined = undefined;
+
+	$: if (moveToData) {
+		currentTypeView = moveToData.type;
+		const d = moveToData;
+		moveToData = undefined;
+		setTimeout(() => {
+			const el = document.querySelector(`[data-name="${d.name}"]`);
+			if (el) {
+				el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				el.classList.add('ring', 'ring-primary', 'ring-2');
+				setTimeout(() => el.classList.remove('ring', 'ring-primary', 'ring-2'), 1500);
+			}
+		}, 500);
+	}
+
+	// ---
 
 	const typeViews = [
 		{ value: CurationEntryType.MetadataEntryItem, name: 'Metadata' },
@@ -85,11 +108,13 @@
 		},
 		{
 			name: 'Study Design',
-			type: CurationEntryType.MetadataEntryItem
+			type: CurationEntryType.MetadataEntryItem,
+			position: 9999
 		}
 	];
 
 	function addEntryClick(entry: Partial<CurationEntryModel>) {
+		if (overlayView && !overlayActive) toggleOverlay();
 		addEntryExample = entry;
 	}
 </script>
@@ -113,7 +138,9 @@
 		{:else}
 			<!-- How the component might be used with data next to it -->
 			<div class="flex gap-x-12">
-				<div class="size-full rounded border border-surface-500 bg-surface-300">
+				<div
+					class="max-h-fit-screen size-full overflow-y-auto rounded border border-surface-500 bg-surface-300"
+				>
 					<div class="m-2 rounded border border-surface-600 bg-surface-100 p-2">
 						<h3 class="text-center text-lg">Pick Data View</h3>
 						<RadioGroup class="-mt-2 w-full">
@@ -137,7 +164,7 @@
 					{#if currentTypeView === CurationEntryType.MetadataEntryItem}
 						<div class="m-2">
 							{#each exampleMetadataInputs as metadataInput}
-								<label class="relative mt-96">
+								<label class="relative mt-96" data-name={metadataInput.name}>
 									<span>{metadataInput.name}</span>
 									<input type="text" class="input" />
 									<button
@@ -172,8 +199,19 @@
 										{#each Array(50) as _, rowIdx}
 											<tr>
 												{#each Array(20) as _, colIdx}
-													<td class="border border-surface-500 px-2 py-1">
+													<td class="group relative border border-surface-500 px-2 py-1">
 														{Math.floor(Math.random() * 1000)}
+														<button
+															class="variant-ghost-primary btn btn-icon absolute right-1 top-1 !size-6 text-xs opacity-0 transition-opacity group-hover:opacity-100"
+															title="Create entry for col {colIdx + 1} row {rowIdx + 1}"
+															on:click={() =>
+																addEntryClick({
+																	name: `Col ${colIdx + 1} Row ${rowIdx + 1}`,
+																	type: CurationEntryType.PrimaryDataEntryItem
+																})}
+														>
+															<Fa icon={faPlus} />
+														</button>
 													</td>
 												{/each}
 											</tr>
@@ -220,6 +258,8 @@
 										bind:jumpToEntryWhere={jumpToEntryWhereExample}
 										bind:applyTypeFilter={typeFilterExample}
 										bind:addEntry={addEntryExample}
+										moveToDataFunction={moveToDataFunctionExample}
+										bind:moveToData
 									/>
 								{/key}
 							</div>
@@ -254,13 +294,17 @@
 					</div>
 				{:else}
 					<!-- Curation entries on the right side -->
-					<div class="w-5/12 shrink-0 grow-0 rounded border border-surface-500">
+					<div
+						class="max-h-fit-screen w-5/12 shrink-0 grow-0 overflow-y-auto rounded border border-surface-500"
+					>
 						{#key searchParDatasetId}
 							<Curation
 								datasetId={searchParDatasetId}
 								bind:jumpToEntryWhere={jumpToEntryWhereExample}
 								bind:applyTypeFilter={typeFilterExample}
 								bind:addEntry={addEntryExample}
+								moveToDataFunction={moveToDataFunctionExample}
+								bind:moveToData
 							/>
 						{/key}
 					</div>
@@ -276,3 +320,9 @@
 		</div>
 	{/if}
 </Page>
+
+<style lang="postcss">
+	.max-h-fit-screen {
+		max-height: calc(100vh - 12rem);
+	}
+</style>
