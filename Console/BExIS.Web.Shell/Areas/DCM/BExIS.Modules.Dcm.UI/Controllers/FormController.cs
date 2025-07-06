@@ -49,6 +49,7 @@ using NHibernate.Util;
 using Telerik.Web.Mvc.Extensions;
 using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Spreadsheet;
+using BExIS.Dlm.Entities.DataStructure;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -3475,7 +3476,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         var value = Convert.ChangeType(aModel.Value, type);
 
                         // check Constraints
-                        foreach (var constraint in aModel.GetMetadataParameter().Constraints)
+                        ICollection<Constraint> constraints = new List<Constraint>();
+                        if (aModel.GetMetadataParameter() != null)
+                        {
+                            constraints = aModel.GetMetadataParameter().Constraints;
+                        }
+
+
+                        foreach (var constraint in constraints)
                         {
                             if (value != null && !constraint.IsSatisfied(value))
                             {

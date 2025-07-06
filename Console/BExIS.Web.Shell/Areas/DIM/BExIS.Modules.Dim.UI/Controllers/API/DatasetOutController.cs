@@ -8,6 +8,7 @@ using BExIS.Modules.Dim.UI.Helpers;
 using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using BExIS.Utils.Data.Helpers;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using NameParser;
@@ -116,6 +117,11 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                 ApiDatasetHelper apiDatasetHelper = new ApiDatasetHelper();
                 // get content
                 ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, versionNumber, dataset.MetadataStructure.Id, dataStructureId);
+
+                // get links
+                EntityReferenceHelper entityReferenceHelper = new EntityReferenceHelper();
+                datasetModel.Links.From = entityReferenceHelper.GetSourceReferences(dataset.Id, dataset.EntityTemplate.EntityType.Id, versionNumber);
+                datasetModel.Links.To = entityReferenceHelper.GetSourceReferences(dataset.Id, dataset.EntityTemplate.EntityType.Id, versionNumber);
 
                 // create response and return as JSON
                 var response = Request.CreateResponse(HttpStatusCode.OK);

@@ -6,8 +6,10 @@ using BExIS.Dlm.Services.Party;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Xml.Helpers;
+using DataAnnotationsValidator;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -1449,9 +1451,13 @@ namespace BExIS.Dim.Helpers.Mappings
                         // then the xml node is the same, no need to go deeper
                         if (cSource.ElementId.Equals(sSource.ElementId) && cSource.Type.Equals(sSource.Type))
                             xSimpleSource = xSource;
+                        else if (sSource.Type == LinkElementType.MetadataParameterUsage)
+                            xSimpleSource = XmlUtility.GetXmlNodeByAttribute(sSource.XPath, metadata);
                         else
                             xSimpleSource = XmlUtility.GetXmlNodeByName(xSource, sSource.Name);
 
+
+                        if (xSimpleSource == null) continue;
 
                         // result is the set value, based on previews runs it must be check if
                         // the xmlnode already exist and have some value inside

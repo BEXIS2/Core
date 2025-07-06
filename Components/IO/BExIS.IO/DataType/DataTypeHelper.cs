@@ -22,6 +22,7 @@ namespace BExIS.IO.DataType
                 case TypeCode.UInt64: return TypeCode.Int64;
                 case TypeCode.Double: return TypeCode.Double;
                 case TypeCode.Decimal: return TypeCode.Double;
+                case TypeCode.Single: return TypeCode.Double;
                 default:
                     return code;
             }
@@ -39,11 +40,13 @@ namespace BExIS.IO.DataType
                 case TypeCode.UInt64: return "Integer";
                 case TypeCode.Double: return "Floating Point Number";
                 case TypeCode.Decimal: return "Floating Point Number";
+                case TypeCode.Single: return "Floating Point Number";
                 case TypeCode.DateTime: return "Date and Time";
                 case TypeCode.Boolean: return "Boolean";
-                case TypeCode.String: return "Text";
+                case TypeCode.String: return "String";
+               
                 default:
-                    return "Text";
+                    return "String";
             }
         }
 

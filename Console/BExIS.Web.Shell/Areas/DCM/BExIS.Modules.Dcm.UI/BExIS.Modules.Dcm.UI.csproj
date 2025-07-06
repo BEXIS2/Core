@@ -88,7 +88,6 @@
     <Compile Include="Helpers\DataASyncUploadHelper.cs" />
     <Compile Include="Helpers\DcmSeedDataGenerator.cs" />
     <Compile Include="Helpers\EasyUploadSuggestion.cs" />
-    <Compile Include="Helpers\EntityReferenceHelper.cs" />
     <Compile Include="Helpers\FormHelper.cs" />
     <Compile Include="Helpers\SubmitHelper.cs" />
     <Compile Include="Helpers\SystemMetadataHelper.cs" />
@@ -123,7 +122,6 @@
     <Compile Include="Models\Edit\FileUploadModel.cs" />
     <Compile Include="Models\Edit\SubmitModel.cs" />
     <Compile Include="Models\Edit\MetadataModel.cs" />
-    <Compile Include="Models\EntityReference\ReferenceModels.cs" />
     <Compile Include="Models\EntityTemplates\EntityTemplateModels.cs" />
     <Compile Include="Models\FileInfoModel.cs" />
     <Compile Include="Models\FinishUploadModel.cs" />

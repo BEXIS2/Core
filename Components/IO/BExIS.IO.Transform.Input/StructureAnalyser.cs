@@ -215,8 +215,27 @@ namespace BExIS.IO.Transform.Input
         /// <param name="systemType"></param>
         /// <returns>DataType</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public List<Entites.DataType> SuggestDataType(string systemType, string value="", List<Entites.DataType> datatypes = null)
+        public List<Entites.DataType> SuggestDataType(string incommingSystemType, string value="", List<Entites.DataType> datatypes = null)
         {
+            string systemType = incommingSystemType;
+            switch(incommingSystemType)
+            {
+                case "Int16":
+                    systemType = "Int64"; // Int32 is not used in BExIS, so use Int64 instead
+                    break;
+                case "Int32":
+                    systemType = "Int64"; // Int32 is not used in BExIS, so use Int64 instead
+                    break;
+                case "UInt32":
+                    systemType = "Int64"; // UInt32 is not used in BExIS, so use Int64 instead
+                    break;
+                case "Decimal":
+                    systemType = "Double"; // Decimal is not used in BExIS, so use Double instead
+                    break;
+            }
+
+
+
             if (string.IsNullOrEmpty(systemType)) throw new ArgumentNullException(nameof(systemType), "system type should not be empty.");
 
             List<Entites.DataType> result = new List<Entites.DataType>();
