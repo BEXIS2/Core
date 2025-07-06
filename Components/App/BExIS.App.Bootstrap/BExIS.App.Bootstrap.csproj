@@ -60,6 +60,7 @@
       <HintPath>..\..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IdentityModel.Tokens.Jwt, Version=5.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -107,6 +108,7 @@
     <Compile Include="Attributes\BExISEntityAuthorizeAttribute.cs" />
     <Compile Include="Attributes\CustomExceptionFilter.cs" />
     <Compile Include="Attributes\JsonNetFilterAttribute.cs" />
+    <Compile Include="Attributes\MinCapacity.cs" />
     <Compile Include="Extensions\AuthorizationContextExtensions.cs" />
     <Compile Include="Helpers\BExISAuthorizeHelper.cs" />
     <Compile Include="Helpers\JwtHelper.cs" />
