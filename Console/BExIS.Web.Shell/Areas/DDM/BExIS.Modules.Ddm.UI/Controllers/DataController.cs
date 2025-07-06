@@ -1,7 +1,10 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dim.Entities.Export.GBIF;
+using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.BIOSCHEMA;
+using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Services;
+using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.Party;
@@ -32,6 +35,7 @@ using BExIS.Xml.Helpers;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.IO;
 using System.IO.Compression;
@@ -45,6 +49,7 @@ using System.Web.Routing;
 using System.Web.UI.WebControls;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.UI;
 using Vaiona.Logging;
@@ -388,15 +393,53 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     }
                     if (asPartial) return PartialView(model);
 
-                  
+                    var settingsHelper = new SettingsHelper();
+                    var citationSettings = settingsHelper.GetCitationSettings();
+
+                    ViewBag.ShowCitation = citationSettings.ShowCitation;
+                    ViewBag.DefaultCitationFormat = citationSettings.ReadCitationFormat;
 
                     return View(model);
                 }
 
                 ModelState.AddModelError("", string.Format("The dataset with the id {0} does not exist", id));
-
                 return View(new ShowDataModel());
             }
+        }
+
+        [ChildActionOnly]
+        public async Task<ActionResult> GetCitationOrTitle(long datasetVersionId)
+        {
+            try
+            {
+                using (var datasetManager = new DatasetManager())
+                {
+                    var settingsHelper = new SettingsHelper();
+                    var citationSettings = settingsHelper.GetCitationSettings();
+
+                    var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+
+                    if (!citationSettings.ShowCitation)
+                    {
+                        return PartialView("_Title", datasetVersion.Title);
+
+                    }
+
+                    var model = CitationHelper.GetCitationDataModel(datasetVersionId);
+
+                    if (model == null)
+                        return PartialView("_Title", datasetVersion.Title);
+
+                    if (!CitationHelper.IsCitationDataModelValid(model))
+                        return PartialView("_Title", datasetVersion.Title);
+
+                    return PartialView($"_Citation_{citationSettings.ReadCitationFormat}", model);
+                }
+            }
+            catch (Exception ex)
+            {
+                return PartialView("_Title", "Title is not available.");
+            }    
         }
 
         public ActionResult Reload(long id, int version = 0)

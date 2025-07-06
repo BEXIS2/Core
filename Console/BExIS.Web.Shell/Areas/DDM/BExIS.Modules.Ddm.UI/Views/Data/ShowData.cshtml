@@ -231,7 +231,14 @@
    
     <div class="datasetview_header">
         <div class="datasetview_header-title">
-            <h1>@Model.Title </h1>
+            @if (ViewBag.ShowCitation)
+            {
+                Html.RenderAction("GetCitationOrTitle", "Data", new { datasetVersionId = Model.VersionId });
+            }
+            else
+            {
+                Html.Partial("_Title", Model.Title);
+            }
         </div>
 
         <div class="datasetview_header-toggle">

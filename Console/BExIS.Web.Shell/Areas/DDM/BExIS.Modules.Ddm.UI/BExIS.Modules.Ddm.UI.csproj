@@ -160,6 +160,7 @@
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DdmModule.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Helpers\CitationHelper.cs" />
     <Compile Include="Helpers\DdmSeedDataGenerator.cs" />
     <Compile Include="Helpers\GridHelper.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />
@@ -266,6 +267,9 @@
     <Content Include="Views\Search\Index.cshtml" />
     <Content Include="Views\PublicSearch\Index.cshtml" />
     <Content Include="Views\Data\_labelsView.cshtml" />
+    <Content Include="Views\Data\_Citation_Text.cshtml" />
+    <Content Include="Views\Data\_Citation_APA.cshtml" />
+    <Content Include="Views\Data\_Title.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

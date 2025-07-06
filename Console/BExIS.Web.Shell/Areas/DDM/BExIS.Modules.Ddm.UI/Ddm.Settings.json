@@ -58,6 +58,21 @@
       "value": "BEXIS - Testsite",
       "type": "String",
       "description": ""
+    },
+    {
+      "key": "citationSettings",
+      "title": "settings for citations",
+      "options": [],
+      "type": "JSON",
+      "value": {
+        "publisher": "BEXIS2 DevOps Team",
+        "instance": "BEXIS2 - DevOps Test",
+        "showCitation": true,
+        "defaultViewCitationFormat": "Text",
+        "ViewCitationFormats": ["Text", "APA"],
+        "DownloadCitationFormats": ["Text", "APA", "RIS", "BibTex"]
+      },
+      "description": "..."
     }
 
   ]
