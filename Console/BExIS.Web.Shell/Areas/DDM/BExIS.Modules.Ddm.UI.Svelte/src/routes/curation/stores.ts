@@ -62,6 +62,7 @@ class CurationStore {
 		CurationStatusEntryTab.Tasks
 	);
 
+	public readonly progressInfoExpanded = writable(false);
 	public readonly curationInfoExpanded = writable(true);
 
 	public readonly moveToDataFunction = writable<((entry: CurationEntryClass) => any) | undefined>();
@@ -84,7 +85,10 @@ class CurationStore {
 			}
 		});
 		this.curationInfoExpanded.subscribe((expanded) => {
-			if (!expanded) this.currentStatusEntryTab.set(CurationStatusEntryTab.Hide);
+			if (!expanded) {
+				this.currentStatusEntryTab.set(CurationStatusEntryTab.Hide);
+				this.progressInfoExpanded.set(false);
+			}
 		});
 	}
 

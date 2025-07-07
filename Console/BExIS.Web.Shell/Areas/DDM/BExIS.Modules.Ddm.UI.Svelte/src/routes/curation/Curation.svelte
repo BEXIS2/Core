@@ -36,7 +36,8 @@
 		editMode,
 		statusColorPalette,
 		hasFiltersApplied,
-		curationInfoExpanded
+		curationInfoExpanded,
+		progressInfoExpanded
 	} = curationStore;
 
 	// Apply jump to entry and reset
@@ -160,16 +161,28 @@
 			</div>
 		{/if}
 		<!-- Progress -->
-		{#if $curation.curationEntries.length > 1}
-			<div class="border-b border-surface-500">
-				<!-- Curation Progress -->
-				<CurationProgressInfo
-					progress={$curation?.curationProgressTotal}
-					totalIssues={$curation?.curationProgressTotal.reduce((a, b) => a + b, 0)}
-					label="Curation Progress"
-				/>
-			</div>
-		{/if}
+		<div class="border-b border-surface-500">
+			<!-- Curation Progress -->
+			<CurationProgressInfo
+				progress={$curation?.curationProgressTotal}
+				label="Curation Progress"
+				expandWritable={progressInfoExpanded}
+			/>
+			{#if $progressInfoExpanded}
+				{#each $curationTypeViewOrder as progressType}
+					<div
+						class="ml-8 opacity-30 hover:opacity-100"
+						in:slide={{ duration: 150 }}
+						out:slide={{ duration: 150 }}
+					>
+						<CurationProgressInfo
+							progress={$curation?.curationProgressPerType[progressType]}
+							label="{CurationEntryTypeNames[progressType]} Progress"
+						/>
+					</div>
+				{/each}
+			{/if}
+		</div>
 		<!-- Filter and search -->
 		{#if $curationInfoExpanded}
 			<div
