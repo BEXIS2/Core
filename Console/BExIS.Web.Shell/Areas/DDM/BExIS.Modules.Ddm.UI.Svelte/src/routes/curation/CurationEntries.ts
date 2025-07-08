@@ -5,6 +5,7 @@ import {
 	CurationEntryType,
 	CurationEntryTypeNames,
 	CurationUserType,
+	type CurationEntryCreationModel,
 	type CurationEntryHelperModel,
 	type CurationEntryModel,
 	type CurationLabel,
@@ -175,25 +176,13 @@ export class CurationClass {
 		return this.addEntry(newEntry);
 	}
 
-	public addEmptyEntry(
-		position: number,
-		name = '',
-		type = CurationEntryType.None,
-		description = ''
-	) {
-		const isStatusEntry = type === CurationEntryType.StatusEntryItem;
+	public addEmptyEntry(entryModel: CurationEntryCreationModel) {
+		const isStatusEntry = entryModel.type === CurationEntryType.StatusEntryItem;
 		const invalidPosition =
-			(isStatusEntry && (position !== 0 || this.curationStatusEntry)) ||
-			(!isStatusEntry && position < 1);
+			(isStatusEntry && (entryModel.position !== 0 || this.curationStatusEntry)) ||
+			(!isStatusEntry && entryModel.position < 1);
 		if (invalidPosition) return this;
-		let newEntry = CurationEntryClass.emptyEntry(
-			this.datasetId,
-			-this.draftCount - 1,
-			position,
-			name,
-			type,
-			description
-		);
+		let newEntry = CurationEntryClass.emptyEntry(this.datasetId, -this.draftCount - 1, entryModel);
 		return new CurationClass(
 			{
 				...this,
@@ -653,23 +642,24 @@ export class CurationEntryClass implements CurationEntryModel {
 	public static emptyEntry(
 		datasetId: number,
 		id: number,
-		position: number,
-		name = '',
-		type = CurationEntryType.None,
-		description = ''
+		entryModel: CurationEntryCreationModel
 	): CurationEntryClass {
+		let notes: CurationNoteModel[] = [];
+		if (entryModel.comment && entryModel.comment.trim().length > 0) {
+			notes.push({
+				id: 0,
+				comment: entryModel.comment,
+				userType: CurationUserType.Curator,
+				userId: 0,
+				creationDate: new Date().toISOString()
+			});
+		}
 		return new CurationEntryClass(
 			{
-				id: id,
-				datasetId: datasetId,
-				topic: '',
-				type: type,
-				name: name,
-				description: description,
-				solution: '',
-				position: position,
-				source: '',
-				notes: [],
+				...entryModel,
+				id,
+				datasetId,
+				notes,
 				creationDate: new Date().toISOString(),
 				creatorId: fixedCurationUserId,
 				userIsDone: false,

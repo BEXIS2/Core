@@ -9,7 +9,15 @@
 	let introduction = '';
 	let tasks = '';
 
-	curationStore.addEmptyEntry(0, introduction, CurationEntryType.StatusEntryItem, tasks, true);
+	curationStore.addEmptyEntry(
+		{
+			name: introduction,
+			description: tasks,
+			type: CurationEntryType.StatusEntryItem,
+			position: 0
+		},
+		true
+	);
 
 	const split = '\n\n---\n\n';
 

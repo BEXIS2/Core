@@ -10,10 +10,12 @@ import {
 	type CurationLabel,
 	type CurationFilterModel,
 	CurationStatusEntryTab,
-	type CurationEntryModel,
-	type CurationEntryHelperModel
+	DefaultCurationEntryCreationModel,
+	type CurationEntryHelperModel,
+	type CurationEntryCreationModel
 } from './types';
 import { CurationClass, CurationEntryClass } from './CurationEntries';
+import { tick } from 'svelte';
 
 class CurationStore {
 	public readonly datasetId = writable<number | null>(null);
@@ -238,41 +240,22 @@ class CurationStore {
 	}
 
 	public addEmptyEntry(
-		position: number,
-		name = '',
-		type = CurationEntryType.None,
-		description = '',
+		entryModel: Partial<CurationEntryCreationModel>,
 		acceptCurationStatusEntry = false
 	) {
-		if (!acceptCurationStatusEntry && type === CurationEntryType.StatusEntryItem) return;
+		if (
+			!acceptCurationStatusEntry &&
+			entryModel.type &&
+			entryModel.type === CurationEntryType.StatusEntryItem
+		)
+			return;
 		this._curation.update((curation) => {
 			if (!curation) return curation;
-			return curation.addEmptyEntry(position, name, type, description);
+			return curation.addEmptyEntry({ ...DefaultCurationEntryCreationModel, ...entryModel });
 		});
 	}
 
-	public addEmptyEntryFromModel(json: {
-		position?: number;
-		type?: CurationEntryType;
-		name?: string;
-		description?: string;
-	}) {
-		const { position = 1, type = CurationEntryType.None, name = '', description = '' } = json;
-		this.addEmptyEntry(position, name, type, description);
-	}
-
-	public updateEntry(
-		entryId: number,
-		updates: Partial<{
-			position: number;
-			topic: string;
-			type: CurationEntryType;
-			name: string;
-			description: string;
-			solution: string;
-			source: string;
-		}>
-	) {
+	public updateEntry(entryId: number, updates: Partial<CurationEntryCreationModel>) {
 		this._curation.update((curation) => {
 			let newCuration = curation?.updateEntry(entryId, updates);
 			if (!newCuration || newCuration == curation) return curation;
@@ -434,8 +417,8 @@ class CurationStore {
 		});
 	}
 
-	public createAndJumpToEntry(entryModel: Partial<CurationEntryModel>) {
-		this.addEmptyEntryFromModel(entryModel);
+	public async createAndJumpToEntry(entryModel: Partial<CurationEntryCreationModel>) {
+		this.addEmptyEntry(entryModel);
 		this.editMode.set(true);
 		if (entryModel.type) {
 			this.updateEntryFilter(
@@ -445,17 +428,14 @@ class CurationStore {
 			);
 			this.removeEntryFilters([CurationFilterType.status, CurationFilterType.search]);
 		} else this.clearEntryFilters();
-		setTimeout(
-			() =>
-				curationStore.jumpToEntryWhere.set(
-					(entry) =>
-						entry.isDraft &&
-						(entryModel.type === undefined || entry.type === entryModel.type) &&
-						(entryModel.name === undefined || entry.name === entryModel.name) &&
-						(entryModel.description === undefined || entry.description === entryModel.description)
-					// needs to be updated if other parts of the entries are used
-				),
-			500
+		await tick();
+		curationStore.jumpToEntryWhere.set(
+			(entry) =>
+				entry.isDraft &&
+				(entryModel.type === undefined || entry.type === entryModel.type) &&
+				(entryModel.name === undefined || entry.name === entryModel.name) &&
+				(entryModel.description === undefined || entry.description === entryModel.description)
+			// needs to be updated if other parts of the entries are used
 		);
 	}
 }

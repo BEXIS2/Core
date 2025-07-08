@@ -17,7 +17,7 @@
 	const { editMode } = curationStore;
 
 	const addNewEntry = () => {
-		curationStore.addEmptyEntry(position, name, type);
+		curationStore.addEmptyEntry({ position, name, type });
 	};
 </script>
 

@@ -89,9 +89,13 @@
 
 	// ---
 
-	$: (async () => {
-		if (!moveToDataReadable) return;
-		moveToDataReadable.subscribe(async (moveToData) => {
+	$: subscribeToMoveToData(moveToDataReadable);
+
+	async function subscribeToMoveToData(
+		mtdReadable: Readable<Partial<CurationEntryHelperModel> | undefined>
+	) {
+		if (!mtdReadable) return;
+		mtdReadable.subscribe(async (moveToData) => {
 			if (!moveToData) return;
 			const mtD = moveToData;
 			currentTypeView = moveToData.type || CurationEntryType.None;
@@ -103,7 +107,7 @@
 				setTimeout(() => el.classList.remove('!ring', '!ring-primary', '!ring-2'), 1500);
 			}
 		});
-	})();
+	}
 
 	// run highlighting update whenever currentViewType or curationEntries change
 	$: if (currentTypeView || $curationEntriesReadable) {
@@ -111,6 +115,7 @@
 	}
 
 	async function refreshHighlighting() {
+		if (!$curationEntriesReadable) return;
 		await tick();
 		if (!$curationEntriesReadable) return;
 		$curationEntriesReadable.forEach((e) => {

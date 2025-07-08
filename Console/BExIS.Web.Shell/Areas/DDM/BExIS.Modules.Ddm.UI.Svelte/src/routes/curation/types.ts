@@ -60,6 +60,17 @@ export interface CurationEntryModel {
 	lastChangeDatetime_Curator: string;
 }
 
+export interface CurationEntryCreationModel {
+	topic: string;
+	type: CurationEntryType;
+	name: string;
+	description: string;
+	solution: string;
+	position: number;
+	source: string;
+	comment: string;
+}
+
 export interface CurationEntryHelperModel extends CurationEntryModel {
 	isDraft: boolean;
 	status: CurationEntryStatus;
@@ -239,3 +250,14 @@ export enum CurationStatusEntryTab {
 	Tasks,
 	Hide
 }
+
+export const DefaultCurationEntryCreationModel: CurationEntryCreationModel = {
+	topic: '',
+	type: CurationEntryType.None,
+	name: '',
+	description: '',
+	solution: '',
+	position: 1,
+	source: '',
+	comment: ''
+};

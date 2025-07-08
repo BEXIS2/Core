@@ -309,6 +309,7 @@
 						bind:value={position}
 						class="input ml-0.5 w-12 px-1 py-0.5 text-xs text-surface-800"
 						min="1"
+						on:input={positionUpdateDebounce}
 						on:change={positionUpdateDebounce}
 						disabled={!$editMode}
 					/>
