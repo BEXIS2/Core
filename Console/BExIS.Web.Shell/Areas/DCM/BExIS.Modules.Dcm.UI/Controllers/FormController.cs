@@ -2511,28 +2511,32 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 StepModelHelper childStepModelHelper;
 
-                foreach (var childStep in currentStepInfo.Children)
-                {
-                    childStepModelHelper = GetStepModelhelper(childStep.Id, taskManager);
-
-                    if (childStepModelHelper.Model == null)
+               
+                    foreach (var childStep in currentStepInfo.Children)
                     {
-                        childStepModelHelper.Model = createModel(childStep.Id, false, childStepModelHelper.UsageType, entityId);
+                        childStepModelHelper = GetStepModelhelper(childStep.Id, taskManager);
 
-                        if (childStepModelHelper.Model.StepInfo.IsInstanze)
-                            LoadSimpleAttributesForModelFromXml(childStepModelHelper, taskManager);
-                    }
+                        if (childStepModelHelper.Model == null)
+                        {
+                            childStepModelHelper.Model = createModel(childStep.Id, false, childStepModelHelper.UsageType, entityId);
 
-                    childStepModelHelper = getChildModelsHelper(childStepModelHelper, taskManager);
+                            if (childStepModelHelper.Model.StepInfo.IsInstanze)
+                                LoadSimpleAttributesForModelFromXml(childStepModelHelper, taskManager);
+                        }
+
+
+                        childStepModelHelper = getChildModelsHelper(childStepModelHelper, taskManager);
 
                     //check if the child step model helper is already in the list and activates
                     // if the usage is active and themin cardinality is 1, also activate the types
-                    if (childStepModelHelper.Model.MinCardinality == 1)
+                    if (childStepModelHelper.Model.MinCardinality == 1 && stepModelHelper.Choice == false)
                         childStepModelHelper.Childrens.ForEach(c => c.Activated = true);
 
-                    if(!stepModelHelper.Childrens.Any(c=> c.UsageId.Equals(childStepModelHelper.UsageId) && c.Number.Equals(childStepModelHelper.Number)))
-                        stepModelHelper.Childrens.Add(childStepModelHelper);
-                }
+                    if (!stepModelHelper.Childrens.Any(c => c.UsageId.Equals(childStepModelHelper.UsageId) && c.Number.Equals(childStepModelHelper.Number)))
+                            stepModelHelper.Childrens.Add(childStepModelHelper);
+                        
+                    }
+                
             }
 
             return stepModelHelper;

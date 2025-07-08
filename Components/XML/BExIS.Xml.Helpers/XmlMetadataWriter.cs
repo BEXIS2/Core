@@ -558,7 +558,8 @@ namespace BExIS.Xml.Helpers
                 {
                     foreach (BaseUsage baseUsage in children)
                     {
-                        element = AddAttribute(element, baseUsage, 1);
+                        if (attributeUsage.Extra == null || !IsChoice(attributeUsage.Extra))
+                            element = AddAttribute(element, baseUsage, 1);
                     }
                 }
 
