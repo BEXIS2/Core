@@ -1,9 +1,11 @@
 import {
 	CurationEntryStatus,
+	CurationEntryStatusColorPalettes,
 	CurationEntryStatusDetails,
 	CurationEntryType,
 	CurationEntryTypeNames,
 	CurationUserType,
+	type CurationEntryHelperModel,
 	type CurationEntryModel,
 	type CurationLabel,
 	type CurationModel,
@@ -697,6 +699,21 @@ export class CurationEntryClass implements CurationEntryModel {
 
 	public isEditable(): boolean {
 		return this.type !== CurationEntryType.StatusEntryItem;
+	}
+
+	public getHelperModel(
+		currentColorPalette: { name: string; colors: string[] } | undefined = undefined
+	): CurationEntryHelperModel {
+		const m = this as CurationEntryModel;
+		return {
+			...m,
+			isDraft: this.isDraft(),
+			status: this.status,
+			statusName: CurationEntryStatusDetails[this.status].name,
+			statusColor: currentColorPalette
+				? currentColorPalette.colors[this.status]
+				: CurationEntryStatusColorPalettes[0].colors[this.status]
+		};
 	}
 }
 

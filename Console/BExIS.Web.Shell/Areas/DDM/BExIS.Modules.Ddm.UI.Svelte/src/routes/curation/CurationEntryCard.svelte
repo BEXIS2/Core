@@ -29,7 +29,7 @@
 		editMode,
 		statusColorPalette,
 		jumpToEntryWhere,
-		moveToDataFunction,
+		moveToDataEnabled,
 		moveToData
 	} = curationStore;
 
@@ -42,7 +42,7 @@
 		cardElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
 	$: {
-		const jumpHere = $jumpToEntryWhere ? $jumpToEntryWhere(entry) : false;
+		const jumpHere = $jumpToEntryWhere ? $jumpToEntryWhere(entry.getHelperModel()) : false;
 		if (jumpHere && cardElement) {
 			scrollCardIntoView();
 			cardElement.classList.add('blink');
@@ -104,8 +104,8 @@
 	const confettiTypeSet = new Set([CurationEntryStatus.Fixed, CurationEntryStatus.Closed]);
 
 	const jumpToDataClick = () => {
-		if (!$moveToDataFunction) return;
-		moveToData.set($moveToDataFunction(entry));
+		if (!$moveToDataEnabled) return;
+		moveToData.set(entry.getHelperModel($statusColorPalette));
 	};
 </script>
 
@@ -179,13 +179,14 @@
 		<!-- Status and Actions -->
 		<div class="mb-1 flex flex-wrap items-center justify-stretch gap-1 overflow-x-hidden text-sm">
 			<!-- link button -->
-			{#if $moveToDataFunction}
+			{#if $moveToDataEnabled}
 				<button
 					class="variant-filled-surface btn hidden px-1 py-0.5 text-sm text-surface-800 sm:block"
 					title="Show linked data"
 					on:click={jumpToDataClick}
 				>
 					<Fa icon={faLink} class="inline-block" />
+					Show
 				</button>
 			{/if}
 			<!-- Status change -->

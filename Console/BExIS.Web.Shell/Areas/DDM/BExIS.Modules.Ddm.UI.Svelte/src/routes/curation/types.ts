@@ -60,6 +60,13 @@ export interface CurationEntryModel {
 	lastChangeDatetime_Curator: string;
 }
 
+export interface CurationEntryHelperModel extends CurationEntryModel {
+	isDraft: boolean;
+	status: CurationEntryStatus;
+	statusName: string;
+	statusColor: string;
+}
+
 export interface CurationNoteModel {
 	id: number;
 	userType: CurationUserType;

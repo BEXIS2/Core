@@ -1,52 +1,28 @@
 <script lang="ts">
 	import Curation from './Curation.svelte';
-	import type { CurationEntryClass } from './CurationEntries';
-	import { CurationEntryType, type CurationEntryModel } from './types';
+	import {
+		CurationEntryType,
+		type CurationEntryHelperModel,
+		type CurationEntryModel
+	} from './types';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 	import Fa from 'svelte-fa';
 	import { faAngleLeft, faCircleDot, faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { fade, slide } from 'svelte/transition';
+	import type { Writable, Readable } from 'svelte/store';
+	import { tick } from 'svelte';
 
 	export let datasetId: number;
 
-	let jumpToEntryWhereExample: ((entry: CurationEntryClass) => boolean) | undefined = undefined;
-
-	const exampleJumpToFunction = () => {
-		// jumps to the first loaded entry, that has "value" written in the name
-		jumpToEntryWhereExample = (e) => e.name.includes('value');
-	};
+	let jumpToEntryWhere: Writable<((entry: CurationEntryHelperModel) => boolean) | undefined>;
 
 	let typeFilterExample: CurationEntryType | undefined = undefined;
 
-	const applyfilterStatusExample = () => {
-		// applies entry filter to curation so that only Datastructure Items are shown
-		typeFilterExample = CurationEntryType.DatastructureEntryItem;
-	};
-
 	let addEntryExample: Partial<CurationEntryModel> | undefined = undefined;
 
-	// move to data
-	const moveToDataFunctionExample = (entry: CurationEntryClass) => {
-		return { name: entry.name, type: entry.type };
-	};
+	let moveToDataReadable: Readable<Partial<CurationEntryHelperModel> | undefined>;
 
-	let moveToData: { name: string; type: CurationEntryType } | undefined = undefined;
-
-	$: if (moveToData) {
-		currentTypeView = moveToData.type;
-		const d = moveToData;
-		moveToData = undefined;
-		setTimeout(() => {
-			// this first timeout is necessary to wait for the page to load, so the element can be found
-			// it should be replaced with an event listener later
-			const el = document.querySelector(`[data-name="${d.name}"]`);
-			if (el) {
-				el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-				el.classList.add('ring', 'ring-primary', 'ring-2');
-				setTimeout(() => el.classList.remove('ring', 'ring-primary', 'ring-2'), 1500);
-			}
-		}, 500);
-	}
+	let curationEntriesReadable: Readable<Partial<CurationEntryHelperModel>[]>;
 
 	// ---
 
@@ -109,6 +85,41 @@
 	function addEntryClick(entry: Partial<CurationEntryModel>) {
 		if (overlayView && !overlayActive) toggleOverlay();
 		addEntryExample = entry;
+	}
+
+	// ---
+
+	$: (async () => {
+		if (!moveToDataReadable) return;
+		moveToDataReadable.subscribe(async (moveToData) => {
+			if (!moveToData) return;
+			const mtD = moveToData;
+			currentTypeView = moveToData.type || CurationEntryType.None;
+			await tick();
+			const el = document.querySelector(`[data-name="${mtD.name}"]`);
+			if (el) {
+				el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				el.classList.add('!ring', '!ring-primary', '!ring-3');
+				setTimeout(() => el.classList.remove('!ring', '!ring-primary', '!ring-2'), 1500);
+			}
+		});
+	})();
+
+	// run highlighting update whenever currentViewType or curationEntries change
+	$: if (currentTypeView || $curationEntriesReadable) {
+		refreshHighlighting();
+	}
+
+	async function refreshHighlighting() {
+		await tick();
+		if (!$curationEntriesReadable) return;
+		$curationEntriesReadable.forEach((e) => {
+			if (e.type !== CurationEntryType.MetadataEntryItem) return;
+			const el = document.querySelector(`[data-name="${e.name}"]`) as HTMLElement;
+			if (el) {
+				el.style.boxShadow = `0 0 0 1px ${e.statusColor}`;
+			}
+		});
 	}
 </script>
 
@@ -231,11 +242,12 @@
 					{#key datasetId}
 						<Curation
 							{datasetId}
-							bind:jumpToEntryWhere={jumpToEntryWhereExample}
+							enableMoveToData={true}
 							bind:applyTypeFilter={typeFilterExample}
 							bind:addEntry={addEntryExample}
-							moveToDataFunction={moveToDataFunctionExample}
-							bind:moveToData
+							bind:jumpToEntryWhere
+							bind:moveToDataReadable
+							bind:curationEntriesReadable
 						/>
 					{/key}
 				</div>
@@ -271,11 +283,12 @@
 			{#key datasetId}
 				<Curation
 					{datasetId}
-					bind:jumpToEntryWhere={jumpToEntryWhereExample}
+					enableMoveToData={true}
 					bind:applyTypeFilter={typeFilterExample}
 					bind:addEntry={addEntryExample}
-					moveToDataFunction={moveToDataFunctionExample}
-					bind:moveToData
+					bind:jumpToEntryWhere
+					bind:moveToDataReadable
+					bind:curationEntriesReadable
 				/>
 			{/key}
 		</div>

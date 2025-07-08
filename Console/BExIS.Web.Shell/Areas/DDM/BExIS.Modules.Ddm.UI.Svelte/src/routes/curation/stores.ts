@@ -10,7 +10,8 @@ import {
 	type CurationLabel,
 	type CurationFilterModel,
 	CurationStatusEntryTab,
-	type CurationEntryModel
+	type CurationEntryModel,
+	type CurationEntryHelperModel
 } from './types';
 import { CurationClass, CurationEntryClass } from './CurationEntries';
 
@@ -43,7 +44,7 @@ class CurationStore {
 	public readonly statusColorPalette = writable(CurationEntryStatusColorPalettes[0]);
 
 	public readonly jumpToEntryWhere = writable<
-		((entry: CurationEntryClass) => boolean) | undefined
+		((entry: CurationEntryHelperModel) => boolean) | undefined
 	>();
 	private jumpToEntryWhereTimer: NodeJS.Timeout | null = null;
 
@@ -65,8 +66,8 @@ class CurationStore {
 	public readonly progressInfoExpanded = writable(false);
 	public readonly curationInfoExpanded = writable(true);
 
-	public readonly moveToDataFunction = writable<((entry: CurationEntryClass) => any) | undefined>();
-	public readonly moveToData = writable<any>();
+	public readonly moveToDataEnabled = writable(false);
+	public readonly moveToData = writable<Partial<CurationEntryHelperModel> | undefined>();
 
 	constructor() {
 		this.datasetId.subscribe((datasetId) => {
@@ -448,7 +449,7 @@ class CurationStore {
 			() =>
 				curationStore.jumpToEntryWhere.set(
 					(entry) =>
-						entry.isDraft() &&
+						entry.isDraft &&
 						(entryModel.type === undefined || entry.type === entryModel.type) &&
 						(entryModel.name === undefined || entry.name === entryModel.name) &&
 						(entryModel.description === undefined || entry.description === entryModel.description)

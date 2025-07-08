@@ -11,9 +11,10 @@
 		CurationEntryTypeNames,
 		CurationEntryTypeViewOrders,
 		CurationFilterType,
+		type CurationEntryHelperModel,
 		type CurationEntryModel
 	} from './types';
-	import { derived } from 'svelte/store';
+	import { derived, type Readable } from 'svelte/store';
 	import { CurationEntryClass } from './CurationEntries';
 	import CurationStatusEntryCard from './CurationStatusEntryCard.svelte';
 	import CurationProgressInfo from './CurationProgressInfo.svelte';
@@ -23,11 +24,24 @@
 	import { slide } from 'svelte/transition';
 
 	export let datasetId: number;
-	export let jumpToEntryWhere: ((entry: CurationEntryClass) => boolean) | undefined = undefined;
+
 	export let applyTypeFilter: CurationEntryType | undefined = undefined;
 	export let addEntry: Partial<CurationEntryModel> | undefined = undefined;
-	export let moveToDataFunction: ((entry: CurationEntryClass) => any) | undefined = undefined;
-	export let moveToData: any = undefined;
+
+	export let enableMoveToData = false;
+	$: moveToDataEnabled.set(enableMoveToData);
+
+	export const jumpToEntryWhere = curationStore.jumpToEntryWhere;
+	export const moveToDataReadable: Readable<Partial<CurationEntryHelperModel> | undefined> =
+		curationStore.moveToData;
+	export const curationEntriesReadable: Readable<Partial<CurationEntryHelperModel>[]> = derived(
+		[curationStore.curation, curationStore.statusColorPalette],
+		([curation, colorPalette]) => {
+			const entries = curation?.curationEntries;
+			if (!entries) return [];
+			return entries.filter((e) => !e.isHidden()).map((e) => e.getHelperModel(colorPalette));
+		}
+	);
 
 	const {
 		loadingCuration,
@@ -37,14 +51,9 @@
 		statusColorPalette,
 		hasFiltersApplied,
 		curationInfoExpanded,
-		progressInfoExpanded
+		progressInfoExpanded,
+		moveToDataEnabled
 	} = curationStore;
-
-	// Apply jump to entry and reset
-	$: if (jumpToEntryWhere) {
-		curationStore.jumpToEntryWhere.set(jumpToEntryWhere);
-		jumpToEntryWhere = undefined;
-	}
 
 	// Apply type filter and reset
 	$: if (applyTypeFilter !== undefined) {
@@ -63,15 +72,6 @@
 		if ($curation?.isCurator) curationStore.createAndJumpToEntry(addEntry);
 		addEntry = undefined;
 	}
-
-	// Move to data
-	$: curationStore.moveToDataFunction.set(moveToDataFunction);
-	const moveToDataStore = curationStore.moveToData;
-	moveToDataStore.subscribe((mtds) => {
-		if (!mtds) return;
-		moveToDataStore.set(undefined);
-		moveToData = mtds;
-	});
 
 	// ---
 
