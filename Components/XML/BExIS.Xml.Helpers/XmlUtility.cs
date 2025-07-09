@@ -265,7 +265,13 @@ namespace BExIS.Xml.Helpers
                     index = Int32.Parse(tmp[1].Remove(tmp[1].IndexOf("]")));
                 }
 
-                XmlNodeList nodes = parent != null ? parent.SelectNodes(nodeName) : doc.SelectNodes(nodeName);
+                XmlNodeList nodes = null;
+  
+                if(parent == null || parent.Name.ToLowerInvariant().Equals(nodeName))
+                    // if parent is null, we are creating the root node
+                    nodes = doc.SelectNodes(nodeName);
+                else
+                    nodes = parent.SelectNodes(nodeName);
 
                 XmlNode node = nodes[index - 1];
 
@@ -279,9 +285,11 @@ namespace BExIS.Xml.Helpers
                     else
                     {
                         if (parent != null) node = parent.AppendChild(doc.CreateElement(nodeName));
+                        else if (doc != null) node = doc.AppendChild(doc.CreateElement(nodeName)); // create root node
                         else return null;
                     }
                 }
+            
 
                 // rejoin the remainder of the array as an xpath expression and recurse
                 string rest = String.Join("/", partsOfXPath, 1, partsOfXPath.Length - 1);
