@@ -3753,7 +3753,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             long parentPartyId = 0;
             // if the complex xml element has a partyid its mapped and all dependend simmple attributes must set
             bool complexIsMapped = false;
-            if (complexElement.Attributes().Any(a => a.Name.LocalName.ToLowerInvariant().Equals("partyid")))
+            if (complexElement!=null &&  complexElement.Attributes().Any(a => a.Name.LocalName.ToLowerInvariant().Equals("partyid")))
             {
                 complexIsMapped = true;
 
