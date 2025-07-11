@@ -1718,7 +1718,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     elements = XmlUtility.GetXElementsByAttribute(usage.Label, keyValueDic, xMetadata).ToList();
                 }
 
-                x = elements.FirstOrDefault();
+                x = elements.LastOrDefault();
 
                 if (x != null && !x.Name.Equals("null"))
                 {
@@ -2514,6 +2514,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                
                     foreach (var childStep in currentStepInfo.Children)
                     {
+
                         childStepModelHelper = GetStepModelhelper(childStep.Id, taskManager);
 
                         if (childStepModelHelper.Model == null)
