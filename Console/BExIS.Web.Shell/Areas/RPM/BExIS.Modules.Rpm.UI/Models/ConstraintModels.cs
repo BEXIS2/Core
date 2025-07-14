@@ -183,15 +183,18 @@ namespace BExIS.Modules.Rpm.UI.Models
                 List<long> variableIds = constraint.VariableConstraints.Select(v => v.Id).ToList();
                 using (DataStructureManager dataStructureManager = new DataStructureManager())
                 {
-                    List<StructuredDataStructure> structuredDataStructures = dataStructureManager.StructuredDataStructureRepo.Query(s => s.Variables.Any(v => variableIds.Contains(v.Id))).ToList();
+                    //List<StructuredDataStructure> structuredDataStructures =
+                    inUse = dataStructureManager.StructuredDataStructureRepo.Query(s => s.Variables.Any(v => variableIds.Contains(v.Id))).Any(s => s.Datasets.Count != 0);
 
-                    if (structuredDataStructures != null && structuredDataStructures.Count > 0)
-                    {
-                        foreach (StructuredDataStructure structuredDataStructure in structuredDataStructures)
-                        {
-                            inUse = structuredDataStructure.Datasets.Any();
-                        }
-                    }
+                    //if (structuredDataStructures != null && structuredDataStructures.Count > 0)
+                    //{
+                    //    foreach (StructuredDataStructure structuredDataStructure in structuredDataStructures)
+                    //    {
+                    //        inUse = structuredDataStructure.Datasets.Any();
+                    //        if (inUse)
+                    //            break;
+                    //    }
+                    //}
                 }
             }                    
             return inUse;
