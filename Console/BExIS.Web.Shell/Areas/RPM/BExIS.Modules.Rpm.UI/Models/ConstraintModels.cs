@@ -173,15 +173,8 @@ namespace BExIS.Modules.Rpm.UI.Models
         public string pattern { get; set; }
     }
 
-    
     public static class inUseChecker
     {
-        private static List<StructuredDataStructure> structuredDataStructures = null;
-
-        public static void reset()
-        {
-            structuredDataStructures = null;
-        }
         public static bool isConstrainInUseByVariable(Constraint constraint)
         {
             bool inUse = false;
@@ -190,11 +183,8 @@ namespace BExIS.Modules.Rpm.UI.Models
                 List<long> variableIds = constraint.VariableConstraints.Select(v => v.Id).ToList();
                 using (DataStructureManager dataStructureManager = new DataStructureManager())
                 {
-                    if(structuredDataStructures == null)
-                        structuredDataStructures = dataStructureManager.StructuredDataStructureRepo.Get().ToList();
-
                     //List<StructuredDataStructure> structuredDataStructures =
-                    inUse = structuredDataStructures.Where(s => s.Variables.Any(v => variableIds.Contains(v.Id))).Any(s => s.Datasets.Count != 0);
+                    inUse = dataStructureManager.StructuredDataStructureRepo.Query(s => s.Variables.Any(v => variableIds.Contains(v.Id))).Any(s => s.Datasets.Count != 0);
 
                     //if (structuredDataStructures != null && structuredDataStructures.Count > 0)
                     //{
