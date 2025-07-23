@@ -121,7 +121,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                 // get links
                 EntityReferenceHelper entityReferenceHelper = new EntityReferenceHelper();
                 datasetModel.Links.From = entityReferenceHelper.GetSourceReferences(dataset.Id, dataset.EntityTemplate.EntityType.Id, versionNumber);
-                datasetModel.Links.To = entityReferenceHelper.GetSourceReferences(dataset.Id, dataset.EntityTemplate.EntityType.Id, versionNumber);
+                datasetModel.Links.To = entityReferenceHelper.GetTargetReferences(dataset.Id, dataset.EntityTemplate.EntityType.Id, versionNumber);
 
                 // create response and return as JSON
                 var response = Request.CreateResponse(HttpStatusCode.OK);
@@ -279,6 +279,11 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                     ApiDatasetHelper apiDatasetHelper = new ApiDatasetHelper();
                     // get content
                     ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, version, metadataStructureId, dataset.DataStructure.Id);
+
+
+                    EntityReferenceHelper entityReferenceHelper = new EntityReferenceHelper();
+                    datasetModel.Links.From = entityReferenceHelper.GetSourceReferences(dataset.Id, dataset.EntityTemplate.EntityType.Id, version);
+                    datasetModel.Links.To = entityReferenceHelper.GetTargetReferences(dataset.Id, dataset.EntityTemplate.EntityType.Id, version);
 
                     // create response and return as JSON
                     var response = Request.CreateResponse(HttpStatusCode.OK);

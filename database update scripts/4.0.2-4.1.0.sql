@@ -298,6 +298,7 @@ END $$;
 Delete
 from datatypes
 where name not in (
+    'String',
     'Text',
     'Integer',
     'Floating Point Number',

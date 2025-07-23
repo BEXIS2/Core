@@ -67,6 +67,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (var constraintManager = new ConstraintManager())
                 {
+                    inUseChecker.reset();
                     List<DomainConstraint> domainConstraints = new List<DomainConstraint>();
                     List<DomainConstraint> dcs = constraintManager.DomainConstraints.Where(c => c.DataContainer == null).ToList();
                     foreach (DomainConstraint dc in dcs)

@@ -1431,6 +1431,14 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
             if(xpath.StartsWith("/")) xpath = xpath.Substring(1);
 
+            if (type == LinkElementType.MetadataAttributeUsage ||
+                type == LinkElementType.MetadataNestedAttributeUsage ||
+                type == LinkElementType.SimpleMetadataAttribute || 
+                type == LinkElementType.ComplexMetadataAttribute )
+            { 
+                xpath = xpath + "/"+name+"Type";
+            }
+
             if (element == null)
             {
                 element = mappingManager.CreateLinkElement(
