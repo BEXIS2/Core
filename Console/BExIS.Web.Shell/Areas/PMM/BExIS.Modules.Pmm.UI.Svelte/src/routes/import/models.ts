@@ -3,7 +3,7 @@ export interface errorItem {
 	errorMsg: string;
 }
 
-export interface tableErrorItem{
+export interface tableErrorItem {
 	errorType: string;
 	errorMsg: string;
 	value?: any;
@@ -36,4 +36,9 @@ export interface Dataset {
 	DataStructureId?: number;
 	MetadataStructureId?: number;
 	EntityTemplateId?: number;
+}
+
+export interface ValidationType {
+	valid: boolean;
+	cellError: errorItem[];
 }

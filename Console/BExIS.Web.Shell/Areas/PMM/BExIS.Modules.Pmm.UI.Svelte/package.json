@@ -55,6 +55,7 @@
 		"@floating-ui/dom": "1.6.8",
 		"@sveltejs/adapter-static": "3.0.2",
 		"@sveltejs/package": "2.3.2",
+		"jsonpath-plus": "^10.3.0",
 		"papaparse": "5.4.1",
 		"patch-package": "8.0.0",
 		"svelte-fa": "4.0.2"

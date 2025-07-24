@@ -2,6 +2,7 @@
 	import { DropdownKVP, Page } from '@bexis2/bexis2-core-ui';
 	import Papa from 'papaparse';
 	import Fa from 'svelte-fa';
+	import { tick } from 'svelte';
 	import {
 		faFileArrowDown,
 		faArrowUpFromBracket,
@@ -15,38 +16,35 @@
 	import lineClamp from './components/lineClamp.svelte';
 	import error from './components/error.svelte';
 	import { invalidTableStore, validTableStore } from './stores';
-	import type {
-		errorArray,
-		errorItem,
-		tableErrorItem,
-	} from './models';
+	import type { errorArray, errorItem, tableErrorItem, ValidationType } from './models';
 	import { onMount } from 'svelte';
 	import * as apiCalls from './services/apiCalls';
-	import mappingJson from "./mapping1.json";
+	import { JSONPath } from 'jsonpath-plus';
+	import mappingPublication from './mappingPublication.json';
+	import mappingResource from './mappingResource.json';
 
 	type dataSetType = {
-		Title: string,
-    	Description: string,
-    	DataStructureId: number,
-    	MetadataStructureId: number,
-    	EntityTemplateId: number;
+		Title: string;
+		Description: string;
+		DataStructureId: number;
+		MetadataStructureId: number;
+		EntityTemplateId: number;
 	};
 
 	let filename: string = '';
 
-	let entities :any[] = [];
-	let transformedArray: any [] = [];
-	let target :number;
+	let entities: any[] = [];
+	let transformedArray: any[] = [];
+	let target: number;
 	let tempTitle: string | null = null;
 	let csvInfo: any[] = [];
 	let dataset: dataSetType = {
-		Title: "",
-		Description: "",
+		Title: '',
+		Description: '',
 		DataStructureId: 0,
 		MetadataStructureId: 0,
 		EntityTemplateId: 0
-  	};
-
+	};
 
 	let validData: any[] = [];
 	let showValid: boolean = false;
@@ -89,7 +87,7 @@
 		clear();
 
 		entities = await apiCalls.getEntityTemplateList();
-		transformedArray = entities.map(entity => ({
+		transformedArray = entities.map((entity) => ({
 			id: entity.id,
 			text: entity.name
 		}));
@@ -128,7 +126,7 @@
 			header: true,
 			complete: function (results) {
 				let jsonData: any = results.data;
-				
+
 				let codeColumns = Object.keys(jsonData[0]).filter(
 					(key) =>
 						key.trim().toLocaleLowerCase().startsWith('code') &&
@@ -141,12 +139,12 @@
 						!['data present'].includes(key.trim().toLowerCase())
 				);
 
-				validateRows(jsonData, codeColumns, dataColumns)
+				validateRows(jsonData, codeColumns, dataColumns);
 
 				fillInvalidTableStore(invalidData);
 				showInvalid = invalidData.length > 0 ? true : false;
 				validTableStore.set(validData);
-		
+
 				createDownloadLinks();
 			}
 		});
@@ -156,48 +154,26 @@
 		let columnErrors: { [key: string]: any[] } = {};
 
 		data.forEach((row: any, rowIndex: number) => {
-			let rowValid = true;
-			let cellError: errorItem[] = [];
-
-			if (!row || Object.values(row).every(val => (val ?? '').toString().trim() === '')) {
-				return;
-			}
-
-			const checkColumns = [
-				{ columns: codeColumns, refColumn: 'Code URL' },
-				{ columns: dataColumns, refColumn: 'Data URL' }
-			];
-
-			checkColumns.forEach(({ columns, refColumn }) => {
-				const ref = row[refColumn];
-				if (!ref) return;
-
-				const commaCount = countCommas(ref);
-
-				if (commaCount === 0) return; // gilt als valide
-
-				columns.forEach((col) => {
-					if (commaCount !== countCommas(row[col])) {
-						cellError.push({
-							column: col,
-							errorMsg: `Number of entries does not match with ${refColumn}`
-						});
-						rowValid = false;
-
-						if (!columnErrors[col]) columnErrors[col] = [];
-						columnErrors[col].push(rowIndex);
-					}
-				});
-			});
-
-			if (rowValid) {
-				validData.push(row);
+			if (!row || Object.values(row).every((val) => (val ?? '').toString().trim() === '')) {
 			} else {
-				invalidDataCounter++;
-				invalidData.push(row);
-				errors.push({ rowIndex, cellErrors: cellError });
+				let validationType: ValidationType = validateRow(row, codeColumns, dataColumns);
+
+				validationType.cellError.forEach((ce) => {
+					if (!columnErrors[ce.column]) {
+						columnErrors[ce.column] = [];
+					}
+					columnErrors[ce.column].push(rowIndex);
+				});
+
+				if (validationType.valid) {
+					validData.push(row);
+				} else {
+					invalidDataCounter++;
+					invalidData.push(row);
+					errors.push({ rowIndex, cellErrors: validationType.cellError });
+				}
+				// console.log("valid", validData)
 			}
-			console.log("valid", validData)
 		});
 
 		// Fehlerhafte Spalten konfigurieren
@@ -212,6 +188,36 @@
 				};
 			}
 		});
+	}
+
+	function validateRow(row: any, codeColumns: string[], dataColumns: string[]): ValidationType {
+		let cellError: errorItem[] = [];
+		let rowValid: boolean = true;
+		const checkColumns = [
+			{ columns: codeColumns, refColumn: 'Code URL' },
+			{ columns: dataColumns, refColumn: 'Data URL' }
+		];
+
+		checkColumns.forEach(({ columns, refColumn }) => {
+			const ref = row[refColumn];
+			if (!ref) return;
+
+			const commaCount = countCommas(ref);
+
+			if (commaCount === 0) return; // gilt als valide
+
+			columns.forEach((col) => {
+				if (commaCount !== countCommas(row[col])) {
+					cellError.push({
+						column: col,
+						errorMsg: `Number of entries does not match with ${refColumn}`
+					});
+					rowValid = false;
+				}
+			});
+		});
+		let validationType: ValidationType = { valid: rowValid, cellError: cellError };
+		return validationType;
 	}
 
 	function countCommas(data: string): number {
@@ -254,68 +260,345 @@
 	}
 
 	function create() {
-		console.log('click');
+		// console.log('click');
 		createAllDatasets(dataset.MetadataStructureId, dataset.EntityTemplateId);
 	}
 
-	async function createAllDatasets (metadataStructureId: number, entityTemplateId: number, dataStructureId: number = 0) {
-    	try {
-			let dss : dataSetType[]=[];
+	let uploadedCount: number = 0;
+	$: totalUploads = $validTableStore.length;
 
-			console.log('validData', validData);
+	async function createAllDatasets(
+		metadataStructureId: number,
+		entityTemplateId: number,
+		dataStructureId: number = 0
+	) {
+		try {
+			let dss: dataSetType[] = [];
 
-			for(const row of validData) {
-				dss.push(mapToApiFormat(row, mappingJson));
+			for (const row of validData) {
+				dss.push(mapToApiFormat(row, mappingPublication));
 			}
 
-			console.log("datasets",dss);
+			uploadedCount = 0; // Reset beim Start
 
-			for(const ds of dss) {	
+			for (let index = 0; index < dss.length; index++) {
+				const ds = dss[index];
+				const csvId = index;
+
 				ds.MetadataStructureId = metadataStructureId;
 				ds.EntityTemplateId = entityTemplateId;
 				ds.DataStructureId = dataStructureId;
-				// console.log("datensätze", ds)
-				let res = await apiCalls.createDataset(ds);	
-			}
-    	} catch (error) {
-        	console.error("Fehler beim Erstellen der Datensätze:", error);
-    	}
-	};
 
-	function mapToApiFormat (csvRow: any, mapping: any) {
+				let res = await apiCalls.createDataset(ds);
+				getDatasets(res, csvId);
+
+				uploadedCount++;
+
+				// Update alle 100 oder beim letzten
+				if (uploadedCount % 100 === 0 || uploadedCount === validData.length) {
+					await tick(); // sorgt für UI-Update
+				}
+			}
+
+			for (const map of idMapping) {
+				const rowIndex = map[0];
+				const metadataId = map[1];
+
+				let metadata = await apiCalls.GetMetadata(metadataId);
+				let MetadataScheema: any = null;
+				if (MetadataScheema == null) {
+					MetadataScheema = await apiCalls.GetMetadataScheema(metadata['@id']);
+				}
+
+				console.log("metadata",metadata);
+
+				applyMappingToMetadata(metadata, validData[rowIndex], mappingPublication.Mappings);
+				console.log("finaldata", metadata);
+				await apiCalls.putMetadata(metadataId, metadata);
+				await apiCalls.GetMetadata(metadataId);
+			}
+		} catch (error) {
+			console.error('Fehler beim Erstellen der Datensätze:', error);
+		}
+	}
+
+	function deepCopy(obj: any) {
+		return JSON.parse(JSON.stringify(obj));
+	}
+
+	// async function fillMetadataForRow(metadata: any, row: any, mapping: any[], resourceValue: string, resourceType: string) {
+	// 	// metadata kopieren, damit original nicht verändert wird
+	// 	const metadataCopy = deepCopy(metadata);
+	// 	metadataCopy.Resource = deepCopy(metadata.Resource);
+
+	// 	for (const map of mapping) {
+	// 		const source = map.Source;
+	// 		const rawTargetPath = map.Target;
+	// 		let value = row[source];
+
+	// 		// Spezialfall Resource.Name mit resourceValue überschreiben
+	// 		if (source === "Data URL" && resourceType === "Dataset") value = resourceValue;
+	// 		if (source === "Code URL" && resourceType === "Software") value = resourceValue;
+
+	// 		if (value === undefined || value === null) continue;
+
+	// 		// "$." entfernen → nur Pfadteile
+	// 		const cleanPath = rawTargetPath.replace(/^\$\./, '');
+	// 		const pathParts = cleanPath.split('.');
+
+	// 		let current = metadataCopy;
+	// 		for (let i = 0; i < pathParts.length - 1; i++) {
+	// 			const part = pathParts[i];
+	// 			if (!(part in current) || typeof current[part] !== 'object') {
+	// 				current[part] = {};
+	// 			}
+	// 			current = current[part];
+	// 		}
+
+	// 		const finalKey = pathParts[pathParts.length - 1];
+	// 		current[finalKey] = value;
+	// 	}
+
+	// 	// Resource_Type setzen
+	// 	metadataCopy.Resource.Resource_Type = resourceType;
+
+	// 	return metadataCopy.Resource;
+	// }
+
+	async function applyMappingToMetadata(metadata: any, row: any, mapping: any[]) {
+		const resourceArray = metadata.Resource;
+		// console.log("resourceArray", resourceArray)
+
+		for (const map of mapping) {
+			const source = map.Source;
+			const rawTargetPath = map.Target;
+			const value = row[source];
+			if (value === undefined || value === null) continue;
+
+			// "$." entfernen → nur die Pfadteile
+			const cleanPath = rawTargetPath.replace(/^\$\./, '');
+			const pathParts = cleanPath.split('.');
+
+			let current = metadata;
+			let parent = null;
+			let key = null;
+
+			for (let i = 0; i < pathParts.length; i++) {
+				const part = pathParts[i];
+
+				if (i === pathParts.length - 1) {
+					parent = current;
+					key = part;
+				} else {
+					if (!(part in current) || typeof current[part] !== 'object') {
+						current[part] = {};
+					}
+					current = current[part];
+				}
+			}
+
+			// Zielstruktur prüfen
+			const targetStructure = parent?.[key];
+			const isArray =
+				Array.isArray(targetStructure) ||
+				rawTargetPath.endsWith('[]') ||
+				Array.isArray(row[source]);
+
+			let values: string[] = [];
+
+			// Wenn es ein Array ist oder ein String mit Trennzeichen
+			if (Array.isArray(value)) {
+				values = value;
+			} else if (typeof value === 'string' && value.includes(';')) {
+				values = value.split(';').map((v) => v.trim());
+			} else {
+				values = [value];
+			}
+
+			if (isArray) {
+				parent[key] = values.map((v) => ({ '#text': v }));
+			} else {
+				parent[key] = { '#text': values[0] };
+			}
+		}
+		let Resource: any = [];
+		Resource = applyResourceMapping(metadata, row, mappingResource.Mappings);
+		console.log("Resource", Resource)
+	}
+
+	async function applyResourceMapping(metadata: any, row: any, mapping: any[]) {
+		const resourceTemplate = metadata.Resource?.[0] || {};
+		const filledResources = [];
+
+		function findMatchingKey(obj: any, key: string): string | undefined {
+			return Object.keys(obj).find((k) => k.toLowerCase() === key.toLowerCase());
+		}
+function setValueAtPath(obj: any, rawPath: string, value: any) {
+    let cleanPath = rawPath;
+    if (rawPath.startsWith('$.Resource.')) {
+        cleanPath = rawPath.replace(/^\$\.Resource\./, '');
+    } else if (rawPath.startsWith('$.')) {
+        cleanPath = rawPath.replace(/^\$\./, '');
+    }
+
+    const pathParts = cleanPath.split('.');
+    let current = obj;
+
+    for (let i = 0; i < pathParts.length - 1; i++) {
+        const part = pathParts[i];
+        // Suche Property case-insensitiv
+        const realKey = Object.keys(current).find(k => k.toLowerCase() === part.toLowerCase()) || part;
+
+        if (Array.isArray(current[realKey])) {
+            current[realKey].forEach(item => {
+                setValueAtPath(item, pathParts.slice(i + 1).join('.'), value);
+            });
+            return;
+        }
+
+        if (!(realKey in current) || typeof current[realKey] !== 'object') {
+            current[realKey] = {};
+        }
+        current = current[realKey];
+    }
+
+    const finalPart = pathParts[pathParts.length - 1];
+    const realFinalKey = Object.keys(current).find(k => k.toLowerCase() === finalPart.toLowerCase()) || finalPart;
+
+    // Dynamische Array-Erkennung
+    let values: string[] = [];
+    if (Array.isArray(value)) {
+        values = value;
+    } else if (typeof value === 'string' && value.includes(';')) {
+        values = value.split(';').map((v) => v.trim());
+    } else {
+        values = [value];
+    }
+
+    const isArray =
+        rawPath.endsWith('[]') ||
+        Array.isArray(value) ||
+        Array.isArray(current[realFinalKey]);
+
+    if (isArray) {
+        current[realFinalKey] = values.map((v) => ({ '#text': v }));
+    } else {
+        current[realFinalKey] = { '#text': values[0] };
+    }
+}
+		function deepCopy(obj: any) {
+			return JSON.parse(JSON.stringify(obj));
+		}
+
+		function splitAndTrim(value: string | undefined): string[] {
+			return (value || '')
+				.split(',')
+				.map((s) => s.trim())
+				.filter(Boolean);
+		}
+
+		// Schritt 1: Allgemeine Metadaten (nicht Resource-spezifisch)
+		for (const map of mapping) {
+    const source = map.Source;
+    const rawTargetPath = map.Target;
+    const value = row[source];
+    if (value === undefined || value === null) continue;
+
+    // Prüfe, ob das Mapping auf alle Resource-Objekte angewendet werden soll
+    if (rawTargetPath.startsWith('$.Resource.')) {
+        if (Array.isArray(metadata.Resource)) {
+            metadata.Resource.forEach((resourceObj: any) => {
+                setValueAtPath(resourceObj, rawTargetPath.replace('$.Resource.', ''), value);
+            });
+        }
+        continue;
+    }
+
+    // Sonst wie gehabt
+    setValueAtPath(metadata, rawTargetPath, value);
+}
+
+		// Schritt 2: Ressourcen (Data und Code)
+		const resourceTypes = ['Data', 'Code'];
+
+		for (const type of resourceTypes) {
+			// Hole alle Mapping-Einträge für diesen Typ
+			const groupMappings = mapping.filter((m) => m.Source.startsWith(type));
+
+			// Extrahiere die Werte für alle Spalten dieses Typs
+			const groupedValues: Record<string, string[]> = Object.fromEntries(
+				groupMappings.map((m) => [m.Source, splitAndTrim(row[m.Source])])
+			);
+
+			const urls = groupedValues[`${type} URL`] || [];
+			const typeText = type === 'Data' ? 'Dataset' : 'Software';
+
+			for (let i = 0; i < urls.length; i++) {
+				const newResource = deepCopy(resourceTemplate);
+				// newResource.Name = urls[i];
+
+				// Setze den Ressourcentyp
+				if (
+					newResource.Resources_Type &&
+					typeof newResource.Resources_Type === 'object' &&
+					'#text' in newResource.Resources_Type
+				) {
+					newResource.Resources_Type['#text'] = typeText;
+				} else {
+					newResource.Resources_Type = { '#text': typeText };
+				}
+
+				// Fülle alle anderen Felder gemäß Mapping
+				for (const map of groupMappings) {
+					const valueList = groupedValues[map.Source];
+					if (!valueList || !valueList[i]) continue;
+					setValueAtPath(newResource, map.Target, valueList[i]);
+				}
+				console.log('newResource', newResource);
+				filledResources.push(newResource);
+			}
+		}
+		console.log('filled', filledResources);
+		metadata.Resource = filledResources;
+
+		return filledResources;
+	}
+
+	let idMapping: [number, number][] = []; // Initial leer
+
+	function getDatasets(response: any, csvId: number) {
+		idMapping.push([csvId, response.id]);
+	}
+
+	function mapToApiFormat(csvRow: any, mapping: any) {
 		let ds: dataSetType = {
-			Title: "",
-			Description: "",
+			Title: '',
+			Description: '',
 			DataStructureId: 0,
 			MetadataStructureId: 0,
 			EntityTemplateId: 0
 		};
 
-		mapping.Mappings.forEach((map: any, index: number) => {
-			let sourceField = "";
-			sourceField = map.Source;
-			// const targetField = map.Target.match(/\$\[['"](.+)['"]\]/)?.[1];  // Extract full path after $
+		for (let index = 0; index < 2; index++) {
+			const map = mapping.Mappings[index];
+			let sourceField = map.Source;
 
-			if (sourceField) 
-			{
-				if (index % 2 === 0) 
-				{
+			if (sourceField) {
+				if (index % 2 === 0) {
 					// Jeder 1. Durchgang (Titel)
 					ds.Title = csvRow[sourceField];
-				} 
-				else if (ds.Title !== null) // Jeder 2. Durchgang (Beschreibung)
-				{
-							ds.Title = ds.Title;
-							ds.Description = csvRow[sourceField];
-				}
-				else
-				{
-					tempTitle = null; // Zurücksetzen für das nächste Paar	
+				} else if (ds.Title !== null) {
+					// Jeder 2. Durchgang (Beschreibung)
+					ds.Title = ds.Title;
+					ds.Description = csvRow[sourceField];
+				} else {
+					tempTitle = null; // Zurücksetzen für das nächste Paar
 				}
 			}
-		});
-    	return ds;	
-    }
+		}
+
+		return ds;
+	}
 
 	// function downloadValidData() {
 	// 	const link = document.createElement('a');
@@ -338,14 +621,16 @@
 		link.click();
 	}
 
+	let metadataStructureId: any;
+
 	function onChangeHandler(event) {
 		let selectedEntity: number;
 		selectedEntity = event.target.value;
 
-		let searchEntity = entities.find(entity => entity.id == selectedEntity)
+		let searchEntity = entities.find((entity) => entity.id == selectedEntity);
 
 		dataset.EntityTemplateId = selectedEntity;
-		dataset.MetadataStructureId = searchEntity.metadataStructure.id;
+		metadataStructureId = dataset.MetadataStructureId = searchEntity.metadataStructure.id;
 	}
 
 	function toggleValidForm() {
@@ -364,19 +649,22 @@
 <Page help={true} title="Manage Publications">
 	<h1 class="h1">Import Publications</h1>
 	<button on:click={create}>Alle Datasets erstellen</button>
-
+	{#if validData.length > 0}
+		<p>{uploadedCount} von {totalUploads} Datensätzen erstellt</p>
+		<progress max={totalUploads} value={uploadedCount}></progress>
+	{/if}
 
 	<div class="flex gap-5 w-full">
 		<div id="fileLabel" class="w-16">Entity :</div>
-			<div class="overflow-clip w-full">
-				<DropdownKVP
-					id="metadataStructure"
-					title=""
-					bind:target
-					source={transformedArray}
-					on:change={onChangeHandler}
-				/>
-			</div>
+		<div class="overflow-clip w-full">
+			<DropdownKVP
+				id="metadataStructure"
+				title=""
+				bind:target
+				source={transformedArray}
+				on:change={onChangeHandler}
+			/>
+		</div>
 	</div>
 	<div class="flex gap-5 w-full">
 		{#if isLoading}
