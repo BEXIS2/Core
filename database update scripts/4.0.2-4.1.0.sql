@@ -309,6 +309,17 @@ where name not in (
 );
 
 
+-- missing author and description update to empty strings
+update datasetversions
+set 
+m_performer = ''
+where m_performer is null;
+
+update datasetversions
+set 
+m_comment = ''
+where m_comment is null;
+
 
 -- BEXIS2 Version Update
 INSERT INTO public.versions(
