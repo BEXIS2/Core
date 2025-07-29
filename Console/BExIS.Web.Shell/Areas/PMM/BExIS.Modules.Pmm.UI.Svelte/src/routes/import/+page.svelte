@@ -19,7 +19,6 @@
 	import type { errorArray, errorItem, tableErrorItem, ValidationType } from './models';
 	import { onMount } from 'svelte';
 	import * as apiCalls from './services/apiCalls';
-	import { JSONPath } from 'jsonpath-plus';
 	import mappingPublication from './mappingPublication.json';
 	import mappingResource from './mappingResource.json';
 
@@ -37,7 +36,6 @@
 	let transformedArray: any[] = [];
 	let target: number;
 	let tempTitle: string | null = null;
-	let csvInfo: any[] = [];
 	let dataset: dataSetType = {
 		Title: '',
 		Description: '',
@@ -310,10 +308,10 @@
 					MetadataScheema = await apiCalls.GetMetadataScheema(metadata['@id']);
 				}
 
-				console.log("metadata",metadata);
+				// console.log('metadata', metadata);
 
 				applyMappingToMetadata(metadata, validData[rowIndex], mappingPublication.Mappings);
-				console.log("finaldata", metadata);
+				console.log('finaldata', metadata);
 				await apiCalls.putMetadata(metadataId, metadata);
 				await apiCalls.GetMetadata(metadataId);
 			}
@@ -322,53 +320,7 @@
 		}
 	}
 
-	function deepCopy(obj: any) {
-		return JSON.parse(JSON.stringify(obj));
-	}
-
-	// async function fillMetadataForRow(metadata: any, row: any, mapping: any[], resourceValue: string, resourceType: string) {
-	// 	// metadata kopieren, damit original nicht verändert wird
-	// 	const metadataCopy = deepCopy(metadata);
-	// 	metadataCopy.Resource = deepCopy(metadata.Resource);
-
-	// 	for (const map of mapping) {
-	// 		const source = map.Source;
-	// 		const rawTargetPath = map.Target;
-	// 		let value = row[source];
-
-	// 		// Spezialfall Resource.Name mit resourceValue überschreiben
-	// 		if (source === "Data URL" && resourceType === "Dataset") value = resourceValue;
-	// 		if (source === "Code URL" && resourceType === "Software") value = resourceValue;
-
-	// 		if (value === undefined || value === null) continue;
-
-	// 		// "$." entfernen → nur Pfadteile
-	// 		const cleanPath = rawTargetPath.replace(/^\$\./, '');
-	// 		const pathParts = cleanPath.split('.');
-
-	// 		let current = metadataCopy;
-	// 		for (let i = 0; i < pathParts.length - 1; i++) {
-	// 			const part = pathParts[i];
-	// 			if (!(part in current) || typeof current[part] !== 'object') {
-	// 				current[part] = {};
-	// 			}
-	// 			current = current[part];
-	// 		}
-
-	// 		const finalKey = pathParts[pathParts.length - 1];
-	// 		current[finalKey] = value;
-	// 	}
-
-	// 	// Resource_Type setzen
-	// 	metadataCopy.Resource.Resource_Type = resourceType;
-
-	// 	return metadataCopy.Resource;
-	// }
-
 	async function applyMappingToMetadata(metadata: any, row: any, mapping: any[]) {
-		const resourceArray = metadata.Resource;
-		// console.log("resourceArray", resourceArray)
-
 		for (const map of mapping) {
 			const source = map.Source;
 			const rawTargetPath = map.Target;
@@ -423,69 +375,66 @@
 		}
 		let Resource: any = [];
 		Resource = applyResourceMapping(metadata, row, mappingResource.Mappings);
-		console.log("Resource", Resource)
+		// console.log('Resource', Resource);
 	}
 
 	async function applyResourceMapping(metadata: any, row: any, mapping: any[]) {
 		const resourceTemplate = metadata.Resource?.[0] || {};
 		const filledResources = [];
 
-		function findMatchingKey(obj: any, key: string): string | undefined {
-			return Object.keys(obj).find((k) => k.toLowerCase() === key.toLowerCase());
+		function setValueAtPath(obj: any, rawPath: string, value: any) {
+			let cleanPath = rawPath;
+			if (rawPath.startsWith('$.Resource.')) {
+				cleanPath = rawPath.replace(/^\$\.Resource\./, '');
+			} else if (rawPath.startsWith('$.')) {
+				cleanPath = rawPath.replace(/^\$\./, '');
+			}
+
+			const pathParts = cleanPath.split('.');
+			let current = obj;
+
+			for (let i = 0; i < pathParts.length - 1; i++) {
+				const part = pathParts[i];
+				// Suche Property case-insensitiv
+				const realKey =
+					Object.keys(current).find((k) => k.toLowerCase() === part.toLowerCase()) || part;
+
+				if (Array.isArray(current[realKey])) {
+					current[realKey].forEach((item) => {
+						setValueAtPath(item, pathParts.slice(i + 1).join('.'), value);
+					});
+					return;
+				}
+
+				if (!(realKey in current) || typeof current[realKey] !== 'object') {
+					current[realKey] = {};
+				}
+				current = current[realKey];
+			}
+
+			const finalPart = pathParts[pathParts.length - 1];
+			const realFinalKey =
+				Object.keys(current).find((k) => k.toLowerCase() === finalPart.toLowerCase()) || finalPart;
+
+			// Dynamische Array-Erkennung
+			let values: string[] = [];
+			if (Array.isArray(value)) {
+				values = value;
+			} else if (typeof value === 'string' && value.includes(';')) {
+				values = value.split(';').map((v) => v.trim());
+			} else {
+				values = [value];
+			}
+
+			const isArray =
+				rawPath.endsWith('[]') || Array.isArray(value) || Array.isArray(current[realFinalKey]);
+
+			if (isArray) {
+				current[realFinalKey] = values.map((v) => ({ '#text': v }));
+			} else {
+				current[realFinalKey] = { '#text': values[0] };
+			}
 		}
-function setValueAtPath(obj: any, rawPath: string, value: any) {
-    let cleanPath = rawPath;
-    if (rawPath.startsWith('$.Resource.')) {
-        cleanPath = rawPath.replace(/^\$\.Resource\./, '');
-    } else if (rawPath.startsWith('$.')) {
-        cleanPath = rawPath.replace(/^\$\./, '');
-    }
-
-    const pathParts = cleanPath.split('.');
-    let current = obj;
-
-    for (let i = 0; i < pathParts.length - 1; i++) {
-        const part = pathParts[i];
-        // Suche Property case-insensitiv
-        const realKey = Object.keys(current).find(k => k.toLowerCase() === part.toLowerCase()) || part;
-
-        if (Array.isArray(current[realKey])) {
-            current[realKey].forEach(item => {
-                setValueAtPath(item, pathParts.slice(i + 1).join('.'), value);
-            });
-            return;
-        }
-
-        if (!(realKey in current) || typeof current[realKey] !== 'object') {
-            current[realKey] = {};
-        }
-        current = current[realKey];
-    }
-
-    const finalPart = pathParts[pathParts.length - 1];
-    const realFinalKey = Object.keys(current).find(k => k.toLowerCase() === finalPart.toLowerCase()) || finalPart;
-
-    // Dynamische Array-Erkennung
-    let values: string[] = [];
-    if (Array.isArray(value)) {
-        values = value;
-    } else if (typeof value === 'string' && value.includes(';')) {
-        values = value.split(';').map((v) => v.trim());
-    } else {
-        values = [value];
-    }
-
-    const isArray =
-        rawPath.endsWith('[]') ||
-        Array.isArray(value) ||
-        Array.isArray(current[realFinalKey]);
-
-    if (isArray) {
-        current[realFinalKey] = values.map((v) => ({ '#text': v }));
-    } else {
-        current[realFinalKey] = { '#text': values[0] };
-    }
-}
 		function deepCopy(obj: any) {
 			return JSON.parse(JSON.stringify(obj));
 		}
@@ -499,24 +448,24 @@ function setValueAtPath(obj: any, rawPath: string, value: any) {
 
 		// Schritt 1: Allgemeine Metadaten (nicht Resource-spezifisch)
 		for (const map of mapping) {
-    const source = map.Source;
-    const rawTargetPath = map.Target;
-    const value = row[source];
-    if (value === undefined || value === null) continue;
+			const source = map.Source;
+			const rawTargetPath = map.Target;
+			const value = row[source];
+			if (value === undefined || value === null) continue;
 
-    // Prüfe, ob das Mapping auf alle Resource-Objekte angewendet werden soll
-    if (rawTargetPath.startsWith('$.Resource.')) {
-        if (Array.isArray(metadata.Resource)) {
-            metadata.Resource.forEach((resourceObj: any) => {
-                setValueAtPath(resourceObj, rawTargetPath.replace('$.Resource.', ''), value);
-            });
-        }
-        continue;
-    }
+			// Prüfe, ob das Mapping auf alle Resource-Objekte angewendet werden soll
+			if (rawTargetPath.startsWith('$.Resource.')) {
+				if (Array.isArray(metadata.Resource)) {
+					metadata.Resource.forEach((resourceObj: any) => {
+						setValueAtPath(resourceObj, rawTargetPath.replace('$.Resource.', ''), value);
+					});
+				}
+				continue;
+			}
 
-    // Sonst wie gehabt
-    setValueAtPath(metadata, rawTargetPath, value);
-}
+			// Sonst wie gehabt
+			setValueAtPath(metadata, rawTargetPath, value);
+		}
 
 		// Schritt 2: Ressourcen (Data und Code)
 		const resourceTypes = ['Data', 'Code'];
@@ -621,8 +570,6 @@ function setValueAtPath(obj: any, rawPath: string, value: any) {
 		link.click();
 	}
 
-	let metadataStructureId: any;
-
 	function onChangeHandler(event) {
 		let selectedEntity: number;
 		selectedEntity = event.target.value;
@@ -648,14 +595,16 @@ function setValueAtPath(obj: any, rawPath: string, value: any) {
 
 <Page help={true} title="Manage Publications">
 	<h1 class="h1">Import Publications</h1>
-	<button on:click={create}>Alle Datasets erstellen</button>
 	{#if validData.length > 0}
+		<button on:click={create} class="btn variant-filled-primary h-9 w-24 shadow-md">Import</button>
 		<p>{uploadedCount} von {totalUploads} Datensätzen erstellt</p>
 		<progress max={totalUploads} value={uploadedCount}></progress>
+	{:else}
+		<button class="btn variant-filled-primary h-9 w-24 shadow-md disabled" disabled>Import</button>
 	{/if}
 
 	<div class="flex gap-5 w-full">
-		<div id="fileLabel" class="w-16">Entity :</div>
+		<div id="fileLabel" class="w-16">Entity Template :</div>
 		<div class="overflow-clip w-full">
 			<DropdownKVP
 				id="metadataStructure"

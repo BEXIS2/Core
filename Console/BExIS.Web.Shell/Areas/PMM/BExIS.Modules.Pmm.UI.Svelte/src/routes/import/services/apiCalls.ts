@@ -15,7 +15,7 @@ export const getEntityTemplateList = async () => {
 export const createDataset = async (dataset: Dataset) => {
 	try {
 		const response = await Api.post('/api/Dataset', dataset);
-		console.log('Dataset created:', response);
+		// console.log('Dataset created:', response);
 		return response.data;
 	} catch (error) {
 		console.error('Fehler beim Erstellen des Datasets:', error);
@@ -28,7 +28,7 @@ export const putMetadata = async (id: number, value: any) => {
 		// console.log(" value:", value);
 
 		const response = await Api.put('/api/Metadata/' + id, value);
-		console.log('Dataset filled:', response);
+		// console.log('Dataset filled:', response);
 		return response.data;
 	} catch (error) {
 		console.error('Fehler beim füllen vom dataset:', error);
@@ -36,21 +36,10 @@ export const putMetadata = async (id: number, value: any) => {
 	}
 };
 
-// export const GetTokens = async () => {
-// 	try {
-// 		const response = await Api.get('/api/tokens/');
-//         console.log("tokens", response)
-//         return response.data;
-// 	} catch (error) {
-// 		console.error(error);
-// 		throw error;
-// 	}
-// };
-
 export const GetMetadata = async (id: number) => {
 	try {
 		const response = await Api.get('/api/Metadata/' + id + '?simplifiedJson=1');
-		console.log('response', response.data);
+		// console.log('response', response.data);
 		return response.data;
 	} catch (error) {
 		console.error(error);
