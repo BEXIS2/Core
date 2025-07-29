@@ -595,16 +595,8 @@
 
 <Page help={true} title="Manage Publications">
 	<h1 class="h1">Import Publications</h1>
-	{#if validData.length > 0}
-		<button on:click={create} class="btn variant-filled-primary h-9 w-24 shadow-md">Import</button>
-		<p>{uploadedCount} von {totalUploads} Datensätzen erstellt</p>
-		<progress max={totalUploads} value={uploadedCount}></progress>
-	{:else}
-		<button class="btn variant-filled-primary h-9 w-24 shadow-md disabled" disabled>Import</button>
-	{/if}
-
 	<div class="flex gap-5 w-full">
-		<div id="fileLabel" class="w-16">Entity Template :</div>
+		<div id="fileLabel" class="w-36">Entity Template :</div>
 		<div class="overflow-clip w-full">
 			<DropdownKVP
 				id="metadataStructure"
@@ -773,6 +765,27 @@
 			{/if}
 		</div>
 	{/if}
+	<div class="flex gap-5 w-full">
+		<div id="datasetCounter">
+			{#if validData.length > 0}
+				<p class="card variant-ghost-primary gap-5 p-2 my-1 align-middle">{uploadedCount} of {totalUploads} datasets created</p>
+			{/if}
+		</div>
+		<div id="progressBar" class="overflow-clip w-full flex items-center">
+			{#if validData.length > 0}
+				<progress max={totalUploads} value={uploadedCount}></progress>
+			{/if}
+		</div>
+		<div id="importButton" class="w-24 flex items-center">
+			{#if validData.length > 0 && dataset.EntityTemplateId}
+				<button on:click={create} class="btn variant-filled-primary h-9 w-24 shadow-md">Import</button>
+			{:else}
+				<button class="btn variant-filled-primary h-9 w-24 shadow-md disabled" disabled>Import</button>
+			{/if}
+		</div>
+		
+		
+	</div>
 </Page>
 
 <!-- C:\Users\xi68neg\Desktop\Bexis\repo\Console\BExIS.Web.Shell\Areas\RPM\BExIS.Modules.Rpm.UI.Svelte\src\routes\unit\+page.svelte -->
