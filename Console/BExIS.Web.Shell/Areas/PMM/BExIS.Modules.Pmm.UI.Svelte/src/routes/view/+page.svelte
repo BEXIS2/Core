@@ -8,6 +8,9 @@
     let datasetAuthors: string[] = [];
     let datasetDescription: string;
     let datasetResources: any[] = [];
+
+    let showAllAuthors = false;
+    let showFullDescription = false;
     
     onMount(async () => {
         metadata = await apiCalls.GetMetadata(4)
@@ -30,23 +33,33 @@
     <h1 class="h1">{datasetTitle}</h1>
     <div class="flex gap-5 w-full">
         <div>
-            <card class="w-96 card flex gap-5 p-2 my-1">
-                <p class="line-clamp-6">
+            <card class="w-96 card flex flex-col gap-5 p-2 my-1">
+                <h4 class="h4">Authors</h4>
+                <p class={showAllAuthors ? "" : "line-clamp-6"}>
                     {#each datasetAuthors as author, i}
-                        <span class="inline-block border border-gray-300 rounded px-2 py-1 bg-white truncate mr-1 mb-1" title={author}>
-                        {author}{i < datasetAuthors.length - 1 ? ', ' : ''}
-                    </span>
+                        <span class="w-40 inline-block border border-gray-300 rounded px-2 py-1 bg-white truncate mr-1 mb-1" title={author}>
+                        {author}
+                        </span>
                     {/each}
                 </p>
+                {#if datasetAuthors.length > 6}
+                    <button class="text-blue-600 underline text-xs mt-1" on:click={() => showAllAuthors = !showAllAuthors}>
+                        {showAllAuthors ? 'See less' : 'See more'}
+                    </button>
+                {/if}
             </card>
         </div>
         <div>
-            <card class="w-full card flex gap-5 p-2 my-1">
-                <p class="text line-clamp-6">{datasetDescription}</p>
+            <card class="w-96 card flex flex-col gap-5 p-2 my-1">
+                <h4 class="h4">Description</h4>
+                <p class={showFullDescription ? "text" : "text line-clamp-6"}>{datasetDescription}</p>
+                {#if datasetDescription && datasetDescription.length > 200}
+                    <button class="text-blue-600 underline text-xs mt-1" on:click={() => showFullDescription = !showFullDescription}>
+                        {showFullDescription ? 'See less' : 'See more'}
+                    </button>
+                {/if}
             </card>
         </div>
     </div>
-    
-    
     <p class="text">{datasetResources}</p>
 </Page>
