@@ -2,24 +2,40 @@
     import { Page } from '@bexis2/bexis2-core-ui';
     import * as apiCalls from './services/apiCalls';
     import { onMount } from 'svelte';
+    import type { ResourceArray } from './models';
 
     let metadata: any;
     let datasetTitle: string;
     let datasetAuthors: string[] = [];
     let datasetDescription: string;
-    let datasetResources: any[] = [];
+    let datasetResources: ResourceArray[] = [];
 
     let showAllAuthors = false;
     let showFullDescription = false;
     
     onMount(async () => {
-        metadata = await apiCalls.GetMetadata(10)
+        metadata = await apiCalls.GetMetadata(10);
         console.log(metadata);
 
         datasetTitle = metadata?.publication?.Title?.['#text'] ?? 'Title not available';
         datasetAuthors = metadata?.publication?.Author?.map((author: any) => author['#text']) || ['Authors not available'];
         datasetDescription = metadata?.publication?.Abstract?.map((abstract:any) => abstract['#text']) ?? 'Description not available';
-        datasetResources = metadata?.Resource;
+
+        datasetResources = (metadata?.Resource ?? []).map((resource: any) => ({
+            Name: resource?.Name?.['#text'] ?? '',
+            SubmissionDate: resource?.Submission_Date?.['#text'] ?? '',
+            EmbargoEnd: resource?.Embargo_End?.['#text'] ?? '',
+            URI: resource?.Access?.URI?.['#text'] ?? '',
+            URIHealth: resource?.Access?.URI_Health?.['#text'] ?? '',
+            DOI: resource?.Access?.DOI?.['#text'] ?? '',
+            DOIHealth: resource?.Access?.DOI_Health?.['#text'] ?? '',
+            RepositoryName: resource?.Repository_Name?.['#text'] ?? '',
+            Licence: resource?.Access?.Licence?.['#text'] ?? '',
+            ProgrammingLanguage: Array.isArray(resource?.Code?.Programing_Language)
+                ? resource.Code.Programing_Language.map((lang: any) => lang['#text']).join(', ')
+                : resource?.Code?.Programing_Language?.['#text'] ?? ''
+        }));
+        console.log("datasetResources",datasetResources);
     });
     
    // Testdaten
@@ -130,11 +146,46 @@
         
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-    {#each datasetResources as dataset}
-        <card class="card w-full flex flex-col gap-2 p-4 my-1">
-            <h4 class="h4 mb-2">{dataset?.Name?.["#text"] ?? dataset?.DOI?.["#text"]}</h4>
-
-        </card>
-    {/each}
-</div>
+        {#each datasetResources as dataset, i}
+            <card class="card w-full flex flex-col gap-2 p-4 my-1">
+                <h4 class="h4 mb-2">
+                    {dataset.Name
+                        ? dataset.Name
+                        : dataset.DOI
+                            ? dataset.DOI
+                            : dataset.URI
+                                ? dataset.URI
+                                : `Resource ${i + 1} of Dataset ${dataset.DOI || 'unknown'}`
+                    }
+                </h4>
+                {#if dataset.SubmissionDate}
+                    <p><b>Submission Date:</b> {dataset.SubmissionDate}</p>
+                {/if}
+                {#if dataset.EmbargoEnd}
+                    <p><b>Embargo End:</b> {dataset.EmbargoEnd}</p>
+                {/if}
+                {#if dataset.URI}
+                    <p><b>URI:</b> <a href={dataset.URI} target="_blank" class="text-blue-600 underline">{dataset.URI}</a></p>
+                {/if}
+                {#if dataset.URIHealth}
+                    <p><b>URI Health:</b> {dataset.URIHealth}</p>
+                {/if}
+                {#if dataset.DOI}
+                    <p><b>DOI:</b> {dataset.DOI}</p>
+                {/if}
+                {#if dataset.DOIHealth}
+                    <p><b>DOI Health:</b> {dataset.DOIHealth}</p>
+                {/if}
+                {#if dataset.RepositoryName}
+                    <p><b>Repository Name:</b> {dataset.RepositoryName}</p>
+                {/if}
+                {#if dataset.Licence}
+                    <p><b>Licence:</b> {dataset.Licence}</p>
+                {/if}
+                {#if dataset.ProgrammingLanguage}
+                    <p><b>Programming Language:</b> {dataset.ProgrammingLanguage}</p>
+                {/if}
+            </card>
+        {/each}
+    </div>
 </Page>
