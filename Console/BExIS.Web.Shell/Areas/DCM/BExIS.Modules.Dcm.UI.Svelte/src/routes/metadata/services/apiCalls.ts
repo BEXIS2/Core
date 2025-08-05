@@ -2,7 +2,7 @@ import { Api } from '@bexis2/bexis2-core-ui';
 
 export const GetMetadataSchema = async (id: number) => {
 	try {
-		const response = await Api.get('/api/MetadataStructure/'+ id);
+		const response = await Api.get('/api/MetadataStructure/' + id);
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -12,7 +12,7 @@ export const GetMetadataSchema = async (id: number) => {
 
 export const GetMetadata = async (id: number) => {
 	try {
-		const response = await Api.get('/api/Metadata/'+ id + '?simplifiedJson=1');
+		const response = await Api.get('/api/Metadata/' + id + '?simplifiedJson=1');
 		return response.data;
 	} catch (error) {
 		console.error(error);

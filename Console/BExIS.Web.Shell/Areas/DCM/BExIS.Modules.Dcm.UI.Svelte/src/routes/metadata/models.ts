@@ -1,6 +1,6 @@
 export interface schemaNode {
 	title: string;
 	description: string;
-	type: string; 
-    properties: scheemaNode[];
+	type: string;
+	properties: scheemaNode[];
 }

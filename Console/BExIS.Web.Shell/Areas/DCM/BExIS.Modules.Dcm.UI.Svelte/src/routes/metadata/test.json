@@ -1,1442 +1,1368 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "GBIF Metadata Profile",
-  "type": "object",
-  "properties": {
-    "Basic": {
-      "description": "Attributes from the root node",
-      "type": "object",
-      "properties": {
-        "DatasetGUID": {
-          "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
-          "type": "object",
-          "properties": {
-            "#text": {
-              "type": "string",
-              "minLength": 1
-            },
-            "@ref": {
-              "type": "string"
-            }
-          }
-        },
-        "@ref": {
-          "type": "string"
-        }
-      }
-    },
-    "TechnicalContacts": {
-      "description": "Metadata item normally not used for end-user display. UDDI registry element for GBIF registry. Questions and feedback about availability of a provider or resource should be directed to the technical contact. This contact normally represents the Agent acting as the publisher of the datasets in the network. The element is unbounded to provide for alternative contacts (vacation etc.).",
-      "type": "object",
-      "properties": {
-        "TechnicalContact": {
-          "type": "array",
-          "items": {
-            "description": "",
-            "type": "object",
-            "properties": {
-              "Name": {
-                "description": "Person, person team, or role name (e. g., 'head of departement')",
-                "type": "object",
-                "properties": {
-                  "#text": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 255
-                  },
-                  "@ref": {
-                    "type": "string"
-                  }
-                }
-              },
-              "Email": {
-                "description": "",
-                "type": "object",
-                "properties": {
-                  "#text": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 255
-                  },
-                  "@ref": {
-                    "type": "string"
-                  }
-                }
-              },
-              "Phone": {
-                "description": "(voice phone)",
-                "type": "object",
-                "properties": {
-                  "#text": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 255
-                  },
-                  "@ref": {
-                    "type": "string"
-                  }
-                }
-              },
-              "Address": {
-                "description": "",
-                "type": "object",
-                "properties": {
-                  "#text": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 255
-                  },
-                  "@ref": {
-                    "type": "string"
-                  }
-                }
-              },
-              "@ref": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "Name"
-            ]
-          },
-          "minItems": 1,
-          "maxItems": 2147483647
-        },
-        "@ref": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "TechnicalContact"
-      ]
-    },
-    "ContentContacts": {
-      "description": "UDDI registry element (\"AdministrativeContact\")  for GBIF registry. Questions and feedback about data, or restrictions on use of the data should be directed to the adminstrative contact. This contact normally represents the agent acting as the original supplier or custodian of the dataset. If a content contact is given on the unit-level, that one should be used for end-user purposes. The element is unbounded to provide for alternative contacts (vacation etc.).",
-      "type": "object",
-      "properties": {
-        "ContentContact": {
-          "type": "array",
-          "items": {
-            "description": "",
-            "type": "object",
-            "properties": {
-              "Name": {
-                "description": "Person, person team, or role name (e. g., 'head of departement')",
-                "type": "object",
-                "properties": {
-                  "#text": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 255
-                  },
-                  "@ref": {
-                    "type": "string"
-                  }
-                }
-              },
-              "Email": {
-                "description": "",
-                "type": "object",
-                "properties": {
-                  "#text": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 255
-                  },
-                  "@ref": {
-                    "type": "string"
-                  }
-                }
-              },
-              "Phone": {
-                "description": "(voice phone)",
-                "type": "object",
-                "properties": {
-                  "#text": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 255
-                  },
-                  "@ref": {
-                    "type": "string"
-                  }
-                }
-              },
-              "Address": {
-                "description": "",
-                "type": "object",
-                "properties": {
-                  "#text": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 255
-                  },
-                  "@ref": {
-                    "type": "string"
-                  }
-                }
-              },
-              "@ref": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "Name"
-            ]
-          },
-          "minItems": 1,
-          "maxItems": 2147483647
-        },
-        "@ref": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "ContentContact"
-      ]
-    },
-    "OtherProviders": {
-      "description": "Other known on-line providers of this dataset.",
-      "type": "object",
-      "properties": {
-        "OtherProvider": {
-          "type": "array",
-          "items": {
-            "description": "The UUID (identifier in the UDDI registry) of another data provider known to serve this dataset.",
-            "type": "object",
-            "properties": {
-              "#text": {
-                "type": "string",
-                "minLength": 1
-              },
-              "@ref": {
-                "type": "string"
-              }
-            }
-          },
-          "minItems": 1,
-          "maxItems": 2147483647
-        },
-        "@ref": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "OtherProvider"
-      ]
-    },
-    "Metadata": {
-      "description": "Metadata referring to the principal source of the entire data collection (the metadata scope may be wider than the objects actually contained in the data set). In its current form, this collection represents a mixture of elements useful for resource discovery (e.g. scope) with metadata actually pertaining to the received (partial) dataset.",
-      "type": "object",
-      "properties": {
-        "Description": {
-          "description": "Dublin Core conformant elements describing the content of the data source queried, representation in different languages possible",
-          "type": "object",
-          "properties": {
-            "Representation": {
-              "type": "array",
-              "items": {
-                "description": "The description in a specified language. Only one representation should be delivered for each language. [ATTR: language]",
-                "type": "object",
-                "properties": {
-                  "Title": {
-                    "description": "Source for Dublin-Core standard element \"Title\": A short, concise title.General Note on DublinCore translation: In addition to those that can bee transformed from UBIF metadata, an additional DC.Type='dataset' should be added.",
-                    "type": "object",
-                    "properties": {
-                      "#text": {
-                        "type": "string",
-                        "minLength": 1,
-                        "maxLength": 255
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "Details": {
-                    "description": "Source for Dublin-Core standard element \"Description\": Free-form text containing a longer description of the project.",
-                    "type": "object",
-                    "properties": {
-                      "#text": {
-                        "type": "string",
-                        "minLength": 1
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "Coverage": {
-                    "description": "Source for Dublin-Core standard element \"Coverage\": Free-form text describing geographic, taxonomic, or other coverage aspects of terminology or descriptions available in the current project.",
-                    "type": "object",
-                    "properties": {
-                      "#text": {
-                        "type": "string",
-                        "minLength": 1
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "URI": {
-                    "description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
-                    "type": "object",
-                    "properties": {
-                      "#text": {
-                        "type": "string"
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "@ref": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "Title"
-                ]
-              },
-              "minItems": 1,
-              "maxItems": 2147483647
-            },
-            "@ref": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "Representation"
-          ]
-        },
-        "IconURI": {
-          "description": "The URI of an icon/logo symbolizing the project.",
-          "type": "object",
-          "properties": {
-            "#text": {
-              "type": "string"
-            },
-            "@ref": {
-              "type": "string"
-            }
-          }
-        },
-        "Scope": {
-          "description": "Keyword lists of geographical, taxonomic, etc. scopes. In the case of projects in progress, 'scope' may define the planned or intended, rather than the achieved scope (or coverage). If scope is given, the content available should be entirely within scope, because this item is for resource discovery purposes. Compare also Coverage in DC.Description (which is language-specific). (Items from Scope may be added to DC.Coverage)",
-          "type": "object",
-          "properties": {
-            "GeoecologicalTerms": {
-              "description": "A collection of terms describing the geoecological scope of the source queried by means of area names (e.g. 'Worldl', 'Germany', 'Atlantic Ocean', 'Andes', 'Mountains'. A list of recommended terms should be developed.",
-              "type": "object",
-              "properties": {
-                "GeoEcologicalTerm": {
-                  "type": "array",
-                  "items": {
-                    "description": "",
-                    "type": "object",
-                    "properties": {
-                      "#text": {
-                        "type": "string"
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "minItems": 1,
-                  "maxItems": 2147483647
-                },
-                "@ref": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "GeoEcologicalTerm"
-              ]
-            },
-            "TaxonomicTerms": {
-              "description": "A collection of taxon names of higher rank describing the taxonomic scope of the source queried. A list of recommended terms should be developed.",
-              "type": "object",
-              "properties": {
-                "TaxonomicTerm": {
-                  "type": "array",
-                  "items": {
-                    "description": "",
-                    "type": "object",
-                    "properties": {
-                      "#text": {
-                        "type": "string"
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "minItems": 1,
-                  "maxItems": 2147483647
-                },
-                "@ref": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "TaxonomicTerm"
-              ]
-            },
-            "@ref": {
-              "type": "string"
-            }
-          }
-        },
-        "Version": {
-          "description": "Number and date of current version (particularly for citing purposes)",
-          "type": "object",
-          "properties": {
-            "Major": {
-              "description": "The major version number ('1' in 1.2) as defined by the content creators.",
-              "type": "object",
-              "properties": {
-                "#text": {
-                  "type": "number"
-                },
-                "@ref": {
-                  "type": "string"
-                }
-              }
-            },
-            "Minor": {
-              "description": "An optional minor version number ('2' in 1.2)",
-              "type": "object",
-              "properties": {
-                "#text": {
-                  "type": "number"
-                },
-                "@ref": {
-                  "type": "string"
-                }
-              }
-            },
-            "Modifier": {
-              "description": "Unconstrained text specifying status + optional number, e. g., 'beta', 'alpha', 'rc/release candidate', 'internal'. If missing, release status is assumed.",
-              "type": "object",
-              "properties": {
-                "#text": {
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 255
-                },
-                "@ref": {
-                  "type": "string"
-                }
-              }
-            },
-            "DateIssued": {
-              "description": "Source for Dublin-Core standard element Date.Issued: Citable 'publication date' of the current version (comp. RevisionData/DateCreated and DateModified for version- independent dates). This date should be missing if the current version is not yet published!",
-              "type": "object",
-              "properties": {
-                "#text": {
-                  "type": "string"
-                },
-                "@ref": {
-                  "type": "string"
-                }
-              }
-            },
-            "@ref": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "Major"
-          ]
-        },
-        "RevisionData": {
-          "description": "Creators, Revision status, and dates of the entire data collection from which the current dataset is derived.",
-          "type": "object",
-          "properties": {
-            "Creators": {
-              "description": "Source for Dublin-Core standard element \"Creators\", i.e. Author or editor.",
-              "type": "object",
-              "properties": {
-                "#text": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "@ref": {
-                  "type": "string"
-                }
-              }
-            },
-            "Contributors": {
-              "description": "Source for Dublin-Core standard element\"Contributors\": General contributors, or translators.",
-              "type": "object",
-              "properties": {
-                "#text": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "@ref": {
-                  "type": "string"
-                }
-              }
-            },
-            "DateCreated": {
-              "description": "Source for Dublin-Core standard element \"Date.Created\": Date/time when the intellectual content (project, term, description, etc.) was created. Applications may initially set this to the system date for new data objects, but authors must be able to change it to an earlier date if necessary. If for legacy data this is imprecisely known, it may be missing here. Earlier versions in other data formats should then be mentioned in the copyright or acknowl. statements.",
-              "type": "object",
-              "properties": {
-                "#text": {
-                  "type": "string"
-                },
-                "@ref": {
-                  "type": "string"
-                }
-              }
-            },
-            "DateModified": {
-              "description": "Source for Dublin-Core standard element Date.Modified: Date/time when the last modification of the object was made. If in online data sources the provider can not assess this, the current date/time may be substituted. For legacy data this may be set to the file date of imported data, or estimated.",
-              "type": "object",
-              "properties": {
-                "#text": {
-                  "type": "string"
-                },
-                "@ref": {
-                  "type": "string"
-                }
-              }
-            },
-            "@ref": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "DateModified"
-          ]
-        },
-        "Owners": {
-          "description": "Entities having legal possession of the data collection content. Here defined for the entire data collection, not for individual units. If an owner statement is present on the unit level, it should override this dataset-level statement.",
-          "type": "object",
-          "properties": {
-            "Owner": {
-              "type": "array",
-              "items": {
-                "description": "Entitiy having legal possession of the data collection content.",
-                "type": "object",
-                "properties": {
-                  "Organisation": {
-                    "description": "Organisation to contact",
-                    "type": "object",
-                    "properties": {
-                      "Name": {
-                        "description": "Full organization or corporate name in multiple languages (en: 'Botanical Garden of ...', de: 'Botanischer Garten von ...'). vCard:Org.OrgName). The Label mechanism also supports acronyms / abbreviations (no vCard equivalent!).",
-                        "type": "object",
-                        "properties": {
-                          "Representation": {
-                            "type": "array",
-                            "items": {
-                              "description": "Language-specific label representation\n[ATTR: language]",
-                              "type": "object",
-                              "properties": {
-                                "Text": {
-                                  "description": "Label text in a specific language.",
-                                  "type": "object",
-                                  "properties": {
-                                    "#text": {
-                                      "type": "string",
-                                      "minLength": 1,
-                                      "maxLength": 255
-                                    },
-                                    "@ref": {
-                                      "type": "string"
-                                    }
-                                  }
-                                },
-                                "Abbreviation": {
-                                  "description": "Restricted to 50 characters maximum length, including blanks (recommended to be shorter!). Label abbreviations are especially important when displaying information in a tabular format.",
-                                  "type": "object",
-                                  "properties": {
-                                    "#text": {
-                                      "type": "string",
-                                      "minLength": 1,
-                                      "maxLength": 50
-                                    },
-                                    "@ref": {
-                                      "type": "string"
-                                    }
-                                  }
-                                },
-                                "@ref": {
-                                  "type": "string"
-                                }
-                              },
-                              "required": [
-                                "Text"
-                              ]
-                            },
-                            "minItems": 1,
-                            "maxItems": 2147483647
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "Representation"
-                        ]
-                      },
-                      "OrgUnits": {
-                        "ttle": "OrgUnits",
-                        "description": "If the contact contains no person definition: the unit within the organization the agent represents; else a list of the various organisational units to which a person may belong. (vCard:OrgUnit)",
-                        "type": "object",
-                        "properties": {
-                          "OrgUnit": {
-                            "type": "array",
-                            "items": {
-                              "description": "(vCard:OrgUnit)",
-                              "type": "object",
-                              "properties": {
-                                "#text": {
-                                  "type": "string"
-                                },
-                                "@ref": {
-                                  "type": "string"
-                                }
-                              }
-                            },
-                            "minItems": 1,
-                            "maxItems": 2147483647
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "OrgUnit"
-                        ]
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "Name"
-                    ]
-                  },
-                  "Person": {
-                    "description": "Person to contact",
-                    "type": "object",
-                    "properties": {
-                      "FullName": {
-                        "description": "Preferred form of personal name for display as a string.",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 255
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "SortingName": {
-                        "description": "The full name with the elements in preferred sorting sequence (vCard: Sort-String).",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 255
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "AtomisedName": {
-                        "description": "",
-                        "type": "object",
-                        "properties": {
-                          "InheritedName": {
-                            "description": "Family names, generational names, clan name, parents/grandparents personal names, etc. This (= last name in western cultures) may be compound ('Fischer von Waldheim', 'da Selva', 'Silvano Morales'). Depending on culture it is not necessarily the name of the parents nor common to the married couple and children, thus 'family name' should be avoided even though used in vCard.  (vCard:N.Family)",
-                            "type": "object",
-                            "properties": {
-                              "#text": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 255
-                              },
-                              "@ref": {
-                                "type": "string"
-                              }
-                            }
-                          },
-                          "Prefix": {
-                            "description": "Prefix to inherited name that should be output before name, but is usually not included in sorting. Examples: 'von', 'Lord'. Compare Title for 'Prof', 'Dr.' (vCard:N.Prefix)",
-                            "type": "object",
-                            "properties": {
-                              "#text": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 255
-                              },
-                              "@ref": {
-                                "type": "string"
-                              }
-                            }
-                          },
-                          "Suffix": {
-                            "description": "Suffix to name that should be output after name, regardless whether it is in sorting sequence (Inherited, Given) or not. Examples: 'Jun.', 'III.'. (vCard:N.Suffix)",
-                            "type": "object",
-                            "properties": {
-                              "#text": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 255
-                              },
-                              "@ref": {
-                                "type": "string"
-                              }
-                            }
-                          },
-                          "GivenNames": {
-                            "description": "The name given to a person as a personal name (= first or christian name in western cultures, including 'middle initials') may contain several words ('Ana Maria', 'Jerry B.'). Applicable only to persons. (vCard:N.Given + vCard:N.Middle)",
-                            "type": "object",
-                            "properties": {
-                              "#text": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 255
-                              },
-                              "@ref": {
-                                "type": "string"
-                              }
-                            }
-                          },
-                          "PreferredName": {
-                            "description": "May differ from the first given name: second given name, nickname ('Bob' for 'Robert'), etc. (vCard:Nickname)",
-                            "type": "object",
-                            "properties": {
-                              "#text": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 255
-                              },
-                              "@ref": {
-                                "type": "string"
-                              }
-                            }
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "InheritedName"
-                        ]
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "FullName"
-                    ]
-                  },
-                  "Roles": {
-                    "description": "",
-                    "type": "object",
-                    "properties": {
-                      "Role": {
-                        "type": "array",
-                        "items": {
-                          "description": "Analogue to vCard:Role: Functional contact name, e.g. \"Database administrator\", \"The Director\", etc.",
-                          "type": "object",
-                          "properties": {
-                            "#text": {
-                              "type": "string"
-                            },
-                            "@ref": {
-                              "type": "string"
-                            }
-                          }
-                        },
-                        "minItems": 1,
-                        "maxItems": 2147483647
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "Role"
-                    ]
-                  },
-                  "Addresses": {
-                    "description": "Contact addresses (one preferred, different languages possible)",
-                    "type": "object",
-                    "properties": {
-                      "Address": {
-                        "type": "array",
-                        "items": {
-                          "description": "",
-                          "type": "object",
-                          "properties": {
-                            "#text": {
-                              "type": "string",
-                              "minLength": 1,
-                              "maxLength": 255
-                            },
-                            "@ref": {
-                              "type": "string"
-                            }
-                          }
-                        },
-                        "minItems": 0,
-                        "maxItems": 2147483647
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "TelephoneNumbers": {
-                    "description": "Telephone and fax numbers",
-                    "type": "object",
-                    "properties": {
-                      "TelephoneNumber": {
-                        "type": "array",
-                        "items": {
-                          "description": "Telephone or fax number",
-                          "type": "object",
-                          "properties": {
-                            "Number": {
-                              "description": "Full number in standard international format",
-                              "type": "object",
-                              "properties": {
-                                "#text": {
-                                  "type": "string",
-                                  "minLength": 1,
-                                  "maxLength": 255
-                                },
-                                "@ref": {
-                                  "type": "string"
-                                }
-                              }
-                            },
-                            "Device": {
-                              "description": "",
-                              "type": "object",
-                              "properties": {
-                                "#text": {
-                                  "type": "string"
-                                },
-                                "@ref": {
-                                  "type": "string"
-                                }
-                              }
-                            },
-                            "UsageNotes": {
-                              "description": "Free text for constraints on use e.g. \"weekdays only\" or \"home number\"",
-                              "type": "object",
-                              "properties": {
-                                "#text": {
-                                  "type": "string"
-                                },
-                                "@ref": {
-                                  "type": "string"
-                                }
-                              }
-                            },
-                            "@ref": {
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "Number"
-                          ]
-                        },
-                        "minItems": 0,
-                        "maxItems": 2147483647
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "EmailAddresses": {
-                    "description": "E-mail addresses",
-                    "type": "object",
-                    "properties": {
-                      "EmailAddress": {
-                        "type": "array",
-                        "items": {
-                          "description": "E-mail address for contact",
-                          "type": "object",
-                          "properties": {
-                            "#text": {
-                              "type": "string"
-                            },
-                            "@ref": {
-                              "type": "string"
-                            }
-                          }
-                        },
-                        "minItems": 0,
-                        "maxItems": 2147483647
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "URIs": {
-                    "description": "URIs for person or organisation",
-                    "type": "object",
-                    "properties": {
-                      "URL": {
-                        "type": "array",
-                        "items": {
-                          "description": "URI for person or organisation",
-                          "type": "object",
-                          "properties": {
-                            "#text": {
-                              "type": "string"
-                            },
-                            "@ref": {
-                              "type": "string"
-                            }
-                          }
-                        },
-                        "minItems": 0,
-                        "maxItems": 2147483647
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "LogoURI": {
-                    "description": "URL of a logo image.",
-                    "type": "object",
-                    "properties": {
-                      "#text": {
-                        "type": "string"
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "@ref": {
-                    "type": "string"
-                  }
-                }
-              },
-              "minItems": 0,
-              "maxItems": 2147483647
-            },
-            "@ref": {
-              "type": "string"
-            }
-          }
-        },
-        "IPRStatements": {
-          "description": "Copyright, terms of use, license and other IPR-related statements like disclaimer or acknowledgement. Giving a copyright statement and a (if possible public) licence is highly recommended! (=DC.Rights)",
-          "type": "object",
-          "properties": {
-            "IPRDeclarations": {
-              "tite": "IPRDeclarations",
-              "description": "Container element for one to several statements, normally representing different language representations of the same content.",
-              "type": "object",
-              "properties": {
-                "IPRDeclaration": {
-                  "type": "array",
-                  "items": {
-                    "description": "Used where the IPR declaration cannot be parsed into the specific items or for forms of IPR declaration not yet covered  (e.g. database rights),",
-                    "type": "object",
-                    "properties": {
-                      "Text": {
-                        "description": "Label text in a specific language.",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 255
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "Details": {
-                        "description": "Source for Dublin-Core standard element \"Description\": Free-form text containing a longer description of the project.",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string",
-                            "minLength": 1
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "URI": {
-                        "description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string"
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "Text"
-                    ]
-                  },
-                  "minItems": 1,
-                  "maxItems": 2147483647
-                },
-                "@ref": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "IPRDeclaration"
-              ]
-            },
-            "Copyrights": {
-              "description": "Container element for one to several statements, normally representing different language representations of the same content.",
-              "type": "object",
-              "properties": {
-                "Copyright": {
-                  "type": "array",
-                  "items": {
-                    "description": "Copyright may include the information that the data has been released to the public domain.",
-                    "type": "object",
-                    "properties": {
-                      "Text": {
-                        "description": "Label text in a specific language.",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 255
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "Details": {
-                        "description": "Source for Dublin-Core standard element \"Description\": Free-form text containing a longer description of the project.",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string",
-                            "minLength": 1
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "URI": {
-                        "description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string"
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "Text"
-                    ]
-                  },
-                  "minItems": 1,
-                  "maxItems": 2147483647
-                },
-                "@ref": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "Copyright"
-              ]
-            },
-            "Licenses": {
-              "description": "Container element for one to several statements, normally representing different language representations of the same content.",
-              "type": "object",
-              "properties": {
-                "License": {
-                  "type": "array",
-                  "items": {
-                    "description": "To be used if data are placed under a public license (GPL, GFDL, OpenDocument). Placing data under a public license while maintaining copyright is recommended!",
-                    "type": "object",
-                    "properties": {
-                      "Text": {
-                        "description": "Label text in a specific language.",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 255
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "Details": {
-                        "description": "Source for Dublin-Core standard element \"Description\": Free-form text containing a longer description of the project.",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string",
-                            "minLength": 1
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "URI": {
-                        "description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string"
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "Text"
-                    ]
-                  },
-                  "minItems": 1,
-                  "maxItems": 2147483647
-                },
-                "@ref": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "License"
-              ]
-            },
-            "TermsOfUseStatements": {
-              "description": "Container element for one to several statements, normally representing different language representations of the same content.",
-              "type": "object",
-              "properties": {
-                "TermsOfUse": {
-                  "type": "array",
-                  "items": {
-                    "description": "Defines conditions under which the data may be analised, distributed or changed. \"Terms of use\" includes concepts like \"Usage conditions\" and \"Specific Restrictions\".",
-                    "type": "object",
-                    "properties": {
-                      "Text": {
-                        "description": "Label text in a specific language.",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 255
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "Details": {
-                        "description": "Source for Dublin-Core standard element \"Description\": Free-form text containing a longer description of the project.",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string",
-                            "minLength": 1
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "URI": {
-                        "description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string"
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "Text"
-                    ]
-                  },
-                  "minItems": 1,
-                  "maxItems": 2147483647
-                },
-                "@ref": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "TermsOfUse"
-              ]
-            },
-            "Disclaimers": {
-              "description": "Container element for one to several statements, normally representing different language representations of the same content.",
-              "type": "object",
-              "properties": {
-                "Disclaimer": {
-                  "type": "array",
-                  "items": {
-                    "description": "Disclaimer statement, e. g. concerning responsibility for data quality or legal implications.",
-                    "type": "object",
-                    "properties": {
-                      "Text": {
-                        "description": "Label text in a specific language.",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 255
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "Details": {
-                        "description": "Source for Dublin-Core standard element \"Description\": Free-form text containing a longer description of the project.",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string",
-                            "minLength": 1
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "URI": {
-                        "description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string"
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "Text"
-                    ]
-                  },
-                  "minItems": 1,
-                  "maxItems": 2147483647
-                },
-                "@ref": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "Disclaimer"
-              ]
-            },
-            "Acknowledgements": {
-              "description": "Container element for one to several statements, normally representing different language representations of the same content.",
-              "type": "object",
-              "properties": {
-                "Acknowledgement": {
-                  "type": "array",
-                  "items": {
-                    "description": "A free form text acknowledging support (e. g. grant money, help, permission to reuse published material, etc.)",
-                    "type": "object",
-                    "properties": {
-                      "Text": {
-                        "description": "Label text in a specific language.",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 255
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "Details": {
-                        "description": "Source for Dublin-Core standard element \"Description\": Free-form text containing a longer description of the project.",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string",
-                            "minLength": 1
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "URI": {
-                        "description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
-                        "type": "object",
-                        "properties": {
-                          "#text": {
-                            "type": "string"
-                          },
-                          "@ref": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "@ref": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "Text"
-                    ]
-                  },
-                  "minItems": 1,
-                  "maxItems": 2147483647
-                },
-                "@ref": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "Acknowledgement"
-              ]
-            },
-            "Citations": {
-              "description": "Container element for one to several statements, normally representing different language representations of the same content.",
-              "type": "object",
-              "properties": {
-                "Citation": {
-                  "description": "Indicates how this dataset or record should be attributed if used [OBIF 1.0]",
-                  "type": "object",
-                  "properties": {
-                    "Text": {
-                      "description": "Label text in a specific language.",
-                      "type": "object",
-                      "properties": {
-                        "#text": {
-                          "type": "string",
-                          "minLength": 1,
-                          "maxLength": 255
-                        },
-                        "@ref": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "Details": {
-                      "description": "Source for Dublin-Core standard element \"Description\": Free-form text containing a longer description of the project.",
-                      "type": "object",
-                      "properties": {
-                        "#text": {
-                          "type": "string",
-                          "minLength": 1
-                        },
-                        "@ref": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "URI": {
-                      "description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
-                      "type": "object",
-                      "properties": {
-                        "#text": {
-                          "type": "string"
-                        },
-                        "@ref": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "@ref": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "Text"
-                  ]
-                },
-                "@ref": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "Citation"
-              ]
-            },
-            "@ref": {
-              "type": "string"
-            }
-          }
-        },
-        "@ref": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "Description",
-        "RevisionData"
-      ]
-    }
-  },
-  "required": [
-    "Basic",
-    "TechnicalContacts",
-    "ContentContacts",
-    "Metadata"
-  ]
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "GBIF Metadata Profile",
+	"type": "object",
+	"properties": {
+		"Basic": {
+			"description": "Attributes from the root node",
+			"type": "object",
+			"properties": {
+				"DatasetGUID": {
+					"description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+					"type": "object",
+					"properties": {
+						"#text": {
+							"type": "string",
+							"minLength": 1
+						},
+						"@ref": {
+							"type": "string"
+						}
+					}
+				},
+				"@ref": {
+					"type": "string"
+				}
+			}
+		},
+		"TechnicalContacts": {
+			"description": "Metadata item normally not used for end-user display. UDDI registry element for GBIF registry. Questions and feedback about availability of a provider or resource should be directed to the technical contact. This contact normally represents the Agent acting as the publisher of the datasets in the network. The element is unbounded to provide for alternative contacts (vacation etc.).",
+			"type": "object",
+			"properties": {
+				"TechnicalContact": {
+					"type": "array",
+					"items": {
+						"description": "",
+						"type": "object",
+						"properties": {
+							"Name": {
+								"description": "Person, person team, or role name (e. g., 'head of departement')",
+								"type": "object",
+								"properties": {
+									"#text": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 255
+									},
+									"@ref": {
+										"type": "string"
+									}
+								}
+							},
+							"Email": {
+								"description": "",
+								"type": "object",
+								"properties": {
+									"#text": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 255
+									},
+									"@ref": {
+										"type": "string"
+									}
+								}
+							},
+							"Phone": {
+								"description": "(voice phone)",
+								"type": "object",
+								"properties": {
+									"#text": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 255
+									},
+									"@ref": {
+										"type": "string"
+									}
+								}
+							},
+							"Address": {
+								"description": "",
+								"type": "object",
+								"properties": {
+									"#text": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 255
+									},
+									"@ref": {
+										"type": "string"
+									}
+								}
+							},
+							"@ref": {
+								"type": "string"
+							}
+						},
+						"required": ["Name"]
+					},
+					"minItems": 1,
+					"maxItems": 2147483647
+				},
+				"@ref": {
+					"type": "string"
+				}
+			},
+			"required": ["TechnicalContact"]
+		},
+		"ContentContacts": {
+			"description": "UDDI registry element (\"AdministrativeContact\")  for GBIF registry. Questions and feedback about data, or restrictions on use of the data should be directed to the adminstrative contact. This contact normally represents the agent acting as the original supplier or custodian of the dataset. If a content contact is given on the unit-level, that one should be used for end-user purposes. The element is unbounded to provide for alternative contacts (vacation etc.).",
+			"type": "object",
+			"properties": {
+				"ContentContact": {
+					"type": "array",
+					"items": {
+						"description": "",
+						"type": "object",
+						"properties": {
+							"Name": {
+								"description": "Person, person team, or role name (e. g., 'head of departement')",
+								"type": "object",
+								"properties": {
+									"#text": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 255
+									},
+									"@ref": {
+										"type": "string"
+									}
+								}
+							},
+							"Email": {
+								"description": "",
+								"type": "object",
+								"properties": {
+									"#text": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 255
+									},
+									"@ref": {
+										"type": "string"
+									}
+								}
+							},
+							"Phone": {
+								"description": "(voice phone)",
+								"type": "object",
+								"properties": {
+									"#text": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 255
+									},
+									"@ref": {
+										"type": "string"
+									}
+								}
+							},
+							"Address": {
+								"description": "",
+								"type": "object",
+								"properties": {
+									"#text": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 255
+									},
+									"@ref": {
+										"type": "string"
+									}
+								}
+							},
+							"@ref": {
+								"type": "string"
+							}
+						},
+						"required": ["Name"]
+					},
+					"minItems": 1,
+					"maxItems": 2147483647
+				},
+				"@ref": {
+					"type": "string"
+				}
+			},
+			"required": ["ContentContact"]
+		},
+		"OtherProviders": {
+			"description": "Other known on-line providers of this dataset.",
+			"type": "object",
+			"properties": {
+				"OtherProvider": {
+					"type": "array",
+					"items": {
+						"description": "The UUID (identifier in the UDDI registry) of another data provider known to serve this dataset.",
+						"type": "object",
+						"properties": {
+							"#text": {
+								"type": "string",
+								"minLength": 1
+							},
+							"@ref": {
+								"type": "string"
+							}
+						}
+					},
+					"minItems": 1,
+					"maxItems": 2147483647
+				},
+				"@ref": {
+					"type": "string"
+				}
+			},
+			"required": ["OtherProvider"]
+		},
+		"Metadata": {
+			"description": "Metadata referring to the principal source of the entire data collection (the metadata scope may be wider than the objects actually contained in the data set). In its current form, this collection represents a mixture of elements useful for resource discovery (e.g. scope) with metadata actually pertaining to the received (partial) dataset.",
+			"type": "object",
+			"properties": {
+				"Description": {
+					"description": "Dublin Core conformant elements describing the content of the data source queried, representation in different languages possible",
+					"type": "object",
+					"properties": {
+						"Representation": {
+							"type": "array",
+							"items": {
+								"description": "The description in a specified language. Only one representation should be delivered for each language. [ATTR: language]",
+								"type": "object",
+								"properties": {
+									"Title": {
+										"description": "Source for Dublin-Core standard element \"Title\": A short, concise title.General Note on DublinCore translation: In addition to those that can bee transformed from UBIF metadata, an additional DC.Type='dataset' should be added.",
+										"type": "object",
+										"properties": {
+											"#text": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 255
+											},
+											"@ref": {
+												"type": "string"
+											}
+										}
+									},
+									"Details": {
+										"description": "Source for Dublin-Core standard element \"Description\": Free-form text containing a longer description of the project.",
+										"type": "object",
+										"properties": {
+											"#text": {
+												"type": "string",
+												"minLength": 1
+											},
+											"@ref": {
+												"type": "string"
+											}
+										}
+									},
+									"Coverage": {
+										"description": "Source for Dublin-Core standard element \"Coverage\": Free-form text describing geographic, taxonomic, or other coverage aspects of terminology or descriptions available in the current project.",
+										"type": "object",
+										"properties": {
+											"#text": {
+												"type": "string",
+												"minLength": 1
+											},
+											"@ref": {
+												"type": "string"
+											}
+										}
+									},
+									"URI": {
+										"description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
+										"type": "object",
+										"properties": {
+											"#text": {
+												"type": "string"
+											},
+											"@ref": {
+												"type": "string"
+											}
+										}
+									},
+									"@ref": {
+										"type": "string"
+									}
+								},
+								"required": ["Title"]
+							},
+							"minItems": 1,
+							"maxItems": 2147483647
+						},
+						"@ref": {
+							"type": "string"
+						}
+					},
+					"required": ["Representation"]
+				},
+				"IconURI": {
+					"description": "The URI of an icon/logo symbolizing the project.",
+					"type": "object",
+					"properties": {
+						"#text": {
+							"type": "string"
+						},
+						"@ref": {
+							"type": "string"
+						}
+					}
+				},
+				"Scope": {
+					"description": "Keyword lists of geographical, taxonomic, etc. scopes. In the case of projects in progress, 'scope' may define the planned or intended, rather than the achieved scope (or coverage). If scope is given, the content available should be entirely within scope, because this item is for resource discovery purposes. Compare also Coverage in DC.Description (which is language-specific). (Items from Scope may be added to DC.Coverage)",
+					"type": "object",
+					"properties": {
+						"GeoecologicalTerms": {
+							"description": "A collection of terms describing the geoecological scope of the source queried by means of area names (e.g. 'Worldl', 'Germany', 'Atlantic Ocean', 'Andes', 'Mountains'. A list of recommended terms should be developed.",
+							"type": "object",
+							"properties": {
+								"GeoEcologicalTerm": {
+									"type": "array",
+									"items": {
+										"description": "",
+										"type": "object",
+										"properties": {
+											"#text": {
+												"type": "string"
+											},
+											"@ref": {
+												"type": "string"
+											}
+										}
+									},
+									"minItems": 1,
+									"maxItems": 2147483647
+								},
+								"@ref": {
+									"type": "string"
+								}
+							},
+							"required": ["GeoEcologicalTerm"]
+						},
+						"TaxonomicTerms": {
+							"description": "A collection of taxon names of higher rank describing the taxonomic scope of the source queried. A list of recommended terms should be developed.",
+							"type": "object",
+							"properties": {
+								"TaxonomicTerm": {
+									"type": "array",
+									"items": {
+										"description": "",
+										"type": "object",
+										"properties": {
+											"#text": {
+												"type": "string"
+											},
+											"@ref": {
+												"type": "string"
+											}
+										}
+									},
+									"minItems": 1,
+									"maxItems": 2147483647
+								},
+								"@ref": {
+									"type": "string"
+								}
+							},
+							"required": ["TaxonomicTerm"]
+						},
+						"@ref": {
+							"type": "string"
+						}
+					}
+				},
+				"Version": {
+					"description": "Number and date of current version (particularly for citing purposes)",
+					"type": "object",
+					"properties": {
+						"Major": {
+							"description": "The major version number ('1' in 1.2) as defined by the content creators.",
+							"type": "object",
+							"properties": {
+								"#text": {
+									"type": "number"
+								},
+								"@ref": {
+									"type": "string"
+								}
+							}
+						},
+						"Minor": {
+							"description": "An optional minor version number ('2' in 1.2)",
+							"type": "object",
+							"properties": {
+								"#text": {
+									"type": "number"
+								},
+								"@ref": {
+									"type": "string"
+								}
+							}
+						},
+						"Modifier": {
+							"description": "Unconstrained text specifying status + optional number, e. g., 'beta', 'alpha', 'rc/release candidate', 'internal'. If missing, release status is assumed.",
+							"type": "object",
+							"properties": {
+								"#text": {
+									"type": "string",
+									"minLength": 1,
+									"maxLength": 255
+								},
+								"@ref": {
+									"type": "string"
+								}
+							}
+						},
+						"DateIssued": {
+							"description": "Source for Dublin-Core standard element Date.Issued: Citable 'publication date' of the current version (comp. RevisionData/DateCreated and DateModified for version- independent dates). This date should be missing if the current version is not yet published!",
+							"type": "object",
+							"properties": {
+								"#text": {
+									"type": "string"
+								},
+								"@ref": {
+									"type": "string"
+								}
+							}
+						},
+						"@ref": {
+							"type": "string"
+						}
+					},
+					"required": ["Major"]
+				},
+				"RevisionData": {
+					"description": "Creators, Revision status, and dates of the entire data collection from which the current dataset is derived.",
+					"type": "object",
+					"properties": {
+						"Creators": {
+							"description": "Source for Dublin-Core standard element \"Creators\", i.e. Author or editor.",
+							"type": "object",
+							"properties": {
+								"#text": {
+									"type": "string",
+									"minLength": 1
+								},
+								"@ref": {
+									"type": "string"
+								}
+							}
+						},
+						"Contributors": {
+							"description": "Source for Dublin-Core standard element\"Contributors\": General contributors, or translators.",
+							"type": "object",
+							"properties": {
+								"#text": {
+									"type": "string",
+									"minLength": 1
+								},
+								"@ref": {
+									"type": "string"
+								}
+							}
+						},
+						"DateCreated": {
+							"description": "Source for Dublin-Core standard element \"Date.Created\": Date/time when the intellectual content (project, term, description, etc.) was created. Applications may initially set this to the system date for new data objects, but authors must be able to change it to an earlier date if necessary. If for legacy data this is imprecisely known, it may be missing here. Earlier versions in other data formats should then be mentioned in the copyright or acknowl. statements.",
+							"type": "object",
+							"properties": {
+								"#text": {
+									"type": "string"
+								},
+								"@ref": {
+									"type": "string"
+								}
+							}
+						},
+						"DateModified": {
+							"description": "Source for Dublin-Core standard element Date.Modified: Date/time when the last modification of the object was made. If in online data sources the provider can not assess this, the current date/time may be substituted. For legacy data this may be set to the file date of imported data, or estimated.",
+							"type": "object",
+							"properties": {
+								"#text": {
+									"type": "string"
+								},
+								"@ref": {
+									"type": "string"
+								}
+							}
+						},
+						"@ref": {
+							"type": "string"
+						}
+					},
+					"required": ["DateModified"]
+				},
+				"Owners": {
+					"description": "Entities having legal possession of the data collection content. Here defined for the entire data collection, not for individual units. If an owner statement is present on the unit level, it should override this dataset-level statement.",
+					"type": "object",
+					"properties": {
+						"Owner": {
+							"type": "array",
+							"items": {
+								"description": "Entitiy having legal possession of the data collection content.",
+								"type": "object",
+								"properties": {
+									"Organisation": {
+										"description": "Organisation to contact",
+										"type": "object",
+										"properties": {
+											"Name": {
+												"description": "Full organization or corporate name in multiple languages (en: 'Botanical Garden of ...', de: 'Botanischer Garten von ...'). vCard:Org.OrgName). The Label mechanism also supports acronyms / abbreviations (no vCard equivalent!).",
+												"type": "object",
+												"properties": {
+													"Representation": {
+														"type": "array",
+														"items": {
+															"description": "Language-specific label representation\n[ATTR: language]",
+															"type": "object",
+															"properties": {
+																"Text": {
+																	"description": "Label text in a specific language.",
+																	"type": "object",
+																	"properties": {
+																		"#text": {
+																			"type": "string",
+																			"minLength": 1,
+																			"maxLength": 255
+																		},
+																		"@ref": {
+																			"type": "string"
+																		}
+																	}
+																},
+																"Abbreviation": {
+																	"description": "Restricted to 50 characters maximum length, including blanks (recommended to be shorter!). Label abbreviations are especially important when displaying information in a tabular format.",
+																	"type": "object",
+																	"properties": {
+																		"#text": {
+																			"type": "string",
+																			"minLength": 1,
+																			"maxLength": 50
+																		},
+																		"@ref": {
+																			"type": "string"
+																		}
+																	}
+																},
+																"@ref": {
+																	"type": "string"
+																}
+															},
+															"required": ["Text"]
+														},
+														"minItems": 1,
+														"maxItems": 2147483647
+													},
+													"@ref": {
+														"type": "string"
+													}
+												},
+												"required": ["Representation"]
+											},
+											"OrgUnits": {
+												"ttle": "OrgUnits",
+												"description": "If the contact contains no person definition: the unit within the organization the agent represents; else a list of the various organisational units to which a person may belong. (vCard:OrgUnit)",
+												"type": "object",
+												"properties": {
+													"OrgUnit": {
+														"type": "array",
+														"items": {
+															"description": "(vCard:OrgUnit)",
+															"type": "object",
+															"properties": {
+																"#text": {
+																	"type": "string"
+																},
+																"@ref": {
+																	"type": "string"
+																}
+															}
+														},
+														"minItems": 1,
+														"maxItems": 2147483647
+													},
+													"@ref": {
+														"type": "string"
+													}
+												},
+												"required": ["OrgUnit"]
+											},
+											"@ref": {
+												"type": "string"
+											}
+										},
+										"required": ["Name"]
+									},
+									"Person": {
+										"description": "Person to contact",
+										"type": "object",
+										"properties": {
+											"FullName": {
+												"description": "Preferred form of personal name for display as a string.",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 255
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"SortingName": {
+												"description": "The full name with the elements in preferred sorting sequence (vCard: Sort-String).",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 255
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"AtomisedName": {
+												"description": "",
+												"type": "object",
+												"properties": {
+													"InheritedName": {
+														"description": "Family names, generational names, clan name, parents/grandparents personal names, etc. This (= last name in western cultures) may be compound ('Fischer von Waldheim', 'da Selva', 'Silvano Morales'). Depending on culture it is not necessarily the name of the parents nor common to the married couple and children, thus 'family name' should be avoided even though used in vCard.  (vCard:N.Family)",
+														"type": "object",
+														"properties": {
+															"#text": {
+																"type": "string",
+																"minLength": 1,
+																"maxLength": 255
+															},
+															"@ref": {
+																"type": "string"
+															}
+														}
+													},
+													"Prefix": {
+														"description": "Prefix to inherited name that should be output before name, but is usually not included in sorting. Examples: 'von', 'Lord'. Compare Title for 'Prof', 'Dr.' (vCard:N.Prefix)",
+														"type": "object",
+														"properties": {
+															"#text": {
+																"type": "string",
+																"minLength": 1,
+																"maxLength": 255
+															},
+															"@ref": {
+																"type": "string"
+															}
+														}
+													},
+													"Suffix": {
+														"description": "Suffix to name that should be output after name, regardless whether it is in sorting sequence (Inherited, Given) or not. Examples: 'Jun.', 'III.'. (vCard:N.Suffix)",
+														"type": "object",
+														"properties": {
+															"#text": {
+																"type": "string",
+																"minLength": 1,
+																"maxLength": 255
+															},
+															"@ref": {
+																"type": "string"
+															}
+														}
+													},
+													"GivenNames": {
+														"description": "The name given to a person as a personal name (= first or christian name in western cultures, including 'middle initials') may contain several words ('Ana Maria', 'Jerry B.'). Applicable only to persons. (vCard:N.Given + vCard:N.Middle)",
+														"type": "object",
+														"properties": {
+															"#text": {
+																"type": "string",
+																"minLength": 1,
+																"maxLength": 255
+															},
+															"@ref": {
+																"type": "string"
+															}
+														}
+													},
+													"PreferredName": {
+														"description": "May differ from the first given name: second given name, nickname ('Bob' for 'Robert'), etc. (vCard:Nickname)",
+														"type": "object",
+														"properties": {
+															"#text": {
+																"type": "string",
+																"minLength": 1,
+																"maxLength": 255
+															},
+															"@ref": {
+																"type": "string"
+															}
+														}
+													},
+													"@ref": {
+														"type": "string"
+													}
+												},
+												"required": ["InheritedName"]
+											},
+											"@ref": {
+												"type": "string"
+											}
+										},
+										"required": ["FullName"]
+									},
+									"Roles": {
+										"description": "",
+										"type": "object",
+										"properties": {
+											"Role": {
+												"type": "array",
+												"items": {
+													"description": "Analogue to vCard:Role: Functional contact name, e.g. \"Database administrator\", \"The Director\", etc.",
+													"type": "object",
+													"properties": {
+														"#text": {
+															"type": "string"
+														},
+														"@ref": {
+															"type": "string"
+														}
+													}
+												},
+												"minItems": 1,
+												"maxItems": 2147483647
+											},
+											"@ref": {
+												"type": "string"
+											}
+										},
+										"required": ["Role"]
+									},
+									"Addresses": {
+										"description": "Contact addresses (one preferred, different languages possible)",
+										"type": "object",
+										"properties": {
+											"Address": {
+												"type": "array",
+												"items": {
+													"description": "",
+													"type": "object",
+													"properties": {
+														"#text": {
+															"type": "string",
+															"minLength": 1,
+															"maxLength": 255
+														},
+														"@ref": {
+															"type": "string"
+														}
+													}
+												},
+												"minItems": 0,
+												"maxItems": 2147483647
+											},
+											"@ref": {
+												"type": "string"
+											}
+										}
+									},
+									"TelephoneNumbers": {
+										"description": "Telephone and fax numbers",
+										"type": "object",
+										"properties": {
+											"TelephoneNumber": {
+												"type": "array",
+												"items": {
+													"description": "Telephone or fax number",
+													"type": "object",
+													"properties": {
+														"Number": {
+															"description": "Full number in standard international format",
+															"type": "object",
+															"properties": {
+																"#text": {
+																	"type": "string",
+																	"minLength": 1,
+																	"maxLength": 255
+																},
+																"@ref": {
+																	"type": "string"
+																}
+															}
+														},
+														"Device": {
+															"description": "",
+															"type": "object",
+															"properties": {
+																"#text": {
+																	"type": "string"
+																},
+																"@ref": {
+																	"type": "string"
+																}
+															}
+														},
+														"UsageNotes": {
+															"description": "Free text for constraints on use e.g. \"weekdays only\" or \"home number\"",
+															"type": "object",
+															"properties": {
+																"#text": {
+																	"type": "string"
+																},
+																"@ref": {
+																	"type": "string"
+																}
+															}
+														},
+														"@ref": {
+															"type": "string"
+														}
+													},
+													"required": ["Number"]
+												},
+												"minItems": 0,
+												"maxItems": 2147483647
+											},
+											"@ref": {
+												"type": "string"
+											}
+										}
+									},
+									"EmailAddresses": {
+										"description": "E-mail addresses",
+										"type": "object",
+										"properties": {
+											"EmailAddress": {
+												"type": "array",
+												"items": {
+													"description": "E-mail address for contact",
+													"type": "object",
+													"properties": {
+														"#text": {
+															"type": "string"
+														},
+														"@ref": {
+															"type": "string"
+														}
+													}
+												},
+												"minItems": 0,
+												"maxItems": 2147483647
+											},
+											"@ref": {
+												"type": "string"
+											}
+										}
+									},
+									"URIs": {
+										"description": "URIs for person or organisation",
+										"type": "object",
+										"properties": {
+											"URL": {
+												"type": "array",
+												"items": {
+													"description": "URI for person or organisation",
+													"type": "object",
+													"properties": {
+														"#text": {
+															"type": "string"
+														},
+														"@ref": {
+															"type": "string"
+														}
+													}
+												},
+												"minItems": 0,
+												"maxItems": 2147483647
+											},
+											"@ref": {
+												"type": "string"
+											}
+										}
+									},
+									"LogoURI": {
+										"description": "URL of a logo image.",
+										"type": "object",
+										"properties": {
+											"#text": {
+												"type": "string"
+											},
+											"@ref": {
+												"type": "string"
+											}
+										}
+									},
+									"@ref": {
+										"type": "string"
+									}
+								}
+							},
+							"minItems": 0,
+							"maxItems": 2147483647
+						},
+						"@ref": {
+							"type": "string"
+						}
+					}
+				},
+				"IPRStatements": {
+					"description": "Copyright, terms of use, license and other IPR-related statements like disclaimer or acknowledgement. Giving a copyright statement and a (if possible public) licence is highly recommended! (=DC.Rights)",
+					"type": "object",
+					"properties": {
+						"IPRDeclarations": {
+							"tite": "IPRDeclarations",
+							"description": "Container element for one to several statements, normally representing different language representations of the same content.",
+							"type": "object",
+							"properties": {
+								"IPRDeclaration": {
+									"type": "array",
+									"items": {
+										"description": "Used where the IPR declaration cannot be parsed into the specific items or for forms of IPR declaration not yet covered  (e.g. database rights),",
+										"type": "object",
+										"properties": {
+											"Text": {
+												"description": "Label text in a specific language.",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 255
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"Details": {
+												"description": "Source for Dublin-Core standard element \"Description\": Free-form text containing a longer description of the project.",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string",
+														"minLength": 1
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"URI": {
+												"description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string"
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"@ref": {
+												"type": "string"
+											}
+										},
+										"required": ["Text"]
+									},
+									"minItems": 1,
+									"maxItems": 2147483647
+								},
+								"@ref": {
+									"type": "string"
+								}
+							},
+							"required": ["IPRDeclaration"]
+						},
+						"Copyrights": {
+							"description": "Container element for one to several statements, normally representing different language representations of the same content.",
+							"type": "object",
+							"properties": {
+								"Copyright": {
+									"type": "array",
+									"items": {
+										"description": "Copyright may include the information that the data has been released to the public domain.",
+										"type": "object",
+										"properties": {
+											"Text": {
+												"description": "Label text in a specific language.",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 255
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"Details": {
+												"description": "Source for Dublin-Core standard element \"Description\": Free-form text containing a longer description of the project.",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string",
+														"minLength": 1
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"URI": {
+												"description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string"
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"@ref": {
+												"type": "string"
+											}
+										},
+										"required": ["Text"]
+									},
+									"minItems": 1,
+									"maxItems": 2147483647
+								},
+								"@ref": {
+									"type": "string"
+								}
+							},
+							"required": ["Copyright"]
+						},
+						"Licenses": {
+							"description": "Container element for one to several statements, normally representing different language representations of the same content.",
+							"type": "object",
+							"properties": {
+								"License": {
+									"type": "array",
+									"items": {
+										"description": "To be used if data are placed under a public license (GPL, GFDL, OpenDocument). Placing data under a public license while maintaining copyright is recommended!",
+										"type": "object",
+										"properties": {
+											"Text": {
+												"description": "Label text in a specific language.",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 255
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"Details": {
+												"description": "Source for Dublin-Core standard element \"Description\": Free-form text containing a longer description of the project.",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string",
+														"minLength": 1
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"URI": {
+												"description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string"
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"@ref": {
+												"type": "string"
+											}
+										},
+										"required": ["Text"]
+									},
+									"minItems": 1,
+									"maxItems": 2147483647
+								},
+								"@ref": {
+									"type": "string"
+								}
+							},
+							"required": ["License"]
+						},
+						"TermsOfUseStatements": {
+							"description": "Container element for one to several statements, normally representing different language representations of the same content.",
+							"type": "object",
+							"properties": {
+								"TermsOfUse": {
+									"type": "array",
+									"items": {
+										"description": "Defines conditions under which the data may be analised, distributed or changed. \"Terms of use\" includes concepts like \"Usage conditions\" and \"Specific Restrictions\".",
+										"type": "object",
+										"properties": {
+											"Text": {
+												"description": "Label text in a specific language.",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 255
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"Details": {
+												"description": "Source for Dublin-Core standard element \"Description\": Free-form text containing a longer description of the project.",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string",
+														"minLength": 1
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"URI": {
+												"description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string"
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"@ref": {
+												"type": "string"
+											}
+										},
+										"required": ["Text"]
+									},
+									"minItems": 1,
+									"maxItems": 2147483647
+								},
+								"@ref": {
+									"type": "string"
+								}
+							},
+							"required": ["TermsOfUse"]
+						},
+						"Disclaimers": {
+							"description": "Container element for one to several statements, normally representing different language representations of the same content.",
+							"type": "object",
+							"properties": {
+								"Disclaimer": {
+									"type": "array",
+									"items": {
+										"description": "Disclaimer statement, e. g. concerning responsibility for data quality or legal implications.",
+										"type": "object",
+										"properties": {
+											"Text": {
+												"description": "Label text in a specific language.",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 255
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"Details": {
+												"description": "Source for Dublin-Core standard element \"Description\": Free-form text containing a longer description of the project.",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string",
+														"minLength": 1
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"URI": {
+												"description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string"
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"@ref": {
+												"type": "string"
+											}
+										},
+										"required": ["Text"]
+									},
+									"minItems": 1,
+									"maxItems": 2147483647
+								},
+								"@ref": {
+									"type": "string"
+								}
+							},
+							"required": ["Disclaimer"]
+						},
+						"Acknowledgements": {
+							"description": "Container element for one to several statements, normally representing different language representations of the same content.",
+							"type": "object",
+							"properties": {
+								"Acknowledgement": {
+									"type": "array",
+									"items": {
+										"description": "A free form text acknowledging support (e. g. grant money, help, permission to reuse published material, etc.)",
+										"type": "object",
+										"properties": {
+											"Text": {
+												"description": "Label text in a specific language.",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 255
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"Details": {
+												"description": "Source for Dublin-Core standard element \"Description\": Free-form text containing a longer description of the project.",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string",
+														"minLength": 1
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"URI": {
+												"description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
+												"type": "object",
+												"properties": {
+													"#text": {
+														"type": "string"
+													},
+													"@ref": {
+														"type": "string"
+													}
+												}
+											},
+											"@ref": {
+												"type": "string"
+											}
+										},
+										"required": ["Text"]
+									},
+									"minItems": 1,
+									"maxItems": 2147483647
+								},
+								"@ref": {
+									"type": "string"
+								}
+							},
+							"required": ["Acknowledgement"]
+						},
+						"Citations": {
+							"description": "Container element for one to several statements, normally representing different language representations of the same content.",
+							"type": "object",
+							"properties": {
+								"Citation": {
+									"description": "Indicates how this dataset or record should be attributed if used [OBIF 1.0]",
+									"type": "object",
+									"properties": {
+										"Text": {
+											"description": "Label text in a specific language.",
+											"type": "object",
+											"properties": {
+												"#text": {
+													"type": "string",
+													"minLength": 1,
+													"maxLength": 255
+												},
+												"@ref": {
+													"type": "string"
+												}
+											}
+										},
+										"Details": {
+											"description": "Source for Dublin-Core standard element \"Description\": Free-form text containing a longer description of the project.",
+											"type": "object",
+											"properties": {
+												"#text": {
+													"type": "string",
+													"minLength": 1
+												},
+												"@ref": {
+													"type": "string"
+												}
+											}
+										},
+										"URI": {
+											"description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
+											"type": "object",
+											"properties": {
+												"#text": {
+													"type": "string"
+												},
+												"@ref": {
+													"type": "string"
+												}
+											}
+										},
+										"@ref": {
+											"type": "string"
+										}
+									},
+									"required": ["Text"]
+								},
+								"@ref": {
+									"type": "string"
+								}
+							},
+							"required": ["Citation"]
+						},
+						"@ref": {
+							"type": "string"
+						}
+					}
+				},
+				"@ref": {
+					"type": "string"
+				}
+			},
+			"required": ["Description", "RevisionData"]
+		}
+	},
+	"required": ["Basic", "TechnicalContacts", "ContentContacts", "Metadata"]
 }
