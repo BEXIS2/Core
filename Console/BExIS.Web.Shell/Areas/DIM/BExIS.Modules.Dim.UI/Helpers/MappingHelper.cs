@@ -10,6 +10,7 @@ using BExIS.Modules.Dim.UI.Models.Mapping;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using BExIS.Utils.Data.MetadataStructure;
+using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -159,6 +160,8 @@ namespace BExIS.Modules.Dim.UI.Helper
 
             bool addTypeAsLinkElement = false;
 
+            List<MetadataParameterUsage> parameters = new List<MetadataParameterUsage>();
+
             if (usage is MetadataPackageUsage)
             {
                 type = LinkElementType.MetadataPackageUsage;
@@ -175,11 +178,14 @@ namespace BExIS.Modules.Dim.UI.Helper
                     addTypeAsLinkElement = true;
                     typeId = n.Member.Self.Id;
                     typeDescription = n.Member.Self.Description;
+
+                    parameters = n.Member.MetadataParameterUsages?.ToList();
                 }
 
                 if (n.Member.Self is MetadataSimpleAttribute)
                 {
                     complexity = LinkElementComplexity.Simple;
+                    parameters = n.Member.MetadataParameterUsages?.ToList();
                 }
             }
             else if (usage is MetadataAttributeUsage)
@@ -193,16 +199,22 @@ namespace BExIS.Modules.Dim.UI.Helper
                     addTypeAsLinkElement = true;
                     typeId = u.MetadataAttribute.Self.Id;
                     typeDescription = u.MetadataAttribute.Self.Description;
+                    parameters = u.MetadataAttribute.MetadataParameterUsages?.ToList();
+
                 }
 
                 if (u.MetadataAttribute.Self is MetadataSimpleAttribute)
                 {
                     complexity = LinkElementComplexity.Simple;
+                    parameters = u.MetadataAttribute.MetadataParameterUsages?.ToList();
                 }
             }
 
             // add usage
-            xPath = parentXpath + "/" + usageName.Replace(" ", string.Empty) + "/" + typeName;
+            xPath = parentXpath + "/" + usageName.Replace(" ", string.Empty);
+
+            //if(complexity == LinkElementComplexity.Complex) 
+            xPath = xPath + "/" + typeName;
 
             long linkElementId = 0;
             string mask = "";
@@ -224,56 +236,20 @@ namespace BExIS.Modules.Dim.UI.Helper
             LEModel.Parent = parent;
             rootModel.LinkElements.Add(LEModel);
 
-            //add type
-            //if (addTypeAsLinkElement)
-            //{
-            //    linkElementId = 0;
 
-            //    linkElement =
-            //        linkElements
-            //            .FirstOrDefault(
-            //                le =>
-            //                    le.ElementId.Equals(typeId) &&
-            //                    le.Type.Equals(LinkElementType.ComplexMetadataAttribute));
-
-            //    if (linkElement != null)
-            //    {
-            //        linkElementId = linkElement.Id;
-            //    }
-
-            //    LEModel = new LinkElementModel(
-            //        linkElementId,
-            //        typeId,
-            //        LinkElementType.ComplexMetadataAttribute,
-            //        typeName,
-            //        xPath,
-            //        rootModel.Position,
-            //        complexity,
-            //        typeDescription);
-
-            //    LEModel.Parent = parent;
-
-            //    if (!rootModel.LinkElements.Any(le => le.ElementId.Equals(typeId) &&
-            //                                          le.Type.Equals(LinkElementType.ComplexMetadataAttribute)))
-            //    {
-            //        rootModel.LinkElements.Add(LEModel);
-            //    }
-            //}
-
-            //Debug.WriteLine("1: " + LEModel.Name + " " + LEModel.Type);
-
+            // check Children
             List<BaseUsage> childrenUsages = metadataStructureUsageHelper.GetChildren(usage.Id, usage.GetType());
 
             if (childrenUsages.Count > 0)
             {
+               
+
                 foreach (BaseUsage childUsage in childrenUsages)
                 {
                     addUsageAsLinkElement(childUsage, xPath, rootModel, LEModel, linkElements);
                 }
-
-                //AddChildrens
-                //addLinkElementsFromChildrens(usage, xPath, rootModel);
             }
+
         }
 
         #endregion load Model from metadataStructure
@@ -735,9 +711,6 @@ namespace BExIS.Modules.Dim.UI.Helper
                         ? LinkElementComplexity.Simple
                         : LinkElementComplexity.Complex;
 
-                    //type = attr.Member.Self is MetadataSimpleAttribute
-                    //    ? LinkElementType.SimpleMetadataAttribute
-                    //    : LinkElementType.ComplexMetadataAttribute;
 
                     type = LinkElementType.MetadataNestedAttributeUsage;
 
@@ -754,6 +727,9 @@ namespace BExIS.Modules.Dim.UI.Helper
                                 complexity,
                                 attr.Description)
                             );
+
+                    // add parameters
+                    tmp.AddRange(getParametersAsLinkElementModels(attr.Member.MetadataParameterUsages, attrXPath, position));
                 }
 
                 return tmp;
@@ -873,6 +849,9 @@ namespace BExIS.Modules.Dim.UI.Helper
                                 complexity,
                                 attr.Description)
                             );
+
+                    // add parameters
+                    tmp.AddRange(getParametersAsLinkElementModels(attr.MetadataAttribute.MetadataParameterUsages, attrXPath, pos));
                 }
 
                 return tmp;
@@ -1211,6 +1190,24 @@ namespace BExIS.Modules.Dim.UI.Helper
         #endregion delete
 
         #region helper
+
+        private static List<LinkElementModel> getParametersAsLinkElementModels(ICollection<MetadataParameterUsage> parameterUsages, string xPath, LinkElementPostion position)
+        {
+            string parameterspath = xPath + "/@";
+            List<LinkElementModel> linkElementModels = new List<LinkElementModel>();
+            foreach (var pUsage in parameterUsages)
+            {
+                string pPath = parameterspath + pUsage.Label;
+                LinkElementModel pLEModel = new LinkElementModel(
+                0,
+                pUsage.Id,
+                LinkElementType.MetadataParameterUsage, pUsage.Label, pPath, position, LinkElementComplexity.Simple, pUsage.Description);
+                linkElementModels.Add(pLEModel);
+            }
+
+            return linkElementModels;
+        }
+    
 
         public static bool ExistLinkElementModel(LinkElementModel leModel, List<LinkElementModel> leModels)
         {

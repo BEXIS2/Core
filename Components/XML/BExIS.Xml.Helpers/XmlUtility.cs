@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BExIS.Xml.Models.Mapping;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -116,6 +117,42 @@ namespace BExIS.Xml.Helpers
             else return false;
         }
 
+        //public static XmlNode GetXmlAttributeByName(XmlNode parentNode, string name, bool recursiv = true)
+        //{
+        //    if (parentNode == null || string.IsNullOrWhiteSpace(name)) return null;
+
+        //    return getXmlAttributeByName(parentNode, name, recursiv);
+        //}
+
+        //private static XmlNode getXmlAttributeByName(XmlNode node, string name, bool recursiv = true)
+        //{
+        //    if (node.LocalName.Equals(name))
+        //        return node;
+        //    else
+        //    {
+        //        if (node.HasChildNodes)
+        //        {
+        //            foreach (XmlNode child in node.ChildNodes)
+        //            {
+        //                if (recursiv)
+        //                {
+        //                    var tmp = getXmlNodeByName(child, name);
+
+        //                    if (tmp != null)
+        //                        return tmp;
+        //                }
+        //                else
+        //                {
+        //                    if (child.LocalName.Equals(name))
+        //                        return node;
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    return null;
+        //}
+
         public static XmlNode GetXmlNodeByName(XmlNode parentNode, string name, bool recursiv = true)
         {
             if (parentNode == null || string.IsNullOrWhiteSpace(name)) return null;
@@ -186,6 +223,12 @@ namespace BExIS.Xml.Helpers
             return null;
         }
 
+        public static XmlNode GetXmlNodeByAttribute(string path, XmlDocument metadata)
+        {
+            var n = metadata.SelectSingleNode(path);
+            return n;
+        }
+
         public static XmlNode CreateNode(string nodeName, XmlDocument doc)
         {
             if (string.IsNullOrWhiteSpace(nodeName) || doc == null) return null;
@@ -222,7 +265,13 @@ namespace BExIS.Xml.Helpers
                     index = Int32.Parse(tmp[1].Remove(tmp[1].IndexOf("]")));
                 }
 
-                XmlNodeList nodes = parent != null ? parent.SelectNodes(nodeName) : doc.SelectNodes(nodeName);
+                XmlNodeList nodes = null;
+  
+                if(parent == null || parent.Name.ToLowerInvariant().Equals(nodeName))
+                    // if parent is null, we are creating the root node
+                    nodes = doc.SelectNodes(nodeName);
+                else
+                    nodes = parent.SelectNodes(nodeName);
 
                 XmlNode node = nodes[index - 1];
 
@@ -236,9 +285,14 @@ namespace BExIS.Xml.Helpers
                     else
                     {
                         if (parent != null) node = parent.AppendChild(doc.CreateElement(nodeName));
+                        else if (doc != null && doc.DocumentElement == null)
+                        {
+                            node = doc.AppendChild(doc.CreateElement(nodeName));
+                        }
                         else return null;
                     }
                 }
+            
 
                 // rejoin the remainder of the array as an xpath expression and recurse
                 string rest = String.Join("/", partsOfXPath, 1, partsOfXPath.Length - 1);
@@ -738,6 +792,20 @@ namespace BExIS.Xml.Helpers
         public static XElement GetXElementByXPath(string xpath, XDocument xDoc)
         {
             return xDoc.XPathSelectElement(xpath.Replace(" ", string.Empty));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static XAttribute GetXAttributeByXPath(string xpath, XDocument xDoc)
+        {
+            var tmp =  (IEnumerable<object>)xDoc.XPathEvaluate(xpath.Replace(" ", string.Empty));
+            var x = tmp.FirstOrDefault();
+            return x as XAttribute;
         }
 
         /// <summary>

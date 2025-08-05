@@ -211,7 +211,7 @@
         </table>
     </div>
 
-    @if (ViewData["IsValid"] == "no")
+    @if (ViewData["IsValid"] == "no" )
     {
         <div id="view-warning-container">
             <div id="view-warning" class="alert alert-danger" role="alert" style="width: 100%;">
@@ -228,7 +228,7 @@
                 <ul>
                     @foreach (var error in validationErrors)
                     {
-                        <li>@error</li>
+                        <li class="bx-error">@error</li>
                     }
                 </ul>
             </div>
@@ -463,10 +463,10 @@
                 setTimeout(function () {
 
                     var errors = $('.bx-input-error');
+                    var errorsFromJsonSchema = $('.bx-error');
+                  
 
-                    console.log(errors);
-
-                    if (errors.length > 0) {
+                    if (errors.length > 0 || errorsFromJsonSchema.length > 0) {
                         bindMinimap(true);
                         $("#form_message")
                             .text("The metadata you entered is either not complete or does not comply to the metadata standard. Check the fields marked in red for more details.");
@@ -531,8 +531,11 @@
                 $('#MetadataEditor').replaceWith(response);
                 bindMinimap(true);
                 var errors = $('.bx-input-error');
+
+                var errorsFromJsonSchema = $('.bx-error');
+
                 console.log(errors);
-                if (errors.length == 0) {
+                if (errors.length == 0 && errorsFromJsonSchema.length == 0) {
 
                     callSubmitAction(true, commit_message);
                 } else {

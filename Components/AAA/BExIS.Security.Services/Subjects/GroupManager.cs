@@ -1,4 +1,5 @@
-﻿using BExIS.Security.Entities.Subjects;
+﻿using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Utils.NH.Querying;
 using Microsoft.AspNet.Identity;
 using System;
@@ -62,7 +63,7 @@ namespace BExIS.Security.Services.Subjects
                     }
                     else if (whereClause != null)
                     {
-                        var filtered = GroupRepository.Query(whereClause);
+                        var filtered = Groups.Where(whereClause);
                         count = filtered.Count();
 
                         return filtered.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
@@ -114,6 +115,45 @@ namespace BExIS.Security.Services.Subjects
             _guow.Commit();
 
             return Task.CompletedTask;
+        }
+
+        public Task<bool> DeleteByIdAsync(long roleId)
+        {
+            var groupRepository = _guow.GetRepository<Group>();
+            var group = groupRepository.Get(roleId);
+
+            if (group == null)
+                //return Task.FromException(new Exception());
+                return Task.FromResult(false);
+
+
+            // Users
+            var userRepository = _guow.GetRepository<User>();
+            foreach (var user in group.Users)
+            {
+                user.Groups.Remove(group);
+                userRepository.Put(user);
+            }
+
+            // EntityPermissions
+            var entityPermissionRepository = _guow.GetRepository<EntityPermission>();
+            foreach (var entityPermission in entityPermissionRepository.Get(e => e.Subject.Id == roleId))
+            {
+                entityPermissionRepository.Delete(entityPermission);
+            }
+
+            // FeaturePermissions
+            var featurePermissionRepository = _guow.GetRepository<FeaturePermission>();
+            foreach (var featurePermission in featurePermissionRepository.Get(e => e.Subject.Id == roleId))
+            {
+                featurePermissionRepository.Delete(featurePermission);
+            }
+
+            var result = groupRepository.Delete(group);
+
+            _guow.Commit();
+
+            return Task.FromResult(result);
         }
 
         public void Dispose()

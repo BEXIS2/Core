@@ -175,28 +175,32 @@ namespace BExIS.Modules.Rpm.UI.Models
 
     public static class inUseChecker
     {
+        private static List<StructuredDataStructure> structuredDataStructures = null;
+
+        public static void reset()
+        {
+            structuredDataStructures = null;
+        }
         public static bool isConstrainInUseByVariable(Constraint constraint)
         {
             bool inUse = false;
-            if(constraint != null) 
+            if (constraint != null)
             {
                 List<long> variableIds = constraint.VariableConstraints.Select(v => v.Id).ToList();
                 using (DataStructureManager dataStructureManager = new DataStructureManager())
                 {
-                    //List<StructuredDataStructure> structuredDataStructures =
-                    inUse = dataStructureManager.StructuredDataStructureRepo.Query(s => s.Variables.Any(v => variableIds.Contains(v.Id))).Any(s => s.Datasets.Count != 0);
+                    if (structuredDataStructures == null)
+                        structuredDataStructures = dataStructureManager.StructuredDataStructureRepo.Get().ToList();
 
-                    //if (structuredDataStructures != null && structuredDataStructures.Count > 0)
-                    //{
-                    //    foreach (StructuredDataStructure structuredDataStructure in structuredDataStructures)
-                    //    {
-                    //        inUse = structuredDataStructure.Datasets.Any();
-                    //        if (inUse)
-                    //            break;
-                    //    }
-                    //}
+                    if (structuredDataStructures != null && structuredDataStructures.Count > 0)
+                    {
+                        foreach (StructuredDataStructure structuredDataStructure in structuredDataStructures)
+                        {
+                            inUse = structuredDataStructure.Datasets.Any();
+                        }
+                    }
                 }
-            }                    
+            }
             return inUse;
         }
 

@@ -1,6 +1,7 @@
 ﻿using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Security.Services.Authorization;
@@ -36,7 +37,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 MetadataStructureId = metadataStructureId
             };
 
-            Dictionary<string, List<XElement>> elements = new Dictionary<string, List<XElement>>();
+            Dictionary<string, List<XObject>> objects = new Dictionary<string, List<XObject>>();
 
             // add additional Information / mapped system keys
             foreach (Key k in Enum.GetValues(typeof(Key)))
@@ -52,18 +53,18 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         datasetModel.AdditionalInformations.Add(k.ToString(), value);
                     }
                     // collect all results for each system key
-                    elements.Add(k.ToString(), MappingUtils.GetXElementFromMetadata(Convert.ToInt64(k), LinkElementType.Key,
+                    objects.Add(k.ToString(), MappingUtils.GetXObjectFromMetadata(Convert.ToInt64(k), LinkElementType.Key,
                                 datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata)));
                 }
             }
 
             // get isMain parts for all found parties if exists (e.g. first and last name)
-            datasetModel.Parties = getPartyIsMainAttributesForParties(elements);
+            datasetModel.Parties = getPartyIsMainAttributesForParties(objects);
 
             // set up person key list
             var personKeyList = new List<string>();
             // setup dic with values of the persons
-            var personKeyDic = new Dictionary<string, List<XElement>>();
+            var personKeyDic = new Dictionary<string, List<XObject>>();
 
             // add keys here
             personKeyList.Add(Key.Author.ToString());
@@ -71,8 +72,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
             foreach (var key in personKeyList)
             {
                 // check if key exists in alle mapped elements
-                if (elements.ContainsKey(key))
-                    personKeyDic.Add(key, elements[key]);
+                if (objects.ContainsKey(key))
+                    personKeyDic.Add(key, objects[key]);
             }
 
             datasetModel.Names = getSplitedNames(personKeyDic);
@@ -99,34 +100,44 @@ namespace BExIS.Modules.Dim.UI.Helpers
             return 0;
         }
 
-        private Dictionary<string, Dictionary<string, string>> getPartyIsMainAttributesForParties(Dictionary<string, List<XElement>> elements)
+        private Dictionary<string, Dictionary<string, string>> getPartyIsMainAttributesForParties(Dictionary<string, List<XObject>> elements)
         {
             Dictionary<string, Dictionary<string, string>> dict = new Dictionary<string, Dictionary<string, string>>();
             using (PartyManager partyManager = new PartyManager())
             {
                 foreach (var key in elements)
                 {
-                    foreach (XElement element in key.Value)
+                    foreach (XObject o in key.Value)
                     {
-                        long partyid = getPartyId(element);
-                        Dictionary<string, string> dict2 = new Dictionary<string, string>();
-                        // id direct
-                        if (partyid > 0)
+                        if (o is XElement)
                         {
-                            var party = partyManager.GetParty(partyid);
+                            string value = "";
 
-                            if (party != null)
+                            XElement element = (XElement)o;
+                            value = element.Value;
+
+                            long partyid = getPartyId(element);
+                            Dictionary<string, string> dict2 = new Dictionary<string, string>();
+              
+
+                            // id direct
+                            if (partyid > 0)
                             {
-                                var attrs = party.CustomAttributeValues.Where(a => a.CustomAttribute.IsMain == true).ToArray();
+                                var party = partyManager.GetParty(partyid);
 
-                                foreach (var attr in attrs)
+                                if (party != null)
                                 {
-                                    dict2.Add(attr.CustomAttribute.Name, attr.Value);
+                                    var attrs = party.CustomAttributeValues.Where(a => a.CustomAttribute.IsMain == true).ToArray();
+
+                                    foreach (var attr in attrs)
+                                    {
+                                        dict2.Add(attr.CustomAttribute.Name, attr.Value);
+                                    }
                                 }
-                            }
-                            if (!dict.ContainsKey(element.Value))
-                            {
-                                dict.Add(element.Value, dict2);
+                                if (!dict.ContainsKey(value))
+                                {
+                                    dict.Add(value, dict2);
+                                }
                             }
                         }
                     }
@@ -136,31 +147,36 @@ namespace BExIS.Modules.Dim.UI.Helpers
             return dict;
         }
 
-        private Dictionary<string, Dictionary<string, string>> getSplitedNames(Dictionary<string, List<XElement>> elements)
+        private Dictionary<string, Dictionary<string, string>> getSplitedNames(Dictionary<string, List<XObject>> elements)
         {
             Dictionary<string, Dictionary<string, string>> dict = new Dictionary<string, Dictionary<string, string>>();
             using (PartyManager partyManager = new PartyManager())
             {
                 foreach (var key in elements)
                 {
-                    foreach (XElement element in key.Value)
+                    foreach (XObject o in key.Value)
                     {
-                        long partyid = getPartyId(element);
-                        Dictionary<string, string> dict2 = new Dictionary<string, string>();
-                        // id direct
-                        Console.WriteLine(partyid);
-                        if (partyid > 0) { }
-                        else
+                        if (o is XElement)
                         {
-                            var person = new HumanName(element.Value);
-                            var GivenName = (person.Middle.Length > 0) ? $"{person.First} {person.Middle}" : $"{person.First}";
-                            var FamilyName = person.Last;
-                            dict2.Add("GivenName", GivenName);
-                            dict2.Add("FamilyName", FamilyName);
+                            XElement element = (XElement)o;
 
-                            if (!dict.ContainsKey(element.Value))
+                            long partyid = getPartyId(element);
+                            Dictionary<string, string> dict2 = new Dictionary<string, string>();
+                            // id direct
+                            Console.WriteLine(partyid);
+                            if (partyid > 0) { }
+                            else
                             {
-                                dict.Add(element.Value, dict2);
+                                var person = new HumanName(element.Value);
+                                var GivenName = (person.Middle.Length > 0) ? $"{person.First} {person.Middle}" : $"{person.First}";
+                                var FamilyName = person.Last;
+                                dict2.Add("GivenName", GivenName);
+                                dict2.Add("FamilyName", FamilyName);
+
+                                if (!dict.ContainsKey(element.Value))
+                                {
+                                    dict.Add(element.Value, dict2);
+                                }
                             }
                         }
                     }

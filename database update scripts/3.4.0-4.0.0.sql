@@ -1,3 +1,4 @@
+BEGIN TRANSACTION;
 -- OPEN ISSUES
 
 -- entitytemplate - description column
@@ -83,12 +84,12 @@ WHERE NOT EXISTS (SELECT * FROM public.entities WHERE name='Publication');
 -- add dim/gbif controller in operations
 INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
 SELECT 1, NULL, 'DIM', 'Gbif', '*', null 
-WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='API' AND controller='DataTable');
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DIM' AND controller='Gbif');
 
 -- add docs operation
 INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
-SELECT 1, NULL, 'SHELL', 'docs', '*', null 
-WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='SHELL' AND controller='docs');
+SELECT 1, NULL, 'Shell', 'Docs', '*', null 
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='Shell' AND controller='Docs');
 
 
 

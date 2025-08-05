@@ -6,6 +6,7 @@
 	import Card from './Card.svelte';
 
 	export let store: Writable<any[]> = writable([]);
+	export let authorLabel = 'Authors';
 
 	let paginationSettings = {
 		page: 0,
@@ -41,6 +42,7 @@
 				date: card.date || '',
 				entitytemplate: card.entitytemplate || ''
 			}}
+			{authorLabel}
 		/>
 	{/each}
 
@@ -54,6 +56,7 @@
 			select="!px-3 !py-1.5 select min-w-[150px]"
 			showFirstLastButtons
 			showPreviousNextButtons
+			on:page ={e => paginationSettings.page = e.detail}
 		/>
 	{/if}
 </div>

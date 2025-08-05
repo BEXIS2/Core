@@ -76,40 +76,17 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
         /// <param name="value"></param>
         /// <param name="row"></param>
         /// <returns></returns>
-        public object Execute(string value, int row)
+        public object Execute(string value, int row=0)
         {
             if (!String.IsNullOrEmpty(value))
             {
                 switch (dataType)
                 {
                     case "Int16":
-                        {
-                            short i = 0;
-
-                            if (Int16.TryParse(value, out i))
-                            {
-                                return i;
-                            }
-                            else
-                            {
-                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
-                            }
-                        }
-
                     case "Int32":
-                        {
-                            int i = 0;
-
-                            if (Int32.TryParse(value, out i))
-                            {
-                                return i;
-                            }
-                            else
-                            {
-                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
-                            }
-                        }
-
+                    case "UInt16":
+                    case "UInt32":
+                    case "UInt64":
                     case "Int64":
                         {
                             long i = 0;
@@ -123,45 +100,8 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                 return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
                             }
                         }
-                    case "UInt16":
-                        {
-                            UInt16 i = 0;
 
-                            if (UInt16.TryParse(value, out i))
-                            {
-                                return i;
-                            }
-                            else
-                            {
-                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
-                            }
-                        }
-                    case "UInt32":
-                        {
-                            UInt32 i = 0;
-
-                            if (UInt32.TryParse(value, out i))
-                            {
-                                return i;
-                            }
-                            else
-                            {
-                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
-                            }
-                        }
-                    case "UInt64":
-                        {
-                            UInt64 i = 0;
-
-                            if (UInt64.TryParse(value, out i))
-                            {
-                                return i;
-                            }
-                            else
-                            {
-                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
-                            }
-                        }
+                    case "Decimal":
                     case "Double":
                         {
                             //Try to figure out the structure and then parse as double - return Error if structure doesn't fit or parsing fails
@@ -177,8 +117,8 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                         if (!temp[temp.Length - 1].Contains(','))
                                         {
                                             //check lenght of the string and compare to the max storage of the datatype
-                                            if (value.Length > 15)
-                                                return new Error(ErrorType.Value, "The value of the number is outside the value range of double. Change it do decimal.", new object[] { name, value, row, dataType });
+                                            //if (value.Length > 17)
+                                                //return new Error(ErrorType.Value, "The value of the number is outside the value range of double. Change it do decimal.", new object[] { name, value, row, dataType });
 
                                             double d = 0;
 
@@ -204,8 +144,8 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                         if (!temp[temp.Length - 1].Contains('.'))
                                         {
                                             //chek lenght of the string and compare to the max storage of the datatype
-                                            if (value.Length > 15)
-                                                return new Error(ErrorType.Value, "the value of the number is outside the value range of double. Change it do decimal.", new object[] { name, value, row, dataType });
+                                            //if (value.Length > 17)
+                                                //return new Error(ErrorType.Value, "the value of the number is outside the value range of double. Change it do decimal.", new object[] { name, value, row, dataType });
 
                                             double d = 0;
                                             if (double.TryParse(value, NumberStyles.Any, new CultureInfo("de-DE"), out d))
@@ -230,72 +170,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                             }
                         }
 
-                    case "Decimal":
-                        {
-                            /*
-                             * Same idea as for double but for decimal you have to explicitly allow
-                             * scientific notation with the flags NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint
-                             **/
-                            try
-                            {
-                                if (decimalCharacter.Equals(DecimalCharacter.point))
-                                {
-                                    string[] temp = value.Split('.');
-                                    if (temp.Length <= 2)
-                                    {
-                                        if (!temp[temp.Length - 1].Contains(','))
-                                        {
-                                            //chek lenght of the string and compare to the max storage of the datatype
-                                            if (value.Length > 28)
-                                                return new Error(ErrorType.Value, "the value of the number is outside the value range of decimal.", new object[] { name, value, row, dataType });
-
-                                            //convert to decimal and compare both string lenghts
-                                            return Decimal.Parse(value, NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint | NumberStyles.Float, new CultureInfo("en-US"));
-                                        }
-                                        else
-                                        {
-                                            return new Error(ErrorType.Value, "False decimal character.", new object[] { name, value, row, dataType });
-                                        }
-                                    }
-                                    else
-                                    {
-                                        return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
-                                    }
-                                }
-
-                                if (decimalCharacter.Equals(DecimalCharacter.comma))
-                                {
-                                    string[] temp = value.Split(',');
-                                    if (temp.Length <= 2)
-                                    {
-                                        if (!temp[temp.Length - 1].Contains('.'))
-                                        {
-                                            //chek lenght of the string and compare to the max storage of the datatype
-                                            if (value.Length > 28)
-                                                return new Error(ErrorType.Value, "the value of the number is outside the value range of decimal.", new object[] { name, value, row, dataType });
-                                            decimal d = 0;
-                                            //convert to decimal and compare both string lenghts
-                                            if (Decimal.TryParse(value, NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint, new CultureInfo("de-DE"), out d))
-                                            {
-                                                return d;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            return new Error(ErrorType.Value, "False decimal character.", new object[] { name, value, row, dataType });
-                                        }
-                                    }
-
-                                    return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
-                                }
-
-                                return Decimal.Parse(value, NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint);
-                            }
-                            catch (Exception ex)
-                            {
-                                return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
-                            }
-                        }
 
                     case "DateTime":
                         {
@@ -322,18 +196,6 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                         }
 
                     case "Char":
-                        {
-                            char converted;
-                            if (Char.TryParse(value, out converted))
-                            {
-                                return converted;
-                            }
-                            else
-                            {
-                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
-                            }
-                        }
-
                     case "String":
                         {
                             return value;

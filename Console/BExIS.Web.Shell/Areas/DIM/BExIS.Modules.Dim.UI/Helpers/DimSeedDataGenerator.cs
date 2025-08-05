@@ -21,6 +21,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Telerik.Web.Mvc.UI;
 using Vaelastrasz.Library.Models;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc.Modularity;
@@ -385,7 +386,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
                  }
                  catch (Exception e)
                  {
-                     mappingConcept = conceptManager.CreateMappingConcept("datacite", "The concept for DIO management at DataCite.", "https://schema.datacite.org/meta/kernel-4.5/", "");
+                    return;
+                     //mappingConcept = conceptManager.CreateMappingConcept("datacite", "The concept for DIO management at DataCite.", "https://schema.datacite.org/meta/kernel-4.5/", "");
                  }
 
                 List<MappingKey> mappingKeys;
@@ -398,8 +400,6 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     mappingKeys = new List<MappingKey>();
                 }
 
-                #region mandatory
-
                 // identifier(s) (id: 1)
 
                 // type
@@ -409,6 +409,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 // event
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/event")))
                     conceptManager.CreateMappingKey("Event", "", "", false, false, "data/attributes/event", mappingConcept);
+
+                #region Creators
 
                 // creator(s) (id: 2)
                 MappingKey creators = null;
@@ -427,6 +429,50 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/creators/nameType")))
                     conceptManager.CreateMappingKey("NameType", "", "", true, false, "data/attributes/creators/nameType", mappingConcept, creators);
 
+                #region NameIdentifiers
+
+                MappingKey creators_nameIdentifiers = null;
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/creators/nameIdentifiers")))
+                    creators_nameIdentifiers = conceptManager.CreateMappingKey("NameIdentifiers", "", "", true, true, "data/attributes/creators/nameIdentifiers", mappingConcept, creators);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/creators/nameIdentifiers/nameIdentifier")))
+                    conceptManager.CreateMappingKey("NameIdentifier", "", "", false, false, "data/attributes/creators/nameIdentifier", mappingConcept, creators_nameIdentifiers);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/creators/nameIdentifiers/nameIdentifierScheme")))
+                    conceptManager.CreateMappingKey("NameIdentifierScheme", "", "", false, false, "data/attributes/creators/nameIdentifierScheme", mappingConcept, creators_nameIdentifiers);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/creators/nameIdentifiers/schemeUri")))
+                    conceptManager.CreateMappingKey("SchemeUri", "", "", true, false, "data/attributes/creators/schemeUri", mappingConcept, creators_nameIdentifiers);
+
+                #endregion
+
+                #region Affiliations
+
+                MappingKey creators_affiliations = null;
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/creators/affiliation")))
+                    creators_affiliations = conceptManager.CreateMappingKey("Affiliation", "", "", true, true, "data/attributes/creators/affiliation", mappingConcept, creators);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/creators/affiliation/affiliationIdentifier")))
+                    conceptManager.CreateMappingKey("AffiliationIdentifier", "", "", true, false, "data/attributes/creators/affiliation/affiliationIdentifier", mappingConcept, creators_affiliations);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/creators/affiliation/affiliationIdentifierScheme")))
+                    conceptManager.CreateMappingKey("AffiliationIdentifierScheme", "", "", true, false, "data/attributes/creators/affiliation/affiliationIdentifierScheme", mappingConcept, creators_affiliations);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/creators/affiliation/name")))
+                    conceptManager.CreateMappingKey("Name", "", "", false, false, "data/attributes/creators/affiliation/name", mappingConcept, creators_affiliations);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/creators/affiliation/schemeUri")))
+                    conceptManager.CreateMappingKey("SchemeUri", "", "", true, false, "data/attributes/creators/affiliation/schemeUri", mappingConcept, creators_affiliations);
+
+                #endregion
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/creators/lang")))
+                    conceptManager.CreateMappingKey("Language", "", "", true, false, "data/attributes/creators/lang", mappingConcept, creators);
+
+                #endregion
+
+                #region Titles
+
                 // title(s) (id: 3)
                 MappingKey titles = null;
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/titles")))
@@ -440,6 +486,10 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/titles/titleType")))
                     conceptManager.CreateMappingKey("TitleType", "", "", true, false, "data/attributes/titles/titleType", mappingConcept, titles);
+
+                #endregion
+
+                #region Publisher
 
                 // publisher (id: 4)
                 MappingKey publisher = null;
@@ -461,27 +511,18 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/publisher/lang")))
                     conceptManager.CreateMappingKey("Language", "", "", true, false, "data/attributes/publisher/lang", mappingConcept, publisher);
 
+                #endregion
+
                 // publicationYear (id: 5)
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/publicationYear")))
                     conceptManager.CreateMappingKey("PublicationYear", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/publicationyear/#id1", false, false, "data/attributes/publicationYear", mappingConcept);
 
-                // resourceType (id: 10)
-                MappingKey types = null;
-                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/types")))
-                    types = conceptManager.CreateMappingKey("Types", "", "", false, true, "data/attributes/types", mappingConcept);
-
-                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/types/resourceTypeGeneral")))
-                    conceptManager.CreateMappingKey("ResourceTypeGeneral", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/resourcetype/#a-resourcetypegeneral", false, false, "data/attributes/types/resourceTypeGeneral", mappingConcept, types);
-
-
-                #endregion
-
-                #region recommended and optional
+                #region Subjects
 
                 // subject(s) (id: 6)
                 MappingKey subjects = null;
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/subjects")))
-                    subjects = conceptManager.CreateMappingKey("Subjects", "", "www.google.de", true, true, "data/attributes/subjects", mappingConcept);
+                    subjects = conceptManager.CreateMappingKey("Subjects", "", "https://datacite-metadata-schema.readthedocs.io/en/4.6/properties/subject/", true, true, "data/attributes/subjects", mappingConcept);
 
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/subjects/subject")))
                     conceptManager.CreateMappingKey("Subject", "", "", false, false, "data/attributes/subjects/subject", mappingConcept, subjects);
@@ -497,6 +538,13 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/subjects/lang")))
                     conceptManager.CreateMappingKey("Lang", "", "", true, false, "data/attributes/subjects/lang", mappingConcept, subjects);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/subjects/classificationCode")))
+                    conceptManager.CreateMappingKey("ClassificationCode", "", "", true, false, "data/attributes/subjects/classificationCode", mappingConcept, subjects);
+
+                #endregion
+
+                #region Contributors
 
                 // contributor(s) (id: 7)
                 MappingKey contributors = null;
@@ -516,7 +564,51 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     conceptManager.CreateMappingKey("NameType", "", "", true, false, "data/attributes/contributors/nameType", mappingConcept, contributors);
 
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/contributors/contributorType")))
-                    conceptManager.CreateMappingKey("ContributorType", "", "", true, false, "data/attributes/contributors/contributorType", mappingConcept, contributors);
+                    conceptManager.CreateMappingKey("ContributorType", "", "", false, false, "data/attributes/contributors/contributorType", mappingConcept, contributors);
+
+                #region NameIdentifiers
+
+                MappingKey contributors_nameIdentifiers = null;
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/contributors/nameIdentifiers")))
+                    contributors_nameIdentifiers = conceptManager.CreateMappingKey("NameIdentifiers", "", "", true, true, "data/attributes/contributors/nameIdentifiers", mappingConcept, creators);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/contributors/nameIdentifiers/nameIdentifier")))
+                    conceptManager.CreateMappingKey("NameIdentifier", "", "", false, false, "data/attributes/contributors/nameIdentifier", mappingConcept, contributors_nameIdentifiers);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/contributors/nameIdentifiers/nameIdentifierScheme")))
+                    conceptManager.CreateMappingKey("NameIdentifierScheme", "", "", false, false, "data/attributes/contributors/nameIdentifierScheme", mappingConcept, contributors_nameIdentifiers);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/contributors/nameIdentifiers/schemeUri")))
+                    conceptManager.CreateMappingKey("SchemeUri", "", "", true, false, "data/attributes/contributors/schemeUri", mappingConcept, contributors_nameIdentifiers);
+
+                #endregion
+
+                #region Affiliations
+
+                MappingKey contributors_affiliations = null;
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/contributors/affiliation")))
+                    contributors_affiliations = conceptManager.CreateMappingKey("Affiliation", "", "", true, true, "data/attributes/contributors/affiliation", mappingConcept, creators);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/contributors/affiliation/affiliationIdentifier")))
+                    conceptManager.CreateMappingKey("AffiliationIdentifier", "", "", true, false, "data/attributes/contributors/affiliation/affiliationIdentifier", mappingConcept, contributors_affiliations);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/contributors/affiliation/affiliationIdentifierScheme")))
+                    conceptManager.CreateMappingKey("AffiliationIdentifierScheme", "", "", true, false, "data/attributes/contributors/affiliation/affiliationIdentifierScheme", mappingConcept, contributors_affiliations);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/contributors/affiliation/name")))
+                    conceptManager.CreateMappingKey("Name", "", "", false, false, "data/attributes/contributors/affiliation/name", mappingConcept, contributors_affiliations);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/contributors/affiliation/schemeUri")))
+                    conceptManager.CreateMappingKey("SchemeUri", "", "", true, false, "data/attributes/contributors/affiliation/schemeUri", mappingConcept, contributors_affiliations);
+
+                #endregion
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/contributors/lang")))
+                    conceptManager.CreateMappingKey("Language", "", "", true, false, "data/attributes/contributors/lang", mappingConcept, contributors);
+
+                #endregion
+
+                #region Dates
 
                 // date(s) (id: 8)
                 MappingKey dates = null;
@@ -532,21 +624,28 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/dates/dateInformation")))
                     conceptManager.CreateMappingKey("DateInformation", "", "", true, false, "data/attributes/dates/dateInformation", mappingConcept, dates);
 
+                #endregion
 
                 // language (id: 9)
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/language")))
                     conceptManager.CreateMappingKey("Language", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/language/#id1", true, false, "data/attributes/language", mappingConcept);
 
-                // alternate identifiers (id: 11)
-                MappingKey alternateIdentifiers = null;
-                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/alternateIdentifiers")))
-                    alternateIdentifiers = conceptManager.CreateMappingKey("AlternateIdentifiers", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/alternateidentifier/#id1", true, true, "data/attributes/alternateIdentifiers", mappingConcept);
+                #region Types
 
-                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/alternateIdentifiers/alternateIdentifierType")))
-                    conceptManager.CreateMappingKey("AlternateIdentifierType", "", "", false, false, "data/attributes/alternateIdentifiers/alternateIdentifierType", mappingConcept, alternateIdentifiers);
+                // resourceType (id: 10)
+                MappingKey types = null;
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/types")))
+                    types = conceptManager.CreateMappingKey("Types", "", "", false, true, "data/attributes/types", mappingConcept);
 
-                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/alternateIdentifiers/alternateIdentifier")))
-                    conceptManager.CreateMappingKey("AlternateIdentifier", "", "", false, false, "data/attributes/alternateIdentifiers/alternateIdentifier", mappingConcept, alternateIdentifiers);
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/types/resourceTypeGeneral")))
+                    conceptManager.CreateMappingKey("ResourceTypeGeneral", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/resourcetype/#a-resourcetypegeneral", false, false, "data/attributes/types/resourceTypeGeneral", mappingConcept, types);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/types/resourceType")))
+                    conceptManager.CreateMappingKey("ResourceType", "", "", false, false, "data/attributes/types/resourceType", mappingConcept, types);
+
+                #endregion
+
+                #region Related Identifiers
 
                 // related identifiers (id: 12)
                 MappingKey relatedIdentifiers = null;
@@ -574,6 +673,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/relatedIdentifiers/resourceTypeGeneral")))
                     conceptManager.CreateMappingKey("ResourceTypeGeneral", "", "", true, false, "data/attributes/relatedIdentifiers/resourceTypeGeneral", mappingConcept, relatedIdentifiers);
 
+                #endregion
+
+
                 // size(s) (id: 13)
                 MappingKey sizes = null;
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/sizes")))
@@ -583,6 +685,13 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 MappingKey formats = null;
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/formats")))
                     formats = conceptManager.CreateMappingKey("Formats", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/format/", true, false, "data/attributes/formats", mappingConcept);
+
+                // NOT NECESSARY, because it is taken from the system?
+                //MappingKey version = null;
+                //if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/formats")))
+                //    formats = conceptManager.CreateMappingKey("Formats", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/format/", true, false, "data/attributes/formats", mappingConcept);
+
+                #region Rights List
 
                 // right(s) (id: 16)
                 MappingKey rightsList = null;
@@ -607,6 +716,10 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/rightsList/lang")))
                     conceptManager.CreateMappingKey("Lang", "", "", true, false, "data/attributes/rightsList/lang", mappingConcept, rightsList);
 
+                #endregion
+
+                #region Descriptions
+
                 // description(s) (id: 17)
                 MappingKey descriptions = null;
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/descriptions")))
@@ -622,6 +735,105 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     conceptManager.CreateMappingKey("DescriptionType", "", "", false, false, "data/attributes/descriptions/descriptionType", mappingConcept, descriptions);
 
                 #endregion
+
+                #region GeoLocations
+
+                MappingKey geoLocations = null;
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations")))
+                    geoLocations = conceptManager.CreateMappingKey("GeoLocations", "", "", true, true, "data/attributes/geoLocations", mappingConcept);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationPlace")))
+                    conceptManager.CreateMappingKey("GeoLocationPlace", "", "", true, false, "data/attributes/geoLocations/geoLocationPlace", mappingConcept, geoLocations);
+
+                MappingKey geoLocations_geoLocationPoint = null;
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationPoint")))
+                    geoLocations_geoLocationPoint = conceptManager.CreateMappingKey("GeoLocationPoint", "", "", true, true, "data/attributes/geoLocations/geoLocationPoint", mappingConcept, geoLocations);
+
+                #region GeoLocationPoint
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationPoint/pointLongitude")))
+                    conceptManager.CreateMappingKey("PointLongitude", "", "", true, true, "data/attributes/geoLocations/geoLocationPoint/pointLongitude", mappingConcept, geoLocations_geoLocationPoint);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationPoint/pointLatitude")))
+                    conceptManager.CreateMappingKey("PointLatitude", "", "", true, true, "data/attributes/geoLocations/geoLocationPoint/pointLatitude", mappingConcept, geoLocations_geoLocationPoint);
+
+                #endregion
+
+                MappingKey geoLocations_geoLocationBox = null;
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationBox")))
+                    geoLocations_geoLocationBox = conceptManager.CreateMappingKey("GeoLocationPoint", "", "", true, true, "data/attributes/geoLocations/geoLocationBox", mappingConcept, geoLocations);
+
+                #region GeoLocationBox
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationBox/westBoundLongitude")))
+                    conceptManager.CreateMappingKey("WestBoundLongitude", "", "", true, true, "data/attributes/geoLocations/geoLocationBox/westBoundLongitude", mappingConcept, geoLocations_geoLocationBox);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationBox/eastBoundLongitude")))
+                    conceptManager.CreateMappingKey("EastBoundLongitude", "", "", true, true, "data/attributes/geoLocations/geoLocationBox/eastBoundLongitude", mappingConcept, geoLocations_geoLocationBox);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationBox/southBoundLatitude")))
+                    conceptManager.CreateMappingKey("SouthBoundLatitude", "", "", true, true, "data/attributes/geoLocations/geoLocationBox/southBoundLatitude", mappingConcept, geoLocations_geoLocationBox);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationBox/northBoundLatitude")))
+                    conceptManager.CreateMappingKey("NorthBoundLatitude", "", "", true, true, "data/attributes/geoLocations/geoLocationBox/northBoundLatitude", mappingConcept, geoLocations_geoLocationBox);
+
+                #endregion
+
+                #endregion
+
+                #region Funding Reference
+
+                MappingKey fundingReferences = null;
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/fundingReferences")))
+                    fundingReferences = conceptManager.CreateMappingKey("FundingReferences", "", "", true, true, "data/attributes/fundingReferences", mappingConcept);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/fundingReferences/funderName")))
+                    conceptManager.CreateMappingKey("FunderName", "", "", false, false, "data/attributes/fundingReferences/funderName", mappingConcept, fundingReferences);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/fundingReferences/funderIdentifier")))
+                    conceptManager.CreateMappingKey("FunderIdentifier", "", "", false, false, "data/attributes/fundingReferences/funderIdentifier", mappingConcept, fundingReferences);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/fundingReferences/funderIdentifierType")))
+                    conceptManager.CreateMappingKey("FunderIdentifierType", "", "", false, false, "data/attributes/fundingReferences/funderIdentifierType", mappingConcept, fundingReferences);
+
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/fundingReferences/awardNumber")))
+                    conceptManager.CreateMappingKey("AwardNumber", "", "", true, false, "data/attributes/fundingReferences/awardNumber", mappingConcept, fundingReferences);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/fundingReferences/awardURI")))
+                    conceptManager.CreateMappingKey("AwardURI", "", "", true, false, "data/attributes/fundingReferences/awardURI", mappingConcept, fundingReferences);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/fundingReferences/awardTitle")))
+                    conceptManager.CreateMappingKey("AwardTitle", "", "", true, false, "data/attributes/fundingReferences/awardTitle", mappingConcept, fundingReferences);
+
+                #endregion
+
+                #region Alternate Identifiers
+
+                // alternate identifiers (id: 11)
+                MappingKey alternateIdentifiers = null;
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/alternateIdentifiers")))
+                    alternateIdentifiers = conceptManager.CreateMappingKey("AlternateIdentifiers", "", "https://datacite-metadata-schema.readthedocs.io/en/4.5/properties/alternateidentifier/#id1", true, true, "data/attributes/alternateIdentifiers", mappingConcept);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/alternateIdentifiers/alternateIdentifierType")))
+                    conceptManager.CreateMappingKey("AlternateIdentifierType", "", "", false, false, "data/attributes/alternateIdentifiers/alternateIdentifierType", mappingConcept, alternateIdentifiers);
+
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/alternateIdentifiers/alternateIdentifier")))
+                    conceptManager.CreateMappingKey("AlternateIdentifier", "", "", false, false, "data/attributes/alternateIdentifiers/alternateIdentifier", mappingConcept, alternateIdentifiers);
+
+                #endregion
+
+                // Xml
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/xml")))
+                    conceptManager.CreateMappingKey("Xml", "", "", true, false, "data/attributes/xml", mappingConcept);
+
+                // Url
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/url")))
+                    conceptManager.CreateMappingKey("Url", "", "", true, false, "data/attributes/url", mappingConcept);
+
+                // SchemaVersion
+                if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/schemaVersion")))
+                    conceptManager.CreateMappingKey("SchemaVersion", "", "", true, false, "data/attributes/schemaVersion", mappingConcept);
             }
         }
 
@@ -1218,6 +1430,14 @@ namespace BExIS.Modules.Dim.UI.Helpers
             LinkElement element = mappingManager.GetLinkElement(id, name, type);
 
             if(xpath.StartsWith("/")) xpath = xpath.Substring(1);
+
+            if (type == LinkElementType.MetadataAttributeUsage ||
+                type == LinkElementType.MetadataNestedAttributeUsage ||
+                type == LinkElementType.SimpleMetadataAttribute || 
+                type == LinkElementType.ComplexMetadataAttribute )
+            { 
+                xpath = xpath + "/"+name+"Type";
+            }
 
             if (element == null)
             {

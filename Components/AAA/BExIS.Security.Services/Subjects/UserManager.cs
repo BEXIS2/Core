@@ -1,4 +1,5 @@
 ﻿using BExIS.Security.Entities.Authentication;
+using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Utils.NH.Querying;
 using Microsoft.AspNet.Identity;
@@ -52,7 +53,7 @@ namespace BExIS.Security.Services.Subjects
             {
                 if (whereClause != null && orderBy != null)
                 {
-                    var l = UserRepository.Query(whereClause);
+                    var l = Users.Where(whereClause);
                     var x = l.OrderBy(orderbyClause);
                     var y = x.Skip((pageNumber - 1) * pageSize);
                     var z = y.Take(pageSize);
@@ -115,12 +116,34 @@ namespace BExIS.Security.Services.Subjects
             return Task.CompletedTask;
         }
 
-        public Task DeleteByIdAsync(long userId)
+        public Task<bool> DeleteByIdAsync(long userId)
         {
-            _guow.GetRepository<User>().Delete(userId);
+            var userRepository = _guow.GetRepository<User>();
+            var user = userRepository.Get(userId);
+
+            if(user == null)
+                //return Task.FromException(new Exception());
+                return Task.FromResult(false);
+
+            // EntityPermissions
+            var entityPermissionRepository = _guow.GetRepository<EntityPermission>();
+            foreach (var entityPermission in entityPermissionRepository.Get(e => e.Subject.Id == userId))
+            {
+                entityPermissionRepository.Delete(entityPermission);
+            }
+
+            // FeaturePermissions
+            var featurePermissionRepository = _guow.GetRepository<FeaturePermission>();
+            foreach (var featurePermission in featurePermissionRepository.Get(e => e.Subject.Id == userId))
+            {
+                featurePermissionRepository.Delete(featurePermission);
+            }
+
+            var result = userRepository.Delete(user);
+
             _guow.Commit();
 
-            return Task.CompletedTask;
+            return Task.FromResult(result);
         }
 
         public void Dispose()

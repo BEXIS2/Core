@@ -5,10 +5,16 @@
 @{
 
     string id = Model.Type + "_" + Model.ElementId + "_" + @Model.Position + "_" + @Model.Name.Replace(' ','-')+"_MappingSimpleLinkElement";
+    bool isParameter = Model.Type.Equals(BExIS.Dim.Entities.Mappings.LinkElementType.MetadataParameterUsage);
+
+    string name = "";
+
+    if (isParameter) name += "@";
+    name += Model.Name;
 
 }
 
-<div id="@id" class="@id le-mapping-simple-element" title="@Model.Description">
+<div id="@id" class="@id le-mapping-simple-element @(isParameter?"le-simple-parameter":"" )" title="@Model.Description">
 
     <div class="le-simple-info" style="display: none">
         <div id="Id">@Model.Id</div>
@@ -21,7 +27,7 @@
     </div>
 
     <div class="le-simple-header">
-        @Model.Name
+        @name
     </div>
     <div class="le-simple-path" value="@Model.XPath">
 

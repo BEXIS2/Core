@@ -293,7 +293,9 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                         luceneName = "property_" + luceneName;
                     }
 
-                    ValueList.Add(doc.Get(luceneName));
+                    var values = doc.GetValues(luceneName);
+
+                    ValueList.Add(string.Join(", ",values));
                 }
                 r.Values = ValueList;
                 RowList.Add(r);

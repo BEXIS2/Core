@@ -1,10 +1,12 @@
 ﻿using BExIS.App.Bootstrap;
 using BExIS.UI.Helpers;
 using BExIS.Utils.Config;
+using BExIS.Utils.Config.Configurations;
 using BExIS.Web.Shell.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -137,16 +139,18 @@ namespace BExIS.Web.Shell
 
         protected void Application_Error(object sender, EventArgs e)
         {
-            bool sendExceptions = GeneralSettings.SendExceptions;
+            ExceptionConfiguration exceptionConfiguration = GeneralSettings.ExceptionConfiguration;
 
             var error = Server.GetLastError();
             var code = (error is HttpException) ? (error as HttpException).GetHttpCode() : 500;
 
+
+
             if (
-                sendExceptions &&
-                code != 404 && // not existing action is called
-                !(error is InvalidOperationException) && !error.Message.StartsWith("Multiple types were found that match the controller named") // same controller name in multpily controller, and no correct action call
-               )
+                exceptionConfiguration.sendExceptions &&
+                !exceptionConfiguration.ExcludedHttpStatusCodes.Contains(code) &&
+                exceptionConfiguration.ExcludedMessages.All(m => !error.Message.Contains(m))
+                )
             {
                 HttpUnhandledException httpUnhandledException =
                    new HttpUnhandledException(error.Message, error);
@@ -155,8 +159,12 @@ namespace BExIS.Web.Shell
                     httpUnhandledException.GetHtmlErrorMessage()
                     );
 
-                ErrorHelper.Log(Server.GetLastError().Message);
+                
             }
+
+            ErrorHelper.Log("*************Error***********");
+            ErrorHelper.Log(Server.GetLastError().Message);
+            ErrorHelper.Log(Server.GetLastError().StackTrace);
         }
     }
 }
