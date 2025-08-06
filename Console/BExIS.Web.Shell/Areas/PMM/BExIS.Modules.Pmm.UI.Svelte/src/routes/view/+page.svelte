@@ -14,7 +14,7 @@
     let showFullDescription = false;
     
     onMount(async () => {
-        metadata = await apiCalls.GetMetadata(10);
+        metadata = await apiCalls.GetMetadata(15);
         console.log(metadata);
 
         datasetTitle = metadata?.publication?.Title?.['#text'] ?? 'Title not available';
@@ -145,47 +145,52 @@
             </div>
         
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-        {#each datasetResources as dataset, i}
-            <card class="card w-full flex flex-col gap-2 p-4 my-1">
-                <h4 class="h4 mb-2">
-                    {dataset.Name
-                        ? dataset.Name
-                        : dataset.DOI
-                            ? dataset.DOI
-                            : dataset.URI
-                                ? dataset.URI
-                                : `Resource ${i + 1} of Dataset ${dataset.DOI || 'unknown'}`
-                    }
-                </h4>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+    {#each datasetResources as dataset, i}
+        <div class="bg-gray-50 rounded-lg shadow flex flex-col gap-2 p-5 border border-gray-100">
+            <h4 class="text-lg font-semibold text-bexis2-primary mb-2 truncate">
+                {dataset.Name
+                    ? dataset.Name
+                    : dataset.DOI
+                        ? dataset.DOI
+                        : dataset.URI
+                            ? dataset.URI
+                            : `Resource ${i + 1} of Dataset ${dataset.DOI || 'unknown'}`
+                }
+            </h4>
+            <div class="flex flex-col gap-1 text-sm text-gray-700">
                 {#if dataset.SubmissionDate}
-                    <p><b>Submission Date:</b> {dataset.SubmissionDate}</p>
+                    <div><span class="font-medium text-gray-500">Submission Date:</span> {dataset.SubmissionDate}</div>
                 {/if}
                 {#if dataset.EmbargoEnd}
-                    <p><b>Embargo End:</b> {dataset.EmbargoEnd}</p>
+                    <div><span class="font-medium text-gray-500">Embargo End:</span> {dataset.EmbargoEnd}</div>
                 {/if}
                 {#if dataset.URI}
-                    <p><b>URI:</b> <a href={dataset.URI} target="_blank" class="text-blue-600 underline">{dataset.URI}</a></p>
+                    <div>
+                        <span class="font-medium text-gray-500">URI:</span>
+                        <a href={dataset.URI} target="_blank" class="text-bexis2-primary underline break-all">{dataset.URI}</a>
+                    </div>
                 {/if}
                 {#if dataset.URIHealth}
-                    <p><b>URI Health:</b> {dataset.URIHealth}</p>
+                    <div><span class="font-medium text-gray-500">URI Health:</span> {dataset.URIHealth}</div>
                 {/if}
                 {#if dataset.DOI}
-                    <p><b>DOI:</b> {dataset.DOI}</p>
+                    <div><span class="font-medium text-gray-500">DOI:</span> {dataset.DOI}</div>
                 {/if}
                 {#if dataset.DOIHealth}
-                    <p><b>DOI Health:</b> {dataset.DOIHealth}</p>
+                    <div><span class="font-medium text-gray-500">DOI Health:</span> {dataset.DOIHealth}</div>
                 {/if}
                 {#if dataset.RepositoryName}
-                    <p><b>Repository Name:</b> {dataset.RepositoryName}</p>
+                    <div><span class="font-medium text-gray-500">Repository Name:</span> {dataset.RepositoryName}</div>
                 {/if}
                 {#if dataset.Licence}
-                    <p><b>Licence:</b> {dataset.Licence}</p>
+                    <div><span class="font-medium text-gray-500">Licence:</span> {dataset.Licence}</div>
                 {/if}
                 {#if dataset.ProgrammingLanguage}
-                    <p><b>Programming Language:</b> {dataset.ProgrammingLanguage}</p>
+                    <div><span class="font-medium text-gray-500">Programming Language:</span> {dataset.ProgrammingLanguage}</div>
                 {/if}
-            </card>
-        {/each}
-    </div>
+            </div>
+        </div>
+    {/each}
+</div>
 </Page>
