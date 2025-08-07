@@ -285,7 +285,10 @@ namespace BExIS.Xml.Helpers
                     else
                     {
                         if (parent != null) node = parent.AppendChild(doc.CreateElement(nodeName));
-                        else if (doc != null) node = doc.AppendChild(doc.CreateElement(nodeName)); // create root node
+                        else if (doc != null && doc.DocumentElement == null)
+                        {
+                            node = doc.AppendChild(doc.CreateElement(nodeName));
+                        }
                         else return null;
                     }
                 }

@@ -80,7 +80,13 @@ namespace BExIS.Xml.Helpers
                 List<MetadataAttributeUsage> attributes;
                 foreach (MetadataPackageUsage mpu in packages)
                 {
-                    XElement package;
+                    int number = 1;
+
+                    if (importXml != null)
+                    { 
+                        string path = root.Name+"/" + mpu.Label + "/"+mpu.MetadataPackage.Name;
+                        number = importXml.XPathSelectElements(path).ToList().Count();
+                    }
 
                     // create the role
                     XElement role = CreateXElement(mpu.Label, XmlNodeType.MetadataPackageUsage);
@@ -89,16 +95,22 @@ namespace BExIS.Xml.Helpers
                     role.SetAttributeValue("id", mpu.Id.ToString());
                     root.Add(role);
 
-                    // create the package
-                    package = CreateXElement(mpu.MetadataPackage.Name, XmlNodeType.MetadataPackage);
-                    if (_mode.Equals(XmlNodeMode.xPath)) package.SetAttributeValue("name", mpu.MetadataPackage.Name);
-                    package.SetAttributeValue("roleId", mpu.Id.ToString());
-                    package.SetAttributeValue("id", mpu.MetadataPackage.Id.ToString());
-                    package.SetAttributeValue("number", "1");
-                    role.Add(package);
 
-                    if(mpu.Extra == null || !IsChoice(mpu.Extra))
-                        setChildren(package, mpu, importXml);
+                    for (int i = 1; i <= number; i++)
+                    {
+                        XElement package;
+                        // create the package
+                        package = CreateXElement(mpu.MetadataPackage.Name, XmlNodeType.MetadataPackage);
+                        if (_mode.Equals(XmlNodeMode.xPath)) package.SetAttributeValue("name", mpu.MetadataPackage.Name);
+                        package.SetAttributeValue("roleId", mpu.Id.ToString());
+                        package.SetAttributeValue("id", mpu.MetadataPackage.Id.ToString());
+                        package.SetAttributeValue("number", i);
+                        role.Add(package);
+
+                        if (mpu.Extra == null || !IsChoice(mpu.Extra))
+                            setChildren(package, mpu, importXml);
+
+                    }
                 }
 
                 return doc;

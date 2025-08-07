@@ -1,0 +1,2600 @@
+{
+	"Metadata": {
+		"@id": "3",
+		"publication": {
+			"@type": "MetadataPackageUsage",
+			"@name": "publication",
+			"@id": "20",
+			"publicationType": {
+				"@type": "MetadataPackage",
+				"@name": "publicationType",
+				"@roleId": "20",
+				"@id": "20",
+				"@number": "1",
+				"Journal": {
+					"@type": "MetadataAttributeUsage",
+					"@name": "Journal",
+					"@id": "63",
+					"JournalType": {
+						"@type": "MetadataAttribute",
+						"@name": "JournalType",
+						"@roleId": "63",
+						"@id": "125",
+						"@number": "1",
+						"#text": "NA"
+					}
+				},
+				"Title": {
+					"@type": "MetadataAttributeUsage",
+					"@name": "Title",
+					"@id": "64",
+					"TitleType": {
+						"@type": "MetadataAttribute",
+						"@name": "TitleType",
+						"@roleId": "64",
+						"@id": "126",
+						"@number": "1",
+						"#text": "Extreme drought impacts have been underestimated in grasslands and shrublands globally"
+					}
+				},
+				"Abstract": {
+					"@type": "MetadataAttributeUsage",
+					"@name": "Abstract",
+					"@id": "65",
+					"AbstractType": {
+						"@type": "MetadataAttribute",
+						"@name": "AbstractType",
+						"@roleId": "65",
+						"@id": "127",
+						"@number": "1",
+						"#text": "Climate change is increasing the frequency and severity of short-term (~1 y) drought events—the most common duration of drought—globally. Yet the impact of this intensification of drought on ecosystem functioning remains poorly resolved. This is due in part to the widely disparate approaches ecologists have employed to study drought, variation in the severity and duration of drought studied, and differences among ecosystems in vegetation, edaphic and climatic attributes that can mediate drought impacts. To overcome these problems and better identify the factors that modulate drought responses, we used a coordinated distributed experiment to quantify the impact of short-term drought on grassland and shrubland ecosystems. With a standardized approach, we imposed ~a single year of drought at 100 sites on six continents. Here we show that loss of a foundational ecosystem function—aboveground net primary production (ANPP)—was 60% greater at sites that experienced statistically extreme drought (1-in-100-y event) vs. those sites where drought was nominal (historically more common) in magnitude (35% vs. 21%, respectively). This reduction in a key carbon cycle process with a single year of extreme drought greatly exceeds previously reported losses for grasslands and shrublands. Our global experiment also revealed high variability in drought response but that relative reductions in ANPP were greater in drier ecosystems and those with fewer plant species. Overall, our results demonstrate with unprecedented rigor that the global impacts of projected increases in drought severity have been significantly underestimated and that drier and less diverse sites are likely to be most vulnerable to extreme drought."
+					}
+				},
+				"Author": {
+					"@type": "MetadataAttributeUsage",
+					"@name": "Author",
+					"@id": "66",
+					"AuthorType": [
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "1",
+							"#text": "Smith, Melinda D."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "2",
+							"#text": "Wilkins, Kate D."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "3",
+							"#text": "Holdrege, Martin C."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "4",
+							"#text": "Wilfahrt, Peter"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "5",
+							"#text": "Collins, Scott L."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "6",
+							"#text": "Knapp, Alan K."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "7",
+							"#text": "Sala, Osvaldo E."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "8",
+							"#text": "Dukes, Jeffrey S."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "9",
+							"#text": "Phillips, Richard P."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "10",
+							"#text": "Yahdjian, Laura"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "11",
+							"#text": "Gherardi, Laureano A."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "12",
+							"#text": "Ohlert, Timothy"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "13",
+							"#text": "Beier, Claus"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "14",
+							"#text": "Fraser, Lauchlan H."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "15",
+							"#text": "Jentsch, Anke"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "16",
+							"#text": "Loik, Michael E."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "17",
+							"#text": "Maestre, Fernando T."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "18",
+							"#text": "Power, Sally A."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "19",
+							"#text": "Yu, Qiang"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "20",
+							"#text": "Felton, Andrew J."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "21",
+							"#text": "Munson, Seth M."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "22",
+							"#text": "Luo, Yiqi"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "23",
+							"#text": "Abdoli, Hamed"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "24",
+							"#text": "Abedi, Mehdi"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "25",
+							"#text": "Alados, Concepción L."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "26",
+							"#text": "Alberti, Juan"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "27",
+							"#text": "Alon, Moshe"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "28",
+							"#text": "An, Hui"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "29",
+							"#text": "Anacker, Brian"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "30",
+							"#text": "Anderson, Maggie"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "31",
+							"#text": "Auge, Harald"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "32",
+							"#text": "Bachle, Seton"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "33",
+							"#text": "Bahalkeh, Khadijeh"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "34",
+							"#text": "Bahn, Michael"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "35",
+							"#text": "Batbaatar, Amgaa"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "36",
+							"#text": "Bauerle, Taryn"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "37",
+							"#text": "Beard, Karen H."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "38",
+							"#text": "Behn, Kai"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "39",
+							"#text": "Beil, Ilka"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "40",
+							"#text": "Biancari, Lucio"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "41",
+							"#text": "Blindow, Irmgard"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "42",
+							"#text": "Bondaruk, Viviana Florencia"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "43",
+							"#text": "Borer, Elizabeth T."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "44",
+							"#text": "Bork, Edward W."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "45",
+							"#text": "Bruschetti, Carlos Martin"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "46",
+							"#text": "Byrne, Kerry M."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "47",
+							"#text": "Cahill Jr., James F."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "48",
+							"#text": "Calvo, Dianela A."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "49",
+							"#text": "Carbognani, Michele"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "50",
+							"#text": "Cardoni, Augusto"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "51",
+							"#text": "Carlyle, Cameron N."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "52",
+							"#text": "Castillo-Garcia, Miguel"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "53",
+							"#text": "Chang, Scott X."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "54",
+							"#text": "Chieppa, Jeff"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "55",
+							"#text": "Cianciaruso, Marcus V."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "56",
+							"#text": "Cohen, Ofer"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "57",
+							"#text": "Cordeiro, Amanda L."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "58",
+							"#text": "Cusack, Daniela F."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "59",
+							"#text": "Dahlke, Sven"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "60",
+							"#text": "Daleo, Pedro"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "61",
+							"#text": "D'Antonio, Carla M."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "62",
+							"#text": "Dietterich, Lee H."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "63",
+							"#text": "S. Doherty, Tim"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "64",
+							"#text": "Dubbert, Maren"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "65",
+							"#text": "Ebeling, Anne"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "66",
+							"#text": "Eisenhauer, Nico"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "67",
+							"#text": "Fischer, Felícia M."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "68",
+							"#text": "Forte, T'ai G. W."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "69",
+							"#text": "Gebauer, Tobias"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "70",
+							"#text": "Gozalo, Beatriz"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "71",
+							"#text": "Greenville, Aaron C."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "72",
+							"#text": "Guidoni-Martins, Karlo G."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "73",
+							"#text": "Hannusch, Heather J."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "74",
+							"#text": "Vatsø Haugum, Siri"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "75",
+							"#text": "Hautier, Yann"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "76",
+							"#text": "Hefting, Mariet"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "77",
+							"#text": "Henry, Hugh A. L."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "78",
+							"#text": "Hoss, Daniela"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "79",
+							"#text": "Ingrisch, Johannes"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "80",
+							"#text": "Iribarne, Oscar"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "81",
+							"#text": "Isbell, Forest"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "82",
+							"#text": "Johnson, Yari"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "83",
+							"#text": "Jordan, Samuel"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "84",
+							"#text": "Kelly, Eugene F."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "85",
+							"#text": "Kimmel, Kaitlin"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "86",
+							"#text": "Kreyling, Juergen"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "87",
+							"#text": "Kröel-Dulay, György"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "88",
+							"#text": "Kröpfl, Alicia"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "89",
+							"#text": "Kübert, Angelika"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "90",
+							"#text": "Kulmatiski, Andrew"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "91",
+							"#text": "Lamb, Eric G."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "92",
+							"#text": "Larsen, Klaus Steenberg"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "93",
+							"#text": "Larson, Julie"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "94",
+							"#text": "Lawson, Jason"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "95",
+							"#text": "Leder, Cintia V."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "96",
+							"#text": "Linstädter, Anja"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "97",
+							"#text": "Liu, Jielin"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "98",
+							"#text": "Liu, Shirong"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "99",
+							"#text": "Lodge, Alexandra G."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "100",
+							"#text": "Longo, Grisel"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "101",
+							"#text": "Loydi, Alejandro"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "102",
+							"#text": "Luan, Junwei"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "103",
+							"#text": "Curtis Lubbe, Frederick"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "104",
+							"#text": "Macfarlane, Craig"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "105",
+							"#text": "Mackie-Haas, Kathleen"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "106",
+							"#text": "Malyshev, Andrey V."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "107",
+							"#text": "Maturano-Ruiz, Adrián"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "108",
+							"#text": "Merchant, Thomas"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "109",
+							"#text": "Metcalfe, Daniel B."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "110",
+							"#text": "Mori, Akira S."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "111",
+							"#text": "Mudongo, Edwin"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "112",
+							"#text": "Newman, Gregory S."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "113",
+							"#text": "Nielsen, Uffe N."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "114",
+							"#text": "Nimmo, Dale"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "115",
+							"#text": "Niu, Yujie"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "116",
+							"#text": "Nobre, Paola"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "117",
+							"#text": "O'Connor, Rory C."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "118",
+							"#text": "Ogaya, Romà"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "119",
+							"#text": "Oñatibia, Gastón R."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "120",
+							"#text": "Orbán, Ildikó"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "121",
+							"#text": "Osborne, Brooke"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "122",
+							"#text": "Otfinowski, Rafael"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "123",
+							"#text": "Pärtel, Meelis"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "124",
+							"#text": "Penuelas, Josep"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "125",
+							"#text": "Peri, Pablo L."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "126",
+							"#text": "Peter, Guadalupe"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "127",
+							"#text": "Petraglia, Alessandro"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "128",
+							"#text": "Picon-Cochard, Catherine"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "129",
+							"#text": "Pillar, Valério D."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "130",
+							"#text": "Piñeiro-Guerra, Juan Manuel"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "131",
+							"#text": "Ploughe, Laura W."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "132",
+							"#text": "Plowes, Robert M."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "133",
+							"#text": "Portales-Reyes, Cristy"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "134",
+							"#text": "Prober, Suzanne M."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "135",
+							"#text": "Pueyo, Yolanda"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "136",
+							"#text": "Reed, Sasha C."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "137",
+							"#text": "Ritchie, Euan G."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "138",
+							"#text": "Rodríguez, Dana Aylén"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "139",
+							"#text": "Rogers, William E."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "140",
+							"#text": "Roscher, Christiane"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "141",
+							"#text": "Sánchez, Ana M."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "142",
+							"#text": "Santos, Bráulio A."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "143",
+							"#text": "Cecilia Scarfó, María"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "144",
+							"#text": "Seabloom, Eric W."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "145",
+							"#text": "Shi, Baoku"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "146",
+							"#text": "Souza, Lara"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "147",
+							"#text": "Stampfli, Andreas"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "148",
+							"#text": "Standish, Rachel J."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "149",
+							"#text": "Sternberg, Marcelo"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "150",
+							"#text": "Sun, Wei"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "151",
+							"#text": "Sünnemann, Marie"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "152",
+							"#text": "Tedder, Michelle"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "153",
+							"#text": "Thorvaldsen, Pål"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "154",
+							"#text": "Tian, Dashuan"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "155",
+							"#text": "Tielbörger, Katja"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "156",
+							"#text": "Valdecantos, Alejandro"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "157",
+							"#text": "van den Brink, Liesbeth"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "158",
+							"#text": "Vandvik, Vigdis"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "159",
+							"#text": "Vankoughnett, Mathew R."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "160",
+							"#text": "Guri Velle, Liv"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "161",
+							"#text": "Wang, Changhui"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "162",
+							"#text": "Wang, Yi"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "163",
+							"#text": "Wardle, Glenda M."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "164",
+							"#text": "Werner, Christiane"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "165",
+							"#text": "Wei, Cunzheng"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "166",
+							"#text": "Wiehl, Georg"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "167",
+							"#text": "Williams, Jennifer L."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "168",
+							"#text": "Wolf, Amelia A."
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "169",
+							"#text": "Zeiter, Michaela"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "170",
+							"#text": "Zhang, Fawei"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "171",
+							"#text": "Zhu, Juntao"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "172",
+							"#text": "Zong, Ning"
+						},
+						{
+							"@type": "MetadataAttribute",
+							"@name": "AuthorType",
+							"@roleId": "66",
+							"@id": "128",
+							"@number": "173",
+							"#text": "Zuo, Xiaoan"
+						}
+					]
+				},
+				"Affiliations": {
+					"@type": "MetadataAttributeUsage",
+					"@name": "Affiliations",
+					"@id": "67",
+					"AffiliationsType": {
+						"@type": "MetadataAttribute",
+						"@name": "AffiliationsType",
+						"@roleId": "67",
+						"@id": "129",
+						"@number": "1"
+					}
+				},
+				"Curation": {
+					"@type": "MetadataAttributeUsage",
+					"@name": "Curation",
+					"@id": "68",
+					"curation": {
+						"@type": "MetadataAttribute",
+						"@name": "curation",
+						"@roleId": "68",
+						"@id": "135",
+						"@number": "1",
+						"curated": {
+							"@type": "MetadataAttributeUsage",
+							"@name": "curated",
+							"@id": "109",
+							"curatedType": {
+								"@type": "MetadataAttribute",
+								"@name": "curatedType",
+								"@roleId": "109",
+								"@id": "130",
+								"@number": "1"
+							}
+						},
+						"rated_by": {
+							"@type": "MetadataAttributeUsage",
+							"@name": "rated_by",
+							"@id": "110",
+							"rated_byType": {
+								"@type": "MetadataAttribute",
+								"@name": "rated_byType",
+								"@roleId": "110",
+								"@id": "131",
+								"@number": "1",
+								"#text": "Ludmilla Figueiredo"
+							}
+						},
+						"access_date": {
+							"@type": "MetadataAttributeUsage",
+							"@name": "access_date",
+							"@id": "111",
+							"access_dateType": {
+								"@type": "MetadataAttribute",
+								"@name": "access_dateType",
+								"@roleId": "111",
+								"@id": "132",
+								"@number": "1",
+								"#text": "NA"
+							}
+						},
+						"date_added": {
+							"@type": "MetadataAttributeUsage",
+							"@name": "date_added",
+							"@id": "112",
+							"date_addedType": {
+								"@type": "MetadataAttribute",
+								"@name": "date_addedType",
+								"@roleId": "112",
+								"@id": "133",
+								"@number": "1",
+								"#text": "07.05.2024 00:00"
+							}
+						},
+						"date_modified": {
+							"@type": "MetadataAttributeUsage",
+							"@name": "date_modified",
+							"@id": "113",
+							"date_modifiedType": {
+								"@type": "MetadataAttribute",
+								"@name": "date_modifiedType",
+								"@roleId": "113",
+								"@id": "134",
+								"@number": "1",
+								"#text": "07.05.2024 00:00"
+							}
+						}
+					}
+				},
+				"Identifiers": {
+					"@type": "MetadataAttributeUsage",
+					"@name": "Identifiers",
+					"@id": "69",
+					"identifiers": {
+						"@type": "MetadataAttribute",
+						"@name": "identifiers",
+						"@roleId": "69",
+						"@id": "141",
+						"@number": "1",
+						"isbn": {
+							"@type": "MetadataAttributeUsage",
+							"@name": "isbn",
+							"@id": "114",
+							"isbnType": {
+								"@type": "MetadataAttribute",
+								"@name": "isbnType",
+								"@roleId": "114",
+								"@id": "136",
+								"@number": "1",
+								"#text": "NA"
+							}
+						},
+						"issn": {
+							"@type": "MetadataAttributeUsage",
+							"@name": "issn",
+							"@id": "115",
+							"issnType": {
+								"@type": "MetadataAttribute",
+								"@name": "issnType",
+								"@roleId": "115",
+								"@id": "137",
+								"@number": "1",
+								"#text": "NA"
+							}
+						},
+						"doi": {
+							"@type": "MetadataAttributeUsage",
+							"@name": "doi",
+							"@id": "116",
+							"doiType": {
+								"@type": "MetadataAttribute",
+								"@name": "doiType",
+								"@roleId": "116",
+								"@id": "138",
+								"@number": "1",
+								"#text": "10.1073/pnas.2309881120"
+							}
+						},
+						"uri": {
+							"@type": "MetadataAttributeUsage",
+							"@name": "uri",
+							"@id": "117",
+							"uriType": {
+								"@type": "MetadataAttribute",
+								"@name": "uriType",
+								"@roleId": "117",
+								"@id": "139",
+								"@number": "1",
+								"#text": "https://www.pnas.org/doi/abs/10.1073/pnas.2309881120"
+							}
+						},
+						"alt_uri": {
+							"@type": "MetadataAttributeUsage",
+							"@name": "alt_uri",
+							"@id": "118",
+							"alt_uriType": {
+								"@type": "MetadataAttribute",
+								"@name": "alt_uriType",
+								"@roleId": "118",
+								"@id": "140",
+								"@number": "1",
+								"#text": "none"
+							}
+						}
+					}
+				},
+				"Type": {
+					"@type": "MetadataAttributeUsage",
+					"@name": "Type",
+					"@id": "70",
+					"TypeType": {
+						"@type": "MetadataAttribute",
+						"@name": "TypeType",
+						"@roleId": "70",
+						"@id": "142",
+						"@number": "1",
+						"#text": "journalArticle"
+					}
+				},
+				"license": {
+					"@type": "MetadataAttributeUsage",
+					"@name": "license",
+					"@id": "71",
+					"licenseType": {
+						"@type": "MetadataAttribute",
+						"@name": "licenseType",
+						"@roleId": "71",
+						"@id": "143",
+						"@number": "1"
+					}
+				},
+				"publication_date": {
+					"@type": "MetadataAttributeUsage",
+					"@name": "publication_date",
+					"@id": "72",
+					"publication_dateType": {
+						"@type": "MetadataAttribute",
+						"@name": "publication_dateType",
+						"@roleId": "72",
+						"@id": "144",
+						"@number": "1"
+					}
+				},
+				"preprint": {
+					"@type": "MetadataAttributeUsage",
+					"@name": "preprint",
+					"@id": "73",
+					"preprintType": {
+						"@type": "MetadataAttribute",
+						"@name": "preprintType",
+						"@roleId": "73",
+						"@id": "145",
+						"@number": "1"
+					}
+				},
+				"pages": {
+					"@type": "MetadataAttributeUsage",
+					"@name": "pages",
+					"@id": "74",
+					"pagesType": {
+						"@type": "MetadataAttribute",
+						"@name": "pagesType",
+						"@roleId": "74",
+						"@id": "146",
+						"@number": "1",
+						"#text": "e2309881120"
+					}
+				},
+				"issue": {
+					"@type": "MetadataAttributeUsage",
+					"@name": "issue",
+					"@id": "75",
+					"issueType": {
+						"@type": "MetadataAttribute",
+						"@name": "issueType",
+						"@roleId": "75",
+						"@id": "147",
+						"@number": "1",
+						"#text": "4"
+					}
+				},
+				"volume": {
+					"@type": "MetadataAttributeUsage",
+					"@name": "volume",
+					"@id": "76",
+					"volumeType": {
+						"@type": "MetadataAttribute",
+						"@name": "volumeType",
+						"@roleId": "76",
+						"@id": "148",
+						"@number": "1",
+						"#text": "121"
+					}
+				},
+				"comment": {
+					"@type": "MetadataAttributeUsage",
+					"@name": "comment",
+					"@id": "77",
+					"commentType": {
+						"@type": "MetadataAttribute",
+						"@name": "commentType",
+						"@roleId": "77",
+						"@id": "149",
+						"@number": "1",
+						"#text": "States that data and code are shared, but only data is. In Dryad, asks future users to contact authors to ensure use according to best practices."
+					}
+				},
+				"keywords": {
+					"@type": "MetadataAttributeUsage",
+					"@name": "keywords",
+					"@id": "78",
+					"keywordsType": {
+						"@type": "MetadataAttribute",
+						"@name": "keywordsType",
+						"@roleId": "78",
+						"@id": "150",
+						"@number": "1",
+						"#text": "NA"
+					}
+				},
+				"supplementary_info": {
+					"@type": "MetadataAttributeUsage",
+					"@name": "supplementary_info",
+					"@id": "79",
+					"supplementary_infoType": {
+						"@type": "MetadataAttribute",
+						"@name": "supplementary_infoType",
+						"@roleId": "79",
+						"@id": "151",
+						"@number": "1"
+					}
+				},
+				"Recourses": {
+					"@type": "MetadataAttributeUsage",
+					"@name": "Recourses",
+					"@id": "80",
+					"recourses": {
+						"@type": "MetadataAttribute",
+						"@name": "recourses",
+						"@roleId": "80",
+						"@id": "156",
+						"@number": "1",
+						"data_availability": {
+							"@type": "MetadataAttributeUsage",
+							"@name": "data_availability",
+							"@id": "119",
+							"data_availabilityType": {
+								"@type": "MetadataAttribute",
+								"@name": "data_availabilityType",
+								"@roleId": "119",
+								"@id": "152",
+								"@number": "1"
+							}
+						},
+						"code_availability": {
+							"@type": "MetadataAttributeUsage",
+							"@name": "code_availability",
+							"@id": "120",
+							"code_availabilityType": {
+								"@type": "MetadataAttribute",
+								"@name": "code_availabilityType",
+								"@roleId": "120",
+								"@id": "153",
+								"@number": "1"
+							}
+						},
+						"Data_code_availiablity_title": {
+							"@type": "MetadataAttributeUsage",
+							"@name": "Data_code_availiablity_title",
+							"@id": "121",
+							"Data_code_availiablity_titleType": {
+								"@type": "MetadataAttribute",
+								"@name": "Data_code_availiablity_titleType",
+								"@roleId": "121",
+								"@id": "154",
+								"@number": "1",
+								"#text": "none"
+							}
+						},
+						"Data_code_availiablity_statement": {
+							"@type": "MetadataAttributeUsage",
+							"@name": "Data_code_availiablity_statement",
+							"@id": "122",
+							"Data_code_availiablity_statementType": {
+								"@type": "MetadataAttribute",
+								"@name": "Data_code_availiablity_statementType",
+								"@roleId": "122",
+								"@id": "155",
+								"@number": "1",
+								"#text": "none"
+							}
+						}
+					}
+				}
+			}
+		},
+		"Resource": {
+			"@type": "MetadataPackageUsage",
+			"@name": "Resource",
+			"@id": "21",
+			"ResourceType": [
+				{
+					"@type": "MetadataPackage",
+					"@name": "ResourceType",
+					"@roleId": "21",
+					"@id": "21",
+					"@number": "1",
+					"Resources_Type": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Resources_Type",
+						"@id": "81",
+						"Resources_TypeType": {
+							"@type": "MetadataAttribute",
+							"@name": "Resources_TypeType",
+							"@roleId": "81",
+							"@id": "157",
+							"@number": "1",
+							"#text": "Dataset"
+						}
+					},
+					"Name": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Name",
+						"@id": "82",
+						"NameType": {
+							"@type": "MetadataAttribute",
+							"@name": "NameType",
+							"@roleId": "82",
+							"@id": "158",
+							"@number": "1"
+						}
+					},
+					"Language": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Language",
+						"@id": "83",
+						"LanguageType": {
+							"@type": "MetadataAttribute",
+							"@name": "LanguageType",
+							"@roleId": "83",
+							"@id": "159",
+							"@number": "1"
+						}
+					},
+					"Access": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Access",
+						"@id": "84",
+						"accessType": {
+							"@type": "MetadataAttribute",
+							"@name": "accessType",
+							"@roleId": "84",
+							"@id": "166",
+							"@number": "1",
+							"URI": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "URI",
+								"@id": "123",
+								"URIType": {
+									"@type": "MetadataAttribute",
+									"@name": "URIType",
+									"@roleId": "123",
+									"@id": "160",
+									"@number": "1",
+									"#text": "https://datadryad.org/stash/dataset/doi:10.5061/dryad.3j9kd51rb"
+								}
+							},
+							"URI_Health": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "URI_Health",
+								"@id": "124",
+								"URI_HealthType": {
+									"@type": "MetadataAttribute",
+									"@name": "URI_HealthType",
+									"@roleId": "124",
+									"@id": "161",
+									"@number": "1",
+									"#text": "yes"
+								}
+							},
+							"DOI": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "DOI",
+								"@id": "125",
+								"DOIType": {
+									"@type": "MetadataAttribute",
+									"@name": "DOIType",
+									"@roleId": "125",
+									"@id": "162",
+									"@number": "1",
+									"#text": "https://doi.org/10.5061/dryad.3j9kd51rb"
+								}
+							},
+							"DOI_Health": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "DOI_Health",
+								"@id": "126",
+								"DOI_HealthType": {
+									"@type": "MetadataAttribute",
+									"@name": "DOI_HealthType",
+									"@roleId": "126",
+									"@id": "163",
+									"@number": "1",
+									"#text": "yes"
+								}
+							},
+							"Repository_Name": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "Repository_Name",
+								"@id": "127",
+								"Repository_NameType": {
+									"@type": "MetadataAttribute",
+									"@name": "Repository_NameType",
+									"@roleId": "127",
+									"@id": "164",
+									"@number": "1"
+								}
+							},
+							"Licence": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "Licence",
+								"@id": "128",
+								"LicenceType": {
+									"@type": "MetadataAttribute",
+									"@name": "LicenceType",
+									"@roleId": "128",
+									"@id": "165",
+									"@number": "1",
+									"#text": "cc0 1.0"
+								}
+							}
+						}
+					},
+					"Submitted_By": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Submitted_By",
+						"@id": "85",
+						"Submitted_ByType": {
+							"@type": "MetadataAttribute",
+							"@name": "Submitted_ByType",
+							"@roleId": "85",
+							"@id": "167",
+							"@number": "1",
+							"#text": "dryad"
+						}
+					},
+					"Submission_Date": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Submission_Date",
+						"@id": "86",
+						"Submission_DateType": {
+							"@type": "MetadataAttribute",
+							"@name": "Submission_DateType",
+							"@roleId": "86",
+							"@id": "168",
+							"@number": "1"
+						}
+					},
+					"Embargo": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Embargo",
+						"@id": "87",
+						"EmbargoType": {
+							"@type": "MetadataAttribute",
+							"@name": "EmbargoType",
+							"@roleId": "87",
+							"@id": "169",
+							"@number": "1"
+						}
+					},
+					"Embargo_End": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Embargo_End",
+						"@id": "88",
+						"Embargo_EndType": {
+							"@type": "MetadataAttribute",
+							"@name": "Embargo_EndType",
+							"@roleId": "88",
+							"@id": "170",
+							"@number": "1"
+						}
+					},
+					"File": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "File",
+						"@id": "89",
+						"file": {
+							"@type": "MetadataAttribute",
+							"@name": "file",
+							"@roleId": "89",
+							"@id": "174",
+							"@number": "1",
+							"SizeIn_MB": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "SizeIn_MB",
+								"@id": "129",
+								"SizeIn_MBType": {
+									"@type": "MetadataAttribute",
+									"@name": "SizeIn_MBType",
+									"@roleId": "129",
+									"@id": "171",
+									"@number": "1"
+								}
+							},
+							"File_Format": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "File_Format",
+								"@id": "130",
+								"File_FormatType": {
+									"@type": "MetadataAttribute",
+									"@name": "File_FormatType",
+									"@roleId": "130",
+									"@id": "172",
+									"@number": "1",
+									"#text": "csv"
+								}
+							},
+							"Data_Type": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "Data_Type",
+								"@id": "131",
+								"Data_TypeType": {
+									"@type": "MetadataAttribute",
+									"@name": "Data_TypeType",
+									"@roleId": "131",
+									"@id": "173",
+									"@number": "1"
+								}
+							}
+						}
+					},
+					"Code": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Code",
+						"@id": "90",
+						"code": {
+							"@type": "MetadataAttribute",
+							"@name": "code",
+							"@roleId": "90",
+							"@id": "177",
+							"@number": "1",
+							"Code_Type": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "Code_Type",
+								"@id": "132",
+								"Code_TypeType": {
+									"@type": "MetadataAttribute",
+									"@name": "Code_TypeType",
+									"@roleId": "132",
+									"@id": "175",
+									"@number": "1"
+								}
+							},
+							"Programing_Language": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "Programing_Language",
+								"@id": "133",
+								"Programing_LanguageType": {
+									"@type": "MetadataAttribute",
+									"@name": "Programing_LanguageType",
+									"@roleId": "133",
+									"@id": "176",
+									"@number": "1",
+									"#text": "NA"
+								}
+							}
+						}
+					}
+				},
+				{
+					"@type": "MetadataPackage",
+					"@name": "ResourceType",
+					"@roleId": "21",
+					"@id": "21",
+					"@number": "2",
+					"Resources_Type": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Resources_Type",
+						"@id": "81",
+						"Resources_TypeType": {
+							"@type": "MetadataAttribute",
+							"@name": "Resources_TypeType",
+							"@roleId": "81",
+							"@id": "157",
+							"@number": "1"
+						}
+					},
+					"Name": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Name",
+						"@id": "82",
+						"NameType": {
+							"@type": "MetadataAttribute",
+							"@name": "NameType",
+							"@roleId": "82",
+							"@id": "158",
+							"@number": "1"
+						}
+					},
+					"Language": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Language",
+						"@id": "83",
+						"LanguageType": {
+							"@type": "MetadataAttribute",
+							"@name": "LanguageType",
+							"@roleId": "83",
+							"@id": "159",
+							"@number": "1"
+						}
+					},
+					"Access": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Access",
+						"@id": "84",
+						"accessType": {
+							"@type": "MetadataAttribute",
+							"@name": "accessType",
+							"@roleId": "84",
+							"@id": "166",
+							"@number": "1",
+							"URI": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "URI",
+								"@id": "123",
+								"URIType": {
+									"@type": "MetadataAttribute",
+									"@name": "URIType",
+									"@roleId": "123",
+									"@id": "160",
+									"@number": "1"
+								}
+							},
+							"URI_Health": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "URI_Health",
+								"@id": "124",
+								"URI_HealthType": {
+									"@type": "MetadataAttribute",
+									"@name": "URI_HealthType",
+									"@roleId": "124",
+									"@id": "161",
+									"@number": "1",
+									"#text": "maybe"
+								}
+							},
+							"DOI": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "DOI",
+								"@id": "125",
+								"DOIType": {
+									"@type": "MetadataAttribute",
+									"@name": "DOIType",
+									"@roleId": "125",
+									"@id": "162",
+									"@number": "1"
+								}
+							},
+							"DOI_Health": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "DOI_Health",
+								"@id": "126",
+								"DOI_HealthType": {
+									"@type": "MetadataAttribute",
+									"@name": "DOI_HealthType",
+									"@roleId": "126",
+									"@id": "163",
+									"@number": "1"
+								}
+							},
+							"Repository_Name": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "Repository_Name",
+								"@id": "127",
+								"Repository_NameType": {
+									"@type": "MetadataAttribute",
+									"@name": "Repository_NameType",
+									"@roleId": "127",
+									"@id": "164",
+									"@number": "1"
+								}
+							},
+							"Licence": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "Licence",
+								"@id": "128",
+								"LicenceType": {
+									"@type": "MetadataAttribute",
+									"@name": "LicenceType",
+									"@roleId": "128",
+									"@id": "165",
+									"@number": "1"
+								}
+							}
+						}
+					},
+					"Submitted_By": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Submitted_By",
+						"@id": "85",
+						"Submitted_ByType": {
+							"@type": "MetadataAttribute",
+							"@name": "Submitted_ByType",
+							"@roleId": "85",
+							"@id": "167",
+							"@number": "1",
+							"#text": "Felix"
+						}
+					},
+					"Submission_Date": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Submission_Date",
+						"@id": "86",
+						"Submission_DateType": {
+							"@type": "MetadataAttribute",
+							"@name": "Submission_DateType",
+							"@roleId": "86",
+							"@id": "168",
+							"@number": "1"
+						}
+					},
+					"Embargo": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Embargo",
+						"@id": "87",
+						"EmbargoType": {
+							"@type": "MetadataAttribute",
+							"@name": "EmbargoType",
+							"@roleId": "87",
+							"@id": "169",
+							"@number": "1"
+						}
+					},
+					"Embargo_End": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Embargo_End",
+						"@id": "88",
+						"Embargo_EndType": {
+							"@type": "MetadataAttribute",
+							"@name": "Embargo_EndType",
+							"@roleId": "88",
+							"@id": "170",
+							"@number": "1"
+						}
+					},
+					"File": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "File",
+						"@id": "89",
+						"file": {
+							"@type": "MetadataAttribute",
+							"@name": "file",
+							"@roleId": "89",
+							"@id": "174",
+							"@number": "1",
+							"SizeIn_MB": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "SizeIn_MB",
+								"@id": "129",
+								"SizeIn_MBType": {
+									"@type": "MetadataAttribute",
+									"@name": "SizeIn_MBType",
+									"@roleId": "129",
+									"@id": "171",
+									"@number": "1"
+								}
+							},
+							"File_Format": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "File_Format",
+								"@id": "130",
+								"File_FormatType": {
+									"@type": "MetadataAttribute",
+									"@name": "File_FormatType",
+									"@roleId": "130",
+									"@id": "172",
+									"@number": "1"
+								}
+							},
+							"Data_Type": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "Data_Type",
+								"@id": "131",
+								"Data_TypeType": {
+									"@type": "MetadataAttribute",
+									"@name": "Data_TypeType",
+									"@roleId": "131",
+									"@id": "173",
+									"@number": "1"
+								}
+							}
+						}
+					},
+					"Code": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Code",
+						"@id": "90",
+						"code": {
+							"@type": "MetadataAttribute",
+							"@name": "code",
+							"@roleId": "90",
+							"@id": "177",
+							"@number": "1",
+							"Code_Type": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "Code_Type",
+								"@id": "132",
+								"Code_TypeType": {
+									"@type": "MetadataAttribute",
+									"@name": "Code_TypeType",
+									"@roleId": "132",
+									"@id": "175",
+									"@number": "1"
+								}
+							},
+							"Programing_Language": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "Programing_Language",
+								"@id": "133",
+								"Programing_LanguageType": {
+									"@type": "MetadataAttribute",
+									"@name": "Programing_LanguageType",
+									"@roleId": "133",
+									"@id": "176",
+									"@number": "1"
+								}
+							}
+						}
+					}
+				},
+				{
+					"@type": "MetadataPackage",
+					"@name": "ResourceType",
+					"@roleId": "21",
+					"@id": "21",
+					"@number": "3",
+					"Resources_Type": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Resources_Type",
+						"@id": "81",
+						"Resources_TypeType": {
+							"@type": "MetadataAttribute",
+							"@name": "Resources_TypeType",
+							"@roleId": "81",
+							"@id": "157",
+							"@number": "1"
+						}
+					},
+					"Name": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Name",
+						"@id": "82",
+						"NameType": {
+							"@type": "MetadataAttribute",
+							"@name": "NameType",
+							"@roleId": "82",
+							"@id": "158",
+							"@number": "1",
+							"#text": "hier steht der name"
+						}
+					},
+					"Language": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Language",
+						"@id": "83",
+						"LanguageType": {
+							"@type": "MetadataAttribute",
+							"@name": "LanguageType",
+							"@roleId": "83",
+							"@id": "159",
+							"@number": "1"
+						}
+					},
+					"Access": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Access",
+						"@id": "84",
+						"accessType": {
+							"@type": "MetadataAttribute",
+							"@name": "accessType",
+							"@roleId": "84",
+							"@id": "166",
+							"@number": "1",
+							"URI": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "URI",
+								"@id": "123",
+								"URIType": {
+									"@type": "MetadataAttribute",
+									"@name": "URIType",
+									"@roleId": "123",
+									"@id": "160",
+									"@number": "1",
+									"#text": "link"
+								}
+							},
+							"URI_Health": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "URI_Health",
+								"@id": "124",
+								"URI_HealthType": {
+									"@type": "MetadataAttribute",
+									"@name": "URI_HealthType",
+									"@roleId": "124",
+									"@id": "161",
+									"@number": "1",
+									"#text": "verfügbar"
+								}
+							},
+							"DOI": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "DOI",
+								"@id": "125",
+								"DOIType": {
+									"@type": "MetadataAttribute",
+									"@name": "DOIType",
+									"@roleId": "125",
+									"@id": "162",
+									"@number": "1",
+									"#text": "IOD"
+								}
+							},
+							"DOI_Health": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "DOI_Health",
+								"@id": "126",
+								"DOI_HealthType": {
+									"@type": "MetadataAttribute",
+									"@name": "DOI_HealthType",
+									"@roleId": "126",
+									"@id": "163",
+									"@number": "1",
+									"#text": "test"
+								}
+							},
+							"Repository_Name": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "Repository_Name",
+								"@id": "127",
+								"Repository_NameType": {
+									"@type": "MetadataAttribute",
+									"@name": "Repository_NameType",
+									"@roleId": "127",
+									"@id": "164",
+									"@number": "1"
+								}
+							},
+							"Licence": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "Licence",
+								"@id": "128",
+								"LicenceType": {
+									"@type": "MetadataAttribute",
+									"@name": "LicenceType",
+									"@roleId": "128",
+									"@id": "165",
+									"@number": "1"
+								}
+							}
+						}
+					},
+					"Submitted_By": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Submitted_By",
+						"@id": "85",
+						"Submitted_ByType": {
+							"@type": "MetadataAttribute",
+							"@name": "Submitted_ByType",
+							"@roleId": "85",
+							"@id": "167",
+							"@number": "1"
+						}
+					},
+					"Submission_Date": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Submission_Date",
+						"@id": "86",
+						"Submission_DateType": {
+							"@type": "MetadataAttribute",
+							"@name": "Submission_DateType",
+							"@roleId": "86",
+							"@id": "168",
+							"@number": "1"
+						}
+					},
+					"Embargo": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Embargo",
+						"@id": "87",
+						"EmbargoType": {
+							"@type": "MetadataAttribute",
+							"@name": "EmbargoType",
+							"@roleId": "87",
+							"@id": "169",
+							"@number": "1"
+						}
+					},
+					"Embargo_End": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Embargo_End",
+						"@id": "88",
+						"Embargo_EndType": {
+							"@type": "MetadataAttribute",
+							"@name": "Embargo_EndType",
+							"@roleId": "88",
+							"@id": "170",
+							"@number": "1"
+						}
+					},
+					"File": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "File",
+						"@id": "89",
+						"file": {
+							"@type": "MetadataAttribute",
+							"@name": "file",
+							"@roleId": "89",
+							"@id": "174",
+							"@number": "1",
+							"SizeIn_MB": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "SizeIn_MB",
+								"@id": "129",
+								"SizeIn_MBType": {
+									"@type": "MetadataAttribute",
+									"@name": "SizeIn_MBType",
+									"@roleId": "129",
+									"@id": "171",
+									"@number": "1"
+								}
+							},
+							"File_Format": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "File_Format",
+								"@id": "130",
+								"File_FormatType": {
+									"@type": "MetadataAttribute",
+									"@name": "File_FormatType",
+									"@roleId": "130",
+									"@id": "172",
+									"@number": "1"
+								}
+							},
+							"Data_Type": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "Data_Type",
+								"@id": "131",
+								"Data_TypeType": {
+									"@type": "MetadataAttribute",
+									"@name": "Data_TypeType",
+									"@roleId": "131",
+									"@id": "173",
+									"@number": "1"
+								}
+							}
+						}
+					},
+					"Code": {
+						"@type": "MetadataAttributeUsage",
+						"@name": "Code",
+						"@id": "90",
+						"code": {
+							"@type": "MetadataAttribute",
+							"@name": "code",
+							"@roleId": "90",
+							"@id": "177",
+							"@number": "1",
+							"Code_Type": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "Code_Type",
+								"@id": "132",
+								"Code_TypeType": {
+									"@type": "MetadataAttribute",
+									"@name": "Code_TypeType",
+									"@roleId": "132",
+									"@id": "175",
+									"@number": "1"
+								}
+							},
+							"Programing_Language": {
+								"@type": "MetadataAttributeUsage",
+								"@name": "Programing_Language",
+								"@id": "133",
+								"Programing_LanguageType": {
+									"@type": "MetadataAttribute",
+									"@name": "Programing_LanguageType",
+									"@roleId": "133",
+									"@id": "176",
+									"@number": "1"
+								}
+							}
+						}
+					}
+				}
+			]
+		}
+	}
+}

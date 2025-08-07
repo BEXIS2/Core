@@ -1,468 +1,244 @@
 ﻿{
-  "@id": "1",
-  "Basic": {
-    "@ref": "",
-    "DatasetGUID": {
-      "@ref": "",
-      "#text": "123456"
-    }
-  },
-  "TechnicalContacts": {
-    "@ref": "",
-    "TechnicalContact": [
-      {
-        "@ref": "",
-        "@partyid": "1",
-        "Name": {
-          "@ref": "",
-          "#text": "David Schöne"
-        },
-        "Email": {
-          "@ref": "",
-          "#text": ""
-        },
-        "Phone": {
-          "@ref": "",
-          "#text": "01608037788"
-        },
-        "Address": {
-          "@ref": "",
-          "#text": "Von der Gabelentz Straße 9 erfurt 99089 Deutschland"
-        }
-      },
-      {
-        "@ref": "",
-        "Name": {
-          "@ref": "",
-          "#text": "Sven Thiel"
-        },
-        "Email": {
-          "@ref": "",
-          "#text": ""
-        },
-        "Phone": {
-          "@ref": "",
-          "#text": ""
-        },
-        "Address": {
-          "@ref": "",
-          "#text": ""
-        }
-      },
-      {
-        "@ref": "",
-        "Name": {
-          "@ref": "",
-          "#text": "Franziska"
-        },
-        "Email": {
-          "@ref": "",
-          "#text": ""
-        },
-        "Phone": {
-          "@ref": "",
-          "#text": ""
-        },
-        "Address": {
-          "@ref": "",
-          "#text": ""
-        }
-      }
-    ]
-  },
-  "ContentContacts": {
-    "@ref": "",
-    "ContentContact": [
-      {
-        "@ref": "",
-        "@partyid": "1",
-        "Name": {
-          "@ref": "",
-          "#text": "David Schöne"
-        },
-        "Email": {
-          "@ref": "",
-          "#text": ""
-        },
-        "Phone": {
-          "@ref": "",
-          "#text": "01608037788"
-        },
-        "Address": {
-          "@ref": "",
-          "#text": "Von der Gabelentz Straße 9 erfurt 99089 Deutschland"
-        }
-      }
-    ]
-  },
-  "OtherProviders": {
-    "@ref": "",
-    "OtherProvider": [
-      {
-        "@ref": "",
-        "#text": ""
-      }
-    ]
-  },
-  "Metadata": {
-    "@ref": "",
-    "Description": {
-      "@ref": "",
-      "Representation": [
-        {
-          "@ref": "",
-          "Title": {
-            "@ref": "",
-            "#text": "Test"
-          },
-          "Details": {
-            "@ref": "",
-            "#text": ""
-          },
-          "Coverage": {
-            "@ref": "",
-            "#text": ""
-          },
-          "URI": {
-            "@ref": "",
-            "#text": ""
-          }
-        }
-      ]
-    },
-    "IconURI": {
-      "@ref": "",
-      "#text": ""
-    },
-    "Scope": {
-      "@ref": "",
-      "GeoecologicalTerms": {
-        "@ref": "",
-        "GeoEcologicalTerm": [
-          {
-            "@ref": "",
-            "#text": ""
-          }
-        ]
-      },
-      "TaxonomicTerms": {
-        "@ref": "",
-        "TaxonomicTerm": [
-          {
-            "@ref": "",
-            "#text": ""
-          }
-        ]
-      }
-    },
-    "Version": {
-      "@ref": "",
-      "Major": {
-        "@ref": "",
-        "#text": ""
-      },
-      "Minor": {
-        "@ref": "",
-        "#text": ""
-      },
-      "Modifier": {
-        "@ref": "",
-        "#text": ""
-      },
-      "DateIssued": {
-        "@ref": "",
-        "#text": ""
-      }
-    },
-    "RevisionData": {
-      "@ref": "",
-      "Creators": {
-        "@ref": "",
-        "#text": ""
-      },
-      "Contributors": {
-        "@ref": "",
-        "#text": ""
-      },
-      "DateCreated": {
-        "@ref": "",
-        "#text": ""
-      },
-      "DateModified": {
-        "@ref": "",
-        "#text": "2022-07-06"
-      }
-    },
-    "Owners": {
-      "@ref": "",
-      "Owner": [
-        {
-          "@ref": "",
-          "Organisation": {
-            "@ref": "",
-            "Name": {
-              "@ref": "",
-              "Representation": [
-                {
-                  "@ref": "",
-                  "Text": {
-                    "@ref": "",
-                    "#text": ""
-                  },
-                  "Abbreviation": {
-                    "@ref": "",
-                    "#text": ""
-                  }
-                }
-              ]
-            },
-            "OrgUnits": {
-              "@ref": "",
-              "OrgUnit": [
-                {
-                  "@ref": "",
-                  "#text": ""
-                }
-              ]
-            }
-          },
-          "Person": {
-            "@ref": "",
-            "FullName": {
-              "@ref": "",
-              "#text": ""
-            },
-            "SortingName": {
-              "@ref": "",
-              "#text": ""
-            },
-            "AtomisedName": {
-              "@ref": "",
-              "InheritedName": {
-                "@ref": "",
-                "#text": ""
-              },
-              "Prefix": {
-                "@ref": "",
-                "#text": ""
-              },
-              "Suffix": {
-                "@ref": "",
-                "#text": ""
-              },
-              "GivenNames": {
-                "@ref": "",
-                "#text": ""
-              },
-              "PreferredName": {
-                "@ref": "",
-                "#text": ""
-              }
-            }
-          },
-          "Roles": {
-            "@ref": "",
-            "Role": [
-              {
-                "@ref": "",
-                "#text": ""
-              }
-            ]
-          },
-          "Addresses": {
-            "@ref": "",
-            "Address": [
-              {
-                "@ref": "",
-                "#text": ""
-              }
-            ]
-          },
-          "TelephoneNumbers": {
-            "@ref": "",
-            "TelephoneNumber": [
-              {
-                "@ref": "",
-                "Number": {
-                  "@ref": "",
-                  "#text": ""
-                },
-                "Device": {
-                  "@ref": "",
-                  "#text": ""
-                },
-                "UsageNotes": {
-                  "@ref": "",
-                  "#text": ""
-                }
-              }
-            ]
-          },
-          "EmailAddresses": {
-            "@ref": "",
-            "EmailAddress": [
-              {
-                "@ref": "",
-                "#text": ""
-              }
-            ]
-          },
-          "URIs": {
-            "@ref": "",
-            "URL": [
-              {
-                "@ref": "",
-                "#text": ""
-              }
-            ]
-          },
-          "LogoURI": {
-            "@ref": "",
-            "#text": ""
-          }
-        }
-      ]
-    },
-    "IPRStatements": {
-      "@ref": "",
-      "IPRDeclarations": {
-        "@ref": "",
-        "IPRDeclaration": [
-          {
-            "@ref": "",
-            "Text": {
-              "@ref": "",
-              "#text": ""
-            },
-            "Details": {
-              "@ref": "",
-              "#text": ""
-            },
-            "URI": {
-              "@ref": "",
-              "#text": ""
-            }
-          }
-        ]
-      },
-      "Copyrights": {
-        "@ref": "",
-        "Copyright": [
-          {
-            "@ref": "",
-            "Text": {
-              "@ref": "",
-              "#text": ""
-            },
-            "Details": {
-              "@ref": "",
-              "#text": ""
-            },
-            "URI": {
-              "@ref": "",
-              "#text": ""
-            }
-          }
-        ]
-      },
-      "Licenses": {
-        "@ref": "",
-        "License": [
-          {
-            "@ref": "",
-            "Text": {
-              "@ref": "",
-              "#text": ""
-            },
-            "Details": {
-              "@ref": "",
-              "#text": ""
-            },
-            "URI": {
-              "@ref": "",
-              "#text": ""
-            }
-          }
-        ]
-      },
-      "TermsOfUseStatements": {
-        "@ref": "",
-        "TermsOfUse": [
-          {
-            "@ref": "",
-            "Text": {
-              "@ref": "",
-              "#text": ""
-            },
-            "Details": {
-              "@ref": "",
-              "#text": ""
-            },
-            "URI": {
-              "@ref": "",
-              "#text": ""
-            }
-          }
-        ]
-      },
-      "Disclaimers": {
-        "@ref": "",
-        "Disclaimer": [
-          {
-            "@ref": "",
-            "Text": {
-              "@ref": "",
-              "#text": ""
-            },
-            "Details": {
-              "@ref": "",
-              "#text": ""
-            },
-            "URI": {
-              "@ref": "",
-              "#text": ""
-            }
-          }
-        ]
-      },
-      "Acknowledgements": {
-        "@ref": "",
-        "Acknowledgement": [
-          {
-            "@ref": "",
-            "Text": {
-              "@ref": "",
-              "#text": ""
-            },
-            "Details": {
-              "@ref": "",
-              "#text": ""
-            },
-            "URI": {
-              "@ref": "",
-              "#text": ""
-            }
-          }
-        ]
-      },
-      "Citations": {
-        "@ref": "",
-        "Citation": {
-          "@ref": "",
-          "Text": {
-            "@ref": "",
-            "#text": ""
-          },
-          "Details": {
-            "@ref": "",
-            "#text": ""
-          },
-          "URI": {
-            "@ref": "",
-            "#text": ""
-          }
-        }
-      }
-    }
-  }
+	"Metadata": {
+		"@xmlns:mstns": "http://tempuri.org/XMLSchema.xsd",
+		"@xmlns:xs": "http://www.w3.org/2001/XMLSchema",
+		"@xmlns": "http://tempuri.org/XMLSchema.xsd",
+		"publication": {
+			"Journal": "NA",
+			"Title": "Extreme drought impacts have been underestimated in grasslands and shrublands globally",
+			"Abstract": "Climate change is increasing the frequency and severity of short-term (~1 y) drought events—the most common duration of drought—globally. Yet the impact of this intensification of drought on ecosystem functioning remains poorly resolved. This is due in part to the widely disparate approaches ecologists have employed to study drought, variation in the severity and duration of drought studied, and differences among ecosystems in vegetation, edaphic and climatic attributes that can mediate drought impacts. To overcome these problems and better identify the factors that modulate drought responses, we used a coordinated distributed experiment to quantify the impact of short-term drought on grassland and shrubland ecosystems. With a standardized approach, we imposed ~a single year of drought at 100 sites on six continents. Here we show that loss of a foundational ecosystem function—aboveground net primary production (ANPP)—was 60% greater at sites that experienced statistically extreme drought (1-in-100-y event) vs. those sites where drought was nominal (historically more common) in magnitude (35% vs. 21%, respectively). This reduction in a key carbon cycle process with a single year of extreme drought greatly exceeds previously reported losses for grasslands and shrublands. Our global experiment also revealed high variability in drought response but that relative reductions in ANPP were greater in drier ecosystems and those with fewer plant species. Overall, our results demonstrate with unprecedented rigor that the global impacts of projected increases in drought severity have been significantly underestimated and that drier and less diverse sites are likely to be most vulnerable to extreme drought.",
+			"Author": [
+				"Smith, Melinda D.",
+				"Wilkins, Kate D.",
+				"Holdrege, Martin C.",
+				"Wilfahrt, Peter",
+				"Collins, Scott L.",
+				"Knapp, Alan K.",
+				"Sala, Osvaldo E.",
+				"Dukes, Jeffrey S.",
+				"Phillips, Richard P.",
+				"Yahdjian, Laura",
+				"Gherardi, Laureano A.",
+				"Ohlert, Timothy",
+				"Beier, Claus",
+				"Fraser, Lauchlan H.",
+				"Jentsch, Anke",
+				"Loik, Michael E.",
+				"Maestre, Fernando T.",
+				"Power, Sally A.",
+				"Yu, Qiang",
+				"Felton, Andrew J.",
+				"Munson, Seth M.",
+				"Luo, Yiqi",
+				"Abdoli, Hamed",
+				"Abedi, Mehdi",
+				"Alados, Concepción L.",
+				"Alberti, Juan",
+				"Alon, Moshe",
+				"An, Hui",
+				"Anacker, Brian",
+				"Anderson, Maggie",
+				"Auge, Harald",
+				"Bachle, Seton",
+				"Bahalkeh, Khadijeh",
+				"Bahn, Michael",
+				"Batbaatar, Amgaa",
+				"Bauerle, Taryn",
+				"Beard, Karen H.",
+				"Behn, Kai",
+				"Beil, Ilka",
+				"Biancari, Lucio",
+				"Blindow, Irmgard",
+				"Bondaruk, Viviana Florencia",
+				"Borer, Elizabeth T.",
+				"Bork, Edward W.",
+				"Bruschetti, Carlos Martin",
+				"Byrne, Kerry M.",
+				"Cahill Jr., James F.",
+				"Calvo, Dianela A.",
+				"Carbognani, Michele",
+				"Cardoni, Augusto",
+				"Carlyle, Cameron N.",
+				"Castillo-Garcia, Miguel",
+				"Chang, Scott X.",
+				"Chieppa, Jeff",
+				"Cianciaruso, Marcus V.",
+				"Cohen, Ofer",
+				"Cordeiro, Amanda L.",
+				"Cusack, Daniela F.",
+				"Dahlke, Sven",
+				"Daleo, Pedro",
+				"D'Antonio, Carla M.",
+				"Dietterich, Lee H.",
+				"S. Doherty, Tim",
+				"Dubbert, Maren",
+				"Ebeling, Anne",
+				"Eisenhauer, Nico",
+				"Fischer, Felícia M.",
+				"Forte, T'ai G. W.",
+				"Gebauer, Tobias",
+				"Gozalo, Beatriz",
+				"Greenville, Aaron C.",
+				"Guidoni-Martins, Karlo G.",
+				"Hannusch, Heather J.",
+				"Vatsø Haugum, Siri",
+				"Hautier, Yann",
+				"Hefting, Mariet",
+				"Henry, Hugh A. L.",
+				"Hoss, Daniela",
+				"Ingrisch, Johannes",
+				"Iribarne, Oscar",
+				"Isbell, Forest",
+				"Johnson, Yari",
+				"Jordan, Samuel",
+				"Kelly, Eugene F.",
+				"Kimmel, Kaitlin",
+				"Kreyling, Juergen",
+				"Kröel-Dulay, György",
+				"Kröpfl, Alicia",
+				"Kübert, Angelika",
+				"Kulmatiski, Andrew",
+				"Lamb, Eric G.",
+				"Larsen, Klaus Steenberg",
+				"Larson, Julie",
+				"Lawson, Jason",
+				"Leder, Cintia V.",
+				"Linstädter, Anja",
+				"Liu, Jielin",
+				"Liu, Shirong",
+				"Lodge, Alexandra G.",
+				"Longo, Grisel",
+				"Loydi, Alejandro",
+				"Luan, Junwei",
+				"Curtis Lubbe, Frederick",
+				"Macfarlane, Craig",
+				"Mackie-Haas, Kathleen",
+				"Malyshev, Andrey V.",
+				"Maturano-Ruiz, Adrián",
+				"Merchant, Thomas",
+				"Metcalfe, Daniel B.",
+				"Mori, Akira S.",
+				"Mudongo, Edwin",
+				"Newman, Gregory S.",
+				"Nielsen, Uffe N.",
+				"Nimmo, Dale",
+				"Niu, Yujie",
+				"Nobre, Paola",
+				"O'Connor, Rory C.",
+				"Ogaya, Romà",
+				"Oñatibia, Gastón R.",
+				"Orbán, Ildikó",
+				"Osborne, Brooke",
+				"Otfinowski, Rafael",
+				"Pärtel, Meelis",
+				"Penuelas, Josep",
+				"Peri, Pablo L.",
+				"Peter, Guadalupe",
+				"Petraglia, Alessandro",
+				"Picon-Cochard, Catherine",
+				"Pillar, Valério D.",
+				"Piñeiro-Guerra, Juan Manuel",
+				"Ploughe, Laura W.",
+				"Plowes, Robert M.",
+				"Portales-Reyes, Cristy",
+				"Prober, Suzanne M.",
+				"Pueyo, Yolanda",
+				"Reed, Sasha C.",
+				"Ritchie, Euan G.",
+				"Rodríguez, Dana Aylén",
+				"Rogers, William E.",
+				"Roscher, Christiane",
+				"Sánchez, Ana M.",
+				"Santos, Bráulio A.",
+				"Cecilia Scarfó, María",
+				"Seabloom, Eric W.",
+				"Shi, Baoku",
+				"Souza, Lara",
+				"Stampfli, Andreas",
+				"Standish, Rachel J.",
+				"Sternberg, Marcelo",
+				"Sun, Wei",
+				"Sünnemann, Marie",
+				"Tedder, Michelle",
+				"Thorvaldsen, Pål",
+				"Tian, Dashuan",
+				"Tielbörger, Katja",
+				"Valdecantos, Alejandro",
+				"van den Brink, Liesbeth",
+				"Vandvik, Vigdis",
+				"Vankoughnett, Mathew R.",
+				"Guri Velle, Liv",
+				"Wang, Changhui",
+				"Wang, Yi",
+				"Wardle, Glenda M.",
+				"Werner, Christiane",
+				"Wei, Cunzheng",
+				"Wiehl, Georg",
+				"Williams, Jennifer L.",
+				"Wolf, Amelia A.",
+				"Zeiter, Michaela",
+				"Zhang, Fawei",
+				"Zhu, Juntao",
+				"Zong, Ning",
+				"Zuo, Xiaoan"
+			],
+			"Curation": {
+				"rated_by": "Ludmilla Figueiredo",
+				"access_date": "NA",
+				"date_added": "07.05.2024 00:00",
+				"date_modified": "07.05.2024 00:00"
+			},
+			"Identifiers": {
+				"isbn": "NA",
+				"issn": "NA",
+				"doi": "10.1073/pnas.2309881120",
+				"uri": "https://www.pnas.org/doi/abs/10.1073/pnas.2309881120",
+				"alt_uri": "none"
+			},
+			"Type": "journalArticle",
+			"pages": "e2309881120",
+			"issue": "4",
+			"volume": "121",
+			"comment": "States that data and code are shared, but only data is. In Dryad, asks future users to contact authors to ensure use according to best practices.",
+			"keywords": "NA",
+			"Recourses": {
+				"Data_code_availiablity_title": "none",
+				"Data_code_availiablity_statement": "none"
+			}
+		},
+		"Resource": [
+			{
+				"Resources_Type": "Dataset",
+				"Access": {
+					"URI": "https://datadryad.org/stash/dataset/doi:10.5061/dryad.3j9kd51rb",
+					"URI_Health": "yes",
+					"DOI": "https://doi.org/10.5061/dryad.3j9kd51rb",
+					"DOI_Health": "yes",
+					"Licence": "cc0 1.0"
+				},
+				"Submitted_By": "dryad",
+				"File": {
+					"File_Format": "csv"
+				},
+				"Code": {
+					"Programing_Language": "NA"
+				}
+			},
+			{
+				"Access": {
+					"URI_Health": "maybe"
+				},
+				"Submitted_By": "Felix"
+			},
+			{
+				"Name": "hier steht der name",
+				"Access": {
+					"URI": "link",
+					"URI_Health": "verfügbar",
+					"DOI": "IOD",
+					"DOI_Health": "test"
+				}
+			}
+		]
+	}
 }

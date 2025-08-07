@@ -210,6 +210,70 @@ namespace BExIS.Xml.Helpers.UnitTests
         }
 
         [Test()]
+        public void ConvertTo_XmlToJsonWithArrays_ReturnXml()
+        {
+            //Arrange
+            XmlMetadataConverter xmlMetadataHelper = new XmlMetadataConverter();
+
+            var metadataOriginalXMl = "ConvertTo_JsonToXml.xml";
+            string path = AppDomain.CurrentDomain.BaseDirectory;
+            string metadataOriginalXMlPath = Path.Combine(path, metadataOriginalXMl);
+
+            XmlDocument metadataOriginal = new XmlDocument();
+            metadataOriginal.Load(metadataOriginalXMlPath);
+
+            // Act
+            XmlMetadataConverter metadataConverter = new XmlMetadataConverter();
+
+            JObject metadataAsJson = metadataConverter.ConvertTo(metadataOriginal);
+            XmlDocument metadataOut = metadataConverter.ConvertTo(metadataAsJson);
+
+            //Assert
+            Assert.IsNotNull(metadataOut);
+
+            // check content
+            string aText = metadataOut.InnerText;
+            string bText = metadataOriginal.InnerText;
+
+            Assert.AreEqual(aText, bText, "the content between output and original xml is not equal");
+
+            // check elements
+            var a = XmlUtility.ToXDocument(metadataOut);
+            var b = XmlUtility.ToXDocument(metadataOriginal);
+
+            var aElements = XmlUtility.GetAllChildren(a.Root);
+            var bElements = XmlUtility.GetAllChildren(b.Root);
+
+            Assert.That(aElements.Count, Is.EqualTo(bElements.Count()), string.Format("number of elements a {0} is different then b {1}", aElements.Count(), bElements.Count()));
+
+            if (aElements.Count() == bElements.Count())
+            {
+                for (int i = 0; i < aElements.Count(); i++)
+                {
+                    var aChild = aElements.ElementAt(i);
+                    var bChild = bElements.ElementAt(i);
+
+                    Assert.That(aChild.Name, Is.EqualTo(bChild.Name), string.Format("child element {0} is not equal to {1}", aChild.Name, bChild.Name));
+
+                    // check attributes
+                    if (aChild.Attributes().Count() > 0)
+                    {
+                        Assert.That(aChild.Attributes().Count(), Is.EqualTo(bChild.Attributes().Count()), string.Format("number of attributes a {0} is different then b {1}", aChild.Name, bChild.Name));
+
+                        for (int j = 0; j < aChild.Attributes().Count(); j++)
+                        {
+                            var aAttr = aChild.Attributes().ElementAt(j);
+                            var bAttr = bChild.Attributes().ElementAt(j);
+
+                            Assert.That(aAttr.Name, Is.EqualTo(bAttr.Name), string.Format("child attr {0} is not equal to {1}", aChild.Name, bChild.Name));
+                            Assert.That(aAttr.Value, Is.EqualTo(bAttr.Value), string.Format("value of the attr {0} - {1} is not equal to {2} - {3}", aChild.Name, aChild.Value, bChild.Name, bChild.Value));
+                        }
+                    }
+                }
+            }
+        }
+
+        [Test()]
         public void ConvertTo_DocumentIsNull_ThrowArgumentNullException()
         {
             XmlMetadataConverter xmlMetadataHelper = new XmlMetadataConverter();
