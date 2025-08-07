@@ -1,6 +1,7 @@
 export interface ResourceArray {
     //ID: number;
     Name: string;
+    ResourceType: string;
     SubmissionDate: string; //Date???
     EmbargoEnd: string; //Date???
     URI: string;
