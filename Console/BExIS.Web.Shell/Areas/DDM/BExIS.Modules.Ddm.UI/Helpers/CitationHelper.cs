@@ -45,17 +45,37 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                         model = (CitationDataModel)serializer.Deserialize(reader);
                     }
 
+                    var settingsHelper = new SettingsHelper();
+                    var citationSettings = settingsHelper.GetCitationSettings();
+
+                    // Authors
+                    if (citationSettings.NumberOfAuthors > 0 && model.Authors.Count > citationSettings.NumberOfAuthors)
+                    {
+                        model.Authors = new List<string>() { model.Authors.Take(citationSettings.NumberOfAuthors) + " et al." };
+                    }
+
                     // Version
                     if (String.IsNullOrEmpty(model.Version))
-                        model.Version = datasetVersion.VersionNo.ToString();
+                    model.Version = datasetVersion.VersionNo.ToString();
 
-                    // Date
+                    // Publication Year
                     if (String.IsNullOrEmpty(model.Date))
                     {
                         if (String.IsNullOrEmpty(datasetVersion.PublicAccessDate.ToString()))
                             model.Date = datasetVersion.PublicAccessDate.ToString();
                         else
                             model.Date = datasetVersion.Timestamp.ToString();
+                    }
+
+                    // Publisher
+                    if (citationSettings != null && !String.IsNullOrEmpty(citationSettings.Publisher))
+                    {
+                        model.Publisher = citationSettings.Publisher;
+                    }
+                    else
+                    {
+                        model.Publisher = "BEXIS2";
+
                     }
 
                     // URL

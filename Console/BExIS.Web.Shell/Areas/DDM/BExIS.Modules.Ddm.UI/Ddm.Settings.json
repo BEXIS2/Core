@@ -67,10 +67,11 @@
       "value": {
         "publisher": "BEXIS2 DevOps Team",
         "instance": "BEXIS2 - DevOps Test",
+        "numberOfAuthors": 0,
         "showCitation": true,
         "defaultViewCitationFormat": "Text",
-        "ViewCitationFormats": ["Text", "APA"],
-        "DownloadCitationFormats": ["Text", "APA", "RIS", "BibTex"]
+        "viewCitationFormats": ["Text", "APA"],
+        "downloadCitationFormats": [ "Text", "APA", "RIS", "BibTex" ]
       },
       "description": "..."
     }
