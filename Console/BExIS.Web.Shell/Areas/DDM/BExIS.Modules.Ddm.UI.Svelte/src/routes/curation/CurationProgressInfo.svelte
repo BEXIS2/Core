@@ -11,7 +11,7 @@
 
 	const { statusColorPalette } = curationStore;
 
-	const totalIssues = progress.reduce((a, b) => a + b, 0);
+	$: totalIssues = progress.reduce((a, b) => a + b, 0);
 
 	const hoveredStatus = writable<CurationEntryStatus | null>(null);
 
