@@ -25,7 +25,10 @@
 			id: idPrefix + index.toString(),
 			fullString: line,
 			text: line
-				.replaceAll(/^\s*(- |\* )?\s*(\[[xX ]?\])?|\*\*|__|\[.*\]\(\?createEntryFromJSON=.*\)/g, '')
+				// remove all markdown specific features
+				.replaceAll(/^\s*(- |\* )?\s*(\[[xX ]?\])?/g, '')
+				.replaceAll(/\*\*|__/g, '')
+				.replaceAll(/\[.*\]\(\?createEntryFromJSON=.*\)/g, '')
 				.trim(),
 			indentation: Math.floor(indentation / 2),
 			isListItem: isListItem,
