@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Xml.Serialization;
 
 namespace BExIS.Modules.Ddm.UI.Models
@@ -8,10 +9,33 @@ namespace BExIS.Modules.Ddm.UI.Models
         public string CitationString { get; set; }
     }
 
+    public class ReadCitationModel
+    {
+        public string Title { get; set; }
+        public string Version { get; set; }
+    }
+
+    public enum ReadCitationFormat
+    {
+        APA,
+        Text
+    }
+
+    public enum DownloadCitationFormat
+    {
+        APA,
+        RIS,
+        Text,
+        Bibtex
+    }
+
+
     [XmlRoot("data")]
     public class CitationDataModel
     {
         [XmlElement("title")]
+        [Required(ErrorMessage = "Title is required")]
+        [MinLength(1, ErrorMessage = "Title cannot be empty")]
         public string Title { get; set; }
 
         [XmlElement("version")]
@@ -21,14 +45,38 @@ namespace BExIS.Modules.Ddm.UI.Models
         public List<string> Projects { get; set; }
 
         [XmlElement("date")]
+        [Required(ErrorMessage = "Date is required")]
+        [MinLength(1, ErrorMessage = "Date cannot be empty")]
         public string Date { get; set; }
 
         [XmlElement("doi")]
         public string DOI { get; set; }
 
+        [XmlElement("url")]
+        [Required(ErrorMessage = "URL is required")]
+        [MinLength(1, ErrorMessage = "URL cannot be empty")]
+        public string URL { get; set; }
+
         [XmlArray("authorNames")]
         [XmlArrayItem("authorName")]
+        //[MinCapacity(1)]
         public List<string> Authors { get; set; }
+
+        [XmlElement("entityType")]
+        [Required(ErrorMessage = "Entity Type is required")]
+        [MinLength(1, ErrorMessage = "Entity Type cannot be empty")]
+        public string EntityType { get; set; }
+
+        [XmlElement("publisher")]
+        [Required(ErrorMessage = "Title is required")]
+        [MinLength(1, ErrorMessage = "Title cannot be empty")]
+        public string Publisher { get; set; }
+
+        public CitationDataModel()
+        {
+            Authors = new List<string>();
+            Projects = new List<string>();
+        }
     }
 
     public class CitationDatasetIds
@@ -61,4 +109,26 @@ namespace BExIS.Modules.Ddm.UI.Models
         public string Name { get; set; }
         public long Id { get; set; }
     }
+
+    public class CitationSettings
+    {
+        public string Instance { get; set; }
+        public string Publisher { get; set; }
+        public bool ShowCitation { get; set; }
+        public int NumberOfAuthors { get; set; }
+        public ReadCitationFormat ReadCitationFormat { get; set; }
+
+        public List<DownloadCitationFormat> DownloadCitationFormats { get; set; }
+
+        public CitationSettings()
+        {
+            Instance = "BEXIS2";
+            Publisher = "BEXIS2";
+            ShowCitation = false;
+            NumberOfAuthors = 1;
+            ReadCitationFormat = ReadCitationFormat.Text;
+            DownloadCitationFormats = new List<DownloadCitationFormat>() { };
+        }
+    }
+
 }
