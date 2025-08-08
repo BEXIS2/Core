@@ -169,18 +169,16 @@
 				expandWritable={progressInfoExpanded}
 			/>
 			{#if $progressInfoExpanded}
-				{#each $curationTypeViewOrder as progressType}
-					<div
-						class="ml-8 opacity-30 hover:opacity-100"
-						in:slide={{ duration: 150 }}
-						out:slide={{ duration: 150 }}
-					>
-						<CurationProgressInfo
-							progress={$curation?.curationProgressPerType[progressType]}
-							label="{CurationEntryTypeNames[progressType]} Progress"
-						/>
-					</div>
-				{/each}
+				<div in:slide={{ duration: 150 }} out:slide={{ duration: 150 }}>
+					{#each $curationTypeViewOrder as progressType}
+						<div class="ml-8 opacity-30 hover:opacity-100">
+							<CurationProgressInfo
+								progress={$curation?.curationProgressPerType[progressType]}
+								label="{CurationEntryTypeNames[progressType]} Progress"
+							/>
+						</div>
+					{/each}
+				</div>
 			{/if}
 		</div>
 		<!-- Filter and search -->

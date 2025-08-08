@@ -49,7 +49,7 @@
 		</div>
 		{#if $curationInfoExpanded}
 			<div
-				class="relativeoverflow-hidden transition-all"
+				class="relative overflow-hidden"
 				in:slide={{ duration: 150 }}
 				out:slide={{ duration: 150 }}
 			>

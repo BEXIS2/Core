@@ -49,7 +49,7 @@
 			<button on:click={toggleExpand} class="btn flex items-baseline rounded px-1 py-0.5">
 				<Fa
 					icon={faAngleDown}
-					class="my-auto transition-all {$expandWritable ? ' rotate-180' : ''}"
+					class="my-auto transition-transform {$expandWritable ? ' rotate-180' : ''}"
 				/>
 				<span class="mr-2 font-semibold text-surface-800">{label}</span>
 				<span class="whitespace-nowrap text-right text-sm font-normal text-surface-600">
@@ -66,13 +66,13 @@
 		{/if}
 	</div>
 	<div
-		class="curation-status-progress-bar my-1 flex h-1.5 w-full flex-row overflow-hidden rounded-full transition-all"
+		class="curation-status-progress-bar my-1 flex h-1.5 w-full flex-row overflow-hidden rounded-full transition-[height]"
 	>
 		{#if progress.some((p) => p > 0)}
 			{#each progress as p, index}
 				{#if p > 0}
 					<div
-						class="h-full transition-all"
+						class="h-full transition-opacity"
 						style="flex-grow: {p}; background-color: {$statusColorPalette.colors[index]}"
 						class:opacity-25={$hasLowOpacity[index]}
 						on:mouseenter={() => handleMouseEnter(index)}
@@ -83,7 +83,7 @@
 			{/each}
 		{:else}
 			<div
-				class="h-full grow transition-all"
+				class="h-full grow transition-opacity"
 				style="background-color: {$statusColorPalette.colors[CurationEntryStatus.Closed]}"
 				class:opacity-25={$hasLowOpacity[CurationEntryStatus.Closed]}
 				on:mouseenter={() => handleMouseEnter(CurationEntryStatus.Closed)}
@@ -92,15 +92,13 @@
 			></div>
 		{/if}
 	</div>
-	<ul
-		class="text-md curation-status-progress-list flex flex-row flex-wrap justify-between gap-x-4 text-sm"
-	>
+	<ul class="flex flex-row flex-wrap justify-between gap-x-4 text-sm">
 		{#if progress.slice(0, CurationEntryStatus.Closed).some((p) => p > 0)}
 			{#each progress as p, index}
 				{#if p > 0}
 					<li>
 						<div
-							class="whitespace-nowrap transition-all"
+							class="whitespace-nowrap transition-opacity"
 							on:mouseenter={() => handleMouseEnter(index)}
 							on:mouseleave={handleMouseLeave}
 							class:opacity-25={$hasLowOpacity[index]}
@@ -118,7 +116,7 @@
 		{:else}
 			<li class="w-full text-center">
 				<div
-					class="whitespace-nowrap transition-all"
+					class="whitespace-nowrap transition-opacity"
 					on:mouseenter={() => handleMouseEnter(CurationEntryStatus.Closed)}
 					on:mouseleave={handleMouseLeave}
 					class:opacity-25={$hasLowOpacity[CurationEntryStatus.Closed]}

@@ -138,7 +138,7 @@
 		>
 			<label
 				title="Introduction tab"
-				class="flex grow cursor-pointer flex-wrap content-center items-center justify-center gap-x-1 rounded px-2 py-0.5 text-center text-surface-800 transition-all"
+				class="flex grow cursor-pointer flex-wrap content-center items-center justify-center gap-x-1 rounded px-2 py-0.5 text-center text-surface-800 transition-colors"
 			>
 				<input
 					type="radio"
@@ -153,7 +153,7 @@
 			</label>
 			<label
 				title="Tasks tab"
-				class="flex grow cursor-pointer flex-wrap content-center items-center justify-center gap-x-1 rounded px-2 py-0.5 text-center text-surface-800 transition-all"
+				class="flex grow cursor-pointer flex-wrap content-center items-center justify-center gap-x-1 rounded px-2 py-0.5 text-center text-surface-800 transition-colors"
 			>
 				<input
 					type="radio"
@@ -168,7 +168,7 @@
 			</label>
 			<label
 				title="Hide Tabs"
-				class="flex cursor-pointer flex-wrap content-center items-center justify-center gap-x-1 rounded px-3 py-0.5 text-center text-surface-800 transition-all"
+				class="flex cursor-pointer flex-wrap content-center items-center justify-center gap-x-1 rounded px-3 py-0.5 text-center text-surface-800 transition-colors"
 			>
 				<input
 					type="radio"

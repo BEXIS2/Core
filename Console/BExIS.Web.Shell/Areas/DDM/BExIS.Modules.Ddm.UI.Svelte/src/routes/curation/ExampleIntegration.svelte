@@ -218,7 +218,7 @@
 	{#if overlayView}
 		<!-- Curation entries overlay with toggle button -->
 		<div
-			class="fixed bottom-12 max-w-2xl overflow-hidden border border-surface-500 bg-surface-100 shadow-xl transition-all"
+			class="fixed bottom-12 max-w-2xl overflow-hidden border border-surface-500 bg-surface-100 shadow-xl transition-[border-radius,max-width]"
 			class:rounded-full={!overlayActive}
 			class:rounded-xl={overlayActive}
 			class:!max-w-12={!overlayActive}
@@ -239,7 +239,7 @@
 			{/if}
 			{#if overlayActive}
 				<div
-					class="flex items-stretch overflow-y-auto"
+					class="flex resize items-stretch overflow-y-auto"
 					style:height="calc(100vh - 12rem)"
 					in:slide={{ duration: 150 }}
 					out:slide={{ duration: 150 }}
@@ -269,7 +269,9 @@
 					>
 						<Fa
 							icon={faAngleLeft}
-							class="inline-block transition-all {overlayPosition === 'left' ? 'rotate-180' : ''}"
+							class="inline-block transition-[transform] {overlayPosition === 'left'
+								? 'rotate-180'
+								: ''}"
 						/>
 						Move overlay {overlayPosition === 'left' ? 'right' : 'left'}
 					</button>
