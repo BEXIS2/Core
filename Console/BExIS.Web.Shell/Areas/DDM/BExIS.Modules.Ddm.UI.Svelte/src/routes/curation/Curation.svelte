@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import CurationDatasetInfo from './CurationDatasetInfo.svelte';
 	import { curationStore } from './stores';
 	import { Spinner } from '@bexis2/bexis2-core-ui';
@@ -23,26 +23,6 @@
 	import StartCuration from './StartCuration.svelte';
 	import { slide } from 'svelte/transition';
 
-	export let datasetId: number;
-
-	export let applyTypeFilter: CurationEntryType | undefined = undefined;
-	export let addEntry: Partial<CurationEntryModel> | undefined = undefined;
-
-	export let enableMoveToData = false;
-	$: moveToDataEnabled.set(enableMoveToData);
-
-	export const jumpToEntryWhere = curationStore.jumpToEntryWhere;
-	export const moveToDataReadable: Readable<Partial<CurationEntryHelperModel> | undefined> =
-		curationStore.moveToData;
-	export const curationEntriesReadable: Readable<Partial<CurationEntryHelperModel>[]> = derived(
-		[curationStore.curation, curationStore.statusColorPalette],
-		([curation, colorPalette]) => {
-			const entries = curation?.curationEntries;
-			if (!entries) return [];
-			return entries.filter((e) => !e.isHidden()).map((e) => e.getHelperModel(colorPalette));
-		}
-	);
-
 	const {
 		loadingCuration,
 		loadingError,
@@ -52,26 +32,49 @@
 		hasFiltersApplied,
 		curationInfoExpanded,
 		progressInfoExpanded,
-		moveToDataEnabled
+		jumpToDataEnabled
 	} = curationStore;
 
-	// Apply type filter and reset
-	$: if (applyTypeFilter !== undefined) {
+	export let datasetId: number;
+
+	export function applyTypeFilter(type: CurationEntryType | undefined) {
 		curationStore.updateEntryFilter(
 			CurationFilterType.type,
-			(_) => applyTypeFilter,
+			(_) => type,
 			(entry: CurationEntryClass, data: CurationEntryType | undefined) =>
 				data === undefined || entry.type === data,
 			(data) => data === undefined
 		);
-		applyTypeFilter = undefined;
 	}
 
-	// add and jump to entry and reset (only if the user is a curator)
-	$: if (addEntry) {
-		if ($curation?.isCurator) curationStore.createAndJumpToEntry(addEntry);
-		addEntry = undefined;
+	export function addEntry(entry: Partial<CurationEntryModel>) {
+		curationStore.createAndJumpToEntry(entry);
 	}
+
+	// Jump To Entry
+	export function jumpToEntryWhere(entryWhere: (entry: CurationEntryHelperModel) => boolean) {
+		curationStore.jumpToEntryWhere.set(entryWhere);
+	}
+
+	// Jump To Data
+	export let enableJumpToData = false;
+	$: jumpToDataEnabled.set(enableJumpToData);
+	const jumpToDataDispatcher = createEventDispatcher<{
+		jumpToData: Partial<CurationEntryHelperModel>;
+	}>();
+	curationStore.setJumpToDataCallback((curationEntryHelper) => {
+		jumpToDataDispatcher('jumpToData', curationEntryHelper);
+	});
+
+	// Curation Entries Readable
+	export const curationEntriesReadable: Readable<Partial<CurationEntryHelperModel>[]> = derived(
+		[curationStore.curation, curationStore.statusColorPalette],
+		([curation, colorPalette]) => {
+			const entries = curation?.curationEntries;
+			if (!entries) return [];
+			return entries.filter((e) => !e.isHidden()).map((e) => e.getHelperModel(colorPalette));
+		}
+	);
 
 	// ---
 

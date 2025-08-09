@@ -68,8 +68,19 @@ class CurationStore {
 	public readonly progressInfoExpanded = writable(false);
 	public readonly curationInfoExpanded = writable(true);
 
-	public readonly moveToDataEnabled = writable(false);
-	public readonly moveToData = writable<Partial<CurationEntryHelperModel> | undefined>();
+	// Jump to Data and Dispatch Jump
+	public readonly jumpToDataEnabled = writable(false);
+	private jumpToDataCallback:
+		| ((curationEntryHelper: Partial<CurationEntryHelperModel>) => void)
+		| undefined;
+	public setJumpToDataCallback(
+		callback: (curationEntryHelper: Partial<CurationEntryHelperModel>) => void
+	) {
+		this.jumpToDataCallback = callback;
+	}
+	public dispatchJumpToData(curationEntryHelper: Partial<CurationEntryHelperModel>) {
+		this.jumpToDataCallback?.(curationEntryHelper);
+	}
 
 	constructor() {
 		this.datasetId.subscribe((datasetId) => {

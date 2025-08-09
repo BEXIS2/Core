@@ -24,14 +24,8 @@
 	export let combined: boolean;
 	export let tag: string | null = 'div'; // if set, use this tag instead of the default <div>
 
-	const {
-		curation,
-		editMode,
-		statusColorPalette,
-		jumpToEntryWhere,
-		moveToDataEnabled,
-		moveToData
-	} = curationStore;
+	const { curation, editMode, statusColorPalette, jumpToEntryWhere, jumpToDataEnabled } =
+		curationStore;
 
 	const cardState = curationStore.getEntryCardState(entry.id);
 
@@ -104,8 +98,8 @@
 	const confettiTypeSet = new Set([CurationEntryStatus.Fixed, CurationEntryStatus.Closed]);
 
 	const jumpToDataClick = () => {
-		if (!$moveToDataEnabled) return;
-		moveToData.set(entry.getHelperModel($statusColorPalette));
+		if (!$jumpToDataEnabled) return;
+		curationStore.dispatchJumpToData(entry.getHelperModel($statusColorPalette));
 	};
 </script>
 
@@ -179,7 +173,7 @@
 		<!-- Status and Actions -->
 		<div class="mb-1 flex flex-wrap items-center justify-stretch gap-1 overflow-x-hidden text-sm">
 			<!-- link button -->
-			{#if $moveToDataEnabled}
+			{#if $jumpToDataEnabled}
 				<button
 					class="variant-filled-surface btn hidden px-1 py-0.5 text-sm text-surface-800 sm:block"
 					title="Show linked data"

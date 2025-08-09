@@ -9,18 +9,18 @@
 	import Fa from 'svelte-fa';
 	import { faAngleLeft, faCircleDot, faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { fade, slide } from 'svelte/transition';
-	import type { Writable, Readable } from 'svelte/store';
+	import type { Readable } from 'svelte/store';
 	import { tick } from 'svelte';
 
 	export let datasetId: number;
 
-	let jumpToEntryWhere: Writable<((entry: CurationEntryHelperModel) => boolean) | undefined>;
+	let jumpToEntryWhere:
+		| ((entryWhere: (entry: CurationEntryHelperModel) => boolean) => void)
+		| undefined;
 
-	let typeFilterExample: CurationEntryType | undefined = undefined;
+	let applyTypeFilter: ((type: CurationEntryType | undefined) => void) | undefined;
 
-	let addEntryExample: Partial<CurationEntryModel> | undefined = undefined;
-
-	let moveToDataReadable: Readable<Partial<CurationEntryHelperModel> | undefined>;
+	let addEntry: (entry: Partial<CurationEntryModel>) => void;
 
 	let curationEntriesReadable: Readable<Partial<CurationEntryHelperModel>[]>;
 
@@ -34,7 +34,9 @@
 
 	let currentTypeView = typeViews[0].value;
 
-	$: typeFilterExample = currentTypeView; // filter curation entries according to current view
+	$: {
+		applyTypeFilter?.(currentTypeView); // filter curation entries according to current view
+	}
 
 	enum PrimaryDataView {
 		eval,
@@ -84,29 +86,25 @@
 
 	function addEntryClick(entry: Partial<CurationEntryModel>) {
 		if (overlayView && !overlayActive) toggleOverlay();
-		addEntryExample = entry;
+		addEntry(entry);
 	}
 
 	// ---
 
-	$: subscribeToMoveToData(moveToDataReadable);
-
-	async function subscribeToMoveToData(
-		mtdReadable: Readable<Partial<CurationEntryHelperModel> | undefined>
-	) {
-		if (!mtdReadable) return;
-		mtdReadable.subscribe(async (moveToData) => {
-			if (!moveToData) return;
-			const mtD = moveToData;
-			currentTypeView = moveToData.type || CurationEntryType.None;
+	async function jumpToData(curationEntryHelper: Partial<CurationEntryHelperModel>) {
+		if (!curationEntryHelper) return;
+		currentTypeView = curationEntryHelper.type || CurationEntryType.None;
+		await tick();
+		const el = document.querySelector(`[data-name="${curationEntryHelper.name}"]`) as HTMLElement;
+		if (el) {
+			el.scrollIntoView({ behavior: 'smooth', block: 'center' });
 			await tick();
-			const el = document.querySelector(`[data-name="${mtD.name}"]`);
-			if (el) {
-				el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-				el.classList.add('!ring', '!ring-primary', '!ring-3');
-				setTimeout(() => el.classList.remove('!ring', '!ring-primary', '!ring-2'), 1500);
-			}
-		});
+			const prevBoxShadow = el.style.boxShadow;
+			// huge, soft, orange box shadow
+			el.style.boxShadow = '0 0 5px 5px orange';
+			el.style.transition = 'box-shadow 1s ease';
+			setTimeout(() => (el.style.boxShadow = prevBoxShadow), 1500);
+		}
 	}
 
 	// run highlighting update whenever currentViewType or curationEntries change
@@ -247,11 +245,11 @@
 					{#key datasetId}
 						<Curation
 							{datasetId}
-							enableMoveToData={true}
-							bind:applyTypeFilter={typeFilterExample}
-							bind:addEntry={addEntryExample}
+							enableJumpToData={true}
+							on:jumpToData={(event) => jumpToData(event.detail)}
+							bind:applyTypeFilter
+							bind:addEntry
 							bind:jumpToEntryWhere
-							bind:moveToDataReadable
 							bind:curationEntriesReadable
 						/>
 					{/key}
@@ -290,11 +288,11 @@
 			{#key datasetId}
 				<Curation
 					{datasetId}
-					enableMoveToData={true}
-					bind:applyTypeFilter={typeFilterExample}
-					bind:addEntry={addEntryExample}
+					enableJumpToData={true}
+					on:jumpToData={(event) => jumpToData(event.detail)}
+					bind:applyTypeFilter
+					bind:addEntry
 					bind:jumpToEntryWhere
-					bind:moveToDataReadable
 					bind:curationEntriesReadable
 				/>
 			{/key}
