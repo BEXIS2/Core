@@ -1,6 +1,10 @@
 <!--
   Confetti.svelte
   This component was written with much help by GitHub Copilot, using GPT-4.1.
+  It creates a confetti effect that is used for the change of the curation entry
+  state, specifically for changing to the "changed" and "approved" state.
+  Copilot was used as this component required a large amount of complex maths.
+  It has been altered to fit the specific requirements of the application.
 -->
 
 <script lang="ts">

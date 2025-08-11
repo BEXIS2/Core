@@ -717,7 +717,10 @@ export function noteCommentToLabel(noteComment: string) {
 	} as CurationLabel;
 }
 
-// -------------------- Copilot with GPT-4.1 --------------------
+// --- The function getContrastColor was generated using Copilot with GPT-4.1 ---
+// It calculates the contrast color (black or white) for a given hex color and
+// is used for the custom labels, where the curator can set custom colors,
+// creating the necessary visual distinction.
 export function getContrastColor(hex: string | undefined) {
 	if (!hex) return '#000000';
 	// Remove hash if present
@@ -736,4 +739,4 @@ export function getContrastColor(hex: string | undefined) {
 	const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
 	return luminance > 186 ? '#000000' : '#ffffff';
 }
-// --------------------------------------------------------------
+// ------------------------------------------------------------------------------
