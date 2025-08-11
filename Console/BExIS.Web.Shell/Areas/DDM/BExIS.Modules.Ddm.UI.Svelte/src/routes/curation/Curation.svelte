@@ -22,13 +22,13 @@
 	import CurationEntryList from './CurationEntryList.svelte';
 	import StartCuration from './StartCuration.svelte';
 	import { slide } from 'svelte/transition';
+	import ColorPalettePicker from './ColorPalettePicker.svelte';
 
 	const {
 		loadingCuration,
 		loadingError,
 		curation,
 		editMode,
-		statusColorPalette,
 		hasFiltersApplied,
 		curationInfoExpanded,
 		progressInfoExpanded,
@@ -142,25 +142,7 @@
 				in:slide={{ duration: 150 }}
 				out:slide={{ duration: 150 }}
 			>
-				<label class="flex">
-					<span class="mr-1">Color palette for the entry status:</span>
-					<select
-						bind:value={$statusColorPalette}
-						title="Change color palette of entry status"
-						class="rounded-l py-0.5 text-sm"
-					>
-						{#each CurationEntryStatusColorPalettes as colorPalette}
-							<option value={colorPalette}>{colorPalette.name}</option>
-						{/each}
-					</select>
-					<div
-						class="flex items-center gap-x-1 overflow-hidden rounded-r border-y border-r border-surface-500 px-2"
-					>
-						{#each $statusColorPalette.colors as c}
-							<div class="inline size-2 rounded-full" style="background-color: {c}">&nbsp;</div>
-						{/each}
-					</div>
-				</label>
+				<ColorPalettePicker />
 			</div>
 		{/if}
 		<!-- Progress -->
