@@ -246,7 +246,7 @@ export enum helpType {
 }
 
 export enum CurationStatusEntryTab {
-	Introduction,
+	Greeting,
 	Tasks,
 	Hide
 }

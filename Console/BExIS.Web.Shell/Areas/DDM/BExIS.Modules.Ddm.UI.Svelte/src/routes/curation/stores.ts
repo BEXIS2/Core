@@ -234,6 +234,10 @@ class CurationStore {
 		this.applyAndSaveEntry(entryId, (entry) => entry.setName(name), debounce);
 	}
 
+	public setTopic(entryId: number, topic: string, debounce: boolean = false) {
+		this.applyAndSaveEntry(entryId, (entry) => entry.setTopic(topic), debounce);
+	}
+
 	public setDescription(entryId: number, description: string, debounce: boolean = false) {
 		this.applyAndSaveEntry(entryId, (entry) => entry.setDescription(description), debounce);
 	}

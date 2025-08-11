@@ -16,6 +16,7 @@
 	import TaskList from './TaskList.svelte';
 	import CurationLabel from './CurationLabel.svelte';
 	import { slide } from 'svelte/transition';
+	import Greeting from './Greeting.svelte';
 
 	export let curationStatusEntry: CurationEntryClass;
 
@@ -29,23 +30,23 @@
 		return $uploadingEntries.includes(curationStatusEntry.id);
 	});
 
-	const editIntroductionMode = writable(false);
+	const editGreetingMode = writable(false);
 
-	let introduction = curationStatusEntry.name;
+	let greeting = curationStatusEntry.topic;
 
-	const editIntroduction = () => {
-		introduction = curationStatusEntry.name;
-		editIntroductionMode.set(true);
+	const editGreeting = () => {
+		greeting = curationStatusEntry.topic;
+		editGreetingMode.set(true);
 	};
 
-	const saveIntroduction = () => {
-		editIntroductionMode.set(false);
-		curationStore.setName(curationStatusEntry.id, introduction);
+	const saveGreeting = () => {
+		editGreetingMode.set(false);
+		curationStore.setTopic(curationStatusEntry.id, greeting);
 	};
 
-	const cancelIntroductionEdit = () => {
-		introduction = curationStatusEntry.name;
-		editIntroductionMode.set(false);
+	const cancelGreetingEdit = () => {
+		greeting = curationStatusEntry.topic;
+		editGreetingMode.set(false);
 	};
 
 	const editTasksMode = writable(false);
@@ -129,7 +130,7 @@
 	</div>
 {/if}
 
-<!-- Introduction and Tasks -->
+<!-- Greeting and Tasks -->
 <div class="relative overflow-x-hidden border-b border-surface-500 p-2">
 	{#if $curation?.isCurator}
 		<!-- Tabs -->
@@ -137,19 +138,19 @@
 			class="tab-switch relative flex items-stretch gap-1 rounded border border-surface-300 bg-surface-200 p-0.5"
 		>
 			<label
-				title="Introduction tab"
+				title="Greeting tab"
 				class="flex grow cursor-pointer flex-wrap content-center items-center justify-center gap-x-1 rounded px-2 py-0.5 text-center text-surface-800 transition-colors"
 			>
 				<input
 					type="radio"
 					class="pointer-events-none absolute opacity-0"
-					title="Activate Introduction Tab"
+					title="Go to Greeting Tab"
 					checked
 					bind:group={$currentStatusEntryTab}
-					value={CurationStatusEntryTab.Introduction}
+					value={CurationStatusEntryTab.Greeting}
 				/>
 				<Fa icon={faDoorOpen} class="inline-block" />
-				<span class="font-semibold">Introduction</span>
+				<span class="font-semibold">Greeting</span>
 			</label>
 			<label
 				title="Tasks tab"
@@ -158,7 +159,7 @@
 				<input
 					type="radio"
 					class="pointer-events-none absolute opacity-0"
-					title="Activate Task Tab"
+					title="Go to Task Tab"
 					bind:group={$currentStatusEntryTab}
 					value={CurationStatusEntryTab.Tasks}
 				/>
@@ -182,38 +183,33 @@
 			</label>
 		</div>
 
-		<!-- Introduction content -->
-		{#if $currentStatusEntryTab === CurationStatusEntryTab.Introduction}
+		<!-- Greeting content -->
+		{#if $currentStatusEntryTab === CurationStatusEntryTab.Greeting}
 			<div
 				class="mt-2 overflow-x-hidden rounded bg-surface-200 px-2 py-1"
 				in:slide={{ duration: 150 }}
 				out:slide={{ duration: 150 }}
 			>
-				{#if !$editIntroductionMode}
+				{#if !$editGreetingMode}
 					<p class="text-surface-800">
-						{#each curationStatusEntry.name.split('\n') as line, index}
-							{line}
-							{#if index < curationStatusEntry.name.split('\n').length - 1}
-								<br />
-							{/if}
-						{/each}
+						<Greeting {greeting} />
 					</p>
 					<div class="flex flex-row-reverse justify-between">
 						<button
 							class="variant-soft-secondary btn mb-1 mt-2 px-2 py-0.5"
-							on:click={editIntroduction}
-							title="Edit Introduction"
+							on:click={editGreeting}
+							title="Edit Greeting"
 						>
 							<Fa icon={faPen} class="mr-1 inline-block" />
-							<span class="ml-1">Edit Introduction</span>
+							<span class="ml-1">Edit Greeting</span>
 						</button>
 					</div>
 				{:else}
-					<!-- Text area - Introduction -->
+					<!-- Text area - Greeting -->
 					<label class="block">
-						<span class="text-surface-700">Introduction:</span>
+						<span class="text-surface-700">Greeting:</span>
 						<textarea
-							bind:value={introduction}
+							bind:value={greeting}
 							class="mt-1 w-full rounded border border-surface-500 px-2 py-1 text-sm text-surface-800 focus-visible:border-surface-700 focus-visible:outline-none"
 							rows="6"
 							placeholder="Enter introduction text"
@@ -223,7 +219,7 @@
 						<!-- Cancel button -->
 						<button
 							class="variant-ghost-surface btn px-2 py-1"
-							on:click={cancelIntroductionEdit}
+							on:click={cancelGreetingEdit}
 							title="Cancel introduction editing"
 						>
 							<Fa icon={faXmark} class="mr-2 inline-block" />
@@ -232,11 +228,11 @@
 						<!-- Save button -->
 						<button
 							class="variant-filled-success btn px-2 py-1"
-							on:click={saveIntroduction}
-							title="Save Introduction"
+							on:click={saveGreeting}
+							title="Save Greeting"
 						>
 							<Fa icon={faFloppyDisk} class="mr-2 inline-block" />
-							<span class="ml-1">Save Introduction</span>
+							<span class="ml-1">Save Greeting</span>
 						</button>
 					</div>
 				{/if}

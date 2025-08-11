@@ -599,6 +599,17 @@ export class CurationEntryClass implements CurationEntryModel {
 		);
 	}
 
+	public setTopic(topic: string): CurationEntryClass {
+		if (this.topic === topic) return this;
+		return new CurationEntryClass(
+			{
+				...this,
+				topic: topic
+			},
+			this.currentUserType
+		);
+	}
+
 	public setDescription(description: string): CurationEntryClass {
 		if (this.description === description) return this;
 		return new CurationEntryClass(
