@@ -424,6 +424,7 @@ namespace BExIS.Dlm.Services.Data
                     var workingCopy = getDatasetWorkingCopy(entity.Id);
                     //This fetch and insert will be problematic on bigger datasets! try implement the logic without loading the tuples
                     var tupleIds = getWorkingCopyTupleIds(workingCopy);
+                    workingCopy.ContentDescriptors.Clear(); // clear the content descriptors, so that they are not copied to the history table
                     workingCopy = editDatasetVersionBig(workingCopy, null, null, tupleIds, null); // deletes all the tuples from the active list and moves them to the history table
                     checkInDataset(entity.Id, "Dataset is deleted", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, deleteReason, TagType.None);
 
@@ -472,6 +473,7 @@ namespace BExIS.Dlm.Services.Data
                 IRepository<DatasetVersion> datasetVersionRepo = uow.GetRepository<DatasetVersion>();
                 IRepository<DataTuple> tupleRepo = uow.GetRepository<DataTuple>();
                 IRepository<DataTupleVersion> tupleVersionRepo = uow.GetRepository<DataTupleVersion>();
+                IRepository<ContentDescriptor> contentDescriptorRepo = uow.GetRepository<ContentDescriptor>();
 
                 //this.DatasetRepo.Evict();
                 //this.DatasetVersionRepo.Evict();
@@ -499,13 +501,15 @@ namespace BExIS.Dlm.Services.Data
                 {
               
                     // get the latest dataset with data (a)
-                    var dataset = DatasetRepo.Get(entity.Id);
+                    var dataset = datasetRepo.Get(entity.Id);
                     var versions = dataset.Versions.OrderBy(v => v.Id);
                     var deletedDatasetVersion = versions.ElementAt(dataset.Versions.Count - 1);
+                    //deletedDatasetVersion = datasetVersionRepo.Get(deletedDatasetVersion.Id);
+
                     var lastDatasetVersion = versions.ElementAt(dataset.Versions.Count - 2);
 
                     // get all datatuples belong to a
-                    var deletedTupleVersions = DataTupleVersionRepo.Query().Where(t =>
+                    var deletedTupleVersions = tupleVersionRepo.Query().Where(t =>
                         t.DatasetVersion.Id.Equals(lastDatasetVersion.Id) &&
                         t.ActingDatasetVersion.Id.Equals(deletedDatasetVersion.Id)
                         ).ToList();
@@ -547,22 +551,27 @@ namespace BExIS.Dlm.Services.Data
                         }
                     }
 
-                    tupleVersionRepo.Delete(deletedTupleVersions.Select(v=>v.Id).ToList());
+                    tupleVersionRepo.Delete(deletedTupleVersions.Select(v => v.Id).ToList());
 
-                   
+                    uow.Commit(); // commit datatuple changes
 
+
+                    //lastDatasetVersion = datasetVersionRepo.Get(lastDatasetVersion.Id);
                     lastDatasetVersion.Status = DatasetVersionStatus.CheckedIn;
-                    datasetVersionRepo.Put(lastDatasetVersion);
+                    //datasetVersionRepo.Put(lastDatasetVersion);
                     dataset.Status = DatasetStatus.CheckedIn;
+
+
                     dataset.Versions.Remove(deletedDatasetVersion);
 
                     datasetVersionRepo.Delete(deletedDatasetVersion.Id);
+
                     datasetRepo.Put(dataset);
                     uow.Commit();
 
                     // if any problem was detected during the commit, an exception will be thrown!
-                    if ((entity.DataStructure is StructuredDataStructure))
-                        updateMaterializedView(datasetId, ViewCreationBehavior.Create, false);
+                    if (entity.DataStructure != null)
+                        SyncView(entity.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
 
                     LoggerFactory.LogCustom("dataset " + datasetId + " returns from delete status");
 

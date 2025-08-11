@@ -245,6 +245,7 @@
     <Content Include="Views\FormerMember\_formerMemberContent.cshtml" />
     <Content Include="Views\FormerMember\_formerMemberSearch.cshtml" />
     <Content Include="Web.config" />
+    <Content Include="Views\Datasets\UndoDelete.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

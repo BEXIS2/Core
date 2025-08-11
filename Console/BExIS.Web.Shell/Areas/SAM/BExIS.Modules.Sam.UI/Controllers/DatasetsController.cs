@@ -141,6 +141,88 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Deletes a dataset, which means the dataset is marked as deleted, but is not physically removed from the database.
+        /// </summary>
+        /// <param name="id">the identifier of the dataset to be purged.</param>
+        /// <remarks>When a dataset is deleted, it is consodered as non-exisiting, but for the sake or provenance, citation, history, etc, it is not removed froom the database.
+        /// The function to recover a deleted dataset, will not be provided.</remarks>
+        /// <returns></returns>
+        //[MeasurePerformance]
+        public ActionResult UndoDelete(long id)
+        {
+            using (var datasetManager = new DatasetManager())
+            using (var entityPermissionManager = new EntityPermissionManager())
+            using (var entityManager = new EntityManager())
+            using (var subjectManager = new SubjectManager())
+            using (var userManager = new UserManager())
+            {
+                try
+                {
+                    var userName = GetUsernameOrDefault();
+                    var user = userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
+
+                    // check if a user is logged in
+                    if (user != null)
+                    {
+                        // is the user allowed to delete this dataset
+                        if (entityPermissionManager.HasEffectiveRightsAsync(user.UserName, typeof(Dataset), id, Security.Entities.Authorization.RightType.Delete).Result)
+                        {
+                            //try delete the dataset
+                            if (datasetManager.UndoDeleteDataset(id, ControllerContext.HttpContext.User.Identity.Name, true))
+                            {
+                                //send email
+                                using (var emailService = new EmailService())
+                                {
+                                    emailService.Send(MessageHelper.GetDeleteDatasetHeader(id, typeof(Dataset).Name),
+                                    MessageHelper.GetDeleteDatasetMessage(id, user.Name, typeof(Dataset).Name),
+                                    GeneralSettings.SystemEmail
+                                    );
+                                }
+
+                                //entityPermissionManager.Delete(typeof(Dataset), id); // This is not needed here.
+
+                                if (this.IsAccessible("DDM", "SearchIndex", "ReIndexUpdateSingle"))
+                                {
+                                    var x = this.Run("DDM", "SearchIndex", "ReIndexUpdateSingle", new RouteValueDictionary() { { "id", id }, { "actionType", "DELETE" } });
+                                }
+                            }
+                        }
+                        else // user is not allowed
+                        {
+                            ViewData.ModelState.AddModelError("", $@"You do not have the permission to delete the record.");
+
+                            using (var emailService = new EmailService())
+                            {
+                                emailService.Send(MessageHelper.GetTryToDeleteDatasetHeader(id, typeof(Dataset).Name),
+                                MessageHelper.GetTryToDeleteDatasetMessage(id, GetUsernameOrDefault(), typeof(Dataset).Name),
+                                GeneralSettings.SystemEmail
+                                );
+                            }
+                        }
+                    }
+                    else // no user exist
+                    {
+                        ViewData.ModelState.AddModelError("", $@"This function can only be executed with a logged-in user.");
+
+                        using (var emailService = new EmailService())
+                        {
+                            emailService.Send(MessageHelper.GetTryToDeleteDatasetHeader(id, typeof(Dataset).Name),
+                                                            MessageHelper.GetTryToDeleteDatasetMessage(id, userName, typeof(Dataset).Name),
+                                                            GeneralSettings.SystemEmail
+                                                            );
+                        }
+                    }
+                }
+                catch (Exception e) //for technical reasons the dataset cannot be deleted
+                {
+                    ViewData.ModelState.AddModelError("", $@"Dataset {id} could not be deleted.");
+                }
+            }
+
+            return View();
+        }
+
         public ActionResult FlipDateTime(long id, long variableid)
         {
             DatasetManager datasetManager = new DatasetManager();

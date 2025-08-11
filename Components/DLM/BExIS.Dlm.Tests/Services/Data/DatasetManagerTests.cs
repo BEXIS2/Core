@@ -163,28 +163,37 @@ namespace BExIS.Dlm.Tests.Services.Data
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
                 id = dataset.Id;
 
-                dsHelper.GenerateTuplesForDataset(dataset, dataStructure, 1000, "david test");
+                //dsHelper.GenerateTuplesForDataset(dataset, dataStructure, 1000, "david test");
                 dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", "david test", ViewCreationBehavior.None);
-                dm.DeleteDataset(dataset.Id, "David", false);
 
-                dataset.Should().NotBeNull();
-                dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
-                dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
-                dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
-                dataset.Status.Should().Be(DatasetStatus.Deleted, "Dataset must be in Deleted status.");
+                using (var datasetmanager = new DatasetManager())
+                {
+                    datasetmanager.DeleteDataset(dataset.Id, "David", false);
 
-                // Act
-                dm.UndoDeleteDataset(dataset.Id, "David test", true);
-                var c = dm.GetDatasetLatestVersionEffectiveTupleCount(dataset);
+                    dataset.Should().NotBeNull();
+                    dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
+                    dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
+                    dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
+                    dataset.Status.Should().Be(DatasetStatus.Deleted, "Dataset must be in Deleted status.");
+                    dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", "david test", ViewCreationBehavior.None);
+                }
 
-                //Assert
-                dataset = dm.GetDataset(id);
-                dataset.Should().NotBeNull();
-                dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
-                dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
-                dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
-                dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in Deleted status.");
-                Assert.That(c.Equals(1000), "version has not same tuples");
+                using (var datasetmanager = new DatasetManager())
+                {
+                    dataset = datasetmanager.GetDataset(id);
+                    // Act
+                    datasetmanager.UndoDeleteDataset(dataset.Id, "David test", true);
+                    var c = datasetmanager.GetDatasetLatestVersionEffectiveTupleCount(dataset);
+
+                    //Assert
+                    dataset = datasetmanager.GetDataset(id);
+                    dataset.Should().NotBeNull();
+                    dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
+                    dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
+                    dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
+                    dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in Deleted status.");
+                    Assert.That(c.Equals(1000), "version has not same tuples");
+                }
             }
             finally
             {
