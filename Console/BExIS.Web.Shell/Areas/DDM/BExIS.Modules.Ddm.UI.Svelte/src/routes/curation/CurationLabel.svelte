@@ -19,6 +19,8 @@
 	export let labelNote: CurationNoteClass | undefined = undefined;
 	export let remainingLabels: { name: string; color: string }[] | undefined = undefined;
 
+	const { curation } = curationStore;
+
 	if (!curationStatusEntry || curationStatusEntry.type !== CurationEntryType.StatusEntryItem) {
 		throw new Error('Invalid CurationStatusEntry provided');
 	}
@@ -35,6 +37,19 @@
 	);
 
 	const statusChange = () => {
+		if (
+			statusIndex == 3 &&
+			$curation?.curationEntries.some((entry) => entry.status < 2 && entry.isVisible())
+		) {
+			// If the status is set to "finished" but there are still "Open" or "Changed" entries,
+			// show an error message and prevent the status change.
+			alert('Cannot set status to finished while there are still unfinished entries.');
+			statusIndex = getCurationStatusFromBoolean(
+				curationStatusEntry.userIsDone,
+				curationStatusEntry.isApproved
+			);
+			return;
+		}
 		setStatus(statusIndex);
 	};
 
