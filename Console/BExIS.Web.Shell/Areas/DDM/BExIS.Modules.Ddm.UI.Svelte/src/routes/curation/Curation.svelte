@@ -187,7 +187,7 @@
 					class="mr-2 inline-block transition-transform {$curationInfoExpanded ? '' : 'rotate-180'}"
 				/>
 				{#if $curationInfoExpanded}
-					Contract
+					Collapse
 				{:else}
 					Expand
 				{/if}
@@ -207,7 +207,7 @@
 			{#if $curation?.isCurator}
 				<button on:click={toggleEditMode} class="variant-soft-secondary btn grow px-2 py-1">
 					<Fa icon={$editMode ? faExpand : faPen} class="mr-2 inline-block" />
-					Go to {$editMode ? 'View' : 'Edit'} Mode
+					Switch to {$editMode ? 'View' : 'Edit'} Mode
 				</button>
 			{/if}
 		</div>

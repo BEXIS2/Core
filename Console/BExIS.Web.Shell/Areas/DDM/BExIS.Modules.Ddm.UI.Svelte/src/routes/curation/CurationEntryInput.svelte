@@ -49,10 +49,10 @@
 	out:slide={{ duration: 150 }}
 >
 	<label class="min-w-32 grow basis-2/5">
-		<span class="label-text">Type:</span>
+		<span class="label-text">Category:</span>
 		<div class="flex items-stretch">
 			<select bind:value={inputData.type} class="input rounded-r-none" required>
-				<option value="" disabled>Select type</option>
+				<option value="" disabled>Select category</option>
 				<option value={CurationEntryType.None}>None (Hidden)</option>
 				<!-- Status should not be created created this way -->
 				<!-- <option value={CurationEntryType.StatusEntryItem}>Status</option> -->
@@ -90,7 +90,7 @@
 	</label>
 
 	<label class="grow basis-full">
-		<span class="label-text">Name:</span>
+		<span class="label-text">Title:</span>
 		<div class="flex items-stretch">
 			<input
 				type="text"

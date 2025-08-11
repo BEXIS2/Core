@@ -271,7 +271,7 @@
 								? 'rotate-180'
 								: ''}"
 						/>
-						Move overlay {overlayPosition === 'left' ? 'right' : 'left'}
+						Move {overlayPosition === 'left' ? 'right' : 'left'}
 					</button>
 					<button class="variant-filled-primary btn grow !rounded-none" on:click={toggleOverlay}>
 						<Fa icon={faCircleDot} class="mr-2 inline-block" />
