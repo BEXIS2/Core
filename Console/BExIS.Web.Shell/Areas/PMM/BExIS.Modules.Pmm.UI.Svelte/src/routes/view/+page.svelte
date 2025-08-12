@@ -59,8 +59,11 @@
 }
 
 function shortenDoi(doi: string): string {
-    return doi.replace(/^(https?:\/\/)?(dx\.)?doi\.org\//, '').replace(/^doi:/, '');
+  const parts = doi.split('/');
+  return parts.length >= 4 ? parts.slice(3).join('/') : '';
 }
+
+
 
 
 function getGlobalIndex(resource: ResourceArray): number {
