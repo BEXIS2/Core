@@ -109,8 +109,24 @@ namespace BEXIS.JSON.Helpers
             current = addAttributes(current);
 
             // add to parent
-            schema.Properties.Add(usage.Label, current);
+            // check if usage has cardinality >1 then create a array before
+            if (getMaxCardinality(usage) > 1)
+            {
+                JSchema array = new JSchema();
+                array.Type = JSchemaType.Array;
+                array.Items.Add(current);
+                schema.Properties.Add(usage.Label, array);
 
+                // add Range contraint
+                array.MinimumItems = usage.MinCardinality;
+                array.MaximumItems = usage.MaxCardinality;
+            }
+            else // add object to schema
+            {
+                schema.Properties.Add(usage.Label, current);
+            }
+
+         
             return schema;
         }
 
