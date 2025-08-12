@@ -215,7 +215,7 @@ namespace BExIS.Xml.Helpers.UnitTests
             //Arrange
             XmlMetadataConverter xmlMetadataHelper = new XmlMetadataConverter();
 
-            var metadataOriginalXMl = "ConvertTo_JsonToXml.xml";
+            var metadataOriginalXMl = "ConvertTo_JsonToXmlArray.xml";
             string path = AppDomain.CurrentDomain.BaseDirectory;
             string metadataOriginalXMlPath = Path.Combine(path, metadataOriginalXMl);
 
