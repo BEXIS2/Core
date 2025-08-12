@@ -160,6 +160,7 @@
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DdmModule.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Helpers\CitationHelper.cs" />
     <Compile Include="Helpers\DdmSeedDataGenerator.cs" />
     <Compile Include="Helpers\GridHelper.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />
@@ -266,6 +267,9 @@
     <Content Include="Views\Search\Index.cshtml" />
     <Content Include="Views\PublicSearch\Index.cshtml" />
     <Content Include="Views\Data\_labelsView.cshtml" />
+    <Content Include="Views\Data\_Citation_Text.cshtml" />
+    <Content Include="Views\Data\_Citation_APA.cshtml" />
+    <Content Include="Views\Data\_Title.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -292,7 +296,7 @@
       <Name>BExIS.Security.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\App\BExIS.App.Bootstrap\BExIS.App.Bootstrap.csproj">
-      <Project>{7D7FBF8E-37D7-4A4C-B40E-3F267E9B9760}</Project>
+      <Project>{7d7fbf8e-37d7-4a4c-b40e-3f267e9b9760}</Project>
       <Name>BExIS.App.Bootstrap</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">

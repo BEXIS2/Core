@@ -117,41 +117,7 @@ namespace BExIS.Xml.Helpers
             else return false;
         }
 
-        //public static XmlNode GetXmlAttributeByName(XmlNode parentNode, string name, bool recursiv = true)
-        //{
-        //    if (parentNode == null || string.IsNullOrWhiteSpace(name)) return null;
-
-        //    return getXmlAttributeByName(parentNode, name, recursiv);
-        //}
-
-        //private static XmlNode getXmlAttributeByName(XmlNode node, string name, bool recursiv = true)
-        //{
-        //    if (node.LocalName.Equals(name))
-        //        return node;
-        //    else
-        //    {
-        //        if (node.HasChildNodes)
-        //        {
-        //            foreach (XmlNode child in node.ChildNodes)
-        //            {
-        //                if (recursiv)
-        //                {
-        //                    var tmp = getXmlNodeByName(child, name);
-
-        //                    if (tmp != null)
-        //                        return tmp;
-        //                }
-        //                else
-        //                {
-        //                    if (child.LocalName.Equals(name))
-        //                        return node;
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    return null;
-        //}
+       
 
         public static XmlNode GetXmlNodeByName(XmlNode parentNode, string name, bool recursiv = true)
         {
@@ -187,6 +153,29 @@ namespace BExIS.Xml.Helpers
             }
 
             return null;
+        }
+
+        public static IEnumerable<XmlNode> FindChildrenRecursive(XmlNode parent, string name)
+        {
+            // Check if the current node has children.
+            if (parent.HasChildNodes)
+            {
+                // Iterate through all the children of the current node.
+                foreach (XmlNode child in parent.ChildNodes)
+                {
+                    // If the child's name matches the target name, yield it.
+                    if (child.Name == name)
+                    {
+                        yield return child;
+                    }
+
+                    // Recursively call the method on the current child and yield its results.
+                    foreach (XmlNode foundChild in FindChildrenRecursive(child, name))
+                    {
+                        yield return foundChild;
+                    }
+                }
+            }
         }
 
         public static XmlNode GetXmlNodeByAttribute(XmlNode parentNode, string name, string attrName, string attrValue)
@@ -284,12 +273,18 @@ namespace BExIS.Xml.Helpers
                     }
                     else
                     {
-                        if (parent != null) node = parent.AppendChild(doc.CreateElement(nodeName));
-                        else if (doc != null && doc.DocumentElement == null)
+                        int add = index;
+                        if(nodes != null && index > nodes.Count) add = index - nodes.Count;
+
+                        for (int i = 0; i < add; i++)
                         {
-                            node = doc.AppendChild(doc.CreateElement(nodeName));
+                            if (parent != null) node = parent.AppendChild(doc.CreateElement(nodeName));
+                            else if (doc != null && doc.DocumentElement == null)
+                            {
+                                node = doc.AppendChild(doc.CreateElement(nodeName));
+                            }
+                            else return null;
                         }
-                        else return null;
                     }
                 }
             
