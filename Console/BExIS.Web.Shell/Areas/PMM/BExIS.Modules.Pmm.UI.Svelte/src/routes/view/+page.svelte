@@ -115,43 +115,43 @@ function getGlobalIndex(resource: ResourceArray): number {
                     </h4>
                     <div class="flex flex-col gap-1 text-sm text-gray-700">
                         {#if dataset.SubmissionDate}
-                            <div><span class="font-medium text-gray-500">Submission Date:</span> {dataset.SubmissionDate}</div>
+                            <div><p class="font-medium text-gray-500">Submission Date:</p> {dataset.SubmissionDate}</div>
                         {/if}
                         {#if dataset.EmbargoEnd}
-                            <div><span class="font-medium text-gray-500">Embargo End:</span> {dataset.EmbargoEnd}</div>
+                            <div><p class="font-medium text-gray-500">Embargo End:</p> {dataset.EmbargoEnd}</div>
                         {/if}
                         {#if dataset.URI}
                             <div>
-                                <span class="font-medium text-gray-500">URI:</span>
+                                <p class="font-medium text-gray-500">URI:</p>
                                 <a href={dataset.URI} target="_blank" class="text-bexis2-primary underline break-all">{shortenUri(dataset.URI)}</a>
                             </div>
                         {/if}
                         {#if dataset.URIHealth}
-                            <div><span class="font-medium text-gray-500">URI Health:</span> {dataset.URIHealth}</div>
+                            <div><p class="font-medium text-gray-500">URI Health:</p> {dataset.URIHealth}</div>
                         {/if}
                         {#if dataset.DOI}
-                <div>
-                    <span class="font-medium text-gray-500">DOI:</span>
-                    <a
-                        href={"https://doi.org/" + shortenDoi(dataset.DOI)}
-                        target="_blank"
-                        class="text-bexis2-primary underline break-all"
-                    >
-                        {shortenDoi(dataset.DOI)}
-                    </a>
-                </div>
-{/if}
+                            <div>
+                                <p class="font-medium text-gray-500">DOI:</p>
+                                <a
+                                    href={"https://doi.org/" + shortenDoi(dataset.DOI)}
+                                    target="_blank"
+                                    class="text-bexis2-primary underline break-all"
+                                >
+                                    {shortenDoi(dataset.DOI)}
+                                </a>
+                            </div>
+                        {/if}
                         {#if dataset.DOIHealth}
-                            <div><span class="font-medium text-gray-500">DOI Health:</span> {dataset.DOIHealth}</div>
+                            <div><p class="font-medium text-gray-500">DOI Health:</p> {dataset.DOIHealth}</div>
                         {/if}
                         {#if dataset.RepositoryName}
-                            <div><span class="font-medium text-gray-500">Repository Name:</span> {dataset.RepositoryName}</div>
+                            <div><p class="font-medium text-gray-500">Repository Name:</p> {dataset.RepositoryName}</div>
                         {/if}
                         {#if dataset.Licence}
-                            <div><span class="font-medium text-gray-500">Licence:</span> {dataset.Licence}</div>
+                            <div><p class="font-medium text-gray-500">Licence:</p> {dataset.Licence}</div>
                         {/if}
                         {#if dataset.ProgrammingLanguage}
-                            <div><span class="font-medium text-gray-500">Programming Language:</span> {dataset.ProgrammingLanguage}</div>
+                            <div><p class="font-medium text-gray-500">Programming Language:</p> {dataset.ProgrammingLanguage}</div>
                         {/if}
                     </div>
                 </div>
