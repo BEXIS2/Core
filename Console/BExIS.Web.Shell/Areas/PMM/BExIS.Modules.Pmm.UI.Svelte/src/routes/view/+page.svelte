@@ -124,28 +124,45 @@ function getGlobalIndex(resource: ResourceArray): number {
                             <div><p class="font-medium text-gray-500">Embargo End:</p> {dataset.EmbargoEnd}</div>
                         {/if}
                         {#if dataset.URI}
-                            <div>
-                                <p class="font-medium text-gray-500">URI:</p>
-                                <a href={dataset.URI} target="_blank" class="text-bexis2-primary underline break-all">{shortenUri(dataset.URI)}</a>
-                            </div>
+                            <div class="flex">
+                                <div class="w-26 border border-gray-500 rounded-l px-2 py-1"
+                                    class:bg-success-300={dataset.URIHealth === 'yes' || dataset.URIHealth === 'true'}
+                                    class:bg-error-300={dataset.URIHealth === 'no' || dataset.URIHealth === 'false' || dataset.URIHealth === 'no data made available online'}
+                                    class:bg-warning-300={dataset.URIHealth !== 'yes' && dataset.URIHealth !== 'true' && dataset.URIHealth !== 'no' && dataset.URIHealth !== 'false' && dataset.URIHealth !== 'no data made available online'}
+                                >  
+                                    <span class="font-medium text-gray-500">URI</span>
+                                </div>
+                                <div class="border-t border-b border-r border-gray-500 rounded-r px-2 py-1">
+                                    <a
+                                        href={dataset.URI}
+                                        target="_blank"
+                                        class="text-bexis2-primary underline break-all"
+                                    >
+                                        {shortenUri(dataset.URI)}
+                                    </a>
+                                </div>
+                            </div>  
                         {/if}
-                        {#if dataset.URIHealth}
-                            <div><p class="font-medium text-gray-500">URI Health:</p> {dataset.URIHealth}</div>
-                        {/if}
+
                         {#if dataset.DOI}
-                            <div>
-                                <p class="font-medium text-gray-500">DOI:</p>
-                                <a
-                                    href={"https://doi.org/" + shortenDoi(dataset.DOI)}
-                                    target="_blank"
-                                    class="text-bexis2-primary underline break-all"
-                                >
-                                    {shortenDoi(dataset.DOI)}
-                                </a>
+                            <div class="flex">
+                                <div class="w-26 border border-gray-500 rounded-l px-2 py-1"
+                                    class:bg-success-300={dataset.URIHealth === 'yes' || dataset.URIHealth === 'true'}
+                                    class:bg-error-300={dataset.URIHealth === 'no' || dataset.URIHealth === 'false' || dataset.URIHealth === 'no data made available online'}
+                                    class:bg-warning-300={dataset.URIHealth !== 'yes' && dataset.URIHealth !== 'true' && dataset.URIHealth !== 'no' && dataset.URIHealth !== 'false' && dataset.URIHealth !== 'no data made available online'}
+                                >  
+                                    <span class="font-medium text-gray-500">DOI</span>
+                                </div>
+                                <div class="border-t border-b border-r border-gray-500 rounded-r px-2 py-1">
+                                      <a
+                                        href={"https://doi.org/" + shortenDoi(dataset.DOI)}
+                                        target="_blank"
+                                        class="text-bexis2-primary underline break-all"
+                                    >
+                                        {shortenDoi(dataset.DOI)}
+                                    </a>
+                                </div>
                             </div>
-                        {/if}
-                        {#if dataset.DOIHealth}
-                            <div><p class="font-medium text-gray-500">DOI Health:</p> {dataset.DOIHealth}</div>
                         {/if}
                         {#if dataset.RepositoryName}
                             <div><p class="font-medium text-gray-500">Repository Name:</p> {dataset.RepositoryName}</div>
