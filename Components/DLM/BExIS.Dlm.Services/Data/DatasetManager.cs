@@ -564,7 +564,7 @@ namespace BExIS.Dlm.Services.Data
 
                     dataset.Versions.Remove(deletedDatasetVersion);
 
-                    datasetVersionRepo.Delete(deletedDatasetVersion.Id);
+                    //datasetVersionRepo.Delete(deletedDatasetVersion.Id);
 
                     datasetRepo.Put(dataset);
                     uow.Commit();
