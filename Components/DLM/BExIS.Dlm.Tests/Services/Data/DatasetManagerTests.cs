@@ -123,7 +123,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
                 dataset.Status.Should().Be(DatasetStatus.Deleted, "Dataset must be in Deleted status.");
 
-                dm.PurgeDataset(dataset.Id);
+                dsHelper.PurgeAllDatasets();
                 dsHelper.PurgeAllDataStructures();
             }
             finally
@@ -135,7 +135,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             }
         }
 
-        //[Test()]
+        [Test()]
         public void UndoDeleteDatasetTest()
         {
             var dm = new DatasetManager();
@@ -163,7 +163,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
                 id = dataset.Id;
 
-                //dsHelper.GenerateTuplesForDataset(dataset, dataStructure, 1000, "david test");
+                dsHelper.GenerateTuplesForDataset(dataset, dataStructure, 1000, "david test");
                 dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", "david test", ViewCreationBehavior.None);
 
                 using (var datasetmanager = new DatasetManager())
@@ -197,7 +197,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             }
             finally
             {
-                dm.PurgeDataset(id);
+                dsHelper.PurgeAllDatasets();
                 dsHelper.PurgeAllDataStructures();
 
                 dm.Dispose();

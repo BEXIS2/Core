@@ -164,11 +164,19 @@ namespace BExIS.Dlm.Tests.Helpers
 
                 StructuredDataStructure dataStructure = dsManager.CreateStructuredDataStructure("dsForTesting", "DS for unit testing", "", "", Dlm.Entities.DataStructure.DataStructureCategory.Generic);
 
-                var var1 = variableManager.CreateVariable("var1UT", dataStructure.Id, varTemplate1.Id);
-                var var2 = variableManager.CreateVariable("var2UT", dataStructure.Id, varTemplate2.Id);
-                var var3 = variableManager.CreateVariable("var3UT", dataStructure.Id, varTemplate3.Id);
-                var var4 = variableManager.CreateVariable("var4UT", dataStructure.Id, varTemplate4.Id);
-                var var5 = variableManager.CreateVariable("var5UT", dataStructure.Id, varTemplate5.Id, 8);
+                if (dataStructure != null)
+                {
+                    var var1 = variableManager.CreateVariable("var1UT", dataStructure.Id, varTemplate1.Id);
+                    var var2 = variableManager.CreateVariable("var2UT", dataStructure.Id, varTemplate2.Id);
+                    var var3 = variableManager.CreateVariable("var3UT", dataStructure.Id, varTemplate3.Id);
+                    var var4 = variableManager.CreateVariable("var4UT", dataStructure.Id, varTemplate4.Id);
+                    var var5 = variableManager.CreateVariable("var5UT", dataStructure.Id, varTemplate5.Id, 8);
+                }
+                else
+                {
+                    dataStructure = dsManager.StructuredDataStructureRepo.Query(d => d.Name.Equals("dsForTesting")).FirstOrDefault();
+                }
+
 
                 return dataStructure;
             }
