@@ -2,7 +2,8 @@
     import { Page } from '@bexis2/bexis2-core-ui';
     import * as apiCalls from './services/apiCalls';
     import { onMount } from 'svelte';
-    import type { ResourceArray } from './models';
+    import type { ResourceArray, LinkType } from './models';
+    import ResourceLink from './components/link.svelte';
 
     let metadata: any;
     let datasetTitle: string;
@@ -16,7 +17,7 @@
     let groupedResources: Record<string, ResourceArray[]> = {};
 
     onMount(async () => {
-        metadata = await apiCalls.GetMetadata(1);
+        metadata = await apiCalls.GetMetadata(3);
         console.log(metadata);
 
         datasetTitle = metadata?.publication?.Title?.['#text'] ?? 'Title not available';
@@ -47,21 +48,7 @@
         }, {});
     });
 
-    function shortenUri(uri: string): string {
-    try {
-        const url = new URL(uri);
-        const host = url.hostname.replace(/^www\./, ''); // z. B. "www.example.com" → "example.com"
-        const path = url.pathname.replace(/^\/+/, '');    // führende Slashes entfernen
-        return path ? `${host}/${path}` : host;
-    } catch {
-        return uri; // Wenn keine gültige URL → gib original zurück
-    }
-}
 
-function shortenDoi(doi: string): string {
-  const parts = doi.split('/');
-  return parts.length >= 4 ? parts.slice(3).join('/') : '';
-}
 
 
 
@@ -107,72 +94,37 @@ function getGlobalIndex(resource: ResourceArray): number {
 
     {#each Object.entries(groupedResources) as [type, resources]}
         <h3 class="text-xl mt-8 mb-2">{type}</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-3 w-full gap-6">
             {#each resources as dataset, i}
-                <div class="bg-gray-50 rounded-lg shadow flex flex-col gap-2 p-5 border border-gray-100">
-                    <h4 class="text-lg font-semibold text-bexis2-primary mb-2 truncate">
-                        {dataset.Name
-                            ? dataset.Name
-                                    : `Resource ${getGlobalIndex(dataset)}`
-                        }
-                    </h4>
-                    <div class="flex flex-col gap-1 text-sm text-gray-700">
-                        {#if dataset.SubmissionDate}
-                            <div><p class="font-medium text-gray-500">Submission Date:</p> {dataset.SubmissionDate}</div>
-                        {/if}
-                        {#if dataset.EmbargoEnd}
-                            <div><p class="font-medium text-gray-500">Embargo End:</p> {dataset.EmbargoEnd}</div>
-                        {/if}
-                        {#if dataset.URI}
-                            <div class="flex">
-                                <div class="w-26 border border-gray-500 rounded-l px-2 py-1"
-                                    class:bg-success-300={dataset.URIHealth === 'yes' || dataset.URIHealth === 'true'}
-                                    class:bg-error-300={dataset.URIHealth === 'no' || dataset.URIHealth === 'false' || dataset.URIHealth === 'no data made available online'}
-                                    class:bg-warning-300={dataset.URIHealth !== 'yes' && dataset.URIHealth !== 'true' && dataset.URIHealth !== 'no' && dataset.URIHealth !== 'false' && dataset.URIHealth !== 'no data made available online'}
-                                >  
-                                    <span class="font-medium text-gray-500">URI</span>
-                                </div>
-                                <div class="border-t border-b border-r border-gray-500 rounded-r px-2 py-1">
-                                    <a
-                                        href={dataset.URI}
-                                        target="_blank"
-                                        class="text-bexis2-primary underline break-all"
-                                    >
-                                        {shortenUri(dataset.URI)}
-                                    </a>
-                                </div>
-                            </div>  
-                        {/if}
+                <div>
+                    <div class="h-52 bg-gray-50 rounded-lg shadow flex flex-col gap-2">
+                        <div class="h4 h-12 text-lg bg-primary-300 rounded-tl rounded-tr font-semibold text-bexis2-primary mb-2 pt-2 pb-2 pl-5 pr-5 truncate">
+                            {dataset.Name
+                                ? dataset.Name
+                                        : `Resource ${getGlobalIndex(dataset)}`
+                            }
+                        </div>
+                        <div class="flex flex-col gap-1 pb-5 pr-5 pl-5 text-sm text-gray-700">
+                            {#if dataset.SubmissionDate}
+                                <div><p class="font-medium text-gray-500">Submission Date:</p> {dataset.SubmissionDate}</div>
+                            {/if}
+                            {#if dataset.EmbargoEnd}
+                                <div><p class="font-medium text-gray-500">Embargo End:</p> {dataset.EmbargoEnd}</div>
+                            {/if}
+                            {#if dataset.URI}
+                                <ResourceLink type="uri" dataset={dataset} /> 
+                            {/if}
 
-                        {#if dataset.DOI}
-                            <div class="flex">
-                                <div class="w-26 border border-gray-500 rounded-l px-2 py-1"
-                                    class:bg-success-300={dataset.URIHealth === 'yes' || dataset.URIHealth === 'true'}
-                                    class:bg-error-300={dataset.URIHealth === 'no' || dataset.URIHealth === 'false' || dataset.URIHealth === 'no data made available online'}
-                                    class:bg-warning-300={dataset.URIHealth !== 'yes' && dataset.URIHealth !== 'true' && dataset.URIHealth !== 'no' && dataset.URIHealth !== 'false' && dataset.URIHealth !== 'no data made available online'}
-                                >  
-                                    <span class="font-medium text-gray-500">DOI</span>
-                                </div>
-                                <div class="border-t border-b border-r border-gray-500 rounded-r px-2 py-1">
-                                      <a
-                                        href={"https://doi.org/" + shortenDoi(dataset.DOI)}
-                                        target="_blank"
-                                        class="text-bexis2-primary underline break-all"
-                                    >
-                                        {shortenDoi(dataset.DOI)}
-                                    </a>
-                                </div>
-                            </div>
-                        {/if}
-                        {#if dataset.RepositoryName}
-                            <div><p class="font-medium text-gray-500">Repository Name:</p> {dataset.RepositoryName}</div>
-                        {/if}
-                        {#if dataset.Licence}
-                            <div><p class="font-medium text-gray-500">Licence:</p> {dataset.Licence}</div>
-                        {/if}
-                        {#if dataset.ProgrammingLanguage}
-                            <div><p class="font-medium text-gray-500">Programming Language:</p> {dataset.ProgrammingLanguage}</div>
-                        {/if}
+                            {#if dataset.DOI}
+                            <ResourceLink type="doi" dataset={dataset} />
+                            {/if}
+                            {#if dataset.RepositoryName}
+                                <div><p class="font-medium text-gray-500">Repository Name:</p> {dataset.RepositoryName}</div>
+                            {/if}
+                            {#if dataset.Licence}
+                                <div><p class="font-medium text-gray-500">Licence:</p> {dataset.Licence}</div>
+                            {/if}
+                        </div>
                     </div>
                 </div>
             {/each}

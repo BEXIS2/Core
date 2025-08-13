@@ -12,3 +12,11 @@ export interface ResourceArray {
     Licence: string;
     ProgrammingLanguage: string;
 }
+
+export enum types {
+    uri = 'uri',
+    doi = 'doi'
+}
+
+export interface LinkType {
+    type: types;}
