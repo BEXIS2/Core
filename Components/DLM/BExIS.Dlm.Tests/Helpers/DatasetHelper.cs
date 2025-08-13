@@ -22,7 +22,7 @@ namespace BExIS.Dlm.Tests.Helpers
             DatasetManager dm = new DatasetManager();
             try
             {
-                dm.GetDatasetLatestIds(true).ForEach(dsId => dm.PurgeDataset(dsId));
+                dm.DatasetRepo.Get().Select(d=>d.Id).ToList().ForEach(dsId => dm.PurgeDataset(dsId));
             }
             finally
             {

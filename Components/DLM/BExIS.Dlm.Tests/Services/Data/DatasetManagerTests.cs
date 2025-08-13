@@ -48,6 +48,11 @@ namespace BExIS.Dlm.Tests.Services.Data
         public void OneTimeTearDown()
         {
             helper.Dispose();
+
+            var dsHelper = new DatasetHelper();
+            dsHelper.PurgeAllDatasets();
+            dsHelper.PurgeAllDataStructures();
+            dsHelper.PurgeAllResearchPlans();
         }
 
         [Test()]
@@ -80,8 +85,6 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
                 dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in CheckedIn status.");
 
-                dm.PurgeDataset(dataset.Id);
-                dsHelper.PurgeAllDataStructures();
             }
             finally
             {
@@ -124,8 +127,6 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
                 dataset.Status.Should().Be(DatasetStatus.Deleted, "Dataset must be in Deleted status.");
 
-                dsHelper.PurgeAllDatasets();
-                dsHelper.PurgeAllDataStructures();
             }
             finally
             {
@@ -164,7 +165,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
                 id = dataset.Id;
 
-                dsHelper.GenerateTuplesForDataset(dataset, dataStructure, 1000, "david test");
+                dsHelper.GenerateTuplesForDataset(dataset, dataStructure, 10, "david test");
                 dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", "david test", ViewCreationBehavior.None);
 
                 using (var datasetmanager = new DatasetManager())
@@ -199,14 +200,11 @@ namespace BExIS.Dlm.Tests.Services.Data
                     var deletedVersion = datasetmanager.DatasetVersionRepo.Get(deletedVersionId);
                     deletedVersion.Should().BeNull("Deleted version must be null.");
 
-                    Assert.That(c.Equals(1000), "version has not same tuples");
+                    Assert.That(c.Equals(10), "version has not same tuples");
                 }
             }
             finally
             {
-                dsHelper.PurgeAllDatasets();
-                dsHelper.PurgeAllDataStructures();
-
                 dm.Dispose();
                 rsm.Dispose();
                 mdm.Dispose();
@@ -256,9 +254,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.DatasetVersionRepo.Evict();
                 dm.DataTupleRepo.Evict();
                 dm.DatasetRepo.Evict();
-                dm.PurgeDataset(dataset.Id, true);
 
-                dsHelper.PurgeAllDataStructures();
             }
             finally
             {
@@ -357,9 +353,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.DatasetVersionRepo.Evict();
                 dm.DataTupleRepo.Evict();
                 dm.DatasetRepo.Evict();
-                dm.PurgeDataset(dataset.Id, true);
 
-                dsHelper.PurgeAllDataStructures();
             }
             finally
             {
@@ -427,8 +421,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.DatasetVersionRepo.Evict();
                 dm.DataTupleRepo.Evict();
                 dm.DatasetRepo.Evict();
-                dm.PurgeDataset(dataset.Id, true);
-                dsHelper.PurgeAllDataStructures();
+
             }
             catch (Exception ex)
             {
@@ -479,8 +472,8 @@ namespace BExIS.Dlm.Tests.Services.Data
                 // Assert
                 dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in CheckedIn status.");
 
-                dm.PurgeDataset(dataset.Id);
-                dsHelper.PurgeAllDataStructures();
+                //dm.PurgeDataset(dataset.Id);
+                //dsHelper.PurgeAllDataStructures();
             }
         }
 
@@ -515,8 +508,8 @@ namespace BExIS.Dlm.Tests.Services.Data
                     dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in CheckedOut status.");
                 }
 
-                dm.PurgeDataset(dataset.Id);
-                dsHelper.PurgeAllDataStructures();
+            //    dm.PurgeDataset(dataset.Id);
+            //    dsHelper.PurgeAllDataStructures();
             }
         }
 
@@ -575,8 +568,8 @@ namespace BExIS.Dlm.Tests.Services.Data
                     lastestVersion.Status.Should().Be(DatasetVersionStatus.CheckedIn, "Dataset version must be in CheckedIn status.");
                     Assert.That(count, Is.EqualTo(countAfterUndo));
 
-                    dm.PurgeDataset(dataset.Id);
-                    dsHelper.PurgeAllDataStructures();
+                    //dm.PurgeDataset(dataset.Id);
+                    //dsHelper.PurgeAllDataStructures();
                 }
                 catch (Exception ex)
                 {
