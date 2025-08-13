@@ -561,10 +561,10 @@ namespace BExIS.Dlm.Services.Data
                     //datasetVersionRepo.Put(lastDatasetVersion);
                     dataset.Status = DatasetStatus.CheckedIn;
 
-
+                    datasetVersionRepo.Delete(deletedDatasetVersion.Id);
                     dataset.Versions.Remove(deletedDatasetVersion);
 
-                    //datasetVersionRepo.Delete(deletedDatasetVersion.Id);
+                   
 
                     datasetRepo.Put(dataset);
                     uow.Commit();
@@ -1774,6 +1774,33 @@ namespace BExIS.Dlm.Services.Data
                 //return (qu.ToList());
             }
 
+        }
+
+        /// <summary>
+        /// Returns the metadata of the delete dataset <param name="datasetId"></param>.
+        /// </summary>
+        /// <param name="datasetId">The dataset whose deleted metadata version is returned.</param>
+        /// <param name="includeCheckouts">Determines whether the method should return the metadata if the dataset is checked-out.</param>
+        /// <returns>The metadata of the latest version of the specified dataset as an <typeparamref name="XmlDocument"/>.</returns>
+        public XmlDocument GetDeletedDatasetMetadata(Int64 datasetId, bool includeCheckouts = false)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var datasetVRepo = uow.GetReadOnlyRepository<Dataset>();
+
+                var dataset = datasetVRepo.Query(p =>
+                                    (p.Id == datasetId)
+                                && (p.Status == DatasetStatus.Deleted)
+                            ).FirstOrDefault();
+                if (dataset == null)
+                    return null;
+
+                var version = dataset.Versions.OrderBy(v => v.Id).LastOrDefault();
+                if (version == null)
+                    return null;
+
+                return version.Metadata;
+            }
         }
 
         /// <summary>

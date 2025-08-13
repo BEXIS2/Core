@@ -5,6 +5,7 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Tests.Helpers;
+using BExIS.Security.Entities.Versions;
 using BExIS.Utils.Config;
 using BExIS.Utils.NH.Querying;
 using FluentAssertions;
@@ -181,6 +182,8 @@ namespace BExIS.Dlm.Tests.Services.Data
                 using (var datasetmanager = new DatasetManager())
                 {
                     dataset = datasetmanager.GetDataset(id);
+                    var deletedVersionId = dataset.Versions.Last().Id;
+
                     // Act
                     datasetmanager.UndoDeleteDataset(dataset.Id, "David test", true);
                     var c = datasetmanager.GetDatasetLatestVersionEffectiveTupleCount(dataset);
@@ -192,6 +195,10 @@ namespace BExIS.Dlm.Tests.Services.Data
                     dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
                     dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
                     dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in Deleted status.");
+
+                    var deletedVersion = datasetmanager.DatasetVersionRepo.Get(deletedVersionId);
+                    deletedVersion.Should().BeNull("Deleted version must be null.");
+
                     Assert.That(c.Equals(1000), "version has not same tuples");
                 }
             }
