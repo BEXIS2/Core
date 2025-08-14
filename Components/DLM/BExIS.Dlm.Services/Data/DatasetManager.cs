@@ -501,12 +501,12 @@ namespace BExIS.Dlm.Services.Data
                 {
               
                     // get the latest dataset with data (a)
-                    var dataset = datasetRepo.Get(entity.Id);
-                    var versions = dataset.Versions.OrderBy(v => v.Id);
-                    var deletedDatasetVersion = versions.ElementAt(dataset.Versions.Count - 1);
+                    entity = datasetRepo.Get(entity.Id);
+                    var versions = entity.Versions.OrderBy(v => v.Id);
+                    var deletedDatasetVersion = versions.ElementAt(entity.Versions.Count - 1);
                     //deletedDatasetVersion = datasetVersionRepo.Get(deletedDatasetVersion.Id);
 
-                    var lastDatasetVersion = versions.ElementAt(dataset.Versions.Count - 2);
+                    var lastDatasetVersion = versions.ElementAt(entity.Versions.Count - 2);
 
                     // get all datatuples belong to a
                     var deletedTupleVersions = tupleVersionRepo.Query().Where(t =>
@@ -553,25 +553,29 @@ namespace BExIS.Dlm.Services.Data
 
                     tupleVersionRepo.Delete(deletedTupleVersions.Select(v => v.Id).ToList());
 
-                    uow.Commit(); // commit datatuple changes
+                    //uow.Commit(); // commit datatuple changes
 
 
-                    //lastDatasetVersion = datasetVersionRepo.Get(lastDatasetVersion.Id);
+                    lastDatasetVersion = datasetVersionRepo.Get(lastDatasetVersion.Id);
                     lastDatasetVersion.Status = DatasetVersionStatus.CheckedIn;
-                    //datasetVersionRepo.Put(lastDatasetVersion);
-                    dataset.Status = DatasetStatus.CheckedIn;
+                    datasetVersionRepo.Put(lastDatasetVersion);
+
+                    entity.Status = DatasetStatus.CheckedIn;
 
                     datasetVersionRepo.Delete(deletedDatasetVersion.Id);
-                    dataset.Versions.Remove(deletedDatasetVersion);
+                    //entity.Versions.Remove(deletedDatasetVersion);
 
-                   
-
-                    datasetRepo.Put(dataset);
+                    entity = datasetRepo.Get(datasetId); // maybe not needed!
+                    entity.Status = DatasetStatus.CheckedIn;
+                    datasetRepo.Put(entity);
                     uow.Commit();
 
                     // if any problem was detected during the commit, an exception will be thrown!
                     if (entity.DataStructure != null)
+                    {
                         SyncView(entity.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+                    }
+
 
                     LoggerFactory.LogCustom("dataset " + datasetId + " returns from delete status");
 
@@ -579,7 +583,7 @@ namespace BExIS.Dlm.Services.Data
                 }
                 catch (Exception ex)
                 {
-                    if (entity.Status == DatasetStatus.CheckedOut)
+                    if (!IsDatasetCheckedIn(datasetId))
                     {
                         checkInDataset(entity.Id, "Checked-in after failed delete try!", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, "", TagType.None);
                     }

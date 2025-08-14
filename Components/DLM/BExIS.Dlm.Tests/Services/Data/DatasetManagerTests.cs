@@ -138,7 +138,7 @@ namespace BExIS.Dlm.Tests.Services.Data
         }
 
         [Test()]
-        public void UndoDeleteDatasetTest()
+        public void PurgeDatasetTest()
         {
             var dm = new DatasetManager();
             var rsm = new ResearchPlanManager();
@@ -170,7 +170,7 @@ namespace BExIS.Dlm.Tests.Services.Data
 
                 using (var datasetmanager = new DatasetManager())
                 {
-                    datasetmanager.DeleteDataset(dataset.Id, "David", false);
+                    datasetmanager.PurgeDataset(dataset.Id);
 
                     dataset.Should().NotBeNull();
                     dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
@@ -180,13 +180,70 @@ namespace BExIS.Dlm.Tests.Services.Data
                     dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", "david test", ViewCreationBehavior.None);
                 }
 
+                
+            }
+            finally
+            {
+                dm.Dispose();
+                rsm.Dispose();
+                mdm.Dispose();
+                etm.Dispose();
+            }
+        }
+
+        [Test()]
+        public void UndoDeleteDataset_withData_DatasetExist()
+        {
+            var dm = new DatasetManager();
+            var rsm = new ResearchPlanManager();
+            var mdm = new MetadataStructureManager();
+            var etm = new EntityTemplateManager();
+
+            var dsHelper = new DatasetHelper();
+            long id = 0;
+            try
+            {
+                // Arrange
+                StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+
+                var rp = dsHelper.CreateResearchPlan();
+                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+
+                var mds = mdm.Repo.Query().First();
+                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+
+                var et = etm.Repo.Query().First();
+                et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
+                id = dataset.Id;
+
+                dsHelper.GenerateTuplesForDataset(dataset, dataStructure, 10, "david");
+                dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", "david", ViewCreationBehavior.None);
+
+                using (var datasetmanager = new DatasetManager())
+                {
+                    datasetmanager.DeleteDataset(dataset.Id, "David", false);
+
+                    dataset.Should().NotBeNull();
+                    dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
+                    dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
+                    dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
+                    dataset.Status.Should().Be(DatasetStatus.Deleted, "Dataset must be in Deleted status.");
+                    dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", "david", ViewCreationBehavior.None);
+                }
+
                 using (var datasetmanager = new DatasetManager())
                 {
                     dataset = datasetmanager.GetDataset(id);
                     var deletedVersionId = dataset.Versions.Last().Id;
 
                     // Act
-                    datasetmanager.UndoDeleteDataset(dataset.Id, "David test", true);
+                    datasetmanager.UndoDeleteDataset(dataset.Id, "david", true);
+
+                    dataset = datasetmanager.GetDataset(dataset.Id);
+
                     var c = datasetmanager.GetDatasetLatestVersionEffectiveTupleCount(dataset);
 
                     //Assert
@@ -202,6 +259,89 @@ namespace BExIS.Dlm.Tests.Services.Data
 
                     Assert.That(c.Equals(10), "version has not same tuples");
                 }
+            }
+            finally
+            {
+                dm.Dispose();
+                rsm.Dispose();
+                mdm.Dispose();
+                etm.Dispose();
+            }
+        }
+
+        [Test()]
+        public void UndoDeleteDataset_withoutData_DatasetExist()
+        {
+            var dm = new DatasetManager();
+            var rsm = new ResearchPlanManager();
+            var mdm = new MetadataStructureManager();
+            var etm = new EntityTemplateManager();
+
+            var dsHelper = new DatasetHelper();
+            long id = 0;
+            try
+            {
+                // Arrange
+                StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+
+                var rp = dsHelper.CreateResearchPlan();
+                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+
+                var mds = mdm.Repo.Query().First();
+                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+
+                var et = etm.Repo.Query().First();
+                et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
+                id = dataset.Id;
+
+                    if (dm.CheckOutDataset(dataset.Id, "david"))
+                    {
+                        DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
+                        dm.EditDatasetVersion(workingCopy, null, null, null);
+                        dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", "david", ViewCreationBehavior.None);
+                    }
+
+                    using (var datasetmanager = new DatasetManager())
+                    {
+                        datasetmanager.DeleteDataset(dataset.Id, "David", false);
+
+                        dataset.Should().NotBeNull();
+                        dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
+                        dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
+                        dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
+                        dataset.Status.Should().Be(DatasetStatus.Deleted, "Dataset must be in Deleted status.");
+                        dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", "david", ViewCreationBehavior.None);
+                    }
+
+                    using (var datasetmanager = new DatasetManager())
+                    {
+                        dataset = datasetmanager.GetDataset(id);
+                        var deletedVersionId = dataset.Versions.Last().Id;
+
+                        // Act
+                        datasetmanager.UndoDeleteDataset(dataset.Id, "david", true);
+
+                        //Assert
+                        dataset = datasetmanager.GetDataset(id);
+                        dataset.Should().NotBeNull();
+                        dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
+                        dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
+                        dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
+                        dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in Deleted status.");
+
+                        var deletedVersion = datasetmanager.DatasetVersionRepo.Get(deletedVersionId);
+                        deletedVersion.Should().BeNull("Deleted version must be null.");
+
+                    }
+                
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
             finally
             {
