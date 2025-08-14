@@ -421,15 +421,19 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 using (var datasetManager = new DatasetManager())
                 {
+                    var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+
+                    if (datasetVersion == null)
+                    {
+                        return PartialView("_Title", "Title is not available.");
+                    }
+
                     var settingsHelper = new SettingsHelper();
                     var citationSettings = settingsHelper.GetCitationSettings();
 
-                    var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
-
-                    if (!citationSettings.ShowCitation)
+                    if (citationSettings == null || !citationSettings.ShowCitation)
                     {
                         return PartialView("_Title", datasetVersion.Title);
-
                     }
 
                     var model = CitationHelper.GetCitationDataModel(datasetVersionId);
