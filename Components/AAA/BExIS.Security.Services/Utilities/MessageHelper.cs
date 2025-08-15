@@ -38,6 +38,22 @@ namespace BExIS.Security.Services.Utilities
             return message + ".";
         }
 
+        public static string GetUndoDeleteDatasetHeader(long datasetid, string entityname)
+        {
+            return $"{entityname}: Restore (ID {datasetid})";
+        }
+
+        public static string GetUndoDeleteDatasetMessage(long datasetid, string userName, string entityname)
+        {
+            string message = $"{entityname} with ID <b>{datasetid}</b> was restored";
+
+            if (!string.IsNullOrEmpty(userName))
+
+                return message += $" by <b>{userName}</b>";
+
+            return message + ".";
+        }
+
         public static string GetTryToDeleteDatasetHeader(long datasetid, string entityname)
         {
             return $"{entityname}: Try to delete ID {datasetid}";

@@ -148,7 +148,7 @@ namespace BExIS.Dlm.Tests.Services.Data
 
                 var dataset = datasetManager.GetDataset(datasetId);
 
-                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, latestDataTupleId, 1, datasetManager);
+                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, latestDataTupleId, 1,"david", datasetManager);
                 datasetManager.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
 
                 //Act
@@ -189,10 +189,10 @@ namespace BExIS.Dlm.Tests.Services.Data
 
                 var dataset = datasetManager.GetDataset(datasetId);
 
-                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, firstDataTupleId, 1, datasetManager);
+                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, firstDataTupleId, 1, username, datasetManager);
                 datasetManager.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
 
-                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, latestDataTupleId, 2, datasetManager);
+                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, latestDataTupleId, 2, username, datasetManager);
                 datasetManager.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
 
                 //Act
