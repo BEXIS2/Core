@@ -1,20 +1,23 @@
-﻿using BExIS.Modules.Dcm.UI.Models.EntityReference;
-using BExIS.Security.Entities.Objects;
+﻿using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
+using BExIS.UI.Models.EntityReference;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
 
-namespace BExIS.Modules.Dcm.UI.Helpers
+namespace BExIS.Utils.Data.Helpers
 {
     public class EntityReferenceHelper
     {
         public EntityReferenceHelper()
         {
+
         }
 
         public bool EntityExist(long id, long typeId)
@@ -98,7 +101,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             {
                 var instanceStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(typeId).EntityStoreType);
 
-                instanceStore.GetVersionsById(id).OrderByDescending(l=>l.Version).ToList().ForEach(v => list.Add(new SelectListItem() { Text = v.Version + " :  " + v.CommitComment, Value = v.Version.ToString() }));
+                instanceStore.GetVersionsById(id).OrderByDescending(l => l.Version).ToList().ForEach(v => list.Add(new SelectListItem() { Text = v.Version + " :  " + v.CommitComment, Value = v.Version.ToString() }));
 
                 return new SelectList(list, "Value", "Text");
             }
@@ -423,3 +426,4 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         #endregion Entity Config
     }
 }
+

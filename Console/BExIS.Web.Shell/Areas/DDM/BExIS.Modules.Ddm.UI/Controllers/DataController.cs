@@ -1,7 +1,10 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dim.Entities.Export.GBIF;
+using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.BIOSCHEMA;
+using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Services;
+using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.Party;
@@ -32,6 +35,7 @@ using BExIS.Xml.Helpers;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.IO;
 using System.IO.Compression;
@@ -45,6 +49,7 @@ using System.Web.Routing;
 using System.Web.UI.WebControls;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.UI;
 using Vaiona.Logging;
@@ -160,6 +165,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 // load settings
                 var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
                 ViewData["use_tags"] = moduleSettings.GetValueByKey("use_tags");
+                bool useTags = (bool)ViewData["use_tags"];
                 ViewData["use_minor"] = moduleSettings.GetValueByKey("use_minor");
                 ViewData["check_public_metadata"] = moduleSettings.GetValueByKey("check_public_metadata");
                 ViewData["has_data"] = false;
@@ -198,142 +204,175 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         List<DatasetVersion> datasetVersions = dm.GetDatasetVersions(id);
                         List<DatasetVersion> datasetVersionsAllowed = new List<DatasetVersion>();
 
-
-                        // Get version id based on public or internal access. Version name has a higher priority as version.
-                        // Public access has higher priority as major/minor versions
-                        versionId = getVersionId(id, version, versionName, tag).Result;
-
-                        // Set if the latest version is selected. Compare current version id against unfiltered max id
-                        latestVersionId = datasetVersions.OrderByDescending(d => d.Timestamp).Select(d => d.Id).FirstOrDefault();
-                        latestVersionNr = dm.GetDatasetVersionNr(latestVersionId);
-                        latestVersion = (versionId == latestVersionId);
-                        // Get version number based on version id
-                        if (versionId >= 0)
+                        if (!dm.IsDatasetDeleted(id)) // dataset should not be in delete state
                         {
-                            version = dm.GetDatasetVersionNr(versionId);
-                        }
+                            // Get version id based on public or internal access. Version name has a higher priority as version.
+                            // Public access has higher priority as major/minor versions
+                            versionId = getVersionId(id, version, versionName, tag).Result;
 
-                        // Throw error if no version id was found.
-                        if (versionId <= 0)
-                        {
-                            ModelState.AddModelError("", string.Format("The version with the requested name {1} or id {0} does not exist or is not publicly accessible", version, versionName));
-                        }
-                        else
-                        {
-                            dsv = dm.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
 
-                            if (dsv != null && dsv.StateInfo != null)
+                            if (useTags)
                             {
-                                isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
-                            }
-
-                            metadataStructureId = dsv.Dataset.MetadataStructure.Id;
-
-                            //MetadataStructureManager msm = new MetadataStructureManager();
-                            //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
-
-                            title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
-                            labels = getLabels(id,versionId, tag, dsv.Dataset.EntityTemplate.Name);
-                            if (dsv.Dataset.DataStructure != null)
-                                dataStructureId = dsv.Dataset.DataStructure.Id;
-
-                            researchPlanId = dsv.Dataset.ResearchPlan.Id;
-                            metadata = dsv.Metadata;
-
-                            // check is public
-                            long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
-                            entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
-
-                            isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
-
-                            // check if the user has download rights
-                            downloadAccess = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read).Result;
-
-                            // if the dataset is public, user or even no user has download rights
-                            if (isPublic) downloadAccess = isPublic;
-
-                            // check if a reuqest of this dataset exist
-                            if (!downloadAccess)
-                            {
-                                requestExist = HasOpenRequest(id);
-
-                                if (UserExist() && HasRequestMapping(id))
+                                // compare the current version with the latest version id also based on tags
+                                var x = dm.GetLatestTag(id);
+                                if (x != null)
                                 {
-                                    requestAble = true;
-                                    hasRequestRight = hasUserRequestRight();
+                                    latestVersionId = dm.GetLatestVersionIdByTagNr(id, x.Nr);
+                                    latestVersion = (versionId >= latestVersionId);
                                 }
-                            }
+                                else
+                                {
+                                    latestVersionId = dm.GetDatasetLatestVersionId(id);
+                                    latestVersion = (versionId >= latestVersionId);
+                                }
 
-                            
-
-                            // get data structure type
-
-                            if (dsv.Dataset.DataStructure != null && dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
-                            {
-                                dataStructureType = DataStructureType.Structured.ToString();
-                                long c = dm.RowCount(dsv.Dataset.Id, null);
-                                ViewData["gridTotal"] = c;
-                                if(c>0) ViewData["has_data"] = true;
                             }
                             else
                             {
-                                dataStructureType = DataStructureType.Unstructured.ToString();
-                                if(dsv.ContentDescriptors.Where(c=>c.Name.Equals("unstructuredData")).Any())
-                                {
-                                    ViewData["has_data"] = true;
-                                }
+                                // Set if the latest version is selected. Compare current version id against unfiltered max id
+
+                                latestVersionId = datasetVersions.OrderByDescending(d => d.Timestamp).Select(d => d.Id).FirstOrDefault();
+                                latestVersionNr = dm.GetDatasetVersionNr(latestVersionId);
+                                latestVersion = (versionId == latestVersionId);
+
+                            }
+                            // Get version number based on version id
+                            if (versionId >= 0)
+                            {
+                                version = dm.GetDatasetVersionNr(versionId);
                             }
 
-                            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show " + typeof(Dataset).Name + ": " + title, this.Session.GetTenant());
+                            // Throw error if no version id was found.
+                            if (versionId <= 0)
+                            {
+                                ModelState.AddModelError("", string.Format("The version with the requested name {1} or id {0} does not exist or is not publicly accessible", version, versionName));
+                            }
+                            else
+                            {
+                                dsv = dm.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
+
+                                if (dsv != null && dsv.StateInfo != null)
+                                {
+                                    isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
+                                }
+
+                                metadataStructureId = dsv.Dataset.MetadataStructure.Id;
+
+                                //MetadataStructureManager msm = new MetadataStructureManager();
+                                //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+
+                                title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
+                                labels = getLabels(id, versionId, tag, dsv.Dataset.EntityTemplate.Name);
+                                if (dsv.Dataset.DataStructure != null)
+                                    dataStructureId = dsv.Dataset.DataStructure.Id;
+
+                                researchPlanId = dsv.Dataset.ResearchPlan.Id;
+                                metadata = dsv.Metadata;
+
+                                // check is public
+                                long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
+                                entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
+
+                                isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
+
+                                // check if the user has download rights
+                                downloadAccess = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read).Result;
+
+                                // if the dataset is public, user or even no user has download rights
+                                if (isPublic) downloadAccess = isPublic;
+
+                                // check if a reuqest of this dataset exist
+                                if (!downloadAccess)
+                                {
+                                    requestExist = HasOpenRequest(id);
+
+                                    if (UserExist() && HasRequestMapping(id))
+                                    {
+                                        requestAble = true;
+                                        hasRequestRight = hasUserRequestRight();
+                                    }
+                                }
+
+
+
+                                // get data structure type
+
+                                if (dsv.Dataset.DataStructure != null && dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
+                                {
+                                    dataStructureType = DataStructureType.Structured.ToString();
+                                    long c = dm.RowCount(dsv.Dataset.Id, null);
+                                    ViewData["gridTotal"] = c;
+                                    if (c > 0) ViewData["has_data"] = true;
+                                }
+                                else
+                                {
+                                    dataStructureType = DataStructureType.Unstructured.ToString();
+                                    if (dsv.ContentDescriptors.Where(c => c.Name.Equals("unstructuredData")).Any())
+                                    {
+                                        ViewData["has_data"] = true;
+                                    }
+                                }
+
+                                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show " + typeof(Dataset).Name + ": " + title, this.Session.GetTenant());
+                            }
+
+                            //set metadata in session
+                            Session["ShowDataMetadata"] = metadata;
+                            ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
+                            ViewData["IsValid"] = isValid;
+                            ViewData["datasetSettings"] = getSettingsDataset();
+                            ViewData["Message"] = "";
+                            ViewData["State"] = "";
+                            ViewData["HasEditRight"] = model.HasEditRight;
                         }
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
+                        else // set message and unset all tabs except of metadata (+ data structure & links)
+                        {
+                            Session["ShowDataMetadata"] = dm.GetDeletedDatasetMetadata(id);
+                            ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
+                            ViewData["IsValid"] = isValid;
+                            ViewData["datasetSettings"] = getSettingsDataset();
+
+                            ViewData["Message"] = "The dataset has been withdrawn. Reason: " + researcobject.ModificationInfo.Comment + ". Please check the \'Links\' section if a new version is available.";
+                            ViewData["State"] = "hidden";
+                            ViewData["HasEditRight"] = model.HasEditRight;
+
+                            model.GrantAccess = false;
+                            model.ViewAccess = false;
+                            model.DownloadAccess = false;
+
+
+                        }
+
+                        model = new ShowDataModel()
+                        {
+                            Id = id,
+                            Version = version,
+                            VersionSelect = version,
+                            VersionId = versionId,
+                            LatestVersion = latestVersion,
+                            LatestVersionNumber = latestVersionNr,
+                            Title = title,
+                            MetadataStructureId = metadataStructureId,
+                            DataStructureId = dataStructureId,
+                            ResearchPlanId = researchPlanId,
+                            ViewAccess = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read).Result,
+                            GrantAccess = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Grant).Result,
+                            HasEditRight = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Write).Result,
+                            DataStructureType = dataStructureType,
+                            DownloadAccess = downloadAccess,
+                            RequestExist = requestExist,
+                            RequestAble = requestAble,
+                            HasRequestRight = hasRequestRight,
+                            IsPublic = isPublic,
+                            Labels = labels
+                        };
+
+
+                       
                     }
 
-                    model = new ShowDataModel()
-                    {
-                        Id = id,
-                        Version = version,
-                        VersionSelect = version,
-                        VersionId = versionId,
-                        LatestVersion = latestVersion,
-                        LatestVersionNumber = latestVersionNr,
-                        Title = title,
-                        MetadataStructureId = metadataStructureId,
-                        DataStructureId = dataStructureId,
-                        ResearchPlanId = researchPlanId,
-                        ViewAccess = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read).Result,
-                        GrantAccess = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Grant).Result,
-                        HasEditRight = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Write).Result,
-                        DataStructureType = dataStructureType,
-                        DownloadAccess = downloadAccess,
-                        RequestExist = requestExist,
-                        RequestAble = requestAble,
-                        HasRequestRight = hasRequestRight,
-                        IsPublic = isPublic,
-                        Labels = labels
-                    };
 
-                    //set metadata in session
-                    Session["ShowDataMetadata"] = metadata;
-                    ViewData["VersionSelect"] = getVersionsSelectList(id, dm);
-                    ViewData["IsValid"] = isValid;
-                    ViewData["datasetSettings"] = getSettingsDataset();
-                    ViewData["Message"] = "";
-                    ViewData["State"] = "";
-                    ViewData["HasEditRight"] = model.HasEditRight;
 
-                    // set message and unset all tabs except of metadata (+ data structure & links)
-                    if (dm.IsDatasetDeleted(id))
-                    {
-                        ViewData["Message"] = "The dataset has been withdrawn. Reason: " + researcobject.ModificationInfo.Comment + ". Please check the \'Links\' section if a new version is available.";
-                        ViewData["State"] = "hidden";
-                        model.GrantAccess = false;
-                        model.ViewAccess = false;
-                        model.DownloadAccess = false;
-                    }
 
                     // load all hooks for the edit view
                     HookManager hooksManager = new HookManager();
@@ -356,7 +395,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
 
                     if (version > 0)
-                    { 
+                    {
                         // load BioSchema Description if exist
                         string bioschemadescription = getBioSchema(id, version);
                         if (!string.IsNullOrEmpty(bioschemadescription))
@@ -365,15 +404,53 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     }
                     if (asPartial) return PartialView(model);
 
-                  
+
 
                     return View(model);
                 }
 
                 ModelState.AddModelError("", string.Format("The dataset with the id {0} does not exist", id));
-
-                return View();
+                return View(new ShowDataModel());
             }
+        }
+
+        [ChildActionOnly]
+        public async Task<ActionResult> GetCitationOrTitle(long datasetVersionId)
+        {
+            try
+            {
+                using (var datasetManager = new DatasetManager())
+                {
+                    var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+
+                    if (datasetVersion == null)
+                    {
+                        return PartialView("_Title", "Title is not available.");
+                    }
+
+                    var settingsHelper = new SettingsHelper();
+                    var citationSettings = settingsHelper.GetCitationSettings();
+
+                    if (citationSettings == null || !citationSettings.ShowCitation)
+                    {
+                        return PartialView("_Title", datasetVersion.Title);
+                    }
+
+                    var model = CitationHelper.GetCitationDataModel(datasetVersionId);
+
+                    if (model == null)
+                        return PartialView("_Title", datasetVersion.Title);
+
+                    if (!CitationHelper.IsCitationDataModelValid(model))
+                        return PartialView("_Title", datasetVersion.Title);
+
+                    return PartialView($"_Citation_{citationSettings.ReadCitationFormat}", model);
+                }
+            }
+            catch (Exception ex)
+            {
+                return PartialView("_Title", "Title is not available.");
+            }    
         }
 
         public ActionResult Reload(long id, int version = 0)
@@ -937,7 +1014,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             }
                         }
 
-                        if(string.IsNullOrEmpty(title)) title = "no title ("+id+")";
+                        if (string.IsNullOrEmpty(title)) title = "no title (" + id + ")";
 
                         return File(path, mimetype, title + ext);
                     }
@@ -951,7 +1028,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             GeneralSettings.SystemEmail
                             );
                     }
-                        
+
                     throw ex;
                 }
                 finally
@@ -1094,7 +1171,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 GeneralSettings.SystemEmail
                                 );
                         }
-                            
+
 
                         return File(Path.Combine(AppConfiguration.DataPath, path), mimetype, title + ext);
                     }
@@ -1108,7 +1185,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             GeneralSettings.SystemEmail
                             );
                     }
-                        
+
                     throw ex;
                 }
                 finally
@@ -1497,7 +1574,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             GeneralSettings.SystemEmail
                             );
                     }
-                        
+
 
                     return File(Path.Combine(AppConfiguration.DataPath, path), mimeType, title);
                 }
@@ -1643,7 +1720,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region tags only for old view
 
-        public PartialViewResult Tags(long id,int version)
+        public PartialViewResult Tags(long id, int version)
         {
             if (id <= 0) throw new ArgumentException("id is not valid");
 
@@ -1651,7 +1728,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             List<TagInfoViewModel> tags = new List<TagInfoViewModel>();
             bool hasEditRights = hasUserRights(id, RightType.Write);
 
-            if(version == 0) return PartialView("_tagsView", tags); // return empty list
+            if (version == 0) return PartialView("_tagsView", tags); // return empty list
 
 
 
@@ -1787,8 +1864,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         private string createEditedBy(string performer)
         {
-            using (PartyManager partyManager = new PartyManager())
-            using (var identityUserService = new IdentityUserService())
+            using (var partyManager = new PartyManager())
+            using (var userManager = new UserManager())
+            using (var identityUserService = new IdentityUserService(userManager))
             {
                 var user_performer = identityUserService.FindByNameAsync(performer);
 
@@ -1950,15 +2028,15 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
 
 
-        private async Task<long> getVersionId(long datasetId,int versionNr=0, string versionName="",  double tagNr=0)
+        private async Task<long> getVersionId(long datasetId, int versionNr = 0, string versionName = "", double tagNr = 0)
         {
 
             var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
             bool useTags = false;
-            bool.TryParse(moduleSettings.GetValueByKey("use_tags").ToString(),out useTags);
+            bool.TryParse(moduleSettings.GetValueByKey("use_tags").ToString(), out useTags);
 
             return await DatasetVersionHelper.GetVersionId(datasetId, GetUsernameOrDefault(), versionNr, useTags, tagNr);
-            
+
         }
 
         public bool UserExist()
@@ -2160,7 +2238,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
 
-              
+
 
                 var publications = publicationManager.PublicationRepo.Query(p => p.Dataset.Id == id && p.DatasetVersion.Id == versionId && p.ExternalLink != "");
                 if (publications != null && publications.Any())

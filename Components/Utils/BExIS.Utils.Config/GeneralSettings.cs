@@ -140,6 +140,14 @@ namespace BExIS.Utils.Config
             }
         }
 
+        public static ExceptionConfiguration ExceptionConfiguration
+        {
+            get
+            {
+                return JsonConvert.DeserializeObject<ExceptionConfiguration>(GetValueByKey("exception").ToString());
+            }
+        }
+
         public static List<LdapConfiguration> LdapConfigurations
         {
             get

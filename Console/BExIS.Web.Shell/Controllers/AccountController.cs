@@ -47,8 +47,9 @@ namespace BExIS.Web.Shell.Controllers
                     return View("Error");
                 }
 
-                using (var identityUserService = new IdentityUserService())
-                using (var signInManager = new SignInManager(AuthenticationManager))
+                using (var userManager = new UserManager())
+                using (var identityUserService = new IdentityUserService(userManager))
+                using (var signInManager = new SignInManager(AuthenticationManager, userManager))
                 {
                     var result = await identityUserService.ConfirmEmailAsync(userId, code);
                     if (!result.Succeeded) return View("Error");
@@ -92,28 +93,29 @@ namespace BExIS.Web.Shell.Controllers
         /// <returns></returns>
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
-            try
+            using (var userManager = new UserManager())
+            using (var signInManager = new SignInManager(AuthenticationManager, userManager))
             {
-                using (var signInManager = new SignInManager(AuthenticationManager))
+                try
                 {
                     var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
                     if (loginInfo == null)
                     {
                         return RedirectToAction("Login");
                     }
-
+            
                     var result = await signInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
                     switch (result)
                     {
                         case SignInStatus.Success:
                             return RedirectToLocal(returnUrl);
-
+            
                         case SignInStatus.LockedOut:
                             return View("Lockout");
-
+            
                         case SignInStatus.RequiresVerification:
                             return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
-
+            
                         case SignInStatus.Failure:
                         default:
                             ViewBag.ReturnUrl = returnUrl;
@@ -121,10 +123,12 @@ namespace BExIS.Web.Shell.Controllers
                             return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel() { Email = loginInfo.Email });
                     }
                 }
-            }
-            catch(Exception ex)
-            {
-                return RedirectToAction("Login");
+                catch(Exception ex)
+                {
+                    ExceptionlessClient.Default.SubmitLog("Account Registration", $"Error while registering user.", Exceptionless.Logging.LogLevel.Error);
+                    return View("Error");
+                }
+            
             }
         }
 
@@ -138,16 +142,17 @@ namespace BExIS.Web.Shell.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
         {
-            try
+            using (var userManager = new UserManager())
+            using (var identityUserService = new IdentityUserService(userManager))
+            using (var signInManager = new SignInManager(AuthenticationManager, userManager))
             {
-                using (var identityUserService = new IdentityUserService())
-                using (var signInManager = new SignInManager(AuthenticationManager))
+                try
                 {
                     if (User.Identity.IsAuthenticated)
                     {
                         return RedirectToAction("Index", "Manage");
                     }
-
+            
                     if (ModelState.IsValid)
                     {
                         // Informationen zum Benutzer aus dem externen Anmeldeanbieter abrufen
@@ -157,7 +162,7 @@ namespace BExIS.Web.Shell.Controllers
                             return View("ExternalLoginFailure");
                         }
                         var user = new User { UserName = model.Email, Email = model.Email };
-
+            
                         var result = await identityUserService.CreateAsync(user);
                         if (result.Succeeded)
                         {
@@ -170,16 +175,17 @@ namespace BExIS.Web.Shell.Controllers
                         }
                         AddErrors(result);
                     }
-
+            
                     ViewBag.ReturnUrl = returnUrl;
                     return View(model);
                 }
-            }
-            catch(Exception ex)
-            {
-                return null;
-            }
-            
+                catch(Exception ex)
+                {
+                    ExceptionlessClient.Default.SubmitLog("Account Registration", $"Error while registering user {model.Email}.", Exceptionless.Logging.LogLevel.Error);
+                    return View("Error");
+                }
+                
+            }            
         }
 
         //
@@ -204,26 +210,29 @@ namespace BExIS.Web.Shell.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
-            var identityUserService = new IdentityUserService();
-
-            try
+            using (var userManager = new UserManager())
+            using (var identityUserService = new IdentityUserService(userManager))
             {
-                if (!ModelState.IsValid) return View(model);
-                var user = await identityUserService.FindByEmailAsync(model.Email);
-                if (user == null || !(await identityUserService.IsEmailConfirmedAsync(user.Id)))
+                try
                 {
-                    // Don't reveal that the user does not exist or is not confirmed
-                    return View("ForgotPasswordConfirmation");
-                }
+                    if (!ModelState.IsValid) return View(model);
+                    var user = await identityUserService.FindByEmailAsync(model.Email);
+                    if (user == null || !(await identityUserService.IsEmailConfirmedAsync(user.Id)))
+                    {
+                        // Don't reveal that the user does not exist or is not confirmed
+                        return View("ForgotPasswordConfirmation");
+                    }
 
-                var code = await identityUserService.GeneratePasswordResetTokenAsync(user.Id);
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code }, Request.Url.Scheme);
-                await identityUserService.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                return RedirectToAction("ForgotPasswordConfirmation", "Account");
-            }
-            finally
-            {
-                identityUserService.Dispose();
+                    var code = await identityUserService.GeneratePasswordResetTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code }, Request.Url.Scheme);
+                    await identityUserService.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                }
+                catch(Exception ex)
+                {
+                    ModelState.AddModelError("", "Invalid login attempt.");
+                    return View(model);
+                }
             }
         }
 
@@ -252,22 +261,23 @@ namespace BExIS.Web.Shell.Controllers
         [ValidateInput(false)]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
-            try
-            {
 
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, change to shouldLockout: true
-                using (var signInManager = new SignInManager(AuthenticationManager))
-                using (var identityUserService = new IdentityUserService())
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, change to shouldLockout: true
+            using (var userManager = new UserManager())
+            using (var identityUserService = new IdentityUserService(userManager))
+            using (var signInManager = new SignInManager(AuthenticationManager, userManager))
+            {
+                try
                 {
                     if (!ModelState.IsValid)
                     {
                         return View(model);
                     }
-
+            
                     // Search for user by email, if not found search by user name
                     var user = await identityUserService.FindByEmailAsync(model.UserName);
-
+            
                     if (user != null)
                     {
                         model.UserName = user.UserName;
@@ -276,7 +286,7 @@ namespace BExIS.Web.Shell.Controllers
                     {
                         user = await identityUserService.FindByNameAsync(model.UserName);
                     }
-
+            
                     // Require the user to have a confirmed email before they can log on.
                     if (user != null)
                     {
@@ -286,45 +296,45 @@ namespace BExIS.Web.Shell.Controllers
                             return View("Error");
                         }
                     }
-
+            
                     // set-cookie
                     if (user != null)
                     {
                         var jwt = JwtHelper.GetTokenByUser(user);
-
+            
                         // Create a new cookie
                         HttpCookie cookie = new HttpCookie("jwt", jwt);
-
+            
                         // Set additional properties if needed
                         cookie.Expires = DateTime.Now.AddDays(1); // Expires in 1 day
                         cookie.Domain = Request.Url.Host; // Set the domain
                         cookie.Path = "/"; // Set the path
-
+            
                         // Add the cookie to the response
                         Response.Cookies.Add(cookie);
                     }
-
+            
                     var result =
                         await signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
                     switch (result)
                     {
                         case SignInStatus.Success:
                             return RedirectToLocal(returnUrl);
-
+            
                         case SignInStatus.LockedOut:
                             return View("Lockout");
-
+            
                         default:
                             ModelState.AddModelError("", "Invalid login attempt.");
                             return View(model);
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Invalid login attempt.");
-                return View(model);
-            }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Invalid login attempt.");
+                    return View(model);
+                }
+            }           
         }
 
         //
@@ -365,50 +375,53 @@ namespace BExIS.Web.Shell.Controllers
         [ValidateInput(false)]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-            var identityUserService = new IdentityUserService();
-
-            try
+            using (var userManager = new UserManager())
+            using (var identityUserService = new IdentityUserService(userManager))
             {
-                if (!ModelState.IsValid) return View(model);
-
-                if (!string.IsNullOrEmpty(model.Extra))
-                    return View(model);
-
-                var user = new User { UserName = model.UserName, FullName = model.UserName, Email = model.Email, HasTermsAndConditionsAccepted = model.TermsAndConditions };
-
-                var result = await identityUserService.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                try
                 {
-                    //var signInManager = new SignInManager(userManager, AuthenticationManager);
-                    //await signInManager.SignInAsync(user, false, false);
+                    if (!ModelState.IsValid) return View(model);
 
-                    // Weitere Informationen zum Aktivieren der Kontobestätigung und Kennwortzurücksetzung finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=320771".
-                    // E-Mail-Nachricht mit diesem Link senden
-                    var code = await identityUserService.GenerateEmailConfirmationTokenAsync(user.Id);
-                    await SendEmailConfirmationTokenAsync(user.Id, "Account registration - Verify your email address");
+                    if (!string.IsNullOrEmpty(model.Extra))
+                        return View(model);
 
-                    using (var emailService = new EmailService())
+                    var user = new User { UserName = model.UserName, FullName = model.UserName, Email = model.Email, HasTermsAndConditionsAccepted = model.TermsAndConditions };
+
+                    var result = await identityUserService.CreateAsync(user, model.Password);
+                    if (result.Succeeded)
                     {
-                        emailService.Send(MessageHelper.GetTryToRegisterUserHeader(),
-                            MessageHelper.GetTryToRegisterUserMessage(user.Id, user.Name, user.Email),
-                            GeneralSettings.SystemEmail
-                            );
+                        //var signInManager = new SignInManager(userManager, AuthenticationManager);
+                        //await signInManager.SignInAsync(user, false, false);
+
+                        // Weitere Informationen zum Aktivieren der Kontobestätigung und Kennwortzurücksetzung finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=320771".
+                        // E-Mail-Nachricht mit diesem Link senden
+                        var code = await identityUserService.GenerateEmailConfirmationTokenAsync(user.Id);
+                        await SendEmailConfirmationTokenAsync(user.Id, "Account registration - Verify your email address");
+
+                        using (var emailService = new EmailService())
+                        {
+                            emailService.Send(MessageHelper.GetTryToRegisterUserHeader(),
+                                MessageHelper.GetTryToRegisterUserMessage(user.Id, user.Name, user.Email),
+                                GeneralSettings.SystemEmail
+                                );
+                        }
+
+                        ViewBag.Message = "Before you can log in to complete your registration, please check your email and verify your email address. If you did not receive an email, please also check your spam folder.";
+
+                        ExceptionlessClient.Default.SubmitLog("Account Registration", $"{user.Name} has registered sucessfully.", Exceptionless.Logging.LogLevel.Info);
+
+                        return View("Info");
                     }
-                        
-                    ViewBag.Message = "Before you can log in to complete your registration, please check your email and verify your email address. If you did not receive an email, please also check your spam folder.";
 
-                    ExceptionlessClient.Default.SubmitLog("Account Registration", $"{user.Name} has registered sucessfully.", Exceptionless.Logging.LogLevel.Info);
+                    AddErrors(result);
 
-                    return View("Info");
+                    return View(model);
                 }
-
-                AddErrors(result);
-
-                return View(model);
-            }
-            finally
-            {
-                identityUserService.Dispose();
+                catch (Exception ex)
+                {
+                    ExceptionlessClient.Default.SubmitLog("Account Registration", $"Error while registering user {model.UserName}.", Exceptionless.Logging.LogLevel.Error);
+                    return View("Error");
+                }
             }
         }
 
@@ -425,37 +438,39 @@ namespace BExIS.Web.Shell.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
         {
-            var identityUserService = new IdentityUserService();
-
-            try
+            using (var userManager = new UserManager())
+            using (var identityUserService = new IdentityUserService(userManager))
             {
-                if (!ModelState.IsValid)
+                try
                 {
-                    return View(model);
-                }
+                    if (!ModelState.IsValid)
+                    {
+                        return View(model);
+                    }
 
-                var user = await identityUserService.FindByEmailAsync(model.Email);
-                if (user == null)
+                    var user = await identityUserService.FindByEmailAsync(model.Email);
+                    if (user == null)
+                    {
+                        // Nicht anzeigen, dass der Benutzer nicht vorhanden ist.
+                        return RedirectToAction("ResetPasswordConfirmation", "Account");
+                    }
+
+                    var result = await identityUserService.ResetPasswordAsync(user.Id, model.Code, model.Password);
+                    if (result.Succeeded)
+                    {
+                        user = await identityUserService.FindByEmailAsync(model.Email);
+                        user.IsEmailConfirmed = true;
+                        await identityUserService.UpdateAsync(user);
+                        return RedirectToAction("ResetPasswordConfirmation", "Account");
+                    }
+
+                    AddErrors(result);
+                    return View();
+                }
+                catch (Exception ex)
                 {
-                    // Nicht anzeigen, dass der Benutzer nicht vorhanden ist.
-                    return RedirectToAction("ResetPasswordConfirmation", "Account");
+                    return View("Error");
                 }
-
-                var result = await identityUserService.ResetPasswordAsync(user.Id, model.Code, model.Password);
-                if (result.Succeeded)
-                {
-                    user = await identityUserService.FindByEmailAsync(model.Email);
-                    user.IsEmailConfirmed = true;
-                    await identityUserService.UpdateAsync(user);
-                    return RedirectToAction("ResetPasswordConfirmation", "Account");
-                }
-
-                AddErrors(result);
-                return View();
-            }
-            finally
-            {
-                identityUserService.Dispose();
             }
         }
 
@@ -466,32 +481,35 @@ namespace BExIS.Web.Shell.Controllers
 
         private async Task<string> SendEmailConfirmationTokenAsync(long userId, string subject)
         {
-            var identityUserService = new IdentityUserService();
-
-            try
+            using (var userManager = new UserManager())
+            using (var identityUserService = new IdentityUserService(userManager))
             {
-                var code = await identityUserService.GenerateEmailConfirmationTokenAsync(userId);
-                var callbackUrl = Url.Action("ConfirmEmail", "Account",
-                   new { userId, code }, Request.Url.Scheme);
+                try
+                {
+                    var code = await identityUserService.GenerateEmailConfirmationTokenAsync(userId);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account",
+                       new { userId, code }, Request.Url.Scheme);
 
-                var policyUrl = Url.Action("Index", "PrivacyPolicy", null, Request.Url.Scheme);
-                var termsUrl = Url.Action("Index", "TermsAndConditions", null, Request.Url.Scheme);
+                    var policyUrl = Url.Action("Index", "PrivacyPolicy", null, Request.Url.Scheme);
+                    var termsUrl = Url.Action("Index", "TermsAndConditions", null, Request.Url.Scheme);
 
-                var applicationName = GeneralSettings.ApplicationName;
+                    var applicationName = GeneralSettings.ApplicationName;
 
-                await identityUserService.SendEmailAsync(userId, subject,
-                    $"<p>Dear user,</p>" +
-                    $"<p>please confirm your email address and complete your registration by clicking <a href=\"{callbackUrl}\">here</a>.</p>" +
-                    $"<p>Once you finished the registration, a system administrator will decide based on your provided information about your assigned permissions. " +
-                    $"This process can take up to 3 days.</p>" +
-                    $"<p>You agreed on our <a href=\"{policyUrl}\">data policy</a> and <a href=\"{termsUrl}\">terms and conditions</a>.</p>" +
-                    $"<br><p>Sincerely your {applicationName} administration team");
+                    await identityUserService.SendEmailAsync(userId, subject,
+                        $"<p>Dear user,</p>" +
+                        $"<p>please confirm your email address and complete your registration by clicking <a href=\"{callbackUrl}\">here</a>.</p>" +
+                        $"<p>Once you finished the registration, a system administrator will decide based on your provided information about your assigned permissions. " +
+                        $"This process can take up to 3 days.</p>" +
+                        $"<p>You agreed on our <a href=\"{policyUrl}\">data policy</a> and <a href=\"{termsUrl}\">terms and conditions</a>.</p>" +
+                        $"<br><p>Sincerely your {applicationName} administration team");
 
-                return callbackUrl;
-            }
-            finally
-            {
-                identityUserService.Dispose();
+                    return callbackUrl;
+                }
+                catch(Exception ex)
+                {
+                    ExceptionlessClient.Default.SubmitLog("Account Registration", $"Error while sending email confirmation token to user {userId}.", Exceptionless.Logging.LogLevel.Error);
+                    return null;
+                }
             }
         }
 

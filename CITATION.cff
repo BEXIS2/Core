@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: "If you use BEXIS2 in your research, please cite it using the following metadata."
+title: "BEXIS2"
+version: 4.1.0
+date-released: 15.08.2025
+authors:
+- family-names: "Zander"
+  given-names: "Franziska"
+  orcid: "https://orcid.org/0000-0001-6892-7046"
+- family-names: "Schöne"
+  given-names: "David"
+  orcid: "https://orcid.org/0009-0009-4663-8716"
+- family-names: "Thiel"
+  given-names: "Sven"
+  orcid: "https://orcid.org/0000-0003-3093-5635"
+- family-names: "Hohmuth"
+  given-names: "Martin"
+  orcid: "https://orcid.org/0000-0001-7492-3631"
+- family-names: "König-Ries"
+  given-names: "Birgitta"
+  orcid: "https://orcid.org/0000-0002-2382-9722"
+doi: ..
+url: "https://github.com/BEXIS2/Core"
+license: "LGPL-3.0 license"
+type: software
+keywords:
+  - research data management
+  - data repository
+  - data infrastructure
+  - open source

@@ -316,12 +316,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         {
                             string xpath = target.XPath;
 
-                            // if the mapping is on type, then it is the last element and the value should set there
-                            // e.g. mappingt to title is usage, set value to title/titleType = "title of the dataset"
-                            // if the mapping is on usage, then the value should set on type and this element is the child of the usage
-                            if (target.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
-                               target.Type.Equals(LinkElementType.MetadataNestedAttributeUsage))
-                                xpath = target.XPath+@"/"+ target.Name+"Type";
+                            //// if the mapping is on type, then it is the last element and the value should set there
+                            //// e.g. mappingt to title is usage, set value to title/titleType = "title of the dataset"
+                            //// if the mapping is on usage, then the value should set on type and this element is the child of the usage
+                            //if (target.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
+                            //   target.Type.Equals(LinkElementType.MetadataNestedAttributeUsage))
+                            //    xpath = target.XPath+@"/"+ target.Name+"Type";
 
                             var targetXElement = metadataXml.XPathSelectElement(xpath);
                             // set value

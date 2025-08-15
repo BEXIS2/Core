@@ -6,12 +6,18 @@ using BExIS.Dlm.Services.Party;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Xml.Helpers;
+using DataAnnotationsValidator;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dim.Helpers.Mappings
@@ -1261,108 +1267,108 @@ namespace BExIS.Dim.Helpers.Mappings
         #endregion
 
         #region concept
-        /// <summary>
-        /// Get Metadata of a dataset in a select concept structure
-        /// </summary>
-        /// <param name="metadataStructureId"></param>
-        /// <param name="conceptId"></param>
-        /// <param name="metadata"></param>
-        /// <returns></returns>
-        public static XmlDocument GetConcept(long metadataStructureId, long conceptId, XmlDocument metadata)
-        {
-            XmlDocument concept = new XmlDocument();
-            concept.AppendChild(XmlUtility.CreateNode("concept", concept));
+        ///// <summary>
+        ///// Get Metadata of a dataset in a select concept structure
+        ///// </summary>
+        ///// <param name="metadataStructureId"></param>
+        ///// <param name="conceptId"></param>
+        ///// <param name="metadata"></param>
+        ///// <returns></returns>
+        //public static XmlDocument GetConcept(long metadataStructureId, long conceptId, XmlDocument metadata)
+        //{
+        //    XmlDocument concept = new XmlDocument();
+        //    concept.AppendChild(XmlUtility.CreateNode("concept", concept));
 
-            // get all complex mappings for the root
-            var root = GetMappings(metadataStructureId, LinkElementType.MetadataStructure, conceptId, LinkElementType.MappingConcept).FirstOrDefault();
-            var complexMappings = GetMappings(root.Id);
+        //    // get all complex mappings for the root
+        //    var root = GetMappings(metadataStructureId, LinkElementType.MetadataStructure, conceptId, LinkElementType.MappingConcept).FirstOrDefault();
+        //    var complexMappings = GetMappings(root.Id);
 
-            foreach (var complexMapping in complexMappings)
-            {
+        //    foreach (var complexMapping in complexMappings)
+        //    {
 
-                // get list of source elements for metadata
-                LinkElement cSource = complexMapping.Source;
-                LinkElement cTarget = complexMapping.Target;
-                var xSourceList = metadata.SelectNodes(cSource.XPath);
-                List<string> tmp = new List<string>();
+        //        // get list of source elements for metadata
+        //        LinkElement cSource = complexMapping.Source;
+        //        LinkElement cTarget = complexMapping.Target;
+        //        var xSourceList = metadata.SelectNodes(cSource.XPath);
+        //        List<string> tmp = new List<string>();
 
-                foreach (XmlNode xSource in xSourceList)
-                {
-                    //create target complex element
-                    XmlNode xTarget = concept.CreateElement(cTarget.Name); //XmlUtility.GenerateNodeFromXPath(concept, concept.DocumentElement, cTarget.XPath);
+        //        foreach (XmlNode xSource in xSourceList)
+        //        {
+        //            //create target complex element
+        //            XmlNode xTarget = concept.CreateElement(cTarget.Name); //XmlUtility.GenerateNodeFromXPath(concept, concept.DocumentElement, cTarget.XPath);
 
-                    // get children of complex mapping
-                    var simpleMappings = GetMappings(complexMapping.Id);
+        //            // get children of complex mapping
+        //            var simpleMappings = GetMappings(complexMapping.Id);
 
-                    var listOfTargets = simpleMappings.Select(m => m.Target.Id);
+        //            var listOfTargets = simpleMappings.Select(m => m.Target.Id);
 
-                    // for each simple mapping
+        //            // for each simple mapping
 
-                    foreach (var simpleMapping in simpleMappings)
-                    {
+        //            foreach (var simpleMapping in simpleMappings)
+        //            {
 
-                        LinkElement sSource = simpleMapping.Source;
-                        LinkElement sTarget = simpleMapping.Target;
+        //                LinkElement sSource = simpleMapping.Source;
+        //                LinkElement sTarget = simpleMapping.Target;
 
-                        XmlNode xSimpleSource = null;
+        //                XmlNode xSimpleSource = null;
 
-                        // if the linkelement of the complex mapping and the simple mapping are the same
-                        // then the xml node is the same, no need to go deeper
-                        if (cSource.ElementId.Equals(sSource.ElementId) && cSource.Type.Equals(sSource.Type))
-                            xSimpleSource = xSource;
-                        else
-                            xSimpleSource = XmlUtility.GetXmlNodeByName(xSource, sSource.Name);
-
-
-                        // result is the set value, based on previews runs it must be check if
-                        // the xmlnode already exist and have some value inside
-                        // by the mapping thete is a complex to simple mapping possible
-                        // this means xTarget is already the simple node where the value should be set, or get
-                        string result = "";//xSimpleSource.InnerText; target
-                        if (xTarget.Value == null && xTarget.ChildNodes.Count == 0) // first run everything is empty
-                            result = String.Empty;
-                        else if (xTarget.Value != null) result = xTarget.Value; // xTarget already simple target, so check value
-                        else // xTarget is complex, get simple node by name and get value
-                        {
-                            XmlNode simpleXTarget = XmlUtility.GetXmlNodeByName(xTarget, sTarget.Name);
-                            if(simpleXTarget != null) result = simpleXTarget.InnerText;
-                        }
-
-                        // transformation
-                        // if the result is empty may its the first run, so set the mask
-                        if (string.IsNullOrEmpty(result)) result = simpleMapping.TransformationRule.Mask;
-
-                        //tranform the value against the transformation rules
-                        string value = xSimpleSource.InnerText!=null? xSimpleSource.InnerText : String.Empty;
-                        List<string> regExResultList = transform(value, simpleMapping.TransformationRule);
-
-                        if(string.IsNullOrEmpty(simpleMapping.TransformationRule.Mask))
-                            result = result+ string.Join(", ", regExResultList.ToArray());
-                        else
-                            result = setOrReplace(result, regExResultList, simpleMapping.Source.Name, simpleMapping.TransformationRule.DefaultValue);
+        //                // if the linkelement of the complex mapping and the simple mapping are the same
+        //                // then the xml node is the same, no need to go deeper
+        //                if (cSource.ElementId.Equals(sSource.ElementId) && cSource.Type.Equals(sSource.Type))
+        //                    xSimpleSource = xSource;
+        //                else
+        //                    xSimpleSource = XmlUtility.GetXmlNodeByName(xSource, sSource.Name);
 
 
-                        // complex to simple mapping
-                        if (cTarget.ElementId.Equals(sTarget.ElementId) && cTarget.Type.Equals(sTarget.Type))
-                        {
-                            xTarget.InnerText = result;
-                        }
-                        else // complex to complex
-                        {
-                            var xSimpleTarget = concept.CreateElement(sTarget.Name);
-                            xSimpleTarget.InnerText = result;
-                            xTarget.AppendChild(xSimpleTarget);
-                        }
+        //                // result is the set value, based on previews runs it must be check if
+        //                // the xmlnode already exist and have some value inside
+        //                // by the mapping thete is a complex to simple mapping possible
+        //                // this means xTarget is already the simple node where the value should be set, or get
+        //                string result = "";//xSimpleSource.InnerText; target
+        //                if (xTarget.Value == null && xTarget.ChildNodes.Count == 0) // first run everything is empty
+        //                    result = String.Empty;
+        //                else if (xTarget.Value != null) result = xTarget.Value; // xTarget already simple target, so check value
+        //                else // xTarget is complex, get simple node by name and get value
+        //                {
+        //                    XmlNode simpleXTarget = XmlUtility.GetXmlNodeByName(xTarget, sTarget.Name);
+        //                    if(simpleXTarget != null) result = simpleXTarget.InnerText;
+        //                }
+
+        //                // transformation
+        //                // if the result is empty may its the first run, so set the mask
+        //                if (string.IsNullOrEmpty(result)) result = simpleMapping.TransformationRule.Mask;
+
+        //                //tranform the value against the transformation rules
+        //                string value = xSimpleSource.InnerText!=null? xSimpleSource.InnerText : String.Empty;
+        //                List<string> regExResultList = transform(value, simpleMapping.TransformationRule);
+
+        //                if(string.IsNullOrEmpty(simpleMapping.TransformationRule.Mask))
+        //                    result = result+ string.Join(", ", regExResultList.ToArray());
+        //                else
+        //                    result = setOrReplace(result, regExResultList, simpleMapping.Source.Name, simpleMapping.TransformationRule.DefaultValue);
 
 
-                    }
+        //                // complex to simple mapping
+        //                if (cTarget.ElementId.Equals(sTarget.ElementId) && cTarget.Type.Equals(sTarget.Type))
+        //                {
+        //                    xTarget.InnerText = result;
+        //                }
+        //                else // complex to complex
+        //                {
+        //                    var xSimpleTarget = concept.CreateElement(sTarget.Name);
+        //                    xSimpleTarget.InnerText = result;
+        //                    xTarget.AppendChild(xSimpleTarget);
+        //                }
 
-                    concept.DocumentElement.AppendChild(xTarget);
-                }
-            }
 
-            return concept;
-        }
+        //            }
+
+        //            concept.DocumentElement.AppendChild(xTarget);
+        //        }
+        //    }
+
+        //    return concept;
+        //}
 
         /// <summary>
         /// Get Metadata of a dataset in a select concept and use the structure of the existing xpath
@@ -1380,130 +1386,246 @@ namespace BExIS.Dim.Helpers.Mappings
             var root = GetMappings(metadataStructureId, LinkElementType.MetadataStructure, conceptId, LinkElementType.MappingConcept).FirstOrDefault();
             if (root == null) return concept; // no mapping exist
 
+            // get all complex mappings for the root
             var complexMappings = GetMappings(root.Id)?.OrderBy(m=>m.Target.ElementId);
 
+            // get all distinct target ids from complex mappings
+            var complexTargets = complexMappings.OrderBy(m => m.Source.XPath).Select(m => m.Target.Id).Distinct().ToList();
+            //var complexTargets = complexMappings.Select(m => m.Target.Id).Distinct().ToList();
+
+            Dictionary<string, string> xpaths = new Dictionary<string, string>();
 
 
-            foreach (var complexMapping in complexMappings)
+            for (int i = 0; i < complexTargets.Count; i++)
             {
-                // if document element not exist create this here
-                if (concept.DocumentElement == null)
+                // ach complex target is a complex element in the concept
+                var currentCompexTarget = complexTargets[i];
+
+                // get all complex mappings for the current target
+                var currentComplexMappings = complexMappings.Where(m => m.Target.Id.Equals(currentCompexTarget)).ToList();
+
+                // get number of elements from source
+                string sourcePath = currentComplexMappings.FirstOrDefault()?.Source.XPath;
+
+                int j = 1;
+                if (!string.IsNullOrEmpty(sourcePath))
+                    j = metadata.SelectNodes(sourcePath).Count; // get number of elements from source
+
+                // go throw each source element and create a complex element in the concept
+                for (int k = 0; k < j; k++)
                 {
-                    string rootNode = "concept";
-                    if (!string.IsNullOrEmpty(complexMapping.Target.XPath))
-                        rootNode = complexMapping.Target.XPath.Split('/')[0];
 
-                    concept.AppendChild(XmlUtility.CreateNode(rootNode, concept));
-                }
-
-                // get list of source elements for metadata
-                LinkElement cSource = complexMapping.Source;
-                LinkElement cTarget = complexMapping.Target;
-
-                //if type is default create a xmlNodeList with a xmlnode with the default value inside
-                List<XmlNode> xSourceList = new List<XmlNode>();
-                if (cSource.Type == LinkElementType.Default)
-                {
-                    XmlElement defaultNode = metadata.CreateElement("Default");
-                    defaultNode.InnerText = "";
-                    xSourceList.Add(defaultNode);
-                }
-                else // cSource is not a default type, oso get all nodes from xpath and add them to a list
-                    foreach(XmlNode xSource in metadata.SelectNodes(cSource.XPath))
-                        xSourceList.Add(xSource);
-
-                List<string> tmp = new List<string>();
-
-                foreach (XmlNode xSource in xSourceList)
-                {
-                    //create target complex element
-                    // generate target if not exist otherwise clone
-                    XmlNode xTarget = null;
-                    if (concept.SelectNodes(cTarget.XPath).Count == 0)
-                        xTarget = XmlUtility.GenerateNodeFromXPath(concept, null, cTarget.XPath);
-                    else
+                    XmlNode xSource = metadata.CreateElement("default");
+                    string currentComplexXPath = "";
+                    if (!string.IsNullOrEmpty(sourcePath))
                     {
-                        var xTargetPrevList = concept.SelectNodes(cTarget.XPath);
-                        var last = xTargetPrevList[xTargetPrevList.Count - 1];
-                        xTarget = concept.CreateElement(last.Name);
-                        last.ParentNode.InsertAfter(xTarget, last);
+                        
+                        xSource = metadata.SelectNodes(sourcePath)[k]; // get source xmlnode
+                        currentComplexXPath = XmlUtility.GetDirectXPathToNode(xSource); // get direct xpath to the source node
                     }
 
 
-                    // get children of complex mapping
-                    var simpleMappings = GetMappings(complexMapping.Id)?.OrderBy(m => m.Target.Id);
+                   
+                    int xpathIndex = k + 1;
 
-                    var listOfTargets = simpleMappings.Select(m => m.Target.ElementId);
-
-                    // for each simple mapping
-
-                    foreach (var simpleMapping in simpleMappings)
+                    string rootPath = "";
+                    string rootDirectPath = "";
+                    
+                    
+                    foreach (var complexMapping in currentComplexMappings)
                     {
+                        bool isRoot = false;
+                        LinkElement cSourceLinkElement = complexMapping.Source;
+                        LinkElement cTargetLinkElement = complexMapping.Target;
+   
+                            if (string.IsNullOrEmpty(rootPath))
+                            {
+                                rootPath = currentComplexXPath;
+                                isRoot = true;
+                            }
+                            else
+                            {
+                                int levelOfRoot = rootPath.Count(c => c == '/');
+                                int levelOfNew = currentComplexXPath.Count(c => c == '/');
 
-                        LinkElement sSource = simpleMapping.Source;
-                        LinkElement sTarget = simpleMapping.Target;
+                                if (levelOfNew <= levelOfRoot)
+                                { 
+                                    rootPath = currentComplexXPath;
+                                    // if the new level is lower then the root, then use the new level
+                                    isRoot = true;
+                                }
 
-                        XmlNode xSimpleSource = null;
+                            }
 
-                        // if the linkelement of the complex mapping and the simple mapping are the same
-                        // then the xml node is the same, no need to go deeper
-                        if (cSource.ElementId.Equals(sSource.ElementId) && cSource.Type.Equals(sSource.Type))
-                            xSimpleSource = xSource;
-                        else
-                            xSimpleSource = XmlUtility.GetXmlNodeByName(xSource, sSource.Name);
+                            
+                            XmlNode xTarget = null;
+              
+                            if(isRoot) rootDirectPath = currentComplexXPath;
+
+                            string currentDirectRootXpath = currentComplexXPath.Substring(0, rootDirectPath.Length); // remove last element from path
+
+                            int index = xpathIndex; //x + 1;
+                            string complexTargetPath = cTargetLinkElement.XPath + "[" + index + "]";
+           
+                            var simpleMappings = GetMappings(complexMapping.Id)?.OrderBy(m => m.Target.Id);
+
+                            foreach (var simpleMapping in simpleMappings)
+                            {
+                                    LinkElement sSourceLinkElement = simpleMapping.Source;
+                                    LinkElement sTargetLinkElement = simpleMapping.Target;
+
+                                // find elements in root source
+                                var simpleElements = XmlUtility.FindChildrenRecursive(xSource,simpleMapping.Source.Name);
+
+                                //var simpleElements = metadata.SelectNodes(t);
+                                if (simpleElements == null || simpleElements.Count() == 0) continue; // no elements found
+
+                                foreach (XmlNode simpleElement in simpleElements)
+                                {
+                                    string simpleSourcePath = XmlUtility.GetDirectXPathToNode(simpleElement);
+
+                                    string simpleTargetPath = mergeXPaths(currentDirectRootXpath, simpleSourcePath, complexTargetPath, cTargetLinkElement.XPath, sTargetLinkElement.XPath, metadata);
+
+                                    if (xTarget == null)
+                                        xTarget = XmlUtility.GenerateNodeFromXPath(concept, concept.DocumentElement, complexTargetPath); // generate target
+
+                                    // result is the set value, based on previews runs it must be check if
+                                    // the xmlnode already exist and have some value inside
+                                    // by the mapping thete is a complex to simple mapping possible
+                                    // this means xTarget is already the simple node where the value should be set, or get
+                                    string result = "";//xSimpleSource.InnerText; target
+                                    if (xTarget.Value == null && xTarget.ChildNodes.Count == 0) // first run everything is empty
+                                        result = String.Empty;
+                                    else if (xTarget.Value != null) result = xTarget.Value; // xTarget already simple target, so check value
+                                    else // xTarget is complex, get simple node by name and get value
+                                    {
+
+                                        XmlNode simpleXTarget = metadata.SelectSingleNode(simpleTargetPath);
+                                        if (simpleXTarget != null) result = simpleXTarget.InnerText;
+                                    }
+
+                                    // transformation
+                                    // if the result is empty may its the first run, so set the mask
+                                    if (string.IsNullOrEmpty(result)) result = simpleMapping.TransformationRule.Mask;
+
+                                    //transform the value against the transformation rules
+                                    string value = simpleElement.InnerText != null ? simpleElement.InnerText : String.Empty;
+                                    List<string> regExResultList = transform(value, simpleMapping.TransformationRule);
+
+                                    if (string.IsNullOrEmpty(simpleMapping.TransformationRule.Mask))
+                                        result = result + string.Join(", ", regExResultList.ToArray());
+                                    else
+                                        result = setOrReplace(result, regExResultList, simpleMapping.Source.Name, simpleMapping.TransformationRule.DefaultValue);
+
+                                    // if the result is empty but a default value exist, then set the default value
+                                    if (string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(simpleMapping.TransformationRule.DefaultValue)) result = simpleMapping.TransformationRule.DefaultValue;
 
 
-                        // result is the set value, based on previews runs it must be check if
-                        // the xmlnode already exist and have some value inside
-                        // by the mapping thete is a complex to simple mapping possible
-                        // this means xTarget is already the simple node where the value should be set, or get
-                        string result = "";//xSimpleSource.InnerText; target
-                        if (xTarget.Value == null && xTarget.ChildNodes.Count == 0) // first run everything is empty
-                            result = String.Empty;
-                        else if (xTarget.Value != null) result = xTarget.Value; // xTarget already simple target, so check value
-                        else // xTarget is complex, get simple node by name and get value
-                        {
-                            XmlNode simpleXTarget = XmlUtility.GetXmlNodeByName(xTarget, sTarget.Name);
-                            if (simpleXTarget != null) result = simpleXTarget.InnerText;
+                                    // complex to simple mapping
+                                    if (cTargetLinkElement.ElementId.Equals(sTargetLinkElement.ElementId) && cTargetLinkElement.Type.Equals(sTargetLinkElement.Type))
+                                    {
+                                        xTarget.InnerText = result;
+                                    }
+                                    else // complex to complex
+                                    {
+                                        string subsetXpath = simpleTargetPath.Remove(0, complexTargetPath.Count());
+                                        //subsetXpath += "[" + index + "]";
+
+
+                                        var xSimpleTarget = XmlUtility.GenerateNodeFromXPath(concept, xTarget, subsetXpath);
+                                        xSimpleTarget.InnerText = result;
+                                    }
+                                }
+                            
                         }
+                    }
+                }
+            }
 
-                        // transformation
-                        // if the result is empty may its the first run, so set the mask
-                        if (string.IsNullOrEmpty(result)) result = simpleMapping.TransformationRule.Mask;
+            //foreach (var x in targetXpaths)
+            //{ 
+            //    XmlUtility.GenerateNodeFromXPath(concept, concept.DocumentElement, x);
+            //}
 
-                        //transform the value against the transformation rules
-                        string value = xSimpleSource.InnerText != null ? xSimpleSource.InnerText : String.Empty;
-                        List<string> regExResultList = transform(value, simpleMapping.TransformationRule);
+            return concept;
+        }
 
-                        if (string.IsNullOrEmpty(simpleMapping.TransformationRule.Mask))
-                            result = result + string.Join(", ", regExResultList.ToArray());
-                        else
-                            result = setOrReplace(result, regExResultList, simpleMapping.Source.Name, simpleMapping.TransformationRule.DefaultValue);
+        private static string mergeXPaths(string directParent,string defaultParentPath, string child)
+        {
+            if (child.Equals(defaultParentPath)) return directParent;
+            return directParent + "/" + child.Replace(defaultParentPath, "").TrimStart('/');
 
-                        // if the result is empty but a default value exist, then set the default value
-                        if (string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(simpleMapping.TransformationRule.DefaultValue)) result = simpleMapping.TransformationRule.DefaultValue;
+        }
 
+        private static string mergeXPaths(string directComplexSourceParent, string directSimpleSourcePath, string directTargetPath,string defaultTargetPath, string child, XmlDocument metadata)
+        {
+            //eg 
+            // directComplexSourceParent = channel[2]/
+            // directSimpleSourcePath = channel[2]/imageEntity[2]/ImageAgent[1]
+            // parent = channel[2]/
+            // child = channel[2]/ImageAgent[1]
 
-                        // complex to simple mapping
-                        if (cTarget.ElementId.Equals(sTarget.ElementId) && cTarget.Type.Equals(sTarget.Type))
-                        {
-                            xTarget.InnerText = result;
-                        }
-                        else // complex to complex
-                        {
-                            string subsetXpath = sTarget.XPath.Remove(0, cTarget.XPath.Count());
-                            var xSimpleTarget = XmlUtility.GenerateNodeFromXPath(concept, xTarget, subsetXpath);
-                            xSimpleTarget.InnerText = result;
-                        }
+            if (directComplexSourceParent.Equals(directSimpleSourcePath)) return child;
+
+            List<string> levelOfSource = directSimpleSourcePath.Replace(directComplexSourceParent,"").Split('/').ToList(); // level 2
+            int index = 1;
 
 
+            if (levelOfSource.Count() == 1) // not level in between, count and get the index
+            {
+                // may remove the index from the last element
+                index = metadata.SelectNodes(directSimpleSourcePath).Count;
+            }
+            else
+            {
+                //count all elements from path index
+                foreach (var l in levelOfSource)
+                {
+                    Int16 o = 0;
+                    if (Int16.TryParse(getContentBetweenBrackets(l), out o))
+                    {
+                        if(o>1)index += o; // add the index of the level   
                     }
 
+                   
                 }
+
+                if (index > 1) index = index - 1; // remove the index of the last element, because it is not needed
 
             }
 
-            return concept;
+            return directTargetPath + "/" + child.Split('/').Last() + "[" + index + "]";//mergeXPaths(directTargetPath, defaultTargetPath, child) + "[" + index + "]";
+        }
+
+        private static string getContentBetweenBrackets(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return null; // Or string.Empty, depending on your desired behavior
+            }
+
+            int startIndex = input.IndexOf('[');
+            if (startIndex == -1)
+            {
+                return null; // Opening bracket not found
+            }
+
+            int endIndex = input.IndexOf(']', startIndex + 1);
+            if (endIndex == -1)
+            {
+                return null; // Closing bracket not found after opening bracket
+            }
+
+            // Calculate the length of the content
+            int length = endIndex - (startIndex + 1);
+
+            // Ensure there's content to extract
+            if (length < 0)
+            {
+                return null; // Malformed brackets like "]["
+            }
+
+            return input.Substring(startIndex + 1, length);
         }
 
         public static bool IsMapped(long source, LinkElementType sourceType, long target, LinkElementType targetType, out List<string> errors)
