@@ -218,7 +218,32 @@ namespace BExIS.Web.Shell.Controllers
 
                 var code = await identityUserService.GeneratePasswordResetTokenAsync(user.Id);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code }, Request.Url.Scheme);
-                await identityUserService.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                
+                // Create professional email template
+                var displayName = !string.IsNullOrEmpty(user.DisplayName) ? user.DisplayName : user.UserName;
+                var applicationName = BExIS.Utils.Config.GeneralSettings.ApplicationName;
+                if (string.IsNullOrEmpty(applicationName)) applicationName = "BEXIS2";
+                
+                var emailBody = $@"
+                <html>
+                <body style='font-family: Arial, sans-serif; color: #333;'>
+                    <p>Dear {displayName},</p>
+                    
+                    <p>We received a request to reset the password for your account.</p>
+                    <p>If you made this request, please reset your password by following the secure link below:</p>
+                    
+                    <p style='margin: 20px 0;'>
+                        <a href='{callbackUrl}' style='background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;'>Reset your password</a>
+                    </p>
+                    
+                    <p>If you did not request a password reset, you can safely ignore this message. Your account will remain unchanged.</p>
+                    
+                    <p>Best regards,<br>
+                    Your {applicationName} Support Team</p>
+                </body>
+                </html>";
+                
+                await identityUserService.SendEmailAsync(user.Id, "Reset Password", emailBody);
                 return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
             finally
