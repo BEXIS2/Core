@@ -164,7 +164,7 @@ namespace BExIS.Xml.Helpers
                 foreach (XmlNode child in parent.ChildNodes)
                 {
                     // If the child's name matches the target name, yield it.
-                    if (child.Name == name)
+                    if (child is XmlElement && child.Name == name)
                     {
                         yield return child;
                     }
