@@ -1419,66 +1419,102 @@ namespace BExIS.Dim.Helpers.Mappings
                     string currentComplexXPath = "";
                     if (!string.IsNullOrEmpty(sourcePath))
                     {
-                        
+
                         xSource = metadata.SelectNodes(sourcePath)[k]; // get source xmlnode
                         currentComplexXPath = XmlUtility.GetDirectXPathToNode(xSource); // get direct xpath to the source node
                     }
 
 
-                   
+
                     int xpathIndex = k + 1;
 
                     string rootPath = "";
                     string rootDirectPath = "";
-                    
-                    
+
+
                     foreach (var complexMapping in currentComplexMappings)
                     {
                         bool isRoot = false;
                         LinkElement cSourceLinkElement = complexMapping.Source;
                         LinkElement cTargetLinkElement = complexMapping.Target;
-   
-                            if (string.IsNullOrEmpty(rootPath))
+
+                        if (string.IsNullOrEmpty(rootPath))
+                        {
+                            rootPath = currentComplexXPath;
+                            isRoot = true;
+                        }
+                        else
+                        {
+                            int levelOfRoot = rootPath.Count(c => c == '/');
+                            int levelOfNew = currentComplexXPath.Count(c => c == '/');
+
+                            if (levelOfNew <= levelOfRoot)
                             {
                                 rootPath = currentComplexXPath;
+                                // if the new level is lower then the root, then use the new level
                                 isRoot = true;
+                            }
+
+                        }
+
+
+                        XmlNode xTarget = null;
+
+                        if (isRoot) rootDirectPath = currentComplexXPath;
+
+                        string currentDirectRootXpath = currentComplexXPath.Substring(0, rootDirectPath.Length); // remove last element from path
+
+                        int index = xpathIndex; //x + 1;
+                        string complexTargetPath = cTargetLinkElement.XPath + "[" + index + "]";
+
+                        var simpleMappings = GetMappings(complexMapping.Id)?.OrderBy(m => m.Target.Id);
+
+                        foreach (var simpleMapping in simpleMappings)
+                        {
+                            LinkElement sSourceLinkElement = simpleMapping.Source;
+                            LinkElement sTargetLinkElement = simpleMapping.Target;
+
+                            List<XmlNode> simpleElements = new List<XmlNode>();
+                            // find elements in root source
+                            if (!string.IsNullOrEmpty(complexMapping.Source.XPath) && simpleMapping.Source.XPath.Equals(complexMapping.Source.XPath)) // same path means no children needed
+                            {
+                                var list = metadata.SelectNodes(currentComplexXPath);
+                                for (int n = 0; n< list.Count;n++)// get all elements by xpath
+                                {
+                                    simpleElements.Add(list.Item(n));
+                                }
                             }
                             else
                             {
-                                int levelOfRoot = rootPath.Count(c => c == '/');
-                                int levelOfNew = currentComplexXPath.Count(c => c == '/');
+                                simpleElements = XmlUtility.FindChildrenRecursive(xSource, simpleMapping.Source.Name).ToList();
+                            }
+                            //var simpleElements = metadata.SelectNodes(t);
+                            if (simpleElements == null || simpleElements.Count() == 0)  // DEFAULT
+                            {
+                               
+                                string simpleTargetPath = complexTargetPath + "/"+ sTargetLinkElement.XPath + "[" + index + "]";
 
-                                if (levelOfNew <= levelOfRoot)
-                                { 
-                                    rootPath = currentComplexXPath;
-                                    // if the new level is lower then the root, then use the new level
-                                    isRoot = true;
+                                if (xTarget == null)
+                                    xTarget = XmlUtility.GenerateNodeFromXPath(concept, concept.DocumentElement, complexTargetPath); // generate target
+
+                                // complex to simple mapping
+                                if (cTargetLinkElement.ElementId.Equals(sTargetLinkElement.ElementId) && cTargetLinkElement.Type.Equals(sTargetLinkElement.Type))
+                                {
+                                    xTarget.InnerText = simpleMapping.TransformationRule.DefaultValue;
+                                }
+                                else // complex to complex
+                                {
+                                    string subsetXpath = simpleTargetPath.Remove(0, complexTargetPath.Count());
+                                    //subsetXpath += "[" + index + "]";
+
+
+                                    var xSimpleTarget = XmlUtility.GenerateNodeFromXPath(concept, xTarget, subsetXpath);
+                                    xSimpleTarget.InnerText = simpleMapping.TransformationRule.DefaultValue;
                                 }
 
                             }
-
-                            
-                            XmlNode xTarget = null;
-              
-                            if(isRoot) rootDirectPath = currentComplexXPath;
-
-                            string currentDirectRootXpath = currentComplexXPath.Substring(0, rootDirectPath.Length); // remove last element from path
-
-                            int index = xpathIndex; //x + 1;
-                            string complexTargetPath = cTargetLinkElement.XPath + "[" + index + "]";
-           
-                            var simpleMappings = GetMappings(complexMapping.Id)?.OrderBy(m => m.Target.Id);
-
-                            foreach (var simpleMapping in simpleMappings)
-                            {
-                                    LinkElement sSourceLinkElement = simpleMapping.Source;
-                                    LinkElement sTargetLinkElement = simpleMapping.Target;
-
-                                // find elements in root source
-                                var simpleElements = XmlUtility.FindChildrenRecursive(xSource,simpleMapping.Source.Name);
-
-                                //var simpleElements = metadata.SelectNodes(t);
-                                if (simpleElements == null || simpleElements.Count() == 0) continue; // no elements found
+                            else // elements found
+                            {     
 
                                 foreach (XmlNode simpleElement in simpleElements)
                                 {
@@ -1488,6 +1524,9 @@ namespace BExIS.Dim.Helpers.Mappings
 
                                     if (xTarget == null)
                                         xTarget = XmlUtility.GenerateNodeFromXPath(concept, concept.DocumentElement, complexTargetPath); // generate target
+                                    else
+                                        xTarget = concept.SelectSingleNode(complexTargetPath);
+
 
                                     // result is the set value, based on previews runs it must be check if
                                     // the xmlnode already exist and have some value inside
@@ -1499,8 +1538,7 @@ namespace BExIS.Dim.Helpers.Mappings
                                     else if (xTarget.Value != null) result = xTarget.Value; // xTarget already simple target, so check value
                                     else // xTarget is complex, get simple node by name and get value
                                     {
-
-                                        XmlNode simpleXTarget = metadata.SelectSingleNode(simpleTargetPath);
+                                        XmlNode simpleXTarget = concept.SelectSingleNode(simpleTargetPath);
                                         if (simpleXTarget != null) result = simpleXTarget.InnerText;
                                     }
 
@@ -1536,11 +1574,14 @@ namespace BExIS.Dim.Helpers.Mappings
                                         xSimpleTarget.InnerText = result;
                                     }
                                 }
-                            
+                            }
+
                         }
                     }
                 }
             }
+
+       
 
             //foreach (var x in targetXpaths)
             //{ 
