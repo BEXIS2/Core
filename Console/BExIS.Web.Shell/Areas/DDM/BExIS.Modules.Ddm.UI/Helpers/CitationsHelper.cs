@@ -19,7 +19,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BExIS.Modules.Ddm.UI.Helpers
 {
-    public class CitationHelper
+    public class CitationsHelper
     {
         public static CitationDataModel GetCitationDataModel(long datasetVersionId)
         {
