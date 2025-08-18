@@ -14,6 +14,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Xml.Linq;
 
 namespace BExIS.Modules.Dim.UI.Helpers
@@ -84,6 +85,51 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
             // check for publication date
             datasetModel.PublicationDate = publicAndDate.Item2.ToString(new CultureInfo("en-US"));
+
+            // Add download information
+            try
+            {
+                // Get download source URL from current request context
+                if (HttpContext.Current != null && HttpContext.Current.Request != null)
+                {
+                    datasetModel.DownloadSource = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority);
+                }
+                else
+                {
+                    datasetModel.DownloadSource = "unknown";
+                }
+            }
+            catch (Exception)
+            {
+                datasetModel.DownloadSource = "unknown";
+            }
+
+            // Set download date time to current time
+            datasetModel.DownloadDateTime = DateTime.Now.ToString(new CultureInfo("en-US"));
+
+            // Set downloaded by user (simplified version for safety)
+            try
+            {
+                var userName = string.Empty;
+                try
+                {
+                    userName = HttpContext.Current?.User?.Identity?.Name;
+                }
+                catch { }
+
+                if (!string.IsNullOrEmpty(userName))
+                {
+                    datasetModel.DownloadedBy = userName;
+                }
+                else
+                {
+                    datasetModel.DownloadedBy = "anonymous";
+                }
+            }
+            catch (Exception)
+            {
+                datasetModel.DownloadedBy = "anonymous";
+            }
 
             return datasetModel;
         }
