@@ -31,20 +31,47 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
 {
     public class CitationController : ApiController
     {
-        // GET api/Citation/{id}
-        /// <summary>
-        /// Get citation of a dataset by id and version.
-        /// </summary>
-        ///
-        /// <param name="id">Identifier of a dataset</param>
         [BExISApiAuthorize]
-        [GetRoute("api/Citation/{id}")]
+        [GetRoute("api/datasets/citations")]
         [ResponseType(typeof(CitationModel))]
-        public HttpResponseMessage Get(long id, int versionNumber = 0, [FromUri] Format format = Format.Bibtex)
+        public HttpResponseMessage Get([FromUri] Format format = Format.Bibtex)
+        {
+            return GetAllCitations();
+        }
+
+        [BExISApiAuthorize]
+        [GetRoute("api/datasets/{datasetId}/citations")]
+        [ResponseType(typeof(CitationModel))]
+        public HttpResponseMessage GetCitationFromLatestVersion(long datasetId, [FromUri] Format format = Format.Bibtex)
         {
 
-            return GetCitation(id, format, versionNumber);
+            try
+            {
+                using (var datasetManager = new DatasetManager())
+                {
+                    var datasetVersionId = datasetManager.GetDatasetLatestVersion(datasetId)?.Id;
 
+                    if( datasetVersionId == null)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Dataset version not found.");
+                    }
+
+                    return Request.CreateResponse<CitationModel>(HttpStatusCode.OK, new CitationModel() { CitationString = "jsdjufkjsdkfjf"});                }
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "An error occurred while retrieving the citation: " + ex.Message);
+            }
+        }
+
+        [BExISApiAuthorize]
+        [GetRoute("api/datasets/{datasetId}/citations/{versionNumber}")]
+        [ResponseType(typeof(CitationModel))]
+        public HttpResponseMessage GetCitationFromSpecificVersionNumber(long datasetId, int versionNumber, [FromUri] Format format = Format.Bibtex)
+        {
+
+            //return GetCitation(id, format, versionNumber);
+            return null;
         }
 
         // GET api/Citation/GetCitations
@@ -147,20 +174,6 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             return response;
         }
 
-        /// <summary>
-        /// Get citation string of all datasets
-        /// </summary>
-        ///
-        /// <param name="id">Identifier of a dataset</param>
-        [BExISApiAuthorize]
-        [GetRoute("api/Citation/Datasets")]
-        [ResponseType(typeof(CitationModel))]
-        public HttpResponseMessage Get()
-        {
-
-            return GetAllCitations();
-
-        }
 
         private HttpResponseMessage GetAllCitations()
         {

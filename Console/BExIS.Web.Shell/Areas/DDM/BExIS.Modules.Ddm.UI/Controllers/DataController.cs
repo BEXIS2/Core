@@ -436,12 +436,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         return PartialView("_Title", datasetVersion.Title);
                     }
 
-                    var model = CitationHelper.GetCitationDataModel(datasetVersionId);
+                    var model = CitationsHelper.GetCitationDataModel(datasetVersionId);
 
                     if (model == null)
                         return PartialView("_Title", datasetVersion.Title);
 
-                    if (!CitationHelper.IsCitationDataModelValid(model))
+                    if (!CitationsHelper.IsCitationDataModelValid(model))
                         return PartialView("_Title", datasetVersion.Title);
 
                     return PartialView($"_Citation_{citationSettings.ReadCitationFormat}", model);
