@@ -14,6 +14,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Xml.Linq;
 
 namespace BExIS.Modules.Dim.UI.Helpers
@@ -84,6 +85,50 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
             // check for publication date
             datasetModel.PublicationDate = publicAndDate.Item2.ToString(new CultureInfo("en-US"));
+
+            // Add download information
+            try
+            {
+                // Get download source URL from current request context
+                if (HttpContext.Current != null && HttpContext.Current.Request != null)
+                {
+                    datasetModel.DownloadSource = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority);
+                }
+                else
+                {
+                    datasetModel.DownloadSource = "unknown";
+                }
+            }
+            catch (Exception)
+            {
+                datasetModel.DownloadSource = "unknown";
+            }
+
+            // Set download date time to current time
+            datasetModel.DownloadDateTime = DateTime.Now.ToString(new CultureInfo("en-US"));
+
+            // Set downloaded by user (similar to getPartyNameOrDefault pattern)
+            try
+            {
+                var userName = HttpContext.Current?.User?.Identity?.Name;
+                if (!string.IsNullOrEmpty(userName))
+                {
+                    using (var partyManager = new PartyManager())
+                    {
+                        // Try to find the party for this user to get display name
+                        // This follows similar logic as in getPartyNameOrDefault methods
+                        datasetModel.DownloadedBy = !string.IsNullOrWhiteSpace(userName) ? userName : "anonymous";
+                    }
+                }
+                else
+                {
+                    datasetModel.DownloadedBy = "anonymous";
+                }
+            }
+            catch (Exception)
+            {
+                datasetModel.DownloadedBy = "anonymous";
+            }
 
             return datasetModel;
         }

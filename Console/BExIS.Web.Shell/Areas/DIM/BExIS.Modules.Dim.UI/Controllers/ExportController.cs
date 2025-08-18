@@ -306,7 +306,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         if (manifest != null)
                         {
                             string manifestPath = OutputDatasetManager.GetDynamicDatasetStorePath(id,
-                                datasetVersionNumber, "manifest", ".json");
+                                datasetVersionNumber, "general_metadata", ".json");
                             string fullFilePath = Path.Combine(AppConfiguration.DataPath, manifestPath);
                             string directory = Path.GetDirectoryName(fullFilePath);
                             if (!Directory.Exists(directory))
@@ -314,7 +314,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                            System.IO.File.WriteAllText(fullFilePath, manifest, System.Text.Encoding.UTF8);
 
-                            archive.AddFileToArchive(fullFilePath, "manifest.json");
+                            archive.AddFileToArchive(fullFilePath, "general_metadata.json");
                         }
 
                         string title = datasetVersion.Title;

@@ -43,6 +43,9 @@ namespace BExIS.Modules.Dim.UI.Models.Api
         public Dictionary<string, Dictionary<string, string>> Parties { get; set; }
         public string VersionDate { get; set; }
         public object Names { get; internal set; }
+        public string DownloadSource { get; set; }
+        public string DownloadDateTime { get; set; }
+        public string DownloadedBy { get; set; }
 
         public ApiDatasetModel()
         {
