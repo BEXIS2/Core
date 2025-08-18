@@ -302,14 +302,14 @@ namespace BExIS.Dlm.Tests.Helpers
             }
         }
 
-        public Dataset UpdateOneTupleForDataset(Dataset dataset, StructuredDataStructure dataStructure, long id, int value, DatasetManager datasetManager)
+        public Dataset UpdateOneTupleForDataset(Dataset dataset, StructuredDataStructure dataStructure, long id, int value,string username, DatasetManager datasetManager)
         {
             dataset.Status.Should().Be(DatasetStatus.CheckedIn);
             dataset.Should().NotBeNull();
 
             try
             {
-                if (datasetManager.IsDatasetCheckedOutFor(dataset.Id, "David") || datasetManager.CheckOutDataset(dataset.Id, "David"))
+                if (datasetManager.IsDatasetCheckedOutFor(dataset.Id, username) || datasetManager.CheckOutDataset(dataset.Id, username))
                 {
                     dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in Checkedout status.");
 

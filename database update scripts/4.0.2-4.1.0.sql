@@ -309,6 +309,8 @@ where name not in (
 );
 
 
+
+
 -- missing author and description update to empty strings
 update datasetversions
 set 
@@ -319,6 +321,14 @@ update datasetversions
 set 
 m_comment = ''
 where m_comment is null;
+
+-- reset all datatypes to units
+delete from units_datatypes where unitref = (select id from units where name like 'none');
+INSERT INTO units_datatypes (datatyperef, unitref)
+SELECT id, (select id from units where name like 'none')
+from datatypes;
+
+
 
 
 -- BEXIS2 Version Update
