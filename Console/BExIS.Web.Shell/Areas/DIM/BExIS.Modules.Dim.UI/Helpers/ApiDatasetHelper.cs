@@ -107,18 +107,19 @@ namespace BExIS.Modules.Dim.UI.Helpers
             // Set download date time to current time
             datasetModel.DownloadDateTime = DateTime.Now.ToString(new CultureInfo("en-US"));
 
-            // Set downloaded by user (similar to getPartyNameOrDefault pattern)
+            // Set downloaded by user (simplified version for safety)
             try
             {
-                var userName = HttpContext.Current?.User?.Identity?.Name;
+                var userName = string.Empty;
+                try
+                {
+                    userName = HttpContext.Current?.User?.Identity?.Name;
+                }
+                catch { }
+
                 if (!string.IsNullOrEmpty(userName))
                 {
-                    using (var partyManager = new PartyManager())
-                    {
-                        // Try to find the party for this user to get display name
-                        // This follows similar logic as in getPartyNameOrDefault methods
-                        datasetModel.DownloadedBy = !string.IsNullOrWhiteSpace(userName) ? userName : "anonymous";
-                    }
+                    datasetModel.DownloadedBy = userName;
                 }
                 else
                 {
