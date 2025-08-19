@@ -1488,8 +1488,10 @@ namespace BExIS.Dim.Helpers.Mappings
                             {
                                 simpleElements = XmlUtility.FindChildrenRecursive(xSource, simpleMapping.Source.Name).ToList();
                             }
+
+
                             //var simpleElements = metadata.SelectNodes(t);
-                            if (simpleElements == null || simpleElements.Count() == 0)  // DEFAULT
+                            if ((simpleElements == null || simpleElements.Count() == 0) && string.IsNullOrEmpty(complexMapping.Source.XPath) && complexMapping.Source.Name.ToLower().Equals("default"))  // DEFAULT
                             {
                                
                                 string simpleTargetPath = complexTargetPath + "/"+ sTargetLinkElement.XPath + "[" + index + "]";
@@ -1581,13 +1583,7 @@ namespace BExIS.Dim.Helpers.Mappings
                 }
             }
 
-       
-
-            //foreach (var x in targetXpaths)
-            //{ 
-            //    XmlUtility.GenerateNodeFromXPath(concept, concept.DocumentElement, x);
-            //}
-
+      
             return concept;
         }
 
