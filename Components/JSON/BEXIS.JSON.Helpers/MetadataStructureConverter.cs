@@ -86,7 +86,7 @@ namespace BEXIS.JSON.Helpers
 
             // base information
             current.Title = usage.Label;
-            current.Type = GetJSchemaType(usage);
+            current.Type = JSchemaType.Object;
             current.Description = usage.Description;
 
             // set required
