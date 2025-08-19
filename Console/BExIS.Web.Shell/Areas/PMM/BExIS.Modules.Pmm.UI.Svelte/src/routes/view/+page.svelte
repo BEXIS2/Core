@@ -106,10 +106,10 @@ function getGlobalIndex(resource: ResourceArray): number {
                         </div>
                         <div class="flex flex-col gap-1 pb-5 pr-5 pl-5 text-sm text-gray-700">
                             {#if dataset.SubmissionDate}
-                                <div><p class="font-medium text-gray-500">Submission Date:</p> {dataset.SubmissionDate}</div>
+                                <div class="font-medium text-gray-500">Submission Date: {dataset.SubmissionDate}</div>
                             {/if}
                             {#if dataset.EmbargoEnd}
-                                <div><p class="font-medium text-gray-500">Embargo End:</p> {dataset.EmbargoEnd}</div>
+                                <div class="font-medium text-gray-500">Embargo End: {dataset.EmbargoEnd}</div>
                             {/if}
                             {#if dataset.URI}
                                 <ResourceLink type="uri" dataset={dataset} /> 
@@ -119,10 +119,10 @@ function getGlobalIndex(resource: ResourceArray): number {
                             <ResourceLink type="doi" dataset={dataset} />
                             {/if}
                             {#if dataset.RepositoryName}
-                                <div><p class="font-medium text-gray-500">Repository Name:</p> {dataset.RepositoryName}</div>
+                                <div class="font-medium text-gray-500">Repository Name: {dataset.RepositoryName}</div>
                             {/if}
                             {#if dataset.Licence}
-                                <div><p class="font-medium text-gray-500">Licence:</p> {dataset.Licence}</div>
+                                <div class="font-medium text-gray-500">Licence: {dataset.Licence}</div>
                             {/if}
                         </div>
                     </div>

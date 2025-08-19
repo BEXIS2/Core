@@ -32,11 +32,12 @@
         > 
             <span class="font-medium text-gray-500">URI</span>
         </div>
-        <div class="shadow bg-surface-200 border-t border-b border-r border-gray-200 rounded-r px-2 py-1">
+        <div class="line-clamp-1 shadow bg-surface-200 border-t border-b border-r border-gray-200 rounded-r px-2 py-1">
             <a
                 href={dataset.URI}
                 target="_blank"
                 class="text-bexis2-primary underline break-all"
+                title={"Open Link: "+dataset.URI}
             >
                 {shortenUri(dataset.URI)}
             </a>
@@ -49,11 +50,12 @@
         >  
             <span class="font-medium text-gray-500">DOI</span>
         </div>
-        <div class="shadow bg-surface-200 border-t border-b border-r border-gray-200 rounded-r px-2 py-1">
+        <div class="line-clamp-1 shadow bg-surface-200 border-t border-b border-r border-gray-200 rounded-r px-2 py-1">
             <a
                 href={"https://doi.org/" + shortenDoi(dataset.DOI)}
                 target="_blank"
                 class="text-bexis2-primary underline break-all"
+                title={"Open Link: "+dataset.DOI}
             >
                 {shortenDoi(dataset.DOI)}
             </a>
