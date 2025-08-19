@@ -22,7 +22,7 @@ namespace BExIS.Dlm.Tests.Services.Data
         private TestSetupHelper helper = null;
         private long datasetId = 0;
         private long latestDataTupleId = 0;
-        private string username = "David";
+        private string username = "david";
         private long numberOfTuples = 10;
         private DatasetHelper dsHelper;
 
