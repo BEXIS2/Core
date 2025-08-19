@@ -9,7 +9,7 @@
 	import { metadataStore } from './stores';
 	import { schemaToJson } from './utils';
 
-	export let schemaId: number = 1;
+	export let schemaId: number = 2;
 	export let datasetId: number = 0;
 
 	let s: any;

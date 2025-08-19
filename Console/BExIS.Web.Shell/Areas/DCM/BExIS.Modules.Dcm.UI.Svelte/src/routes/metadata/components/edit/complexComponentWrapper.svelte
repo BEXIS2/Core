@@ -11,6 +11,7 @@
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from './simpleComponentWrapper.svelte';
 	import ArrayComponent from './arrayComponentWrapper.svelte';
+	import ChoiceComponent from './choiceComponentWrapper.svelte';
 	import { faPlus, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { slide, fade } from 'svelte/transition';
@@ -45,7 +46,7 @@
 		{@const l = label = key}
 		{#if value.type === 'object' && value.properties && !value.properties['#text']}
 			{#if value.oneOf || value.anyOf || value.allOf}
-				<p>Choise</p>
+				<ChoiceComponent choiceComponent={value} {path} />
 			{:else}
 				<div class="grid grid-cols-1 gap-0 m-2">
 					<div class="card bg-primary-300 dark:bg-primary-800 px-5 py-2 grid grid-cols-2">

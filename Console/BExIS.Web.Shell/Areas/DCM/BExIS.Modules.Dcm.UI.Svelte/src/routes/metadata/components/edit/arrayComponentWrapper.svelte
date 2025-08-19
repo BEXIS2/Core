@@ -24,6 +24,8 @@
 			? arrayComponent.items.required
 			: [];
 
+	console.log('Array', label, schemaToJson(arrayComponent.items));
+
 	let value = getValueByPath(path) == undefined ? [] : getValueByPath(path);
 	let render: boolean = false;
 
@@ -60,6 +62,7 @@
 
 	function insertItemAt(index: number) {
 		value.splice(index, 0, schemaToJson(arrayComponent.items));
+		console.log('insertItemAt', value);
 		render = !render;
 	}
 </script>
