@@ -48,14 +48,22 @@
         }, {});
     });
 
-
-
-
-
-
 function getGlobalIndex(resource: ResourceArray): number {
     return datasetResources.findIndex(r => r === resource) + 1;
 }
+
+  function isValidUrl(value: any) {
+    try {
+      new URL(value);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  function isValidDoi(doi: any) {
+    return doi && doi !== "unknown" && doi.includes("/");
+  }
 
 </script>
 
@@ -111,12 +119,12 @@ function getGlobalIndex(resource: ResourceArray): number {
                             {#if dataset.EmbargoEnd}
                                 <div class="font-medium text-gray-500">Embargo End: {dataset.EmbargoEnd}</div>
                             {/if}
-                            {#if dataset.URI}
+                            {#if dataset.URI && isValidUrl(dataset.URI)}
                                 <ResourceLink type="uri" dataset={dataset} /> 
                             {/if}
 
-                            {#if dataset.DOI}
-                            <ResourceLink type="doi" dataset={dataset} />
+                            {#if dataset.DOI && isValidDoi(dataset.DOI)}
+                                <ResourceLink type="doi" dataset={dataset} />
                             {/if}
                             {#if dataset.RepositoryName}
                                 <div class="font-medium text-gray-500">Repository Name: {dataset.RepositoryName}</div>
