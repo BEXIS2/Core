@@ -22,7 +22,7 @@ namespace BExIS.Dlm.Tests.Services.Data
         private long datasetId = 0;
         private long latestDataTupleId = 0;
         private long firstDataTupleId = 0;
-        private string username = "David";
+        private string username = "david";
 
         private DatasetHelper dsHelper;
         private long numberOfTuples = 10;
@@ -148,7 +148,7 @@ namespace BExIS.Dlm.Tests.Services.Data
 
                 var dataset = datasetManager.GetDataset(datasetId);
 
-                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, latestDataTupleId, 1,"david", datasetManager);
+                dataset = dsHelper.UpdateOneTupleForDataset(dataset, (StructuredDataStructure)dataset.DataStructure, latestDataTupleId, 1, username, datasetManager);
                 datasetManager.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
 
                 //Act
