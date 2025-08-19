@@ -1,21 +1,24 @@
 ﻿using BExIS.Dim.Helpers.Mappings;
+using BExIS.Dim.Services;
 using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Ddm.UI.Models;
+using BExIS.Security.Entities.Versions;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Xml.Serialization;
-using System.Xml;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dim.Services;
-using System.Text;
-using BExIS.Security.Entities.Versions;
-using System.Data;
-using System.Security.Policy;
-using Telerik.Web.Mvc.Infrastructure;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
+using System.Linq;
+using System.Security.Policy;
+using System.Text;
+using System.Web;
+using System.Xml;
+using System.Xml.Serialization;
+using Telerik.Web.Mvc.Infrastructure;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Ddm.UI.Helpers
 {
@@ -27,6 +30,8 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             {
                 using (var datasetManager = new DatasetManager())
                 using (var conceptManager = new ConceptManager())
+                using (var entityPermissionManager = new EntityPermissionManager())
+                using (var entityManager = new EntityManager())
                 {
                     var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
                     var metadata = datasetVersion.Metadata;
@@ -46,6 +51,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     }
 
                     var settingsHelper = new SettingsHelper();
+                    var useTags = Boolean.Parse(settingsHelper.GetValue("use_tags"));
                     var citationSettings = settingsHelper.GetCitationSettings();
 
                     // Authors
@@ -54,17 +60,24 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                         model.Authors = new List<string>() { model.Authors.Take(citationSettings.NumberOfAuthors) + " et al." };
                     }
 
-                    // Version
+                    // Version 
                     if (String.IsNullOrEmpty(model.Version))
-                    model.Version = datasetVersion.VersionNo.ToString();
+                    {
+                        if (useTags && datasetVersion.Tag != null)
+                            model.Version = datasetVersion.Tag.ToString();
+
+                            model.Version = datasetVersion.VersionNo.ToString();
+                    }
+
+                    var isPublic = entityPermissionManager.IsPublicAsync(datasetVersion.Dataset.EntityTemplate.EntityType.Id, datasetVersion.Dataset.Id).Result;
 
                     // Publication Year
                     if (String.IsNullOrEmpty(model.Date))
-                    {
-                        if (String.IsNullOrEmpty(datasetVersion.PublicAccessDate.ToString()))
-                            model.Date = datasetVersion.PublicAccessDate.ToString();
-                        else
-                            model.Date = datasetVersion.Timestamp.ToString();
+                    {                       
+                        if (isPublic)
+                            model.Date = datasetVersion.PublicAccessDate.Date.ToString("yyyy");
+
+                        model.Date = datasetVersion.Timestamp.Date.ToString("yyyy");
                     }
 
                     // Publisher
@@ -91,7 +104,10 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                             }
                             else
                             {
-                                model.URL = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + "/ddm/dataset/" + datasetVersion.Dataset.Id;
+                                if(useTags)
+                                    model.URL = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + $"/ddm/data/Showdata/{datasetVersion.Dataset.Id}?tag={datasetVersion.VersionNo}";
+
+                                model.URL = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + $"/ddm/data/Showdata/{datasetVersion.Dataset.Id}?version={datasetVersion.VersionNo}";
                             }
                         }
                     }
