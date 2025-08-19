@@ -9,6 +9,8 @@
     let datasetTitle: string;
     let datasetAuthors: string[] = [];
     let datasetDescription: string;
+    let datasetComment: string;
+    let datasetDataCodeAvailiabilityStatement: string[] = [];
     let datasetResources: ResourceArray[] = [];
 
     let showAllAuthors = false;
@@ -17,12 +19,14 @@
     let groupedResources: Record<string, ResourceArray[]> = {};
 
     onMount(async () => {
-        metadata = await apiCalls.GetMetadata(3);
+        metadata = await apiCalls.GetMetadata(11);
         console.log(metadata);
 
         datasetTitle = metadata?.publication?.Title?.['#text'] ?? 'Title not available';
         datasetAuthors = metadata?.publication?.Author?.map((author: any) => author['#text']) || ['Authors not available'];
         datasetDescription = metadata?.publication?.Abstract?.map((abstract: any) => abstract['#text'])?.join('\n\n') ?? 'Description not available';
+        datasetComment = metadata?.publication?.comment?.['#text'] ?? 'Comment not available';
+        datasetDataCodeAvailiabilityStatement = metadata?.publication?.Recourses?.Data_code_availiablity_statement?.map((statement: any) => statement['#text']) || ['Data code availability statement not available'];
 
         datasetResources = (metadata?.Resource ?? []).map((resource: any) => ({
             Name: resource?.Name?.['#text'] ?? '',
@@ -119,12 +123,13 @@ function getGlobalIndex(resource: ResourceArray): number {
                             {#if dataset.EmbargoEnd}
                                 <div class="font-medium text-gray-500">Embargo End: {dataset.EmbargoEnd}</div>
                             {/if}
-                            {#if dataset.URI && isValidUrl(dataset.URI)}
-                                <ResourceLink type="uri" dataset={dataset} /> 
-                            {/if}
 
                             {#if dataset.DOI && isValidDoi(dataset.DOI)}
                                 <ResourceLink type="doi" dataset={dataset} />
+                            {:else}
+                                {#if dataset.URI && isValidUrl(dataset.URI)}
+                                    <ResourceLink type="uri" dataset={dataset} /> 
+                                {/if}
                             {/if}
                             {#if dataset.RepositoryName}
                                 <div class="font-medium text-gray-500">Repository Name: {dataset.RepositoryName}</div>
