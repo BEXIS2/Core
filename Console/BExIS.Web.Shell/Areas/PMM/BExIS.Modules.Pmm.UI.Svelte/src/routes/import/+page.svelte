@@ -148,6 +148,60 @@
 		});
 	}
 
+function applyAvailableUponRequestRules(row: any) {
+	function syncColumns(presentKey: string, targetKeys: string[], triggerValue: string) {
+		if (!row[presentKey]) return;
+
+		const presentValues = row[presentKey]
+			.toString()
+			.split(',')
+			.map((v: string) => v.trim());
+
+		for (const targetKey of targetKeys) {
+			// Stelle sicher, dass die Zielzelle existiert (sonst leeres Array zum Füllen)
+			let targetValues = (row[targetKey] || '')
+				.toString()
+				.split(',')
+				.map((v: string) => v.trim());
+
+			// Länge angleichen (falls Zielspalte kürzer ist)
+			while (targetValues.length < presentValues.length) {
+				targetValues.push('');
+			}
+
+			// Werte synchronisieren
+			for (let i = 0; i < presentValues.length; i++) {
+				if (presentValues[i].toLowerCase() === triggerValue.toLowerCase()) {
+					targetValues[i] = triggerValue;
+				}
+			}
+
+			row[targetKey] = targetValues.join(', ');
+		}
+	}
+
+	// Regel 1: available upon request
+	syncColumns('Data present', ['Data License', 'Data Publisher'], 'available upon request');
+
+	// Regel 2: no access (nur für Data)
+	syncColumns(
+		'Data present',
+		[
+			'Data License',
+			'Data Publisher',
+			'Data format',
+			'Data URL',
+			'Data URL resolves',
+			'Data DOI',
+			'Data DOI resolves'
+		],
+		'no access'
+	);
+
+	return row;
+}
+
+
 	function validateRows(data: any[], codeColumns: string[], dataColumns: string[]) {
 		let columnErrors: { [key: string]: any[] } = {};
 
@@ -164,6 +218,7 @@
 				});
 
 				if (validationType.valid) {
+					row = applyAvailableUponRequestRules(row);
 					validData.push(row);
 				} else {
 					invalidDataCounter++;
