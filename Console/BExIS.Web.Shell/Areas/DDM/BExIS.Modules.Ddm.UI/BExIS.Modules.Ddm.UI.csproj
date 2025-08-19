@@ -160,7 +160,7 @@
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DdmModule.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Helpers\CitationHelper.cs" />
+    <Compile Include="Helpers\CitationsHelper.cs" />
     <Compile Include="Helpers\DdmSeedDataGenerator.cs" />
     <Compile Include="Helpers\GridHelper.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />

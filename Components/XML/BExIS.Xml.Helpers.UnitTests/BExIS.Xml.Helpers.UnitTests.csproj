@@ -260,6 +260,9 @@
     <Content Include="ConvertTo_JsonToXml.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="ConvertTo_JsonToXmlArray.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="ConvertTo_XmlToJson2.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

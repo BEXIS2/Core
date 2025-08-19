@@ -46,20 +46,6 @@
       "description": "If set to true, the minor version tag can be assigned to dataset versions to display changes in more detail."
     },
     {
-      "key": "publisher",
-      "title": "Publisher for citations",
-      "value": "BEXIS",
-      "type": "String",
-      "description": ""
-    },
-    {
-      "key": "instanceName",
-      "title": "Instance name for citation",
-      "value": "BEXIS - Testsite",
-      "type": "String",
-      "description": ""
-    },
-    {
       "key": "citationSettings",
       "title": "settings for citations",
       "options": [],
