@@ -330,21 +330,65 @@ from datatypes;
 
 -- Citation Concept Mapping Updates
 
--- UPDATE dim_mappingconcepts
--- 	SET name='citation'
--- 	WHERE name='Citation';
+INSERT INTO public.dim_mappingconcepts(
+version, name, description, url, xsd) 
+SELECT 1,'Citation', 'The concept is needed to create a citation string', '', ''
+WHERE NOT EXISTS (SELECT * FROM public.dim_mappingconcepts WHERE name='Citation');
 
-UPDATE public.dim_mappingkeys
-	SET optional=true
-	WHERE xpath='data/version' and concept = (select id from dim_mappingconcepts where name='citation');
+INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept, xpath)
+SELECT 'Title','Title of citation string.', '', false, false, (select id from dim_mappingconcepts where name='Citation'), 'data/title'
+WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='Citation') AND xpath='data/title');
 
-UPDATE public.dim_mappingkeys
-	SET optional=true
-	WHERE xpath='data/year' and concept = (select id from dim_mappingconcepts where name='citation');
+INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept, xpath)
+SELECT 'Version','Dataset version of citation string.', '', true, false, (select id from dim_mappingconcepts where name='Citation'), 'data/version'
+WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='Citation') AND xpath='data/version');
 
-UPDATE public.dim_mappingkeys
-	SET optional=true
-	WHERE xpath='data/entityType' and concept = (select id from dim_mappingconcepts where name='citation');
+INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept, xpath)
+SELECT 'Year','Dataset publish year of citation string.', '', true, false, (select id from dim_mappingconcepts where name='Citation'), 'data/year'
+WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='Citation') AND xpath='data/year');
+
+INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept, xpath)
+SELECT 'Doi','Dataset DOI of citation string.', '', true, false, (select id from dim_mappingconcepts where name='Citation'), 'data/doi'
+WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='Citation') AND xpath='data/doi');
+
+
+INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept, xpath)
+SELECT 'EntityType','Entity Type of citation string.', '', true, false, (select id from dim_mappingconcepts where name='Citation'), 'data/entityType'
+WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='Citation') AND xpath='data/entityType');
+
+
+INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept, xpath)
+SELECT 'Projects','Dataset projects of citation string.', '', true, false, (select id from dim_mappingconcepts where name='Citation'), 'data/projects'
+WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='Citation') AND xpath='data/projects');
+
+INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept,parentRef, xpath)
+SELECT 'Project','Dataset project of citation string.', '', true, false, 
+			(select id from dim_mappingconcepts where name='Citation'), 
+			(SELECT id FROM public.dim_mappingkeys WHERE name='Projects'and concept = (SELECT id FROM public.dim_mappingconcepts WHERE name='Citation')),
+			'data/projects/project'
+WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='Citation') AND xpath='data/projects/project');
+
+INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept, xpath)
+SELECT 'AuthorNames','Dataset author names of citation string.', '', false, false, (select id from dim_mappingconcepts where name='Citation'), 'data/authorNames'
+WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='Citation') AND xpath='data/authorNames');
+
+INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept,parentRef, xpath)
+SELECT 'AuthorName','Dataset author name of citation string.', '', false, false, 
+			(select id from dim_mappingconcepts where name='Citation'), 
+			(SELECT id FROM public.dim_mappingkeys WHERE name='AuthorNames'and concept = (SELECT id FROM public.dim_mappingconcepts WHERE name='Citation')),
+			'data/authorNames/authorName'
+WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='Citation') AND xpath='data/authorNames/authorName');
+
+
+--Create feature and operation for citation api
+INSERT INTO public.features(
+versionno, extra, description, name, parentref)
+SELECT 1, null, 'Citation Api', 'Citation Api', 13
+WHERE NOT EXISTS (SELECT * FROM public.features WHERE name='Citation Api');
+
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'API', 'Citation', '*', (Select id from features where name = 'Citation Api')
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='API' AND controller='Citation');
 
 -- BEXIS2 Version Update
 INSERT INTO public.versions(
