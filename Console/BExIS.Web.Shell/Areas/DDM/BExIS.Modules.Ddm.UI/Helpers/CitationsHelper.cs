@@ -76,13 +76,19 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
                     var isPublic = entityPermissionManager.IsPublicAsync(datasetVersion.Dataset.EntityTemplate.EntityType.Id, datasetVersion.Dataset.Id).Result;
 
+                    // Entity Type
+                    if (String.IsNullOrEmpty(model.EntityType))
+                    {
+                        model.EntityType = datasetVersion.Dataset.EntityTemplate.EntityType.Name;
+                    }
+
                     // Publication Year
-                    if (model.Date == null || String.IsNullOrEmpty(model.Date))
+                    if (model.Year == null || String.IsNullOrEmpty(model.Year))
                     {                       
                         if (isPublic)
-                            model.Date = datasetVersion.PublicAccessDate.Date.ToString("yyyy");
+                            model.Year = datasetVersion.PublicAccessDate.Date.ToString("yyyy");
 
-                        model.Date = datasetVersion.Timestamp.Date.ToString("yyyy");
+                        model.Year = datasetVersion.Timestamp.Date.ToString("yyyy");
                     }
 
                     // Publisher
@@ -166,7 +172,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 return string.Empty;
             }
             var citation = new StringBuilder();
-            citation.AppendLine($"{string.Join(", ", model.Authors)} ({model.Date}). {model.Title}. Version {model.Version}.");
+            citation.AppendLine($"{string.Join(", ", model.Authors)} ({model.Year}). {model.Title}. Version {model.Version}.");
             if (!string.IsNullOrEmpty(model.DOI))
             {
                 citation.AppendLine($"https://doi.org/{model.DOI}");
@@ -187,7 +193,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             bibTex.AppendLine("@misc{");
             bibTex.AppendLine($"  title = {{{model.Title}}},");
             bibTex.AppendLine($"  version = {{{model.Version}}},");
-            bibTex.AppendLine($"  date = {{{model.Date}}},");
+            bibTex.AppendLine($"  date = {{{model.Year}}},");
             bibTex.AppendLine($"  doi = {{{model.DOI}}},");
             if (model.Authors != null && model.Authors.Count > 0)
             {
@@ -231,7 +237,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             ris.AppendLine("TY  - GEN");
             ris.AppendLine($"TI  - {model.Title}");
             ris.AppendLine($"VL  - {model.Version}");
-            ris.AppendLine($"PY  - {model.Date}");
+            ris.AppendLine($"PY  - {model.Year}");
             if (!string.IsNullOrEmpty(model.DOI))
             {
                 ris.AppendLine($"DO  - {model.DOI}");

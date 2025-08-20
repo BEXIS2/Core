@@ -44,10 +44,10 @@ namespace BExIS.Modules.Ddm.UI.Models
         [XmlElement("projects")]
         public List<string> Projects { get; set; }
 
-        [XmlElement("date")]
-        [Required(ErrorMessage = "Date is required")]
-        [MinLength(1, ErrorMessage = "Date cannot be empty")]
-        public string Date { get; set; }
+        [XmlElement("year")]
+        [Required(ErrorMessage = "Year is required")]
+        [MinLength(1, ErrorMessage = "Year cannot be empty")]
+        public string Year { get; set; }
 
         [XmlElement("doi")]
         public string DOI { get; set; }

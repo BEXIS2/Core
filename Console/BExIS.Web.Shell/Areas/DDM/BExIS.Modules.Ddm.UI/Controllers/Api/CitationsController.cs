@@ -387,7 +387,7 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             if (!String.IsNullOrEmpty(model.DOI))
                 datasetCitationEntry.DOI = model.DOI;
             datasetCitationEntry.Authors = model.Authors;
-            datasetCitationEntry.Year = getYear(model.Date);
+            datasetCitationEntry.Year = getYear(model.Year);
 
             //create authorname in the correct format
             List<string> authors = new List<string>();
@@ -414,7 +414,7 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             string publisher = settings.GetValueByKey("publisher").ToString();
             string instanceName = settings.GetValueByKey("instanceName").ToString();
 
-            string year = getYear(model.Date);
+            string year = getYear(model.Year);
 
             //create authorname in the correct format
             List<string> authors = new List<string>();
@@ -466,12 +466,12 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
 
                 if(String.IsNullOrEmpty(model.Version))
                     model.Version = datasetVersion.VersionNo.ToString();
-                if(String.IsNullOrEmpty(model.Date))
+                if(String.IsNullOrEmpty(model.Year))
                 {
                     if(String.IsNullOrEmpty(datasetVersion.PublicAccessDate.ToString()))
-                        model.Date = datasetVersion.PublicAccessDate.ToString();
+                        model.Year = datasetVersion.PublicAccessDate.ToString();
                     else
-                        model.Date = datasetVersion.Timestamp.ToString();
+                        model.Year = datasetVersion.Timestamp.ToString();
                 }
                 if(String.IsNullOrEmpty(model.DOI))
                 {
