@@ -50,8 +50,13 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                         model = (CitationDataModel)serializer.Deserialize(reader);
                     }
 
+                    if(model == null)
+                        return null;    
+
                     var settingsHelper = new SettingsHelper();
-                    var useTags = Boolean.Parse(settingsHelper.GetValue("use_tags"));
+
+                    var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+                    var useTags = (bool)moduleSettings.GetValueByKey("use_tags");
                     var citationSettings = settingsHelper.GetCitationSettings();
 
                     // Authors
@@ -61,18 +66,18 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     }
 
                     // Version 
-                    if (String.IsNullOrEmpty(model.Version))
+                    if (model.Version == null || string.IsNullOrEmpty(model.Version))
                     {
                         if (useTags && datasetVersion.Tag != null)
                             model.Version = datasetVersion.Tag.ToString();
 
-                            model.Version = datasetVersion.VersionNo.ToString();
+                        model.Version = datasetManager.GetDatasetVersionNr(datasetVersionId).ToString();
                     }
 
                     var isPublic = entityPermissionManager.IsPublicAsync(datasetVersion.Dataset.EntityTemplate.EntityType.Id, datasetVersion.Dataset.Id).Result;
 
                     // Publication Year
-                    if (String.IsNullOrEmpty(model.Date))
+                    if (model.Date == null || String.IsNullOrEmpty(model.Date))
                     {                       
                         if (isPublic)
                             model.Date = datasetVersion.PublicAccessDate.Date.ToString("yyyy");
@@ -105,9 +110,10 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                             else
                             {
                                 if(useTags)
-                                    model.URL = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + $"/ddm/data/Showdata/{datasetVersion.Dataset.Id}?tag={datasetVersion.VersionNo}";
+                                    model.URL = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + $"/ddm/data/Showdata/{datasetVersion.Dataset.Id}?tag={model.Version}";
 
-                                model.URL = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + $"/ddm/data/Showdata/{datasetVersion.Dataset.Id}?version={datasetVersion.VersionNo}";
+                                model.URL = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + $"/ddm/data/Showdata/{datasetVersion.Dataset.Id}?version={model.Version}";
+
                             }
                         }
                     }
