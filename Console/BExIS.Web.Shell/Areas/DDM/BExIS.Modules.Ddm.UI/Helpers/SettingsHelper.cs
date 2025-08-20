@@ -27,18 +27,30 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             return element != null ? true : false;
         }
 
-        public string GetValue(string key)
+        //public string GetValue(string key)
+        //{
+        //    XDocument settings = XDocument.Load(filePath);
+        //    XElement element = XmlUtility.GetXElementByAttribute("entry", "key", key.ToLower(), settings);
+
+        //    string value = "";
+        //    if (element != null)
+        //    {
+        //        value = element.Attribute("value")?.Value;
+        //    }
+
+        //    return value;
+        //}
+
+        public T GetValue<T>(string key) where T : class
         {
-            XDocument settings = XDocument.Load(filePath);
-            XElement element = XmlUtility.GetXElementByAttribute("entry", "key", key.ToLower(), settings);
-
-            string value = "";
-            if (element != null)
+            try
             {
-                value = element.Attribute("value")?.Value;
+                return _settings.GetValueByKey<T>(key);
             }
-
-            return value;
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public CitationSettings GetCitationSettings()

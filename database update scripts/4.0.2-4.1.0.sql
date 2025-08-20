@@ -328,8 +328,23 @@ INSERT INTO units_datatypes (datatyperef, unitref)
 SELECT id, (select id from units where name like 'none')
 from datatypes;
 
+-- Citation Concept Mapping Updates
 
+-- UPDATE dim_mappingconcepts
+-- 	SET name='citation'
+-- 	WHERE name='Citation';
 
+UPDATE public.dim_mappingkeys
+	SET optional=true
+	WHERE xpath='data/version' and concept = (select id from dim_mappingconcepts where name='citation');
+
+UPDATE public.dim_mappingkeys
+	SET optional=true
+	WHERE xpath='data/year' and concept = (select id from dim_mappingconcepts where name='citation');
+
+UPDATE public.dim_mappingkeys
+	SET optional=true
+	WHERE xpath='data/entityType' and concept = (select id from dim_mappingconcepts where name='citation');
 
 -- BEXIS2 Version Update
 INSERT INTO public.versions(

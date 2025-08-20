@@ -1,5 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dim.Entities.Export.GBIF;
+using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.BIOSCHEMA;
 using BExIS.Dim.Helpers.Mappings;
@@ -7,6 +8,7 @@ using BExIS.Dim.Services;
 using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
@@ -420,6 +422,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             try
             {
                 using (var datasetManager = new DatasetManager())
+                using (var conceptManager = new ConceptManager())
                 {
                     var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
@@ -431,7 +434,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     var settingsHelper = new SettingsHelper();
                     var citationSettings = settingsHelper.GetCitationSettings();
 
-                    if (citationSettings == null || !citationSettings.ShowCitation)
+                    var errors = new List<string>();
+                    if (citationSettings == null || !citationSettings.ShowCitation || !MappingUtils.IsMapped(datasetVersion.Dataset.MetadataStructure.Id, LinkElementType.MetadataStructure, conceptManager.FindByName("citation").Id, LinkElementType.MappingConcept, out errors))
                     {
                         return PartialView("_Title", datasetVersion.Title);
                     }
@@ -1827,7 +1831,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
 
                 // user has edit permission and can see all versions -> show full list
-                if (hasEditPermission || helper.GetValue("reduce_versions_select_logged_in").ToString() == "false")
+                var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+                if (hasEditPermission || !(bool)moduleSettings.GetValueByKey("reduce_versions_select_logged_in"))
                 {
                     datasetVersionsAllowed = datasetVersions;
                 }
