@@ -314,12 +314,7 @@
 
 		<div class="rounded bg-surface-200 px-2 py-1" class:line-clamp-4={!$curationInfoExpanded}>
 			<p class="text-surface-800">
-				{#each curationStatusEntry.name.split('\n') as line, index}
-					{line}
-					{#if index < curationStatusEntry.name.split('\n').length - 1}
-						<br />
-					{/if}
-				{/each}
+				<Greeting {greeting} />
 			</p>
 		</div>
 	{/if}
