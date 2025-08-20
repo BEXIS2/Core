@@ -8,8 +8,8 @@
 - Update script from version 4.0.2 to 4.1.0: [Update_Script_4.0.2_4.1.0.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/4.0.2-4.1.0.sql)
 
 ### New Settings:
-- **Error Email System**: A new setting has been introduced to control the sending of error emails based on the system settings. This allows administrators to manage error notifications more effectively.
-- ????
+- **Error Email System**: A new setting has been introduced to control the sending of error emails based on the system settings. This allows administrators to manage error notifications more effectively. ([here](https://demo.bexis2.uni-jena.de/home/docs/Configuration#e-mail))
+- **Citation settings**: A new setting under data discovery enables the system to provide citation formats and displays for entities. ([here](https://demo.bexis2.uni-jena.de/home/docs/Configuration#citation))
 
 # Bugfixes and enhancements
 ## Metadata
@@ -41,6 +41,8 @@
 - **Dataset Links**: Fix missing in the download package. ([#981](https://github.com/BEXIS2/Core/issues/981))
 
 - **Version Access Rights**: Fix get latest version throws an error when you have no rights to see the latest not tagged version. ([#2119](https://github.com/BEXIS2/Core/issues/2119))
+  
+- **Title OR Citation within Dataset View**: Added a new option to the Dataset View Page that gives you control over what information is shown at the top. You can now choose between displaying either the Dataset Title or the full Citation String. ([#2140](https://github.com/BEXIS2/Core/issues/2140))
 
 ## Dataset Edit
 - **Data Types Merging**: Merging of similar data types to simplify use. ([#2117](https://github.com/BEXIS2/Core/issues/2117))
@@ -50,7 +52,6 @@
 - **Upload Validation**: Add date pattern to error message. ([#2145](https://github.com/BEXIS2/Core/issues/2145))
 
 - **Constraint Loading**: Fix long loading times for used constraints. ([#2110](https://github.com/BEXIS2/Core/issues/2110))
-
 
 - **Tag View Error**: Fix loading tag view throws error when author and description is null. ([#2144](https://github.com/BEXIS2/Core/issues/2144))
 
@@ -72,3 +73,6 @@
 - **Update Script Extension**: Extend update script to link variable templates and meanings. ([#2111](https://github.com/BEXIS2/Core/issues/2111))
 
 - **SAM Former Members**: Fix user not findable in former members group. ([#2112](https://github.com/BEXIS2/Core/issues/2112))
+
+- **Restore deleted Datasets**: Add new feature to the Dataset Management page that allows you to easily restore datasets that were previously marked for deletion. ([#1734](https://github.com/BEXIS2/Core/issues/1734))
+
