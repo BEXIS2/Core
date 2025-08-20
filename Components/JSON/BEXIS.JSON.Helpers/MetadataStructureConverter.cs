@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BEXIS.JSON.Helpers
 {
@@ -85,14 +86,14 @@ namespace BEXIS.JSON.Helpers
 
             // base information
             current.Title = usage.Label;
-            current.Type = getMaxCardinality(usage) > 1?JSchemaType.Array: JSchemaType.Object;
+            current.Type = JSchemaType.Object;
             current.Description = usage.Description;
 
             // set required
             if (usage.MinCardinality > 0) required = true;
             else required = false;
 
-            //childrens
+            //children
             if (type != null && type.MetadataAttributeUsages.Any())
             {
                 foreach (var metadataAttrUsage in type.MetadataAttributeUsages)
@@ -102,6 +103,8 @@ namespace BEXIS.JSON.Helpers
 
                     // if current is required add it to the parent
                     if (_childRequired) current.Required.Add(metadataAttrUsage.Label);
+                    if (IsChoice(usage.Extra) && getMaxCardinality(usage) > 1) current.AnyOf.Add(current.Properties.Last().Value);
+                    else if (IsChoice(usage.Extra)) current.OneOf.Add(current.Properties.Last().Value);
                 }
             }
 
@@ -110,7 +113,7 @@ namespace BEXIS.JSON.Helpers
 
             // add to parent
             // check if usage has cardinality >1 then create a array before
-            if (getMaxCardinality(usage) > 1)
+            if (GetJSchemaType(usage) == JSchemaType.Array)
             {
                 JSchema array = new JSchema();
                 array.Type = JSchemaType.Array;
@@ -206,6 +209,8 @@ namespace BEXIS.JSON.Helpers
                         current = addMetadataAttrUsage(mnau, current, out _childIsRequired);
                         // if current is required add it to the parent
                         if (_childIsRequired) current.Required.Add(mnau.Label);
+                        if (IsChoice(usage.Extra) && getMaxCardinality(usage) > 1) current.AnyOf.Add(current.Properties.Last().Value);
+                        else if (IsChoice(usage.Extra)) current.OneOf.Add(current.Properties.Last().Value);
                     }
                 }
             }
@@ -214,7 +219,7 @@ namespace BEXIS.JSON.Helpers
             current = addAttributes(current);
 
             // check if usage has cardinality >1 then create a array before
-            if (getMaxCardinality(usage)  > 1)
+            if (GetJSchemaType(usage) == JSchemaType.Array)
             {
                 JSchema array = new JSchema();
                 array.Type = JSchemaType.Array;
@@ -359,6 +364,26 @@ namespace BEXIS.JSON.Helpers
             }
 
             return 1; // default
+        }
+
+        private bool IsChoice(XmlNode xmlNode)
+        {
+            if (xmlNode != null)
+            {
+                XmlNode element = XmlUtility.GetXmlNodeByAttribute(xmlNode, "type", "name", "choice");
+                if (element != null) return true;
+            }
+            return false;
+        }
+
+        private JSchemaType GetJSchemaType(BaseUsage usage)
+        {
+            if(IsChoice(usage.Extra))
+                return JSchemaType.Object;
+            else if (getMaxCardinality(usage) > 1)
+                return JSchemaType.Array;
+            else
+                return JSchemaType.Object;
         }
     }
 }

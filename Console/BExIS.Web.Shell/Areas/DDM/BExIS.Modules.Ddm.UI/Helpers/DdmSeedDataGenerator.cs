@@ -197,13 +197,13 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     conceptManager.CreateMappingKey("Title", "", "", false, false, "data/title", concept);
                 //version
                 if (!keys.Any(k => k.Name.Equals("data/version")))
-                    conceptManager.CreateMappingKey("Version", "", "", false, false, "data/version", concept);
+                    conceptManager.CreateMappingKey("Version", "", "", true, false, "data/version", concept);
                 //year
                 if (!keys.Any(k => k.Name.Equals("data/year")))
-                    conceptManager.CreateMappingKey("Year", "", "", false, false, "data/year", concept);
+                    conceptManager.CreateMappingKey("Year", "", "", true, false, "data/year", concept);
                 //entityType
                 if (!keys.Any(k => k.Name.Equals("data/entityType")))
-                    conceptManager.CreateMappingKey("EntityType", "", "", false, false, "data/entityType", concept);
+                    conceptManager.CreateMappingKey("EntityType", "", "", true, false, "data/entityType", concept);
 
                 //doi
                 if (!keys.Any(k => k.Name.Equals("data/doi")))
