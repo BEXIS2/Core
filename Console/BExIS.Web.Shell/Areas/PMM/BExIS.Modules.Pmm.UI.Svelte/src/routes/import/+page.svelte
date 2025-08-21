@@ -182,6 +182,7 @@ function applyAvailableUponRequestRules(row: any) {
 
 	// Regel 1: available upon request
 	syncColumns('Data present', ['Data License', 'Data Publisher'], 'available upon request');
+	syncColumns('Code present', ['Code License', 'Code Publisher'], 'available upon request');
 
 	// Regel 2: no access (nur für Data)
 	syncColumns(
@@ -189,7 +190,6 @@ function applyAvailableUponRequestRules(row: any) {
 		[
 			'Data License',
 			'Data Publisher',
-			'Data format',
 			'Data URL',
 			'Data URL resolves',
 			'Data DOI',
@@ -198,6 +198,19 @@ function applyAvailableUponRequestRules(row: any) {
 		'no access'
 	);
 
+
+	syncColumns(
+		'Code present',
+		[
+			'Code License',
+			'Code Publisher',
+			'Code URL',
+			'Code URL resolves',
+			'Code DOI',
+			'Code DOI resolves'
+		],
+		'no access'
+	);
 	return row;
 }
 
