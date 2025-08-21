@@ -1,17 +1,22 @@
 ﻿using BExIS.Xml.Helpers;
+using System.Collections.Generic;
+using System;
 using System.IO;
 using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Mvc.Modularity;
+using BExIS.Modules.Ddm.UI.Models;
 
 namespace BExIS.Modules.Ddm.UI.Helpers
 {
     public class SettingsHelper
     {
+        private ModuleSettings _settings;
         private string filePath = "";
 
         public SettingsHelper()
         {
-            filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Ddm.Settings.xml");
+            _settings = ModuleManager.GetModuleSettings("ddm");
         }
 
         public bool KeyExist(string key)
@@ -22,18 +27,42 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             return element != null ? true : false;
         }
 
-        public string GetValue(string key)
+        //public string GetValue(string key)
+        //{
+        //    XDocument settings = XDocument.Load(filePath);
+        //    XElement element = XmlUtility.GetXElementByAttribute("entry", "key", key.ToLower(), settings);
+
+        //    string value = "";
+        //    if (element != null)
+        //    {
+        //        value = element.Attribute("value")?.Value;
+        //    }
+
+        //    return value;
+        //}
+
+        public T GetValue<T>(string key) where T : class
         {
-            XDocument settings = XDocument.Load(filePath);
-            XElement element = XmlUtility.GetXElementByAttribute("entry", "key", key.ToLower(), settings);
-
-            string value = "";
-            if (element != null)
+            try
             {
-                value = element.Attribute("value")?.Value;
+                return _settings.GetValueByKey<T>(key);
             }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
 
-            return value;
+        public CitationSettings GetCitationSettings()
+        {
+            try
+            {
+                return _settings.GetValueByKey<CitationSettings>("citationSettings");
+            }
+            catch (Exception ex)
+            {
+                return new CitationSettings();
+            }
         }
     }
 }

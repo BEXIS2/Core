@@ -26,7 +26,7 @@ namespace BExIS.App.Bootstrap.Attributes
                 using (var featurePermissionManager = new FeaturePermissionManager())
                 using (var operationManager = new OperationManager())
                 using (var userManager = new UserManager())
-                using (var identityUserService = new IdentityUserService())
+                using (var identityUserService = new IdentityUserService(userManager))
                 {
                     var areaName = "Api";
                     var controllerName = actionContext.ActionDescriptor.ControllerDescriptor.ControllerName;

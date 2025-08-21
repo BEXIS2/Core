@@ -215,8 +215,27 @@ namespace BExIS.IO.Transform.Input
         /// <param name="systemType"></param>
         /// <returns>DataType</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public List<Entites.DataType> SuggestDataType(string systemType, string value="", List<Entites.DataType> datatypes = null)
+        public List<Entites.DataType> SuggestDataType(string incommingSystemType, string value="", List<Entites.DataType> datatypes = null)
         {
+            string systemType = incommingSystemType;
+            switch(incommingSystemType)
+            {
+                case "Int16":
+                    systemType = "Int64"; // Int32 is not used in BExIS, so use Int64 instead
+                    break;
+                case "Int32":
+                    systemType = "Int64"; // Int32 is not used in BExIS, so use Int64 instead
+                    break;
+                case "UInt32":
+                    systemType = "Int64"; // UInt32 is not used in BExIS, so use Int64 instead
+                    break;
+                case "Decimal":
+                    systemType = "Double"; // Decimal is not used in BExIS, so use Double instead
+                    break;
+            }
+
+
+
             if (string.IsNullOrEmpty(systemType)) throw new ArgumentNullException(nameof(systemType), "system type should not be empty.");
 
             List<Entites.DataType> result = new List<Entites.DataType>();
@@ -258,7 +277,7 @@ namespace BExIS.IO.Transform.Input
                     //if lenght > without time  then it is a date and time
                     if (lenght > withoutTime)
                     {
-                        return dataTypeManager.Repo.Query(d => d.SystemType.Equals(systemType) && d.Name.ToLower() == "datetime").ToList();
+                        return dataTypeManager.Repo.Query(d => d.SystemType.Equals(systemType) && d.Name.ToLower().Contains("date") && d.Name.ToLower().Contains("time")).ToList();
                     }
                 }
             }
@@ -299,7 +318,7 @@ namespace BExIS.IO.Transform.Input
                     if (!dataTypes.Any())
                         dataTypes = dataTypeManager.Repo.Get().ToList();
 
-                    var dt = dataTypes.FirstOrDefault(d => d.Name.ToLower().Equals(dataType));
+                    var dt = dataTypes.FirstOrDefault(d => d.Name.ToLower().Equals(dataType.ToLower()));
                     if (dt != null) units = units.Where(u => u.AssociatedDataTypes.Any(d=> d.Id.Equals(dt.Id))).ToList();
                 }
 
@@ -562,10 +581,10 @@ namespace BExIS.IO.Transform.Input
 
             types.Add(typeof(Boolean));
             types.Add(typeof(DateTime));
-            types.Add(typeof(Decimal));
+            //types.Add(typeof(Decimal));
             types.Add(typeof(Double));
             types.Add(typeof(Int64));
-            types.Add(typeof(UInt32));
+            //types.Add(typeof(UInt32));
 
             return types;
         }
@@ -579,10 +598,10 @@ namespace BExIS.IO.Transform.Input
         {
             if (types.Any())
             {
-                if (types.Contains(typeof(UInt32))) return typeof(UInt32);
+                if (types.Contains(typeof(UInt32))) return typeof(Int64);
                 if (types.Contains(typeof(Int64))) return typeof(Int64);
                 if (types.Contains(typeof(Double))) return typeof(Double);
-                if (types.Contains(typeof(Decimal))) return typeof(Decimal);
+                if (types.Contains(typeof(Decimal))) return typeof(Double);
                 if (types.Contains(typeof(DateTime))) return typeof(DateTime);
                 if (types.Contains(typeof(Boolean))) return typeof(Boolean);
             }

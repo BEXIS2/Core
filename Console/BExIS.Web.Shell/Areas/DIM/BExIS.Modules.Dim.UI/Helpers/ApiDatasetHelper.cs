@@ -6,10 +6,12 @@ using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using BExIS.Utils.Data.Helpers;
 using BExIS.Xml.Helpers;
 using NameParser;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -20,7 +22,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 {
     public class ApiDatasetHelper
     {
-        public ApiDatasetModel GetContent(DatasetVersion datasetVersion, long id, long versionNumber, long metadataStructureId, long dataStructureId)
+        public ApiDatasetModel GetContent(DatasetVersion datasetVersion, long id, int versionNumber, long metadataStructureId, long dataStructureId)
         {
             ApiDatasetModel datasetModel = new ApiDatasetModel()
             {
@@ -84,6 +86,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
             // check for publication date
             datasetModel.PublicationDate = publicAndDate.Item2.ToString(new CultureInfo("en-US"));
+
+            // get links
+            EntityReferenceHelper entityReferenceHelper = new EntityReferenceHelper();
+            datasetModel.Links.From = entityReferenceHelper.GetSourceReferences(id, datasetVersion.Dataset.EntityTemplate.EntityType.Id, versionNumber);
+            datasetModel.Links.To = entityReferenceHelper.GetTargetReferences(id, datasetVersion.Dataset.EntityTemplate.EntityType.Id, versionNumber);
+
 
             return datasetModel;
         }

@@ -24,16 +24,18 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public async Task<bool> AddUserToGroup(long userId, string groupName)
         {
-            var identityUserService = new IdentityUserService();
-
-            try
+            using (var userManager = new UserManager())
+            using (var identityUserService = new IdentityUserService(userManager))
             {
-                var result = await identityUserService.AddToRoleAsync(userId, groupName);
-                return result.Succeeded;
-            }
-            finally
-            {
-                identityUserService.Dispose();
+                try
+                {
+                    var result = await identityUserService.AddToRoleAsync(userId, groupName);
+                    return result.Succeeded;
+                }
+                catch(Exception ex)
+                {
+                    return false;
+                }
             }
         }
 
@@ -46,34 +48,36 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(CreateUserModel model)
         {
-            var identityUserService = new IdentityUserService();
-
-            try
+            using (var userManager = new UserManager())
+            using (var identityUserService = new IdentityUserService(userManager))
             {
-                if (!ModelState.IsValid) return PartialView("_Create", model);
-
-                var user = new User { UserName = model.UserName, FullName = model.UserName, Email = model.Email.Trim() };
-
-                var result = await identityUserService.CreateAsync(user);
-                if (result.Succeeded)
+                try
                 {
-                    var code = await identityUserService.GeneratePasswordResetTokenAsync(user.Id);
-                    var callbackUrl = Url.Action("ResetPassword", "Account", new { area = "", userId = user.Id, code },
-                        Request.Url.Scheme);
-                    await
-                        identityUserService.SendEmailAsync(user.Id, "Set your password!",
-                            "Please set your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    if (!ModelState.IsValid) return PartialView("_Create", model);
 
-                    return Json(new { success = true });
+                    var user = new User { UserName = model.UserName, FullName = model.UserName, Email = model.Email.Trim() };
+
+                    var result = await identityUserService.CreateAsync(user);
+                    if (result.Succeeded)
+                    {
+                        var code = await identityUserService.GeneratePasswordResetTokenAsync(user.Id);
+                        var callbackUrl = Url.Action("ResetPassword", "Account", new { area = "", userId = user.Id, code },
+                            Request.Url.Scheme);
+                        await
+                            identityUserService.SendEmailAsync(user.Id, "Set your password!",
+                                "Please set your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                        return Json(new { success = true });
+                    }
+
+                    AddErrors(result);
+
+                    return PartialView("_Create", model);
                 }
-
-                AddErrors(result);
-
-                return PartialView("_Create", model);
-            }
-            finally
-            {
-                identityUserService.Dispose();
+                catch(Exception ex)
+                {
+                    return PartialView("_Create", model);
+                }
             }
         }
 
@@ -144,16 +148,18 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         private async Task<bool> removeUserFromGroup(long userId, string groupName)
         {
-            var identityUserService = new IdentityUserService();
-
-            try
+            using (var userManager = new UserManager())
+            using (var identityUserService = new IdentityUserService(userManager))
             {
-                var result = await identityUserService.RemoveFromRoleAsync(userId, groupName);
-                return result.Succeeded;
-            }
-            finally
-            {
-                identityUserService.Dispose();
+                try
+                {
+                    var result = await identityUserService.RemoveFromRoleAsync(userId, groupName);
+                    return result.Succeeded;
+                }
+                catch(Exception ex)
+                {
+                    return false;
+                }
             }
         }
 

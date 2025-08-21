@@ -25,6 +25,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Xml;
+using Vaiona.Entities.Common;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
@@ -248,6 +249,14 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                         title = workingCopy.Title;
                         if (string.IsNullOrEmpty(title)) title = "No Title available.";
+
+                        ////set modification
+                        workingCopy.ModificationInfo = new EntityAuditInfo()
+                        {
+                            Performer = user.UserName,
+                            Comment = "via API",
+                            ActionType = AuditActionType.Create
+                        };
 
                         datasetManager.EditDatasetVersion(workingCopy, null, null, null);
                         datasetManager.CheckInDataset(id, "via API", user.Name, ViewCreationBehavior.None);

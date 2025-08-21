@@ -118,6 +118,7 @@
                     <td>
                         @Html.ActionLink("Sync", "Sync", new { id = entity.Id, area = "Sam" }, new { @style = entity.IsSynced ? "color:darkgreen;" : "color:black;" }) |
                         @Html.ActionLink("Versions", "Versions", new { id = entity.Id, area = "Sam" }) |
+                        @Html.ActionLink("Undo delete", "UndoDelete", new { id = entity.Id, area = "Sam" }) |
                         @Html.ActionLink("Purge", "Purge", new { id = entity.Id, area = "Sam" }) |
                         <a entityid="@entity.Id" class="number-of-rows-bt">Count</a>
                     </td>
