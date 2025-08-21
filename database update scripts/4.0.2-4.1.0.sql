@@ -25,7 +25,7 @@ BEGIN TRANSACTION;
 update datatypes
 	set 
 	name = 'Text',
-	description = 'A unicode string'
+	description = 'A special data type for very long sequences of character.'
 	where id = (select id systemtype from datatypes where systemtype = 'String'  and name =	'text' 
 		order by id
 		limit 1);
@@ -37,7 +37,7 @@ update datatypes
 update datatypes
 	set 
 	name = 'String',
-	description = 'A unicode string'
+	description = 'A sequence of characters, such as letters, numbers, or symbols (e.g., IDs).'
 	where id = (select id systemtype from datatypes where systemtype = 'String'  and name =	'string' 
 		order by id
 		limit 1);
@@ -65,7 +65,7 @@ select id from datatypes where SystemType like 'Int%';
 update datatypes
 set 
 name = 'Integer',
-description = 'An 64 bit integer number'
+description = 'A data type for whole numbers. In this case, it corresponds to Int64, a 64-bit integer that can represent large values.'
 where id = (select id systemtype from datatypes where systemtype = 'Int64' 
 order by id
 limit 1);
@@ -89,7 +89,7 @@ select id from datatypes where SystemType = 'Double';
 update datatypes
 set 
 name = 'Floating Point Number',
-description = 'A precise real number with a restricted range'
+description = 'A floating-point number with double precision (for decimal values, e.g., 3.14159).'
 where id = (select id systemtype from datatypes where systemtype = 'Double' 
 order by id
 limit 1);
@@ -112,7 +112,7 @@ select * from datatypes where systemtype = 'DateTime';
 update datatypes
 set 
 name = 'Date and Time',
-description = 'A date with / or time'
+description = 'A data type for storing both a calendar date and a time.'
 where id = (select id systemtype from datatypes where systemtype = 'DateTime' and name = 'datetime' 
 order by id
 limit 1);
@@ -120,7 +120,7 @@ limit 1);
 update datatypes
 set 
 name = 'Date',
-description = 'A date'
+description = 'A data type for storing a calendar date without time.'
 where id = (select id systemtype from datatypes where systemtype = 'DateTime' and name = 'date' 
 order by id
 limit 1);
@@ -128,7 +128,7 @@ limit 1);
 update datatypes
 set 
 name = 'Time',
-description = 'A time'
+description = 'A data type for storing a time of day without a date.'
 where id = (select id systemtype from datatypes where systemtype = 'DateTime' and name = 'time' 
 order by id
 limit 1);
@@ -150,7 +150,7 @@ where datatyperef in (select id from datatypes where SystemType = 'DateTime');
 update datatypes
 set 
 name = 'Boolean',
-description = 'A boolean value'
+description = 'A logical data type with only two possible values: true or false; 0 or 1.'
 where id = (select id systemtype from datatypes where systemtype = 'Boolean' 
 order by id
 limit 1);
