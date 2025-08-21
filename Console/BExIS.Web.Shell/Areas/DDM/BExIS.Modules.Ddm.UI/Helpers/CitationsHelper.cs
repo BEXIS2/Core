@@ -112,14 +112,18 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                             {
                                 if (!String.IsNullOrEmpty(pub.Doi))
                                     model.URL = pub.Doi;
+                                else if (!String.IsNullOrEmpty(pub.ExternalLink))
+                                    model.URL = pub.ExternalLink;
+
                             }
-                            else
+
+                            if (String.IsNullOrEmpty(model.URL))
                             {
-                                if(useTags)
+                                if (useTags)
                                     model.URL = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + $"/ddm/data/Showdata/{datasetVersion.Dataset.Id}?tag={model.Version}";
 
                                 model.URL = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + $"/ddm/data/Showdata/{datasetVersion.Dataset.Id}?version={model.Version}";
-
+                            
                             }
                         }
                     }
