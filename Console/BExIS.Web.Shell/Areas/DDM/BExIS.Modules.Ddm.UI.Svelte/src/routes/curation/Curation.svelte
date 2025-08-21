@@ -134,20 +134,15 @@
 		<!-- Progress -->
 		<div class="border-b border-surface-500">
 			<!-- Curation Progress -->
-			<CurationProgressInfo
-				progress={$curation?.curationProgressTotal}
-				label="Curation Progress"
-				expandWritable={progressInfoExpanded}
-			/>
+			<CurationProgressInfo expandWritable={progressInfoExpanded} />
 			{#if $progressInfoExpanded}
 				<div in:slide={{ duration: 150 }} out:slide={{ duration: 150 }}>
 					{#each $curationTypeViewOrder as progressType}
-						<div class="ml-8 opacity-30 hover:opacity-100">
-							<CurationProgressInfo
-								progress={$curation?.curationProgressPerType[progressType]}
-								label="{CurationEntryTypeNames[progressType]} Progress"
-							/>
-						</div>
+						{#if progressType !== CurationEntryType.None}
+							<div class="ml-8 opacity-30 hover:opacity-100">
+								<CurationProgressInfo type={progressType} />
+							</div>
+						{/if}
 					{/each}
 				</div>
 			{/if}
