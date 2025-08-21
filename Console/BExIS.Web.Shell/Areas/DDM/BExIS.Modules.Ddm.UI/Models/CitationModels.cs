@@ -1,4 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Serialization;
@@ -51,6 +52,7 @@ namespace BExIS.Modules.Ddm.UI.Models
         public string Year { get; set; }
 
         [XmlElement("doi")]
+        [Obsolete]
         public string DOI { get; set; }
 
         [XmlElement("url")]

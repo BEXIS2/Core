@@ -1,5 +1,41 @@
 ﻿@model BExIS.Modules.Ddm.UI.Models.CitationDataModel
 
-<div>@String.Join("; ", Model.Authors) (@(Model.Year)): @(Model.Title). Version @(Model.Version). @(Model.Publisher). @(Model.EntityType). @(Model.URL)</div>
+<div id="citation-container"><b>Citation:</b><div id="citation-title">@String.Join("; ", Model.Authors) (@(Model.Year)): <b>@(Model.Title)</b>. Version @(Model.Version). @(Model.Publisher). @(Model.EntityType). @(Model.URL)  <span id="citation-copy" class="bx bx-copy" onclick="copyDivContentToClipboard('citation-title')"></span></div>
+   
+</div>
 
 @*{Nachname Ersteller}, {Initialen Ersteller}. ({Jahr}). {Titel des Datensatzes} [Datensatz]. {Herausgeber/Organisation}. Abgerufen am {Datum des Zugriffs}, von https://doi.org/{DOI} oder {URL}*@
+
+<script>
+        function copyDivContentToClipboard(divId) {
+            const div = document.getElementById(divId);
+            // You can copy text or HTML content, change as needed
+            const content = div.innerText; // Use innerHTML if you want to copy HTML formatting
+
+            navigator.clipboard.writeText(content)
+                .then(() => {
+                    alert('Citation copied to clipboard!');
+                })
+                .catch(err => {
+                    alert('Error copying citation: ' + err);
+                });
+        }
+
+</script>
+
+<style>
+    #citation-container {
+        display: flex;
+        flex: auto;
+        gap: 10px;
+    }
+
+    #citation-copy {
+        cursor: pointer;
+    }
+
+    #citation-copy:hover {
+        color: var(--bexis2-gray-3);
+    }
+
+</style>
