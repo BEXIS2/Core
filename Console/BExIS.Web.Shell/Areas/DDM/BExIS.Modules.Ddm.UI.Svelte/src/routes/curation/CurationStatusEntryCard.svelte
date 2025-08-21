@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Fa from 'svelte-fa';
-	import type { CurationEntryClass } from './CurationEntries';
 	import { CurationEntryType, CurationStatusEntryTab } from './types';
 	import {
 		faDoorOpen,
@@ -10,7 +9,7 @@
 		faEyeSlash,
 		faXmark
 	} from '@fortawesome/free-solid-svg-icons';
-	import { derived, writable } from 'svelte/store';
+	import { writable } from 'svelte/store';
 	import { curationStore } from './stores';
 	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
 	import TaskList from './TaskList.svelte';
@@ -18,96 +17,108 @@
 	import { slide } from 'svelte/transition';
 	import Greeting from './Greeting.svelte';
 
-	export let curationStatusEntry: CurationEntryClass;
+	const { curation, currentStatusEntryTab, curationInfoExpanded, uploadingEntries } = curationStore;
 
-	if (!curationStatusEntry || curationStatusEntry.type !== CurationEntryType.StatusEntryItem) {
+	$: curationStatusEntry = $curation?.curationStatusEntry;
+
+	$: if (!curationStatusEntry || curationStatusEntry.type !== CurationEntryType.StatusEntryItem) {
 		throw new Error('Invalid CurationStatusEntry provided');
 	}
 
-	const { curation, currentStatusEntryTab, curationInfoExpanded } = curationStore;
-
-	var isUploadingStatus = derived(curationStore.uploadingEntries, ($uploadingEntries) => {
-		return $uploadingEntries.includes(curationStatusEntry.id);
-	});
+	$: isUploadingStatus = curationStatusEntry && $uploadingEntries.includes(curationStatusEntry.id);
 
 	const editGreetingMode = writable(false);
 
-	let greeting = curationStatusEntry.topic;
+	let greeting = curationStatusEntry?.topic ?? '';
+
+	$: if (curationStatusEntry && !$editGreetingMode) {
+		greeting = curationStatusEntry.topic;
+	}
 
 	const editGreeting = () => {
-		greeting = curationStatusEntry.topic;
+		if (!curationStatusEntry) return;
+		greeting = curationStatusEntry?.topic;
 		editGreetingMode.set(true);
 	};
 
 	const saveGreeting = () => {
+		if (!curationStatusEntry) return;
 		editGreetingMode.set(false);
 		curationStore.setTopic(curationStatusEntry.id, greeting);
 	};
 
 	const cancelGreetingEdit = () => {
-		greeting = curationStatusEntry.topic;
+		greeting = curationStatusEntry?.topic ?? '';
 		editGreetingMode.set(false);
 	};
 
 	const editTasksMode = writable(false);
 
-	let tasks = curationStatusEntry.description;
+	let tasks = curationStatusEntry?.description ?? '';
+
+	$: if (curationStatusEntry && !$editTasksMode) {
+		tasks = curationStatusEntry.description;
+	}
 
 	const editTasks = () => {
-		tasks = curationStatusEntry.description;
+		if (!curationStatusEntry) return;
+		tasks = curationStatusEntry?.description;
 		editTasksMode.set(true);
 	};
 
 	const saveTasks = () => {
+		if (!curationStatusEntry) return;
 		editTasksMode.set(false);
 		curationStore.setDescription(curationStatusEntry.id, tasks);
 	};
 
 	const cancelTasksEdit = () => {
-		tasks = curationStatusEntry.description;
+		tasks = curationStatusEntry?.description ?? '';
 		editTasksMode.set(false);
 	};
 
 	let highlightOpen: string | undefined = undefined;
 
-	const labelSelectContent = derived(curation, (c) => c?.curationLabels || []);
-
-	const remainingLabels = derived([labelSelectContent, curation], ([labels, c]) => {
-		if (!labels || !c) return [];
-		return Array.from(
-			new Set(labels.map((l) => l.name)).difference(
-				new Set(
-					curationStatusEntry.visibleNotes.map((n) =>
-						n.comment
-							.match(/^\S*\s/)
-							?.toString()
-							.trim()
+	$: remainingLabels =
+		!curationStatusEntry || !$curation?.curationLabels
+			? []
+			: Array.from(
+					new Set($curation.curationLabels.map((l) => l.name)).difference(
+						new Set(
+							curationStatusEntry.visibleNotes.map((n) =>
+								n.comment
+									.match(/^\S*\s/)
+									?.toString()
+									.trim()
+							)
+						)
 					)
 				)
-			)
-		)
-			.toSorted((a, b) => a.localeCompare(b))
-			.map((name) => labels.find((l) => l.name === name)!);
-	});
+					.toSorted((a, b) => a.localeCompare(b))
+					.map((name) => $curation.curationLabels.find((l) => l.name === name)!);
 
-	const taskInfoString = derived(curation, (c) => {
-		const taskString = c?.curationStatusEntry?.description || '';
-		let open = 0;
-		let closed = 0;
-		for (const match of taskString.matchAll(/(^|\n)\s*[-\*]?\s*\[( ?|x|X)\]/g)) {
-			if (match[2] === ' ' || match[2] === '') open++;
-			else closed++;
-		}
+	$: taskInfoString = (() => {
+		if (!curationStatusEntry) return '';
+		const taskString = curationStatusEntry.description;
+		const matches = Array.from(taskString.matchAll(/(^|\n)\s*[-\*]?\s*\[( ?|x|X)\]/g));
+		const { open, closed } = matches.reduce(
+			(acc, match) => {
+				if (match[2] === ' ' || match[2] === '') acc.open++;
+				else acc.closed++;
+				return acc;
+			},
+			{ open: 0, closed: 0 }
+		);
 		if (open === 0) {
 			if (closed === 0) return 'None';
 			else return 'Done';
 		}
-		return `(${closed} von ${closed + open})`;
-	});
+		return `(${closed} of ${closed + open})`;
+	})();
 </script>
 
 <!-- Status and Badges -->
-{#if $curation?.isCurator}
+{#if $curation?.isCurator && curationStatusEntry}
 	<div class="relative flex flex-wrap gap-2 overflow-x-hidden border-b border-surface-500 p-2">
 		<!-- Status -->
 		<CurationLabel {curationStatusEntry} />
@@ -116,7 +127,7 @@
 			<CurationLabel {curationStatusEntry} {labelNote} />
 		{/each}
 		<!-- Custom Label Creation -->
-		<CurationLabel {curationStatusEntry} remainingLabels={$remainingLabels} />
+		<CurationLabel {curationStatusEntry} {remainingLabels} />
 		{#if curationStatusEntry.visibleNotes.length > 0}
 			<div class="flex grow items-center justify-center px-1 py-0.5 text-xs text-surface-600">
 				<span>Click on a label to remove it</span>
@@ -124,7 +135,7 @@
 		{/if}
 
 		<!-- Spinner overlay -->
-		{#if $isUploadingStatus}
+		{#if isUploadingStatus}
 			<SpinnerOverlay />
 		{/if}
 	</div>
@@ -132,7 +143,7 @@
 
 <!-- Greeting and Tasks -->
 <div class="relative overflow-x-hidden border-b border-surface-500 p-2">
-	{#if $curation?.isCurator}
+	{#if $curation?.isCurator && curationStatusEntry}
 		<!-- Tabs -->
 		<div
 			class="tab-switch relative flex items-stretch gap-1 rounded border border-surface-300 bg-surface-200 p-0.5"
@@ -165,7 +176,7 @@
 				/>
 				<Fa icon={faListCheck} class="inline-block" />
 				<span class="font-semibold">Curation Tasks</span>
-				<span class="text-sm text-surface-700">{$taskInfoString}</span>
+				<span class="text-sm text-surface-700">{taskInfoString}</span>
 			</label>
 			<label
 				title="Hide Tabs"
@@ -191,9 +202,7 @@
 				out:slide={{ duration: 150 }}
 			>
 				{#if !$editGreetingMode}
-					<p class="text-surface-800">
-						<Greeting {greeting} />
-					</p>
+					<Greeting {greeting} />
 					<div class="flex flex-row-reverse justify-between">
 						<button
 							class="variant-soft-secondary btn mb-1 mt-2 px-2 py-0.5"
@@ -308,19 +317,17 @@
 				{/if}
 			</div>
 		{/if}
-	{:else}
+	{:else if curationStatusEntry}
 		<!-- Non-curator view -->
-		<!-- Display only the introduction text -->
+		<!-- Display only the greeting -->
 
 		<div class="rounded bg-surface-200 px-2 py-1" class:line-clamp-4={!$curationInfoExpanded}>
-			<p class="text-surface-800">
-				<Greeting {greeting} />
-			</p>
+			<Greeting {greeting} />
 		</div>
 	{/if}
 
 	<!-- Spinner overlay -->
-	{#if $isUploadingStatus}
+	{#if isUploadingStatus}
 		<SpinnerOverlay />
 	{/if}
 </div>

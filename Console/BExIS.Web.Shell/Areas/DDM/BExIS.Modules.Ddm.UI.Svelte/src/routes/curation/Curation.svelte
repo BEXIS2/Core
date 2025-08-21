@@ -6,7 +6,6 @@
 	import Fa from 'svelte-fa';
 	import { faAngleUp, faBroom, faExpand, faPen } from '@fortawesome/free-solid-svg-icons';
 	import {
-		CurationEntryStatusColorPalettes,
 		CurationEntryType,
 		CurationEntryTypeNames,
 		CurationEntryTypeViewOrders,
@@ -134,7 +133,7 @@
 		<StartCuration />
 	{:else}
 		<!-- Status Entry -->
-		<CurationStatusEntryCard curationStatusEntry={$curation.curationStatusEntry} />
+		<CurationStatusEntryCard />
 		<!-- Color Palette Picker -->
 		{#if $curationInfoExpanded}
 			<div
