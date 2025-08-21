@@ -19,7 +19,7 @@
     let groupedResources: Record<string, ResourceArray[]> = {};
 
     onMount(async () => {
-        metadata = await apiCalls.GetMetadata(11);
+        metadata = await apiCalls.GetMetadata(2);
         console.log(metadata);
 
         datasetTitle = metadata?.publication?.Title?.['#text'] ?? 'Title not available';
@@ -102,6 +102,16 @@ function getGlobalIndex(resource: ResourceArray): number {
                 </span>
             {/if}
         </div>
+    </div>
+
+    <div class="w-full flex flex-col gap-3 p-2 my-1">
+            <h4 class="h4">Data Code Availability Statement</h4>
+            <p>{datasetDataCodeAvailiabilityStatement}</p>
+    </div>
+
+    <div class="w-full flex flex-col gap-3 p-2 my-1">
+            <h4 class="h4">Comment</h4>
+            <p>{datasetComment}</p>
     </div>
 
     {#each Object.entries(groupedResources) as [type, resources]}
