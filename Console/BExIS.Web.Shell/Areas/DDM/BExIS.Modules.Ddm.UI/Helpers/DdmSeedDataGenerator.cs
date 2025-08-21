@@ -212,7 +212,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 //projects
                 MappingKey projects = null;
                 if (!keys.Any(k => k.Name.Equals("data/projects")))
-                    projects = conceptManager.CreateMappingKey("Projects", "", "", true, false, "data/projects", concept);
+                    projects = conceptManager.CreateMappingKey("Projects", "", "", true, true, "data/projects", concept);
 
                 if (!keys.Any(k => k.Name.Equals("data/projects/project")))
                     conceptManager.CreateMappingKey("Project", "", "", true, false, "data/projects/project", concept, projects);

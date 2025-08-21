@@ -1832,7 +1832,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 // user has edit permission and can see all versions -> show full list
                 var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
-                if (hasEditPermission || !(bool)moduleSettings.GetValueByKey("reduce_versions_select_logged_in"))
+                if (hasEditPermission || !Convert.ToBoolean(moduleSettings.GetValueByKey("reduce_versions_select_logged_in")))
                 {
                     datasetVersionsAllowed = datasetVersions;
                 }

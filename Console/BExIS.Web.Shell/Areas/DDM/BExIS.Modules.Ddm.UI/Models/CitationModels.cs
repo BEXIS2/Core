@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using BExIS.App.Bootstrap.Attributes;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Serialization;
 
@@ -59,7 +60,7 @@ namespace BExIS.Modules.Ddm.UI.Models
 
         [XmlArray("authorNames")]
         [XmlArrayItem("authorName")]
-        //[MinCapacity(1)]
+        [MinCapacity(1), NoNullOrEmptyItems]
         public List<string> Authors { get; set; }
 
         [XmlElement("entityType")]
