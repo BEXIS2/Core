@@ -56,7 +56,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     var settingsHelper = new SettingsHelper();
 
                     var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
-                    var useTags = (bool)moduleSettings.GetValueByKey("use_tags");
+                    var useTags = Convert.ToBoolean(moduleSettings.GetValueByKey("use_tags"));
                     var citationSettings = settingsHelper.GetCitationSettings();
 
                     // Authors
