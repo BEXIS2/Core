@@ -39,7 +39,7 @@
 	};
 </script>
 
-<p class="mx-2 mt-2 text-center text-surface-600">
+<p class="m-2 text-center text-surface-600">
 	<Fa icon={faCircleInfo} class="mr-1 inline-block" />The curation process has not started yet.
 </p>
 
