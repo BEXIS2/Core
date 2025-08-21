@@ -4,10 +4,14 @@
 	import Fa from 'svelte-fa';
 	import { writable } from 'svelte/store';
 	import CurationNote from './CurationNote.svelte';
-	import { fixedCurationUserId, type CurationEntryClass } from './CurationEntries';
+	import { fixedCurationUserId } from './CurationEntries';
 	import { onMount } from 'svelte';
 
-	export let entry: CurationEntryClass;
+	export let entryId: number;
+
+	const entry = curationStore.getEntryReadable(entryId);
+	$: notes = $entry?.notes || [];
+	$: visibleNotes = $entry?.visibleNotes ?? [];
 
 	let new_note = '';
 	let textarea: HTMLTextAreaElement | null = null;
@@ -37,7 +41,7 @@
 	function addNote() {
 		new_note = new_note.trim();
 		if (new_note === '') return;
-		curationStore.addNote(entry.id, new_note);
+		curationStore.addNote(entryId, new_note);
 		new_note = '';
 	}
 
@@ -50,7 +54,7 @@
 	}
 
 	// Scroll to bottom when a new note is added
-	$: if (entry.visibleNotes.length > 0) {
+	$: if (visibleNotes.length > 0) {
 		scrollToBottom();
 	}
 </script>
@@ -58,24 +62,24 @@
 <div class="flex h-full flex-col gap-y-1 overflow-hidden p-1 text-sm">
 	<ul class="node-box flex grow flex-col gap-y-1 overflow-y-auto rounded" bind:this={noteList}>
 		<!-- Notes or message area -->
-		{#if entry.visibleNotes.length === 0}
+		{#if visibleNotes.length === 0}
 			<li class="mx-2 my-auto text-center text-surface-700">
 				Add a note to start the conversation about this entry.
 			</li>
 		{:else}
-			{#each entry.visibleNotes as note}
-				<CurationNote {note} entryId={entry.id} {replyText} />
+			{#each visibleNotes as note}
+				<CurationNote {note} {entryId} {replyText} />
 			{/each}
 		{/if}
 	</ul>
-	{#if entry.visibleNotes.length > 0 || entry.notes.filter((note) => note.userId === fixedCurationUserId).length > 0}
+	{#if visibleNotes.length > 0 || notes.filter((note) => note.userId === fixedCurationUserId).length > 0}
 		<button
-			on:click={() => curationStore.setUnread(entry.id, !entry.hasUnreadNotes)}
+			on:click={() => curationStore.setUnread(entryId, !$entry?.hasUnreadNotes)}
 			class="flex cursor-pointer items-center justify-center gap-x-1 overflow-hidden text-ellipsis text-nowrap rounded px-2 py-1 text-surface-800 hover:bg-surface-400"
-			title="Mark this conversation as {!entry.hasUnreadNotes ? 'unread' : 'read'}"
+			title="Mark this conversation as {!$entry?.hasUnreadNotes ? 'unread' : 'read'}"
 			name="Mark as read/unread"
 		>
-			{#if !entry.hasUnreadNotes}
+			{#if !$entry?.hasUnreadNotes}
 				<Fa icon={faBookmark} />
 				<span>Mark as unread</span>
 			{:else}

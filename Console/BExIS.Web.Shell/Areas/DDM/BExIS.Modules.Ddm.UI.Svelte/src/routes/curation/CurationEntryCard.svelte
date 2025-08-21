@@ -9,25 +9,33 @@
 		faTrash,
 		faXmark
 	} from '@fortawesome/free-solid-svg-icons';
-	import { derived } from 'svelte/store';
 	import { curationStore } from './stores';
 	import RelativeDate from '$lib/components/RelativeDate.svelte';
 	import CurationNotes from './CurationNotes.svelte';
 	import { CurationEntryStatus, CurationEntryStatusDetails } from './types';
-	import type { CurationEntryClass } from './CurationEntries';
 	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
 	import CurationEntryInput from './CurationEntryInput.svelte';
 	import CurationNote from './CurationNote.svelte';
 	import Confetti from '$lib/components/Confetti.svelte';
 
-	export let entry: CurationEntryClass;
+	export let entryId: number;
 	export let combined: boolean;
 	export let tag: string | null = 'div'; // if set, use this tag instead of the default <div>
 
-	const { curation, editMode, statusColorPalette, jumpToEntryWhere, jumpToDataEnabled } =
-		curationStore;
+	const {
+		curation,
+		editMode,
+		statusColorPalette,
+		jumpToEntryWhere,
+		jumpToDataEnabled,
+		uploadingEntries
+	} = curationStore;
 
-	const cardState = curationStore.getEntryCardState(entry.id);
+	const entry = curationStore.getEntryReadable(entryId);
+	$: visibleNotes = $entry?.visibleNotes ?? [];
+	$: lastVisibleNote = visibleNotes.at(-1);
+
+	const cardState = curationStore.getEntryCardState(entryId);
 
 	// Jump to this card
 	let cardElement: HTMLElement | null = null;
@@ -36,7 +44,9 @@
 		cardElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
 	$: {
-		const jumpHere = $jumpToEntryWhere ? $jumpToEntryWhere(entry.getHelperModel()) : false;
+		const jumpHere = $jumpToEntryWhere
+			? $entry && $jumpToEntryWhere($entry.getHelperModel())
+			: false;
 		if (jumpHere && cardElement) {
 			scrollCardIntoView();
 			cardElement.classList.add('blink');
@@ -45,25 +55,19 @@
 		}
 	}
 
-	const prevPos = entry.position;
-	let position = entry.position;
+	let inputPosition: number = $entry?.position || 0;
+	let isEditingPosition = false;
 	let positiontimer: NodeJS.Timeout | null = null;
 
-	const isUploading = derived(curationStore.uploadingEntries, (uploadingEntries) =>
-		uploadingEntries.some((id) => id === entry.id)
-	);
+	$: if (!isEditingPosition && $entry && $entry.position !== inputPosition) {
+		inputPosition = $entry.position;
+	}
 
-	const entryReadable = curationStore.getEntryReadable(entry.id);
-
-	entryReadable.subscribe((entry) => {
-		if (entry) {
-			position = entry.position;
-		}
-	});
+	$: isUploading = $uploadingEntries.some((id) => id === entryId);
 
 	const setStatus = (status: CurationEntryStatus) => {
-		if (entry.status !== status) {
-			curationStore.setStatus(entry.id, status);
+		if ($entry && $entry.status !== status) {
+			curationStore.setStatus(entryId, status);
 		}
 	};
 
@@ -72,18 +76,26 @@
 			clearTimeout(positiontimer);
 		}
 		positiontimer = setTimeout(() => {
-			if (position === prevPos) return;
-			curationStore.updateEntryPosition(entry.id, position);
+			if ($entry && inputPosition !== $entry.position) {
+				curationStore.updateEntryPosition(entryId, inputPosition);
+			}
 		}, 1000);
+	};
+
+	const positionUpdateImmediate = () => {
+		isEditingPosition = false;
+		if ($entry && inputPosition !== $entry.position) {
+			curationStore.updateEntryPosition(entryId, inputPosition);
+		}
 	};
 
 	const deleteEntry = () => {
 		if (
 			confirm(
-				`Are you sure you want to delete the entry "${entry.name}" at position ${entry.position}?`
+				`Are you sure you want to delete the entry "${$entry?.name}" at position ${$entry?.position}?`
 			)
 		) {
-			curationStore.deleteEntry(entry.id);
+			curationStore.deleteEntry(entryId);
 		}
 	};
 
@@ -91,15 +103,15 @@
 		cardState.update((v) => ({ ...v, isExpanded: !v.isExpanded }));
 	};
 
-	$: showCollapsedNotes = !$cardState.isExpanded && entry.visibleNotes.length > 0;
+	$: showCollapsedNotes = !$cardState.isExpanded && ($entry?.visibleNotes.length ?? 0 > 0);
 
 	let confettiRef: Confetti;
 
 	const confettiTypeSet = new Set([CurationEntryStatus.Fixed, CurationEntryStatus.Closed]);
 
 	const jumpToDataClick = () => {
-		if (!$jumpToDataEnabled) return;
-		curationStore.dispatchJumpToData(entry.getHelperModel($statusColorPalette));
+		if (!$jumpToDataEnabled || !$entry) return;
+		curationStore.dispatchJumpToData($entry.getHelperModel($statusColorPalette));
 	};
 </script>
 
@@ -110,30 +122,30 @@
 	class="curation-entry-card relative overflow-hidden rounded px-2 py-0.5"
 	class:border={combined}
 	class:border-surface-400={combined}
-	class:text-primary-500={entry.isDraft()}
+	class:text-primary-500={$entry?.isDraft()}
 	class:blink={false}
-	style:--current-status-color={$statusColorPalette.colors[entry.status]}
+	style:--current-status-color={$statusColorPalette.colors[$entry?.status || 0]}
 >
 	{#if $editMode && $cardState.editEntryMode}
-		<CurationEntryInput {entry} />
+		<CurationEntryInput {entryId} />
 	{:else}
 		<div class="items-top no-wrap mb-2 flex gap-x-2 overflow-hidden">
 			<div class="grow overflow-hidden">
 				<!-- Title -->
 				{#if combined}
-					<h3 class="font-semibold" class:text-surface-500={entry.isHidden()}>
-						{entry.name}
+					<h3 class="font-semibold" class:text-surface-500={$entry?.isHidden()}>
+						{$entry?.name}
 					</h3>
 				{/if}
 
 				<!-- Description -->
-				<p class="overflow-hidden break-words" class:text-surface-500={entry.isHidden()}>
-					{entry.description}
+				<p class="overflow-hidden break-words" class:text-surface-500={$entry?.isHidden()}>
+					{$entry?.description}
 				</p>
 			</div>
 			<RelativeDate
 				class="hidden text-nowrap border-surface-300 pr-1 text-xs text-surface-600 sm:block"
-				date={entry.lastChangedDate}
+				date={$entry?.lastChangedDate || new Date(0)}
 				label="Last updated"
 				showIcon={true}
 			/>
@@ -147,12 +159,12 @@
 			class:md:h-7={showCollapsedNotes && !$editMode}
 			class:bg-surface-300={$cardState.isExpanded}
 			class:rounded-br={!$cardState.isExpanded}
-			class:mb-2={!$editMode && (entry.visibleNotes.length > 0 || $cardState.isExpanded)}
+			class:mb-2={!$editMode && (visibleNotes.length > 0 || $cardState.isExpanded)}
 			style:transition="height 0.15s"
 		>
 			{#if $cardState.isExpanded && !$editMode}
-				<CurationNotes {entry} />
-			{:else if entry.visibleNotes.length > 0}
+				<CurationNotes {entryId} />
+			{:else if lastVisibleNote}
 				<button
 					class="variant-soft-surface btn size-full !justify-start overflow-hidden border border-surface-500 px-1.5 py-0.5 text-left text-sm text-surface-700"
 					title="Open Chat"
@@ -161,11 +173,7 @@
 						scrollCardIntoView();
 					}}
 				>
-					<CurationNote
-						note={entry.visibleNotes[entry.visibleNotes.length - 1]}
-						entryId={entry.id}
-						shortForm={true}
-					/>
+					<CurationNote note={lastVisibleNote} {entryId} shortForm={true} />
 				</button>
 			{/if}
 		</div>
@@ -189,16 +197,16 @@
 				class:gap-x-0={$editMode}
 				class:!w-24={$editMode}
 				class:!grow-0={$editMode}
-				class:opacity-10={entry.isDraft()}
-				class:cursor-not-allowed={entry.isDraft()}
+				class:opacity-10={$entry?.isDraft()}
+				class:cursor-not-allowed={$entry?.isDraft()}
 			>
 				{#each CurationEntryStatusDetails as statusDetails, index}
 					{#if $curation?.isCurator || (index !== CurationEntryStatus.Ok && index !== CurationEntryStatus.Closed)}
-						{#if !$editMode || index === entry.status}
+						{#if !$editMode || index === $entry?.status}
 							<button
 								class="status-change-button relative shrink grow basis-1/4 overflow-hidden text-ellipsis text-nowrap rounded p-0"
-								class:active={index === entry.status}
-								disabled={index === entry.status || $editMode || entry.isDraft()}
+								class:active={index === $entry?.status}
+								disabled={index === $entry?.status || $editMode || $entry?.isDraft()}
 								style="--status-color: {$statusColorPalette.colors[index]};"
 								title="Change Entry Status to {statusDetails.name}"
 								on:click={(e) => {
@@ -226,9 +234,9 @@
 			<button
 				class="variant-ghost-surface btn w-24 grow overflow-hidden text-ellipsis text-nowrap px-2 py-0.5 text-sm"
 				class:hidden={$editMode}
-				class:opacity-10={entry.isDraft()}
-				class:cursor-not-allowed={entry.isDraft()}
-				disabled={$editMode || entry.isDraft()}
+				class:opacity-10={$entry?.isDraft()}
+				class:cursor-not-allowed={$entry?.isDraft()}
+				disabled={$editMode || $entry?.isDraft()}
 				title="Toggle Chat"
 				on:click={() => {
 					toggleExpand();
@@ -236,19 +244,19 @@
 				}}
 			>
 				<Fa icon={$cardState.isExpanded ? faXmark : faMessage} class="mr-2 inline-block" />
-				{#if entry.hasUnreadNotes && !$cardState.isExpanded}
+				{#if $entry?.hasUnreadNotes && !$cardState.isExpanded}
 					<span class="notification-badge"><span>&nbsp;</span></span>
 				{/if}
 				Chat
-				{#if !$cardState.isExpanded && entry.visibleNotes.length > 0}
-					({entry.visibleNotes.length})
+				{#if !$cardState.isExpanded && visibleNotes.length > 0}
+					({visibleNotes.length})
 				{/if}
 			</button>
 
 			<!-- EDIT MODE -->
 
 			<!-- Hidden or Draft Badges -->
-			{#if entry.isHidden()}
+			{#if $entry?.isHidden()}
 				<div
 					class="rounded bg-tertiary-700 px-2 py-0.5 text-surface-50 opacity-70"
 					class:hidden={!$editMode}
@@ -258,7 +266,7 @@
 					Hidden
 				</div>
 			{/if}
-			{#if entry.isDraft()}
+			{#if $entry?.isDraft()}
 				<div
 					class="rounded bg-primary-400 px-2 py-0.5 text-surface-50 opacity-70"
 					class:hidden={!$editMode}
@@ -269,7 +277,7 @@
 				</div>
 			{/if}
 
-			{#if entry.isDraft()}
+			{#if $entry?.isDraft()}
 				<button
 					class="variant-soft-error btn px-2 py-0.5 text-sm"
 					title="Delete Draft"
@@ -300,11 +308,14 @@
 					<span class="text-surface-700">Position</span>
 					<input
 						type="number"
-						bind:value={position}
+						bind:value={inputPosition}
 						class="input ml-0.5 w-12 px-1 py-0.5 text-xs text-surface-800"
 						min="1"
+						on:focus={() => {
+							isEditingPosition = true;
+						}}
+						on:blur={positionUpdateImmediate}
 						on:input={positionUpdateDebounce}
-						on:change={positionUpdateDebounce}
 						disabled={!$editMode}
 					/>
 				</label>
@@ -312,7 +323,7 @@
 		</div>
 	{/if}
 
-	{#if $isUploading}
+	{#if isUploading}
 		<SpinnerOverlay />
 	{/if}
 

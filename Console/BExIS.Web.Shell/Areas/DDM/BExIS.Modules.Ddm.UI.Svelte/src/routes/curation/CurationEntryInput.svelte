@@ -5,7 +5,6 @@
 		faSquarePlus,
 		faXmark
 	} from '@fortawesome/free-solid-svg-icons';
-	import type { CurationEntryClass } from './CurationEntries';
 	import { curationStore } from './stores';
 	import Fa from 'svelte-fa';
 	import { CurationEntryType } from './types';
@@ -13,9 +12,11 @@
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
 
-	export let entry: CurationEntryClass;
+	export let entryId: number;
 
-	const cardState = curationStore.getEntryCardState(entry.id);
+	const entry = curationStore.getEntryReadable(entryId);
+
+	const cardState = curationStore.getEntryCardState(entryId);
 
 	let form: HTMLFormElement;
 
@@ -23,11 +24,18 @@
 		form?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 	});
 
+	const defaultInputData = {
+		type: CurationEntryType.None,
+		position: 0,
+		name: '',
+		description: ''
+	};
+
 	let inputData = $cardState.inputData || {
-		type: entry.type,
-		position: entry.position,
-		name: entry.name,
-		description: entry.description
+		type: $entry?.type ?? defaultInputData.type,
+		position: $entry?.position ?? defaultInputData.position,
+		name: $entry?.name ?? defaultInputData.name,
+		description: $entry?.description ?? defaultInputData.description
 	};
 
 	$: cardState.update((cs) => ({ ...cs, inputData }));
@@ -36,7 +44,7 @@
 		cardState.update((cs) => ({ ...cs, editEntryMode: false, inputData: undefined }));
 
 	const saveChanges = () => {
-		curationStore.updateEntry(entry.id, $cardState.inputData || {});
+		curationStore.updateEntry(entryId, $cardState.inputData || {});
 		closeEditMode();
 	};
 </script>
@@ -62,7 +70,7 @@
 			</select>
 			<button
 				class="rounded-r border-y border-r border-surface-400 px-3 hover:bg-surface-500 active:bg-surface-600"
-				on:click|preventDefault={() => (inputData.type = entry.type)}
+				on:click|preventDefault={() => (inputData.type = $entry?.type ?? CurationEntryType.None)}
 				title="Undo changes"
 			>
 				<Fa icon={faRotateLeft} />
@@ -78,10 +86,12 @@
 				bind:value={inputData.position}
 				class="input rounded-r-none"
 				placeholder="Enter position"
+				min="1"
 			/>
 			<button
 				class="rounded-r border-y border-r border-surface-400 px-3 hover:bg-surface-500 active:bg-surface-600"
-				on:click|preventDefault={() => (inputData.position = entry.position)}
+				on:click|preventDefault={() =>
+					(inputData.position = $entry?.position ?? defaultInputData.position)}
 				title="Undo changes"
 			>
 				<Fa icon={faRotateLeft} />
@@ -101,7 +111,7 @@
 			/>
 			<button
 				class="rounded-r border-y border-r border-surface-400 px-3 hover:bg-surface-500 active:bg-surface-600"
-				on:click|preventDefault={() => (inputData.name = entry.name)}
+				on:click|preventDefault={() => (inputData.name = $entry?.name ?? defaultInputData.name)}
 				title="Undo changes"
 			>
 				<Fa icon={faRotateLeft} />
@@ -120,7 +130,8 @@
 			></textarea>
 			<button
 				class="rounded-r border-y border-r border-surface-400 px-3 hover:bg-surface-500 active:bg-surface-600"
-				on:click|preventDefault={() => (inputData.description = entry.description)}
+				on:click|preventDefault={() =>
+					(inputData.description = $entry?.description ?? defaultInputData.description)}
 				title="Undo changes"
 			>
 				<Fa icon={faRotateLeft} />
@@ -150,7 +161,7 @@
 			title="Save entry"
 			class="variant-filled-success btn grow text-nowrap px-2 py-1"
 		>
-			{#if entry.isDraft()}
+			{#if $entry?.isDraft()}
 				<Fa icon={faSquarePlus} class="mr-1 inline-block" />
 				Create
 			{:else}

@@ -4,15 +4,17 @@
 	import type { CurationEntryClass } from './CurationEntries';
 	import CurationGroupCard from './CurationGroupCard.svelte';
 	import { curationStore } from './stores';
-	import type { CurationEntryType } from './types';
+	import { CurationEntryTypeNames, type CurationEntryType } from './types';
 	import { faBan } from '@fortawesome/free-solid-svg-icons';
 
-	export let curationEntries: CurationEntryClass[];
-	export let heading: string | undefined = undefined;
+	export let type: CurationEntryType;
 	export let combineNames = true;
-	export let type: CurationEntryType | undefined = undefined;
 
 	const { editMode } = curationStore;
+
+	const filteredEntries = curationStore.getFilteredEntriesReadable();
+
+	$: curationEntries = $filteredEntries.filter((e) => e.type === type);
 
 	// sorted Entries is always a list of lists of CurationEntries
 	$: sortedEntries = combineNames
@@ -24,9 +26,7 @@
 		: curationEntries.map((entry) => [entry]);
 </script>
 
-{#if heading}
-	<h2 class="m-2 mt-3 text-xl font-semibold">{heading}</h2>
-{/if}
+<h2 class="m-2 mt-3 text-xl font-semibold">{CurationEntryTypeNames[type]}</h2>
 {#if curationEntries.some((entry) => entry.isVisible()) || $editMode}
 	<ul class="flex flex-col gap-2 overflow-hidden p-2">
 		{#if $editMode}
@@ -34,7 +34,10 @@
 		{/if}
 		{#each sortedEntries as entryNameGroup (entryNameGroup.map((e) => e.id).join(' '))}
 			{#if $editMode || entryNameGroup.some((entry) => entry.isVisible())}
-				<CurationGroupCard entries={entryNameGroup} />
+				<CurationGroupCard
+					entryIds={entryNameGroup.map((entry) => entry.id)}
+					groupName={entryNameGroup[0]?.name}
+				/>
 			{/if}
 		{/each}
 	</ul>

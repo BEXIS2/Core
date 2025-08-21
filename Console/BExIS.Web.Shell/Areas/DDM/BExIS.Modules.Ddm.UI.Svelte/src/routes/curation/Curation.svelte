@@ -77,20 +77,7 @@
 
 	// ---
 
-	const filteredEntries = curationStore.getFilteredEntriesReadable();
-
 	const typeFilter = curationStore.getEntryFilterData(CurationFilterType.type);
-
-	const typeGroupedEntries = derived(filteredEntries, ($filteredEntries) => {
-		// empty list for each entry of CurationEntryTypeNames
-		let groupedEntries: CurationEntryClass[][] = CurationEntryTypeNames.map((_) => []);
-		let previousPos: (number | undefined)[] = groupedEntries.map((_) => 2);
-		$filteredEntries.forEach((e) => {
-			groupedEntries[e.type as number].push(e);
-		});
-		groupedEntries.slice(0, -1).forEach((ge, i) => (previousPos[i + 1] = ge.at(-1)?.position ?? 2));
-		return groupedEntries;
-	});
 
 	const curationTypeViewOrder = derived(editMode, ($editMode) =>
 		!$editMode ? CurationEntryTypeViewOrders.default : CurationEntryTypeViewOrders.editMode
@@ -214,13 +201,7 @@
 		<div class="overflow-hidden py-2">
 			{#each $curationTypeViewOrder as type}
 				{#if $typeFilter?.data !== undefined ? $typeFilter.data === type : true}
-					<!-- {#key $typeGroupedEntries[type]} -->
-					<CurationEntryList
-						heading={CurationEntryTypeNames[type]}
-						curationEntries={$typeGroupedEntries[type]}
-						{type}
-					/>
-					<!-- {/key} -->
+					<CurationEntryList {type} />
 				{/if}
 			{/each}
 		</div>
