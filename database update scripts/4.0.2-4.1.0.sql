@@ -358,7 +358,7 @@ WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id 
 
 
 INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept, xpath)
-SELECT 'Projects','Dataset projects of citation string.', '', true, false, (select id from dim_mappingconcepts where name='Citation'), 'data/projects'
+SELECT 'Projects','Dataset projects of citation string.', '', true, true, (select id from dim_mappingconcepts where name='Citation'), 'data/projects'
 WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='Citation') AND xpath='data/projects');
 
 INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept,parentRef, xpath)
@@ -369,7 +369,7 @@ SELECT 'Project','Dataset project of citation string.', '', true, false,
 WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='Citation') AND xpath='data/projects/project');
 
 INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept, xpath)
-SELECT 'AuthorNames','Dataset author names of citation string.', '', false, false, (select id from dim_mappingconcepts where name='Citation'), 'data/authorNames'
+SELECT 'AuthorNames','Dataset author names of citation string.', '', false, true, (select id from dim_mappingconcepts where name='Citation'), 'data/authorNames'
 WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='Citation') AND xpath='data/authorNames');
 
 INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, concept,parentRef, xpath)

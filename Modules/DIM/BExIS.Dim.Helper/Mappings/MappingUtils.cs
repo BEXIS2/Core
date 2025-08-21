@@ -1602,7 +1602,10 @@ namespace BExIS.Dim.Helpers.Mappings
             // parent = channel[2]/
             // child = channel[2]/ImageAgent[1]
 
-            if (directComplexSourceParent.Equals(directSimpleSourcePath)) return child;
+            if (directComplexSourceParent.Equals(directSimpleSourcePath)) // simple xpath need index
+            {
+                return directTargetPath;
+            }
 
             List<string> levelOfSource = directSimpleSourcePath.Replace(directComplexSourceParent,"").Split('/').ToList(); // level 2
             int index = 1;
