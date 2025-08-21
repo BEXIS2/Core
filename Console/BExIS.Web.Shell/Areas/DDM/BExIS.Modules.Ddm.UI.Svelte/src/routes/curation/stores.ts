@@ -226,8 +226,8 @@ class CurationStore {
 		);
 	}
 
-	public setStatus(entryId: number, status: CurationEntryStatus) {
-		this.applyAndSaveEntry(entryId, (entry) => entry.setStatus(status), true);
+	public setStatus(entryId: number, status: CurationEntryStatus, debounce: boolean = true) {
+		this.applyAndSaveEntry(entryId, (entry) => entry.setStatus(status), debounce);
 	}
 
 	public setName(entryId: number, name: string, debounce: boolean = false) {

@@ -17,11 +17,9 @@
 	export let radius = 36;
 	export let duration = 900; // ms
 
-	export function trigger(event: MouseEvent) {
-		const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-		const parentRect = (
-			event.currentTarget as HTMLElement
-		).offsetParent?.getBoundingClientRect() ?? { left: 0, top: 0 };
+	export function trigger(element: HTMLElement) {
+		const rect = element.getBoundingClientRect();
+		const parentRect = element.offsetParent?.getBoundingClientRect() ?? { left: 0, top: 0 };
 		x = rect.left - parentRect.left + rect.width / 2;
 		y = rect.top - parentRect.top + rect.height / 2;
 		show = false;

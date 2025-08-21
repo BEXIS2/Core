@@ -35,6 +35,8 @@
 	$: visibleNotes = $entry?.visibleNotes ?? [];
 	$: lastVisibleNote = visibleNotes.at(-1);
 
+	$: isUploading = $uploadingEntries.some((id) => id === entryId);
+
 	const cardState = curationStore.getEntryCardState(entryId);
 
 	// Jump to this card
@@ -55,6 +57,36 @@
 		}
 	}
 
+	// Status Update
+	let confettiRef: Confetti;
+	const confettiTypeSet = new Set([CurationEntryStatus.Fixed, CurationEntryStatus.Closed]);
+
+	const setStatus = (status: CurationEntryStatus, target: HTMLElement) => {
+		if ($entry && $entry.status !== status) {
+			curationStore.setStatus(entryId, status);
+			if (confettiTypeSet.has(status)) confettiRef.trigger(target);
+		}
+	};
+
+	const keydownHandler = (event: KeyboardEvent) => {
+		const buttons = Array.from(
+			(event.currentTarget as HTMLElement).parentElement?.querySelectorAll('[role="radio"]') || []
+		);
+		const currentIndex = buttons.indexOf(event.currentTarget as HTMLElement);
+		let newIndex = currentIndex;
+		if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+			newIndex = (currentIndex - 1 + buttons.length) % buttons.length;
+			event.preventDefault();
+		} else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+			newIndex = (currentIndex + 1) % buttons.length;
+			event.preventDefault();
+		}
+		if (newIndex !== currentIndex) {
+			(buttons[newIndex] as HTMLElement).focus();
+		}
+	};
+
+	// Position Update
 	let inputPosition: number = $entry?.position || 0;
 	let isEditingPosition = false;
 	let positiontimer: NodeJS.Timeout | null = null;
@@ -62,14 +94,6 @@
 	$: if (!isEditingPosition && $entry && $entry.position !== inputPosition) {
 		inputPosition = $entry.position;
 	}
-
-	$: isUploading = $uploadingEntries.some((id) => id === entryId);
-
-	const setStatus = (status: CurationEntryStatus) => {
-		if ($entry && $entry.status !== status) {
-			curationStore.setStatus(entryId, status);
-		}
-	};
 
 	const positionUpdateDebounce = () => {
 		if (positiontimer) {
@@ -104,10 +128,6 @@
 	};
 
 	$: showCollapsedNotes = !$cardState.isExpanded && ($entry?.visibleNotes.length ?? 0 > 0);
-
-	let confettiRef: Confetti;
-
-	const confettiTypeSet = new Set([CurationEntryStatus.Fixed, CurationEntryStatus.Closed]);
 
 	const jumpToDataClick = () => {
 		if (!$jumpToDataEnabled || !$entry) return;
@@ -166,7 +186,7 @@
 				<CurationNotes {entryId} />
 			{:else if lastVisibleNote}
 				<button
-					class="variant-soft-surface btn size-full !justify-start overflow-hidden border border-surface-500 px-1.5 py-0.5 text-left text-sm text-surface-700"
+					class="variant-soft-surface btn size-full !justify-start border border-surface-500 px-1.5 py-0.5 text-left text-sm text-surface-700"
 					title="Open Chat"
 					on:click={() => {
 						toggleExpand();
@@ -179,7 +199,7 @@
 		</div>
 
 		<!-- Status and Actions -->
-		<div class="mb-1 flex flex-wrap items-center justify-stretch gap-1 overflow-x-hidden text-sm">
+		<div class="mb-1 flex flex-wrap items-center justify-stretch gap-1 text-sm">
 			<!-- link button -->
 			{#if $jumpToDataEnabled}
 				<button
@@ -193,39 +213,32 @@
 			{/if}
 			<!-- Status change -->
 			<div
-				class="status-button-container flex w-80 shrink grow gap-x-1 overflow-hidden"
+				class="status-button-container flex max-w-full shrink grow basis-80 gap-x-1"
 				class:gap-x-0={$editMode}
-				class:!w-24={$editMode}
+				class:!max-w-24={$editMode}
 				class:!grow-0={$editMode}
 				class:opacity-10={$entry?.isDraft()}
 				class:cursor-not-allowed={$entry?.isDraft()}
+				role="radiogroup"
 			>
 				{#each CurationEntryStatusDetails as statusDetails, index}
-					{#if $curation?.isCurator || (index !== CurationEntryStatus.Ok && index !== CurationEntryStatus.Closed)}
-						{#if !$editMode || index === $entry?.status}
-							<button
-								class="status-change-button relative shrink grow basis-1/4 overflow-hidden text-ellipsis text-nowrap rounded p-0"
-								class:active={index === $entry?.status}
-								disabled={index === $entry?.status || $editMode || $entry?.isDraft()}
-								style="--status-color: {$statusColorPalette.colors[index]};"
-								title="Change Entry Status to {statusDetails.name}"
-								on:click={(e) => {
-									if (confettiTypeSet.has(index)) confettiRef.trigger(e);
-									setStatus(index);
-								}}
-							>
-								<div class="inactive-content size-full px-1 py-0.5">
-									<Fa icon={statusDetails.icon} class="mr-1 inline-block" />
-									{statusDetails.name}
-								</div>
-								<div
-									class="active-content pointer-events-none absolute left-0 top-0 size-full overflow-hidden px-1 py-0.5"
-								>
-									<Fa icon={statusDetails.icon} class="mr-1 inline-block" />
-									{statusDetails.name}
-								</div>
-							</button>
-						{/if}
+					{#if index === $entry?.status || (!$editMode && ($curation?.isCurator || (index !== CurationEntryStatus.Ok && index !== CurationEntryStatus.Closed)))}
+						<button
+							class="btn relative shrink grow basis-1/4 overflow-hidden text-ellipsis text-nowrap rounded px-2 py-0.5 text-sm"
+							class:active={index === $entry?.status}
+							style="--status-color: {$statusColorPalette.colors[index]};"
+							title="Change Entry Status to {statusDetails.name}"
+							on:click={(e) => {
+								setStatus(index, e.currentTarget);
+							}}
+							on:keydown={keydownHandler}
+							role="radio"
+							aria-checked={index === $entry?.status}
+							tabindex={index === $entry?.status ? 0 : -1}
+						>
+							<Fa icon={statusDetails.icon} class="mr-1 inline-block" />
+							{statusDetails.name}
+						</button>
 					{/if}
 				{/each}
 			</div>
@@ -354,50 +367,27 @@
 		}
 	}
 
-	.status-change-button {
+	.status-button-container .btn {
 		color: var(--status-color, inherit);
 		box-shadow: 0 0 0 1px var(--status-color, transparent) inset;
 		transition:
+			background-color 0.15s,
 			opacity 0.15s,
 			filter 0.15s,
 			transform 0.15s;
 		z-index: 1;
 	}
-
-	.status-change-button:active {
-		transform: scale(95%, 95%);
-		filter: brightness(0.9);
+	.status-button-container .btn:hover {
+		box-shadow: 0 0 0 2px var(--status-color, transparent) inset;
 	}
 
-	.status-change-button:hover {
-		/* box-shadow: 0 0 0 2px var(--status-color, transparent) inset; */
-		opacity: 0.7;
-	}
-
-	.status-change-button.active {
+	.status-button-container .btn.active {
 		@apply cursor-not-allowed text-white;
+		background-color: var(--status-color, inherit);
 	}
 
-	.status-change-button .active-content {
-		opacity: 0;
-		background-color: var(--status-color, transparent);
-		transform: scale(0.2);
-		clip-path: circle(0% at 50% 50%);
-		transition:
-			opacity 0.3s,
-			clip-path 0.3s;
-	}
-
-	.status-change-button.active .active-content {
-		opacity: 1;
-		transform: scale(1);
-		clip-path: circle(150% at 50% 50%);
-	}
-
-	.status-change-button.active
-		.status-button-container:not(.active):hover
-		.status-change-button.active,
-	.status-button-container:not(.active):focus .status-change-button.active {
+	.status-button-container:has(.btn:not(.active):hover) .btn.active,
+	.status-button-container:has(.btn:not(.active):focus) .btn.active {
 		@apply opacity-30;
 	}
 
