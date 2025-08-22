@@ -107,6 +107,7 @@
 				bind:value={inputData.name}
 				class="input rounded-r-none"
 				placeholder="Enter name"
+				maxLength={255}
 				required
 			/>
 			<button
