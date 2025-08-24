@@ -1,0 +1,179 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>BExIS.Web.Shell</RootNamespace>
+    <AssemblyName>BExIS.Web.Shell</AssemblyName>
+    
+    <!-- ASP.NET Core specific settings -->
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <AspNetCoreModuleName>AspNetCoreModuleV2</AspNetCoreModuleName>
+    
+    <!-- Enable Razor runtime compilation for development -->
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    
+    <!-- Enable NuGet package restore -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    
+    <!-- Security settings -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <WarningsNotAsErrors />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <!-- ASP.NET Core Framework and Web packages -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="6.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    
+    <!-- Bundling and Optimization (replaces System.Web.Optimization) -->
+    <PackageReference Include="WebOptimizer.Core" Version="3.0.372" />
+    <PackageReference Include="WebOptimizer.Sass" Version="3.0.119" />
+    
+    <!-- JSON.NET for compatibility -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    
+    <!-- Entity Framework Core (if using EF) -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.0" />
+    
+    <!-- Security packages -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" />
+    
+    <!-- Compatibility packages for migration -->
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
+    
+    <!-- Logging providers -->
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="6.0.0" />
+    
+    <!-- HTTP client -->
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+  </ItemGroup>
+
+  <!-- Project References (replace with actual BExIS component references) -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.Utils\Vaiona.Utils.NetCore.csproj" />
+    <ProjectReference Include="..\..\Components\Utils\BExIS.Utils\BExIS.Utils.NetCore.csproj" />
+    <ProjectReference Include="..\..\Components\App\BExIS.App.Bootstrap\BExIS.App.Bootstrap.NetCore.csproj" />
+    <ProjectReference Include="..\..\Components\UI\BExIS.UI\BExIS.UI.NetCore.csproj" />
+    <!-- Add other BExIS component references as needed -->
+  </ItemGroup>
+
+  <!-- Content files -->
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="appsettings.Production.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <!-- Static web assets -->
+  <ItemGroup>
+    <Content Include="wwwroot\**\*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- Embedded resources -->
+  <ItemGroup>
+    <EmbeddedResource Include="Themes\**\*" />
+    <EmbeddedResource Include="Areas\**\*.resx" />
+  </ItemGroup>
+
+  <!-- None items (files not to be compiled) -->
+  <ItemGroup>
+    <None Include="README.md" />
+    <None Include="LICENSE.txt" />
+    <None Include="robots.txt" />
+  </ItemGroup>
+
+  <!-- Copy dependencies from old packages.config that need manual handling -->
+  <!--
+  The following packages from packages.config need special attention during migration:
+  
+  Old .NET Framework packages that need replacement:
+  - System.Web.Mvc -> Microsoft.AspNetCore.Mvc
+  - System.Web.Http -> Microsoft.AspNetCore.Mvc.Core
+  - System.Web.Optimization -> WebOptimizer.Core
+  - Microsoft.Web.Infrastructure -> Not needed in .NET Core
+  - WebGrease -> Not needed with WebOptimizer
+  - Antlr -> Not needed with WebOptimizer
+  
+  Telerik packages need to be updated:
+  - Telerik.UI.for.AspNet.Mvc5 -> Telerik.UI.for.AspNetCore
+  
+  Other packages may need version updates for .NET 6 compatibility
+  -->
+
+  <!-- Build events and custom MSBuild targets -->
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="echo Starting .NET Core build..." />
+  </Target>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="echo .NET Core build completed successfully" />
+  </Target>
+
+  <!-- Copy Areas to output directory -->
+  <Target Name="CopyAreas" AfterTargets="Build">
+    <ItemGroup>
+      <AreaFiles Include="Areas\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(AreaFiles)" DestinationFiles="@(AreaFiles->'$(OutputPath)Areas\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+</Project>
+
+<!--
+Migration Notes:
+1. Changed from .NET Framework 4.8 to .NET 6.0
+2. Using SDK-style project format (much shorter and cleaner)
+3. PackageReference instead of packages.config
+4. Replaced System.Web.* packages with ASP.NET Core equivalents
+5. Added new .NET Core specific packages for functionality
+6. Simplified configuration with built-in dependency injection
+7. Content files now use wwwroot convention
+8. appsettings.json replaces Web.config for most settings
+9. Bundling now uses WebOptimizer instead of System.Web.Optimization
+10. Authentication uses ASP.NET Core Identity patterns
+
+Breaking Changes to Address:
+- HttpContext.Current -> IHttpContextAccessor injection
+- Global.asax -> Startup.cs middleware pipeline
+- Web.config settings -> appsettings.json + IConfiguration
+- Session state management -> ASP.NET Core session services
+- Custom view engines -> View location expanders
+- IIS-specific features -> Kestrel server with Linux compatibility
+-->
