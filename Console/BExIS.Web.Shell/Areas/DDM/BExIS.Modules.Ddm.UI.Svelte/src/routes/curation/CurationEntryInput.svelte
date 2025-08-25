@@ -61,6 +61,15 @@
 	in:slide={{ duration: 150 }}
 	out:slide={{ duration: 150 }}
 >
+	<h3 class="w-full text-lg font-semibold">
+		{#if $entry?.isDraft()}
+			Create Curation Entry
+			<span class="text-sm text-primary-500">(Draft)</span>
+		{:else}
+			Edit Curation Entry
+			<span class="text-sm text-primary-500">(#{$entry?.id})</span>
+		{/if}
+	</h3>
 	<label class="min-w-32 grow basis-2/5">
 		<span class="label-text">Category:</span>
 		<div class="flex items-stretch">
