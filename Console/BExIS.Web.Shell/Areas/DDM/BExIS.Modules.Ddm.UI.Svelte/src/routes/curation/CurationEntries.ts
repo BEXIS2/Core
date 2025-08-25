@@ -152,27 +152,23 @@ export class CurationClass {
 		return entry;
 	}
 
-	public updateEntry(
-		entryId: number,
-		updates: Partial<{
-			position: number;
-			topic: string;
-			type: CurationEntryType;
-			name: string;
-			description: string;
-			solution: string;
-			source: string;
-		}>
-	): CurationClass {
+	public updateEntry(entryId: number, updates: Partial<CurationEntryCreationModel>): CurationClass {
 		const entry = this.getEntryById(entryId);
 		if (!entry) return this;
-		const newEntry = new CurationEntryClass(
+		const comment = updates.comment;
+		delete updates.comment;
+		let newEntry = new CurationEntryClass(
 			{
 				...entry,
 				...updates
 			},
 			this.currentUserType
 		);
+		if (entry.isDraft()) {
+			if (comment && comment.trim().length > 0) {
+				newEntry = newEntry.clearNotes().addNote(comment);
+			}
+		}
 		return this.addEntry(newEntry);
 	}
 
@@ -518,6 +514,16 @@ export class CurationEntryClass implements CurationEntryModel {
 				...this,
 				notes: newNotes,
 				lastChangeDatetime_User: note.creationDate
+			},
+			this.currentUserType
+		);
+	}
+
+	public clearNotes(): CurationEntryClass {
+		return new CurationEntryClass(
+			{
+				...this,
+				notes: []
 			},
 			this.currentUserType
 		);

@@ -56,7 +56,13 @@ class CurationStore {
 			isExpanded: boolean;
 			editEntryMode: boolean;
 			inputData:
-				| { type: CurationEntryType; position: number; name: string; description: string }
+				| {
+						type: CurationEntryType;
+						position: number;
+						name: string;
+						description: string;
+						comment: string;
+				  }
 				| undefined;
 		}>
 	>();

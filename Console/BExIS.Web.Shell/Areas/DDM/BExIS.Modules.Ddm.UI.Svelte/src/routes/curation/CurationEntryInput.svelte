@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {
 		faFloppyDisk,
+		faMessage,
 		faRotateLeft,
 		faSquarePlus,
 		faXmark
@@ -28,14 +29,16 @@
 		type: CurationEntryType.None,
 		position: 0,
 		name: '',
-		description: ''
+		description: '',
+		comment: ''
 	};
 
 	let inputData = $cardState.inputData || {
 		type: $entry?.type ?? defaultInputData.type,
 		position: $entry?.position ?? defaultInputData.position,
 		name: $entry?.name ?? defaultInputData.name,
-		description: $entry?.description ?? defaultInputData.description
+		description: $entry?.description ?? defaultInputData.description,
+		comment: $entry?.notes.at(-1)?.comment ?? defaultInputData.comment
 	};
 
 	$: cardState.update((cs) => ({ ...cs, inputData }));
@@ -47,6 +50,8 @@
 		curationStore.updateEntry(entryId, $cardState.inputData || {});
 		closeEditMode();
 	};
+
+	let showCommentField = inputData.comment?.trim().length > 0;
 </script>
 
 <form
@@ -69,7 +74,8 @@
 				<option value={CurationEntryType.DatastructureEntryItem}>Data Structure</option>
 			</select>
 			<button
-				class="rounded-r border-y border-r border-surface-400 px-3 hover:bg-surface-500 active:bg-surface-600"
+				class="btn rounded-l-none border-y border-r border-surface-500 px-3 ring-0"
+				disabled={$entry?.isDraft()}
 				on:click|preventDefault={() => (inputData.type = $entry?.type ?? CurationEntryType.None)}
 				title="Undo changes"
 			>
@@ -89,7 +95,8 @@
 				min="1"
 			/>
 			<button
-				class="rounded-r border-y border-r border-surface-400 px-3 hover:bg-surface-500 active:bg-surface-600"
+				class="btn rounded-l-none border-y border-r border-surface-500 px-3 ring-0"
+				disabled={$entry?.isDraft()}
 				on:click|preventDefault={() =>
 					(inputData.position = $entry?.position ?? defaultInputData.position)}
 				title="Undo changes"
@@ -111,7 +118,8 @@
 				required
 			/>
 			<button
-				class="rounded-r border-y border-r border-surface-400 px-3 hover:bg-surface-500 active:bg-surface-600"
+				class="btn rounded-l-none border-y border-r border-surface-500 px-3 ring-0"
+				disabled={$entry?.isDraft()}
 				on:click|preventDefault={() => (inputData.name = $entry?.name ?? defaultInputData.name)}
 				title="Undo changes"
 			>
@@ -130,7 +138,8 @@
 				required
 			></textarea>
 			<button
-				class="rounded-r border-y border-r border-surface-400 px-3 hover:bg-surface-500 active:bg-surface-600"
+				class="btn rounded-l-none border-y border-r border-surface-500 px-3 ring-0"
+				disabled={$entry?.isDraft()}
 				on:click|preventDefault={() =>
 					(inputData.description = $entry?.description ?? defaultInputData.description)}
 				title="Undo changes"
@@ -139,6 +148,33 @@
 			</button>
 		</div>
 	</label>
+
+	<!-- Comment Field -->
+	{#if $entry?.isDraft()}
+		<div class="my-2 w-full">
+			{#if !showCommentField}
+				<button
+					class="variant-outline-surface btn w-full px-2 py-1 text-sm text-surface-700"
+					on:click={() => (showCommentField = true)}
+				>
+					<Fa icon={faMessage} class="mr-1 inline-block" />
+					Add Comment
+				</button>
+			{:else}
+				<label class="grow basis-full">
+					<span class="label-text">Comment:</span>
+					<div class="flex items-stretch">
+						<textarea
+							bind:value={inputData.comment}
+							class="input rounded-r-none"
+							placeholder="Enter comment"
+							required
+						></textarea>
+					</div>
+				</label>
+			{/if}
+		</div>
+	{/if}
 
 	<div class="flex grow basis-full flex-wrap gap-x-2 gap-y-1">
 		<button
