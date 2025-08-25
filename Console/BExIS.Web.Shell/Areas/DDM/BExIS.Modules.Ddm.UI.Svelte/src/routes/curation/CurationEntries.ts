@@ -94,7 +94,8 @@ export class CurationClass {
 		let updatedPosition = true;
 
 		if (index !== -1) {
-			updatedPosition = newEntries[index].position !== entry.position;
+			updatedPosition =
+				newEntries[index].position !== entry.position || newEntries[index].type !== entry.type;
 			newEntries[index] = entry;
 		} else {
 			newEntries.push(entry);
