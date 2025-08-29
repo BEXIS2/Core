@@ -124,6 +124,9 @@
 }
 
 <div id="MetadataEditor" style="width: 89%" entityid="@Model.DatasetId">
+
+    @Html.AntiForgeryToken() <!-- This generates the hidden input field -->
+
     @if (Model.DatasetId != -1)
     {
         <span id="datasetId" style="display:none">@Model.DatasetId</span>

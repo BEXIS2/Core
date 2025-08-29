@@ -1,4 +1,5 @@
-﻿using BExIS.Modules.Sam.UI.Models;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.UI.Helpers;
@@ -43,6 +44,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryTokenOnPost]
         public async Task<ActionResult> CreateAsync(CreateGroupModel model)
         {
             using (var groupManager = new GroupManager())
