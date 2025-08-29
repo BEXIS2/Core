@@ -29,10 +29,10 @@ export class CurationClass {
 	// Additional properties
 	public readonly userMap: Map<number, CurationUserModel>;
 
-	public readonly datasetVersionDateObj: Date;
-	public readonly creationDate: Date;
-	public readonly lastUserChangedDate: Date;
-	public readonly lastCuratorChangedDate: Date;
+	public readonly datasetVersionDateObj: Date | undefined;
+	public readonly creationDate: Date | undefined;
+	public readonly lastUserChangedDate: Date | undefined;
+	public readonly lastCuratorChangedDate: Date | undefined;
 
 	public readonly curationProgressTotal: number[];
 	public readonly curationProgressPerType: number[][];
@@ -111,24 +111,44 @@ export class CurationClass {
 		);
 	}
 
-	private getCalculatedDates(): [Date, Date, Date] {
-		let creationDate = this.datasetVersionDateObj.getTime();
-		let lastUserChangedDate = this.datasetVersionDateObj.getTime();
-		let lastCuratorChangedDate = this.datasetVersionDateObj.getTime();
+	private getCalculatedDates(): [Date | undefined, Date | undefined, Date | undefined] {
+		let creationDate: number | undefined = undefined;
+		let lastUserChangedDate: number | undefined = undefined;
+		let lastCuratorChangedDate: number | undefined = undefined;
 
 		this.curationEntries.forEach((entry) => {
-			if (entry.creationDateObj.getTime() > creationDate)
-				creationDate = entry.creationDateObj.getTime();
-			if (entry.lastChangeDatetime_UserObj.getTime() > lastUserChangedDate)
-				lastUserChangedDate = entry.lastChangeDatetime_UserObj.getTime();
-			if (entry.lastChangeDatetime_CuratorObj.getTime() > lastCuratorChangedDate)
-				lastCuratorChangedDate = entry.lastChangeDatetime_CuratorObj.getTime();
+			if (
+				!creationDate ||
+				(entry.creationDateObj && entry.creationDateObj.getTime() > creationDate)
+			)
+				creationDate = entry.creationDateObj?.getTime();
+			if (
+				!lastUserChangedDate ||
+				(entry.lastChangeDatetime_UserObj &&
+					entry.lastChangeDatetime_UserObj.getTime() > lastUserChangedDate)
+			)
+				lastUserChangedDate = entry.lastChangeDatetime_UserObj?.getTime();
+			if (
+				!lastCuratorChangedDate ||
+				(entry.lastChangeDatetime_CuratorObj &&
+					entry.lastChangeDatetime_CuratorObj.getTime() > lastCuratorChangedDate)
+			)
+				lastCuratorChangedDate = entry.lastChangeDatetime_CuratorObj?.getTime();
 		});
 
+		const cutoff = new Date();
+		cutoff.setFullYear(cutoff.getFullYear() - 2000);
+		const twoThousandYearsAgoTime = cutoff.getTime();
+
 		return [
-			new Date(creationDate),
-			new Date(lastUserChangedDate),
-			new Date(lastCuratorChangedDate)
+			// if creationDate is older than 2000 years set undefined
+			!creationDate || creationDate < twoThousandYearsAgoTime ? undefined : new Date(creationDate),
+			!lastUserChangedDate || lastUserChangedDate < twoThousandYearsAgoTime
+				? undefined
+				: new Date(lastUserChangedDate),
+			!lastCuratorChangedDate || lastCuratorChangedDate < twoThousandYearsAgoTime
+				? undefined
+				: new Date(lastCuratorChangedDate)
 		];
 	}
 
@@ -377,11 +397,11 @@ export class CurationEntryClass implements CurationEntryModel {
 	public readonly lastChangeDatetime_User: string;
 	public readonly lastChangeDatetime_Curator: string;
 	// Converted Date Object properties
-	public readonly creationDateObj: Date;
-	public readonly lastChangeDatetime_UserObj: Date;
-	public readonly lastChangeDatetime_CuratorObj: Date;
+	public readonly creationDateObj: Date | undefined;
+	public readonly lastChangeDatetime_UserObj: Date | undefined;
+	public readonly lastChangeDatetime_CuratorObj: Date | undefined;
 	// Additional derived properties
-	public readonly lastChangedDate: Date;
+	public readonly lastChangedDate: Date | undefined;
 	public readonly visibleNotes: CurationNoteClass[];
 	public readonly noteUsers: Set<number>;
 	public readonly hasUnreadNotes: boolean;
@@ -440,12 +460,12 @@ export class CurationEntryClass implements CurationEntryModel {
 
 	private getCalculatedLastChangedDate() {
 		let lastChangedDate = Math.max(
-			this.creationDateObj.getTime(),
-			this.lastChangeDatetime_UserObj.getTime(),
-			this.lastChangeDatetime_CuratorObj.getTime(),
-			...this.visibleNotes.map((note) => note.creationDateObj.getTime())
+			this.creationDateObj?.getTime() ?? 0,
+			this.lastChangeDatetime_UserObj?.getTime() ?? 0,
+			this.lastChangeDatetime_CuratorObj?.getTime() ?? 0,
+			...this.visibleNotes.map((note) => note.creationDateObj?.getTime() ?? 0)
 		);
-		return new Date(lastChangedDate);
+		return lastChangedDate ? new Date(lastChangedDate) : undefined;
 	}
 
 	/**
@@ -669,7 +689,7 @@ export class CurationEntryClass implements CurationEntryModel {
 				comment: entryModel.comment,
 				userType: CurationUserType.Curator,
 				userId: 0,
-				creationDate: new Date().toISOString()
+				creationDate: ''
 			});
 		}
 		return new CurationEntryClass(
@@ -678,12 +698,12 @@ export class CurationEntryClass implements CurationEntryModel {
 				id,
 				datasetId,
 				notes,
-				creationDate: new Date().toISOString(),
+				creationDate: '',
 				creatorId: fixedCurationUserId,
 				userIsDone: false,
 				isApproved: false,
-				lastChangeDatetime_User: new Date().toISOString(),
-				lastChangeDatetime_Curator: new Date().toISOString()
+				lastChangeDatetime_User: '',
+				lastChangeDatetime_Curator: ''
 			},
 			CurationUserType.User
 		);

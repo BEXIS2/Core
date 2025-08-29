@@ -2,7 +2,7 @@
 	import { faClockRotateLeft } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 
-	export let date: Date;
+	export let date: Date | undefined = undefined;
 	export let showIcon: boolean = false;
 	export let label: string | undefined = undefined;
 	export let tag: string | null = 'span';
@@ -17,7 +17,8 @@
 		return `${count} ${word}s`;
 	};
 
-	const dateToRelative = (date: Date): string => {
+	const dateToRelative = (date: Date | undefined): string => {
+		if (!date) return 'Never';
 		const now = new Date();
 		const diff = now.getTime() - date.getTime();
 		if (diff < 0) return 'In the future';
@@ -35,7 +36,8 @@
 		return 'Just now';
 	};
 
-	const dateToReadable = (date: Date): string => {
+	const dateToReadable = (date: Date | undefined): string => {
+		if (!date) return 'Never';
 		const options: Intl.DateTimeFormatOptions = {
 			year: 'numeric',
 			month: '2-digit',

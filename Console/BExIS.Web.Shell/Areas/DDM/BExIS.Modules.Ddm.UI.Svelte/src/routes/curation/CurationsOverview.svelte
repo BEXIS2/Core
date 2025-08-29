@@ -31,8 +31,8 @@
 		progress_1: number; // Changed Entries
 		progress_2: number; // Paused Entries
 		progress_3: number; // Approved Entries
-		lastChangeDatetime_User: Date;
-		lastChangeDatetime_Curator: Date;
+		lastChangeDatetime_User: Date | undefined;
+		lastChangeDatetime_Curator: Date | undefined;
 	};
 
 	const curationDetailsPartial = writable<tableDetails[]>([]);
@@ -57,11 +57,28 @@
 				progress_1: c.count_UserIsDone_True_IsApproved_False, // Changed Entries
 				progress_2: c.count_UserIsDone_False_IsApproved_True, // Paused Entries
 				progress_3: c.count_UserIsDone_True_IsApproved_True, // Approved Entries
-				lastChangeDatetime_User: new Date(c.lastChangeDatetime_User || 0),
-				lastChangeDatetime_Curator: new Date(c.lastChangeDatetime_Curator || 0)
+				lastChangeDatetime_User: c.lastChangeDatetime_User
+					? new Date(c.lastChangeDatetime_User)
+					: undefined,
+				lastChangeDatetime_Curator: c.lastChangeDatetime_Curator
+					? new Date(c.lastChangeDatetime_Curator)
+					: undefined
 			}))
 		)
 	);
+
+	const dateInstructions = {
+		toStringFn: (date: Date | undefined) =>
+			!date || date.getFullYear() <= 1970
+				? 'Never'
+				: date.toLocaleString('en-US', {
+						month: 'short',
+						day: 'numeric',
+						year: 'numeric'
+					}),
+		toSortableValueFn: (date: Date | undefined) => (date ? date.getTime() : 0),
+		toFilterableValueFn: (date: Date | undefined) => (date ? date : new Date(0))
+	};
 
 	const curationsConfig: TableConfig<tableDetails> = {
 		id: 'curationsOverview',
@@ -119,33 +136,11 @@
 			},
 			lastChangeDatetime_User: {
 				header: 'Last User Change',
-				instructions: {
-					toStringFn: (date: Date) =>
-						date.getFullYear() <= 1970
-							? 'Never'
-							: date.toLocaleString('en-US', {
-									month: 'short',
-									day: 'numeric',
-									year: 'numeric'
-								}),
-					toSortableValueFn: (date: Date) => date.getTime(),
-					toFilterableValueFn: (date: Date) => date
-				}
+				instructions: dateInstructions
 			},
 			lastChangeDatetime_Curator: {
 				header: 'Last Curator Change',
-				instructions: {
-					toStringFn: (date: Date) =>
-						date.getFullYear() <= 1970
-							? 'Never'
-							: date.toLocaleString('en-US', {
-									month: 'short',
-									day: 'numeric',
-									year: 'numeric'
-								}),
-					toSortableValueFn: (date: Date) => date.getTime(),
-					toFilterableValueFn: (date: Date) => date
-				}
+				instructions: dateInstructions
 			},
 			optionsColumn: {}
 		}

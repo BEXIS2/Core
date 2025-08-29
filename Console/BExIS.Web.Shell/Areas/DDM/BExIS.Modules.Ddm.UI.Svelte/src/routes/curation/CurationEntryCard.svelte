@@ -165,7 +165,7 @@
 			</div>
 			<RelativeDate
 				class="hidden text-nowrap border-surface-300 pr-1 text-xs text-surface-600 sm:block"
-				date={$entry?.lastChangedDate || new Date(0)}
+				date={$entry?.lastChangedDate}
 				label="Last updated"
 				showIcon={true}
 			/>
