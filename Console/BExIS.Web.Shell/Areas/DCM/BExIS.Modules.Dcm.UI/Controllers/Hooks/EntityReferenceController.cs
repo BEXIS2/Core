@@ -102,7 +102,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryTokenOnPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Create(CreateSimpleReferenceModel model)
         {
             EntityReferenceHelper helper = new EntityReferenceHelper();
@@ -170,7 +170,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
 
         [HttpPost]
-        [ValidateAntiForgeryTokenOnPost]
+        [ValidateAntiForgeryToken]
         public JsonResult Delete(long id)
         {
             if (id == 0) return Json(false);

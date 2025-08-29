@@ -124,9 +124,11 @@ namespace BExIS.Web.Shell.Controllers
         [HttpGet]
         public ActionResult GetAntiForgeryToken()
         {
+            var oldCookieToken = this.HttpContext.Request.Cookies[AntiForgeryConfig.CookieName]?.Value;
+
             string cookieToken, formToken;
             // The GetTokens method generates the tokens without rendering a view.
-            AntiForgery.GetTokens(null, out cookieToken, out formToken);
+            AntiForgery.GetTokens(oldCookieToken, out cookieToken, out formToken);
 
             // Return the tokens in a JSON format.
             // It's common to send the form token in the response body

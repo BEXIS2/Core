@@ -33,7 +33,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost]
+        [HttpPost, ValidateAntiForgeryToken]
         public JsonResult EditDimension(DimensionListItem dimensionListItem)
         {
             ValidationResult validationResult = new ValidationResult
@@ -82,7 +82,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost]
+        [HttpPost, ValidateAntiForgeryToken]
         public JsonResult DeleteDimension(long id)
         {
             if (id > 0)

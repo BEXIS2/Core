@@ -2764,7 +2764,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// Is called when the user write a letter in Autocomplete User Component
         /// </summary>
         [HttpPost]
-        [ValidateAntiForgeryTokenOnPost]
+        [ValidateAntiForgeryToken]
         public ActionResult _AutoCompleteAjaxLoading(string text, long id, string type)
         {
             // if mapping with etities exits
@@ -3239,7 +3239,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         //XX number of index des values nötig
         [HttpPost]
-        [ValidateAntiForgeryTokenOnPost]
+        [ValidateAntiForgeryToken]
         public ActionResult ValidateMetadataAttributeUsage(string value, int id, int parentid, string parentname, int number, int parentModelNumber, int parentStepId, long entityId)
         {
             //delete all white spaces from start and end
@@ -3329,7 +3329,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryTokenOnPost]
+        [ValidateAntiForgeryToken]
         public ActionResult ValidateMetadataParameterUsage(string value, int id, long attrUsageId, int number, int parentModelNumber, int parentStepId, long entityId)
         {
             //delete all white spaces from start and end

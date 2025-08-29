@@ -112,7 +112,7 @@
     <Compile Include="Attributes\MinCapacityAttribute.cs" />
     <Compile Include="Attributes\NoNullOrEmptyItemsAttribute.cs" />
     <Compile Include="Attributes\ThrottlingFilterAttribute.cs" />
-    <Compile Include="Attributes\ValidateAntiForgeryTokenOnPost.cs" />
+    <Compile Include="Attributes\CustomValidateAntiForgeryToken.cs" />
     <Compile Include="Extensions\AuthorizationContextExtensions.cs" />
     <Compile Include="Helpers\BExISAuthorizeHelper.cs" />
     <Compile Include="Helpers\JwtHelper.cs" />

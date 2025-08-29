@@ -89,7 +89,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryTokenOnPost]
+        [ValidateAntiForgeryToken]
         public JsonResult Upload(long id)
         {
             // load edit dataset cache
@@ -161,7 +161,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryTokenOnPost]
+        [ValidateAntiForgeryToken]
         public JsonResult RemoveFile(long id, BExIS.UI.Hooks.Caches.FileInfo file)
         {
             // load edit dataset cache
@@ -226,7 +226,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryTokenOnPost]
+        [ValidateAntiForgeryToken]
         public JsonResult SaveFileDescription(long id, BExIS.UI.Hooks.Caches.FileInfo file, string description)
         {
             HookManager hookManager = new HookManager();
