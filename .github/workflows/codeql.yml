@@ -1,7 +1,0 @@
-on:
-  push:
-    branches: [ master, rc ]    # Replace 'main' with your default branch name
-  pull_request:
-    branches: [ master, rc ]    # Triggers on PRs targeting only default branch
-  schedule:
-    - cron: '0 0 * * 1'   # Optional: weekly scan on default branch
