@@ -63,7 +63,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return Json(tmp.ToArray(), JsonRequestBehavior.AllowGet);
         }
 
-        [HttpPost]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult Upload()
         {
             if (Request.Files.Count > 0)
@@ -171,7 +171,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         
 
         [JsonNetFilter]
-        [HttpPost]
+        [HttpPost, ValidateAntiForgeryToken]
         public JsonResult Create(DataStructureCreationModel model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
@@ -264,7 +264,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost]
+        [HttpPost, ValidateAntiForgeryToken]
         public JsonResult Save(DataStructureEditModel model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
@@ -381,7 +381,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         
 
         [JsonNetFilter]
-        [HttpPost]
+        [HttpPost, ValidateAntiForgeryToken]
         public JsonResult Generate(DataStructureCreationModel model)
         {
 
@@ -613,7 +613,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost]
+        [HttpPost, ValidateAntiForgeryToken]
         public JsonResult Delete(long id)
         {
             if (id <= 0) throw new NullReferenceException("id of the data structure should be greater then 0");
@@ -635,7 +635,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost]
+        [HttpPost, ValidateAntiForgeryToken]
         public JsonResult CheckPrimaryKeySet(long id, long[] primaryKeys)
         {
             if (id <= 0) throw new ArgumentNullException("id");
