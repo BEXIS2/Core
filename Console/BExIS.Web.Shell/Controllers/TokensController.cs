@@ -11,6 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Helpers;
 using System.Web.Mvc;
 
 namespace BExIS.Web.Shell.Controllers
@@ -117,6 +118,20 @@ namespace BExIS.Web.Shell.Controllers
             {
                 return View("Error");
             }
+        }
+
+        // GET: /AntiForgeryToken/GetToken
+        [HttpGet]
+        public ActionResult GetAntiForgeryToken()
+        {
+            string cookieToken, formToken;
+            // The GetTokens method generates the tokens without rendering a view.
+            AntiForgery.GetTokens(null, out cookieToken, out formToken);
+
+            // Return the tokens in a JSON format.
+            // It's common to send the form token in the response body
+            // and let the client handle the cookie token which is set automatically.
+            return Json(new { csrfToken = formToken }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
