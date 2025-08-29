@@ -29,30 +29,20 @@
 		</h2>
 
 		<ul class="my-2 flex flex-col gap-2">
+			{#each entryValues as entry}
+				{#if entry}
+					<CurationEntryCard entryId={entry?.id} combined={false} tag="li" />
+				{/if}
+			{/each}
 			{#if $editMode}
 				<AddCurationEntry
-					position={entryValues[0]?.position}
+					position={(entryValues.at(-1)?.position || 0) + (entryValues.at(-1)?.isDraft() ? 0 : 1)}
 					name={groupName}
 					type={entryValues[0]?.type}
 					tag="li"
 					class="mx-2"
 				/>
 			{/if}
-			{#each entryValues as entry}
-				{#if entry}
-					<CurationEntryCard entryId={entry?.id} combined={false} tag="li" />
-
-					{#if $editMode}
-						<AddCurationEntry
-							position={entry?.position + (entry?.isDraft() ? 0 : 1)}
-							name={groupName}
-							type={entry.type}
-							tag="li"
-							class="mx-2"
-						/>
-					{/if}
-				{/if}
-			{/each}
 		</ul>
 	</li>
 {/if}

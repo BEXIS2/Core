@@ -28,7 +28,7 @@
 	out:slide={{ duration: 150 }}
 >
 	<button
-		class="btn size-full overflow-hidden border-2 border-dashed border-surface-500 px-2 py-0.5 text-surface-600"
+		class="btn size-full overflow-hidden border border-dashed border-surface-500 px-2 py-0.5 text-surface-500"
 		on:click={addNewEntry}
 		title="Add new entry at position {position}"
 		disabled={!$editMode}
@@ -37,6 +37,9 @@
 		<span>
 			<Fa icon={faSquarePlus} class="mr-1 inline-block" />
 			Add new entry
+			{#if name.trim().length > 0}
+				to "{name.trim().length > 12 ? name.trim().slice(0, 9) + '...' : name.trim()}"
+			{/if}
 		</span>
 	</button>
 </svelte:element>
