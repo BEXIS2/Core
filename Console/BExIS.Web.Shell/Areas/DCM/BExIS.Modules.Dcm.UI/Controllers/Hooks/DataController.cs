@@ -106,6 +106,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryTokenOnPost]
         public JsonResult RemoveFile(long id, FileInfo file)
         {
             // remove file from server
@@ -141,6 +142,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <param name="file"></param>
         /// <returns></returns>
         [HttpPost]
+        [ValidateAntiForgeryTokenOnPost]
         public JsonResult RevertFile(long id, FileInfo file)
         {
             // remove file from server
@@ -184,6 +186,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
         [HttpPost]
+        [ValidateAntiForgeryTokenOnPost]
         public JsonResult SaveFileDescription(long id, BExIS.UI.Hooks.Caches.FileInfo file)
         {
             // remove file from cache

@@ -72,8 +72,6 @@
     <Compile Include="Controllers\Legacy\ImportMetadataStructureSetParametersController.cs" />
     <Compile Include="Controllers\Legacy\ImportMetadataStructureSummaryController.cs" />
     <Compile Include="Controllers\Legacy\ManageMetadataStructureController.cs" />
-    <Compile Include="Controllers\Legacy\PushController.cs" />
-    <Compile Include="Controllers\Legacy\OldSubmitController.cs" />
     <Compile Include="Controllers\Hooks\MetadataController.cs" />
     <Compile Include="Controllers\API\LinkController.cs" />
     <Compile Include="Controllers\Views\MessagesController.cs" />
