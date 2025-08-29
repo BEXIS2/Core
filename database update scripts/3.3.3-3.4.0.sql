@@ -195,7 +195,7 @@ INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, 
     SELECT 'email','A email of a creator of the dataset.', 'https://schema.org/email', false, false, 
 				(select id from dim_mappingconcepts where name='BIOSCHEMA-Dataset'), 
 				(SELECT id FROM public.dim_mappingkeys WHERE name='creator'and concept = (SELECT id FROM public.dim_mappingconcepts WHERE name='BIOSCHEMA-Dataset')),
-				'dataset/creator/familyName'
+				'dataset/creator/email'
     WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='BIOSCHEMA-Dataset') AND xpath='dataset/creator/email');
 
 -- schema.org/creator/affiliation
@@ -203,7 +203,7 @@ INSERT INTO public.dim_mappingkeys (name,description, url, optional, iscomplex, 
     SELECT 'affiliation','An organization that this person is affiliated with. For example, a school/university, a club, or a team.', 'https://schema.org/affiliation', false, false, 
 				(select id from dim_mappingconcepts where name='BIOSCHEMA-Dataset'), 
 				(SELECT id FROM public.dim_mappingkeys WHERE name='creator'and concept = (SELECT id FROM public.dim_mappingconcepts WHERE name='BIOSCHEMA-Dataset')),
-				'dataset/creator/familyName'
+				'dataset/creator/affiliation'
     WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='BIOSCHEMA-Dataset') AND xpath='dataset/creator/affiliation');
 
 -- Search
