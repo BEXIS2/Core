@@ -102,6 +102,7 @@
 				class="input rounded-r-none"
 				placeholder="Enter position"
 				min="1"
+				required
 			/>
 			<button
 				class="btn rounded-l-none border-y border-r border-surface-500 px-3 ring-0"
@@ -177,7 +178,6 @@
 							bind:value={inputData.comment}
 							class="input rounded-r-none"
 							placeholder="Enter comment"
-							required
 						></textarea>
 					</div>
 				</label>

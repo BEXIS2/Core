@@ -8,7 +8,7 @@ import { Api } from '@bexis2/bexis2-core-ui';
  * @param response - response object (could be an array or an object)
  * @returns - new object with first letter of the keys in lowercase
  */
-const firstLetterToLowerCase: (response: any) => any = (response: any) => {
+function firstLetterToLowerCase(response: any): any {
 	if (Array.isArray(response)) {
 		// Only process array elements if they are objects (not strings, numbers, etc.)
 		return response.map((item) =>
@@ -23,7 +23,16 @@ const firstLetterToLowerCase: (response: any) => any = (response: any) => {
 		return newEntry;
 	}
 	return response;
-};
+}
+
+function fixModel(model: CurationEntryModel): CurationEntryModel {
+	if (model.name.trim() === '') model.name = 'None';
+	if (model.description.trim() === '') model.description = 'None';
+	if (model.topic.trim() === '') model.topic = 'None';
+	if (model.solution.trim() === '') model.solution = 'None';
+	if (model.source.trim() === '') model.source = 'None';
+	return model;
+}
 
 export const get = async () => {
 	try {
@@ -57,6 +66,8 @@ export const getCurationDataset = async (id: number) => {
 
 export const putCurationEntry = async (model: CurationEntryModel) => {
 	try {
+		model = fixModel(model);
+
 		const response = await Api.put('/api/curationentries', model);
 
 		console.log('🎈 ~ PUT ~ Response:', response);
@@ -72,6 +83,8 @@ export const putCurationEntry = async (model: CurationEntryModel) => {
 
 export const postCurationEntry = async (model: CurationEntryModel) => {
 	try {
+		model = fixModel(model);
+
 		model.id = 0; // Set id to 0 to create a new entry
 
 		const response = await Api.post('/api/curationentries', model);

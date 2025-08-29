@@ -59,8 +59,8 @@ export class CurationClass {
 
 		// dataset information
 		this.datasetId = curation.datasetId || 0;
-		this.datasetTitle = curation.datasetTitle || 'None';
-		this.datasetVersionDate = curation.datasetVersionDate || 'None';
+		this.datasetTitle = curation.datasetTitle || '';
+		this.datasetVersionDate = curation.datasetVersionDate || '';
 
 		// curation entries
 		const allEntries = (curation.curationEntries || []).map((entry) => {
@@ -339,11 +339,11 @@ export class CurationNoteClass implements CurationNoteModel {
 	constructor(curationNote: CurationNoteModel, escape: boolean = false) {
 		this.id = curationNote.id || 0;
 		this.userType = curationNote.userType || CurationUserType.User;
-		this.creationDate = curationNote.creationDate || 'None';
+		this.creationDate = curationNote.creationDate || '';
 		if (escape) {
-			this.comment = curationNote.comment.replace(/\\/g, '\\\\') || 'None';
+			this.comment = curationNote.comment.replace(/\\/g, '\\\\') || '';
 		} else {
-			this.comment = curationNote.comment || 'None';
+			this.comment = curationNote.comment || '';
 		}
 		this.userId = curationNote.userId || 0;
 		// derive additional properties
@@ -413,23 +413,23 @@ export class CurationEntryClass implements CurationEntryModel {
 		currentUserType: CurationUserType
 	) {
 		this.id = curationEntry.id || 0;
-		this.topic = curationEntry.topic || 'None';
+		this.topic = curationEntry.topic || '';
 		this.type = curationEntry.type || CurationEntryType.None;
 		this.datasetId = curationEntry.datasetId || 0;
-		this.name = curationEntry.name || 'None';
-		this.description = curationEntry.description || 'None';
-		this.solution = curationEntry.solution || 'None';
+		this.name = curationEntry.name || '';
+		this.description = curationEntry.description || '';
+		this.solution = curationEntry.solution || '';
 		this.position = curationEntry.position || 0;
-		this.source = curationEntry.source || 'None';
+		this.source = curationEntry.source || '';
 		this.notes = (curationEntry.notes || [])
 			.map((note) => new CurationNoteClass(note, false))
 			.sort((a, b) => a.creationDateObj.getTime() - b.creationDateObj.getTime());
-		this.creationDate = curationEntry.creationDate || 'None';
+		this.creationDate = curationEntry.creationDate || '';
 		this.creatorId = curationEntry.creatorId || 0;
 		this.userIsDone = curationEntry.userIsDone || false;
 		this.isApproved = curationEntry.isApproved || false;
-		this.lastChangeDatetime_User = curationEntry.lastChangeDatetime_User || 'None';
-		this.lastChangeDatetime_Curator = curationEntry.lastChangeDatetime_Curator || 'None';
+		this.lastChangeDatetime_User = curationEntry.lastChangeDatetime_User || '';
+		this.lastChangeDatetime_Curator = curationEntry.lastChangeDatetime_Curator || '';
 		// Converted Date Object properties
 		this.creationDateObj = new Date(curationEntry.creationDate);
 		this.lastChangeDatetime_UserObj = new Date(curationEntry.lastChangeDatetime_User);
