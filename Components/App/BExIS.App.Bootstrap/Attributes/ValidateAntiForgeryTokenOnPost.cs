@@ -4,7 +4,7 @@ using System.Web.Mvc;
 
 namespace BExIS.App.Bootstrap.Attributes
 {
-    public class ValidateAntiForgeryTokenOnPost: ActionFilterAttribute
+    public class ValidateAntiForgeryTokenOnPost: FilterAttribute, IAuthorizationFilter
     {
         public void OnAuthorization(AuthorizationContext filterContext)
         {
