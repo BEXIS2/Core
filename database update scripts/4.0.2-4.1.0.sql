@@ -1051,11 +1051,11 @@ DECLARE
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM public.dim_mappingkeys
-        WHERE xpath = 'data/attributes/subjects/subject' AND parentref = (select id from public.dim_mappingkeys where xpath = 'data/attributes/subject' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite'))
+        WHERE xpath = 'data/attributes/subjects/subject' AND parentref = (select id from public.dim_mappingkeys where xpath = 'data/attributes/subjects' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite'))
     ) THEN
 
         INSERT INTO public.dim_mappingkeys (name, description, url, optional, iscomplex, xpath, concept, parentref)
-        VALUES ('Subject', '', '', false, false, 'data/attributes/subjects/subject', (select id from public.dim_mappingconcepts where name = 'DataCite'), (select id from public.dim_mappingkeys where xpath = 'data/attributes/subject' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite')));
+        VALUES ('Subject', '', '', false, false, 'data/attributes/subjects/subject', (select id from public.dim_mappingconcepts where name = 'DataCite'), (select id from public.dim_mappingkeys where xpath = 'data/attributes/subjects' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite')));
 
         GET DIAGNOSTICS cnt = ROW_COUNT;
         RAISE NOTICE 'Inserted % rows', cnt;
@@ -1071,11 +1071,11 @@ DECLARE
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM public.dim_mappingkeys
-        WHERE xpath = 'data/attributes/subjects/subjectScheme' AND parentref = (select id from public.dim_mappingkeys where xpath = 'data/attributes/subject' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite'))
+        WHERE xpath = 'data/attributes/subjects/subjectScheme' AND parentref = (select id from public.dim_mappingkeys where xpath = 'data/attributes/subjects' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite'))
     ) THEN
 
         INSERT INTO public.dim_mappingkeys (name, description, url, optional, iscomplex, xpath, concept, parentref)
-        VALUES ('SubjectScheme', '', '', true, false, 'data/attributes/subjects/subjectScheme', (select id from public.dim_mappingconcepts where name = 'DataCite'), (select id from public.dim_mappingkeys where xpath = 'data/attributes/subject' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite')));
+        VALUES ('SubjectScheme', '', '', true, false, 'data/attributes/subjects/subjectScheme', (select id from public.dim_mappingconcepts where name = 'DataCite'), (select id from public.dim_mappingkeys where xpath = 'data/attributes/subjects' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite')));
 
         GET DIAGNOSTICS cnt = ROW_COUNT;
         RAISE NOTICE 'Inserted % rows', cnt;
@@ -1091,11 +1091,11 @@ DECLARE
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM public.dim_mappingkeys
-        WHERE xpath = 'data/attributes/subjects/schemeUri' AND parentref = (select id from public.dim_mappingkeys where xpath = 'data/attributes/subject' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite'))
+        WHERE xpath = 'data/attributes/subjects/schemeUri' AND parentref = (select id from public.dim_mappingkeys where xpath = 'data/attributes/subjects' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite'))
     ) THEN
 
         INSERT INTO public.dim_mappingkeys (name, description, url, optional, iscomplex, xpath, concept, parentref)
-        VALUES ('SchemeUri', '', '', true, false, 'data/attributes/subjects/schemeUri', (select id from public.dim_mappingconcepts where name = 'DataCite'), (select id from public.dim_mappingkeys where xpath = 'data/attributes/subject' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite')));
+        VALUES ('SchemeUri', '', '', true, false, 'data/attributes/subjects/schemeUri', (select id from public.dim_mappingconcepts where name = 'DataCite'), (select id from public.dim_mappingkeys where xpath = 'data/attributes/subjects' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite')));
 
         GET DIAGNOSTICS cnt = ROW_COUNT;
         RAISE NOTICE 'Inserted % rows', cnt;
@@ -1111,11 +1111,11 @@ DECLARE
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM public.dim_mappingkeys
-        WHERE xpath = 'data/attributes/subjects/valueUri' AND parentref = (select id from public.dim_mappingkeys where xpath = 'data/attributes/subject' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite'))
+        WHERE xpath = 'data/attributes/subjects/valueUri' AND parentref = (select id from public.dim_mappingkeys where xpath = 'data/attributes/subjects' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite'))
     ) THEN
 
         INSERT INTO public.dim_mappingkeys (name, description, url, optional, iscomplex, xpath, concept, parentref)
-        VALUES ('ValueUri', '', '', true, false, 'data/attributes/subjects/valueUri', (select id from public.dim_mappingconcepts where name = 'DataCite'), (select id from public.dim_mappingkeys where xpath = 'data/attributes/subject' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite')));
+        VALUES ('ValueUri', '', '', true, false, 'data/attributes/subjects/valueUri', (select id from public.dim_mappingconcepts where name = 'DataCite'), (select id from public.dim_mappingkeys where xpath = 'data/attributes/subjects' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite')));
 
         GET DIAGNOSTICS cnt = ROW_COUNT;
         RAISE NOTICE 'Inserted % rows', cnt;
@@ -1131,11 +1131,11 @@ DECLARE
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM public.dim_mappingkeys
-        WHERE xpath = 'data/attributes/subjects/lang' AND parentref = (select id from public.dim_mappingkeys where xpath = 'data/attributes/subject' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite'))
+        WHERE xpath = 'data/attributes/subjects/lang' AND parentref = (select id from public.dim_mappingkeys where xpath = 'data/attributes/subjects' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite'))
     ) THEN
 
         INSERT INTO public.dim_mappingkeys (name, description, url, optional, iscomplex, xpath, concept, parentref)
-        VALUES ('Language', '', '', true, false, 'data/attributes/subjects/lang', (select id from public.dim_mappingconcepts where name = 'DataCite'), (select id from public.dim_mappingkeys where xpath = 'data/attributes/subject' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite')));
+        VALUES ('Language', '', '', true, false, 'data/attributes/subjects/lang', (select id from public.dim_mappingconcepts where name = 'DataCite'), (select id from public.dim_mappingkeys where xpath = 'data/attributes/subjects' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite')));
 
         GET DIAGNOSTICS cnt = ROW_COUNT;
         RAISE NOTICE 'Inserted % rows', cnt;
@@ -1151,11 +1151,11 @@ DECLARE
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM public.dim_mappingkeys
-        WHERE xpath = 'data/attributes/subjects/classificationCode' AND parentref = (select id from public.dim_mappingkeys where xpath = 'data/attributes/subject' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite'))
+        WHERE xpath = 'data/attributes/subjects/classificationCode' AND parentref = (select id from public.dim_mappingkeys where xpath = 'data/attributes/subjects' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite'))
     ) THEN
 
         INSERT INTO public.dim_mappingkeys (name, description, url, optional, iscomplex, xpath, concept, parentref)
-        VALUES ('ClassificationCode', '', '', true, false, 'data/attributes/subjects/classificationCode', (select id from public.dim_mappingconcepts where name = 'DataCite'), (select id from public.dim_mappingkeys where xpath = 'data/attributes/subject' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite')));
+        VALUES ('ClassificationCode', '', '', true, false, 'data/attributes/subjects/classificationCode', (select id from public.dim_mappingconcepts where name = 'DataCite'), (select id from public.dim_mappingkeys where xpath = 'data/attributes/subjects' AND concept = (select id from public.dim_mappingconcepts where name = 'DataCite')));
 
         GET DIAGNOSTICS cnt = ROW_COUNT;
         RAISE NOTICE 'Inserted % rows', cnt;
@@ -2275,7 +2275,7 @@ BEGIN
     ) THEN
 
         INSERT INTO public.dim_mappingkeys (name, description, url, optional, iscomplex, xpath, concept)
-        VALUES ('fFndingReferences', '', '', true, true, 'data/attributes/fundingReferences', (select id from public.dim_mappingconcepts where name = 'DataCite'));
+        VALUES ('fundingReferences', '', '', true, true, 'data/attributes/fundingReferences', (select id from public.dim_mappingconcepts where name = 'DataCite'));
 
         GET DIAGNOSTICS cnt = ROW_COUNT;
         RAISE NOTICE 'Inserted % rows', cnt;
