@@ -64,7 +64,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <param name="searchType"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult Query(string autoComplete, string FilterList, string searchType)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
@@ -125,7 +125,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <param name="searchType"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult FilterByDropDownList(string SelectedFilter, string searchType)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
@@ -142,7 +142,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult _AutoCompleteAjaxLoading(string text)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
@@ -158,7 +158,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <param name="value">consist the searchType</param>
         /// <param name="model"></param>
         /// <returns></returns>
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public void ChangeSearchValuesACBySearchType(string value)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
@@ -178,7 +178,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <param name="IsChecked">show the status of the checkbox (true = selected/false=deselected)</param>
         /// <param name="model"></param>
         /// <returns></returns>
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult ToggleFacet(string SelectedItem, string Parent)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
@@ -259,7 +259,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult AddFacetsToSearch()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
@@ -370,7 +370,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         #endregion BreadcrumbView
 
         #region Datagrid
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult GetTableData()
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
@@ -391,7 +391,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         #region Properties _searchProperties
 
         //+++++++++++++++++++++ Properties Sliders Action +++++++++++++++++++++++++++
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult FilterByRangeSlider(int start, int end, string parent)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
@@ -400,7 +400,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return j;
         }
 
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult FilterBySlider(int value, string parent)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
@@ -413,7 +413,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         //+++++++++++++++++++++Properties DropDown Action +++++++++++++++++++++++++++
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult FilterByDropDown(string value, string node)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
@@ -426,7 +426,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         //+++++++++++++++++++++Properties RadioButton Action +++++++++++++++++++++++++++
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult FilterByRadioButton(string value, string node, bool isChecked)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
@@ -438,7 +438,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         //+++++++++++++++++++++Properties ´CheckButton Action +++++++++++++++++++++++++++
 
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult FilterByCheckBox(string value, string node, bool isChecked)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();

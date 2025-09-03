@@ -80,7 +80,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             DataASyncUploadHelper asyncUploadHelper = new DataASyncUploadHelper(cache, log, "dataset");
             asyncUploadHelper.User = BExISAuthorizeHelper.GetUserFromAuthorization(HttpContext);
-            asyncUploadHelper.RunningASync = true;
+            asyncUploadHelper.RunningASync = false;
 
             if (asyncUploadHelper.RunningASync && model.HasStructrue) //async
             {

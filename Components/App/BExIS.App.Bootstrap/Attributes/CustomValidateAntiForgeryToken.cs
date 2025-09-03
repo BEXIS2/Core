@@ -18,6 +18,7 @@ namespace BExIS.App.Bootstrap.Attributes
                 var formToken = request.Form["__RequestVerificationToken"];
 
                 // check header for post from javascript
+
                 if (formToken==null)
                 {
                     formToken = request.Headers["__RequestVerificationToken"];

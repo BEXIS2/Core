@@ -32,7 +32,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult DeleteConstraint(long Id)
         {
             try
@@ -96,7 +96,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult GetDomainConstraint(long Id)
         {
             try
@@ -118,7 +118,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult GetRangeConstraint(long Id)
         {
             try
@@ -139,7 +139,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult GetPatternConstraint(long Id)
         {
             try
@@ -160,7 +160,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult GetDatasetsByConstraint(long Id)
         {
             List<DatasetInfo> datasetInfos = new List<DatasetInfo>();
@@ -203,7 +203,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult GetMeaningsByConstraint(long Id)
         {
             List<Info> MeaningInfos = new List<Info>();
@@ -229,7 +229,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult EditDomainConstraint(EditDomainConstraintModel constraintListItem)
         {
             string username = null;
@@ -332,7 +332,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult EditRangeConstraint(EditRangeConstraintModel constraintListItem)
         {
             string username = null;
@@ -432,7 +432,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult EditPatternConstraint(EditPatternConstraintModel constraintListItem)
         {
             string username = null;
@@ -640,7 +640,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult GetDatastructure(long Id)
         {
             DatastructureInfo datastructureInfo = null;
@@ -681,7 +681,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult GetData(long Id, int pageSize = 0, long variableId = 0)
         {
             string username = null;

@@ -244,7 +244,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         [JsonNetFilter]
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [CustomValidateAntiForgeryToken]
         public JsonResult Create(CreateModel data)
         {
             if (data == null) return Json(false);

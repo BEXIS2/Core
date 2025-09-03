@@ -41,7 +41,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult EditDataType(DataTypeListItem dataTypeListItem)
         {
             ValidationResult validationResult = new ValidationResult
@@ -90,7 +90,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult DeleteDataType(long id)
         {
             if (id > 0)

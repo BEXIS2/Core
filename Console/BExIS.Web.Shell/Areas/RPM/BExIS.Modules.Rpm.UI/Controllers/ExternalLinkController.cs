@@ -92,7 +92,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult Create(ExternalLinkModel data)
         {
             try
@@ -119,7 +119,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [BExISAuthorizeAttribute]
         [JsonNetFilter]
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult Update(ExternalLinkModel data)
         {
             try
@@ -201,7 +201,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [BExISAuthorize]
         [JsonNetFilter]
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult CreatePrefixCategories(PrefixCategory data)
         {
             if (data == null) throw new NullReferenceException("prefix category should not be null.");
@@ -216,7 +216,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         [BExISAuthorize]
         [JsonNetFilter]
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult updatePrefixCategories(PrefixCategory data)
         {
             try
