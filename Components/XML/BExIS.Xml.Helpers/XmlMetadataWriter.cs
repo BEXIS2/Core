@@ -4,6 +4,7 @@ using BExIS.Dlm.Services.MetadataStructure;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -776,6 +777,11 @@ namespace BExIS.Xml.Helpers
         public XDocument AddAttribute(XDocument metadataXml, BaseUsage attributeUsage, int number, string attributeTypeName, string attributeId, string parentXPath)
         {
             _tempXDoc = metadataXml;
+
+            if (!!XmlUtility.IsSafeXPath(parentXPath))
+            {
+                throw new ArgumentException("Potentially unsafe xpath expression.");
+            }
 
             /*
              * In the xml the structure is everytime usage/type

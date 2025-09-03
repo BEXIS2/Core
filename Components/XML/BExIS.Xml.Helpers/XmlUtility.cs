@@ -13,6 +13,19 @@ namespace BExIS.Xml.Helpers
 {
     public class XmlUtility
     {
+        // Validate that xpath is a simple, safe path: only allows slashes and node names (alphanumeric/underscore)
+        public static bool IsSafeXPath(string xpath)
+        {
+            // Prevent empty, null XPaths
+            if (string.IsNullOrEmpty(xpath)) return false;
+
+            // Only allow XPaths like /a/b/c or /a[1]/b matches, no function calls, no quotes, etc.
+            // You can adjust the pattern according to the actual requirements.
+            // This only allows: /node1/node2/...
+            var safePattern = @"^(/[a-zA-Z_][\w\-]*(\[\d+\])?)*$";
+            return System.Text.RegularExpressions.Regex.IsMatch(xpath, safePattern);
+        }
+
         public static string GetXPathToNode(XmlNode node)
         {
             string xPath = "";
