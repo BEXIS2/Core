@@ -148,72 +148,70 @@
 		});
 	}
 
-function applyAvailableUponRequestRules(row: any) {
-	function syncColumns(presentKey: string, targetKeys: string[], triggerValue: string) {
-		if (!row[presentKey]) return;
+	function applyAvailableUponRequestRules(row: any) {
+		function syncColumns(presentKey: string, targetKeys: string[], triggerValue: string) {
+			if (!row[presentKey]) return;
 
-		const presentValues = row[presentKey]
-			.toString()
-			.split(',')
-			.map((v: string) => v.trim());
-
-		for (const targetKey of targetKeys) {
-			// Stelle sicher, dass die Zielzelle existiert (sonst leeres Array zum Füllen)
-			let targetValues = (row[targetKey] || '')
+			const presentValues = row[presentKey]
 				.toString()
 				.split(',')
 				.map((v: string) => v.trim());
 
-			// Länge angleichen (falls Zielspalte kürzer ist)
-			while (targetValues.length < presentValues.length) {
-				targetValues.push('');
-			}
+			for (const targetKey of targetKeys) {
+				// Stelle sicher, dass die Zielzelle existiert (sonst leeres Array zum Füllen)
+				let targetValues = (row[targetKey] || '')
+					.toString()
+					.split(',')
+					.map((v: string) => v.trim());
 
-			// Werte synchronisieren
-			for (let i = 0; i < presentValues.length; i++) {
-				if (presentValues[i].toLowerCase() === triggerValue.toLowerCase()) {
-					targetValues[i] = triggerValue;
+				// Länge angleichen (falls Zielspalte kürzer ist)
+				while (targetValues.length < presentValues.length) {
+					targetValues.push('');
 				}
+
+				// Werte synchronisieren
+				for (let i = 0; i < presentValues.length; i++) {
+					if (presentValues[i].toLowerCase() === triggerValue.toLowerCase()) {
+						targetValues[i] = triggerValue;
+					}
+				}
+
+				row[targetKey] = targetValues.join(', ');
 			}
-
-			row[targetKey] = targetValues.join(', ');
 		}
+
+		// Regel 1: available upon request
+		syncColumns('Data present', ['Data License', 'Data Publisher'], 'available upon request');
+		syncColumns('Code present', ['Code License', 'Code Publisher'], 'available upon request');
+
+		// Regel 2: no access (nur für Data)
+		syncColumns(
+			'Data present',
+			[
+				'Data License',
+				'Data Publisher',
+				'Data URL',
+				'Data URL resolves',
+				'Data DOI',
+				'Data DOI resolves'
+			],
+			'no access'
+		);
+
+		syncColumns(
+			'Code present',
+			[
+				'Code License',
+				'Code Publisher',
+				'Code URL',
+				'Code URL resolves',
+				'Code DOI',
+				'Code DOI resolves'
+			],
+			'no access'
+		);
+		return row;
 	}
-
-	// Regel 1: available upon request
-	syncColumns('Data present', ['Data License', 'Data Publisher'], 'available upon request');
-	syncColumns('Code present', ['Code License', 'Code Publisher'], 'available upon request');
-
-	// Regel 2: no access (nur für Data)
-	syncColumns(
-		'Data present',
-		[
-			'Data License',
-			'Data Publisher',
-			'Data URL',
-			'Data URL resolves',
-			'Data DOI',
-			'Data DOI resolves'
-		],
-		'no access'
-	);
-
-
-	syncColumns(
-		'Code present',
-		[
-			'Code License',
-			'Code Publisher',
-			'Code URL',
-			'Code URL resolves',
-			'Code DOI',
-			'Code DOI resolves'
-		],
-		'no access'
-	);
-	return row;
-}
-
 
 	function validateRows(data: any[], codeColumns: string[], dataColumns: string[]) {
 		let columnErrors: { [key: string]: any[] } = {};
@@ -836,7 +834,9 @@ function applyAvailableUponRequestRules(row: any) {
 	<div class="flex gap-5 w-full">
 		<div id="datasetCounter">
 			{#if validData.length > 0}
-				<p class="card variant-ghost-primary gap-5 p-2 my-1 align-middle">{uploadedCount} of {totalUploads} datasets created</p>
+				<p class="card variant-ghost-primary gap-5 p-2 my-1 align-middle">
+					{uploadedCount} of {totalUploads} datasets created
+				</p>
 			{/if}
 		</div>
 		<div id="progressBar" class="overflow-clip w-full flex items-center">
@@ -846,13 +846,15 @@ function applyAvailableUponRequestRules(row: any) {
 		</div>
 		<div id="importButton" class="w-24 flex items-center">
 			{#if validData.length > 0 && dataset.EntityTemplateId}
-				<button on:click={create} class="btn variant-filled-primary h-9 w-24 shadow-md">Import</button>
+				<button on:click={create} class="btn variant-filled-primary h-9 w-24 shadow-md"
+					>Import</button
+				>
 			{:else}
-				<button class="btn variant-filled-primary h-9 w-24 shadow-md disabled" disabled>Import</button>
+				<button class="btn variant-filled-primary h-9 w-24 shadow-md disabled" disabled
+					>Import</button
+				>
 			{/if}
 		</div>
-		
-		
 	</div>
 </Page>
 
