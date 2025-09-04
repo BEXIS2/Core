@@ -63,7 +63,7 @@
 		return datasetResources.findIndex((r) => r === resource) + 1;
 	}
 
-	function isValidUrl(value: any) {
+	function isValidLink(value: any) {
 		try {
 			new URL(value);
 			return true;
@@ -72,9 +72,7 @@
 		}
 	}
 
-	function isValidDoi(doi: any) {
-		return doi && doi !== 'unknown' && doi.includes('/');
-	}
+
 </script>
 
 <Page help={true} title="View Publication">
@@ -151,9 +149,9 @@
 								<div class="font-medium text-gray-500">Embargo End: {dataset.EmbargoEnd}</div>
 							{/if}
 
-							{#if dataset.DOI && isValidDoi(dataset.DOI)}
+							{#if dataset.DOI && isValidLink(dataset.DOI)}
 								<ResourceLink type="doi" {dataset} />
-							{:else if dataset.URI && isValidUrl(dataset.URI)}
+							{:else if dataset.URI && isValidLink(dataset.URI)}
 								<ResourceLink type="uri" {dataset} />
 							{/if}
 							{#if dataset.RepositoryName}
