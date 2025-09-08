@@ -24,7 +24,11 @@ namespace BExIS.App.Bootstrap.Attributes
                     formToken = request.Headers["__RequestVerificationToken"];
                 }
 
-                AntiForgery.Validate(cookieToken, formToken);
+                if (cookieToken != null)
+                {
+                    AntiForgery.Validate(cookieToken, formToken);
+                }
+
                 //AntiForgery.Validate();
             }
         }
