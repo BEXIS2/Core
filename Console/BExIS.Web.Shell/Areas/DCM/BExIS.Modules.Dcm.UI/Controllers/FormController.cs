@@ -49,6 +49,7 @@ using NHibernate.Util;
 using Telerik.Web.Mvc.Extensions;
 using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Spreadsheet;
+using BExIS.Dlm.Entities.DataStructure;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -185,13 +186,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         dsv = datasetManager.GetDatasetVersion(entityId, version);
                     }
 
-                   
 
-                    if (dsv != null && dsv.StateInfo != null)
+
+                    if (dsv != null)
                     {
                         metadata = dsv.Metadata;
-                        isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
-                        if(locked)ViewData["IsValid"] = isValid; // add only valid state to viewdata if locked  - only for view dataset
+                        if (dsv.StateInfo != null)
+                        { 
+                            isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
+                            if (locked) ViewData["IsValid"] = isValid; // add only valid state to viewdata if locked  - only for view dataset
+                        }
                     }
 
 
@@ -1551,6 +1555,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             try
             {
+                if (!XmlUtility.IsSafeXPath(xpath))
+                {
+                    return Json(false, JsonRequestBehavior.AllowGet);
+                }
+
                 AddXmlAttribute(xpath, "partyid", partyId.ToString(), entityId);
 
                 return Json(true, JsonRequestBehavior.AllowGet);
@@ -1714,7 +1723,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     elements = XmlUtility.GetXElementsByAttribute(usage.Label, keyValueDic, xMetadata).ToList();
                 }
 
-                x = elements.FirstOrDefault();
+                x = elements.LastOrDefault();
 
                 if (x != null && !x.Name.Equals("null"))
                 {
@@ -2055,13 +2064,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (usage is MetadataPackageUsage)
                 {
                     keyValueDic.Add("type", BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage.ToString());
-                    //elements = XmlUtility.GetXElementsByAttribute(usage.Label, keyValueDic, xMetadata).ToList();
                     parentXElement = XmlUtility.GetXElementByXPath(parent.XPath, xMetadata);
                 }
                 else
                 {
                     keyValueDic.Add("type", BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage.ToString());
-                    //elements = XmlUtility.GetXElementsByAttribute(usage.Label, keyValueDic, xMetadata, parentXpath).ToList();
                     parentXElement = XmlUtility.GetXElementByXPath(parent.XPath, xMetadata);
                 }
 
@@ -2507,28 +2514,33 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 StepModelHelper childStepModelHelper;
 
-                foreach (var childStep in currentStepInfo.Children)
-                {
-                    childStepModelHelper = GetStepModelhelper(childStep.Id, taskManager);
-
-                    if (childStepModelHelper.Model == null)
+               
+                    foreach (var childStep in currentStepInfo.Children)
                     {
-                        childStepModelHelper.Model = createModel(childStep.Id, false, childStepModelHelper.UsageType, entityId);
 
-                        if (childStepModelHelper.Model.StepInfo.IsInstanze)
-                            LoadSimpleAttributesForModelFromXml(childStepModelHelper, taskManager);
-                    }
+                        childStepModelHelper = GetStepModelhelper(childStep.Id, taskManager);
 
-                    childStepModelHelper = getChildModelsHelper(childStepModelHelper, taskManager);
+                        if (childStepModelHelper.Model == null)
+                        {
+                            childStepModelHelper.Model = createModel(childStep.Id, false, childStepModelHelper.UsageType, entityId);
+
+                            if (childStepModelHelper.Model.StepInfo.IsInstanze)
+                                LoadSimpleAttributesForModelFromXml(childStepModelHelper, taskManager);
+                        }
+
+
+                        childStepModelHelper = getChildModelsHelper(childStepModelHelper, taskManager);
 
                     //check if the child step model helper is already in the list and activates
                     // if the usage is active and themin cardinality is 1, also activate the types
-                    if (childStepModelHelper.Model.MinCardinality == 1)
+                    if (childStepModelHelper.Model.MinCardinality == 1 && stepModelHelper.Choice == false)
                         childStepModelHelper.Childrens.ForEach(c => c.Activated = true);
 
-                    if(!stepModelHelper.Childrens.Any(c=> c.UsageId.Equals(childStepModelHelper.UsageId) && c.Number.Equals(childStepModelHelper.Number)))
-                        stepModelHelper.Childrens.Add(childStepModelHelper);
-                }
+                    if (!stepModelHelper.Childrens.Any(c => c.UsageId.Equals(childStepModelHelper.UsageId) && c.Number.Equals(childStepModelHelper.Number)))
+                            stepModelHelper.Childrens.Add(childStepModelHelper);
+                        
+                    }
+                
             }
 
             return stepModelHelper;
@@ -2755,6 +2767,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// Is called when the user write a letter in Autocomplete User Component
         /// </summary>
         [HttpPost]
+        [CustomValidateAntiForgeryToken]
         public ActionResult _AutoCompleteAjaxLoading(string text, long id, string type)
         {
             // if mapping with etities exits
@@ -3091,6 +3104,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         //ToDo really said function, but cant find a other solution for now
         private void AddXmlAttribute(string xpath, string attrName, string attrValue,long entityId)
         {
+            if(XmlUtility.IsSafeXPath(xpath) == false)
+            {
+                throw new Exception("The provided xpath is not safe.");
+            }
+
             TaskManager = FormHelper.GetTaskManager(entityId);
             XDocument metadataXml = getMetadata(TaskManager);
 
@@ -3229,6 +3247,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         //XX number of index des values nötig
         [HttpPost]
+        [CustomValidateAntiForgeryToken]
         public ActionResult ValidateMetadataAttributeUsage(string value, int id, int parentid, string parentname, int number, int parentModelNumber, int parentStepId, long entityId)
         {
             //delete all white spaces from start and end
@@ -3318,6 +3337,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
+        [CustomValidateAntiForgeryToken]
         public ActionResult ValidateMetadataParameterUsage(string value, int id, long attrUsageId, int number, int parentModelNumber, int parentStepId, long entityId)
         {
             //delete all white spaces from start and end
@@ -3472,7 +3492,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         var value = Convert.ChangeType(aModel.Value, type);
 
                         // check Constraints
-                        foreach (var constraint in aModel.GetMetadataParameter().Constraints)
+                        ICollection<Constraint> constraints = new List<Constraint>();
+                        if (aModel.GetMetadataParameter() != null)
+                        {
+                            constraints = aModel.GetMetadataParameter().Constraints;
+                        }
+
+
+                        foreach (var constraint in constraints)
                         {
                             if (value != null && !constraint.IsSatisfied(value))
                             {
@@ -3738,7 +3765,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             long parentPartyId = 0;
             // if the complex xml element has a partyid its mapped and all dependend simmple attributes must set
             bool complexIsMapped = false;
-            if (complexElement.Attributes().Any(a => a.Name.LocalName.ToLowerInvariant().Equals("partyid")))
+            if (complexElement!=null &&  complexElement.Attributes().Any(a => a.Name.LocalName.ToLowerInvariant().Equals("partyid")))
             {
                 complexIsMapped = true;
 

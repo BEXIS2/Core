@@ -27,7 +27,7 @@
 
 }
 
-@if (Model != null && Model.Any())
+@if (Model != null && Model.Any() && tagNr > 0)
 {
     <div id="tagsinfo-container">
         <div id="tagsview" style="display: none;">
@@ -54,23 +54,28 @@
 
         <div id="tagview">
             <div>
-                <table>
-                    <tbody>
-                        @{
-                            var singletag = Model.FirstOrDefault(t=>t.Version == tagNr);
 
-                            <tr id="@singletag.Version" class="selected">
-                                <td><a href="@url&tag=@singletag.Version"> @singletag.Version</a></td>
-                                <td>
-                                    @foreach (var note in singletag.ReleaseNotes)
-                                    {
-                                        <div>@note</div>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+
+                    <table>
+                        <tbody>
+                                @{
+                                    var singletag = Model.FirstOrDefault(t => t.Version == tagNr);
+
+
+                                    <tr id="@singletag.Version" class="selected">
+                                        <td><a href="@url&tag=@singletag.Version"> @singletag.Version</a></td>
+                                        <td>
+                                            @foreach (var note in singletag.ReleaseNotes)
+                                            {
+                                                <div>@note</div>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                        </tbody>
+                    </table>
+
+                
             </div>
 
         </div>

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace BExIS.Modules.Dcm.UI.Models.EntityReference
+namespace BExIS.UI.Models.EntityReference
 {
     public class ReferencesModel
     {
@@ -76,6 +76,7 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityReference
             TypeId = typeId;
             Title = title;
             Type = type;
+            LatestVersion = latestVersionc;
         }
     }
 

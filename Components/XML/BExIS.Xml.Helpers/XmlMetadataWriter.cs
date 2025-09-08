@@ -4,6 +4,7 @@ using BExIS.Dlm.Services.MetadataStructure;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -80,7 +81,13 @@ namespace BExIS.Xml.Helpers
                 List<MetadataAttributeUsage> attributes;
                 foreach (MetadataPackageUsage mpu in packages)
                 {
-                    XElement package;
+                    int number = 1;
+
+                    if (importXml != null)
+                    { 
+                        string path = root.Name+"/" + mpu.Label + "/"+mpu.MetadataPackage.Name;
+                        number = importXml.XPathSelectElements(path).ToList().Count();
+                    }
 
                     // create the role
                     XElement role = CreateXElement(mpu.Label, XmlNodeType.MetadataPackageUsage);
@@ -89,16 +96,22 @@ namespace BExIS.Xml.Helpers
                     role.SetAttributeValue("id", mpu.Id.ToString());
                     root.Add(role);
 
-                    // create the package
-                    package = CreateXElement(mpu.MetadataPackage.Name, XmlNodeType.MetadataPackage);
-                    if (_mode.Equals(XmlNodeMode.xPath)) package.SetAttributeValue("name", mpu.MetadataPackage.Name);
-                    package.SetAttributeValue("roleId", mpu.Id.ToString());
-                    package.SetAttributeValue("id", mpu.MetadataPackage.Id.ToString());
-                    package.SetAttributeValue("number", "1");
-                    role.Add(package);
 
-                    if(mpu.Extra == null || !IsChoice(mpu.Extra))
-                        setChildren(package, mpu, importXml);
+                    for (int i = 1; i <= number; i++)
+                    {
+                        XElement package;
+                        // create the package
+                        package = CreateXElement(mpu.MetadataPackage.Name, XmlNodeType.MetadataPackage);
+                        if (_mode.Equals(XmlNodeMode.xPath)) package.SetAttributeValue("name", mpu.MetadataPackage.Name);
+                        package.SetAttributeValue("roleId", mpu.Id.ToString());
+                        package.SetAttributeValue("id", mpu.MetadataPackage.Id.ToString());
+                        package.SetAttributeValue("number", i);
+                        role.Add(package);
+
+                        if (mpu.Extra == null || !IsChoice(mpu.Extra))
+                            setChildren(package, mpu, importXml);
+
+                    }
                 }
 
                 return doc;
@@ -230,7 +243,9 @@ namespace BExIS.Xml.Helpers
                         List<XElement> typeList = new List<XElement>();
 
                         typeList = addAndReturnAttribute(element, nestedUsage, 1, 1);
-                        setChildren(typeList.FirstOrDefault(), nestedUsage, importDocument);
+
+                        if (nestedUsage.Extra == null || !IsChoice(nestedUsage.Extra))
+                            setChildren(typeList.FirstOrDefault(), nestedUsage, importDocument);
                     }
                 }
             }
@@ -279,7 +294,9 @@ namespace BExIS.Xml.Helpers
                             List<XElement> typeList = new List<XElement>();
 
                             typeList = addAndReturnAttribute(element, attrUsage, 1, 1);
-                            setChildren(typeList.FirstOrDefault(), attrUsage, importDocument);
+
+                            if (attrUsage.Extra == null || !IsChoice(attrUsage.Extra))
+                                setChildren(typeList.FirstOrDefault(), attrUsage, importDocument);
                         }
                     }
                 }
@@ -554,7 +571,8 @@ namespace BExIS.Xml.Helpers
                 {
                     foreach (BaseUsage baseUsage in children)
                     {
-                        element = AddAttribute(element, baseUsage, 1);
+                        if (attributeUsage.Extra == null || !IsChoice(attributeUsage.Extra))
+                            element = AddAttribute(element, baseUsage, 1);
                     }
                 }
 
@@ -759,6 +777,11 @@ namespace BExIS.Xml.Helpers
         public XDocument AddAttribute(XDocument metadataXml, BaseUsage attributeUsage, int number, string attributeTypeName, string attributeId, string parentXPath)
         {
             _tempXDoc = metadataXml;
+
+            if (!!XmlUtility.IsSafeXPath(parentXPath))
+            {
+                throw new ArgumentException("Potentially unsafe xpath expression.");
+            }
 
             /*
              * In the xml the structure is everytime usage/type

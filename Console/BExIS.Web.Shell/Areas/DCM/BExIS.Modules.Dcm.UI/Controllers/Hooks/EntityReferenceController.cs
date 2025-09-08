@@ -1,13 +1,13 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Modules.Dcm.UI.Helpers;
-using BExIS.Modules.Dcm.UI.Models.EntityReference;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using BExIS.UI.Models.EntityReference;
+using BExIS.Utils.Data.Helpers;
 using BExIS.Xml.Helpers;
 using NHibernate.Util;
 using System;
@@ -102,6 +102,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
+        [CustomValidateAntiForgeryToken]
         public ActionResult Create(CreateSimpleReferenceModel model)
         {
             EntityReferenceHelper helper = new EntityReferenceHelper();
@@ -169,6 +170,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
 
         [HttpPost]
+        [CustomValidateAntiForgeryToken]
         public JsonResult Delete(long id)
         {
             if (id == 0) return Json(false);

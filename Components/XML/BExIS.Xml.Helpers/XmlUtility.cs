@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BExIS.Xml.Models.Mapping;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -12,6 +13,19 @@ namespace BExIS.Xml.Helpers
 {
     public class XmlUtility
     {
+        // Validate that xpath is a simple, safe path: only allows slashes and node names (alphanumeric/underscore)
+        public static bool IsSafeXPath(string xpath)
+        {
+            // Prevent empty, null XPaths
+            if (string.IsNullOrEmpty(xpath)) return false;
+
+            // Only allow XPaths like /a/b/c or /a[1]/b matches, no function calls, no quotes, etc.
+            // You can adjust the pattern according to the actual requirements.
+            // This only allows: /node1/node2/...
+            var safePattern = @"^(/[a-zA-Z_][\w\-]*(\[\d+\])?)*$";
+            return System.Text.RegularExpressions.Regex.IsMatch(xpath, safePattern);
+        }
+
         public static string GetXPathToNode(XmlNode node)
         {
             string xPath = "";
@@ -116,6 +130,8 @@ namespace BExIS.Xml.Helpers
             else return false;
         }
 
+       
+
         public static XmlNode GetXmlNodeByName(XmlNode parentNode, string name, bool recursiv = true)
         {
             if (parentNode == null || string.IsNullOrWhiteSpace(name)) return null;
@@ -152,6 +168,29 @@ namespace BExIS.Xml.Helpers
             return null;
         }
 
+        public static IEnumerable<XmlNode> FindChildrenRecursive(XmlNode parent, string name)
+        {
+            // Check if the current node has children.
+            if (parent.HasChildNodes)
+            {
+                // Iterate through all the children of the current node.
+                foreach (XmlNode child in parent.ChildNodes)
+                {
+                    // If the child's name matches the target name, yield it.
+                    if (child is XmlElement && child.Name == name)
+                    {
+                        yield return child;
+                    }
+
+                    // Recursively call the method on the current child and yield its results.
+                    foreach (XmlNode foundChild in FindChildrenRecursive(child, name))
+                    {
+                        yield return foundChild;
+                    }
+                }
+            }
+        }
+
         public static XmlNode GetXmlNodeByAttribute(XmlNode parentNode, string name, string attrName, string attrValue)
         {
             if (string.IsNullOrEmpty(name) ||
@@ -184,6 +223,12 @@ namespace BExIS.Xml.Helpers
             }
 
             return null;
+        }
+
+        public static XmlNode GetXmlNodeByAttribute(string path, XmlDocument metadata)
+        {
+            var n = metadata.SelectSingleNode(path);
+            return n;
         }
 
         public static XmlNode CreateNode(string nodeName, XmlDocument doc)
@@ -222,7 +267,13 @@ namespace BExIS.Xml.Helpers
                     index = Int32.Parse(tmp[1].Remove(tmp[1].IndexOf("]")));
                 }
 
-                XmlNodeList nodes = parent != null ? parent.SelectNodes(nodeName) : doc.SelectNodes(nodeName);
+                XmlNodeList nodes = null;
+  
+                if(parent == null || parent.Name.ToLowerInvariant().Equals(nodeName))
+                    // if parent is null, we are creating the root node
+                    nodes = doc.SelectNodes(nodeName);
+                else
+                    nodes = parent.SelectNodes(nodeName);
 
                 XmlNode node = nodes[index - 1];
 
@@ -235,10 +286,21 @@ namespace BExIS.Xml.Helpers
                     }
                     else
                     {
-                        if (parent != null) node = parent.AppendChild(doc.CreateElement(nodeName));
-                        else return null;
+                        int add = index;
+                        if(nodes != null && index > nodes.Count) add = index - nodes.Count;
+
+                        for (int i = 0; i < add; i++)
+                        {
+                            if (parent != null) node = parent.AppendChild(doc.CreateElement(nodeName));
+                            else if (doc != null && doc.DocumentElement == null)
+                            {
+                                node = doc.AppendChild(doc.CreateElement(nodeName));
+                            }
+                            else return null;
+                        }
                     }
                 }
+            
 
                 // rejoin the remainder of the array as an xpath expression and recurse
                 string rest = String.Join("/", partsOfXPath, 1, partsOfXPath.Length - 1);

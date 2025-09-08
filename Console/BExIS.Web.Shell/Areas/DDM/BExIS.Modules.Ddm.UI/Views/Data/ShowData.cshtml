@@ -81,41 +81,44 @@
     var datasetHooks = new List<Hook>();
     var additionalHooks = new List<Hook>();
 
-    // separate dataset hooks and additional hooks
-    foreach (var hook in Model.Hooks)
+    if (Model != null && Model.Hooks.Any())
     {
-        // check if the hook is blocked by settings
-        string key = "show_" + hook.Name.ToLower() + "_tab";
-        bool isNotBlocked = true;
-
-        if (show_tabs.ContainsKey(key))
+        // separate dataset hooks and additional hooks
+        foreach (var hook in Model.Hooks)
         {
-            bool.TryParse(show_tabs[key], out isNotBlocked);
-        }
+            // check if the hook is blocked by settings
+            string key = "show_" + hook.Name.ToLower() + "_tab";
+            bool isNotBlocked = true;
 
-        if (hook != null && isNotBlocked)
-        {
-            //set active hook based one nam in session
-            if (hook.Name.Equals(activeHookName))
+            if (show_tabs.ContainsKey(key))
             {
-                activeHook = hook;
+                bool.TryParse(show_tabs[key], out isNotBlocked);
             }
 
-            if (hook.Name == "metadata")
+            if (hook != null && isNotBlocked)
             {
-                metadataHook = hook;
-            }
-            else if (hook.Name == "data")
-            {
-                dataHook = hook;
-            }
-            else if (hook.Name == "datadescription")
-            {
-                dataDescriptionHook = hook;
-            }
-            else
-            {
-                additionalHooks.Add(hook);
+                //set active hook based one nam in session
+                if (hook.Name.Equals(activeHookName))
+                {
+                    activeHook = hook;
+                }
+
+                if (hook.Name == "metadata")
+                {
+                    metadataHook = hook;
+                }
+                else if (hook.Name == "data")
+                {
+                    dataHook = hook;
+                }
+                else if (hook.Name == "datadescription")
+                {
+                    dataDescriptionHook = hook;
+                }
+                else
+                {
+                    additionalHooks.Add(hook);
+                }
             }
         }
     }
@@ -228,7 +231,7 @@
    
     <div class="datasetview_header">
         <div class="datasetview_header-title">
-            <h1>@Model.Title </h1>
+            @{Html.RenderAction("GetCitationOrTitle", "Data", new { datasetVersionId = Model.VersionId });}
         </div>
 
         <div class="datasetview_header-toggle">

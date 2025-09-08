@@ -5,6 +5,7 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Tests.Helpers;
+using BExIS.Security.Entities.Versions;
 using BExIS.Utils.Config;
 using BExIS.Utils.NH.Querying;
 using FluentAssertions;
@@ -18,6 +19,8 @@ namespace BExIS.Dlm.Tests.Services.Data
     public class DatasetManagerTests
     {
         private TestSetupHelper helper = null;
+
+        string username = "david";
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -47,6 +50,11 @@ namespace BExIS.Dlm.Tests.Services.Data
         public void OneTimeTearDown()
         {
             helper.Dispose();
+
+            var dsHelper = new DatasetHelper();
+            dsHelper.PurgeAllDatasets();
+            dsHelper.PurgeAllDataStructures();
+            dsHelper.PurgeAllResearchPlans();
         }
 
         [Test()]
@@ -79,8 +87,6 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
                 dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in CheckedIn status.");
 
-                dm.PurgeDataset(dataset.Id);
-                dsHelper.PurgeAllDataStructures();
             }
             finally
             {
@@ -115,7 +121,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
 
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
-                dm.DeleteDataset(dataset.Id, "Javad", false);
+                dm.DeleteDataset(dataset.Id, username, false);
 
                 dataset.Should().NotBeNull();
                 dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
@@ -123,8 +129,6 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
                 dataset.Status.Should().Be(DatasetStatus.Deleted, "Dataset must be in Deleted status.");
 
-                dm.PurgeDataset(dataset.Id);
-                dsHelper.PurgeAllDataStructures();
             }
             finally
             {
@@ -136,7 +140,7 @@ namespace BExIS.Dlm.Tests.Services.Data
         }
 
         //[Test()]
-        public void UndoDeleteDatasetTest()
+        public void PurgeDatasetTest()
         {
             var dm = new DatasetManager();
             var rsm = new ResearchPlanManager();
@@ -163,34 +167,252 @@ namespace BExIS.Dlm.Tests.Services.Data
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
                 id = dataset.Id;
 
-                dsHelper.GenerateTuplesForDataset(dataset, dataStructure, 1000, "david test");
-                dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", "david test", ViewCreationBehavior.None);
-                dm.DeleteDataset(dataset.Id, "David", false);
+                dsHelper.GenerateTuplesForDataset(dataset, dataStructure, 10, username);
+                dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
 
-                dataset.Should().NotBeNull();
-                dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
-                dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
-                dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
-                dataset.Status.Should().Be(DatasetStatus.Deleted, "Dataset must be in Deleted status.");
+                using (var datasetmanager = new DatasetManager())
+                {
+                    datasetmanager.PurgeDataset(dataset.Id);
+                }
 
-                // Act
-                dm.UndoDeleteDataset(dataset.Id, "David test", true);
-                var c = dm.GetDatasetLatestVersionEffectiveTupleCount(dataset);
+                using (var datasetmanager = new DatasetManager())
+                {
+                    var deletedDataset = datasetmanager.GetDataset(id);
+                    deletedDataset.Should().BeNull("Dataset exist after purge.");
+                }
 
-                //Assert
-                dataset = dm.GetDataset(id);
-                dataset.Should().NotBeNull();
-                dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
-                dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
-                dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
-                dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in Deleted status.");
-                Assert.That(c.Equals(1000), "version has not same tuples");
+
             }
             finally
             {
-                dm.PurgeDataset(id);
-                dsHelper.PurgeAllDataStructures();
+                dm.Dispose();
+                rsm.Dispose();
+                mdm.Dispose();
+                etm.Dispose();
+            }
+        }
 
+        [Test()]
+        public void UndoDeleteDataset_withData_DatasetExist()
+        {
+            var dm = new DatasetManager();
+            var rsm = new ResearchPlanManager();
+            var mdm = new MetadataStructureManager();
+            var etm = new EntityTemplateManager();
+
+            var dsHelper = new DatasetHelper();
+            long id = 0;
+            try
+            {
+                // Arrange
+                StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+
+                var rp = dsHelper.CreateResearchPlan();
+                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+
+                var mds = mdm.Repo.Query().First();
+                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+
+                var et = etm.Repo.Query().First();
+                et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
+                id = dataset.Id;
+
+                dsHelper.GenerateTuplesForDataset(dataset, dataStructure, 10, username);
+                dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
+
+                using (var datasetmanager = new DatasetManager())
+                {
+                    datasetmanager.DeleteDataset(dataset.Id, username, false);
+
+                    dataset.Should().NotBeNull();
+                    dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
+                    dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
+                    dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
+                    dataset.Status.Should().Be(DatasetStatus.Deleted, "Dataset must be in Deleted status.");
+                    dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
+                }
+
+                using (var datasetmanager = new DatasetManager())
+                {
+                    dataset = datasetmanager.GetDataset(id);
+                    var deletedVersionId = dataset.Versions.Last().Id;
+
+                    // Act
+                    datasetmanager.UndoDeleteDataset(dataset.Id, username, true);
+
+                    dataset = datasetmanager.GetDataset(dataset.Id);
+
+                    var c = datasetmanager.GetDatasetLatestVersionEffectiveTupleCount(dataset);
+
+                    //Assert
+                    dataset = datasetmanager.GetDataset(id);
+                    dataset.Should().NotBeNull();
+                    dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
+                    dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
+                    dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
+                    dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in Deleted status.");
+
+                    var deletedVersion = datasetmanager.DatasetVersionRepo.Get(deletedVersionId);
+                    deletedVersion.Should().BeNull("Deleted version must be null.");
+
+                    Assert.That(c.Equals(10), "version has not same tuples");
+                }
+            }
+            finally
+            {
+                dm.Dispose();
+                rsm.Dispose();
+                mdm.Dispose();
+                etm.Dispose();
+            }
+        }
+
+        [Test()]
+        public void RevertDataset_withData_DatasetExist()
+        {
+            var dm = new DatasetManager();
+            var rsm = new ResearchPlanManager();
+            var mdm = new MetadataStructureManager();
+            var etm = new EntityTemplateManager();
+
+            var dsHelper = new DatasetHelper();
+            long id = 0;
+            try
+            {
+                // Arrange
+                string user = username;
+                StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+
+                var rp = dsHelper.CreateResearchPlan();
+                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+
+                var mds = mdm.Repo.Query().First();
+                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+
+                var et = etm.Repo.Query().First();
+                et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
+                id = dataset.Id;
+
+                dsHelper.GenerateTuplesForDataset(dataset, dataStructure, 10, user);
+                dm.CheckInDataset(dataset.Id, "for create  datatuples with versions", user, ViewCreationBehavior.None);
+                var version = dm.GetDatasetLatestVersion(dataset.Id);
+
+                var latestDataTuple = dm.GetDataTuples(version.Id).LastOrDefault();
+
+                if(latestDataTuple != null ) dsHelper.UpdateOneTupleForDataset(dataset,dataStructure, latestDataTuple.Id,10, user, dm);
+                
+                dm.CheckInDataset(dataset.Id, "for update  datatuple with versions", user, ViewCreationBehavior.None);
+
+                using (var datasetmanager = new DatasetManager())
+                {
+ 
+                    datasetmanager.RevertLastVersionOfDataset(dataset.Id, user, true);
+
+                    dataset.Should().NotBeNull();
+                    dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
+                    dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
+                    dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
+                    dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in Deleted status.");
+
+                    dataset = dm.GetDataset(id);
+                    dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", user, ViewCreationBehavior.None);
+
+                    var c = datasetmanager.GetDatasetLatestVersionEffectiveTupleCount(dataset);
+                    Assert.That(c.Equals(10), "version has not same tuples");
+                }
+
+            }
+            finally
+            {
+                dm.Dispose();
+                rsm.Dispose();
+                mdm.Dispose();
+                etm.Dispose();
+            }
+        }
+
+        [Test()]
+        public void UndoDeleteDataset_withoutData_DatasetExist()
+        {
+            var dm = new DatasetManager();
+            var rsm = new ResearchPlanManager();
+            var mdm = new MetadataStructureManager();
+            var etm = new EntityTemplateManager();
+
+            var dsHelper = new DatasetHelper();
+            long id = 0;
+            try
+            {
+                // Arrange
+                StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+
+                var rp = dsHelper.CreateResearchPlan();
+                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+
+                var mds = mdm.Repo.Query().First();
+                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+
+                var et = etm.Repo.Query().First();
+                et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
+                id = dataset.Id;
+
+                    if (dm.CheckOutDataset(dataset.Id, username))
+                    {
+                        DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
+                        dm.EditDatasetVersion(workingCopy, null, null, null);
+                        dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
+                    }
+
+                    using (var datasetmanager = new DatasetManager())
+                    {
+                        datasetmanager.DeleteDataset(dataset.Id, username, false);
+
+                        dataset.Should().NotBeNull();
+                        dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
+                        dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
+                        dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
+                        dataset.Status.Should().Be(DatasetStatus.Deleted, "Dataset must be in Deleted status.");
+                        dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", username, ViewCreationBehavior.None);
+                    }
+
+                    using (var datasetmanager = new DatasetManager())
+                    {
+                        dataset = datasetmanager.GetDataset(id);
+                        var deletedVersionId = dataset.Versions.Last().Id;
+
+                        // Act
+                        datasetmanager.UndoDeleteDataset(dataset.Id, username, true);
+
+                        //Assert
+                        dataset = datasetmanager.GetDataset(id);
+                        dataset.Should().NotBeNull();
+                        dataset.Id.Should().BeGreaterThan(0, "Dataset is not persisted.");
+                        dataset.LastCheckIOTimestamp.Should().NotBeAfter(DateTime.UtcNow, "The dataset's timestamp is wrong.");
+                        dataset.DataStructure.Should().NotBeNull("Dataset must have a data structure.");
+                        dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in Deleted status.");
+
+                        var deletedVersion = datasetmanager.DatasetVersionRepo.Get(deletedVersionId);
+                        deletedVersion.Should().BeNull("Deleted version must be null.");
+
+                    }
+                
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
                 dm.Dispose();
                 rsm.Dispose();
                 mdm.Dispose();
@@ -223,10 +445,10 @@ namespace BExIS.Dlm.Tests.Services.Data
                 et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
 
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
-                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, "Javad");
+                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, username);
                 dataset.Should().NotBeNull("The dataset tuple generation has failed!");
 
-                dm.CheckInDataset(dataset.Id, "for testing purposes 2", "Javad", ViewCreationBehavior.None);
+                dm.CheckInDataset(dataset.Id, "for testing purposes 2", username, ViewCreationBehavior.None);
                 //dm.SyncView(ds.Id, ViewCreationBehavior.Create);
                 //dm.SyncView(ds.Id, ViewCreationBehavior.Refresh);
                 dm.SyncView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
@@ -240,9 +462,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.DatasetVersionRepo.Evict();
                 dm.DataTupleRepo.Evict();
                 dm.DatasetRepo.Evict();
-                dm.PurgeDataset(dataset.Id, true);
 
-                dsHelper.PurgeAllDataStructures();
             }
             finally
             {
@@ -321,10 +541,10 @@ namespace BExIS.Dlm.Tests.Services.Data
 
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
 
-                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, "Javad");
+                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, username);
                 dataset.Should().NotBeNull("The dataset tuple generation has failed!");
 
-                dm.CheckInDataset(dataset.Id, "for testing purposes 2", "Javad", ViewCreationBehavior.None);
+                dm.CheckInDataset(dataset.Id, "for testing purposes 2", username, ViewCreationBehavior.None);
                 dm.SyncView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
 
                 dataset.Id.Should().BeGreaterThan(0, "Dataset was not persisted.");
@@ -341,9 +561,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.DatasetVersionRepo.Evict();
                 dm.DataTupleRepo.Evict();
                 dm.DatasetRepo.Evict();
-                dm.PurgeDataset(dataset.Id, true);
 
-                dsHelper.PurgeAllDataStructures();
             }
             finally
             {
@@ -390,10 +608,10 @@ namespace BExIS.Dlm.Tests.Services.Data
                 et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
 
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
-                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, "Javad");
+                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, username);
                 dataset.Should().NotBeNull("The dataset tuple generation has failed!");
 
-                dm.CheckInDataset(dataset.Id, "for testing purposes 2", "Javad", ViewCreationBehavior.None);
+                dm.CheckInDataset(dataset.Id, "for testing purposes 2", username, ViewCreationBehavior.None);
                 dm.SyncView(dataset.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
 
                 dataset.Id.Should().BeGreaterThan(0, "Dataset was not persisted.");
@@ -411,8 +629,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.DatasetVersionRepo.Evict();
                 dm.DataTupleRepo.Evict();
                 dm.DatasetRepo.Evict();
-                dm.PurgeDataset(dataset.Id, true);
-                dsHelper.PurgeAllDataStructures();
+
             }
             catch (Exception ex)
             {
@@ -452,19 +669,19 @@ namespace BExIS.Dlm.Tests.Services.Data
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
 
                 // Act
-                if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
+                if (dm.IsDatasetCheckedOutFor(dataset.Id, username) || dm.CheckOutDataset(dataset.Id, username))
                 {
                     var workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
                     dm.EditDatasetVersion(workingCopy, null, null, null);
 
-                    dm.CheckInDataset(dataset.Id, "no update on data tuples", "David", ViewCreationBehavior.None);
+                    dm.CheckInDataset(dataset.Id, "no update on data tuples", username, ViewCreationBehavior.None);
                 }
 
                 // Assert
                 dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in CheckedIn status.");
 
-                dm.PurgeDataset(dataset.Id);
-                dsHelper.PurgeAllDataStructures();
+                //dm.PurgeDataset(dataset.Id);
+                //dsHelper.PurgeAllDataStructures();
             }
         }
 
@@ -493,14 +710,14 @@ namespace BExIS.Dlm.Tests.Services.Data
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
 
                 // Act
-                if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
+                if (dm.IsDatasetCheckedOutFor(dataset.Id, username) || dm.CheckOutDataset(dataset.Id, username))
                 {
                     // Assert
                     dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in CheckedOut status.");
                 }
 
-                dm.PurgeDataset(dataset.Id);
-                dsHelper.PurgeAllDataStructures();
+            //    dm.PurgeDataset(dataset.Id);
+            //    dsHelper.PurgeAllDataStructures();
             }
         }
 
@@ -531,24 +748,24 @@ namespace BExIS.Dlm.Tests.Services.Data
                     Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
 
                     // Act
-                    if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
+                    if (dm.IsDatasetCheckedOutFor(dataset.Id, username) || dm.CheckOutDataset(dataset.Id, username))
                     {
                         var workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
                         dm.EditDatasetVersion(workingCopy, null, null, null);
 
-                        dm.CheckInDataset(dataset.Id, "no update on data tuples", "David", ViewCreationBehavior.None);
+                        dm.CheckInDataset(dataset.Id, "no update on data tuples", username, ViewCreationBehavior.None);
                     }
 
                     long count = dm.GetDatasetVersionCount(dataset.Id);
 
                     // Act
-                    if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
+                    if (dm.IsDatasetCheckedOutFor(dataset.Id, username) || dm.CheckOutDataset(dataset.Id, username))
                     {
                         var workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
                         dm.EditDatasetVersion(workingCopy, null, null, null);
-                        //dm.CheckInDataset(dataset.Id, "no update on data tuples", "David", ViewCreationBehavior.None);
+                        //dm.CheckInDataset(dataset.Id, "no update on data tuples", username, ViewCreationBehavior.None);
 
-                        dm.UndoCheckoutDataset(dataset.Id, "David", ViewCreationBehavior.None);
+                        dm.UndoCheckoutDataset(dataset.Id, username, ViewCreationBehavior.None);
                     }
 
                     long countAfterUndo = dm.GetDatasetVersionCount(dataset.Id);
@@ -559,8 +776,8 @@ namespace BExIS.Dlm.Tests.Services.Data
                     lastestVersion.Status.Should().Be(DatasetVersionStatus.CheckedIn, "Dataset version must be in CheckedIn status.");
                     Assert.That(count, Is.EqualTo(countAfterUndo));
 
-                    dm.PurgeDataset(dataset.Id);
-                    dsHelper.PurgeAllDataStructures();
+                    //dm.PurgeDataset(dataset.Id);
+                    //dsHelper.PurgeAllDataStructures();
                 }
                 catch (Exception ex)
                 {
