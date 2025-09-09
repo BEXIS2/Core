@@ -138,8 +138,9 @@ namespace BExIS.Modules.Dcm.UI.Models.Curation
         public DateTime DatasetVersionDate { get; set; }
         public IEnumerable<CurationEntryModel> CurationEntries { get; set; }
         public IEnumerable<CurationUserModel> CurationUsers { get; set; }
-
         public IEnumerable<CurationLabel> CurationLabels { get; set; }
+        public IEnumerable<CurationEntryType> CurationEntryTypes { get; set; }
+
 
         public CurationModel()
         {
@@ -149,9 +150,10 @@ namespace BExIS.Modules.Dcm.UI.Models.Curation
             CurationEntries = new List<CurationEntryModel>();
             CurationUsers = new List<CurationUserModel>();
             CurationLabels = new List<CurationLabel>();
+            CurationEntryTypes = Enum.GetValues(typeof(CurationEntryType)).Cast<CurationEntryType>().ToList();
         }
 
-        public CurationModel(long datasetId, string datasetTitle, DateTime datasetVersionDate, IEnumerable<CurationEntryModel> curationEntries, IEnumerable<CurationUserModel> curationUsers, IEnumerable<CurationLabel> curationLabels)
+        public CurationModel(long datasetId, string datasetTitle, DateTime datasetVersionDate, IEnumerable<CurationEntryModel> curationEntries, IEnumerable<CurationUserModel> curationUsers, IEnumerable<CurationLabel> curationLabels, IEnumerable<CurationEntryType> curationEntryTypes)
         {
             DatasetId = datasetId;
             DatasetTitle = datasetTitle;
@@ -159,6 +161,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Curation
             CurationEntries = curationEntries;
             CurationUsers = curationUsers;
             CurationLabels = curationLabels;
+            CurationEntryTypes = curationEntryTypes;
         }
 
     }

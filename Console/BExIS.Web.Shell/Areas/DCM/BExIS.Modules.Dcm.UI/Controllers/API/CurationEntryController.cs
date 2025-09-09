@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.RightsManagement;
 using System.Threading.Tasks;
 using System.Web.Http;
 using BExIS.App.Bootstrap.Attributes;
@@ -14,6 +16,7 @@ using BExIS.Dlm.Services.Curation;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Models.Curation;
 using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authorization;
 using BExIS.Utils.Config.Configurations;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
@@ -51,7 +54,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     responseEntries.Add(new CurationEntryModel(curationEntry)
                     {
-                        Description = string.Empty
+                        Description = string.Empty,
+                        Notes = new List<CurationNoteModel>()
                     });
                 } else {
                     // add the curationEntryModel
@@ -95,7 +99,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             curationLabels = curationLabels == null ? new List<CurationLabel>() : curationLabels;
 
-            return new CurationModel(datasetVersion.Id, datasetVersion.Title, datasetVersion.Timestamp, responseEntries, userMap.Values, curationLabels);
+            return new CurationModel()
+            {
+                DatasetId = datasetVersion.Id,
+                DatasetTitle = datasetVersion.Title,
+                DatasetVersionDate = datasetVersion.Timestamp,
+                CurationEntries = responseEntries,
+                CurationUsers = userMap.Values,
+                CurationLabels = curationLabels
+            };
         }
 
         private static CurationEntryModel AnonymizeCurationEntryModel(CurationEntryModel knownCurationEntry, CurationEntry curationEntry, User user)
@@ -127,6 +139,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return newCurationEntry;
         }
 
+        private static int userRights(long userId, long datasetId)
+        {
+            int rights = 0;
+            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+            {
+                rights = entityPermissionManager.GetEffectiveRightsAsync(userId, datasetId).Result;
+            }
+            return rights;
+        }
+
         [BExISApiAuthorize]
         [JsonNetFilter]
         [GetRoute("api/datasets/{datasetid}/curation")]
@@ -137,6 +159,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // get user or respond with error
             if (!ActionContext.ControllerContext.RouteData.Values.TryGetValue("user", out object userObject) || !(userObject is User user))
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, "User not found");
+
+            // check if user has rights to access the dataset
+            //if (!(userRights(user.Id, datasetid) > 0))
+            //    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "User has no rights to access the dataset");
 
             CurationModel responseContent;
 
@@ -150,7 +176,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             var response = Request.CreateResponse(HttpStatusCode.OK, responseContent);
             return response;
-                 
         }
 
         [BExISApiAuthorize]
@@ -166,25 +191,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (var curationManager = new CurationManager())
             using (var datasetManager = new DatasetManager())
             {
-
-                // ------ simpler query that only uses the CurationEntryType.StatusEntryItem
-                //var query = from d in datasetManager.DatasetRepo.Get()
-                //            join c in curationManager.CurationEntryRepository.Get()
-                //                on d.Id equals c.Dataset.Id into gj
-                //            from c in gj.Where(x => x.Type == CurationEntryType.StatusEntryItem).DefaultIfEmpty()
-                //            select new
-                //            {
-                //                DatasetId = d.Id,
-                //                NotesComments = c != null && c.Notes != null
-                //                    ? c.Notes.Select(n => n.Comment).ToList()
-                //                    : new List<string>(),
-                //                UserIsDone = c != null ? c.UserIsDone : false,
-                //                IsApproved = c != null ? c.IsApproved : false,
-                //                LastChangeDatetime_Curator = c != null ? c.LastChangeDatetime_Curator : (DateTime?)null,
-                //                LastChangeDatetime_User = c != null ? c.LastChangeDatetime_User : (DateTime?)null
-                //            };
-                // ------
-
                 var datasets = datasetManager.DatasetRepo.Get();
                 var versions = datasetManager.DatasetVersionRepo.Get();
                 var curationEntries = curationManager.CurationEntryRepository.Get();
@@ -224,12 +230,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 LastChangeDatetime_User = temp.AllEntries.Any()
                                     ? temp.AllEntries.Max(e => e.LastChangeDatetime_User)
                                     : (DateTime?)null,
-                                //statusCounts = new List<int>(){
-                                //    temp.FilteredEntries.Count(e => !e.UserIsDone && !e.IsApproved),
-                                //    temp.FilteredEntries.Count(e => !e.UserIsDone && e.IsApproved),
-                                //    temp.FilteredEntries.Count(e => e.UserIsDone && !e.IsApproved),
-                                //    temp.FilteredEntries.Count(e => e.UserIsDone && e.IsApproved),
-                                //},
                                 Count_UserIsDone_True_IsApproved_True = temp.FilteredEntries
                                     .Count(e => e.UserIsDone && e.IsApproved),
                                 Count_UserIsDone_True_IsApproved_False = temp.FilteredEntries
@@ -274,6 +274,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var c = curationManager.CurationEntries.FirstOrDefault(ce => ce.Id == curationEntryModel.Id);
                 if (c == null) return Request.CreateErrorResponse(HttpStatusCode.NotFound, "curationEntry not found");
 
+                // check if user has rights to access the dataset
+                //if (!(userRights(user.Id, c.Dataset.Id) > 0))
+                //    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "User has no rights to access the dataset");
+
                 var newCurationEntry = curationManager.Update(
                         curationEntryModel.Id,
                         curationEntryModel.Topic,
@@ -312,6 +316,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (!CurationEntry.GetCurationUserType(user).Equals(CurationUserType.Curator))
                 return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "User not permitted to create curation entries");
+
+            // check if user has rights to access the dataset
+            //if (!(userRights(user.Id, curationEntryModel.DatasetId) > 0))
+            //    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "User has no rights to access the dataset");
 
             List<CurationNote> notes;
             if (curationEntryModel.Notes == null || !curationEntryModel.Notes.Any())

@@ -81,9 +81,12 @@ namespace BExIS.Dlm.Entities.Curation
     { 
         None,
         StatusEntryItem,
+        GeneralEntryItem,
         MetadataEntryItem,
         PrimaryDataEntryItem,
-        DatastrutcureEntryItem
+        DatastrutcureEntryItem,
+        LinkEntryItem,
+        AttachmentEntryItem
     }
 
     public class MetadataEntryItem
