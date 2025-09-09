@@ -1493,8 +1493,7 @@ namespace BExIS.Dim.Helpers.Mappings
                             //var simpleElements = metadata.SelectNodes(t);
                             if ((simpleElements == null || simpleElements.Count() == 0) && string.IsNullOrEmpty(complexMapping.Source.XPath) && complexMapping.Source.Name.ToLower().Equals("default"))  // DEFAULT
                             {
-                               
-                                string simpleTargetPath = complexTargetPath + "/"+ sTargetLinkElement.XPath + "[" + index + "]";
+                                string simpleTargetPath = mergeXPaths(complexTargetPath, cTargetLinkElement.XPath, sTargetLinkElement.XPath + "[" + index + "]");
 
                                 if (xTarget == null)
                                     xTarget = XmlUtility.GenerateNodeFromXPath(concept, concept.DocumentElement, complexTargetPath); // generate target
@@ -1592,6 +1591,23 @@ namespace BExIS.Dim.Helpers.Mappings
             if (child.Equals(defaultParentPath)) return directParent;
             return directParent + "/" + child.Replace(defaultParentPath, "").TrimStart('/');
 
+        }
+        // check if two xpath start with the same path
+        private static bool startWithSameXPath(string path1, string path2)
+        {
+            if (string.IsNullOrEmpty(path1) || string.IsNullOrEmpty(path2)) return false;
+
+            List<string> levelOfPath1 = path1.Split('/').ToList();
+            List<string> levelOfPath2 = path2.Split('/').ToList();
+
+            int minLevel = Math.Min(levelOfPath1.Count(), levelOfPath2.Count());
+
+            for (int i = 0; i < minLevel; i++)
+            {
+                if (!levelOfPath1[i].Equals(levelOfPath2[i])) return false;
+            }
+
+            return true;
         }
 
         private static string mergeXPaths(string directComplexSourceParent, string directSimpleSourcePath, string directTargetPath,string defaultTargetPath, string child, XmlDocument metadata)
