@@ -30,6 +30,7 @@ export interface CurationModel {
 	datasetId: number;
 	datasetTitle: string;
 	datasetVersionDate: string;
+	curationEntryTypes: CurationEntryType[];
 	curationEntries: CurationEntryModel[];
 	curationUsers: CurationUserModel[];
 	curationLabels: CurationLabel[];
@@ -89,31 +90,23 @@ export interface CurationNoteModel {
 export enum CurationEntryType {
 	None = 0,
 	StatusEntryItem = 1,
-	MetadataEntryItem = 2,
-	PrimaryDataEntryItem = 3,
-	DatastructureEntryItem = 4
+	GeneralEntryItem = 2,
+	MetadataEntryItem = 3,
+	PrimaryDataEntryItem = 4,
+	DatastructureEntryItem = 5,
+	LinkEntryItem = 6,
+	AttachmentEntryItem = 7
 }
-
-export const CurationEntryTypeViewOrders = {
-	default: [
-		CurationEntryType.MetadataEntryItem,
-		CurationEntryType.DatastructureEntryItem,
-		CurationEntryType.PrimaryDataEntryItem
-	],
-	editMode: [
-		CurationEntryType.MetadataEntryItem,
-		CurationEntryType.DatastructureEntryItem,
-		CurationEntryType.PrimaryDataEntryItem,
-		CurationEntryType.None
-	]
-};
 
 export const CurationEntryTypeNames: string[] = [
 	'Hidden',
 	'Status',
+	'General',
 	'Metadata',
 	'Primary Data',
-	'Datastructure'
+	'Datastructure',
+	'Links',
+	'Attachments'
 ];
 
 export enum CurationUserType {

@@ -7,8 +7,6 @@
 	import { faAngleUp, faBroom, faExpand, faPen } from '@fortawesome/free-solid-svg-icons';
 	import {
 		CurationEntryType,
-		CurationEntryTypeNames,
-		CurationEntryTypeViewOrders,
 		CurationFilterType,
 		type CurationEntryHelperModel,
 		type CurationEntryModel
@@ -79,9 +77,7 @@
 
 	const typeFilter = curationStore.getEntryFilterData(CurationFilterType.type);
 
-	const curationTypeViewOrder = derived(editMode, ($editMode) =>
-		!$editMode ? CurationEntryTypeViewOrders.default : CurationEntryTypeViewOrders.editMode
-	);
+	const currentTypeViewOrder = curationStore.getCurrentTypeViewOrder();
 
 	onMount(async () => {
 		if (datasetId) {
@@ -137,7 +133,7 @@
 			<CurationProgressInfo expandWritable={progressInfoExpanded} />
 			{#if $progressInfoExpanded}
 				<div in:slide={{ duration: 150 }} out:slide={{ duration: 150 }}>
-					{#each $curationTypeViewOrder as progressType}
+					{#each $currentTypeViewOrder as progressType}
 						{#if progressType !== CurationEntryType.None}
 							<div class="ml-8 opacity-30 hover:opacity-100">
 								<CurationProgressInfo type={progressType} />
@@ -194,7 +190,7 @@
 		</div>
 		<!-- Curation Entries -->
 		<div class="overflow-hidden py-2">
-			{#each $curationTypeViewOrder as type}
+			{#each $currentTypeViewOrder as type}
 				{#if $typeFilter?.data !== undefined ? $typeFilter.data === type : true}
 					<CurationEntryList {type} />
 				{/if}

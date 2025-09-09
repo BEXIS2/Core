@@ -33,11 +33,7 @@
 
 	// Type Filter
 
-	const filterEntryTypes = [
-		CurationEntryType.MetadataEntryItem,
-		CurationEntryType.DatastructureEntryItem,
-		CurationEntryType.PrimaryDataEntryItem
-	];
+	const currentTypeViewOrder = curationStore.getCurrentTypeViewOrder();
 
 	const typeFilter = curationStore.getEntryFilterData(CurationFilterType.type);
 
@@ -69,6 +65,13 @@
 			typeFilterFn,
 			(data) => data === undefined
 		);
+	});
+
+	// check for changes in current types to remove the selected type if it is no longer available
+	currentTypeViewOrder.subscribe(() => {
+		if ($typeFilterGroup !== undefined && !$currentTypeViewOrder.includes($typeFilterGroup)) {
+			typeFilterGroup.set(undefined);
+		}
 	});
 
 	// Search
@@ -138,7 +141,7 @@
 			/>
 			<span>All</span>
 		</label>
-		{#each filterEntryTypes as i}
+		{#each $currentTypeViewOrder as i}
 			<label
 				class="button-label cursor-pointer rounded border border-surface-500 bg-surface-300 px-2 py-0.5"
 			>

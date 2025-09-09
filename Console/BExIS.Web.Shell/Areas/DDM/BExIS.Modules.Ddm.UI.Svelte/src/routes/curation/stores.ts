@@ -4,7 +4,6 @@ import {
 	CurationEntryStatus,
 	CurationEntryStatusColorPalettes,
 	CurationEntryType,
-	CurationEntryTypeViewOrders,
 	CurationFilterType,
 	type CurationDetailModel,
 	type CurationLabel,
@@ -401,14 +400,20 @@ class CurationStore {
 		return derived(this._entryFilters, (filters) => filters.find((f) => f.type === filterType));
 	}
 
+	public getCurrentTypeViewOrder(): Readable<CurationEntryType[]> {
+		return derived([this._curation, this.editMode], ([curation, editMode]) => {
+			const types = curation?.curationEntryTypes ?? [];
+			return editMode ? [...types, CurationEntryType.None] : types;
+		});
+	}
+
 	public getFilteredEntriesReadable(): Readable<CurationEntryClass[]> {
 		return derived(
 			[this._curation, this._entryFilters, this.editMode],
 			([curation, filters, editMode]) => {
 				if (!curation) return [];
-				const typeSet = new Set(
-					!editMode ? CurationEntryTypeViewOrders.default : CurationEntryTypeViewOrders.editMode
-				);
+				const typeSet = new Set(curation.curationEntryTypes);
+				if (editMode) typeSet.add(CurationEntryType.None);
 				return curation.curationEntries
 					.filter((entry) => typeSet.has(entry.type))
 					.filter((entry) => filters.every((f) => !f.fn || f.fn(entry, f.data)));

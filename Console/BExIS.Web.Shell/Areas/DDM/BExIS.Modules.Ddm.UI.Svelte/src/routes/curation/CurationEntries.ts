@@ -21,6 +21,7 @@ export class CurationClass {
 	public readonly datasetId: number;
 	public readonly datasetTitle: string;
 	public readonly datasetVersionDate: string;
+	public readonly curationEntryTypes: CurationEntryType[];
 	public readonly curationEntries: CurationEntryClass[];
 	public readonly curationStatusEntry: CurationEntryClass | null = null;
 	public readonly curationUsers: CurationUserClass[];
@@ -61,6 +62,14 @@ export class CurationClass {
 		this.datasetId = curation.datasetId || 0;
 		this.datasetTitle = curation.datasetTitle || '';
 		this.datasetVersionDate = curation.datasetVersionDate || '';
+
+		const removeTypes = new Set<CurationEntryType>([
+			CurationEntryType.None,
+			CurationEntryType.StatusEntryItem
+		]);
+		this.curationEntryTypes = (curation.curationEntryTypes || []).filter(
+			(type) => !removeTypes.has(type)
+		);
 
 		// curation entries
 		const allEntries = (curation.curationEntries || []).map((entry) => {
