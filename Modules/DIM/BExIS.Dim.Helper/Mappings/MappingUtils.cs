@@ -1620,7 +1620,8 @@ namespace BExIS.Dim.Helpers.Mappings
 
             if (directComplexSourceParent.Equals(directSimpleSourcePath)) // simple xpath need index
             {
-                return directTargetPath;
+                //merge directTargetPath with child to get the child path with index
+                return mergeXPaths(directTargetPath,defaultTargetPath,child);
             }
 
             List<string> levelOfSource = directSimpleSourcePath.Replace(directComplexSourceParent,"").Split('/').ToList(); // level 2
