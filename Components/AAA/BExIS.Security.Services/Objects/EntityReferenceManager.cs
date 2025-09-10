@@ -42,7 +42,9 @@ namespace BExIS.Security.Services.Objects
                          r.TargetEntityId.Equals(entityReference.TargetEntityId) &&
                          r.TargetVersion.Equals(entityReference.TargetVersion) &&
                          r.Context.Equals(entityReference.Context) &&
-                         r.ReferenceType.Equals(entityReference.ReferenceType)
+                         r.ReferenceType.Equals(entityReference.ReferenceType) &&
+                         r.LinkType.Equals(entityReference.LinkType) &&
+                         r.Category.Equals(entityReference.Category)
 
                     ).Count() == 0) return false;
                 }
@@ -55,7 +57,10 @@ namespace BExIS.Security.Services.Objects
                          r.TargetEntityId.Equals(entityReference.TargetEntityId) &&
                          r.TargetVersion.Equals(entityReference.TargetVersion) &&
                          r.Context.Equals(entityReference.Context) &&
-                         r.ReferenceType.Equals(entityReference.ReferenceType)
+                         r.ReferenceType.Equals(entityReference.ReferenceType) &&
+                         r.LinkType.Equals(entityReference.LinkType) &&
+                         r.Category.Equals(entityReference.Category)
+
 
                     ).Count() == 0) return false;
                 }
@@ -67,7 +72,10 @@ namespace BExIS.Security.Services.Objects
                          r.TargetId.Equals(entityReference.TargetId) &&
                          r.TargetEntityId.Equals(entityReference.TargetEntityId) &&
                          r.Context.Equals(entityReference.Context) &&
-                         r.ReferenceType.Equals(entityReference.ReferenceType)
+                         r.ReferenceType.Equals(entityReference.ReferenceType) &&
+                         r.LinkType.Equals(entityReference.LinkType) &&
+                         r.Category.Equals(entityReference.Category)
+
                     ).Count() == 0) return false;
                 }
 
@@ -85,9 +93,9 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
-        public EntityReference Create(long sourceId, long sourceEntityId, int sourceEntityVersion, long targetId, long targetEntityId, int targetEntityVersion, string context, string type)
+        public EntityReference Create(long sourceId, long sourceEntityId, int sourceEntityVersion, long targetId, long targetEntityId, int targetEntityVersion, string context, string type, string linkType, string category)
         {
-            EntityReference entityReference = new EntityReference(sourceId, sourceEntityId, sourceEntityVersion, targetId, targetEntityId, targetEntityVersion, context, type, DateTime.Now);
+            EntityReference entityReference = new EntityReference(sourceId, sourceEntityId, sourceEntityVersion, targetId, targetEntityId, targetEntityVersion, context, type, DateTime.Now, linkType, category);
 
             using (var uow = this.GetUnitOfWork())
             {
