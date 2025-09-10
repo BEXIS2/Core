@@ -8,12 +8,14 @@
 	} from '@fortawesome/free-solid-svg-icons';
 	import { curationStore } from './stores';
 	import Fa from 'svelte-fa';
-	import { CurationEntryType } from './types';
+	import { CurationEntryType, CurationEntryTypeNames } from './types';
 	import CurationEntryTemplateTool from './CurationEntryTemplateTool.svelte';
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
 
 	export let entryId: number;
+
+	const { curation } = curationStore;
 
 	const entry = curationStore.getEntryReadable(entryId);
 
@@ -76,11 +78,12 @@
 			<select bind:value={inputData.type} class="input rounded-r-none" required>
 				<option value="" disabled>Select category</option>
 				<option value={CurationEntryType.None}>None (Hidden)</option>
-				<!-- Status should not be created created this way -->
-				<!-- <option value={CurationEntryType.StatusEntryItem}>Status</option> -->
-				<option value={CurationEntryType.MetadataEntryItem}>Metadata</option>
-				<option value={CurationEntryType.PrimaryDataEntryItem}>Primary Data</option>
-				<option value={CurationEntryType.DatastructureEntryItem}>Data Structure</option>
+				<!-- Status Entry should not be created created this way -->
+				{#each $curation?.curationEntryTypes ?? [] as type}
+					<option value={type}>
+						{CurationEntryTypeNames[type]}
+					</option>
+				{/each}
 			</select>
 			<button
 				class="btn rounded-l-none border-y border-r border-surface-500 px-3 ring-0"
