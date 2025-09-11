@@ -23,6 +23,14 @@ SELECT
 	
 WHERE NOT EXISTS (SELECT * FROM public.entities WHERE name='Extension');
 
+-- update entity template
+--- add columns
+--- update existing entity templates
+
+-- update entity references 
+--- add link type, category
+
+
 
 
 -- BEXIS2 Version Update

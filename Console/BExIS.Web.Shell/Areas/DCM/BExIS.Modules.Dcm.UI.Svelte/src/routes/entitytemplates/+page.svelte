@@ -20,7 +20,8 @@
 		getGroups,
 		getHooks,
 		getFileTypes,
-		getEntityTemplateList
+		getEntityTemplateList,
+		getExtensions
 	} from '../../services/EntityTemplateCaller';
 
 	// types
@@ -35,6 +36,7 @@
 	let entities = [];
 	let groups = [];
 	let filetypes = [];
+	let extensions = [];
 
 	let isOpen = false;
 	let header = '';
@@ -49,6 +51,7 @@
 		entities = await getEntities();
 		groups = await getGroups();
 		filetypes = await getFileTypes();
+		extensions	= await getExtensions();
 
 		entityTemplatesStore.set(await getEntityTemplateList());
 	}
@@ -127,6 +130,7 @@
 					{entities}
 					{groups}
 					{filetypes}
+					{extensions}
 					on:save={refresh}
 					on:cancel={() => (isOpen = false)}
 				/>

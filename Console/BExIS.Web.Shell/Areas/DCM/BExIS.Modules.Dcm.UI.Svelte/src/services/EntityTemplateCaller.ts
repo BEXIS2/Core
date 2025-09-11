@@ -61,6 +61,16 @@ export const getDataStructures = async () => {
 	}
 };
 
+export const getExtensions = async () => {
+	try {
+		const response = await Api.get('/dcm/entitytemplates/Extensions');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
 export const getHooks = async () => {
 	try {
 		const response = await Api.get('/dcm/entitytemplates/Hooks');

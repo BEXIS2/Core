@@ -190,6 +190,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         [JsonNetFilter]
         [HttpGet]
+        public JsonResult Extensions()
+        {
+            List<KeyValuePair<long, string>> tmp = new List<KeyValuePair<long, string>>();
+            using (var entityTemplateManager = new EntityTemplateManager())
+            using (var entityManager = new EntityManager())
+            {
+                var extensionEntity = entityManager.EntityRepository.Get().Where(e => e.Name.Equals("Extension")).FirstOrDefault();
+                tmp = entityTemplateManager.Repo.Query(t=>t.EntityType.Id.Equals(extensionEntity.Id))
+                    .Select(e => new KeyValuePair<long, string>(e.Id, e.Name)).ToList();
+            }
+
+            return Json(tmp, JsonRequestBehavior.AllowGet);
+        }
+
+        [JsonNetFilter]
+        [HttpGet]
         public JsonResult Hooks()
         {
             HookManager hookManager = new HookManager();

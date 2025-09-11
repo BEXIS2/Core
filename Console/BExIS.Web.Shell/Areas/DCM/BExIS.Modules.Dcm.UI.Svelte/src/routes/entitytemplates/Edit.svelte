@@ -46,6 +46,7 @@
 	export let entities = [];
 	export let groups = [];
 	export let filetypes: string[];
+	export let extensions: [];
 
 	const dispatch = createEventDispatcher();
 
@@ -275,6 +276,41 @@
 									title="Limit the selection of allowed data structures"
 									source={dataStructures}
 									bind:target={entityTemplate.datastructureList}
+									itemId="key"
+									itemLabel="value"
+									complexSource={true}
+									help={true}
+								/>
+							{/if}
+						</div>
+					</EntryContainer>
+				</div>
+			</div>
+
+			<div class="flex flex-col space-y-4">
+				<h3 class="h3">Extension</h3>
+				<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+					<EntryContainer>
+						<div
+							role="group"
+							class="flex flex-col gap-4"
+							on:mouseover={() => helpStore.show('hasExtension')}
+							on:focus={() => helpStore.show('hasExtension')}
+						>
+							<SlideToggle
+								active="bg-primary-500"
+								name="use_data_structure"
+								bind:checked={entityTemplate.hasExtension}
+							>
+								Allow to use data structures
+							</SlideToggle>
+
+							{#if entityTemplate.hasExtension}
+								<MultiSelect
+									id="datastructures"
+									title="Limit the selection of allowed extensions"
+									source={extensions}
+									bind:target={entityTemplate.extentionsList}
 									itemId="key"
 									itemLabel="value"
 									complexSource={true}

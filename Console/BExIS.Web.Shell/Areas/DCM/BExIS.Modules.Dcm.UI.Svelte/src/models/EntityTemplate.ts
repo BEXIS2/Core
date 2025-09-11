@@ -10,6 +10,8 @@ export interface EntityTemplateModel {
 	metadataInvalidSaveMode: boolean;
 	hasDatastructure: boolean;
 	datastructureList: number[];
+	hasExtension: boolean;
+	extentionsList: number[];
 	allowedFileTypes: string[];
 	disabledHooks: string[];
 	notificationGroups: number[];
