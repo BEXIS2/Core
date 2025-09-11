@@ -11,7 +11,7 @@ export interface EntityTemplateModel {
 	hasDatastructure: boolean;
 	datastructureList: number[];
 	hasExtension: boolean;
-	extentionsList: number[];
+	extensionsList: number[];
 	allowedFileTypes: string[];
 	disabledHooks: string[];
 	notificationGroups: number[];
