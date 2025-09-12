@@ -310,7 +310,7 @@
 									id="datastructures"
 									title="Limit the selection of allowed extensions"
 									source={extensions}
-									bind:target={entityTemplate.extentionsList}
+									bind:target={entityTemplate.extensionList}
 									itemId="key"
 									itemLabel="value"
 									complexSource={true}

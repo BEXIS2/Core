@@ -39,3 +39,9 @@ export enum HookMode {
 	view = 0,
 	edit = 1
 }
+
+export interface ExtensionType{
+	id: number;
+	version: number;
+	title: string;
+};

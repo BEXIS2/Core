@@ -64,6 +64,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
+
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult GetByObject(long id)
+        {
+            if (id == 0) return Json(new EntityTemplateModel(), JsonRequestBehavior.AllowGet);
+
+            using (var datasetManager = new DatasetManager())
+            using (var entityTemplateManager = new EntityTemplateManager())
+            {
+                var obj = datasetManager.GetDataset(id);
+                var entityTemplate = entityTemplateManager.Repo.Get(obj.EntityTemplate.Id);
+                return Json(EntityTemplateHelper.ConvertTo(entityTemplate), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
         [JsonNetFilter]
         [HttpDelete]
         public JsonResult Delete(long id)

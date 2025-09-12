@@ -4,10 +4,13 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Services.Objects;
 using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
+using BExIS.UI.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -121,5 +124,40 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 return Json(Hooks, JsonRequestBehavior.AllowGet);
             }
         }
+
+        #region extension
+        [JsonNetFilter]
+        public JsonResult GetExtensions(long id)
+        {
+            List<ExtensionItem> tmp = new List<ExtensionItem>();
+
+            using (var datasetManager = new DatasetManager())
+            using (var entityReferenceManager = new EntityReferenceManager())
+            { 
+                var dataset = datasetManager.GetDataset(id);
+                var entity = dataset.EntityTemplate.EntityType;
+
+                var entityreferences = entityReferenceManager.ReferenceRepository.Query(e =>
+                        e.LinkType.Equals("extension") &&
+                        e.SourceId.Equals(id) &&
+                        e.SourceEntityId.Equals(entity.Id)).ToList();
+
+                foreach (var x in entityreferences)
+                {
+                    string title  = datasetManager.GetDatasetVersion(x.TargetId, x.TargetVersion).Title;
+                    tmp.Add(new ExtensionItem()
+                    {
+                        Id = x.TargetId,
+                        Version = x.TargetVersion,
+                        Title = title,
+                        LinkType = x.LinkType,
+                        ReferenceType = x.ReferenceType
+                    });
+                }
+            }
+            return Json(tmp, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
     }
 }

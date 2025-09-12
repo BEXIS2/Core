@@ -11,6 +11,16 @@ export const getEntityTemplate = async (id: number) => {
 	}
 };
 
+export const getEntityTemplateByObject = async (id: number) => {
+	try {
+		const response = await Api.get('/dcm/entitytemplates/GetByObject?id=' + id);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
 export const getEntityTemplateList = async () => {
 	try {
 		const response = await Api.get('/dcm/entitytemplates/Load');

@@ -33,6 +33,21 @@ export const getHooks = async (id) => {
 };
 
 // get Model for Edit page
+export const getExtensions = async (id) => {
+	console.log('getExtensions', id);
+
+	try {
+		const response = await Api.get('/dcm/edit/GetExtensions?id=' + id);
+		console.log(response);
+
+		return response.data;
+	} catch (error) {
+		console.error('error', error);
+		throw error;
+	}
+};
+
+// get Model for Edit page
 export const submit = async (id) => {
 	//console.log("edit",id);
 
