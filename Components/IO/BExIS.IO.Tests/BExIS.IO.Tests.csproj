@@ -141,10 +141,6 @@
       <Project>{0FCF7DE1-E8F2-484C-8638-EF759B11D8A2}</Project>
       <Name>BExIS.App.Testing</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
-      <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
-      <Name>BExIS.Utils.Config</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>

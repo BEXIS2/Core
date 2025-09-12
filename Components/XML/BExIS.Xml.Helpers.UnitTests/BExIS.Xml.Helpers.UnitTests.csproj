@@ -221,10 +221,6 @@
       <Project>{c4d68ac5-84fa-4a97-9e64-9f11623dadc9}</Project>
       <Name>BEXIS.JSON.Helpers</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
-      <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
-      <Name>BExIS.Utils.Config</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
       <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
       <Name>BExIS.Utils.Data</Name>

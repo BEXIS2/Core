@@ -4,12 +4,12 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.Utils.Config;
 using System;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using BExIS.Utils.Config;
 
 namespace BExIS.App.Bootstrap.Attributes
 {
