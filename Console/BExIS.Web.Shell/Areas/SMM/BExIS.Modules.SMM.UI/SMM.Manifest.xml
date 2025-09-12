@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Manifest moduleId="SMM" displayName="Business Administration Module" version="1.0.0" builtin="false">
+	<Description>
+    BAM provides the ability to work with objects such as Party Package. All the packages related to the core of system belong to this module.
+  </Description>
+	<Assemblies>
+		<Assembly fullName="" role="" />
+	</Assemblies>
+	<Dependencies>
+		<!--<Dependency moduleId="dcm" version="*.*.*" />-->
+	</Dependencies>
+	<Exports>
+		<!--add proper menu items-->
+
+		<Export tag="settings" id="createDataset" order="1"
+						title="Manage Parties" description="" icon=""
+						controller="Party" action="index"
+						extends="./settingsRoot" />
+
+		<!-- INTERNAL-->
+
+		<Export tag="internalApi" id="loadFromPartyUserRegisterationForm"
+						title="Load From Party User Registration Form" description="Load FromParty User Registration Form" icon=""
+						controller="PartyService" action="UserRegistration"
+						extends="" />
+		<Export tag="internalApi" id="GetPartyTypesForAccount"
+				title="Get partyTypes for account" description="Get partyTypes for account which are defined in setting.xml" icon=""
+				controller="PartyService" action="GetPartyTypesForAccount"
+				extends="" />
+		<Export tag="lunchbar" id="helpSmm" order="2"
+						title="Account / Parties" description="Parties Help Manual" icon=""
+						controller="Help" action="index"
+						extends="./lunchbarRoot/help" />
+	<!-- Settings Example-->
+		<!--<Export tag="settings" id="manageMetadata" order="1"
+						title="Manage Metadata Structure" description="Edit or Importa new Metadata Structure" icon=""
+						controller="ManageMetadataStructure" action="Index" argument=""
+						extends="./settingsRoot"
+						/>-->
+	<!-- Menubar Example-->
+		<!--<Export tag="menubar" id="createDataset" order="1"
+						title="Create Dataset" description="Create new Dataset" icon=""
+						controller="CreateDataset" action="index"
+						extends="./menubarRoot/collect" />-->
+
+		<!-- Api Example-->
+		<!-- <Export tag="api" id="tntList"
+						title="No thing" description="Change me!" icon=""
+						controller="home" action="index"
+						extends="./apiRoot"
+						/>-->
+	</Exports>
+</Manifest>
