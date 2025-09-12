@@ -66,5 +66,11 @@ export const editHelp = [
 			'<u>2. selection or not</u>' +
 			'<ul class="ul list-disc p-5"><li> If you activate data structure, you can define a selection of data structures from the system.</li>' +
 			'<li>selected - only these structures can be used later, not selected - new structures can be selected.</li></ul>'
+	},
+	{
+		id: 'activated',
+		name: 'Visibility of entity templates when creating entities',
+		description:
+			'Only the activated entity templates are visible to users and they can only create entities based on these.'
 	}
 ];

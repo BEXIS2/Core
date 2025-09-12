@@ -157,7 +157,6 @@
     <Compile Include="DataStructure\UnitManager.cs" />
     <Compile Include="DataStructure\ViewManager.cs" />
     <Compile Include="Helpers\DatasetConvertor.cs" />
-    <Compile Include="Meanings\IMeaningManager.cs" />
     <Compile Include="Meanings\MeaningManager.cs" />
     <Compile Include="MetadataStructure\MetadataPackageManager.cs" />
     <Compile Include="MetadataStructure\MetadataAttributeManager.cs" />

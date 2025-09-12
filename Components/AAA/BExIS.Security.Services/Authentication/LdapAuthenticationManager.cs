@@ -10,7 +10,7 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Authentication
 {
-    public class LdapAuthenticationManager
+    public class LdapAuthenticationManager : IDisposable
     {
         private readonly IUnitOfWork _guow;
         private bool _isDisposed;

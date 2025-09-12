@@ -76,7 +76,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult EditUnit(UnitListItem unitListItem)
         {
             ValidationResult validationResult = new ValidationResult
@@ -143,7 +143,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult DeleteUnit(long id)
         {
             if (id > 0)

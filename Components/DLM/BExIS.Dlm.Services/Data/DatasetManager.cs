@@ -424,6 +424,7 @@ namespace BExIS.Dlm.Services.Data
                     var workingCopy = getDatasetWorkingCopy(entity.Id);
                     //This fetch and insert will be problematic on bigger datasets! try implement the logic without loading the tuples
                     var tupleIds = getWorkingCopyTupleIds(workingCopy);
+                    workingCopy.ContentDescriptors.Clear(); // clear the content descriptors, so that they are not copied to the history table
                     workingCopy = editDatasetVersionBig(workingCopy, null, null, tupleIds, null); // deletes all the tuples from the active list and moves them to the history table
                     checkInDataset(entity.Id, "Dataset is deleted", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, deleteReason, TagType.None);
 
@@ -472,6 +473,7 @@ namespace BExIS.Dlm.Services.Data
                 IRepository<DatasetVersion> datasetVersionRepo = uow.GetRepository<DatasetVersion>();
                 IRepository<DataTuple> tupleRepo = uow.GetRepository<DataTuple>();
                 IRepository<DataTupleVersion> tupleVersionRepo = uow.GetRepository<DataTupleVersion>();
+                IRepository<ContentDescriptor> contentDescriptorRepo = uow.GetRepository<ContentDescriptor>();
 
                 //this.DatasetRepo.Evict();
                 //this.DatasetVersionRepo.Evict();
@@ -499,13 +501,15 @@ namespace BExIS.Dlm.Services.Data
                 {
               
                     // get the latest dataset with data (a)
-                    var dataset = DatasetRepo.Get(entity.Id);
-                    var versions = dataset.Versions.OrderBy(v => v.Id);
-                    var deletedDatasetVersion = versions.ElementAt(dataset.Versions.Count - 1);
-                    var lastDatasetVersion = versions.ElementAt(dataset.Versions.Count - 2);
+                    entity = datasetRepo.Get(entity.Id);
+                    var versions = entity.Versions.OrderBy(v => v.Id);
+                    var deletedDatasetVersion = versions.ElementAt(entity.Versions.Count - 1);
+                    //deletedDatasetVersion = datasetVersionRepo.Get(deletedDatasetVersion.Id);
+
+                    var lastDatasetVersion = versions.ElementAt(entity.Versions.Count - 2);
 
                     // get all datatuples belong to a
-                    var deletedTupleVersions = DataTupleVersionRepo.Query().Where(t =>
+                    var deletedTupleVersions = tupleVersionRepo.Query().Where(t =>
                         t.DatasetVersion.Id.Equals(lastDatasetVersion.Id) &&
                         t.ActingDatasetVersion.Id.Equals(deletedDatasetVersion.Id)
                         ).ToList();
@@ -547,22 +551,31 @@ namespace BExIS.Dlm.Services.Data
                         }
                     }
 
-                    tupleVersionRepo.Delete(deletedTupleVersions.Select(v=>v.Id).ToList());
+                    tupleVersionRepo.Delete(deletedTupleVersions.Select(v => v.Id).ToList());
 
-                   
+                    //uow.Commit(); // commit datatuple changes
 
+
+                    lastDatasetVersion = datasetVersionRepo.Get(lastDatasetVersion.Id);
                     lastDatasetVersion.Status = DatasetVersionStatus.CheckedIn;
                     datasetVersionRepo.Put(lastDatasetVersion);
-                    dataset.Status = DatasetStatus.CheckedIn;
-                    dataset.Versions.Remove(deletedDatasetVersion);
+
+                    entity.Status = DatasetStatus.CheckedIn;
 
                     datasetVersionRepo.Delete(deletedDatasetVersion.Id);
-                    datasetRepo.Put(dataset);
+                    //entity.Versions.Remove(deletedDatasetVersion);
+
+                    entity = datasetRepo.Get(datasetId); // maybe not needed!
+                    entity.Status = DatasetStatus.CheckedIn;
+                    datasetRepo.Put(entity);
                     uow.Commit();
 
                     // if any problem was detected during the commit, an exception will be thrown!
-                    if ((entity.DataStructure is StructuredDataStructure))
-                        updateMaterializedView(datasetId, ViewCreationBehavior.Create, false);
+                    if (entity.DataStructure != null)
+                    {
+                        SyncView(entity.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+                    }
+
 
                     LoggerFactory.LogCustom("dataset " + datasetId + " returns from delete status");
 
@@ -570,9 +583,167 @@ namespace BExIS.Dlm.Services.Data
                 }
                 catch (Exception ex)
                 {
-                    if (entity.Status == DatasetStatus.CheckedOut)
+                    if (!IsDatasetCheckedIn(datasetId))
                     {
                         checkInDataset(entity.Id, "Checked-in after failed delete try!", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, "", TagType.None);
+                    }
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Reset data of a dataset
+        /// If the dataset is checked out and the <paramref name="rollbackCheckout"/> is
+        /// True, the dataset's changes will be roll-backed and then the delete operation takes place, but if the <paramref name="rollbackCheckout"/> is false,
+        /// The changes will be checked in as a new version and then the deletion operation is executed.
+        /// </summary>
+        /// <param name="datasetId">The identifier of the dataset to be checked-in.</param>
+        /// <param name="username">The username that performs the check-in, which should be the same as the check-out username.</param>
+        /// <param name="rollbackCheckout">Determines whether latest uncommitted changes should be rolled back or checked in before marking the dataset as deleted.</param>
+        /// <returns>True if the dataset is deleted, False otherwise.</returns>
+        public bool RevertLastVersionOfDataset(Int64 datasetId, string username, bool rollbackCheckout)
+        {
+            string deleteReason = "Revert of entity " + datasetId; // @ToDO replace by variable from UI
+            Contract.Requires(datasetId >= 0);
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Dataset> datasetRepo = uow.GetRepository<Dataset>();
+                IRepository<DatasetVersion> datasetVersionRepo = uow.GetRepository<DatasetVersion>();
+                IRepository<DataTuple> tupleRepo = uow.GetRepository<DataTuple>();
+                IRepository<DataTupleVersion> tupleVersionRepo = uow.GetRepository<DataTupleVersion>();
+                IRepository<ContentDescriptor> contentDescriptorRepo = uow.GetRepository<ContentDescriptor>();
+
+                //this.DatasetRepo.Evict();
+                //this.DatasetVersionRepo.Evict();
+                //this.DataTupleRepo.Evict();
+                //this.DataTupleVerionRepo.Evict();
+
+                Dataset entity = datasetRepo.Get(datasetId);
+                if (entity.Status == DatasetStatus.Deleted)
+                    return false;
+                /// the dataset must be in CheckedIn state to be deleted
+                /// so if it is checked out, the checkout version (working copy) is removed first
+                if (entity.Status == DatasetStatus.CheckedOut)
+                {
+                    if (rollbackCheckout == true)
+                    {
+                        this.undoCheckout(entity.Id, username, false); // commit and behavior: create|refresh
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("Dataset {0} is in check out state, which prevents it from being deleted. Rollback the changes or check them in and try again", entity.Id));
+                    }
+                }
+
+                try
+                {
+
+                    // get the latest dataset with data (a)
+                    entity = datasetRepo.Get(entity.Id);
+                    var versions = entity.Versions.OrderBy(v => v.Id);
+
+                    if (versions.Count() <= 1) return false; // can not revert if one 
+
+                    var toDeletedDatasetVersion = versions.ElementAt(entity.Versions.Count - 1); // select the last version to be deleted
+                    var lastDatasetVersion = versions.ElementAt(entity.Versions.Count - 2); // select the second last version to be the new last version
+
+                    // get all old tuples version that go to the datatuples table
+                    var oldTupleVersions = tupleVersionRepo.Query().Where(t =>
+                        t.DatasetVersion.Id.Equals(lastDatasetVersion.Id) &&
+                        t.ActingDatasetVersion.Id.Equals(toDeletedDatasetVersion.Id)
+                        ).ToList();
+
+                    // copy datatuplversions -> datatuples table
+                    List<DataTuple> datatuples = new List<DataTuple>();
+                    foreach (var oldTupleVersion in oldTupleVersions)
+                    {
+                        DataTuple tuple = new DataTuple()
+                        {
+                            TupleAction = TupleAction.Edited,
+                            Extra = oldTupleVersion.Extra,
+                            //Id = orginalTuple.Id,
+                            OrderNo = oldTupleVersion.OrderNo,
+                            Timestamp = oldTupleVersion.Timestamp,
+                            XmlAmendments = oldTupleVersion.XmlAmendments,
+                            JsonVariableValues = oldTupleVersion.JsonVariableValues,
+                            DatasetVersion = oldTupleVersion.DatasetVersion, //latestCheckedInVersion,
+                            Values = oldTupleVersion.Values
+                        };
+
+                        datatuples.Add(tuple);
+                    }
+
+                    if (datatuples != null && datatuples.Count > 0)
+                    {
+                        int batchSize = uow.PersistenceManager.PreferredPushSize;
+                        List<DataTuple> processedTuples = null;
+                        long iterations = datatuples.Count / batchSize;
+                        if (iterations * batchSize < datatuples.Count)
+                            iterations++;
+                        for (int round = 0; round < iterations; round++)
+                        {
+                            processedTuples = datatuples.Skip(round * batchSize).Take(batchSize).ToList();
+                            tupleRepo.Put(processedTuples);
+                            uow.ClearCache(true); //flushes one batch of tuples
+                            processedTuples.Clear();
+                            GC.Collect();
+                        }
+                    }
+
+                    // // delete the old tuple versions
+                    tupleVersionRepo.Delete(oldTupleVersions.Select(v => v.Id).ToList());
+
+
+                    // all new tuples need to be deleted
+                    var newTuples = tupleRepo.Query().Where(t =>
+                       t.DatasetVersion.Id.Equals(toDeletedDatasetVersion.Id)
+                       ).ToList();
+
+                    tupleRepo.Delete(newTuples.Select(v => v.Id).ToList());
+
+                    //uow.Commit(); // commit datatuple changes
+
+                    lastDatasetVersion = datasetVersionRepo.Get(lastDatasetVersion.Id);
+                    lastDatasetVersion.Status = DatasetVersionStatus.CheckedIn;
+                    datasetVersionRepo.Put(lastDatasetVersion);
+
+                    entity.Status = DatasetStatus.CheckedIn;
+
+                    // check content descriptors
+                    if (toDeletedDatasetVersion.ContentDescriptors.Any())
+                    { 
+                        foreach (var contentDescriptor in toDeletedDatasetVersion.ContentDescriptors)
+                        {
+                            // remove the content descriptor from the dataset version
+                            contentDescriptorRepo.Delete(contentDescriptor.Id);
+                        }
+                    }
+
+                    datasetVersionRepo.Delete(toDeletedDatasetVersion.Id);
+                    //entity.Versions.Remove(deletedDatasetVersion);
+
+                    entity = datasetRepo.Get(datasetId); // maybe not needed!
+                    entity.Status = DatasetStatus.CheckedIn;
+                    datasetRepo.Put(entity);
+                    uow.Commit();
+
+                    // if any problem was detected during the commit, an exception will be thrown!
+                    if (entity.DataStructure != null)
+                    {
+                        SyncView(entity.Id, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
+                    }
+
+                    LoggerFactory.LogCustom("entity " + datasetId + " returns from last version status");
+
+                    return (true);
+                }
+                catch (Exception ex)
+                {
+                    if (!IsDatasetCheckedIn(datasetId))
+                    {
+                        checkInDataset(entity.Id, "Checked-in after failed revert try!", username, false, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, "", TagType.None);
                     }
                     return false;
                 }
@@ -1768,6 +1939,33 @@ namespace BExIS.Dlm.Services.Data
         }
 
         /// <summary>
+        /// Returns the metadata of the delete dataset <param name="datasetId"></param>.
+        /// </summary>
+        /// <param name="datasetId">The dataset whose deleted metadata version is returned.</param>
+        /// <param name="includeCheckouts">Determines whether the method should return the metadata if the dataset is checked-out.</param>
+        /// <returns>The metadata of the latest version of the specified dataset as an <typeparamref name="XmlDocument"/>.</returns>
+        public XmlDocument GetDeletedDatasetMetadata(Int64 datasetId, bool includeCheckouts = false)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var datasetVRepo = uow.GetReadOnlyRepository<Dataset>();
+
+                var dataset = datasetVRepo.Query(p =>
+                                    (p.Id == datasetId)
+                                && (p.Status == DatasetStatus.Deleted)
+                            ).FirstOrDefault();
+                if (dataset == null)
+                    return null;
+
+                var version = dataset.Versions.OrderBy(v => v.Id).LastOrDefault();
+                if (version == null)
+                    return null;
+
+                return version.Metadata;
+            }
+        }
+
+        /// <summary>
         /// reports what changes have been done by the version specified by <paramref name="versionId"/>. Deletions, updates, new records, and changes in the dataset attributes are among the reported items.
         /// </summary>
         /// <param name="versionId"></param>
@@ -1963,6 +2161,8 @@ namespace BExIS.Dlm.Services.Data
 
             return values;
         }
+
+
 
         #endregion DatasetVersion
 
@@ -4274,6 +4474,70 @@ namespace BExIS.Dlm.Services.Data
             }
 
             return tagNr;
+        }
+
+        #endregion
+
+        #region metadata
+
+        public void UpdateSingleValueInMetadata(long versionId, string xpath, string value)
+        {
+            if(versionId<=0) throw new ArgumentException("versionId must be greater than 0");
+            if (string.IsNullOrWhiteSpace(xpath)) throw new ArgumentException("xpath must not be null or empty");
+            //if (string.IsNullOrWhiteSpace(value)) throw new ArgumentException("value must not be null or empty");
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<DatasetVersion> datasetVersionRepo = uow.GetRepository<DatasetVersion>();
+                var version = datasetVersionRepo.Get(versionId);
+
+                if(version == null) throw new ArgumentException("versionId is not valid");
+
+                var node = version.Metadata.SelectSingleNode(xpath);
+
+                if (node != null)
+                {
+
+                    //node.Value = value;
+                    node.InnerText = value;
+
+                    datasetVersionRepo.Put(version);
+                    uow.Commit();
+
+                }
+            }
+        }
+
+        public void UpdateValueInMetadata(long versionId, string xpath, string value)
+        {
+            if (versionId <= 0) throw new ArgumentException("versionId must be greater than 0");
+            if (string.IsNullOrWhiteSpace(xpath)) throw new ArgumentException("xpath must not be null or empty");
+            if (string.IsNullOrWhiteSpace(value)) throw new ArgumentException("value must not be null or empty");
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<DatasetVersion> datasetVersionRepo = uow.GetRepository<DatasetVersion>();
+                var version = datasetVersionRepo.Get(versionId);
+
+                if (version == null) throw new ArgumentException("versionId is not valid");
+
+                XmlNodeList nodeList = version.Metadata.SelectNodes(xpath);
+
+                if (nodeList.Count >= 1)
+                {
+                    var last = nodeList[nodeList.Count - 1];
+                    if (string.IsNullOrEmpty(last.InnerText)) last.InnerText = value;
+                    else
+                    {
+                        var newNode = last.CloneNode(true);
+                        newNode.InnerText = value;
+                        last.ParentNode.AppendChild(newNode);
+                    }
+                }
+
+                datasetVersionRepo.Put(version);
+                uow.Commit();
+            }
         }
 
         #endregion

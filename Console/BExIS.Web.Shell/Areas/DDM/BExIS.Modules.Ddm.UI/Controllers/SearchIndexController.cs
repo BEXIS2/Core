@@ -55,7 +55,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     if (use_tags == false || (use_tags && hasReleasedTag))// not tags are used or dataset has released tag 
                     {
                         var enumAction = (IndexingAction)Enum.Parse(typeof(IndexingAction), actionType);
-                        provider?.UpdateSingleDatasetIndex(id, enumAction);
+                        provider?.UpdateSingleDatasetIndex(id, enumAction, use_tags);
                     }
                 }
             }

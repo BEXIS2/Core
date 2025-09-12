@@ -29,6 +29,8 @@ namespace BExIS.UI.Models
         public string Url { get; set; }
         public string Target { get; set; }
         public string Module { get; set; }
+
+        public bool Internal { get; set; }
         public List<MenuItem> Items { get; set; }
 
         public MenuItem()
@@ -38,6 +40,7 @@ namespace BExIS.UI.Models
             Items = new List<MenuItem>();
             Target = "_self";
             Module = "";
+            Internal = true;
         }
 
         public MenuItem(string title, string url, string module, string target = "_self")

@@ -9,11 +9,11 @@
 <Accordion>
 	<AccordionItem>
 		<svelte:fragment slot="summary">({count})</svelte:fragment>
-		<svelte:fragment slot="lead">{title}</svelte:fragment>
+		<svelte:fragment slot="lead"><div class="break-words w-11/12">{title}</div></svelte:fragment>
 		<svelte:fragment slot="content">
-			<ol class="list-disc px-5">
+			<ol class="list-disc px-5 break-words w-11/12">
 				{#each messages as m}
-					<li>{m}</li>
+					<li class="break-words w-11/12">{m}</li>
 				{/each}
 			</ol>
 		</svelte:fragment>

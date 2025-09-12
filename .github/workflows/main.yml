@@ -1,0 +1,32 @@
+on:
+  push:
+    paths:
+      - '**/*.csproj'
+      - '**/*.sln'
+  workflow_dispatch:
+
+jobs:
+  upgrade-check:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+
+      - name: Install .NET Upgrade Assistant
+        run: dotnet tool install -g upgrade-assistant
+
+      - name: Run Upgrade Assistant in analyze mode
+        run: |
+          upgrade-assistant analyze BExIS%2B%2B.sln --format json > upgrade-report.json
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v3.1.3
+        with:
+          name: upgrade-report
+          path: upgrade-report.json

@@ -5,6 +5,7 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Xml.Helpers;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace BExIS.Dlm.Tests.Helpers
             DatasetManager dm = new DatasetManager();
             try
             {
-                dm.GetDatasetLatestIds(true).ForEach(dsId => dm.PurgeDataset(dsId));
+                dm.DatasetRepo.Get().Select(d=>d.Id).ToList().ForEach(dsId => dm.PurgeDataset(dsId));
             }
             finally
             {
@@ -96,6 +97,47 @@ namespace BExIS.Dlm.Tests.Helpers
             }
         }
 
+        public Dataset CreateDatasetWithMetadata()
+        {
+            using (var dm = new DatasetManager())
+            using (var rsm = new ResearchPlanManager())
+            using (var mdm = new MetadataStructureManager())
+            using (var etm = new EntityTemplateManager())
+
+            {
+ 
+                StructuredDataStructure dataStructure = CreateADataStructure();
+                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+
+                var rp = CreateResearchPlan();
+                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+
+                var mds = mdm.Repo.Query().First();
+                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+
+                var et = etm.Repo.Query().First();
+                et.Should().NotBeNull("Failed to meet a precondition: a entity template is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds, et);
+
+                if (dm.IsDatasetCheckedOutFor(dataset.Id, "username") || dm.CheckOutDataset(dataset.Id, "username"))
+                {
+                    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
+
+                    var xmlMetadatWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+
+                    var metadataXml = xmlMetadatWriter.CreateMetadataXml(1); // abcd
+                    workingCopy.Metadata = XmlUtility.ToXmlDocument(metadataXml);
+
+                    var dsv = dm.EditDatasetVersion(workingCopy, null, null, null);
+                    dm.CheckInDataset(dataset.Id, "for testing  datatuples with versions", "username", ViewCreationBehavior.None);
+                    return dm.GetDataset(dataset.Id);
+                }
+
+                return null;
+            }
+        }
+
         public StructuredDataStructure CreateADataStructure()
         {
             var unitManager = new UnitManager();
@@ -124,6 +166,8 @@ namespace BExIS.Dlm.Tests.Helpers
                 if (dataStructure != null)
                 {
 
+                if (dataStructure != null)
+                {
                     var var1 = variableManager.CreateVariable("var1UT", dataStructure.Id, varTemplate1.Id);
                     var var2 = variableManager.CreateVariable("var2UT", dataStructure.Id, varTemplate2.Id);
                     var var3 = variableManager.CreateVariable("var3UT", dataStructure.Id, varTemplate3.Id);
@@ -132,8 +176,9 @@ namespace BExIS.Dlm.Tests.Helpers
                 }
                 else
                 {
-                    dataStructure = dsManager.StructuredDataStructureRepo.Query().First();
+                    dataStructure = dsManager.StructuredDataStructureRepo.Query(d => d.Name.Equals("dsForTesting")).FirstOrDefault();
                 }
+
 
                 return dataStructure;
             }
@@ -259,14 +304,14 @@ namespace BExIS.Dlm.Tests.Helpers
             }
         }
 
-        public Dataset UpdateOneTupleForDataset(Dataset dataset, StructuredDataStructure dataStructure, long id, int value, DatasetManager datasetManager)
+        public Dataset UpdateOneTupleForDataset(Dataset dataset, StructuredDataStructure dataStructure, long id, int value,string username, DatasetManager datasetManager)
         {
             dataset.Status.Should().Be(DatasetStatus.CheckedIn);
             dataset.Should().NotBeNull();
 
             try
             {
-                if (datasetManager.IsDatasetCheckedOutFor(dataset.Id, "David") || datasetManager.CheckOutDataset(dataset.Id, "David"))
+                if (datasetManager.IsDatasetCheckedOutFor(dataset.Id, username) || datasetManager.CheckOutDataset(dataset.Id, username))
                 {
                     dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in Checkedout status.");
 

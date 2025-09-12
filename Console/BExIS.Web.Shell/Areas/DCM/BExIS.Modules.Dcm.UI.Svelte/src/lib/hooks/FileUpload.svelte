@@ -6,7 +6,7 @@
 
 	import FileOverview from '$lib/components/fileupload/FileOverview.svelte';
 
-	import FileReaderInformation from '$lib/components/fileupload/FileReaderInformation.svelte';
+	import FileReaderInformation from '$lib/components/fileupload/FileReaderInfo.svelte';
 
 	import {
 		latestFileUploadDate,
@@ -42,7 +42,6 @@
 
 	onMount(async () => {
 		load();
-
 	});
 
 	$: loading = false;
@@ -97,6 +96,9 @@
 			on:success
 		/>
 		{#if model.fileUploader.existingFiles.length}
+			<div class="pt-2">
+				<b>Uploaded File(s)</b>
+			</div>
 			<FileOverview
 				{id}
 				files={model.fileUploader.existingFiles}
@@ -106,14 +108,13 @@
 				on:success={success}
 				on:warning={warning}
 			/>
- 	{#if model.allFilesReadable && model.hasStructure}
-
-			<FileReaderInformation
-				{id}
-				bind:target={fileReaderSelectedFile}
-				bind:readableFiles={model.fileUploader.existingFiles}
-				bind:asciiFileReaderInfo={model.asciiFileReaderInfo}
-			/>
+			{#if model.allFilesReadable && model.hasStructure}
+				<FileReaderInformation
+					{id}
+					bind:target={fileReaderSelectedFile}
+					bind:readableFiles={model.fileUploader.existingFiles}
+					bind:asciiFileReaderInfo={model.asciiFileReaderInfo}
+				/>
 			{/if}
 		{/if}
 	{:catch error}

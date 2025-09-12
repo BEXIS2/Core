@@ -175,6 +175,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 }
 
                 if (!operationManager.Exists("RPM", "Help", "*")) operationManager.Create("RPM", "Help", "*");
+
+                if (!operationManager.Exists("RPM", "File", "*")) operationManager.Create("RPM", "File", "*");
             }
             finally
             {

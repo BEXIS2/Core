@@ -18,6 +18,14 @@ export interface sortedError {
 	errors: string[];
 }
 
+export interface sortedWarning {
+	name: string;
+	count: number;
+	issue: string;
+	type: errorType;
+	warnings: string[];
+}
+
 export enum errorType {
 	Dataset,
 	Datastructure,

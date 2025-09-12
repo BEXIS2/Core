@@ -1,4 +1,5 @@
-﻿using BExIS.Security.Entities.Subjects;
+﻿using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Utils.NH.Querying;
 using Microsoft.AspNet.Identity;
 using System;
@@ -100,26 +101,59 @@ namespace BExIS.Security.Services.Subjects
                 //return Task.FromException(new Exception());
                 return Task.CompletedTask;
 
-            using (var uow = this.GetUnitOfWork())
-            {
-                var groupRepository = uow.GetRepository<Group>();
-                groupRepository.Put(role);
-                uow.Commit();
-            }
+            var groupRepository = _guow.GetRepository<Group>();
+            groupRepository.Put(role);
+            _guow.Commit();
 
             return Task.CompletedTask;
         }
 
         public Task DeleteAsync(Group role)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var groupRepository = uow.GetRepository<Group>();
-                groupRepository.Delete(role);
-                uow.Commit();
-            }
+            var groupRepository = _guow.GetRepository<Group>();
+            groupRepository.Delete(role);
+            _guow.Commit();
 
             return Task.CompletedTask;
+        }
+
+        public Task<bool> DeleteByIdAsync(long roleId)
+        {
+            var groupRepository = _guow.GetRepository<Group>();
+            var group = groupRepository.Get(roleId);
+
+            if (group == null)
+                //return Task.FromException(new Exception());
+                return Task.FromResult(false);
+
+
+            // Users
+            var userRepository = _guow.GetRepository<User>();
+            foreach (var user in group.Users)
+            {
+                user.Groups.Remove(group);
+                userRepository.Put(user);
+            }
+
+            // EntityPermissions
+            var entityPermissionRepository = _guow.GetRepository<EntityPermission>();
+            foreach (var entityPermission in entityPermissionRepository.Get(e => e.Subject.Id == roleId))
+            {
+                entityPermissionRepository.Delete(entityPermission);
+            }
+
+            // FeaturePermissions
+            var featurePermissionRepository = _guow.GetRepository<FeaturePermission>();
+            foreach (var featurePermission in featurePermissionRepository.Get(e => e.Subject.Id == roleId))
+            {
+                featurePermissionRepository.Delete(featurePermission);
+            }
+
+            var result = groupRepository.Delete(group);
+
+            _guow.Commit();
+
+            return Task.FromResult(result);
         }
 
         public void Dispose()
@@ -129,29 +163,20 @@ namespace BExIS.Security.Services.Subjects
 
         public Task<Group> FindByIdAsync(long roleId)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var groupRepository = uow.GetRepository<Group>();
-                return Task.FromResult(groupRepository.Get(roleId));
-            }
+            return Task.FromResult(GroupRepository.Get(roleId));
         }
 
         public Task<Group> FindByNameAsync(string roleName)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var groupRepository = uow.GetRepository<Group>();
+            var groups = GroupRepository.Query(u => u.Name.ToLowerInvariant() == roleName.ToLowerInvariant()).ToList();
 
-                var groups = groupRepository.Query(u => u.Name.ToLowerInvariant() == roleName.ToLowerInvariant()).ToList();
+            if (!groups.Any())
+                return Task.FromResult<Group>(null);
 
-                if(!groups.Any())
-                    return Task.FromResult<Group>(null);
+            if (groups.Count > 1)
+                return Task.FromResult<Group>(null);
 
-                if (groups.Count > 1)
-                    return Task.FromResult<Group>(null);
-
-                return Task.FromResult(groups.Single());
-            }
+            return Task.FromResult(groups.Single());
         }
 
         public Task UpdateAsync(Group role)
@@ -165,14 +190,10 @@ namespace BExIS.Security.Services.Subjects
             if (FindByIdAsync(role.Id)?.Result == null)
                 return Task.CompletedTask;
 
-            using (var uow = this.GetUnitOfWork())
-            {
-                var groupRepository = uow.GetRepository<Group>();
-                groupRepository.Merge(role);
-                var r = groupRepository.Get(role.Id);
-                groupRepository.Put(r);
-                uow.Commit();
-            }
+            _guow.GetRepository<Group>().Merge(role);
+            var merged = _guow.GetRepository<Group>().Get(role.Id);
+            _guow.GetRepository<Group>().Put(merged);
+            _guow.Commit();
 
             return Task.CompletedTask;
         }

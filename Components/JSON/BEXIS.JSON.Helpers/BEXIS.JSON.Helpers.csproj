@@ -37,11 +37,12 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json.Schema, Version=4.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Newtonsoft.Json.Schema.4.0.1\lib\net45\Newtonsoft.Json.Schema.dll</HintPath>
+    <Reference Include="Newtonsoft.Json.Schema, Version=3.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Newtonsoft.Json.Schema.3.0.16\lib\net45\Newtonsoft.Json.Schema.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
     <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Vaiona\Vaiona.Entities\bin\Debug\Vaiona.Entities.dll</HintPath>
     </Reference>
@@ -62,6 +63,10 @@
     <ProjectReference Include="..\..\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
       <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
       <Name>BExIS.Dlm.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
+      <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
+      <Name>BExIS.Xml.Helpers</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

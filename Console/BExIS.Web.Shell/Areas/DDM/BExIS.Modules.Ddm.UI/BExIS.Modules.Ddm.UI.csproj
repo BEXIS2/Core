@@ -59,6 +59,9 @@
     <Reference Include="Microsoft.Web.Infrastructure, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Microsoft.Web.Infrastructure.2.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
+    <Reference Include="NameParser, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\NameParserSharp.1.5.0\lib\net45\NameParser.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -69,7 +72,11 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
-    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
     </Reference>
@@ -136,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\Api\CitationsController.cs" />
     <Compile Include="Controllers\Api\DataTableController.cs" />
     <Compile Include="Controllers\Api\SearchApiController.cs" />
     <Compile Include="Controllers\Api\TagInfoController.cs" />
@@ -153,12 +161,14 @@
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DdmModule.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Helpers\CitationsHelper.cs" />
     <Compile Include="Helpers\DdmSeedDataGenerator.cs" />
     <Compile Include="Helpers\GridHelper.cs" />
     <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Helpers\SearchUIHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\TagInfoHelper.cs" />
+    <Compile Include="Models\CitationModels.cs" />
     <Compile Include="Models\DashboardModel.cs" />
     <Compile Include="Models\DatasetPermissionModels.cs" />
     <Compile Include="Models\DecisionModels.cs" />
@@ -257,6 +267,10 @@
     <Content Include="Views\Data\_bioSchemaView.cshtml" />
     <Content Include="Views\Search\Index.cshtml" />
     <Content Include="Views\PublicSearch\Index.cshtml" />
+    <Content Include="Views\Data\_labelsView.cshtml" />
+    <Content Include="Views\Data\_Citation_Text.cshtml" />
+    <Content Include="Views\Data\_Citation_APA.cshtml" />
+    <Content Include="Views\Data\_Title.cshtml" />
     <Content Include="Views\Curation\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -270,6 +284,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\Images\" />
+    <Folder Include="Views\Citation\" />
     <Folder Include="Views\Export\" />
     <Folder Include="Views\Home\" />
   </ItemGroup>
@@ -283,7 +298,7 @@
       <Name>BExIS.Security.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\App\BExIS.App.Bootstrap\BExIS.App.Bootstrap.csproj">
-      <Project>{7D7FBF8E-37D7-4A4C-B40E-3F267E9B9760}</Project>
+      <Project>{7d7fbf8e-37d7-4a4c-b40e-3f267e9b9760}</Project>
       <Name>BExIS.App.Bootstrap</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
@@ -313,6 +328,10 @@
     <ProjectReference Include="..\..\..\..\..\Components\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
       <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
       <Name>BExIS.Utils.Config</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
+      <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
+      <Name>BExIS.Utils.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\Utils\BExIS.Utils.NH\BExIS.Utils.NH.csproj">
       <Project>{0F1EC13E-D685-4F4D-A438-52797B0E53A0}</Project>

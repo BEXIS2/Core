@@ -899,7 +899,7 @@
             <param name="version"></param>
             <returns></returns>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.CheckExportPossibility(System.Int64,System.Int64)">
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.CheckExportPossibility(System.Int64,System.Int64,System.Int32,System.Double)">
             <summary>
             ToDo Refactor submission Commented by Javad due to modularity issues.
             Thes functions should call the APIs of the DIM module and get json objects back.
@@ -915,7 +915,7 @@
             <param name="datasetVersionId"></param>
             <returns></returns>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.SendDataToDataRepo(System.Int64,System.Int64)">
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.SendDataToDataRepo(System.Int64,System.Int64,System.Int32,System.Double)">
             <summary>
             
             </summary>
@@ -957,6 +957,19 @@
         <member name="M:BExIS.Modules.Dim.UI.Helpers.DimSeedDataGenerator.createToKeyMapping(System.String,BExIS.Dim.Entities.Mappings.LinkElementType,System.String,BExIS.Dim.Entities.Mappings.LinkElementType,BExIS.Dim.Entities.Mappings.Key,BExIS.Dim.Entities.Mappings.Mapping,System.Xml.Linq.XDocument,BExIS.Dim.Services.Mappings.MappingManager,BExIS.Dim.Entities.Mappings.TransformationRule)">
             <summary>
             Map a node from xml to system key
+            </summary>
+            <param name="simpleNodeName">name or xpath</param>
+            <param name="simpleType"></param>
+            <param name="complexNodeName">name or xpath</param>
+            <param name="complexType"></param>
+            <param name="key"></param>
+            <param name="root"></param>
+            <param name="metadataRef"></param>
+            <param name="mappingManager"></param>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Helpers.DimSeedDataGenerator.createMappingKeyMapping(System.String,BExIS.Dim.Entities.Mappings.LinkElementType,System.String,BExIS.Dim.Entities.Mappings.LinkElementType,BExIS.Dim.Entities.Mappings.MappingKey,BExIS.Dim.Entities.Mappings.MappingKey,BExIS.Dim.Entities.Mappings.Mapping,BExIS.Dim.Entities.Mappings.Mapping,System.Xml.Linq.XDocument,BExIS.Dim.Services.Mappings.MappingManager,BExIS.Dim.Entities.Mappings.TransformationRule,BExIS.Dim.Entities.Mappings.TransformationRule)">
+            <summary>
+            Map a node from xml to concept key
             </summary>
             <param name="simpleNodeName">name or xpath</param>
             <param name="simpleType"></param>

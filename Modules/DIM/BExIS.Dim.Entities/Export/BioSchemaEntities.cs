@@ -41,8 +41,22 @@ namespace BExIS.Dim.Entities.Export
         [JsonProperty("citation")]
         public string Citation { get; set; }
 
+        [JsonProperty("version")]
+        public string Version { get; set; }
+
+        [JsonProperty("dateCreated")]
+        public string DateCreated { get; set; }
+
+        [JsonProperty("dateModified")]
+        public string DateModified { get; set; }
+
+        [JsonProperty("datePublished")]
+        public string DatePublished { get; set; }
+
         [JsonProperty("creator")]
         public List<BioSchemaPerson> Creator { get; set; }
+
+    
         public BioSchemaDataset() { 
         
             Context = "https://schema.org/";
@@ -56,6 +70,9 @@ namespace BExIS.Dim.Entities.Export
             Url = "";
             Citation = "";
             Creator = new List<BioSchemaPerson>();
+            Version = "";
+            DateCreated = "";
+            DateModified = "";
             
         }
     }
@@ -69,7 +86,7 @@ namespace BExIS.Dim.Entities.Export
         [JsonProperty("givenName")]
         public string GivenName { get; set; }
 
-        [JsonProperty("familiName")]
+        [JsonProperty("familyName")]
         public string FamiliName { get; set; }
 
         [JsonProperty("email")]

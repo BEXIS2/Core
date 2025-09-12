@@ -15,30 +15,51 @@
       "title": "Check public metadata for not-logged in users",
       "value": false,
       "type": "Boolean",
-      "description": "Set true to enable to show metadata for not-logged in users, if the dataset is not public."
+      "description": "If set to true, the metadata of non-public datasets will also be visible to non-logged-in users, in addition to the metadata of public datasets."
     },
     {
       "key": "reduce_versions_select_logged_in",
       "title": "Reduce versions select for logged in users",
       "value": true,
       "type": "Boolean",
-      "description": "Set true to reduce the versions select for logged in users."
+      "description": "If set to true, logged-in users will only see major and minor versions of a dataset instead of all versions."
     },
     {
       "key": "restrict_latest_version_logged_in",
       "title": "Restrict to latest version for logged in users",
       "value": false,
       "type": "Boolean",
-      "description": "Set true to restrict the version select to the latest version for logged in users."
+      "description": "If set to true, logged-in users will only see the newest version of a dataset instead of all versions."
     },
     {
       "key": "use_tags",
       "title": "Activate tags to summarize versions",
       "value": false,
       "type": "Boolean",
-      "description": "Enable to possibilty for Users to define a combination of versions to a tag."
+      "description": "If set to true, using tags is enabled to define a combination of versions."
     },
     {
+      "key": "use_minor",
+      "title": "Use minor tags",
+      "value": false,
+      "type": "Boolean",
+      "description": "If set to true, the minor version tag can be assigned to dataset versions to display changes in more detail."
+    },
+    {
+      "key": "citationSettings",
+      "title": "settings for citations",
+      "options": [],
+      "type": "JSON",
+      "value": {
+        "publisher": "BEXIS2 DevOps Team",
+        "instance": "BEXIS2 - DevOps Test",
+        "numberOfAuthors": 0,
+        "showCitation": true,
+        "defaultViewCitationFormat": "Text",
+        "viewCitationFormats": ["Text", "APA"],
+        "downloadCitationFormats": [ "Text", "APA", "RIS", "BibTex" ]
+      },
+      "description": "..."
         "key": "use_minor",
         "title": "Use minor tags",
         "value": false,
@@ -59,5 +80,6 @@
         "type": "JSON",
         "description": "Customize the labels that can be used in the curation. \nExample: \"curationLabels\": [ { \"name\": \"custom-label-1\", \"color\": \"#ff0000\" }, ... ]"
     }
+
   ]
 }

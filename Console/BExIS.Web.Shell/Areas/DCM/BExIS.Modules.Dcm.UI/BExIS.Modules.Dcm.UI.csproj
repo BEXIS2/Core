@@ -57,6 +57,7 @@
     <Compile Include="Controllers\CreateController.cs" />
     <Compile Include="Controllers\EditController.cs" />
     <Compile Include="Controllers\EntityTemplatesController.cs" />
+    <Compile Include="Controllers\Hooks\DataController.cs" />
     <Compile Include="Controllers\Hooks\DataDescriptionController.cs" />
     <Compile Include="Controllers\Hooks\AttachmentUploadController.cs" />
     <Compile Include="Controllers\Hooks\FileUploadController.cs" />
@@ -72,8 +73,6 @@
     <Compile Include="Controllers\Legacy\ImportMetadataStructureSetParametersController.cs" />
     <Compile Include="Controllers\Legacy\ImportMetadataStructureSummaryController.cs" />
     <Compile Include="Controllers\Legacy\ManageMetadataStructureController.cs" />
-    <Compile Include="Controllers\Legacy\PushController.cs" />
-    <Compile Include="Controllers\Legacy\OldSubmitController.cs" />
     <Compile Include="Controllers\Hooks\MetadataController.cs" />
     <Compile Include="Controllers\API\LinkController.cs" />
     <Compile Include="Controllers\Views\MessagesController.cs" />
@@ -88,12 +87,12 @@
     <Compile Include="Helpers\DataASyncUploadHelper.cs" />
     <Compile Include="Helpers\DcmSeedDataGenerator.cs" />
     <Compile Include="Helpers\EasyUploadSuggestion.cs" />
-    <Compile Include="Helpers\EntityReferenceHelper.cs" />
     <Compile Include="Helpers\FormHelper.cs" />
     <Compile Include="Helpers\SubmitHelper.cs" />
     <Compile Include="Helpers\SystemMetadataHelper.cs" />
     <Compile Include="Helpers\UploadUIHelper.cs" />
     <Compile Include="Hooks\AttachmentViewHook.cs" />
+    <Compile Include="Hooks\DataEditHook.cs" />
     <Compile Include="Hooks\DataStructurePreviewHook.cs" />
     <Compile Include="Hooks\DataHook.cs" />
     <Compile Include="Hooks\DataDescriptionHook.cs" />
@@ -118,11 +117,11 @@
     <Compile Include="Models\Curation\Curation.cs" />
     <Compile Include="Models\EasyUploadSummaryModel.cs" />
     <Compile Include="Models\Edit\DataDescriptionModel.cs" />
+    <Compile Include="Models\Edit\DataModel.cs" />
     <Compile Include="Models\Edit\EditModel.cs" />
     <Compile Include="Models\Edit\FileUploadModel.cs" />
     <Compile Include="Models\Edit\SubmitModel.cs" />
     <Compile Include="Models\Edit\MetadataModel.cs" />
-    <Compile Include="Models\EntityReference\ReferenceModels.cs" />
     <Compile Include="Models\EntityTemplates\EntityTemplateModels.cs" />
     <Compile Include="Models\FileInfoModel.cs" />
     <Compile Include="Models\FinishUploadModel.cs" />
@@ -471,6 +470,7 @@
     <Content Include="Views\Form\_number.cshtml" />
     <Content Include="Views\Form\_metadataParameterViewOffline.cshtml" />
     <Content Include="Web.config" />
+    <Content Include="Views\Form\_displayname.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -483,6 +483,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\Images\" />
+    <Folder Include="Views\Data\" />
     <Folder Include="Views\DcmAdmin\" />
     <Folder Include="Views\FileReaderInfo\" />
     <Folder Include="Views\FileUpload\" />
@@ -498,6 +499,7 @@
     </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.4.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Iesi.Collections.4.0.4\lib\net461\Iesi.Collections.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.Identity.Core.2.2.4\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
@@ -520,8 +522,8 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json.Schema, Version=4.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\Newtonsoft.Json.Schema.4.0.1\lib\net45\Newtonsoft.Json.Schema.dll</HintPath>
+    <Reference Include="Newtonsoft.Json.Schema, Version=3.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Newtonsoft.Json.Schema.3.0.16\lib\net45\Newtonsoft.Json.Schema.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate, Version=5.4.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\NHibernate.5.4.9\lib\net48\NHibernate.dll</HintPath>
@@ -573,6 +575,7 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.IO.Compression.ZipFile, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\System.IO.Compression.ZipFile.4.3.0\lib\net46\System.IO.Compression.ZipFile.dll</HintPath>
       <Private>True</Private>
@@ -906,5 +909,12 @@ C:\Windows\System32\xcopy "$(ProjectDir)Dcm.Settings.json" "$(SolutionDir)Consol
   </Target>
   <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
     <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <Import Project="..\..\..\..\..\packages\NETStandard.Library.2.0.0\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\..\..\..\..\packages\NETStandard.Library.2.0.0\build\netstandard2.0\NETStandard.Library.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\..\..\..\packages\NETStandard.Library.2.0.0\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\..\packages\NETStandard.Library.2.0.0\build\netstandard2.0\NETStandard.Library.targets'))" />
   </Target>
 </Project>

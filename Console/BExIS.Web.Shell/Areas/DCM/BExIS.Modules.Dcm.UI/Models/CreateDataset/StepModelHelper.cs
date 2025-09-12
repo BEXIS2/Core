@@ -36,6 +36,7 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
             set
             {
                 _model = value;
+       
                 Activated = SetActiveByPreload();
             }
         }
@@ -96,6 +97,8 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
 
         public bool IsEmpty()
         {
+            if (Model == null) return true;
+
             foreach (MetadataAttributeModel simpleAttr in Model.MetadataAttributeModels)
             {
                 if (simpleAttr.IsEmpty != true) return false;
@@ -107,6 +110,12 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
             }
 
             return true;
+        }
+
+        private bool isChildOfChoiceParent(StepModelHelper parent )
+        { 
+            if(parent == null) return false;
+            return parent.Choice;
         }
 
         public string DisplayName()
@@ -147,8 +156,17 @@ namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
         /// <returns></returns>
         private bool SetActiveByPreload()
         {
-            if (Model != null &&
-                Model.MinCardinality > 0) Activated = true;
+            // check if a parent is in a choice object
+            if (!isChildOfChoiceParent(Parent)) // not, so set active if MinCardinality >0
+            {
+                if (Model != null &&
+                    Model.MinCardinality > 0 &&
+                    Model.MaxCardinality >= 1)
+                {
+                    Activated = true;
+                }
+            }
+
 
             return Activated;
         }

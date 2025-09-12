@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicFileInfo.cs" />
+    <Compile Include="DataType\DataTypeHelper.cs" />
     <Compile Include="FileHelper.cs" />
     <Compile Include="IOHelper.cs" />
     <Compile Include="IOUtility.cs" />

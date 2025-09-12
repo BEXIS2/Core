@@ -2,6 +2,7 @@
 using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.IO.Transform.Input;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.Edit;
@@ -15,8 +16,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Modularity;
@@ -197,10 +200,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
-        public JsonResult RemoveFile(long id, string file)
+        [CustomValidateAntiForgeryToken]
+        public JsonResult RemoveFile(long id, BExIS.UI.Hooks.Caches.FileInfo file)
         {
             // remove file from server
-            string path = Path.Combine(AppConfiguration.DataPath, "datasets", id.ToString(), "Temp", file);
+            string path = Path.Combine(AppConfiguration.DataPath, "datasets", id.ToString(), "Temp", file.Name);
             if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
 
             // remove file from cache
@@ -209,9 +213,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             EditDatasetDetailsLog log = hookManager.LoadLog<EditDatasetDetailsLog>("dataset", "details", HookMode.edit, id);
             var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
-            if (cache.Files.Any(f => f.Name == file))
+            if (cache.Files.Any(f => f.Name == file.Name))
             {
-                var f = cache.Files.Where(x => x.Name == file).FirstOrDefault();
+                var f = cache.Files.Where(x => x.Name == file.Name).FirstOrDefault();
                 if (f != null) cache.Files.Remove(f);
             }
 
@@ -224,7 +228,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
-        public JsonResult SaveFileDescription(long id, string file, string description)
+        [CustomValidateAntiForgeryToken]
+        public JsonResult SaveFileDescription(long id, BExIS.UI.Hooks.Caches.FileInfo file, string description)
         {
             // remove file from cache
             HookManager hookManager = new HookManager();
@@ -233,10 +238,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
-            if (cache.Files.Any(f => f.Name == file))
+            if (cache.Files.Any(f => f.Name == file.Name))
             {
-                var f = cache.Files.Where(x => x.Name == file).FirstOrDefault();
-                if (f != null) f.Description = description;
+                var f = cache.Files.Where(x => x.Name == file.Name).FirstOrDefault();
+                if (f != null) f.Description = file.Description;
             }
 
             log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { file + " description updated" }, username, "File upload", "save file description"));
@@ -245,6 +250,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             hookManager.SaveCache(cache, "dataset", "details", HookMode.edit, id);
 
             return Json(true);
+        }
+
+        public JsonResult FileReader(string file, long entityId, long version = -1)
+        {
+            //var x =  RedirectToAction("Load", "DataStructure", new { area = "RPM", file, entityId, version });
+
+            //if (this.IsAccessible("RPM", "DataStructure", "Load"))
+            //{
+            //    var actionresult = this.Run("RPM", "DataStructure", "Load", new RouteValueDictionary() { { "file", file }, { "version", version }, { "entityId", entityId } { "encoding", EncodingType.UTF8 } });
+
+            //   // return Json("");
+            //}
+
+            return Json(new
+            {
+                redirectUrl = Url.Action("test", " DataStructure", new { area = "RPM" })
+            });
+
+            //return Json(new { redirect = true, url = Url.Action("Load", "DataStructure", new { area = "RPM", file, version, entityId, encoding = EncodingType.UTF8 }) } );
         }
 
         private string getFileName(HttpPostedFileBase file)

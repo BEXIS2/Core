@@ -84,7 +84,7 @@
 		}
 	});
 
-	function fillVariableValdationStates(vars: []) {
+	function fillVariableValdationStates(vars: VariableInstanceModel[]) {
 		variableValidationStates = [];
 
 		for (let index = 0; index < vars.length; index++) {
@@ -92,10 +92,10 @@
 		}
 	}
 
-	// every time when validation state of a varaible is change,
-	// this function triggered an check wheter save button can be active or not
+	// every time when validation state of a variable is change,
+	// this function triggered an check whether save button can be active or not
 	function checkValidationState() {
-		valid = variableValidationStates.every((v) => v === true);
+		valid = variableValidationStates.every((v: boolean) => v === true);
 		//console.log("TCL ~ file: Variables.svelte:63 ~ checkValidationState ~ variableValidationStates:", variableValidationStates)
 	}
 
@@ -108,12 +108,12 @@
 		return cValues;
 	}
 
-	// copy data from varaible on index i to the next one
+	// copy data from variable on index i to the next one
 	function copyNext(i: number) {
 		const modal: ModalSettings = {
 			type: 'confirm',
 			title: 'Copy',
-			body: 'Are you sure you wish to copy the current variable to the next?',
+			body: 'Are you sure you want to copy the current variable to the next?',
 			// TRUE if confirm pressed, FALSE if cancel pressed
 			response: (r: boolean) => {
 				if (r === true) {
@@ -131,12 +131,12 @@
 		modalStore.trigger(modal);
 	}
 
-	// copy data from varaible on index i to all next
+	// copy data from variable on index i to all next
 	function copyAll(i: number) {
 		const modal: ModalSettings = {
 			type: 'confirm',
 			title: 'Copy',
-			body: 'Are you sure you wish to copy the current variable to all after?',
+			body: 'Are you sure you want to copy the current variable to all after?',
 			// TRUE if confirm pressed, FALSE if cancel pressed
 			response: (r: boolean) => {
 				if (r === true) {
@@ -156,7 +156,7 @@
 		modalStore.trigger(modal);
 	}
 
-	function updateVariableFromOther(from, to) {
+	function updateVariableFromOther(from: VariableInstanceModel, to: VariableInstanceModel) {
 		if (from && to) {
 			to.description = from.description;
 			to.dataType = from.dataType;
@@ -196,7 +196,7 @@
 		const confirm: ModalSettings = {
 			type: 'confirm',
 			title: 'Delete Variable',
-			body: 'Are you sure you wish to delete the variable "' + deleteVar.name + '"?',
+			body: 'Are you sure you want to delete the variable "' + deleteVar.name + '"?',
 			// TRUE if confirm pressed, FALSE if cancel pressed
 			response: (r: boolean) => {
 				if (r) {
@@ -225,6 +225,7 @@
 		<button
 			id="variables-expander"
 			class="btn variant-filled-secondary"
+			title={expandAll ? 'collapse all' : 'expand all'}
 			on:mouseover={() => helpStore.show('variables-expander')}
 			on:click={() => (expandAll = !expandAll)}
 		>
@@ -273,15 +274,16 @@
 							<button
 								id="copy-next-{i}"
 								type="button"
-								title="copy to next"
+								title="copy content (not name) to the next variable "
 								class="chip variant-filled-warning"
 								on:mouseover={() => helpStore.show('copy-next')}
+								on:focus={() => helpStore.show('copy-next')}
 								on:click={() => copyNext(i)}><Fa icon={faShare} /></button
 							>
 							<button
 								id="copy-all-{i}"
 								type="button"
-								title="copy to all after this"
+								title="copy content (not name) to all after this"
 								class="chip variant-filled-warning"
 								on:mouseover={() => helpStore.show('copy-all')}
 								on:click={() => copyAll(i)}><Fa icon={faShareFromSquare} /></button
@@ -292,27 +294,30 @@
 						{#if !dataExist}
 							<button
 								id="delete-{i}"
-								title="delete"
+								title="delete variable"
 								class="chip variant-filled-error"
 								on:mouseover={() => helpStore.show('delete-var')}
+								on:focus={() => helpStore.show('delete-var')}
 								on:click={() => deleteFn(i)}><Fa icon={faTrash}></Fa></button
 							>
 
 							{#if i > 0}
 								<button
 									id="up-{i}"
-									title="up"
+									title="move up"
 									class="chip variant-filled-surface"
 									on:mouseover={() => helpStore.show('up-var')}
+									on:focus={() => helpStore.show('up-var')}
 									on:click={() => upFn(i)}><Fa icon={faAngleUp}></Fa></button
 								>
 							{:else}
 								<button
 									id="up-{i}"
-									title="up"
+									title="move up"
 									class="chip variant-filled-surface disbaled"
 									disabled
 									on:mouseover={() => helpStore.show('up-var')}
+									on:focus={() => helpStore.show('up-var')}
 									on:click={() => upFn(i)}><Fa icon={faAngleUp}></Fa></button
 								>
 							{/if}
@@ -322,24 +327,27 @@
 								title="copy"
 								class="chip variant-filled-primary"
 								on:mouseover={() => helpStore.show('copy-var')}
+								on:focus={() => helpStore.show('copy-var')}
 								on:click={() => copyFn(i)}><Fa icon={faCopy}></Fa></button
 							>
 
 							{#if variables.length > 0 && i < variables.length - 1}
 								<button
 									id="down-{i}"
-									title="down"
+									title="move down"
 									class="chip variant-filled-surface"
 									on:mouseover={() => helpStore.show('down-var')}
+								 on:focus={() => helpStore.show('down-var')}
 									on:click={() => downFn(i)}><Fa icon={faAngleDown}></Fa></button
 								>
 							{:else}
 								<button
 									id="down-{i}"
-									title="down"
+									title="move down"
 									class="chip variant-filled-surface"
 									disabled
 									on:mouseover={() => helpStore.show('down-var')}
+									on:focus={() => helpStore.show('down-var')}
 									on:click={() => downFn(i)}><Fa icon={faAngleDown}></Fa></button
 								>
 							{/if}
@@ -356,7 +364,11 @@
 				{/if}
 			</div>
 		{:else}
-			<Spinner label="loading suggested structure" />
+		 {#if dataExist}
+			<Spinner label="loading suggested structure based on your file." />
+			{:else}
+			<Spinner label="loading structure." />
+		{/if}
 		{/if}
 	</div>
 </div>

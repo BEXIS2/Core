@@ -1,54 +1,78 @@
-> This version contains some new features and a lot of smaller enhancements. Once the new features are stable, we plan to release version 4.0.0.
-
-<b>Important:</b> web.config.samples and the workspace contain important changes.
+# BEXIS 2 Release Notes - Version 4.1.0
+> This release comes with a big reduction in data type complexity by removing unused and redundant data types. Only the most commonly used data types are now available, which simplifies the data structure creation process. Additionally, this release includes several bug fixes and enhancements to improve the overall user experience. Further we introduced a new setting to control sending error emails based from the system.
 
 ### Workspace changes:
-- Workspace changes: [3.3.3..3.4.0](https://github.com/BEXIS2/Workspace/compare/3.3.3..3.4.0)
+- Workspace changes: [4.0.2..4.1.0](https://github.com/BEXIS2/Workspace/compare/4.0.2..4.1.0)
 
 ### Database Update(s):
-- Update script from version 3.3.3 to 3.4.0: [Update_Script_3.3.3_3.4.0.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/3.3.3-3.4.0.sql)
+- Update script from version 4.0.2 to 4.1.0: [Update_Script_4.0.2_4.1.0.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/4.0.2-4.1.0.sql)
 
-### New Settings
-- General
-  - <b>landingPageForUsers</b> update link to new search
-- Data Discovery
-  - <b>use_tags</b> : Enable users to create tags as a combination of dataset versions.
-  - <b>use_minor</b> : Activate minor tags to show the changes more granularly (x.x).
+### New Settings:
+- **Error Email System**: A new setting has been introduced to control the sending of error emails based on the system settings. This allows administrators to manage error notifications more effectively. ([here](https://demo.bexis2.uni-jena.de/home/docs/Configuration#e-mail))
+- **Citation settings**: A new setting under data discovery enables the system to provide citation formats and displays for entities. ([here](https://demo.bexis2.uni-jena.de/home/docs/Configuration#citation))
 
+# Bugfixes and enhancements
+## Metadata
+- **UI Rendering Issues**: Fix high-level schema elements rendered improperly([#2096](https://github.com/BEXIS2/Core/issues/2096))
 
-### Features
-- Dataset versioning: Creation, View, and Editing. Call via tag (url & API) [#1647](https://github.com/BEXIS2/Core/issues/#1647)
-- Bioschema.org integration: Add as a concept for mapping and to the metadata [#511](https://github.com/BEXIS2/Core/issues/511)
-- Refactored Search UI to Svelte (as it was before) [#1801](https://github.com/BEXIS2/Core/issues/1801)
-- DOI integration into BEXIS2 Core System [#1567](https://github.com/BEXIS2/Core/issues/1567)
+- **UI Element Duplication**: Fix random duplication of elements. ([#2097](https://github.com/BEXIS2/Core/issues/2097))
 
+- **UI Drop-down Menu**: Fix drop-down menu for integers rendering issue. ([#2103](https://github.com/BEXIS2/Core/issues/2103))
 
-### Enhancements
-- Hide empty field groups in Metadata View [#1807](https://github.com/BEXIS2/Core/issues/1807)
-- Change and edit missing values during editing and creation of a data structure [#1779](https://github.com/BEXIS2/Core/issues/1779)
-- Add centralized BEXIS2 theme CSS generation [#1790](https://github.com/BEXIS2/Core/issues/1790)
-- Variable edit in data structure: Change group names from value to category [#1787](https://github.com/BEXIS2/Core/issues/1787)
-- Bigger refactoring of the variable edit in the data structure [#1792](ttps://github.com/BEXIS2/Core/issues/1792)
-- UI improvements File Reader Information & Spell checking [#1855](https://github.com/BEXIS2/Core/issues/1855)
-- Change the order of the data structure and file upload in the metadata edit [#1859](https://github.com/BEXIS2/Core/issues/1859)
-- Add variable count to data structure error message [#1777](https://github.com/BEXIS2/Core/issues/1777)
-- Remove "in use" info from user view [#1782](https://github.com/BEXIS2/Core/issues/1782)
+- **Metadata Save Issue**: Fix metadata not saveable anymore after update of system values. ([#2133](https://github.com/BEXIS2/Core/issues/2133))
 
-### Maintenance & Security
-- Add API error messages as notifications to page component for development [#91](https://github.com/BEXIS2/bexis2-core-ui/issues/91)
-- Fix problems with build solution after new installation of BEXIS 2 [#1791](https://github.com/BEXIS2/Core/issues/1791)
-- Reduction of used NuGet packages [#1794](https://github.com/BEXIS2/Core/issues/1794)
-- Robots.txt: change default settings [#735](https://github.com/BEXIS2/Core/issues/)
-- Prevent Web Application Potentially Vulnerable to Clickjacking [#1853](https://github.com/BEXIS2/Core/issues/1853)
-- Prevent Web Server Allows Password Auto-Completion [#1861](https://github.com/BEXIS2/Core/issues/1861)
+- **Metadata Choices**: Fix choices with default value from XSD has selected 2 values at the same time. ([#2134](https://github.com/BEXIS2/Core/issues/2134))
+
+- **Metadata Enum Elements**: Fix Enum-Elements with an attribute are not displayed as drop-down list. ([#1265](https://github.com/BEXIS2/Core/issues/1265))
+
+- **Metadata Default Values**: Fix choices in metadata with default value in XSD has selected 2 values at the same time. ([#2135](https://github.com/BEXIS2/Core/issues/2135))
+
+## General
+- **Menu Layout**: Fix missing nowrap in new menu. ([#2109](https://github.com/BEXIS2/Core/issues/2109))
+
+- **Footer Update**: Change footer. ([#2054](https://github.com/BEXIS2/Core/issues/2054))
 
 
-### Bugfixes
-- Fix data structure (date pattern) changes are not detected [#1858](https://github.com/BEXIS2/Core/issues/1858)
-- Fix name of a person (party type) switches after edit [#1484](https://github.com/BEXIS2/Core/issues/1484)
-- Fix Log Off does not work in Svelte Layout [#1518](https://github.com/BEXIS2/Core/issues/1518)
-- Fix file reader information: Selection without description does not work [#1856](https://github.com/BEXIS2/Core/issues/1856)
-- Fix disable Submit after submitting does not work for small files [#1857](https://github.com/BEXIS2/Core/issues/1857)
-- Fix data structure (date pattern & missing values) changes are not detected [#1858](https://github.com/BEXIS2/Core/issues/1858)
-- Fix data type Decimal does not allow negative values [#1866](https://github.com/BEXIS2/Core/issues/1866)
-- Fix wrong title for delete Variable & Dimension [#1868](https://github.com/BEXIS2/Core/issues/1868)
+- **Svelte Menu Enhancement**: Add hover effect and increase size. ([#2071](https://github.com/BEXIS2/Core/issues/2071))
+
+## Dataset View
+- **Permissions Tab**: Fix permissions tab is not visible. ([#2118](https://github.com/BEXIS2/Core/issues/2118))
+
+- **Dataset Links**: Fix missing in the download package. ([#981](https://github.com/BEXIS2/Core/issues/981))
+
+- **Version Access Rights**: Fix get latest version throws an error when you have no rights to see the latest not tagged version. ([#2119](https://github.com/BEXIS2/Core/issues/2119))
+  
+- **Title OR Citation within Dataset View**: Added a new option to the Dataset View Page that gives you control over what information is shown at the top. You can now choose between displaying either the Dataset Title or the full Citation String. ([#2140](https://github.com/BEXIS2/Core/issues/2140))
+
+## Dataset Edit
+- **Data Types Merging**: Merging of similar data types to simplify use. ([#2117](https://github.com/BEXIS2/Core/issues/2117))
+
+- **Attachment Upload**: Fix error while adding file description during upload of attachments. ([#2143](https://github.com/BEXIS2/Core/issues/2143))
+
+- **Upload Validation**: Add date pattern to error message. ([#2145](https://github.com/BEXIS2/Core/issues/2145))
+
+- **Constraint Loading**: Fix long loading times for used constraints. ([#2110](https://github.com/BEXIS2/Core/issues/2110))
+
+- **Tag View Error**: Fix loading tag view throws error when author and description is null. ([#2144](https://github.com/BEXIS2/Core/issues/2144))
+
+## API & Export
+- **API Enhancement**: Create API should return ID and status code instead of message. ([#2121](https://github.com/BEXIS2/Core/issues/2121))
+
+- **Dataset API Enhancement**: Add entity links. ([#2132](https://github.com/BEXIS2/Core/issues/2132))
+
+- **ORCID and ROR IDs**: Use of ORCID and ROR IDs in the user profile and in the DOI proxy. ([#2068](https://github.com/BEXIS2/Core/issues/2068))
+
+- **JSON Field Mapping**: Fix impossible to obtain several fields mapped into one information block in JSON. ([#2138](https://github.com/BEXIS2/Core/issues/2138))
+
+
+## Maintenance
+- **Error Email System**: Send error emails based on settings. ([#2136](https://github.com/BEXIS2/Core/issues/2136))
+
+- **SQL Script Creation**: Create a SQL script that adds tags to versions in an existing instance. ([#2120](https://github.com/BEXIS2/Core/issues/2120))
+
+- **Update Script Extension**: Extend update script to link variable templates and meanings. ([#2111](https://github.com/BEXIS2/Core/issues/2111))
+
+- **SAM Former Members**: Fix user not findable in former members group. ([#2112](https://github.com/BEXIS2/Core/issues/2112))
+
+- **Restore deleted Datasets**: Add new feature to the Dataset Management page that allows you to easily restore datasets that were previously marked for deletion. ([#1734](https://github.com/BEXIS2/Core/issues/1734))
+

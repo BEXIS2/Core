@@ -232,7 +232,8 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                                 {
                                     Performer = HttpContext.User?.Identity?.Name,
                                     Comment = "File",
-                                    ActionType = AuditActionType.Delete
+                                    ActionType = AuditActionType.Delete,
+                                    Timestamp = DateTime.Now
                                 };
 
                                 // set system key values
@@ -242,8 +243,13 @@ namespace IDIV.Modules.Mmm.UI.Controllers
 
                                 datasetManager.EditDatasetVersion(workingCopy, null, null, null);
 
+                                // get comment for checkin
+                                string comment = "File deleted (" + Path.GetFileName(path) + ")";
                                 // ToDo: Get Comment from ui and users
-                                datasetManager.CheckInDataset(datasetID, temp.Last(), HttpContext.User.Identity.Name, ViewCreationBehavior.None);
+                                datasetManager.CheckInDataset(datasetID, comment, HttpContext.User.Identity.Name, ViewCreationBehavior.None);
+
+
+
                                 Session["DatasetInfo"] = datasetInfo;
                                 Session["EntityType"] = entityType;
                                 return true;

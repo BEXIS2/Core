@@ -1,5 +1,5 @@
 ﻿@using BExIS.Utils.Extensions
-@model BExIS.Modules.Dcm.UI.Models.EntityReference.ReferencesModel
+@model BExIS.UI.Models.EntityReference.ReferencesModel
 
 @{
     ViewBag.Title = " ... ";
@@ -46,11 +46,13 @@
 
                 @foreach (var srm in Model.TargetReferences)
                 {
+                    string targetName = string.IsNullOrEmpty(srm.Target.Title) ? "No Title available" : srm.Target.Title;
+
                     <tr>
                         <td>@srm.Source.Version</td>
                         <td>@srm.Target.Id</td>
                         <td>@srm.Target.Version</td>
-                        <td>@Html.ActionLink(@srm.Target.Title, "Show", "Data", new { Area = "DDM", id = srm.Target.Id, version = srm.Target.Version }, null)</td>
+                        <td>@Html.ActionLink(targetName, "Show", "Data", new { Area = "DDM", id = srm.Target.Id, version = srm.Target.Version }, null)</td>
                         <td>@srm.Context</td>
                         <td>@srm.Target.Type</td>
                         <td>@srm.ReferenceType</td>
@@ -168,6 +170,8 @@
 
             $('#create-reference-bt')
                 .click(function () {
+                    console.log("create-reference-bt");
+     
                     $.ajax({
                         type: 'GET',
                         url: '@Url.Action("Create", "EntityReference")',
@@ -236,7 +240,9 @@
                         }
                     });
                 }
-            }
+        }
+
+        console.log("link ready")
         })
 </script>
 

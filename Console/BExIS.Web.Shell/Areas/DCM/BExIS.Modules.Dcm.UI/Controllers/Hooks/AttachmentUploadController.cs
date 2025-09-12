@@ -5,6 +5,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.IO;
 using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.Edit;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
@@ -15,8 +16,10 @@ using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Upload;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Web;
 using System.Web.Mvc;
 using Vaiona.Entities.Common;
@@ -86,6 +89,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
+        [CustomValidateAntiForgeryToken]
         public JsonResult Upload(long id)
         {
             // load edit dataset cache
@@ -157,7 +161,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
-        public JsonResult RemoveFile(long id, string file)
+        [CustomValidateAntiForgeryToken]
+        public JsonResult RemoveFile(long id, BExIS.UI.Hooks.Caches.FileInfo file)
         {
             // load edit dataset cache
             HookManager hookManager = new HookManager();
@@ -168,48 +173,61 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 var username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
-                var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "Attachments", file);
+                var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "Attachments", file.Name);
                 FileHelper.Delete(filePath);
                 var dataset = dm.GetDataset(id);
-                var datasetVersion = dm.GetDatasetLatestVersion(dataset);
-                var contentDescriptor = datasetVersion.ContentDescriptors.FirstOrDefault(item => item.Name == file);
-                if (contentDescriptor == null)
-                    throw new Exception("There is not any content descriptor having file name '" + file + "'. ");
+      
 
-                datasetVersion.ContentDescriptors.Remove(contentDescriptor);
-
-                datasetVersion.ModificationInfo = new EntityAuditInfo()
+                if (dm.IsDatasetCheckedOutFor(dataset.Id, username) || dm.CheckOutDataset(dataset.Id, username))
                 {
-                    Performer = username,
-                    Comment = "Attachment",
-                    ActionType = AuditActionType.Delete
-                };
+                    var datasetVersion = dm.GetDatasetWorkingCopy(dataset.Id);
 
-                dm.EditDatasetVersion(datasetVersion, null, null, null);
-                dm.CheckInDataset(dataset.Id, file, username, ViewCreationBehavior.None);
+                    var contentDescriptor = datasetVersion.ContentDescriptors.FirstOrDefault(item => item.Name == file.Name);
+                    if (contentDescriptor == null)
+                        throw new Exception("There is not any content descriptor having file name '" + file + "'. ");
 
-                using (var emailService = new EmailService())
-                {
-                    emailService.Send(MessageHelper.GetAttachmentDeleteHeader(id, typeof(Dataset).Name),
-                                    MessageHelper.GetAttachmentDeleteMessage(id, file, username),
-                                    GeneralSettings.SystemEmail
-                                    );
+                    datasetVersion.ContentDescriptors.Remove(contentDescriptor);
+
+                    datasetVersion.ModificationInfo = new EntityAuditInfo()
+                    {
+                        Performer = username,
+                        Comment = "Attachment",
+                        ActionType = AuditActionType.Delete,
+                        Timestamp = DateTime.Now
+                    };
+
+
+                    // create attachment comment
+                    // single case
+                    string comment = "Attachment deleted (" + file.Name + ")";
+
+                    dm.EditDatasetVersion(datasetVersion, null, null, null);
+                    dm.CheckInDataset(dataset.Id, comment, username, ViewCreationBehavior.None);
+
+                    using (var emailService = new EmailService())
+                    {
+                        emailService.Send(MessageHelper.GetAttachmentDeleteHeader(id, typeof(Dataset).Name),
+                                        MessageHelper.GetAttachmentDeleteMessage(id, file.Name, username),
+                                        GeneralSettings.SystemEmail
+                                        );
+                    }
+
+                    // add message to the cache
+                    log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { file + " removed" }, username, "Attachment upload", "remove"));
+
+                    // update last modification time
+                    cache.UpdateLastModificarion(typeof(AttachmentEditHook));
+
+                    hookManager.Save(cache, log, "dataset", "details", HookMode.edit, id);
                 }
-
-                // add message to the cache
-                log.Messages.Add(new LogMessage(DateTime.Now, new List<string>() { file + " removed" }, username, "Attachment upload", "remove"));
-
-                // update last modification time
-                cache.UpdateLastModificarion(typeof(AttachmentEditHook));
-
-                hookManager.Save(cache, log, "dataset", "details", HookMode.edit, id);
             }
 
             return Json(true);
         }
 
         [HttpPost]
-        public JsonResult SaveFileDescription(long id, string file, string description)
+        [CustomValidateAntiForgeryToken]
+        public JsonResult SaveFileDescription(long id, BExIS.UI.Hooks.Caches.FileInfo file, string description)
         {
             HookManager hookManager = new HookManager();
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
@@ -217,14 +235,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             using (var dm = new DatasetManager())
             {
-                var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "Attachments", file);
+                var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "Attachments", file.Name);
                 var dataset = dm.GetDataset(id);
                 var datasetVersion = dm.GetDatasetLatestVersion(dataset);
-                var contentDescriptor = datasetVersion.ContentDescriptors.FirstOrDefault(item => item.Name == file);
+                var contentDescriptor = datasetVersion.ContentDescriptors.FirstOrDefault(item => item.Name == file.Name);
                 if (contentDescriptor == null)
                     throw new Exception("There is not any content descriptor having file name '" + file + "'. ");
 
-                contentDescriptor.Description = description;
+                contentDescriptor.Description = file.Description;
 
                 dm.UpdateContentDescriptor(contentDescriptor);
             }
@@ -266,7 +284,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         //[BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
         public void saveAttachments(HttpFileCollectionBase attachments, long datasetId)
         {
-            var filemNames = "";
+            var fileNames = "";
             var user = BExISAuthorizeHelper.GetUserFromAuthorization(HttpContext);
             using (var dm = new DatasetManager())
             {
@@ -300,7 +318,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         {
                             HttpPostedFileBase file = attachments[i];
                             var fileName = getFileName(file);
-                            filemNames += fileName.ToString() + ",";
+                            fileNames += fileName.ToString() + ",";
                             var dataPath = AppConfiguration.DataPath;
                             if (!Directory.Exists(Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments")))
                                 Directory.CreateDirectory(Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments"));
@@ -312,21 +330,29 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         using (var emailService = new EmailService())
                         {
                             emailService.Send(MessageHelper.GetAttachmentUploadHeader(datasetId, typeof(Dataset).Name),
-                                                        MessageHelper.GetAttachmentUploadMessage(datasetId, filemNames, user.DisplayName),
+                                                        MessageHelper.GetAttachmentUploadMessage(datasetId, fileNames, user.DisplayName),
                                                         GeneralSettings.SystemEmail
                                                         );
                         }
+
+                        // create attachment comment
+                        // single case
+                        string comment = "Attachment uploaded (" + fileNames+")";
+                        // multiple case
+                        if(attachments.Count>1)
+                            comment = "Attachments uploaded (" + fileNames + ")";
 
                         //set modification
                         datasetVersion.ModificationInfo = new EntityAuditInfo()
                         {
                             Performer = user.Name,
                             Comment = "Attachment",
-                            ActionType = AuditActionType.Create
+                            ActionType = AuditActionType.Create,
+                            Timestamp = DateTime.Now
                         };
 
                         dm.EditDatasetVersion(datasetVersion, null, null, null);
-                        dm.CheckInDataset(dataset.Id, filemNames, user.Name, ViewCreationBehavior.None);
+                        dm.CheckInDataset(dataset.Id, comment, user.Name, ViewCreationBehavior.None);
                     }
                     catch (Exception ex)
                     {

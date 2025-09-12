@@ -32,7 +32,7 @@ export const load = async (file: string, entityId: number, encoding: number, ver
 	console.log(file, entityId, version);
 	try {
 		const response = await Api.get(
-			'/rpm/DataStructure/load?file=' +
+			'/rpm/File/load?file=' +
 				file +
 				'&&encoding=' +
 				encoding +
@@ -93,16 +93,16 @@ export const checkPrimaryKeySet = async (id: number, primaryKeys: number[]) => {
 	}
 };
 
-export const empty = async () => {
+export const empty = async (id:number=0) => {
 	try {
-		const response = await Api.get('/rpm/DataStructure/empty');
+		const response = await Api.get('/rpm/DataStructure/empty?entityId=' + id);	
 		return response.data;
 	} catch (error) {
 		console.error(error);
 	}
 };
 
-export const copy = async (id) => {
+export const copy = async (id:number) => {
 	try {
 		const response = await Api.get('/rpm/DataStructure/copy?id=' + id);
 
@@ -124,11 +124,10 @@ export const remove = async (id) => {
 
 export const store = async (data) => {
 	try {
-		const response = await Api.post('/rpm/DataStructure/store', data);
+		const response = await Api.post('/rpm/File/store', data);
 		return response;
 	} catch (error) {
 		console.error(error);
-		
 	}
 };
 
@@ -207,9 +206,7 @@ export const getConstraints = async () => {
 	}
 };
 
-
 // go to a internal action
-export const goTo = async (url:string) => {
+export const goTo = async (url: string) => {
 	window.open(host + url, '_self').focus();
 };
-

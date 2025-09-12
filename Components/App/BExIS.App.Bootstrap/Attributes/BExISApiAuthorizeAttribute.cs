@@ -26,7 +26,7 @@ namespace BExIS.App.Bootstrap.Attributes
                 using (var featurePermissionManager = new FeaturePermissionManager())
                 using (var operationManager = new OperationManager())
                 using (var userManager = new UserManager())
-                using (var identityUserService = new IdentityUserService())
+                using (var identityUserService = new IdentityUserService(userManager))
                 {
                     var areaName = "Api";
                     var controllerName = actionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
@@ -80,7 +80,7 @@ namespace BExIS.App.Bootstrap.Attributes
                     // 1.1. check basic auth in case of principal is empty!
                     if (principal == null || principal.Identity == null || !principal.Identity.IsAuthenticated)
                     {
-                        if (actionContext.Request.Headers.Authorization.Scheme.ToLower() == "basic")
+                        if (actionContext.Request.Headers.Authorization != null && actionContext.Request.Headers.Authorization.Scheme.ToLower() == "basic")
                         {
                             string basicParameter = actionContext.Request.Headers.Authorization.Parameter;
 

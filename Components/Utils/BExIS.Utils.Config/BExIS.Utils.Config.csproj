@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppConfigHelper.cs" />
+    <Compile Include="Configurations\ExceptionConfiguration.cs" />
     <Compile Include="Configurations\CurationConfiguration.cs" />
     <Compile Include="Configurations\JwtConfiguration.cs" />
     <Compile Include="Configurations\LdapConfiguration.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="WebApiConfig.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

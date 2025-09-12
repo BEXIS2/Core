@@ -1,4 +1,5 @@
-﻿using BExIS.Dim.Entities.Publications;
+﻿using BExIS.App.Bootstrap;
+using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers;
 using BExIS.Dim.Helpers.Export;
 using BExIS.Dim.Services;
@@ -11,15 +12,21 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Party;
 using BExIS.IO;
 using BExIS.IO.Transform.Output;
+using BExIS.Modules.Dim.UI.Helpers;
+using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Modules.Dim.UI.Models.Export;
 using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Entities.Versions;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
 using BExIS.Utils.Extensions;
+using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
-using Ionic.Zip;
+using Newtonsoft.Json;
 using System;
+using System.Data;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
@@ -29,6 +36,7 @@ using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -188,36 +196,29 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             try
             {
-                using (var uow = this.GetUnitOfWork())
+                using (var datasetManager = new DatasetManager())
                 {
-                    LoggerFactory.LogCustom("Generate Zip Start");
-                    long dsvId = versionid;
-                    if (dsvId <= 0) dsvId = dm.GetDatasetLatestVersion(id).Id;
-                    DatasetVersion datasetVersion = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsvId);
-                    int versionNr = dm.GetDatasetVersionNr(datasetVersion);
+                    long datasetVersionId = versionid;
+                    long dataStructureId = 0;
+                    int datasetVersionNumber = dm.GetDatasetVersionNr(datasetVersionId);
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
-                    #region metadata
+                    #region Metadata
 
-                    LoggerFactory.LogCustom("Metadata Start");
+                    //metadata as XML
+                    XmlDocument document = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport, datasetVersion.Dataset.MetadataStructure.Name);
 
-                    //metadata as xml output
-                    XmlDocument document = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport,
-                             datasetVersion.Dataset.MetadataStructure.Name);
+                    //generate metadata as HTML and store the file locally
+                    generateMetadataAsHtml(datasetVersion);
 
-                    //metadata as html
-                    generateMetadataHtml(datasetVersion);
-
-                    #endregion metadata
+                    #endregion
 
                     #region primary data
-
-                    LoggerFactory.LogCustom("Primary Data Start");
 
                     // check the data sturcture type ...
                     if (format != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure && dm.GetDataTuplesCount(datasetVersion.Id) > 0)
                     {
                         OutputDataManager odm = new OutputDataManager();
-                        // apply selection and projection
 
                         //check wheter title is empty or not
                         string title = String.IsNullOrEmpty(datasetVersion.Title) ? "no title available" : datasetVersion.Title;
@@ -238,133 +239,104 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         }
                     }
 
-                    #endregion primary data
+                 
 
-                    LoggerFactory.LogCustom("check zip on server Start");
+                    #endregion
 
-                    string zipName = publishingManager.GetZipFileName(id, versionNr);
-                    string zipPath = publishingManager.GetDirectoryPath(id, brokerName);
-                    string dynamicZipPath = publishingManager.GetDynamicDirectoryPath(id, brokerName);
-                    string zipFilePath = Path.Combine(zipPath, zipName);
-                    //string dynamicFilePath = Path.Combine(dynamicZipPath, zipName);
-
-                    FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipFilePath));
-
-                    if (FileHelper.FileExist(zipFilePath))
-                    {
-                        if (FileHelper.WaitForFile(zipFilePath))
-                        {
-                            FileHelper.Delete(zipFilePath);
-                        }
-                    }
-
-                    // add datastructure
-                    //ToDo put that functiom to the outputDatatructureManager
-
-                    #region datatructure
-
-                    LoggerFactory.LogCustom("Datastructure Start");
-
-                   
+                    #region data structure
 
                     if (datasetVersion.Dataset.DataStructure != null)
                     {
-                        long dataStructureId = datasetVersion.Dataset.DataStructure.Id;
+                        dataStructureId = datasetVersion.Dataset.DataStructure.Id;
                         DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
 
-                        try
-                        {
-                            string dynamicPathOfDS = "";
-                            dynamicPathOfDS = storeGeneratedFilePathToContentDiscriptor(id, datasetVersion,
-                                "datastructure", ".txt");
-                            string datastructureFilePath = AsciiWriter.CreateFile(dynamicPathOfDS);
+                        string dataStructurePath = "";
+                        dataStructurePath = storeGeneratedFilePathToContentDiscriptor(id, datasetVersion,
+                            "datastructure", ".json");
+                        string datastructureFilePath = AsciiWriter.CreateFile(dataStructurePath);
 
-                            string json = OutputDataStructureManager.GetDataStructureAsJson(dataStructureId);
+                        string json = OutputDataStructureManager.GetDataStructureAsJson(dataStructureId);
 
-                            AsciiWriter.AllTextToFile(datastructureFilePath, json);
+                        AsciiWriter.AllTextToFile(datastructureFilePath, json);
 
-                            //generate datastructure as html
-                            DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsvId);
-                            generateDataStructureHtml(ds);
-                        }
-                        catch (Exception ex)
-                        {
-                            throw ex;
-                        }
+                        //generate data structure as html 
+                        generateDataStructureHtml(datasetVersion);
                     }
 
-                    #endregion datatructure
+                    #endregion
 
-                    LoggerFactory.LogCustom("Zip Start");
+                    #region zip file
 
-                    using (ZipFile zip = new ZipFile())
+                    string zipName = publishingManager.GetZipFileName(id, datasetVersionNumber);
+                    string zipPath = Path.Combine(publishingManager.GetDirectoryPath(id, brokerName), zipName);
+                    FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipPath));
+
+                    using (var zipFileStream = new FileStream(zipPath, FileMode.Create))
+                    using (var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Update))
                     {
+                        // stored contentdescriptior key name in db for the format and the dataname
+                        string dataName = getCDTypeName(format);
+
+                        // content descriptors
                         foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                         {
-                            bool addFile = true;
+                            string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
+                            string name = cd.URI.Split('\\').Last();
 
-                            if (cd.Name.ToLower().Contains("generated"))
+                            if(cd.Name.StartsWith("generated") && !cd.Name.Equals(dataName)) continue;
+
+                            if (FileHelper.FileExist(path))
                             {
-                                if (!cd.MimeType.ToLower().Equals(format)) addFile = false;
-                            }
-
-                            if (addFile)
-                            {
-                                string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
-                                string name = cd.URI.Split('\\').Last();
-
-                                if (FileHelper.FileExist(path))
-                                {
-                                    if (!zip.Any(entry => entry.FileName.EndsWith(name)))
-                                        zip.AddFile(path, "");
-                                }
+                                if (!archive.Entries.Any(entry => entry.Name.EndsWith(name)))
+                                    archive.AddFileToArchive(path, name);
                             }
                         }
 
-                        // add xsd of the metadata schema
-                        LoggerFactory.LogCustom("Schema Start");
+                        // xml schema
+                        string xsdPath = OutputMetadataManager.GetSchemaDirectoryPath(id);
+                        if (Directory.Exists(xsdPath))
+                            archive.AddFolderToArchive(xsdPath, "Schema");
 
-                        string xsdDirectoryPath = OutputMetadataManager.GetSchemaDirectoryPath(id);
-                        if (Directory.Exists(xsdDirectoryPath))
-                            zip.AddDirectory(xsdDirectoryPath, "Schema");
-
-                        LoggerFactory.LogCustom("Manifest Start");
-
-                        XmlDocument manifest = OutputDatasetManager.GenerateManifest(id, datasetVersion.Id);
+                        // manifest
+                        ApiDatasetHelper apiDatasetHelper = new ApiDatasetHelper();
+                        // get content
+                        ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, datasetVersionNumber, datasetVersion.Dataset.MetadataStructure.Id, dataStructureId);
+                        string manifest = JsonConvert.SerializeObject(datasetModel);
 
                         if (manifest != null)
                         {
-                            string dynamicManifestFilePath = OutputDatasetManager.GetDynamicDatasetStorePath(id,
-                                versionNr, "manifest", ".xml");
-                            string fullFilePath = Path.Combine(AppConfiguration.DataPath, dynamicManifestFilePath);
+                            string manifestPath = OutputDatasetManager.GetDynamicDatasetStorePath(id,
+                                datasetVersionNumber, "manifest", ".json");
+                            string fullFilePath = Path.Combine(AppConfiguration.DataPath, manifestPath);
+                            string directory = Path.GetDirectoryName(fullFilePath);
+                            if (!Directory.Exists(directory))
+                                FileHelper.CreateDicrectoriesIfNotExist(directory);
 
-                            manifest.Save(fullFilePath);
-                            zip.AddFile(fullFilePath, "");
+                           System.IO.File.WriteAllText(fullFilePath, manifest, System.Text.Encoding.UTF8);
+
+                            archive.AddFileToArchive(fullFilePath, "manifest.json");
                         }
-
-                        LoggerFactory.LogCustom("Save zip Start");
-
-                        zip.Save(zipFilePath);
-
-                        LoggerFactory.LogCustom("Return");
 
                         string title = datasetVersion.Title;
                         title = String.IsNullOrEmpty(title) ? "unknown" : title;
 
                         string message = string.Format("dataset {0} version {1} was downloaded as zip - {2}.", id,
-                        versionNr, format);
+                        datasetVersionNumber, format);
                         LoggerFactory.LogCustom(message);
 
                         using (var emailService = new EmailService())
                         {
-                            emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
-                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), "zip - " + format, versionNr),
+                            emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, datasetVersionNumber),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), "zip - " + format, datasetVersionNumber),
                             GeneralSettings.SystemEmail
                             );
                         }
 
-                        return File(zipFilePath, "application/zip", Path.GetFileName(zipFilePath));
+                        return File(zipPath, "application/zip", Path.GetFileName(zipPath));
                     }
+
+                    #endregion
+
                 }
             }
             catch (Exception ex)
@@ -377,6 +349,36 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 dm.Dispose();
                 dataStructureManager.Dispose();
                 publicationManager.Dispose();
+            }
+        }
+
+        private string getCDTypeName(string mimeType)
+        {
+            switch (mimeType)
+            {
+                case "text/csv":
+                case "text/comma-separated-values":
+                case "application/octet-stream":
+                    /* of course this is a wrong  mimetype for csv.
+                    but the c# class MimeMapping.GetMimeMapping(ext) currently returns this as a result for .csv.
+                    since we don't use the datatype at the moment,
+                    it will be rebuilt into the case here*/
+                    {
+                        return "generatedCSV";
+                    }
+                case "text/tsv":
+                case "text/tab-separated-values":
+                    {
+                        return "generatedTSV";
+                    }
+                case "application/xlsx":
+                    {
+                        return "generatedExcel";
+                    }
+                default:
+                    {
+                        return "generatedTXT";
+                    }
             }
         }
 
@@ -439,7 +441,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
-        private void generateMetadataHtml(DatasetVersion dsv)
+        private void generateMetadataAsHtml(DatasetVersion dsv)
         {
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             long datasetId = dsv.Dataset.Id;

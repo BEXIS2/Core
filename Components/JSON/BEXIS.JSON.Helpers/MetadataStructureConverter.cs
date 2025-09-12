@@ -2,6 +2,7 @@
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Xml.Helpers;
 using Newtonsoft.Json.Linq;
 
 //using Newtonsoft.Json.Linq;
@@ -9,6 +10,8 @@ using Newtonsoft.Json.Schema;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BEXIS.JSON.Helpers
 {
@@ -38,6 +41,13 @@ namespace BEXIS.JSON.Helpers
 
                 // check if metadat structure exist
                 if (metadataStructure == null) throw new ArgumentNullException("metadata structure with id " + id + " not exist");
+
+                // set schema title
+                schema.Title = metadataStructure.Name;
+                // set schema description
+                schema.Description = metadataStructure.Description;
+                // set schema root element type
+                schema.Type = JSchemaType.Object;
 
                 // first child level are the MetadataPackageUsages
                 // go to each MetadataPackageUsage and start recursive adding to schema
@@ -83,7 +93,7 @@ namespace BEXIS.JSON.Helpers
             if (usage.MinCardinality > 0) required = true;
             else required = false;
 
-            //childrens
+            //children
             if (type != null && type.MetadataAttributeUsages.Any())
             {
                 foreach (var metadataAttrUsage in type.MetadataAttributeUsages)
@@ -93,6 +103,8 @@ namespace BEXIS.JSON.Helpers
 
                     // if current is required add it to the parent
                     if (_childRequired) current.Required.Add(metadataAttrUsage.Label);
+                    if (IsChoice(usage.Extra) && getMaxCardinality(usage) > 1) current.AnyOf.Add(current.Properties.Last().Value);
+                    else if (IsChoice(usage.Extra)) current.OneOf.Add(current.Properties.Last().Value);
                 }
             }
 
@@ -100,8 +112,24 @@ namespace BEXIS.JSON.Helpers
             current = addAttributes(current);
 
             // add to parent
-            schema.Properties.Add(usage.Label, current);
+            // check if usage has cardinality >1 then create a array before
+            if (GetJSchemaType(usage) == JSchemaType.Array)
+            {
+                JSchema array = new JSchema();
+                array.Type = JSchemaType.Array;
+                array.Items.Add(current);
+                schema.Properties.Add(usage.Label, array);
 
+                // add Range contraint
+                array.MinimumItems = usage.MinCardinality;
+                array.MaximumItems = usage.MaxCardinality;
+            }
+            else // add object to schema
+            {
+                schema.Properties.Add(usage.Label, current);
+            }
+
+         
             return schema;
         }
 
@@ -181,6 +209,8 @@ namespace BEXIS.JSON.Helpers
                         current = addMetadataAttrUsage(mnau, current, out _childIsRequired);
                         // if current is required add it to the parent
                         if (_childIsRequired) current.Required.Add(mnau.Label);
+                        if (IsChoice(usage.Extra) && getMaxCardinality(usage) > 1) current.AnyOf.Add(current.Properties.Last().Value);
+                        else if (IsChoice(usage.Extra)) current.OneOf.Add(current.Properties.Last().Value);
                     }
                 }
             }
@@ -189,7 +219,7 @@ namespace BEXIS.JSON.Helpers
             current = addAttributes(current);
 
             // check if usage has cardinality >1 then create a array before
-            if (usage.MaxCardinality > 1)
+            if (GetJSchemaType(usage) == JSchemaType.Array)
             {
                 JSchema array = new JSchema();
                 array.Type = JSchemaType.Array;
@@ -286,9 +316,10 @@ namespace BEXIS.JSON.Helpers
                         // the range of a string need to def as a length in json schema
                         if (current.Type == JSchemaType.String)
                         {
-                            current.MinimumLength = Convert.ToInt64(r.Lowerbound);
-
-                            long max = 0;
+                            long min = Int64.MinValue;
+                            if (Int64.TryParse(r.Lowerbound.ToString(), out min))
+                                current.MinimumLength = min; //may not exist
+                            long max = Int64.MaxValue;
                             if (Int64.TryParse(r.Upperbound.ToString(), out max))
                                 current.MaximumLength = max; //may not exist
                         }
@@ -315,6 +346,44 @@ namespace BEXIS.JSON.Helpers
             }
 
             return current;
+        }
+
+        private int getMaxCardinality(BaseUsage usage)
+        {
+            if(usage.Extra==null) return usage.MaxCardinality;
+
+            // check for choice
+            var xmlnode = XmlUtility.GetXmlNodeByAttribute(usage.Extra, "type","name","choice");
+            if (xmlnode != null)
+            {
+                var XmlAttribute = xmlnode.Attributes["max"];
+                if (XmlAttribute != null)
+                {
+                    return int.Parse(XmlAttribute.Value);
+                }
+            }
+
+            return 1; // default
+        }
+
+        private bool IsChoice(XmlNode xmlNode)
+        {
+            if (xmlNode != null)
+            {
+                XmlNode element = XmlUtility.GetXmlNodeByAttribute(xmlNode, "type", "name", "choice");
+                if (element != null) return true;
+            }
+            return false;
+        }
+
+        private JSchemaType GetJSchemaType(BaseUsage usage)
+        {
+            if(IsChoice(usage.Extra))
+                return JSchemaType.Object;
+            else if (getMaxCardinality(usage) > 1)
+                return JSchemaType.Array;
+            else
+                return JSchemaType.Object;
         }
     }
 }

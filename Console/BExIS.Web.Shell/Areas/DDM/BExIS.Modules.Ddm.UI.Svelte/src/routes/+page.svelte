@@ -1,6 +1,5 @@
 <script>
 	import { Page } from '@bexis2/bexis2-core-ui';
-
 </script>
 
 <Page title="System Administration">

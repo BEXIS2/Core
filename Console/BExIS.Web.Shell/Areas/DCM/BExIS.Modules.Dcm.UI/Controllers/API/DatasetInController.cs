@@ -16,8 +16,11 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
+using Newtonsoft.Json;
+using NHibernate.Loader.Custom;
 using System;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -49,7 +52,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
         [HttpPost]
         public HttpResponseMessage Post([FromBody] PostApiDatasetModel dataset)
         {
-            var request = Request.CreateResponse();
+      
             User user = null;
             string error = "";
             long datasetId = 0;
@@ -71,9 +74,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
 
                     if (user == null)
                     {
-                        request.Content = new StringContent("Token is not valid.");
-
-                        return request;
+                        return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "Token is not valid.");
                     }
 
                     #endregion security
@@ -84,51 +85,50 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
                     if (dataset.Title == null) error += "title not existing.";
                     if (dataset.Description == null) error += "description not existing.";
                     if (dataset.MetadataStructureId == 0) error += "metadata structure id should not be null. ";
-                    if (dataset.DataStructureId == 0) error += "datastructure id should not be null. ";
+                    //if (dataset.DataStructureId == 0) error += "datastructure id should not be null. ";
 
                     if (!string.IsNullOrEmpty(error))
                     {
-                        request.Content = new StringContent(error);
-
-                        return request;
+                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed,error);
                     }
 
                     #endregion incomming values check
 
                     #region create dataset
 
-                    DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructureId);
-                    //if datastructure is not a structured one
-                    if (dataStructure == null) dataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(dataset.DataStructureId);
+                    DataStructure dataStructure = null;
+                    
+                    if(dataset.DataStructureId != null && dataset.DataStructureId > 0)
+                        dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructureId);
 
-                    if (dataStructure == null)
-                    {
-                        request.Content = new StringContent("A data structure with id " + dataset.DataStructureId + "does not exist.");
-                        return request;
-                    }
+                    //if datastructure is not a structured one
+                    //if (dataStructure == null) dataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(dataset.DataStructureId);
+
+                    //if (dataStructure == null)
+                    //{
+                    //    request.Content = new StringContent("A data structure with id " + dataset.DataStructureId + "does not exist.");
+                    //    return request;
+                    //}
 
                     ResearchPlan rp = researchPlanManager.Repo.Get(researchPlanId);
 
                     if (rp == null)
                     {
-                        request.Content = new StringContent("A research plan with id " + researchPlanId + "does not exist.");
-                        return request;
+                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "A research plan with id " + researchPlanId + "does not exist.");
                     }
 
                     MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(dataset.MetadataStructureId);
 
                     if (metadataStructure == null)
                     {
-                        request.Content = new StringContent("A metadata structure with id " + dataset.MetadataStructureId + "does not exist.");
-                        return request;
+                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "A metadata structure with id " + dataset.MetadataStructureId + "does not exist.");
                     }
 
                     EntityTemplate entityTemplate = entityTemplateManager.Repo.Get(dataset.EntityTemplateId);
 
-                    if (metadataStructure == null)
+                    if (entityTemplate == null)
                     {
-                        request.Content = new StringContent("A EntityTemplate with id " + dataset.EntityTemplateId + "does not exist.");
-                        return request;
+                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "A EntityTemplate with id " + dataset.EntityTemplateId + "does not exist.");
                     }
 
                     var newDataset = datasetManager.CreateEmptyDataset(dataStructure, rp, metadataStructure, entityTemplate);
@@ -167,15 +167,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
                         datasetManager.CheckInDataset(datasetId, "Title and description were added to the dataset via the api.", user.UserName, ViewCreationBehavior.None);
                     }
 
-                    request.Content = new StringContent("the dataset " + dataset.Title + "(" + datasetId + ") was successfully created.");
+                    SimpleApiResponceModel simpleApiResponceModel = new SimpleApiResponceModel();
+                    simpleApiResponceModel.Id = datasetId;
+                    string resp = JsonConvert.SerializeObject(simpleApiResponceModel);
+
+                    var request = Request.CreateResponse(HttpStatusCode.Created, "the dataset " + dataset.Title + "(" + datasetId + ") was successfully created.");
+
+                    request.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
+                    //new StringContent("the dataset " + dataset.Title + "(" + datasetId + ") was successfully created.");
                     return request;
 
                     #endregion create dataset
                 }
                 catch (Exception ex)
                 {
-                    request.Content = new StringContent(ex.Message);
-                    return request;
+                    return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
                 }
             }
         }

@@ -1,4 +1,5 @@
-﻿using BExIS.Dim.Entities.Publications;
+﻿using BExIS.Dim.Entities.Export.GBIF;
+using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -6,12 +7,15 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO;
 using BExIS.IO.Transform.Output;
+using BExIS.Utils.Extensions;
 using BExIS.Xml.Helpers;
-using Ionic.Zip;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Text;
+using System.Web.Routing;
 using System.Xml;
 using Vaiona.Logging;
 using Vaiona.Utils.Cfg;
@@ -33,10 +37,10 @@ namespace BExIS.Dim.Helpers.Export
             using (DatasetManager datasetManager = new DatasetManager())
             using (DataStructureManager dataStructureManager = new DataStructureManager())
             using (PublicationManager publicationManager = new PublicationManager())
-            using (ZipFile zip = new ZipFile())
             {
                 DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
                 long datasetId = datasetVersion.Dataset.Id;
+                string metadataStructureName = datasetVersion.Dataset.MetadataStructure.Name;
 
                 Publication publication =
                     publicationManager.GetPublication()
@@ -58,7 +62,7 @@ namespace BExIS.Dim.Helpers.Export
 
                         // get primary data
                         // check the data sturcture type ...
-                        if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                        if (datasetVersion.Dataset.DataStructure != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                         {
                             OutputDataManager odm = new OutputDataManager();
                             // apply selection and projection
@@ -89,65 +93,66 @@ namespace BExIS.Dim.Helpers.Export
 
                         #region datatructure
 
-                        long dataStructureId = datasetVersion.Dataset.DataStructure.Id;
-                        DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
-
-                        if (dataStructure != null)
+                        if (datasetVersion.Dataset.DataStructure != null)
                         {
-                            try
-                            {
-                                string dynamicPathOfDS = "";
-                                dynamicPathOfDS = storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion,
-                                    "datastructure", ".txt");
-                                string datastructureFilePath = AsciiWriter.CreateFile(dynamicPathOfDS);
+                            long dataStructureId = datasetVersion.Dataset.DataStructure.Id;
+                            DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
 
-                                string json = OutputDataStructureManager.GetDataStructureAsJson(dataStructureId);
+                            string dataStructurePath = "";
+                            dataStructurePath = storeGeneratedFilePathToContentDiscriptor(datasetVersion.Dataset.Id, datasetVersion,
+                                "datastructure", ".json");
+                            string datastructureFilePath = AsciiWriter.CreateFile(dataStructurePath);
 
-                                AsciiWriter.AllTextToFile(datastructureFilePath, json);
-                            }
-                            catch (Exception ex)
-                            {
-                                throw ex;
-                            }
+                            string json = OutputDataStructureManager.GetDataStructureAsJson(dataStructureId);
+
+                            AsciiWriter.AllTextToFile(datastructureFilePath, json);
+
+                            ////generate data structure as html 
+                            //generateDataStructureHtml(datasetVersion);
                         }
 
                         #endregion datatructure
 
-                        foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                        using (var zipFileStream = new FileStream(zipFilePath, FileMode.Create))
+                        using (var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Update))
                         {
-                            string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
-                            string name = cd.URI.Split('\\').Last();
+                            datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
-                            if (FileHelper.FileExist(path))
+                            foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                             {
-                                zip.AddFile(path, "");
+                                string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
+                                string name = cd.URI.Split('\\').Last();
+
+                                if (cd.Name.StartsWith("generated") && !cd.Name.Equals("text/csv")) continue;
+
+                                if (FileHelper.FileExist(path))
+                                {
+                                    if (!archive.Entries.Any(entry => entry.Name.EndsWith(name)))
+                                        archive.AddFileToArchive(path, name);
+                                }
                             }
+
+                            // add xsd of the metadata schema
+                            string xsdDirectoryPath = OutputMetadataManager.GetSchemaDirectoryPath(datasetId);
+                            if (Directory.Exists(xsdDirectoryPath))
+                                archive.AddFolderToArchive(xsdDirectoryPath, "Schema");
+
+                            XmlDocument manifest = OutputDatasetManager.GenerateManifest(datasetId, datasetVersion.Id);
+
+                            if (manifest != null)
+                            {
+                                string dynamicManifestFilePath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId,
+                                    versionNr, "manifest", ".xml");
+                                string fullFilePath = Path.Combine(AppConfiguration.DataPath, dynamicManifestFilePath);
+
+                                manifest.Save(fullFilePath);
+                                archive.AddFileToArchive(fullFilePath, "manifest.xml");
+                            }
+
+                            string message = string.Format("dataset {0} version {1} was published for repository {2}", datasetId,
+                                datasetVersion.Id, broker.Name);
+                            LoggerFactory.LogCustom(message);
                         }
-
-                        // add xsd of the metadata schema
-                        string xsdDirectoryPath = OutputMetadataManager.GetSchemaDirectoryPath(datasetId);
-                        if (Directory.Exists(xsdDirectoryPath))
-                            zip.AddDirectory(xsdDirectoryPath, "Schema");
-
-                        XmlDocument manifest = OutputDatasetManager.GenerateManifest(datasetId, datasetVersion.Id);
-
-                        if (manifest != null)
-                        {
-                            string dynamicManifestFilePath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId,
-                                versionNr, "manifest", ".xml");
-                            string fullFilePath = Path.Combine(AppConfiguration.DataPath, dynamicManifestFilePath);
-
-                            manifest.Save(fullFilePath);
-                            zip.AddFile(fullFilePath, "");
-                        }
-
-                        string message = string.Format("dataset {0} version {1} was published for repository {2}", datasetId,
-                            datasetVersion.Id, broker.Name);
-                        LoggerFactory.LogCustom(message);
-
-                        //Session["ZipFilePath"] = dynamicFilePath;
-
-                        zip.Save(zipFilePath);
 
                         return zipFilePath;
                     }

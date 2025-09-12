@@ -13,7 +13,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             foreach (var t in systemKeyList)
             {
                 //get all mappings to automatic system from the metadata structure
-                var mappings = MappingUtils.GetMappingsWhereSource((int)t, LinkElementType.Key);
+                var mappings = MappingUtils.GetMappingsWhereSource((int)t, LinkElementType.Key, 2);
 
                 if (mappings != null)
                 {
@@ -69,11 +69,17 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         {
             try
             {
-                var xmlElement = metadata.SelectSingleNode(xpath);
-                if (xmlElement != null && (XmlElement)xmlElement != null)
+                var xmlobj = metadata.SelectSingleNode(xpath);
+                if (xmlobj != null && xmlobj is XmlElement)
                 {
-                    ((XmlElement)xmlElement).InnerText = value;
+                    ((XmlElement)xmlobj).InnerText = value;
                 }
+
+                if (xmlobj != null && xmlobj is XmlAttribute)
+                {
+                    ((XmlAttribute)xmlobj).InnerText = value;
+                }
+
             }
             catch (Exception ex)
             {

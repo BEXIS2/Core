@@ -19,10 +19,10 @@ namespace BExIS.Modules.Sam.UI.Models
         public string UserName { get; set; }
 
         [JsonProperty("creationDate")]
-        public DateTimeOffset CreationDate { get; set; }
+        public DateTime CreationDate { get; set; }
 
         [JsonProperty("modificationDate")]
-        public DateTimeOffset ModificationDate { get; set; }
+        public DateTime ModificationDate { get; set; }
 
         public static ReadUserModel Convert(User user)
         {
@@ -31,8 +31,8 @@ namespace BExIS.Modules.Sam.UI.Models
                 Id = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
-                CreationDate = DateTimeOffset.Now,
-                ModificationDate = DateTimeOffset.Now
+                CreationDate = user.RegistrationDate,
+                ModificationDate = user.RegistrationDate
             };
         }
     }
@@ -83,7 +83,7 @@ namespace BExIS.Modules.Sam.UI.Models
         public string Name { get; set; }
         public string DisplayName { get; set; }
         public string IsEmailConfirmed { get; set; }
-        public DateTimeOffset RegistrationDate { get; set; }
+        public DateTime RegistrationDate { get; set; }
 
         public static UserGridRowModel Convert(User user)
         {

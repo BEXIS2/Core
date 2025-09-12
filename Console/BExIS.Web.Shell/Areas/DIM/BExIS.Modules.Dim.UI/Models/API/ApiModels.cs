@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using BExIS.UI.Models.EntityReference;
+using System.Collections.Generic;
 using System.Data;
 
 namespace BExIS.Modules.Dim.UI.Models.Api
@@ -44,10 +45,25 @@ namespace BExIS.Modules.Dim.UI.Models.Api
         public string VersionDate { get; set; }
         public object Names { get; internal set; }
 
+        public LinksOverview Links { get; set; }
+
         public ApiDatasetModel()
         {
             AdditionalInformations = new Dictionary<string, string>();
             Parties = new Dictionary<string, Dictionary<string, string>>();
+            Links = new LinksOverview();
+        }
+    }
+
+    public class LinksOverview
+    { 
+        public List<ReferenceModel> From { get; set; }
+        public List<ReferenceModel> To { get; set; }
+
+        public LinksOverview()
+        {
+            From = new List<ReferenceModel>();
+            To = new List<ReferenceModel>();
         }
     }
 

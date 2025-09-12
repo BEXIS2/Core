@@ -9,8 +9,14 @@ namespace BExIS.Security.Services.Subjects
 {
     public class IdentityUserService : UserManager<User, long>
     {
-        public IdentityUserService() : base(new UserManager())
+        private readonly UserManager _userManager;
+        private bool _disposed;
+
+        //[System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
+        public IdentityUserService(UserManager userManager) : base(userManager)
         {
+            _userManager = userManager;
+
             // Configure validation logic for usernames
             UserValidator = new UserValidator<User, long>(this)
             {
@@ -53,8 +59,17 @@ namespace BExIS.Security.Services.Subjects
 
         protected override void Dispose(bool disposing)
         {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _userManager?.Dispose();
+                }
+
+                _disposed = true;
+            }
+
             base.Dispose(disposing);
-            Store.Dispose();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BExIS.Security.Entities.Authentication;
+using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Utils.NH.Querying;
 using Microsoft.AspNet.Identity;
@@ -20,6 +21,8 @@ namespace BExIS.Security.Services.Subjects
         {
             _guow = this.GetIsolatedUnitOfWork();
             UserRepository = _guow.GetReadOnlyRepository<User>();
+            LoginRepository = _guow.GetReadOnlyRepository<Login>();
+            GroupRepository = _guow.GetReadOnlyRepository<Group>();
         }
 
         ~UserManager()
@@ -29,7 +32,15 @@ namespace BExIS.Security.Services.Subjects
 
         public IQueryable<User> Users => UserRepository.Query();
 
+        public IQueryable<Login> Logins => LoginRepository.Query();
+
+        public IQueryable<Group> Groups => GroupRepository.Query();
+
         private IReadOnlyRepository<User> UserRepository { get; }
+
+        private IReadOnlyRepository<Group> GroupRepository { get; }
+
+        private IReadOnlyRepository<Login> LoginRepository { get; }
 
         public List<User> GetUsers(FilterExpression filter, OrderByExpression orderBy, int pageNumber, int pageSize, out int count)
         {
@@ -91,26 +102,48 @@ namespace BExIS.Security.Services.Subjects
                 //return Task.FromException(new Exception());
                 return Task.CompletedTask;
 
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
-                userRepository.Put(user);
-                uow.Commit();
-            }
+            var userRepository = _guow.GetRepository<User>().Put(user);
+            _guow.Commit();
 
             return Task.CompletedTask;
         }
 
         public Task DeleteAsync(User user)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
-                userRepository.Delete(user);
-                uow.Commit();
-            }
+            _guow.GetRepository<User>().Delete(user.Id);
+            _guow.Commit();
 
             return Task.CompletedTask;
+        }
+
+        public Task<bool> DeleteByIdAsync(long userId)
+        {
+            var userRepository = _guow.GetRepository<User>();
+            var user = userRepository.Get(userId);
+
+            if(user == null)
+                //return Task.FromException(new Exception());
+                return Task.FromResult(false);
+
+            // EntityPermissions
+            var entityPermissionRepository = _guow.GetRepository<EntityPermission>();
+            foreach (var entityPermission in entityPermissionRepository.Get(e => e.Subject.Id == userId))
+            {
+                entityPermissionRepository.Delete(entityPermission);
+            }
+
+            // FeaturePermissions
+            var featurePermissionRepository = _guow.GetRepository<FeaturePermission>();
+            foreach (var featurePermission in featurePermissionRepository.Get(e => e.Subject.Id == userId))
+            {
+                featurePermissionRepository.Delete(featurePermission);
+            }
+
+            var result = userRepository.Delete(user);
+
+            _guow.Commit();
+
+            return Task.FromResult(result);
         }
 
         public void Dispose()
@@ -120,9 +153,7 @@ namespace BExIS.Security.Services.Subjects
 
         public Task<User> FindByEmailAsync(string email)
         {
-            var userRepository = _guow.GetReadOnlyRepository<User>();
-
-            var users = userRepository.Query(u => u.Email.ToLowerInvariant() == email.ToLowerInvariant()).ToList();
+            var users = UserRepository.Query(u => u.Email.ToLowerInvariant() == email.ToLowerInvariant()).ToList();
 
             if (!users.Any())
                 //return Task.FromException(new Exception());
@@ -137,28 +168,22 @@ namespace BExIS.Security.Services.Subjects
 
         public Task<User> FindByIdAsync(long userId)
         {
-            var userRepository = _guow.GetRepository<User>();
-            return Task.FromResult(userRepository.Get(userId));
+            return Task.FromResult(UserRepository.Get(userId));
         }
 
         public Task<User> FindByNameAsync(string userName)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
+            var users = UserRepository.Query().Where(u => u.Name.ToLowerInvariant() == userName.ToLowerInvariant()).ToList();
 
-                var users = userRepository.Query().Where(u => u.Name.ToLowerInvariant() == userName.ToLowerInvariant()).ToList();
+            if (!users.Any())
+                //return Task.FromException(new Exception());
+                return Task.FromResult<User>(null);
 
-                if (!users.Any())
-                    //return Task.FromException(new Exception());
-                    return Task.FromResult<User>(null);
+            if (users.Count > 1)
+                //return Task.FromException(new Exception());
+                return Task.FromResult<User>(null);
 
-                if (users.Count > 1)
-                    //return Task.FromException(new Exception());
-                    return Task.FromResult<User>(null);
-
-                return Task.FromResult(users.Single());
-            }
+            return Task.FromResult(users.Single());
         }
 
         public Task<string> GetEmailAsync(User user)
@@ -197,14 +222,10 @@ namespace BExIS.Security.Services.Subjects
                 //return Task.FromException(new Exception());
                 return Task.CompletedTask;
 
-            using (var uow = this.GetUnitOfWork())
-            {
-                var repo = uow.GetRepository<User>();
-                repo.Merge(user);
-                var merged = repo.Get(user.Id);
-                repo.Put(merged);
-                uow.Commit();
-            }
+            _guow.GetRepository<User>().Merge(user);
+            var merged = _guow.GetRepository<User>().Get(user.Id);
+            _guow.GetRepository<User>().Put(merged);
+            _guow.Commit();
 
             return Task.CompletedTask;
         }
@@ -228,44 +249,35 @@ namespace BExIS.Security.Services.Subjects
 
         public Task AddLoginAsync(User user, UserLoginInfo login)
         {
-            using (var uow = this.GetUnitOfWork())
+            var loginRepository = _guow.GetRepository<Login>();
+
+            user = UserRepository.Get(user.Id);
+            var userLogin = new Login()
             {
-                var userRepository = uow.GetReadOnlyRepository<User>();
-                var loginRepository = uow.GetRepository<Login>();
+                ProviderKey = login.ProviderKey,
+                LoginProvider = login.LoginProvider,
+                User = user
+            };
 
-                user = userRepository.Get(user.Id);
-                var userLogin = new Login()
-                {
-                    ProviderKey = login.ProviderKey,
-                    LoginProvider = login.LoginProvider,
-                    User = user
-                };
+            loginRepository.Put(userLogin);
+            _guow.Commit();
 
-                loginRepository.Put(userLogin);
-                uow.Commit();
-
-                return Task.CompletedTask;
-            }
+            return Task.CompletedTask;
         }
 
         public Task<User> FindAsync(UserLoginInfo login)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var loginRepository = uow.GetRepository<Login>();
+            var users = LoginRepository.Query(m => m.LoginProvider.ToLowerInvariant() == login.LoginProvider.ToLowerInvariant() && m.ProviderKey.ToLowerInvariant() == login.ProviderKey.ToLowerInvariant()).Select(m => m.User).ToList();
 
-                var users = loginRepository.Query(m => m.LoginProvider.ToLowerInvariant() ==login.LoginProvider.ToLowerInvariant() && m.ProviderKey.ToLowerInvariant() == login.ProviderKey.ToLowerInvariant()).Select(m => m.User).ToList();
+            if (!users.Any())
+                //return Task.FromException(new Exception());
+                return Task.FromResult<User>(null);
 
-                if (!users.Any())
-                    //return Task.FromException(new Exception());
-                    return Task.FromResult<User>(null);
+            if (users.Count > 1)
+                //return Task.FromException(new Exception());
+                return Task.FromResult<User>(null);
 
-                if (users.Count > 1)
-                    //return Task.FromException(new Exception());
-                    return Task.FromResult<User>(null);
-
-                return Task.FromResult(users.Single());
-            }
+            return Task.FromResult(users.Single());
         }
 
         public Task<IList<UserLoginInfo>> GetLoginsAsync(User user)
@@ -275,20 +287,17 @@ namespace BExIS.Security.Services.Subjects
 
         public Task RemoveLoginAsync(User user, UserLoginInfo login)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
+            var userRepository = _guow.GetRepository<User>();
 
-                user = userRepository.Get(user.Id);
-                var info = user.Logins.SingleOrDefault(x => x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
-                if (info == null) return Task.FromResult(0);
+            user = userRepository.Get(user.Id);
+            var info = user.Logins.SingleOrDefault(x => x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
+            if (info == null) return Task.FromResult(0);
 
-                user.Logins.Remove(info);
-                userRepository.Put(user);
-                uow.Commit();
+            user.Logins.Remove(info);
+            userRepository.Put(user);
+            _guow.Commit();
 
-                return Task.CompletedTask;
-            }
+            return Task.CompletedTask;
         }
 
         #endregion IUserLoginStore
@@ -371,83 +380,69 @@ namespace BExIS.Security.Services.Subjects
 
         public Task AddToRoleAsync(User user, string roleName)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var groupRepository = uow.GetReadOnlyRepository<Group>();
-                var groups = groupRepository.Query(g => g.Name.ToLowerInvariant() == roleName.ToLowerInvariant()).ToList();
+            var groups = GroupRepository.Query(g => g.Name.ToLowerInvariant() == roleName.ToLowerInvariant()).ToList();
 
-                if (!groups.Any())
-                    //return Task.FromException(new Exception());
-                    return Task.FromResult(false);
+            if (!groups.Any())
+                //return Task.FromException(new Exception());
+                return Task.FromResult(false);
 
-                if (groups.Count > 1)
-                    //return Task.FromException(new Exception());
-                    return Task.FromResult(false);
+            if (groups.Count > 1)
+                //return Task.FromException(new Exception());
+                return Task.FromResult(false);
 
-                var group = groups.Single();
+            var group = groups.Single();
 
-                //// [Sven][Workaround][2017/10/09]
-                //// It is necessary to "re-get" the object. Other than that, "Load", "Reload" or other functions are not working here.
-                //// In general, there is an issue with the sessions. The primary error message was
-                ////  "reassociated object has dirty collection: BExIS.Security.Entities.Subjects.User.Groups"
-                //// but with "Load" or "Reload" it changed to
-                ////  "a different object with the same identifier value was already associated with the session: 32768, of entity: BExIS.Security.Entities.Subjects.User".
-                //// At https://forum.hibernate.org/viewtopic.php?t=934551 is claimed to change "session.Lock()" to "session.Update" which should be done at Vaiona.
-                ///
-                var userRepository = uow.GetRepository<User>();
-                user = userRepository.Get(user.Id);
+            //// [Sven][Workaround][2017/10/09]
+            //// It is necessary to "re-get" the object. Other than that, "Load", "Reload" or other functions are not working here.
+            //// In general, there is an issue with the sessions. The primary error message was
+            ////  "reassociated object has dirty collection: BExIS.Security.Entities.Subjects.User.Groups"
+            //// but with "Load" or "Reload" it changed to
+            ////  "a different object with the same identifier value was already associated with the session: 32768, of entity: BExIS.Security.Entities.Subjects.User".
+            //// At https://forum.hibernate.org/viewtopic.php?t=934551 is claimed to change "session.Lock()" to "session.Update" which should be done at Vaiona.
+            ///
 
-                if (group == null) return Task.FromResult(false);
+            user = UserRepository.Get(user.Id);
+            if (user == null) return Task.FromResult(false);
 
-                user.Groups.Add(group);
-                userRepository.Put(user);
-                uow.Commit();
+            var userRepository = _guow.GetRepository<User>();
+            user.Groups.Add(group);
+            userRepository.Put(user);
+            _guow.Commit();
 
-                return Task.FromResult(true);
-            }
+            return Task.FromResult(true);
         }
 
         public Task<IList<string>> GetRolesAsync(User user)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
+            user = UserRepository.Get(user.Id);
 
-                user = userRepository.Get(user.Id);
-                var groups = user.Groups.Select(m  => m.Name).ToList();
+            var groups = user.Groups.Select(m => m.Name).ToList();
 
-                return Task.FromResult((IList<string>)groups);
-            }
+            return Task.FromResult((IList<string>)groups);
         }
 
         public Task<bool> IsInRoleAsync(User user, string roleName)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var userRepository = uow.GetRepository<User>();
-                user = userRepository.Get(user.Id);
+            user = UserRepository.Get(user.Id);
 
-                return Task.FromResult(user.Groups.Any(m => m.Name.ToLowerInvariant() == roleName.ToLowerInvariant()));
-            }
+            return Task.FromResult(user.Groups.Any(m => m.Name.ToLowerInvariant() == roleName.ToLowerInvariant()));
         }
 
         public Task RemoveFromRoleAsync(User user, string roleName)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var groupRepository = uow.GetRepository<Group>();
-                var userRepository = uow.GetRepository<User>();
-                var group = groupRepository.Query(g => g.Name.ToUpperInvariant() == roleName.ToUpperInvariant()).FirstOrDefault();
+            var group = GroupRepository.Query(g => g.Name.ToUpperInvariant() == roleName.ToUpperInvariant()).FirstOrDefault();
 
-                if (group == null) return Task.FromResult(false);
+            if (group == null) return Task.FromResult(false);
 
-                user = userRepository.Get(user.Id);
-                user.Groups.Remove(group);
-                userRepository.Put(user);
-                uow.Commit();
+            user = UserRepository.Get(user.Id);
+            if (user == null) return Task.FromResult(false);
 
-                return Task.FromResult(true);
-            }
+            var userRepository = _guow.GetRepository<User>();
+            user.Groups.Remove(group);
+            userRepository.Put(user);
+            _guow.Commit();
+
+            return Task.FromResult(true);
         }
 
         #endregion IUserRoleStore

@@ -7,6 +7,8 @@ export interface SubmitModel {
 	isDataValid: boolean;
 	allFilesReadable: boolean;
 	files: fileInfoType[];
+	deleteFiles: fileInfoType[];
+	modifiedFiles: fileInfoType[];
 	asciiFileReaderInfo: asciiFileReaderInfoType;
 	hasStructrue: boolean;
 	structureId: number;

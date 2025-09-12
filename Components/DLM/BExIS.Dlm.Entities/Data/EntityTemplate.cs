@@ -23,6 +23,11 @@ namespace BExIS.Dlm.Entities.Data
         public virtual Entity EntityType { get; set; }
 
         /// <summary>
+        /// Entity
+        /// </summary>
+        public virtual bool Activated { get; set; }
+
+        /// <summary>
         ///Metadata Structure
         /// </summary>
         public virtual MetadataStructure.MetadataStructure MetadataStructure { get; set; }
