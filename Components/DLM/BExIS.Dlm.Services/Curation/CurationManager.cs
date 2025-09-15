@@ -63,21 +63,27 @@ namespace BExIS.Dlm.Services.Curation
             DateTime lastChangeDatetime_User;
             DateTime lastChangeDatetime_Curator;
 
-            if (CurationEntry.GetCurationUserType(user) == CurationUserType.Curator)
-            {
-                lastChangeDatetime_User = DateTime.MinValue;
-                lastChangeDatetime_Curator = DateTime.Now;
-            } 
-            else
-            {
-                lastChangeDatetime_User = DateTime.Now;
-                lastChangeDatetime_Curator = DateTime.MinValue;
-            }
-
             using (var uow = this.GetUnitOfWork())
             {
                 var repoEntries = uow.GetRepository<CurationEntry>();
                 var repoDataset = uow.GetRepository<Dataset>();
+                var repoUser = uow.GetRepository<User>();
+
+                // Re-fetch user from the current session and ensure Groups are loaded
+                var loadedUser = repoUser.Get(user.Id);
+                // Force loading of Groups collection
+                var _ = loadedUser.Groups.Count;
+
+                if (CurationEntry.GetCurationUserType(loadedUser) == CurationUserType.Curator)
+                {
+                    lastChangeDatetime_User = DateTime.MinValue;
+                    lastChangeDatetime_Curator = DateTime.Now;
+                }
+                else
+                {
+                    lastChangeDatetime_User = DateTime.Now;
+                    lastChangeDatetime_Curator = DateTime.MinValue;
+                }
 
                 var dataset = repoDataset.Get(datasetId);
 
@@ -92,7 +98,7 @@ namespace BExIS.Dlm.Services.Curation
                     source,
                     notes,
                     DateTime.Now,
-                    user,
+                    loadedUser,
                     userIsDone,
                     isApproved,
                     lastChangeDatetime_User,
@@ -121,12 +127,18 @@ namespace BExIS.Dlm.Services.Curation
             if (type == CurationEntryType.StatusEntryItem && position != 0) throw new ArgumentException("Position for StatusEntryItem must be 0.");
             if (type != CurationEntryType.StatusEntryItem && position <= 0) throw new ArgumentException("Position for none StatusEntryItem must be greater than 0.");
 
-            var isCurator = CurationEntry.GetCurationUserType(user) == CurationUserType.Curator;
-
             using (var uow = this.GetUnitOfWork())
             {
                 var repoEntries = uow.GetRepository<CurationEntry>();
                 var repoNotes = uow.GetRepository<CurationNote>();
+                var repoUser = uow.GetRepository<User>();
+
+                // Re-fetch user from the current session and ensure Groups are loaded
+                var loadedUser = repoUser.Get(user.Id);
+                // Force loading of Groups collection
+                var _ = loadedUser.Groups.Count;
+
+                var isCurator = CurationEntry.GetCurationUserType(loadedUser) == CurationUserType.Curator;
 
                 var merged = repoEntries.Get(id);
 
@@ -137,7 +149,7 @@ namespace BExIS.Dlm.Services.Curation
                 var deletedNotes = merged.Notes.Where(n => !incomingIds.Contains(n.Id)).ToList();
                 foreach (var note in deletedNotes)
                 {
-                    if (user.Id != note.User.Id) continue; // do not delete notes from other users
+                    if (loadedUser.Id != note.User.Id) continue; // do not delete notes from other users
                     currentNotes.Remove(note);
                     repoNotes.Delete(note);
                 }
@@ -147,12 +159,12 @@ namespace BExIS.Dlm.Services.Curation
                     var existingNote = currentNotes.FirstOrDefault(n => n.Id == incomingNote.Id);
                     if (incomingNote.Id == 0 || existingNote == null)
                     {
-                        var newNote = new CurationNote(user, incomingNote.Comment);
+                        var newNote = new CurationNote(loadedUser, incomingNote.Comment);
                         currentNotes.Add(newNote);
                     }
                     else
                     {
-                        if (user.Id != existingNote.User.Id) continue; // do not change notes from other users
+                        if (loadedUser.Id != existingNote.User.Id) continue; // do not change notes from other users
                         existingNote.Comment = incomingNote.Comment;
                     }
                 }
@@ -204,58 +216,6 @@ namespace BExIS.Dlm.Services.Curation
                 uow.Commit();
             }
         }
-
-        #region notes
-
-
-        public CurationEntry AddNote(long id, CurationNote note)
-        {
-            if (id <= 0) throw new ArgumentException("id must be greater than 0.");
-            if (note == null) throw new ArgumentException("note is required");
-
-
-            using (var uow = this.GetUnitOfWork())
-            {
-                var repo = uow.GetRepository<CurationEntry>();
-
-                var merged = repo.Get(id);
-
-                merged.Notes.ToList().Add(note);
-
-                if (note.UserType == CurationUserType.User) merged.LastChangeDatetime_User = DateTime.Now;
-                else merged.LastChangeDatetime_Curator = DateTime.Now;
-
-                repo.Put(merged);
-                uow.Commit();
-
-                return merged;
-            }
-        }
-
-        public CurationEntry DeleteNote(long id, long noteId)
-        {
-            if (id <= 0) throw new ArgumentException("id must be greater than 0.");
-
-
-            using (var uow = this.GetUnitOfWork())
-            {
-                var repo = uow.GetRepository<CurationEntry>();
-                var repoNote = uow.GetRepository<CurationNote>();
-
-                var merged = repo.Get(id);
-                var note = repoNote.Get(noteId);
-
-                merged.Notes.ToList().Remove(note);
-
-
-                repo.Put(merged);
-                uow.Commit();
-
-                return merged;
-            }
-        }
-
-        #endregion
 
 
         public void Dispose()

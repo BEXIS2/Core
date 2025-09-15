@@ -17,9 +17,12 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Models.Curation;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Config.Configurations;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
+using Microsoft.AspNet.Identity;
+using NHibernate.Linq;
 using NHibernate.Util;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -168,10 +171,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             using (var curationManager = new CurationManager())
             using (var datasetManager = new DatasetManager())
+            using (var userManager = new UserManager())
             {
+                var userWithGroups = userManager.Users
+                    .Where(u => u.Id == user.Id)
+                    .Fetch(u => u.Groups)
+                    .SingleOrDefault();
+
                 var curationEntries = curationManager.CurationEntryRepository.Get().Where(c => c.Dataset.Id == datasetid).ToList();
                 var datasetVersion = datasetManager.GetDatasetLatestVersion(datasetid);
-                responseContent = AnonymizedCurationResponseContent(datasetVersion, curationEntries, user);
+                responseContent = AnonymizedCurationResponseContent(datasetVersion, curationEntries, userWithGroups);
             }
 
             var response = Request.CreateResponse(HttpStatusCode.OK, responseContent);
@@ -270,9 +279,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 notes = curationEntryModel.Notes.Select(n => new CurationNote() { Id = n.Id, Comment = n.Comment }).ToList();
 
             using (var curationManager = new CurationManager())
+            using (var userManager = new UserManager())
             {
                 var c = curationManager.CurationEntries.FirstOrDefault(ce => ce.Id == curationEntryModel.Id);
                 if (c == null) return Request.CreateErrorResponse(HttpStatusCode.NotFound, "curationEntry not found");
+
+                var userWithGroups = userManager.Users
+                    .Where(u => u.Id == user.Id)
+                    .Fetch(u => u.Groups)
+                    .SingleOrDefault();
 
                 // check if user has rights to access the dataset
                 //if (!(userRights(user.Id, c.Dataset.Id) > 0))
@@ -290,10 +305,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         notes,
                         curationEntryModel.UserIsDone,
                         curationEntryModel.IsApproved,
-                        user
+                        userWithGroups
                 );
 
-                var response = AnonymizeCurationEntryModel(curationEntryModel, newCurationEntry, user);
+                var response = AnonymizeCurationEntryModel(curationEntryModel, newCurationEntry, userWithGroups);
 
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -314,21 +329,27 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (!ActionContext.ControllerContext.RouteData.Values.TryGetValue("user", out object userObject) || !(userObject is User user))
                 return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "User not found");
 
-            if (!CurationEntry.GetCurationUserType(user).Equals(CurationUserType.Curator))
-                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "User not permitted to create curation entries");
-
             // check if user has rights to access the dataset
             //if (!(userRights(user.Id, curationEntryModel.DatasetId) > 0))
             //    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "User has no rights to access the dataset");
 
-            List<CurationNote> notes;
-            if (curationEntryModel.Notes == null || !curationEntryModel.Notes.Any())
-                notes = new List<CurationNote>();
-            else
-                notes = curationEntryModel.Notes.Select(n => new CurationNote(user, n.Comment)).ToList(); // all notes will be created for the current user
-
             using (var curationManager = new CurationManager())
+            using (var userManager = new UserManager())
             {
+                var userWithGroups = userManager.Users
+                    .Where(u => u.Id == user.Id)
+                    .Fetch(u => u.Groups)
+                    .SingleOrDefault();
+
+                if (!CurationEntry.GetCurationUserType(userWithGroups).Equals(CurationUserType.Curator))
+                    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "User not permitted to create curation entries");
+
+                List<CurationNote> notes;
+                if (curationEntryModel.Notes == null || !curationEntryModel.Notes.Any())
+                    notes = new List<CurationNote>();
+                else
+                    notes = curationEntryModel.Notes.Select(n => new CurationNote(user, n.Comment)).ToList(); // all notes will be created for the current user
+
                 if (curationEntryModel.Type == CurationEntryType.StatusEntryItem)
                 {
                     if (curationManager.CurationEntries.Any(ce => ce.Dataset.Id == curationEntryModel.DatasetId && ce.Type == CurationEntryType.StatusEntryItem))
@@ -353,10 +374,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         notes,
                         curationEntryModel.UserIsDone,
                         curationEntryModel.IsApproved,
-                        user
+                        userWithGroups
                     );
 
-                var response = AnonymizeCurationEntryModel(curationEntryModel, newCurationEntry, user);
+                var response = AnonymizeCurationEntryModel(curationEntryModel, newCurationEntry, userWithGroups);
 
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
