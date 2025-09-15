@@ -171,6 +171,10 @@
       <Project>{2fb8def8-5749-4eae-8588-8a5aaed251a5}</Project>
       <Name>Vaiona.PersistenceProviders.NH</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
+      <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
+      <Name>BExIS.Utils.Config</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\DatasetHelper.cs" />

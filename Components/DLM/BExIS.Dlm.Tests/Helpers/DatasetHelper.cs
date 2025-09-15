@@ -163,8 +163,6 @@ namespace BExIS.Dlm.Tests.Helpers
                 var varTemplate5 = variableManager.CreateVariableTemplate("att5UT", dateTimeType, unit, "Attribute for Unit testing");
 
                 StructuredDataStructure dataStructure = dsManager.CreateStructuredDataStructure("dsForTesting", "DS for unit testing", "", "", Dlm.Entities.DataStructure.DataStructureCategory.Generic);
-                if (dataStructure != null)
-                {
 
                 if (dataStructure != null)
                 {

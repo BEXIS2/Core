@@ -164,6 +164,10 @@
       <Project>{0fcf7de1-e8f2-484c-8638-ef759b11d8a2}</Project>
       <Name>BExIS.App.Testing</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
+      <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
+      <Name>BExIS.Utils.Config</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
       <Project>{A7FBCC13-7E29-4710-82A1-BD6D6F811FDA}</Project>
       <Name>BExIS.Utils.Data</Name>

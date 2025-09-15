@@ -30,7 +30,6 @@ namespace BExIS.Dlm.Tests.Services.Curation
             helper = new TestSetupHelper(WebApiConfig.Register, false);
 
             using (UserManager userManager = new UserManager())
-            using (var identityUserService = new IdentityUserService())
             {
                 User admin = new User()
                 {
