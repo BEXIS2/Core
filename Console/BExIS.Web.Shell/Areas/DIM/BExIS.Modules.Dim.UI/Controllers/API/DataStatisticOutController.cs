@@ -12,22 +12,22 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.Utils.NH.Querying;
+using BExIS.Utils.Data;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
-
-//using System.Linq.Dynamic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using Vaiona.Persistence.Api;
+using Vaiona.Web.Mvc.Modularity;
+
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -99,13 +99,16 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return getData(id, variableId, token);
         }
 
-        private HttpResponseMessage getData(long id, int variableId, string token)
+        private HttpResponseMessage getData(long id, int variableId, string token, double tag = 0)
         {
             DatasetManager datasetManager = new DatasetManager();
             UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             EntityManager entityManager = new EntityManager();
             DataStructureManager dataStructureManager = null;
+
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            bool useTags = (bool)moduleSettings.GetValueByKey("use_tags");
 
             bool isPublic = false;
             try
@@ -140,41 +143,81 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     {
                         XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                         OutputDataManager ioOutputDataManager = new OutputDataManager();
+                       
+                        DatasetVersion datasetVersion = getDatasetVersion(id, datasetManager).Result;
 
-                        Dataset dataset = datasetManager.GetDataset(id);
-                        DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-
-                        string title = datasetVersion.Title;
-
-                        // check the data sturcture type ...
-                        if (datasetVersion.Dataset.DataStructure != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                        int count = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion).Count;
+                        if (count > 0)
                         {
-                            object stats = new object();
+                            string title = datasetVersion.Title;
 
-                            DataTable dt = new DataTable("Varibales");
-
-                            List<ApiDataStatisticModel> dataStatisticModels = new List<ApiDataStatisticModel>();
-                            StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(datasetVersion.Dataset.DataStructure.Id);
-                            if (variableId == -1)
+                            // check the data sturcture type ...
+                            if (datasetVersion.Dataset.DataStructure != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                             {
-                                foreach (VariableInstance vs in structuredDataStructure.Variables)
+                                object stats = new object();
+
+                                DataTable dt = new DataTable("Varibales");
+
+                                List<ApiDataStatisticModel> dataStatisticModels = new List<ApiDataStatisticModel>();
+                                StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(datasetVersion.Dataset.DataStructure.Id);
+                                if (variableId == -1)
                                 {
+                                    foreach (VariableInstance vs in structuredDataStructure.Variables)
+                                    {
+                                        ApiDataStatisticModel dataStatisticModel = new ApiDataStatisticModel();
+                                        dt = GetUniqueValues(datasetVersion, vs.Label, count, vs.Id);
+                                        dataStatisticModel.VariableId = vs.Id;
+                                        dataStatisticModel.VariableName = vs.Label;
+                                        dataStatisticModel.VariableDescription = vs.Description;
+                                        dataStatisticModel.DataTypeName = vs.DataType.Name;
+                                        dataStatisticModel.DataTypeSystemType = vs.DataType.SystemType;
+
+                                        DataTypeDisplayPattern dtdp = vs.DisplayPatternId > 0 ? DataTypeDisplayPattern.Get(vs.DisplayPatternId) : null;
+                                        string displayPattern = "";
+                                        if (dtdp != null) displayPattern = dtdp.StringPattern;
+
+                                        dataStatisticModel.DataTypeDisplayPattern = displayPattern;
+                                        dataStatisticModel.Unit = vs.Unit.Name;
+
+                                        dataStatisticModel.uniqueValues = dt;
+                                        dataStatisticModel.minLength = dt.Compute("Min(length)", string.Empty).ToString();
+                                        dataStatisticModel.maxLength = dt.Compute("Max(length)", string.Empty).ToString();
+                                        dataStatisticModel.count = dt.Compute("Sum(count)", string.Empty).ToString();
+
+                                        DataTable dtMissingValues = new DataTable("MissingValues");
+                                        dtMissingValues.Columns.Add("placeholder", typeof(String));
+                                        dtMissingValues.Columns.Add("displayName", typeof(String));
+
+                                        foreach (var missingValue in vs.MissingValues)
+                                        {
+                                            DataRow workRow = dtMissingValues.NewRow();
+                                            workRow["placeholder"] = missingValue.Placeholder;
+                                            workRow["displayName"] = missingValue.DisplayName;
+                                            dtMissingValues.Rows.Add(workRow);
+                                        }
+                                        dataStatisticModel.min = GetMin(dtMissingValues, dt);
+                                        dataStatisticModel.max = GetMax(dtMissingValues, dt);
+                                        dataStatisticModel.missingValues = dtMissingValues;
+                                        dataStatisticModels.Add(dataStatisticModel);
+                                    }
+                                }
+                                else
+                                {
+                                    VariableInstance variable = new VariableInstance();
+
+                                    foreach (VariableInstance vs in structuredDataStructure.Variables)
+                                    {
+                                        if (vs.Id == variableId)
+                                        {
+                                            variable = vs;
+                                        }
+                                    }
+
                                     ApiDataStatisticModel dataStatisticModel = new ApiDataStatisticModel();
-                                    dt = GetUniqueValues(id, vs.Id);
-                                    dataStatisticModel.VariableId = vs.Id;
-                                    dataStatisticModel.VariableName = vs.Label;
-                                    dataStatisticModel.VariableDescription = vs.Description;
-                                    dataStatisticModel.DataTypeName = vs.DataType.Name;
-                                    dataStatisticModel.DataTypeSystemType = vs.DataType.SystemType;
-
-                                    DataTypeDisplayPattern dtdp = vs.DisplayPatternId > 0 ? DataTypeDisplayPattern.Get(vs.DisplayPatternId) : null;
-                                    string displayPattern = "";
-                                    if (dtdp != null) displayPattern = dtdp.StringPattern;
-
-                                    dataStatisticModel.DataTypeDisplayPattern = displayPattern;
-                                    dataStatisticModel.Unit = vs.Unit.Name;
-
+                                    dt = GetUniqueValues(datasetVersion, variable.Label, count, variable.Id); ;
+                                    dataStatisticModel.VariableId = variableId;
                                     dataStatisticModel.uniqueValues = dt;
+
                                     dataStatisticModel.minLength = dt.Compute("Min(length)", string.Empty).ToString();
                                     dataStatisticModel.maxLength = dt.Compute("Max(length)", string.Empty).ToString();
                                     dataStatisticModel.count = dt.Compute("Sum(count)", string.Empty).ToString();
@@ -183,7 +226,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     dtMissingValues.Columns.Add("placeholder", typeof(String));
                                     dtMissingValues.Columns.Add("displayName", typeof(String));
 
-                                    foreach (var missingValue in vs.MissingValues)
+                                    foreach (var missingValue in variable.MissingValues)
                                     {
                                         DataRow workRow = dtMissingValues.NewRow();
                                         workRow["placeholder"] = missingValue.Placeholder;
@@ -195,63 +238,29 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     dataStatisticModel.missingValues = dtMissingValues;
                                     dataStatisticModels.Add(dataStatisticModel);
                                 }
+                                dt.Strip();
+
+                                dt.TableName = id + "_data";
+
+                                DatasetModel model = new DatasetModel();
+                                model.DataTable = dt;
+
+                                var response = Request.CreateResponse(HttpStatusCode.OK);
+                                string resp = JsonConvert.SerializeObject(dataStatisticModels);
+
+                                response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
+                                response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                                return response;
                             }
                             else
                             {
-                                VariableInstance variable = new VariableInstance();
-
-                                foreach (VariableInstance vs in structuredDataStructure.Variables)
-                                {
-                                    if (vs.Id == variableId)
-                                    {
-                                        variable = vs;
-                                    }
-                                }
-
-                                ApiDataStatisticModel dataStatisticModel = new ApiDataStatisticModel();
-                                dt = GetUniqueValues(id, variableId);
-                                dataStatisticModel.VariableId = variableId;
-                                dataStatisticModel.uniqueValues = dt;
-
-                                dataStatisticModel.minLength = dt.Compute("Min(length)", string.Empty).ToString();
-                                dataStatisticModel.maxLength = dt.Compute("Max(length)", string.Empty).ToString();
-                                dataStatisticModel.count = dt.Compute("Sum(count)", string.Empty).ToString();
-
-                                DataTable dtMissingValues = new DataTable("MissingValues");
-                                dtMissingValues.Columns.Add("placeholder", typeof(String));
-                                dtMissingValues.Columns.Add("displayName", typeof(String));
-
-                                foreach (var missingValue in variable.MissingValues)
-                                {
-                                    DataRow workRow = dtMissingValues.NewRow();
-                                    workRow["placeholder"] = missingValue.Placeholder;
-                                    workRow["displayName"] = missingValue.DisplayName;
-                                    dtMissingValues.Rows.Add(workRow);
-                                }
-                                dataStatisticModel.min = GetMin(dtMissingValues, dt);
-                                dataStatisticModel.max = GetMax(dtMissingValues, dt);
-                                dataStatisticModel.missingValues = dtMissingValues;
-                                dataStatisticModels.Add(dataStatisticModel);
+                                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no structured data for the dataset.");
                             }
-                            dt.Strip();
-
-                            dt.TableName = id + "_data";
-
-                            DatasetModel model = new DatasetModel();
-                            model.DataTable = dt;
-
-                            var response = Request.CreateResponse(HttpStatusCode.OK);
-                            string resp = JsonConvert.SerializeObject(dataStatisticModels);
-
-                            response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
-                            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-                            return response;
                         }
                         else
-                        {
-                            return Request.CreateResponse();
-                        }
+                            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no data for the dataset version.");
+
                     }
                     else // has rights?
                     {
@@ -283,66 +292,81 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
-        private static ProjectionExpression GetProjectionExpression(string projection)
+        private async Task<DatasetVersion> getDatasetVersion(long datasetId, DatasetManager datasetManager, int versionNr= 0)
         {
-            ProjectionExpression pe = new ProjectionExpression();
+            string username = GetUsernameOrDefault();
 
-            string[] columns = projection.Split(',');
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            bool useTags = false;
+            bool.TryParse(moduleSettings.GetValueByKey("use_tags").ToString(), out useTags);
 
-            foreach (string c in columns)
-            {
-                if (!string.IsNullOrEmpty(c))
-                {
-                    pe.Items.Add(new ProjectionItemExpression() { FieldName = c });
-                }
-            }
+            // get version based on situtaion / tags, versions, etc.    
+            long versionId = await DatasetVersionHelper.GetVersionId(datasetId, username, versionNr, useTags);
+            DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(versionId);
 
-            return pe;
+            return datasetVersion;
         }
 
-        private long Count(long datasetId)
+        public string GetUsernameOrDefault()
         {
-            StringBuilder mvBuilder = new StringBuilder();
-            mvBuilder.AppendLine(string.Format("SELECT COUNT(id) AS cnt FROM {0};", this.BuildName(datasetId).ToLower()));
-            // execute the statement
+            var username = string.Empty;
             try
             {
-                using (IUnitOfWork uow = this.GetBulkUnitOfWork())
-                {
-                    var result = uow.ExecuteScalar(mvBuilder.ToString());
-                    return (long)result;
-                }
+                var user = ControllerContext.RouteData.Values["user"] as User;
+                username = user.UserName;
             }
-            catch
-            {
-                return -1;
-            }
+            catch { }
+
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
-        private DataTable GetUniqueValues(long datasetId, long variableId)
+        private DataTable GetUniqueValues(DatasetVersion datasetVersion, string variableName, int count, long variableId)
         {
-            StringBuilder mvBuilder = new StringBuilder();
-            mvBuilder.AppendLine($"SELECT var{variableId} as var, count(id), length(var{variableId}::text) FROM {BuildName(datasetId).ToLower()} group by var{variableId} order by var;");
-            // execute the statement
-            try
+            using (var datasetManager = new DatasetManager())
             {
-                using (IUnitOfWork uow = this.GetUnitOfWork())
-                {
-                    var result = uow.ExecuteQuery(mvBuilder.ToString());
-                    return result;
-                }
-            }
-            catch
-            {
-                return null;
+                DataTable dt = datasetManager.GetDatasetVersionTuples(datasetVersion.Id, 0, count);
+                dt.Strip(); 
+
+                dt = OutputDataManager.ProjectionOnDataTable(dt, variableName.ToUpper().Split(','));
+
+                string requested = "var"+ variableId;
+                string targetCol = dt.Columns.Cast<DataColumn>()
+                    .Where(c => string.Equals(c.ColumnName, requested, StringComparison.OrdinalIgnoreCase))
+                    .Select(c => c.ColumnName)
+                    .FirstOrDefault()
+                    ?? throw new ArgumentException(
+                         $"Spalte '{requested}' nicht in Tabelle. Vorhanden: " +
+                         string.Join(", ", dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName)));
+
+                bool trim = true;
+                var cmp = StringComparer.OrdinalIgnoreCase;
+
+                var query =
+                    dt.Rows.Cast<DataRow>()
+                      .Select(r =>
+                      {
+                          var v = r[targetCol];
+                          string s = (v == null || v == DBNull.Value) ? null : v.ToString();
+                          return (trim && s != null) ? s.Trim() : s;
+                      })
+                      .GroupBy(s => s, cmp)
+                      .Select(g => new { Value = g.Key, Count = g.Count(), Length = (g.Key ?? string.Empty).Length })
+                      .OrderBy(x => x.Value);
+
+                // 4) Ergebnis bauen
+                var result = new DataTable();
+                result.Columns.Add(targetCol, typeof(string));
+                result.Columns.Add("Count", typeof(int));
+                result.Columns.Add("Length", typeof(int));
+
+                foreach (var x in query)
+                    result.Rows.Add(x.Value, x.Count, x.Length);
+
+                return result;
             }
         }
 
-        private string BuildName(long datasetId)
-        {
-            return "mvDataset" + datasetId;
-        }
-
+        
         private string GetMin(DataTable missingValues, DataTable dt)
         {
             for (var i = 0; i < dt.Rows.Count - 1; i++)
