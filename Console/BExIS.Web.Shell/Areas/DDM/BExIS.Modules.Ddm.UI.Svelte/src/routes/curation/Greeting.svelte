@@ -34,7 +34,6 @@
 			}
 			return parts;
 		});
-		console.log(r);
 		return r;
 	}
 

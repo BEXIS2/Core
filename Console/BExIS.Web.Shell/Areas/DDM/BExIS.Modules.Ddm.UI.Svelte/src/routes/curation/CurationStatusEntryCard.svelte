@@ -22,7 +22,8 @@
 	$: curationStatusEntry = $curation?.curationStatusEntry;
 
 	$: if (!curationStatusEntry || curationStatusEntry.type !== CurationEntryType.StatusEntryItem) {
-		throw new Error('Invalid CurationStatusEntry provided');
+		console.log('CurationStatusEntryCard: No valid status entry found.');
+		curationStatusEntry = undefined;
 	}
 
 	$: isUploadingStatus = curationStatusEntry && $uploadingEntries.includes(curationStatusEntry.id);

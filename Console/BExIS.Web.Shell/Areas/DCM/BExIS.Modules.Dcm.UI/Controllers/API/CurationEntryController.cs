@@ -104,7 +104,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return new CurationModel()
             {
-                DatasetId = datasetVersion.Id,
+                DatasetId = datasetVersion.Dataset.Id,
                 DatasetTitle = datasetVersion.Title,
                 DatasetVersionDate = datasetVersion.Timestamp,
                 CurationEntries = responseEntries,
@@ -173,12 +173,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (var datasetManager = new DatasetManager())
             using (var userManager = new UserManager())
             {
+                if (datasetManager.GetDataset(datasetid) == null)
+                    throw new ArgumentException($"Dataset with id {datasetid} does not exist.", nameof(datasetid));
+
                 var userWithGroups = userManager.Users
                     .Where(u => u.Id == user.Id)
                     .Fetch(u => u.Groups)
                     .SingleOrDefault();
 
-                var curationEntries = curationManager.CurationEntryRepository.Get().Where(c => c.Dataset.Id == datasetid).ToList();
+                var curationEntries = curationManager.CurationEntryRepository.Get().Where(c => c.Dataset != null && c.Dataset.Id == datasetid).ToList();
                 var datasetVersion = datasetManager.GetDatasetLatestVersion(datasetid);
                 responseContent = AnonymizedCurationResponseContent(datasetVersion, curationEntries, userWithGroups);
             }
@@ -202,7 +205,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 var datasets = datasetManager.DatasetRepo.Get();
                 var versions = datasetManager.DatasetVersionRepo.Get();
-                var curationEntries = curationManager.CurationEntryRepository.Get();
+                var curationEntries = curationManager.CurationEntryRepository.Get().Where(ce => ce.Dataset != null);
 
                 var query = from d in datasets
                             join v in versions

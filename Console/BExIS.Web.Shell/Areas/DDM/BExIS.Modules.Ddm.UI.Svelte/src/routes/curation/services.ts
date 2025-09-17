@@ -34,68 +34,48 @@ function fixModel(model: CurationEntryModel): CurationEntryModel {
 	return model;
 }
 
-export const get = async () => {
-	try {
-		const response = await Api.get('/api/curationentries');
+export const getCurationEntries = async () => {
+	const response = await Api.get('/api/curationentries');
 
-		console.log('🎈 ~ GET ~ response:', response);
+	console.log('🎈 ~ GET ~ response:', response);
 
-		response.data = firstLetterToLowerCase(response.data);
+	response.data = firstLetterToLowerCase(response.data);
 
-		return response.data as CurationsOverviewModel;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
+	return response.data as CurationsOverviewModel;
 };
 
 export const getCurationDataset = async (id: number) => {
-	try {
-		const response = await Api.get(`/api/datasets/${id}/curation`);
+	const response = await Api.get(`/api/datasets/${id}/curation`);
 
-		console.log('🎈 ~ GET by dataset ~ response:', response);
+	console.log('🎈 ~ GET by dataset ~ response:', response);
 
-		response.data = firstLetterToLowerCase(response.data);
+	response.data = firstLetterToLowerCase(response.data);
 
-		return response.data as CurationModel;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
+	return response.data as CurationModel;
 };
 
 export const putCurationEntry = async (model: CurationEntryModel) => {
-	try {
-		model = fixModel(model);
+	model = fixModel(model);
 
-		const response = await Api.put('/api/curationentries', model);
+	const response = await Api.put('/api/curationentries', model);
 
-		console.log('🎈 ~ PUT ~ Response:', response);
+	console.log('🎈 ~ PUT ~ Response:', response);
 
-		response.data = firstLetterToLowerCase(response.data);
+	response.data = firstLetterToLowerCase(response.data);
 
-		return response.data as CurationEntryModel;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
+	return response.data as CurationEntryModel;
 };
 
 export const postCurationEntry = async (model: CurationEntryModel) => {
-	try {
-		model = fixModel(model);
+	model = fixModel(model);
 
-		model.id = 0; // Set id to 0 to create a new entry
+	model.id = 0; // Set id to 0 to create a new entry
 
-		const response = await Api.post('/api/curationentries', model);
+	const response = await Api.post('/api/curationentries', model);
 
-		console.log('🎈 ~ POST ~ response:', response);
+	console.log('🎈 ~ POST ~ response:', response);
 
-		response.data = firstLetterToLowerCase(response.data);
+	response.data = firstLetterToLowerCase(response.data);
 
-		return response.data as CurationEntryModel;
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
+	return response.data as CurationEntryModel;
 };

@@ -34,6 +34,8 @@
 
 	export let datasetId: number;
 
+	curationStore.datasetId.set(datasetId);
+
 	export function applyTypeFilter(type: CurationEntryType | undefined) {
 		curationStore.updateEntryFilter(
 			CurationFilterType.type,
@@ -78,12 +80,6 @@
 	const typeFilter = curationStore.getEntryFilterData(CurationFilterType.type);
 
 	const currentTypeViewOrder = curationStore.getCurrentTypeViewOrder();
-
-	onMount(async () => {
-		if (datasetId) {
-			curationStore.datasetId.set(datasetId);
-		}
-	});
 
 	const clearFilters = () => {
 		curationStore.clearEntryFilters();

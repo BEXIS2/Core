@@ -74,6 +74,7 @@ namespace BExIS.Dlm.Services.Curation
                 // Force loading of Groups collection
                 var _ = loadedUser.Groups.Count;
 
+                // set last change date time
                 if (CurationEntry.GetCurationUserType(loadedUser) == CurationUserType.Curator)
                 {
                     lastChangeDatetime_User = DateTime.MinValue;
@@ -86,6 +87,10 @@ namespace BExIS.Dlm.Services.Curation
                 }
 
                 var dataset = repoDataset.Get(datasetId);
+
+                // check if dataset exists
+                if (dataset == null)
+                    throw new ArgumentException($"Dataset with id {datasetId} does not exist.", nameof(datasetId));
 
                 CurationEntry curationEntry = new CurationEntry(
                     topic,

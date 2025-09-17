@@ -1,5 +1,10 @@
 import { derived, writable, type Readable, type Writable } from 'svelte/store';
-import { get, getCurationDataset, postCurationEntry, putCurationEntry } from './services';
+import {
+	getCurationEntries,
+	getCurationDataset,
+	postCurationEntry,
+	putCurationEntry
+} from './services';
 import {
 	CurationEntryStatus,
 	CurationEntryStatusColorPalettes,
@@ -15,6 +20,7 @@ import {
 } from './types';
 import { CurationClass, CurationEntryClass } from './CurationEntries';
 import { tick } from 'svelte';
+import { get } from 'svelte/store';
 
 class CurationStore {
 	public readonly datasetId = writable<number | null>(null);
@@ -93,7 +99,7 @@ class CurationStore {
 				this.setState(null, true, null);
 				return;
 			}
-			this.fetch(datasetId);
+			this.fetch();
 		});
 		this.jumpToEntryWhere.subscribe((fn) => {
 			if (this.jumpToEntryWhereTimer) clearTimeout(this.jumpToEntryWhereTimer);
@@ -117,7 +123,8 @@ class CurationStore {
 		this._loadingError.set(error);
 	}
 
-	private fetch(datasetId: number | null) {
+	private fetch() {
+		const datasetId: number | null = get(this.datasetId);
 		if (!datasetId) {
 			this.setState(null, false, 'No dataset selected');
 			return;
@@ -187,14 +194,6 @@ class CurationStore {
 			return [];
 		});
 		this.timer = null;
-	}
-
-	public reload() {
-		this.datasetId.update((datasetId) => {
-			if (!datasetId) return datasetId;
-			this.fetch(datasetId);
-			return datasetId;
-		});
 	}
 
 	public addNote(entryId: number, comment: string) {
@@ -322,7 +321,7 @@ class CurationStore {
 			.catch((error) => {
 				console.error('🎈 ~ Error saving entry:', error);
 				this._uploadingEntries.set([]);
-				this.fetch(entry.datasetId);
+				this.fetch();
 			});
 	}
 
@@ -489,7 +488,7 @@ class OverviewStore {
 		this._curationLabels.set([]);
 		this._isLoading.set(true);
 		this._errorMessage.set(undefined);
-		get()
+		getCurationEntries()
 			.then((response) => {
 				this._curationDetails.set(response.datasets);
 				this._curationLabels.set(response.curationLabels);
