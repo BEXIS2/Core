@@ -60,9 +60,6 @@ namespace BExIS.Dlm.Services.Curation
 
             if (type == CurationEntryType.StatusEntryItem && position != 0) throw new ArgumentException("Position for StatusEntryItem must be 0.");
 
-            DateTime lastChangeDatetime_User;
-            DateTime lastChangeDatetime_Curator;
-
             using (var uow = this.GetUnitOfWork())
             {
                 var repoEntries = uow.GetRepository<CurationEntry>();
@@ -75,16 +72,8 @@ namespace BExIS.Dlm.Services.Curation
                 var _ = loadedUser.Groups.Count;
 
                 // set last change date time
-                if (CurationEntry.GetCurationUserType(loadedUser) == CurationUserType.Curator)
-                {
-                    lastChangeDatetime_User = DateTime.MinValue;
-                    lastChangeDatetime_Curator = DateTime.Now;
-                }
-                else
-                {
-                    lastChangeDatetime_User = DateTime.Now;
-                    lastChangeDatetime_Curator = DateTime.MinValue;
-                }
+                if (CurationEntry.GetCurationUserType(loadedUser) != CurationUserType.Curator)
+                    throw new UnauthorizedAccessException("Only curators are allowed to create curation entries.");
 
                 var dataset = repoDataset.Get(datasetId);
 
@@ -106,8 +95,8 @@ namespace BExIS.Dlm.Services.Curation
                     loadedUser,
                     userIsDone,
                     isApproved,
-                    lastChangeDatetime_User,
-                    lastChangeDatetime_Curator
+                    lastChangeDatetime_User: DateTime.MinValue,
+                    lastChangeDatetime_Curator: DateTime.Now
                 );
 
                 repoEntries.Put(curationEntry);
@@ -174,24 +163,42 @@ namespace BExIS.Dlm.Services.Curation
                     }
                 }
 
-                merged.UserIsDone = userIsDone;
                 merged.Notes = currentNotes;
+
+                var changed = false;
 
                 if (isCurator)
                 {
+                    changed = topic != merged.Topic ||
+                              type != merged.Type ||
+                              name != merged.Name ||
+                              description != merged.Description ||
+                              solution != merged.Solution ||
+                              source != merged.Source ||
+                              userIsDone != merged.UserIsDone ||
+                              isApproved != merged.IsApproved;
                     merged.Topic = topic;
                     merged.Type = type;
                     merged.Name = name;
                     merged.Description = description;
                     merged.Solution = solution;
                     merged.Source = source;
-                    merged.LastChangeDatetime_Curator = DateTime.Now;
+                    merged.UserIsDone = userIsDone;
                     merged.IsApproved = isApproved;
+                    if (changed)
+                        merged.LastChangeDatetime_Curator = DateTime.Now;
                 }
                 else
                 {
-                    merged.LastChangeDatetime_User = DateTime.Now;
-                    if (!isApproved) merged.IsApproved = isApproved;
+                    changed = userIsDone != merged.UserIsDone;
+                    merged.UserIsDone = userIsDone;
+                    if (!isApproved)
+                    {
+                        changed |= isApproved != merged.IsApproved;
+                        merged.IsApproved = isApproved;
+                    }                        
+                    if (changed)
+                        merged.LastChangeDatetime_User = DateTime.Now;
                 }
 
 

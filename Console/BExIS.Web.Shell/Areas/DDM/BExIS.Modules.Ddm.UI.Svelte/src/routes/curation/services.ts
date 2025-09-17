@@ -34,6 +34,41 @@ function fixModel(model: CurationEntryModel): CurationEntryModel {
 	return model;
 }
 
+const curationEntryModelKeys = [
+	'id',
+	'topic',
+	'type',
+	'datasetId',
+	'name',
+	'description',
+	'solution',
+	'position',
+	'source',
+	'notes',
+	'userIsDone',
+	'isApproved'
+];
+
+const curationNoteModelKeys = ['id', 'comment'];
+
+function filterObjectKeys(obj: any, keys: string[]): any {
+	const filtered: any = {};
+	for (const key of keys) {
+		filtered[key] = obj[key];
+	}
+	return filtered;
+}
+
+function filterCurationEntryModel(obj: any): CurationEntryModel {
+	const filtered = filterObjectKeys(obj, curationEntryModelKeys);
+	if (Array.isArray(filtered.notes)) {
+		filtered.notes = filtered.notes.map((note: any) =>
+			filterObjectKeys(note, curationNoteModelKeys)
+		);
+	}
+	return filtered as CurationEntryModel;
+}
+
 export const getCurationEntries = async () => {
 	const response = await Api.get('/api/curationentries');
 
@@ -56,8 +91,8 @@ export const getCurationDataset = async (id: number) => {
 
 export const putCurationEntry = async (model: CurationEntryModel) => {
 	model = fixModel(model);
-
-	const response = await Api.put('/api/curationentries', model);
+	const filteredModel = filterCurationEntryModel(model);
+	const response = await Api.put('/api/curationentries', filteredModel);
 
 	console.log('🎈 ~ PUT ~ Response:', response);
 
@@ -68,10 +103,9 @@ export const putCurationEntry = async (model: CurationEntryModel) => {
 
 export const postCurationEntry = async (model: CurationEntryModel) => {
 	model = fixModel(model);
-
-	model.id = 0; // Set id to 0 to create a new entry
-
-	const response = await Api.post('/api/curationentries', model);
+	model.id = 0;
+	const filteredModel = filterCurationEntryModel(model);
+	const response = await Api.post('/api/curationentries', filteredModel);
 
 	console.log('🎈 ~ POST ~ response:', response);
 

@@ -174,7 +174,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (var userManager = new UserManager())
             {
                 if (datasetManager.GetDataset(datasetid) == null)
-                    throw new ArgumentException($"Dataset with id {datasetid} does not exist.", nameof(datasetid));
+                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Dataset not found");
 
                 var userWithGroups = userManager.Users
                     .Where(u => u.Id == user.Id)
@@ -351,7 +351,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (curationEntryModel.Notes == null || !curationEntryModel.Notes.Any())
                     notes = new List<CurationNote>();
                 else
-                    notes = curationEntryModel.Notes.Select(n => new CurationNote(user, n.Comment)).ToList(); // all notes will be created for the current user
+                    notes = curationEntryModel.Notes.Select(n => new CurationNote(userWithGroups, n.Comment)).ToList(); // all notes will be created for the current user
 
                 if (curationEntryModel.Type == CurationEntryType.StatusEntryItem)
                 {
