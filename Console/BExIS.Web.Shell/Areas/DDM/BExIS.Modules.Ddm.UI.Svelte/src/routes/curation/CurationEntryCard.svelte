@@ -256,10 +256,15 @@
 					if ($cardState.isExpanded) scrollCardIntoView();
 				}}
 			>
-				<Fa icon={$cardState.isExpanded ? faXmark : faMessage} class="mr-2 inline-block" />
-				{#if $entry?.hasUnreadNotes && !$cardState.isExpanded}
-					<span class="notification-badge"><span>&nbsp;</span></span>
-				{/if}
+				<span class="relative mr-2">
+					<Fa icon={$cardState.isExpanded ? faXmark : faMessage} class="inline-block" />
+					{#if $entry?.hasUnreadNotes && !$cardState.isExpanded}
+						<span class="notification-badge">
+							<span aria-hidden="true">&nbsp;</span>
+							<span class="sr-only">New unread note</span>
+						</span>
+					{/if}
+				</span>
 				Chat
 				{#if !$cardState.isExpanded && visibleNotes.length > 0}
 					({visibleNotes.length})
@@ -397,11 +402,12 @@
 	}
 
 	.notification-badge {
-		@apply border border-surface-300;
+		@apply absolute border border-surface-300;
 		width: 0.5rem;
 		height: 0.5rem;
-		margin-left: -0.8rem;
-		margin-top: -0.65rem;
+		top: 0;
+		right: 0;
+		transform: translate(50%, 0);
 	}
 
 	.notification-badge * {
