@@ -196,7 +196,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 datatupleFromDatabaseIds = datasetManager.GetDatasetVersionEffectiveTupleIds(latest);
 
                 //get updated tuples as incoming datatuples
-                incoming = dsHelper.GetUpdatedDatatuples(latest, dataset.DataStructure as StructuredDataStructure, datasetManager);
+                incoming = dsHelper.GetUpdatedDatatuples(latest, dataset.DataStructure as StructuredDataStructure, datasetManager, 10);
 
                 //because of updateing all datatuples the incoming number is should be equal then the existing one
                 expectedCount = incoming.Count;
