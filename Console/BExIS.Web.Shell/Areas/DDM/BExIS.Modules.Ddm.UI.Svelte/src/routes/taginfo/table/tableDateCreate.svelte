@@ -16,7 +16,7 @@
 	}
 </script>
 
-<span title="Date of creation of the release tag">
+<span title="Creation date of this version">
 	{#if !emtpy}
 		{new Date(value).toLocaleString('de-DE')}
 	{/if}
