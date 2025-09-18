@@ -23,7 +23,7 @@
 		entitytemplate: ''
 	};
 
- export let authorLabel = 'Authors';
+	export let authorLabel = 'Authors';
 
 	const { title, description, author, license, id, doi, entity, date, entitytemplate } = card;
 

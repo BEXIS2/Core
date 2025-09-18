@@ -249,7 +249,8 @@
 
 		if (placeholders.length > 0) {
 			const idIndex = headers.findIndex((header) => header.Name === 'ID');
-   authorLabel = headers[headers.findIndex((header) => header.Placeholder === 'author')]?.DisplayName
+			authorLabel =
+				headers[headers.findIndex((header) => header.Placeholder === 'author')]?.DisplayName;
 			const data = rows.map((row) => ({
 				...placeholders.reduce(
 					(acc, item) => {
@@ -265,12 +266,9 @@
 
 			placeholderStore.set(data);
 
-			console.log("🚀 ~ data ~ data:", data, authorLabel)
+			console.log('🚀 ~ data ~ data:', data, authorLabel);
 		}
 	};
-
-
-
 
 	const deleteCriteriaKey = (criterion: string, value: string) => {
 		const temp = { ...$criteria };
@@ -594,7 +592,7 @@
 					</div>
 				{/if}
 				<div class:hidden={currentView === 'table'}>
-					<Cards store={placeholderStore} {authorLabel}/>
+					<Cards store={placeholderStore} {authorLabel} />
 				</div>
 			</div>
 		</div>
