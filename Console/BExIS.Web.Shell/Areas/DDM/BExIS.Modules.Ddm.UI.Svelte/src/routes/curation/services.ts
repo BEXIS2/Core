@@ -49,7 +49,7 @@ const curationEntryModelKeys = [
 	'isApproved'
 ];
 
-const curationNoteModelKeys = ['id', 'comment'];
+const curationNoteModelKeys = ['id', 'comment', 'userId'];
 
 function filterObjectKeys(obj: any, keys: string[]): any {
 	const filtered: any = {};
