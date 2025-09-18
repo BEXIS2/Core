@@ -131,6 +131,24 @@ namespace BExIS.Modules.Dcm.UI.Models.Curation
         }
     }
 
+    public class CurationTemplateModel
+    {
+        public string name { get; set; }
+        public string content { get; set; }
+
+        public CurationTemplateModel()
+        {
+            name = string.Empty;
+            content = string.Empty;
+        }
+
+        public CurationTemplateModel(string name, string content)
+        {
+            this.name = name;
+            this.content = content;
+        }
+    }
+
     public class CurationModel
     {
         public long DatasetId { get; set; }
@@ -140,7 +158,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Curation
         public IEnumerable<CurationUserModel> CurationUsers { get; set; }
         public IEnumerable<CurationLabel> CurationLabels { get; set; }
         public IEnumerable<CurationEntryType> CurationEntryTypes { get; set; }
-
+        public IEnumerable<CurationTemplateModel> GreetingTemplates { get; set; }
+        public IEnumerable<CurationTemplateModel> TaskListTemplates { get; set; }
 
         public CurationModel()
         {
@@ -151,9 +170,11 @@ namespace BExIS.Modules.Dcm.UI.Models.Curation
             CurationUsers = new List<CurationUserModel>();
             CurationLabels = new List<CurationLabel>();
             CurationEntryTypes = Enum.GetValues(typeof(CurationEntryType)).Cast<CurationEntryType>().ToList();
+            GreetingTemplates = new List<CurationTemplateModel>();
+            TaskListTemplates = new List<CurationTemplateModel>();
         }
 
-        public CurationModel(long datasetId, string datasetTitle, DateTime datasetVersionDate, IEnumerable<CurationEntryModel> curationEntries, IEnumerable<CurationUserModel> curationUsers, IEnumerable<CurationLabel> curationLabels, IEnumerable<CurationEntryType> curationEntryTypes)
+        public CurationModel(long datasetId, string datasetTitle, DateTime datasetVersionDate, IEnumerable<CurationEntryModel> curationEntries, IEnumerable<CurationUserModel> curationUsers, IEnumerable<CurationLabel> curationLabels, IEnumerable<CurationEntryType> curationEntryTypes, IEnumerable<CurationTemplateModel> greetingTemplates, IEnumerable<CurationTemplateModel> taskListTemplates)
         {
             DatasetId = datasetId;
             DatasetTitle = datasetTitle;
@@ -162,6 +183,8 @@ namespace BExIS.Modules.Dcm.UI.Models.Curation
             CurationUsers = curationUsers;
             CurationLabels = curationLabels;
             CurationEntryTypes = curationEntryTypes;
+            GreetingTemplates = greetingTemplates;
+            TaskListTemplates = taskListTemplates;
         }
 
     }
