@@ -216,16 +216,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var greetingTemplates = GetGreetingTemplates();
                 var taskListTemplates = GetTaskListTemplates();
 
+                bool userIsCurator = CurationEntry.GetCurationUserType(userWithGroups).Equals(CurationUserType.Curator);
+
                 curationModel = new CurationModel(
                     datasetid,
                     datasetVersion != null ? datasetVersion.Title : string.Empty,
                     datasetVersion != null ? datasetVersion.Timestamp : DateTime.MinValue,
                     anonymizedCurationEntries.AnonymizedCurationEntries,
                     anonymizedCurationEntries.AnonymizedCurationUsers,
-                    curationLabels,
+                    userIsCurator ? curationLabels : new List<CurationLabel>(),
                     curationEntryTypes,
-                    greetingTemplates,
-                    taskListTemplates
+                    userIsCurator ? greetingTemplates : new List<CurationTemplateModel>(),
+                    userIsCurator ? taskListTemplates : new List<CurationTemplateModel>()
                 );
             }
 
