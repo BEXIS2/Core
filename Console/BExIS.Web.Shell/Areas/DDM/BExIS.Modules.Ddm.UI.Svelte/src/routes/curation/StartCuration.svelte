@@ -1,8 +1,9 @@
 <script lang="ts">
 	import Fa from 'svelte-fa';
 	import { curationStore } from './stores';
-	import { CurationEntryType } from './types';
+	import { CurationEntryType, type CurationTemplateModel } from './types';
 	import { faPlay, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+	import CurationTemplate from './CurationTemplate.svelte';
 
 	const { curation, editMode } = curationStore;
 
@@ -37,6 +38,16 @@
 		});
 		editMode.set(true);
 	};
+
+	const addGreetingTemplate = (template: CurationTemplateModel) => {
+		if (greeting.length > 0 && !greeting.endsWith('\n')) greeting += '\n';
+		greeting += template.content;
+	};
+
+	const addTaskTemplate = (template: CurationTemplateModel) => {
+		if (tasks.length > 0 && !tasks.endsWith('\n')) tasks += '\n';
+		tasks += template.content;
+	};
 </script>
 
 <p class="m-2 text-center text-surface-600">
@@ -44,7 +55,7 @@
 </p>
 
 {#if $curation?.isCurator}
-	<form class="mx-2 mt-2 flex flex-col items-stretch gap-2 sm:mx-24">
+	<form class="m-2 flex flex-col items-stretch gap-2 sm:mx-24">
 		<button
 			on:click|preventDefault={startCuration}
 			class="variant-filled-success btn px-4 py-1 text-base"
@@ -61,6 +72,11 @@
 				placeholder="Add a greeting to greet the researcher. (can still be adjusted later)"
 				required
 			></textarea>
+			<CurationTemplate
+				title="Greeting"
+				templates={$curation?.greetingTemplates ?? []}
+				addFunction={addGreetingTemplate}
+			/>
 		</label>
 		<label class="block">
 			<span class="text-surface-700">Tasks:</span>
@@ -71,6 +87,11 @@
 				placeholder="Add a list of tasks you want to complete for this dataset. (can still be adjusted later)"
 				required
 			></textarea>
+			<CurationTemplate
+				title="Tasks"
+				templates={$curation?.taskListTemplates ?? []}
+				addFunction={addTaskTemplate}
+			/>
 		</label>
 	</form>
 {/if}

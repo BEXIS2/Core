@@ -11,12 +11,13 @@ import {
 	type CurationLabel,
 	type CurationModel,
 	type CurationNoteModel,
+	type CurationTemplateModel,
 	type CurationUserModel
 } from './types';
 
 export const fixedCurationUserId = 1; // This is set by the backend when requesting the curation entries
 
-export class CurationClass {
+export class CurationClass implements CurationModel {
 	// Properties from CurationModel
 	public readonly datasetId: number;
 	public readonly datasetTitle: string;
@@ -26,6 +27,8 @@ export class CurationClass {
 	public readonly curationStatusEntry: CurationEntryClass | null = null;
 	public readonly curationUsers: CurationUserClass[];
 	public readonly curationLabels: CurationLabel[];
+	public readonly greetingTemplates: CurationTemplateModel[];
+	public readonly taskListTemplates: CurationTemplateModel[];
 
 	// Additional properties
 	public readonly userMap: Map<number, CurationUserModel>;
@@ -62,6 +65,9 @@ export class CurationClass {
 		this.datasetId = curation.datasetId || 0;
 		this.datasetTitle = curation.datasetTitle || '';
 		this.datasetVersionDate = curation.datasetVersionDate || '';
+
+		this.greetingTemplates = curation.greetingTemplates || [];
+		this.taskListTemplates = curation.taskListTemplates || [];
 
 		const removeTypes = new Set<CurationEntryType>([
 			CurationEntryType.None,

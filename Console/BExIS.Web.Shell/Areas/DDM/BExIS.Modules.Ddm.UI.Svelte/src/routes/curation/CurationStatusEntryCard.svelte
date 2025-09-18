@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Fa from 'svelte-fa';
-	import { CurationEntryType, CurationStatusEntryTab } from './types';
+	import { CurationEntryType, CurationStatusEntryTab, type CurationTemplateModel } from './types';
 	import {
 		faDoorOpen,
 		faListCheck,
@@ -16,6 +16,7 @@
 	import CurationLabel from './CurationLabel.svelte';
 	import { slide } from 'svelte/transition';
 	import Greeting from './Greeting.svelte';
+	import CurationTemplate from './CurationTemplate.svelte';
 
 	const { curation, currentStatusEntryTab, curationInfoExpanded, uploadingEntries } = curationStore;
 
@@ -53,6 +54,11 @@
 		editGreetingMode.set(false);
 	};
 
+	const addGreetingTemplate = (template: CurationTemplateModel) => {
+		if (greeting.length > 0 && !greeting.endsWith('\n')) greeting += '\n';
+		greeting += template.content;
+	};
+
 	const editTasksMode = writable(false);
 
 	let tasks = curationStatusEntry?.description ?? '';
@@ -76,6 +82,11 @@
 	const cancelTasksEdit = () => {
 		tasks = curationStatusEntry?.description ?? '';
 		editTasksMode.set(false);
+	};
+
+	const addTaskTemplate = (template: CurationTemplateModel) => {
+		if (tasks.length > 0 && !tasks.endsWith('\n')) tasks += '\n';
+		tasks += template.content;
 	};
 
 	let highlightOpen: string | undefined = undefined;
@@ -203,7 +214,9 @@
 				out:slide={{ duration: 150 }}
 			>
 				{#if !$editGreetingMode}
-					<Greeting {greeting} />
+					{#key greeting}
+						<Greeting {greeting} />
+					{/key}
 					<div class="flex flex-row-reverse justify-between">
 						<button
 							class="variant-soft-secondary btn mb-1 mt-2 px-2 py-0.5"
@@ -224,6 +237,11 @@
 							rows="6"
 							placeholder="Enter introduction text"
 						></textarea>
+						<CurationTemplate
+							title="Tasks"
+							templates={$curation?.taskListTemplates ?? []}
+							addFunction={addGreetingTemplate}
+						/>
 					</label>
 					<div class="mb-1 mt-2 flex flex-row justify-between">
 						<!-- Cancel button -->
@@ -293,6 +311,11 @@
 							rows="12"
 							placeholder="Enter tasks"
 						></textarea>
+						<CurationTemplate
+							title="Tasks"
+							templates={$curation?.taskListTemplates ?? []}
+							addFunction={addTaskTemplate}
+						/>
 					</label>
 
 					<div class="mb-1 mt-2 flex flex-row justify-between">

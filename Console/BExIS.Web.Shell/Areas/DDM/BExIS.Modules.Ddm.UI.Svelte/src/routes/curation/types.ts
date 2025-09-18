@@ -26,6 +26,11 @@ export interface CurationDetailModel {
 	count_UserIsDone_False_IsApproved_False: number;
 }
 
+export interface CurationTemplateModel {
+	name: string;
+	content: string;
+}
+
 export interface CurationModel {
 	datasetId: number;
 	datasetTitle: string;
@@ -34,6 +39,8 @@ export interface CurationModel {
 	curationEntries: CurationEntryModel[];
 	curationUsers: CurationUserModel[];
 	curationLabels: CurationLabel[];
+	greetingTemplates: CurationTemplateModel[];
+	taskListTemplates: CurationTemplateModel[];
 }
 
 export interface CurationUserModel {
