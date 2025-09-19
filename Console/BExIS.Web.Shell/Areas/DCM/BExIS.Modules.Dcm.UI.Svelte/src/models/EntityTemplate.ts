@@ -11,7 +11,7 @@ export interface EntityTemplateModel {
 	hasDatastructure: boolean;
 	datastructureList: number[];
 	hasExtension: boolean;
-	extensionsList: number[];
+	extensionList: extensionType[];
 	allowedFileTypes: string[];
 	disabledHooks: string[];
 	notificationGroups: number[];
@@ -27,3 +27,19 @@ export interface permissionsType {
 	viewEdit: number[];
 	view: number[];
 }
+
+export class extensionType {
+	templateId: number;
+	referenceType: string;
+	unique: boolean;
+
+	public constructor() {
+		this.templateId = -1;
+		this.referenceType = '';
+		this.unique = false;
+	}
+}
+
+
+
+

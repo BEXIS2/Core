@@ -87,11 +87,11 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         public virtual string JsonExtensionList { get; set; }
 
-        public virtual List<long> ExtensionList
+        public virtual List<ExtensionType> ExtensionList
         {
             get
             {
-                return JsonConvert.DeserializeObject<List<long>>(JsonExtensionList);
+                return JsonConvert.DeserializeObject<List<ExtensionType>>(JsonExtensionList);
             }
             set
             {
@@ -188,7 +188,7 @@ namespace BExIS.Dlm.Entities.Data
             PermissionGroups = new PermissionsType();
             NotificationGroups = new List<long>();
             MetadataInvalidSaveMode = true;
-            ExtensionList = new List<long>();
+            ExtensionList = new List<ExtensionType>();
 
             JsonAllowedFileTypes = "";
             JsonDatastructureList = "";
@@ -208,7 +208,7 @@ namespace BExIS.Dlm.Entities.Data
             AllowedFileTypes = new List<string>();
             DisabledHooks = new List<string>();
             DatastructureList = new List<long>();
-            ExtensionList = new List<long>();
+            ExtensionList = new List<ExtensionType>();
             MetadataFields = new List<int>();
             PermissionGroups = new PermissionsType();
             NotificationGroups = new List<long>();
@@ -237,6 +237,21 @@ namespace BExIS.Dlm.Entities.Data
             ViewEditGrant = new List<long>();
             View = new List<long>();
             ViewEdit = new List<long>();
+        }
+    }
+
+    public class ExtensionType
+    {
+        public long TemplateId { get; set; }
+        public string ReferenceType { get; set; }
+        public bool Unique { get; set; }
+
+
+        public ExtensionType()
+        {
+            TemplateId = 0;
+            ReferenceType = "";
+            Unique = true;
         }
     }
 }

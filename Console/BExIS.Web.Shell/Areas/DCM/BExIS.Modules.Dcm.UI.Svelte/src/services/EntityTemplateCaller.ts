@@ -81,6 +81,17 @@ export const getExtensions = async () => {
 	}
 };
 
+export const getReferenceTypes = async () => {
+	try {
+		const response = await Api.get('/dcm/entitytemplates/ReferenceTypes');
+		console.log("🚀 ~ getReferenceTypes ~ response:", response.data)
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
 export const getHooks = async () => {
 	try {
 		const response = await Api.get('/dcm/entitytemplates/Hooks');

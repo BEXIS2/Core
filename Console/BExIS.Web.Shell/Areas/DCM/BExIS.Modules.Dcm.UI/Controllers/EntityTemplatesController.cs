@@ -13,6 +13,7 @@ using BExIS.Security.Services.Subjects;
 using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
 using BExIS.UI.Models;
+using BExIS.Utils.Data.Helpers;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -209,16 +210,24 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpGet]
         public JsonResult Extensions()
         {
-            List<KeyValuePair<long, string>> tmp = new List<KeyValuePair<long, string>>();
+            List<ListItem> tmp = new List<ListItem>();
             using (var entityTemplateManager = new EntityTemplateManager())
             using (var entityManager = new EntityManager())
             {
                 var extensionEntity = entityManager.EntityRepository.Get().Where(e => e.Name.Equals("Extension")).FirstOrDefault();
                 tmp = entityTemplateManager.Repo.Query(t=>t.EntityType.Id.Equals(extensionEntity.Id))
-                    .Select(e => new KeyValuePair<long, string>(e.Id, e.Name)).ToList();
+                    .Select(e => new ListItem(e.Id, e.Name,"")).ToList();
             }
 
             return Json(tmp, JsonRequestBehavior.AllowGet);
+        }
+
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult ReferenceTypes()
+        {
+            EntityReferenceHelper helper = new EntityReferenceHelper();
+            return Json(helper.GetReferencesTypesAsKVP("extension"), JsonRequestBehavior.AllowGet);
         }
 
         [JsonNetFilter]

@@ -12,7 +12,8 @@
 	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
 	const modalStore = getModalStore();
 
-	import EntryContainer from './EntryContainer.svelte';
+	import EntryContainer from '../../lib/components/EntryContainer.svelte';
+
 
 	// validation
 	import suite from './edit';
@@ -25,13 +26,15 @@
 	} from '../../services/EntityTemplateCaller';
 
 	// types
-	import type { EntityTemplateModel } from '../../models/EntityTemplate';
-	import type { listItemType } from '@bexis2/bexis2-core-ui';
+	import type { EntityTemplateModel, extensionType } from '../../models/EntityTemplate';
+	import type { keyValuePairType, listItemType } from '@bexis2/bexis2-core-ui';
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 
 	// help
 	import { editHelp } from './help';
 	import { helpStore } from '@bexis2/bexis2-core-ui';
+	import ExtensionEntries from '../../lib/components/ExtensionEntries.svelte';
+
 
 	//Set list of help items and clear selection
 	helpStore.setHelpItemList(editHelp);
@@ -46,7 +49,8 @@
 	export let entities = [];
 	export let groups = [];
 	export let filetypes: string[];
-	export let extensions: [];
+	export let extensions:listItemType[] =  [];
+	export let referenceTypes:any[] =  [];
 
 	const dispatch = createEventDispatcher();
 
@@ -287,40 +291,38 @@
 				</div>
 			</div>
 
-			<div class="flex flex-col space-y-4">
+
 				<h3 class="h3">Extension</h3>
-				<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
-					<EntryContainer>
+				<div class="py-5 flex-col gap-4">
+					<!-- <EntryContainer>
 						<div
 							role="group"
 							class="flex flex-col gap-4"
 							on:mouseover={() => helpStore.show('hasExtension')}
 							on:focus={() => helpStore.show('hasExtension')}
-						>
+						> -->
+						<div>
 							<SlideToggle
 								active="bg-primary-500"
-								name="use_data_structure"
+								name="use_extension"
 								bind:checked={entityTemplate.hasExtension}
 							>
-								Allow to use data structures
+								Allow to use extensions
 							</SlideToggle>
-
+				</div>
+				<div>
 							{#if entityTemplate.hasExtension}
-								<MultiSelect
-									id="datastructures"
-									title="Limit the selection of allowed extensions"
-									source={extensions}
-									bind:target={entityTemplate.extensionList}
-									itemId="key"
-									itemLabel="value"
-									complexSource={true}
-									help={true}
-								/>
+								<ExtensionEntries
+								 {extensions}
+									{referenceTypes} 
+									bind:selectedExtensions = {entityTemplate.extensionList}
+									/>
+	
 							{/if}
 						</div>
-					</EntryContainer>
+					<!-- </EntryContainer> -->
 				</div>
-			</div>
+
 
 			<h3 class="h3">Administration</h3>
 			<p class="p">Set permissions per default to the following groups</p>

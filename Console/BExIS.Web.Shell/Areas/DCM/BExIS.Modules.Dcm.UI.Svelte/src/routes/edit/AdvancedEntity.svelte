@@ -2,7 +2,7 @@
 	import { Tab, TabGroup } from '@skeletonlabs/skeleton';
 	import Entity from './Entity.svelte';
 	import type { ExtensionType } from './types';
-	import ExtensionCreation from '../../lib/components/ExtensionCreation.svelte';
+	import ExtensionCreation from './ExtensionCreation.svelte';
 
  let tabSet: number = 0;
  export let id: number = 0;
@@ -33,7 +33,7 @@
   {#if tabSet === 0}
    <Entity {id} {version} {title} />
   {:else if tabSet === 100}
-   <ExtensionCreation/>
+   <ExtensionCreation {id}/>
   {/if}
 
  {#each extensions as ext (ext.id)}

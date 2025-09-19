@@ -2,7 +2,7 @@
 	import { fade } from 'svelte/transition';
 
 	import { positionType, ErrorMessage } from '@bexis2/bexis2-core-ui';
-	import type { linkType } from '@bexis2/bexis2-core-ui';
+	import type { keyValuePairType, linkType, listItemType } from '@bexis2/bexis2-core-ui';
 
 	// ui components
 	import Fa from 'svelte-fa';
@@ -21,11 +21,14 @@
 		getHooks,
 		getFileTypes,
 		getEntityTemplateList,
-		getExtensions
+		getExtensions,
+
+		getReferenceTypes
+
 	} from '../../services/EntityTemplateCaller';
 
 	// types
-	import type { EntityTemplateModel } from '../../models/EntityTemplate';
+	import type { EntityTemplateModel, extensionType } from '../../models/EntityTemplate';
 
 	// Store
 	import { entityTemplatesStore } from './store';
@@ -36,7 +39,8 @@
 	let entities = [];
 	let groups = [];
 	let filetypes = [];
-	let extensions = [];
+	let extensions:listItemType[] = [];
+	let referenceTypes:string[] = [];
 
 	let isOpen = false;
 	let header = '';
@@ -52,6 +56,9 @@
 		groups = await getGroups();
 		filetypes = await getFileTypes();
 		extensions	= await getExtensions();
+		console.log("🚀 ~ load ~ extensions:", extensions)
+		referenceTypes	= await getReferenceTypes();
+		console.log("🚀 ~ load ~ referenceTypes:", referenceTypes)
 
 		entityTemplatesStore.set(await getEntityTemplateList());
 	}
@@ -131,6 +138,7 @@
 					{groups}
 					{filetypes}
 					{extensions}
+					{referenceTypes}
 					on:save={refresh}
 					on:cancel={() => (isOpen = false)}
 				/>

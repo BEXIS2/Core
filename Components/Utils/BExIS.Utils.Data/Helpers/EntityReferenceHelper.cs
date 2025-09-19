@@ -365,7 +365,7 @@ namespace BExIS.Utils.Data.Helpers
             }
         }
 
-        private ReferenceConfigElement GetReferenceConfigByType(string type)
+        public ReferenceConfigElement GetReferenceConfigByType(string type)
         {
             if (_config != null)
             {
@@ -374,6 +374,7 @@ namespace BExIS.Utils.Data.Helpers
 
             return null;
         }
+
 
         /// <summary>
         /// this function return a list of all reference types. This types are listed in the entity reference config.xml in the workspace
@@ -394,6 +395,36 @@ namespace BExIS.Utils.Data.Helpers
             }
 
             return new SelectList(new List<SelectListItem>(), "Value", "Text");
+        }
+
+        public SelectList GetReferencesTypes(string type)
+        {
+
+            if (_config != null)
+            {
+                var types = _config.ReferenceTypes.Where(e => e.LinkType.Equals(type)).Select(e => new SelectListItem()
+                {
+                    Text = String.IsNullOrEmpty(e.Description) ? e.ReferenceType : e.Description,
+                    Value = e.ReferenceType
+                }).ToList();
+
+                return new SelectList(types, "Value", "Text");
+            }
+
+            return new SelectList(new List<SelectListItem>(), "Value", "Text");
+        }
+
+        public List<KeyValuePair<string, string>> GetReferencesTypesAsKVP(string type)
+        {
+            List<KeyValuePair<string,string>> tmp = new List<KeyValuePair<string, string>>();
+            if (_config != null)
+            {
+                tmp = _config.ReferenceTypes.Where(e => e.LinkType.Equals(type)).Select(e => 
+                    new KeyValuePair<string,string>(e.ReferenceType, string.IsNullOrEmpty(e.Description) ? e.ReferenceType : e.Description)).ToList();
+
+            }
+
+            return tmp;
         }
 
         public SelectList GetReferencesHelpTypes()

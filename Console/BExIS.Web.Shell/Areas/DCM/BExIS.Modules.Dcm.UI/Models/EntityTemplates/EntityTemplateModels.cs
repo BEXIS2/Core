@@ -63,7 +63,7 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
         /// <summary>
         /// List of available extensions
         /// </summary>
-        public virtual List<long> ExtensionList { get; set; }
+        public virtual List<ExtensionType> ExtensionList { get; set; }
 
         public List<string> AllowedFileTypes { get; set; }
 
