@@ -22,6 +22,8 @@
 
     <property name="Context" type="string" />
 	<property name="ReferenceType" type="string" />
+	<property name="LinkType" type="string" />
+	<property name="Category" type="string" />
 	<property name="CreationDate" type="DateTime" />
   </class>
 </hibernate-mapping>

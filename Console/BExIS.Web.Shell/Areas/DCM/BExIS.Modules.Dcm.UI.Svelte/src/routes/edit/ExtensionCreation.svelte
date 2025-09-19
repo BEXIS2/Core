@@ -1,19 +1,17 @@
 <script lang="ts">
 	import List from '../../lib/components/entityTemplate/List.svelte';
 	import Form from '../../lib/components/entityTemplate/Form.svelte';
-	import { Api, ErrorMessage, Page, host, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
-
-	import type { linkType } from '@bexis2/bexis2-core-ui';
-
+	import {ErrorMessage, notificationStore, notificationType} from '@bexis2/bexis2-core-ui';
 	import { fade } from 'svelte/transition';
 
 	import { Spinner, positionType } from '@bexis2/bexis2-core-ui';
-	import { getEntityTemplateList } from './services';
-	import { goTo } from '$services/BaseCaller';
+	import { createExtensionLink, getExtensionEntityTemplateList } from './services';
+	// import { goTo } from '$services/BaseCaller';
 
 	import type { EntityTemplateModel } from '$models/EntityTemplate';
 
 	let entitytemplate: EntityTemplateModel;
+	export let id;
 
 	$: entitytemplates = [];
 	// $:systemkeys= [];
@@ -22,7 +20,7 @@
 	$: isOpen = false;
 
 	async function load() {
-		entitytemplates = await getEntityTemplateList();
+		entitytemplates = await getExtensionEntityTemplateList(id);
 		console.log('🚀 ~ load ~ entitytemplates:', entitytemplates);
 	}
 	function handleSelect(e) {
@@ -41,27 +39,29 @@
 		}, 500);
 	}
 
-	function onSaveHandler(e) {
+	async function onSaveHandler(e) {
 		//e.detail == id of teh new created dataset
-		goTo('/dcm/edit?id=' + e.detail);
+		console.log('saved', e.detail, id);
+		//create link between main entity and extension entity
+		const res =	await createExtensionLink(id,e.detail);
+		notificationStore.showNotification({
+				notificationType: notificationType.success,
+				message: 'This is the success style Notification'
+			})
+	
+		goTo('/dcm/edit?id=' + id);
 	}
 
-	let links: linkType[] = [
-		{
-			label: 'manual',
-			url: '/home/docs/Datasets#create-a-datasets'
-		}
-	];
 
 	//console.log(links)
+
+
+	function goTo(arg0: string) {
+		throw new Error('Function not implemented.');
+	}
 </script>
 
-<Page
-	title="Create a Dataset"
-	note="On this page you can create a dataset based on a template. Please select one template and fill out the form."
-	{links}
-	contentLayoutType={pageContentLayoutType.full}
->
+
 	<div in:fade={{ delay: 500 }} out:fade={{ delay: 500 }}>
 		{#await load()}
 			<div class="text-surface-800">
@@ -83,4 +83,4 @@
 			<ErrorMessage {error} />
 		{/await}
 	</div>
-</Page>
+
