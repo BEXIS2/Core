@@ -11,6 +11,7 @@
 
 	export let inputData: Partial<CurationEntryCreationModel>;
 	export let isDraft: boolean = false;
+	export let positionHidden: boolean = false;
 	export let resetValues:
 		| {
 				type: () => void;
@@ -49,27 +50,29 @@
 	</div>
 </label>
 
-<label class="grow basis-1/6">
-	<span>Position:</span>
-	<div class="flex items-stretch">
-		<input
-			type="number"
-			bind:value={inputData.position}
-			class="input rounded-r-none"
-			placeholder="Enter position"
-			min="1"
-			required
-		/>
-		<button
-			class="btn rounded-l-none border-y border-r border-surface-500 px-3 ring-0"
-			disabled={resetValues?.position === undefined}
-			on:click|preventDefault={resetValues?.position}
-			title="Undo changes"
-		>
-			<Fa icon={faRotateLeft} />
-		</button>
-	</div>
-</label>
+{#if !positionHidden}
+	<label class="grow basis-1/6">
+		<span>Position:</span>
+		<div class="flex items-stretch">
+			<input
+				type="number"
+				bind:value={inputData.position}
+				class="input rounded-r-none"
+				placeholder="Enter position"
+				min="1"
+				required
+			/>
+			<button
+				class="btn rounded-l-none border-y border-r border-surface-500 px-3 ring-0"
+				disabled={resetValues?.position === undefined}
+				on:click|preventDefault={resetValues?.position}
+				title="Undo changes"
+			>
+				<Fa icon={faRotateLeft} />
+			</button>
+		</div>
+	</label>
+{/if}
 
 <label class="grow basis-full">
 	<span>Title:</span>

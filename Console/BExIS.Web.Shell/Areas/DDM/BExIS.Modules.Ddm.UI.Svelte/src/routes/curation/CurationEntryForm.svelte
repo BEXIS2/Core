@@ -1,14 +1,8 @@
 <script lang="ts">
-	import { faFloppyDisk, faSquarePlus, faXmark } from '@fortawesome/free-solid-svg-icons';
+	import { faCopy, faFloppyDisk, faSquarePlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 	import { curationStore } from './stores';
 	import Fa from 'svelte-fa';
-	import {
-		CurationEntryStatus,
-		CurationEntryType,
-		DefaultCurationEntryCreationModel,
-		type CurationEntryCreationModel
-	} from './types';
-	import CurationEntryTemplateTool from './CurationEntryTemplateTool.svelte';
+	import { DefaultCurationEntryCreationModel, type CurationEntryCreationModel } from './types';
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import CurationEntryInputs from './CurationEntryInputs.svelte';
@@ -16,7 +10,7 @@
 
 	export let entryId: number;
 
-	const { curation } = curationStore;
+	const { entryTemplatePopupState } = curationStore;
 
 	const entry = curationStore.getEntryReadable(entryId);
 
@@ -35,7 +29,7 @@
 		name: get(entry)?.name ?? DefaultCurationEntryCreationModel.name,
 		description: get(entry)?.description ?? DefaultCurationEntryCreationModel.description,
 		comment: get(entry)?.notes.at(-1)?.comment ?? DefaultCurationEntryCreationModel.comment,
-		status: get(entry)?.status ?? CurationEntryStatus.Open
+		status: get(entry)?.status ?? DefaultCurationEntryCreationModel.status
 	};
 
 	$: cardState.update((cs) => ({ ...cs, inputData }));
@@ -91,11 +85,16 @@
 			Cancel
 		</button>
 
-		<CurationEntryTemplateTool
-			type={inputData.type}
-			name={inputData.name}
-			description={inputData.description}
-		/>
+		<!-- Create Template Button -->
+		<button
+			type="button"
+			title="Create template"
+			class="variant-ghost-surface btn text-nowrap px-2 py-1 text-surface-800"
+			on:click={() => entryTemplatePopupState.set({ show: true, inputData })}
+		>
+			<Fa icon={faCopy} class="mr-1 inline-block" />
+			Create Template
+		</button>
 
 		<button
 			type="submit"

@@ -85,6 +85,13 @@ class CurationStore {
 		this.jumpToDataCallback?.(curationEntryHelper);
 	}
 
+	public readonly entryTemplatePopupState = writable<{
+		show: boolean;
+		inputData?: CurationEntryCreationModel;
+	}>({
+		show: false
+	});
+
 	constructor() {
 		this.datasetId.subscribe((datasetId) => {
 			if (!datasetId) {
@@ -252,7 +259,9 @@ class CurationStore {
 
 	public addEmptyEntry(
 		entryModel: Partial<CurationEntryCreationModel>,
-		acceptCurationStatusEntry = false
+		acceptCurationStatusEntry = false,
+		asDraft = true,
+		jumpToEntry = false
 	) {
 		if (
 			!acceptCurationStatusEntry &&
@@ -262,7 +271,31 @@ class CurationStore {
 			return;
 		this._curation.update((curation) => {
 			if (!curation) return curation;
-			return curation.addEmptyEntry({ ...DefaultCurationEntryCreationModel, ...entryModel });
+			const result = curation.addEmptyEntry({
+				...DefaultCurationEntryCreationModel,
+				...entryModel
+			});
+			if (jumpToEntry) {
+				this.editMode.set(true);
+				if (entryModel.type) {
+					this.updateEntryFilter(
+						CurationFilterType.type,
+						(type: (CurationEntryType | undefined) | undefined) =>
+							type === entryModel.type ? type : undefined
+					);
+					this.removeEntryFilters([CurationFilterType.status, CurationFilterType.search]);
+				} else this.clearEntryFilters();
+			}
+			tick().then(() => {
+				if (jumpToEntry) {
+					curationStore.jumpToEntryWhere.set((entry) => entry.id === result.newEntryId);
+				}
+				if (!asDraft)
+					tick().then(() => {
+						this.saveEntry(result.curation.getEntryById(result.newEntryId)!);
+					});
+			});
+			return result.curation;
 		});
 	}
 
@@ -432,28 +465,6 @@ class CurationStore {
 			if (!curation) return curation;
 			return curation.removeEntry(entryId);
 		});
-	}
-
-	public async createAndJumpToEntry(entryModel: Partial<CurationEntryCreationModel>) {
-		this.addEmptyEntry(entryModel);
-		this.editMode.set(true);
-		if (entryModel.type) {
-			this.updateEntryFilter(
-				CurationFilterType.type,
-				(type: (CurationEntryType | undefined) | undefined) =>
-					type === entryModel.type ? type : undefined
-			);
-			this.removeEntryFilters([CurationFilterType.status, CurationFilterType.search]);
-		} else this.clearEntryFilters();
-		await tick();
-		curationStore.jumpToEntryWhere.set(
-			(entry) =>
-				entry.isDraft &&
-				(entryModel.type === undefined || entry.type === entryModel.type) &&
-				(entryModel.name === undefined || entry.name === entryModel.name) &&
-				(entryModel.description === undefined || entry.description === entryModel.description)
-			// needs to be updated if other parts of the entries are used
-		);
 	}
 }
 

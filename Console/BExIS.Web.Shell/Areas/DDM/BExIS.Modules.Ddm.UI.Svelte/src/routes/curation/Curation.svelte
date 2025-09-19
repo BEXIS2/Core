@@ -20,6 +20,7 @@
 	import StartCuration from './StartCuration.svelte';
 	import { slide } from 'svelte/transition';
 	import ColorPalettePicker from './ColorPalettePicker.svelte';
+	import CurationEntryTemplatePopup from './CurationEntryTemplatePopup.svelte';
 
 	const {
 		loadingCuration,
@@ -47,7 +48,7 @@
 	}
 
 	export function addEntry(entry: Partial<CurationEntryModel>) {
-		curationStore.createAndJumpToEntry(entry);
+		curationStore.addEmptyEntry(entry, false, true, true);
 	}
 
 	// Jump To Entry
@@ -192,5 +193,9 @@
 				{/if}
 			{/each}
 		</div>
+	{/if}
+
+	{#if $curation?.isCurator}
+		<CurationEntryTemplatePopup />
 	{/if}
 </div>

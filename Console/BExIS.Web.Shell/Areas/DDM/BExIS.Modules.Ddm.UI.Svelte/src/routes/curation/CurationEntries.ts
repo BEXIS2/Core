@@ -46,6 +46,8 @@ export class CurationClass implements CurationModel {
 
 	public readonly draftCount: number;
 
+	public readonly highestPositionPerType: number[];
+
 	constructor(
 		curation: CurationModel | CurationClass,
 		doNotSort: boolean | undefined = undefined,
@@ -88,6 +90,16 @@ export class CurationClass implements CurationModel {
 
 		if (doNotSort) this.curationEntries = allEntries;
 		else this.curationEntries = CurationClass.applyPositioning(allEntries, changedEntryPos);
+
+		this.highestPositionPerType = CurationEntryTypeNames.map((_) => 0);
+		this.curationEntries.forEach((entry) => {
+			if (entry.type !== CurationEntryType.StatusEntryItem) {
+				this.highestPositionPerType[entry.type] = Math.max(
+					this.highestPositionPerType[entry.type],
+					entry.position
+				);
+			}
+		});
 
 		this.curationLabels = curation.curationLabels || [];
 
@@ -219,16 +231,19 @@ export class CurationClass implements CurationModel {
 		const invalidPosition =
 			(isStatusEntry && (entryModel.position !== 0 || this.curationStatusEntry)) ||
 			(!isStatusEntry && entryModel.position < 1);
-		if (invalidPosition) return this;
+		if (invalidPosition) return { curation: this, newEntryId: 0 };
 		let newEntry = CurationEntryClass.emptyEntry(this.datasetId, -this.draftCount - 1, entryModel);
-		return new CurationClass(
-			{
-				...this,
-				curationEntries: [...this.curationEntries, newEntry]
-			},
-			false,
-			newEntry
-		);
+		return {
+			curation: new CurationClass(
+				{
+					...this,
+					curationEntries: [...this.curationEntries, newEntry]
+				},
+				false,
+				newEntry
+			),
+			newEntryId: newEntry.id
+		};
 	}
 
 	private static sortedCurationEntries(

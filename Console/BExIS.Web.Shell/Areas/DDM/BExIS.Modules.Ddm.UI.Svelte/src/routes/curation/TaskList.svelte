@@ -2,7 +2,8 @@
 	import type { CurationEntryClass } from './CurationEntries';
 	import { CurationEntryType, type taskLine } from './types';
 	import { curationStore } from './stores';
-	import CurationEntryTemplateTool from './CurationEntryTemplateTool.svelte';
+	import CurationEntryTemplateTool from './CurationEntryTemplateButton.svelte';
+	import { entryTemplateRegex } from './CurationEntryTemplate';
 
 	export let curationStatusEntry: CurationEntryClass;
 	export let highlightOpen: string | undefined = undefined;
@@ -20,7 +21,7 @@
 		const isListItem = trimmedLine.startsWith('- ') || trimmedLine.startsWith('* ');
 		const indentation = line.length - trimmedLine.length;
 		const isCheckbox = /^\s*(- |\* )?\s*\[[xX ]?\]/.test(line);
-		const mdLinkString = line.match(/\[*\]\(\?createEntryFromJSON=.*\)/)?.toString();
+		const entryTemplateMD = line.match(entryTemplateRegex)?.toString();
 		return {
 			id: idPrefix + index.toString(),
 			fullString: line,
@@ -28,14 +29,14 @@
 				// remove all markdown specific features
 				.replaceAll(/^\s*(- |\* )?\s*(\[[xX ]?\])?/g, '')
 				.replaceAll(/\*\*|__/g, '')
-				.replaceAll(/\[.*\]\(\?createEntryFromJSON=.*\)/g, '')
+				.replaceAll(entryTemplateRegex, '')
 				.trim(),
 			indentation: Math.floor(indentation / 2),
 			isListItem: isListItem,
 			isBold: /\*\*.*\*\*|__.*__/.test(line),
 			isCheckbox: isCheckbox,
 			isChecked: isCheckbox ? /^\s*(- |\* )?\s*(\[[xX]\])/.test(line) : undefined,
-			linkString: mdLinkString?.match(/\?.[^)]*/)?.toString()
+			entryTemplateMD: entryTemplateMD
 		};
 	});
 
@@ -78,8 +79,8 @@
 							/>
 							{tl.text}
 						</label>
-						{#if tl.linkString}
-							<CurationEntryTemplateTool linkString={tl.linkString} />
+						{#if tl.entryTemplateMD}
+							<CurationEntryTemplateTool entryTemplateMD={tl.entryTemplateMD} />
 						{/if}
 					{/if}
 				</li>
@@ -105,8 +106,8 @@
 					</label>
 				{/if}
 			</span>
-			{#if tl.linkString}
-				<CurationEntryTemplateTool linkString={tl.linkString} />
+			{#if tl.entryTemplateMD}
+				<CurationEntryTemplateTool entryTemplateMD={tl.entryTemplateMD} />
 			{/if}
 			<br />
 		{/if}

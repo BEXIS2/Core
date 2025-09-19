@@ -236,7 +236,7 @@ export type taskLine = {
 	isBold: boolean;
 	isCheckbox: boolean;
 	isChecked: boolean | undefined;
-	linkString: string | undefined;
+	entryTemplateMD: string | undefined;
 };
 
 export enum helpType {
