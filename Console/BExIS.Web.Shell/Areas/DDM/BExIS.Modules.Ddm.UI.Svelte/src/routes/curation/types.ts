@@ -77,6 +77,7 @@ export interface CurationEntryCreationModel {
 	position: number;
 	source: string;
 	comment: string;
+	status: CurationEntryStatus;
 }
 
 export interface CurationEntryHelperModel extends CurationEntryModel {
@@ -259,5 +260,6 @@ export const DefaultCurationEntryCreationModel: CurationEntryCreationModel = {
 	solution: '',
 	position: 1,
 	source: '',
-	comment: ''
+	comment: '',
+	status: CurationEntryStatus.Open
 };

@@ -8,7 +8,12 @@
 	} from '@fortawesome/free-solid-svg-icons';
 	import { curationStore } from './stores';
 	import Fa from 'svelte-fa';
-	import { CurationEntryType, CurationEntryTypeNames } from './types';
+	import {
+		CurationEntryStatus,
+		CurationEntryStatusDetails,
+		CurationEntryType,
+		CurationEntryTypeNames
+	} from './types';
 	import CurationEntryTemplateTool from './CurationEntryTemplateTool.svelte';
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
@@ -40,7 +45,8 @@
 		position: $entry?.position ?? defaultInputData.position,
 		name: $entry?.name ?? defaultInputData.name,
 		description: $entry?.description ?? defaultInputData.description,
-		comment: $entry?.notes.at(-1)?.comment ?? defaultInputData.comment
+		comment: $entry?.notes.at(-1)?.comment ?? defaultInputData.comment,
+		status: $entry?.status ?? CurationEntryStatus.Open
 	};
 
 	$: cardState.update((cs) => ({ ...cs, inputData }));
@@ -73,7 +79,7 @@
 		{/if}
 	</h3>
 	<label class="min-w-32 grow basis-2/5">
-		<span class="label-text">Category:</span>
+		<span>Category:</span>
 		<div class="flex items-stretch">
 			<select bind:value={inputData.type} class="input rounded-r-none" required>
 				<option value="" disabled>Select category</option>
@@ -97,7 +103,7 @@
 	</label>
 
 	<label class="grow basis-1/6">
-		<span class="label-text">Position:</span>
+		<span>Position:</span>
 		<div class="flex items-stretch">
 			<input
 				type="number"
@@ -120,7 +126,7 @@
 	</label>
 
 	<label class="grow basis-full">
-		<span class="label-text">Title:</span>
+		<span>Title:</span>
 		<div class="flex items-stretch">
 			<input
 				type="text"
@@ -142,7 +148,7 @@
 	</label>
 
 	<label class="grow basis-full">
-		<span class="label-text">Description:</span>
+		<span>Description:</span>
 		<div class="flex items-stretch">
 			<textarea
 				bind:value={inputData.description}
@@ -162,33 +168,50 @@
 		</div>
 	</label>
 
-	<!-- Comment Field -->
 	{#if $entry?.isDraft()}
-		<div class="my-2 w-full">
+		<!-- Comment Field -->
+		<div class="my-2 flex w-full flex-wrap gap-2 border-t border-surface-300 pt-2">
 			{#if !showCommentField}
 				<button
-					class="variant-outline-surface btn w-full px-2 py-1 text-sm text-surface-700"
+					class="variant-outline-surface btn min-w-40 grow px-2 py-1 text-sm text-surface-700"
 					on:click={() => (showCommentField = true)}
 				>
 					<Fa icon={faMessage} class="mr-1 inline-block" />
-					Add Comment
+					Add Initial Comment
 				</button>
 			{:else}
-				<label class="grow basis-full">
-					<span class="label-text">Comment:</span>
+				<label class="min-w-40 grow">
+					<span>Initial Comment:</span>
 					<div class="flex items-stretch">
 						<textarea
 							bind:value={inputData.comment}
 							class="input rounded-r-none"
-							placeholder="Enter comment"
+							placeholder="Enter initial comment"
 						></textarea>
 					</div>
 				</label>
 			{/if}
+
+			<!-- Change Status -->
+			<label>
+				<span>Initial Status:</span>
+				<br />
+				<select
+					bind:value={inputData.status}
+					class="input w-full px-2 py-1 sm:w-32"
+					title="Change Initial Status"
+				>
+					{#each CurationEntryStatusDetails as { status, name }}
+						<option value={status}>
+							{name}
+						</option>
+					{/each}
+				</select>
+			</label>
 		</div>
 	{/if}
 
-	<div class="flex grow basis-full flex-wrap gap-x-2 gap-y-1">
+	<div class="flex grow basis-full flex-wrap gap-2">
 		<button
 			type="button"
 			on:click|preventDefault={closeEditMode}

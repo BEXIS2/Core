@@ -67,6 +67,7 @@ class CurationStore {
 						name: string;
 						description: string;
 						comment: string;
+						status: CurationEntryStatus;
 				  }
 				| undefined;
 		}>

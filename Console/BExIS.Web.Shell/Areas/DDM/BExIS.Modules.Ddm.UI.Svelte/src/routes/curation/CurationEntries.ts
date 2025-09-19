@@ -193,10 +193,16 @@ export class CurationClass implements CurationModel {
 		if (!entry) return this;
 		const comment = updates.comment;
 		delete updates.comment;
+		const { userIsDone, isApproved } = CurationEntryClass.getStatusBoolean(
+			updates.status ?? entry.status
+		);
+		delete updates.status;
 		let newEntry = new CurationEntryClass(
 			{
 				...entry,
-				...updates
+				...updates,
+				userIsDone: userIsDone,
+				isApproved: isApproved
 			},
 			this.currentUserType
 		);
@@ -606,6 +612,16 @@ export class CurationEntryClass implements CurationEntryModel {
 		if (!userIsDone && isApproved) return CurationEntryStatus.Ok;
 		if (userIsDone && isApproved) return CurationEntryStatus.Closed;
 		return CurationEntryStatus.Open;
+	}
+
+	public static getStatusBoolean(status: CurationEntryStatus): {
+		userIsDone: boolean;
+		isApproved: boolean;
+	} {
+		if (status === CurationEntryStatus.Fixed) return { userIsDone: true, isApproved: false };
+		if (status === CurationEntryStatus.Ok) return { userIsDone: false, isApproved: true };
+		if (status === CurationEntryStatus.Closed) return { userIsDone: true, isApproved: true };
+		return { userIsDone: false, isApproved: false };
 	}
 
 	private _getStatus(): CurationEntryStatus {
