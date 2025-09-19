@@ -14,9 +14,9 @@
 	import CurationNotes from './CurationNotes.svelte';
 	import { CurationEntryStatus, CurationEntryStatusDetails } from './types';
 	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
-	import CurationEntryInput from './CurationEntryInput.svelte';
 	import CurationNote from './CurationNote.svelte';
 	import Confetti from '$lib/components/Confetti.svelte';
+	import CurationEntryForm from './CurationEntryForm.svelte';
 
 	export let entryId: number;
 	export let combined: boolean;
@@ -147,7 +147,7 @@
 	style:--current-status-color={$statusColorPalette.colors[$entry?.status || 0]}
 >
 	{#if $editMode && $cardState.editEntryMode}
-		<CurationEntryInput {entryId} />
+		<CurationEntryForm {entryId} />
 	{:else}
 		<div class="items-top no-wrap mb-2 flex gap-x-2 overflow-hidden">
 			<div class="grow overflow-hidden">
