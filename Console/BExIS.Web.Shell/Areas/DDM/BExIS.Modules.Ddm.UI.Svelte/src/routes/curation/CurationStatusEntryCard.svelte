@@ -17,6 +17,7 @@
 	import { slide } from 'svelte/transition';
 	import Greeting from './Greeting.svelte';
 	import CurationTemplate from './CurationTemplate.svelte';
+	import { tick } from 'svelte';
 
 	const { curation, currentStatusEntryTab, curationInfoExpanded, uploadingEntries } = curationStore;
 
@@ -30,6 +31,8 @@
 	$: isUploadingStatus = curationStatusEntry && $uploadingEntries.includes(curationStatusEntry.id);
 
 	const editGreetingMode = writable(false);
+
+	let greetingTextarea: HTMLTextAreaElement | null = null;
 
 	let greeting = curationStatusEntry?.topic ?? '';
 
@@ -57,9 +60,19 @@
 	const addGreetingTemplate = (template: CurationTemplateModel) => {
 		if (greeting.length > 0 && !greeting.endsWith('\n')) greeting += '\n';
 		greeting += template.content;
+		// Set cursor to end after DOM updates
+		tick().then(() => {
+			if (greetingTextarea) {
+				greetingTextarea.selectionStart = greetingTextarea.selectionEnd =
+					greetingTextarea.value.length;
+				greetingTextarea.focus();
+			}
+		});
 	};
 
 	const editTasksMode = writable(false);
+
+	let tasksTextarea: HTMLTextAreaElement | null = null;
 
 	let tasks = curationStatusEntry?.description ?? '';
 
@@ -87,6 +100,13 @@
 	const addTaskTemplate = (template: CurationTemplateModel) => {
 		if (tasks.length > 0 && !tasks.endsWith('\n')) tasks += '\n';
 		tasks += template.content;
+		// Set cursor to end after DOM updates
+		tick().then(() => {
+			if (tasksTextarea) {
+				tasksTextarea.selectionStart = tasksTextarea.selectionEnd = tasksTextarea.value.length;
+				tasksTextarea.focus();
+			}
+		});
 	};
 
 	let highlightOpen: string | undefined = undefined;
@@ -232,6 +252,7 @@
 					<label class="block">
 						<span class="text-surface-700">Greeting:</span>
 						<textarea
+							bind:this={greetingTextarea}
 							bind:value={greeting}
 							class="mt-1 w-full rounded border border-surface-500 px-2 py-1 text-sm text-surface-800 focus-visible:border-surface-700 focus-visible:outline-none"
 							rows="6"
@@ -306,6 +327,7 @@
 					<label class="block">
 						<span class="text-surface-700">Tasks:</span>
 						<textarea
+							bind:this={tasksTextarea}
 							bind:value={tasks}
 							class="mt-1 w-full rounded border border-surface-500 px-2 py-1 text-sm text-surface-800 focus-visible:border-surface-700 focus-visible:outline-none"
 							rows="12"

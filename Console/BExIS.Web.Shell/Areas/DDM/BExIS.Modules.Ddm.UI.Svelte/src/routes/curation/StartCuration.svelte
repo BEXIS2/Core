@@ -4,6 +4,7 @@
 	import { CurationEntryType, type CurationTemplateModel } from './types';
 	import { faPlay, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 	import CurationTemplate from './CurationTemplate.svelte';
+	import { tick } from 'svelte';
 
 	const { curation, editMode } = curationStore;
 
@@ -39,14 +40,33 @@
 		editMode.set(true);
 	};
 
+	let greetingTextarea: HTMLTextAreaElement | null = null;
+
 	const addGreetingTemplate = (template: CurationTemplateModel) => {
 		if (greeting.length > 0 && !greeting.endsWith('\n')) greeting += '\n';
 		greeting += template.content;
+		// Set cursor to end after DOM updates
+		tick().then(() => {
+			if (greetingTextarea) {
+				greetingTextarea.selectionStart = greetingTextarea.selectionEnd =
+					greetingTextarea.value.length;
+				greetingTextarea.focus();
+			}
+		});
 	};
+
+	let tasksTextarea: HTMLTextAreaElement | null = null;
 
 	const addTaskTemplate = (template: CurationTemplateModel) => {
 		if (tasks.length > 0 && !tasks.endsWith('\n')) tasks += '\n';
 		tasks += template.content;
+		// Set cursor to end after DOM updates
+		tick().then(() => {
+			if (tasksTextarea) {
+				tasksTextarea.selectionStart = tasksTextarea.selectionEnd = tasksTextarea.value.length;
+				tasksTextarea.focus();
+			}
+		});
 	};
 </script>
 
@@ -66,6 +86,7 @@
 		<label class="block">
 			<span class="text-surface-700">Greeting:</span>
 			<textarea
+				bind:this={greetingTextarea}
 				bind:value={greeting}
 				class="textarea text-sm"
 				rows="6"
@@ -81,6 +102,7 @@
 		<label class="block">
 			<span class="text-surface-700">Tasks:</span>
 			<textarea
+				bind:this={tasksTextarea}
 				bind:value={tasks}
 				class="textarea text-sm"
 				rows="12"
