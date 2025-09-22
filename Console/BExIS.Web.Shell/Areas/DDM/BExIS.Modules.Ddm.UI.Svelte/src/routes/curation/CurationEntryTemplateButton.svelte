@@ -6,13 +6,13 @@
 	import { get } from 'svelte/store';
 	import { DefaultCurationEntryCreationModel } from './types';
 
-	export let entryTemplateMD: string;
+	export let markdown: string;
 
 	const { curation } = curationStore;
 
 	const createEntryFromTemplate = () => {
-		if (!entryTemplateMD) return;
-		const template = parseTemplateLink(entryTemplateMD);
+		if (!markdown) return;
+		const template = parseTemplateLink(markdown);
 		console.log('Creating entry from template', template);
 		const type = template.type ?? DefaultCurationEntryCreationModel.type;
 		const highestPosition = get(curation)?.highestPositionPerType?.[type];

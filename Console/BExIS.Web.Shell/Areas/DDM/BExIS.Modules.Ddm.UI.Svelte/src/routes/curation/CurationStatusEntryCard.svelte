@@ -12,12 +12,14 @@
 	import { writable } from 'svelte/store';
 	import { curationStore } from './stores';
 	import SpinnerOverlay from '$lib/components/SpinnerOverlay.svelte';
-	import TaskList from './TaskList.svelte';
 	import CurationLabel from './CurationLabel.svelte';
 	import { slide } from 'svelte/transition';
 	import Greeting from './Greeting.svelte';
 	import CurationTemplate from './CurationTemplate.svelte';
 	import { tick } from 'svelte';
+	import MarkdownComponent from '$lib/components/MarkdownComponent/MarkdownComponent.svelte';
+	import CurationEntryTemplateButton from './CurationEntryTemplateButton.svelte';
+	import { entryTemplateRegex } from './CurationEntryTemplate';
 
 	const { curation, currentStatusEntryTab, curationInfoExpanded, uploadingEntries } = curationStore;
 
@@ -74,32 +76,42 @@
 
 	let tasksTextarea: HTMLTextAreaElement | null = null;
 
-	let tasks = curationStatusEntry?.description ?? '';
+	let tasksContent = curationStatusEntry?.description ?? '';
+
+	const templateMarkdownComponent = {
+		component: CurationEntryTemplateButton,
+		regexp: entryTemplateRegex
+	};
 
 	$: if (curationStatusEntry && !$editTasksMode) {
-		tasks = curationStatusEntry.description;
+		tasksContent = curationStatusEntry.description;
+	}
+
+	function handleTasksChange(newMarkdown: string) {
+		if (!curationStatusEntry) return;
+		curationStore.setDescription(curationStatusEntry.id, newMarkdown, true);
 	}
 
 	const editTasks = () => {
 		if (!curationStatusEntry) return;
-		tasks = curationStatusEntry?.description;
+		tasksContent = curationStatusEntry?.description;
 		editTasksMode.set(true);
 	};
 
 	const saveTasks = () => {
 		if (!curationStatusEntry) return;
 		editTasksMode.set(false);
-		curationStore.setDescription(curationStatusEntry.id, tasks);
+		curationStore.setDescription(curationStatusEntry.id, tasksContent);
 	};
 
 	const cancelTasksEdit = () => {
-		tasks = curationStatusEntry?.description ?? '';
+		tasksContent = curationStatusEntry?.description ?? '';
 		editTasksMode.set(false);
 	};
 
 	const addTaskTemplate = (template: CurationTemplateModel) => {
-		if (tasks.length > 0 && !tasks.endsWith('\n')) tasks += '\n';
-		tasks += template.content;
+		if (tasksContent.length > 0 && !tasksContent.endsWith('\n')) tasksContent += '\n';
+		tasksContent += template.content;
 		// Set cursor to end after DOM updates
 		tick().then(() => {
 			if (tasksTextarea) {
@@ -298,10 +310,14 @@
 				{#if !$editTasksMode}
 					<div
 						class="resize-y overflow-y-auto overflow-x-hidden"
-						class:h-96={tasks.split('\n').length > 10}
+						class:h-96={tasksContent.split('\n').length > 10}
 					>
 						{#key curationStatusEntry.description}
-							<TaskList {curationStatusEntry} {highlightOpen} />
+							<MarkdownComponent
+								markdown={tasksContent}
+								on:change={(e) => handleTasksChange(e.detail)}
+								customInlineComponents={[templateMarkdownComponent]}
+							/>
 						{/key}
 					</div>
 					<div class="flex items-center justify-between border-t">
@@ -328,7 +344,7 @@
 						<span class="text-surface-700">Tasks:</span>
 						<textarea
 							bind:this={tasksTextarea}
-							bind:value={tasks}
+							bind:value={tasksContent}
 							class="mt-1 w-full rounded border border-surface-500 px-2 py-1 text-sm text-surface-800 focus-visible:border-surface-700 focus-visible:outline-none"
 							rows="12"
 							placeholder="Enter tasks"
