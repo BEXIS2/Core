@@ -13,17 +13,18 @@
 			copied = false;
 		}, 1500);
 	}
-	import { curationStore } from './stores';
 	import Fa from 'svelte-fa';
-	import { faCopy, faTimes } from '@fortawesome/free-solid-svg-icons';
+	import { faCopy, faFloppyDisk, faTimes } from '@fortawesome/free-solid-svg-icons';
 	import CurationEntryInputs from './CurationEntryInputs.svelte';
-	import { DefaultCurationEntryCreationModel, type CurationEntryCreationModel } from './types';
-	import { getTemplateLinkText } from './CurationEntryTemplate';
-
-	const popupState = curationStore.entryTemplatePopupState;
+	import {
+		DefaultCurationEntryTemplate,
+		entryTemplatePopupState,
+		getTemplateLinkText,
+		type CurationEntryTemplateModel
+	} from './CurationEntryTemplate';
 
 	const close = () => {
-		popupState.set({ show: false });
+		entryTemplatePopupState.set({ show: false });
 	};
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -37,7 +38,7 @@
 	});
 
 	$: {
-		if ($popupState.show) {
+		if ($entryTemplatePopupState.show) {
 			document.body.style.overflow = 'hidden';
 			window.addEventListener('keydown', handleKeydown);
 		} else {
@@ -51,24 +52,26 @@
 		window.removeEventListener('keydown', handleKeydown);
 	});
 
-	let inputData: CurationEntryCreationModel = { ...DefaultCurationEntryCreationModel };
+	let template = { ...DefaultCurationEntryTemplate };
 
-	popupState.subscribe(($popupState) => {
-		if ($popupState.inputData) {
-			inputData = { ...DefaultCurationEntryCreationModel, ...$popupState.inputData };
+	entryTemplatePopupState.subscribe(($entryTemplatePopupState) => {
+		if ($entryTemplatePopupState.template) {
+			template = { ...DefaultCurationEntryTemplate, ...$entryTemplatePopupState.template };
 		} else {
-			inputData = { ...DefaultCurationEntryCreationModel };
+			template = { ...DefaultCurationEntryTemplate };
 		}
 	});
 
-	let position: 'top' | 'bottom' = 'bottom';
-	let createAsDraft: boolean = true;
-	let autoCreate: boolean = false;
+	let callback: ((template: CurationEntryTemplateModel) => void) | undefined;
 
-	$: templateLink = getTemplateLinkText(inputData, position, createAsDraft, autoCreate);
+	entryTemplatePopupState.subscribe(($popupState) => {
+		callback = $popupState.callback;
+	});
+
+	$: templateLink = getTemplateLinkText(template);
 </script>
 
-{#if $popupState.show}
+{#if $entryTemplatePopupState.show}
 	<div
 		class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
 		role="dialog"
@@ -94,22 +97,22 @@
 				</button>
 			</header>
 			<form class="flex flex-wrap gap-x-2 gap-y-1 overflow-y-auto p-6">
-				<CurationEntryInputs bind:inputData isDraft positionHidden />
+				<CurationEntryInputs bind:inputData={template} isDraft positionHidden />
 				<div class="flex w-full justify-between gap-2 border-t border-surface-300 pt-2">
 					<label>
 						<span>Insert New Entry:</span>
-						<select bind:value={position} class="input">
+						<select bind:value={template.placement} class="input">
 							<option value="top">Top</option>
 							<option value="bottom">Bottom</option>
 						</select>
 					</label>
 					<div class="flex h-full flex-col justify-center gap-2">
 						<label class="has-[:disabled]:opacity-50">
-							<input type="checkbox" bind:checked={createAsDraft} class="input size-5" />
+							<input type="checkbox" bind:checked={template.createAsDraft} class="input size-5" />
 							<span>Create as Draft</span>
 						</label>
 						<label>
-							<input type="checkbox" bind:checked={autoCreate} class="input size-5" />
+							<input type="checkbox" bind:checked={template.autoCreate} class="input size-5" />
 							<span>Auto Create</span>
 						</label>
 					</div>
@@ -123,7 +126,7 @@
 						on:click={handleCopy}
 						title="Copy to clipboard"
 					>
-						{getTemplateLinkText(inputData, position, createAsDraft, autoCreate)}
+						{templateLink}
 						<Fa icon={faCopy} class="absolute right-2 top-1/2 -translate-y-1/2 text-lg" />
 						<span
 							class="pointer-events-none absolute flex size-full items-center justify-center bg-surface-400 bg-opacity-90 font-semibold transition-opacity duration-300"
@@ -134,6 +137,34 @@
 						</span>
 					</button>
 				</label>
+				{#if callback}
+					<!-- If a callback is provided, use it -->
+					<div class="mt-2 flex w-full justify-between gap-2">
+						<button
+							type="button"
+							on:click|preventDefault={close}
+							title="Cancel"
+							class="variant-ghost-surface btn grow text-nowrap px-2 py-1 text-surface-800"
+						>
+							<Fa icon={faTimes} class="mr-1 inline-block" />
+							Cancel
+						</button>
+						<button
+							type="button"
+							on:click|preventDefault={() => {
+								if (callback) {
+									callback(template);
+								}
+								close();
+							}}
+							title="Save and close"
+							class="variant-filled-success btn grow text-nowrap px-2 py-1"
+						>
+							<Fa icon={faFloppyDisk} class="mr-1 inline-block" />
+							Save
+						</button>
+					</div>
+				{/if}
 			</form>
 		</div>
 	</div>

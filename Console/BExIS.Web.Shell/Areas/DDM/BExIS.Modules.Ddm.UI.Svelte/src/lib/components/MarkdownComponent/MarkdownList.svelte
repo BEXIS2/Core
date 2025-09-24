@@ -103,23 +103,58 @@
 		markdown = combined;
 		dispatch('change', combined);
 	}
+
+	function handlePartChange(index: number, newMarkdown: string) {
+		parts[index].markdown = newMarkdown;
+		const combined = parts
+			.map((part) => {
+				let line = '';
+				if (part.isCheckbox) {
+					line += part.isChecked ? '- [x] ' : '- [ ] ';
+				} else {
+					line += '- ';
+				}
+				line += part.markdown;
+				if (part.subListMarkdown) {
+					const listLines = part.subListMarkdown.split('\n');
+					const indentedList = listLines
+						.map((l) => ' '.repeat(part.subListIndentation) + l)
+						.join('\n');
+					line += '\n' + indentedList;
+				}
+				return line;
+			})
+			.join('\n');
+		markdown = combined;
+		dispatch('change', combined);
+	}
 </script>
 
 <ul class="markdown-list ml-6">
 	{#each parts as part, idx}
 		<li>
 			{#if part.isCheckbox}
-				<label class="label -ml-2 cursor-pointer rounded !bg-opacity-30 pl-1 hover:bg-primary-300">
+				<label
+					class="label -ml-2 cursor-pointer gap-1 rounded !bg-opacity-30 px-1 hover:bg-primary-300"
+				>
 					<input
-						class="input checkbox mb-0.5 size-4"
+						class="input checkbox relative mb-1 size-4"
 						type="checkbox"
 						checked={part.isChecked}
 						on:change={(e) => handleCheckboxChange(idx, getChecked(e))}
 					/>
-					<MarkdownInlineComponent markdown={part.markdown} {customInlineComponents} />
+					<MarkdownInlineComponent
+						markdown={part.markdown}
+						{customInlineComponents}
+						on:change={(e) => handlePartChange(idx, e.detail)}
+					/>
 				</label>
 			{:else}
-				<MarkdownInlineComponent markdown={part.markdown} {customInlineComponents} />
+				<MarkdownInlineComponent
+					markdown={part.markdown}
+					{customInlineComponents}
+					on:change={(e) => handlePartChange(idx, e.detail)}
+				/>
 			{/if}
 			{#if part.subListMarkdown}
 				<MarkdownList

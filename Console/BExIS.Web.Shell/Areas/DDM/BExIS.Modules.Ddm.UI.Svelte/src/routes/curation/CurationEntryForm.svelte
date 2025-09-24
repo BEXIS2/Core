@@ -7,10 +7,9 @@
 	import { slide } from 'svelte/transition';
 	import CurationEntryInputs from './CurationEntryInputs.svelte';
 	import { get } from 'svelte/store';
+	import { entryTemplatePopupState } from './CurationEntryTemplate';
 
 	export let entryId: number;
-
-	const { entryTemplatePopupState } = curationStore;
 
 	const entry = curationStore.getEntryReadable(entryId);
 
@@ -90,7 +89,7 @@
 			type="button"
 			title="Create template"
 			class="variant-ghost-surface btn text-nowrap px-2 py-1 text-surface-800"
-			on:click={() => entryTemplatePopupState.set({ show: true, inputData })}
+			on:click={() => entryTemplatePopupState.set({ show: true, template: { ...inputData } })}
 		>
 			<Fa icon={faCopy} class="mr-1 inline-block" />
 			Create Template

@@ -85,13 +85,6 @@ class CurationStore {
 		this.jumpToDataCallback?.(curationEntryHelper);
 	}
 
-	public readonly entryTemplatePopupState = writable<{
-		show: boolean;
-		inputData?: CurationEntryCreationModel;
-	}>({
-		show: false
-	});
-
 	constructor() {
 		this.datasetId.subscribe((datasetId) => {
 			if (!datasetId) {

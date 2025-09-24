@@ -26,7 +26,7 @@
 	$: curationStatusEntry = $curation?.curationStatusEntry;
 
 	$: if (!curationStatusEntry || curationStatusEntry.type !== CurationEntryType.StatusEntryItem) {
-		console.log('CurationStatusEntryCard: No valid status entry found.');
+		console.warn('CurationStatusEntryCard: No valid status entry found.');
 		curationStatusEntry = undefined;
 	}
 
@@ -120,8 +120,6 @@
 			}
 		});
 	};
-
-	let highlightOpen: string | undefined = undefined;
 
 	$: remainingLabels =
 		!curationStatusEntry || !$curation?.curationLabels
@@ -320,15 +318,8 @@
 							/>
 						{/key}
 					</div>
-					<div class="flex items-center justify-between border-t">
-						<label>
-							<span>Highlight open tasks:</span>
-							<select bind:value={highlightOpen} class="rounded py-0.5 text-sm">
-								<option value={undefined}>None</option>
-								<option value={'red'}>Red</option>
-								<option value={'#bbbbbb'}>Gray</option>
-							</select>
-						</label>
+
+					<div class="flex flex-row-reverse justify-between">
 						<button
 							class="variant-soft-secondary btn mb-1 mt-2 px-2 py-0.5"
 							on:click={editTasks}

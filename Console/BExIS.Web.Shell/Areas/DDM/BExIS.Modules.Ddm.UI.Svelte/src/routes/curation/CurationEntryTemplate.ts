@@ -1,95 +1,85 @@
+import { writable } from 'svelte/store';
 import type { CurationEntryCreationModel } from './types';
-import { CurationEntryStatus, CurationEntryType } from './types';
+import { DefaultCurationEntryCreationModel } from './types';
 
 export const entryTemplateRegex = /\[TemplateEntry\]\(\?([^)]*)\)/g;
 
-export function getTemplateLinkText(
-	inputData: Partial<CurationEntryCreationModel>,
-	position?: 'top' | 'bottom',
-	createAsDraft?: boolean,
-	autoCreate?: boolean
-) {
-	const params: Record<string, string> = {};
-	for (const [key, value] of Object.entries(inputData)) {
-		if (
-			value !== undefined &&
-			value !== null &&
-			!(typeof value === 'string' && value.trim() === '')
-		) {
-			params[key] = encodeURIComponent(value.toString());
+export interface CurationEntryTemplateModel extends CurationEntryCreationModel {
+	placement: 'top' | 'bottom';
+	createAsDraft: boolean;
+	autoCreate: boolean;
+	scrollToEntry: boolean;
+}
+
+export const entryTemplatePopupState = writable<{
+	show: boolean;
+	template?: CurationEntryTemplateModel;
+	callback?: (newTemplate: CurationEntryTemplateModel) => void;
+}>({
+	show: false
+});
+
+export const DefaultCurationEntryTemplate: CurationEntryTemplateModel = {
+	...DefaultCurationEntryCreationModel,
+	placement: 'bottom',
+	createAsDraft: false,
+	autoCreate: false,
+	scrollToEntry: false
+}; // booleans should default to false as presence means true
+
+const nameMapping: Record<string, string> = {
+	createAsDraft: 'draft',
+	autoCreate: 'auto',
+	scrollToEntry: 'scroll'
+};
+
+const mapName = (field: string) => {
+	if (field in nameMapping) {
+		return nameMapping[field];
+	}
+	return field;
+};
+
+const fields: (keyof CurationEntryTemplateModel)[] = [
+	'topic',
+	'type',
+	'name',
+	'description',
+	'solution',
+	'source',
+	'comment',
+	'status',
+	'placement',
+	'createAsDraft',
+	'autoCreate'
+];
+
+function getCreationModelParams(entryCreation: CurationEntryTemplateModel) {
+	const params: Record<string, string | null> = {};
+
+	for (const field of fields) {
+		const value = entryCreation[field];
+		const defaultValue = DefaultCurationEntryTemplate[field];
+		if (value !== undefined && value !== defaultValue) {
+			if (typeof value === 'boolean') {
+				params[mapName(field)] = null;
+			} else if (typeof value === 'string') {
+				params[mapName(field)] = encodeURIComponent(value);
+			} else {
+				params[mapName(field)] = encodeURIComponent(value?.toString() ?? '');
+			}
 		}
 	}
-	if (position) params['position'] = position;
-	if (createAsDraft) params['draft'] = '';
-	if (autoCreate) params['auto'] = '';
+
+	return params;
+}
+
+export function getTemplateLinkText(curationEntryTemplate: CurationEntryTemplateModel) {
+	const params = getCreationModelParams(curationEntryTemplate);
 	const paramString = Object.entries(params)
-		.map(([k, v]) => (v === '' ? k : `${k}=${v}`))
+		.map(([k, v]) => (v === null ? k : `${k}=${v}`))
 		.join('&');
 	return `[TemplateEntry](?${paramString})`;
-}
-
-function mapPosition(position: string): 'top' | 'bottom' {
-	if (position === 'top' || position === 'bottom') {
-		return position;
-	} else if (position === '0') {
-		return 'top';
-	} else {
-		return 'bottom';
-	}
-}
-
-function removeEmptyStringValues(obj: Record<string, any>) {
-	for (const key in obj) {
-		if (typeof obj[key] === 'string' && obj[key].trim() === '') {
-			delete obj[key];
-		}
-	}
-}
-
-function mapParamsToExpectedTypes(params: Record<string, string>) {
-	const result: any = { ...params };
-	if ('type' in params && params.type !== '') {
-		const typeValue = parseInt(params.type, 10);
-		// Check if typeValue is a valid CurationEntryType
-		if (
-			Object.values(CurationEntryType)
-				.filter((v) => typeof v === 'number')
-				.includes(typeValue)
-		) {
-			result.type = typeValue;
-		} else {
-			throw new Error(`Invalid type value: ${params.type}`);
-		}
-	}
-	if ('status' in params && params.status !== '') {
-		const statusValue = parseInt(params.status, 10);
-		// Check if statusValue is a valid CurationEntryStatus
-		if (
-			Object.values(CurationEntryStatus)
-				.filter((v) => typeof v === 'number')
-				.includes(statusValue)
-		) {
-			result.status = statusValue;
-		} else {
-			throw new Error(`Invalid status value: ${params.status}`);
-		}
-	}
-	if ('position' in params && params.position !== '') {
-		result.position = mapPosition(params.position);
-	}
-	// Boolean flags: presence means true, absence means false
-	if ('draft' in params) {
-		result.createAsDraft = true;
-	}
-	if ('auto' in params) {
-		result.autoCreate = true;
-	}
-	removeEmptyStringValues(result);
-	return result as Partial<CurationEntryCreationModel> & {
-		position?: 'top' | 'bottom';
-		createAsDraft?: boolean;
-		autoCreate?: boolean;
-	};
 }
 
 export function parseTemplateLink(link: string) {
@@ -99,15 +89,54 @@ export function parseTemplateLink(link: string) {
 		throw new Error('Invalid template link format');
 	}
 	const paramString = match[1];
-	const params: Record<string, string> = {};
+	const params: Record<string, string | null> = {};
 	for (const pair of paramString.split('&')) {
 		if (pair.includes('=')) {
 			const [key, value] = pair.split('=');
-			if (key) params[key] = value ? decodeURIComponent(value) : '';
+			if (key && value) params[key] = decodeURIComponent(value);
 		} else if (pair) {
-			// flag with no value
-			params[pair] = '';
+			params[pair] = null;
 		}
 	}
-	return mapParamsToExpectedTypes(params);
+
+	// Map params back to model fields
+	for (const [key, mappedKey] of Object.entries(nameMapping)) {
+		if (params[mappedKey] !== undefined) {
+			params[key] = params[mappedKey];
+			delete params[mappedKey];
+		}
+	}
+
+	const template: CurationEntryTemplateModel = { ...DefaultCurationEntryTemplate };
+
+	Object.entries(params).forEach(([key, value]) => {
+		const field = key as keyof CurationEntryTemplateModel;
+		if (
+			value !== null &&
+			value !== undefined &&
+			typeof DefaultCurationEntryTemplate[field] === 'string'
+		) {
+			(template as any)[field] = value;
+		} else if (
+			value !== null &&
+			value !== undefined &&
+			typeof DefaultCurationEntryTemplate[field] === 'number'
+		) {
+			if (field === 'type') {
+				const intValue = parseInt(value);
+				if (!isNaN(intValue)) {
+					template.type = intValue;
+				}
+			} else if (field === 'status') {
+				const intValue = parseInt(value);
+				if (!isNaN(intValue)) {
+					template.status = intValue;
+				}
+			}
+		} else if (value === null && typeof DefaultCurationEntryTemplate[field] === 'boolean') {
+			(template as any)[field] = true;
+		}
+	});
+
+	return template;
 }
