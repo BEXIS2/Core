@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Fa from 'svelte-fa';
+	import Fa, { FaLayers } from 'svelte-fa';
 	import { CurationEntryType, CurationStatusEntryTab, type CurationTemplateModel } from './types';
 	import {
 		faDoorOpen,
@@ -7,7 +7,9 @@
 		faPen,
 		faFloppyDisk,
 		faEyeSlash,
-		faXmark
+		faXmark,
+		faSquare,
+		faA
 	} from '@fortawesome/free-solid-svg-icons';
 	import { writable } from 'svelte/store';
 	import { curationStore } from './stores';
@@ -19,7 +21,12 @@
 	import { tick } from 'svelte';
 	import MarkdownComponent from '$lib/components/MarkdownComponent/MarkdownComponent.svelte';
 	import CurationEntryTemplateButton from './CurationEntryTemplateButton.svelte';
-	import { entryTemplateRegex } from './CurationEntryTemplate';
+	import {
+		createEntriesFromTemplates,
+		entriesFromTemplatesProgress,
+		entryTemplateRegex,
+		getAllAutoTemplates
+	} from './CurationEntryTemplate';
 
 	const { curation, currentStatusEntryTab, curationInfoExpanded, uploadingEntries } = curationStore;
 
@@ -157,6 +164,22 @@
 		}
 		return `(${closed} of ${closed + open})`;
 	})();
+
+	$: autoTemplates = getAllAutoTemplates(tasksContent);
+	let autoAsDraft = true;
+
+	const createAllTemplates = () => {
+		if (!$curation) return;
+		// ask for confirmation
+		if (
+			!confirm(
+				`Are you sure you want to create all ${autoTemplates.length} templates?` +
+					(autoAsDraft ? ' They will be created as drafts.' : 'They will be created directly.')
+			)
+		)
+			return;
+		createEntriesFromTemplates(autoTemplates, autoAsDraft);
+	};
 </script>
 
 <!-- Status and Badges -->
@@ -319,13 +342,52 @@
 						{/key}
 					</div>
 
-					<div class="flex flex-row-reverse justify-between">
+					<div class="mb-1 mt-2 flex flex-wrap justify-between gap-2">
+						<div class="flex items-center">
+							<button
+								class="variant-soft-primary btn relative gap-x-1 rounded-r-none px-2 py-0.5"
+								on:click={createAllTemplates}
+								disabled={autoTemplates.length === 0 || $entriesFromTemplatesProgress >= 0}
+							>
+								<FaLayers class="inline-block">
+									<Fa icon={faSquare} class="text-primary-500 group-hover:text-primary-50" />
+									<Fa icon={faA} class="text-primary-50 group-hover:text-primary-500" scale="0.7" />
+								</FaLayers>
+								Auto Create Templates ({autoTemplates.length})
+								<div
+									class="pointer-events-none absolute right-0 top-0 flex size-full justify-end rounded rounded-r-none bg-primary-500 bg-opacity-30 text-xs opacity-0 transition-opacity"
+									class:!opacity-30={$entriesFromTemplatesProgress >= 0}
+								>
+									<span
+										class="h-full bg-primary-500 bg-opacity-50"
+										style="width: {Math.round(
+											(1 - $entriesFromTemplatesProgress) * 100
+										)}%; transition: width 0.3s ease;"
+									>
+										&nbsp;
+									</span>
+								</div>
+							</button>
+							<label
+								class="variant-soft-primary btn inline-flex cursor-pointer items-center rounded-l-none border-l border-primary-600 border-opacity-20 px-2 py-1 text-sm text-surface-700 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-70"
+								title="Create all templates as draft"
+							>
+								<input
+									type="checkbox"
+									class="input variant-soft-primary size-4 cursor-pointer"
+									bind:checked={autoAsDraft}
+									disabled={autoTemplates.length === 0}
+								/>
+								<span>Create as Draft</span>
+							</label>
+						</div>
+
 						<button
-							class="variant-soft-secondary btn mb-1 mt-2 px-2 py-0.5"
+							class="variant-soft-secondary btn px-2 py-0.5"
 							on:click={editTasks}
 							title="Edit Tasks"
 						>
-							<Fa icon={faPen} class="mr-1 inline-block" />
+							<Fa icon={faPen} class="inline-block" />
 							<span class="ml-1">Edit Tasks</span>
 						</button>
 					</div>

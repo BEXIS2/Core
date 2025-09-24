@@ -1,6 +1,7 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 import type { CurationEntryCreationModel } from './types';
-import { DefaultCurationEntryCreationModel } from './types';
+import { CurationEntryType, DefaultCurationEntryCreationModel } from './types';
+import { curationStore } from './stores';
 
 export const entryTemplateRegex = /\[TemplateEntry\]\(\?([^)]*)\)/g;
 
@@ -13,7 +14,7 @@ export interface CurationEntryTemplateModel extends CurationEntryCreationModel {
 
 export const entryTemplatePopupState = writable<{
 	show: boolean;
-	template?: CurationEntryTemplateModel;
+	template?: Partial<CurationEntryTemplateModel>;
 	callback?: (newTemplate: CurationEntryTemplateModel) => void;
 }>({
 	show: false
@@ -54,7 +55,7 @@ const fields: (keyof CurationEntryTemplateModel)[] = [
 	'autoCreate'
 ];
 
-function getCreationModelParams(entryCreation: CurationEntryTemplateModel) {
+function getCreationModelParams(entryCreation: Partial<CurationEntryTemplateModel>) {
 	const params: Record<string, string | null> = {};
 
 	for (const field of fields) {
@@ -74,7 +75,7 @@ function getCreationModelParams(entryCreation: CurationEntryTemplateModel) {
 	return params;
 }
 
-export function getTemplateLinkText(curationEntryTemplate: CurationEntryTemplateModel) {
+export function getTemplateLinkText(curationEntryTemplate: Partial<CurationEntryTemplateModel>) {
 	const params = getCreationModelParams(curationEntryTemplate);
 	const paramString = Object.entries(params)
 		.map(([k, v]) => (v === null ? k : `${k}=${v}`))
@@ -139,4 +140,70 @@ export function parseTemplateLink(link: string) {
 	});
 
 	return template;
+}
+
+export function createEntryFromTemplate(
+	template: CurationEntryTemplateModel,
+	scrollToEntry = true
+): Promise<number | void> {
+	const type = template.type ?? DefaultCurationEntryCreationModel.type;
+	const highestPosition = get(curationStore.curation)?.highestPositionPerType?.[type];
+	let position: number;
+	if (template.placement === 'top' || highestPosition === undefined) {
+		position = 1;
+	} else {
+		position = highestPosition + 1;
+	}
+	const entryModel = {
+		...template,
+		position
+	};
+	return curationStore.addEmptyEntry(
+		entryModel,
+		false,
+		template.createAsDraft ?? false,
+		scrollToEntry
+	);
+}
+
+export const entriesFromTemplatesProgress = writable(-1);
+
+entriesFromTemplatesProgress.subscribe((value) => {
+	if (value === 100) {
+		setTimeout(() => entriesFromTemplatesProgress.set(-1), 500);
+	}
+});
+
+export function createEntriesFromTemplates(
+	templates: CurationEntryTemplateModel[],
+	asDraft = true
+): Promise<void> {
+	entriesFromTemplatesProgress.set(0);
+	const total = templates.length;
+	let completed = 0;
+	const filteredTemplates = templates.filter((t) => t.type !== CurationEntryType.StatusEntryItem);
+	const run = async () => {
+		for (const [i, template] of filteredTemplates.entries()) {
+			await createEntryFromTemplate(
+				{ ...template, createAsDraft: asDraft },
+				i === filteredTemplates.length - 1
+			);
+			completed++;
+			entriesFromTemplatesProgress.set((completed / total) * 100);
+		}
+		entriesFromTemplatesProgress.set(1);
+	};
+	return run();
+}
+
+export function getAllAutoTemplates(markdown: string) {
+	const matches = markdown.matchAll(entryTemplateRegex);
+	const templates: CurationEntryTemplateModel[] = [];
+	for (const match of matches) {
+		const template = parseTemplateLink(match[0]);
+		if (template.autoCreate) {
+			templates.push(template);
+		}
+	}
+	return templates;
 }

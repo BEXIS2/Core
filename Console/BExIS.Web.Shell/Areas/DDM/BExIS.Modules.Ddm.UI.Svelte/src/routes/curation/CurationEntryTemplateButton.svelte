@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Fa from 'svelte-fa';
+	import Fa, { FaLayers } from 'svelte-fa';
 	import {
 		faA,
 		faArrowRightFromFile,
@@ -7,19 +7,20 @@
 		faEdit,
 		faFilePen,
 		faMessage,
+		faSquare,
 		faTurnDown,
 		faTurnUp
 	} from '@fortawesome/free-solid-svg-icons';
 	import { curationStore } from './stores';
 	import {
+		createEntryFromTemplate,
 		DefaultCurationEntryTemplate,
 		entryTemplatePopupState,
 		getTemplateLinkText,
 		parseTemplateLink,
 		type CurationEntryTemplateModel
 	} from './CurationEntryTemplate';
-	import { get } from 'svelte/store';
-	import { CurationEntryStatusDetails, DefaultCurationEntryCreationModel } from './types';
+	import { CurationEntryStatusDetails } from './types';
 	import { createEventDispatcher } from 'svelte';
 
 	export let markdown: string;
@@ -33,17 +34,9 @@
 		...parseTemplateLink(markdown)
 	} as CurationEntryTemplateModel;
 
-	const createEntryFromTemplate = () => {
+	const createClick = () => {
 		if (!markdown) return;
-		const type = template.type ?? DefaultCurationEntryCreationModel.type;
-		const highestPosition = get(curation)?.highestPositionPerType?.[type];
-		const position =
-			template.placement === 'top' ? 1 : highestPosition !== undefined ? highestPosition + 1 : 1;
-		const entryModel = {
-			...template,
-			position
-		};
-		curationStore.addEmptyEntry(entryModel, false, template.createAsDraft ?? false, true);
+		createEntryFromTemplate(template);
 	};
 
 	const callback = (newEntryTemplate: CurationEntryTemplateModel) => {
@@ -101,50 +94,47 @@
 				</span>
 				<span
 					title={template.placement === 'top' ? 'Creates at top' : 'Creates at bottom'}
-					class="rounded bg-success-400 px-[0.4rem] py-0.5 text-white"
+					class="flex items-center justify-center rounded bg-success-400 px-0.5 py-1 text-white"
 				>
-					<Fa
-						icon={template.placement === 'top' ? faTurnUp : faTurnDown}
-						class="-mr-0.5 inline-block"
-					/>
+					<Fa icon={template.placement === 'top' ? faTurnUp : faTurnDown} class="size-4" />
 				</span>
 				{#if template.comment?.length}
-					<span title="Has initial comment" class="rounded bg-surface-500 px-1 py-0.5 text-white">
-						<Fa icon={faMessage} class="inline-block" />
+					<span title="Has initial comment" class="rounded bg-surface-500 px-0.5 py-1 text-white">
+						<Fa icon={faMessage} class="size-4" />
 					</span>
 				{/if}
 				<span
 					title={template.createAsDraft ? 'Gets created as draft' : 'Gets created directly'}
-					class="rounded px-1 py-0.5 text-white"
+					class="flex items-center justify-center rounded px-0.5 py-1 text-white"
 					class:bg-primary-500={template.createAsDraft}
 					class:bg-warning-500={!template.createAsDraft}
 				>
-					<Fa
-						icon={template.createAsDraft ? faFilePen : faArrowRightFromFile}
-						class="-mr-0.5 inline-block"
-					/>
+					<Fa icon={template.createAsDraft ? faFilePen : faArrowRightFromFile} class="size-4" />
 				</span>
 			</div>
 		</div>
 		<!-- Buttons -->
 		<button
-			class="btn m-0 shrink grow gap-1 overflow-hidden text-ellipsis whitespace-nowrap rounded-r-none px-1 py-0.5 text-sm text-success-600 text-opacity-70 hover:variant-soft-success hover:text-opacity-100"
+			class="btn m-0 grow gap-1 overflow-hidden text-ellipsis whitespace-nowrap rounded-r-none px-1 py-0.5 text-sm text-success-600 text-opacity-70 hover:variant-soft-success hover:text-opacity-100"
 			title="Create curation entry from task"
-			on:click|preventDefault={createEntryFromTemplate}
+			on:click|preventDefault={createClick}
 		>
 			<Fa icon={faCirclePlus} class="text-xs" />
 			Create
 		</button>
 		{#if template.autoCreate}
 			<div
-				class="flex grow items-center justify-center bg-primary-500 bg-opacity-0 text-primary-500 transition-opacity group-hover:bg-opacity-50 group-hover:text-primary-50"
+				class="flex shrink items-center justify-center bg-primary-500 bg-opacity-0 px-[0.1rem] transition-opacity group-hover:bg-opacity-50"
 				title="This entry is automatically created, when you click on 'Create All'"
 			>
-				<Fa icon={faA} class="inline-block size-[0.7rem] px-0.5" />
+				<FaLayers class="mt-[0.1rem] text-xs">
+					<Fa icon={faSquare} class="text-primary-500 group-hover:text-primary-50" />
+					<Fa icon={faA} class="text-primary-50 group-hover:text-primary-500" scale="0.7" />
+				</FaLayers>
 			</div>
 		{/if}
 		<button
-			class="btn m-0 shrink grow gap-1 overflow-hidden text-ellipsis whitespace-nowrap rounded-l-none px-1 py-0.5 text-sm text-secondary-600 text-opacity-70 hover:variant-soft-secondary hover:text-opacity-100"
+			class="btn m-0 grow gap-1 overflow-hidden text-ellipsis whitespace-nowrap rounded-l-none px-1 py-0.5 text-sm text-secondary-600 text-opacity-70 hover:variant-soft-secondary hover:text-opacity-100"
 			title="Edit task"
 			on:click|preventDefault={editTemplate}
 		>

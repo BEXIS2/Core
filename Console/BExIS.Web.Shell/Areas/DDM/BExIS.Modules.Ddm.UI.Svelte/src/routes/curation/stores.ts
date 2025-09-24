@@ -255,40 +255,57 @@ class CurationStore {
 		acceptCurationStatusEntry = false,
 		asDraft = true,
 		jumpToEntry = false
+	): Promise<number | void> {
+		return new Promise((resolve) => {
+			if (
+				!acceptCurationStatusEntry &&
+				entryModel.type &&
+				entryModel.type === CurationEntryType.StatusEntryItem
+			)
+				return resolve(undefined);
+			this._curation.update((curation) => {
+				if (!curation) return curation;
+				const result = curation.addEmptyEntry({
+					...DefaultCurationEntryCreationModel,
+					...entryModel
+				});
+				this.handleAddEmptyEntryResult(result, entryModel, jumpToEntry, asDraft, resolve);
+				return result.curation;
+			});
+		});
+	}
+
+	private handleAddEmptyEntryResult(
+		result: { curation: CurationClass; newEntryId: number },
+		entryModel: Partial<CurationEntryCreationModel>,
+		jumpToEntry: boolean,
+		asDraft: boolean,
+		resolve: (value: number | void) => void
 	) {
-		if (
-			!acceptCurationStatusEntry &&
-			entryModel.type &&
-			entryModel.type === CurationEntryType.StatusEntryItem
-		)
-			return;
-		this._curation.update((curation) => {
-			if (!curation) return curation;
-			const result = curation.addEmptyEntry({
-				...DefaultCurationEntryCreationModel,
-				...entryModel
-			});
-			if (jumpToEntry) {
-				this.editMode.set(true);
-				if (entryModel.type) {
-					this.updateEntryFilter(
-						CurationFilterType.type,
-						(type: (CurationEntryType | undefined) | undefined) =>
-							type === entryModel.type ? type : undefined
-					);
-					this.removeEntryFilters([CurationFilterType.status, CurationFilterType.search]);
-				} else this.clearEntryFilters();
+		if (jumpToEntry) {
+			this.editMode.set(true);
+			if (entryModel.type) {
+				this.updateEntryFilter(
+					CurationFilterType.type,
+					(type: (CurationEntryType | undefined) | undefined) =>
+						type === entryModel.type ? type : undefined
+				);
+				this.removeEntryFilters([CurationFilterType.status, CurationFilterType.search]);
+			} else {
+				this.clearEntryFilters();
 			}
-			tick().then(() => {
-				if (jumpToEntry) {
-					curationStore.jumpToEntryWhere.set((entry) => entry.id === result.newEntryId);
-				}
-				if (!asDraft)
-					tick().then(() => {
-						this.saveEntry(result.curation.getEntryById(result.newEntryId)!);
-					});
-			});
-			return result.curation;
+		}
+		tick().then(() => {
+			if (jumpToEntry) {
+				curationStore.jumpToEntryWhere.set((entry) => entry.id === result.newEntryId);
+			}
+			if (!asDraft)
+				tick().then(() => {
+					const newEntry = result.curation.getEntryById(result.newEntryId);
+					if (!newEntry) return;
+					this.saveEntry(newEntry).then((id) => resolve(id));
+				});
+			else resolve(result.newEntryId);
 		});
 	}
 
@@ -314,33 +331,37 @@ class CurationStore {
 		});
 	}
 
-	public saveEntry(entry: CurationEntryClass) {
-		const prevEntryId = entry.id;
-		const entryWasDraft = entry.isDraft();
-		this.setEntryLoading(prevEntryId, true);
-		let f = entryWasDraft ? postCurationEntry : putCurationEntry;
-		f(entry)
-			.then((response) => {
-				this._curation.update((curation) => {
-					if (!curation) return curation;
-					const newEntry = new CurationEntryClass(response, curation.currentUserType);
-					let newCuration = curation;
-					if (entryWasDraft) {
-						newCuration = curation.removeEntry(entry.id);
-						this._entryCardStates.delete(prevEntryId);
-						this.setEntryLoading(prevEntryId, false);
-					}
-					newCuration = newCuration.addEntry(newEntry);
-					this.setEntryLoading(newEntry.id, false);
-					return newCuration;
+	public saveEntry(entry: CurationEntryClass): Promise<number | void> {
+		return new Promise((resolve) => {
+			const prevEntryId = entry.id;
+			const entryWasDraft = entry.isDraft();
+			this.setEntryLoading(prevEntryId, true);
+			let f = entryWasDraft ? postCurationEntry : putCurationEntry;
+			return f(entry)
+				.then((response) => {
+					this._curation.update((curation) => {
+						if (!curation) return curation;
+						const newEntry = new CurationEntryClass(response, curation.currentUserType);
+						let newCuration = curation;
+						if (entryWasDraft) {
+							newCuration = curation.removeEntry(entry.id);
+							this._entryCardStates.delete(prevEntryId);
+							this.setEntryLoading(prevEntryId, false);
+						}
+						newCuration = newCuration.addEntry(newEntry);
+						this.setEntryLoading(newEntry.id, false);
+						resolve(newEntry.id);
+						return newCuration;
+					});
+					return response;
+				})
+				.catch((error) => {
+					console.error('🎈 ~ Error saving entry:', error);
+					this._uploadingEntries.set([]);
+					this.fetch();
+					resolve(undefined);
 				});
-				return response;
-			})
-			.catch((error) => {
-				console.error('🎈 ~ Error saving entry:', error);
-				this._uploadingEntries.set([]);
-				this.fetch();
-			});
+		});
 	}
 
 	public getEntryReadable(entryId: number): Readable<CurationEntryClass | null> {
