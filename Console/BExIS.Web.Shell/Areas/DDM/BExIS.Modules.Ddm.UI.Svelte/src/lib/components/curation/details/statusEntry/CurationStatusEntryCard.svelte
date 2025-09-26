@@ -401,7 +401,7 @@
 							bind:this={tasksTextarea}
 							bind:value={tasksContent}
 							class="mt-1 w-full rounded border border-surface-500 px-2 py-1 text-sm text-surface-800 focus-visible:border-surface-700 focus-visible:outline-none"
-							rows="12"
+							rows="24"
 							placeholder="Enter tasks"
 						></textarea>
 						<CurationTemplate

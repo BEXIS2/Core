@@ -19,8 +19,10 @@
 	import CurationProgressInfo from './details/utils/CurationProgressInfo.svelte';
 	import ColorPalettePicker from './details/utils/ColorPalettePicker.svelte';
 	import CurationFilter from './details/utils/CurationFilter.svelte';
-	import CurationEntryTemplatePopup from './details/utils/CurationEntryTemplatePopup.svelte';
 	import CurationEntryList from './details/entryList/CurationEntryList.svelte';
+	import Popup from '../Popup.svelte';
+	import CurationEntryTemplatePopupContent from './details/utils/CurationEntryTemplatePopupContent.svelte';
+	import { entryTemplatePopupState } from '$lib/models/CurationEntryTemplate';
 
 	const {
 		loadingCuration,
@@ -95,6 +97,22 @@
 
 	const toggleCurationInfoExpand = () => {
 		curationInfoExpanded.update((i) => !i);
+	};
+
+	let popup: Popup;
+	entryTemplatePopupState.subscribe(($entryTemplatePopupState) => {
+		if (!popup) {
+			return;
+		}
+		if ($entryTemplatePopupState.show) {
+			popup.openPopup();
+		} else {
+			popup.closePopup();
+		}
+	});
+
+	const popupClosed = () => {
+		entryTemplatePopupState.set({ show: false });
 	};
 </script>
 
@@ -196,6 +214,9 @@
 	{/if}
 
 	{#if $curation?.isCurator}
-		<CurationEntryTemplatePopup />
+		<!-- <CurationEntryTemplatePopup /> -->
+		<Popup bind:this={popup} title="Create Curation Entry Template" on:closed={popupClosed}>
+			<CurationEntryTemplatePopupContent />
+		</Popup>
 	{/if}
 </div>
