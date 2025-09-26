@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Page, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
-	import CurationsOverview from './CurationsOverview.svelte';
-	import Curation from './Curation.svelte';
+	import CurationsTable from '$lib/components/curation/CurationsTable.svelte';
+	import Curation from '$lib/components/curation/Curation.svelte';
 	import { page } from '$app/stores';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import ExampleIntegration from './ExampleIntegration.svelte';
@@ -17,7 +17,7 @@
 <Page title="Curation" contentLayoutType={pageContentLayoutType.full}>
 	{#if !searchParDatasetId}
 		<!-- Overview of datasets and ongoing curations -->
-		<CurationsOverview />
+		<CurationsTable />
 	{:else}
 		{#if !showExampleIntegration}
 			<!-- Standard implementation for Curation -->

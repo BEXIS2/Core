@@ -1,16 +1,16 @@
 <script lang="ts">
-	import Curation from './Curation.svelte';
-	import {
-		CurationEntryType,
-		type CurationEntryHelperModel,
-		type CurationEntryModel
-	} from './types';
+	import Curation from '$lib/components/curation/Curation.svelte';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 	import Fa from 'svelte-fa';
 	import { faAngleLeft, faCircleDot, faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { fade, slide } from 'svelte/transition';
 	import type { Readable } from 'svelte/store';
 	import { tick } from 'svelte';
+	import {
+		CurationEntryType,
+		type CurationEntryHelperModel,
+		type CurationEntryModel
+	} from '$lib/models/CurationEntry';
 
 	export let datasetId: number;
 

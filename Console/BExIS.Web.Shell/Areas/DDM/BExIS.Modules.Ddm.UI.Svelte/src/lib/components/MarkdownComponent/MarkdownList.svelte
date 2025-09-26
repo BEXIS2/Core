@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { derived, get, writable, type Writable } from 'svelte/store';
 	import MarkdownInlineComponent from './MarkdownInlineComponent.svelte';
 	import MarkdownList from './MarkdownList.svelte';
 	import { createEventDispatcher } from 'svelte';
