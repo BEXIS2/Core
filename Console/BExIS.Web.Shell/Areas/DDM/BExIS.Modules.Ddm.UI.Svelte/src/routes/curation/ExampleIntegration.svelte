@@ -2,10 +2,17 @@
 	import Curation from '$lib/components/curation/Curation.svelte';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 	import Fa from 'svelte-fa';
-	import { faAngleLeft, faCircleDot, faPlus } from '@fortawesome/free-solid-svg-icons';
+	import {
+		faAngleLeft,
+		faCircleDot,
+		faCodeCommit,
+		faCodeCompare,
+		faPlus
+	} from '@fortawesome/free-solid-svg-icons';
 	import { fade, slide } from 'svelte/transition';
 	import type { Readable } from 'svelte/store';
 	import { tick } from 'svelte';
+	import MetadataDiffTool from '$lib/components/metadataDiffTool/MetadataDiffTool.svelte';
 	import {
 		CurationEntryType,
 		type CurationEntryHelperModel,
@@ -124,6 +131,8 @@
 			}
 		});
 	}
+
+	let showChanges = false;
 </script>
 
 <!-- How the component might be used with data next to it -->
@@ -152,21 +161,36 @@
 		</div>
 
 		{#if currentTypeView === CurationEntryType.MetadataEntryItem}
-			<div class="m-2">
-				{#each exampleMetadataInputs as metadataInput}
-					<label class="relative mt-24" data-name={metadataInput.name}>
-						<span>{metadataInput.name}</span>
-						<input type="text" class="input" />
-						<button
-							class="variant-ghost-primary btn btn-icon absolute right-3 top-3 !size-6"
-							title="Create entry for {metadataInput.name}"
-							on:click={() => addEntryClick(metadataInput)}
-						>
-							<Fa icon={faPlus} />
-						</button>
-					</label>
-				{/each}
+			<!-- Example metadata inputs -->
+			<div class="flex justify-center">
+				<button
+					class="variant-ghost-primary btn mb-2 ml-2"
+					on:click={() => (showChanges = !showChanges)}
+				>
+					<Fa icon={showChanges ? faCodeCommit : faCodeCompare} class="mr-2" />
+					Show {showChanges ? 'Example Metadata Inputs' : 'Changes'}
+				</button>
 			</div>
+
+			{#if showChanges}
+				<MetadataDiffTool {datasetId} />
+			{:else}
+				<div class="m-2">
+					{#each exampleMetadataInputs as metadataInput}
+						<label class="relative mt-24" data-name={metadataInput.name}>
+							<span>{metadataInput.name}</span>
+							<input type="text" class="input" />
+							<button
+								class="variant-ghost-primary btn btn-icon absolute right-3 top-3 !size-6"
+								title="Create entry for {metadataInput.name}"
+								on:click={() => addEntryClick(metadataInput)}
+							>
+								<Fa icon={faPlus} />
+							</button>
+						</label>
+					{/each}
+				</div>
+			{/if}
 		{:else if currentTypeView === CurationEntryType.DatastructureEntryItem}
 			<div></div>
 		{:else if currentTypeView === CurationEntryType.PrimaryDataEntryItem}
