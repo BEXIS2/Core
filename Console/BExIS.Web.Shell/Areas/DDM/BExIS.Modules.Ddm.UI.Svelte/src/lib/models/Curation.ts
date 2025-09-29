@@ -253,7 +253,7 @@ export class CurationClass implements CurationModel {
 		return this.addEntry(newEntry);
 	}
 
-	public addEmptyEntry(entryModel: CurationEntryCreationModel) {
+	public addEntryModel(entryModel: CurationEntryCreationModel) {
 		const isStatusEntry = entryModel.type === CurationEntryType.StatusEntryItem;
 		const invalidPosition =
 			(isStatusEntry && (entryModel.position !== 0 || this.curationStatusEntry)) ||

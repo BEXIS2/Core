@@ -265,7 +265,7 @@ class CurationStore {
 				return resolve(undefined);
 			this._curation.update((curation) => {
 				if (!curation) return curation;
-				const result = curation.addEmptyEntry({
+				const result = curation.addEntryModel({
 					...DefaultCurationEntryCreationModel,
 					...entryModel
 				});
