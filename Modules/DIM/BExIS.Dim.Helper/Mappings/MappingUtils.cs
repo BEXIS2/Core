@@ -1413,7 +1413,9 @@ namespace BExIS.Dim.Helpers.Mappings
                 foreach (var source in sources)
                 {
                     string sourcePath = source;
-                    var currentComplexMappings = complexMappings.Where(m => m.Target.Id.Equals(currentCompexTarget) && m.Source.XPath.Contains(source)).ToList();
+                    var currentComplexMappings = complexMappings.Where(m => m.Target.Id.Equals(currentCompexTarget) 
+                        && (!string.IsNullOrEmpty(m.Source.XPath) && m.Source.XPath.Contains(source)) // belong to the current source scope
+                        || string.IsNullOrEmpty(m.Source.XPath)).ToList(); // all mappings without xpath, means default
 
 
                     int j = 1;
@@ -1502,6 +1504,7 @@ namespace BExIS.Dim.Helpers.Mappings
                                 //var simpleElements = metadata.SelectNodes(t);
                                 if ((simpleElements == null || simpleElements.Count() == 0) && string.IsNullOrEmpty(complexMapping.Source.XPath) && complexMapping.Source.Name.ToLower().Equals("default"))  // DEFAULT
                                 {
+                                    index = 1;
                                     string simpleTargetPath = mergeXPaths(complexTargetPath, cTargetLinkElement.XPath, sTargetLinkElement.XPath + "[" + index + "]");
 
                                     if (xTarget == null)
