@@ -375,10 +375,8 @@ export class CurationEntryClass implements CurationEntryModel {
 	}
 
 	public setStatus(status: CurationEntryStatus): CurationEntryClass {
-		if (status === CurationEntryStatus.Fixed) return this.setStatusBoolean(true, false);
-		if (status === CurationEntryStatus.Ok) return this.setStatusBoolean(false, true);
-		if (status === CurationEntryStatus.Closed) return this.setStatusBoolean(true, true);
-		return this.setStatusBoolean(false, false);
+		const { userIsDone, isApproved } = CurationEntryClass.getStatusBoolean(status);
+		return this.setStatusBoolean(userIsDone, isApproved);
 	}
 
 	public setName(name: string): CurationEntryClass {

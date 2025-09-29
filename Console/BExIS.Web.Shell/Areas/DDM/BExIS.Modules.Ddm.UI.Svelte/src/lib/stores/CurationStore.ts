@@ -246,6 +246,10 @@ class CurationStore {
 		});
 	}
 
+	public jumpToEntryWithId(entryId: number) {
+		this.jumpToEntryWhere.set((entry) => entry.id === entryId);
+	}
+
 	public addEmptyEntry(
 		entryModel: Partial<CurationEntryCreationModel>,
 		acceptCurationStatusEntry = false,
@@ -279,7 +283,7 @@ class CurationStore {
 		resolve: (value: number | void) => void
 	) {
 		if (jumpToEntry) {
-			this.editMode.set(true);
+			if (asDraft) this.editMode.set(true);
 			if (entryModel.type) {
 				this.updateEntryFilter(
 					CurationFilterType.type,
@@ -293,13 +297,16 @@ class CurationStore {
 		}
 		tick().then(() => {
 			if (jumpToEntry) {
-				curationStore.jumpToEntryWhere.set((entry) => entry.id === result.newEntryId);
+				this.jumpToEntryWithId(result.newEntryId);
 			}
 			if (!asDraft)
 				tick().then(() => {
 					const newEntry = result.curation.getEntryById(result.newEntryId);
 					if (!newEntry) return;
-					this.saveEntry(newEntry).then((id) => resolve(id));
+					this.saveEntry(newEntry).then((id) => {
+						if (jumpToEntry && id) this.jumpToEntryWithId(id);
+						resolve(id);
+					});
 				});
 			else resolve(result.newEntryId);
 		});

@@ -27,7 +27,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	const { curation, statusColorPalette } = curationStore;
+	const { statusColorPalette } = curationStore;
 
 	$: template = {
 		...DefaultCurationEntryTemplate,

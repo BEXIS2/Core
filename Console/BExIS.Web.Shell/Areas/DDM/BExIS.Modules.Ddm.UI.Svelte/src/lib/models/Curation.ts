@@ -260,6 +260,7 @@ export class CurationClass implements CurationModel {
 			(!isStatusEntry && entryModel.position < 1);
 		if (invalidPosition) return { curation: this, newEntryId: 0 };
 		let newEntry = CurationEntryClass.emptyEntry(this.datasetId, -this.draftCount - 1, entryModel);
+		if (entryModel.status !== undefined) newEntry = newEntry.setStatus(entryModel.status);
 		return {
 			curation: new CurationClass(
 				{
