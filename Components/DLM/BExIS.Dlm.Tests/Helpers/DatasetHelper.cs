@@ -392,7 +392,7 @@ namespace BExIS.Dlm.Tests.Helpers
             }
         }
 
-        public List<DataTuple> GetUpdatedDatatuples(DatasetVersion datasetVersion, StructuredDataStructure dataStructure, DatasetManager datasetManager)
+        public List<DataTuple> GetUpdatedDatatuples(DatasetVersion datasetVersion, StructuredDataStructure dataStructure, DatasetManager datasetManager, int count = 0)
         {
             datasetVersion.Should().NotBeNull();
             var dataset = datasetVersion.Dataset;
@@ -401,11 +401,17 @@ namespace BExIS.Dlm.Tests.Helpers
 
             try
             {
-                var datatuples = datasetManager.GetDataTuples(datasetVersion.Id);
+                List<AbstractTuple> datatuples = new List<AbstractTuple>();
+                if(count == 0)
+                    datatuples =  datasetManager.GetDataTuples(datasetVersion.Id);
+                else
+                    datatuples = datasetManager.GetDataTuples(datasetVersion.Id).Take(count).ToList();
+
                 List<DataTuple> editedTuples = new List<DataTuple>();
 
                 foreach (var dataTuple in datatuples)
                 {
+
                     dataTuple.Materialize();
 
                     var vv = dataTuple.VariableValues.Where(v => v.VariableId.Equals(dataStructure.Variables.Skip(4).First().Id)).FirstOrDefault();
@@ -416,6 +422,7 @@ namespace BExIS.Dlm.Tests.Helpers
                     //dataTuple.XmlVariableValues.Should().NotBeNull();
 
                     editedTuples.Add((DataTuple)dataTuple);
+                  
                 }
 
                 return editedTuples;

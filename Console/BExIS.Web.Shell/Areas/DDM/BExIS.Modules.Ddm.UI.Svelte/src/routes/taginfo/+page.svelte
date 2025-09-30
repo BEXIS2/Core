@@ -16,8 +16,8 @@
 </script>
 
 <Page
-	title="Tag Overview"
-	note="Manage and view tags of the dataset."
+	title="Release Tag Management"
+	note="Manage and view release tags of the dataset."
 	contentLayoutType={pageContentLayoutType.center}
 	{links}
 >

@@ -1,0 +1,35 @@
+<!DOCTYPE html >
+<html lang="en" theme="dark">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="../favicon.png" />
+		<meta name="viewport" content="width=device-width" />
+		<meta http-equiv="content-security-policy" content="">
+		<link rel="modulepreload" href="../_app/immutable/entry/start.e8cdc731.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/index.615b5812.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/singletons.df40aca5.js">
+		<link rel="modulepreload" href="../_app/immutable/chunks/index.84e7447a.js">
+		<link rel="modulepreload" href="../_app/immutable/entry/app.fed1cebf.js">
+	</head>
+	<body data-theme="skeleton">
+		<div style="display: contents" class="h-full overflow-hidden">
+			<script>
+				{
+					__sveltekit_1b7ru7o = {
+						base: new URL("..", location).pathname.slice(0, -1),
+						env: {}
+					};
+
+					const element = document.currentScript.parentElement;
+
+					Promise.all([
+						import("../_app/immutable/entry/start.e8cdc731.js"),
+						import("../_app/immutable/entry/app.fed1cebf.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element);
+					});
+				}
+			</script>
+		</div>
+	</body>
+</html>

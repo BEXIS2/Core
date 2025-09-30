@@ -8,16 +8,21 @@
 	} from '@bexis2/bexis2-core-ui';
 	import { add, get, save, updateSearch } from './services';
 
-	import { tagInfoModelStore, withMinorStore } from './stores.js';
+	import { tagInfoModelStore, withMinorStore, originalTagInfoModelStore } from './stores.js';
 	import TablePublish from './table/tablePublish.svelte';
 	import TableShow from './table/tableShow.svelte';
 	import TableNr from './table/tableNr.svelte';
 	import TableText from './table/tableText.svelte';
+	import TableTextType from './table/tableTextType.svelte';
+	import TableTextAuthor from './table/tableTextAuthor.svelte';
 	import TableOptions from './table/tableOptions.svelte';
 	import TableDate from './table/tableDate.svelte';
+	import TableVersionNumber from './table/tableVersionNumber.svelte';
 	import { type TagInfoEditModel, TagType } from './types';
 	import TableReleaseNote from './table/tableReleaseNote.svelte';
 	import { createEventDispatcher, onMount } from 'svelte';
+	import { Tab } from '@skeletonlabs/skeleton';
+	import TableDateCreate from './table/tableDateCreate.svelte';
 
 	let container;
 	let id: number = 0;
@@ -25,6 +30,7 @@
 	let rows: number = 3;
 
 	let promise: Promise<TagInfoEditModel[]>;
+	let originalRows: TagInfoEditModel[] = [];
 
 	const dispatch = createEventDispatcher();
 
@@ -36,6 +42,9 @@
 		promise = get(id);
 		const tagInfos = await promise;
 		rows = tagInfos.length;
+		// deep copy
+		originalRows = JSON.parse(JSON.stringify(tagInfos));
+		originalTagInfoModelStore.update(() => originalRows);
 		tagInfoModelStore.set(tagInfos);
 		withMinorStore.set(withMinor);
 
@@ -75,14 +84,16 @@
 
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'Tag is saved.'
+				message: 'Release tag changes are saved.'
 			});
-
+			originalTagInfoModelStore.update((arr) =>
+				arr.map((x) => (x.versionId === tagInfo.versionId ? { ...x, ...tagInfo } : x))
+			);
 			dispatch('reload');
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: 'Tag is not saved.'
+				message: 'Release tag changes are not saved.'
 			});
 		}
 	}
@@ -113,7 +124,7 @@
 		<TablePlaceholder cols={7} {rows} />
 	</div>
 {:then model}
-	<h2 class="h2">Tag Management</h2>
+	<h2 class="h2">Release Tag Management</h2>
 	<div class="table table-compact w-full">
 		<Table
 			on:action={tableActions}
@@ -135,16 +146,20 @@
 						fixedWidth: 10,
 						header: 'Internal version',
 						disableFiltering: true,
-						disableSorting: true
+						disableSorting: true,
+						instructions: {
+							renderComponent: TableVersionNumber
+						}
 					},
 					tagNr: {
 						fixedWidth: 80,
-						header: 'Tag',
+						header: 'Release Tag',
 						disableFiltering: true,
 						disableSorting: true,
 						instructions: {
 							renderComponent: TableNr
-						}
+						},
+						label: 'Tag'
 					},
 					releaseNote: {
 						header: 'Release Note',
@@ -166,23 +181,29 @@
 					systemDescription: {
 						header: 'System Description',
 						disableFiltering: true,
-						disableSorting: true
+						disableSorting: true,
+						instructions: {
+							renderComponent: TableTextType
+						}
 					},
 					systemAuthor: {
-						header: 'System Author',
+						header: 'Author',
 						disableFiltering: true,
-						disableSorting: true
+						disableSorting: true,
+						instructions: {
+							renderComponent: TableTextAuthor
+						}
 					},
 					systemDate: {
-						header: 'System Date',
+						header: 'Creation Date',
 						instructions: {
-							renderComponent: TableDate
+							renderComponent: TableDateCreate
 						},
 						disableFiltering: true,
 						disableSorting: true
 					},
 					show: {
-						header: 'Show history',
+						header: 'Show Note',
 						fixedWidth: 10,
 						instructions: {
 							renderComponent: TableShow

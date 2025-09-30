@@ -4,7 +4,9 @@
 </script>
 
 <div>
-	{#if value > 0}
-		{value.toFixed(1)}
-	{/if}
+	<span title="Release Tag">
+		{#if value > 0}
+			{value.toFixed(1)}
+		{/if}
+	</span>
 </div>
