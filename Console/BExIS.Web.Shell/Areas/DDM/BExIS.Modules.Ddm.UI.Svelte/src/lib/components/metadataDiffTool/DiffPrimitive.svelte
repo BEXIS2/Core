@@ -1,6 +1,7 @@
 <script lang="ts">
 	export let value1: string | number | boolean | undefined | null;
 	export let value2: string | number | boolean | undefined | null;
+	export let byChar: boolean = false;
 
 	$: value1String = String(value1);
 	$: value2String = String(value2);
@@ -9,19 +10,20 @@
 		typeof value1 !== typeof value2 || value1String.length < 40 || value2String.length < 40;
 	$: isDiff = value1 !== value2;
 
-	function renderValue(val: string) {
-		return val.length > 0 ? val : '\u00A0';
-	}
-
 	interface DiffPart {
 		value: string;
 		removed: boolean;
 		added: boolean;
 	}
 
-	function customDiff(a: string, b: string): DiffPart[] {
-		const unitsA = a.split(/\s+/);
-		const unitsB = b.split(/\s+/);
+	function customDiff(a: string, b: string, tokenizeByChar = false): DiffPart[] {
+		// Split into tokens, preserving whitespace as separate tokens
+		const tokenize = tokenizeByChar
+			? (str: string) => str.split('')
+			: (str: string) => str.match(/\S+\s*/g) ?? [];
+		// const tokenize = (str: string) => str.split(/(\s+)/).filter((t) => t.length > 0);
+		const unitsA = tokenize(a);
+		const unitsB = tokenize(b);
 
 		// LCS algorithm to find the longest common subsequence
 		const m = unitsA.length;
@@ -62,55 +64,91 @@
 		for (const part of parts) {
 			const last = combined[combined.length - 1];
 			if (last && last.removed === part.removed && last.added === part.added) {
-				last.value += ' ' + part.value;
+				last.value += part.value;
 			} else {
-				combined.push(part);
+				combined.push({ ...part });
 			}
 		}
 
+		console.log(combined);
+
 		return combined;
+	}
+
+	function isEmpty(val: string) {
+		return val.trim().length === 0 || val === 'null' || val === 'undefined';
+	}
+
+	function renderValue(val: string) {
+		return !isEmpty(val) ? val : '\u00A0'; // non-breaking space for empty values
+	}
+
+	function splitLines(str: string): string[] {
+		return str.split(/\r?\n/);
 	}
 
 	let showCustomDiff = true;
 </script>
 
 {#if !isDiff}
-	{#if value1String.length > 0 && value1String !== 'null' && value1String !== 'undefined'}
+	{#if !isEmpty(value1String)}
 		<span class="rounded bg-surface-100 px-1">
-			{value1String}
+			{#each splitLines(value1String) as line, index}
+				{renderValue(line)}
+				{#if index < splitLines(value1String).length - 1}
+					<br />
+				{/if}
+			{/each}
 		</span>
 	{:else}
-		<span class="rounded bg-warning-100 px-1 font-mono text-warning-800">empty</span>
+		<span class="empty">empty</span>
 	{/if}
 {:else}
 	<!-- Simple Format -->
-	<div class:flex={!showCustomDiff} class="my-2 hidden items-center gap-2">
+	<div class:flex={!showCustomDiff || useSimpleFormat} class="my-2 hidden items-center gap-2">
 		<span class="h-full rounded bg-error-50 px-2 py-0.5 text-error-800">
-			{renderValue(value1String)}
+			{#if !isEmpty(value1String)}
+				{#each splitLines(value1String) as line, index}
+					{renderValue(line)}
+					{#if index < splitLines(value1String).length - 1}
+						<br />
+					{/if}
+				{/each}
+			{:else}
+				<span class="empty">empty</span>
+			{/if}
 		</span>
 		<span class="text-surface-500">→</span>
 		<span class="h-full rounded bg-success-100 px-2 py-0.5 text-success-800">
-			{renderValue(value2String)}
+			{#if !isEmpty(value2String)}
+				{#each splitLines(value2String) as line, index}
+					{renderValue(line)}
+					{#if index < splitLines(value2String).length - 1}
+						<br />
+					{/if}
+				{/each}
+			{:else}
+				<span class="empty">empty</span>
+			{/if}
 		</span>
 	</div>
 	<!-- Detailed Diff -->
 	{#if !useSimpleFormat}
-		<div
-			class="t-2 hidden w-full flex-wrap gap-1 rounded bg-surface-100 p-2"
-			class:flex={showCustomDiff}
+		<p
+			class="hidden w-full flex-wrap gap-1 rounded bg-surface-100 p-2"
+			class:!block={showCustomDiff}
 		>
-			{#each customDiff(value1String, value2String) as part}
-				{#if part.removed}
-					<span class="rounded bg-error-50 px-1 text-error-800 line-through hover:no-underline">
-						{part.value}
-					</span>
-				{:else if part.added}
-					<span class="rounded bg-success-100 px-1 text-success-800">{part.value}</span>
-				{:else}
-					<span class="px-1">{part.value}</span>
-				{/if}
+			{#each customDiff(value1String, value2String, byChar) as part}
+				<span class:added={part.added} class:removed={part.removed}>
+					{#each splitLines(part.value) as line, index}
+						{renderValue(line)}
+						{#if index < splitLines(part.value).length - 1}
+							<br />
+						{/if}
+					{/each}
+				</span>
 			{/each}
-		</div>
+		</p>
 	{/if}
 	{#if !useSimpleFormat}
 		<label class="my-2 flex cursor-pointer items-center justify-center gap-1">
@@ -119,3 +157,17 @@
 		</label>
 	{/if}
 {/if}
+
+<style lang="postcss">
+	span {
+		&.added {
+			@apply rounded bg-success-100 text-success-800;
+		}
+		&.removed {
+			@apply rounded bg-error-50 text-error-800 line-through;
+		}
+		&.empty {
+			@apply rounded bg-warning-100 px-1 font-mono text-warning-800;
+		}
+	}
+</style>
