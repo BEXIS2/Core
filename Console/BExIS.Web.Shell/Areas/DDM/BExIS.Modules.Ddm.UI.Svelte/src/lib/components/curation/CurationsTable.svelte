@@ -13,6 +13,8 @@
 		noteCommentToLabel
 	} from '$lib/models/CurationStatusEntry';
 	import { CurationEntryStatusDetails } from '$lib/models/CurationEntry';
+	import { faSquareArrowUpRight } from '@fortawesome/free-solid-svg-icons';
+	import Fa from 'svelte-fa';
 
 	const { curationDetails, isLoading, errorMessage } = overviewStore;
 
@@ -157,7 +159,19 @@
 	}
 </script>
 
-<h1>Curations Overview</h1>
+<div class="max-w-prose">
+	<h1 class="mb-2 text-xl">Curations Overview</h1>
+	<p>
+		Welcome to the curation tool. This tool is designed to help you manage and track the curation of
+		your datasets. Use the table below to see an overview of all datasets that you are able to
+		access. Click on
+		<span class="italic text-primary-500">
+			<Fa icon={faSquareArrowUpRight} class="inline-block" />
+			Open Curation
+		</span>
+		to open the curation details for a specific dataset.
+	</p>
+</div>
 
 {#if !$errorMessage || $isLoading}
 	<div class="relative">

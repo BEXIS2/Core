@@ -49,7 +49,7 @@
 	<CurationEntryInputs bind:inputData={template} isDraft positionHidden />
 	<div class="flex w-full justify-between gap-2 border-t border-surface-300 pt-2">
 		<label>
-			<span>Insert New Entry:</span>
+			<span>Placement:</span>
 			<select bind:value={template.placement} class="input">
 				<option value="top">Top</option>
 				<option value="bottom">Bottom</option>

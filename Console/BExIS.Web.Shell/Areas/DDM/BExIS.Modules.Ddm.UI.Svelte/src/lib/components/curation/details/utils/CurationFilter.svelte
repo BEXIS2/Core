@@ -128,14 +128,14 @@
 	</div>
 	<div class="flex flex-wrap items-center gap-1 rounded border border-surface-400 px-2 py-1">
 		<Fa icon={faFilter} class="inline-block text-xs" />
-		<span>Filter by Type:</span>
+		<span>Filter by Category:</span>
 		<label
 			class="button-label cursor-pointer rounded border border-surface-500 bg-surface-300 px-2 py-0.5"
 		>
 			<input
 				class="pointer-events-none absolute opacity-0"
 				type="radio"
-				title="Remove entry type filter"
+				title="Remove category filter"
 				bind:group={$typeFilterGroup}
 				value={undefined}
 			/>
@@ -148,7 +148,7 @@
 				<input
 					class="pointer-events-none absolute opacity-0"
 					type="radio"
-					title="Hide/Show '{CurationEntryTypeNames[i]}' entries"
+					title="Only show '{CurationEntryTypeNames[i]}' entries"
 					bind:group={$typeFilterGroup}
 					value={i}
 				/>
