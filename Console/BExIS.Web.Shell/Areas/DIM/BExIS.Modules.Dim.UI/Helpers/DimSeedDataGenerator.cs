@@ -752,10 +752,10 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 #region GeoLocationPoint
 
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationPoint/pointLongitude")))
-                    conceptManager.CreateMappingKey("PointLongitude", "", "", true, true, "data/attributes/geoLocations/geoLocationPoint/pointLongitude", mappingConcept, geoLocations_geoLocationPoint);
+                    conceptManager.CreateMappingKey("PointLongitude", "", "", true, false, "data/attributes/geoLocations/geoLocationPoint/pointLongitude", mappingConcept, geoLocations_geoLocationPoint);
 
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationPoint/pointLatitude")))
-                    conceptManager.CreateMappingKey("PointLatitude", "", "", true, true, "data/attributes/geoLocations/geoLocationPoint/pointLatitude", mappingConcept, geoLocations_geoLocationPoint);
+                    conceptManager.CreateMappingKey("PointLatitude", "", "", true, false, "data/attributes/geoLocations/geoLocationPoint/pointLatitude", mappingConcept, geoLocations_geoLocationPoint);
 
                 #endregion
 
@@ -766,16 +766,16 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 #region GeoLocationBox
 
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationBox/westBoundLongitude")))
-                    conceptManager.CreateMappingKey("WestBoundLongitude", "", "", true, true, "data/attributes/geoLocations/geoLocationBox/westBoundLongitude", mappingConcept, geoLocations_geoLocationBox);
+                    conceptManager.CreateMappingKey("WestBoundLongitude", "", "", true, false, "data/attributes/geoLocations/geoLocationBox/westBoundLongitude", mappingConcept, geoLocations_geoLocationBox);
 
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationBox/eastBoundLongitude")))
-                    conceptManager.CreateMappingKey("EastBoundLongitude", "", "", true, true, "data/attributes/geoLocations/geoLocationBox/eastBoundLongitude", mappingConcept, geoLocations_geoLocationBox);
+                    conceptManager.CreateMappingKey("EastBoundLongitude", "", "", true, false, "data/attributes/geoLocations/geoLocationBox/eastBoundLongitude", mappingConcept, geoLocations_geoLocationBox);
 
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationBox/southBoundLatitude")))
-                    conceptManager.CreateMappingKey("SouthBoundLatitude", "", "", true, true, "data/attributes/geoLocations/geoLocationBox/southBoundLatitude", mappingConcept, geoLocations_geoLocationBox);
+                    conceptManager.CreateMappingKey("SouthBoundLatitude", "", "", true, false, "data/attributes/geoLocations/geoLocationBox/southBoundLatitude", mappingConcept, geoLocations_geoLocationBox);
 
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationBox/northBoundLatitude")))
-                    conceptManager.CreateMappingKey("NorthBoundLatitude", "", "", true, true, "data/attributes/geoLocations/geoLocationBox/northBoundLatitude", mappingConcept, geoLocations_geoLocationBox);
+                    conceptManager.CreateMappingKey("NorthBoundLatitude", "", "", true, false, "data/attributes/geoLocations/geoLocationBox/northBoundLatitude", mappingConcept, geoLocations_geoLocationBox);
 
                 #endregion
 

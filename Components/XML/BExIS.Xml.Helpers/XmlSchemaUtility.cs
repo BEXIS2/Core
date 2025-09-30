@@ -524,6 +524,14 @@ namespace BExIS.Xml.Helpers
             return null;
         }
 
+        public static XmlSchemaSimpleType GetSimpleType(XmlSchemaElement element)
+        {
+            if (element.ElementSchemaType is XmlSchemaSimpleType)
+                return element.ElementSchemaType as XmlSchemaSimpleType;
+
+            return null;
+        }
+
         public static List<XmlSchemaElement> GetAllSimpleElements(List<XmlSchemaElement> elements)
         {
             List<XmlSchemaElement> simpleElementList = new List<XmlSchemaElement>();
