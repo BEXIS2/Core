@@ -16,7 +16,7 @@
 	import { slide } from 'svelte/transition';
 	import Greeting from '$lib/components/curation/details/statusEntry/Greeting.svelte';
 	import { tick } from 'svelte';
-	import MarkdownComponent from '$lib/components/MarkdownComponent/MarkdownComponent.svelte';
+	import MarkdownComponent from '$lib/components/markdownComponent/MarkdownComponent.svelte';
 	import { curationStore } from '$lib/stores/CurationStore';
 	import { CurationEntryType } from '$lib/models/CurationEntry';
 	import type { CurationTemplateModel } from '$lib/models/Curation';

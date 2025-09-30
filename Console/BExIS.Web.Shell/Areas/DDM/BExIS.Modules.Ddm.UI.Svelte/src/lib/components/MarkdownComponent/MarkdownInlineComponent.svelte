@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MarkdownInlineComponent from '$lib/components/MarkdownComponent/MarkdownInlineComponent.svelte';
+	import MarkdownInlineComponent from '$lib/components/markdownComponent/MarkdownInlineComponent.svelte';
 	import { createEventDispatcher } from 'svelte';
 
 	export let markdown: string;
