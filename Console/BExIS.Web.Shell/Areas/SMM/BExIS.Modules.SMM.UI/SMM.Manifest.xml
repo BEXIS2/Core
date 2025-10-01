@@ -12,21 +12,21 @@
 	<Exports>
 		<!--add proper menu items-->
 
-		<Export tag="settings" id="createDataset" order="1"
+		<!--<Export tag="settings" id="createDataset" order="1"
 						title="Manage Parties" description="" icon=""
 						controller="Party" action="index"
-						extends="./settingsRoot" />
+						extends="./settingsRoot" />-->
 
 		<!-- INTERNAL-->
 
-		<Export tag="internalApi" id="loadFromPartyUserRegisterationForm"
+		<!--<Export tag="internalApi" id="loadFromPartyUserRegisterationForm"
 						title="Load From Party User Registration Form" description="Load FromParty User Registration Form" icon=""
 						controller="PartyService" action="UserRegistration"
 						extends="" />
 		<Export tag="internalApi" id="GetPartyTypesForAccount"
 				title="Get partyTypes for account" description="Get partyTypes for account which are defined in setting.xml" icon=""
 				controller="PartyService" action="GetPartyTypesForAccount"
-				extends="" />
+				extends="" />-->
 		<Export tag="lunchbar" id="helpSmm" order="2"
 						title="Account / Parties" description="Parties Help Manual" icon=""
 						controller="Help" action="index"

@@ -716,7 +716,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         //Debug.Writeline("package : " + element.Name);
                         //Debug.Writeline("--------------------------");
 
-                        string typeName = GetTypeOfName(element.Name);
+                        string typeName = GetTypeOfName(element);
                         string rootName = ((XmlSchemaElement)root).Name;
 
                         string xpathInternal = "Metadata/" + element.Name + "/" + typeName;
@@ -965,7 +965,7 @@ namespace BExIS.Xml.Helpers.Mapping
             if (ct.Name != null)
                 nameOfType = ct.Name;
             else
-                nameOfType = GetTypeOfName(element.Name);
+                nameOfType = GetTypeOfName(element);
 
             MetadataCompoundAttribute metadataCompountAttr = getExistingMetadataCompoundAttribute(nameOfType);
             string currentInternalXPath = internalXPath + "/" + element.Name + "/" + nameOfType;
@@ -1328,9 +1328,9 @@ namespace BExIS.Xml.Helpers.Mapping
                 MetadataAttribute attribute;
 
                 if (metadataAttributeManager.MetadataAttributeRepo != null &&
-                    getExistingMetadataAttribute(GetTypeOfName(element.Name)) != null)
+                    getExistingMetadataAttribute(GetTypeOfName(element)) != null)
                 {
-                    attribute = getExistingMetadataAttribute(GetTypeOfName(element.Name));
+                    attribute = getExistingMetadataAttribute(GetTypeOfName(element));
                 }
                 else
                 {
@@ -1443,7 +1443,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 {
                     XmlSchemaSimpleType type = (XmlSchemaSimpleType)element.ElementSchemaType;
 
-                    string name = GetTypeOfName(element.Name);
+                    string name = GetTypeOfName(element);
                     string description = "";
 
                     if (element.Annotation != null)
@@ -1507,7 +1507,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     var t = ComplexTypes.FirstOrDefault(c => c.Name.Equals(type.Name));
                     if (t != null) type = t;
 
-                    string name = GetTypeOfName(element.Name);
+                    string name = GetTypeOfName(element);
                     string description = "";
 
                     if (element.Annotation != null)
@@ -1628,7 +1628,8 @@ namespace BExIS.Xml.Helpers.Mapping
             {
                 // create a compoundAttribute
                 int i = 0;
-                MetadataCompoundAttribute mca = getExistingMetadataCompoundAttribute(element.Name + "Type"); ;// = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(p => p.Name == element.Name+"Type").FirstOrDefault();
+                string typeName = GetTypeOfName(element);
+                MetadataCompoundAttribute mca = getExistingMetadataCompoundAttribute(typeName); ;// = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(p => p.Name == element.Name+"Type").FirstOrDefault();
                                                                                                               //Debug.WriteLine("createMetadataCompoundAttribute" + i++);
                 DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.ToLower().Equals("text")).FirstOrDefault();
                 if (dt1 == null)
@@ -1640,8 +1641,8 @@ namespace BExIS.Xml.Helpers.Mapping
                 {
                     mca = new MetadataCompoundAttribute
                     {
-                        ShortName = GetTypeOfName(element.Name),
-                        Name = GetTypeOfName(element.Name),
+                        ShortName = typeName,
+                        Name = typeName,
                         Description = "",
                         DataType = dt1
                     };
@@ -1909,9 +1910,9 @@ namespace BExIS.Xml.Helpers.Mapping
                 MetadataAttribute attribute;
 
                 if (metadataAttributeManager.MetadataAttributeRepo != null &&
-                        metadataAttributeManager.MetadataAttributeRepo.Query().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).Count() > 0)
+                        metadataAttributeManager.MetadataAttributeRepo.Query().Where(m => m.Name.Equals(GetTypeOfName(element))).Count() > 0)
                 {
-                    attribute = metadataAttributeManager.MetadataAttributeRepo.Query().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).First();
+                    attribute = metadataAttributeManager.MetadataAttributeRepo.Query().Where(m => m.Name.Equals(GetTypeOfName(element))).First();
                 }
                 else
                 {
@@ -2203,9 +2204,28 @@ namespace BExIS.Xml.Helpers.Mapping
             }
         }
 
-        private string GetTypeOfName(string name)
+        private string GetTypeOfName(XmlSchemaElement element)
         {
-            return name + "Type";
+            string nameOfType = "";
+
+            // check if type is complex
+            XmlSchemaComplexType ct = XmlSchemaUtility.GetComplextType(element);
+
+            if (ct != null && ct.Name != null)
+            {
+                return ct.Name;
+            }
+
+            //check if simple type
+            XmlSchemaSimpleType st = XmlSchemaUtility.GetSimpleType(element);
+
+            if(st != null && st.Name != null)
+            {
+                return st.Name;
+            }
+
+            // nothing found so create a new name + XSDType
+            return element.Name + element.ElementType.GetType().Name; // bexis2InternType
         }
 
         #endregion helper functions

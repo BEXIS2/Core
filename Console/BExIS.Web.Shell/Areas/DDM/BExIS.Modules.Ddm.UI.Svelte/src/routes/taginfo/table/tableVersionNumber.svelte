@@ -4,9 +4,7 @@
 </script>
 
 <div>
-	<span title="Release Tag">
-		{#if value > 0}
-			{value.toFixed(1)}
-		{/if}
+	<span title="Internal Version Number">
+		{value}
 	</span>
 </div>
