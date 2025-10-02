@@ -46,6 +46,18 @@
       "description": "If set to true, the minor version tag can be assigned to dataset versions to display changes in more detail."
     },
     {
+      "key": "data_aggreement",
+      "title": "Data Aggreement by download",
+      "value": "none",
+      "description": "Set up  if user need to aggree the data aggreements before download and where the aggreement is writen.",
+      "type": "String",
+      "options": [
+        "none",
+        "data policy",
+        "terms and conditions"
+      ]
+    },
+    {
       "key": "citationSettings",
       "title": "settings for citations",
       "options": [],
@@ -56,7 +68,7 @@
         "numberOfAuthors": 0,
         "showCitation": true,
         "defaultViewCitationFormat": "Text",
-        "viewCitationFormats": ["Text", "APA"],
+        "viewCitationFormats": [ "Text", "APA" ],
         "downloadCitationFormats": [ "Text", "APA", "RIS", "BibTex" ]
       },
       "description": "..."
