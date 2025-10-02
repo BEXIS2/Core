@@ -782,6 +782,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         }
 
                         ViewData["gridTotal"] = dm.RowCount(dataset.Id, null);
+                        ViewData["isPublic"] = entityPermissionManager.ExistsAsync(dataset.EntityTemplate.EntityType.Id, dataset.Id).Result;
 
                         sds.Variables = sds.Variables.OrderBy(v => v.OrderNo).ToList();
 
