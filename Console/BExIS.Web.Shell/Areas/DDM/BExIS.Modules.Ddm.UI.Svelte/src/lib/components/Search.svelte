@@ -525,7 +525,7 @@
 									placeholder="Search within selected category"
 								/>
 								<button
-									title="Search"
+									title="Apply selected search criteria"
 									class="btn variant-filled-primary"
 									on:click|preventDefault={async () => await handleSearch()}>Search</button
 								>
@@ -547,7 +547,7 @@
 									{#if $criteria[key].values.length < 3}
 										{#each $criteria[key].values as value, index (`${key}-${value}`)}
 											<CriteriaChip
-												title="Click to remove search term {value}"
+												title="Click to remove search term: {value}"
 												on:remove={async () => {
 													if ($criteria[key].type === 'Facet') {
 														await toggleFacet(key, value);
