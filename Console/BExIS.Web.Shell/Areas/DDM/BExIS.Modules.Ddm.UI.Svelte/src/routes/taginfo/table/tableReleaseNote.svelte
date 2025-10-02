@@ -20,7 +20,7 @@
 	}
 </script>
 
-<span title="Release Note; Click save to apply">
+<span title="Release Note; Click save to apply changes.">
 	<TextArea
 		bind:value={currentRow.releaseNote}
 		on:input={() =>

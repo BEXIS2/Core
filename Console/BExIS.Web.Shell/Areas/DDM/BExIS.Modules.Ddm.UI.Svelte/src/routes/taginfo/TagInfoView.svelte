@@ -30,12 +30,12 @@
 		<TablePlaceholder cols={2} {rows} />
 	</div>
 {:then model}
-	<h2 class="h2">Tag Preview</h2>
+	<h2 class="h2">Preview</h2>
 	<table class="table table-compact bg-tertiary-200">
 		<thead>
 			<tr class="bg-primary-300">
-				<th class="!p-2 w-16">Tag</th>
-				<th class="!p-2">Release Note</th>
+				<th scope="col" class="!p-2 w-16">Release Tag</th>
+				<th scope="col" class="!p-2">Release Note</th>
 			</tr>
 		</thead>
 		<tbody>
