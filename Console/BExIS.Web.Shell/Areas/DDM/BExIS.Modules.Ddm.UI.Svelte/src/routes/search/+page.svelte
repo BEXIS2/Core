@@ -16,5 +16,6 @@
 	contentLayoutType={pageContentLayoutType.full}
 	{links}
 >
+<h1>eric is cool</h1>
 	<Search {controller} />
 </Page>

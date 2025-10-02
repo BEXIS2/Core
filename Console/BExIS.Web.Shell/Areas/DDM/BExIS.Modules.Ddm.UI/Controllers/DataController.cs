@@ -171,6 +171,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 ViewData["use_minor"] = moduleSettings.GetValueByKey("use_minor");
                 ViewData["check_public_metadata"] = moduleSettings.GetValueByKey("check_public_metadata");
                 ViewData["has_data"] = false;
+                ViewData["data_aggreement"] = moduleSettings.GetValueByKey("data_aggreement");
                 Session["Filter"] = null;
 
                 Dataset researcobject = dm.GetDataset(id);
