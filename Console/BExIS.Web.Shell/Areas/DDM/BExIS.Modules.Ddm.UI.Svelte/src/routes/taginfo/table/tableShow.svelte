@@ -16,6 +16,7 @@
 			show: false
 		} as TagInfoEditModel);
 
+	// Update the store when the toggle is changed
 	function toggleShow(versionId: number, value: boolean) {
 		tagInfoModelStore.update((arr) =>
 			arr.map((x) => (x.versionId === versionId ? { ...x, show: !!value } : x))
@@ -24,7 +25,7 @@
 </script>
 
 <div class="flex h-full items-center justify-center">
-	<div title="Show the release note of this version; Click save to apply">
+	<div title="Show the release note of this version; Click save to apply changes.">
 		{#if currentRow && currentRow.tagId > 0}
 			<SlideToggle
 				name={'' + currentRow.versionId}

@@ -3,7 +3,7 @@
 </script>
 
 <div>
-	<span title="Person who made the change">
+	<span title="Person created this version">
 		{value}
 	</span>
 </div>

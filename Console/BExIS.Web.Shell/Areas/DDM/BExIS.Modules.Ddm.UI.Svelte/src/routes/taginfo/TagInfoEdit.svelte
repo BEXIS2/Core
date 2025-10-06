@@ -105,7 +105,7 @@
 		if (responce.status === 200) {
 			notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'Tag is generated.'
+				message: 'Release Tag is generated.'
 			});
 
 			reload();
@@ -113,7 +113,7 @@
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: 'Tag is not generated.'
+				message: 'Release Tag is not generated.'
 			});
 		}
 	}
@@ -179,7 +179,7 @@
 						disableSorting: true
 					},
 					systemDescription: {
-						header: 'System Description',
+						header: 'General Type',
 						disableFiltering: true,
 						disableSorting: true,
 						instructions: {
@@ -219,6 +219,10 @@
 						},
 						disableFiltering: true,
 						disableSorting: true
+					},
+					link: {
+						disableFiltering: true,
+						exclude: true
 					}
 				}
 			}}
