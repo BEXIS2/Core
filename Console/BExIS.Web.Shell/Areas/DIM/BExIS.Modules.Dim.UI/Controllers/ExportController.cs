@@ -28,6 +28,7 @@ using System.Data;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -203,13 +204,14 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     long dataStructureId = 0;
                     int datasetVersionNumber = dm.GetDatasetVersionNr(datasetVersionId);
                     DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+                    string title = "";    
 
                     #region Metadata
 
                     //metadata as XML
                     XmlDocument document = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport, datasetVersion.Dataset.MetadataStructure.Name);
 
-                    //generate metadata as HTML and store the file locally
+                    //generate data structure as html 
                     generateMetadataAsHtml(datasetVersion);
 
                     #endregion
@@ -222,7 +224,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         OutputDataManager odm = new OutputDataManager();
 
                         //check wheter title is empty or not
-                        string title = String.IsNullOrEmpty(datasetVersion.Title) ? "no title available" : datasetVersion.Title;
+                        title = String.IsNullOrEmpty(datasetVersion.Title) ? "no title available" : datasetVersion.Title;
 
                         switch (format)
                         {
@@ -260,7 +262,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                         AsciiWriter.AllTextToFile(datastructureFilePath, json);
 
-                        //generate data structure as html 
                         generateDataStructureHtml(datasetVersion);
                     }
 
@@ -268,8 +269,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     #region zip file
 
-                    string zipName = publishingManager.GetZipFileName(id, datasetVersionNumber);
-                    string zipPath = Path.Combine(publishingManager.GetDirectoryPath(id, brokerName), zipName);
+                    string zipName = IOHelper.GetFileName(FileType.Bundle, id, datasetVersionNumber, dataStructureId, title); //publishingManager.GetZipFileName(id, datasetVersionNumber);
+                    string zipPath = Path.Combine(publishingManager.GetDirectoryPath(id, brokerName), zipName+".zip");
                     FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipPath));
 
                     using (var zipFileStream = new FileStream(zipPath, FileMode.Create))
@@ -283,13 +284,33 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         {
                             string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
                             string name = cd.URI.Split('\\').Last();
+                            string ext = Path.GetExtension(name).ToLower();
 
                             if(cd.Name.StartsWith("generated") && !cd.Name.Equals(dataName)) continue;
 
                             if (FileHelper.FileExist(path))
                             {
                                 if (!archive.Entries.Any(entry => entry.Name.EndsWith(name)))
+                                {
+                                    if (cd.Name.Equals("metadata"))
+                                    {
+                                        name = IOHelper.GetFileName(FileType.Metadata, id, datasetVersionNumber, dataStructureId) + ext;
+                                    }
+                                    else if (cd.Name.Equals("datastructure"))
+                                    {
+                                        name = IOHelper.GetFileName(FileType.DataStructure, id, datasetVersionNumber, dataStructureId) + ext;
+                                    }
+                                    else if (cd.Name.Contains("generated"))
+                                    {
+                                        name = IOHelper.GetFileName(FileType.PrimaryData, id, datasetVersionNumber, dataStructureId) + ext;
+                                    }
+                                    else
+                                    {
+                                        name = IOHelper.GetFileName(FileType.None, id, datasetVersionNumber, dataStructureId,cd.Name) + ext;
+                                    }
+
                                     archive.AddFileToArchive(path, name);
+                                }
                             }
                         }
 
@@ -307,8 +328,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                        
                         if (manifest != null)
                         {
+                            string manifestFileName = IOHelper.GetFileName(FileType.Manifest, id, datasetVersionNumber, dataStructureId);
                             string manifestPath = OutputDatasetManager.GetDynamicDatasetStorePath(id,
-                                datasetVersionNumber, "manifest", ".json");
+                                datasetVersionNumber, manifestFileName, ".json");
                             string fullFilePath = Path.Combine(AppConfiguration.DataPath, manifestPath);
                             string directory = Path.GetDirectoryName(fullFilePath);
                             if (!Directory.Exists(directory))
@@ -316,7 +338,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                            System.IO.File.WriteAllText(fullFilePath, manifest, System.Text.Encoding.UTF8);
 
-                            archive.AddFileToArchive(fullFilePath, "manifest.json");
+                            archive.AddFileToArchive(fullFilePath, manifestFileName + ".json");
                         }
                         #endregion
 
@@ -329,7 +351,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                         #endregion terms and conditions
 
-                        string title = datasetVersion.Title;
+                        title = datasetVersion.Title;
                         title = String.IsNullOrEmpty(title) ? "unknown" : title;
 
                         string message = string.Format("dataset {0} version {1} was downloaded as zip - {2}.", id,
@@ -406,6 +428,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 mimeType = "text/comma-separated-values";
             }
 
+            if (ext.Contains("json"))
+            {
+                name = "datastructure";
+                mimeType = "application/json";
+            }
+
             if (ext.Contains("html"))
             {
                 name = title;
@@ -436,6 +464,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     {
                         if (cd.Name.Equals(name) && cd.MimeType.Equals(mimeType))
                         {
+                            cd.Name = name;
+                            cd.MimeType = mimeType;
                             cd.URI = dynamicPath;
                             dm.UpdateContentDescriptor(cd);
                         }
@@ -463,7 +493,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             string title = dsv.Title;
             Session["ShowDataMetadata"] = dsv.Metadata;
-
+            int versionNr = 0;
             var view = this.Render("DCM", "Form", "LoadMetadataOfflineVersion", new RouteValueDictionary()
             {
                 { "entityId", datasetId },
@@ -477,6 +507,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             byte[] content = Encoding.ASCII.GetBytes(view.ToString());
 
+    
             string dynamicPathOfMD = "";
             dynamicPathOfMD = storeGeneratedFilePathToContentDiscriptor(datasetId, dsv,
                 "metadata", ".html");
@@ -493,7 +524,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             });
 
             byte[] content = Encoding.ASCII.GetBytes(view.ToString());
-
+       
             string dynamicPathOfMD = "";
             dynamicPathOfMD = storeGeneratedFilePathToContentDiscriptor(dsv.Dataset.Id, dsv,
                 "datastructure", ".html");

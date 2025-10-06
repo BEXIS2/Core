@@ -74,7 +74,7 @@ namespace BExIS.IO.Transform.Output
 
         public static string GetDynamicDatasetStorePath(long datasetId, long datasetVersionOrderNr, string title, string extention)
         {
-            return IoHelper.GetDynamicStorePath(datasetId, datasetVersionOrderNr, title, extention);
+            return IOHelper.GetDynamicStorePath(datasetId, datasetVersionOrderNr, title, extention);
         }
 
         public static XmlDocument GenerateManifest(long datasetId, long versionId)
