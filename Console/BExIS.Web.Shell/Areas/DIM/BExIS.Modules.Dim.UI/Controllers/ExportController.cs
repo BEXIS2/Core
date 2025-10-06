@@ -35,6 +35,7 @@ using System.Xml;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Modularity;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -297,12 +298,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         if (Directory.Exists(xsdPath))
                             archive.AddFolderToArchive(xsdPath, "Schema");
 
+                        #region manifest
                         // manifest
                         ApiDatasetHelper apiDatasetHelper = new ApiDatasetHelper();
                         // get content
                         ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, datasetVersionNumber, datasetVersion.Dataset.MetadataStructure.Id, dataStructureId);
                         string manifest = JsonConvert.SerializeObject(datasetModel);
-
+                       
                         if (manifest != null)
                         {
                             string manifestPath = OutputDatasetManager.GetDynamicDatasetStorePath(id,
@@ -316,6 +318,16 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                             archive.AddFileToArchive(fullFilePath, "manifest.json");
                         }
+                        #endregion
+
+                        #region terms and conditions
+
+                        string termsPath = this.Session.GetTenant().GetResourcePath("terms");
+
+                        if(!string.IsNullOrEmpty(termsPath) && System.IO.File.Exists(termsPath))
+                            archive.AddFileToArchive(termsPath, "terms.txt");
+
+                        #endregion terms and conditions
 
                         string title = datasetVersion.Title;
                         title = String.IsNullOrEmpty(title) ? "unknown" : title;
