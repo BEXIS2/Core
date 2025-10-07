@@ -1218,12 +1218,38 @@ namespace BExIS.Xml.Helpers.Mapping
                      *
                      */
 
+                    //if element is a choise
+                    XmlDocument extra = null;
+                    //check if element is a choice
                     if (XmlSchemaUtility.IsChoiceType(element))
                     {
                         min = 0;
+                        Dictionary<string, string> additionalAttributes = new Dictionary<string, string>();
+
+                        XmlSchemaComplexType ct = element.ElementSchemaType as XmlSchemaComplexType;
+
+                        if (ct != null)
+                        {
+                            #region choice
+
+                            // check if it is e choice
+                            XmlSchemaChoice choice = ct.ContentTypeParticle as XmlSchemaChoice;
+                            if (choice != null)
+                            {
+                                additionalAttributes.Add("min", choice.MinOccurs.ToString());
+                                if (choice.MaxOccurs > 10)
+                                    additionalAttributes.Add("max", "10");
+                                else
+                                    additionalAttributes.Add("max", choice.MaxOccurs.ToString());
+                            }
+
+                            #endregion choice
+                        }
+
+                        extra = xmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type", additionalAttributes);
                     }
 
-                    metadataPackageManager.AddMetadataAtributeUsage(package, compoundAttribute, element.Name, GetDescription(element.Annotation), min, max, element.DefaultValue, element.FixedValue);
+                    metadataPackageManager.AddMetadataAtributeUsage(package, compoundAttribute, element.Name, GetDescription(element.Annotation), min, max, element.DefaultValue, element.FixedValue, extra);
                 }
             }
             finally

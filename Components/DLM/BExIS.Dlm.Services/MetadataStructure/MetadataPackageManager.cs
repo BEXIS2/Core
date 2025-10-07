@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Xml;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.MetadataStructure
@@ -128,7 +129,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
         #region Associations
 
-        public MetadataAttributeUsage AddMetadataAtributeUsage(MetadataPackage package, MetadataAttribute attribute, string label, string description, int minCardinality, int maxCardinality, string defaultValue, string fixedValue)
+        public MetadataAttributeUsage AddMetadataAtributeUsage(MetadataPackage package, MetadataAttribute attribute, string label, string description, int minCardinality, int maxCardinality, string defaultValue, string fixedValue, XmlDocument extra = null )
         {
             Contract.Requires(package != null && package.Id >= 0);
             Contract.Requires(attribute != null && attribute.Id >= 0);
@@ -166,6 +167,10 @@ namespace BExIS.Dlm.Services.MetadataStructure
                     DefaultValue = defaultValue,
                     FixedValue = fixedValue
                 };
+
+                if (extra != null && !string.IsNullOrEmpty(extra.OuterXml))
+                    usage.Extra = extra;
+
                 package.MetadataAttributeUsages.Add(usage);
                 attribute.UsedIn.Add(usage);
 
