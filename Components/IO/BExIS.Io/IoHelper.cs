@@ -1,4 +1,5 @@
 ﻿using BExIS.Utils.Config;
+using BExIS.Utils.Files;
 using System;
 using System.IO;
 
@@ -42,7 +43,9 @@ namespace BExIS.IO
             string downloadName = "no title available";
             string downloadDate = DateTime.Now.ToString("yyyyMMdd");
 
-            string downloadTitle = title.Replace(" ", "");
+            string downloadTitle = FileNameUtility.SanitizeFileName(title,'-');
+
+            
 
             // tag vs version?
 

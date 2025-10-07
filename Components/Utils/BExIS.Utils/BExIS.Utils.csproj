@@ -101,6 +101,7 @@
     <Compile Include="Extensions\QueryableExtensions.cs" />
     <Compile Include="Extensions\ViewExtentions.cs" />
     <Compile Include="Extensions\ZipArchiveExtensions.cs" />
+    <Compile Include="Files\FileNameUtility.cs" />
     <Compile Include="Filters\MustBeTrueAttribute.cs" />
     <Compile Include="Filters\QueryAttribute.cs" />
     <Compile Include="Helpers\HashHelper.cs" />
