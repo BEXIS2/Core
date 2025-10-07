@@ -14,6 +14,7 @@ using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Helpers;
 using BExIS.Modules.Dim.UI.Models.Api;
+using BExIS.Modules.Dim.UI.Models.Download;
 using BExIS.Modules.Dim.UI.Models.Export;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Entities.Versions;
@@ -25,6 +26,7 @@ using BExIS.Xml.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -323,14 +325,22 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         // manifest
                         ApiDatasetHelper apiDatasetHelper = new ApiDatasetHelper();
                         // get content
-                        ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, datasetVersionNumber, datasetVersion.Dataset.MetadataStructure.Id, dataStructureId);
+                        ApiDatasetModel apimodel = apiDatasetHelper.GetContent(datasetVersion, id, datasetVersionNumber, datasetVersion.Dataset.MetadataStructure.Id, dataStructureId);
+                        GeneralMetadataModel datasetModel = GeneralMetadataModel.Map(apimodel);
+
+                        datasetModel.DownloadInformation.DownloadDate = DateTime.Now.ToString(new CultureInfo("en-US"));
+                        datasetModel.DownloadInformation.DownloadSource = Request.Url.Host;
+                        datasetModel.DownloadInformation.DownloadedBy = getPartyNameOrDefault();
+
+                        if(datasetModel.DownloadInformation.DownloadedBy == "DEFAULT") datasetModel.DownloadInformation.DownloadedBy = "ANONYMOUS";
+
                         string manifest = JsonConvert.SerializeObject(datasetModel);
                        
                         if (manifest != null)
                         {
                             string manifestFileName = IOHelper.GetFileName(FileType.Manifest, id, datasetVersionNumber, dataStructureId);
                             string manifestPath = OutputDatasetManager.GetDynamicDatasetStorePath(id,
-                                datasetVersionNumber, manifestFileName, ".json");
+                                datasetVersionNumber, "general_metadata", ".json");
                             string fullFilePath = Path.Combine(AppConfiguration.DataPath, manifestPath);
                             string directory = Path.GetDirectoryName(fullFilePath);
                             if (!Directory.Exists(directory))

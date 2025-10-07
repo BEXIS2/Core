@@ -44,6 +44,8 @@ namespace BExIS.IO
 
             string downloadTitle = title.Replace(" ", "");
 
+            // tag vs version?
+
             switch (type)
             {
                 case FileType.Metadata:
@@ -71,7 +73,7 @@ namespace BExIS.IO
                     downloadName = string.Format("{0}_{1}_v{2}_{3}_{4}", appName, datasetId, versionNr, downloadTitle, downloadDate);
                     break;
                 case FileType.Manifest:
-                    downloadName = string.Format("{0}_{1}_v{2}_general-metadata", appName, datasetId, versionNr);
+                    downloadName = string.Format("{0}_{1}_v{2}_general_metadata", appName, datasetId, versionNr);
                     break;
                 default:
                     downloadName = string.Format("{0}_{1}_v{2}_{3}", appName, datasetId, versionNr, title);
