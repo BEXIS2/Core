@@ -2225,7 +2225,14 @@ namespace BExIS.Xml.Helpers.Mapping
             }
 
             // nothing found so create a new name + XSDType
-            return element.Name + element.ElementType.GetType().Name; // bexis2InternType
+            if(element.ElementType!=null && element.ElementType.GetType()!=null)
+                return element.Name + element.ElementType.GetType().Name; // bexis2InternType
+
+            if (element.ElementSchemaType != null && element.ElementSchemaType.GetType() != null)
+                return element.Name + element.ElementSchemaType.GetType().Name; // bexis2InternType
+
+            // if nothing exist return name only
+            return element.Name; 
         }
 
         #endregion helper functions
