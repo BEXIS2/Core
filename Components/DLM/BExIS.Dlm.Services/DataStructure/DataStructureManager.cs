@@ -107,10 +107,8 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
-                IRepository<UnStructuredDataStructure> sRepo = uow.GetRepository<UnStructuredDataStructure>();
                 if (
-                        (repo.Query(p => p.Name.ToLower() == name.ToLower()).Count() <= 0) &&
-                        (sRepo.Query(p => p.Name.ToLower() == name.ToLower()).Count() <= 0)
+                        (repo.Query(p => p.Name.ToLower() == name.ToLower()).Count() <= 0)
                     )
                 {
                     StructuredDataStructure e = new StructuredDataStructure()

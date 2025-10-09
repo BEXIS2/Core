@@ -59,9 +59,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Vaiona.Entities\Vaiona.Entities.csproj">
       <Project>{0815d220-3625-4e23-bbbc-8152345637fe}</Project>
       <Name>Vaiona.Entities</Name>
@@ -78,6 +75,9 @@
       <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
       <Name>Vaiona.Utils</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <!-- Prevent PostSharp.targets to be automatically imported if PostSharp has been installed on the computer using the setup program. -->
   <PropertyGroup>

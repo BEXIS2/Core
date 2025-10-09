@@ -198,6 +198,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("Api", "Dataset", "*", DatasetCreationFeature);
                 operationManager.Create("Api", "MetadataIn", "*", DatasetCreationFeature);
                 operationManager.Create("Api", "Metadata", "*", DatasetCreationFeature);
+                operationManager.Create("Api", "CurationEntry", "*", null);
 
                 operationManager.Create("DCM", "Edit", "*");
                 operationManager.Create("DCM", "View", "*");
