@@ -70,13 +70,7 @@
         "defaultViewCitationFormat": "Text",
         "viewCitationFormats": [ "Text", "APA" ],
         "downloadCitationFormats": [ "Text", "APA", "RIS", "BibTex" ]
-      },
-      "description": "..."
-        "key": "use_minor",
-        "title": "Use minor tags",
-        "value": false,
-        "type": "Boolean",
-        "description": "Activate minor tags in order to be able to show the changes more granularly."
+      }
     },
     {
         "key": "curation",
