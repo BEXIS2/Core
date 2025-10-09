@@ -23,7 +23,7 @@
 		entitytemplate: ''
 	};
 
- export let authorLabel = 'Authors';
+	export let authorLabel = 'Authors';
 
 	const { title, description, author, license, id, doi, entity, date, entitytemplate } = card;
 
@@ -84,6 +84,7 @@
 		on:keydown={() => window.open(`/ddm/data/Showdata/${id}`)}
 		role="link"
 		tabindex="0"
+		title="View dataset details in a new tab"
 	>
 		<div class="flex flex-col w-full gap-4">
 			<div class="justify-between flex gap-2">
@@ -122,7 +123,7 @@
 				</div>
 				<div class="ml-auto flex gap-2">
 					{#if entitytemplate && entitytemplate.length > 0}
-						<div title="Entity Template" class="rounded-full px-3 p-1 bg-primary-500">
+						<div title="Entity Category" class="rounded-full px-3 p-1 bg-primary-500">
 							<span class="text-sm font-semibold text-on-secondary-token"
 								>{entitytemplate.toLowerCase()}</span
 							>
@@ -130,7 +131,7 @@
 					{/if}
 
 					{#if entity && entity.length > 0}
-						<div title="Entity" class="rounded-full px-3 p-1 bg-primary-500">
+						<div title="Entity Type" class="rounded-full px-3 p-1 bg-primary-500">
 							<span class="text-sm font-semibold text-on-secondary-token"
 								>{entity.toLowerCase()}</span
 							>

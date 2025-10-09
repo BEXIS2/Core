@@ -126,6 +126,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Files\FileNameUtilityTests.cs" />
     <Compile Include="Helper\HashHelperTests.cs" />
     <Compile Include="Helper\ManualHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

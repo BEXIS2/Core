@@ -134,7 +134,7 @@
     <div>
         <table>
             <tr>
-                @if (locked)
+                @*@if (locked)
                 {
 
                     <td style="width:500px;">
@@ -177,7 +177,7 @@
 
 
                     </td>
-                }
+                }*@
 
                 @if (!Model.Created && !locked && Model.Import)
                 {
@@ -198,6 +198,18 @@
                         )
                     </td>
                 }
+                <td>
+                    @if (ViewData["IsValid"] == "no")
+                    {
+                        <div id="view-warning-container">
+                            <div id="view-warning" class="alert alert-danger" role="alert" style="width: 100%;">
+                                <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
+                                The metadata for this dataset is not complete.
+                            </div>
+                        </div>
+                    }
+
+                </td>
 
                 <td id="form_message_container_Column" style="text-align: right">
                     <span id="form_message"></span>
@@ -214,16 +226,7 @@
         </table>
     </div>
 
-    @if (ViewData["IsValid"] == "no" )
-    {
-        <div id="view-warning-container">
-            <div id="view-warning" class="alert alert-danger" role="alert" style="width: 100%;">
-                <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
-                The metadata for this dataset is not complete.
-            </div>
-        </div>
-    }
-
+ 
     @if (validationErrors.Any())
     {
         <div id="view-warning-container">
