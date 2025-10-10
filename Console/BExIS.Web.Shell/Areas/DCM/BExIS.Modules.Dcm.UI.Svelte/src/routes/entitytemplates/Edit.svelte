@@ -52,6 +52,9 @@
 	export let extensions:listItemType[] =  [];
 	export let referenceTypes:any[] =  [];
 
+	let isExtensions = false;
+	$:	isExtensions;
+
 	const dispatch = createEventDispatcher();
 
 	let entityTemplate: EntityTemplateModel;
@@ -59,7 +62,6 @@
 	$: entityTemplate;
 	$: systemKeys;
 	$: subsetMetadataStructures;
-
 	$: loaded = false;
 
 	let type = [];
@@ -78,7 +80,7 @@
 		console.log('load entity', entityTemplate);
 		console.log('load filetypes', filetypes);
 		updateSystemKeys('metadataStructure');
-
+		updateIsExtensions(entityTemplate.entityType.text);
 		// if id > 0 then run validation
 		if (id > 0) {
 			res = suite(entityTemplate);
@@ -103,7 +105,11 @@
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
 	async function onChangeHandler(e) {
-		//console.log("input changed", e)
+
+	
+		console.log("input changed", entityTemplate)
+
+		updateIsExtensions(entityTemplate.entityType.text);
 		// add some delay so the entityTemplate is updated
 		// otherwise the values are old
 		setTimeout(async () => {
@@ -163,6 +169,15 @@
 
 		modalStore.trigger(modal);
 	}
+
+function	updateIsExtensions(entityTypeText:string){
+		if(entityTypeText === "Extension"){
+			isExtensions = true;
+		}else{
+			isExtensions = false;
+		}
+	}
+
 </script>
 
 {#if entityTemplate}
@@ -256,6 +271,7 @@
 				</div>
 			</div>
 
+	{#if !isExtensions}
 			<div class="flex flex-col space-y-4">
 				<h3 class="h3">Data Structure</h3>
 				<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -324,6 +340,7 @@
 				</div>
 
 
+			
 			<h3 class="h3">Administration</h3>
 			<p class="p">Set permissions per default to the following groups</p>
 			<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -395,9 +412,11 @@
 					/>
 				</EntryContainer>
 			</div>
-
+{/if	}
 			<h3 class="h3">Dataset Settings</h3>
+			
 			<div class="py-5 w-full grid xs:grid-cols-1 md:grid-cols-2 gap-4">
+				{#if !isExtensions}
 				<EntryContainer>
 					<MultiSelect
 						id="disabledHooks"
@@ -407,7 +426,7 @@
 						help={true}
 					/>
 				</EntryContainer>
-
+				{/if}
 				<EntryContainer>
 					<MultiSelect
 						id="allowedFileTypes"
