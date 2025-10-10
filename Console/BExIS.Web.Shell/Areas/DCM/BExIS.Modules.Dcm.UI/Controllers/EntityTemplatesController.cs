@@ -215,7 +215,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (var entityManager = new EntityManager())
             {
                 var extensionEntity = entityManager.EntityRepository.Get().Where(e => e.Name.Equals("Extension")).FirstOrDefault();
-                tmp = entityTemplateManager.Repo.Query(t=>t.EntityType.Id.Equals(extensionEntity.Id))
+                tmp = entityTemplateManager.Repo.Query(t=>t.EntityType.Id.Equals(extensionEntity.Id) && t.Activated)
                     .Select(e => new ListItem(e.Id, e.Name,"")).ToList();
             }
 

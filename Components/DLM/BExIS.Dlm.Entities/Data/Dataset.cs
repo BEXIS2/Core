@@ -10,6 +10,17 @@ using Vaiona.Entities.Common;
 namespace BExIS.Dlm.Entities.Data
 {
     /// <summary>
+    /// This is a list fo currently used entity types in BExIS. It is used to identify the type of the entity in a generic way.
+    /// </summary>
+    public enum EntityType
+    {
+        Dataset = 1,
+        Publication = 2,
+        Sample = 3,
+        Extension = 4,
+    }
+
+    /// <summary>
     ///
     /// </summary>
     public enum DatasetStatus
