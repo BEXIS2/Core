@@ -459,7 +459,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (var entityTemplateManager = new EntityTemplateManager())
             {
                 // get entity templates without extension
-                string extensionName = Convert.ToString(EntityType.Extention);
+                string extensionName = Convert.ToString(EntityType.Extension);
                 foreach (var e in entityTemplateManager.Repo.Query(e=>e.Activated && !e.EntityType.Name.ToLower().Equals(extensionName.ToLower())).ToList())
                 {
                     entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e, false));

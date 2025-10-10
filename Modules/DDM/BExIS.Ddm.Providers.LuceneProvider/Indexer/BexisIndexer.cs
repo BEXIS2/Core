@@ -408,6 +408,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             string doi  = "";
             string date = "";
             string entityTemplate = "";
+            string entityName = "";
             DatasetVersion version = null; 
             XmlDocument metadata = null;
 
@@ -430,10 +431,14 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 {
                     // doi
                     entityTemplate = version.Dataset.EntityTemplate.Name;
+                entityName = version.Dataset.EntityTemplate.EntityType.Name;
                     date = version.ModificationInfo?.Timestamp?.ToString("yyyy-MM-dd");
                     if(date == null) version.CreationInfo?.Timestamp?.ToString("yyyy-MM-dd");
                     if (date == null) date = "";
                 }
+
+                // stop indexing if entity is an extension
+                if(entityName.ToLowerInvariant().Equals(Convert.ToString(EntityType.Extension).ToLowerInvariant())) return;
 
                 var dataset = new Document();
                 List<XmlNode> facetNodes = facetXmlNodeList;
@@ -445,7 +450,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 dataset.Add(new Field("gen_isPublic", entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result ? "TRUE" : "FALSE", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
 
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-                var entityName = xmlDatasetHelper.GetEntityName(id);
+                //var entityName = xmlDatasetHelper.GetEntityName(id);
                 dataset.Add(new Field("gen_entity_name", entityName, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
                 dataset.Add(new Field("gen_doi", doi, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
                 dataset.Add(new Field("gen_modifieddate", date, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
