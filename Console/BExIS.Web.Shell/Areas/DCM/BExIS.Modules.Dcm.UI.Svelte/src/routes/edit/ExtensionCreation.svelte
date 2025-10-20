@@ -6,7 +6,7 @@
 
 	import { Spinner, positionType } from '@bexis2/bexis2-core-ui';
 	import { createExtensionLink, getExtensionEntityTemplateList } from './services';
-	// import { goTo } from '$services/BaseCaller';
+	import { goTo } from '$services/BaseCaller';
 
 	import type { EntityTemplateModel } from '$models/EntityTemplate';
 
@@ -46,7 +46,7 @@
 		const res =	await createExtensionLink(id,e.detail);
 		notificationStore.showNotification({
 				notificationType: notificationType.success,
-				message: 'This is the success style Notification'
+				message: 'Extension created and linked successfully'
 			})
 	
 		goTo('/dcm/edit?id=' + id);
@@ -56,9 +56,6 @@
 	//console.log(links)
 
 
-	function goTo(arg0: string) {
-		throw new Error('Function not implemented.');
-	}
 </script>
 
 

@@ -21,6 +21,7 @@
 
 	import type { EditModel, HookModel, ViewModel } from './types';
 	import Placeholder from './PlaceholderPage.svelte';
+	import { onDestroy, onMount } from 'svelte';
 
 
 	export let id: number = 0;
@@ -73,7 +74,8 @@
 	});
 
 	latestValidationDate.subscribe((e) => {
-		updateHookStatus();
+		 console.log('latestValidationDate in edit entity', id);
+		 updateHookStatus();
 	});
 
 	latestSubmitDate.subscribe((e) => {
@@ -81,7 +83,35 @@
 	});
 
 	latestDataDate.subscribe((e) => {
+		console.log('latestDataDate in edit entity', id);
 		updateHookStatus();
+	});
+
+
+	const unsubscribe = () =>{
+
+		latestFileUploadDate.set(0);
+		latestDataDescriptionDate.set(0);
+		latestFileReaderDate.set(0);
+		latestValidationDate.set(0);
+		latestSubmitDate.set(0);
+		latestDataDate.set(0);
+
+		hooksStatus.set({ ['']: 0 });
+
+	}
+
+
+
+	onMount(() => {
+
+
+	});
+	
+	
+	onDestroy(() => {
+		console.log('DESTROY EDIT ENTITY');
+		unsubscribe();
 	});
 
 	async function load() {
@@ -138,7 +168,7 @@
 				}
 
 				await sleep(time);
-				console.log('test');
+				//console.log('test');
 			} while (wait);
 		}
 	}
@@ -200,7 +230,6 @@
 
 	
 </script>
-
 	{#await load()}
 		<Placeholder />
 	{:then a}
