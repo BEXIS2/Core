@@ -8,6 +8,7 @@
 	import { ErrorMessage } from '@bexis2/bexis2-core-ui';
 	import { latestSubmitDate, latestDataDate } from '../../routes/edit/stores';
 
+
 	export let id = 0;
 	export let version = 1;
 	export let hook;
@@ -16,16 +17,18 @@
 
 	const dispatch = createEventDispatcher();
 
+	// latestSubmitDate.subscribe((s) => {
+	// 		reload();
+	// 	});
+
 	onMount(async () => {
 		console.log('DATA', hook);
 
 		load();
-		latestSubmitDate.subscribe((s) => {
-			reload();
-		});
 	});
 
 	async function reload() {
+		console.log('reload data hook');
 		/*update store*/
 		latestDataDate.set(Date.now());
 
@@ -35,7 +38,7 @@
 
 	async function load() {
 		model = await getHookStart(hook.start, id, version);
-		console.log('🚀 ~ load ~ model:', model);
+		console.log('🚀 ~ load ~ model:',id, model);
 
 		dispatch('dateChanged', { lastModification: model.lastModification });
 	}

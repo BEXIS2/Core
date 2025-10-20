@@ -20,9 +20,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	onMount(async () => {
-		load();
-		latestFileUploadDate.subscribe((s) => {
+	latestFileUploadDate.subscribe((s) => {
 			if (s > 0) {
 				reloadByFileUpdate();
 			}
@@ -32,6 +30,10 @@
 				reload();
 			}
 		});
+
+	onMount(async () => {
+		load();
+		
 	});
 
 	async function load() {

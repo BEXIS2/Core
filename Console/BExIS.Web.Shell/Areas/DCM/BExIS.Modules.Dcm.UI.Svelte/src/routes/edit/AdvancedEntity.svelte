@@ -24,7 +24,7 @@
   </Tab>
  {/each}
  <!--add extentions -->
- <Tab bind:group={tabSet} name="add" value={100}>
+ <Tab bind:group={tabSet}  name="add" value={100}>
   +
  </Tab>
 
@@ -37,8 +37,8 @@
   {/if}
 
  {#each extensions as ext (ext.id)}
+
    {#if tabSet === ext.id}
-    {id},{title}
     <Entity id={ext.id} version={0} title={ext.title} />
    {/if}
   {/each}
