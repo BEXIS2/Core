@@ -16,6 +16,8 @@ using DocumentFormat.OpenXml.Drawing.Diagrams;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -270,6 +272,46 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return Json(true);
         }
 
-            #endregion
+        [JsonNetFilter]
+        [HttpPost]
+        public JsonResult DeleteExtension(long extensionId)
+        {
+
+
+            using (var datasetmanager = new DatasetManager())
+            using (var entityReferenceManager = new EntityReferenceManager())
+            {
+                try
+                {
+                    if (extensionId == 0) throw new Exception("extensionId is missing");
+
+                    // remove all existing links
+
+                    var linkIds = entityReferenceManager.ReferenceRepository.Query(e =>
+                        e.TargetId.Equals(extensionId) &&
+                        e.LinkType.Equals("extension")).Select(l=>l.Id);
+
+                    entityReferenceManager.Delete(linkIds.ToList());
+
+
+                    // purge dataset
+                    datasetmanager.PurgeDataset(extensionId);
+
+
+                }
+                catch (Exception ex)
+                {
+              
+                    throw new Exception(ex.Message);
+                }
+            }
+
+            Response.StatusCode = (int)HttpStatusCode.OK;
+         
+            return Json( new { Success = true, Message = "Extension successful deleted" });
+        
         }
+
+        #endregion
+    }
 }

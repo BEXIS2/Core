@@ -116,3 +116,13 @@ export const createExtensionLink = async (id, extensionId) => {
 	}
 };
 
+export const deleteExtension = async (extensionId) => {
+	try {
+		const response = await Api.post('/dcm/edit/DeleteExtension',{ extensionId });
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
