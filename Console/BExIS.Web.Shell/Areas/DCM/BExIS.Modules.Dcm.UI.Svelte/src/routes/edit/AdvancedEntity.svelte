@@ -1,14 +1,61 @@
 <script lang="ts">
-	import { Tab, TabGroup } from '@skeletonlabs/skeleton';
+	import { type ModalSettings, Tab, TabGroup } from '@skeletonlabs/skeleton';
+  import { Modal, getModalStore } from '@skeletonlabs/skeleton';
+
+  import { notificationType, notificationStore } from '@bexis2/bexis2-core-ui';
+
+
 	import Entity from './Entity.svelte';
 	import type { ExtensionType } from './types';
 	import ExtensionCreation from './ExtensionCreation.svelte';
+  import Fa from 'svelte-fa';
+  import { faTrash } from '@fortawesome/free-solid-svg-icons';
+  import { deleteExtension } from './services';
+
+	const modalStore = getModalStore();
 
  let tabSet: number = 0;
  export let id: number = 0;
 	export let version: number;
  export let title = "";
  export let extensions:ExtensionType[] = []
+
+ 
+ async function removeExtensionFn( extId, title){ 
+		const modal: ModalSettings = {
+			type: 'confirm',
+			title: 'Delete ' + title + '(' + extId + ')',
+			body: 'Are you sure you wish to delete the current extension?',
+			// TRUE if confirm pressed, FALSE if cancel pressed
+			response: (r: boolean) => {
+				if (r === true) {
+					console.log("remove ext", extId);
+          var res = deleteExtension(extId);
+          res.then((e)=>{
+
+            console.log(e)
+            if(e.success){
+              notificationStore.showNotification({
+                message: 'Extension deleted successfully',
+                notificationType: notificationType.success
+              })
+	
+            } else {
+              notificationStore.showNotification({
+                message: 'Error deleting extension',
+                notificationType: notificationType.error
+              })
+            }
+
+            //reload page
+            location.reload();
+          })
+				}
+			}
+		};
+
+		modalStore.trigger(modal);
+	}
 
 </script>
 
@@ -21,6 +68,8 @@
  {#each extensions as ext (ext.id)}
   <Tab bind:group={tabSet} name={ext.title} value={ext.id}>
    {ext.title} 
+   
+
   </Tab>
  {/each}
  <!--add extentions -->
@@ -39,7 +88,12 @@
  {#each extensions as ext (ext.id)}
 
    {#if tabSet === ext.id}
-    <Entity id={ext.id} version={0} title={ext.title} />
+   <div class="flex justify-end">
+    <button class="chip variant-filled-error " type="button" on:click={() => removeExtensionFn(ext.id, ext.title)} ><Fa icon={faTrash} /></button>   
+  </div>
+  
+  <Entity id={ext.id} version={0} title={ext.title} />
+
    {/if}
   {/each}
  </svelte:fragment>

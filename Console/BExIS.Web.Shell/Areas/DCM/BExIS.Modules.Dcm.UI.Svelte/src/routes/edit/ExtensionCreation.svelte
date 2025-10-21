@@ -49,7 +49,7 @@
 				message: 'Extension created and linked successfully'
 			})
 	
-		goTo('/dcm/edit?id=' + id);
+			location.reload();
 	}
 
 

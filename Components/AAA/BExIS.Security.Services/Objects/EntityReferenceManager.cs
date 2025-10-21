@@ -1,5 +1,6 @@
 ﻿using BExIS.Security.Entities.Objects;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
@@ -114,6 +115,17 @@ namespace BExIS.Security.Services.Objects
                 var repo = uow.GetRepository<EntityReference>();
                 var entityReference = repo.Get(id);
                 repo.Delete(entityReference);
+                uow.Commit();
+            }
+        }
+
+        public void Delete(IEnumerable<long> ids)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var repo = uow.GetRepository<EntityReference>();
+                var entityReferences = repo.Query(l=> ids.Contains(l.Id)).Select(l=>l.Id).ToList();
+                repo.Delete(entityReferences);
                 uow.Commit();
             }
         }
