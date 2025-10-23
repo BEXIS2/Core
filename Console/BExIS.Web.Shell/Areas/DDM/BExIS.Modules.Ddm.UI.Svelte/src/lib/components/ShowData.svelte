@@ -5,6 +5,6 @@
 	export let row;
 </script>
 
-<a href="/ddm/data/Showdata/{row.iD}" target="_blank" class="btn variant-filled-primary">
+<a href="/ddm/data/Showdata/{row.iD}" target="_blank" class="btn variant-filled-primary" title="View dataset details in a new tab">
 	<Fa icon={faEye} size="xs" />
 </a>

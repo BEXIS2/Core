@@ -515,6 +515,7 @@
     <Compile Include="Models\DataCiteDOIModels.cs" />
     <Compile Include="Models\DatasetModel.cs" />
     <Compile Include="Models\DatasetVersionModel.cs" />
+    <Compile Include="Models\Download\GeneralMetadataModel.cs" />
     <Compile Include="Models\GbifModels.cs" />
     <Compile Include="Models\Export\SimpleDataStructureModel.cs" />
     <Compile Include="Models\Mapping\LinkElementModels.cs" />

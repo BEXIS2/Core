@@ -23,8 +23,8 @@
       <column name="Name" />
     </property>
 
-    <property name="XPath" type="string">
-      <column name="XPath" />
+    <property name="XPath" type="StringClob">
+      <column name="XPath" sql-type="text" />
     </property>
 
     <property name="IsSequence" type="boolean">

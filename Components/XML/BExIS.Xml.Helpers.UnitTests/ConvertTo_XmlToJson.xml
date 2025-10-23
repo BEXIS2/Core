@@ -2,393 +2,393 @@
 	<Basic type="MetadataPackageUsage" name="Basic" id="1">
 		<BasicType type="MetadataPackage" name="BasicType" roleId="1" id="1" number="1">
 			<DatasetGUID type="MetadataAttributeUsage" name="DatasetGUID" id="1">
-				<DatasetGUIDType type="MetadataAttribute" name="DatasetGUIDType" roleId="1" id="1" number="1">123456</DatasetGUIDType>
+				<String type="MetadataAttribute" name="String" roleId="1" id="1" number="1">123456</String>
 			</DatasetGUID>
 		</BasicType>
 	</Basic>
 	<TechnicalContacts type="MetadataPackageUsage" name="TechnicalContacts" id="2">
-		<TechnicalContactsType type="MetadataPackage" name="TechnicalContactsType" roleId="2" id="2" number="1">
+		<TechnicalContactsXmlSchemaComplexType type="MetadataPackage" name="TechnicalContactsXmlSchemaComplexType" roleId="2" id="2" number="1">
 			<TechnicalContact type="MetadataAttributeUsage" name="TechnicalContact" id="2">
-				<MicroAgentP type="MetadataAttribute" name="MicroAgentP" roleId="2" id="6" number="1" partyid="1">
+				<MicroAgentP type="MetadataAttribute" name="MicroAgentP" roleId="2" id="3" number="1" partyid="1">
 					<Name type="MetadataAttributeUsage" name="Name" id="1">
-						<NameType type="MetadataAttribute" name="NameType" roleId="1" id="2" number="1">David Schöne</NameType>
+						<String255 type="MetadataAttribute" name="String255" roleId="1" id="2" number="1">David Schöne</String255>
 					</Name>
 					<Email type="MetadataAttributeUsage" name="Email" id="2">
-						<EmailType type="MetadataAttribute" name="EmailType" roleId="2" id="3" number="1" />
+						<String255 type="MetadataAttribute" name="String255" roleId="2" id="2" number="1"></String255>
 					</Email>
 					<Phone type="MetadataAttributeUsage" name="Phone" id="3">
-						<PhoneType type="MetadataAttribute" name="PhoneType" roleId="3" id="4" number="1">01608037788</PhoneType>
+						<String255 type="MetadataAttribute" name="String255" roleId="3" id="2" number="1">01608037788</String255>
 					</Phone>
 					<Address type="MetadataAttributeUsage" name="Address" id="4">
-						<AddressType type="MetadataAttribute" name="AddressType" roleId="4" id="5" number="1">Von der Gabelentz Straße 9 erfurt 99089 Deutschland</AddressType>
+						<String255 type="MetadataAttribute" name="String255" roleId="4" id="2" number="1">Von der Gabelentz Straße 9 erfurt 99089 Deutschland</String255>
 					</Address>
 				</MicroAgentP>
-				<MicroAgentP type="MetadataAttribute" name="MicroAgentP" roleId="2" id="6" number="2">
+				<MicroAgentP type="MetadataAttribute" name="MicroAgentP" roleId="2" id="3" number="2">
 					<Name type="MetadataAttributeUsage" name="Name" id="1">
-						<NameType type="MetadataAttribute" name="NameType" roleId="1" id="2" number="1">Sven Thiel</NameType>
+						<String255 type="MetadataAttribute" name="String255" roleId="1" id="2" number="1">Sven Thiel</String255>
 					</Name>
 					<Email type="MetadataAttributeUsage" name="Email" id="2">
-						<EmailType type="MetadataAttribute" name="EmailType" roleId="2" id="3" number="1" />
+						<String255 type="MetadataAttribute" name="String255" roleId="2" id="2" number="1"></String255>
 					</Email>
 					<Phone type="MetadataAttributeUsage" name="Phone" id="3">
-						<PhoneType type="MetadataAttribute" name="PhoneType" roleId="3" id="4" number="1" />
+						<String255 type="MetadataAttribute" name="String255" roleId="3" id="2" number="1"></String255>
 					</Phone>
 					<Address type="MetadataAttributeUsage" name="Address" id="4">
-						<AddressType type="MetadataAttribute" name="AddressType" roleId="4" id="5" number="1" />
+						<String255 type="MetadataAttribute" name="String255" roleId="4" id="2" number="1"></String255>
 					</Address>
 				</MicroAgentP>
-				<MicroAgentP type="MetadataAttribute" name="MicroAgentP" roleId="2" id="6" number="3">
+				<MicroAgentP type="MetadataAttribute" name="MicroAgentP" roleId="2" id="3" number="3">
 					<Name type="MetadataAttributeUsage" name="Name" id="1">
-						<NameType type="MetadataAttribute" name="NameType" roleId="1" id="2" number="1">Franziska</NameType>
+						<String255 type="MetadataAttribute" name="String255" roleId="1" id="2" number="1">Franziska</String255>
 					</Name>
 					<Email type="MetadataAttributeUsage" name="Email" id="2">
-						<EmailType type="MetadataAttribute" name="EmailType" roleId="2" id="3" number="1" />
+						<String255 type="MetadataAttribute" name="String255" roleId="2" id="2" number="1"></String255>
 					</Email>
 					<Phone type="MetadataAttributeUsage" name="Phone" id="3">
-						<PhoneType type="MetadataAttribute" name="PhoneType" roleId="3" id="4" number="1" />
+						<String255 type="MetadataAttribute" name="String255" roleId="3" id="2" number="1"></String255>
 					</Phone>
 					<Address type="MetadataAttributeUsage" name="Address" id="4">
-						<AddressType type="MetadataAttribute" name="AddressType" roleId="4" id="5" number="1" />
+						<String255 type="MetadataAttribute" name="String255" roleId="4" id="2" number="1"></String255>
 					</Address>
 				</MicroAgentP>
 			</TechnicalContact>
-		</TechnicalContactsType>
+		</TechnicalContactsXmlSchemaComplexType>
 	</TechnicalContacts>
 	<ContentContacts type="MetadataPackageUsage" name="ContentContacts" id="3">
-		<ContentContactsType type="MetadataPackage" name="ContentContactsType" roleId="3" id="3" number="1">
+		<ContentContactsXmlSchemaComplexType type="MetadataPackage" name="ContentContactsXmlSchemaComplexType" roleId="3" id="3" number="1">
 			<ContentContact type="MetadataAttributeUsage" name="ContentContact" id="3">
-				<MicroAgentP type="MetadataAttribute" name="MicroAgentP" roleId="3" id="6" number="1" partyid="1">
+				<MicroAgentP type="MetadataAttribute" name="MicroAgentP" roleId="3" id="3" number="1" partyid="1">
 					<Name type="MetadataAttributeUsage" name="Name" id="1">
-						<NameType type="MetadataAttribute" name="NameType" roleId="1" id="2" number="1">David Schöne</NameType>
+						<String255 type="MetadataAttribute" name="String255" roleId="1" id="2" number="1">David Schöne</String255>
 					</Name>
 					<Email type="MetadataAttributeUsage" name="Email" id="2">
-						<EmailType type="MetadataAttribute" name="EmailType" roleId="2" id="3" number="1" />
+						<String255 type="MetadataAttribute" name="String255" roleId="2" id="2" number="1"></String255>
 					</Email>
 					<Phone type="MetadataAttributeUsage" name="Phone" id="3">
-						<PhoneType type="MetadataAttribute" name="PhoneType" roleId="3" id="4" number="1">01608037788</PhoneType>
+						<String255 type="MetadataAttribute" name="String255" roleId="3" id="2" number="1">01608037788</String255>
 					</Phone>
 					<Address type="MetadataAttributeUsage" name="Address" id="4">
-						<AddressType type="MetadataAttribute" name="AddressType" roleId="4" id="5" number="1">Von der Gabelentz Straße 9 erfurt 99089 Deutschland</AddressType>
+						<String255 type="MetadataAttribute" name="String255" roleId="4" id="2" number="1">Von der Gabelentz Straße 9 erfurt 99089 Deutschland</String255>
 					</Address>
 				</MicroAgentP>
 			</ContentContact>
-		</ContentContactsType>
+		</ContentContactsXmlSchemaComplexType>
 	</ContentContacts>
 	<OtherProviders type="MetadataPackageUsage" name="OtherProviders" id="4">
-		<OtherProvidersType type="MetadataPackage" name="OtherProvidersType" roleId="4" id="4" number="1">
+		<OtherProvidersXmlSchemaComplexType type="MetadataPackage" name="OtherProvidersXmlSchemaComplexType" roleId="4" id="4" number="1">
 			<OtherProvider type="MetadataAttributeUsage" name="OtherProvider" id="4">
-				<OtherProviderType type="MetadataAttribute" name="OtherProviderType" roleId="4" id="7" number="1" />
+				<String type="MetadataAttribute" name="String" roleId="4" id="1" number="1"></String>
 			</OtherProvider>
-		</OtherProvidersType>
+		</OtherProvidersXmlSchemaComplexType>
 	</OtherProviders>
 	<Metadata type="MetadataPackageUsage" name="Metadata" id="5">
-		<MetadataType type="MetadataPackage" name="MetadataType" roleId="5" id="5" number="1">
+		<ContentMetadata type="MetadataPackage" name="ContentMetadata" roleId="5" id="5" number="1">
 			<Description type="MetadataAttributeUsage" name="Description" id="5">
-				<DescriptionType type="MetadataAttribute" name="DescriptionType" roleId="5" id="14" number="1">
+				<DescriptionXmlSchemaComplexType type="MetadataAttribute" name="DescriptionXmlSchemaComplexType" roleId="5" id="7" number="1">
 					<Representation type="MetadataAttributeUsage" name="Representation" id="9">
-						<MetadataDescriptionRepr type="MetadataAttribute" name="MetadataDescriptionRepr" roleId="9" id="12" number="1" language="">
+						<MetadataDescriptionRepr type="MetadataAttribute" name="MetadataDescriptionRepr" roleId="9" id="5" number="1" language="">
 							<Title type="MetadataAttributeUsage" name="Title" id="5">
-								<TitleType type="MetadataAttribute" name="TitleType" roleId="5" id="8" number="1">Test</TitleType>
+								<String255 type="MetadataAttribute" name="String255" roleId="5" id="2" number="1">Test</String255>
 							</Title>
 							<Details type="MetadataAttributeUsage" name="Details" id="6">
-								<DetailsType type="MetadataAttribute" name="DetailsType" roleId="6" id="9" number="1" />
+								<String type="MetadataAttribute" name="String" roleId="6" id="1" number="1"></String>
 							</Details>
 							<Coverage type="MetadataAttributeUsage" name="Coverage" id="7">
-								<CoverageType type="MetadataAttribute" name="CoverageType" roleId="7" id="10" number="1" />
+								<String type="MetadataAttribute" name="String" roleId="7" id="1" number="1"></String>
 							</Coverage>
 							<URI type="MetadataAttributeUsage" name="URI" id="8">
-								<URIType type="MetadataAttribute" name="URIType" roleId="8" id="11" number="1" />
+								<URIDatatype_anyURI type="MetadataAttribute" name="URIDatatype_anyURI" roleId="8" id="4" number="1"></URIDatatype_anyURI>
 							</URI>
 						</MetadataDescriptionRepr>
 					</Representation>
-				</DescriptionType>
+				</DescriptionXmlSchemaComplexType>
 			</Description>
 			<IconURI type="MetadataAttributeUsage" name="IconURI" id="6">
-				<IconURIType type="MetadataAttribute" name="IconURIType" roleId="6" id="15" number="1" />
+				<IconURIDatatype_anyURI type="MetadataAttribute" name="IconURIDatatype_anyURI" roleId="6" id="8" number="1"></IconURIDatatype_anyURI>
 			</IconURI>
 			<Scope type="MetadataAttributeUsage" name="Scope" id="7">
-				<ScopeType type="MetadataAttribute" name="ScopeType" roleId="7" id="20" number="1">
+				<ScopeXmlSchemaComplexType type="MetadataAttribute" name="ScopeXmlSchemaComplexType" roleId="7" id="12" number="1">
 					<GeoecologicalTerms type="MetadataAttributeUsage" name="GeoecologicalTerms" id="12">
-						<GeoecologicalTermsType type="MetadataAttribute" name="GeoecologicalTermsType" roleId="12" id="17" number="1">
+						<GeoecologicalTermsXmlSchemaComplexType type="MetadataAttribute" name="GeoecologicalTermsXmlSchemaComplexType" roleId="12" id="10" number="1">
 							<GeoEcologicalTerm type="MetadataAttributeUsage" name="GeoEcologicalTerm" id="10">
-								<GeoEcologicalTermType type="MetadataAttribute" name="GeoEcologicalTermType" roleId="10" id="16" number="1" language="" />
+								<StringL255 type="MetadataAttribute" name="StringL255" roleId="10" id="9" number="1" language=""></StringL255>
 							</GeoEcologicalTerm>
-						</GeoecologicalTermsType>
+						</GeoecologicalTermsXmlSchemaComplexType>
 					</GeoecologicalTerms>
 					<TaxonomicTerms type="MetadataAttributeUsage" name="TaxonomicTerms" id="13">
-						<TaxonomicTermsType type="MetadataAttribute" name="TaxonomicTermsType" roleId="13" id="19" number="1">
+						<TaxonomicTermsXmlSchemaComplexType type="MetadataAttribute" name="TaxonomicTermsXmlSchemaComplexType" roleId="13" id="11" number="1">
 							<TaxonomicTerm type="MetadataAttributeUsage" name="TaxonomicTerm" id="11">
-								<TaxonomicTermType type="MetadataAttribute" name="TaxonomicTermType" roleId="11" id="18" number="1" language="" />
+								<StringL255 type="MetadataAttribute" name="StringL255" roleId="11" id="9" number="1" language=""></StringL255>
 							</TaxonomicTerm>
-						</TaxonomicTermsType>
+						</TaxonomicTermsXmlSchemaComplexType>
 					</TaxonomicTerms>
-				</ScopeType>
+				</ScopeXmlSchemaComplexType>
 			</Scope>
 			<Version type="MetadataAttributeUsage" name="Version" id="8">
-				<VersionType type="MetadataAttribute" name="VersionType" roleId="8" id="25" number="1">
+				<VersionXmlSchemaComplexType type="MetadataAttribute" name="VersionXmlSchemaComplexType" roleId="8" id="16" number="1">
 					<Major type="MetadataAttributeUsage" name="Major" id="14">
-						<MajorType type="MetadataAttribute" name="MajorType" roleId="14" id="21" number="1" />
+						<MajorDatatype_nonNegativeInteger type="MetadataAttribute" name="MajorDatatype_nonNegativeInteger" roleId="14" id="13" number="1"></MajorDatatype_nonNegativeInteger>
 					</Major>
 					<Minor type="MetadataAttributeUsage" name="Minor" id="15">
-						<MinorType type="MetadataAttribute" name="MinorType" roleId="15" id="22" number="1" />
+						<MinorDatatype_nonNegativeInteger type="MetadataAttribute" name="MinorDatatype_nonNegativeInteger" roleId="15" id="14" number="1"></MinorDatatype_nonNegativeInteger>
 					</Minor>
 					<Modifier type="MetadataAttributeUsage" name="Modifier" id="16">
-						<ModifierType type="MetadataAttribute" name="ModifierType" roleId="16" id="23" number="1" />
+						<String255 type="MetadataAttribute" name="String255" roleId="16" id="2" number="1"></String255>
 					</Modifier>
 					<DateIssued type="MetadataAttributeUsage" name="DateIssued" id="17">
-						<DateIssuedType type="MetadataAttribute" name="DateIssuedType" roleId="17" id="24" number="1" />
+						<DateIssuedDatatype_date type="MetadataAttribute" name="DateIssuedDatatype_date" roleId="17" id="15" number="1"></DateIssuedDatatype_date>
 					</DateIssued>
-				</VersionType>
+				</VersionXmlSchemaComplexType>
 			</Version>
 			<RevisionData type="MetadataAttributeUsage" name="RevisionData" id="9">
-				<RevisionData type="MetadataAttribute" name="RevisionData" roleId="9" id="30" number="1">
+				<RevisionData type="MetadataAttribute" name="RevisionData" roleId="9" id="19" number="1">
 					<Creators type="MetadataAttributeUsage" name="Creators" id="18">
-						<CreatorsType type="MetadataAttribute" name="CreatorsType" roleId="18" id="26" number="1" />
+						<String type="MetadataAttribute" name="String" roleId="18" id="1" number="1"></String>
 					</Creators>
 					<Contributors type="MetadataAttributeUsage" name="Contributors" id="19">
-						<ContributorsType type="MetadataAttribute" name="ContributorsType" roleId="19" id="27" number="1" />
+						<String type="MetadataAttribute" name="String" roleId="19" id="1" number="1"></String>
 					</Contributors>
 					<DateCreated type="MetadataAttributeUsage" name="DateCreated" id="20">
-						<DateCreatedType type="MetadataAttribute" name="DateCreatedType" roleId="20" id="28" number="1" />
+						<DateCreatedDatatype_dateTime type="MetadataAttribute" name="DateCreatedDatatype_dateTime" roleId="20" id="17" number="1"></DateCreatedDatatype_dateTime>
 					</DateCreated>
 					<DateModified type="MetadataAttributeUsage" name="DateModified" id="21">
-						<DateModifiedType type="MetadataAttribute" name="DateModifiedType" roleId="21" id="29" number="1">2022-07-06</DateModifiedType>
+						<DateModifiedDatatype_dateTime type="MetadataAttribute" name="DateModifiedDatatype_dateTime" roleId="21" id="18" number="1">2022-07-06</DateModifiedDatatype_dateTime>
 					</DateModified>
 				</RevisionData>
 			</RevisionData>
 			<Owners type="MetadataAttributeUsage" name="Owners" id="10">
-				<OwnersType type="MetadataAttribute" name="OwnersType" roleId="10" id="62" number="1">
+				<OwnersXmlSchemaComplexType type="MetadataAttribute" name="OwnersXmlSchemaComplexType" roleId="10" id="41" number="1">
 					<Owner type="MetadataAttributeUsage" name="Owner" id="52">
-						<Contact type="MetadataAttribute" name="Contact" roleId="52" id="61" number="1">
+						<Contact type="MetadataAttribute" name="Contact" roleId="52" id="40" number="1">
 							<Organisation type="MetadataAttributeUsage" name="Organisation" id="44">
-								<Organisation type="MetadataAttribute" name="Organisation" roleId="44" id="37" number="1">
+								<Organisation type="MetadataAttribute" name="Organisation" roleId="44" id="25" number="1">
 									<Name type="MetadataAttributeUsage" name="Name" id="26">
-										<Label type="MetadataAttribute" name="Label" roleId="26" id="34" number="1">
+										<Label type="MetadataAttribute" name="Label" roleId="26" id="22" number="1">
 											<Representation type="MetadataAttributeUsage" name="Representation" id="24">
-												<RepresentationType type="MetadataAttribute" name="RepresentationType" roleId="24" id="33" number="1">
+												<RepresentationXmlSchemaComplexType type="MetadataAttribute" name="RepresentationXmlSchemaComplexType" roleId="24" id="21" number="1">
 													<Text type="MetadataAttributeUsage" name="Text" id="22">
-														<TextType type="MetadataAttribute" name="TextType" roleId="22" id="31" number="1" />
+														<String255 type="MetadataAttribute" name="String255" roleId="22" id="2" number="1"></String255>
 													</Text>
 													<Abbreviation type="MetadataAttributeUsage" name="Abbreviation" id="23">
-														<AbbreviationType type="MetadataAttribute" name="AbbreviationType" roleId="23" id="32" number="1" />
+														<String50 type="MetadataAttribute" name="String50" roleId="23" id="20" number="1"></String50>
 													</Abbreviation>
-												</RepresentationType>
+												</RepresentationXmlSchemaComplexType>
 											</Representation>
 										</Label>
 									</Name>
 									<OrgUnits type="MetadataAttributeUsage" name="OrgUnits" id="27">
-										<OrgUnitsType type="MetadataAttribute" name="OrgUnitsType" roleId="27" id="36" number="1">
+										<OrgUnitsXmlSchemaComplexType type="MetadataAttribute" name="OrgUnitsXmlSchemaComplexType" roleId="27" id="24" number="1">
 											<OrgUnit type="MetadataAttributeUsage" name="OrgUnit" id="25">
-												<OrgUnitType type="MetadataAttribute" name="OrgUnitType" roleId="25" id="35" number="1" language="" />
+												<StringL type="MetadataAttribute" name="StringL" roleId="25" id="23" number="1" language=""></StringL>
 											</OrgUnit>
-										</OrgUnitsType>
+										</OrgUnitsXmlSchemaComplexType>
 									</OrgUnits>
 								</Organisation>
 							</Organisation>
 							<Person type="MetadataAttributeUsage" name="Person" id="45">
-								<PersonName type="MetadataAttribute" name="PersonName" roleId="45" id="46" number="1">
+								<PersonName type="MetadataAttribute" name="PersonName" roleId="45" id="27" number="1">
 									<FullName type="MetadataAttributeUsage" name="FullName" id="33">
-										<FullNameType type="MetadataAttribute" name="FullNameType" roleId="33" id="38" number="1" />
+										<String255 type="MetadataAttribute" name="String255" roleId="33" id="2" number="1"></String255>
 									</FullName>
 									<SortingName type="MetadataAttributeUsage" name="SortingName" id="34">
-										<SortingNameType type="MetadataAttribute" name="SortingNameType" roleId="34" id="39" number="1" />
+										<String255 type="MetadataAttribute" name="String255" roleId="34" id="2" number="1"></String255>
 									</SortingName>
 									<AtomisedName type="MetadataAttributeUsage" name="AtomisedName" id="35">
-										<AtomisedNameType type="MetadataAttribute" name="AtomisedNameType" roleId="35" id="45" number="1">
+										<AtomisedNameXmlSchemaComplexType type="MetadataAttribute" name="AtomisedNameXmlSchemaComplexType" roleId="35" id="26" number="1">
 											<InheritedName type="MetadataAttributeUsage" name="InheritedName" id="28">
-												<InheritedNameType type="MetadataAttribute" name="InheritedNameType" roleId="28" id="40" number="1" />
+												<String255 type="MetadataAttribute" name="String255" roleId="28" id="2" number="1"></String255>
 											</InheritedName>
 											<Prefix type="MetadataAttributeUsage" name="Prefix" id="29">
-												<PrefixType type="MetadataAttribute" name="PrefixType" roleId="29" id="41" number="1" />
+												<String255 type="MetadataAttribute" name="String255" roleId="29" id="2" number="1"></String255>
 											</Prefix>
 											<Suffix type="MetadataAttributeUsage" name="Suffix" id="30">
-												<SuffixType type="MetadataAttribute" name="SuffixType" roleId="30" id="42" number="1" />
+												<String255 type="MetadataAttribute" name="String255" roleId="30" id="2" number="1"></String255>
 											</Suffix>
 											<GivenNames type="MetadataAttributeUsage" name="GivenNames" id="31">
-												<GivenNamesType type="MetadataAttribute" name="GivenNamesType" roleId="31" id="43" number="1" />
+												<String255 type="MetadataAttribute" name="String255" roleId="31" id="2" number="1"></String255>
 											</GivenNames>
 											<PreferredName type="MetadataAttributeUsage" name="PreferredName" id="32">
-												<PreferredNameType type="MetadataAttribute" name="PreferredNameType" roleId="32" id="44" number="1" />
+												<String255 type="MetadataAttribute" name="String255" roleId="32" id="2" number="1"></String255>
 											</PreferredName>
-										</AtomisedNameType>
+										</AtomisedNameXmlSchemaComplexType>
 									</AtomisedName>
 								</PersonName>
 							</Person>
 							<Roles type="MetadataAttributeUsage" name="Roles" id="46">
-								<RolesType type="MetadataAttribute" name="RolesType" roleId="46" id="48" number="1">
+								<RolesXmlSchemaComplexType type="MetadataAttribute" name="RolesXmlSchemaComplexType" roleId="46" id="28" number="1">
 									<Role type="MetadataAttributeUsage" name="Role" id="36">
-										<RoleType type="MetadataAttribute" name="RoleType" roleId="36" id="47" number="1" language="" />
+										<StringL type="MetadataAttribute" name="StringL" roleId="36" id="23" number="1" language=""></StringL>
 									</Role>
-								</RolesType>
+								</RolesXmlSchemaComplexType>
 							</Roles>
 							<Addresses type="MetadataAttributeUsage" name="Addresses" id="47">
-								<AddressesType type="MetadataAttribute" name="AddressesType" roleId="47" id="49" number="1">
+								<AddressesXmlSchemaComplexType type="MetadataAttribute" name="AddressesXmlSchemaComplexType" roleId="47" id="31" number="1">
 									<Address type="MetadataAttributeUsage" name="Address" id="37">
-										<AddressType type="MetadataAttribute" name="AddressType" roleId="37" id="5" number="1" />
+										<StringLP type="MetadataAttribute" name="StringLP" roleId="37" id="29" number="1" language="" preferred=""></StringLP>
 									</Address>
-								</AddressesType>
+								</AddressesXmlSchemaComplexType>
 							</Addresses>
 							<TelephoneNumbers type="MetadataAttributeUsage" name="TelephoneNumbers" id="48">
-								<TelephoneNumbersType type="MetadataAttribute" name="TelephoneNumbersType" roleId="48" id="55" number="1">
+								<TelephoneNumbersXmlSchemaComplexType type="MetadataAttribute" name="TelephoneNumbersXmlSchemaComplexType" roleId="48" id="34" number="1">
 									<TelephoneNumber type="MetadataAttributeUsage" name="TelephoneNumber" id="41">
-										<TelephoneNumber type="MetadataAttribute" name="TelephoneNumber" roleId="41" id="53" number="1" preferred="false">
+										<TelephoneNumber type="MetadataAttribute" name="TelephoneNumber" roleId="41" id="33" number="1" preferred="false">
 											<Number type="MetadataAttributeUsage" name="Number" id="38">
-												<NumberType type="MetadataAttribute" name="NumberType" roleId="38" id="50" number="1" />
+												<String255 type="MetadataAttribute" name="String255" roleId="38" id="2" number="1"></String255>
 											</Number>
 											<Device type="MetadataAttributeUsage" name="Device" id="39">
-												<DeviceType type="MetadataAttribute" name="DeviceType" roleId="39" id="51" number="1" />
+												<TelephoneDevice type="MetadataAttribute" name="TelephoneDevice" roleId="39" id="32" number="1"></TelephoneDevice>
 											</Device>
 											<UsageNotes type="MetadataAttributeUsage" name="UsageNotes" id="40">
-												<UsageNotesType type="MetadataAttribute" name="UsageNotesType" roleId="40" id="52" number="1" language="" />
+												<StringL type="MetadataAttribute" name="StringL" roleId="40" id="23" number="1" language=""></StringL>
 											</UsageNotes>
 										</TelephoneNumber>
 									</TelephoneNumber>
-								</TelephoneNumbersType>
+								</TelephoneNumbersXmlSchemaComplexType>
 							</TelephoneNumbers>
 							<EmailAddresses type="MetadataAttributeUsage" name="EmailAddresses" id="49">
-								<EmailAddressesType type="MetadataAttribute" name="EmailAddressesType" roleId="49" id="57" number="1">
+								<EmailAddressesXmlSchemaComplexType type="MetadataAttribute" name="EmailAddressesXmlSchemaComplexType" roleId="49" id="36" number="1">
 									<EmailAddress type="MetadataAttributeUsage" name="EmailAddress" id="42">
-										<EmailAddressType type="MetadataAttribute" name="EmailAddressType" roleId="42" id="56" number="1" preferred="" />
+										<StringP255 type="MetadataAttribute" name="StringP255" roleId="42" id="35" number="1" preferred=""></StringP255>
 									</EmailAddress>
-								</EmailAddressesType>
+								</EmailAddressesXmlSchemaComplexType>
 							</EmailAddresses>
 							<URIs type="MetadataAttributeUsage" name="URIs" id="50">
-								<URIsType type="MetadataAttribute" name="URIsType" roleId="50" id="59" number="1">
+								<URIsXmlSchemaComplexType type="MetadataAttribute" name="URIsXmlSchemaComplexType" roleId="50" id="38" number="1">
 									<URL type="MetadataAttributeUsage" name="URL" id="43">
-										<URLType type="MetadataAttribute" name="URLType" roleId="43" id="58" number="1" preferred="" />
+										<anyUriP type="MetadataAttribute" name="anyUriP" roleId="43" id="37" number="1" preferred=""></anyUriP>
 									</URL>
-								</URIsType>
+								</URIsXmlSchemaComplexType>
 							</URIs>
 							<LogoURI type="MetadataAttributeUsage" name="LogoURI" id="51">
-								<LogoURIType type="MetadataAttribute" name="LogoURIType" roleId="51" id="60" number="1" />
+								<LogoURIDatatype_anyURI type="MetadataAttribute" name="LogoURIDatatype_anyURI" roleId="51" id="39" number="1"></LogoURIDatatype_anyURI>
 							</LogoURI>
 						</Contact>
 					</Owner>
-				</OwnersType>
+				</OwnersXmlSchemaComplexType>
 			</Owners>
 			<IPRStatements type="MetadataAttributeUsage" name="IPRStatements" id="11">
-				<IPRStatements type="MetadataAttribute" name="IPRStatements" roleId="11" id="71" number="1">
+				<IPRStatements type="MetadataAttribute" name="IPRStatements" roleId="11" id="50" number="1">
 					<IPRDeclarations type="MetadataAttributeUsage" name="IPRDeclarations" id="63">
-						<IPRDeclarationsType type="MetadataAttribute" name="IPRDeclarationsType" roleId="63" id="64" number="1">
+						<IPRDeclarationsXmlSchemaComplexType type="MetadataAttribute" name="IPRDeclarationsXmlSchemaComplexType" roleId="63" id="43" number="1">
 							<IPRDeclaration type="MetadataAttributeUsage" name="IPRDeclaration" id="56">
-								<Statement type="MetadataAttribute" name="Statement" roleId="56" id="63" number="1" language="">
+								<Statement type="MetadataAttribute" name="Statement" roleId="56" id="42" number="1" language="">
 									<Text type="MetadataAttributeUsage" name="Text" id="53">
-										<TextType type="MetadataAttribute" name="TextType" roleId="53" id="31" number="1" />
+										<String type="MetadataAttribute" name="String" roleId="53" id="1" number="1"></String>
 									</Text>
 									<Details type="MetadataAttributeUsage" name="Details" id="54">
-										<DetailsType type="MetadataAttribute" name="DetailsType" roleId="54" id="9" number="1" />
+										<String type="MetadataAttribute" name="String" roleId="54" id="1" number="1"></String>
 									</Details>
 									<URI type="MetadataAttributeUsage" name="URI" id="55">
-										<URIType type="MetadataAttribute" name="URIType" roleId="55" id="11" number="1" />
+										<URIDatatype_anyURI type="MetadataAttribute" name="URIDatatype_anyURI" roleId="55" id="4" number="1"></URIDatatype_anyURI>
 									</URI>
 								</Statement>
 							</IPRDeclaration>
-						</IPRDeclarationsType>
+						</IPRDeclarationsXmlSchemaComplexType>
 					</IPRDeclarations>
 					<Copyrights type="MetadataAttributeUsage" name="Copyrights" id="64">
-						<CopyrightsType type="MetadataAttribute" name="CopyrightsType" roleId="64" id="65" number="1">
+						<CopyrightsXmlSchemaComplexType type="MetadataAttribute" name="CopyrightsXmlSchemaComplexType" roleId="64" id="44" number="1">
 							<Copyright type="MetadataAttributeUsage" name="Copyright" id="57">
-								<Statement type="MetadataAttribute" name="Statement" roleId="57" id="63" number="1" language="">
+								<Statement type="MetadataAttribute" name="Statement" roleId="57" id="42" number="1" language="">
 									<Text type="MetadataAttributeUsage" name="Text" id="53">
-										<TextType type="MetadataAttribute" name="TextType" roleId="53" id="31" number="1" />
+										<String type="MetadataAttribute" name="String" roleId="53" id="1" number="1"></String>
 									</Text>
 									<Details type="MetadataAttributeUsage" name="Details" id="54">
-										<DetailsType type="MetadataAttribute" name="DetailsType" roleId="54" id="9" number="1" />
+										<String type="MetadataAttribute" name="String" roleId="54" id="1" number="1"></String>
 									</Details>
 									<URI type="MetadataAttributeUsage" name="URI" id="55">
-										<URIType type="MetadataAttribute" name="URIType" roleId="55" id="11" number="1" />
+										<URIDatatype_anyURI type="MetadataAttribute" name="URIDatatype_anyURI" roleId="55" id="4" number="1"></URIDatatype_anyURI>
 									</URI>
 								</Statement>
 							</Copyright>
-						</CopyrightsType>
+						</CopyrightsXmlSchemaComplexType>
 					</Copyrights>
 					<Licenses type="MetadataAttributeUsage" name="Licenses" id="65">
-						<LicensesType type="MetadataAttribute" name="LicensesType" roleId="65" id="66" number="1">
+						<LicensesXmlSchemaComplexType type="MetadataAttribute" name="LicensesXmlSchemaComplexType" roleId="65" id="45" number="1">
 							<License type="MetadataAttributeUsage" name="License" id="58">
-								<Statement type="MetadataAttribute" name="Statement" roleId="58" id="63" number="1" language="">
+								<Statement type="MetadataAttribute" name="Statement" roleId="58" id="42" number="1" language="">
 									<Text type="MetadataAttributeUsage" name="Text" id="53">
-										<TextType type="MetadataAttribute" name="TextType" roleId="53" id="31" number="1" />
+										<String type="MetadataAttribute" name="String" roleId="53" id="1" number="1"></String>
 									</Text>
 									<Details type="MetadataAttributeUsage" name="Details" id="54">
-										<DetailsType type="MetadataAttribute" name="DetailsType" roleId="54" id="9" number="1" />
+										<String type="MetadataAttribute" name="String" roleId="54" id="1" number="1"></String>
 									</Details>
 									<URI type="MetadataAttributeUsage" name="URI" id="55">
-										<URIType type="MetadataAttribute" name="URIType" roleId="55" id="11" number="1" />
+										<URIDatatype_anyURI type="MetadataAttribute" name="URIDatatype_anyURI" roleId="55" id="4" number="1"></URIDatatype_anyURI>
 									</URI>
 								</Statement>
 							</License>
-						</LicensesType>
+						</LicensesXmlSchemaComplexType>
 					</Licenses>
 					<TermsOfUseStatements type="MetadataAttributeUsage" name="TermsOfUseStatements" id="66">
-						<TermsOfUseStatementsType type="MetadataAttribute" name="TermsOfUseStatementsType" roleId="66" id="67" number="1">
+						<TermsOfUseStatementsXmlSchemaComplexType type="MetadataAttribute" name="TermsOfUseStatementsXmlSchemaComplexType" roleId="66" id="46" number="1">
 							<TermsOfUse type="MetadataAttributeUsage" name="TermsOfUse" id="59">
-								<Statement type="MetadataAttribute" name="Statement" roleId="59" id="63" number="1" language="">
+								<Statement type="MetadataAttribute" name="Statement" roleId="59" id="42" number="1" language="">
 									<Text type="MetadataAttributeUsage" name="Text" id="53">
-										<TextType type="MetadataAttribute" name="TextType" roleId="53" id="31" number="1" />
+										<String type="MetadataAttribute" name="String" roleId="53" id="1" number="1"></String>
 									</Text>
 									<Details type="MetadataAttributeUsage" name="Details" id="54">
-										<DetailsType type="MetadataAttribute" name="DetailsType" roleId="54" id="9" number="1" />
+										<String type="MetadataAttribute" name="String" roleId="54" id="1" number="1"></String>
 									</Details>
 									<URI type="MetadataAttributeUsage" name="URI" id="55">
-										<URIType type="MetadataAttribute" name="URIType" roleId="55" id="11" number="1" />
+										<URIDatatype_anyURI type="MetadataAttribute" name="URIDatatype_anyURI" roleId="55" id="4" number="1"></URIDatatype_anyURI>
 									</URI>
 								</Statement>
 							</TermsOfUse>
-						</TermsOfUseStatementsType>
+						</TermsOfUseStatementsXmlSchemaComplexType>
 					</TermsOfUseStatements>
 					<Disclaimers type="MetadataAttributeUsage" name="Disclaimers" id="67">
-						<DisclaimersType type="MetadataAttribute" name="DisclaimersType" roleId="67" id="68" number="1">
+						<DisclaimersXmlSchemaComplexType type="MetadataAttribute" name="DisclaimersXmlSchemaComplexType" roleId="67" id="47" number="1">
 							<Disclaimer type="MetadataAttributeUsage" name="Disclaimer" id="60">
-								<Statement type="MetadataAttribute" name="Statement" roleId="60" id="63" number="1" language="">
+								<Statement type="MetadataAttribute" name="Statement" roleId="60" id="42" number="1" language="">
 									<Text type="MetadataAttributeUsage" name="Text" id="53">
-										<TextType type="MetadataAttribute" name="TextType" roleId="53" id="31" number="1" />
+										<String type="MetadataAttribute" name="String" roleId="53" id="1" number="1"></String>
 									</Text>
 									<Details type="MetadataAttributeUsage" name="Details" id="54">
-										<DetailsType type="MetadataAttribute" name="DetailsType" roleId="54" id="9" number="1" />
+										<String type="MetadataAttribute" name="String" roleId="54" id="1" number="1"></String>
 									</Details>
 									<URI type="MetadataAttributeUsage" name="URI" id="55">
-										<URIType type="MetadataAttribute" name="URIType" roleId="55" id="11" number="1" />
+										<URIDatatype_anyURI type="MetadataAttribute" name="URIDatatype_anyURI" roleId="55" id="4" number="1"></URIDatatype_anyURI>
 									</URI>
 								</Statement>
 							</Disclaimer>
-						</DisclaimersType>
+						</DisclaimersXmlSchemaComplexType>
 					</Disclaimers>
 					<Acknowledgements type="MetadataAttributeUsage" name="Acknowledgements" id="68">
-						<AcknowledgementsType type="MetadataAttribute" name="AcknowledgementsType" roleId="68" id="69" number="1">
+						<AcknowledgementsXmlSchemaComplexType type="MetadataAttribute" name="AcknowledgementsXmlSchemaComplexType" roleId="68" id="48" number="1">
 							<Acknowledgement type="MetadataAttributeUsage" name="Acknowledgement" id="61">
-								<Statement type="MetadataAttribute" name="Statement" roleId="61" id="63" number="1" language="">
+								<Statement type="MetadataAttribute" name="Statement" roleId="61" id="42" number="1" language="">
 									<Text type="MetadataAttributeUsage" name="Text" id="53">
-										<TextType type="MetadataAttribute" name="TextType" roleId="53" id="31" number="1" />
+										<String type="MetadataAttribute" name="String" roleId="53" id="1" number="1"></String>
 									</Text>
 									<Details type="MetadataAttributeUsage" name="Details" id="54">
-										<DetailsType type="MetadataAttribute" name="DetailsType" roleId="54" id="9" number="1" />
+										<String type="MetadataAttribute" name="String" roleId="54" id="1" number="1"></String>
 									</Details>
 									<URI type="MetadataAttributeUsage" name="URI" id="55">
-										<URIType type="MetadataAttribute" name="URIType" roleId="55" id="11" number="1" />
+										<URIDatatype_anyURI type="MetadataAttribute" name="URIDatatype_anyURI" roleId="55" id="4" number="1"></URIDatatype_anyURI>
 									</URI>
 								</Statement>
 							</Acknowledgement>
-						</AcknowledgementsType>
+						</AcknowledgementsXmlSchemaComplexType>
 					</Acknowledgements>
 					<Citations type="MetadataAttributeUsage" name="Citations" id="69">
-						<CitationsType type="MetadataAttribute" name="CitationsType" roleId="69" id="70" number="1">
+						<CitationsXmlSchemaComplexType type="MetadataAttribute" name="CitationsXmlSchemaComplexType" roleId="69" id="49" number="1">
 							<Citation type="MetadataAttributeUsage" name="Citation" id="62">
-								<Statement type="MetadataAttribute" name="Statement" roleId="62" id="63" number="1" language="">
+								<Statement type="MetadataAttribute" name="Statement" roleId="62" id="42" number="1" language="">
 									<Text type="MetadataAttributeUsage" name="Text" id="53">
-										<TextType type="MetadataAttribute" name="TextType" roleId="53" id="31" number="1" />
+										<String type="MetadataAttribute" name="String" roleId="53" id="1" number="1"></String>
 									</Text>
 									<Details type="MetadataAttributeUsage" name="Details" id="54">
-										<DetailsType type="MetadataAttribute" name="DetailsType" roleId="54" id="9" number="1" />
+										<String type="MetadataAttribute" name="String" roleId="54" id="1" number="1"></String>
 									</Details>
 									<URI type="MetadataAttributeUsage" name="URI" id="55">
-										<URIType type="MetadataAttribute" name="URIType" roleId="55" id="11" number="1" />
+										<URIDatatype_anyURI type="MetadataAttribute" name="URIDatatype_anyURI" roleId="55" id="4" number="1"></URIDatatype_anyURI>
 									</URI>
 								</Statement>
 							</Citation>
-						</CitationsType>
+						</CitationsXmlSchemaComplexType>
 					</Citations>
 				</IPRStatements>
 			</IPRStatements>
-		</MetadataType>
+		</ContentMetadata>
 	</Metadata>
 </Metadata>

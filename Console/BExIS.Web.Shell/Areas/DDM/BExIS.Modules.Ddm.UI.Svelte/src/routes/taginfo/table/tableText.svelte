@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { TextInput } from '@bexis2/bexis2-core-ui';
-	import type { TagInfoModel } from '../types';
 
 	export let value: string;
 	export let row: any;

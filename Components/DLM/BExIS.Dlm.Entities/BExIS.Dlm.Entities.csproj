@@ -62,6 +62,8 @@
   <ItemGroup>
     <Compile Include="Administration\ResearchPlan.cs" />
     <Compile Include="Common\BaseUsage.cs" />
+    <Compile Include="Curation\CurationEntry.cs" />
+    <Compile Include="Curation\CurationNote.cs" />
     <Compile Include="DataStructure\AggregateFunction.cs" />
     <Compile Include="DataStructure\Classifier.cs" />
     <Compile Include="DataStructure\Constraint.cs" />

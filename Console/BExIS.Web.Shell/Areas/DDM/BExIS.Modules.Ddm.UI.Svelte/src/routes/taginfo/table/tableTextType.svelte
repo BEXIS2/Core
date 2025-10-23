@@ -3,7 +3,7 @@
 </script>
 
 <div>
-	<span title="Type of change made in this version">
+	<span title="General type of change of this version (e.g. Metadata, Data, etc.)">
 		{value}
 	</span>
 </div>

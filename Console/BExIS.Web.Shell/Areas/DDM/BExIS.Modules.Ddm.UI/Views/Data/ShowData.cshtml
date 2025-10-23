@@ -10,6 +10,8 @@
     string bioSchemaInfos = "";
     long total = 0;
     bool has_data = false;
+    string data_aggreement = "none";
+    bool aggrreement_checked = true;
 
     if (ViewData["TabIndex"] != null)
     {
@@ -39,6 +41,14 @@
     if (ViewData["has_data"] != null)
     {
         has_data = (bool)ViewData["has_data"];
+    }
+
+    if (ViewData["data_aggreement"] != null && String.IsNullOrEmpty(User.Identity.Name))
+    {
+        data_aggreement = (string)ViewData["data_aggreement"];
+        if (data_aggreement != "none") {
+            aggrreement_checked = false;
+        }
     }
 
     var show_tabs = new Dictionary<string, string>();
@@ -234,14 +244,37 @@
             @{Html.RenderAction("GetCitationOrTitle", "Data", new { datasetVersionId = Model.VersionId });}
         </div>
 
-        <div class="datasetview_header-toggle">
-
+        <div class="datasetview_header-toggle flex">
+           
             @if (Model.DownloadAccess)
             {
+                /*  data aggreement state: none, data policy, terms and conditions**/
+
+                if (data_aggreement.Equals("data policy"))
+                {
+                    <div class="data-aggreement">
+                        @Html.CheckBox("data_policy", false, new { @id = "data-policy" })
+                        <b>I accept the public regulations from the 
+                        <a href="/footer/policy" target="_blank">privacy policy</a>.</b>
+                    </div>
+                }
+                else if (data_aggreement.Equals("terms and conditions"))
+                {
+                    <div class="data-aggreement">
+                        @Html.CheckBox("terms_and_conditions", false, new { @id = "terms-and-conditions" })
+                        <b>
+                            I accept the public regulations from the
+                            <a href="/footer/termsandconditions" target="_blank">terms and conditions</a>.
+                        </b>
+                     </div>
+                }
+
+
 
                 if (Model.DataStructureType.ToLower().Equals("structured"))
                 {
                     <span class="dropdown">
+
                         <button class="bx-button function small" type="button" id="dropdownMenu1" data-toggle="dropdown" title="Download dataset with a selected dataformat for the primary data" aria-haspopup="true" aria-expanded="true">
                             <span class="fa fa-download" style="padding-right: 5px;"></span>
                             Download
@@ -278,9 +311,9 @@
                         {
                             <button id="sendRequestBt" class="bx-button small function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
                         }
-                        else if(!has_data)
+                        else if (!has_data)
                         {
-                           <!-- if dataset has no data-->
+                            <!-- if dataset has no data-->
 
                         }
                         else
@@ -444,7 +477,7 @@
         </div>
     }
 </div>
-    <script type="text/javascript">
+<script type="text/javascript">
 
 	function grid_subjects_onDataBound() {
 		addTooltips();
@@ -479,8 +512,34 @@
 
         $("#preloaderContainer").removePreloader();
 
+        console.log("aggrreement_checked",'@aggrreement_checked')
+        setDownloadBt('@aggrreement_checked');
+
     });
 
+    function setDownloadBt(aggreed) {
+        console.log("aggreed",aggreed)
+
+        if (aggreed == 'true' || aggreed == 'True' || aggreed == true) {
+            $("#dropdownMenu1").removeAttr("disabled");
+            $("#dropdownMenu1").removeClass("bx-disabled")
+        }
+        else
+        {
+            $("#dropdownMenu1").attr("disabled", "disabled");
+            $("#dropdownMenu1").addClass("bx-disabled")
+        }
+        }
+
+      $("#data-policy").change(function () {
+        var isChecked = $(this).is(":checked");
+            setDownloadBt(isChecked);
+      });
+
+    $("#terms-and-conditions").change(function () {
+        var isChecked = $(this).is(":checked");
+        setDownloadBt(isChecked);
+    });
 
     function loadTags() {
             $.ajax({
@@ -631,7 +690,7 @@
        window.location.href = "/dcm/edit?id=@Model.Id";
 
     }
-    </script>
+</script>
 
 }
 else if (Model.IsPublic == false)
@@ -672,14 +731,17 @@ else
         float: right;
     }
 
+
     .tab-pane {
         min-height: 70px;
     }
 
-    .flex{
+    .flex {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
+        gap: 5px;
+        align-content: center;
     }
 
     .grow {
@@ -700,6 +762,10 @@ else
 
     #identifier-container {
         padding-left:2px;
+    }
+
+    .data-aggreement {
+        width:300px;
     }
 
 </style>

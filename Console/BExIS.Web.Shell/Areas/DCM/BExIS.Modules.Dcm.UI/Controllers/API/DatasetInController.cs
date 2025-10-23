@@ -30,6 +30,7 @@ using Vaiona.Entities.Common;
 
 namespace BExIS.Modules.Dcm.UI.Controllers.API
 {
+    [RoutePrefix("api/dataset")]
     public class DatasetInController : ApiController
     {
         // POST api/ DatasetIn
@@ -47,7 +48,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
         /// <param name="dataset"></param>
         /// <returns> HttpResponseMessage </returns>
         [BExISApiAuthorize]
-        [PostRoute("api/Dataset")]
+        [PostRoute("")]
+        [HttpPost]
         public HttpResponseMessage Post([FromBody] PostApiDatasetModel dataset)
         {
       
@@ -184,21 +186,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
             }
         }
 
-        // PUT api/<controller>/5
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [BExISApiAuthorize]
-        [PutRoute("api/Dataset")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+        //// PUT api/<controller>/5
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        //[BExISApiAuthorize]
+        //[PutRoute("api/Dataset")]
+        //public void Put(int id, [FromBody] string value)
+        //{
+        //}
 
-        // DELETE api/<controller>/5
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [BExISApiAuthorize]
-        [DeleteRoute("api/Dataset")]
-        public void Delete(int id)
-        {
-        }
+        //// DELETE api/<controller>/5
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        //[BExISApiAuthorize]
+        //[DeleteRoute("api/Dataset")]
+        //public void Delete(int id)
+        //{
+        //}
 
         private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)
         {
