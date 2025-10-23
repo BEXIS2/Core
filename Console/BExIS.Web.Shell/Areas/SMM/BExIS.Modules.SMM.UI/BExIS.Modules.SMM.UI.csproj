@@ -125,7 +125,6 @@
     <None Include="Properties\PublishProfiles\BexisServer_train.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_demo.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="SMM.Manifest.xml" />
     <Content Include="SMM.Settings.xml" />
     <Content Include="Views\Web.config" />
