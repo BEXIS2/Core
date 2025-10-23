@@ -538,7 +538,8 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             {
                 ris += "AU - " + author + "\n";
             }
-            ris += "PY - " + year + "/// \n";
+            ris += "PY - " + year + " \n";
+            ris += " ET- " + version + " \n";
             ris += "PB - " + publisher + " \n";
 
             if (!String.IsNullOrEmpty(doi))
