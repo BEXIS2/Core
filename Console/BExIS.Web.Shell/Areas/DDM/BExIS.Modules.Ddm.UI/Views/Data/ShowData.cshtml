@@ -12,6 +12,8 @@
     bool has_data = false;
     string data_aggreement = "none";
     bool aggrreement_checked = true;
+    bool withFilter = false;
+    bool withUnits = false;
 
     if (ViewData["TabIndex"] != null)
     {
@@ -245,7 +247,7 @@
         </div>
 
         <div class="datasetview_header-toggle flex">
-           
+
             @if (Model.DownloadAccess)
             {
                 /*  data aggreement state: none, data policy, terms and conditions**/
@@ -254,8 +256,10 @@
                 {
                     <div class="data-aggreement">
                         @Html.CheckBox("data_policy", false, new { @id = "data-policy" })
-                        <b>I accept the public regulations from the 
-                        <a href="/footer/policy" target="_blank">privacy policy</a>.</b>
+                        <b>
+                            I accept the public regulations from the
+                            <a href="/footer/policy" target="_blank">privacy policy</a>.
+                        </b>
                     </div>
                 }
                 else if (data_aggreement.Equals("terms and conditions"))
@@ -266,97 +270,108 @@
                             I accept the public regulations from the
                             <a href="/footer/termsandconditions" target="_blank">terms and conditions</a>.
                         </b>
-                     </div>
+                    </div>
                 }
 
 
 
                 if (Model.DataStructureType.ToLower().Equals("structured"))
                 {
-                    <span class="dropdown">
+                        <div class="padding-top-5 position-releative ">
+                            <span>
+                                @Html.CheckBox("WithFilter", false, new { text = "download filtered data", @id = "withFilter" })
+                                use filter
+                            </span>
 
-                        <button class="bx-button function small" type="button" id="dropdownMenu1" data-toggle="dropdown" title="Download dataset with a selected dataformat for the primary data" aria-haspopup="true" aria-expanded="true">
-                            <span class="fa fa-download" style="padding-right: 5px;"></span>
-                            Download
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
+                            <span>
+                                @Html.CheckBox("WithUnits", false, new { text = "download data with units", @id = "withUnits" })
+                                add units
+                            </span>
+                        </div>
 
-                            @if (@total < 1048576) // hide Excel download for bigger datasets, which exceed the max number of rows in excel
-                            {
-                                <li>@*<a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId })">... with Template</a>*@</li>
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId })">... with Excel</a></li>
-                            }
-                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })">... with CSV</a></li>
-                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv", version = Model.VersionId })">... with TSV</a></li>
-                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain", version = Model.VersionId })">... with TXT</a></li>
-                        </ul>
-                    </span>
-                }
-                else
-                {
-                    <a class="bx-button small function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, version = Model.VersionId, format = "" })"><span class="fa fa-download" style="padding-right: 5px;"></span>Download Dataset</a>
-                }
-            }
-            else
-            {
+                        <span class="dropdown">
+
+                            <button class="bx-button function small" type="button" id="dropdownMenu1" data-toggle="dropdown" title="Download dataset with a selected dataformat for the primary data" aria-haspopup="true" aria-expanded="true">
+                                <span class="fa fa-download" style="padding-right: 5px;"></span>
+                                Download
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
+
+                                @if (@total < 1048576) // hide Excel download for bigger datasets, which exceed the max number of rows in excel
+                                {
+                                    <li>@*<a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId })">... with Template</a>*@</li>
+                                    <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId, withFilter, withUnits })">... with Excel</a></li>
+                                }
+                                <li><a id="csv-download" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })" >... with CSV</a></li>
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv", version = Model.VersionId, withFilter,withUnits })">... with TSV</a></li>
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain", version = Model.VersionId, withFilter,withUnits })">... with TXT</a></li>
+                            </ul>
+                        </span>
+                        }
+                        else
+                        {
+                        <a class="bx-button small function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, version = Model.VersionId, format = "" })"><span class="fa fa-download" style="padding-right: 5px;"></span>Download Dataset</a>
+                        }
+                        }
+                        else
+                        {
 
 
-                if (Model.HasRequestRight)
-                {
-                    if (Model.RequestAble)
-                    {
+                        if (Model.HasRequestRight)
+                        {
+                        if (Model.RequestAble)
+                        {
 
                         if (Model.RequestExist)
                         {
-                            <button id="sendRequestBt" class="bx-button small function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
+                        <button id="sendRequestBt" class="bx-button small function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
                         }
                         else if (!has_data)
                         {
-                            <!-- if dataset has no data-->
+                        <!-- if dataset has no data-->
+                        }
+                        else
+                        {
+                        <div>
+                            @Html.TextArea("intention", new { @class = "bx-input", placeholder = "describe your intention " });
+                        </div>
+                        <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button small function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">
+                            <span class="fa fa-paper-plane" style="padding-right: 5px;"></span>
+                            Request Access
+                        </button>
+                        }
 
                         }
                         else
                         {
-                            <div>
-                                @Html.TextArea("intention", new { @class = "bx-input", placeholder = "describe your intention " });
-                            </div>
-                            <button id="sendRequestBt" datasetId="@Model.Id" class="bx-button small function" title="Send request to the owner of the dataset for the rights to see and download the primary data.">
-                                <span class="fa fa-paper-plane" style="padding-right: 5px;"></span>
-                                Request Access
-                            </button>
-                        }
-
-                    }
-                    else
-                    {
                         if (show_tabs["show_tabs_deactivated"] == "true")
                         {
-                            <button id="sendRequestBt" class="bx-button small function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
+                        <button id="sendRequestBt" class="bx-button small function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data. If the function is not available, please contact the administrator." disabled="disabled">Currently not available</button>
                         }
-                    }
-                }
-                else
-                {
-                    if (show_tabs["show_tabs_deactivated"] == "true")
-                    {
+                        }
+                        }
+                        else
+                        {
+                        if (show_tabs["show_tabs_deactivated"] == "true")
+                        {
                         <button id="sendRequestBt" class="bx-button small function bx-disabled" title="You have no right to make requests." disabled="disabled">Currently not available</button>
-                    }
-                }
-            }
+                        }
+                        }
+                        }
 
-            @if (Model.HasEditRight && ViewData["state"].ToString() != "hidden")
-            {
+                        @if (Model.HasEditRight && ViewData["state"].ToString() != "hidden")
+                        {
 
-                <button title="go to edit dataset" class="bx-button small function" type="button" onclick="toogleToEdit()">
-                    <span class="fa fa-pencil"></span>
-                    <span style="padding:5px;">
-                        Edit
-                    </span>
-                </button>
+                            <button title="go to edit dataset" class="bx-button small function" type="button" onclick="toogleToEdit()">
+                                <span class="fa fa-pencil"></span>
+                                <span style="padding:5px;">
+                                    Edit
+                                </span>
+                            </button>
 
-            }
-        </div>
+                        }
+</div>
     </div>
 
 
@@ -514,6 +529,37 @@
 
         console.log("aggrreement_checked",'@aggrreement_checked')
         setDownloadBt('@aggrreement_checked');
+
+
+        $("#csv-download").on("click", function (e) {
+            // Prevent the default navigation initially
+            e.preventDefault();
+
+            var withFilter = $("#withFilter");
+            var withFilterIsChecked = withFilter.is(":checked"); // Check if the box is checked
+            var withUnits = $("#withUnits");
+            var withUnitsIsChecked = withUnits.is(":checked"); // Check if the box is checked
+
+
+            var link = $(this);
+            var originalHref = link.attr("href");
+            var newHref = originalHref;
+
+            // Construct the query parameter, using the checkbox's name 'IsChecked'
+            var param = "withFilter=" + withFilterIsChecked + "&&withUnits=" + withUnitsIsChecked;
+
+            // Check if the URL already contains query parameters
+            if (originalHref.indexOf('?') > -1) {
+                newHref += "&" + param;
+            } else {
+                newHref += "?" + param;
+            }
+
+            console.log("newHref", newHref);
+
+            // Set the new URL and navigate
+            window.location.href = newHref;
+        });
 
     });
 
@@ -758,6 +804,11 @@ else
 
     .padding-top-5 {
         padding-top: 5px;
+    }
+
+
+    .position-releative {
+        position: relative;
     }
 
     #identifier-container {

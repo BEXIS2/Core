@@ -192,7 +192,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
-        public ActionResult GenerateZip(long id, long versionid, string format)
+        public ActionResult GenerateZip(long id, long versionid, string format,bool withFilter = false, bool withUnits = false)
         {
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             DatasetManager dm = new DatasetManager();
@@ -237,10 +237,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         //check wheter title is empty or not
                         title = String.IsNullOrEmpty(datasetVersion.Title) ? "no title available" : datasetVersion.Title;
 
-                        if (isFilterInUse)
+                        if (isFilterInUse && withFilter)
                         {
                             DataTable filteredData = getFilteredData(id);
-                            filteredFilePath = odm.GenerateAsciiFile("temp", filteredData, title, format, datasetVersion.Dataset.DataStructure.Id, false);
+                            filteredFilePath = odm.GenerateAsciiFile("temp", filteredData, title, format, datasetVersion.Dataset.DataStructure.Id, withUnits);
                         }
                         else
                         {
@@ -248,7 +248,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             switch (format)
                             {
                                 case "application/xlsx":
-                                    odm.GenerateExcelFile(id, datasetVersion.Id, false);
+                                    odm.GenerateExcelFile(id, datasetVersion.Id, withUnits);
                                     break;
 
                                 case "application/xlsm":
@@ -256,7 +256,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     break;
 
                                 default:
-                                    odm.GenerateAsciiFile(id, datasetVersion.Id, format, false);
+                                    odm.GenerateAsciiFile(id, datasetVersion.Id, format, withUnits);
                                     break;
                             }
                         }

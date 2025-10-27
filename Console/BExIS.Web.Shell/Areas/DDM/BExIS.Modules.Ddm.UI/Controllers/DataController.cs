@@ -591,11 +591,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
-        public ActionResult DownloadZip(long id, string format, long version = -1)
+        public ActionResult DownloadZip(long id, string format, long version = -1,bool withFilter = false, bool withUnits=false)
         {
             if (this.IsAccessible("DIM", "Export", "GenerateZip"))
             {
-                var actionresult = this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", version }, { "format", format } });
+                var actionresult = this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", version }, { "format", format }, { "withFilter", withFilter }, { "withUnits", withUnits } });
 
                 return actionresult;
             }
