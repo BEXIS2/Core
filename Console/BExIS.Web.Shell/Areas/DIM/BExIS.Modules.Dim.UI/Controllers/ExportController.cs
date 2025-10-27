@@ -19,9 +19,11 @@ using BExIS.Modules.Dim.UI.Models.Export;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Entities.Versions;
 using BExIS.Security.Services.Utilities;
+using BExIS.UI.Helpers;
 using BExIS.Utils.Config;
 using BExIS.Utils.Extensions;
 using BExIS.Utils.Models;
+using BExIS.Utils.NH.Querying;
 using BExIS.Xml.Helpers;
 using Newtonsoft.Json;
 using System;
@@ -35,6 +37,8 @@ using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
+using Telerik.Web.Mvc;
+using Vaelastrasz.Library.Models;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
@@ -196,6 +200,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
             PublicationManager publicationManager = new PublicationManager();
             SubmissionManager publishingManager = new SubmissionManager();
 
+            bool isFilterInUse = filterInUse();
+            string filteredFilePath = "";
+
             string brokerName = "generic";
 
             try
@@ -220,6 +227,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     #region primary data
 
+
+
                     // check the data sturcture type ...
                     if (format != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure && dm.GetDataTuplesCount(datasetVersion.Id) > 0)
                     {
@@ -228,19 +237,28 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         //check wheter title is empty or not
                         title = String.IsNullOrEmpty(datasetVersion.Title) ? "no title available" : datasetVersion.Title;
 
-                        switch (format)
+                        if (isFilterInUse)
                         {
-                            case "application/xlsx":
-                                odm.GenerateExcelFile(id, datasetVersion.Id, false);
-                                break;
+                            DataTable filteredData = getFilteredData(id);
+                            filteredFilePath = odm.GenerateAsciiFile("temp", filteredData, title, format, datasetVersion.Dataset.DataStructure.Id, false);
+                        }
+                        else
+                        {
 
-                            case "application/xlsm":
-                                odm.GenerateExcelFile(id, datasetVersion.Id, true);
-                                break;
+                            switch (format)
+                            {
+                                case "application/xlsx":
+                                    odm.GenerateExcelFile(id, datasetVersion.Id, false);
+                                    break;
 
-                            default:
-                                odm.GenerateAsciiFile(id, datasetVersion.Id, format, false);
-                                break;
+                                case "application/xlsm":
+                                    odm.GenerateExcelFile(id, datasetVersion.Id, true);
+                                    break;
+
+                                default:
+                                    odm.GenerateAsciiFile(id, datasetVersion.Id, format, false);
+                                    break;
+                            }
                         }
                     }
 
@@ -272,6 +290,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     #region zip file
 
                     string zipName = IOHelper.GetFileName(FileType.Bundle, id, datasetVersionNumber, dataStructureId, title); //publishingManager.GetZipFileName(id, datasetVersionNumber);
+                    // add suffix if filter is in use
+                    if (isFilterInUse) zipName += "_filtered";
+
                     string zipPath = Path.Combine(publishingManager.GetDirectoryPath(id, brokerName), zipName+".zip");
                     FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipPath));
 
@@ -316,6 +337,18 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             }
                         }
 
+                        // if data was filtered add a text file with information about filtering
+                        if (isFilterInUse)
+                        {
+                            string path = Path.Combine(AppConfiguration.DataPath, filteredFilePath);
+                            string ext = Path.GetExtension(filteredFilePath).ToLower();
+                            string name = IOHelper.GetFileName(FileType.PrimaryData, id, datasetVersionNumber, dataStructureId)+"filtered"+ ext;
+
+                            archive.AddFileToArchive(filteredFilePath, name);
+                        }
+
+
+
                         // xml schema
                         string xsdPath = OutputMetadataManager.GetSchemaDirectoryPath(id);
                         if (Directory.Exists(xsdPath))
@@ -331,6 +364,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         datasetModel.DownloadInformation.DownloadDate = DateTime.Now.ToString(new CultureInfo("en-US"));
                         datasetModel.DownloadInformation.DownloadSource = Request.Url.Host;
                         datasetModel.DownloadInformation.DownloadedBy = getPartyNameOrDefault();
+
+                        // set filter info 
+                        if(isFilterInUse)
+                            datasetModel.DownloadInformation.DownloadedFilter = getFilterQuery();
 
                         if(datasetModel.DownloadInformation.DownloadedBy == "DEFAULT") datasetModel.DownloadInformation.DownloadedBy = "ANONYMOUS";
 
@@ -572,5 +609,62 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
             return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
         }
+
+        private bool filterInUse()
+        {
+            if (Session["DataFilter"] != null || Session["DataOrderBy"] != null || Session["DataProjection"] != null )
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private DataTable getFilteredData(long datasetId)
+        {
+            DatasetManager datasetManager = new DatasetManager();
+            try
+            {
+                GridCommand command = null;
+                FilterExpression filter = null;
+                OrderByExpression orderBy = null;
+                ProjectionExpression projection = null;
+                string[] columns = null;
+
+                if (Session["DataFilter"] != null) filter  = (FilterExpression)Session["DataFilter"];
+                if (Session["DataOrderBy"] != null) orderBy = (OrderByExpression)Session["DataOrderBy"];
+                if (Session["DataProjection"] != null) projection = (ProjectionExpression)Session["DataProjection"];
+
+
+                long count = datasetManager.RowCount(datasetId, filter);
+
+                DataTable table = datasetManager.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, projection, "", 0, (int)count);
+
+                if (projection == null) table.Strip();
+
+                return table;
+            }
+            finally
+            {
+                datasetManager.Dispose();
+            }
+        }
+
+        private string getFilterQuery()
+        {
+            FilterExpression filter = null;
+            OrderByExpression orderBy = null;
+            ProjectionExpression projection = null;
+            string[] columns = null;
+
+            if (Session["DataFilter"] != null) filter = (FilterExpression)Session["DataFilter"];
+            if (Session["DataOrderBy"] != null) orderBy = (OrderByExpression)Session["DataOrderBy"];
+            if (Session["DataProjection"] != null) projection = (ProjectionExpression)Session["DataProjection"];
+
+            string query = filter?.ToSQL() + orderBy?.ToSQL() + projection?.ToSQL();
+
+            return query;
+        }
+
     }
 }

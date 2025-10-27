@@ -54,5 +54,6 @@ namespace BExIS.Modules.Dim.UI.Models.Download
         public string DownloadSource { get; set; }
         public string DownloadDate { get; set; }
         public string DownloadedBy { get; set; }
+        public string DownloadedFilter { get; set; }
     }
 }
