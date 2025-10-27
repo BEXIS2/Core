@@ -73,6 +73,12 @@ namespace BExIS.Utils.Files
                 sanitizedName = sanitizedName.Replace(doubleReplacement, replacementChar.ToString());
             }
 
+            // length
+            if (sanitizedName.Length > 40)
+            {
+                sanitizedName = sanitizedName.Substring(0, 40)+"...";
+            }
+
             return sanitizedName;
         }
     }
