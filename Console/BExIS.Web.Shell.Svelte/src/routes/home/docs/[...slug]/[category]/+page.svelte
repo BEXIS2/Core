@@ -221,28 +221,28 @@
 		const svg_save =
 			'<svg class="svelte-fa svelte-fa-base undefined svelte-bvo74f inline" viewBox="0 0 448 512" aria-hidden="true" role="img" xmlns="http://www.w3.org/2000/svg"><g transform="translate(224 256)" transform-origin="112 0"><g transform="translate(0,0) scale(1,1)"><path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-242.7c0-17-6.7-33.3-18.7-45.3L352 50.7C340 38.7 323.7 32 306.7 32L64 32zm0 96c0-17.7 14.3-32 32-32l192 0c17.7 0 32 14.3 32 32l0 64c0 17.7-14.3 32-32 32L96 224c-17.7 0-32-14.3-32-32l0-64zM224 288a64 64 0 1 1 0 128 64 64 0 1 1 0-128z" fill="currentColor" transform="translate(-256 -256)"></path></g></g></svg>';
 
-		if (text.startsWith('[!LINK_VIEW]')) {
-			return `<div class="inline-flex not-prose mt-2"><div class="mr-1 ">${svg_view}</div><a class="underline" href="${href}" title="${title || ''} ">${text.replace('[!LINK_VIEW]', '').trim()}</a></div>`;
+		const icons = {};
+		icons['[!LINK_VIEW]'] = svg_view;
+		icons['[!LINK_EDIT]'] = svg_edit;
+		icons['[!LINK_CREATE]'] = svg_add;
+		icons['[!LINK_DELETE]'] = svg_delete;
+		icons['[!LINK_MANAGE]'] = svg_manage;
+		icons['[!LINK_CONFIGURE]'] = svg_configure;
+		icons['[!LINK_SAVE]'] = svg_save;
+
+		// use regex to extract the link type and the rest of the text
+		const text_type = text.match(/(\[!LINK_[A-Z]+\])/);
+		if (!text_type) {
+			return `<a class="underline" href="${href}" title="${title || ''}">${text}</a>`;
 		}
-		if (text.startsWith('[!LINK_EDIT]')) {
-			return `<div class="inline-flex not-prose"><div class="mr-1">${svg_edit}</div><a class="underline" href="${href}" title="${title || ''} ">${text.replace('[!LINK_EDIT]', '').trim()}</a></div>`;
+		const text_rest = text.replace(text_type[0], '').trim();
+		if (text_type[0] in icons) {
+			return `<span class="inline-flex not-prose mt-2"><span class="mr-1 ">${icons[text_type[0]]}</span><a class="underline" href="${href}" title="${title || ''} ">${text_rest}</a></span>`;
 		}
-		if (text.startsWith('[!LINK_CREATE]')) {
-			return `<div class="inline-flex not-prose"><div class="mr-1 ">${svg_add}</div><a class="underline" href="${href}" title="${title || ''} ">${text.replace('[!LINK_CREATE]', '').trim()}</a></div>`;
+		else
+		{
+			return `<a class="underline" href="${href}" title="${title || ''}">${text}</a>`;
 		}
-		if (text.startsWith('[!LINK_DELETE]')) {
-			return `<div class="inline-flex not-prose"><div class="mr-1 ">${svg_delete}</div><a class="underline" href="${href}" title="${title || ''} ">${text.replace('[!LINK_DELETE]', '').trim()}</a></div>`;
-		}
-		if (text.startsWith('[!LINK_MANAGE]')) {
-			return `<div class="inline-flex not-prose"><div class="mr-1 ">${svg_manage}</div><a class="underline" href="${href}" title="${title || ''} ">${text.replace('[!LINK_MANAGE]', '').trim()}</a></div>`;
-		}
-		if (text.startsWith('[!LINK_CONFIGURE]')) {
-			return `<div class="inline-flex not-prose"><div class="mr-1 ">${svg_configure}</div><a class="underline" href="${href}" title="${title || ''} ">${text.replace('[!LINK_CONFIGURE]', '').trim()}</a></div>`;
-		}
-		if (text.startsWith('[!LINK_SAVE]')) {
-			return `<div class="inline-flex not-prose"><div class="mr-1 ">${svg_save}</div><a class="underline" href="${href}" title="${title || ''} ">${text.replace('[!LINK_SAVE]', '').trim()}</a></div>`;
-		}
-		return `<a class="underline" href="${href}" title="${title || ''}">${text}</a>`;
 	};
 
 	async function toggleVisibility(index: number, init = false) {

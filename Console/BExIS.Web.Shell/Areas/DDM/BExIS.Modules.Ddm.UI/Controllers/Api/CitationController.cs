@@ -31,20 +31,47 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
 {
     public class CitationController : ApiController
     {
-        // GET api/Citation/{id}
-        /// <summary>
-        /// Get citation of a dataset by id and version.
-        /// </summary>
-        ///
-        /// <param name="id">Identifier of a dataset</param>
         [BExISApiAuthorize]
-        [GetRoute("api/Citation/{id}")]
+        [GetRoute("api/datasets/citations")]
         [ResponseType(typeof(CitationModel))]
-        public HttpResponseMessage Get(long id, int versionNumber = 0, [FromUri] Format format = Format.Bibtex)
+        public HttpResponseMessage Get([FromUri] Format format = Format.Bibtex)
+        {
+            return GetAllCitations();
+        }
+
+        [BExISApiAuthorize]
+        [GetRoute("api/datasets/{datasetId}/citations")]
+        [ResponseType(typeof(CitationModel))]
+        public HttpResponseMessage GetCitationFromLatestVersion(long datasetId, [FromUri] Format format = Format.Bibtex)
         {
 
-            return GetCitation(id, format, versionNumber);
+            try
+            {
+                using (var datasetManager = new DatasetManager())
+                {
+                    var datasetVersionId = datasetManager.GetDatasetLatestVersion(datasetId)?.Id;
 
+                    if( datasetVersionId == null)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Dataset version not found.");
+                    }
+
+                    return Request.CreateResponse<CitationModel>(HttpStatusCode.OK, new CitationModel() { CitationString = "jsdjufkjsdkfjf"});                }
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "An error occurred while retrieving the citation: " + ex.Message);
+            }
+        }
+
+        [BExISApiAuthorize]
+        [GetRoute("api/datasets/{datasetId}/citations/{versionNumber}")]
+        [ResponseType(typeof(CitationModel))]
+        public HttpResponseMessage GetCitationFromSpecificVersionNumber(long datasetId, int versionNumber, [FromUri] Format format = Format.Bibtex)
+        {
+
+            //return GetCitation(id, format, versionNumber);
+            return null;
         }
 
         // GET api/Citation/GetCitations
@@ -147,20 +174,6 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             return response;
         }
 
-        /// <summary>
-        /// Get citation string of all datasets
-        /// </summary>
-        ///
-        /// <param name="id">Identifier of a dataset</param>
-        [BExISApiAuthorize]
-        [GetRoute("api/Citation/Datasets")]
-        [ResponseType(typeof(CitationModel))]
-        public HttpResponseMessage Get()
-        {
-
-            return GetAllCitations();
-
-        }
 
         private HttpResponseMessage GetAllCitations()
         {
@@ -374,7 +387,7 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             if (!String.IsNullOrEmpty(model.DOI))
                 datasetCitationEntry.DOI = model.DOI;
             datasetCitationEntry.Authors = model.Authors;
-            datasetCitationEntry.Year = getYear(model.Date);
+            datasetCitationEntry.Year = getYear(model.Year);
 
             //create authorname in the correct format
             List<string> authors = new List<string>();
@@ -401,7 +414,7 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             string publisher = settings.GetValueByKey("publisher").ToString();
             string instanceName = settings.GetValueByKey("instanceName").ToString();
 
-            string year = getYear(model.Date);
+            string year = getYear(model.Year);
 
             //create authorname in the correct format
             List<string> authors = new List<string>();
@@ -451,28 +464,28 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                     model = (CitationDataModel)serializer.Deserialize(reader);
                 }
 
-                if (String.IsNullOrEmpty(model.Version))
+                if(String.IsNullOrEmpty(model.Version))
                     model.Version = datasetVersion.VersionNo.ToString();
-                if (String.IsNullOrEmpty(model.Date))
+                if(String.IsNullOrEmpty(model.Year))
                 {
-                    if (String.IsNullOrEmpty(datasetVersion.PublicAccessDate.ToString()))
-                        model.Date = datasetVersion.PublicAccessDate.ToString();
+                    if(String.IsNullOrEmpty(datasetVersion.PublicAccessDate.ToString()))
+                        model.Year = datasetVersion.PublicAccessDate.ToString();
                     else
-                        model.Date = datasetVersion.Timestamp.ToString();
+                        model.Year = datasetVersion.Timestamp.ToString();
                 }
-                if (String.IsNullOrEmpty(model.DOI))
+                if(String.IsNullOrEmpty(model.DOI))
                 {
                     using (var publicationManager = new PublicationManager())
                     {
                         var pub = publicationManager.GetPublication(datasetVersion.Dataset.Id);
-                        if (pub != null)
+                        if(pub != null)
                         {
-                            if (!String.IsNullOrEmpty(pub.Doi))
-                                model.DOI = pub.Doi;
+                            if(!String.IsNullOrEmpty(pub.Doi))
+                                model.DOI = pub.Doi;    
                         }
                     }
                 }
-
+                    
             }
 
             return model;
@@ -525,7 +538,8 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             {
                 ris += "AU - " + author + "\n";
             }
-            ris += "PY - " + year + "/// \n";
+            ris += "PY - " + year + " \n";
+            ris += " ET- " + version + " \n";
             ris += "PB - " + publisher + " \n";
 
             if (!String.IsNullOrEmpty(doi))
