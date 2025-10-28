@@ -1778,10 +1778,10 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     XDocument metadataRef = xmlMetadataWriter.CreateMetadataXml(metadataStructure.Id);
 
                     //create root mapping
-                    LinkElement extensionRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None, "");
+                    LinkElement extensionRoot = createLinkELementIfNotExist(mappingManager, metadataAttributeManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None, "");
 
                     //create system mapping
-                    LinkElement system = createLinkELementIfNotExist(mappingManager, 0, "System", LinkElementType.System, LinkElementComplexity.None, "");
+                    LinkElement system = createLinkELementIfNotExist(mappingManager, metadataAttributeManager, 0, "System", LinkElementType.System, LinkElementComplexity.None, "");
 
                     #region mapping GBIF to System Keys
 
@@ -1790,14 +1790,14 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                     if (Exist("title", LinkElementType.MetadataAttributeUsage, uow))
                     {
-                        createToKeyMapping("title", LinkElementType.MetadataAttributeUsage, "title", LinkElementType.MetadataAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager);
-                        createFromKeyMapping("title", LinkElementType.MetadataAttributeUsage, "title", LinkElementType.MetadataAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager);
+                        createToKeyMapping("title", LinkElementType.MetadataAttributeUsage, "title", LinkElementType.MetadataAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager, metadataAttributeManager);
+                        createFromKeyMapping("title", LinkElementType.MetadataAttributeUsage, "title", LinkElementType.MetadataAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager, metadataAttributeManager);
                     }
 
                     if (Exist("description", LinkElementType.MetadataAttributeUsage, uow))
                     {
-                        createToKeyMapping("description", LinkElementType.MetadataAttributeUsage, "description", LinkElementType.MetadataAttributeUsage, Key.Description, rootTo, metadataRef, mappingManager);
-                        createFromKeyMapping("description", LinkElementType.MetadataAttributeUsage, "description", LinkElementType.MetadataAttributeUsage, Key.Description, rootFrom, metadataRef, mappingManager);
+                        createToKeyMapping("description", LinkElementType.MetadataAttributeUsage, "description", LinkElementType.MetadataAttributeUsage, Key.Description, rootTo, metadataRef, mappingManager, metadataAttributeManager);
+                        createFromKeyMapping("description", LinkElementType.MetadataAttributeUsage, "description", LinkElementType.MetadataAttributeUsage, Key.Description, rootFrom, metadataRef, mappingManager, metadataAttributeManager);
                     }
 
 
