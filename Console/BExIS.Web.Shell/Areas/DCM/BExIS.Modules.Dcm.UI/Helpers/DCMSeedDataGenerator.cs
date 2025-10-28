@@ -237,6 +237,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("Api", "Dataset", "*", DatasetCreationFeature);
                 operationManager.Create("Api", "MetadataIn", "*", DatasetCreationFeature);
                 operationManager.Create("Api", "Metadata", "*", DatasetCreationFeature);
+                operationManager.Create("Api", "CurationEntry", "*", null);
 
                 operationManager.Create("DCM", "Edit", "*");
                 operationManager.Create("DCM", "View", "*");
@@ -324,9 +325,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic ABCD")))
                 {
                     string titleXPath =
-                        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
+                        "Metadata/Metadata/ContentMetadata/Description/DescriptionXmlSchemaComplexType/Representation/MetadataDescriptionRepr/Title/String255";
                     string descriptionXpath =
-                        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
+                        "Metadata/Metadata/ContentMetadata/Description/DescriptionXmlSchemaComplexType/Representation/MetadataDescriptionRepr/Details/String";
 
                     ImportSchema("Basic ABCD", "ABCD_2.06.XSD", "DataSet", entity.Name, entity.EntityType.FullName,
                         titleXPath, descriptionXpath);
@@ -336,8 +337,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("GBIF")))
                 {
-                    string titleXPath = "Metadata/Basic/BasicType/title/titleType";
-                    string descriptionXpath = "Metadata/abstract/abstractType/para/paraType";
+                    string titleXPath = "Metadata/Basic/BasicType/title/i18nString";
+                    string descriptionXpath = "Metadata/abstract/abstractXmlSchemaComplexType/para/paraDatatype_string";
 
                     ImportSchema("GBIF", "eml.xsd", "Dataset", entity.Name, entity.EntityType.FullName, titleXPath,
                         descriptionXpath);
@@ -345,8 +346,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Publication")))
                 {
-                    string titleXPath = "Metadata/publication/publicationType/Title/TitleType";
-                    string descriptionXpath = "Metadata/publication/publicationType/Abstract/AbstractType";
+                    string titleXPath = "Metadata/publication/publication/Title/TitleDatatype_string";
+                    string descriptionXpath = "Metadata/publication/publication/Abstract/AbstractXmlSchemaSimpleType";
 
                     ImportSchema("Publication", "BEXIS2-Publication-Schema-draft.xsd", "Metadata", publication.Name, publication.EntityType.FullName, titleXPath, descriptionXpath);
                 }

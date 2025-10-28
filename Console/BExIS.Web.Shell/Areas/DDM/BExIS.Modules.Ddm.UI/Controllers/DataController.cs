@@ -110,6 +110,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             //get the researchobject (cuurently called dataset) to get the id of a metadata structure
             Dataset researcobject = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(id);
 
+            
+
             if (researcobject != null)
             {
                 long metadataStrutcureId = researcobject.MetadataStructure.Id;
@@ -171,7 +173,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 ViewData["use_minor"] = moduleSettings.GetValueByKey("use_minor");
                 ViewData["check_public_metadata"] = moduleSettings.GetValueByKey("check_public_metadata");
                 ViewData["has_data"] = false;
+                ViewData["data_aggreement"] = moduleSettings.GetValueByKey("data_aggreement");
                 Session["Filter"] = null;
+                // reset sessions
+                Session["DataFilter"] = null;
+                Session["DataOrderBy"] = null;
+                Session["DataProjection"] = null;
 
                 Dataset researcobject = dm.GetDataset(id);
 
@@ -584,11 +591,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
-        public ActionResult DownloadZip(long id, string format, long version = -1)
+        public ActionResult DownloadZip(long id, string format, long version = -1,bool withFilter = false, bool withUnits=false)
         {
             if (this.IsAccessible("DIM", "Export", "GenerateZip"))
             {
-                var actionresult = this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", version }, { "format", format } });
+                var actionresult = this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", version }, { "format", format }, { "withFilter", withFilter }, { "withUnits", withUnits } });
 
                 return actionresult;
             }
@@ -782,6 +789,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         }
 
                         ViewData["gridTotal"] = dm.RowCount(dataset.Id, null);
+                        ViewData["isPublic"] = entityPermissionManager.ExistsAsync(dataset.EntityTemplate.EntityType.Id, dataset.Id).Result;
 
                         sds.Variables = sds.Variables.OrderBy(v => v.OrderNo).ToList();
 
@@ -862,6 +870,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         FilterExpression filter = TelerikGridHelper.Convert(command.FilterDescriptors.ToList());
                         OrderByExpression orderBy = TelerikGridHelper.Convert(command.SortDescriptors.ToList());
+                        ProjectionExpression projection = null; 
+                        if(!string.IsNullOrEmpty(columns)) projection = TelerikGridHelper.Convert(columns.Replace("ID", "").Split(','));
+
+                        Session["DataFilter"] = filter;
+                        Session["DataOrderBy"] = orderBy;
+                        Session["DataProjection"] = projection;
+
 
                         table = dm.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, null, "", command.Page - 1, command.PageSize);
                         ViewData["gridTotal"] = dm.RowCount(datasetId, filter);
@@ -1420,6 +1435,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
 
                 ProjectionExpression projection = TelerikGridHelper.Convert(columns);
+
 
                 long count = datasetManager.RowCount(datasetId, filter);
 

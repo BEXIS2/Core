@@ -24,7 +24,6 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Helpers;
 using BExIS.UI.Models;
-using BExIS.Utils.Config;
 using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Extensions;
 using BExIS.Xml.Helpers;
@@ -46,6 +45,7 @@ using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
 using BExIS.Utils.Data.Helpers;
+using BExIS.Utils.Config;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {

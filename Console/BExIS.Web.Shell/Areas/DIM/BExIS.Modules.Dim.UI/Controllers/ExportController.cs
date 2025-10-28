@@ -14,27 +14,35 @@ using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Helpers;
 using BExIS.Modules.Dim.UI.Models.Api;
+using BExIS.Modules.Dim.UI.Models.Download;
 using BExIS.Modules.Dim.UI.Models.Export;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Entities.Versions;
 using BExIS.Security.Services.Utilities;
+using BExIS.UI.Helpers;
 using BExIS.Utils.Config;
 using BExIS.Utils.Extensions;
 using BExIS.Utils.Models;
+using BExIS.Utils.NH.Querying;
 using BExIS.Xml.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
+using Telerik.Web.Mvc;
+using Vaelastrasz.Library.Models;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Modularity;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -184,13 +192,16 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
-        public ActionResult GenerateZip(long id, long versionid, string format)
+        public ActionResult GenerateZip(long id, long versionid, string format,bool withFilter = false, bool withUnits = false)
         {
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             DatasetManager dm = new DatasetManager();
             DataStructureManager dataStructureManager = new DataStructureManager();
             PublicationManager publicationManager = new PublicationManager();
             SubmissionManager publishingManager = new SubmissionManager();
+
+            bool isFilterInUse = filterInUse();
+            string filteredFilePath = "";
 
             string brokerName = "generic";
 
@@ -202,18 +213,21 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     long dataStructureId = 0;
                     int datasetVersionNumber = dm.GetDatasetVersionNr(datasetVersionId);
                     DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+                    string title = "";    
 
                     #region Metadata
 
                     //metadata as XML
                     XmlDocument document = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport, datasetVersion.Dataset.MetadataStructure.Name);
 
-                    //generate metadata as HTML and store the file locally
+                    //generate data structure as html 
                     generateMetadataAsHtml(datasetVersion);
 
                     #endregion
 
                     #region primary data
+
+
 
                     // check the data sturcture type ...
                     if (format != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure && dm.GetDataTuplesCount(datasetVersion.Id) > 0)
@@ -221,21 +235,30 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         OutputDataManager odm = new OutputDataManager();
 
                         //check wheter title is empty or not
-                        string title = String.IsNullOrEmpty(datasetVersion.Title) ? "no title available" : datasetVersion.Title;
+                        title = String.IsNullOrEmpty(datasetVersion.Title) ? "no title available" : datasetVersion.Title;
 
-                        switch (format)
+                        if (isFilterInUse && withFilter)
                         {
-                            case "application/xlsx":
-                                odm.GenerateExcelFile(id, datasetVersion.Id, false);
-                                break;
+                            DataTable filteredData = getFilteredData(id);
+                            filteredFilePath = odm.GenerateAsciiFile("temp", filteredData, title, format, datasetVersion.Dataset.DataStructure.Id, withUnits);
+                        }
+                        else
+                        {
 
-                            case "application/xlsm":
-                                odm.GenerateExcelFile(id, datasetVersion.Id, true);
-                                break;
+                            switch (format)
+                            {
+                                case "application/xlsx":
+                                    odm.GenerateExcelFile(id, datasetVersion.Id, withUnits);
+                                    break;
 
-                            default:
-                                odm.GenerateAsciiFile(id, datasetVersion.Id, format, false);
-                                break;
+                                case "application/xlsm":
+                                    odm.GenerateExcelFile(id, datasetVersion.Id, true);
+                                    break;
+
+                                default:
+                                    odm.GenerateAsciiFile(id, datasetVersion.Id, format, withUnits);
+                                    break;
+                            }
                         }
                     }
 
@@ -259,7 +282,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                         AsciiWriter.AllTextToFile(datastructureFilePath, json);
 
-                        //generate data structure as html 
                         generateDataStructureHtml(datasetVersion);
                     }
 
@@ -267,8 +289,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     #region zip file
 
-                    string zipName = publishingManager.GetZipFileName(id, datasetVersionNumber);
-                    string zipPath = Path.Combine(publishingManager.GetDirectoryPath(id, brokerName), zipName);
+                    string zipName = IOHelper.GetFileName(FileType.Bundle, id, datasetVersionNumber, dataStructureId, title); //publishingManager.GetZipFileName(id, datasetVersionNumber);
+                    // add suffix if filter is in use
+                    if (isFilterInUse) zipName += "_filtered";
+
+                    string zipPath = Path.Combine(publishingManager.GetDirectoryPath(id, brokerName), zipName+".zip");
                     FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipPath));
 
                     using (var zipFileStream = new FileStream(zipPath, FileMode.Create))
@@ -282,31 +307,77 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         {
                             string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
                             string name = cd.URI.Split('\\').Last();
+                            string ext = Path.GetExtension(name).ToLower();
 
                             if(cd.Name.StartsWith("generated") && !cd.Name.Equals(dataName)) continue;
 
                             if (FileHelper.FileExist(path))
                             {
                                 if (!archive.Entries.Any(entry => entry.Name.EndsWith(name)))
+                                {
+                                    if (cd.Name.Equals("metadata"))
+                                    {
+                                        name = IOHelper.GetFileName(FileType.Metadata, id, datasetVersionNumber, dataStructureId) + ext;
+                                    }
+                                    else if (cd.Name.Equals("datastructure"))
+                                    {
+                                        name = IOHelper.GetFileName(FileType.DataStructure, id, datasetVersionNumber, dataStructureId) + ext;
+                                    }
+                                    else if (cd.Name.Contains("generated"))
+                                    {
+                                        name = IOHelper.GetFileName(FileType.PrimaryData, id, datasetVersionNumber, dataStructureId) + ext;
+                                    }
+                                    else
+                                    {
+                                        name = IOHelper.GetFileName(FileType.None, id, datasetVersionNumber, dataStructureId,cd.Name) + ext;
+                                    }
+
                                     archive.AddFileToArchive(path, name);
+                                }
                             }
                         }
+
+                        // if data was filtered add a text file with information about filtering
+                        if (isFilterInUse)
+                        {
+                            string path = Path.Combine(AppConfiguration.DataPath, filteredFilePath);
+                            string ext = Path.GetExtension(filteredFilePath).ToLower();
+                            string name = IOHelper.GetFileName(FileType.PrimaryData, id, datasetVersionNumber, dataStructureId)+"filtered"+ ext;
+
+                            archive.AddFileToArchive(filteredFilePath, name);
+                        }
+
+
 
                         // xml schema
                         string xsdPath = OutputMetadataManager.GetSchemaDirectoryPath(id);
                         if (Directory.Exists(xsdPath))
                             archive.AddFolderToArchive(xsdPath, "Schema");
 
+                        #region manifest
                         // manifest
                         ApiDatasetHelper apiDatasetHelper = new ApiDatasetHelper();
                         // get content
-                        ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, datasetVersionNumber, datasetVersion.Dataset.MetadataStructure.Id, dataStructureId);
-                        string manifest = JsonConvert.SerializeObject(datasetModel);
+                        ApiDatasetModel apimodel = apiDatasetHelper.GetContent(datasetVersion, id, datasetVersionNumber, datasetVersion.Dataset.MetadataStructure.Id, dataStructureId);
+                        GeneralMetadataModel datasetModel = GeneralMetadataModel.Map(apimodel);
 
+                        datasetModel.DownloadInformation.DownloadDate = DateTime.Now.ToString(new CultureInfo("en-US"));
+                        datasetModel.DownloadInformation.DownloadSource = Request.Url.Host;
+                        datasetModel.DownloadInformation.DownloadedBy = getPartyNameOrDefault();
+
+                        // set filter info 
+                        if(isFilterInUse)
+                            datasetModel.DownloadInformation.DownloadedFilter = getFilterQuery();
+
+                        if(datasetModel.DownloadInformation.DownloadedBy == "DEFAULT") datasetModel.DownloadInformation.DownloadedBy = "ANONYMOUS";
+
+                        string manifest = JsonConvert.SerializeObject(datasetModel);
+                       
                         if (manifest != null)
                         {
+                            string manifestFileName = IOHelper.GetFileName(FileType.Manifest, id, datasetVersionNumber, dataStructureId);
                             string manifestPath = OutputDatasetManager.GetDynamicDatasetStorePath(id,
-                                datasetVersionNumber, "manifest", ".json");
+                                datasetVersionNumber, "general_metadata", ".json");
                             string fullFilePath = Path.Combine(AppConfiguration.DataPath, manifestPath);
                             string directory = Path.GetDirectoryName(fullFilePath);
                             if (!Directory.Exists(directory))
@@ -314,10 +385,20 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                            System.IO.File.WriteAllText(fullFilePath, manifest, System.Text.Encoding.UTF8);
 
-                            archive.AddFileToArchive(fullFilePath, "manifest.json");
+                            archive.AddFileToArchive(fullFilePath, manifestFileName + ".json");
                         }
+                        #endregion
 
-                        string title = datasetVersion.Title;
+                        #region terms and conditions
+
+                        string termsPath = this.Session.GetTenant().GetResourcePath("terms");
+
+                        if(!string.IsNullOrEmpty(termsPath) && System.IO.File.Exists(termsPath))
+                            archive.AddFileToArchive(termsPath, "terms.txt");
+
+                        #endregion terms and conditions
+
+                        title = datasetVersion.Title;
                         title = String.IsNullOrEmpty(title) ? "unknown" : title;
 
                         string message = string.Format("dataset {0} version {1} was downloaded as zip - {2}.", id,
@@ -394,6 +475,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 mimeType = "text/comma-separated-values";
             }
 
+            if (ext.Contains("json"))
+            {
+                name = "datastructure";
+                mimeType = "application/json";
+            }
+
             if (ext.Contains("html"))
             {
                 name = title;
@@ -424,6 +511,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     {
                         if (cd.Name.Equals(name) && cd.MimeType.Equals(mimeType))
                         {
+                            cd.Name = name;
+                            cd.MimeType = mimeType;
                             cd.URI = dynamicPath;
                             dm.UpdateContentDescriptor(cd);
                         }
@@ -451,7 +540,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             string title = dsv.Title;
             Session["ShowDataMetadata"] = dsv.Metadata;
-
+            int versionNr = 0;
             var view = this.Render("DCM", "Form", "LoadMetadataOfflineVersion", new RouteValueDictionary()
             {
                 { "entityId", datasetId },
@@ -465,6 +554,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             byte[] content = Encoding.ASCII.GetBytes(view.ToString());
 
+    
             string dynamicPathOfMD = "";
             dynamicPathOfMD = storeGeneratedFilePathToContentDiscriptor(datasetId, dsv,
                 "metadata", ".html");
@@ -481,7 +571,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             });
 
             byte[] content = Encoding.ASCII.GetBytes(view.ToString());
-
+       
             string dynamicPathOfMD = "";
             dynamicPathOfMD = storeGeneratedFilePathToContentDiscriptor(dsv.Dataset.Id, dsv,
                 "datastructure", ".html");
@@ -519,5 +609,62 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
             return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
         }
+
+        private bool filterInUse()
+        {
+            if (Session["DataFilter"] != null || Session["DataOrderBy"] != null || Session["DataProjection"] != null )
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private DataTable getFilteredData(long datasetId)
+        {
+            DatasetManager datasetManager = new DatasetManager();
+            try
+            {
+                GridCommand command = null;
+                FilterExpression filter = null;
+                OrderByExpression orderBy = null;
+                ProjectionExpression projection = null;
+                string[] columns = null;
+
+                if (Session["DataFilter"] != null) filter  = (FilterExpression)Session["DataFilter"];
+                if (Session["DataOrderBy"] != null) orderBy = (OrderByExpression)Session["DataOrderBy"];
+                if (Session["DataProjection"] != null) projection = (ProjectionExpression)Session["DataProjection"];
+
+
+                long count = datasetManager.RowCount(datasetId, filter);
+
+                DataTable table = datasetManager.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, projection, "", 0, (int)count);
+
+                if (projection == null) table.Strip();
+
+                return table;
+            }
+            finally
+            {
+                datasetManager.Dispose();
+            }
+        }
+
+        private string getFilterQuery()
+        {
+            FilterExpression filter = null;
+            OrderByExpression orderBy = null;
+            ProjectionExpression projection = null;
+            string[] columns = null;
+
+            if (Session["DataFilter"] != null) filter = (FilterExpression)Session["DataFilter"];
+            if (Session["DataOrderBy"] != null) orderBy = (OrderByExpression)Session["DataOrderBy"];
+            if (Session["DataProjection"] != null) projection = (ProjectionExpression)Session["DataProjection"];
+
+            string query = filter?.ToSQL() + orderBy?.ToSQL() + projection?.ToSQL();
+
+            return query;
+        }
+
     }
 }

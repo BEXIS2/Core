@@ -175,10 +175,6 @@
       <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
       <Name>BExIS.IO.Transform.Validation</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Components\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
-      <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
-      <Name>BExIS.Utils.Config</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Entities\Vaiona.Entities.csproj">
       <Project>{0815d220-3625-4e23-bbbc-8152345637fe}</Project>
       <Name>Vaiona.Entities</Name>

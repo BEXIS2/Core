@@ -143,10 +143,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\Api\CitationsController.cs" />
+    <Compile Include="Controllers\Api\CitationController.cs" />
     <Compile Include="Controllers\Api\DataTableController.cs" />
     <Compile Include="Controllers\Api\SearchApiController.cs" />
     <Compile Include="Controllers\Api\TagInfoController.cs" />
+    <Compile Include="Controllers\CurationController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\DataController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
@@ -270,6 +271,7 @@
     <Content Include="Views\Data\_Citation_Text.cshtml" />
     <Content Include="Views\Data\_Citation_APA.cshtml" />
     <Content Include="Views\Data\_Title.cshtml" />
+    <Content Include="Views\Curation\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
