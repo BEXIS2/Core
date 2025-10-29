@@ -42,3 +42,10 @@ export interface ValidationType {
 	valid: boolean;
 	cellError: errorItem[];
 }
+
+export interface validationReturn {
+	validData: any[];
+	invalidData: any[];
+	invalidDataCounter: number;
+	errors: errorArray[];
+}

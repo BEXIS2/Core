@@ -16,11 +16,14 @@
 	import lineClamp from './components/lineClamp.svelte';
 	import error from './components/error.svelte';
 	import { invalidTableStore, validTableStore } from './stores';
-	import type { errorArray, errorItem, tableErrorItem, ValidationType } from './models';
+	import type { errorArray, errorItem, tableErrorItem, ValidationType, validationReturn } from './models';
 	import { onMount } from 'svelte';
 	import * as apiCalls from './services/apiCalls';
 	import mappingPublication from './mappingPublication.json';
 	import mappingResource from './mappingResource.json';
+
+	import * as validation from './validation';
+
 
 	type dataSetType = {
 		Title: string;
@@ -44,11 +47,8 @@
 		EntityTemplateId: 0
 	};
 
-	let validData: any[] = [];
 	let showValid: boolean = false;
 
-	let invalidData: any[] = [];
-	let invalidDataCounter: number = 0;
 	let showInvalid: boolean = false;
 
 	let downloadLinkValidData = '';
@@ -57,9 +57,15 @@
 
 	let isLoading: boolean = false;
 
-	let errors: errorArray[] = [];
 	let showErrorMsg: boolean = false;
 
+	let validationReturnObj: validationReturn = {
+		validData: [],
+		invalidData: [],
+		invalidDataCounter: 0,
+		errors: [],
+	};
+	
 	let columnCfg: any = {
 		Author: {
 			minWidth: 300,
@@ -92,10 +98,10 @@
 	});
 
 	function clear() {
-		invalidDataCounter = 0;
-		invalidData = [];
-		validData = [];
-		errors = [];
+		validationReturnObj.invalidDataCounter = 0;
+		validationReturnObj.invalidData = [];
+		validationReturnObj.validData = [];
+		validationReturnObj.errors = [];
 		isLoading = false;
 		showValid = false;
 		showInvalid = false;
@@ -119,7 +125,7 @@
 		}
 	}
 
-	function parseCSVToJson(data: any) {
+	function parseCSVToJson(data: any) { 
 		Papa.parse(data, {
 			header: true,
 			complete: function (results) {
@@ -137,111 +143,20 @@
 						!['data present'].includes(key.trim().toLowerCase())
 				);
 
-				validateRows(jsonData, codeColumns, dataColumns);
+				validation.validateRows(jsonData, codeColumns, dataColumns, validationReturnObj);
+				createColumnError(codeColumns, dataColumns);
 
-				fillInvalidTableStore(invalidData);
-				showInvalid = invalidData.length > 0 ? true : false;
-				validTableStore.set(validData);
+				fillInvalidTableStore(validationReturnObj.invalidData);
+				showInvalid = validationReturnObj.invalidData.length > 0 ? true : false;
+				validTableStore.set(validationReturnObj.validData);
 
 				createDownloadLinks();
 			}
 		});
 	}
 
-	function applyAvailableUponRequestRules(row: any) {
-		function syncColumns(presentKey: string, targetKeys: string[], triggerValue: string) {
-			if (!row[presentKey]) return;
-
-			const presentValues = row[presentKey]
-				.toString()
-				.split(',')
-				.map((v: string) => v.trim());
-
-			for (const targetKey of targetKeys) {
-				// Stelle sicher, dass die Zielzelle existiert (sonst leeres Array zum Füllen)
-				let targetValues = (row[targetKey] || '')
-					.toString()
-					.split(',')
-					.map((v: string) => v.trim());
-
-				// Länge angleichen (falls Zielspalte kürzer ist)
-				while (targetValues.length < presentValues.length) {
-					targetValues.push('');
-				}
-
-				// Werte synchronisieren
-				for (let i = 0; i < presentValues.length; i++) {
-					if (presentValues[i].toLowerCase() === triggerValue.toLowerCase()) {
-						targetValues[i] = triggerValue;
-					}
-				}
-
-				row[targetKey] = targetValues.join(', ');
-			}
-		}
-
-		// Regel 1: available upon request
-		syncColumns('Data present', ['Data License', 'Data Publisher'], 'available upon request');
-		syncColumns('Code present', ['Code License', 'Code Publisher'], 'available upon request');
-
-		// Regel 2: no access (nur für Data)
-		syncColumns(
-			'Data present',
-			[
-				'Data License',
-				'Data Publisher',
-				'Data URL',
-				'Data URL resolves',
-				'Data DOI',
-				'Data DOI resolves'
-			],
-			'no access'
-		);
-
-		syncColumns(
-			'Code present',
-			[
-				'Code License',
-				'Code Publisher',
-				'Code URL',
-				'Code URL resolves',
-				'Code DOI',
-				'Code DOI resolves'
-			],
-			'no access'
-		);
-		return row;
-	}
-
-	function validateRows(data: any[], codeColumns: string[], dataColumns: string[]) {
-		let columnErrors: { [key: string]: any[] } = {};
-
-		data.forEach((row: any, rowIndex: number) => {
-			if (!row || Object.values(row).every((val) => (val ?? '').toString().trim() === '')) {
-			} else {
-				let validationType: ValidationType = validateRow(row, codeColumns, dataColumns);
-
-				validationType.cellError.forEach((ce) => {
-					if (!columnErrors[ce.column]) {
-						columnErrors[ce.column] = [];
-					}
-					columnErrors[ce.column].push(rowIndex);
-				});
-
-				if (validationType.valid) {
-					row = applyAvailableUponRequestRules(row);
-					validData.push(row);
-				} else {
-					invalidDataCounter++;
-					invalidData.push(row);
-					errors.push({ rowIndex, cellErrors: validationType.cellError });
-				}
-				// console.log("valid", validData)
-			}
-		});
-
-		// Fehlerhafte Spalten konfigurieren
-		[...codeColumns, ...dataColumns].forEach((columnHeader: string) => {
+	function createColumnError(codeColumns: string[], dataColumns: string[]) {
+        [...codeColumns, ...dataColumns].forEach((columnHeader: string) => {
 			if (!columnCfg[columnHeader]) {
 				columnCfg[columnHeader] = {
 					...(columnCfg[columnHeader] || {}),
@@ -252,50 +167,16 @@
 				};
 			}
 		});
-	}
-
-	function validateRow(row: any, codeColumns: string[], dataColumns: string[]): ValidationType {
-		let cellError: errorItem[] = [];
-		let rowValid: boolean = true;
-		const checkColumns = [
-			{ columns: codeColumns, refColumn: 'Code URL' },
-			{ columns: dataColumns, refColumn: 'Data URL' }
-		];
-
-		checkColumns.forEach(({ columns, refColumn }) => {
-			const ref = row[refColumn];
-			if (!ref) return;
-
-			const commaCount = countCommas(ref);
-
-			if (commaCount === 0) return; // gilt als valide
-
-			columns.forEach((col) => {
-				if (commaCount !== countCommas(row[col])) {
-					cellError.push({
-						column: col,
-						errorMsg: `Number of entries does not match with ${refColumn}`
-					});
-					rowValid = false;
-				}
-			});
-		});
-		let validationType: ValidationType = { valid: rowValid, cellError: cellError };
-		return validationType;
-	}
-
-	function countCommas(data: string): number {
-		return data.split(',').length - 1;
-	}
+    }
 
 	function fillInvalidTableStore(data: any) {
 		invalidTableStore.set(data);
 		let tableErrorItem: tableErrorItem;
 		let errorItem: errorItem;
 
-		for (let i: number = 0; i < errors.length; i++) {
-			for (let j: number = 0; j < errors[i].cellErrors.length; j++) {
-				errorItem = errors[i].cellErrors[j];
+		for (let i: number = 0; i < validationReturnObj.errors.length; i++) {
+			for (let j: number = 0; j < validationReturnObj.errors[i].cellErrors.length; j++) {
+				errorItem = validationReturnObj.errors[i].cellErrors[j];
 				tableErrorItem = {
 					errorType: 'missmatch',
 					errorMsg: errorItem.errorMsg,
@@ -307,16 +188,16 @@
 	}
 
 	function createDownloadLinks() {
-		const validCSVString = Papa.unparse(validData, { delimiter: ',' }); // Ensure comma as separator
+		const validCSVString = Papa.unparse(validationReturnObj.validData, { delimiter: ',' }); // Ensure comma as separator
 		const blobValid = new Blob([validCSVString], { type: 'text/csv' });
 		downloadLinkValidData = URL.createObjectURL(blobValid);
 
 		// fs.writeFile('valid_data', validData)
-		const validDataJson = JSON.stringify(validData);
+		const validDataJson = JSON.stringify(validationReturnObj.validData);
 		const blobJson = new Blob([validDataJson], { type: 'application/json' });
 		downloadLinkValidDataAsJson = URL.createObjectURL(blobJson);
 
-		const invalidCSVString = Papa.unparse(invalidData, { delimiter: ',' }); // Ensure comma as separator
+		const invalidCSVString = Papa.unparse(validationReturnObj.invalidData, { delimiter: ',' }); // Ensure comma as separator
 		const blobInvalid = new Blob([invalidCSVString], { type: 'text/csv' });
 		downloadLinkInvalidData = URL.createObjectURL(blobInvalid);
 
@@ -339,7 +220,7 @@
 		try {
 			let dss: dataSetType[] = [];
 
-			for (const row of validData) {
+			for (const row of validationReturnObj.validData) {
 				dss.push(mapToApiFormat(row, mappingPublication));
 			}
 
@@ -359,7 +240,7 @@
 				uploadedCount++;
 
 				// Update alle 100 oder beim letzten
-				if (uploadedCount % 100 === 0 || uploadedCount === validData.length) {
+				if (uploadedCount % 100 === 0 || uploadedCount === validationReturnObj.validData.length) {
 					await tick(); // sorgt für UI-Update
 				}
 			}
@@ -376,7 +257,7 @@
 
 				// console.log('metadata', metadata);
 
-				applyMappingToMetadata(metadata, validData[rowIndex], mappingPublication.Mappings);
+				applyMappingToMetadata(metadata, validationReturnObj.validData[rowIndex], mappingPublication.Mappings);
 				console.log('finaldata', metadata);
 				await apiCalls.putMetadata(metadataId, metadata);
 				await apiCalls.GetMetadata(metadataId);
@@ -697,9 +578,9 @@
 		{/if}
 	</div>
 
-	{#if validData.length > 0 || invalidData.length > 0}
+	{#if validationReturnObj.validData.length > 0 || validationReturnObj.invalidData.length > 0}
 		<div class="card p-2">
-			{#if validData.length > 0}
+			{#if validationReturnObj.validData.length > 0}
 				<div class="grid gap-5 w-full">
 					<div class="text-left card variant-ghost-primary w-full flex gap-5 p-2 my-1">
 						{#if !showValid}
@@ -756,10 +637,10 @@
 				</div>
 			{/if}
 
-			{#if invalidData.length > 0}
+			{#if validationReturnObj.invalidData.length > 0}
 				<div class="w-full">
 					<div class="text-left card variant-ghost-warning w-full flex gap-5 p-2 my-1">
-						<div class="w-full align-middle">{invalidDataCounter} rows failed to import</div>
+						<div class="w-full align-middle">{validationReturnObj.invalidDataCounter} rows failed to import</div>
 						<div class="w-9">
 							{#if !showErrorMsg}
 								<button class="chip" on:click={toggleErrorMsg}
@@ -779,7 +660,7 @@
 							<div class="font-bold">Row</div>
 							<div class="font-bold">Column</div>
 							<div class="font-bold col-span-3">Error Messages</div>
-							{#each errors as error}
+							{#each validationReturnObj.errors as error}
 								<div class="col-span-5"><hr /></div>
 								<div>{error.rowIndex}</div>
 								{#each error.cellErrors as cellError, i}
@@ -833,19 +714,19 @@
 	{/if}
 	<div class="flex gap-5 w-full">
 		<div id="datasetCounter">
-			{#if validData.length > 0}
+			{#if validationReturnObj.validData.length > 0}
 				<p class="card variant-ghost-primary gap-5 p-2 my-1 align-middle">
 					{uploadedCount} of {totalUploads} datasets created
 				</p>
 			{/if}
 		</div>
 		<div id="progressBar" class="overflow-clip w-full flex items-center">
-			{#if validData.length > 0}
+			{#if validationReturnObj.validData.length > 0}
 				<progress max={totalUploads} value={uploadedCount}></progress>
 			{/if}
 		</div>
 		<div id="importButton" class="w-24 flex items-center">
-			{#if validData.length > 0 && dataset.EntityTemplateId}
+			{#if validationReturnObj.validData.length > 0 && dataset.EntityTemplateId}
 				<button on:click={create} class="btn variant-filled-primary h-9 w-24 shadow-md"
 					>Import</button
 				>
