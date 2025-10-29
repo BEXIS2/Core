@@ -1,6 +1,6 @@
-import type { ValidationType, validationReturn, errorItem } from './models';
+import type { ValidationType, ValidationReturn, errorItem } from './models';
 
-export function validateRows(data: any[], codeColumns: string[], dataColumns: string[], validationReturnObj: validationReturn): validationReturn {
+export function validateRows(data: any[], codeColumns: string[], dataColumns: string[], validationReturnObj: ValidationReturn): ValidationReturn {
     let columnErrors: { [key: string]: any[] } = {};
 
     data.forEach((row: any, rowIndex: number) => {

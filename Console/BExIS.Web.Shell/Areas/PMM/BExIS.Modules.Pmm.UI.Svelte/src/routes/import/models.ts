@@ -38,14 +38,28 @@ export interface Dataset {
 	EntityTemplateId?: number;
 }
 
+export interface dataSetType  {
+	Title?: string;
+	Description?: string;
+	DataStructureId?: number;
+	MetadataStructureId?: number;
+	EntityTemplateId?: number;
+}
+
 export interface ValidationType {
 	valid: boolean;
 	cellError: errorItem[];
 }
 
-export interface validationReturn {
+export interface ValidationReturn {
 	validData: any[];
 	invalidData: any[];
 	invalidDataCounter: number;
 	errors: errorArray[];
+}
+
+export interface createDatasetReturn {
+	uploadedCount: number;
+	idMapping: number[][];
+	tempTitle: string | null;
 }

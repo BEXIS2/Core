@@ -2,7 +2,6 @@
 	import { DropdownKVP, Page } from '@bexis2/bexis2-core-ui';
 	import Papa from 'papaparse';
 	import Fa from 'svelte-fa';
-	import { tick } from 'svelte';
 	import {
 		faFileArrowDown,
 		faArrowUpFromBracket,
@@ -16,30 +15,24 @@
 	import lineClamp from './components/lineClamp.svelte';
 	import error from './components/error.svelte';
 	import { invalidTableStore, validTableStore } from './stores';
-	import type {errorItem, tableErrorItem, validationReturn } from './models';
+	import type {errorItem, tableErrorItem, ValidationReturn, dataSetType, createDatasetReturn } from './models';
 	import { onMount } from 'svelte';
 	import * as apiCalls from './services/apiCalls';
-	import mappingPublication from './mappingPublication.json';
+
 
 
 	import * as validation from './validation';
-	import * as mapMetadata from './mapMetadata';
+	import * as createDatasets from './createDatasets';
 
 
-	type dataSetType = {
-		Title: string;
-		Description: string;
-		DataStructureId: number;
-		MetadataStructureId: number;
-		EntityTemplateId: number;
-	};
+
+
 
 	let filename: string = '';
 
 	let entities: any[] = [];
 	let transformedArray: any[] = [];
 	let target: number;
-	let tempTitle: string | null = null;
 	let dataset: dataSetType = {
 		Title: '',
 		Description: '',
@@ -60,12 +53,18 @@
 
 	let showErrorMsg: boolean = false;
 
-	let validationReturnObj: validationReturn = {
+	let validationReturnObj: ValidationReturn = {
 		validData: [],
 		invalidData: [],
 		invalidDataCounter: 0,
 		errors: [],
 	};
+
+	let createDatasetReturn: createDatasetReturn = {
+		uploadedCount: 0,
+		idMapping: [], // Initial leer
+		tempTitle: null
+	}
 	
 	let columnCfg: any = {
 		Author: {
@@ -207,102 +206,18 @@
 
 	function create() {
 		// console.log('click');
-		createAllDatasets(dataset.MetadataStructureId, dataset.EntityTemplateId);
+		createDatasets.createAllDatasets(dataset.MetadataStructureId, dataset.EntityTemplateId, validationReturnObj, createDatasetReturn);
 	}
 
-	let uploadedCount: number = 0;
+	
 	$: totalUploads = $validTableStore.length;
 
-	async function createAllDatasets(
-		metadataStructureId: number,
-		entityTemplateId: number,
-		dataStructureId: number = 0
-	) {
-		try {
-			let dss: dataSetType[] = [];
 
-			for (const row of validationReturnObj.validData) {
-				dss.push(mapToApiFormat(row, mappingPublication));
-			}
 
-			uploadedCount = 0; // Reset beim Start
 
-			for (let index = 0; index < dss.length; index++) {
-				const ds = dss[index];
-				const csvId = index;
 
-				ds.MetadataStructureId = metadataStructureId;
-				ds.EntityTemplateId = entityTemplateId;
-				ds.DataStructureId = dataStructureId;
 
-				let res = await apiCalls.createDataset(ds);
-				getDatasets(res, csvId);
-
-				uploadedCount++;
-
-				// Update alle 100 oder beim letzten
-				if (uploadedCount % 100 === 0 || uploadedCount === validationReturnObj.validData.length) {
-					await tick(); // sorgt für UI-Update
-				}
-			}
-
-			for (const map of idMapping) {
-				const rowIndex = map[0];
-				const metadataId = map[1];
-
-				let metadata = await apiCalls.GetMetadata(metadataId);
-				let MetadataScheema: any = null;
-				if (MetadataScheema == null) {
-					MetadataScheema = await apiCalls.GetMetadataScheema(metadata['@id']);
-				}
-
-				// console.log('metadata', metadata);
-
-				mapMetadata.applyMappingToMetadata(metadata, validationReturnObj.validData[rowIndex], mappingPublication.Mappings);
-				console.log('finaldata', metadata);
-				await apiCalls.putMetadata(metadataId, metadata);
-				await apiCalls.GetMetadata(metadataId);
-			}
-		} catch (error) {
-			console.error('Fehler beim Erstellen der Datensätze:', error);
-		}
-	}
-
-	let idMapping: [number, number][] = []; // Initial leer
-
-	function getDatasets(response: any, csvId: number) {
-		idMapping.push([csvId, response.id]);
-	}
-
-	function mapToApiFormat(csvRow: any, mapping: any) {
-		let ds: dataSetType = {
-			Title: '',
-			Description: '',
-			DataStructureId: 0,
-			MetadataStructureId: 0,
-			EntityTemplateId: 0
-		};
-
-		for (let index = 0; index < 2; index++) {
-			const map = mapping.Mappings[index];
-			let sourceField = map.Source;
-
-			if (sourceField) {
-				if (index % 2 === 0) {
-					// Jeder 1. Durchgang (Titel)
-					ds.Title = csvRow[sourceField];
-				} else if (ds.Title !== null) {
-					// Jeder 2. Durchgang (Beschreibung)
-					ds.Title = ds.Title;
-					ds.Description = csvRow[sourceField];
-				} else {
-					tempTitle = null; // Zurücksetzen für das nächste Paar
-				}
-			}
-		}
-
-		return ds;
-	}
+	
 
 	// function downloadValidData() {
 	// 	const link = document.createElement('a');
