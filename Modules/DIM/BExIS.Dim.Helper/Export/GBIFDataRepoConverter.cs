@@ -15,6 +15,7 @@ using BExIS.Utils.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -98,11 +99,11 @@ namespace BExIS.Dim.Helpers.Export
                     {
                         // generate metadata
                         string metadataFilePath = helper.GenerateResourceMetadata(concept.Id, metadatastructureId, datasetversion.Metadata, folder, xsdPath);
-                        if (File.Exists(metadataFilePath)) archive.AddFileToArchive(metadataFilePath, "");
+                        if (File.Exists(metadataFilePath)) archive.AddFileToArchive(metadataFilePath, Path.GetFileName(metadataFilePath));
 
                         // get data
                         string datapath = helper.GenerateData(id, versionId);
-                        if (File.Exists(datapath)) archive.AddFileToArchive(datapath, "");
+                        if (File.Exists(datapath)) archive.AddFileToArchive(datapath, Path.GetFileName(datapath));
 
                         // has links to extentions? (IsDwcEventOf,IsDwcHumboltExtensionOf, IsEwcEMofExtensionOf)
                         // has links?
@@ -126,14 +127,14 @@ namespace BExIS.Dim.Helpers.Export
                                     var extention = helper.GetExtention(r.ReferenceType);
 
                                     extentions.Add(new ExtentionEntity() { IdIndex = 0, Version = r.SourceVersion, StructureId = structureId, Extention = extention, dataPath = Path.GetFileName(rPath) });
-                                    archive.AddFileToArchive(rPath, "");
+                                    archive.AddFileToArchive(rPath, Path.GetFileName(rPath));
                                 }
                             }
                         }
 
                         // generate meta file
                         string metaFilePath = helper.GenerateMeta(_type, dataset.DataStructure.Id, folder, Path.GetFileName(datapath), extentions);
-                        if (File.Exists(metaFilePath)) archive.AddFileToArchive(metaFilePath, "");
+                        if (File.Exists(metaFilePath)) archive.AddFileToArchive(metaFilePath, Path.GetFileName(metaFilePath));
                     }
 
                     return zipfilepath;
