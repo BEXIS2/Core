@@ -1,0 +1,76 @@
+{
+    "Mappings": [
+        {
+            "Source": "",
+            "Target": "$.publication.Journal"
+        },
+        {
+            "Source": "title",
+            "Target": "$.publication.Title"
+        },
+        {
+            "Source": "abstract",
+            "Target": "$.publication.Abstract"
+        },
+        {
+            "Source": "",
+            "Target": "$.publication.Author"
+        },
+        {
+            "Source": "",
+            "Target": "$.publication.Affiliatons"
+        },
+        {
+            "Source": "type",
+            "Target": "$.publication.Type"
+        },
+        {
+            "Source": "license",
+            "Target": "$.publication.License"
+        },
+        {
+            "Source": "published",
+            "Target": "$.publication.Publication_date"
+        },
+        {
+            "Source": "",
+            "Target": "$.publication.Curation.Rated_by"
+        },
+        {
+            "Source": "",
+            "Target": "$.publication.Curation.Access_date"
+        },
+        {
+            "Source": "",
+            "Target": "$.publication.Curation.Date_added"
+        },
+        {
+            "Source": "",
+            "Target": "$.publication.Curation.Date_modified"
+        },
+        {
+            "Source": "",
+            "Target": "$.publication.Identifiers.Isbn"
+        },
+        {
+            "Source": "ISSN",
+            "Target": "$.publication.Identifiers.Issn"
+        },
+        {
+            "Source": "DOI",
+            "Target": "$.publication.Identifiers.Doi"
+        },
+        {
+            "Source": "",
+            "Target": "$.publication.Identifiers.Uri"
+        },
+        {
+            "Source": "",
+            "Target": "$.publication.Identifiers.Alt_uri"
+        },
+        {
+            "Source": "",
+            "Target": "$.publication.Identifiers.Alt_uri"
+        }
+    ]
+}

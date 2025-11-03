@@ -19,14 +19,8 @@
 	import { onMount } from 'svelte';
 	import * as apiCalls from './services/apiCalls';
 
-
-
 	import * as validation from './validation';
 	import * as createDatasets from './createDatasets';
-
-
-
-
 
 	let filename: string = '';
 
@@ -171,6 +165,7 @@
 
 	function fillInvalidTableStore(data: any) {
 		invalidTableStore.set(data);
+		console.log('invalidTableStore', data);
 		let tableErrorItem: tableErrorItem;
 		let errorItem: errorItem;
 
@@ -209,15 +204,7 @@
 		createDatasets.createAllDatasets(dataset.MetadataStructureId, dataset.EntityTemplateId, validationReturnObj, createDatasetReturn);
 	}
 
-	
 	$: totalUploads = $validTableStore.length;
-
-
-
-
-
-
-	
 
 	// function downloadValidData() {
 	// 	const link = document.createElement('a');
@@ -439,13 +426,13 @@
 		<div id="datasetCounter">
 			{#if validationReturnObj.validData.length > 0}
 				<p class="card variant-ghost-primary gap-5 p-2 my-1 align-middle">
-					{uploadedCount} of {totalUploads} datasets created
+					{createDatasetReturn.uploadedCount} of {totalUploads} datasets created
 				</p>
 			{/if}
 		</div>
 		<div id="progressBar" class="overflow-clip w-full flex items-center">
 			{#if validationReturnObj.validData.length > 0}
-				<progress max={totalUploads} value={uploadedCount}></progress>
+				<progress max={totalUploads} value={createDatasetReturn.uploadedCount}></progress>
 			{/if}
 		</div>
 		<div id="importButton" class="w-24 flex items-center">
