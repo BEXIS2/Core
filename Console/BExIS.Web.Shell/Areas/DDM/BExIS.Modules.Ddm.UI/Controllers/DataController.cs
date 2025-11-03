@@ -210,6 +210,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     // Retrieve data for active and hidden (marked as deleted) datasets
                     if (dm.IsDatasetCheckedIn(id) || dm.IsDatasetDeleted(id))
                     {
+                        // check is public
+                        long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
+                        entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
+
+                        isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
+
                         List<DatasetVersion> datasetVersions = dm.GetDatasetVersions(id);
                         List<DatasetVersion> datasetVersionsAllowed = new List<DatasetVersion>();
 
@@ -278,11 +284,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 researchPlanId = dsv.Dataset.ResearchPlan.Id;
                                 metadata = dsv.Metadata;
 
-                                // check is public
-                                long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
-                                entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
-
-                                isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
+                                
 
                                 // check if the user has download rights
                                 downloadAccess = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read).Result;
