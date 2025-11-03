@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DatasetStore.cs" />
+    <Compile Include="Extensions\XmlExtensions.cs" />
     <Compile Include="Mapping\XmlMapperManager.cs" />
     <Compile Include="Mapping\XmlSchemaManager.cs" />
     <Compile Include="SampleStore.cs" />
