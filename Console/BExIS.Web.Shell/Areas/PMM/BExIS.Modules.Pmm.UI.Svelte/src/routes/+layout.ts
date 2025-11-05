@@ -4,8 +4,9 @@ import { setApiConfig } from '@bexis2/bexis2-core-ui';
 export async function load({ fetch }) {
 	if (import.meta.env.DEV) {
 		console.log('dev');
-		setApiConfig('https://rc.bexis2.uni-jena.de', 'admin', '123456');
-		//setApiConfig('http://mv-bexis.bioimbgle.uni-jena.de/', 'felixistlit', '!"§$%&/()=');
+		setApiConfig('http://mv-bexis.bioimbgle.uni-jena.de/', 'Felix', '123456');
+		// setApiConfig('https://rc.bexis2.uni-jena.de/', 'admin', '123456');
+		// setApiConfig('http://mv-bexis.bioimbgle.uni-jena.de/', 'felixistlit', '!"§$%&/()=');
 		console.log('layout');
 	}
 

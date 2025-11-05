@@ -1,5 +1,5 @@
 export interface validatedData {
-    data: Record<string, any>[];
+    data: any;
     MissingFields?: string[];
     TypeMessage: string;
 }
@@ -10,4 +10,10 @@ export interface datasetType  {
     DataStructureId?: number;
     MetadataStructureId?: number;
     EntityTemplateId?: number;
+}
+
+export  interface issueType {
+    Index: number;
+    errorType: string;
+    msg: string;
 }

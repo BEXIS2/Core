@@ -58,7 +58,8 @@
 		"jsonpath-plus": "^10.3.0",
 		"papaparse": "5.4.1",
 		"patch-package": "8.0.0",
-		"svelte-fa": "4.0.2"
+		"svelte-fa": "4.0.2",
+		"svelte-json-tree": "^2.2.0"
 	},
 	"author": "David Schöne",
 	"license": "ISC",
