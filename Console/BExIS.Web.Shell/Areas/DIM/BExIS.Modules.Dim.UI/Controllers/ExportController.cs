@@ -342,7 +342,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         {
                             string path = Path.Combine(AppConfiguration.DataPath, filteredFilePath);
                             string ext = Path.GetExtension(filteredFilePath).ToLower();
-                            string name = IOHelper.GetFileName(FileType.PrimaryData, id, datasetVersionNumber, dataStructureId)+"filtered"+ ext;
+                            string name = IOHelper.GetFileName(FileType.PrimaryData, id, datasetVersionNumber, dataStructureId)+"_filtered"+ ext;
 
                             archive.AddFileToArchive(filteredFilePath, name);
                         }
