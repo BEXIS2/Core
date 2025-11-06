@@ -47,7 +47,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
         /// </summary>
         [BExISApiAuthorize]
         [HttpGet]
-        [Route("")]
+        [GetRoute("")]
         [ResponseType(typeof(ApiSimpleDatasetModel))]
         public IEnumerable<ApiSimpleDatasetModel> Get()
         {
