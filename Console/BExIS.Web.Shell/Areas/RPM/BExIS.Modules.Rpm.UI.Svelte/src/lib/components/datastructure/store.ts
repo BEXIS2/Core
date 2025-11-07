@@ -15,5 +15,6 @@ export const enforcePrimaryKeyStore = writable<boolean>(false);
 export const changeablePrimaryKeyStore = writable<boolean>(false);
 export const meaningsStore = writable<meaningListItemType[]>([]);
 export const constraintsStore = writable<listItemType[]>([]);
+export const showDarwinCoreValidationStore = writable<boolean>(false);
 
 export const x = writable(1);
