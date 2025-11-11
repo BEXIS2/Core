@@ -1,5 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
+using BExIS.Dim.Helpers.GBIF;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
@@ -131,6 +132,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             bool enforcePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("enforcePrimaryKey");
             ViewData["enforcePrimaryKey"] = enforcePrimaryKey;
 
+            bool showDarwinCoreValidation = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("showDarwinCoreValidation");
+            ViewData["showDarwinCoreValidation"] = enforcePrimaryKey;
+
             return View("Create");
         }
 
@@ -162,6 +166,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             bool enforcePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("enforcePrimaryKey");
             ViewData["enforcePrimaryKey"] = enforcePrimaryKey;
+
+            bool showDarwinCoreValidation = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("showDarwinCoreValidation");
+            ViewData["showDarwinCoreValidation"] = enforcePrimaryKey;
 
             ViewData["dataExist"] = structureHelper.InUseAndDataExist(structureId);
 
@@ -816,6 +823,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             List<ListItem> list = helper.GetConstraints();
 
             return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
+        }
+
+        [JsonNetFilter]
+        public JsonResult GetDWCRequirements()
+        {
+            GbifHelper gbifHelper = new GbifHelper();
+            var t = gbifHelper.LoadExtentionList();
+
+            return Json(t, JsonRequestBehavior.AllowGet);
         }
 
 

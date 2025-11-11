@@ -25,7 +25,8 @@
 		setByTemplateStore,
 		updateDescriptionByTemplateStore,
 		enforcePrimaryKeyStore,
-		changeablePrimaryKeyStore
+		changeablePrimaryKeyStore,
+		showDarwinCoreValidationStore
 	} from '$lib/components/datastructure/store';
 	import { pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
@@ -93,6 +94,10 @@
 		const updateDescriptionByTemplate =
 			container?.getAttribute('updateDescriptionByTemplate')?.toLocaleLowerCase() == 'true' ? true : false;
 			updateDescriptionByTemplateStore.set(updateDescriptionByTemplate);
+
+		const showDarwinCoreValidation	=
+			container?.getAttribute('showDarwinCoreValidation')?.toLocaleLowerCase() == 'true' ? true : false;
+			showDarwinCoreValidationStore.set(showDarwinCoreValidation);
 
 		//console.log('edit structure', datastructureId);
 

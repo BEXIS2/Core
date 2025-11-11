@@ -15,6 +15,7 @@
     string setByTemplate = "false";
     string enforcePrimaryKey = "false";
     string changeablePrimaryKey = "true";
+    string showDarwinCoreValidation = "false";
 
     if (ViewData["id"] != null) { id = Convert.ToInt64(ViewData["id"]); }
     if (ViewData["version"] != null) { version = Convert.ToInt64(ViewData["version"]); }
@@ -23,9 +24,10 @@
     if (ViewData["isTemplateRequired"] != null) { isTemplateRequired = ViewData["isTemplateRequired"].ToString(); }
     if (ViewData["setByTemplate"] != null) { setByTemplate = ViewData["setByTemplate"].ToString(); }
     if (ViewData["enforcePrimaryKey"] != null) { enforcePrimaryKey = ViewData["enforcePrimaryKey"].ToString(); }
+    if (ViewData["showDarwinCoreValidation"] != null) { showDarwinCoreValidation = ViewData["showDarwinCoreValidation"].ToString(); }
     //if (ViewData["changeablePrimaryKey"] != null) { changeablePrimaryKey = ViewData["changeablePrimaryKey"].ToString(); }
 
 }
-<div id="datastructure" structure="@structureId" dataset="@id" file="@file" isTemplateRequired="@isTemplateRequired" isMeaningRequired="@isMeaningRequired" setByTemplate="@setByTemplate" enforcePrimaryKey="@enforcePrimaryKey" changeablePrimaryKey="@changeablePrimaryKey">
+<div id="datastructure" structure="@structureId" dataset="@id" file="@file" isTemplateRequired="@isTemplateRequired" isMeaningRequired="@isMeaningRequired" setByTemplate="@setByTemplate" enforcePrimaryKey="@enforcePrimaryKey" changeablePrimaryKey="@changeablePrimaryKey" showDarwinCoreValidation="@showDarwinCoreValidation">
     @Html.Partial("_sveltePage")
 </div>

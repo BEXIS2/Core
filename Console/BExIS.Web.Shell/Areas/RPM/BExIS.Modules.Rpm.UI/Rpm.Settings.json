@@ -53,6 +53,13 @@
       "description": "If the primary key is allowed to be changed, a change is possible after a successful upload of data."
     },
     {
+      "key": "showDarwinCoreValidation",
+      "title": "Show Darwin Core Archive Validation",
+      "value": false,
+      "type": "Boolean",
+      "description": "If this flag is true, you can validate your datastructure against a darwin core archive type."
+    },
+    {
       "key": "missingValues",
       "title": "Missing values",
       "value": [

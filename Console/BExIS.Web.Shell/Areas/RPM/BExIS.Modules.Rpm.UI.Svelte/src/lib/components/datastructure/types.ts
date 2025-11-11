@@ -135,3 +135,10 @@ export interface meaningEntryItemType {
 	releation: string;
 	link: string;
 }
+
+export interface dwcExtention{
+	name:string,
+	linkName:string,
+	rowType:string,
+	requiredFields:string[],
+}

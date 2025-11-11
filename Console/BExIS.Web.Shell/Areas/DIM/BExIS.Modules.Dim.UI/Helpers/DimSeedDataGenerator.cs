@@ -1706,15 +1706,15 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     if (Exist("givenName", LinkElementType.MetadataNestedAttributeUsage, uow) &&
                         Exist("individualName", LinkElementType.MetadataAttributeUsage, uow))
                     {
-                        createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager,metadataAttributeManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
-                        createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, metadataAttributeManager, mappingManager.CreateTransformationRule(@"\w+", "Author[0]"));
+                        createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/agentType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager,metadataAttributeManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
+                        createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/agentType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, metadataAttributeManager, mappingManager.CreateTransformationRule(@"\w+", "Author[0]"));
                     }
 
                     if (Exist("surName", LinkElementType.MetadataNestedAttributeUsage, uow) &&
                         Exist("individualName", LinkElementType.MetadataAttributeUsage, uow))
                     {
-                        createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager, metadataAttributeManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
-                        createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, metadataAttributeManager, mappingManager.CreateTransformationRule(@"\w+", "Author[1]"));
+                        createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/agentType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager, metadataAttributeManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
+                        createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/agentType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, metadataAttributeManager, mappingManager.CreateTransformationRule(@"\w+", "Author[1]"));
                     }
 
                     if (Exist("title", LinkElementType.MetadataAttributeUsage, uow) &&
@@ -2280,7 +2280,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     {
                         PartyType partyType = partyTypes.FirstOrDefault(p => p.Title.Equals("Organization"));
                         //FirstName
-                        string complexAttrName = "Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/Organisation/Organisation/Name/Label/Representation/RepresentationType";
+                        string complexAttrName = "Metadata/Metadata/ContentMetadata/Owners/OwnersXmlSchemaComplexType/Owner/Contact/Organisation/Organisation/Name/Label/Representation/RepresentationXmlSchemaComplexType";
 
                         if (partyCustomAttrs.Any(
                             pAttr => pAttr.Name.Equals("Name") && pAttr.PartyType.Id.Equals(partyType.Id)))
@@ -2344,7 +2344,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         PartyType partyType = partyTypes.FirstOrDefault(p => p.Title.Equals("Person"));
                         //FirstName
 
-                        string complexAttrName = "individualNameType";
+                        string complexAttrName = "individualNameXmlSchemaComplexType";
 
                         if (partyCustomAttrs.Any(
                             pAttr => pAttr.Name.Equals("FirstName") && pAttr.PartyType.Id.Equals(partyType.Id)))
@@ -2400,7 +2400,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         {
                             createToPartyReleationMapping(
                                 "givenName", LinkElementType.MetadataNestedAttributeUsage,
-                                "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage,
+                                "Metadata/creator/agentType/individualName", LinkElementType.MetadataAttributeUsage,
                                 partyRelationshipType, rootTo, metadataRef,
                                 mappingManager,
                                 metadataAttributeManager,
@@ -2408,7 +2408,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                             createFromPartyReleationMapping(
                                 "givenName", LinkElementType.MetadataNestedAttributeUsage,
-                                "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage,
+                                "Metadata/creator/agentType/individualName", LinkElementType.MetadataAttributeUsage,
                                 partyRelationshipType, rootFrom, metadataRef,
                                 mappingManager,
                                 metadataAttributeManager,
@@ -2902,7 +2902,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         createMappingKeyMapping(
                            "givenName",
                            LinkElementType.MetadataNestedAttributeUsage,
-                           "Metadata/creator/creatorType/individualName",
+                           "Metadata/creator/agentType/individualName",
                            LinkElementType.MetadataAttributeUsage,
                            givenName,
                            creator,
@@ -2920,7 +2920,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         createMappingKeyMapping(
                            "surName",
                            LinkElementType.MetadataNestedAttributeUsage,
-                           "Metadata/creator/creatorType/individualName",
+                           "Metadata/creator/agentType/individualName",
                            LinkElementType.MetadataAttributeUsage,
                            familyName,
                            creator,
@@ -3029,7 +3029,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         createMappingKeyMapping(
                            "url",
                            LinkElementType.MetadataNestedAttributeUsage,
-                           "Metadata/distribution/distributionType/online",
+                           "Metadata/distribution/distributionXmlSchemaComplexType/online/onlineXmlSchemaComplexType",
                            LinkElementType.MetadataAttributeUsage,
                            url,
                            null,
