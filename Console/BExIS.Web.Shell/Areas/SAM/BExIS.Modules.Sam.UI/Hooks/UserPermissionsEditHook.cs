@@ -7,9 +7,9 @@ using System.Web;
 
 namespace BExIS.Modules.Sam.UI.Hooks
 {
-    public class UserPermissionsHook : Hook
+    public class UserPermissionsEditHook : Hook
     {
-        public UserPermissionsHook()
+        public UserPermissionsEditHook()
         {
             Start = "/sam/UserPermissions/start";
         }

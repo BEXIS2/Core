@@ -147,7 +147,8 @@
     <Compile Include="Helpers\FormerMemberStatus.cs" />
     <Compile Include="Helpers\SAMSeedDataGenerator.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
-    <Compile Include="Hooks\UserPermissionsHook.cs" />
+    <Compile Include="Hooks\UserPermissionsViewHook.cs" />
+    <Compile Include="Hooks\UserPermissionsEditHook.cs" />
     <Compile Include="Models\DatasetModels.cs" />
     <Compile Include="Models\DatasetStatModel.cs" />
     <Compile Include="Models\DecisionModels.cs" />

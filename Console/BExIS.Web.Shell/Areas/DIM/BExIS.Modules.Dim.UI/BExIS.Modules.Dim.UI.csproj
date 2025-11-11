@@ -509,7 +509,8 @@
     <Compile Include="Helpers\MappingHelper.cs" />
     <Compile Include="Helpers\ReleationshipHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
-    <Compile Include="Hooks\PublishHook.cs" />
+    <Compile Include="Hooks\PublishEditHook.cs" />
+    <Compile Include="Hooks\PublishViewHook.cs" />
     <Compile Include="Models\AdminModel.cs" />
     <Compile Include="Models\Api\ApiModels.cs" />
     <Compile Include="Models\DataCiteDOIModels.cs" />

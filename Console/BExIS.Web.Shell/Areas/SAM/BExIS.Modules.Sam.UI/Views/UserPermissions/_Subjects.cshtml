@@ -3,12 +3,31 @@
 @using Telerik.Web.Mvc.UI
 
 @model EntityInstanceModel
+@{
+    ViewBag.Title = "Permissions for "+Model.InstanceId;
+}
+
 
 <style>
     i {
         cursor: pointer;
     }
 </style>
+<script>
+    function backFn() {
+        window.location.href = '/dcm/edit/?id=@Model.InstanceId';
+    }
+
+</script>
+
+<div class="permission-header">
+    <div>
+        <button class="bx bx-button function" onclick="backFn()" style="font-family:Arial">back</button>
+    </div>
+    @*<div>
+        <h2>Permissions for  </h2>
+    </div>*@
+</div>
 
 @(Html.Telerik().Grid<EntityPermissionGridRowModel>()
     .Name("grid_subjects")
@@ -56,3 +75,11 @@
       {
           events.OnDataBound("grid_subjects_onDataBound");
       }))
+
+<style>
+    .permission-header {
+        display: flex;
+        gap: 3px;
+        align-items: center;
+    }
+</style>

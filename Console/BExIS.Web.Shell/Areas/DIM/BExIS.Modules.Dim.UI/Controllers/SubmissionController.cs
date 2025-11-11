@@ -148,6 +148,15 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return PartialView("_showPublishDataView", model);
         }
 
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Read)]
+        public ActionResult getPublishDataView(long datasetId, long datasetVersionId = -1)
+        {
+            setViewData(datasetId);
+            ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
+
+            return View("_showPublishDataView", model);
+        }
+
         public async Task<ActionResult> LoadRequirementView(long brokerId, long datasetId, int versionNr = 0, double tagNr = 0)
         {
             setViewData(datasetId);
@@ -435,6 +444,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
             try
             {
                 Dataset dataset = datasetManager.GetDataset(datasetId);
+                var latestVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                model.Title = latestVersion != null ? latestVersion.Title : "No title available";
 
                 List<Broker> Brokers = GetBrokers(dataset.MetadataStructure.Id, publicationManager);
 
@@ -501,9 +512,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         Status = pub.Status,
                         DatasetVersionNr = versionNr,
                         Tag = pub.DatasetVersion.Tag != null ? pub.DatasetVersion.Tag.Nr : 0,
+                       
                     });
                 }
-
                 return model;
             }
             finally
@@ -915,7 +926,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 ViewData["VersionNrs"] = versionNumbers;
                 ViewData["Tags"] = tags;
-                
+                ViewData["Title"] = tags;
+
             }
         }
     }

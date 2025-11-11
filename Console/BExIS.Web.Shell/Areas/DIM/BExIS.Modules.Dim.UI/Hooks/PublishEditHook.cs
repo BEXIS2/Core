@@ -4,9 +4,9 @@ using BExIS.UI.Hooks;
 
 namespace BExIS.Modules.Dim.UI.Hooks
 {
-    public class PublishHook : Hook
+    public class PublishEditHook : Hook
     {
-        public PublishHook()
+        public PublishEditHook()
         {
             Start = "/dim/publish/start";
         }

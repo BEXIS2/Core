@@ -3,7 +3,6 @@
 	import Header from './ShowHeader.svelte';
 	import { Table } from '@bexis2/bexis2-core-ui';
 	import type { TableConfig } from '@bexis2/bexis2-core-ui';
-	import { dataset_dev } from 'svelte/internal';
 	import { writable } from 'svelte/store';
 	import NameTableCol from './NameTableCol.svelte';
 

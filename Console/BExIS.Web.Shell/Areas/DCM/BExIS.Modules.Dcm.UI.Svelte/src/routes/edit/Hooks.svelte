@@ -1,11 +1,12 @@
 <script>
 	import HookContainer from '$lib/components/HookContainer.svelte';
-	import Hook from '$lib/components//Hook.svelte';
+	import DefaultViewHook from '$lib/components/DefaultViewHook.svelte';
 	import Attachments from '$lib/hooks/Attachment.svelte';
 
 	import { Spinner } from '@bexis2/bexis2-core-ui';
-	import { onMount } from 'svelte';
-	import { construct_svelte_component } from 'svelte/internal';
+	import Link from '../../lib/hooks/Link.svelte';
+	import Permission from '../../lib/hooks/Permission.svelte';
+	import Publish from '../../lib/hooks/Publish.svelte';
 
 	export let id;
 	export let version;
@@ -14,6 +15,9 @@
 	$: seperateHooks(hooks);
 
 	let attachmentHook;
+	// let linkHook;
+	// let permissionsHook;
+	// let publishHook;
 
 	$: addtionalhooks = [];
 
@@ -22,7 +26,15 @@
 		hooks.forEach((element) => {
 			if (element.name == 'attachments') {
 				attachmentHook = element;
-			} else {
+			} 
+			//else if(element.name == 'link'){
+			// 	linkHook = element;
+			// } else if(element.name == 'permissions'){
+			// 	permissionsHook = element;
+			// } else if(element.name == 'publish'){
+			// 	publishHook = element;
+			// }
+			else {
 				// console.log(element.name)
 				addtionalhooks.push(element);
 			}
@@ -35,6 +47,18 @@
 <div class={hookColor}>
 	{#if addtionalhooks}
 		<!-- if hooks list is loaded render hooks -->
+<!-- 
+		<HookContainer {...linkHook} color={hookColor}>
+			<div>
+				<Link
+					{id}
+					{version}
+					hook={linkHook}
+					on:error={(e) => errorHandler(e)}
+					on:success={(e) => successHandler(e)}
+				/>
+			</div>
+		</HookContainer> -->
 
 		<HookContainer {...attachmentHook} let:errorHandler let:successHandler color={hookColor}>
 			<div>
@@ -47,11 +71,39 @@
 				/>
 			</div>
 		</HookContainer>
+<!-- 
+		<HookContainer {...permissionsHook} let:errorHandler let:successHandler color={hookColor}>
+			<div>
+				<Permission
+					{id}
+					{version}
+					hook={permissionsHook}
+					on:error={(e) => errorHandler(e)}
+					on:success={(e) => successHandler(e)}
+				/>
+			</div>
+		</HookContainer>
+
+		<HookContainer {...publishHook} let:errorHandler let:successHandler color={hookColor}>
+			<div>
+				<Publish
+					{id}
+					{version}
+					hook={publishHook}
+					on:error={(e) => errorHandler(e)}
+					on:success={(e) => successHandler(e)}
+				/>
+			</div>
+		</HookContainer> -->
+
+		
+
+		
 
 		{#each addtionalhooks as hook}
 			<HookContainer {...hook} color={hookColor}>
 				<div>
-					<Hook {id} {version} {...hook} />
+					<DefaultViewHook {id} {version} {...hook} start={hook.start} />
 				</div>
 			</HookContainer>
 		{/each}

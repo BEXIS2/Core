@@ -7,14 +7,19 @@
   InActive = 5 // Data behind the hook exists
 -->
 
-<script>
+<script lang="ts">
 
   import Fa from 'svelte-fa';
   import { faPen, faCopy } from '@fortawesome/free-solid-svg-icons';
 
-	export let id = 0;
-	export let version = 1;
-	export let start='';
+		//prepare drawer
+		import { Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
+		const drawerStore = getDrawerStore();
+		import type { DrawerSettings } from '@skeletonlabs/skeleton';
+
+		export let id = 0;
+		export let version = 1;
+		export let start='';
 
 
 	export let status = 0;
