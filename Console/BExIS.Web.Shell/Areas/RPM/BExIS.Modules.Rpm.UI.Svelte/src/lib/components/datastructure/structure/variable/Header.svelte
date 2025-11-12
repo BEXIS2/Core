@@ -36,7 +36,7 @@
 	{/if}
 </div>
 
-<div class="flex flex-col">
+<div class="flex flex-col pt-2">
 	<div id={index.toString()} class="flex">
 		<div class="flex grow gap-2">
 			<div

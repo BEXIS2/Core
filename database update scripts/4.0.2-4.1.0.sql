@@ -19,6 +19,8 @@ Set
  where type  in (5,6) and complexity = 1 and xpath !='';
 	*/
 
+BEGIN TRANSACTION;
+
 -- TEXT - string
 update datatypes
 	set 

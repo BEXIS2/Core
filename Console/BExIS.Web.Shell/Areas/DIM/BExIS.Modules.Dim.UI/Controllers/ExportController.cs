@@ -274,15 +274,24 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
 
                         string dataStructurePath = "";
-                        dataStructurePath = storeGeneratedFilePathToContentDiscriptor(id, datasetVersion,
-                            "datastructure", ".json");
+                        dataStructurePath = storeGeneratedFilePathToContentDiscriptor(id, datasetVersion,"datastructure", ".json");
                         string datastructureFilePath = AsciiWriter.CreateFile(dataStructurePath);
 
+                        // generate json
                         string json = OutputDataStructureManager.GetDataStructureAsJson(dataStructureId);
-
                         AsciiWriter.AllTextToFile(datastructureFilePath, json);
 
+                        // generate txt
+                        dataStructurePath = storeGeneratedFilePathToContentDiscriptor(id, datasetVersion,"datastructure", ".csv");
+                        datastructureFilePath = AsciiWriter.CreateFile(dataStructurePath);
+
+                        string txt =  OutputDataStructureManager.GenerateDataStructureAsText(dataStructureId);
+
+                        AsciiWriter.AllTextToFile(datastructureFilePath, txt);
+
+                        // generate html
                         generateDataStructureHtml(datasetVersion);
+
                     }
 
                     #endregion
@@ -342,7 +351,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         {
                             string path = Path.Combine(AppConfiguration.DataPath, filteredFilePath);
                             string ext = Path.GetExtension(filteredFilePath).ToLower();
-                            string name = IOHelper.GetFileName(FileType.PrimaryData, id, datasetVersionNumber, dataStructureId)+"filtered"+ ext;
+                            string name = IOHelper.GetFileName(FileType.PrimaryData, id, datasetVersionNumber, dataStructureId)+"_filtered"+ ext;
 
                             archive.AddFileToArchive(filteredFilePath, name);
                         }
@@ -573,8 +582,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             byte[] content = Encoding.ASCII.GetBytes(view.ToString());
        
             string dynamicPathOfMD = "";
-            dynamicPathOfMD = storeGeneratedFilePathToContentDiscriptor(dsv.Dataset.Id, dsv,
-                "datastructure", ".html");
+            dynamicPathOfMD = storeGeneratedFilePathToContentDiscriptor(dsv.Dataset.Id, dsv,"datastructure", ".html");
             string metadataFilePath = AsciiWriter.CreateFile(dynamicPathOfMD);
 
             AsciiWriter.AllTextToFile(metadataFilePath, view.ToString());

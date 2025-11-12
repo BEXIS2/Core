@@ -17,12 +17,20 @@
 	import { goTo } from '$services/BaseCaller';
 	import { get } from 'svelte/store';
 
-	import type { DataStructureCreationModel } from '../types';
-	import { Alert, helpStore } from '@bexis2/bexis2-core-ui';
+	import type { DataStructureCreationModel, dwcExtention } from '../types';
+	import { Alert, helpStore, MultiSelect } from '@bexis2/bexis2-core-ui';
 	import { type ModalSettings, getModalStore } from '@skeletonlabs/skeleton';
+	import DwcRequirements from './DwcRequirements.svelte';
 	const modalStore = getModalStore();
 
 	export let model: DataStructureCreationModel;
+	export let dwcExtensions: dwcExtention[] = [];
+
+ // let dwcSelections:dwcExtention[] = [];
+ // $: dwcSelections;
+	let dwcSelection:dwcExtention;
+ let notSet:string[]	= [];
+
 	let enforcePrimaryKey: boolean = get(enforcePrimaryKeyStore);
 
 	$: isPKSet = false;
@@ -81,10 +89,11 @@
 		};
 		modalStore.trigger(confirm);
 	}
+
 </script>
 
-<div>
-	<div transition:fade class="flex">
+<div class="gap-4">
+	<div transition:fade class="flex gap-5 items-start">
 		<div class="grow">
 			{#if model.file}
 				<button
@@ -97,6 +106,7 @@
 				>
 			{/if}
 		</div>
+
 		<div class="flex-none text-end">
 			<button
 				id="cancel"
@@ -118,6 +128,7 @@
 					!areAttributesValid ||
 					!((enforcePrimaryKey && isPKSet) || !enforcePrimaryKey)}><Fa icon={faSave} /></button
 			>
+
 		</div>
 	</div>
 
@@ -126,6 +137,7 @@
 		<Alert message="Please select a (combined) primary key." cssClass="variant-filled-warning"
 		></Alert>
 	{/if}
+
 
 	<Variables
 		bind:variables={model.variables}
