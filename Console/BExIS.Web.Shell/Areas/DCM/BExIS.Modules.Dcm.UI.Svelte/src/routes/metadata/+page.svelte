@@ -9,7 +9,7 @@
 	import { metadataStore } from './stores';
 	import { schemaToJson } from './utils';
 
-	export let schemaId: number = 2;
+	export let schemaId: number = 7;
 	export let datasetId: number = 0;
 
 	let s: any;
@@ -20,6 +20,7 @@
 	async function load() {
 		if (schemaId > 0) {
 			s = await apiCalls.GetMetadataSchema(schemaId);
+			console.log('Schema loaded', s);
 			if (datasetId > 0) m = await apiCalls.GetMetadata(datasetId);
 			else m = schemaToJson(s);
 			console.log('Metadata loaded', m);
@@ -34,7 +35,7 @@
 		<Spinner />
 	{:then}
 		<div class="p-2">
-			<ComplexComponent complexComponent={s} path={''} />
+			<ComplexComponent complexComponent={schema} path={''} />
 		</div>
 	{/await}
 </Page>

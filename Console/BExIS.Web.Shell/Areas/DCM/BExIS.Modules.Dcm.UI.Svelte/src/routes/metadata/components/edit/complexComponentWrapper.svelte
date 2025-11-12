@@ -16,6 +16,7 @@
 	import Fa from 'svelte-fa';
 	import { slide, fade } from 'svelte/transition';
 	import { hideStore } from '../../stores';
+	import { toggleShow } from '../../utils';
 
 	export let complexComponent: any;
 	export let path: string;
@@ -27,17 +28,6 @@
 		complexComponent && complexComponent.type === 'object' && complexComponent.required
 			? complexComponent.required
 			: [];
-
-	function toggleShow(path: string) {
-		let hideStoreValue: string[] = $hideStore;
-		if (hideStoreValue.includes(path)) {
-			let idx = hideStoreValue.findIndex((x) => x == path);
-			if (idx > -1) hideStoreValue.splice(idx, 1);
-		} else {
-			hideStoreValue.push(path);
-		}
-		hideStore.set(hideStoreValue);
-	}
 </script>
 
 {#if complexComponent && complexComponent.type === 'object' && complexComponent.properties}

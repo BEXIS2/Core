@@ -1,6 +1,7 @@
-import { metadataStore } from './stores';
+import type { SimpleComponentData, validationStoretype } from './models';
+import { metadataStore, hideStore, validationStore } from './stores';
 
-export function getValueByPath(path) {
+export function getValueByPath(path: string) {
 	let obj: any;
 	metadataStore.subscribe((v) => {
 		obj = v;
@@ -8,7 +9,7 @@ export function getValueByPath(path) {
 	return path.split('.').reduce((acc, part) => acc && acc[part], obj);
 }
 
-export function setValueByPath(obj, path, value) {
+export function setValueByPath(obj: any, path: string, value: any) {
 	const parts = path.split('.');
 	let current = obj;
 	for (let i = 0; i < parts.length - 1; i++) {
@@ -21,7 +22,7 @@ export function setValueByPath(obj, path, value) {
 	return obj;
 }
 
-export function updateMetadataStore(path, value) {
+export function updateMetadataStore(path: string, value: any) {
 	let obj: any;
 	metadataStore.subscribe((v) => {
 		obj = v;
@@ -73,3 +74,48 @@ export function schemaToJson(schema: any): any {
 			return null;
 	}
 }
+
+export function toggleShow(path: string) {
+		let hideStoreValue: string[] = [];
+		hideStore.subscribe((v) => {
+			hideStoreValue = [...v];
+		})();
+
+		if (hideStoreValue.includes(path)) {
+			let idx = hideStoreValue.findIndex((x) => x == path);
+			if (idx > -1) hideStoreValue.splice(idx, 1);
+		} else {
+			hideStoreValue.push(path);
+		}
+		hideStore.set(hideStoreValue);
+	}
+
+export function getValidationStore(): validationStoretype {
+	let validationStoreValues: validationStoretype = { allSimpleTypesValid: true, simpleTypeValidationItems: [] };
+			validationStore.subscribe(n => {
+				validationStoreValues = n;
+			});
+		if(validationStoreValues == undefined) {
+			validationStoreValues = { allSimpleTypesValid: true, simpleTypeValidationItems: [] };
+			validationStore.set(validationStoreValues);
+		}
+	return validationStoreValues;
+	}
+
+export function ValidationStoreAddSimpleComponent(item: SimpleComponentData): validationStoretype {
+	let validationStoreValues: validationStoretype = getValidationStore();
+		if( !validationStoreValues.simpleTypeValidationItems.includes(item) && item.required) {
+			validationStoreValues.simpleTypeValidationItems.push(item);
+			validationStore.set(validationStoreValues);
+		}
+	return validationStoreValues;
+	}
+
+export function ValidationStoreSetAllValid(isValid: boolean): boolean {
+	let validationStoreValues: validationStoretype = getValidationStore();
+		validationStoreValues.allSimpleTypesValid = isValid;
+		validationStore.set(validationStoreValues);
+	return validationStoreValues.allSimpleTypesValid;
+	}
+
+
