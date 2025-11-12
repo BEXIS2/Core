@@ -1,29 +1,32 @@
 <script lang="ts">
-/* -------------------- IMPORTS -------------------- */
-	import { Page, DropdownKVP, TextInput, CheckboxKVPList } from '@bexis2/bexis2-core-ui';
+	/* -------------------- IMPORTS -------------------- */
+	import { Page, DropdownKVP, TextInput, CheckboxKVPList, notificationStore, notificationType } from '@bexis2/bexis2-core-ui';
 	import { FileButton } from '@skeletonlabs/skeleton';
-	import { faArrowUpFromBracket, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+	import {
+		faArrowUpFromBracket,
+		faChevronDown,
+		faChevronUp
+	} from '@fortawesome/free-solid-svg-icons';
 	import { onMount } from 'svelte';
 	import Fa from 'svelte-fa';
 	import { slide } from 'svelte/transition';
 	import JsonTree from 'svelte-json-tree';
 
 	import mapping from './mapping.json';
-	import type { validatedData, datasetType, issueType } from './models';
+	import type { validatedData, datasetType, issueType, fillDatasetType } from './models';
 	import * as apiCalls from './services/apiCalls';
-	
+	import { applyTransformations } from './transformations';
 
-/* -------------------- VARIABLES -------------------- */
+	/* -------------------- VARIABLES -------------------- */
 	// --- File & DOI ---
 	let filename: string = '';
 	let manualDOI: string = '';
-	let noValidDOi: boolean = false;
 
 	// --- Data & validation ---
 	let validatedData: validatedData = {
 		data: [],
 		MissingFields: [],
-		TypeMessage: "",
+		TypeMessage: ''
 	};
 	let DataArray: any[] = [];
 	let showDataTree: boolean = false;
@@ -38,20 +41,36 @@
 	// --- Issues & checkbox ---
 	let showErrorMsg: boolean = false;
 	let hasIssuesCalled: boolean = false;
-	let IssueRow: issueType = { Index: 0, errorType: "", msg: "" };
+	let IssueRow: issueType = { Index: 0, errorType: '', msg: '' };
 	let issueBlock: any[] = [];
 	let groupedIssues: any[] = [];
 	let currentIndex: number = 0;
 
-	let selectAll: { key: number; value: string }[] = [
-		{ key: -1, value: "Select all" }
-	];
-	$: selectAllTarget = [];
-	let _prevSelectAllTarget: string[] = [];
+	let selectAll: { key: number; value: string }[] = [{ key: -1, value: 'Select all' }];
+	
+	// let _prevSelectAllTarget: number[] = [];
 
+	let initialized = false;
+	let selectAllTarget: number[] = [];
+	$: selectAllBoxes(selectAllTarget);
+	$: deselectSelectBox(groupedIssues);
 
+ function deselectSelectBox(issues: typeof groupedIssues) {
+    const allFilled = issues.every(issue => issue.selected.length > 0);
 
-/* -------------------- ON MOUNT -------------------- */
+    if (allFilled) {
+      if (!initialized) {
+      initialized = true;
+      return; // 🚫 beim ersten Lauf: nichts tun
+    }
+	  
+      selectAllTarget = [-1];
+    } else {
+      console.log("⚠️ Mindestens ein selected ist leer");
+      selectAllTarget = [];
+    }
+  }
+	/* -------------------- ON MOUNT -------------------- */
 
 	onMount(async () => {
 		entities = await apiCalls.getEntityTemplateList();
@@ -60,8 +79,8 @@
 			text: entity.name
 		}));
 	});
-	
-/* -------------------- HANDLERS -------------------- */
+
+	/* -------------------- HANDLERS -------------------- */
 
 	function onChangeHandler(event: any) {
 		let selectedEntity: number;
@@ -69,17 +88,19 @@
 		let searchEntity = entities.find((entity) => entity.id == selectedEntity);
 		EntityTemplateId = +selectedEntity;
 		MetadataStructureId = searchEntity.metadataStructure.id;
-		console.log("Selected Entity Template ID:", EntityTemplateId);
-		console.log("Selected Metadata Structure ID:", MetadataStructureId);
+		console.log('Selected Entity Template ID:', EntityTemplateId);
+		console.log('Selected Metadata Structure ID:', MetadataStructureId);
 	}
-
-
-
 
 	// handle dois - get metadata
 	async function handleManualDOI() {
-		if (!manualDOI || manualDOI.trim() === "") {
-			noValidDOi = true;
+		if (!manualDOI || manualDOI.trim() === '') {
+			let msg = "Please enter at least on DOI"
+			notificationStore.showNotification({
+				notificationType: notificationType.error,
+				message: msg
+			})
+			
 			// alert("Please enter at least one DOI.");
 			return;
 		}
@@ -91,29 +112,26 @@
 			.filter((doi) => doi.length > 0);
 
 		if (doiList.length === 0) {
-			alert("No valid DOIs entered.");
+			alert('No valid DOIs entered.');
 			return;
 		}
 
-		console.log("Manual DOIs entered:", doiList);
+		console.log('Manual DOIs entered:', doiList);
 
 		DataArray = [];
-		validatedData = { data: [], MissingFields: [], TypeMessage: "" };
+		validatedData = { data: [], MissingFields: [], TypeMessage: '' };
 		showDataTree = false;
 
 		await grabMetadata(doiList);
 	}
-
-
 
 	// let json: any; //für debugging -> wenn gelöscht wird bei handleFileUpload const json =JSON.parse...
 
 	async function handleFileUpload(event: Event) {
 		const input = event.target as HTMLInputElement;
 		if (input.files && input.files.length > 0) {
-
 			DataArray = [];
-			validatedData = { data: [], MissingFields: [], TypeMessage: "" };
+			validatedData = { data: [], MissingFields: [], TypeMessage: '' };
 			showDataTree = false;
 
 			filename = input.files[0].name;
@@ -135,27 +153,23 @@
 		}
 	}
 
-
-
 	async function grabDOI(json: any) {
 		let DOIs: string[] = [];
 
 		if (json.message) {
 			DOIs.push(json.message.DOI);
-			console.log("Grabbed DOI:", json.message.DOI);
+			console.log('Grabbed DOI:', json.message.DOI);
 		} else if (json.data && Array.isArray(json.data)) {
 			json.data.forEach((item: any, i: number) => {
 				DOIs.push(item?.message?.DOI);
 				console.log(`Grabbed DOI [${i}]:`, item?.message?.DOI);
 			});
 		} else {
-			console.warn("No DOI found!");
+			console.warn('No DOI found!');
 		}
 
 		await grabMetadata(DOIs);
 	}
-
-
 
 	async function grabMetadata(dois: string[]) {
 		let Metadata: any[] = [];
@@ -172,33 +186,31 @@
 		validate(Metadata);
 	}
 
-
-
-// validation 
+	// validation
 	function validate(Metadata: any[]) {
-		console.log("Starting validation for metadata:", Metadata);
+		console.log('Starting validation for metadata:', Metadata);
 		Metadata.forEach((data) => {
-			console.log("Validating data:", data);
+			console.log('Validating data:', data);
 			// validatedData.data = data;
 			checkMandatoryFields(data);
 			validateTypes(data);
-			validatedData.data = filterData(data, mapping);
+			const transformedData = applyTransformations(data);
+			console.log("transformierte daten", transformedData)
+			validatedData.data = filterData(transformedData, mapping);
 
 			DataArray.push({ ...validatedData }); // Kopie pushen
-			validatedData = { data: [], MissingFields: [], TypeMessage: "" };
+			validatedData = { data: [], MissingFields: [], TypeMessage: '' };
 		});
 		hasIssues(DataArray);
 		showDataTree = true;
-		console.log("All validated data:", DataArray);
+		console.log('All validated data:', DataArray);
 	}
-
- 
 
 	function checkMandatoryFields(data: Record<string, any>): void {
 		validatedData.MissingFields ??= [];
 		for (const map of mapping.Mappings) {
 			const source = map.Source?.trim();
-			if (source === "") continue;
+			if (source === '') continue;
 			const value =
 				getNestedValue(data, source) ??
 				getNestedValue(data.message, source) ??
@@ -211,20 +223,22 @@
 		}
 	}
 
+function getNestedValue(obj: any, path: string): any {
+	if (!obj || typeof path !== 'string') return undefined;
+	const parts = path.split('.');
+	let cur = obj;
 
+	for (const p of parts) {
+		if (cur == null || typeof cur !== 'object') return undefined;
 
-	function getNestedValue(obj: any, path: string): any {
-		if (!obj || typeof path !== 'string') return undefined;
-		const parts = path.split('.');
-		let cur = obj;
-		for (const p of parts) {
-			if (cur == null) return undefined;
-			cur = cur[p];
-		}
-		return cur;
+		// Finde key case-insensitive
+		const key = Object.keys(cur).find((k) => k.toLowerCase() === p.toLowerCase());
+		if (!key) return undefined;
+
+		cur = cur[key];
 	}
-
-
+	return cur;
+}
 
 	function findValueByKeyRecursive(obj: any, key: string): any {
 		if (obj == null || typeof obj !== 'object') return undefined;
@@ -239,35 +253,29 @@
 		return undefined;
 	}
 
-
-
 	function isEmptyValue(value: any): boolean {
 		if (value === null || value === undefined) return true;
 		if (typeof value === 'string') return value.trim() === '';
 		if (Array.isArray(value)) return value.length === 0 || value.every(isEmptyValue);
 		if (typeof value === 'object') {
 			const keys = Object.keys(value);
-			return keys.length === 0 || keys.every(k => isEmptyValue(value[k]));
+			return keys.length === 0 || keys.every((k) => isEmptyValue(value[k]));
 		}
 		return false;
 	}
 
-
-
 	function validateTypes(data: any) {
-		console.log("Validating types for data:", data);
-		if (data['update-to']?.[0]?.type === "retraction") {
+		console.log('Validating types for data:', data);
+		if (data['update-to']?.[0]?.type === 'retraction') {
 			validatedData.TypeMessage = 'This data has type "retraction". Do you really want to import?';
 		}
 	}
 
-
-
 	function filterData(data: any, mapping: any) {
 		// Alle relevanten Quellen aus der Mapping-Datei extrahieren
-		const sources = mapping.Mappings
-			.map((m: any) => m.Source?.trim())
-			.filter((s: string) => s && s.length > 0); // Nur nicht-leere Sources
+		const sources = mapping.Mappings.map((m: any) => m.Source?.trim()).filter(
+			(s: string) => s && s.length > 0
+		); // Nur nicht-leere Sources
 
 		const filtered: Record<string, any> = {};
 
@@ -281,8 +289,6 @@
 		return filtered;
 	}
 
-
-
 	function hasIssues(dataArray: any[]) {
 		dataArray.forEach((data) => {
 			if (data.MissingFields.length > 0 || data.TypeMessage) {
@@ -293,9 +299,7 @@
 		if (hasIssuesCalled) {
 			IssueInformation(dataArray);
 		}
-	} 
-
-
+	}
 
 	function IssueInformation(dataArray: any[]) {
 		dataArray.forEach((data, index) => {
@@ -303,56 +307,56 @@
 				data.MissingFields.forEach((field: string) => {
 					IssueRow = {
 						Index: index + 1,
-						errorType: "Error",
-						msg: "Missing Fields: " + field
+						errorType: 'Error',
+						msg: 'Missing Fields: ' + field
 					};
-					issueBlock.push({ ...IssueRow}); // Kopie pushen
-					IssueRow = { Index: 0, errorType: "", msg: "" };
+					issueBlock.push({ ...IssueRow }); // Kopie pushen
+					IssueRow = { Index: 0, errorType: '', msg: '' };
 				});
 			}
 			if (data.TypeMessage) {
 				IssueRow = {
 					Index: index + 1,
-					errorType: "Warning",
-					msg: "Type Message: " + data.TypeMessage
+					errorType: 'Warning',
+					msg: 'Type Message: ' + data.TypeMessage
 				};
-				issueBlock.push({ ...IssueRow}); // Kopie pushen
-				IssueRow = { Index: 0, errorType: "", msg: "" };
+				issueBlock.push({ ...IssueRow }); // Kopie pushen
+				IssueRow = { Index: 0, errorType: '', msg: '' };
 			}
 		});
-		console.log("Issue Information:", issueBlock);
+		console.log('Issue Information:', issueBlock);
 		for (const issue of issueBlock) {
 			let group = groupedIssues.find((g: any) => g.Index === issue.Index);
 			if (!group) {
-			group = { 
-				Index: issue.Index,
-				issues: [],
-				checkboxValue: [{ key: issue.Index, value: ""}],
-				selected: [] 
-			};
-			groupedIssues.push(group);
+				group = {
+					Index: issue.Index,
+					issues: [],
+					checkboxValue: [{ key: issue.Index, value: '' }],
+					selected: []
+				};
+				groupedIssues.push(group);
 			}
-    		group.issues.push({ errorType: issue.errorType, msg: issue.msg });
-  		}
+			group.issues.push({ errorType: issue.errorType, msg: issue.msg });
+		}
 	}
 
-
-
-// create datasets in bexis
-	async function createDatasets() {
-		console.log("Creating datasets with validated data:", DataArray);
-		for (const data of DataArray) {
+	// create datasets in bexis
+	async function createDatasets(Array: any) {
+		console.log('Creating datasets with validated data:', Array);
+		const fillDatasetArray:any[] = [];
+		for (const data of Array) {
 			const mapped = mapToApiFormat(data);
 			const res = await apiCalls.createDataset(mapped);
-			console.log("Dataset created:", res);
+			console.log('Dataset created:', res);
+			const fillDataset: fillDatasetType = {id: res.id, data: data.data}
+			fillDatasetArray.push(fillDataset);
 		}
-		console.log("All datasets created!");
+		console.log('All datasets created!');
+		fillDatasets(fillDatasetArray);
 	}
 
-
-
 	function mapToApiFormat(data: any) {
-		console.log("Mapping data to API format:", data);
+		console.log('Mapping data to API format:', data);
 		const dataset: datasetType = {
 			Title: '',
 			Description: '',
@@ -361,16 +365,147 @@
 			EntityTemplateId: EntityTemplateId
 		};
 
-		dataset.Title = data.data.title?.toString() ?? "";
-		dataset.Description = data.data.abstract?.toString() ?? "";
+		dataset.Title = data.data.title?.toString() ?? '';
+		dataset.Description = data.data.abstract?.toString() ?? '';
 
-		console.log("Mapped dataset:", dataset);
+		console.log('Mapped dataset:', dataset);
 		return dataset;
+	}
+
+	async function fillDatasets(data: any) {
+		console.log("Diese Datasets werden füllen", data);
+
+		for (const dataset of data) {
+			// Metadaten abrufen
+			const getMetadata = await apiCalls.GetMetadata(dataset.id);
+			let metadata = getMetadata; // wird überschrieben
+
+			console.log("Ursprüngliche Metadaten:", metadata);
+
+			// JSON-Daten aus deinem DOI-Metadaten-Array holen
+			const json = dataset.data;
+
+			// Über Mapping iterieren
+			for (const map of mapping.Mappings) {
+				const source = map.Source?.trim();
+				const target = map.Target?.trim();
+
+				// Source leer → überspringen
+				if (!source) continue;
+
+				// Wert aus JSON holen
+				const value =
+					getNestedValue(json, source) ??
+					json[source] ??
+					undefined;
+
+				if (value === undefined) continue;
+
+				// Typ anpassen
+				const normalized = normalizeValue(value, "string");
+
+				// Wert in Metadaten setzen
+				setNestedValue(metadata, target, normalized);
+			}
+
+			console.log("Gefüllte Metadaten:", metadata);
+			await apiCalls.putMetadata(dataset.id, metadata);
+
+			// Optional: API call zum Speichern
+			// await apiCalls.UpdateMetadata(dataset.id, metadata);
+		}
+	}
+
+// Hilfsfunktion: Pfad im Objekt setzen (z.B. $.publication.Title → metadata.publication.Title)
+	function setNestedValue(obj: any, path: string, value: any) {
+		path = path.replace(/^\$\./, '');
+		const parts = path.split('.');
+		let cur = obj;
+
+		for (let i = 0; i < parts.length - 1; i++) {
+			const part = parts[i];
+
+			// Case-insensitive lookup
+			let key = Object.keys(cur).find((k) => k.toLowerCase() === part.toLowerCase());
+			if (!key) {
+				key = part;
+				cur[key] = {};
+			}
+
+			cur = cur[key];
+		}
+
+		const lastKeyPart = parts[parts.length - 1];
+		let lastKey = Object.keys(cur).find((k) => k.toLowerCase() === lastKeyPart.toLowerCase()) ?? lastKeyPart;
+
+		const isArrayTarget = Array.isArray(cur[lastKey]);
+
+		// FALL 1: Ziel ist ein Array → erstelle pro Wert ein Objekt mit #text
+		if (isArrayTarget) {
+			let values = Array.isArray(value) ? value : [value];
+
+			cur[lastKey] = values.map((v) => ({
+				"@ref": "",
+				"@partyid": "",
+				"#text": typeof v === "object" ? JSON.stringify(v) : String(v),
+			}));
+			return;
+		}
+
+		// FALL 2: Source ist ein Array, aber Ziel ist kein Array → prüfe ob Ziel-Template ein Array ist
+		if (Array.isArray(value)) {
+			// Wenn aktuelles Ziel-Objekt ein Array sein sollte (z. B. Author in Metadaten)
+			if (cur[lastKey] && typeof cur[lastKey] === "object" && cur[lastKey]["#text"] !== undefined) {
+				// Ein einzelnes Objekt vorhanden → in Array umwandeln
+				cur[lastKey] = value.map((v) => ({
+					"@ref": "",
+					"@partyid": "",
+					"#text": typeof v === "object" ? JSON.stringify(v) : String(v),
+				}));
+				return;
+			}
+		}
+
+		// FALL 3: Einfacher Wert (Standard)
+		if (typeof cur[lastKey] !== "object" || cur[lastKey] === null) {
+			cur[lastKey] = { "#text": "" };
+		} else if (!("#text" in cur[lastKey])) {
+			cur[lastKey]["#text"] = "";
+		}
+
+		cur[lastKey]["#text"] = Array.isArray(value)
+			? value.join(", ")
+			: typeof value === "object"
+			? JSON.stringify(value)
+			: String(value);
 	}
 
 
 
-// checkbox stuff
+// Wandelt JSON-Wert auf erwarteten Typ um (einfach gehalten)
+	function normalizeValue(value: any, expectedType: string): any {
+		if (value === null || value === undefined) return "";
+		if (Array.isArray(value)) {
+			// Wenn Array von Objekten → JSON-String, sonst join
+			if (value.every(v => typeof v === "object")) {
+				return JSON.stringify(value);
+			}
+			return value.join(", ");
+		}
+		if (typeof value === "object") {
+			// Objekt in JSON-String umwandeln
+			return JSON.stringify(value);
+		}
+		if (typeof value === "boolean" || typeof value === "number") {
+			return String(value);
+		}
+		return value.toString();
+	}
+
+
+
+
+	// checkbox stuff
 	function checkCheckboxes() {
 		// Finde alle Indizes, deren selected leer ist (diese sollen raus)
 		const removeIndices = groupedIssues
@@ -380,54 +515,40 @@
 		// Erzeuge ein NEUES Array ohne die zu entfernenden Einträge
 		const filteredDataArray = DataArray.filter((_, i) => !removeIndices.includes(i));
 
-		console.log("Gefiltertes DataArray:", filteredDataArray);
+		console.log('Gefiltertes DataArray:', filteredDataArray);
+		console.log("groupoed Issues:", groupedIssues)
+		createDatasets(filteredDataArray);
 	}
 
-
-
-	// Hilfsfunktion für tiefen Array-Vergleich (einfach)
-	function arraysEqual(a: any[], b: any[]) {
-		if (a === b) return true;
-		if (a.length !== b.length) return false;
-		for (let i = 0; i < a.length; i++) {
-		if (a[i] !== b[i]) return false;
-		}
-		return true;
-	}
 
 	// Reaktiver Watcher: läuft automatisch, wenn selectAllTarget sich ändert
-	$: if (!arraysEqual(_prevSelectAllTarget, selectAllTarget)) {
-		// update prev
-		_prevSelectAllTarget = [...selectAllTarget];
-		// führe handler aus
-		onSelectAllChanged(selectAllTarget);
-	}
-
-
-
-	function onSelectAllChanged(current: string[]) {
-		if (current.length > 0) {
-		console.log("✅ Checkbox ist angeklickt:", current);
-
-		groupedIssues = groupedIssues.map((group: any) => ({
-		...group,
-		selected: [group.Index] // neue Array-Referenz
-		}));
-		} else {
-		console.log("❌ Checkbox ist nicht angeklickt", current);
+ //if (!arraysEqual(_prevSelectAllTarget, selectAllTarget)) {
+	function selectAllBoxes(selectAll: any[]){
+ 	// update prev
+		if(selectAll.length == 1 && selectAllTarget[0] == -1){
+			console.log('✅ Checkbox ist angeklickt:', selectAll);
 
 			groupedIssues = groupedIssues.map((group: any) => ({
-		...group,
-		selected: [] // neue Array-Referenz
-		}));
+				...group,
+				selected: [group.Index] // neue Array-Referenz
+			}));	
+			//_prevSelectAllTarget = [];
 		}
+		else{
+			console.log('❌ Checkbox ist nicht angeklickt', selectAll);
+
+			groupedIssues = groupedIssues.map((group: any) => ({
+				...group,
+				selected: [] // neue Array-Referenz
+			}));
+			//_prevSelectAllTarget = ["-1"];
+		}
+		console.log('Checkbox ist :', selectAll);
 	}
-
-
-
-	function closeNoDOIAlert() {
-		noValidDOi = false;
-	}
+		// console.log('lalelu',_prevSelectAllTarget);
+		// führe handler aus
+		//onSelectAllChanged(selectAllTarget);
+	//}
 
 	function next() {
 		if (currentIndex < DataArray.length - 1) currentIndex++;
@@ -442,16 +563,19 @@
 	}
 
 	function jumpTo(index: number) {
-		console.log("das ist der index", index);
-		currentIndex = index -1;
+		console.log('das ist der index', index);
+		currentIndex = index - 1;
 	}
 
+	function checkSingle(){
+		console.log("aktueller index", currentIndex)
+		console.log("grouped Issues", groupedIssues)
+		console.log("absenden", ) 
 
-
+	}
 </script>
 
 <Page>
-
 	<h1 class="h1">Import Publications</h1>
 
 	<!-- Dropdown -->
@@ -467,8 +591,6 @@
 			/>
 		</div>
 	</div>
-
-
 
 	<!-- Datei-Upload -->
 	<div class="flex gap-5 w-full mt-4">
@@ -491,35 +613,13 @@
 	<!--  Manuelle DOI-Eingabe -->
 	<div class="flex gap-5 w-full mt-4">
 		<div id="manualDOILabel" class="w-36 mt-3">Manual DOI :</div>
-        <div class="over-clip w-full">
-	        <TextInput id="name" required={false} bind:value={manualDOI} />
-        </div>
-		<!-- <input
-			type="text"
-			placeholder="Enter DOI manually..."
-			bind:value={manualDOI}
-			class="input input-bordered w-full"
-		/> -->
-		<button
-			class="btn variant-filled-primary h-9 shadow-md mt-2"
-			on:click={handleManualDOI}
-		>
+		<div class="over-clip w-full">
+			<TextInput id="name" required={false} bind:value={manualDOI} />
+		</div>
+		<button class="btn variant-filled-primary h-9 shadow-md mt-2" on:click={handleManualDOI}>
 			Fetch DOI
 		</button>
-
 	</div>
-
-
-			{#if noValidDOi}
-		<aside class="alert variant-ghost-error w-80">
-			<div class="alert-message">
-				<p>Please enter at least one DOI.</p>
-			</div>
-			<div class="alert-actions">
-				<button on:click={closeNoDOIAlert} class="btn hover:text-primary-100" title="Close alert"><svg class="svelte-fa svelte-fa-base undefined svelte-bvo74f" viewBox="0 0 384 512" aria-hidden="true" role="img" xmlns="http://www.w3.org/2000/svg"><g transform="translate(192 256)" transform-origin="96 0"><g transform="translate(0,0) scale(1,1)"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" fill="currentColor" transform="translate(-192 -256)"></path></g></g></svg></button>
-			</div>
-		</aside>
-	{/if}
 
 	{#if hasIssuesCalled}
 		<div class="w-full">
@@ -527,52 +627,56 @@
 				<div class="w-full align-middle">Issues</div>
 				<div class="w-9">
 					{#if !showErrorMsg}
-						<button class="chip" on:click={toggleErrorMsg}
-							><Fa icon={faChevronDown}></Fa></button
-						>
+						<button class="chip" on:click={toggleErrorMsg}><Fa icon={faChevronDown}></Fa></button>
 					{:else}
 						<button class="chip" on:click={toggleErrorMsg}><Fa icon={faChevronUp}></Fa></button>
 					{/if}
 				</div>
 			</div>
-		{#if showErrorMsg}
-			<div class="grid grid-cols-5 gap-1 w-full card variant-ringed-warning p-5 text-xs" in:slide={{ delay: 400 }} out:slide>
-				<div class="font-bold">Selection</div>
-				<div class="font-bold">Index </div>
-				<div class="font-bold">Issue Type</div>
-				<div class="font-bold ">Message</div>
+			{#if showErrorMsg}
+				<div
+					class="grid grid-cols-5 gap-1 w-full card variant-ringed-warning p-5 text-xs"
+					in:slide={{ delay: 400 }}
+					out:slide
+				>
+					<div class="font-bold">Selection</div>
+					<div class="font-bold">Index</div>
+					<div class="font-bold">Issue Type</div>
+					<div class="font-bold">Message</div>
 
-				{#each groupedIssues as issueGroup}
-				<div class="col-span-5"><hr /></div>
-				<div>
-					<CheckboxKVPList
-						id="issueSelect"
-						key=""
-						description=""
-						title=""
-						source={issueGroup.checkboxValue}
-						bind:target={issueGroup.selected}
-					/>
-				</div>
-				<div>{issueGroup.Index}</div>
-
-					{#each issueGroup.issues as singleIssue, i}
-						{#if i > 0}
-							<div class="col-span-2"></div>							
-						{/if}
-						<div>{singleIssue.errorType}</div>
-						<div class="text-red-500">{singleIssue.msg}</div>
-						{#if i > 0}
-							<div></div>							
-						{:else}
-						<div class="text-right">
-							<button on:click={() => jumpTo(issueGroup.Index)} class="badge variant-filled-primary shadow-md w-16 text-xs">
-								Jump to
-							</button>
+					{#each groupedIssues as issueGroup}
+						<div class="col-span-5"><hr /></div>
+						<div>
+							<CheckboxKVPList
+								id="issueSelect"
+								key=""
+								description=""
+								title=""
+								source={issueGroup.checkboxValue}
+								bind:target={issueGroup.selected}
+							/>
 						</div>
-						{/if}
-					{/each}
-						
+						<div>{issueGroup.Index}</div>
+
+						{#each issueGroup.issues as singleIssue, i}
+							{#if i > 0}
+								<div class="col-span-2"></div>
+							{/if}
+							<div>{singleIssue.errorType}</div>
+							<div class="text-red-500">{singleIssue.msg}</div>
+							{#if i > 0}
+								<div></div>
+							{:else}
+								<div class="text-right">
+									<button
+										on:click={() => jumpTo(issueGroup.Index)}
+										class="badge variant-filled-primary shadow-md w-16 text-xs"
+									>
+										Jump to
+									</button>
+								</div>
+							{/if}
+						{/each}
 					{/each}
 					<div>
 						<CheckboxKVPList
@@ -589,43 +693,62 @@
 		</div>
 	{/if}
 
-
 	<!-- Dataset-Erstellung -->
-	 {#if showDataTree && DataArray.length > 0}
+	{#if showDataTree && DataArray.length > 0}
 		<div class="mt-6 flex flex-col items-center gap-4">
-			<h2 class="text-xl font-bold mb-2">Your JSON import {currentIndex + 1} / {DataArray.length}</h2>
+			<h2 class="text-xl font-bold mb-2">
+				Your JSON import {currentIndex + 1} / {DataArray.length}
+			</h2>
 
 			<!-- JSON Tree -->
-			<div class="w-full max-w-4xl text-gray-100 p-4 rounded-xl shadow-md overflow-auto max-h-[500px]">
-				<JsonTree value={DataArray[currentIndex].data} defaultExpandedLevel={700} shouldShowPreview={false} />
+			<div
+				class="w-full max-w-4xl text-gray-100 p-4 rounded-xl shadow-md overflow-auto max-h-[500px]"
+			>
+				<JsonTree
+					value={DataArray[currentIndex].data}
+					defaultExpandedLevel={700}
+					shouldShowPreview={false}
+				/>
 			</div>
 
 			<!-- Navigation Buttons -->
 			<div class="flex justify-between items-center w-full max-w-4xl mt-3">
-		<div class="flex gap-3">
-			<button 
-				class="btn variant-filled-primary shadow-md disabled:opacity-50"
-				on:click={prev}
-				disabled={currentIndex === 0}
-			>
-				Prev
-			</button>
+				<div class="flex gap-3">
+					<button
+						class="btn variant-filled-primary shadow-md disabled:opacity-50"
+						on:click={prev}
+						disabled={currentIndex === 0}
+					>
+						Prev
+					</button>
 
-			<button 
-				class="btn variant-filled-primary shadow-md disabled:opacity-50"
-				on:click={next}
-				disabled={currentIndex === DataArray.length - 1}
-			>
-				Next
-			</button>
+					<button
+						class="btn variant-filled-primary shadow-md disabled:opacity-50"
+						on:click={next}
+						disabled={currentIndex === DataArray.length - 1}
+					>
+						Next
+					</button>
+				</div>
+				<div>
+					{#if EntityTemplateId}
+						<button class="btn variant-filled-primary shadow-md" on:click={checkSingle}>
+							Confirm
+						</button>
+						<button class="btn variant-filled-primary shadow-md" on:click={checkCheckboxes}>
+							Confirm all
+						</button>
+					{:else}
+						<button class="btn variant-filled-primary shadow-md disabled" disabled>
+							Confirm
+						</button>
+						<button class="btn variant-filled-primary shadow-md disabled" disabled>
+							Confirm all
+						</button>
+					{/if}
+				</div>
+				
+			</div>
 		</div>
-			<button class="btn variant-filled-primary shadow-md" on:click={checkCheckboxes}>
-				Confirm
-			</button>
-		</div>
-	</div>
-{/if}
-
-	
-
+	{/if}
 </Page>

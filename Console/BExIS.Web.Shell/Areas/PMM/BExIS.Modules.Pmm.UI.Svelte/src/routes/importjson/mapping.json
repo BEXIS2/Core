@@ -1,7 +1,7 @@
 {
     "Mappings": [
         {
-            "Source": "",
+            "Source": "container-title",
             "Target": "$.publication.Journal"
         },
         {
@@ -13,7 +13,7 @@
             "Target": "$.publication.Abstract"
         },
         {
-            "Source": "",
+            "Source": "author",
             "Target": "$.publication.Author"
         },
         {
@@ -29,8 +29,16 @@
             "Target": "$.publication.License"
         },
         {
-            "Source": "published",
+            "Source": "published-online",
             "Target": "$.publication.Publication_date"
+        },
+        {
+            "Source": "issue",
+            "Target": "$.publication.issue"
+        },
+         {
+            "Source": "volume",
+            "Target": "$.publication.volume"
         },
         {
             "Source": "",
@@ -61,7 +69,7 @@
             "Target": "$.publication.Identifiers.Doi"
         },
         {
-            "Source": "",
+            "Source": "URL",
             "Target": "$.publication.Identifiers.Uri"
         },
         {

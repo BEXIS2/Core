@@ -48,3 +48,27 @@ export const createDataset = async (dataset: datasetType) => {
     }
 };
 
+export const GetMetadata = async (id: number) => {
+	try {
+		const response = await Api.get('/api/Metadata/' + id + '?simplifiedJson=1');
+		// console.log('response', response.data);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
+export const putMetadata = async (id: number, value: any) => {
+	try {
+		// console.log(" value:", value);
+
+		const response = await Api.put('/api/Metadata/' + id, value);
+		// console.log('Dataset filled:', response);
+		return response.data;
+	} catch (error) {
+		console.error('Fehler beim füllen vom dataset:', error);
+		throw error;
+	}
+};
+

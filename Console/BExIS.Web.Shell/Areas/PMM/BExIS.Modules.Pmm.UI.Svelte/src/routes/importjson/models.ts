@@ -17,3 +17,8 @@ export  interface issueType {
     errorType: string;
     msg: string;
 }
+
+export interface fillDatasetType {
+    id: number;
+    data: any;
+}
