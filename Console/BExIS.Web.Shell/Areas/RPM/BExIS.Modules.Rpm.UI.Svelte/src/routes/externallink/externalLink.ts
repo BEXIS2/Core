@@ -9,7 +9,7 @@ const suite = create((data = {}, fieldName) => {
 		enforce(data.name).isNotBlank();
 	});
 
-	test('name', 'name allready exist.', () => {
+	test('name', 'name already exist.', () => {
 		const existingLinks = get(externalLinksStore).map((e) => e.name);
 		// if the form is in edit mode, find the selected one by id
 		const editedObj =
@@ -21,6 +21,16 @@ const suite = create((data = {}, fieldName) => {
 
 		enforce(data.name).notInside(list);
 	});
+
+	test('type', 'type is required', () => {
+        let value = data.type;
+        if (Array.isArray(value)) value = value[0];
+        // tolerate object shapes from MultiSelect (e.g. { id, text } or { value } etc.)
+        if (value && typeof value === 'object') {
+            value = value.id ?? value.value ?? value.text ?? value.name ?? '';
+        }
+        enforce(value).isNotBlank();
+    });
 
 	test('uri', 'uri is required', () => {
 		enforce(data.uri).isNotBlank();
