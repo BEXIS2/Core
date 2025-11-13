@@ -26,17 +26,23 @@ function select(type: any) {
 
 function open(): void {
 
-		const drawerSettings: DrawerSettings = {
-			id: 'example-2',
-			meta: { foo: 'bar', fizz: 'buzz', age: 40 }
-		};
-		drawerStore.open(drawerSettings);
-	}
+	 if(list==undefined || list.length==0){
+			return;
+		}
+
+			const drawerSettings: DrawerSettings = {
+				id: 'example-2',
+				meta: { foo: 'bar', fizz: 'buzz', age: 40 }
+			};
+			drawerStore.open(drawerSettings);
+		}
 
  function close() {
 		console.log('close selection');
   dispatch('close');
   drawerStore.close();
+
+		list	= [];
   
 	}
 
