@@ -35,6 +35,7 @@ export class MeaningModel {
 export class meaningEntryType {
 	mappingRelation: listItemType;
 	mappedLinks: listItemType[];
+	isValid: boolean = true;
 
 	public constructor() {
 		this.mappingRelation = { id: -1, text: '', group: '', description: '' };
