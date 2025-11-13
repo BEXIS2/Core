@@ -299,7 +299,16 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     {
                         publication.Status = "accepted";
                         publication.Response = JsonConvert.SerializeObject(dataCiteResponse.Data);
-                        publication.ExternalLink = dataCiteResponse.Data.Data.Attributes.Doi;
+
+                        if(dataCiteResponse.Data.Data.Attributes.Identifiers.Count > 0)
+                        {
+                            publication.ExternalLink = dataCiteResponse.Data.Data.Id;
+                        }
+                        else
+                        {
+                            publication.ExternalLink = dataCiteResponse.Data.Data.Attributes.Doi;
+                        }
+
                         publication.ExternalLinkType = "DOI";
 
                         publicationManager.Update(publication);
