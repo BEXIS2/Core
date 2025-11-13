@@ -354,10 +354,10 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Extension")))
                 {
-                    string titleXPath = "Metadata/Title/TitleType";
-                    string descriptionXpath = "Metadata/Description/DescriptionType";
+                    string titleXPath = "Metadata/metadata/metadata/title/titleXmlSchemaComplexType";
+                    string descriptionXpath = "Metadata/metadata/metadata/description/descriptionXmlSchemaComplexType\r\n ";
 
-                    ImportSchema("Extension", "BEXIS2-Extension.xsd", "Metadata", extension.Name, extension.EntityType.FullName, titleXPath, descriptionXpath);
+                    ImportSchema("Extension", "BEXIS2-Extension.xsd", "", extension.Name, extension.EntityType.FullName, titleXPath, descriptionXpath);
                 }
 
                 #endregion Add Metadata

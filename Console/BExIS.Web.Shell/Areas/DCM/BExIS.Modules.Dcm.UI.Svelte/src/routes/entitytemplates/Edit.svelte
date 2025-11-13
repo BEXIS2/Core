@@ -22,7 +22,10 @@
 	import {
 		getEntityTemplate,
 		saveEntityTemplate,
-		getSystemKeys
+		getSystemKeys,
+
+		getExtensions
+
 	} from '../../services/EntityTemplateCaller';
 
 	// types
@@ -81,6 +84,7 @@
 		console.log('load filetypes', filetypes);
 		updateSystemKeys('metadataStructure');
 		updateIsExtensions(entityTemplate.entityType.text);
+		updateExtensions();
 		// if id > 0 then run validation
 		if (id > 0) {
 			res = suite(entityTemplate);
@@ -147,6 +151,11 @@
 			systemKeys = await getSystemKeys(id);
 			console.log(systemKeys);
 		}
+	}
+
+	async function updateExtensions(){
+		extensions = await getExtensions();
+		console.log("🚀 ~ updateExtensions ~ extensions:", extensions)
 	}
 
 	function onCancel() {
@@ -271,7 +280,7 @@ function	updateIsExtensions(entityTypeText:string){
 				</div>
 			</div>
 
-	{#if !isExtensions}
+
 			<div class="flex flex-col space-y-4">
 				<h3 class="h3">Data Structure</h3>
 				<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -307,7 +316,7 @@ function	updateIsExtensions(entityTypeText:string){
 				</div>
 			</div>
 
-
+			{#if !isExtensions}
 				<h3 class="h3">Extension</h3>
 				<div class="py-5 flex-col gap-4">
 					<!-- <EntryContainer>

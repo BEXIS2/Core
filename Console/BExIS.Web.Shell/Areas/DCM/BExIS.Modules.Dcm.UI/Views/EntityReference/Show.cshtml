@@ -13,21 +13,24 @@
 }
 
 
-<div class="entity-reference-header">
-    <div>
-        <button class="bx bx-button function" onclick="backFn()" style="font-family:Arial">back</button>
-    </div>
-    @if (Model.HasEditRights)
-    {
-        <div >
-            <button id="create-reference-bt" class="bx bx-button function" style="font-family:Arial">Create link</button>
-        </div>
-    }
 
-</div>
 
 
 <div id="entity-reference-container" class="row text-left">
+
+    <div class="entity-reference-header">
+        <div>
+            <button class="bx bx-button function" onclick="backFn()" style="font-family:Arial">back</button>
+        </div>
+        @if (Model.HasEditRights)
+        {
+            <div>
+                <button id="create-reference-bt" class="bx bx-button function" style="font-family:Arial">Create link</button>
+            </div>
+        }
+
+    </div>
+
     <div class="col-md-12">
 
 
@@ -277,5 +280,6 @@
         display: flex;
         gap: 3px;
         align-items: center;
+        padding-left:10px;
     }
 </style>
