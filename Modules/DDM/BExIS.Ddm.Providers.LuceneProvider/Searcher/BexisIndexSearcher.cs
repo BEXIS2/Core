@@ -263,7 +263,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 Row r = new Row();
                 List<object> ValueList = new List<object>();
                 ValueList = new List<object>();
-                ValueList.Add(doc.Get("doc_id"));
+                ValueList.Add(Int64.Parse(doc.Get("doc_id")));
                 ValueList.Add(doc.Get("gen_entity_name"));
                 ValueList.Add(doc.Get("gen_entitytemplate"));
                 ValueList.Add(doc.Get("gen_modifieddate"));
