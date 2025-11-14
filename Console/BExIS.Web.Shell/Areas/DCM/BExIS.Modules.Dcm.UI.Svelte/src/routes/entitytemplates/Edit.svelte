@@ -6,7 +6,7 @@
 	// ui Components
 	import Fa from 'svelte-fa';
 	import { DropdownKVP, MultiSelect, TextArea, TextInput, Spinner } from '@bexis2/bexis2-core-ui';
-	import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons/index';
+	import { faSave, faXmark } from '@fortawesome/free-solid-svg-icons/index';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import ContentContainer from '../../lib/components/ContentContainer.svelte';
 	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
@@ -466,7 +466,7 @@ function	updateIsExtensions(entityTypeText:string){
 						title="cancel"
 						type="button"
 						class="btn variant-filled-warning"
-						on:click={onCancel}><Fa icon={faTrash} /></button
+						on:click={onCancel}><Fa icon={faXmark} /></button
 					>
 					<button title="save" type="submit" class="btn variant-filled-primary" {disabled}
 						><Fa icon={faSave} /></button

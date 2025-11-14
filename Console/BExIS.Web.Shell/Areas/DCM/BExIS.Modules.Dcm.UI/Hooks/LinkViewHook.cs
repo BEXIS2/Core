@@ -1,4 +1,6 @@
-﻿using BExIS.Security.Entities.Authorization;
+﻿using BExIS.Dlm.Services.Data;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Services.Objects;
 using BExIS.UI.Hooks;
 
 namespace BExIS.Modules.Dcm.UI.Hooks
@@ -12,8 +14,16 @@ namespace BExIS.Modules.Dcm.UI.Hooks
 
         public override void Check(long id, string username)
         {
-            // check status
-            checkStatus(id, username);
+            // disable for extension entity
+            checkEntity(id);
+
+            if (Status != HookStatus.Disabled)
+            {
+
+                // check status
+                checkStatus(id, username);
+
+            }
         }
 
         private void checkStatus(long id, string username)
@@ -33,6 +43,19 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             //        var dataset = datasetManager.GetDataset(id);
             //        if (dataset.Status != Dlm.Entities.Data.DatasetStatus.CheckedIn) Status = HookStatus.Disabled;
             //    }
+        }
+
+        private void checkEntity(long id)
+        {
+            using (var datasetManager = new DatasetManager())
+            using (var entityManager = new EntityManager())
+            {
+                var entity = entityManager.FindByName("extension"); // get entity
+                if (entity != null)
+                {
+                    Status = datasetManager.GetDataset(id).EntityTemplate.EntityType.Id.Equals(entity.Id) ? HookStatus.Disabled : Status; // disable if entity type matches
+                }
+            }
         }
     }
 }
