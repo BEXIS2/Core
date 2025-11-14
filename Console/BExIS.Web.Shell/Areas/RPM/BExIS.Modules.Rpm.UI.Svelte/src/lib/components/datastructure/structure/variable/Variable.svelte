@@ -335,6 +335,7 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 	function test() {
 		console.log('close template model');
 		openTemplateModel = false;
+
 	}
 
 </script>
@@ -645,5 +646,6 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 </div>
 
 {#if openTemplateModel}
+
 	<VariableTemplateSelection bind:list={variableTemplates} on:selected={selectVariableTamplateFn} on:close{test}/>
 {/if}
