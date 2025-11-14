@@ -166,6 +166,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     var settingsHelper = new SettingsHelper();
                     var placeholders = settingsHelper.GetDataCitePlaceholders();
                     var mappings = settingsHelper.GetDataCiteMappings();
+                    var updateProperties = settingsHelper.GetDataCiteUpdateProperties();
 
                     // Placeholders for DOI
                     for (int i = 0; i < placeholders.Count; i++)
@@ -203,7 +204,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     var model = new CreateDataCiteModel();
 
-                    var configuration = new Vaelastrasz.Library.Configurations.Configuration(publication.Broker.UserName, publication.Broker.Password, publication.Broker.Host, true);
+                    var configuration = new Vaelastrasz.Library.Configurations.Configuration(publication.Broker.UserName, publication.Broker.Password, publication.Broker.Host);
                     var doiService = new DOIService(configuration);
                     var createSuffixModel = new CreateSuffixModel()
                     {
@@ -243,6 +244,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     JsonExtensions.TransformToMatchClassTypes(jObject, typeof(CreateDataCiteModel));
 
                     json = JsonConvert.SerializeObject(jObject, Formatting.Indented);
+
 
                     try
                     {
@@ -289,6 +291,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 break;
                         }
                     }
+
+                    // Update Properties
+                    model.Update("Creators");
+                    model.Update("Contributors");
 
                     // Vaelastrasz
                     var dataCiteService = new DataCiteService(configuration);
