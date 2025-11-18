@@ -23,7 +23,7 @@ namespace BExIS.Modules.Ddm.UI.Models
         Text
     }
 
-    public enum DownloadCitationFormat
+    public enum CitationFormat
     {
         APA,
         RIS,
@@ -52,7 +52,6 @@ namespace BExIS.Modules.Ddm.UI.Models
         public string Year { get; set; }
 
         [XmlElement("doi")]
-        [Obsolete]
         public string DOI { get; set; }
 
         [XmlElement("url")]
@@ -70,10 +69,24 @@ namespace BExIS.Modules.Ddm.UI.Models
         [MinLength(1, ErrorMessage = "Entity Type cannot be empty")]
         public string EntityType { get; set; }
 
+        [XmlElement("entryType")]
+        [Required(ErrorMessage = "Entry Type is required")]
+        [MinLength(1, ErrorMessage = "Entry Type cannot be empty")]
+        public string EntryType { get; set; }
+
+        [XmlElement("entityName")]
+        public string EntityName { get; set; }
+
         [XmlElement("publisher")]
         [Required(ErrorMessage = "Title is required")]
         [MinLength(1, ErrorMessage = "Title cannot be empty")]
         public string Publisher { get; set; }
+
+        [XmlElement("keyword")]
+        public string Keyword { get; set; }
+
+        [XmlElement("note")]
+        public string Note { get; set; }
 
         public CitationDataModel()
         {
@@ -96,7 +109,6 @@ namespace BExIS.Modules.Ddm.UI.Models
 
         public string URL { get; set; }
         public string Publisher { get; set; }
-        public string InstanceName { get; set; }
         public string Year { get; set; }
         public List<string> Authors { get; set; }
         public string Title { get; set; }
@@ -121,7 +133,7 @@ namespace BExIS.Modules.Ddm.UI.Models
         public int NumberOfAuthors { get; set; }
         public ReadCitationFormat ReadCitationFormat { get; set; }
 
-        public List<DownloadCitationFormat> DownloadCitationFormats { get; set; }
+        public List<CitationFormat> DownloadCitationFormats { get; set; }
 
         public CitationSettings()
         {
@@ -130,7 +142,7 @@ namespace BExIS.Modules.Ddm.UI.Models
             ShowCitation = false;
             NumberOfAuthors = 1;
             ReadCitationFormat = ReadCitationFormat.Text;
-            DownloadCitationFormats = new List<DownloadCitationFormat>() { };
+            DownloadCitationFormats = new List<CitationFormat>() { };
         }
     }
 
