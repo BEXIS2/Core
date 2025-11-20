@@ -378,7 +378,10 @@ namespace BEXIS.JSON.Helpers
 
         private JSchemaType GetJSchemaType(BaseUsage usage)
         {
-            if(IsChoice(usage.Extra))
+            // if choice and max cardinality >1 then array
+            if (IsChoice(usage.Extra) && getMaxCardinality(usage) > 1)
+                return JSchemaType.Array;
+            else if (IsChoice(usage.Extra))
                 return JSchemaType.Object;
             else if (getMaxCardinality(usage) > 1)
                 return JSchemaType.Array;
