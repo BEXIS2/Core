@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Vaiona.Web.Mvc.Modularity;
+using static System.Net.WebRequestMethods;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -125,7 +126,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         publication.Status = PublicationStatus.Registered.ToString();
                         publication.FilePath = downloadPath;
                         publication.Response = result.Replace('\"', ' ').Trim();
-                        publication.ExternalLink = doi;
+                        publication.ExternalLink = "https://doi.org/"+doi;
                         publication.ExternalLinkType = "DOI";
                         publicationManager.UpdatePublication(publication);
 
