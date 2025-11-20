@@ -206,20 +206,29 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
                     //title
                     if (!keys.Any(k => k.Name.Equals("data/title")))
-                        conceptManager.CreateMappingKey("Title", "", "", true, false, "data/title", concept);
+                        conceptManager.CreateMappingKey("Title", "", "", false, false, "data/title", concept);
                     //version
                     if (!keys.Any(k => k.Name.Equals("data/version")))
-                        conceptManager.CreateMappingKey("Version", "", "", false, false, "data/version", concept);
+                        conceptManager.CreateMappingKey("Version", "", "", true, false, "data/version", concept);
                     //year
                     if (!keys.Any(k => k.Name.Equals("data/year")))
-                        conceptManager.CreateMappingKey("Year", "", "", false, false, "data/year", concept);
+                        conceptManager.CreateMappingKey("Year", "", "", true, false, "data/year", concept);
+
                     //entityType
                     if (!keys.Any(k => k.Name.Equals("data/entityType")))
                         conceptManager.CreateMappingKey("EntityType", "", "", true, false, "data/entityType", concept);
 
-                    //entryTypeType
-                    if (!keys.Any(k => k.Name.Equals("data/entryType")))
-                        conceptManager.CreateMappingKey("EntryType", "", "", true, false, "data/entryType", concept);
+                    //entryType
+                    if (value == CitationFormat.Text)
+                    {
+                        if (!keys.Any(k => k.Name.Equals("data/entryType")))
+                            conceptManager.CreateMappingKey("EntryType", "", "", true, false, "data/entryType", concept);
+                    }
+                    else
+                    {
+                        if (!keys.Any(k => k.Name.Equals("data/entryType")))
+                            conceptManager.CreateMappingKey("EntryType", "", "", false, false, "data/entryType", concept);
+                    }
 
                     //publisher
                     if (!keys.Any(k => k.Name.Equals("data/publisher")))
@@ -228,32 +237,32 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     if (value == CitationFormat.Bibtex)
                     {
                         if (!keys.Any(k => k.Name.Equals("data/keyword")))
-                            conceptManager.CreateMappingKey("Keyword", "", "", true, false, "data/keyword", concept);
+                            conceptManager.CreateMappingKey("Keyword", "", "", false, false, "data/keyword", concept);
                     }
 
                     //note
                     if (!keys.Any(k => k.Name.Equals("data/note")))
-                        conceptManager.CreateMappingKey("Note", "", "", false, false, "data/note", concept);
+                        conceptManager.CreateMappingKey("Note", "", "", true, false, "data/note", concept);
 
                     //doi
                     if (!keys.Any(k => k.Name.Equals("data/doi")))
-                        conceptManager.CreateMappingKey("Doi", "", "", false, false, "data/doi", concept);
+                        conceptManager.CreateMappingKey("DOI", "", "", true, false, "data/doi", concept);
 
                     //projects
                     MappingKey projects = null;
                     if (!keys.Any(k => k.Name.Equals("data/projects")))
-                        projects = conceptManager.CreateMappingKey("Projects", "", "", false, true, "data/projects", concept);
+                        projects = conceptManager.CreateMappingKey("Projects", "", "", true, true, "data/projects", concept);
 
                     if (!keys.Any(k => k.Name.Equals("data/projects/project")))
-                        conceptManager.CreateMappingKey("Project", "", "", false, false, "data/projects/project", concept, projects);
+                        conceptManager.CreateMappingKey("Project", "", "", true, false, "data/projects/project", concept, projects);
 
                     //authors
                     MappingKey authors = null;
                     if (!keys.Any(k => k.Name.Equals("data/authorNames")))
-                        authors = conceptManager.CreateMappingKey("AuthorNames", "", "", true, true, "data/authorNames", concept);
+                        authors = conceptManager.CreateMappingKey("AuthorNames", "", "", false, true, "data/authorNames", concept);
 
                     if (!keys.Any(k => k.Name.Equals("data/authorNames/authorName")))
-                        conceptManager.CreateMappingKey("AuthorName", "", "", true, false, "data/authorNames/authorName", concept, authors);
+                        conceptManager.CreateMappingKey("AuthorName", "", "", false, false, "data/authorNames/authorName", concept, authors);
                 }
             }
         }

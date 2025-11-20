@@ -64,10 +64,10 @@ namespace BExIS.Modules.Ddm.UI.Models
         [MinCapacity(1), NoNullOrEmptyItems]
         public List<string> Authors { get; set; }
 
-        [XmlElement("entityType")]
-        [Required(ErrorMessage = "Entity Type is required")]
-        [MinLength(1, ErrorMessage = "Entity Type cannot be empty")]
-        public string EntityType { get; set; }
+        //[XmlElement("entityType")]
+        //[Required(ErrorMessage = "Entity Type is required")]
+        //[MinLength(1, ErrorMessage = "Entity Type cannot be empty")]
+        //public string EntityType { get; set; }
 
         [XmlElement("entryType")]
         [Required(ErrorMessage = "Entry Type is required")]
@@ -78,8 +78,8 @@ namespace BExIS.Modules.Ddm.UI.Models
         public string EntityName { get; set; }
 
         [XmlElement("publisher")]
-        [Required(ErrorMessage = "Title is required")]
-        [MinLength(1, ErrorMessage = "Title cannot be empty")]
+        [Required(ErrorMessage = "Publisher is required")]
+        [MinLength(1, ErrorMessage = "Publisher cannot be empty")]
         public string Publisher { get; set; }
 
         [XmlElement("keyword")]

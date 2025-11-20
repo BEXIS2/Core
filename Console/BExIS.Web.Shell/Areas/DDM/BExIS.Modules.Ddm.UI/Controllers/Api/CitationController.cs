@@ -1,6 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dim.Helpers.Mappings;
-using BExIS.Dim.Services;
 using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
@@ -11,7 +10,6 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.UI.Models;
 using BExIS.Utils.Route;
 using NameParser;
 using Newtonsoft.Json;
@@ -35,7 +33,7 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
     {
         [BExISApiAuthorize]
         [GetRoute("api/datasets/citations")]
-        [ResponseType(typeof(CitationModel))]
+        //[ResponseType(typeof(CitationModel))]
         public HttpResponseMessage Get([FromUri] CitationFormat format = CitationFormat.Bibtex)
         {
             return GetAllCitations();
@@ -352,14 +350,14 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                 var useTags = Convert.ToBoolean(moduleSettings.GetValueByKey("use_tags"));
 
                 CitationDataModel model = CitationsHelper.CreateCitationDataModel(datasetVersion, format);
-                CitationModel citationModel = new CitationModel();
-
+                string citationString = "";
                 if (CitationsHelper.IsCitationDataModelValid(model))
-                    citationModel.CitationString =  CitationsHelper.GetCitationString(model, format, isPublic, datasetVersion.Dataset.Id, useTags);
+                    citationString =  CitationsHelper.GetCitationString(model, format, isPublic, datasetVersion.Dataset.Id, useTags);
                 else
-                    citationModel.CitationString = "Citation metadata is incomplete.";
+                    citationString = "Citation metadata is incomplete.";
 
-                return Request.CreateResponse<CitationModel>(HttpStatusCode.OK, citationModel);
+                HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(citationString, Encoding.UTF8, "application/text") };
+                return response;
             }
         }
 

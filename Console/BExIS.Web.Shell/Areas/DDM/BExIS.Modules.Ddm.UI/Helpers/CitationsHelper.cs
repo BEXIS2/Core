@@ -4,21 +4,17 @@ using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Ddm.UI.Models;
-using BExIS.Security.Entities.Versions;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using NameParser;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
 using System.Linq;
-using System.Security.Policy;
 using System.Text;
 using System.Web;
 using System.Xml;
 using System.Xml.Serialization;
-using Telerik.Web.Mvc.Infrastructure;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Ddm.UI.Helpers
@@ -36,7 +32,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 {
                     var metadata = datasetVersion.Metadata;
 
-                    var concept = conceptManager.MappingConceptRepository.Query(c => c.Name.ToLower() == "citation_" + format).FirstOrDefault();
+                    var concept = conceptManager.MappingConceptRepository.Query(c => c.Name.ToLower() == "citation_" + format.ToString().ToLower()).FirstOrDefault();
 
                     if (concept == null)
                         return null;
@@ -105,7 +101,6 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     }
 
                     // URL
-
                     if (String.IsNullOrEmpty(model.URL))
                     {
                         model.URL = HttpContext.Current.Request.Url.Host;
@@ -144,7 +139,6 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             { 
                 return false;
             }
-            
         }
 
         public static string GetCitationString(CitationDataModel model, CitationFormat format, bool isPublic, long entityId, bool useTags)
@@ -159,6 +153,8 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                         return GenerateRis(entityId, model, isPublic, useTags);
                     case CitationFormat.Text:
                         return GenerateText(entityId, model, isPublic, useTags);
+                    case CitationFormat.APA:
+                        return GetApaFromCitationDataModel(model);
                     default:
                         return "";
                 }
@@ -230,21 +226,21 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             if (!String.IsNullOrEmpty(model.DOI))
                 bibtex += "doi ={" + model.DOI + "},\n";
 
-            if (!String.IsNullOrEmpty(model.Type))
+            if (!String.IsNullOrEmpty(model.EntityName))
             { 
                 if (isPublic)
-                    bibtex += "type ={Dataset. Published.},\n";
+                    bibtex += "type ={" + model.EntityName + ". Published.},\n";
                 else
-                    bibtex += "type ={Dataset. Unpublished.},\n";
+                    bibtex += "type ={" + model.EntityName + ". Unpublished.},\n";
             }
-            if(!String.IsNullOrEmpty(model.Note))
-                bibtex += "note ={Dataset ID: " + entityId + "},\n";
+            if(String.IsNullOrEmpty(model.Note))
+                bibtex += "note ={" + model.EntityName + " ID: " + entityId + "},\n";
+            else
+                bibtex += "note ={"+ model.Note + "},\n";
 
             bibtex += "}";
 
             return bibtex;
-
-
         }
 
         public static string GenerateRis(long entityId, CitationDataModel model, bool isPublic, bool useTags)
@@ -253,7 +249,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             {
                 return string.Empty;
             }
-            string ris = "TY  - " + model.EntityType + " \n";
+            string ris = "TY - " + model.EntryType + " \n";
             ris += "T1 - " + model.Title + "\n";
 
             foreach (string author in model.Authors)
@@ -261,7 +257,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 ris += "AU - " + author + "\n";
             }
             ris += "PY - " + model.Year + " \n";
-            ris += " ET- " + model.Version + " \n";
+            ris += "ET - " + model.Version + " \n";
             ris += "PB - " + model.Publisher + " \n";
 
             if (!String.IsNullOrEmpty(model.DOI))
@@ -283,15 +279,14 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             if (isPublic)
                 ris += "N1 - " + model.EntityName +" ID: " + entityId + ", Published. \n";
             else
-                ris += "N1 - " + model.EntityName + " ID: " + entityId + ", Unpublished. \n`";
-            ris += "ER  -";
+                ris += "N1 - " + model.EntityName + " ID: " + entityId + ", Unpublished. \n";
+            ris += "ER -";
 
             return ris;
         }
 
         public static string GenerateText(long entityId,CitationDataModel model, bool isPublic, bool useTags)
         {
-
             string text = "";
             var lastAuthor = model.Authors.Last();
             foreach (string author in model.Authors)
@@ -326,7 +321,10 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 else
                     text += url + ". ";
 
-                text += model.EntityName + " ID= " + entityId;
+                if(String.IsNullOrEmpty(model.Note))
+                    text += model.EntityName + " ID= " + entityId;
+                else
+                    text += model.Note;
             }
 
             return text;
