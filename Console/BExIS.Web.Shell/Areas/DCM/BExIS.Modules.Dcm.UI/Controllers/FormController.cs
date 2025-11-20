@@ -177,9 +177,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                    
                      DatasetVersion dsv = null;
 
-                    if (version == -1)
+                    if (version == -1) // latest
                     {
                         dsv = datasetManager.GetDatasetLatestVersion(entityId);
+                    }
+                    else if (version == 0 || dataset.Status == DatasetStatus.Deleted) // check may deleted
+                    {
+                        if(dataset.Status == DatasetStatus.Deleted)
+                            dsv = datasetManager.GetDeletedDatasetLatestVersion(entityId);
                     }
                     else
                     {

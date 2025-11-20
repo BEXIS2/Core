@@ -347,6 +347,22 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             ViewData["State"] = "hidden";
                             ViewData["HasEditRight"] = model.HasEditRight;
 
+                            var deletedVersion = dm.GetDeletedDatasetLatestVersion(id);
+                            latestVersion = true;
+                            latestVersionId = deletedVersion.Id;
+                            versionId = deletedVersion.Id;
+                            version = dm.GetDatasetVersionNr(versionId);
+                            latestVersionNr = dm.GetDatasetVersionNr(latestVersionId);
+
+                            if (deletedVersion != null && deletedVersion.StateInfo != null)
+                            {
+                                isValid = DatasetStateInfo.Valid.ToString().Equals(deletedVersion.StateInfo.State) ? "yes" : "no";
+                                ViewData["IsValid"] = isValid;
+                            }
+
+                            title = deletedVersion != null ? deletedVersion.Title : "n.a.";
+                            labels = getLabels(id, versionId, tag, deletedVersion.Dataset.EntityTemplate.Name);
+
                             model.GrantAccess = false;
                             model.ViewAccess = false;
                             model.DownloadAccess = false;
@@ -426,14 +442,23 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         [ChildActionOnly]
-        public async Task<ActionResult> GetCitationOrTitle(long datasetVersionId)
+        public async Task<ActionResult> GetCitationOrTitle(long Id, long datasetVersionId)
         {
             try
             {
                 using (var datasetManager = new DatasetManager())
                 using (var conceptManager = new ConceptManager())
                 {
-                    var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+                    var dataset = datasetManager.GetDataset(Id);
+                    DatasetVersion datasetVersion = null;
+                    if (dataset.Status == DatasetStatus.Deleted)
+                    {
+                        datasetVersion = datasetManager.GetDeletedDatasetLatestVersion(Id);
+                    }
+                    else
+                    {
+                        datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+                    }
 
                     if (datasetVersion == null)
                     {
