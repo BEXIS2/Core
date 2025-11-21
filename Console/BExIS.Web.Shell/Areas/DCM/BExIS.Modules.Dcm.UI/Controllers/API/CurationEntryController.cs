@@ -34,7 +34,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             public AnonymizedCuration(IEnumerable<CurationEntry> curationEntries, User user)
             {
-                bool userIsCurator = CurationEntry.GetCurationUserType(user).Equals(CurationUserType.Curator);
+                bool userIsCurator = CurationEntry.GetCurationUserType(user, GetCurationGroupName()).Equals(CurationUserType.Curator);
 
                 // requesting user gets added to the set of seen users
                 var userSet = new HashSet<long>() { user.Id };
@@ -88,7 +88,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 // convert the user list to new userIds from 1 to n
                 var userMap = new Dictionary<long, CurationUserModel>();
-                for (var i = 0; i < sortedUsers.Count; i++) userMap.Add(sortedUsers[i].Id, new CurationUserModel(sortedUsers[i], i + 1));
+                for (var i = 0; i < sortedUsers.Count; i++) userMap.Add(sortedUsers[i].Id, new CurationUserModel(sortedUsers[i], i + 1, GetCurationUserType(sortedUsers[i])));
 
                 // replace original userIds with the anonymized ones
                 foreach (var curationEntry in AnonymizedCurationEntries)
@@ -137,6 +137,26 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             var curationLabels = ModuleManager.GetModuleSettings("DDM").GetValueByKey<CurationConfiguration>("curation")?.CurationLabels;
             return curationLabels == null ? new List<CurationLabel>() : curationLabels;
+        }
+
+        private static String GetCurationGroupName()
+        {
+            var groupName = ModuleManager.GetModuleSettings("DDM").GetValueByKey<string>("curatorsGroupName");
+            if (string.IsNullOrEmpty(groupName))
+            {
+                return "curator";
+            }
+            return groupName;
+        }
+
+        public static CurationUserType GetCurationUserType(User user)
+        {
+            var curationGroupName = GetCurationGroupName();
+            if (user.Groups.Any(g => g.Name.Equals(curationGroupName, StringComparison.CurrentCultureIgnoreCase)))
+            {
+                return CurationUserType.Curator;
+            }
+            return CurationUserType.User;
         }
 
         private static IEnumerable<CurationTemplateModel> GetGreetingTemplates()
@@ -216,7 +236,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var greetingTemplates = GetGreetingTemplates();
                 var taskListTemplates = GetTaskListTemplates();
 
-                bool userIsCurator = CurationEntry.GetCurationUserType(userWithGroups).Equals(CurationUserType.Curator);
+                bool userIsCurator = CurationEntry.GetCurationUserType(userWithGroups, GetCurationGroupName()).Equals(CurationUserType.Curator);
 
                 curationModel = new CurationModel(
                     datasetid,
@@ -337,6 +357,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // check if user has rights to access the dataset
                 //if (!(userRights(user.Id, c.Dataset.Id) > 0))
                 //    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "User has no rights to access the dataset");
+                bool userIsCurator = CurationEntry.GetCurationUserType(userWithGroups, GetCurationGroupName()).Equals(CurationUserType.Curator);
 
                 var newCurationEntry = curationManager.Update(
                         curationEntryModel.Id,
@@ -350,7 +371,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         notes,
                         curationEntryModel.UserIsDone,
                         curationEntryModel.IsApproved,
-                        userWithGroups
+                        userWithGroups,
+                        userIsCurator
                 );
 
                 var response = AnonymizeCurationEntryModel(curationEntryModel, newCurationEntry, userWithGroups);
@@ -385,15 +407,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     .Where(u => u.Id == user.Id)
                     .Fetch(u => u.Groups)
                     .SingleOrDefault();
+                
+                var userIsCurator = CurationEntry.GetCurationUserType(userWithGroups, GetCurationGroupName()).Equals(CurationUserType.Curator);
 
-                if (!CurationEntry.GetCurationUserType(userWithGroups).Equals(CurationUserType.Curator))
+                if (!CurationEntry.GetCurationUserType(userWithGroups, GetCurationGroupName()).Equals(CurationUserType.Curator))
                     return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "User not permitted to create curation entries");
 
                 List<CurationNote> notes;
                 if (curationEntryModel.Notes == null || !curationEntryModel.Notes.Any())
                     notes = new List<CurationNote>();
                 else
-                    notes = curationEntryModel.Notes.Select(n => new CurationNote(userWithGroups, n.Comment)).ToList(); // all notes will be created for the current user
+
+                notes = curationEntryModel.Notes.Select(n => new CurationNote(userWithGroups, n.Comment, GetCurationUserType(userWithGroups))).ToList(); // all notes will be created for the current user
 
                 if (curationEntryModel.Type == CurationEntryType.StatusEntryItem)
                 {
@@ -419,7 +444,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         notes,
                         curationEntryModel.UserIsDone,
                         curationEntryModel.IsApproved,
-                        userWithGroups
+                        userWithGroups,
+                        userIsCurator
                     );
 
                 var response = AnonymizeCurationEntryModel(curationEntryModel, newCurationEntry, userWithGroups);

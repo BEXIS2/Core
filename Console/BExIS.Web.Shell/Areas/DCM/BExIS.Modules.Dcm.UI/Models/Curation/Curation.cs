@@ -123,11 +123,11 @@ namespace BExIS.Modules.Dcm.UI.Models.Curation
             CurationUserType = curationUserType;
         }
 
-        public CurationUserModel(User user, long id)
+        public CurationUserModel(User user, long id, CurationUserType curationUserType)
         {
             Id = id;
             DisplayName = user.DisplayName;
-            CurationUserType = CurationEntry.GetCurationUserType(user);
+            CurationUserType = curationUserType;
         }
     }
 

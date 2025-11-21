@@ -73,6 +73,13 @@
       }
     },
     {
+      "key": "curatorsGroupName",
+      "title": "Group name for curators",
+      "value": "curator",
+      "type": "String",
+      "description": "Group name all curators assigned to. This is needed for the curation tool to know who is curator."
+    },
+    {
         "key": "curation",
         "title": "Configuration Settings for Curation",
         "value": {
