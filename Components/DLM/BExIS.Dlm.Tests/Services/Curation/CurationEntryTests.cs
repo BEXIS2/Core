@@ -30,7 +30,15 @@ namespace BExIS.Dlm.Tests.Services.Curation
             helper = new TestSetupHelper(WebApiConfig.Register, false);
 
             using (UserManager userManager = new UserManager())
+            using (GroupManager groupManager = new GroupManager())
             {
+                Group group = new Group();
+                group.Name = "curator";
+                group.Description = "curators group";
+                groupManager.CreateAsync(group);
+
+            
+
                 User admin = new User()
                 {
                     Name = "Admin",
@@ -39,6 +47,14 @@ namespace BExIS.Dlm.Tests.Services.Curation
                 };
 
                 userManager.CreateAsync(admin).Wait();
+
+                admin = userManager.FindByNameAsync("Admin").Result;
+                group = groupManager.FindByNameAsync("curator").Result;
+
+                userManager.AddToRoleAsync(admin, group.Name).Wait();
+
+
+
             }
         }
 
@@ -67,6 +83,15 @@ namespace BExIS.Dlm.Tests.Services.Curation
                 foreach (var item in l)
                 {
                     repo.Delete(item);
+                }
+                uow.Commit();
+
+                var groupsRepo = uow.GetRepository<Group>();
+
+                var g = groupsRepo.Query().ToList();
+                foreach (var item in g)
+                {
+                    groupsRepo.Delete(item);
                 }
                 uow.Commit();
             }
