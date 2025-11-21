@@ -120,7 +120,7 @@ namespace BExIS.Dlm.Tests.Services.Curation
                 var curationEntry = curationEntryManager.Create(
                     "Test Topic", 
                     CurationEntryType.None, 
-                    ds.Id, "Test Name", "Test Description", "Test Solution", 1, "Test Source", new List<CurationNote>(), false, false, user);
+                    ds.Id, "Test Name", "Test Description", "Test Solution", 1, "Test Source", new List<CurationNote>(), false, false, user, true);
 
 
                 //Assert
@@ -158,7 +158,7 @@ namespace BExIS.Dlm.Tests.Services.Curation
                 var curationEntry = curationEntryManager.Create(
                     "Test Topic",
                     CurationEntryType.None,
-                    ds.Id, "Test Name", "Test Description", "Test Solution", 1, "Test Source", new List<CurationNote>(), false, false, user);
+                    ds.Id, "Test Name", "Test Description", "Test Solution", 1, "Test Source", new List<CurationNote>(), false, false, user, true);
 
 
                 //Assert
