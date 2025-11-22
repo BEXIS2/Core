@@ -2,7 +2,7 @@
 	import { goTo } from '../../../services/BaseCaller';
 	import { MultiSelect, Spinner } from '@bexis2/bexis2-core-ui';
 	import type { listItemType } from '@bexis2/bexis2-core-ui';
-	import { onMount, createEventDispatcher } from 'svelte';
+	import { onMount, createEventDispatcher} from 'svelte';
 
 	import { availableStructues, setStructure } from '$services/DataDescriptionCaller';
 	import { getHookStart } from '$services/HookCaller';
@@ -10,7 +10,7 @@
 	import type { DataDescriptionModel } from '$models/DataDescription';
 
 	import { latestFileUploadDate, latestDataDescriptionDate } from '../../../routes/edit/stores';
-
+	
 	const dispatch = createEventDispatcher();
 
 	function goToGenerate(file, id) {
@@ -38,6 +38,9 @@
 	let structures = [];
 	$: structures;
 
+	let selected;
+	$: selected;
+
 	onMount(async () => {
 		reload();
 		setList(model.readableFiles, structures);
@@ -63,18 +66,24 @@
 	}
 
 	// after select a value from the dropdown
-	// it will go to the generator or selet a exiting structure
+	// it will go to the generator or select a exiting structure
 	async function change(e) {
 		let item = e.detail;
 		//console.log("select item",item)
 
-		if (item.group === 'options') {
+		if (item.group === 'other options') {
 			//console.log("go to create a datastructure")
 			goToCreate();
-		} else if (item.group === 'file') {
+		} else if (item.group === 'create new based on file') {
+			if (item.text === 'upload first a file to create a new data structure based on it') {
+				// do nothing
+				// trigger clear selection
+				selected = null;
+				return;
+			}
 			loading = true;
 			goToGenerate(e.detail.text, model.id);
-		} else if (item.group === 'structure') {
+		} else if (item.group === 'data structures') {
 			console.log('select a structure', id, item.id);
 			loading = true;
 			await setStructure(model.id, item.id);
@@ -82,22 +91,44 @@
 		}
 	}
 
-	// list is a comibnation of options, already existing datastructures and files
+	// list is a combination of options, already existing data structures and files
 	function setList(files, structureList) {
 		list = [];
 
-		if (model.isRestricted == false) {
-			// if user is not restricted by selection of the structures, then add option to vcreate a new one
-			list.push({ id: 0, text: 'create new', group: 'options' });
-		}
-
 		if (files && model.isRestricted == false) {
 			// if user is not restricted by selection of the structures, then add option to create from file
-			files.forEach((i) => list.push({ id: i.name, text: i.name, group: 'file' }));
+			if (files.length > 0){
+				files.forEach((i) => list.push({
+					id: i.name, text: i.name, group: 'create new based on file',
+					description: ''
+				}));
+			}
+			else{
+				// if no files are available, we can not create from file
+				list.push({
+					id: 0, text: 'upload first a file to create a new data structure based on it', group: 'create new based on file',
+					description: ''
+				});
+			}
+		}
+	
+		if (model.isRestricted == false) {
+			// if user is not restricted by selection of the structures, then add option to vcreate a new one
+			// get max id to avoid id conflict
+			let maxId = 0;
+			list.forEach((i) => {
+				if (i.id > maxId) maxId = i.id;
+			});
+			list.push({
+				id: maxId + 1, text: 'create a new data structure manually', group: 'other options',
+				description: '',
+			});
 		}
 
 		if (structureList) {
 			//structureList!== null && structureList != undefined)
+			// change group from structure to existing structure
+			structureList.forEach((s) => (s.group = 'data structures'));
 			list = [...list, ...structureList];
 		}
 	}
@@ -107,7 +138,8 @@
 	<div class="flex">
 		<MultiSelect
 			id="SelectDataStructure"
-			title="Generate based on an uploaded file, select an existing one, or create a new"
+			title="Create new (uploaded file or manually) or select an existing data structure"
+			placeholder="Select data structure option"
 			itemId="id"
 			itemLabel="text"
 			itemGroup="group"
@@ -117,6 +149,8 @@
 			complexTarget={true}
 			isMulti={false}
 			{loading}
+			bind:target={selected}
+	
 		/>
 	</div>
 {/if}

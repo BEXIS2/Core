@@ -374,7 +374,7 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 
 								<div slot="template">
 									<div class="flex w-full gap-1 py-1">
-										<div class="grow">Template (data is copy and changeable!)</div>
+										<div class="grow">Template (data is copied and changeable!)</div>
 										{#each suggestedTemplates.slice(0, 3) as t}
 											<button
 												title="Click to select"
