@@ -162,15 +162,15 @@
                             <button class="bx-button function bx-disabled" disabled="disabled" title="You can only download the metadata of the latest version directly.">Download Metadata </button>
                             }
 
-                                @*@if (Model.EditRight)
-                        {
-                            <button class="bx-button small function" title="Edit Metadata" onclick="edit()">
-                                <span class="fa fa-pencil"></span>
-                                <span style="padding:5px;">
-                                    Edit Metadata
-                                </span>
-                            </button>
-                        }*@
+                            @if (Model.EditRight)
+                            {
+                                <button class="bx-button small function" title="Edit Metadata" onclick="edit()">
+                                    <span class="fa fa-pencil"></span>
+                                    <span style="padding:5px;">
+                                        Edit Metadata
+                                    </span>
+                                </button>
+                            }
 
                             @Html.CheckBox("showAll", @showOptional, new { OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll" })
 
