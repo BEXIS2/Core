@@ -69,7 +69,7 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
         ///
         /// <param name="id">Identifier of a dataset</param>
         [BExISApiAuthorize]
-        [PostRoute("api/Citation/GetCitations")]
+        [PostRoute("api/datasets/citations")]
         public HttpResponseMessage Post([FromBody] CitationDatasetIds data)
         {
             var datasetIds = data.DatasetIds.Distinct().ToArray();

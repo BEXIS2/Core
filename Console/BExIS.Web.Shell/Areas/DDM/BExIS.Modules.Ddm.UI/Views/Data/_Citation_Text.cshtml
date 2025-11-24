@@ -1,6 +1,6 @@
 ﻿@model BExIS.Modules.Ddm.UI.Models.CitationDataModel
 
-<div id="citation-container"><b>Citation:</b><div id="citation-title">@String.Join("; ", Model.Authors) (@(Model.Year)): <b>@(Model.Title)</b>. Version @(Model.Version). @(Model.Publisher). @(Model.EntityType). @(Model.URL)  <span id="citation-copy" class="bx bx-copy" onclick="copyDivContentToClipboard('citation-title')"></span></div>
+<div id="citation-container"><b>Citation:</b><div id="citation-title">@String.Join("; ", Model.Authors) (@(Model.Year)): <b>@(Model.Title)</b>. Version @(Model.Version). @(Model.Publisher). @(Model.EntityName). @(Model.URL)  <span id="citation-copy" class="bx bx-copy" onclick="copyDivContentToClipboard('citation-title')"></span></div>
    
 </div>
 
