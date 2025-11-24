@@ -86,6 +86,14 @@ namespace BExIS.Dlm.Tests.Services.Curation
                 }
                 uow.Commit();
 
+                var usersRepo = uow.GetRepository<User>();
+
+                var u = usersRepo.Query().ToList();
+                foreach (var item in u)
+                {
+                    usersRepo.Delete(item);
+                }
+
                 var groupsRepo = uow.GetRepository<Group>();
 
                 var g = groupsRepo.Query().ToList();
