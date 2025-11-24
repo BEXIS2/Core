@@ -26,6 +26,7 @@
 
     @using (Ajax.BeginForm("Create", "EntityReference", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_createEnityReference", OnSuccess = "createEntityReference_OnSuccess" }))
     {
+      
         @Html.ValidationSummary(true)
 
         @Html.HiddenFor(m => m.SourceId);
