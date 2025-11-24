@@ -1,9 +1,12 @@
 ﻿@{
     string title = ViewBag.Title;
 
-    if (title.Contains("-"))
+    // if title is not null and contains "-"
+    if (!string.IsNullOrEmpty(title) && title.Contains("-"))
     {
-        title = title.Split('-').Last();
+        // Remove only before the first hyphen and show the rest (BEXIS2 - Show Dataset: -> Show Dataset:)
+        title = title.Substring(title.IndexOf('-') + 1).Trim();
+        // title = title.Split('-').Last();
     }
 
 }

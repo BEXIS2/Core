@@ -177,9 +177,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                    
                      DatasetVersion dsv = null;
 
-                    if (version == -1)
+                    if (version == -1) // latest
                     {
                         dsv = datasetManager.GetDatasetLatestVersion(entityId);
+                    }
+                    else if (version == 0 || dataset.Status == DatasetStatus.Deleted) // check may deleted
+                    {
+                        if(dataset.Status == DatasetStatus.Deleted)
+                            dsv = datasetManager.GetDeletedDatasetLatestVersion(entityId);
                     }
                     else
                     {
@@ -1555,6 +1560,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             try
             {
+                if (!XmlUtility.IsSafeXPath(xpath))
+                {
+                    return Json(false, JsonRequestBehavior.AllowGet);
+                }
+
                 AddXmlAttribute(xpath, "partyid", partyId.ToString(), entityId);
 
                 return Json(true, JsonRequestBehavior.AllowGet);
@@ -2059,13 +2069,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (usage is MetadataPackageUsage)
                 {
                     keyValueDic.Add("type", BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage.ToString());
-                    //elements = XmlUtility.GetXElementsByAttribute(usage.Label, keyValueDic, xMetadata).ToList();
                     parentXElement = XmlUtility.GetXElementByXPath(parent.XPath, xMetadata);
                 }
                 else
                 {
                     keyValueDic.Add("type", BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage.ToString());
-                    //elements = XmlUtility.GetXElementsByAttribute(usage.Label, keyValueDic, xMetadata, parentXpath).ToList();
                     parentXElement = XmlUtility.GetXElementByXPath(parent.XPath, xMetadata);
                 }
 
@@ -3100,6 +3108,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         //ToDo really said function, but cant find a other solution for now
         private void AddXmlAttribute(string xpath, string attrName, string attrValue,long entityId)
         {
+            if(XmlUtility.IsSafeXPath(xpath) == false)
+            {
+                throw new Exception("The provided xpath is not safe.");
+            }
+
             TaskManager = FormHelper.GetTaskManager(entityId);
             XDocument metadataXml = getMetadata(TaskManager);
 

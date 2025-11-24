@@ -124,6 +124,9 @@
 }
 
 <div id="MetadataEditor" style="width: 89%" entityid="@Model.DatasetId">
+
+    @Html.AntiForgeryToken() <!-- This generates the hidden input field -->
+
     @if (Model.DatasetId != -1)
     {
         <span id="datasetId" style="display:none">@Model.DatasetId</span>
@@ -133,11 +136,12 @@
             <tr>
                 @if (locked)
                 {
+                    if (Model.EditRight)
+                    {
+                        <td style="width:500px;">
 
-                    <td style="width:500px;">
-
-                        @if (Model.LatestVersion)
-                        {
+                            @if (Model.LatestVersion)
+                            {
 
                             <span class="dropdown">
                                 <button class="bx-button small function" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -152,34 +156,36 @@
                                     <li><a id="downloadXmlButton" onclick="downloadXml()">... as XML</a></li>
                                 </ul>
                             </span>
-                        }
-                        else
-                        {
+                            }
+                            else
+                            {
                             <button class="bx-button function bx-disabled" disabled="disabled" title="You can only download the metadata of the latest version directly.">Download Metadata </button>
+                            }
+
+                            @if (Model.EditRight)
+                            {
+                                <button class="bx-button small function" title="Edit Metadata" onclick="edit()">
+                                    <span class="fa fa-pencil"></span>
+                                    <span style="padding:5px;">
+                                        Edit Metadata
+                                    </span>
+                                </button>
+                            }
+
+                            @Html.CheckBox("showAll", @showOptional, new { OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll" })
+
+                            <b>show all fields</b>
+                            
+
+
+                        </td>
                         }
+                    }
 
-                        @if (Model.EditRight)
-                        {
-                            <button class="bx-button small function" title="Edit Metadata" onclick="edit()">
-                                <span class="fa fa-pencil"></span>
-                                <span style="padding:5px;">
-                                    Edit Metadata
-                                </span>
-                            </button>
-                        }
-
-                        @Html.CheckBox("showAll", @showOptional, new { OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll" })
-
-                        <b>show all fields</b>
-
-
-                    </td>
-                }
-
-                @if (!Model.Created && !locked && Model.Import)
-                {
-                    <td style="width: 100px">
-                        @(Html.Telerik().Upload()
+                    @if (!Model.Created && !locked && Model.Import)
+                    {
+                        <td style="width: 100px">
+                            @(Html.Telerik().Upload()
                             .Name("SelectFileUploader")
                             .Multiple(false)
                             .ShowFileList(false)
@@ -193,34 +199,37 @@
                                 .AutoUpload(true))
 
                         )
+                        </td>
+                    }
+                    <td>
+                        @if (ViewData["IsValid"] == "no")
+                        {
+                            <div id="view-warning-container">
+                                <div id="view-warning" class="alert alert-danger" role="alert" style="width: 100%;">
+                                    <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
+                                    The metadata for this dataset is not complete.
+                                </div>
+                            </div>
+                        }
+
                     </td>
-                }
 
-                <td id="form_message_container_Column" style="text-align: right">
-                    <span id="form_message"></span>
-                    <div id="preloader_cotainer">
-                        @*<script type="text/javascript">$("#preloader_cotainer").preloader(20, "Loading metadata...")</script>*@
-                    </div>
-                    <div id="show_help_all"><button type="button" title="Show all help information." class="bx-function bx-disabled fa  fa-info " onclick="showHelpAll();"></button></div>
-                    <div id="hide_help_all"><button type="button" title="Hide all help information." class="bx-function bx-disabled" onclick="hideHelpAll();"><i class="fa bx-info" id="help_container"></i><i class="fa fa-ban" id="help_nested"></i></button></div>
+                    <td id="form_message_container_Column" style="text-align: right">
+                        <span id="form_message"></span>
+                        <div id="preloader_cotainer">
+                            @*<script type="text/javascript">$("#preloader_cotainer").preloader(20, "Loading metadata...")</script>*@
+                        </div>
+                        <div id="show_help_all"><button type="button" title="Show all help information." class="bx-function bx-disabled fa  fa-info " onclick="showHelpAll();"></button></div>
+                        <div id="hide_help_all"><button type="button" title="Hide all help information." class="bx-function bx-disabled" onclick="hideHelpAll();"><i class="fa bx-info" id="help_container"></i><i class="fa fa-ban" id="help_nested"></i></button></div>
 
-                    <span id="preloaderContainer" style="float: right"></span>
-                </td>
+                        <span id="preloaderContainer" style="float: right"></span>
+                    </td>
 
-            </tr>
+                </tr>
         </table>
     </div>
 
-    @if (ViewData["IsValid"] == "no" )
-    {
-        <div id="view-warning-container">
-            <div id="view-warning" class="alert alert-danger" role="alert" style="width: 100%;">
-                <span id="view-warning-icon" class=" fa fa-exclamation-triangle"></span>
-                The metadata for this dataset is not complete.
-            </div>
-        </div>
-    }
-
+ 
     @if (validationErrors.Any())
     {
         <div id="view-warning-container">

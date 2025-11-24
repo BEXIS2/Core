@@ -46,7 +46,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult Update(VariableTemplateModel model)
         {
             if (model == null) throw new ArgumentNullException("model");

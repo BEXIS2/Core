@@ -77,6 +77,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         [JsonNetFilter]
         [HttpPost]
+        [CustomValidateAntiForgeryToken]
         public JsonResult Update(EntityTemplateModel entityTemplate)
         {
             using (var entityTemplateManager = new EntityTemplateManager())

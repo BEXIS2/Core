@@ -51,8 +51,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 foreach (int id in datasetIds)
                 {
                     DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(id);
-                    if (datasetVersion.Dataset.DataStructure != null &&
-                        datasetVersion.Dataset.DataStructure is StructuredDataStructure)
+                    if (datasetVersion.Dataset.DataStructure != null)
                     {
                         structuredIds.Add(id);
                     }

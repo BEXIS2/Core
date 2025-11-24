@@ -25,6 +25,8 @@
     }
 </style>
 
+@Html.AntiForgeryToken()
+
 <button id="button_createGroup" type="button" class="bx-button function">Create Group</button>
 @(Html.Telerik().Grid<GroupGridRowModel>()
       .Name("grid_groups")

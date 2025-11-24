@@ -18,7 +18,6 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Helpers;
-using BExIS.Utils.Config;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -29,6 +28,7 @@ using System.Xml.Linq;
 using System.Xml;
 using System.Xml.XPath;
 using Vaiona.Entities.Common;
+using BExIS.Utils.Config;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -244,6 +244,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         [JsonNetFilter]
         [HttpPost]
+        [CustomValidateAntiForgeryToken]
         public JsonResult Create(CreateModel data)
         {
             if (data == null) return Json(false);
@@ -369,7 +370,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     dm.EditDatasetVersion(workingCopy, null, null, null);
 
                     // close check out
-                    dm.CheckInDataset(datasetId, "Init creation a " + entityTemplate.EntityType.Name.ToLower() + " based on " + entityTemplate.Name.ToLower(), GetUsernameOrDefault(), ViewCreationBehavior.None, TagType.Copy);
+                    dm.CheckInDataset(datasetId,  entityTemplate.EntityType.Name + " created based on category: " + entityTemplate.Name, GetUsernameOrDefault(), ViewCreationBehavior.None, TagType.Copy);
                 }
 
                 #endregion update version

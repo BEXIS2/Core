@@ -335,6 +335,7 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 	function test() {
 		console.log('close template model');
 		openTemplateModel = false;
+
 	}
 
 </script>
@@ -373,7 +374,7 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 
 								<div slot="template">
 									<div class="flex w-full gap-1 py-1">
-										<div class="grow">Template (data is copy and changeable!)</div>
+										<div class="grow">Template (data is copied and changeable!)</div>
 										{#each suggestedTemplates.slice(0, 3) as t}
 											<button
 												title="Click to select"
@@ -645,5 +646,6 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 </div>
 
 {#if openTemplateModel}
+
 	<VariableTemplateSelection bind:list={variableTemplates} on:selected={selectVariableTamplateFn} on:close{test}/>
 {/if}

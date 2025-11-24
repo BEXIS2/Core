@@ -27,6 +27,18 @@ namespace BExIS.Modules.Dim.UI.Helpers
             }
         }
 
+        public List<string> GetDataCiteUpdateProperties()
+        {
+            try
+            {
+                return _settings.GetValueByKey<List<string>>("dataciteUpdateProperties");
+            }
+            catch (Exception ex)
+            {
+                return new List<string>(); ;
+            }
+        }
+
         public Dictionary<string, string> GetDataCitePlaceholders()
         {
             try

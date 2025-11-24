@@ -48,6 +48,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Controllers\API\CurationEntryController.cs" />
     <Compile Include="Controllers\API\FileController.cs" />
     <Compile Include="Controllers\API\AttachmentInController.cs" />
     <Compile Include="Controllers\API\DataInController.cs" />
@@ -72,8 +73,6 @@
     <Compile Include="Controllers\Legacy\ImportMetadataStructureSetParametersController.cs" />
     <Compile Include="Controllers\Legacy\ImportMetadataStructureSummaryController.cs" />
     <Compile Include="Controllers\Legacy\ManageMetadataStructureController.cs" />
-    <Compile Include="Controllers\Legacy\PushController.cs" />
-    <Compile Include="Controllers\Legacy\OldSubmitController.cs" />
     <Compile Include="Controllers\Hooks\MetadataController.cs" />
     <Compile Include="Controllers\API\LinkController.cs" />
     <Compile Include="Controllers\Views\MessagesController.cs" />
@@ -115,6 +114,7 @@
     <Compile Include="Models\CreateDataset\SetupModel.cs" />
     <Compile Include="Models\CreateDataset\StepModelHelper.cs" />
     <Compile Include="Models\Create\CreateModel.cs" />
+    <Compile Include="Models\Curation\Curation.cs" />
     <Compile Include="Models\EasyUploadSummaryModel.cs" />
     <Compile Include="Models\Edit\DataDescriptionModel.cs" />
     <Compile Include="Models\Edit\DataModel.cs" />

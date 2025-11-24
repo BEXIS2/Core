@@ -31,7 +31,7 @@ namespace BExIS.IO.Tests
         public void GetDynamicStorePathValuesTest(
             [Range(1, 2)] long datasetId, [Range(1, 2)] long datasetVersionOrderNr)
         {
-            string path = IoHelper.GetDynamicStorePath(datasetId, datasetVersionOrderNr, "title", ".txt");
+            string path = IOHelper.GetDynamicStorePath(datasetId, datasetVersionOrderNr, "title", ".txt");
 
             path.Should().NotBeNull("Because path is not null.");
         }
@@ -39,7 +39,7 @@ namespace BExIS.IO.Tests
         [TestCase(1, 2, "test", ".txt", ExpectedResult = @"Datasets\1\DatasetVersions\1_2_test.txt")]
         public string GetDynamicStorePathResultTest(long datasetId, long datasetVersionOrderNr, string title, string extention)
         {
-            return IoHelper.GetDynamicStorePath(datasetId, datasetVersionOrderNr, title, extention);
+            return IOHelper.GetDynamicStorePath(datasetId, datasetVersionOrderNr, title, extention);
         }
 
         [TestCase(-1, 1, "title", ".txt")]
@@ -48,7 +48,7 @@ namespace BExIS.IO.Tests
         [TestCase(1, 1, "title", "")]
         public void GetDynamicStorePathWidthExceptionTest(long datasetId, long datasetVersionOrderNr, string title, string extention)
         {
-            Assert.Throws<Exception>(() => IoHelper.GetDynamicStorePath(datasetId, datasetVersionOrderNr, title, extention));
+            Assert.Throws<Exception>(() => IOHelper.GetDynamicStorePath(datasetId, datasetVersionOrderNr, title, extention));
         }
     }
 }

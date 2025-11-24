@@ -804,7 +804,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                     var version = dm.GetDatasetLatestVersion(dataset.Id);
                     // Act
                     //string xpath = "Metadata/Basic/BasicType/alternateIdentifier/alternateIdentifierType";
-                    string xpath = "Metadata/Basic/BasicType/DatasetGUID/DatasetGUIDType";
+                    string xpath = "Metadata/Basic/BasicType/DatasetGUID/String";
                     string value = "new doi"+DateTime.Now.ToString();
 
                     dm.UpdateSingleValueInMetadata(version.Id, xpath, value);
@@ -840,7 +840,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                     var version = dm.GetDatasetLatestVersion(dataset.Id);
                     // Act
                     //string xpath = "Metadata/Basic/BasicType/alternateIdentifier/alternateIdentifierType";
-                    string xpath = "Metadata/Basic/BasicType/DatasetGUID/DatasetGUIDType";
+                    string xpath = "Metadata/Basic/BasicType/DatasetGUID/String";
                     string value = "new doi" + DateTime.Now.ToString();
                     string value2 = "new doi new";
 
@@ -882,7 +882,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                     var version = dm.GetDatasetLatestVersion(dataset.Id);
                     // Act
                     //string xpath = "Metadata/Basic/BasicType/alternateIdentifier/alternateIdentifierType";
-                    string xpath = "Metadata/Basic/BasicType/DatasetGUID/DatasetGUIDType";
+                    string xpath = "Metadata/Basic/BasicType/DatasetGUID/String";
                     string value = "";
                     string value2 = "new doi new";
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Variable from './variable/Variable.svelte';
 	import { Spinner, helpStore } from '@bexis2/bexis2-core-ui';
-	import { onMount } from 'svelte';
+	import { onMount, createEventDispatcher } from 'svelte';
 
 	import type { missingValueType } from '../types';
 	import { VariableInstanceModel } from '../types';
@@ -39,11 +39,14 @@
 		meaningsStore,
 		constraintsStore
 	} from '../store';
+	import DwcRequirements from './DwcRequirements.svelte';
 
 	export let variables: VariableInstanceModel[] = [];
 	export let missingValues: missingValueType[] = [];
 	export let data: string[][];
 	export let dataExist: boolean = false;
+
+	const dispatch = createEventDispatcher();
 
 	$: variables;
 
@@ -92,10 +95,16 @@
 		}
 	}
 
+	function varChangeFn()
+	{
+		checkValidationState();
+		dispatch("changed")
+	}
 	// every time when validation state of a variable is change,
 	// this function triggered an check whether save button can be active or not
 	function checkValidationState() {
 		valid = variableValidationStates.every((v: boolean) => v === true);
+		
 		//console.log("TCL ~ file: Variables.svelte:63 ~ checkValidationState ~ variableValidationStates:", variableValidationStates)
 	}
 
@@ -221,7 +230,7 @@
 </script>
 
 <div class="p-2">
-	<div class="flex gap-2 items-baseline">
+	<div class="flex gap-2 items-end">
 		<button
 			id="variables-expander"
 			class="btn variant-filled-secondary"
@@ -236,22 +245,25 @@
 			{/if}
 		</button>
 
-		<div class="pr-32 w-auto">
-			{#if !valid}
-				<span class="text-sm">Variables with errors:</span>
-				{#each variableValidationStates as v, i}
-					{#if v == false && variables[i] != undefined}
-						<a class="chip variant-filled-error m-1" href="#{i}">
-							{#if variables[i].name != ''}
-								{variables[i].name}
-							{:else}
-								{i + 1}
-							{/if}
-						</a>
-					{/if}
-				{/each}
-			{/if}
-		</div>
+		<DwcRequirements bind:variables={variables} />
+		
+		
+	</div>
+	<div class="pr-32 w-auto">
+		{#if !valid}
+			<span class="text-sm">Variables with errors:</span>
+			{#each variableValidationStates as v, i}
+				{#if v == false && variables[i] != undefined}
+					<a class="chip variant-filled-error m-1" href="#{i}">
+						{#if variables[i].name != ''}
+							{variables[i].name}
+						{:else}
+							{i + 1}
+						{/if}
+					</a>
+				{/if}
+			{/each}
+		{/if}
 	</div>
 	<div class="flex-col space-y-2 mt-1">
 		{#if variables && missingValues && ready}
@@ -260,7 +272,7 @@
 				<Variable
 					bind:variable
 					index={i}
-					on:var-change={checkValidationState}
+					on:var-change={varChangeFn}
 					bind:isValid={variableValidationStates[i]}
 					bind:missingValues
 					data={getColumnData(i)}

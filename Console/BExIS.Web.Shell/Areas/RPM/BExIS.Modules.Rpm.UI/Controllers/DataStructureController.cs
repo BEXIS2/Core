@@ -1,5 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
+using BExIS.Dim.Helpers.GBIF;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
@@ -131,6 +132,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             bool enforcePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("enforcePrimaryKey");
             ViewData["enforcePrimaryKey"] = enforcePrimaryKey;
 
+            bool showDarwinCoreValidation = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("showDarwinCoreValidation");
+            ViewData["showDarwinCoreValidation"] = enforcePrimaryKey;
+
             return View("Create");
         }
 
@@ -163,6 +167,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             bool enforcePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("enforcePrimaryKey");
             ViewData["enforcePrimaryKey"] = enforcePrimaryKey;
 
+            bool showDarwinCoreValidation = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("showDarwinCoreValidation");
+            ViewData["showDarwinCoreValidation"] = enforcePrimaryKey;
+
             ViewData["dataExist"] = structureHelper.InUseAndDataExist(structureId);
 
             return View("Edit");
@@ -171,7 +178,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         
 
         [JsonNetFilter]
-        [HttpPost]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult Create(DataStructureCreationModel model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
@@ -264,7 +271,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult Save(DataStructureEditModel model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
@@ -381,7 +388,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         
 
         [JsonNetFilter]
-        [HttpPost]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult Generate(DataStructureCreationModel model)
         {
 
@@ -613,7 +620,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult Delete(long id)
         {
             if (id <= 0) throw new NullReferenceException("id of the data structure should be greater then 0");
@@ -635,7 +642,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         }
 
         [JsonNetFilter]
-        [HttpPost]
+        [HttpPost, CustomValidateAntiForgeryToken]
         public JsonResult CheckPrimaryKeySet(long id, long[] primaryKeys)
         {
             if (id <= 0) throw new ArgumentNullException("id");
@@ -816,6 +823,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             List<ListItem> list = helper.GetConstraints();
 
             return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
+        }
+
+        [JsonNetFilter]
+        public JsonResult GetDWCRequirements()
+        {
+            GbifHelper gbifHelper = new GbifHelper();
+            var t = gbifHelper.LoadExtentionList();
+
+            return Json(t, JsonRequestBehavior.AllowGet);
         }
 
 

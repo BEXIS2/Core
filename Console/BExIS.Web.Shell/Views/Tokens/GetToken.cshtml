@@ -4,7 +4,21 @@
     ViewBag.Title = "Token";
 }
 
+<script>
+    function myFunction() {
+    	const text = @Html.Raw(Json.Encode(Model.Jwt));
+    	navigator.clipboard.writeText(text)
+    	.then(() => {
+            alert('JWT copied to clipboard!');
+    	})
+    	.catch(err => {
+            alert('Error copying JWT: ' + err);
+    	});
+    }
+</script>
+
 <div class="col-md-6" style="word-wrap: break-word">
     @Html.LabelFor(m => m.Jwt)
     @Html.DisplayFor(m => m.Jwt)
+    <button id="jwt-copy" class="bx bx-copy" onclick="myFunction()">Copy</button>
 </div>

@@ -110,7 +110,7 @@ namespace BExIS.Web.Shell
         {
             HttpContext.Current.Response.AddHeader("Access-Control-Allow-Origin", "*");
             HttpContext.Current.Response.AddHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-            HttpContext.Current.Response.AddHeader("Access-Control-Allow-Headers", "content-type, append,delete,entries,foreach,get,has,keys,set,values,Authorization");
+            HttpContext.Current.Response.AddHeader("Access-Control-Allow-Headers", "content-type, append,delete,entries,foreach,get,has,keys,set,values,Authorization, __requestverificationtoken");
 
             if (Request.HttpMethod == "OPTIONS")
             {

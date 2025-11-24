@@ -752,10 +752,10 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 #region GeoLocationPoint
 
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationPoint/pointLongitude")))
-                    conceptManager.CreateMappingKey("PointLongitude", "", "", true, true, "data/attributes/geoLocations/geoLocationPoint/pointLongitude", mappingConcept, geoLocations_geoLocationPoint);
+                    conceptManager.CreateMappingKey("PointLongitude", "", "", true, false, "data/attributes/geoLocations/geoLocationPoint/pointLongitude", mappingConcept, geoLocations_geoLocationPoint);
 
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationPoint/pointLatitude")))
-                    conceptManager.CreateMappingKey("PointLatitude", "", "", true, true, "data/attributes/geoLocations/geoLocationPoint/pointLatitude", mappingConcept, geoLocations_geoLocationPoint);
+                    conceptManager.CreateMappingKey("PointLatitude", "", "", true, false, "data/attributes/geoLocations/geoLocationPoint/pointLatitude", mappingConcept, geoLocations_geoLocationPoint);
 
                 #endregion
 
@@ -766,16 +766,16 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 #region GeoLocationBox
 
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationBox/westBoundLongitude")))
-                    conceptManager.CreateMappingKey("WestBoundLongitude", "", "", true, true, "data/attributes/geoLocations/geoLocationBox/westBoundLongitude", mappingConcept, geoLocations_geoLocationBox);
+                    conceptManager.CreateMappingKey("WestBoundLongitude", "", "", true, false, "data/attributes/geoLocations/geoLocationBox/westBoundLongitude", mappingConcept, geoLocations_geoLocationBox);
 
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationBox/eastBoundLongitude")))
-                    conceptManager.CreateMappingKey("EastBoundLongitude", "", "", true, true, "data/attributes/geoLocations/geoLocationBox/eastBoundLongitude", mappingConcept, geoLocations_geoLocationBox);
+                    conceptManager.CreateMappingKey("EastBoundLongitude", "", "", true, false, "data/attributes/geoLocations/geoLocationBox/eastBoundLongitude", mappingConcept, geoLocations_geoLocationBox);
 
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationBox/southBoundLatitude")))
-                    conceptManager.CreateMappingKey("SouthBoundLatitude", "", "", true, true, "data/attributes/geoLocations/geoLocationBox/southBoundLatitude", mappingConcept, geoLocations_geoLocationBox);
+                    conceptManager.CreateMappingKey("SouthBoundLatitude", "", "", true, false, "data/attributes/geoLocations/geoLocationBox/southBoundLatitude", mappingConcept, geoLocations_geoLocationBox);
 
                 if (!mappingKeys.Any(k => k.XPath.Equals("data/attributes/geoLocations/geoLocationBox/northBoundLatitude")))
-                    conceptManager.CreateMappingKey("NorthBoundLatitude", "", "", true, true, "data/attributes/geoLocations/geoLocationBox/northBoundLatitude", mappingConcept, geoLocations_geoLocationBox);
+                    conceptManager.CreateMappingKey("NorthBoundLatitude", "", "", true, false, "data/attributes/geoLocations/geoLocationBox/northBoundLatitude", mappingConcept, geoLocations_geoLocationBox);
 
                 #endregion
 
@@ -1421,6 +1421,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
         private LinkElement createLinkELementIfNotExist(
             MappingManager mappingManager,
+            MetadataAttributeManager metadataAttributeManager,
             long id,
             string name,
             LinkElementType type,
@@ -1436,7 +1437,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 type == LinkElementType.SimpleMetadataAttribute || 
                 type == LinkElementType.ComplexMetadataAttribute )
             { 
-                xpath = xpath + "/"+name+"Type";
+                string typeName = getTypeName(id, type, metadataAttributeManager);
+                xpath = xpath + "/"+ typeName;
             }
 
             if (element == null)
@@ -1452,6 +1454,40 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
             return element;
         }
+
+        public string getTypeName(long id, LinkElementType type, MetadataAttributeManager metadataAttributeManager)
+        {
+
+            var elementId = id;
+            var elemenType = type;
+            var datatype = "";
+
+            if (elemenType == LinkElementType.MetadataAttributeUsage)
+            {
+                var mau = metadataAttributeManager.MetadataAttributeUsageRepo.Get(elementId);
+                datatype = mau.MetadataAttribute.Name;
+            }
+            else if (elemenType == LinkElementType.MetadataNestedAttributeUsage)
+            {
+                var mnau = metadataAttributeManager.MetadataNestedAttributeUsageRepo.Get(elementId);
+                datatype = mnau.Member.Name;
+            }
+            else if (elemenType == LinkElementType.SimpleMetadataAttribute)
+            {
+                var sma = metadataAttributeManager.MetadataSimpleAttributeRepo.Get(elementId);
+                datatype = sma.Name;
+            }
+            else if (elemenType == LinkElementType.ComplexMetadataAttribute)
+            {
+                var cma = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(elementId);
+                datatype = cma.Name;
+            }
+
+            return datatype;
+
+            
+        }
+
 
 
         private void createMetadataStructureRepoMaps()
@@ -1514,9 +1550,10 @@ namespace BExIS.Modules.Dim.UI.Helpers
             Key key,
             Mapping root,
             XDocument metadataRef,
-            MappingManager mappingManager)
+            MappingManager mappingManager,
+            MetadataAttributeManager metadataAttributeManager)
         {
-            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(key),
+            LinkElement le = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(key),
                     key.ToString(), LinkElementType.Key, LinkElementComplexity.Simple,"");
 
             if (simpleNodeName.Equals(complexNodeName))
@@ -1529,7 +1566,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     string name = xElement.Attribute("name").Value;
                     
 
-                    LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                    LinkElement tmp = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(sId), name,
                         simpleType, LinkElementComplexity.Simple, xElement.GetAbsoluteXPath());
 
                     Mapping tmpMapping = MappingHelper.CreateIfNotExistMapping(le, tmp, 1, null, root, mappingManager);
@@ -1544,7 +1581,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 {
                     string sIdComplex = complex.Attribute("id").Value;
                     string nameComplex = complex.Attribute("name").Value;
-                    LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
+                    LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(sIdComplex), nameComplex,
                         complexType, LinkElementComplexity.Complex, complex.GetAbsoluteXPath());
 
                     Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(le, tmpComplexElement, 1, null, root, mappingManager);
@@ -1555,7 +1592,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     {
                         string sId = xElement.Attribute("id").Value;
                         string name = xElement.Attribute("name").Value;
-                        LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                        LinkElement tmp = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(sId), name,
                             simpleType, LinkElementComplexity.Simple, xElement.GetAbsoluteXPath());
 
                         MappingHelper.CreateIfNotExistMapping(le, tmp, 2, null, complexMapping, mappingManager);
@@ -1571,6 +1608,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 tmp.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get().ToList();
 
             using (MappingManager mappingManager = new MappingManager())
+            using (MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager())
             using (var uow = this.GetUnitOfWork())
             {
                 XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
@@ -1584,10 +1622,10 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     XDocument metadataRef = xmlMetadataWriter.CreateMetadataXml(metadataStructure.Id);
 
                     //create root mapping
-                    LinkElement abcdRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None, "");
+                    LinkElement abcdRoot = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None, "");
 
                     //create system mapping
-                    LinkElement system = createLinkELementIfNotExist(mappingManager, 0, "System", LinkElementType.System, LinkElementComplexity.None, "");
+                    LinkElement system = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, 0, "System", LinkElementType.System, LinkElementComplexity.None, "");
 
                     #region mapping ABCD BASIC to System Keys
 
@@ -1599,32 +1637,32 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                     if (Exist("Title", LinkElementType.MetadataNestedAttributeUsage, uow))
                     {
-                        createToKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager);
-                        createFromKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager);
+                        createToKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager, metadataAttributeManager);
+                        createFromKeyMapping("Title", LinkElementType.MetadataNestedAttributeUsage, "Title", LinkElementType.MetadataNestedAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager, metadataAttributeManager);
                     }
 
                     if (Exist("Details", LinkElementType.MetadataNestedAttributeUsage, uow) &&
                         Exist("MetadataDescriptionRepr", LinkElementType.ComplexMetadataAttribute, uow))
                     {
                         Debug.WriteLine("Details");
-                        createToKeyMapping("Details", LinkElementType.MetadataNestedAttributeUsage, "MetadataDescriptionRepr", LinkElementType.ComplexMetadataAttribute, Key.Description, rootTo, metadataRef, mappingManager);
-                        createFromKeyMapping("Details", LinkElementType.MetadataNestedAttributeUsage, "MetadataDescriptionRepr", LinkElementType.ComplexMetadataAttribute, Key.Description, rootFrom, metadataRef, mappingManager);
+                        createToKeyMapping("Details", LinkElementType.MetadataNestedAttributeUsage, "MetadataDescriptionRepr", LinkElementType.ComplexMetadataAttribute, Key.Description, rootTo, metadataRef, mappingManager, metadataAttributeManager);
+                        createFromKeyMapping("Details", LinkElementType.MetadataNestedAttributeUsage, "MetadataDescriptionRepr", LinkElementType.ComplexMetadataAttribute, Key.Description, rootFrom, metadataRef, mappingManager, metadataAttributeManager);
                     }
 
                     if (Exist("FullName", LinkElementType.MetadataNestedAttributeUsage, uow) &&
                         Exist("PersonName", LinkElementType.ComplexMetadataAttribute, uow))
                     {
                         Debug.WriteLine("FullName");
-                        createToKeyMapping("FullName", LinkElementType.MetadataNestedAttributeUsage, "PersonName", LinkElementType.ComplexMetadataAttribute, Key.Author, rootTo, metadataRef, mappingManager);
-                        createFromKeyMapping("FullName", LinkElementType.MetadataNestedAttributeUsage, "PersonName", LinkElementType.ComplexMetadataAttribute, Key.Author, rootFrom, metadataRef, mappingManager);
+                        createToKeyMapping("FullName", LinkElementType.MetadataNestedAttributeUsage, "PersonName", LinkElementType.ComplexMetadataAttribute, Key.Author, rootTo, metadataRef, mappingManager, metadataAttributeManager);
+                        createFromKeyMapping("FullName", LinkElementType.MetadataNestedAttributeUsage, "PersonName", LinkElementType.ComplexMetadataAttribute, Key.Author, rootFrom, metadataRef, mappingManager, metadataAttributeManager);
                     }
 
                     if (Exist("Text", LinkElementType.MetadataNestedAttributeUsage, uow) &&
                         Exist("License", LinkElementType.MetadataNestedAttributeUsage, uow))
                     {
                         Debug.WriteLine("Text");
-                        createToKeyMapping("Text", LinkElementType.MetadataNestedAttributeUsage, "License", LinkElementType.MetadataNestedAttributeUsage, Key.License, rootTo, metadataRef, mappingManager);
-                        createFromKeyMapping("Text", LinkElementType.MetadataNestedAttributeUsage, "License", LinkElementType.MetadataNestedAttributeUsage, Key.License, rootFrom, metadataRef, mappingManager);
+                        createToKeyMapping("Text", LinkElementType.MetadataNestedAttributeUsage, "License", LinkElementType.MetadataNestedAttributeUsage, Key.License, rootTo, metadataRef, mappingManager, metadataAttributeManager);
+                        createFromKeyMapping("Text", LinkElementType.MetadataNestedAttributeUsage, "License", LinkElementType.MetadataNestedAttributeUsage, Key.License, rootFrom, metadataRef, mappingManager, metadataAttributeManager);
                     }
 
                     #endregion mapping ABCD BASIC to System Keys
@@ -1642,10 +1680,10 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     XDocument metadataRef = xmlMetadataWriter.CreateMetadataXml(metadataStructure.Id);
 
                     //create root mapping
-                    LinkElement gbifRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None, "");
+                    LinkElement gbifRoot = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None, "");
 
                     //create system mapping
-                    LinkElement system = createLinkELementIfNotExist(mappingManager, 0, "System", LinkElementType.System, LinkElementComplexity.None,"");
+                    LinkElement system = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, 0, "System", LinkElementType.System, LinkElementComplexity.None,"");
 
                     #region mapping GBIF to System Keys
 
@@ -1654,36 +1692,36 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                     if (Exist("title", LinkElementType.MetadataAttributeUsage, uow))
                     {
-                        createToKeyMapping("title", LinkElementType.MetadataAttributeUsage, "title", LinkElementType.MetadataAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager);
-                        createFromKeyMapping("title", LinkElementType.MetadataAttributeUsage, "title", LinkElementType.MetadataAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager);
+                        createToKeyMapping("title", LinkElementType.MetadataAttributeUsage, "title", LinkElementType.MetadataAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager, metadataAttributeManager);
+                        createFromKeyMapping("title", LinkElementType.MetadataAttributeUsage, "title", LinkElementType.MetadataAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager, metadataAttributeManager);
                     }
 
                     if (Exist("para", LinkElementType.MetadataAttributeUsage, uow) &&
                         Exist("abstract", LinkElementType.MetadataPackageUsage, uow))
                     {
-                        createToKeyMapping("para", LinkElementType.MetadataAttributeUsage, "abstract", LinkElementType.MetadataPackageUsage, Key.Description, rootTo, metadataRef, mappingManager);
-                        createFromKeyMapping("para", LinkElementType.MetadataAttributeUsage, "abstract", LinkElementType.MetadataPackageUsage, Key.Description, rootFrom, metadataRef, mappingManager);
+                        createToKeyMapping("para", LinkElementType.MetadataAttributeUsage, "abstract", LinkElementType.MetadataPackageUsage, Key.Description, rootTo, metadataRef, mappingManager, metadataAttributeManager);
+                        createFromKeyMapping("para", LinkElementType.MetadataAttributeUsage, "abstract", LinkElementType.MetadataPackageUsage, Key.Description, rootFrom, metadataRef, mappingManager, metadataAttributeManager);
                     }
 
                     if (Exist("givenName", LinkElementType.MetadataNestedAttributeUsage, uow) &&
                         Exist("individualName", LinkElementType.MetadataAttributeUsage, uow))
                     {
-                        createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
-                        createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, mappingManager.CreateTransformationRule(@"\w+", "Author[0]"));
+                        createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/agentType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager,metadataAttributeManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
+                        createToKeyMapping("givenName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/agentType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, metadataAttributeManager, mappingManager.CreateTransformationRule(@"\w+", "Author[0]"));
                     }
 
                     if (Exist("surName", LinkElementType.MetadataNestedAttributeUsage, uow) &&
                         Exist("individualName", LinkElementType.MetadataAttributeUsage, uow))
                     {
-                        createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
-                        createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, mappingManager.CreateTransformationRule(@"\w+", "Author[1]"));
+                        createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/agentType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootTo, metadataRef, mappingManager, metadataAttributeManager, mappingManager.CreateTransformationRule("", "givenName[0] surName[0]"));
+                        createToKeyMapping("surName", LinkElementType.MetadataNestedAttributeUsage, "Metadata/creator/agentType/individualName", LinkElementType.MetadataAttributeUsage, Key.Author, rootFrom, metadataRef, mappingManager, metadataAttributeManager, mappingManager.CreateTransformationRule(@"\w+", "Author[1]"));
                     }
 
                     if (Exist("title", LinkElementType.MetadataAttributeUsage, uow) &&
                         Exist("project", LinkElementType.MetadataPackageUsage, uow))
                     {
-                        createToKeyMapping("title", LinkElementType.MetadataAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootTo, metadataRef, mappingManager);
-                        createFromKeyMapping("title", LinkElementType.MetadataAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootFrom, metadataRef, mappingManager);
+                        createToKeyMapping("title", LinkElementType.MetadataAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootTo, metadataRef, mappingManager, metadataAttributeManager);
+                        createFromKeyMapping("title", LinkElementType.MetadataAttributeUsage, "project", LinkElementType.MetadataPackageUsage, Key.ProjectTitle, rootFrom, metadataRef, mappingManager, metadataAttributeManager);
                     }
 
                     #endregion mapping GBIF to System Keys
@@ -1701,10 +1739,10 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     XDocument metadataRef = xmlMetadataWriter.CreateMetadataXml(metadataStructure.Id);
 
                     //create root mapping
-                    LinkElement publicationRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None, "");
+                    LinkElement publicationRoot = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None, "");
 
                     //create system mapping
-                    LinkElement system = createLinkELementIfNotExist(mappingManager, 0, "System", LinkElementType.System, LinkElementComplexity.None, "");
+                    LinkElement system = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, 0, "System", LinkElementType.System, LinkElementComplexity.None, "");
 
                     #region mapping GBIF to System Keys
 
@@ -1713,14 +1751,14 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                     if (Exist("Title", LinkElementType.MetadataAttributeUsage, uow))
                     {
-                        createToKeyMapping("Title", LinkElementType.MetadataAttributeUsage, "Title", LinkElementType.MetadataAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager);
-                        createFromKeyMapping("Title", LinkElementType.MetadataAttributeUsage, "Title", LinkElementType.MetadataAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager);
+                        createToKeyMapping("Title", LinkElementType.MetadataAttributeUsage, "Title", LinkElementType.MetadataAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager, metadataAttributeManager);
+                        createFromKeyMapping("Title", LinkElementType.MetadataAttributeUsage, "Title", LinkElementType.MetadataAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager, metadataAttributeManager);
                     }
 
                     if (Exist("abstract", LinkElementType.MetadataAttributeUsage, uow))
                     {
-                        createToKeyMapping("Abstract", LinkElementType.MetadataAttributeUsage, "Abstract", LinkElementType.MetadataAttributeUsage, Key.Description, rootTo, metadataRef, mappingManager);
-                        createFromKeyMapping("Abstract", LinkElementType.MetadataAttributeUsage, "Abstract", LinkElementType.MetadataAttributeUsage, Key.Description, rootFrom, metadataRef, mappingManager);
+                        createToKeyMapping("Abstract", LinkElementType.MetadataAttributeUsage, "Abstract", LinkElementType.MetadataAttributeUsage, Key.Description, rootTo, metadataRef, mappingManager, metadataAttributeManager);
+                        createFromKeyMapping("Abstract", LinkElementType.MetadataAttributeUsage, "Abstract", LinkElementType.MetadataAttributeUsage, Key.Description, rootFrom, metadataRef, mappingManager, metadataAttributeManager);
                     }
 
 
@@ -1749,11 +1787,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
             Key key,
             Mapping root,
             XDocument metadataRef,
-            MappingManager mappingManager, TransformationRule transformationRule = null)
+            MappingManager mappingManager,
+            MetadataAttributeManager metadataAttributeManager, TransformationRule transformationRule = null)
         {
             if (transformationRule == null) transformationRule = new TransformationRule();
 
-            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(key),
+            LinkElement le = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(key),
                     key.ToString(), LinkElementType.Key, LinkElementComplexity.Simple, "");
 
             if (simpleNodeName.Equals(complexNodeName))
@@ -1764,7 +1803,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 {
                     string sId = xElement.Attribute("id").Value;
                     string name = xElement.Attribute("name").Value;
-                    LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                    LinkElement tmp = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(sId), name,
                         simpleType, LinkElementComplexity.Simple, xElement.GetAbsoluteXPath());
 
                     Mapping tmpMapping = MappingHelper.CreateIfNotExistMapping(tmp, le, 1, new TransformationRule(), root, mappingManager);
@@ -1779,7 +1818,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 {
                     string sIdComplex = complex.Attribute("id").Value;
                     string nameComplex = complex.Attribute("name").Value;
-                    LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
+                    LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(sIdComplex), nameComplex,
                         complexType, LinkElementComplexity.Complex, complex.GetAbsoluteXPath());
 
                     Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(tmpComplexElement, le, 1, new TransformationRule(), root, mappingManager);
@@ -1790,7 +1829,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     {
                         string sId = xElement.Attribute("id").Value;
                         string name = xElement.Attribute("name").Value;
-                        LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                        LinkElement tmp = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(sId), name,
                             simpleType, LinkElementComplexity.Simple, xElement.GetAbsoluteXPath());
 
                         MappingHelper.CreateIfNotExistMapping(tmp, le, 2, transformationRule, complexMapping, mappingManager);
@@ -1809,20 +1848,20 @@ namespace BExIS.Modules.Dim.UI.Helpers
             PartyRelationshipType partyReleationType,
             Mapping root,
             XDocument metadataRef,
-            MappingManager mappingManager, TransformationRule transformationRule = null)
+            MappingManager mappingManager,MetadataAttributeManager metadataAttributeManager, TransformationRule transformationRule = null)
         {
             //create ruleif not exist
             if (transformationRule == null) transformationRule = new TransformationRule();
 
             //create complex elements if not exits
-            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyReleationType.Id),
+            LinkElement le = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(partyReleationType.Id),
                     partyReleationType.Title, LinkElementType.PartyRelationshipType, LinkElementComplexity.Simple, "");
 
             XElement complex = getXElements(complexNodeName, metadataRef).FirstOrDefault();
 
             string sIdComplex = complex.Attribute("id").Value;
             string nameComplex = complex.Attribute("name").Value;
-            LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
+            LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(sIdComplex), nameComplex,
                 complexType, LinkElementComplexity.Complex, complex.GetAbsoluteXPath());
 
             //map complex
@@ -1836,7 +1875,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
             {
                 string sId = xElement.Attribute("id").Value;
                 string name = xElement.Attribute("name").Value;
-                LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                LinkElement tmp = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(sId), name,
                     simpleType, LinkElementComplexity.Simple, xElement.GetAbsoluteXPath());
 
                 MappingHelper.CreateIfNotExistMapping(simpleLe, tmp, 2, transformationRule, complexMapping, mappingManager);
@@ -1850,32 +1889,32 @@ namespace BExIS.Modules.Dim.UI.Helpers
             PartyType partyType,
             Mapping root,
             XDocument metadataRef,
-            MappingManager mappingManager, TransformationRule transformationRule = null)
+            MappingManager mappingManager, MetadataAttributeManager metadataAttributeManager, TransformationRule transformationRule = null)
         {
             if (transformationRule == null) transformationRule = new TransformationRule();
 
-            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyType.Id),
+            LinkElement le = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(partyType.Id),
                     partyType.Title, LinkElementType.PartyType, LinkElementComplexity.Complex,"");
 
             XElement complex = getXElements(complexNodeName, metadataRef).FirstOrDefault();
 
             string sIdComplex = complex.Attribute("id").Value;
             string nameComplex = complex.Attribute("name").Value;
-            LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
+            LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(sIdComplex), nameComplex,
                 complexType, LinkElementComplexity.Complex, complex.GetAbsoluteXPath());
 
             Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(le, tmpComplexElement, 1, new TransformationRule(), root, mappingManager);
 
             IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
 
-            LinkElement simpleLe = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyCustomAttr.Id),
+            LinkElement simpleLe = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(partyCustomAttr.Id),
             partyCustomAttr.Name, LinkElementType.PartyCustomType, LinkElementComplexity.Simple, "");
 
             foreach (XElement xElement in simpleElements)
             {
                 string sId = xElement.Attribute("id").Value;
                 string name = xElement.Attribute("name").Value;
-                LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                LinkElement tmp = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(sId), name,
                     simpleType, LinkElementComplexity.Simple, xElement.GetAbsoluteXPath());
 
                 MappingHelper.CreateIfNotExistMapping(simpleLe, tmp, 2, transformationRule, complexMapping, mappingManager);
@@ -1896,6 +1935,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 tmp.GetUnitOfWork().GetReadOnlyRepository<PartyRelationshipType>().Get().ToList();
 
             MappingManager mappingManager = new MappingManager();
+            MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager();
             XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
             try
@@ -1910,11 +1950,11 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     XDocument metadataRef = xmlMetadataWriter.CreateMetadataXml(metadataStructure.Id);
 
                     //create root mapping
-                    LinkElement abcdRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id,
+                    LinkElement abcdRoot = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, metadataStructure.Id,
                         metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None,"");
 
                     //create system mapping
-                    LinkElement system = createLinkELementIfNotExist(mappingManager, 0, "System", LinkElementType.System,
+                    LinkElement system = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, 0, "System", LinkElementType.System,
                         LinkElementComplexity.None, "");
 
                     #region mapping ABCD BASIC to System Keys
@@ -1943,6 +1983,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootTo, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule(@"\w+", "Name[0]"));
 
                             createFromPartyTypeMapping(
@@ -1950,6 +1991,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootFrom, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule(@"\w+", "FirstName[0] LastName[0]"));
                         }
 
@@ -1964,6 +2006,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootTo, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule(@"\w+", "Name[1]"));
 
                             createFromPartyTypeMapping(
@@ -1971,6 +2014,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootFrom, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule(@"\w+", "FirstName[0] LastName[0]"));
                         }
 
@@ -1985,6 +2029,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootTo, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule());
 
                             createFromPartyTypeMapping(
@@ -1992,6 +2037,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootFrom, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule());
                         }
 
@@ -2006,6 +2052,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootTo, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule());
 
                             createFromPartyTypeMapping(
@@ -2013,6 +2060,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootFrom, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule());
                         }
 
@@ -2029,6 +2077,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootTo, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule(@"\w+", "Address[0]"));
 
                             createFromPartyTypeMapping(
@@ -2036,6 +2085,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootFrom, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule());
                         }
 
@@ -2050,6 +2100,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootTo, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule(@"\w+", "Address[1]"));
 
                             createFromPartyTypeMapping(
@@ -2057,6 +2108,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootFrom, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule());
                         }
 
@@ -2071,6 +2123,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootTo, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule(@"\w+", "Address[2]"));
 
                             createFromPartyTypeMapping(
@@ -2078,6 +2131,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootFrom, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule());
                         }
 
@@ -2092,6 +2146,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootTo, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule(@"\w+", "Address[3]"));
 
                             createFromPartyTypeMapping(
@@ -2099,6 +2154,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootFrom, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule());
                         }
 
@@ -2119,6 +2175,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 personUsage, LinkElementType.MetadataNestedAttributeUsage,
                                 partyCustomAttribute, partyType, rootTo, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule(@"\w+", "Name[0]"));
 
                             createFromPartyTypeMapping(
@@ -2126,6 +2183,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 personUsage, LinkElementType.MetadataNestedAttributeUsage,
                                 partyCustomAttribute, partyType, rootFrom, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule(@"\w+", "FirstName[0] LastName[0]"));
                         }
 
@@ -2140,6 +2198,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 personUsage, LinkElementType.MetadataNestedAttributeUsage,
                                 partyCustomAttribute, partyType, rootTo, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule(@"\w+", "Name[1]"));
 
                             createFromPartyTypeMapping(
@@ -2147,6 +2206,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 personUsage, LinkElementType.MetadataNestedAttributeUsage,
                                 partyCustomAttribute, partyType, rootFrom, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule(@"\w+", "FirstName[0] LastName[0]"));
                         }
 
@@ -2159,6 +2219,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 personUsage, LinkElementType.MetadataNestedAttributeUsage,
                                 partyRelationshipType, rootTo, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule(@"\w+", "FullName[0]"));
 
                             createFromPartyReleationMapping(
@@ -2166,6 +2227,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 personUsage, LinkElementType.MetadataNestedAttributeUsage,
                                 partyRelationshipType, rootFrom, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule(@"\w+", "FirstName[0] LastName[0]"));
                         }
 
@@ -2180,7 +2242,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     {
                         PartyType partyType = partyTypes.FirstOrDefault(p => p.Title.Equals("Organization"));
                         //FirstName
-                        string complexAttrName = "Metadata/Metadata/MetadataType/Owners/OwnersType/Owner/Contact/Organisation/Organisation/Name/Label/Representation/RepresentationType";
+                        string complexAttrName = "Metadata/Metadata/ContentMetadata/Owners/OwnersXmlSchemaComplexType/Owner/Contact/Organisation/Organisation/Name/Label/Representation/RepresentationXmlSchemaComplexType";
 
                         if (partyCustomAttrs.Any(
                             pAttr => pAttr.Name.Equals("Name") && pAttr.PartyType.Id.Equals(partyType.Id)))
@@ -2193,6 +2255,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootTo, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule());
 
                             createFromPartyTypeMapping(
@@ -2200,6 +2263,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootFrom, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule());
                         }
                     }
@@ -2221,11 +2285,11 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     XDocument metadataRef = xmlMetadataWriter.CreateMetadataXml(metadataStructure.Id);
 
                     //create root mapping
-                    LinkElement gbifRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id,
+                    LinkElement gbifRoot = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, metadataStructure.Id,
                         metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None, "");
 
                     //create system mapping
-                    LinkElement system = createLinkELementIfNotExist(mappingManager, 0, "System", LinkElementType.System,
+                    LinkElement system = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, 0, "System", LinkElementType.System,
                         LinkElementComplexity.None, "");
 
                     #region mapping GFBIO to System Keys
@@ -2242,7 +2306,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         PartyType partyType = partyTypes.FirstOrDefault(p => p.Title.Equals("Person"));
                         //FirstName
 
-                        string complexAttrName = "individualNameType";
+                        string complexAttrName = "individualNameXmlSchemaComplexType";
 
                         if (partyCustomAttrs.Any(
                             pAttr => pAttr.Name.Equals("FirstName") && pAttr.PartyType.Id.Equals(partyType.Id)))
@@ -2255,6 +2319,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootTo, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule());
 
                             createFromPartyTypeMapping(
@@ -2262,6 +2327,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootFrom, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule());
                         }
 
@@ -2276,6 +2342,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootTo, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule());
 
                             createFromPartyTypeMapping(
@@ -2283,6 +2350,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.ComplexMetadataAttribute,
                                 partyCustomAttribute, partyType, rootFrom, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule());
                         }
 
@@ -2294,16 +2362,18 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         {
                             createToPartyReleationMapping(
                                 "givenName", LinkElementType.MetadataNestedAttributeUsage,
-                                "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage,
+                                "Metadata/creator/agentType/individualName", LinkElementType.MetadataAttributeUsage,
                                 partyRelationshipType, rootTo, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule());
 
                             createFromPartyReleationMapping(
                                 "givenName", LinkElementType.MetadataNestedAttributeUsage,
-                                "Metadata/creator/creatorType/individualName", LinkElementType.MetadataAttributeUsage,
+                                "Metadata/creator/agentType/individualName", LinkElementType.MetadataAttributeUsage,
                                 partyRelationshipType, rootFrom, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule());
                         }
 
@@ -2331,6 +2401,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.MetadataPackageUsage,
                                 partyCustomAttribute, partyType, rootTo, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule());
 
                             createFromPartyTypeMapping(
@@ -2338,6 +2409,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                                 complexAttrName, LinkElementType.MetadataPackageUsage,
                                 partyCustomAttribute, partyType, rootFrom, metadataRef,
                                 mappingManager,
+                                metadataAttributeManager,
                                 new TransformationRule());
                         }
                     }
@@ -2356,6 +2428,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
             finally
             {
                 mappingManager.Dispose();
+                metadataAttributeManager.Dispose();
             }
         }
 
@@ -2365,18 +2438,18 @@ namespace BExIS.Modules.Dim.UI.Helpers
             PartyRelationshipType partyReleationType,
             Mapping root,
             XDocument metadataRef,
-            MappingManager mappingManager, TransformationRule transformationRule = null)
+            MappingManager mappingManager,MetadataAttributeManager metadataAttributeManager, TransformationRule transformationRule = null)
         {
             if (transformationRule == null) transformationRule = new TransformationRule();
 
-            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyReleationType.Id),
+            LinkElement le = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(partyReleationType.Id),
                     partyReleationType.Title, LinkElementType.PartyRelationshipType, LinkElementComplexity.Simple, "");
 
             XElement complex = getXElements(complexNodeName, metadataRef).FirstOrDefault();
 
             string sIdComplex = complex.Attribute("id").Value;
             string nameComplex = complex.Attribute("name").Value;
-            LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
+            LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(sIdComplex), nameComplex,
                 complexType, LinkElementComplexity.Complex, complex.GetAbsoluteXPath());
 
             Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(tmpComplexElement, le, 1, new TransformationRule(), root, mappingManager);
@@ -2389,7 +2462,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
             {
                 string sId = xElement.Attribute("id").Value;
                 string name = xElement.Attribute("name").Value;
-                LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                LinkElement tmp = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(sId), name,
                     simpleType, LinkElementComplexity.Simple, xElement.GetAbsoluteXPath());
 
                 MappingHelper.CreateIfNotExistMapping(tmp, simpleLe, 2, transformationRule, complexMapping, mappingManager);
@@ -2403,32 +2476,32 @@ namespace BExIS.Modules.Dim.UI.Helpers
             PartyType partyType,
             Mapping root,
             XDocument metadataRef,
-            MappingManager mappingManager, TransformationRule transformationRule = null)
+            MappingManager mappingManager,MetadataAttributeManager metadataAttributeManager, TransformationRule transformationRule = null)
         {
             if (transformationRule == null) transformationRule = new TransformationRule();
 
-            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyType.Id),
+            LinkElement le = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(partyType.Id),
                     partyType.Title, LinkElementType.PartyType, LinkElementComplexity.Complex, "");
 
             XElement complex = getXElements(complexNodeName, metadataRef).FirstOrDefault();
 
             string sIdComplex = complex.Attribute("id").Value;
             string nameComplex = complex.Attribute("name").Value;
-            LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
+            LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(sIdComplex), nameComplex,
                 complexType, LinkElementComplexity.Complex,"");
 
             Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(tmpComplexElement, le, 1, new TransformationRule(), root, mappingManager);
 
             IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
 
-            LinkElement simpleLe = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(partyCustomAttr.Id),
+            LinkElement simpleLe = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(partyCustomAttr.Id),
             partyCustomAttr.Name, LinkElementType.PartyCustomType, LinkElementComplexity.Simple, "");
 
             foreach (XElement xElement in simpleElements)
             {
                 string sId = xElement.Attribute("id").Value;
                 string name = xElement.Attribute("name").Value;
-                LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                LinkElement tmp = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(sId), name,
                     simpleType, LinkElementComplexity.Simple , xElement.GetAbsoluteXPath());
 
                 MappingHelper.CreateIfNotExistMapping(tmp, simpleLe, 2, transformationRule, complexMapping, mappingManager);
@@ -2446,6 +2519,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 tmp.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get().ToList();
 
             using (MappingManager mappingManager = new MappingManager())
+            using( MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager())
             using (var conceptManager = new ConceptManager())
             using (var uow = this.GetUnitOfWork())
             {
@@ -2491,10 +2565,10 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     XDocument metadataRef = xmlMetadataWriter.CreateMetadataXml(metadataStructure.Id);
 
                     //create root mapping
-                    LinkElement abcdRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None,"");
+                    LinkElement abcdRoot = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None,"");
 
                     //create system mapping
-                    LinkElement conceptRoot = createLinkELementIfNotExist(mappingManager, concept.Id, concept.Name, LinkElementType.MappingConcept, LinkElementComplexity.None, "");
+                    LinkElement conceptRoot = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, concept.Id, concept.Name, LinkElementType.MappingConcept, LinkElementComplexity.None, "");
 
                     #region mapping ABCD BASIC to concept
 
@@ -2517,7 +2591,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                             rootTo,
                             rootFrom,
                             metadataRef,
-                            mappingManager
+                            mappingManager, metadataAttributeManager
                             );
                     }
 
@@ -2536,7 +2610,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                          rootTo,
                          rootFrom,
                          metadataRef,
-                         mappingManager
+                         mappingManager, metadataAttributeManager
                          );
                     }
 
@@ -2554,7 +2628,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                             rootTo,
                             rootFrom,
                             metadataRef,
-                            mappingManager
+                            mappingManager, metadataAttributeManager
                             );
                     }
 
@@ -2573,7 +2647,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
                             rootTo,
                             rootFrom,
                             metadataRef,
-                            mappingManager
+                            mappingManager,
+                                metadataAttributeManager
                             );
                     }
 
@@ -2587,6 +2662,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         rootTo,
                         rootFrom,
                         mappingManager,
+                        metadataAttributeManager,
                         transformationRuleTo,
                         null
                         );
@@ -2606,7 +2682,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
                          rootTo,
                          rootFrom,
                          metadataRef,
-                         mappingManager
+                         mappingManager,
+                         metadataAttributeManager
                          );
                     }
 
@@ -2625,7 +2702,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
                             rootTo,
                             rootFrom,
                             metadataRef,
-                            mappingManager
+                            mappingManager,
+                                metadataAttributeManager
                             );
                     }
 
@@ -2650,6 +2728,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                             rootFrom,
                             metadataRef,
                             mappingManager,
+                            metadataAttributeManager,
                             new TransformationRule(@"\w+", "Fullname[0]"),
                             new TransformationRule(@"", "givenName[0] familyName[0]")
                             );
@@ -2669,6 +2748,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                             rootFrom,
                             metadataRef,
                             mappingManager,
+                            metadataAttributeManager,
                             new TransformationRule(@"\w+", "Fullname[0]"),
                             new TransformationRule(@"", "givenName[0] familyName[0]")
                             );
@@ -2688,7 +2768,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                             rootTo,
                             rootFrom,
                             metadataRef,
-                            mappingManager
+                            mappingManager, metadataAttributeManager
                             );
                     }
 
@@ -2706,7 +2786,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                             rootTo,
                             rootFrom,
                             metadataRef,
-                            mappingManager
+                            mappingManager, metadataAttributeManager
                             );
                     }
 
@@ -2726,10 +2806,10 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     XDocument metadataRef = xmlMetadataWriter.CreateMetadataXml(metadataStructure.Id);
 
                     //create root mapping
-                    LinkElement gbifRoot = createLinkELementIfNotExist(mappingManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None,"");
+                    LinkElement gbifRoot = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None,"");
 
                     //create system mapping
-                    LinkElement conceptRoot = createLinkELementIfNotExist(mappingManager, concept.Id, concept.Name, LinkElementType.MappingConcept, LinkElementComplexity.None, "");
+                    LinkElement conceptRoot = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, concept.Id, concept.Name, LinkElementType.MappingConcept, LinkElementComplexity.None, "");
 
                     //create system mapping
      
@@ -2755,7 +2835,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                            rootTo,
                            rootFrom,
                            metadataRef,
-                           mappingManager
+                           mappingManager, metadataAttributeManager
                            );
                     }
                     //description - dataset/description
@@ -2772,7 +2852,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                            rootTo,
                            rootFrom,
                            metadataRef,
-                           mappingManager
+                           mappingManager, metadataAttributeManager
                            );
 
                     }
@@ -2784,14 +2864,14 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         createMappingKeyMapping(
                            "givenName",
                            LinkElementType.MetadataNestedAttributeUsage,
-                           "Metadata/creator/creatorType/individualName",
+                           "Metadata/creator/agentType/individualName",
                            LinkElementType.MetadataAttributeUsage,
                            givenName,
                            creator,
                            rootTo,
                            rootFrom,
                            metadataRef,
-                           mappingManager
+                           mappingManager, metadataAttributeManager
                            );
 
                     }
@@ -2802,14 +2882,14 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         createMappingKeyMapping(
                            "surName",
                            LinkElementType.MetadataNestedAttributeUsage,
-                           "Metadata/creator/creatorType/individualName",
+                           "Metadata/creator/agentType/individualName",
                            LinkElementType.MetadataAttributeUsage,
                            familyName,
                            creator,
                            rootTo,
                            rootFrom,
                            metadataRef,
-                           mappingManager
+                           mappingManager, metadataAttributeManager
                            );
 
                     }
@@ -2829,7 +2909,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                            rootTo,
                            rootFrom,
                            metadataRef,
-                           mappingManager
+                           mappingManager, metadataAttributeManager
                            );
 
                     }
@@ -2847,7 +2927,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                            rootTo,
                            rootFrom,
                            metadataRef,
-                           mappingManager
+                           mappingManager, metadataAttributeManager
                            );
 
                     }
@@ -2866,7 +2946,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                            rootTo,
                            rootFrom,
                            metadataRef,
-                           mappingManager
+                           mappingManager, metadataAttributeManager
                            );
 
                     }
@@ -2882,6 +2962,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         rootTo,
                         rootFrom,
                         mappingManager,
+                                metadataAttributeManager,
                         transformationRuleTo,
                         null
                         );
@@ -2900,7 +2981,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                            rootTo,
                            rootFrom,
                            metadataRef,
-                           mappingManager
+                           mappingManager, metadataAttributeManager
                            );
 
                     }
@@ -2910,14 +2991,14 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         createMappingKeyMapping(
                            "url",
                            LinkElementType.MetadataNestedAttributeUsage,
-                           "Metadata/distribution/distributionType/online",
+                           "Metadata/distribution/distributionXmlSchemaComplexType/online/onlineXmlSchemaComplexType",
                            LinkElementType.MetadataAttributeUsage,
                            url,
                            null,
                            rootTo,
                            rootFrom,
                            metadataRef,
-                           mappingManager
+                           mappingManager, metadataAttributeManager
                            );
 
                     }
@@ -2962,19 +3043,20 @@ namespace BExIS.Modules.Dim.UI.Helpers
             Mapping rootFrom,
             XDocument metadataRef,
             MappingManager mappingManager, 
+            MetadataAttributeManager metadataAttributeManager,
             TransformationRule transformationRuleTo = null,
             TransformationRule transformationRuleFrom = null)
         {
             if (transformationRuleTo == null) transformationRuleTo = new TransformationRule();
             if (transformationRuleFrom == null) transformationRuleFrom = new TransformationRule();
 
-            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(key.Id),
+            LinkElement le = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(key.Id),
                     key.Name, LinkElementType.MappingKey, LinkElementComplexity.Simple, key.XPath);
 
             LinkElement parentLe = null;
             
             if(parentKey!=null)
-                parentLe = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(parentKey.Id),
+                parentLe = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(parentKey.Id),
                     parentKey.Name, LinkElementType.MappingKey, LinkElementComplexity.Complex, parentKey.XPath);
 
 
@@ -2986,7 +3068,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 {
                     string sId = xElement.Attribute("id").Value;
                     string name = xElement.Attribute("name").Value;
-                    LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                    LinkElement tmp = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(sId), name,
                         simpleType, LinkElementComplexity.Simple, xElement.GetAbsoluteXPath());
 
                     LinkElement p = parentLe == null ? le : parentLe;
@@ -3008,7 +3090,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 {
                     string sIdComplex = complex.Attribute("id").Value;
                     string nameComplex = complex.Attribute("name").Value;
-                    LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sIdComplex), nameComplex,
+                    LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(sIdComplex), nameComplex,
                         complexType, LinkElementComplexity.Complex, complex.GetAbsoluteXPath() );
 
                     LinkElement p = parentLe == null ? le : parentLe;
@@ -3023,7 +3105,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                     {
                         string sId = xElement.Attribute("id").Value;
                         string name = xElement.Attribute("name").Value;
-                        LinkElement tmp = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(sId), name,
+                        LinkElement tmp = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(sId), name,
                             simpleType, LinkElementComplexity.Simple, xElement.GetAbsoluteXPath());
 
                         // from metadata entry to mapping concept
@@ -3042,6 +3124,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
             Mapping rootTo,
             Mapping rootFrom,
             MappingManager mappingManager,
+            MetadataAttributeManager metadataAttributeManager,
             TransformationRule transformationRuleTo = null,
             TransformationRule transformationRuleFrom = null
             )
@@ -3049,17 +3132,17 @@ namespace BExIS.Modules.Dim.UI.Helpers
             if (transformationRuleTo == null) transformationRuleTo = new TransformationRule();
             if (transformationRuleFrom == null) transformationRuleFrom = new TransformationRule();
 
-            LinkElement le = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(key.Id),
+            LinkElement le = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(key.Id),
                     key.Name, LinkElementType.MappingKey, LinkElementComplexity.Simple, key.XPath);
 
             LinkElement parentLe = null;
 
             if (parentKey != null)
-                parentLe = createLinkELementIfNotExist(mappingManager, Convert.ToInt64(parentKey.Id),
+                parentLe = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(parentKey.Id),
                     parentKey.Name, LinkElementType.MappingKey, LinkElementComplexity.Complex, parentKey.XPath);
 
 
-                LinkElement defaultElement = createLinkELementIfNotExist(mappingManager, 1, "Default", LinkElementType.Default, LinkElementComplexity.Simple, "");
+                LinkElement defaultElement = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, 1, "Default", LinkElementType.Default, LinkElementComplexity.Simple, "");
 
                 LinkElement p = parentLe == null ? le : parentLe;
                 // from metadata entry to mapping concept
