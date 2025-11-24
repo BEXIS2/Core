@@ -141,7 +141,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private static String GetCurationGroupName()
         {
-            var groupName = ModuleManager.GetModuleSettings("DDM").GetValueByKey<string>("curatorsGroupName");
+            var groupName = ModuleManager.GetModuleSettings("DDM").GetValueByKey("curatorsGroupName").ToString();
             if (string.IsNullOrEmpty(groupName))
             {
                 return "curator";
