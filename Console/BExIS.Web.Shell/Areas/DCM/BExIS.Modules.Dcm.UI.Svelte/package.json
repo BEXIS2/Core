@@ -61,6 +61,7 @@
 		"svelte-fa": "4.0.2",
 		"svelte-headless-table": "0.18.2",
 		"svelte-select": "5.8.3",
+		"svelty-picker": "^5.2.11",
 		"vest": "5.4.0"
 	},
 	"author": "David Schöne",

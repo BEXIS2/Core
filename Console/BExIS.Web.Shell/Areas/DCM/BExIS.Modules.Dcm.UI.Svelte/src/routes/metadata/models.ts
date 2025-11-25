@@ -6,7 +6,7 @@ export interface schemaNode {
 }
 
 export interface validationStoretype {
-	allSimpleTypesValid: boolean;
+	allSimpleRequiredValid: boolean;
 	simpleTypeValidationItems: SimpleComponentData[];
 }
 
@@ -14,7 +14,13 @@ export interface SimpleComponentData {
 	path: string;
 	label: string;
 	required: boolean;
-	value: any;
+	regex?: string;
+	lowerBound?: number;
+	upperBound?: number;
+	domainList?: string[];
+	minLength?: number;
+	maxLength?: number;
+	isValid: boolean;
 }
 
 export interface ComplexComponentData {
