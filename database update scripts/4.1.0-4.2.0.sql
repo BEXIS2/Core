@@ -12,6 +12,8 @@ ALTER TABLE public.dim_linkelements
     ALTER COLUMN xpath TYPE text COLLATE pg_catalog."default";
 
 -- curation
+
+
 CREATE SEQUENCE IF NOT EXISTS public.curationentries_id_seq
     INCREMENT 1
     START 1
@@ -19,11 +21,6 @@ CREATE SEQUENCE IF NOT EXISTS public.curationentries_id_seq
     MAXVALUE 9223372036854775807
     CACHE 1;
 
-ALTER SEQUENCE public.curationentries_id_seq
-    OWNED BY public.curationentries.id;
-
-ALTER SEQUENCE public.curationentries_id_seq
-    OWNER TO postgres;
 
 CREATE SEQUENCE IF NOT EXISTS public.curationnotes_id_seq
     INCREMENT 1
@@ -31,42 +28,6 @@ CREATE SEQUENCE IF NOT EXISTS public.curationnotes_id_seq
     MINVALUE 1
     MAXVALUE 9223372036854775807
     CACHE 1;
-
-ALTER SEQUENCE public.curationnotes_id_seq
-    OWNED BY public.curationnotes.id;
-
-ALTER SEQUENCE public.curationnotes_id_seq
-    OWNER TO postgres;
-
-CREATE TABLE IF NOT EXISTS public.curationnotes
-(
-    id bigint NOT NULL DEFAULT nextval('curationnotes_id_seq'::regclass),
-    versionno integer NOT NULL,
-    extra xml,
-    usertype integer,
-    creationdate timestamp without time zone,
-    comment text COLLATE pg_catalog."default",
-    userref bigint,
-    curationentryref bigint,
-    CONSTRAINT curationnotes_pkey PRIMARY KEY (id),
-    CONSTRAINT fk_2b898659 FOREIGN KEY (curationentryref)
-        REFERENCES public.curationentries (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT fk_5c66acff FOREIGN KEY (userref)
-        REFERENCES public.users (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.curationnotes
-    OWNER to postgres;
-CREATE INDEX IF NOT EXISTS idx_curationnote_id
-    ON public.curationnotes USING btree
-    (id ASC NULLS LAST)
-    TABLESPACE pg_default;
 
 
 CREATE TABLE IF NOT EXISTS public.curationentries
@@ -101,12 +62,59 @@ CREATE TABLE IF NOT EXISTS public.curationentries
 
 TABLESPACE pg_default;
 
+CREATE TABLE IF NOT EXISTS public.curationnotes
+(
+    id bigint NOT NULL DEFAULT nextval('curationnotes_id_seq'::regclass),
+    versionno integer NOT NULL,
+    extra xml,
+    usertype integer,
+    creationdate timestamp without time zone,
+    comment text COLLATE pg_catalog."default",
+    userref bigint,
+    curationentryref bigint,
+    CONSTRAINT curationnotes_pkey PRIMARY KEY (id),
+    CONSTRAINT fk_2b898659 FOREIGN KEY (curationentryref)
+        REFERENCES public.curationentries (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_5c66acff FOREIGN KEY (userref)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.curationnotes
+    OWNER to postgres;
+CREATE INDEX IF NOT EXISTS idx_curationnote_id
+    ON public.curationnotes USING btree
+    (id ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+
+
+ALTER SEQUENCE public.curationentries_id_seq
+    OWNED BY public.curationentries.id;
+
+ALTER SEQUENCE public.curationentries_id_seq
+    OWNER TO postgres;
+
+
 ALTER TABLE IF EXISTS public.curationentries
     OWNER to postgres;
+
 CREATE INDEX IF NOT EXISTS idx_curationentry_id
     ON public.curationentries USING btree
     (id ASC NULLS LAST)
     TABLESPACE pg_default;
+
+
+ALTER SEQUENCE public.curationnotes_id_seq
+    OWNED BY public.curationnotes.id;
+
+ALTER SEQUENCE public.curationnotes_id_seq
+    OWNER TO postgres;
 
 
     -- BEXIS2 Version Update
