@@ -21,8 +21,6 @@ Set up if user need to agree the data agreements before download and where the a
 
 
 
-
-
 # Bugfixes and enhancements
 ### New features
 
@@ -38,6 +36,7 @@ Set up if user need to agree the data agreements before download and where the a
 - **Entity Template:** Fix Wrong (trash) icon for cancel button in edit mode ([#2228](https://github.com/BEXIS2/Core/issues/2228))
 - **Core UI**: UX improvements across the core UI. ([#2223](https://github.com/BEXIS2/Core/issues/2223))
 - **Accessibility**: Accessibility improvements for Dataset Creation / Edit / Data Structure flows. ([#2271](https://github.com/BEXIS2/Core/issues/2271))
+- **JWT Token**: Add a copy to clipboard button ([#2259](https://github.com/BEXIS2/Core/issues/2259))
 
 
 ### Search
@@ -68,6 +67,11 @@ Set up if user need to agree the data agreements before download and where the a
 - **Complex types**: Random reuse of metadata elements with the same name in complex types. ([#2189](https://github.com/BEXIS2/Core/issues/2189))
 - **Concept Output**: Multi complex → one complex conversion does not work. ([#2224](https://github.com/BEXIS2/Core/issues/2224))
 - **Structure Mapping**: Allow mapping multiple default sources to one target. ([#2227](https://github.com/BEXIS2/Core/issues/2227))
+- **Concept mapping**: False outcome when one field is mapped to multiple target fields with default values. ([#2202](https://github.com/BEXIS2/Core/issues/2202))
+- **Dataset Details**: Creating links fails with HTTP 500 error. ([#2269](https://github.com/BEXIS2/Core/issues/2269))
+- **Set links**: Set links cannot be deleted — fix deletion handling. ([#2272](https://github.com/BEXIS2/Core/issues/2272))
+- **Metadata API**: Formats missing in JSON schemas — add missing format entries. ([#2275](https://github.com/BEXIS2/Core/issues/2275))
+
 
 
 ### Upload & parsing
@@ -81,6 +85,9 @@ Set up if user need to agree the data agreements before download and where the a
 - **Data Structure Edit**: Fix Selecting a meaning opens the select template overlay ([#2222](https://github.com/BEXIS2/Core/issues/2222))
 - **External Link**: Fix Missing validation and required fields indicator ([#2218](https://github.com/BEXIS2/Core/issues/2218))
 - **Manage Meaning**: Fix Crashes when saving empty relation([#2215](https://github.com/BEXIS2/Core/issues/2215))
+- **Data Structure From File**: Fix Escaped delimiter not ignored during data structure creation ([#283](https://github.com/BEXIS2/Core/issues/222832835))
 
 ### DOI & Citation
 - **DOI Overview**: Fix links not working. ([#2261](https://github.com/BEXIS2/Core/issues/2261))
+- **Citation API**: Add and add generic creation of citation formats 
+ ([#2258](https://github.com/BEXIS2/Core/issues/2258)) ([#2104](https://github.com/BEXIS2/Core/issues/2104))
