@@ -2135,13 +2135,26 @@ namespace BExIS.Xml.Helpers.Mapping
             {
                 if (!dataTypeAsString.ToLower().Equals("Object"))
                 {
+
                     TypeCode typeCode = ConvertStringToSystemType(dataTypeAsString);
                     DataType dataType = null;
                     // if datatime - need to check typeCodeName for date, time , datetime
 
-    
+
                     TypeCode c = DataTypeHelper.GetMaxTypeCode(typeCode);
                     string label = DataTypeHelper.GetLabel(typeCode);
+
+                    // in case of time or date, there is no system type for it so we need to set it
+                    if (typeCodeName.ToLower().Equals("time"))
+                    {
+                        c = TypeCode.DateTime;
+                        label = "Time";
+                    }
+                    else if(typeCodeName.ToLower().Equals("date"))
+                    {
+                        c = TypeCode.DateTime;
+                        label = "Date";
+                    }
 
                     if (dataTypeAsString.Equals(TypeCode.DateTime.ToString()))
                     {
@@ -2158,7 +2171,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         dataType =
                             dataTypeManager.Repo.Query()
                                 .Where(
-                                    d =>                         
+                                    d =>
                                         d.Name.ToLower().Equals(label.ToString().ToLower()))
                                 .FirstOrDefault();
 

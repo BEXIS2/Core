@@ -87,11 +87,15 @@
         </div>
 
         <div>
-            <button id="showTags" class="bx bx-function fa-arrow-down small" onclick="onClickFn()"> Show History</button>
-            
+            <button id="showTags" title="Show dataset history as table" class="bx-button small function" style="background-color: #8080809c" onclick="onClickFn()">
+                                <span class="fa fa-arrow-down"></span>
+                                <span style="padding:5px;">
+                                    Show History
+                                </span>
+                            </button>
             @if (hasEditRigths)
             {
-                <button id="editTags" class="bx bx-function fa-tag small"></button>
+                <button id="editTags" class="bx-button fa-tag small function"></button>
             }
         </div>
     </div>
@@ -144,10 +148,17 @@
             tagsview.style.display = "block";
         }
 
-        const element = document.getElementById("showTags");
+        const element = document.getElementById("showTags").querySelector("span.fa");
         element.classList.toggle("fa-arrow-up");
         element.classList.toggle("fa-arrow-down");
-        element.innerText = element.innerText === " Show History" ? " Hide History" : " Show History";
-     
+        // look at text within span and change it accordingly (2nd span child of button)
+        const span = element.querySelector("span:nth-child(2)");
+        if (span) {
+            if (span.innerText.trim() === "Show History") {
+                span.innerText = " Hide History";
+            } else {
+                span.innerText = " Show History";
+            }
+        }
     }
 </script>

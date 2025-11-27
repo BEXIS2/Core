@@ -61,8 +61,8 @@
 
 <div class="flex-col space-y-1">
 	<div class="flex gap-3 justify-left">
-		<button class="chip variant-filled-secondary flex-none" on:click={editFn}
-			><Fa icon={faPen} /></button
+		<button class="btn btn-sm variant-filled-secondary flex-none" on:click={editFn}
+			><Fa icon={faPen} /><span class="pl-1">Edit</span></button
 		>
 	</div>
 </div>

@@ -126,7 +126,7 @@
 					on:mouseover={() => helpStore.show('check')}
 					on:focus={() => helpStore.show('check')}
 					on:click={onCheckPKHandler}
-					on:keypress={onCheckPKHandler}><Fa icon={faBinoculars} /></button
+					on:keypress={onCheckPKHandler}><Fa icon={faBinoculars} /><span class="pl-1">Check Primary Key</span></button
 				>
 			{/if}
 			<button
@@ -137,7 +137,7 @@
 				disabled={!areVariablesValid ||
 					!areAttributesValid ||
 					!((enforcePrimaryKey && isPKSet) || !enforcePrimaryKey) ||
-					(pksHasChanged && !pksValid)}><Fa icon={faSave} /></button
+					(pksHasChanged && !pksValid)}><Fa icon={faSave} /><span class="pl-1">Save</span></button
 			>
 		</div>
 	</div>

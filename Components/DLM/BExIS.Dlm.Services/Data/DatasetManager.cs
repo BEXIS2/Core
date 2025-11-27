@@ -1510,7 +1510,7 @@ namespace BExIS.Dlm.Services.Data
         /// </summary>
         /// <param name="datasetId">The  identifiers of the dataset whose their latest versions is requested</param>
         /// <returns>The list of the latest versions of the deleted datasets</returns>
-        private DatasetVersion getDeletedDatasetLatestVersion(long datasetId)
+        public DatasetVersion GetDeletedDatasetLatestVersion(long datasetId)
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {

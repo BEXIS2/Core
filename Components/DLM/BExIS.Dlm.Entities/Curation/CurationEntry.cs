@@ -65,9 +65,10 @@ namespace BExIS.Dlm.Entities.Curation
         public virtual bool IsApproved { get; set; }
         public virtual DateTime LastChangeDatetime_User { get; set; }
         public virtual DateTime LastChangeDatetime_Curator { get; set; }
-        public static CurationUserType GetCurationUserType(User user)
+
+        public static CurationUserType GetCurationUserType(User user, string curationGroupName)
         {
-            if (user.Groups.Any(g => g.Name.Equals("curator", StringComparison.CurrentCultureIgnoreCase)))
+            if (user.Groups.Any(g => g.Name.Equals(curationGroupName, StringComparison.CurrentCultureIgnoreCase)))
             {
                 return CurationUserType.Curator;
             }

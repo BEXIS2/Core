@@ -53,7 +53,7 @@ namespace BExIS.Dlm.Services.Curation
             }
         }
 
-        public CurationEntry Create(string topic, CurationEntryType type, long datasetId, string name, string description, string solution, int position, string source, IEnumerable<CurationNote> notes, bool userIsDone, bool isApproved, User user)
+        public CurationEntry Create(string topic, CurationEntryType type, long datasetId, string name, string description, string solution, int position, string source, IEnumerable<CurationNote> notes, bool userIsDone, bool isApproved, User user, bool userIsCurator)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name), "name is empty but is required.");
             if (string.IsNullOrEmpty(source)) throw new ArgumentNullException(nameof(source), "source is empty but is required.");
@@ -72,7 +72,7 @@ namespace BExIS.Dlm.Services.Curation
                 var _ = loadedUser.Groups.Count;
 
                 // set last change date time
-                if (CurationEntry.GetCurationUserType(loadedUser) != CurationUserType.Curator)
+                if (!userIsCurator)
                     throw new UnauthorizedAccessException("Only curators are allowed to create curation entries.");
 
                 var dataset = repoDataset.Get(datasetId);
@@ -113,8 +113,7 @@ namespace BExIS.Dlm.Services.Curation
                 return curationEntry;
             }
         }
-
-        public CurationEntry Update(long id, string topic, CurationEntryType type, string name, string description, string solution, int position, string source, IEnumerable<CurationNote> notes, bool userIsDone, bool isApproved, User user)
+        public CurationEntry Update(long id, string topic, CurationEntryType type, string name, string description, string solution, int position, string source, IEnumerable<CurationNote> notes, bool userIsDone, bool isApproved, User user, bool userIsCurator)
         {
             if (id <= 0) throw new ArgumentException("id must be greater than 0.");
 
@@ -132,8 +131,6 @@ namespace BExIS.Dlm.Services.Curation
                 // Force loading of Groups collection
                 var _ = loadedUser.Groups.Count;
 
-                var isCurator = CurationEntry.GetCurationUserType(loadedUser) == CurationUserType.Curator;
-
                 var merged = repoEntries.Get(id);
 
                 var currentNotes = merged.Notes.ToList();
@@ -141,6 +138,12 @@ namespace BExIS.Dlm.Services.Curation
                 var incomingIds = new HashSet<long>(notes.Select(n => n.Id));
                 incomingIds.Remove(0);
                 var deletedNotes = merged.Notes.Where(n => !incomingIds.Contains(n.Id)).ToList();
+
+                var userType = CurationUserType.User;
+                if (userIsCurator)
+                    userType = CurationUserType.Curator;
+
+
                 foreach (var note in deletedNotes)
                 {
                     if (loadedUser.Id != note.User.Id) continue; // do not delete notes from other users
@@ -153,7 +156,7 @@ namespace BExIS.Dlm.Services.Curation
                     var existingNote = currentNotes.FirstOrDefault(n => n.Id == incomingNote.Id);
                     if (incomingNote.Id == 0 || existingNote == null)
                     {
-                        var newNote = new CurationNote(loadedUser, incomingNote.Comment);
+                        var newNote = new CurationNote(loadedUser, incomingNote.Comment, userType);
                         currentNotes.Add(newNote);
                     }
                     else
@@ -167,7 +170,7 @@ namespace BExIS.Dlm.Services.Curation
 
                 var changed = false;
 
-                if (isCurator)
+                if (userIsCurator)
                 {
                     changed = topic != merged.Topic ||
                               type != merged.Type ||
