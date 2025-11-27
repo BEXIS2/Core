@@ -441,6 +441,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 path,
                 AsciiFileReaderInfo.GetSeperator((char)model.Delimeter),
                 AsciiFileReaderInfo.GetDecimalCharacter((char)model.Decimal),
+                AsciiFileReaderInfo.GetTextMarker((char)model.TextMarker),
                 missingValues,
                 startdataIndex + 1
                 );
@@ -844,7 +845,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         /// <param name="missingValues"></param>
         /// <param name="datastart">row not index!</param>
         /// <returns></returns>
-        private Dictionary<int, Type> suggestSystemTypes(string file, TextSeperator delimeter, DecimalCharacter decimalCharacter, List<string> missingValues, int datastart)
+        private Dictionary<int, Type> suggestSystemTypes(string file, TextSeperator delimeter, DecimalCharacter decimalCharacter, TextMarker textMarker, List<string> missingValues, int datastart)
         {
             var settings = ModuleManager.GetModuleSettings("Rpm");
             int min = Convert.ToInt32(settings.GetValueByKey("minToAnalyse"));
@@ -863,7 +864,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             List<string> rows = AsciiReader.GetRandowRows(file, total, selection, datastart);
 
-            return structureAnalyser.SuggestSystemTypes(rows, delimeter, decimalCharacter, missingValues);
+            return structureAnalyser.SuggestSystemTypes(rows, textMarker, delimeter, decimalCharacter, missingValues);
         }
 
         private string getValueFromMarkedRow(List<string> rows, List<Marker> markers, string type, char delimeter, int position, char textMarker)
