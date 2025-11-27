@@ -249,7 +249,7 @@ namespace BExIS.IO.Tests.Transform.Input
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
             //Act
-            var result = structureAnalyser.SuggestSystemTypes(rows.GetRange(0, n), TextSeperator.semicolon, DecimalCharacter.comma, new List<string>());
+            var result = structureAnalyser.SuggestSystemTypes(rows.GetRange(0, n),TextMarker.doubleQuotes, TextSeperator.semicolon, DecimalCharacter.comma, new List<string>());
 
             //Assert
             Assert.NotNull(result);
@@ -294,7 +294,7 @@ namespace BExIS.IO.Tests.Transform.Input
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
             //Act
-            var result = structureAnalyser.SuggestSystemTypes(rows, TextSeperator.semicolon, DecimalCharacter.comma, new List<string>());
+            var result = structureAnalyser.SuggestSystemTypes(rows, TextMarker.doubleQuotes, TextSeperator.semicolon, DecimalCharacter.comma, new List<string>());
 
             //Assert
             Assert.NotNull(result);
@@ -321,7 +321,7 @@ namespace BExIS.IO.Tests.Transform.Input
             dateValues.Add("2022-12-24"); // yyyy-MM-dd
 
             //Act
-            var result = structureAnalyser.SuggestSystemTypes(rows.GetRange(0, n), TextSeperator.semicolon, DecimalCharacter.comma, new List<string>());
+            var result = structureAnalyser.SuggestSystemTypes(rows.GetRange(0, n), TextMarker.doubleQuotes, TextSeperator.semicolon, DecimalCharacter.comma, new List<string>());
 
             //Assert
             Assert.NotNull(result);
@@ -334,7 +334,7 @@ namespace BExIS.IO.Tests.Transform.Input
             StructureAnalyser structureAnalyser = new StructureAnalyser();
 
             //Act
-            var result = structureAnalyser.SuggestSystemTypes(rowWithMissingValues, TextSeperator.semicolon, DecimalCharacter.comma, missingValueList);
+            var result = structureAnalyser.SuggestSystemTypes(rowWithMissingValues, TextMarker.doubleQuotes, TextSeperator.semicolon, DecimalCharacter.comma, missingValueList);
 
             //Assert
             Assert.NotNull(result);

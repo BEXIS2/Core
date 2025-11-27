@@ -171,7 +171,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
 
         [HttpPost]
-        //[CustomValidateAntiForgeryToken]
         public JsonResult Delete(long id)
         {
             if (id == 0) return Json(false);

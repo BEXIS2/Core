@@ -63,14 +63,19 @@
       "options": [],
       "type": "JSON",
       "value": {
-        "publisher": "BEXIS2 DevOps Team",
-        "instance": "BEXIS2 - DevOps Test",
         "numberOfAuthors": 0,
         "showCitation": true,
         "defaultViewCitationFormat": "Text",
         "viewCitationFormats": [ "Text", "APA" ],
         "downloadCitationFormats": [ "Text", "APA", "RIS", "BibTex" ]
       }
+    },
+    {
+      "key": "curatorsGroupName",
+      "title": "Group name for curators",
+      "value": "curator",
+      "type": "String",
+      "description": "Group name all curators assigned to. This is needed for the curation tool to know who is curator."
     },
     {
         "key": "curation",

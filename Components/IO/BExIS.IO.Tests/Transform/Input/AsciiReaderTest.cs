@@ -122,6 +122,29 @@ namespace BExIS.IO.Tests.Transform.Input
         }
 
         [Test]
+        public void rowToList_RowAsOneVariablewithQuotesAndSeperatorInQuotes_ReturnExpectedListOfStrings()
+        {
+            //Arrange
+            string row = "V1,V2,'V3,V4'";
+            List<string> expectedOutcome = new List<string> { "V1", "V2", "V3,V4" };
+
+            AsciiFileReaderInfo info = new AsciiFileReaderInfo();
+            info.Seperator = TextSeperator.comma;
+
+            AsciiReader reader = new AsciiReader(new StructuredDataStructure(), info);
+
+            //Act
+
+            List<string> values = reader.rowToList(row,
+                AsciiFileReaderInfo.GetSeperator(TextSeperator.comma));
+
+            //Assert
+            Assert.That(values.Count, Is.EqualTo(expectedOutcome.Count));
+            Assert.That(values, Is.EquivalentTo(expectedOutcome));
+        }
+
+
+        [Test]
         public void ValidateRow_runNotValid_LimitErrors()
         {
             //Arrange

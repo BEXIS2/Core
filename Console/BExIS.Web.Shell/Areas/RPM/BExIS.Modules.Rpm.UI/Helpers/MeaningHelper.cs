@@ -60,7 +60,14 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
             if (model.ExternalLinks != null && model.ExternalLinks.Any())
             {
-                model.ExternalLinks.ToList().ForEach(x => meaning.ExternalLinks.Add(ConvertTo(x)));
+                foreach (MeaningEntryModel l in model.ExternalLinks)
+                {
+                    if (l.MappingRelation.Id > 0) // add only if there is a selected mapping relation
+                    { 
+                        meaning.ExternalLinks.Add(ConvertTo(l));
+                    }
+                }
+
             }
 
             if (model.Constraints != null && model.Constraints.Any())
@@ -82,13 +89,15 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             using (var meaningManager = new MeaningManager())
             {
                 if (model.MappingRelation != null)
+                {
                     entry.MappingRelation = meaningManager.GetExternalLink(model.MappingRelation.Id);
 
-                if (model.MappedLinks.Any())
-                {
-                    var ids = model.MappedLinks.Select(m => m.Id);
+                    if (model.MappedLinks.Any())
+                    {
+                        var ids = model.MappedLinks.Select(m => m.Id);
 
-                    entry.MappedLinks = meaningManager.GetExternalLinks().Where(e => ids.Contains(e.Id)).ToList();
+                        entry.MappedLinks = meaningManager.GetExternalLinks().Where(e => ids.Contains(e.Id)).ToList();
+                    }
                 }
             }
             return entry;

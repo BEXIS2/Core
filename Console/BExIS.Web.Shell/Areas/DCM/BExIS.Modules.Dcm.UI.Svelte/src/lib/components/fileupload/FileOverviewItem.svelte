@@ -76,7 +76,7 @@
 			{#if loading}
 				<Spinner textCss="text-surface-500" />
 			{:else}
-				<button class="btn" on:click={(e) => handleRemoveFile(e)}><Fa icon={faIcon} /></button>
+				<button  title="Remove file" class="btn" on:click={(e) => handleRemoveFile(e)}><Fa icon={faIcon} /></button>
 			{/if}
 		</div>
 	</div>

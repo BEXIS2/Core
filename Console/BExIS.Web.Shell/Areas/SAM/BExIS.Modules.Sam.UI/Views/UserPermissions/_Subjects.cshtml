@@ -76,10 +76,141 @@
           events.OnDataBound("grid_subjects_onDataBound");
       }))
 
-<style>
-    .permission-header {
-        display: flex;
-        gap: 3px;
-        align-items: center;
-    }
-</style>
+
+
+@section Scripts
+{
+    <script src="@Url.Content("~/Scripts/2013.2.611/telerik.common.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/2013.2.611/telerik.draganddrop.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/2013.2.611/telerik.window.min.js")" type="text/javascript"></script>
+
+    <script type="text/javascript">
+
+        $("#treeView_entities li div")
+            .click(function(e) {
+                $(e.target).find(".t-in").trigger("click");
+            });
+
+        function getTreeView() {
+            return $('#treeView_entities').data('tTreeView');
+        }
+
+        function treeView_entities_onSelect(e) {
+            var entityId = getTreeView().getItemValue(e.item);
+            var prevSelectedDiv = $(".bx-selected");
+            if (prevSelectedDiv.length > 0) $(prevSelectedDiv).removeClass("bx-selected");
+
+            var selectedDiv = $(e.item).find("div")[0];
+            $(selectedDiv).addClass("bx-selected");
+
+            $('#content_instances').empty();
+
+            $.get('@Url.Action("Instances", "EntityPermissions")',
+                { EntityId: entityId },
+                function(contentData) {
+
+                    $('#content_instances').html(contentData);
+
+                    truncateTitle();
+                });
+        }
+
+        function grid_instances_onDataBound() {
+            addTooltips();
+            resetAllTelerikIconTitles();
+
+            $("#grid_instances")
+                .on("change",
+                    "input[name='selectedInstances']:checkbox",
+                    function(e) {
+                        if ($(this).is(':checked')) {
+                            $.post('@Url.Action("AddInstanceToPublic", "EntityPermissions")',
+                                { EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid') },
+                                function() {
+                                    $("#grid_subjects .t-refresh").trigger('click');
+                                    $("#grid_instances .t-refresh").trigger('click');
+                                });
+                        } else {
+                            $.post('@Url.Action("RemoveInstanceFromPublic", "EntityPermissions")',
+                                { EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid') },
+                                function() {
+                                    $("#grid_subjects .t-refresh").trigger('click');
+                                    $("#grid_instances .t-refresh").trigger('click');
+                                });
+                        }
+                    });
+        }
+
+        function grid_instances_onRowSelect(e) {
+            $.get('@Url.Action("Subjects", "EntityPermissions")',
+                {
+                    EntityId: $("input[name='selectedInstances']:checkbox", e.row).data('entityid'),
+                    InstanceId: $("input[name='selectedInstances']:checkbox", e.row).data('instanceid')
+                },
+                function(data) {
+                    $('#content_subjects').empty();
+                    $('#content_subjects').html(data);
+                });
+        }
+
+        function grid_subjects_onDataBound() {
+            addTooltips();
+            resetAllTelerikIconTitles();
+
+            $("#grid_subjects tbody input:checkbox").click(function () {
+                if ($(this).is(':checked')) {
+                    $.post('@Url.Action("AddRightToEntityPermission", "EntityPermissions")',
+                        { SubjectId: $(this).data('subjectid'), EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid'), RightType: $(this).data('righttype') },
+                        function () {
+                            $("#grid_subjects .t-refresh").trigger('click');
+                        });
+                } else {
+                    $.post('@Url.Action("RemoveRightFromEntityPermission", "EntityPermissions")',
+                        { SubjectId: $(this).data('subjectid'), EntityId: $(this).data('entityid'), InstanceId: $(this).data('instanceid'), RightType: $(this).data('righttype') },
+                        function () {
+                            $("#grid_subjects .t-refresh").trigger('click');
+                        });
+                }
+            });
+        }
+
+        function grid_subjects_onRowSelect(e) {
+            console.log(e.row);
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("Permissions", "EntityPermissions")',
+                data: { SubjectId: $("input", e.row).data('subjectid'), EntityId: $("input", e.row).data('entityid'), InstanceId: $("input", e.row).data('instanceid') },
+                dataType: 'html',
+                success: function(htmlData) {
+                    var windowElement = $.telerik.window.create({
+                        title: "Permissions: " + $("input", e.row).data('title'),
+                        html: "<div id='content_permissions' class='bx-window'>" + htmlData + "</div>",
+                        contentUrl: "",
+                        actions: ["Close"],
+                        modal: true,
+                        width: 500,
+                        height: 500,
+                        resizable: false,
+                        draggable: true,
+                        scrollable: false,
+                        onClose: function() {
+                            $("#window_permissions").data('tWindow').destroy();
+                            $("#grid_subjects .t-refresh").trigger('click');
+                        }
+                    });
+
+                    windowElement.attr('id', 'window_permissions');
+                    var window = $(windowElement).data('tWindow');
+                    window.center().open();
+
+                    resetAllTelerikIconTitles();
+                }
+            });
+        }
+
+        function grid_permissions_onDataBound() {
+            addTooltips();
+            resetAllTelerikIconTitles();
+        }
+    </script>
+}

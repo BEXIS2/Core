@@ -60,7 +60,7 @@ namespace BExIS.IO
                     downloadName = string.Format("{0}_{1}_v{2}_metadata_{3}", appName, datasetId, versionNr, title);
                     break;
                 case FileType.DataStructure:
-                    downloadName = string.Format("{0}_{1}_datastructure_{2}", appName, datasetId, datastructureId);
+                    downloadName = string.Format("{0}_{1}_data_structure_{2}", appName, datasetId, datastructureId);
                     break;
                 case FileType.PrimaryData:
                     downloadName = string.Format("{0}_{1}_v{2}_data", appName, datasetId, versionNr);

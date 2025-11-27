@@ -29,10 +29,10 @@ namespace BExIS.Dlm.Entities.Curation
             User = user;
         }
 
-        public CurationNote(User user, string comment)
+        public CurationNote(User user, string comment, CurationUserType userType)
         {
             Id = 0;
-            UserType = CurationEntry.GetCurationUserType(user);
+            UserType = userType;
             CreationDate = DateTime.Now;
             Comment = comment;
             User = user;

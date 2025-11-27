@@ -457,13 +457,19 @@ namespace BExIS.IO.Transform.Input
             throw new NotImplementedException();
         }
 
-        public Dictionary<int, Type> SuggestSystemTypes(List<string> rows, TextSeperator delimeter, DecimalCharacter decimalCharacter, List<string> missingValues)
+        public Dictionary<int, Type> SuggestSystemTypes(List<string> rows,TextMarker textMarker, TextSeperator delimeter, DecimalCharacter decimalCharacter, List<string> missingValues)
         {
             Dictionary<int, List<Type>> source = new Dictionary<int, List<Type>>();
             Dictionary<int, Type> result = new Dictionary<int, Type>();
 
             // get type checks
             checks = getDataTypeChecks(decimalCharacter);
+
+            // validate input
+            AsciiFileReaderInfo info = new AsciiFileReaderInfo();
+            info.Seperator = delimeter;
+            info.TextMarker = textMarker;
+            AsciiReader reader = new AsciiReader(new StructuredDataStructure(), info);
 
             // create dictionary with types per column
             char seperator = AsciiFileReaderInfo.GetSeperator(delimeter);
@@ -477,8 +483,11 @@ namespace BExIS.IO.Transform.Input
             // go throw each row
             foreach (var row in rows)
             {
+                // 
+                var cells = reader.rowToList(row, seperator);
+
                 //split row based on sepeartor
-                foreach (var cell in row.Split(seperator).Select((x, i) => new { Value = x, Index = i }))
+                foreach (var cell in cells.Select((x, i) => new { Value = x, Index = i }))
                 {
                     //update possible list of types by check the value against the existing list
                     source[cell.Index] = checkValue(cell.Value, source[cell.Index], missingValues);

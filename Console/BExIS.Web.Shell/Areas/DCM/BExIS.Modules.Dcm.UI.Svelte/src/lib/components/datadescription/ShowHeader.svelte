@@ -3,7 +3,7 @@
 	import type { fileInfoType } from '@bexis2/bexis2-core-ui';
 
 	import Fa from 'svelte-fa';
-	import { faTrash, faEdit, faDownload } from '@fortawesome/free-solid-svg-icons';
+	import { faTrash, faPencil, faDownload } from '@fortawesome/free-solid-svg-icons';
 
 	import { removeStructure } from '$services/DataDescriptionCaller';
 	import { latestDataDescriptionDate } from '../../../routes/edit/stores';
@@ -28,8 +28,8 @@
 
 	const modal: ModalSettings = {
 		type: 'confirm',
-		title: 'Copy',
-		body: 'Are you sure you wish to remove the structure?',
+		title: 'Remove Data Structure',
+		body: 'Are you sure you want to remove this data structure?',
 		// TRUE if confirm pressed, FALSE if cancel pressed
 		response: (r: boolean) => {
 			if (r === true) {
@@ -87,20 +87,20 @@
 	</div>
 	<div>
 		<div class="flex gap-2 text-end flex-auto">
-			<button title="download" class="chip variant-filled-secondary" on:click={downloadFn}
-				><Fa icon={faDownload} /></button
+			<button title="Download data structure template as excel file" class="chip variant-filled-secondary" on:click={downloadFn}
+				><Fa icon={faDownload} /><span class="pl-1">Download</span></button
 			>
 			{#if enableEdit}
-				<button title="edit" class="chip variant-filled-secondary" on:click={goToEditFn}
-					><Fa icon={faEdit} /></button
+				<button title="Edit data structure" class="chip variant-filled-secondary" on:click={goToEditFn}
+					><Fa icon={faPencil} /><span class="pl-1">Edit</span></button
 				>
 			{/if}
 
 			{#if hasData === false}
 				<button
-					title="remove"
+					title="Remove data structure"
 					class="chip variant-filled-error"
-					on:click={() => modalStore.trigger(modal)}><Fa icon={faTrash} /></button
+					on:click={() => modalStore.trigger(modal)}><Fa icon={faTrash} /><span class="pl-1">Remove</span></button
 				>
 			{/if}
 		</div>
