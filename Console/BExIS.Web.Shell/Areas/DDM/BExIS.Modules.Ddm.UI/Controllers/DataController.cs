@@ -474,7 +474,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         return PartialView("_Title", datasetVersion.Title);
                     }
 
-                    var model = CitationsHelper.GetCitationDataModel(datasetVersionId);
+                    var model = CitationsHelper.CreateCitationDataModel(datasetVersion);
 
                     if (model == null)
                         return PartialView("_Title", datasetVersion.Title);
