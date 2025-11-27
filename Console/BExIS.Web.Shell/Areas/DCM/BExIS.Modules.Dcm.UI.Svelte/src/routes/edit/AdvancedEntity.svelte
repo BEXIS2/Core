@@ -18,6 +18,7 @@
  export let id: number = 0;
 	export let version: number;
  export let title = "";
+ export let entity = "";
  export let extensions:ExtensionType[] = []
 
  
@@ -61,7 +62,7 @@
 
 <TabGroup>
  <Tab bind:group={tabSet} name="entity" value={0}>
-  entity
+  {entity} : {title}
  </Tab>
  <!--existing extentions -->
 

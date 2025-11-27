@@ -52,7 +52,7 @@
   <Header {id} {version} {title} />
 
   {#if entityTemplate.hasExtension} <!--if using extensions add a tab here-->
-   <AdvancedEntity {id} {version} {title} {extensions} />
+   <AdvancedEntity {id} {version} {title} {extensions} entity={entityTemplate.entityType.text} />
 
   {:else}
    <Entity {id} {version} {title} />
