@@ -4,27 +4,24 @@ using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Ddm.UI.Models;
-using BExIS.Security.Entities.Versions;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using NameParser;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
 using System.Linq;
-using System.Security.Policy;
 using System.Text;
 using System.Web;
 using System.Xml;
 using System.Xml.Serialization;
-using Telerik.Web.Mvc.Infrastructure;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Ddm.UI.Helpers
 {
     public class CitationsHelper
     {
-        public static CitationDataModel GetCitationDataModel(long datasetVersionId)
+        public static CitationDataModel CreateCitationDataModel(DatasetVersion datasetVersion, CitationFormat format = 0)
         {
             try
             {
@@ -33,10 +30,9 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 using (var entityPermissionManager = new EntityPermissionManager())
                 using (var entityManager = new EntityManager())
                 {
-                    var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
                     var metadata = datasetVersion.Metadata;
 
-                    var concept = conceptManager.MappingConceptRepository.Query(c => c.Name.ToLower() == "citation").FirstOrDefault();
+                    var concept = conceptManager.MappingConceptRepository.Query(c => c.Name.ToLower() == "citation_" + format.ToString().ToLower()).FirstOrDefault();
 
                     if (concept == null)
                         return null;
@@ -50,8 +46,8 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                         model = (CitationDataModel)serializer.Deserialize(reader);
                     }
 
-                    if(model == null)
-                        return null;    
+                    if (model == null)
+                        return null;
 
                     var settingsHelper = new SettingsHelper();
 
@@ -65,66 +61,60 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                         model.Authors = new List<string>() { model.Authors.Take(citationSettings.NumberOfAuthors) + " et al." };
                     }
 
+                    //create authorname in the correct format
+                    List<string> authors = new List<string>();
+                    foreach (string author in model.Authors)
+                    {
+                        HumanName name = new HumanName(author);
+                        if (String.IsNullOrEmpty(name.Middle))
+                            authors.Add(name.Last + ", " + name.First);
+                        else
+                            authors.Add(name.Last + ", " + name.Middle + " " + name.First);
+                    }
+
+                    model.Authors = authors;
+
                     // Version 
                     if (model.Version == null || string.IsNullOrEmpty(model.Version))
                     {
                         if (useTags && datasetVersion.Tag != null)
                             model.Version = datasetVersion.Tag.ToString();
 
-                        model.Version = datasetManager.GetDatasetVersionNr(datasetVersionId).ToString();
+                        model.Version = datasetManager.GetDatasetVersionNr(datasetVersion.Id).ToString();
                     }
 
                     var isPublic = entityPermissionManager.IsPublicAsync(datasetVersion.Dataset.EntityTemplate.EntityType.Id, datasetVersion.Dataset.Id).Result;
 
                     // Entity Type
-                    if (String.IsNullOrEmpty(model.EntityType))
+                    if (String.IsNullOrEmpty(model.EntityName))
                     {
-                        model.EntityType = datasetVersion.Dataset.EntityTemplate.EntityType.Name;
+                        model.EntityName = datasetVersion.Dataset.EntityTemplate.EntityType.Name;
                     }
 
                     // Publication Year
                     if (model.Year == null || String.IsNullOrEmpty(model.Year))
-                    {                       
+                    {
                         if (isPublic)
                             model.Year = datasetVersion.PublicAccessDate.Date.ToString("yyyy");
 
                         model.Year = datasetVersion.Timestamp.Date.ToString("yyyy");
                     }
 
-                    // Publisher
-                    if (citationSettings != null && !String.IsNullOrEmpty(citationSettings.Publisher))
-                    {
-                        model.Publisher = citationSettings.Publisher;
-                    }
-                    else
-                    {
-                        model.Publisher = "BEXIS2";
-
-                    }
-
                     // URL
                     if (String.IsNullOrEmpty(model.URL))
                     {
-                        using (var publicationManager = new PublicationManager())
+                        model.URL = HttpContext.Current.Request.Url.Host;
+                    }
+
+                    using (var publicationManager = new PublicationManager())
+                    {
+                        var pub = publicationManager.GetPublication(datasetVersion.Dataset.Id);
+                        if (pub != null)
                         {
-                            var pub = publicationManager.GetPublication(datasetVersion.Dataset.Id);
-                            if (pub != null)
-                            {
-                                if (!String.IsNullOrEmpty(pub.Doi))
-                                    model.URL = pub.Doi;
-                                else if (!String.IsNullOrEmpty(pub.ExternalLink))
-                                    model.URL = pub.ExternalLink;
-
-                            }
-
-                            if (String.IsNullOrEmpty(model.URL))
-                            {
-                                if (useTags)
-                                    model.URL = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + $"/ddm/data/Showdata/{datasetVersion.Dataset.Id}?tag={model.Version}";
-
-                                model.URL = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + $"/ddm/data/Showdata/{datasetVersion.Dataset.Id}?version={model.Version}";
-                            
-                            }
+                            if (!String.IsNullOrEmpty(pub.Doi))
+                                model.DOI = pub.Doi;
+                            //else if (!String.IsNullOrEmpty(pub.ExternalLink))
+                            //    model.URL = pub.ExternalLink;
                         }
                     }
 
@@ -149,15 +139,22 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             { 
                 return false;
             }
-            
         }
 
-        public static string DownloadCitationString(CitationDataModel model, DownloadCitationFormat format)
+        public static string GetCitationString(CitationDataModel model, CitationFormat format, bool isPublic, long entityId, bool useTags)
         {
             try
             {
                 switch (format)
                 {
+                    case CitationFormat.Bibtex:
+                        return GenerateBibtex(entityId, model, isPublic, useTags);
+                    case CitationFormat.RIS:
+                        return GenerateRis(entityId, model, isPublic, useTags);
+                    case CitationFormat.Text:
+                        return GenerateText(entityId, model, isPublic, useTags);
+                    case CitationFormat.APA:
+                        return GetApaFromCitationDataModel(model);
                     default:
                         return "";
                 }
@@ -169,7 +166,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             }
         }
 
-        public static string DownloadApaFromCitationDataModel(CitationDataModel model)
+        public static string GetApaFromCitationDataModel(CitationDataModel model)
         {
             if (model == null)
             {
@@ -187,86 +184,150 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             }
             return citation.ToString();
         }
-        public static string DownloadBibTexFromCitationDataModel(CitationDataModel model)
+
+        public static string GenerateBibtex(long entityId,CitationDataModel model, bool isPublic,  bool useTags)
         {
             if (model == null)
             {
                 return string.Empty;
             }
-            var bibTex = new StringBuilder();
-            bibTex.AppendLine("@misc{");
-            bibTex.AppendLine($"  title = {{{model.Title}}},");
-            bibTex.AppendLine($"  version = {{{model.Version}}},");
-            bibTex.AppendLine($"  date = {{{model.Year}}},");
-            bibTex.AppendLine($"  doi = {{{model.DOI}}},");
-            if (model.Authors != null && model.Authors.Count > 0)
+
+            string bibtex = "@misc{" + model.Keyword + "\n";
+            bibtex += "title ={" + model.Title + "},\n";
+            bibtex += "author ={";
+            var lastAuthor = model.Authors.Last();
+            foreach (string author in model.Authors)
             {
-                bibTex.AppendLine("  author = {");
-                for (int i = 0; i < model.Authors.Count; i++)
-                {
-                    bibTex.Append($"    {model.Authors[i]}");
-                    if (i < model.Authors.Count - 1)
-                    {
-                        bibTex.Append(",");
-                    }
-                    bibTex.AppendLine();
-                }
-                bibTex.AppendLine("  },");
+                if (author == lastAuthor)
+                    bibtex += author + "";
+                else
+                    bibtex += author + " and ";
             }
-            if (model.Projects != null && model.Projects.Count > 0)
+            bibtex += "},\n";
+
+            bibtex += "version ={" + model.Version + "},\n";
+
+            bibtex += "year ={" + model.Year + "},\n";
+            bibtex += "publisher ={" + model.Publisher + "},\n";
+
+            string url = model.URL;
+            if (isPublic)
             {
-                bibTex.AppendLine("  projects = {");
-                for (int i = 0; i < model.Projects.Count; i++)
-                {
-                    bibTex.Append($"    {model.Projects[i]}");
-                    if (i < model.Projects.Count - 1)
-                    {
-                        bibTex.Append(",");
-                    }
-                    bibTex.AppendLine();
-                }
-                bibTex.AppendLine("  },");
+                if (useTags)
+                    url += "/ddm/data/Showdata/" + entityId + "?tag=" + model.Version + "";
+                else
+                    url += "/ddm/data/Showdata/" + entityId + "?version=" + model.Version + "";
+
+                bibtex += "url ={" + url + "},\n";
             }
-            bibTex.Append("}");
-            return bibTex.ToString();
+            else
+                bibtex += "url ={" + url + "},\n";
+
+            if (!String.IsNullOrEmpty(model.DOI))
+                bibtex += "doi ={" + model.DOI + "},\n";
+
+            if (!String.IsNullOrEmpty(model.EntityName))
+            { 
+                if (isPublic)
+                    bibtex += "type ={" + model.EntityName + ". Published.},\n";
+                else
+                    bibtex += "type ={" + model.EntityName + ". Unpublished.},\n";
+            }
+            if(String.IsNullOrEmpty(model.Note))
+                bibtex += "note ={" + model.EntityName + " ID: " + entityId + "},\n";
+            else
+                bibtex += "note ={"+ model.Note + "},\n";
+
+            bibtex += "}";
+
+            return bibtex;
         }
 
-        public static string DownloadRISFromCitationDataModel(CitationDataModel model)
+        public static string GenerateRis(long entityId, CitationDataModel model, bool isPublic, bool useTags)
         {
             if (model == null)
             {
                 return string.Empty;
             }
-            var ris = new StringBuilder();
-            ris.AppendLine("TY  - GEN");
-            ris.AppendLine($"TI  - {model.Title}");
-            ris.AppendLine($"VL  - {model.Version}");
-            ris.AppendLine($"PY  - {model.Year}");
-            if (!string.IsNullOrEmpty(model.DOI))
+            string ris = "TY - " + model.EntryType + " \n";
+            ris += "T1 - " + model.Title + "\n";
+
+            foreach (string author in model.Authors)
             {
-                ris.AppendLine($"DO  - {model.DOI}");
+                ris += "AU - " + author + "\n";
             }
-            if (model.Authors != null && model.Authors.Count > 0)
+            ris += "PY - " + model.Year + " \n";
+            ris += "ET - " + model.Version + " \n";
+            ris += "PB - " + model.Publisher + " \n";
+
+            if (!String.IsNullOrEmpty(model.DOI))
+                ris += "DO - " + model.DOI + "\n";
+
+            string url = model.URL;
+            if (isPublic)
             {
-                foreach (var author in model.Authors)
-                {
-                    ris.AppendLine($"AU  - {author}");
-                }
+                if (useTags)
+                    url += "/ddm/data/Showdata/" + entityId + "?tag=" + model.Version + "";
+                else
+                    url += "/ddm/data/Showdata/" + entityId + "?version=" + model.Version + "";
+
+                ris += "UR - " + url + "\n";
             }
-            if (model.Projects != null && model.Projects.Count > 0)
-            {
-                foreach (var project in model.Projects)
-                {
-                    ris.AppendLine($"PB  - {project}");
-                }
-            }
-            ris.AppendLine("ER  - ");
-            return ris.ToString();
+            else
+                ris += "UR - " + url + "\n";
+
+            if (isPublic)
+                ris += "N1 - " + model.EntityName +" ID: " + entityId + ", Published. \n";
+            else
+                ris += "N1 - " + model.EntityName + " ID: " + entityId + ", Unpublished. \n";
+            ris += "ER -";
+
+            return ris;
         }
 
-        public static string GetTextFromCitationDataModel(CitationDataModel model)
+        public static string GenerateText(long entityId,CitationDataModel model, bool isPublic, bool useTags)
         {
-            return $"{model.Title}. ";
+            string text = "";
+            var lastAuthor = model.Authors.Last();
+            foreach (string author in model.Authors)
+            {
+                if (author.Equals(lastAuthor))
+                    text += author;
+                else
+                    text += author + "; ";
+            }
+            text += " (" + model.Year + "): ";
+            text += model.Title + ". ";
+            text += "Version " + model.Version + ". ";
+            text += model.Publisher + ". ";
+            text += model.EntityName + ". ";
+
+            if (!String.IsNullOrEmpty(model.DOI))
+            {
+                text += model.DOI;
+            }
+            else
+            {
+                string url = model.URL;
+                if (isPublic)
+                {
+                    if (useTags)
+                        url += "/ddm/data/Showdata/" + entityId + "?tag=" + model.Version + "";
+                    else
+                        url += "/ddm/data/Showdata/" + entityId + "?version=" + model.Version + "";
+
+                    text += url + ". ";
+                }
+                else
+                    text += url + ". ";
+
+                if(String.IsNullOrEmpty(model.Note))
+                    text += model.EntityName + " ID= " + entityId;
+                else
+                    text += model.Note;
+            }
+
+            return text;
         }
     }
 }
