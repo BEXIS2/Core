@@ -1,78 +1,93 @@
-# BEXIS 2 Release Notes - Version 4.1.0
-> This release comes with a big reduction in data type complexity by removing unused and redundant data types. Only the most commonly used data types are now available, which simplifies the data structure creation process. Additionally, this release includes several bug fixes and enhancements to improve the overall user experience. Further we introduced a new setting to control sending error emails based from the system.
+
+# BEXIS 2 Release Notes - Version 4.2.0
+> This version holds several UX/UI improvements, bugfixes and enhancements related to dataset creation and upload and a revised download. For example single file downloads without metadata are no longer allowed without edit permissions. The content of the download archive also have been extended und refactored. During creation you can now also enable to check if required DWC terms are assigned (show as warning). Further our new integrated curation tool has been added for testing. 
 
 ### Workspace changes:
-- Workspace changes: [4.0.2..4.1.0](https://github.com/BEXIS2/Workspace/compare/4.0.2..4.1.0)
+- Workspace changes: [4.1.0..4.2.0](https://github.com/BEXIS2/Workspace/compare/4.1.0..4.2.0)
 
 ### Database Update(s):
-- Update script from version 4.0.2 to 4.1.0: [Update_Script_4.0.2_4.1.0.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/4.0.2-4.1.0.sql)
+- Update script from version 4.1.0 to 4.2.0: [Update_Script_4.1.0_4.2.0.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/4.1.0-4.2.0.sql)
 
 ### New Settings:
-- **Error Email System**: A new setting has been introduced to control the sending of error emails based on the system settings. This allows administrators to manage error notifications more effectively. ([here](https://demo.bexis2.uni-jena.de/home/docs/Configuration#e-mail))
-- **Citation settings**: A new setting under data discovery enables the system to provide citation formats and displays for entities. ([here](https://demo.bexis2.uni-jena.de/home/docs/Configuration#citation))
+- **Show Darwin Core Archive Validation** (RPM)
+If this flag is true, you can validate your data structure against a darwin core archive type.
+
+- **Curation Group Name** & **Curation Labels** (DDM)
+The new curation module was added for testing (Instruction: https://github.com/BEXIS2/Core/issues/2277). It is not ready for production! 
+
+- **Data Agreement by download** (DDM)
+Set up if user need to agree the data agreements before download and where the agreement is written.
+"options": ["none","data policy","terms and conditions"]
+
+
 
 # Bugfixes and enhancements
-## Metadata
-- **UI Rendering Issues**: Fix high-level schema elements rendered improperly([#2096](https://github.com/BEXIS2/Core/issues/2096))
-
-- **UI Element Duplication**: Fix random duplication of elements. ([#2097](https://github.com/BEXIS2/Core/issues/2097))
-
-- **UI Drop-down Menu**: Fix drop-down menu for integers rendering issue. ([#2103](https://github.com/BEXIS2/Core/issues/2103))
-
-- **Metadata Save Issue**: Fix metadata not saveable anymore after update of system values. ([#2133](https://github.com/BEXIS2/Core/issues/2133))
-
-- **Metadata Choices**: Fix choices with default value from XSD has selected 2 values at the same time. ([#2134](https://github.com/BEXIS2/Core/issues/2134))
-
-- **Metadata Enum Elements**: Fix Enum-Elements with an attribute are not displayed as drop-down list. ([#1265](https://github.com/BEXIS2/Core/issues/1265))
-
-- **Metadata Default Values**: Fix choices in metadata with default value in XSD has selected 2 values at the same time. ([#2135](https://github.com/BEXIS2/Core/issues/2135))
-
-## General
-- **Menu Layout**: Fix missing nowrap in new menu. ([#2109](https://github.com/BEXIS2/Core/issues/2109))
-
-- **Footer Update**: Change footer. ([#2054](https://github.com/BEXIS2/Core/issues/2054))
+### New features
 
 
-- **Svelte Menu Enhancement**: Add hover effect and increase size. ([#2071](https://github.com/BEXIS2/Core/issues/2071))
-
-## Dataset View
-- **Permissions Tab**: Fix permissions tab is not visible. ([#2118](https://github.com/BEXIS2/Core/issues/2118))
-
-- **Dataset Links**: Fix missing in the download package. ([#981](https://github.com/BEXIS2/Core/issues/981))
-
-- **Version Access Rights**: Fix get latest version throws an error when you have no rights to see the latest not tagged version. ([#2119](https://github.com/BEXIS2/Core/issues/2119))
-  
-- **Title OR Citation within Dataset View**: Added a new option to the Dataset View Page that gives you control over what information is shown at the top. You can now choose between displaying either the Dataset Title or the full Citation String. ([#2140](https://github.com/BEXIS2/Core/issues/2140))
-
-## Dataset Edit
-- **Data Types Merging**: Merging of similar data types to simplify use. ([#2117](https://github.com/BEXIS2/Core/issues/2117))
-
-- **Attachment Upload**: Fix error while adding file description during upload of attachments. ([#2143](https://github.com/BEXIS2/Core/issues/2143))
-
-- **Upload Validation**: Add date pattern to error message. ([#2145](https://github.com/BEXIS2/Core/issues/2145))
-
-- **Constraint Loading**: Fix long loading times for used constraints. ([#2110](https://github.com/BEXIS2/Core/issues/2110))
-
-- **Tag View Error**: Fix loading tag view throws error when author and description is null. ([#2144](https://github.com/BEXIS2/Core/issues/2144))
-
-## API & Export
-- **API Enhancement**: Create API should return ID and status code instead of message. ([#2121](https://github.com/BEXIS2/Core/issues/2121))
-
-- **Dataset API Enhancement**: Add entity links. ([#2132](https://github.com/BEXIS2/Core/issues/2132))
-
-- **ORCID and ROR IDs**: Use of ORCID and ROR IDs in the user profile and in the DOI proxy. ([#2068](https://github.com/BEXIS2/Core/issues/2068))
-
-- **JSON Field Mapping**: Fix impossible to obtain several fields mapped into one information block in JSON. ([#2138](https://github.com/BEXIS2/Core/issues/2138))
+### UI / UX
+- **Documentation**: Change edit and add save icon. ([#2221](https://github.com/BEXIS2/Core/issues/2221))
+- **Documentation**: Fix unintended line breaks before images ([#2247](https://github.com/BEXIS2/Core/issues/2247))
+- **Search UI**: Small improvements. ([#2232](https://github.com/BEXIS2/Core/issues/2232))
+- **Tag Management**: UX improvements. ([#2198](https://github.com/BEXIS2/Core/issues/2198))
+- **Tags on dataset landing page**: Improve UI on current dataset landing page. ([#2193](https://github.com/BEXIS2/Core/issues/2193))
+- **Dataset View**: Missing icon for unstructured download. ([#2199](https://github.com/BEXIS2/Core/issues/2199))
+- **Create Data Structure**: Extend info text shown in the create data structure flow. ([#2248](https://github.com/BEXIS2/Core/issues/2248))
+- **Entity Template:** Fix Wrong (trash) icon for cancel button in edit mode ([#2228](https://github.com/BEXIS2/Core/issues/2228))
+- **Core UI**: UX improvements across the core UI. ([#2223](https://github.com/BEXIS2/Core/issues/2223))
+- **Accessibility**: Accessibility improvements for Dataset Creation / Edit / Data Structure flows. ([#2271](https://github.com/BEXIS2/Core/issues/2271))
+- **JWT Token**: Add a copy to clipboard button ([#2259](https://github.com/BEXIS2/Core/issues/2259))
 
 
-## Maintenance
-- **Error Email System**: Send error emails based on settings. ([#2136](https://github.com/BEXIS2/Core/issues/2136))
+### Search
+- **Search Overview**: Fix ID is sorted text based instead by number** ([#2146](https://github.com/BEXIS2/Core/issues/2146))
+ 
 
-- **SQL Script Creation**: Create a SQL script that adds tags to versions in an existing instance. ([#2120](https://github.com/BEXIS2/Core/issues/2120))
+### Authentication & login
+- **External providers**: Additional text about potential external login providers. ([#2210](https://github.com/BEXIS2/Core/issues/2210))
 
-- **Update Script Extension**: Extend update script to link variable templates and meanings. ([#2111](https://github.com/BEXIS2/Core/issues/2111))
 
-- **SAM Former Members**: Fix user not findable in former members group. ([#2112](https://github.com/BEXIS2/Core/issues/2112))
+### Public data & downloads
+- **Terms**: Add terms and conditions to the download package. ([#855](https://github.com/BEXIS2/Core/issues/855))
+- **Download scope**: Only the whole package should be downloadable. ([#778](https://github.com/BEXIS2/Core/issues/778))
+- **Agreement checkbox**: Optional checkbox that data agreement is accepted before download. ([#779](https://github.com/BEXIS2/Core/issues/779))
+- **Download info**: Extend download information shown to users. ([#2147](https://github.com/BEXIS2/Core/issues/2147))
+- **Download dataset**: Allow filter data on package download ([#2238](https://github.com/BEXIS2/Core/issues/2238))
+- **Download dataset**: Better filename ([#445](https://github.com/BEXIS2/Core/issues/445))
 
-- **Restore deleted Datasets**: Add new feature to the Dataset Management page that allows you to easily restore datasets that were previously marked for deletion. ([#1734](https://github.com/BEXIS2/Core/issues/1734))
+### Dataset management & safety
+- **Purge confirmation**: Purge dataset action should require confirmation. ([#2239](https://github.com/BEXIS2/Core/issues/2239))
 
+
+### Metadata, mapping & structure
+- **Dataset API**: Fix Create dataset not possible (multiple controller) ([#2255](https://github.com/BEXIS2/Core/issues/2255))
+- **Dataset Details**: Title is cut on "-" — prevent incorrect truncation. ([#2270](https://github.com/BEXIS2/Core/issues/2270))
+- **Deleted dataset view**: Not shown if not logged in; searchable but metadata hidden. ([#2245](https://github.com/BEXIS2/Core/issues/2245))
+- **Dataset Details**: Restore missing Metadata Edit button on details page. ([#2273](https://github.com/BEXIS2/Core/issues/2273))
+- **Complex types**: Random reuse of metadata elements with the same name in complex types. ([#2189](https://github.com/BEXIS2/Core/issues/2189))
+- **Concept Output**: Multi complex → one complex conversion does not work. ([#2224](https://github.com/BEXIS2/Core/issues/2224))
+- **Structure Mapping**: Allow mapping multiple default sources to one target. ([#2227](https://github.com/BEXIS2/Core/issues/2227))
+- **Concept mapping**: False outcome when one field is mapped to multiple target fields with default values. ([#2202](https://github.com/BEXIS2/Core/issues/2202))
+- **Dataset Details**: Creating links fails with HTTP 500 error. ([#2269](https://github.com/BEXIS2/Core/issues/2269))
+- **Set links**: Set links cannot be deleted — fix deletion handling. ([#2272](https://github.com/BEXIS2/Core/issues/2272))
+- **Metadata API**: Formats missing in JSON schemas — add missing format entries. ([#2275](https://github.com/BEXIS2/Core/issues/2275))
+
+
+
+### Upload & parsing
+- **DateTime parsing**: DateTime like "24.12.2025 17:23:00" is not working. ([#2231](https://github.com/BEXIS2/Core/issues/2231))
+
+
+## Data structure / DWC
+- **DWC**: Allow to check requirements during data structure creation ([#2249](https://github.com/BEXIS2/Core/issues/2249))
+- **Data Structure**: Provide in another file format (and rename file extension) ([#940](https://github.com/BEXIS2/Core/issues/940))
+- **DWC Export**: Fix fail because of new zip library ([#2252](https://github.com/BEXIS2/Core/issues/2252))
+- **Data Structure Edit**: Fix Selecting a meaning opens the select template overlay ([#2222](https://github.com/BEXIS2/Core/issues/2222))
+- **External Link**: Fix Missing validation and required fields indicator ([#2218](https://github.com/BEXIS2/Core/issues/2218))
+- **Manage Meaning**: Fix Crashes when saving empty relation([#2215](https://github.com/BEXIS2/Core/issues/2215))
+- **Data Structure From File**: Fix Escaped delimiter not ignored during data structure creation ([#283](https://github.com/BEXIS2/Core/issues/222832835))
+
+### DOI & Citation
+- **DOI Overview**: Fix links not working. ([#2261](https://github.com/BEXIS2/Core/issues/2261))
+- **Citation API**: Add and add generic creation of citation formats 
+ ([#2258](https://github.com/BEXIS2/Core/issues/2258)) ([#2104](https://github.com/BEXIS2/Core/issues/2104))

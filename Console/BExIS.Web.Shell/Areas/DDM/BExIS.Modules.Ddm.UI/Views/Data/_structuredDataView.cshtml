@@ -36,6 +36,12 @@
         tableClass = "scroll_in_screen";
     }
 
+    bool isPublic = false;
+
+    if(ViewData["isPublic"]!=null)
+    {
+        isPublic = (bool)ViewData["isPublic"];
+    }
 }
 
 @section Scripts{
@@ -58,64 +64,68 @@
 }
 <div id="downloadOptions" style="text-align:left;">
 
-    @if (Model.DownloadAccess && Model.Data != null && Model.Data.Rows.Count > 0)
-    {
 
-        @*<button id="downloadExcelTemplateButton" class="bx-button function" title="Xlsx download" onclick="downloadExcelTemplate(@Model.DatasetId)">Download Template</button>
+    @if (!isPublic || User.Identity.Name != "") /* dont sho download options if the dataset is public */
+    { 
+        if (Model.DownloadAccess && Model.Data != null && Model.Data.Rows.Count > 0)
+        {
 
-            <button id="downloadExcelButton" class="bx-button function" title="Xlsx download" onclick="downloadExcel(@Model.DatasetId)">Download Excel</button>*@
+            @*<button id="downloadExcelTemplateButton" class="bx-button function" title="Xlsx download" onclick="downloadExcelTemplate(@Model.DatasetId)">Download Template</button>
+
+                <button id="downloadExcelButton" class="bx-button function" title="Xlsx download" onclick="downloadExcel(@Model.DatasetId)">Download Excel</button>*@
 
         if (@total < 1048576) // hide Excel download for bigger datasets, which exceed the max number of rows in excel
         {
+                <span class="dropdown">
+                    <button class="bx-button function" type="button" onclick="downloadExcel(@Model.DatasetId)">
+                        Download Excel
+                    </button>
+                    @*<button class="bx-button function" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Download Excel
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <li><a id="downloadExcelTemplateButton" onclick="downloadExcelTemplate(@Model.DatasetId)">Template (.xlsm)</a></li>
+                        <li><a id="downloadExcelButton" onclick="downloadExcel(@Model.DatasetId)">Excel (.xlsx)</a></li>
+                    </ul>*@
+                </span>
+        }
+
             <span class="dropdown">
-                <button class="bx-button function" type="button" onclick="downloadExcel(@Model.DatasetId)">
-                    Download Excel
-                </button>
-                @*<button class="bx-button function" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    Download Excel
+                <button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Download Text
                     <span class="caret"></span>
                 </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                    <li><a id="downloadExcelTemplateButton" onclick="downloadExcelTemplate(@Model.DatasetId)">Template (.xlsm)</a></li>
-                    <li><a id="downloadExcelButton" onclick="downloadExcel(@Model.DatasetId)">Excel (.xlsx)</a></li>
-                </ul>*@
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+
+                    @foreach (KeyValuePair<string, string> fileType in Model.AsciiFileDownloadSupport)
+                    {
+                        <li><a class="file-type-download-entry" ext="@fileType.Value"> @fileType.Key (@fileType.Value)</a></li>
+                    }
+                </ul>
+            </span>
+
+            <span>
+                @Html.CheckBox("WithUnits", false, new { text = "download data with units", @id = "WithUnits" })
+                Download data with units.
             </span>
         }
+        else
+        {
 
-        <span class="dropdown">
-            <button class="bx-button function" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                Download Text
-                <span class="caret"></span>
+            <button title="Download Excel"
+                    name="Download Excel"
+                    class="t-button t-state-disabled margin"
+                    disabled="disabled">
+                Download Excel
             </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-
-                @foreach (KeyValuePair<string, string> fileType in Model.AsciiFileDownloadSupport)
-                {
-                    <li><a class="file-type-download-entry" ext="@fileType.Value"> @fileType.Key (@fileType.Value)</a></li>
-                }
-            </ul>
-        </span>
-
-        <span>
-            @Html.CheckBox("WithUnits", false, new { text = "download data with units", @id = "WithUnits" })
-            Download data with units.
-        </span>
+            <button title="Download Comma Separated"
+                    name="Download Comma Separated"
+                    class="t-button t-state-disabled margin"
+                    disabled="disabled">
+                Download Text
+            </button>
         }
-    else
-    {
-
-        <button title="Download Excel"
-                name="Download Excel"
-                class="t-button t-state-disabled margin"
-                disabled="disabled">
-            Download Excel
-        </button>
-        <button title="Download Comma Separated"
-                name="Download Comma Separated"
-                class="t-button t-state-disabled margin"
-                disabled="disabled">
-            Download Text
-        </button>
     }
 
     <span>
@@ -125,7 +135,7 @@
 
     <span id="preloaderContainer" style="float: right"></span>
 </div>
-<br />
+
 @(Html.Telerik().Grid(Model.Data)
                 .Name("PrimaryDataResultGrid")
                     .DataBinding(dataBinding => dataBinding

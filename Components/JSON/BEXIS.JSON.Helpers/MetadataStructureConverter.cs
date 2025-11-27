@@ -179,11 +179,21 @@ namespace BEXIS.JSON.Helpers
                 // set json schema type based on datatype input
                 currentText.Type = convertToJSchemaType(type.DataType);
 
-                //if Datatype is datetime, jsosn schema use type string
-                // but need to set a format
-                if (type.DataType.SystemType == "datetime")
+                ////if Datatype is datetime, jsosn schema use type string
+                //// but need to set a format
+                //if (type.DataType.SystemType.ToLower() == "datetime")
+                //{
+                //    currentText.Format = "date";
+                //}
+
+                if (type.DataType.SystemType.ToLower() == "datetime")
                 {
-                    currentText.Format = "date";
+                    currentText.Format = type.DataType.Name.ToLower(); // set datetime, date or time in format
+                }
+
+                if (type.DataType.SystemType.ToLower() == "string" && type.DataType.Name.ToLower() == "text")
+                {
+                    currentText.Format = type.DataType.Name.ToLower();
                 }
 
                 //Contraints
@@ -378,7 +388,10 @@ namespace BEXIS.JSON.Helpers
 
         private JSchemaType GetJSchemaType(BaseUsage usage)
         {
-            if(IsChoice(usage.Extra))
+            // if choice and max cardinality >1 then array
+            if (IsChoice(usage.Extra) && getMaxCardinality(usage) > 1)
+                return JSchemaType.Array;
+            else if (IsChoice(usage.Extra))
                 return JSchemaType.Object;
             else if (getMaxCardinality(usage) > 1)
                 return JSchemaType.Array;

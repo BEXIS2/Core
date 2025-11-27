@@ -125,6 +125,13 @@ namespace BExIS.Security.Services.Subjects
                 //return Task.FromException(new Exception());
                 return Task.FromResult(false);
 
+            // Logins
+            var loginsRepository = _guow.GetRepository<Login>();
+            foreach (var login in loginsRepository.Get(l => l.User.Id == userId))
+            {
+                loginsRepository.Delete(login);
+            }
+
             // EntityPermissions
             var entityPermissionRepository = _guow.GetRepository<EntityPermission>();
             foreach (var entityPermission in entityPermissionRepository.Get(e => e.Subject.Id == userId))

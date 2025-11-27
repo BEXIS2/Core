@@ -177,9 +177,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                    
                      DatasetVersion dsv = null;
 
-                    if (version == -1)
+                    if (version == -1) // latest
                     {
                         dsv = datasetManager.GetDatasetLatestVersion(entityId);
+                    }
+                    else if (version == 0 || dataset.Status == DatasetStatus.Deleted) // check may deleted
+                    {
+                        if(dataset.Status == DatasetStatus.Deleted)
+                            dsv = datasetManager.GetDeletedDatasetLatestVersion(entityId);
                     }
                     else
                     {
@@ -1555,6 +1560,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             try
             {
+                if (!XmlUtility.IsSafeXPath(xpath))
+                {
+                    return Json(false, JsonRequestBehavior.AllowGet);
+                }
+
                 AddXmlAttribute(xpath, "partyid", partyId.ToString(), entityId);
 
                 return Json(true, JsonRequestBehavior.AllowGet);
@@ -2059,13 +2069,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (usage is MetadataPackageUsage)
                 {
                     keyValueDic.Add("type", BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage.ToString());
-                    //elements = XmlUtility.GetXElementsByAttribute(usage.Label, keyValueDic, xMetadata).ToList();
                     parentXElement = XmlUtility.GetXElementByXPath(parent.XPath, xMetadata);
                 }
                 else
                 {
                     keyValueDic.Add("type", BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage.ToString());
-                    //elements = XmlUtility.GetXElementsByAttribute(usage.Label, keyValueDic, xMetadata, parentXpath).ToList();
                     parentXElement = XmlUtility.GetXElementByXPath(parent.XPath, xMetadata);
                 }
 
@@ -2764,7 +2772,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// Is called when the user write a letter in Autocomplete User Component
         /// </summary>
         [HttpPost]
-        [ValidateAntiForgeryTokenOnPost]
         public ActionResult _AutoCompleteAjaxLoading(string text, long id, string type)
         {
             // if mapping with etities exits
@@ -3101,6 +3108,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         //ToDo really said function, but cant find a other solution for now
         private void AddXmlAttribute(string xpath, string attrName, string attrValue,long entityId)
         {
+            if(XmlUtility.IsSafeXPath(xpath) == false)
+            {
+                throw new Exception("The provided xpath is not safe.");
+            }
+
             TaskManager = FormHelper.GetTaskManager(entityId);
             XDocument metadataXml = getMetadata(TaskManager);
 
@@ -3239,7 +3251,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         //XX number of index des values nötig
         [HttpPost]
-        [ValidateAntiForgeryTokenOnPost]
         public ActionResult ValidateMetadataAttributeUsage(string value, int id, int parentid, string parentname, int number, int parentModelNumber, int parentStepId, long entityId)
         {
             //delete all white spaces from start and end
@@ -3329,7 +3340,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryTokenOnPost]
         public ActionResult ValidateMetadataParameterUsage(string value, int id, long attrUsageId, int number, int parentModelNumber, int parentStepId, long entityId)
         {
             //delete all white spaces from start and end

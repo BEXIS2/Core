@@ -27,6 +27,7 @@
 	import ConstraintsDescription from './structure/variable/ConstraintsDescription.svelte';
 	import { goTo } from './services';
 	import { type ModalSettings, getModalStore } from '@skeletonlabs/skeleton';
+	import Info from './Info.svelte';
 	const modalStore = getModalStore();
 
 	export let model: DataStructureCreationModel;
@@ -457,17 +458,24 @@
 	}
 </script>
 
+
 {#if !model || state.length == 0 || generate == false}
 	<button title="back" class="btn variant-filled-warning" on:click={() => back()}
 		><Fa icon={faArrowLeft} /></button
 	>
+
 	<!--if the model == false, access denied-->
 	{#if !model || state.length == 0 || generate == false}
 		<div class="h-full w-full text-surface-700">
+
 			<Spinner
-				position={positionType.center}
-				label="Loading Structure Suggestion based on: {model.file}"
-			/>
+			position={positionType.center}
+			label="Loading Structure Suggestion based on: {model.file}"/>
+
+			<div class="mt-10">
+				<Info></Info>
+			</div>
+			
 		</div>
 	{:else}
 		<div class="h-full w-full text-surface-700">

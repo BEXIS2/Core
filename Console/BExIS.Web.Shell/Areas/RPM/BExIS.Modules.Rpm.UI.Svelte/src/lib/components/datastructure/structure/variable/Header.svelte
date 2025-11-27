@@ -36,7 +36,7 @@
 	{/if}
 </div>
 
-<div class="flex flex-col">
+<div class="flex flex-col pt-2">
 	<div id={index.toString()} class="flex">
 		<div class="flex grow gap-2">
 			<div
@@ -57,7 +57,7 @@
 
 		<div class="flex-none flex-col text-right w-1/4">
 			<div class="flex gap-2 pb-2 justify-end">
-				<div>Mark as part of primary key</div>
+				<div>{isKey ? 'Part of primary key' : 'Not part of primary key'}</div>
 				<SlideToggle
 					size="sm"
 					name="isKey"
@@ -68,11 +68,11 @@
 				></SlideToggle>
 			</div>
 			<div class="flex gap-2 pb-2 justify-end">
-				<div>Value can be optional</div>
+				<div>{isOptional ? 'Value is optional' : 'Value is required'}</div>
 				<SlideToggle
 					size="sm"
 					name="isOptional"
-					title={isOptional ? 'Value can be optional' : 'Value is required'}
+					title={isOptional ? 'Value is optional' : 'Value is required'}
 					active="bg-primary-500"
 					bind:checked={isOptional}
 					disabled={blockDataRelevant}

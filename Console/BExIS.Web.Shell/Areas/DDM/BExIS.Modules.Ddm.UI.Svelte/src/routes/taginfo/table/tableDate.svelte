@@ -16,6 +16,8 @@
 	}
 </script>
 
-{#if !emtpy}
-	{new Date(value).toLocaleString('de-DE')}
-{/if}
+<span title="Date of creation of the release tag">
+	{#if !emtpy}
+		{new Date(value).toLocaleString('de-DE')}
+	{/if}
+</span>

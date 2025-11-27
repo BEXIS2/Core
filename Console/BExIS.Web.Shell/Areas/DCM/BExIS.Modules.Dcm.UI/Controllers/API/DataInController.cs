@@ -13,7 +13,6 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
-using BExIS.Utils.Config;
 using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Route;
 using BExIS.Utils.Upload;
@@ -34,6 +33,7 @@ using BExIS.Modules.Dcm.UI.Helpers;
 using System.Xml;
 using BExIS.Dim.Entities.Mappings;
 using Remotion.Linq.Parsing.Structure.NodeTypeProviders;
+using BExIS.Utils.Config;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {

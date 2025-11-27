@@ -5,11 +5,18 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Meanings;
 using BExIS.IO.DataType.DisplayPattern;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.Math;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Web.Configuration;
+using Vaiona.Utils.Cfg;
+using DataTable = System.Data.DataTable;
 
 namespace BExIS.IO.Transform.Output
 {
@@ -426,15 +433,35 @@ namespace BExIS.IO.Transform.Output
             return JsonConvert.SerializeObject(new DataStructureDataTable(id));
         }
 
-        //public static string GetVariableListAsJson(long id)
-        //{
-        //    return JsonConvert.SerializeObject(new DataStructureDataList(id), Newtonsoft.Json.Formatting.Indented);
-        //}
 
         public static DataStructureDataList GetVariableList(long id)
         {
             return new DataStructureDataList(id);
         }
+
+        public static string GenerateDataStructureAsText(long datastructureId)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            using (var dataStructureManager = new DataStructureManager())
+            {
+                StructuredDataStructure dataStructure = new StructuredDataStructure();
+                dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(datastructureId);
+
+                if (dataStructure != null)
+                {
+                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => v.Label)));
+                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => v.Unit?.Name)));
+                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => v.Description)));
+                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => v.DataType?.Name)));
+                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => v.IsValueOptional? "optional" : "mandatory")));
+                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => v.IsKey?"primary key":"")));
+                }
+            }
+
+            return stringBuilder.ToString();
+        }
+
 
         public static string GenerateDataStructure(long datasetId)
         {

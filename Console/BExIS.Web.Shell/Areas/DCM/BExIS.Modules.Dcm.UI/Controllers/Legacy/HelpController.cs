@@ -1,5 +1,4 @@
-﻿using BExIS.Utils.Config;
-using BExIS.Utils.Helpers;
+﻿using BExIS.Utils.Helpers;
 using System;
 using System.Web.Mvc;
 using Vaiona.Web.Mvc.Modularity;

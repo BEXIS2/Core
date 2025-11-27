@@ -1,4 +1,7 @@
 # bexis2-rpm-ui
+## 0.2.13
+- change message when file is analyzed for a data structure
+
 ## 0.2.9
 - update bexis2.core.ui lib
 

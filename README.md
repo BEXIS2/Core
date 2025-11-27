@@ -8,13 +8,13 @@ BEXIS2 is published under a GNU LESSER GENERAL PUBLIC LICENSE Version 3
 
 > In the release notes, you will find a list of all changes to the current version and updated scripts. 
 
-[RELEASE NOTES](https://github.com/BEXIS2/Core/blob/4.1.0/Release%20Notes/Release_Notes.md)
+[RELEASE NOTES](https://github.com/BEXIS2/Core/blob/4.2.0/Release%20Notes/Release_Notes.md)
 
 # Installation
 
 A guide for the preparation of BEXIS2 on a server is available here.
 
-[Installation Manual](https://github.com/BEXIS2/Documents/blob/4.1.0/Guides/Installation/installation.md)
+[Installation Manual](https://github.com/BEXIS2/Documents/blob/4.2.0/Guides/Installation/installation.md)
 
 
 # Help for Users/Admins/Developers
@@ -36,9 +36,9 @@ The page is divided into:
 
 The initial version of the workspace can be found here:
 
-- [Workspace 4.1.0 Repo](https://github.com/BEXIS2/Workspace/tree/4.1.0)
-- [Workspace 4.1.0 Release](https://github.com/BEXIS2/Workspace/releases/tag/4.1.0)
+- [Workspace 4.2.0 Repo](https://github.com/BEXIS2/Workspace/tree/4.2.0)
+- [Workspace 4.2.0 Release](https://github.com/BEXIS2/Workspace/releases/tag/4.2.0)
 
 # List of Modules
 
-- [Modules Overview](https://github.com/BEXIS2/Core/blob/4.1.0/MODULES.md)
+- [Modules Overview](https://github.com/BEXIS2/Core/blob/4.2.0/MODULES.md)

@@ -3,16 +3,22 @@
 <div class="publication-container">
     @foreach (var label in Model)
     {
-        if (@label.Value == "template")
+
+        if (label.Value == "template")
         {
             <a href="" class="label label-info">@label.Key</a>
         }
-        else
+        else if(label.Value.ToLower() == "doi")
         {
-            <a href="@label.Key" class="label label-success">@label.Value: @label.Key</a>
+            string displayName = label.Key;
+            if (label.Key.StartsWith("http"))
+            {
+                string[] parts = label.Key.Split('/');
+                displayName = string.Join("/", parts.Skip(parts.Length - 2));
+            }
+
+            <a href="@label.Key" class="label label-success">@label.Value: @displayName</a>
         }
-
-
     }
 
 </div>

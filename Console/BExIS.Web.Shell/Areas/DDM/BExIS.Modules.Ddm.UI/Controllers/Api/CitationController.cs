@@ -1,31 +1,31 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dim.Helpers.Mappings;
+using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.Party;
+using BExIS.Modules.Ddm.UI.Helpers;
 using BExIS.Modules.Ddm.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Route;
+using NameParser;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Xml;
 using System.Xml.Serialization;
-using BExIS.Dim.Helpers.Mappings;
-using BExIS.Dim.Services.Mappings;
-using Newtonsoft.Json;
-using System.Net.Http.Headers;
 using Vaiona.Web.Mvc.Modularity;
-using BExIS.Dlm.Services.Party;
-using NameParser;
-using BExIS.Dim.Services;
 
 namespace BExIS.Modules.MCD.UI.Controllers.API
 {
@@ -33,8 +33,8 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
     {
         [BExISApiAuthorize]
         [GetRoute("api/datasets/citations")]
-        [ResponseType(typeof(CitationModel))]
-        public HttpResponseMessage Get([FromUri] Format format = Format.Bibtex)
+        //[ResponseType(typeof(CitationModel))]
+        public HttpResponseMessage Get([FromUri] CitationFormat format = CitationFormat.Bibtex)
         {
             return GetAllCitations();
         }
@@ -42,21 +42,11 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
         [BExISApiAuthorize]
         [GetRoute("api/datasets/{datasetId}/citations")]
         [ResponseType(typeof(CitationModel))]
-        public HttpResponseMessage GetCitationFromLatestVersion(long datasetId, [FromUri] Format format = Format.Bibtex)
+        public HttpResponseMessage GetCitationFromLatestVersion(long datasetId, [FromUri] CitationFormat format = CitationFormat.Bibtex)
         {
-
             try
             {
-                using (var datasetManager = new DatasetManager())
-                {
-                    var datasetVersionId = datasetManager.GetDatasetLatestVersion(datasetId)?.Id;
-
-                    if( datasetVersionId == null)
-                    {
-                        return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Dataset version not found.");
-                    }
-
-                    return Request.CreateResponse<CitationModel>(HttpStatusCode.OK, new CitationModel() { CitationString = "jsdjufkjsdkfjf"});                }
+                return GetCitation(datasetId, format);              
             }
             catch(Exception ex)
             {
@@ -67,11 +57,9 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
         [BExISApiAuthorize]
         [GetRoute("api/datasets/{datasetId}/citations/{versionNumber}")]
         [ResponseType(typeof(CitationModel))]
-        public HttpResponseMessage GetCitationFromSpecificVersionNumber(long datasetId, int versionNumber, [FromUri] Format format = Format.Bibtex)
+        public HttpResponseMessage GetCitationFromSpecificVersionNumber(long datasetId, int versionNumber, [FromUri] CitationFormat format = CitationFormat.Bibtex)
         {
-
-            //return GetCitation(id, format, versionNumber);
-            return null;
+            return GetCitation(datasetId, format, versionNumber);
         }
 
         // GET api/Citation/GetCitations
@@ -81,7 +69,7 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
         ///
         /// <param name="id">Identifier of a dataset</param>
         [BExISApiAuthorize]
-        [PostRoute("api/Citation/GetCitations")]
+        [PostRoute("api/datasets/citations")]
         public HttpResponseMessage Post([FromBody] CitationDatasetIds data)
         {
             var datasetIds = data.DatasetIds.Distinct().ToArray();
@@ -164,8 +152,18 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                             return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "The dataset with the id (" + id + ") does not exist.");
                     }
 
-                    CitationDataModel model = GetModel(datasetVersion);
-                    citationString += generateCitation(id.ToString(), model, isPublic, Format.Text) + "\n\n";
+                    var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+                    var useTags = Convert.ToBoolean(moduleSettings.GetValueByKey("use_tags"));
+
+                    CitationDataModel model = CitationsHelper.CreateCitationDataModel(datasetVersion, CitationFormat.Text);
+                    string datasetCitationString = "";
+
+                    if (CitationsHelper.IsCitationDataModelValid(model))
+                        datasetCitationString = CitationsHelper.GetCitationString(model, CitationFormat.Text, isPublic, datasetVersion.Dataset.Id, useTags);
+                    else
+                        datasetCitationString = "Citation metadata for id " + datasetid + " is incomplete.";
+
+                    citationString += datasetCitationString;
 
                 }
             }
@@ -277,7 +275,7 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             return response;
         }
 
-        private HttpResponseMessage GetCitation(long id, Format format, int version_number = 0)
+        private HttpResponseMessage GetCitation(long id, CitationFormat format, int version_number = 0)
         {
             DatasetVersion datasetVersion = null;
 
@@ -319,7 +317,8 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                 }
 
                 // Check if a dataset version was set
-                if (datasetVersion == null) return Request.CreateResponse(HttpStatusCode.InternalServerError, "It is not possible to load the latest or given version.");
+                if (datasetVersion == null) 
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "It is not possible to load the latest or given version.");
 
                 //entity permissions
                 if (id > 0)
@@ -329,7 +328,6 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                     // Check if dataset is public
                     long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
                     entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
-                    isPublic = false;
                     isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
 
                     // If dataset is not public check if a valid token is provided
@@ -348,8 +346,16 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                         return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "The dataset with the id (" + id + ") does not exist.");
                 }
 
-                CitationDataModel model = GetModel(datasetVersion);
-                string citationString = generateCitation(id.ToString(), model, isPublic, format);
+                var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+                var useTags = Convert.ToBoolean(moduleSettings.GetValueByKey("use_tags"));
+
+                CitationDataModel model = CitationsHelper.CreateCitationDataModel(datasetVersion, format);
+                string citationString = "";
+                if (CitationsHelper.IsCitationDataModelValid(model))
+                    citationString =  CitationsHelper.GetCitationString(model, format, isPublic, datasetVersion.Dataset.Id, useTags);
+                else
+                    citationString = "Citation metadata is incomplete.";
+
                 HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(citationString, Encoding.UTF8, "application/text") };
                 return response;
             }
@@ -367,19 +373,23 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             else
                 datasetCitationEntry.URL = url;
 
-            datasetCitationEntry.Publisher = settings.GetValueByKey("publisher").ToString();
-            datasetCitationEntry.InstanceName = settings.GetValueByKey("instanceName").ToString();
+            datasetCitationEntry.Publisher = model.Publisher;
+            //datasetCitationEntry.InstanceName = settings.GetValueByKey("instanceName").ToString();
 
-            using (PartyManager partyManager = new PartyManager())
+            if (model.Projects != null || model.Projects.Count > 0)
             {
-                foreach (string project in model.Projects)
+                using (PartyManager partyManager = new PartyManager())
                 {
-                    Project p = new Project();
-                    p.Id = partyManager.Parties.Where(c => c.Name == project).Select(c => c.Id).FirstOrDefault();
-                    p.Name = project;
-                    datasetCitationEntry.Projects.Add(p);
+                    foreach (string project in model.Projects)
+                    {
+                        Project p = new Project();
+                        p.Id = partyManager.Parties.Where(c => c.Name == project).Select(c => c.Id).FirstOrDefault();
+                        p.Name = project;
+                        datasetCitationEntry.Projects.Add(p);
+                    }
                 }
             }
+
             datasetCitationEntry.DatasetId = datasetId.ToString();
             datasetCitationEntry.IsPublic = isPublic;
             datasetCitationEntry.Title = model.Title;
@@ -387,7 +397,7 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             if (!String.IsNullOrEmpty(model.DOI))
                 datasetCitationEntry.DOI = model.DOI;
             datasetCitationEntry.Authors = model.Authors;
-            datasetCitationEntry.Year = getYear(model.Year);
+            datasetCitationEntry.Year = model.Year;
 
             //create authorname in the correct format
             List<string> authors = new List<string>();
@@ -400,230 +410,14 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                     authors.Add(name.Last + ", " + name.First + " " + name.Middle);
             }
 
-            datasetCitationEntry.CitationStringTxt = generateText(datasetCitationEntry.DatasetId, model.Title, datasetCitationEntry.Year, model.Version, model.DOI, datasetCitationEntry.URL, datasetCitationEntry.Publisher, datasetCitationEntry.InstanceName, authors, isPublic);
-
-            return datasetCitationEntry;
-        }
-
-        private string generateCitation(string datasetId, CitationDataModel model, bool isPublic, Format format)
-        {
-            string citationString = "";
-            var settings = ModuleManager.GetModuleSettings("ddm");
-            string url = HttpContext.Current.Request.Url.Host;
-
-            string publisher = settings.GetValueByKey("publisher").ToString();
-            string instanceName = settings.GetValueByKey("instanceName").ToString();
-
-            string year = getYear(model.Year);
-
-            //create authorname in the correct format
-            List<string> authors = new List<string>();
-            foreach (string author in model.Authors)
+            var useTags = Convert.ToBoolean(settings.GetValueByKey("use_tags"));
+            if (CitationsHelper.IsCitationDataModelValid(model))
             {
-                HumanName name = new HumanName(author);
-                if (String.IsNullOrEmpty(name.Middle))
-                    authors.Add(name.Last + ", " + name.First);
-                else
-                    authors.Add(name.Last + ", " + name.Middle + " " + name.First);
-            }
-
-            switch (format)
-            {
-                case Format.Bibtex:
-                    citationString = generateBibtex(datasetId, model.Title, year, model.Version, model.DOI, url, publisher, instanceName, authors, isPublic);
-                    break;
-                case Format.RIS:
-                    citationString = generateRis(datasetId, model.Title, year, model.Version, model.DOI, url, publisher, instanceName, authors, isPublic);
-                    break;
-                case Format.Text:
-                    citationString = generateText(datasetId, model.Title, year, model.Version, model.DOI, url, publisher, instanceName, authors, isPublic);
-                    break;
-            }
-
-            return citationString;
-        }
-
-        private CitationDataModel GetModel(DatasetVersion datasetVersion)
-        {
-            CitationDataModel model = new CitationDataModel();
-
-            XmlDocument xmlDoc = datasetVersion.Metadata;
-            string citationString = "";
-            //get citation concept
-            using (var conceptManager = new ConceptManager())
-            {
-                var concept = conceptManager.MappingConceptRepository.Get().Where(c => c.Name.Equals("Citation")).FirstOrDefault();
-
-                long mdId = datasetVersion.Dataset.MetadataStructure.Id;
-
-                xmlDoc = MappingUtils.GetConceptOutput(mdId, concept.Id, xmlDoc);
-
-                XmlSerializer serializer = new XmlSerializer(typeof(CitationDataModel), new XmlRootAttribute("data"));
-                using (XmlReader reader = new XmlNodeReader(xmlDoc))
-                {
-                    model = (CitationDataModel)serializer.Deserialize(reader);
-                }
-
-                if(String.IsNullOrEmpty(model.Version))
-                    model.Version = datasetVersion.VersionNo.ToString();
-                if(String.IsNullOrEmpty(model.Year))
-                {
-                    if(String.IsNullOrEmpty(datasetVersion.PublicAccessDate.ToString()))
-                        model.Year = datasetVersion.PublicAccessDate.ToString();
-                    else
-                        model.Year = datasetVersion.Timestamp.ToString();
-                }
-                if(String.IsNullOrEmpty(model.DOI))
-                {
-                    using (var publicationManager = new PublicationManager())
-                    {
-                        var pub = publicationManager.GetPublication(datasetVersion.Dataset.Id);
-                        if(pub != null)
-                        {
-                            if(!String.IsNullOrEmpty(pub.Doi))
-                                model.DOI = pub.Doi;    
-                        }
-                    }
-                }
-                    
-            }
-
-            return model;
-        }
-
-        private string generateBibtex(string datasetId, string title, string year, string version, string doi, string url, string publisher, string instanceName, List<string> authors, bool isPublic)
-        {
-            string bibtex = "@misc{" + instanceName + "_" + datasetId + "_v" + version + "\n";
-            bibtex += "title ={" + title + "},\n";
-            bibtex += "author ={";
-            var lastAuthor = authors.Last();
-            foreach (string author in authors)
-            {
-                if (author == lastAuthor)
-                    bibtex += author + "";
-                else
-                    bibtex += author + " and ";
-            }
-            bibtex += "},\n";
-            bibtex += "version ={" + version + "},\n";
-            bibtex += "year ={" + year + "},\n";
-            bibtex += "publisher ={" + publisher + "},\n";
-            if (isPublic)
-            {
-                url += "/ddm/data/Showdata/" + datasetId + "?version=" + version + "";
-                bibtex += "url ={" + url + "},\n";
+                datasetCitationEntry.CitationStringTxt = CitationsHelper.GetCitationString(model, CitationFormat.Text, isPublic, datasetId, useTags);
+                return datasetCitationEntry;
             }
             else
-                bibtex += "url ={" + url + "},\n";
-
-            if (!String.IsNullOrEmpty(doi))
-                bibtex += "doi ={" + doi + "},\n";
-
-            if (isPublic)
-                bibtex += "type ={Dataset. Published.},\n";
-            else
-                bibtex += "type ={Dataset. Unpublished.},\n";
-
-            bibtex += "note ={Dataset ID: " + datasetId + "},\n";
-            bibtex += "}";
-
-            return bibtex;
+                return null;
         }
-
-        private string generateRis(string datasetId, string title, string year, string version, string doi, string url, string publisher, string instanceName, List<string> authors, bool isPublic)
-        {
-            string ris = "TY  - DATA \n";
-            ris += "T1 - " + title + "\n";
-            foreach (string author in authors)
-            {
-                ris += "AU - " + author + "\n";
-            }
-            ris += "PY - " + year + "/// \n";
-            ris += "PB - " + publisher + " \n";
-
-            if (!String.IsNullOrEmpty(doi))
-                ris += "DO - " + doi + "\n";
-
-            if (isPublic)
-            {
-                url += "/ddm/data/Showdata/" + datasetId + "?version=" + version + "";
-                ris += "UR - " + url + "\n";
-            }
-            else
-                ris += "UR - " + url + "\n";
-
-            if (isPublic)
-                ris += "N1 - Dataset ID: " + datasetId + ", Published. \n";
-            else
-                ris += "N1 - Dataset ID: " + datasetId + ", Unpublished. \n`";
-            ris += "ER  -";
-
-            return ris;
-        }
-
-        private string generateText(string datasetId, string title, string year, string version, string doi, string url, string publisher, string instanceName, List<string> authors, bool isPublic)
-        {
-            string text = "";
-            var lastAuthor = authors.Last();
-            foreach (string author in authors)
-            {
-                if (author.Equals(lastAuthor))
-                    text += author;
-                else
-                    text += author + "; ";
-            }
-            text += " (" + year + "): ";
-            text += title + ". ";
-            text += "Version " + version + ". ";
-            text += publisher + ". ";
-            text += "Dataset. ";
-            if (!String.IsNullOrEmpty(doi))
-            {
-                text += doi;
-            }
-            else
-            {
-                if (isPublic)
-                {
-                    url += "/ddm/data/Showdata/" + datasetId + "?version=" + version + "";
-                    text += url + ". ";
-                }
-                else
-                    text += url + ". ";
-
-                text += "Dataset ID= " + datasetId;
-            }
-
-            return text;
-        }
-
-        private string getYear(string dateString)
-        {
-
-            string year = "";
-            var date_time_parts = dateString.Split(' ');
-            // Format: "3/6/2022 7:47:10 PM"
-            if (dateString.Contains("/"))
-            {
-                var date_parts = date_time_parts[0].Split('/');
-                year = date_parts[2];
-            }
-            // Format: "2008-02-22"
-            else
-            {
-                var date_parts = date_time_parts[0].Split('-');
-                year = date_parts[0];
-            }
-
-            return year;
-        }
-
-        public enum Format
-        {
-            RIS,
-            Text,
-            Bibtex
-        }
-
     }
 }

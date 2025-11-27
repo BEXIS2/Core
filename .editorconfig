@@ -84,6 +84,9 @@ csharp_prefer_simple_using_statement = true:suggestion
 csharp_style_namespace_declarations = block_scoped:silent
 csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
 
+# CS1591: Fehledes XML-Kommentar für öffentlich sichtbaren Typ oder Element
+dotnet_diagnostic.CS1591.severity = none
+
 [*.vb]
 #### Benennungsstile ####
 

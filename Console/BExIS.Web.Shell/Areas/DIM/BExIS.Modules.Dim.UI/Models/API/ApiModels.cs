@@ -37,9 +37,9 @@ namespace BExIS.Modules.Dim.UI.Models.Api
         public long MetadataStructureId { get; set; }
         public bool IsPublic { get; set; }
         public string PublicationDate { get; set; }
-        public string VersionName { get; set; }
-        public bool VersionPublicAccess { get; set; }
-        public string VersionPublicAccessDate { get; set; }
+        //public string VersionName { get; set; }
+        //public bool VersionPublicAccess { get; set; }
+        //public string VersionPublicAccessDate { get; set; }
         public Dictionary<string, string> AdditionalInformations { get; set; }
         public Dictionary<string, Dictionary<string, string>> Parties { get; set; }
         public string VersionDate { get; set; }

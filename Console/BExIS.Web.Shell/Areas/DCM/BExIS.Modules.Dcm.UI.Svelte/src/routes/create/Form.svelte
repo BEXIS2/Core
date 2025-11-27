@@ -159,14 +159,14 @@
 						{/if}
 					</div>
 					<button
-						title="cancel"
+						title="Cancel creating a new dataset"
 						type="button"
 						class="btn variant-filled-warning"
-						on:click={onCancel}><Fa icon={faXmark} /></button
+						on:click={onCancel}><Fa icon={faXmark} /><span class="pl-1">Cancel</span></button
 					>
 
-					<button title="create" type="submit" class="btn variant-filled-primary" {disabled}
-						><Fa icon={faAdd} /></button
+					<button title="Create a new dataset and continue editing" type="submit" class="btn variant-filled-primary" {disabled}
+						><Fa icon={faAdd} /><span class="pl-1">Create and Continue</span></button
 					>
 				</div>
 			</form>

@@ -4,7 +4,7 @@ using System.Web.Mvc;
 
 namespace BExIS.App.Bootstrap.Attributes
 {
-    public class ValidateAntiForgeryTokenOnPost: FilterAttribute, IAuthorizationFilter
+    public class CustomValidateAntiForgeryToken: FilterAttribute, IAuthorizationFilter
     {
         public void OnAuthorization(AuthorizationContext filterContext)
         {
@@ -18,12 +18,17 @@ namespace BExIS.App.Bootstrap.Attributes
                 var formToken = request.Form["__RequestVerificationToken"];
 
                 // check header for post from javascript
+
                 if (formToken==null)
                 {
                     formToken = request.Headers["__RequestVerificationToken"];
                 }
 
-                AntiForgery.Validate(cookieToken, formToken);
+                if (cookieToken != null)
+                {
+                    AntiForgery.Validate(cookieToken, formToken);
+                }
+
                 //AntiForgery.Validate();
             }
         }

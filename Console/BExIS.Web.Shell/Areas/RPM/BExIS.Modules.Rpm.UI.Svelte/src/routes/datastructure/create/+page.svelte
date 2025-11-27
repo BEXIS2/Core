@@ -20,7 +20,7 @@
 		getStructures
 	} from '$lib/components/datastructure/services';
 
-	import type { DataStructureCreationModel } from '$lib/components/datastructure/types';
+	import type { DataStructureCreationModel, dwcExtention } from '$lib/components/datastructure/types';
 	import {
 		displayPatternStore,
 		structureStore,
@@ -29,7 +29,8 @@
 		setByTemplateStore,
 		updateDescriptionByTemplateStore,
 		enforcePrimaryKeyStore,
-		changeablePrimaryKeyStore
+		changeablePrimaryKeyStore,
+		showDarwinCoreValidationStore
 	} from '$lib/components/datastructure/store';
 	import { pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
@@ -40,6 +41,7 @@
 	import type { linkType } from '@bexis2/bexis2-core-ui';
 
 	let helpItems: helpItemType[] = dataStructureHelp;
+	
 
 	// load attributes from div
 	let container;
@@ -107,6 +109,10 @@
 			container?.getAttribute('updateDescriptionByTemplate')?.toLocaleLowerCase() == 'true' ? true : false;
 			updateDescriptionByTemplateStore.set(updateDescriptionByTemplate);
 
+		const showDarwinCoreValidation	=
+			container?.getAttribute('showDarwinCoreValidation')?.toLocaleLowerCase() == 'true' ? true : false;
+			showDarwinCoreValidationStore.set(showDarwinCoreValidation);
+
 		// 2 Usecases,
 		// 1. generate from file, selection needed -> load file
 		// 2. create empty datastructure -> jump direct to generate
@@ -138,6 +144,8 @@
 		// load display pattern onces for all edit types
 		const displayPattern = await getDisplayPattern();
 		displayPatternStore.set(displayPattern);
+
+		
 	}
 
 	async function update(e) {
@@ -191,7 +199,7 @@
 					<Selection bind:model on:saved={update} {init} />
 				</div>
 			{:else if model.variables}
-				<Structure {model} on:back={back} />
+				<Structure {model} on:back={back}/>
 			{/if}
 		{/if}
 	{:catch error}
