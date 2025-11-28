@@ -134,12 +134,12 @@ order by id
 limit 1);
 
 
--- update all variables with Floating Point Number
+-- update all variables with Date Time
 update variables 
 set datatyperef = (select id from datatypes where name = 'Date and Time') 
 where datatyperef in (select id from datatypes where SystemType = 'DateTime');
 
--- update datacontainers with Floating Point Number
+-- update datacontainers with Date Time
 update datacontainers 
 set datatyperef = (select id from datatypes where name = 'Date and Time') 
 where datatyperef in (select id from datatypes where SystemType = 'DateTime');
@@ -155,12 +155,12 @@ where id = (select id systemtype from datatypes where systemtype = 'Boolean'
 order by id
 limit 1);
 
--- update all variables with Floating Point Number
+-- update all variables with Boolean
 update variables 
 set datatyperef = (select id from datatypes where name = 'Boolean') 
 where datatyperef in (select id from datatypes where SystemType = 'Boolean');
 
--- update datacontainers with Floating Point Number
+-- update datacontainers with Boolean
 update datacontainers 
 set datatyperef = (select id from datatypes where name = 'Boolean') 
 where datatyperef in (select id from datatypes where SystemType = 'Boolean');
