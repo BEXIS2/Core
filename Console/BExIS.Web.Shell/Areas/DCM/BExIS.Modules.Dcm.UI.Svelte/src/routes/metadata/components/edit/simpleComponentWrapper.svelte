@@ -24,7 +24,7 @@
 			? path.split('.')[path.split('.').length - 1]
 			: path;
 
-	let value = getValueByPath(path + '.#text');
+	let value = getValueByPath(path);
 </script>
 
 {#if path && simpleComponent.properties}

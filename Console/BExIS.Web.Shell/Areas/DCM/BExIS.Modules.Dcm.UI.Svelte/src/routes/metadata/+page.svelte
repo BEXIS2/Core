@@ -6,8 +6,8 @@
 	import { helpStore, Spinner } from '@bexis2/bexis2-core-ui';
 
 	import { Page } from '@bexis2/bexis2-core-ui';
-	import { metadataStore } from './stores';
-	import { schemaToJson } from './utils';
+	import { schemaToJson, setConfigStore, setMetadataStore } from './utils';
+	import configJson from './customComponents/config.json';
 
 	export let schemaId: number = 2;
 	export let datasetId: number = 0;
@@ -24,7 +24,8 @@
 			if (datasetId > 0) m = await apiCalls.GetMetadata(datasetId);
 			else m = schemaToJson(s);
 			console.log('Metadata loaded', m);
-			metadataStore.set(m);
+			setMetadataStore(m);
+			setConfigStore(configJson);
 		}
 	}
 </script>

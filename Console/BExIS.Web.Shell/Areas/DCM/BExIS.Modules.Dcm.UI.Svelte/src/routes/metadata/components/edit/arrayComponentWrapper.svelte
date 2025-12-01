@@ -10,7 +10,7 @@
 	} from '@bexis2/bexis2-core-ui';
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from './simpleComponent.svelte';
-	import { getValueByPath, setValueByPath, updateMetadataStore, schemaToJson, toggleShow } from '../../utils';
+	import { getValueBySchemaPath, setValueByPath, updateMetadataStore, schemaToJson, toggleShow } from '../../utils';
 	import { faPlus, faChevronUp, faChevronDown, faTrash } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { slide, fade } from 'svelte/transition';
@@ -25,7 +25,7 @@
 			? arrayComponent.items.required
 			: [];
 
-	let value = getValueByPath(path) == undefined ? [] : getValueByPath(path);
+	let value = getValueBySchemaPath(path) == undefined ? [] : getValueBySchemaPath(path);
 	let render: boolean = false;
 
 	let maxItems: number = arrayComponent.maxItems ? arrayComponent.maxItems : 2147483647;
@@ -198,7 +198,7 @@
 								<SimpleComponent
 									simpleComponent={arrayComponent.items}
 									path={path + '.' + index}
-									value={getValueByPath(path + '.' + index + '.#text')}
+									value={getValueBySchemaPath(path + '.' + index + '.#text')}
 									{label}
 									required={requiredList.includes(label)}
 								/>

@@ -1,14 +1,22 @@
 import type { SimpleComponentData, validationStoretype } from './models';
-import { metadataStore, hideStore, validationStore } from './stores';
+import { metadataStore, hideStore, validationStore, configStore } from './stores';
 // Utility functions for metadata handling
 // Get and set values in the metadata store based on a dot-separated path
+export function setMetadataStore(metadata: any) {
+	metadataStore.set(metadata);
+}
 // Get value from an object based on a dot-separated path
-export function getValueByPath(path: string) {
+export function getValueBySchemaPath(path: string) {
 	let obj: any;
 	metadataStore.subscribe((v) => {
 		obj = v;
 	});
 	return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+}
+
+export function getValueByPath(path: string) {
+	path = path + '.#text';
+	return getValueBySchemaPath(path);
 }
 // Set value in an object based on a dot-separated path
 export function setValueByPath(obj: any, path: string, value: any) {
@@ -25,28 +33,84 @@ export function setValueByPath(obj: any, path: string, value: any) {
 }
 // Update metadata store with a new value at the specified path
 export function updateMetadataStore(path: string, value: any):any {
-	let obj: any;
-	metadataStore.subscribe((v) => {
-		obj = v;
-	});
-	{
-		if (value !== undefined && value !== null && value !== getValueByPath(path + '.#text')) {
-			obj = setValueByPath(obj, path + '.#text', value);
-			if (
-				obj &&
-				obj !== undefined &&
-				obj !== null &&
-				obj !==
-					metadataStore.subscribe((value) => {
-						obj = value;
-					})
-			) {
-				metadataStore.set(obj);
+	let obj: any = {};
+	if (path !== undefined && path !== null && path !== '') {
+		metadataStore.subscribe((v) => {
+			obj = v;
+		});
+		{
+			if (value !== undefined && value !== null && value !== getValueByPath(path)) {
+				obj = setValueByPath(obj, path + '.#text', value);
+				if (
+					obj !== undefined &&
+					obj !== null &&
+					obj !==
+						metadataStore.subscribe((value) => {
+							obj = value;
+						})
+				) {
+					metadataStore.set(obj);
+				}
 			}
 		}
 	}
+	console.log('Updated metadata store:', obj);
 	return obj;
 }
+// Config Store Functions
+// Set configuration data in the config store
+export function setConfigStore(config: any) {
+	configStore.set(config);
+}
+
+// Get configuration data from the config store
+export function getConfigStore(): any {
+	let config: any;
+	configStore.subscribe((v) => {
+		config = v;
+	});
+	return config;
+}
+
+// Get anchor point for a given component name from the config store
+// export function getAnchorFromConfig(componentName: string): string {	
+// 	if(componentName != null && componentName != undefined && componentName != ''){
+// 		let config: any = getConfigStore();
+// 		for (const component of config.components) {
+// 			if (component.meta.component_name.toLowerCase() === componentName.toLowerCase() && component.globalSettings.anchorpoint === anchor) {
+// 				return component.globalSettings.anchorpoint;
+// 			}
+// 		}
+// 	}
+// 	return '';
+// }
+
+export function getVariablesFromConfig(componentName: string, anchor: string): any[] {	
+	let variables: any[] = [];
+	if(componentName != null && componentName != undefined && componentName != ''){
+		let config: any = getConfigStore();
+		for (const component of config.components) {
+			if (component.meta.component_name.toLowerCase() === componentName.toLowerCase() && component.globalSettings.anchorpoint === anchor) {
+				variables = component.mode.variables.variable;
+			}
+		}
+	}
+	return variables;
+}
+
+export function getVariableSoursePathFromConfig(componentName: string, anchor: string, targetVariableName: string): string {
+	if(componentName != null && componentName != undefined && componentName != ''){	
+		let variables = getVariablesFromConfig(componentName, anchor);
+			for (const variable of variables) {
+				if (variable.target_variable === targetVariableName) {
+					console.log('Found variable:', variable.JSONPath);
+					return variable.JSONPath;
+				}
+			}
+		}
+return '';
+}
+
 // Convert a schema node to a JSON object with default values
 export function schemaToJson(schema: any): any {
 	if (!schema) return null;
