@@ -10,6 +10,7 @@
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
 	import { ValidationStoreAddSimpleComponent, ValidationStoreSetSimpleTypeValid, updateMetadataStore, createSimpleComponentValidationItem, getConfigStore } from '../../../../lib/components/utils/metadata/metadataComponentUtils';
+	import { customComponentsCatalog } from '../../../../lib/components/customComponents/componentCatalog';
 	import suite from './simpleComponent';
 	import type { SimpleComponentData } from '../../../../lib/components/utils/metadata/models';
 	import SveltyPicker from 'svelty-picker';
@@ -27,7 +28,7 @@
 	let config: any;
 	let isAnchor: boolean = false;
 	let isVisible: boolean = true;
-	let customComponent: any; 
+	let customComponent: any;
 
 	// set overall validity
 	$: ValidationStoreSetSimpleTypeValid(path, res.isValid());
@@ -48,7 +49,7 @@
 				date = value !== undefined || value == '' ? value as Date : Date.now() as unknown as Date;
 			}
 			// create validation item and add to store
-			let simpleComponentValidationItem: SimpleComponentData = createSimpleComponentValidationItem(path, label, required, false, simpleComponent); 
+			let simpleComponentValidationItem: SimpleComponentData = createSimpleComponentValidationItem(path, label, required, simpleComponent); 
 			// add to validation store
 			ValidationStoreAddSimpleComponent(simpleComponentValidationItem);
 			config = getConfigStore();
@@ -56,7 +57,7 @@
 			for (const component of config.components) {
 				if (component.globalSettings.anchorpoint == path){
 					isAnchor = true;
-					customComponent = (await import('../../../../lib/components/customComponents/'+component.meta.component_name+'/component.svelte')).default;
+					customComponent = customComponentsCatalog[component.meta.component_name].component;
 				}
 				for (const variable of component.mode.variables.variable) {
 					if (variable.JSONPath == path && variable.is_visible == false){

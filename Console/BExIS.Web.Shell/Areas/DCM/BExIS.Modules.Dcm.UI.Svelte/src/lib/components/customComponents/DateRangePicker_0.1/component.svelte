@@ -1,7 +1,7 @@
 <script lang="ts">
 	
 	import { onMount } from 'svelte';
-	import { getValueByPath, updateMetadataStore, getVariableSoursePathFromConfig, ValidationStoreSetSimpleTypeValid } from '../../utils/metadata/metadataComponentUtils';
+	import { getValueByPath, updateMetadataStore, getVariableSoursePathFromConfig } from '../../utils/metadata/metadataComponentUtils';
 	import SveltyPicker, {  } from 'svelty-picker';
 	//import { en, de } from 'svelty-picker/dist/i18n';
 

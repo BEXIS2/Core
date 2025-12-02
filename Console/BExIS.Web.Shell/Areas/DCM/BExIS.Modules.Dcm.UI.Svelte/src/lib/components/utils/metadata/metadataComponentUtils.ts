@@ -1,3 +1,4 @@
+import exp from 'constants';
 import type { SimpleComponentData, validationStoretype } from './models';
 import { metadataStore, hideStore, validationStore, configStore } from './stores';
 // Utility functions for metadata handling
@@ -54,7 +55,6 @@ export function updateMetadataStore(path: string, value: any):any {
 			}
 		}
 	}
-	console.log('Updated metadata store:', obj);
 	return obj;
 }
 // Config Store Functions
@@ -166,18 +166,21 @@ export function getValidationStore(): validationStoretype {
 				validationStoreValues = n;
 			});
 		if(validationStoreValues == undefined) {
-			validationStoreValues = { allSimpleRequiredValid: false, simpleTypeValidationItems: [] };
-			validationStore.set(validationStoreValues);
+			clearValidationStore();
 		}
 	return validationStoreValues;
 	}
+
+export function clearValidationStore(): void {
+	validationStore.set({ allSimpleRequiredValid: false, simpleTypeValidationItems: [] });
+}
 // Add a simple component's validation data to the validation store
 // if it doesn't already exist
 // and has relevant validation criteria
 // Returns the updated validation store values
 export function ValidationStoreAddSimpleComponent(item: SimpleComponentData): validationStoretype {
 	let validationStoreValues: validationStoretype = getValidationStore();
-		if( !validationStoreValues.simpleTypeValidationItems.includes(item) && (item.required || item.regex !== undefined || item.lowerBound !== undefined || item.upperBound !== undefined || (item.domainList && item.domainList.length > 0)) ) {
+		if( validationStoreValues.simpleTypeValidationItems.find(i => i.path === item.path) === undefined && (item.required || item.regex !== undefined || item.lowerBound !== undefined || item.upperBound !== undefined || (item.domainList && item.domainList.length > 0)) ) {
 			validationStoreValues.simpleTypeValidationItems.push(item);
 			validationStore.set(validationStoreValues);
 		}
@@ -205,7 +208,7 @@ export function ValidationStoreSetSimpleTypeValid(path:string, isValid: boolean)
 	}
 // Create a SimpleComponentData validation item
 // based on the provided parameters and simple component properties
-export function createSimpleComponentValidationItem(label: string, path: string, required: boolean , isValid: boolean, simpleComponent: any): SimpleComponentData {
+export function createSimpleComponentValidationItem(path: string,label: string, required: boolean, simpleComponent: any): SimpleComponentData {
 	let simpleComponentValidationItem: SimpleComponentData = {label: label,path: path, required: required , isValid: false};
 
 	// set regex if defined
