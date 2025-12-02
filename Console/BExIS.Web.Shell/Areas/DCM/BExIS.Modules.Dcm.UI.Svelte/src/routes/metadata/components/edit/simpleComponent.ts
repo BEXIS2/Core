@@ -1,7 +1,6 @@
 import { create, test, enforce, only, skipWhen, each } from 'vest';
-import { validationStore } from '../../stores';
-import type { validationStoretype } from '../../models';
-import { getValidationStore } from '../../utils';
+import type { validationStoretype } from '../../../../lib/components/utils/metadata/models';
+import { getValidationStore } from '../../../../lib/components/utils/metadata/metadataComponentUtils';
 
 // Get current values from the validation store
 let validationStoreValues: validationStoretype = getValidationStore();
@@ -12,6 +11,7 @@ const suite = create((data: any, fieldName: string) => {
     if (validationStoreValues.simpleTypeValidationItems.length > 0) {
         // Iterate over each validation item in the store
         each(validationStoreValues.simpleTypeValidationItems, (item) => {
+            console.log('Validating field:', item.path, 'with data:', data);
             if(fieldName == item.path){
                 // Validate required field
                 if(item.required){

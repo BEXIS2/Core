@@ -10,7 +10,7 @@
 	} from '@bexis2/bexis2-core-ui';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 
-	import { getValueByPath, setValueByPath, updateMetadataStore } from '../../utils';
+	import { getValueByPath, setValueByPath, updateMetadataStore } from '../../../../lib/components/utils/metadata/metadataComponentUtils';
 
 	import SimpleComponent from './simpleComponent.svelte';
 

@@ -10,11 +10,11 @@
 	} from '@bexis2/bexis2-core-ui';
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from './simpleComponent.svelte';
-	import { getValueBySchemaPath, setValueByPath, updateMetadataStore, schemaToJson, toggleShow } from '../../utils';
+	import { getValueBySchemaPath, setValueByPath, updateMetadataStore, schemaToJson, toggleShow } from '../../../../lib/components/utils/metadata/metadataComponentUtils';
 	import { faPlus, faChevronUp, faChevronDown, faTrash } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { slide, fade } from 'svelte/transition';
-	import { hideStore } from '../../stores';
+	import { hideStore } from '../../../../lib/components/utils/metadata/stores';
 
 	export let arrayComponent: any;
 	export let path: string;

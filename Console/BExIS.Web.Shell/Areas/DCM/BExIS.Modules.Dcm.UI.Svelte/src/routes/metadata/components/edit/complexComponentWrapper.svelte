@@ -15,8 +15,8 @@
 	import { faPlus, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { slide, fade } from 'svelte/transition';
-	import { hideStore } from '../../stores';
-	import { toggleShow } from '../../utils';
+	import { hideStore } from '../../../../lib/components/utils/metadata/stores';
+	import { toggleShow } from '../../../../lib/components/utils/metadata/metadataComponentUtils';
 
 	export let complexComponent: any;
 	export let path: string;

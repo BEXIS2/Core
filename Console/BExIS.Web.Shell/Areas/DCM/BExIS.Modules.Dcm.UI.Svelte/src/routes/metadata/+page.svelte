@@ -6,7 +6,7 @@
 	import { helpStore, Spinner } from '@bexis2/bexis2-core-ui';
 
 	import { Page } from '@bexis2/bexis2-core-ui';
-	import { schemaToJson, setConfigStore, setMetadataStore } from './utils';
+	import { schemaToJson, setConfigStore, setMetadataStore } from '../../lib/components/utils/metadata/metadataComponentUtils';
 	import configJson from './customComponents/config.json';
 
 	export let schemaId: number = 2;

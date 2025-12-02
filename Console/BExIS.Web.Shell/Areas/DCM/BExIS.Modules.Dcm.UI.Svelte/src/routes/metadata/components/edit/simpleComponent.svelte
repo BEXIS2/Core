@@ -9,9 +9,9 @@
 	} from '@bexis2/bexis2-core-ui';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
-	import { ValidationStoreAddSimpleComponent, ValidationStoreSetSimpleTypeValid, updateMetadataStore, createSimpleComponentValidationItem, getConfigStore } from '../../utils';
+	import { ValidationStoreAddSimpleComponent, ValidationStoreSetSimpleTypeValid, updateMetadataStore, createSimpleComponentValidationItem, getConfigStore } from '../../../../lib/components/utils/metadata/metadataComponentUtils';
 	import suite from './simpleComponent';
-	import type { SimpleComponentData } from '../../models';
+	import type { SimpleComponentData } from '../../../../lib/components/utils/metadata/models';
 	import SveltyPicker from 'svelty-picker';
 	//import { en, de } from 'svelty-picker/dist/i18n';
 
@@ -56,7 +56,7 @@
 			for (const component of config.components) {
 				if (component.globalSettings.anchorpoint == path){
 					isAnchor = true;
-					customComponent = (await import('../../customComponents/'+component.meta.component_name+'/+page.svelte')).default;
+					customComponent = (await import('../../../../lib/components/customComponents/'+component.meta.component_name+'/component.svelte')).default;
 				}
 				for (const variable of component.mode.variables.variable) {
 					if (variable.JSONPath == path && variable.is_visible == false){

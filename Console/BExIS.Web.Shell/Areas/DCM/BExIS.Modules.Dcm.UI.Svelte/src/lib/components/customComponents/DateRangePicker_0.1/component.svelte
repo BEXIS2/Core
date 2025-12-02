@@ -1,18 +1,11 @@
 <script lang="ts">
 	
 	import { onMount } from 'svelte';
-	import { getValueByPath, updateMetadataStore, getVariableSoursePathFromConfig, ValidationStoreSetSimpleTypeValid } from '../../utils';
+	import { getValueByPath, updateMetadataStore, getVariableSoursePathFromConfig, ValidationStoreSetSimpleTypeValid } from '../../utils/metadata/metadataComponentUtils';
 	import SveltyPicker, {  } from 'svelty-picker';
-	import suite from '../../components/edit/simpleComponent';
-		//import { en, de } from 'svelty-picker/dist/i18n';
+	//import { en, de } from 'svelty-picker/dist/i18n';
 
 	let componentName: string = 'DateRangePicker_0.1';
-
-	// load form result object
-	let res = suite.get();
-
-	// set overall validity
-	//$: ValidationStoreSetSimpleTypeValid(path, res.isValid());
 
 	export let label: string;
 	export let anchor: string;
@@ -23,25 +16,11 @@
 	
 	// update metadata store on value change
 	$: updateMetadataStore(valuePath, value!= undefined && value != null ? value.toString() : '');
+
 	onMount(async () => {
-			// initial check
-			setTimeout(async () => {
-					res = suite(value, '');
-			}, 10);
 
 			date = value !== undefined || value == '' ? value as Date : Date.now() as unknown as Date;
 	});
-
-	//change event: if input change check also validation only on the field
-	// e.target.id is the id of the input component
-	function onChangeHandler(e: any) {
-		// add some delay so the entityTemplate is updated
-		// otherwise the values are old
-		setTimeout(async () => {
-			// check changed field
-			res = suite(value, e.target.id);
-		}, 10);
-	}
 
 	</script>
 		<span id = {anchor}>

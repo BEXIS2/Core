@@ -9,7 +9,7 @@
         "anchorpoint": "Basic.pubDate"
       },
       "mode": {
-        "mode_name": "dateRange",
+        "mode_name": "dateRangeOneField",
         "variables": {
           "variable": [
             {
