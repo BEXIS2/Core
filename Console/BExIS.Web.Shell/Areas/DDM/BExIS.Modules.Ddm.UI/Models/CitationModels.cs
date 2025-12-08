@@ -43,7 +43,8 @@ namespace BExIS.Modules.Ddm.UI.Models
         [XmlElement("version")]
         public string Version { get; set; }
 
-        [XmlElement("projects")]
+        [XmlArray("projects")]
+        [XmlArrayItem("project")]
         public List<string> Projects { get; set; }
 
         [XmlElement("year")]
@@ -70,8 +71,6 @@ namespace BExIS.Modules.Ddm.UI.Models
         //public string EntityType { get; set; }
 
         [XmlElement("entryType")]
-        [Required(ErrorMessage = "Entry Type is required")]
-        [MinLength(1, ErrorMessage = "Entry Type cannot be empty")]
         public string EntryType { get; set; }
 
         [XmlElement("entityName")]
