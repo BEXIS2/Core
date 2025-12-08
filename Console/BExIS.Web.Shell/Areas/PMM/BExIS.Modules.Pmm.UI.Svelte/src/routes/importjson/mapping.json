@@ -17,7 +17,7 @@
             "Target": "$.publication.Author"
         },
         {
-            "Source": "",
+            "Source": "affiliation",
             "Target": "$.publication.Affiliatons"
         },
         {

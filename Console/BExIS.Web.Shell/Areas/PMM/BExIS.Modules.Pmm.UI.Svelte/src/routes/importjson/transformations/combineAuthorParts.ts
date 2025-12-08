@@ -1,16 +1,29 @@
 export function combineAuthorParts(obj: any): any {
-  if (obj === null || typeof obj !== "object") return obj;
+  if (obj == null || typeof obj !== "object") return obj;
 
-  // Prüfen, ob das Objekt ein "author"-Array hat
+  // Falls "author" ein Array ist
   if (Array.isArray(obj.author)) {
-    obj.author = obj.author.map((a: any) => {
+
+    // Top-Level Affiliation immer anlegen
+    obj.affiliation = [];
+
+    obj.author = obj.author.map(a => {
       const given = a.given?.trim() ?? "";
       const family = a.family?.trim() ?? "";
-      return `${given} ${family}`.trim();
+      const fullName = `${given} ${family}`.trim();
+
+      // affiliation hochziehen (auch wenn leer)
+      if (Array.isArray(a.affiliation)) {
+        obj.affiliation.push(...a.affiliation);
+      }
+
+      return {
+        name: fullName
+      };
     });
   }
 
-  // Rekursiv in verschachtelten Strukturen weitermachen
+  // rekursiv in andere Strukturen gehen
   for (const key in obj) {
     if (typeof obj[key] === "object") {
       obj[key] = combineAuthorParts(obj[key]);

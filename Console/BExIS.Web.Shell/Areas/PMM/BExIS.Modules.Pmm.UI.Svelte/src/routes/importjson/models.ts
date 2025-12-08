@@ -2,6 +2,7 @@ export interface validatedData {
     data: any;
     MissingFields?: string[];
     TypeMessage: string;
+    imported: boolean;
 }
 
 export interface datasetType  {

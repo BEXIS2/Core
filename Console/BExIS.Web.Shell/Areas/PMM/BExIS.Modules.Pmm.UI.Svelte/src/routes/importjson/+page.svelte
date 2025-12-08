@@ -1,216 +1,341 @@
 <script lang="ts">
-	/* -------------------- IMPORTS -------------------- */
-	import { Page, DropdownKVP, TextInput, CheckboxKVPList, notificationStore, notificationType } from '@bexis2/bexis2-core-ui';
+
+	/* ============================================================
+	   IMPORTS
+	   ============================================================ */
+	import {
+		Page,
+		DropdownKVP,
+		TextInput,
+		CheckboxKVPList,
+		notificationStore,
+		notificationType
+	} from '@bexis2/bexis2-core-ui';
+
 	import { FileButton } from '@skeletonlabs/skeleton';
+
 	import {
 		faArrowUpFromBracket,
 		faChevronDown,
 		faChevronUp
 	} from '@fortawesome/free-solid-svg-icons';
+
 	import { onMount } from 'svelte';
 	import Fa from 'svelte-fa';
 	import { slide } from 'svelte/transition';
 	import JsonTree from 'svelte-json-tree';
 
 	import mapping from './mapping.json';
-	import type { validatedData, datasetType, issueType, fillDatasetType } from './models';
+	import type {
+		validatedData,
+		datasetType,
+		issueType,
+		fillDatasetType
+	} from './models';
+
 	import * as apiCalls from './services/apiCalls';
 	import { applyTransformations } from './transformations';
 
-	/* -------------------- VARIABLES -------------------- */
-	// --- File & DOI ---
-	let filename: string = '';
-	let manualDOI: string = '';
 
-	// --- Data & validation ---
+
+	/* ============================================================
+	   GLOBAL STATE VARIABLES
+	   ============================================================ */
+
+	// --- FILE & DOI INPUT ---
+	let filename: string = "";             // name of uploaded JSON/TXT file
+	let manualDOI: string = "";            // DOI(s) typed manually
+
+	// --- VALIDATION RESULT STRUCTURE ---
 	let validatedData: validatedData = {
 		data: [],
 		MissingFields: [],
-		TypeMessage: ''
+		TypeMessage: "",
+		imported: false
 	};
-	let DataArray: any[] = [];
-	let showDataTree: boolean = false;
 
-	// --- Entities / dropdown ---
-	let entities: any[] = [];
-	let transformedArray: any[] = [];
-	let target: number;
-	let EntityTemplateId: number;
-	let MetadataStructureId: number;
+	let DataArray: any[] = [];             // stores validated results for each DOI
+	let showDataTree: boolean = false;     // toggles preview
 
-	// --- Issues & checkbox ---
-	let showErrorMsg: boolean = false;
+	// --- ENTITY TEMPLATE SELECTION (BEXIS) ---
+	let entities: any[] = [];              // list of all entity templates from backend
+	let transformedArray: any[] = [];      // dropdown-compatible structure
+	let target: number;                    // dropdown selected ID
+	let EntityTemplateId: number;          // selected template ID
+	let MetadataStructureId: number;       // metadata schema ID for import
+
+	// --- ISSUE HANDLING ---
+	let showErrorMsg: boolean = false;     // toggle for issue components
 	let hasIssuesCalled: boolean = false;
-	let IssueRow: issueType = { Index: 0, errorType: '', msg: '' };
-	let issueBlock: any[] = [];
-	let groupedIssues: any[] = [];
-	let currentIndex: number = 0;
+	let IssueRow: issueType = { Index: 0, errorType: "", msg: "" };
+	let issueBlock: any[] = [];            // flat list of all issues
+	let groupedIssues: any[] = [];         // issues grouped by dataset index
+	let currentIndex: number = 0;          // for step navigation
 
-	let selectAll: { key: number; value: string }[] = [{ key: -1, value: 'Select all' }];
-	
-	// let _prevSelectAllTarget: number[] = [];
-
-	let initialized = false;
+	// --- "SELECT ALL" CHECKBOX HANDLING ---
+	let selectAll = [{ key: -1, value: "Select all" }];
+	let initialized = false;               // ensures select-all does not auto-trigger on first run
 	let selectAllTarget: number[] = [];
+
+	// Reactive Svelte statements
 	$: selectAllBoxes(selectAllTarget);
 	$: deselectSelectBox(groupedIssues);
 
- function deselectSelectBox(issues: typeof groupedIssues) {
-    const allFilled = issues.every(issue => issue.selected.length > 0);
 
-    if (allFilled) {
-      if (!initialized) {
-      initialized = true;
-      return; // 🚫 beim ersten Lauf: nichts tun
-    }
-	  
-      selectAllTarget = [-1];
-    } else {
-      console.log("⚠️ Mindestens ein selected ist leer");
-      selectAllTarget = [];
-    }
-  }
-	/* -------------------- ON MOUNT -------------------- */
 
+	/* ============================================================
+	   SELECT-ALL LOGIC
+	   ============================================================ */
+
+	// Automatically deactivate select-all when not all entries are selected
+	function deselectSelectBox(issues: typeof groupedIssues) {
+		const allFilled = issues.every(issue => issue.selected.length > 0);
+
+		if (allFilled) {
+			if (!initialized) {
+				initialized = true; // prevent first-run auto-trigger
+				return;
+			}
+			selectAllTarget = [-1]; // enable select-all
+		} else {
+			selectAllTarget = [];   // disable select-all
+		}
+	}
+
+
+
+	/* ============================================================
+	   LIFECYCLE: OnMount
+	   ============================================================ */
 	onMount(async () => {
+		// Load available entity templates for metadata import
 		entities = await apiCalls.getEntityTemplateList();
-		transformedArray = entities.map((entity) => ({
+
+		// Convert to dropdown format
+		transformedArray = entities.map(entity => ({
 			id: entity.id,
 			text: entity.name
 		}));
 	});
 
-	/* -------------------- HANDLERS -------------------- */
 
+
+	/* ============================================================
+	   HANDLERS: ENTITY SELECTION
+	   ============================================================ */
 	function onChangeHandler(event: any) {
-		let selectedEntity: number;
-		selectedEntity = event.target.value;
-		let searchEntity = entities.find((entity) => entity.id == selectedEntity);
-		EntityTemplateId = +selectedEntity;
+		const selectedEntity = Number(event.target.value);
+
+		const searchEntity = entities.find(e => e.id === selectedEntity);
+
+		EntityTemplateId = selectedEntity;
 		MetadataStructureId = searchEntity.metadataStructure.id;
-		console.log('Selected Entity Template ID:', EntityTemplateId);
-		console.log('Selected Metadata Structure ID:', MetadataStructureId);
+
+		console.log("Selected Entity Template ID:", EntityTemplateId);
+		console.log("Selected Metadata Structure ID:", MetadataStructureId);
 	}
 
-	// handle dois - get metadata
+
+
+	/* ============================================================
+	   TXT FILE UPLOAD — PARSE DOI LIST
+	   ============================================================ */
+	async function handleTxtUpload(event: Event) {
+		const input = event.target as HTMLInputElement;
+		if (!input.files?.length) return;
+
+		filename = input.files[0].name;
+		const file = input.files[0];
+
+		const reader = new FileReader();
+		reader.onload = async e => {
+			const content = e.target?.result as string;
+
+			// Split by comma, semicolon, whitespace, line breaks
+			const doiList = content
+				.split(/[,\n\r; ]+/)
+				.map(d => d.trim())
+				.filter(d => d.length > 0);
+
+			if (!doiList.length) {
+				notificationStore.showNotification({
+					notificationType: notificationType.error,
+					message: "No valid DOIs found in text file."
+				});
+				return;
+			}
+
+			console.log("DOIs from TXT:", doiList);
+
+			// Reset UI state
+			DataArray = [];
+			validatedData = { data: [], MissingFields: [], TypeMessage: "", imported: false };
+			showDataTree = false;
+
+			await grabMetadata(doiList);
+		};
+
+		reader.readAsText(file);
+	}
+
+
+
+	/* ============================================================
+	   MANUAL DOI INPUT
+	   ============================================================ */
 	async function handleManualDOI() {
-		if (!manualDOI || manualDOI.trim() === '') {
-			let msg = "Please enter at least on DOI"
+		if (!manualDOI.trim()) {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: msg
-			})
-			
-			// alert("Please enter at least one DOI.");
+				message: "Please enter at least one DOI"
+			});
 			return;
 		}
 
-		// Eingabe aufteilen anhand von Kommas oder Leerzeichen
+		// Split by comma or whitespace
 		const doiList = manualDOI
-			.split(/[,\s]+/) // trennt an Kommas oder Leerzeichen
-			.map((doi) => doi.trim())
-			.filter((doi) => doi.length > 0);
+			.split(/[,\s]+/)
+			.map(d => d.trim())
+			.filter(d => d.length > 0);
 
-		if (doiList.length === 0) {
-			alert('No valid DOIs entered.');
+		if (!doiList.length) {
+			alert("No valid DOIs entered.");
 			return;
 		}
 
-		console.log('Manual DOIs entered:', doiList);
+		console.log("Manual DOIs:", doiList);
 
+		// Reset previous results
 		DataArray = [];
-		validatedData = { data: [], MissingFields: [], TypeMessage: '' };
+		validatedData = { data: [], MissingFields: [], TypeMessage: "", imported: false };
 		showDataTree = false;
 
 		await grabMetadata(doiList);
 	}
 
-	// let json: any; //für debugging -> wenn gelöscht wird bei handleFileUpload const json =JSON.parse...
 
+
+	/* ============================================================
+	   JSON FILE UPLOAD — EXTRACT DOI(s)
+	   ============================================================ */
 	async function handleFileUpload(event: Event) {
 		const input = event.target as HTMLInputElement;
-		if (input.files && input.files.length > 0) {
-			DataArray = [];
-			validatedData = { data: [], MissingFields: [], TypeMessage: '' };
-			showDataTree = false;
+		if (!input.files?.length) return;
 
-			filename = input.files[0].name;
-			const file = input.files[0];
-			const reader = new FileReader();
+		DataArray = [];
+		validatedData = { data: [], MissingFields: [], TypeMessage: "", imported: false };
+		showDataTree = false;
 
-			reader.onload = async (e) => {
-				try {
-					const json = JSON.parse(e.target?.result as string);
-					// json = JSON.parse(e.target?.result as string);
-					console.log('Uploaded JSON:', json);
-					await grabDOI(json);
-				} catch (err) {
-					console.error('Invalid JSON file');
-				}
-			};
+		filename = input.files[0].name;
+		const file = input.files[0];
 
-			reader.readAsText(file);
-		}
+		const reader = new FileReader();
+		reader.onload = async e => {
+			try {
+				const json = JSON.parse(e.target?.result as string);
+				console.log("Uploaded JSON:", json);
+				await grabDOI(json);
+			} catch {
+				console.error("Invalid JSON file");
+			}
+		};
+
+		reader.readAsText(file);
 	}
 
+
+
+	/* ============================================================
+	   EXTRACT DOI(S) FROM JSON
+	   ============================================================ */
 	async function grabDOI(json: any) {
-		let DOIs: string[] = [];
+		const DOIs: string[] = [];
 
 		if (json.message) {
+			// JSON contains single item
 			DOIs.push(json.message.DOI);
-			console.log('Grabbed DOI:', json.message.DOI);
-		} else if (json.data && Array.isArray(json.data)) {
+		}
+		else if (json.data && Array.isArray(json.data)) {
+			// JSON contains list of items
 			json.data.forEach((item: any, i: number) => {
 				DOIs.push(item?.message?.DOI);
-				console.log(`Grabbed DOI [${i}]:`, item?.message?.DOI);
 			});
-		} else {
-			console.warn('No DOI found!');
+		}
+		else {
+			console.warn("No DOI found!");
 		}
 
 		await grabMetadata(DOIs);
 	}
 
+
+
+	/* ============================================================
+	   FETCH METADATA FOR EACH DOI
+	   ============================================================ */
 	async function grabMetadata(dois: string[]) {
-		let Metadata: any[] = [];
+		const Metadata: any[] = [];
+
 		for (const doi of dois) {
 			try {
 				const res = await apiCalls.getWorkByDOI(doi);
-				// const res = json;
 				Metadata.push(res?.message);
-				console.log(`Metadata for DOI ${doi}:`, res?.message);
 			} catch (e) {
 				console.error(`Failed to fetch metadata for DOI ${doi}:`, e);
 			}
 		}
+
 		validate(Metadata);
 	}
 
-	// validation
+
+
+	/* ============================================================
+	   VALIDATION: MANDATORY FIELDS & TYPE CHECKING
+	   ============================================================ */
 	function validate(Metadata: any[]) {
-		console.log('Starting validation for metadata:', Metadata);
-		Metadata.forEach((data) => {
-			console.log('Validating data:', data);
-			// validatedData.data = data;
+		Metadata.forEach(data => {
+
 			checkMandatoryFields(data);
 			validateTypes(data);
+
+			// apply custom rules from transformations.ts
 			const transformedData = applyTransformations(data);
-			console.log("transformierte daten", transformedData)
+
+			// Filter data based on mapping.json
 			validatedData.data = filterData(transformedData, mapping);
 
-			DataArray.push({ ...validatedData }); // Kopie pushen
-			validatedData = { data: [], MissingFields: [], TypeMessage: '' };
+			// Push a *copy* to DataArray
+			DataArray.push({ ...validatedData });
+
+			// Reset for next iteration
+			validatedData = {
+				data: [],
+				MissingFields: [],
+				TypeMessage: "",
+				imported: false
+			};
 		});
+
+		// Check for issues
 		hasIssues(DataArray);
 		showDataTree = true;
-		console.log('All validated data:', DataArray);
+
+		console.log("Validated data:", DataArray);
 	}
 
-	function checkMandatoryFields(data: Record<string, any>): void {
+
+
+	/* ============================================================
+	   VALIDATION: CHECK REQUIRED FIELDS
+	   ============================================================ */
+	function checkMandatoryFields(data: Record<string, any>) {
 		validatedData.MissingFields ??= [];
+
 		for (const map of mapping.Mappings) {
 			const source = map.Source?.trim();
-			if (source === '') continue;
+			if (!source) continue;
+
 			const value =
 				getNestedValue(data, source) ??
 				getNestedValue(data.message, source) ??
@@ -223,59 +348,84 @@
 		}
 	}
 
-function getNestedValue(obj: any, path: string): any {
-	if (!obj || typeof path !== 'string') return undefined;
-	const parts = path.split('.');
-	let cur = obj;
 
-	for (const p of parts) {
-		if (cur == null || typeof cur !== 'object') return undefined;
 
-		// Finde key case-insensitive
-		const key = Object.keys(cur).find((k) => k.toLowerCase() === p.toLowerCase());
-		if (!key) return undefined;
+	/* ============================================================
+	   HELPERS: DEEP LOOKUP TO EXTRACT VALUES BY PATH
+	   ============================================================ */
+	function getNestedValue(obj: any, path: string): any {
+		if (!obj || typeof path !== "string") return undefined;
 
-		cur = cur[key];
+		const parts = path.split(".");
+		let cur = obj;
+
+		for (const p of parts) {
+			if (cur == null || typeof cur !== "object") return undefined;
+
+			// Case-insensitive key match
+			const key = Object.keys(cur)
+				.find(k => k.toLowerCase() === p.toLowerCase());
+
+			if (!key) return undefined;
+			cur = cur[key];
+		}
+
+		return cur;
 	}
-	return cur;
-}
 
 	function findValueByKeyRecursive(obj: any, key: string): any {
-		if (obj == null || typeof obj !== 'object') return undefined;
-		if (Object.prototype.hasOwnProperty.call(obj, key)) return obj[key];
+		if (!obj || typeof obj !== "object") return undefined;
+
+		if (Object.prototype.hasOwnProperty.call(obj, key)) {
+			return obj[key];
+		}
+
 		for (const k of Object.keys(obj)) {
 			const v = obj[k];
-			if (typeof v === 'object' && v !== null) {
+			if (typeof v === "object" && v !== null) {
 				const found = findValueByKeyRecursive(v, key);
 				if (found !== undefined) return found;
 			}
 		}
+
 		return undefined;
 	}
 
 	function isEmptyValue(value: any): boolean {
-		if (value === null || value === undefined) return true;
-		if (typeof value === 'string') return value.trim() === '';
+		if (value == null) return true;
+
+		if (typeof value === "string") return value.trim() === "";
 		if (Array.isArray(value)) return value.length === 0 || value.every(isEmptyValue);
-		if (typeof value === 'object') {
+
+		if (typeof value === "object") {
 			const keys = Object.keys(value);
-			return keys.length === 0 || keys.every((k) => isEmptyValue(value[k]));
+			return keys.length === 0 || keys.every(k => isEmptyValue(value[k]));
 		}
+
 		return false;
 	}
 
+
+
+	/* ============================================================
+	   VALIDATION: SPECIAL TYPE CHECKS (EX: RETRACTION)
+	   ============================================================ */
 	function validateTypes(data: any) {
-		console.log('Validating types for data:', data);
-		if (data['update-to']?.[0]?.type === 'retraction') {
-			validatedData.TypeMessage = 'This data has type "retraction". Do you really want to import?';
+		if (data["update-to"]?.[0]?.type === "retraction") {
+			validatedData.TypeMessage =
+				'This data has type "retraction". Do you really want to import?';
 		}
 	}
 
+
+
+	/* ============================================================
+	   FILTER DATA ACCORDING TO MAPPING.JSON
+	   ============================================================ */
 	function filterData(data: any, mapping: any) {
-		// Alle relevanten Quellen aus der Mapping-Datei extrahieren
-		const sources = mapping.Mappings.map((m: any) => m.Source?.trim()).filter(
-			(s: string) => s && s.length > 0
-		); // Nur nicht-leere Sources
+		const sources = mapping.Mappings
+			.map(m => m.Source?.trim())
+			.filter(s => s);
 
 		const filtered: Record<string, any> = {};
 
@@ -289,8 +439,13 @@ function getNestedValue(obj: any, path: string): any {
 		return filtered;
 	}
 
+
+
+	/* ============================================================
+	   ISSUE DETECTION & GROUPING
+	   ============================================================ */
 	function hasIssues(dataArray: any[]) {
-		dataArray.forEach((data) => {
+		dataArray.forEach(data => {
 			if (data.MissingFields.length > 0 || data.TypeMessage) {
 				hasIssuesCalled = true;
 			}
@@ -303,97 +458,124 @@ function getNestedValue(obj: any, path: string): any {
 
 	function IssueInformation(dataArray: any[]) {
 		dataArray.forEach((data, index) => {
-			if (data.MissingFields.length > 0) {
-				data.MissingFields.forEach((field: string) => {
-					IssueRow = {
-						Index: index + 1,
-						errorType: 'Error',
-						msg: 'Missing Fields: ' + field
-					};
-					issueBlock.push({ ...IssueRow }); // Kopie pushen
-					IssueRow = { Index: 0, errorType: '', msg: '' };
-				});
-			}
+
+			// Missing fields
+			data.MissingFields.forEach(field => {
+				IssueRow = {
+					Index: index + 1,
+					errorType: "Error",
+					msg: "Missing Fields: " + field
+				};
+				issueBlock.push({ ...IssueRow });
+			});
+
+			// Type warnings
 			if (data.TypeMessage) {
 				IssueRow = {
 					Index: index + 1,
-					errorType: 'Warning',
-					msg: 'Type Message: ' + data.TypeMessage
+					errorType: "Warning",
+					msg: "Type Message: " + data.TypeMessage
 				};
-				issueBlock.push({ ...IssueRow }); // Kopie pushen
-				IssueRow = { Index: 0, errorType: '', msg: '' };
+				issueBlock.push({ ...IssueRow });
 			}
 		});
-		console.log('Issue Information:', issueBlock);
+
+		console.log("Issue Information:", issueBlock);
+
+		// Group issues by dataset index
 		for (const issue of issueBlock) {
-			let group = groupedIssues.find((g: any) => g.Index === issue.Index);
+			let group = groupedIssues.find(g => g.Index === issue.Index);
+
 			if (!group) {
 				group = {
 					Index: issue.Index,
 					issues: [],
-					checkboxValue: [{ key: issue.Index, value: '' }],
+					checkboxValue: [{ key: issue.Index, value: "" }],
 					selected: []
 				};
 				groupedIssues.push(group);
 			}
-			group.issues.push({ errorType: issue.errorType, msg: issue.msg });
+
+			group.issues.push({
+				errorType: issue.errorType,
+				msg: issue.msg
+			});
 		}
 	}
 
-	// create datasets in bexis
+
+
+	/* ============================================================
+	   CREATE DATASETS IN BEXIS
+	   ============================================================ */
 	async function createDatasets(Array: any) {
-		console.log('Creating datasets with validated data:', Array);
-		const fillDatasetArray:any[] = [];
+		console.log("Creating datasets…", Array);
+
+		const fillDatasetArray: any[] = [];
+
 		for (const data of Array) {
 			const mapped = mapToApiFormat(data);
+
+			// Create empty dataset in BEXIS
 			const res = await apiCalls.createDataset(mapped);
-			console.log('Dataset created:', res);
-			const fillDataset: fillDatasetType = {id: res.id, data: data.data}
-			fillDatasetArray.push(fillDataset);
+
+			console.log("Dataset created:", res);
+
+			// Store ID + JSON data for filling
+			fillDatasetArray.push({
+				id: res.id,
+				data: data.data
+			});
 		}
-		console.log('All datasets created!');
+
+		// Now fill metadata for each dataset
 		fillDatasets(fillDatasetArray);
 	}
 
+
+
+	/* ============================================================
+	   MAP VALIDATED DATA TO BEXIS API FORMAT
+	   ============================================================ */
 	function mapToApiFormat(data: any) {
-		console.log('Mapping data to API format:', data);
 		const dataset: datasetType = {
-			Title: '',
-			Description: '',
+			Title: "",
+			Description: "",
 			DataStructureId: 0,
 			MetadataStructureId: MetadataStructureId,
 			EntityTemplateId: EntityTemplateId
 		};
 
-		dataset.Title = data.data.title?.toString() ?? '';
-		dataset.Description = data.data.abstract?.toString() ?? '';
+		dataset.Title = data.data.title?.toString() ?? "";
+		dataset.Description = data.data.abstract?.toString() ?? "";
 
-		console.log('Mapped dataset:', dataset);
 		return dataset;
 	}
 
-	async function fillDatasets(data: any) {
-		console.log("Diese Datasets werden füllen", data);
+
+
+	/* ============================================================
+	   FILL DATASET METADATA ACCORDING TO MAPPING.JSON
+	   ============================================================ */
+	async function fillDatasets(data: any[]) {
 
 		for (const dataset of data) {
-			// Metadaten abrufen
+
+			// Fetch existing metadata (empty template)
 			const getMetadata = await apiCalls.GetMetadata(dataset.id);
-			let metadata = getMetadata; // wird überschrieben
+			let metadata = getMetadata;
 
-			console.log("Ursprüngliche Metadaten:", metadata);
+			console.log("Original Metadata:", metadata);
 
-			// JSON-Daten aus deinem DOI-Metadaten-Array holen
 			const json = dataset.data;
 
-			// Über Mapping iterieren
+			// Apply mapping.json rules
 			for (const map of mapping.Mappings) {
 				const source = map.Source?.trim();
 				const target = map.Target?.trim();
 
-				// Source leer → überspringen
 				if (!source) continue;
 
-				// Wert aus JSON holen
 				const value =
 					getNestedValue(json, source) ??
 					json[source] ??
@@ -401,32 +583,33 @@ function getNestedValue(obj: any, path: string): any {
 
 				if (value === undefined) continue;
 
-				// Typ anpassen
 				const normalized = normalizeValue(value, "string");
-
-				// Wert in Metadaten setzen
 				setNestedValue(metadata, target, normalized);
 			}
 
-			console.log("Gefüllte Metadaten:", metadata);
-			await apiCalls.putMetadata(dataset.id, metadata);
+			console.log("Filled metadata:", metadata);
 
-			// Optional: API call zum Speichern
-			// await apiCalls.UpdateMetadata(dataset.id, metadata);
+			// PUT metadata to server
+			await apiCalls.putMetadata(dataset.id, metadata);
 		}
 	}
 
-// Hilfsfunktion: Pfad im Objekt setzen (z.B. $.publication.Title → metadata.publication.Title)
+
+
+	/* ============================================================
+	   UTILITY: SET VALUE INSIDE NESTED METADATA STRUCTURE
+	   ============================================================ */
 	function setNestedValue(obj: any, path: string, value: any) {
-		path = path.replace(/^\$\./, '');
-		const parts = path.split('.');
+		path = path.replace(/^\$\./, "");
+		const parts = path.split(".");
 		let cur = obj;
 
 		for (let i = 0; i < parts.length - 1; i++) {
 			const part = parts[i];
 
-			// Case-insensitive lookup
-			let key = Object.keys(cur).find((k) => k.toLowerCase() === part.toLowerCase());
+			let key = Object.keys(cur)
+				.find(k => k.toLowerCase() === part.toLowerCase());
+
 			if (!key) {
 				key = part;
 				cur[key] = {};
@@ -436,37 +619,43 @@ function getNestedValue(obj: any, path: string): any {
 		}
 
 		const lastKeyPart = parts[parts.length - 1];
-		let lastKey = Object.keys(cur).find((k) => k.toLowerCase() === lastKeyPart.toLowerCase()) ?? lastKeyPart;
+		let lastKey =
+			Object.keys(cur)
+				.find(k => k.toLowerCase() === lastKeyPart.toLowerCase())
+			?? lastKeyPart;
 
 		const isArrayTarget = Array.isArray(cur[lastKey]);
 
-		// FALL 1: Ziel ist ein Array → erstelle pro Wert ein Objekt mit #text
+		// Case 1: Target is array → create list of {#text} items
 		if (isArrayTarget) {
-			let values = Array.isArray(value) ? value : [value];
+			const values = Array.isArray(value) ? value : [value];
 
-			cur[lastKey] = values.map((v) => ({
+			cur[lastKey] = values.map(v => ({
 				"@ref": "",
 				"@partyid": "",
-				"#text": typeof v === "object" ? JSON.stringify(v) : String(v),
+				"#text": typeof v === "object"
+					? JSON.stringify(v)
+					: String(v)
 			}));
+
 			return;
 		}
 
-		// FALL 2: Source ist ein Array, aber Ziel ist kein Array → prüfe ob Ziel-Template ein Array ist
+		// Case 2: Source is array but target is single → try coercing
 		if (Array.isArray(value)) {
-			// Wenn aktuelles Ziel-Objekt ein Array sein sollte (z. B. Author in Metadaten)
 			if (cur[lastKey] && typeof cur[lastKey] === "object" && cur[lastKey]["#text"] !== undefined) {
-				// Ein einzelnes Objekt vorhanden → in Array umwandeln
-				cur[lastKey] = value.map((v) => ({
+				cur[lastKey] = value.map(v => ({
 					"@ref": "",
 					"@partyid": "",
-					"#text": typeof v === "object" ? JSON.stringify(v) : String(v),
+					"#text": typeof v === "object"
+						? JSON.stringify(v)
+						: String(v)
 				}));
 				return;
 			}
 		}
 
-		// FALL 3: Einfacher Wert (Standard)
+		// Case 3: Simple #text value
 		if (typeof cur[lastKey] !== "object" || cur[lastKey] === null) {
 			cur[lastKey] = { "#text": "" };
 		} else if (!("#text" in cur[lastKey])) {
@@ -476,80 +665,89 @@ function getNestedValue(obj: any, path: string): any {
 		cur[lastKey]["#text"] = Array.isArray(value)
 			? value.join(", ")
 			: typeof value === "object"
-			? JSON.stringify(value)
-			: String(value);
+				? JSON.stringify(value)
+				: String(value);
 	}
 
 
 
-// Wandelt JSON-Wert auf erwarteten Typ um (einfach gehalten)
+	/* ============================================================
+	   UTILITY: NORMALIZE VALUE TYPES
+	   ============================================================ */
 	function normalizeValue(value: any, expectedType: string): any {
-		if (value === null || value === undefined) return "";
+		if (value == null) return "";
+
 		if (Array.isArray(value)) {
-			// Wenn Array von Objekten → JSON-String, sonst join
 			if (value.every(v => typeof v === "object")) {
 				return JSON.stringify(value);
 			}
 			return value.join(", ");
 		}
+
 		if (typeof value === "object") {
-			// Objekt in JSON-String umwandeln
 			return JSON.stringify(value);
 		}
+
 		if (typeof value === "boolean" || typeof value === "number") {
 			return String(value);
 		}
+
 		return value.toString();
 	}
 
 
 
+	/* ============================================================
+	   CONFIRM SELECTION — ONLY IMPORT SELECTED DATASETS
+	   ============================================================ */
+	function confirmSelectedDatasets() {
 
-	// checkbox stuff
-	function checkCheckboxes() {
-		// Finde alle Indizes, deren selected leer ist (diese sollen raus)
+		// Indices where user unselected → skip them
 		const removeIndices = groupedIssues
-			.filter((g: any) => g.selected.length === 0)
-			.map((g: any) => g.Index - 1);
+			.filter(g => g.selected.length === 0)
+			.map(g => g.Index - 1);
 
-		// Erzeuge ein NEUES Array ohne die zu entfernenden Einträge
-		const filteredDataArray = DataArray.filter((_, i) => !removeIndices.includes(i));
+		// Filter DataArray: remove unselected & already imported
+		const filteredDataArray = DataArray.filter((item, i) => {
+			return !removeIndices.includes(i) && !item.imported;
+		});
 
-		console.log('Gefiltertes DataArray:', filteredDataArray);
-		console.log("groupoed Issues:", groupedIssues)
+		if (!filteredDataArray.length) {
+			console.warn("No new or selected datasets to import.");
+			return;
+		}
+
 		createDatasets(filteredDataArray);
 	}
 
 
-	// Reaktiver Watcher: läuft automatisch, wenn selectAllTarget sich ändert
- //if (!arraysEqual(_prevSelectAllTarget, selectAllTarget)) {
-	function selectAllBoxes(selectAll: any[]){
- 	// update prev
-		if(selectAll.length == 1 && selectAllTarget[0] == -1){
-			console.log('✅ Checkbox ist angeklickt:', selectAll);
 
-			groupedIssues = groupedIssues.map((group: any) => ({
-				...group,
-				selected: [group.Index] // neue Array-Referenz
-			}));	
-			//_prevSelectAllTarget = [];
-		}
-		else{
-			console.log('❌ Checkbox ist nicht angeklickt', selectAll);
+	/* ============================================================
+	   TOGGLE SELECT-ALL BEHAVIOR
+	   ============================================================ */
+	function selectAllBoxes(selectAll: any[]) {
 
-			groupedIssues = groupedIssues.map((group: any) => ({
+		if (selectAll.length === 1 && selectAll[0] === -1) {
+			// Select everything
+			groupedIssues = groupedIssues.map(group => ({
 				...group,
-				selected: [] // neue Array-Referenz
+				selected: [group.Index]
 			}));
-			//_prevSelectAllTarget = ["-1"];
 		}
-		console.log('Checkbox ist :', selectAll);
+		else {
+			// Deselect everything
+			groupedIssues = groupedIssues.map(group => ({
+				...group,
+				selected: []
+			}));
+		}
 	}
-		// console.log('lalelu',_prevSelectAllTarget);
-		// führe handler aus
-		//onSelectAllChanged(selectAllTarget);
-	//}
 
+
+
+	/* ============================================================
+	   NAVIGATION FUNCTIONS
+	   ============================================================ */
 	function next() {
 		if (currentIndex < DataArray.length - 1) currentIndex++;
 	}
@@ -563,17 +761,41 @@ function getNestedValue(obj: any, path: string): any {
 	}
 
 	function jumpTo(index: number) {
-		console.log('das ist der index', index);
 		currentIndex = index - 1;
 	}
 
-	function checkSingle(){
-		console.log("aktueller index", currentIndex)
-		console.log("grouped Issues", groupedIssues)
-		console.log("absenden", ) 
 
+
+	/* ============================================================
+	   IMPORT ONLY ONE DATASET ("CHECK SINGLE")
+	   ============================================================ */
+	function checkSingle() {
+		const nextIndex = currentIndex;
+
+		// remove its grouped issue entry
+		const hasNext = groupedIssues.some(g => g.Index === nextIndex + 1);
+
+		if (hasNext) {
+			groupedIssues = groupedIssues.filter(g => g.Index !== nextIndex + 1);
+		}
+
+		// mark as imported
+		if (!DataArray[currentIndex]) {
+			console.warn("No entry found for import.");
+			return;
+		}
+
+		DataArray[currentIndex].imported = true;
+
+		// create a filtered array with only the selected dataset
+		const newArray = [...DataArray];
+		const filtered = newArray.filter((_, i) => i === currentIndex);
+
+		createDatasets(filtered);
 	}
+
 </script>
+
 
 <Page>
 	<h1 class="h1">Import Publications</h1>
@@ -594,7 +816,7 @@ function getNestedValue(obj: any, path: string): any {
 
 	<!-- Datei-Upload -->
 	<div class="flex gap-5 w-full mt-4">
-		<div id="fileLabel" class="w-16">File :</div>
+		<div id="fileLabel" class="w-32">File  (.json):</div>
 		<div id="fileName" class="overflow-clip w-full">{filename}</div>
 		<div id="fileButton" class="w-16">
 			<FileButton
@@ -609,6 +831,24 @@ function getNestedValue(obj: any, path: string): any {
 			</FileButton>
 		</div>
 	</div>
+
+		<div class="flex gap-5 w-full mt-4">
+		<div id="fileLabel" class="w-96">DOI List  (.txt, comma seperated):</div>
+		<div id="fileName" class="overflow-clip w-full">{filename}</div>
+		<div id="fileButton" class="w-16">
+			<FileButton
+				id="uploadTXT"
+				title="Upload TXT"
+				button="btn variant-filled-primary h-9 w-16 shadow-md"
+				name="uploadTXT"
+				accept=".txt"
+				on:change={handleTxtUpload}
+			>
+				<Fa icon={faArrowUpFromBracket} />
+			</FileButton>
+		</div>
+	</div>
+
 
 	<!--  Manuelle DOI-Eingabe -->
 	<div class="flex gap-5 w-full mt-4">
@@ -699,6 +939,19 @@ function getNestedValue(obj: any, path: string): any {
 			<h2 class="text-xl font-bold mb-2">
 				Your JSON import {currentIndex + 1} / {DataArray.length}
 			</h2>
+			{#if DataArray[currentIndex].imported === true}
+				<div class="w-96">
+					<div class="text-center card variant-ghost-primary w-full flex gap-5 p-2 my-1">
+						<div class="w-full align-middle">You have already imported this Dataset</div>
+					</div>
+				</div>
+				{:else if DataArray[currentIndex].TypeMessage !== '' || DataArray[currentIndex].MissingFields > 0  }
+				<div class="w-96">
+					<div class="text-center card variant-ghost-error w-full flex gap-5 p-2 my-1">
+						<div class="w-full align-middle">This Dataset has issues</div>
+					</div>
+				</div>
+			{/if}
 
 			<!-- JSON Tree -->
 			<div
@@ -713,38 +966,50 @@ function getNestedValue(obj: any, path: string): any {
 
 			<!-- Navigation Buttons -->
 			<div class="flex justify-between items-center w-full max-w-4xl mt-3">
-				<div class="flex gap-3">
-					<button
-						class="btn variant-filled-primary shadow-md disabled:opacity-50"
-						on:click={prev}
-						disabled={currentIndex === 0}
-					>
-						Prev
-					</button>
+				{#if DataArray.length > 1}
+					<div class="flex gap-3">
+						<button
+							class="btn variant-filled-primary shadow-md disabled:opacity-50"
+							on:click={prev}
+							disabled={currentIndex === 0}
+						>
+							Prev
+						</button>
 
-					<button
-						class="btn variant-filled-primary shadow-md disabled:opacity-50"
-						on:click={next}
-						disabled={currentIndex === DataArray.length - 1}
-					>
-						Next
-					</button>
-				</div>
-				<div>
+						<button
+							class="btn variant-filled-primary shadow-md disabled:opacity-50"
+							on:click={next}
+							disabled={currentIndex === DataArray.length - 1}
+						>
+							Next
+						</button>
+					</div>
+				{/if}
+				<div class="text-right w-full">
 					{#if EntityTemplateId}
-						<button class="btn variant-filled-primary shadow-md" on:click={checkSingle}>
+						{#if DataArray[currentIndex].imported === false}
+							<button class="btn variant-filled-primary shadow-md" on:click={checkSingle}>
+								Confirm
+							</button>
+						{:else}
+						<button class="btn variant-filled-primary shadow-md disabled" disabled>
 							Confirm
 						</button>
-						<button class="btn variant-filled-primary shadow-md" on:click={checkCheckboxes}>
-							Confirm all
-						</button>
+						{/if}
+						{#if DataArray.length > 1}
+							<button class="btn variant-filled-primary shadow-md" on:click={confirmSelectedDatasets}>
+								Confirm all
+							</button>
+						{/if}
 					{:else}
 						<button class="btn variant-filled-primary shadow-md disabled" disabled>
 							Confirm
 						</button>
-						<button class="btn variant-filled-primary shadow-md disabled" disabled>
-							Confirm all
-						</button>
+						{#if DataArray.length > 1}
+							<button class="btn variant-filled-primary shadow-md disabled" disabled>
+								Confirm all
+							</button>
+						{/if}
 					{/if}
 				</div>
 				
