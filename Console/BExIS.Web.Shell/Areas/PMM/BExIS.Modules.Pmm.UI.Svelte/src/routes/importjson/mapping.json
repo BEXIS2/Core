@@ -14,11 +14,11 @@
         },
         {
             "Source": "author",
-            "Target": "$.publication.Author"
+            "Target": "$.publication.Authors"
         },
         {
             "Source": "affiliation",
-            "Target": "$.publication.Affiliatons"
+            "Target": "$.publication.Affiliations"
         },
         {
             "Source": "type",
