@@ -14,7 +14,7 @@
 	import { Table } from '@bexis2/bexis2-core-ui';
 	import lineClamp from './components/lineClamp.svelte';
 	import error from './components/error.svelte';
-	import { invalidTableStore, validTableStore } from './stores';
+	import { invalidTableStore, validTableStore, createDatasetReturnStore } from './stores';
 	import type {errorItem, tableErrorItem, ValidationReturn, dataSetType, createDatasetReturn } from './models';
 	import { onMount } from 'svelte';
 	import * as apiCalls from './services/apiCalls';
@@ -201,7 +201,7 @@
 
 	function create() {
 		// console.log('click');
-		createDatasets.createAllDatasets(dataset.MetadataStructureId, dataset.EntityTemplateId, validationReturnObj, createDatasetReturn);
+		createDatasets.createAllDatasets(dataset.MetadataStructureId, dataset.EntityTemplateId, validationReturnObj, createDatasetReturnStore);
 	}
 
 	$: totalUploads = $validTableStore.length;
@@ -426,13 +426,13 @@
 		<div id="datasetCounter">
 			{#if validationReturnObj.validData.length > 0}
 				<p class="card variant-ghost-primary gap-5 p-2 my-1 align-middle">
-					{createDatasetReturn.uploadedCount} of {totalUploads} datasets created
+					{$createDatasetReturnStore.uploadedCount} of {totalUploads} datasets created
 				</p>
 			{/if}
 		</div>
 		<div id="progressBar" class="overflow-clip w-full flex items-center">
 			{#if validationReturnObj.validData.length > 0}
-				<progress max={totalUploads} value={createDatasetReturn.uploadedCount}></progress>
+				<progress max={totalUploads} value={$createDatasetReturnStore.uploadedCount}></progress>
 			{/if}
 		</div>
 		<div id="importButton" class="w-24 flex items-center">

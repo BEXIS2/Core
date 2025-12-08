@@ -14,7 +14,7 @@
 		},
 		{
 			"Source": "Author",
-			"Target": "$.publication.Author"
+			"Target": "$.publication.Authors"
 		},
 		{
 			"Source": "Item Type",
