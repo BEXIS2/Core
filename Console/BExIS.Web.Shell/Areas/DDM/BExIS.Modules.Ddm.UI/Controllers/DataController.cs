@@ -469,7 +469,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     var citationSettings = settingsHelper.GetCitationSettings();
 
                     var errors = new List<string>();
-                    if (citationSettings == null || !citationSettings.ShowCitation || !MappingUtils.IsMapped(datasetVersion.Dataset.MetadataStructure.Id, LinkElementType.MetadataStructure, conceptManager.FindByName("citation").Id, LinkElementType.MappingConcept, out errors))
+                    string conceptName = "Citation_" + citationSettings.ReadCitationFormat;
+                    var concept = conceptManager.FindByName(conceptName);
+
+                    if (citationSettings == null || !citationSettings.ShowCitation || concept == null || !MappingUtils.IsMapped(datasetVersion.Dataset.MetadataStructure.Id, LinkElementType.MetadataStructure, concept.Id, LinkElementType.MappingConcept, out errors))
                     {
                         return PartialView("_Title", datasetVersion.Title);
                     }
