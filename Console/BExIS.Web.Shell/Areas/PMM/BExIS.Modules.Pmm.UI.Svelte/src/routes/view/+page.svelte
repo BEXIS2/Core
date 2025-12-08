@@ -19,16 +19,15 @@
 	let groupedResources: Record<string, ResourceArray[]> = {};
 
 	onMount(async () => {
-		metadata = await apiCalls.GetMetadata(5);
+		metadata = await apiCalls.GetMetadata(48);
 		console.log(metadata);
 
 		datasetTitle = metadata?.publication?.Title?.['#text'] ?? 'Title not available';
-		datasetAuthors = metadata?.publication?.Author?.map((author: any) => author['#text']) || [
+		datasetAuthors = metadata?.publication?.Authors?.map((author: any) => author['#text']) || [
 			'Authors not available'
 		];
 		datasetDescription =
-			metadata?.publication?.Abstract?.map((abstract: any) => abstract['#text'])?.join('\n\n') ??
-			'Description not available';
+			metadata?.publication?.Abstract?.['#text'] ?? 'Description not available';
 		datasetComment = metadata?.publication?.comment?.['#text'] ?? 'Comment not available';
 		datasetDataCodeAvailiabilityStatement =
 			metadata?.publication?.Recourses?.Data_code_availiablity_statement?.map(

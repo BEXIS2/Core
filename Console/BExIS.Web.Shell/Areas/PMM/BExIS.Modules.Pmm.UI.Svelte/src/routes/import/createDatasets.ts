@@ -3,26 +3,23 @@ import mappingPublication from './mappingPublication.json';
 import * as mapMetadata from './mapMetadata';
 import * as apiCalls from './services/apiCalls';
 import { tick } from 'svelte';
-import { createDatasetReturnStore } from './stores.js';
-import type { Writable } from 'svelte/store';
-import { get } from 'svelte/store';
+import { DataCounterStore } from './stores.js';
 
 export async function createAllDatasets(
-    metadataStructureId: any,
-    entityTemplateId: any,
+    metadataStructureId: any, // wenn type = number, dann Fehler bei Funktionsaufruf in +page.svelte <- war vor dem auslagern number
+    entityTemplateId: any,  // wenn type = number, dann Fehler bei Funktionsaufruf in +page.svelte <- war vor dem auslagern number
     validationReturnObj: ValidationReturn,
-    createDatasetReturnStore: Writable<createDatasetReturn>, // <-- hier!
+    createDatasetReturnObj: createDatasetReturn,
     dataStructureId: number = 0
 ) {
     try {
         let dss: dataSetType[] = [];
 
-        createDatasetReturnStore.update(v => ({ ...v, uploadedCount: 0, idMapping: [] }));
-
         for (const row of validationReturnObj.validData) {
-            const v = get(createDatasetReturnStore);
-            dss.push(mapToApiFormat(row, mappingPublication, v));
+            dss.push(mapToApiFormat(row, mappingPublication, createDatasetReturnObj));
         }
+
+        createDatasetReturnObj.uploadedCount = 0; // Reset beim Start
 
         for (let index = 0; index < dss.length; index++) {
             const ds = dss[index];
@@ -33,24 +30,38 @@ export async function createAllDatasets(
             ds.DataStructureId = dataStructureId;
 
             let res = await apiCalls.createDataset(ds);
+            getDatasets(res, csvId, createDatasetReturnObj);
 
-            // Aktualisiere den Store reaktiv
-            createDatasetReturnStore.update(v => {
-                v.idMapping.push([csvId, res.id]);
-                v.uploadedCount++;
-                return v;
-            });
+            createDatasetReturnObj.uploadedCount++;
+            DataCounterStore.set(createDatasetReturnObj.uploadedCount);
 
-            console.log(`Datensatz ${index + 1} erstellt.`);
-            await tick();
+            // Update alle 100 oder beim letzten
+            if (createDatasetReturnObj.uploadedCount % 100 === 0 || createDatasetReturnObj.uploadedCount === validationReturnObj.validData.length) {
+                await tick(); // sorgt für UI-Update
+            }
         }
 
-        // Danach ggf. deine Metadaten-Logik
+        for (const map of createDatasetReturnObj.idMapping) {
+            const rowIndex = map[0];
+            const metadataId = map[1];
+
+            let metadata = await apiCalls.GetMetadata(metadataId);
+            let MetadataScheema: any = null;
+            if (MetadataScheema == null) {
+                MetadataScheema = await apiCalls.GetMetadataScheema(metadata['@id']);
+            }
+
+            // console.log('metadata', metadata);
+
+            mapMetadata.applyMappingToMetadata(metadata, validationReturnObj.validData[rowIndex], mappingPublication.Mappings);
+            console.log('finaldata', metadata);
+            await apiCalls.putMetadata(metadataId, metadata);
+            await apiCalls.GetMetadata(metadataId);
+        }
     } catch (error) {
         console.error('Fehler beim Erstellen der Datensätze:', error);
     }
 }
-
 
 function mapToApiFormat(csvRow: any, mapping: any, createDatasetReturnObj: createDatasetReturn) {
     let ds: dataSetType = {
