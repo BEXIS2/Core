@@ -308,7 +308,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Publication")))
                 {
                     string titleXPath = "Metadata/publication/publication/Title/TitleDatatype_string";
-                    string descriptionXpath = "Metadata/publication/publication/Abstract/AbstractXmlSchemaSimpleType";
+                    string descriptionXpath = "Metadata/publication/publication/Abstract/AbstractDatatype_string";
 
                     ImportSchema("Publication", "BEXIS2-Publication-Schema-draft.xsd", "Metadata", publication.Name, publication.EntityType.FullName, titleXPath, descriptionXpath);
                 }
