@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vaiona.Web.Mvc.Modularity;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BExIS.Modules.Ddm.UI.Helpers
 {
@@ -192,6 +193,12 @@ namespace BExIS.Modules.Ddm.UI.Helpers
         {
             using (var conceptManager = new ConceptManager())
             {
+
+                /*
+                APA,
+                RIS,
+                Text,
+                Bibtex*/
                 foreach (CitationFormat value in Enum.GetValues(typeof(CitationFormat)))
                 {
                     var keys = new List<MappingKey>();
@@ -261,7 +268,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     if (!keys.Any(k => k.Name.Equals("data/authorNames")))
                         authors = conceptManager.CreateMappingKey("AuthorNames", "", "", false, true, "data/authorNames", concept);
 
-                    if (!keys.Any(k => k.Name.Equals("data/authorNames/authorName")))
+                    if (!keys.Any(k => k.Name.Equals("data/authorNames/authorname")))
                         conceptManager.CreateMappingKey("AuthorName", "", "", false, false, "data/authorNames/authorName", concept, authors);
                 }
             }

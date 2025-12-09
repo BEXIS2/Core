@@ -123,7 +123,7 @@ namespace BExIS.Dim.Helpers.Export
                                 string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
                                 string name = cd.URI.Split('\\').Last();
 
-                                if (cd.Name.StartsWith("generated") && !cd.Name.Equals("text/csv")) continue;
+                                if (cd.Name.StartsWith("generated") && !cd.MimeType.Equals(broker.PrimaryDataFormat)) continue;
 
                                 if (FileHelper.FileExist(path))
                                 {
