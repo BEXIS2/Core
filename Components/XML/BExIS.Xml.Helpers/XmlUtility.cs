@@ -22,7 +22,7 @@ namespace BExIS.Xml.Helpers
             // Only allow XPaths like /a/b/c or /a[1]/b matches, no function calls, no quotes, etc.
             // You can adjust the pattern according to the actual requirements.
             // This only allows: /node1/node2/...
-            var safePattern = @"^(/[a-zA-Z_][\w\-]*(\[\d+\])?)*$";
+            var safePattern = @"^(/?/?[a-zA-Z_][\w\-]*(\[\d+\])?)*$";
             return System.Text.RegularExpressions.Regex.IsMatch(xpath, safePattern);
         }
 
