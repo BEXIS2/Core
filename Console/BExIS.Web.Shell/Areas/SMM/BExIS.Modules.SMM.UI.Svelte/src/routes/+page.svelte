@@ -12,10 +12,9 @@
 	);
 </script>
 
-<Page title="System Administration">
+<Page title="Species Mapping">
 	<div class="grid grid-flow-col gap-10">
-		<a class="btn variant-filled-secondary" href="./users">users</a>
-		<a class="btn variant-filled-secondary" href="./groups">groups</a>
+		<a class="btn variant-filled-secondary" href="./species">species</a>
 	
 	</div>
 </Page>
