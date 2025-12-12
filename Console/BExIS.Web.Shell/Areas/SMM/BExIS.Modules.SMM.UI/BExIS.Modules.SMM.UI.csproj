@@ -105,11 +105,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-<<<<<<< Updated upstream
     <Compile Include="Controllers\HomeController.cs" />
-=======
     <Compile Include="Controllers\SpeciesController.cs" />
->>>>>>> Stashed changes
     <Compile Include="Helpers\SMMSeedDataGenerator.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Models\SpeciesModel.cs" />
@@ -148,13 +145,9 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Web.config" />
-<<<<<<< Updated upstream
-    <Content Include="SMM.Settings.json" />
-    <Content Include="Views\Home\Index.cshtml" />
-=======
     <Content Include="Smm.Settings.json" />
+    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Species\Index.cshtml" />
->>>>>>> Stashed changes
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
