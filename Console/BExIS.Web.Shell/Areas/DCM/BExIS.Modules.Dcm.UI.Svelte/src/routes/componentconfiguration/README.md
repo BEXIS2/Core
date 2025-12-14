@@ -62,6 +62,7 @@ let currentSchema: number = 2;
 **Schema Tree Generation**
 
 `TreeComponent.svelte` - main schema parser
+
 `arrayComponentWrapper.svelte`, `choiceComponentWrapper.svelte`, `complexComponentWrapper.svelte`, `simpleComponentWrapper.svelte` - recursive parsers, each for a corresponding Component (complex, simple, choice, array)
 
 **Flow Elements**
@@ -89,3 +90,4 @@ let currentSchema: number = 2;
 **Reference**
 Config and Manifest schemas, as well as Bachelor's thesis, available on GitLab:
 https://git.uni-jena.de/fusion/teaching/thesis/julius-halank-ba/fusion_bexis2_docs_thesis/-/tree/main/thesis/final_versions
+
