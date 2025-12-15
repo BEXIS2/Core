@@ -24,6 +24,7 @@
 	};
 
 	export let authorLabel = 'Authors';
+	export let dateLabel = 'Modified';
 
 	const { title, description, author, license, id, doi, entity, date, entitytemplate } = card;
 
@@ -96,7 +97,8 @@
 				<span class="chip"></span>
 				<p class="shrink">
 					{#if date && date.length > 0}
-						{date}
+					 <span class="font-semibold">{dateLabel}: </span>
+						<span class="text-sm italic text-neutral-600">{date}</span>
 					{/if}
 				</p>
 			</div>
@@ -123,7 +125,7 @@
 				</div>
 				<div class="ml-auto flex gap-2">
 					{#if entitytemplate && entitytemplate.length > 0}
-						<div title="Entity Category" class="rounded-full px-3 p-1 bg-primary-500">
+						<div title="Entity Category" class="rounded-full px-3 p-1 bg-primary-400">
 							<span class="text-sm font-semibold text-on-secondary-token"
 								>{entitytemplate.toLowerCase()}</span
 							>
