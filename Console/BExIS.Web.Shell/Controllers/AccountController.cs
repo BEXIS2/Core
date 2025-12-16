@@ -312,15 +312,10 @@ namespace BExIS.Web.Shell.Controllers
                         cookieJwt.Domain = Request.Url.Host; // Set the domain
                         cookieJwt.Path = "/"; // Set the path
 
-                        var csrfToken = AntiForgeryHelper.GetFormToken();
-                        HttpCookie cookieCsrf = new HttpCookie("XSRF-TOKEN", csrfToken);
-                        // Set additional properties if needed
-                        cookieCsrf.Expires = DateTime.Now.AddDays(1); // Expires in 1 day
-                        cookieCsrf.Domain = Request.Url.Host; // Set the domain
-                        cookieCsrf.Path = "/"; // Set the path
-
                         // Add the cookie to the response
-                        Response.Cookies.Add(cookieCsrf);
+                        Response.Cookies.Add(cookieJwt);
+
+
                     }
             
                     var result =
