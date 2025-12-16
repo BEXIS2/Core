@@ -12,10 +12,12 @@ using Microsoft.Owin.Security;
 using System;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
+using BExIS.App.Bootstrap.Helpers;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -301,17 +303,24 @@ namespace BExIS.Web.Shell.Controllers
                     if (user != null)
                     {
                         var jwt = JwtHelper.GetTokenByUser(user);
-            
+      
                         // Create a new cookie
-                        HttpCookie cookie = new HttpCookie("jwt", jwt);
-            
+                        HttpCookie cookieJwt = new HttpCookie("jwt", jwt);
+
                         // Set additional properties if needed
-                        cookie.Expires = DateTime.Now.AddDays(1); // Expires in 1 day
-                        cookie.Domain = Request.Url.Host; // Set the domain
-                        cookie.Path = "/"; // Set the path
-            
+                        cookieJwt.Expires = DateTime.Now.AddDays(1); // Expires in 1 day
+                        cookieJwt.Domain = Request.Url.Host; // Set the domain
+                        cookieJwt.Path = "/"; // Set the path
+
+                        var csrfToken = AntiForgeryHelper.GetFormToken();
+                        HttpCookie cookieCsrf = new HttpCookie("XSRF-TOKEN", csrfToken);
+                        // Set additional properties if needed
+                        cookieCsrf.Expires = DateTime.Now.AddDays(1); // Expires in 1 day
+                        cookieCsrf.Domain = Request.Url.Host; // Set the domain
+                        cookieCsrf.Path = "/"; // Set the path
+
                         // Add the cookie to the response
-                        Response.Cookies.Add(cookie);
+                        Response.Cookies.Add(cookieCsrf);
                     }
             
                     var result =
