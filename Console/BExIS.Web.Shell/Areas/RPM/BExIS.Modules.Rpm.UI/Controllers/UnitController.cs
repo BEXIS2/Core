@@ -1,19 +1,19 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.Meanings;
+using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Modules.Rpm.UI.Models.Dimensions;
 using BExIS.Modules.Rpm.UI.Models.Units;
 using BExIS.UI.Helpers;
+using BExIS.Utils.NH.Querying;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BExIS.Modules.Rpm.UI.Models;
-using BExIS.Dlm.Entities.Meanings;
-using BExIS.Dlm.Services.Meanings;
-using BExIS.Utils.NH.Querying;
 using System.Web.Mvc;
-using BExIS.Dlm.Services.MetadataStructure;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -35,7 +35,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             using (UnitManager unitManager = new UnitManager())
             {
-                return Json(convertToUnitListItem(unitManager.Repo.Get().OrderBy(u => u.Id).ToList()), JsonRequestBehavior.AllowGet);
+                return Json(convertToUnitListItem(unitManager.Repo.Query().OrderBy(u => u.Id).ToList()), JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -256,12 +256,34 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             using (var metadataAttributeManager = new MetadataAttributeManager())
             using (var variableManager = new VariableManager())
             {
+                Dictionary<long, long> maUsage = new Dictionary<long, long>();
+                Dictionary<long, long> viUsage = new Dictionary<long, long>();
+                Dictionary<long, long> vtUsage = new Dictionary<long, long>();
+
+                // metadata attributes
+                var mas = metadataAttributeManager.MetadataAttributeRepo.Query(ma => ma.Unit != null).Select(x => new {
+                    Id = x.Id,
+                    UnitId = x.Unit.Id
+                });
+
+                // variable instance
+                var vis = variableManager.VariableInstanceRepo.Query(v => v.Unit != null).Select(x => new {
+                    Id = x.Id,
+                    UnitId = x.Unit.Id
+                });
+                // variable templates
+                var vts = variableManager.VariableTemplateRepo.Query(v => v.Unit != null).Select(x => new {
+                    Id = x.Id,
+                    UnitId = x.Unit.Id
+                });
+
                 foreach (Unit unit in units)
-                {
+                {   
                     bool inUse = false;
-                    inUse = metadataAttributeManager.MetadataAttributeRepo.Query().Any(ma => ma.Unit != null && ma.Unit.Id == unit.Id);
-                    if (!inUse) inUse = variableManager.VariableInstanceRepo.Query().Any(v => v.Unit != null && v.Unit.Id == unit.Id);
-                    if (!inUse) inUse = variableManager.VariableTemplateRepo.Query().Any(v => v.Unit != null && v.Unit.Id == unit.Id);
+
+                    inUse = mas.Any(ma => ma.UnitId == unit.Id);
+                    if (!inUse) inUse = vis.Any(v => v.UnitId == unit.Id);
+                    if (!inUse) inUse = vts.Any(v => v.UnitId == unit.Id);
 
                     unitListItems.Add(convertToUnitListItem(unit, inUse));
                 }
