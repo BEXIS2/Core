@@ -28,7 +28,7 @@
 	let q = '';
 
 			// get data from parent
-			let container = document.getElementById('search');
+			let container = document.getElementById(controller);
 			let currentView:string =  ""+container?.getAttribute('search_result_presentation'); //'table' | 'cards' = 'table';
 
 
