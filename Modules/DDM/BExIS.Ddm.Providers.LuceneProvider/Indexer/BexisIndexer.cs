@@ -757,7 +757,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             foreach (string pDataValue in sdsStrings)
             // Loop through List with foreach
             {
-                if (string.IsNullOrEmpty(pDataValue))
+                if (!string.IsNullOrEmpty(pDataValue))
                 { 
                     Field a = new Field("category_" + lucene_name, pDataValue,
                         Lucene.Net.Documents.Field.Store.NO, toAnalyse);
