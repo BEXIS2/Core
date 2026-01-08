@@ -227,7 +227,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-       [HttpPost, CustomValidateAntiForgeryToken]
+       [HttpPost]
         public JsonResult AddFacetsToSearch()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
