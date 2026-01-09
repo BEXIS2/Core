@@ -778,7 +778,7 @@ namespace BExIS.Xml.Helpers
         {
             _tempXDoc = metadataXml;
 
-            if (!!XmlUtility.IsSafeXPath(parentXPath))
+            if (!XmlUtility.IsSafeXPath(parentXPath))
             {
                 throw new ArgumentException("Potentially unsafe xpath expression.");
             }

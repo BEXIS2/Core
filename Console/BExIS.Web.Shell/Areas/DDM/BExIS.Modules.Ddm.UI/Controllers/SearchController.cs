@@ -15,6 +15,7 @@ using Telerik.Web.Mvc;
 using Vaiona.IoC;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Mvc.Modularity;
 using SearchCriteria = BExIS.Utils.Models.SearchCriteria;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
@@ -31,6 +32,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             ViewData["app"] = SvelteHelper.GetApp(module);
             ViewData["start"] = SvelteHelper.GetStart(module);
+
+            var settings = ModuleManager.GetModuleSettings("DDM");
+            ViewData["search_result_presentation"] = settings.GetValueByKey("search_result_presentation").ToString();
 
             return View();
         }
@@ -259,7 +263,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [HttpPost, CustomValidateAntiForgeryToken]
+        [HttpPost]
         public JsonResult AddFacetsToSearch()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());

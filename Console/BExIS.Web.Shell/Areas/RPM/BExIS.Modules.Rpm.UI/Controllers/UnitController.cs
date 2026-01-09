@@ -1,17 +1,18 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.Meanings;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.Meanings;
+using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Modules.Rpm.UI.Models.Dimensions;
 using BExIS.Modules.Rpm.UI.Models.Units;
 using BExIS.UI.Helpers;
+using BExIS.Utils.NH.Querying;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BExIS.Modules.Rpm.UI.Models;
-using BExIS.Dlm.Entities.Meanings;
-using BExIS.Dlm.Services.Meanings;
-using BExIS.Utils.NH.Querying;
 using System.Web.Mvc;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
@@ -34,7 +35,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             using (UnitManager unitManager = new UnitManager())
             {
-                return Json(convertToUnitListItem(unitManager.Repo.Get().OrderBy(u => u.Id).ToList()), JsonRequestBehavior.AllowGet);
+                return Json(convertToUnitListItem(unitManager.Repo.Query().OrderBy(u => u.Id).ToList()), JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -101,6 +102,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     if (validationResult.IsValid)
                     {
                         Unit unit = new Unit();
+                        bool inUse = false;
 
                         if (unitListItem.Id == 0)
                         {
@@ -116,6 +118,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             unit.Description = unitListItem.Description;
                             unit.Dimension = unitManager.DimensionRepo.Get(unitListItem.Dimension.Id);
                             unit.MeasurementSystem = (MeasurementSystem)Enum.Parse(typeof(MeasurementSystem), unitListItem.MeasurementSystem);
+                            inUse = unit.DataContainers.Any();
                         }
                         if (unitListItem.Datatypes.Count > 0)
                         {
@@ -130,7 +133,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                             unit.ExternalLink = null;
                         }
                         unit = unitManager.Update(unit);
-                        unitListItem = convertToUnitListItem(unit);
+                        unitListItem = convertToUnitListItem(unit, true);
                     }
                     result = new
                     {
@@ -140,7 +143,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 }
             }
             return Json(result, JsonRequestBehavior.AllowGet);
-        }
+        }       
 
         [JsonNetFilter]
         [HttpPost, CustomValidateAntiForgeryToken]
@@ -250,22 +253,48 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         {
             List<UnitListItem> unitListItems = new List<UnitListItem>();
 
-            foreach (Unit unit in units)
+            using (var metadataAttributeManager = new MetadataAttributeManager())
+            using (var variableManager = new VariableManager())
             {
-                unitListItems.Add(convertToUnitListItem(unit));
+                Dictionary<long, long> maUsage = new Dictionary<long, long>();
+                Dictionary<long, long> viUsage = new Dictionary<long, long>();
+                Dictionary<long, long> vtUsage = new Dictionary<long, long>();
+
+                // metadata attributes
+                var mas = metadataAttributeManager.MetadataAttributeRepo.Query(ma => ma.Unit != null).Select(x => new {
+                    Id = x.Id,
+                    UnitId = x.Unit.Id
+                });
+
+                // variable instance
+                var vis = variableManager.VariableInstanceRepo.Query(v => v.Unit != null).Select(x => new {
+                    Id = x.Id,
+                    UnitId = x.Unit.Id
+                });
+                // variable templates
+                var vts = variableManager.VariableTemplateRepo.Query(v => v.Unit != null).Select(x => new {
+                    Id = x.Id,
+                    UnitId = x.Unit.Id
+                });
+
+                foreach (Unit unit in units)
+                {   
+                    bool inUse = false;
+
+                    inUse = mas.Any(ma => ma.UnitId == unit.Id);
+                    if (!inUse) inUse = vis.Any(v => v.UnitId == unit.Id);
+                    if (!inUse) inUse = vts.Any(v => v.UnitId == unit.Id);
+
+                    unitListItems.Add(convertToUnitListItem(unit, inUse));
+                }
             }
             return unitListItems;
         }
 
-        private UnitListItem convertToUnitListItem(Unit unit)
+
+
+        private UnitListItem convertToUnitListItem(Unit unit, bool inUse)
         {
-            bool inuse = false;
-
-            if (unit.DataContainers.Any())
-                inuse = true;
-            else
-                inuse = false;
-
             UnitListItem unitListItem = new UnitListItem
             {
                 Id = unit.Id,
@@ -275,7 +304,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 Dimension = convertToDimensionListItem(unit.Dimension),
                 Datatypes = convertToDataTypeListItem(unit.AssociatedDataTypes.ToList()),
                 MeasurementSystem = unit.MeasurementSystem.ToString(),
-                InUse = inuse,
+                InUse = inUse,
                 Link = convertToLinkItem(unit.ExternalLink),
             };
             return unitListItem;

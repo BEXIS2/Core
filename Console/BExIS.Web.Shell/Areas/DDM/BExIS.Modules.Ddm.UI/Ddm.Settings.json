@@ -46,6 +46,17 @@
       "description": "If set to true, the minor version tag can be assigned to dataset versions to display changes in more detail."
     },
     {
+      "key": "search_result_presentation",
+      "title": "Search Result Presentation",
+      "value": "table",
+      "description": "Select the initial display format for all user search results across the system. This setting establishes the global baseline for result presentation.",
+      "type": "String",
+      "options": [
+        "table",
+        "cards"
+      ]
+    },
+    {
       "key": "data_aggreement",
       "title": "Data Aggreement by download",
       "value": "none",
