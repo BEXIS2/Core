@@ -4,12 +4,15 @@
 
 ### Workspace changes:
 - Workspace changes: [4.2.0..4.2.1](https://github.com/BEXIS2/Workspace/compare/4.2.0..4.2.1)
+- Improvement of the publication schema xsd
+- Add a switch for a default search result presentation in the data discovery settings.
+- Correct spelling errors in the submission configuration file
 
 ### Database Update(s):
 - Update script from version 4.2.0 to 4.2.1: [Update_Script_4.2.0_4.2.1.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/4.2.0-4.2.1.sql)
 
 ### Web.config changes
-....
+- machineKey: Set a Machine Key in IIS to ensure consistent loading and a seamless login experience for all users.
 
 
 
