@@ -1,4 +1,5 @@
-﻿using BExIS.Security.Entities.Authorization;
+﻿using BExIS.Dlm.Services.Data;
+using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Hooks;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,12 @@ namespace BExIS.Modules.Sam.UI.Hooks
             else
             {
                 Status = HookStatus.Open;
+            }
+
+            using (var datasetManager = new DatasetManager())
+            {
+                var dataset = datasetManager.GetDataset(id);
+                if (dataset.Status != Dlm.Entities.Data.DatasetStatus.CheckedIn) Status = HookStatus.Disabled;
             }
 
         }
