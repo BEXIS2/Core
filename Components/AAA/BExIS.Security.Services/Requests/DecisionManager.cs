@@ -3,31 +3,19 @@ using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Requests;
 using BExIS.Security.Entities.Subjects;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Requests
 {
-    public class DecisionManager : IDisposable
+    public class DecisionManager
     {
-        private readonly IUnitOfWork _guow;
-        private bool _isDisposed;
-
-        public DecisionManager()
-        {
-            _guow = this.GetIsolatedUnitOfWork();
-            DecisionRepository = _guow.GetReadOnlyRepository<Decision>();
-        }
-
-        ~DecisionManager()
-        {
-            Dispose(true);
-        }
-
-        public IReadOnlyRepository<Decision> DecisionRepository { get; }
-
-        public IQueryable<Decision> Decisions => DecisionRepository.Query();
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="decisionId"></param>
+        /// <param name="reason"></param>
         public void Accept(long decisionId, string reason)
         {
             using (var uow = this.GetUnitOfWork())
@@ -98,36 +86,78 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
-        public void Create(Decision decision)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="decisionId"></param>
+        /// <returns></returns>
+        public bool Delete(long decisionId)
         {
             using (var uow = this.GetUnitOfWork())
             {
                 var decisionRepository = uow.GetRepository<Decision>();
-                decisionRepository.Put(decision);
+                var decision = decisionRepository.Get(decisionId);
+                if (decision == null)
+                    return false;
+
+                var deleted = decisionRepository.Delete(decision);
                 uow.Commit();
+
+                return deleted;
             }
         }
 
-        public void Delete(Decision decision)
+        public List<Decision> Get()
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var decisionRepository = uow.GetRepository<Decision>();
-                decisionRepository.Delete(decision);
-                uow.Commit();
+                var decisionRepository = uow.GetReadOnlyRepository<Decision>();
+                return decisionRepository.Query().ToList();
             }
         }
 
-        public void Dispose()
+        public List<Decision> Get(Func<Decision, bool> predicate)
         {
-            Dispose(true);
+            using (var uow = this.GetUnitOfWork())
+            {
+                var decisionRepository = uow.GetReadOnlyRepository<Decision>();
+                return decisionRepository.Query(predicate).ToList();
+            }
         }
 
-        public Decision FindById(long decisionId)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public bool Exists(Func<Decision, bool> predicate)
         {
-            return DecisionRepository.Get(decisionId);
+            using (var uow = this.GetUnitOfWork())
+            {
+                var decisionRepository = uow.GetReadOnlyRepository<Decision>();
+                return decisionRepository.Query(predicate).Any();
+            }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="decisionId"></param>
+        /// <returns></returns>
+        public Decision Get(long decisionId)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var decisionRepository = uow.GetReadOnlyRepository<Decision>();
+                return decisionRepository.Get(decisionId);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="decisionId"></param>
+        /// <param name="reason"></param>
         public void Reject(long decisionId, string reason)
         {
             using (var uow = this.GetUnitOfWork())
@@ -167,14 +197,14 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
-        public void Withdraw(long requestID)
+        public void Withdraw(long requestId)
         {
             using (var uow = this.GetUnitOfWork())
             {
                 var decisionRepository = uow.GetRepository<Decision>();
                 var requestRepository = uow.GetRepository<Request>();
 
-                var request = requestRepository.Get(requestID);
+                var request = requestRepository.Get(requestId);
 
                 if (request != null)
                 {
@@ -184,7 +214,7 @@ namespace BExIS.Security.Services.Requests
                     var mergedRequest = requestRepository.Get(request.Id);
                     requestRepository.Put(mergedRequest);
 
-                    var decision = decisionRepository.Query(m => m.Request.Id == requestID).FirstOrDefault();
+                    var decision = decisionRepository.Query(m => m.Request.Id == requestId).FirstOrDefault();
                     decision.Status = DecisionStatus.Withdrawn;
 
                     decisionRepository.Merge(decision);
@@ -196,28 +226,15 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
-        public void Update(Decision entity)
+        public void Update(Decision decision)
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var repo = uow.GetRepository<Decision>();
-                repo.Merge(entity);
-                var merged = repo.Get(entity.Id);
-                repo.Put(merged);
+                var decisionRepository = uow.GetRepository<Decision>();
+                decisionRepository.Merge(decision);
+                var merged = decisionRepository.Get(decision.Id);
+                decisionRepository.Put(merged);
                 uow.Commit();
-            }
-        }
-
-        protected void Dispose(bool disposing)
-        {
-            if (!_isDisposed)
-            {
-                if (disposing)
-                {
-                    if (_guow != null)
-                        _guow.Dispose();
-                    _isDisposed = true;
-                }
             }
         }
     }
