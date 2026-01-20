@@ -124,6 +124,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
                         numericProperties.Add(fieldName.ToLower());
                     }
 
+                    // get all facets plus and all value in there
                     if (fieldType.ToLower().Equals("facet_field"))
                     {
                         facetXmlNodeList.Add(fieldProperty);
@@ -148,6 +149,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
                                 {
                                     if (!hpg.Name.ToString().Equals(""))
                                     {
+
                                         Facet ccDefault = new Facet();
                                         ccDefault.Name = hpg.Name.ToString();
                                         ccDefault.Text = hpg.Name.ToString();
@@ -155,14 +157,17 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
                                         ccDefault.Count = (int)hpg.HitCount;
                                         if (ccDefault.Count > 0) cCount++;
 
+                                        // iterate over all Documents inside this facet
                                         foreach (var doc in hpg.Documents)
                                         {
                                             IList<IFieldable> numericFields = doc.GetFields("facet_" + fieldName);
+                                            // get all values inside this Document that is link to this facet
                                             foreach (var field in numericFields)
                                             {
                                                 ccDefault.Name = field.StringValue;
                                                 ccDefault.Text = field.StringValue;
                                                 ccDefault.Value = field.StringValue;
+                                                // check if Person is already in a child
                                                 if (!cDefault.Childrens.Exists(x => x.Name == ccDefault.Name)) cDefault.Childrens.Add(ccDefault);
                                             }
                                         }

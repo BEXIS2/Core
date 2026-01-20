@@ -389,6 +389,10 @@
       <Project>{FBE3101A-791A-4EAB-9B8F-F6E071F8DBDC}</Project>
       <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Modules\DDM\BExIS.Ddm.Providers.OpenSearch\BExIS.Ddm.Providers.OpenSearch.csproj">
+      <Project>{36d5d1a4-ced1-4d3c-831b-6a4b0e5320a7}</Project>
+      <Name>BExIS.Ddm.Providers.OpenSearch</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Modules\DIM\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
       <Project>{34CAD2A2-6928-458B-B8DC-AF71D55F20CC}</Project>
       <Name>BExIS.Dim.Entities</Name>
