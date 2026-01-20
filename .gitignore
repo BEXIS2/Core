@@ -282,3 +282,5 @@ svelte
 /_output
 /Console/BExIS.Web.Shell/Web.config
 /Console/BExIS.Web.Shell/Areas/SMM/BExIS.Modules.SMM.UI/Properties/PublishProfiles/FolderProfile.pubxml
+/Console/BExIS.Web.Shell/Web.config.backup
+/Console/BExIS.Web.Shell/Web.config.backup2
