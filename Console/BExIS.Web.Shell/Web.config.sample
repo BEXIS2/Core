@@ -22,7 +22,7 @@
 		<add key="UseSchemaInDatabaseGeneration" value="False" />
 		<add key="ThrowErrorWhenParialContentNotFound" value="False" />
 		<add key="ApplicationName" value="{APPLICATIONNAME}" />
-		<add key="ApplicationVersion" value="4.2.0" />
+		<add key="ApplicationVersion" value="4.2.1" />
 		<add key="SessionWarningDelaySecond" value="30" />
 		<!-- Keep it as false, there are some test data in the database-->
 		<add key="CreateDatabase" value="false" />
@@ -75,6 +75,14 @@
 	<system.web>
 		<globalization uiCulture="en-US" culture="en-US" />
 		<sessionState timeout="120" />
+
+   <!-- improves loading time for iis-->
+		<machineKey
+			validationKey="{validationKey}"
+			decryptionKey="{decryptionKey}"
+			validation="SHA1"
+			decryption="AES" />
+
 		<!-- 20 minutes session timeout, set the cookie name as a cobination of the appname + version-->
 		<compilation targetFramework="4.8" debug="false">
 			<assemblies>

@@ -398,9 +398,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                        
                     }
 
-
-
-
                     // load all hooks for the edit view
                     HookManager hooksManager = new HookManager();
                     model.Hooks = hooksManager.GetHooksFor("dataset", "details", HookMode.view);

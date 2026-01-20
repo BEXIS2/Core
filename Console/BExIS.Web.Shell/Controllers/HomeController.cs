@@ -137,6 +137,7 @@ namespace BExIS.Web.Shell.Controllers
 
         [JsonNetFilter]
         [HttpGet]
+        [OutputCache(Duration = 60, VaryByParam = "none")]
         public JsonResult GetApplicationName()
         {
             try

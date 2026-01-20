@@ -10,7 +10,6 @@
             if (string.IsNullOrEmpty(url)) return docsUrl+"general";
 
             //2. URL is set and no url -> generate link to internal documentation
-
             if (url.Contains("http")) return url;
 
 

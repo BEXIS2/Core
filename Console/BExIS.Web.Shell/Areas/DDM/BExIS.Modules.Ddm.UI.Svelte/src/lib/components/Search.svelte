@@ -6,7 +6,7 @@
 
 	import { RadioGroup, RadioItem, SlideToggle } from '@skeletonlabs/skeleton';
 
-	import { Api, Facets, Page, pageContentLayoutType, Table } from '@bexis2/bexis2-core-ui';
+	import { Api, Facets, Page, pageContentLayoutType, Table, TablePlaceholder } from '@bexis2/bexis2-core-ui';
 	import type { Columns, FacetGroup, linkType, TableConfig } from '@bexis2/bexis2-core-ui';
 
 	import Cards from '$lib/components/Cards.svelte';
@@ -17,6 +17,7 @@
 	import { convertTableData } from '$lib/helpers';
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
+	import CardsPlaceHolder from './CardsPlaceHolder.svelte';
 
 	export let controller: string = 'search';
 
@@ -26,7 +27,10 @@
 	let currentCategory = 'All';
 	let q = '';
 
-	let currentView: 'table' | 'cards' = 'table';
+			// get data from parent
+			let container = document.getElementById(controller);
+			let currentView:string =  ""+container?.getAttribute('search_result_presentation'); //'table' | 'cards' = 'table';
+
 
 	let facetsRef: any;
 
@@ -399,29 +403,13 @@
 		}));
 	};
 
-	const load = async (input: string) => {
-		const data = [
-			{ Text: 'a', Value: 'a' },
-			{ Text: 'b', Value: 'b' },
-			{ Text: 'c', Value: 'c' },
-			{ Text: 'd', Value: 'd' },
-			{ Text: 'e', Value: 'e' },
-			{ Text: 'f', Value: 'f' },
-			{ Text: 'g', Value: 'g' }
-		];
-
-		return data.map((item: any) => ({
-			label: item.Text,
-			value: item.Value
-		}));
-	};
-
 	const handleAutoCompleteSelect = async (e: { detail: { value: string; label: string } }) => {
 		q = e.detail.value;
 
 		return null;
 	};
 
+	
 	onMount(async () => {
 		await handleSearch(true);
 	});
@@ -450,6 +438,8 @@
 							on:showMoreSelect={handleShowMoreSelect}
 							on:showMoreOpenChange={handleShowMoreOpenChange}
 						/>
+						{:else}
+						<TablePlaceholder cols={1} rows={12}/>
 					{/if}
 				</div>
 			</div>
@@ -586,14 +576,25 @@
 				</div>
 			</div>
 			<div class="pt-8">
+
 				{#if config}
 					<div class:hidden={currentView === 'cards'} class="">
 						<Table {config} />
 					</div>
+					<div class:hidden={currentView === 'table'}>
+						<Cards store={placeholderStore} {authorLabel} />
+					</div>
+				{:else}
+
+				{#if currentView === 'table'}
+					<TablePlaceholder cols={6} rows={10}/>
 				{/if}
-				<div class:hidden={currentView === 'table'}>
-					<Cards store={placeholderStore} {authorLabel} />
-				</div>
+				{#if currentView === 'cards'}
+    		<CardsPlaceHolder />
+				{/if}
+
+				{/if}
+
 			</div>
 		</div>
 	</Pane>

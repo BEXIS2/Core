@@ -44,6 +44,12 @@ namespace BExIS.Modules.Sam.UI.Hooks
                 Status = HookStatus.Open;
             }
 
+            using (var datasetManager = new DatasetManager())
+            {
+                var dataset = datasetManager.GetDataset(id);
+                if (dataset.Status != Dlm.Entities.Data.DatasetStatus.CheckedIn) Status = HookStatus.Disabled;
+            }
+
         }
 
         private void checkEntity(long id)

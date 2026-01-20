@@ -147,7 +147,8 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-            $("#target_reference_table").DataTable({
+        $("#target_reference_table").DataTable({
+                "pageLength": 100,
                 "autoWidth": false,
                 "columns": [
                     { "width": "50px" },
@@ -161,7 +162,8 @@
                 ]
             });
 
-            $("#source_reference_table").DataTable({
+        $("#source_reference_table").DataTable({
+            "pageLength": 100,
                 "autoWidth": false,
                 "columns": [
                     { "width": "50px" },

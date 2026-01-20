@@ -320,10 +320,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
 
                 List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(datasetIds, true);
+
                 foreach (var dsv in datasetVersions)
                 {
                     Object[] rowArray = new Object[8];
                     string isValid = "no";
+
+                    bool isOwn = rightType == RightType.Grant || rightType == RightType.Write ? true : false ;
 
                     string type = "file";
                     if (dsv.Dataset.DataStructure?.Self is StructuredDataStructure)
@@ -355,7 +358,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     }
 
                     //
-                    rowArray[7] = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), dsv.Dataset.Id, RightType.Write).Result;
+                    rowArray[7] = isOwn;
 
                     model.Add(new MyDatasetsModel(
                        (long)rowArray[0],

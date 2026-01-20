@@ -598,7 +598,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <param name="brokerId"></param>
         /// <returns></returns>
         private Tuple<string, string> PrepareData(long datasetVersionId, long brokerId)
-        {
+         {
             Tuple<string, string> tmp = null;
             try
             {

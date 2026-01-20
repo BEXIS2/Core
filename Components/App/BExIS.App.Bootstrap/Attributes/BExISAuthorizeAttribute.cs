@@ -50,9 +50,6 @@ namespace BExIS.App.Bootstrap.Attributes
                                 if (!featurePermissionManager.HasAccessAsync(user.Id, feature.Id).Result)
                                 {
                                     filterContext.SetResponse(HttpStatusCode.Forbidden);
-
-                                    
-
                                 }
 
                                 // update jwt cookie

@@ -300,7 +300,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     string zipName = IOHelper.GetFileName(FileType.Bundle, id, datasetVersionNumber, dataStructureId, title); //publishingManager.GetZipFileName(id, datasetVersionNumber);
                     // add suffix if filter is in use
-                    if (isFilterInUse) zipName += "_filtered";
+                    if (isFilterInUse & withFilter) zipName += "_filtered";
 
                     string zipPath = Path.Combine(publishingManager.GetDirectoryPath(id, brokerName), zipName+".zip");
                     FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipPath));
@@ -341,7 +341,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                         name = IOHelper.GetFileName(FileType.None, id, datasetVersionNumber, dataStructureId,cd.Name) + ext;
                                     }
 
-                                    archive.AddFileToArchive(path, name);
+                                    // if data is filtered, do not add full data file
+                                    if (cd.Name.Contains("generated") == false || (cd.Name.Contains("generated") && withFilter == false))
+                                       archive.AddFileToArchive(path, name);
                                 }
                             }
                         }
