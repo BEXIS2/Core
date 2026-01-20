@@ -62,7 +62,7 @@
 
 <TabGroup>
  <Tab bind:group={tabSet} name="entity" value={0}>
-  {entity} : {title}
+  {entity}  {title}
  </Tab>
  <!--existing extentions -->
 

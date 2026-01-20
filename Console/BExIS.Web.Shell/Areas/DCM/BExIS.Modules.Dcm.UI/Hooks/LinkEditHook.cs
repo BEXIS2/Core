@@ -14,19 +14,17 @@ namespace BExIS.Modules.Dcm.UI.Hooks
 
         public override void Check(long id, string username)
         {
+            
+
+            // check status
+            checkStatus(id, username);
+
+            // check if subject is checked in
+            // only check if status is open
+            checkAvailablity(id);
+
             // disable for extension entity
             checkEntity(id);
-
-            if (Status != HookStatus.Disabled)
-            {
-
-                // check status
-                checkStatus(id, username);
-
-                // check if subject is checked in
-                // only check if status is open
-                checkAvailablity(id);
-            }
         }
 
         private void checkStatus(long id, string username)
