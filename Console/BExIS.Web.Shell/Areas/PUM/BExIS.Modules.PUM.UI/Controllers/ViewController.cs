@@ -6,7 +6,7 @@ using System;
 
 namespace BExIS.Modules.Pum.UI.Controllers
 {
-    public class HomeController : BaseController
+    public class ViewController : BaseController
     {
         public ActionResult Index()
         {
