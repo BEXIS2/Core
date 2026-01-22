@@ -6,7 +6,7 @@
 	import {
 		Page,
 		DropdownKVP,
-		TextInput,
+		TextArea,
 		CheckboxKVPList,
 		notificationStore,
 		notificationType
@@ -700,25 +700,41 @@
 	/* ============================================================
 	   CONFIRM SELECTION — ONLY IMPORT SELECTED DATASETS
 	   ============================================================ */
-	function confirmSelectedDatasets() {
+function confirmSelectedDatasets() {
+	// Indices, die der Nutzer abgewählt hat → überspringen
+	const removeIndices = groupedIssues
+		.filter(g => g.selected.length === 0)
+		.map(g => g.Index - 1);
 
-		// Indices where user unselected → skip them
-		const removeIndices = groupedIssues
-			.filter(g => g.selected.length === 0)
-			.map(g => g.Index - 1);
+	// Filtere DataArray: nur ausgewählte & noch nicht importierte
+	const filteredDataArray = DataArray.filter((item, i) => {
+		return !removeIndices.includes(i) && !item.imported;
+	});
 
-		// Filter DataArray: remove unselected & already imported
-		const filteredDataArray = DataArray.filter((item, i) => {
-			return !removeIndices.includes(i) && !item.imported;
-		});
-
-		if (!filteredDataArray.length) {
-			console.warn("No new or selected datasets to import.");
-			return;
-		}
-
-		createDatasets(filteredDataArray);
+	if (!filteredDataArray.length) {
+		console.warn("No new or selected datasets to import.");
+		return;
 	}
+
+	// markiere alle als importiert
+	filteredDataArray.forEach(item => {
+		item.imported = true;
+	});
+
+	// entferne importierte Datensätze aus groupedIssues
+	groupedIssues = groupedIssues.filter(g => {
+		// Index anpassen: group.Index - 1 ist der DataArray-Index
+		const dataIndex = g.Index - 1;
+		return !filteredDataArray.some((_, i) => i === dataIndex);
+	});
+
+	// optional: Erfolgsmeldung
+	showMessage(`${filteredDataArray.length} Datensatz${filteredDataArray.length > 1 ? 'e' : ''} importiert.`);
+
+	// Importvorgang
+	createDatasets(filteredDataArray);
+}
+
 
 
 
@@ -854,7 +870,13 @@
 	<div class="flex gap-5 w-full mt-4">
 		<div id="manualDOILabel" class="w-36 mt-3">Manual DOI :</div>
 		<div class="over-clip w-full">
-			<TextInput id="name" required={false} bind:value={manualDOI} />
+			<!-- <TextInput id="name" required={false} bind:value={manualDOI} /> -->
+			<TextArea
+			id="name"
+			required={false}
+			placeholder="Enter one or more DOIs, separated by commas or spaces"
+			bind:value={manualDOI}
+		/>
 		</div>
 		<button class="btn variant-filled-primary h-9 shadow-md mt-2" on:click={handleManualDOI}>
 			Fetch DOI
@@ -945,7 +967,7 @@
 						<div class="w-full align-middle">You have already imported this Dataset</div>
 					</div>
 				</div>
-				{:else if DataArray[currentIndex].TypeMessage !== '' || DataArray[currentIndex].MissingFields > 0  }
+				{:else if DataArray[currentIndex].TypeMessage !== '' || DataArray[currentIndex].MissingFields.length > 0  }
 				<div class="w-96">
 					<div class="text-center card variant-ghost-error w-full flex gap-5 p-2 my-1">
 						<div class="w-full align-middle">This Dataset has issues</div>
@@ -998,7 +1020,7 @@
 						{/if}
 						{#if DataArray.length > 1}
 							<button class="btn variant-filled-primary shadow-md" on:click={confirmSelectedDatasets}>
-								Confirm all
+								Confirm selected
 							</button>
 						{/if}
 					{:else}
