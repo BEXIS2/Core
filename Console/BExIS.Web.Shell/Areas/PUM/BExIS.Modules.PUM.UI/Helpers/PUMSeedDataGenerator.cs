@@ -19,33 +19,27 @@ namespace BExIS.Modules.Pum.UI.Helpers
         {
 
 
-            // Features
-            FeatureManager featureManager = new FeatureManager();
-            Feature PumModule =
-                    featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Publication Import and View Module"));
-                if (PumModule == null)
-                    PumModule = featureManager.Create("Publication Import and View Module", "Publication Import and View Module");
-
+            
 
             // Operations
             using (OperationManager operationManager = new OperationManager())
             {
-                var homeController = operationManager.Find("PUM", "Home", PumModule) ?? operationManager.Create("PUM", "Home", PumModule);
+                var homeController = operationManager.Find("PUM", "Home", "*") ?? operationManager.Create("PUM", "Home", "*");
             }
 
             using (OperationManager operationManager = new OperationManager())
             {
-                var importJSONController = operationManager.Find("PUM", "ImportJSON", PumModule) ?? operationManager.Create("PUM", "ImportJSON", PumModule);
+                var importJSONController = operationManager.Find("PUM", "ImportJSON", "*") ?? operationManager.Create("PUM", "ImportJSON", "*");
             }
 
             using (OperationManager operationManager = new OperationManager())
             {
-                var importCSVController = operationManager.Find("PUM", "ImportCSV", PumModule) ?? operationManager.Create("PUM", "ImportCSV", PumModule);
+                var importCSVController = operationManager.Find("PUM", "ImportCSV", "*") ?? operationManager.Create("PUM", "ImportCSV", "*");
             }
 
             using (OperationManager operationManager = new OperationManager())
             {
-                var viewController = operationManager.Find("PUM", "View", PumModule) ?? operationManager.Create("PUM", "View", PumModule);
+                var viewController = operationManager.Find("PUM", "View", "*") ?? operationManager.Create("PUM", "View", "*");
             }
 
 
