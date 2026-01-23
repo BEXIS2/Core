@@ -11,8 +11,8 @@ const config = {
 
 	kit: {
 		adapter: adapter({
-			pages: '../BExIS.Modules.Pmm.UI/Scripts/svelte',
-			assets: '../BExIS.Modules.Pmm.UI/Scripts/svelte',
+			pages: '../BExIS.Modules.Pum.UI/Scripts/svelte',
+			assets: '../BExIS.Modules.Pum.UI/Scripts/svelte',
 			fallback: null,
 			precompress: true,
 			preprocess: true,
@@ -20,7 +20,7 @@ const config = {
 		}),
 		paths: {
 			relative: true,
-			base: process.env.NODE_ENV === 'production' ? '/pmm' : '' // add module id here e.g. /dcm
+			base: process.env.NODE_ENV === 'production' ? '/pum' : '' // add module id here e.g. /dcm
 		},
 		alias: {
 			$services: './src/services'

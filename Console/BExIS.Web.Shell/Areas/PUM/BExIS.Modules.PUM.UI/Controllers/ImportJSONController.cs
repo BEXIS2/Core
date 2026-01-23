@@ -1,15 +1,16 @@
 ﻿using System.Web.Mvc;
-using Vaiona.Web.Mvc;
-using Telerik.Web.Mvc;
-using Telerik.Web.Mvc.Extensions;
-using System;
+using BExIS.UI.Helpers;
 
 namespace BExIS.Modules.Pum.UI.Controllers
 {
-    public class ImportJSONController : BaseController
+    public class ImportJSONController : Controller
     {
-        public ActionResult Index()
+        public ActionResult Index(long id = 0)
         {
+            string module = "PUM";
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
+            ViewData["id"] = id;
             return View();
         }
     }
