@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using BExIS.Dlm.Entities.Data;
 
 /// <summary>
 ///
@@ -64,6 +66,12 @@ namespace BExIS.Utils.Models
 
             placeholder = "";
         }
+
+        /// <summary>
+        /// necessary for new SearchConfig by Paul
+        /// </summary>
+        public long EntityTemplateId { get; set; }
+        public string EntityTemplateName { get; set; }
 
         /// <summary>
         /// Palceholder for card view

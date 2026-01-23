@@ -51,6 +51,7 @@
     <Reference Include="DocumentFormat.OpenXml">
       <HintPath>..\..\..\Libraries\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
@@ -79,6 +80,7 @@
     <Reference Include="Microsoft.IdentityModel.Tokens, Version=6.35.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.IdentityModel.Tokens.6.35.0\lib\net472\Microsoft.IdentityModel.Tokens.dll</HintPath>
     </Reference>
+    <Reference Include="MimeKit, Version=4.8.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814" />
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -193,7 +195,6 @@
     <Compile Include="Config\LocalSpatialData.cs" />
     <Compile Include="Config\PointSpatialMetadata.cs" />
     <Compile Include="Config\PrimaryDataAggregation.cs" />
-    <Compile Include="Config\SearchComponentBaseType.cs" />
     <Compile Include="Config\SearchConfig.cs" />
     <Compile Include="Config\SearchConfigManager.cs" />
     <Compile Include="Config\Snapshots\BBoxSpatialMetadataSnapshot.cs" />
@@ -221,7 +222,9 @@
     <Compile Include="Config\SpatialMetadataConverter.cs" />
     <Compile Include="OpenSearchIndexer.cs" />
     <Compile Include="OpenSearchProvider.cs" />
+    <Compile Include="SearchDesigner.cs" />
     <Compile Include="SearchProvider.cs" />
+    <Compile Include="SearchViewModelMapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
@@ -239,6 +242,10 @@
     <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
       <Project>{C4CA0A99-0AF3-4372-A9B7-B9073599BD8B}</Project>
       <Name>BExIS.Dlm.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
+      <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
+      <Name>BExIS.Utils.Config</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
       <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
@@ -259,6 +266,10 @@
     <ProjectReference Include="..\..\..\Components\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
       <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
       <Name>Vaiona.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
+      <Project>{252F7872-A69C-43A6-84B4-4D2ABDBDD9AB}</Project>
+      <Name>BExIS.Xml.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DIM\BExIS.Dim.Services\BExIS.Dim.Services.csproj">
       <Project>{CAC933A2-6849-4C61-82B4-CBF4052210CC}</Project>

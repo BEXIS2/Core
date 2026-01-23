@@ -21,11 +21,15 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config
             object existingValue,
             JsonSerializer serializer)
         {
+
+            if (reader.TokenType == JsonToken.Null)
+                return null;
+
             JObject jo = JObject.Load(reader);
             JToken typeToken = jo["type"];
 
             if (typeToken == null)
-                throw new JsonSerializationException("spatial_metadata.type is missing");
+                return null;
 
             string type = typeToken.Value<string>();
 

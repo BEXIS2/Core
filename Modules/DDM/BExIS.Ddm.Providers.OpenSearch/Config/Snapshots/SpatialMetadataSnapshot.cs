@@ -18,7 +18,7 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config.Snapshots
         public static SpatialMetadataSnapshot FromDto(SpatialMetadata dto)
         {
             if (dto == null)
-                throw new ArgumentNullException("dto");
+                throw null;
 
             var bbox = dto as BBoxSpatialMetadata;
             if (bbox != null)

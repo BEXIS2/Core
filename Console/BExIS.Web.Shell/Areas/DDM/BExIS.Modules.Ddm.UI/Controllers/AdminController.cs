@@ -1,5 +1,6 @@
 ﻿using BExIS.Ddm.Api;
 using BExIS.Ddm.Providers.LuceneProvider;
+using BExIS.Ddm.Providers.OpenSearch;
 using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Services.Mappings;
 using BExIS.Modules.Ddm.UI.Models;
@@ -364,12 +365,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         private ISearchDesigner GetSearchDesigner()
         {
+
             if (Session["SearchDesigner"] != null)
             {
                 return (ISearchDesigner)Session["SearchDesigner"];
             }
-
-            return new SearchDesigner();
+            return new BExIS.Ddm.Providers.OpenSearch.SearchDesigner();
+            //return new SearchDesigner();
         }
 
         private void SetSearchDesigner(ISearchDesigner searchDesigner)

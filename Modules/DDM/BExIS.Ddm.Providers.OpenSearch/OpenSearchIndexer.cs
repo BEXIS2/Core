@@ -21,6 +21,7 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Config;
 using BExIS.Utils.Models;
 using DocumentFormat.OpenXml.Drawing.Charts;
 using OpenSearch.Client;
@@ -132,7 +133,7 @@ namespace BExIS.Ddm.Providers.OpenSearch
         // extract infos from _configXML to member lists
         private void LoadBeforeIndexing()
         {
-            var globalComponents = SearchConfigManager.GetGlobalComponentsAsDict();
+            var globalComponents = SearchConfigManager.GetAllComponents();
             Category category = new Category();
             category.Name = "All";
             category.Value = "All";
@@ -141,17 +142,17 @@ namespace BExIS.Ddm.Providers.OpenSearch
 
             foreach (var item in globalComponents)
             {
-                if (item.Key == "facet")
+                if (item.ComponentType == SearchComponentBaseType.Facet)
                 {
 
                     Facet c = new Facet();
-                    c.Name = item.Value.ComponentName;
-                    c.Text = item.Value.ComponentName;
-                    c.Value = item.Value.ComponentName;
+                    c.Name = item.ComponentName;
+                    c.Text = item.ComponentName;
+                    c.Value = item.ComponentName;
                     c.Childrens = new List<Facet>();
                     _allFacets.Add(c);
                 }
-                else if (item.Key == "property")
+                else if (item.ComponentType == SearchComponentBaseType.Property)
                 {
                     // TODO: Not supported yet
                     //Property c = new Property();
@@ -166,16 +167,16 @@ namespace BExIS.Ddm.Providers.OpenSearch
                     //c.DataType = localComponent.DataTypeId.ToString();
                     //_allProperties.Add(c);
                 }
-                else if (item.Key == "category")
+                else if (item.ComponentType == SearchComponentBaseType.Category)
                 {
                     //categoryXmlNodeList.Add(fieldProperty);
                     Category c = new Category();
-                    c.Name = item.Value.ComponentName;
-                    c.Value = item.Value.ComponentName;
+                    c.Name = item.ComponentName;
+                    c.Value = item.ComponentName;
                     c.DefaultValue = "nothing";
                     _allCategories.Add(c);
                 }
-                else if (item.Key == "general")
+                else if (item.ComponentType == SearchComponentBaseType.General)
                 {
                     // TODO: redundant nach neuer SearchConfig?
                     //generalXmlNodeList.Add(fieldProperty);
@@ -274,12 +275,12 @@ namespace BExIS.Ddm.Providers.OpenSearch
             finally
             {
                 GC.Collect();
-                //using (var emailService = new EmailService())
-                //{
-                //    emailService.Send(MessageHelper.GetSearchReIndexHeader(),
-                //        MessageHelper.GetSearchReIndexMessage(errors),
-                //        GeneralSettings.SystemEmail);
-                //}
+                using (var emailService = new EmailService())
+                {
+                    emailService.Send(MessageHelper.GetSearchReIndexHeader(),
+                        MessageHelper.GetSearchReIndexMessage(errors),
+                        GeneralSettings.SystemEmail);
+                }
 
             }
         }
@@ -291,7 +292,7 @@ namespace BExIS.Ddm.Providers.OpenSearch
         /// <param name="query"></param>
         /// <param name="headerItemList"></param>
         /// <returns></returns>
-        public SearchResult Search(QueryContainer query, Dictionary<string,GlobalComponent> headerItemList)
+        public SearchResult Search(QueryContainer query, List<SearchComponentConfigObj> headerItemList)
         {
             int n = 0;
             DatasetManager dm = null;
@@ -365,12 +366,12 @@ namespace BExIS.Ddm.Providers.OpenSearch
             foreach (var item in headerItemList)
             {
                 HeaderItem hi = new HeaderItem();
-                hi.Name = item.Value.ComponentName;
-                hi.DisplayName = item.Value.ComponentName;
-                hi.Placeholder = item.Value.Placeholder;
+                hi.Name = item.ComponentName;
+                hi.DisplayName = item.ComponentName;
+                hi.Placeholder = item.Placeholder;
                 header.Add(hi);
 
-                if(item.Value.DefaultHeaderItem)
+                if(item.DefaultHeaderItem)
                 {
                     defaultHeader.Add(hi);
                 }
@@ -417,19 +418,19 @@ namespace BExIS.Ddm.Providers.OpenSearch
                 // Weitere dynamische Felder basierend auf XML-Konfiguration
                 foreach (var item in headerItemList)
                 {
-                    string componentName = item.Value.ComponentName;
+                    string componentName = item.ComponentName;
 
-                    if (item.Key == "facet")
+                    if (item.ComponentType == SearchComponentBaseType.Facet)
                     {
-                        componentName = "facet_" + item.Value.ComponentName;
+                        componentName = "facet_" + item.ComponentName;
                     }
-                    else if (item.Key == "category")
+                    else if (item.ComponentType == SearchComponentBaseType.Category)
                     {
-                        componentName = "category_" + item.Value.ComponentName;
+                        componentName = "category_" + item.ComponentName;
                     }
-                    else if (item.Key == "property")
+                    else if (item.ComponentType == SearchComponentBaseType.Property)
                     {
-                        componentName = "property_" + item.Value.ComponentName;
+                        componentName = "property_" + item.ComponentName;
                     }
 
                     if (source.TryGetValue(componentName, out var fieldValues))

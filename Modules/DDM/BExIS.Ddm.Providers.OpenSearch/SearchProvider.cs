@@ -37,7 +37,7 @@ namespace BExIS.Ddm.Providers.OpenSearch
             {
                 SearchConfigManager.Reload();
             }
-            SearchConfigManager.Reload();
+SearchConfigManager.Reload();
             DefaultSearchModel = InitDefault();
             WorkingSearchModel = InitWorking();
             WorkingSearchModel = Get(WorkingSearchModel.CriteriaComponent);
@@ -313,7 +313,8 @@ namespace BExIS.Ddm.Providers.OpenSearch
         public SearchModel Get(SearchCriteria searchCriteria, int pageSize = 10, int currentPage = 1)
         {
             GetQueryFromCriteria(searchCriteria);
-            WorkingSearchModel.ResultComponent = _indexer.Search(_searchQuery, SearchConfigManager.GetHeaderComponentsAsDict());
+            WorkingSearchModel.ResultComponent = _indexer.Search(_searchQuery, SearchConfigManager.GetAllComponents().ToList());
+            //WorkingSearchModel.ResultComponent = _indexer.Search(_searchQuery, SearchConfigManager.GetAllHeaderComponents().ToList());
 
 
             return WorkingSearchModel;
@@ -321,7 +322,14 @@ namespace BExIS.Ddm.Providers.OpenSearch
 
         public SearchModel GetTextBoxSearchValues(string value, string filter, string searchType, int numberOfResults)
         {
-            throw new NotImplementedException();
+            if (searchType.Equals("basedon")) GetQueryFromCriteria(this.WorkingSearchModel.CriteriaComponent);
+            if (searchType.Equals("new")) GetQueryFromCriteria(new SearchCriteria());
+
+            // encoding special characters for lucene
+            //value = EncoderHelper.Encode(value);
+
+            this.WorkingSearchModel.SearchComponent.TextBoxSearchValues = _indexer.DoTextSearch(_searchQuery, filter, value);
+            return this.WorkingSearchModel;
         }
 
         public SearchModel GetTextBoxSearchValues(string value, string filter, string searchType, int numberOfResults, SearchCriteria searchCriteria)
@@ -331,12 +339,17 @@ namespace BExIS.Ddm.Providers.OpenSearch
 
         public void Reload()
         {
-            throw new NotImplementedException();
+            SearchConfigManager.Reload();
         }
 
         public SearchModel SearchAndUpdate(SearchCriteria searchCriteria, int pageSize = 10, int currentPage = 1)
         {
-            throw new NotImplementedException();
+            this.WorkingSearchModel = Get(searchCriteria, pageSize, currentPage);
+            this.WorkingSearchModel = UpdateFacets(searchCriteria);
+            this.WorkingSearchModel = UpdateProperties(searchCriteria);
+            this.WorkingSearchModel.ResultComponent.Rows = this.WorkingSearchModel.ResultComponent.Rows.OrderByDescending(r => Convert.ToDecimal(r.Values.First())).ToList();
+
+            return this.WorkingSearchModel;
         }
 
         public void SearchAndUpdate(SearchCriteria searchCriteria)

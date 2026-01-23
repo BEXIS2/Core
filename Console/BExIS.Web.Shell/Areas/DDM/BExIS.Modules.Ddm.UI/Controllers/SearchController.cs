@@ -1,5 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Ddm.Api;
+using BExIS.Ddm.Providers.OpenSearch.Config;
 using BExIS.Security.Entities.Requests;
 using BExIS.UI.Helpers;
 using BExIS.Utils.Models;
@@ -8,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Web.Helpers;
 using System.Web.Mvc;
@@ -58,6 +60,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             j.MaxJsonLength = int.MaxValue;
             return j;
 
+        }
+
+
+        [HttpPost, CustomValidateAntiForgeryToken]
+        public JsonResult TestQuery(string test)
+        {
+            Debug.WriteLine(test);
+            return Json(SearchConfigManager.GetSnapshot(), JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>

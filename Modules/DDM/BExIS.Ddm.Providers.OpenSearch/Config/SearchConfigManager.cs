@@ -6,11 +6,15 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Services.Data;
 using BExIS.Utils.Models;
 using DocumentFormat.OpenXml.Drawing.Diagrams;
+using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Newtonsoft.Json;  
 using Newtonsoft.Json.Converters;
+using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Category = BExIS.Utils.Models.Category;
 
@@ -19,6 +23,7 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config
     public static class SearchConfigManager
     {
         private static string _configFilePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "OpenSearch", "Config", "SearchConfig.json");
+        private static string _defaultConfigFilePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "OpenSearch", "Config", "backup", "SearchConfig_backup.json)");
 
         private static volatile SearchConfig _configSnapshot;
         private static readonly object _Lock = new object();
@@ -33,19 +38,26 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config
 
         }
 
-        public static void Reload()
+        public static void Reload(string filePath = null)
         {
             lock (_Lock)
             {
-                var json = File.ReadAllText(_configFilePath);
+                var path = string.IsNullOrWhiteSpace(filePath)
+                    ? _configFilePath
+                    : filePath;
+                
 
+                if (!File.Exists(path))
+                    throw new FileNotFoundException("Config file not found", path);
+
+                var json = File.ReadAllText(path);
                 var settings = new JsonSerializerSettings
                 {
                     Converters =
-                {
-                    new StringEnumConverter(),
-                    //new CalcBlockListConverter()
-                }
+            {
+                new StringEnumConverter(),
+                // new CalcBlockListConverter()
+            }
                 };
 
                 var newConfig = JsonConvert.DeserializeObject<SearchConfig>(json, settings);
@@ -57,6 +69,66 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config
             }
         }
 
+
+        public static void RestoreDefaultConfig()
+        {
+            {
+                lock (_Lock)
+                {
+                    // Restore
+                    var json = File.ReadAllText(_defaultConfigFilePath);
+
+                    var settings = new JsonSerializerSettings
+                    {
+                        Converters =
+                            {
+                                new StringEnumConverter()
+                            }
+                    };
+
+                    var defaultConfig = JsonConvert.DeserializeObject<SearchConfig>(json, settings);
+
+                    if (defaultConfig == null)
+                        throw new InvalidOperationException("Invalid default config");
+
+                    _configSnapshot = defaultConfig;
+
+                    // Save
+                    var outputJson = JsonConvert.SerializeObject(_configSnapshot, Formatting.Indented);
+                    File.WriteAllText(_configFilePath, outputJson);
+                }
+            }
+        }
+
+        public static void Save()
+        {
+            lock (_Lock)
+            {
+                if (_configSnapshot == null)
+                    throw new InvalidOperationException("No config loaded to save");
+
+                var settings = new JsonSerializerSettings
+                {
+                    Formatting = Formatting.Indented,
+                    Converters =
+                    {
+                        new StringEnumConverter()
+                    }
+                };
+
+                var json = JsonConvert.SerializeObject(_configSnapshot, settings);
+
+                var tempFile = _configFilePath + ".tmp";
+                // atomic
+                File.WriteAllText(tempFile, json);
+                File.Copy(tempFile, _configFilePath, true);
+                // for windows
+                //File.Replace(tempFile, _configFilePath, null);
+                File.Delete(tempFile);
+            }
+        }
+
+
         public static IEnumerable<GlobalComponent> GetHeaderComponents()
         {
             return GetGlobalFacets()
@@ -66,60 +138,38 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config
                 .Where(c => c.HeaderItem);
         }
 
-        public static Dictionary<string, GlobalComponent> GetHeaderComponentsAsDict()
+        private static List<SearchComponentConfigObj> GetSearchComponentConfigObj(SearchComponentBaseType componentType)
         {
-            Dictionary<string, GlobalComponent> globalComponentsDict = new Dictionary<string, GlobalComponent>();
-
-            var facets = GetGlobalFacets();
-            foreach (var component in facets)
+            List<SearchComponentConfigObj> configComponents = new List<SearchComponentConfigObj>();
+            foreach (var globalObj in GetGlobalObj(componentType))
             {
-                if (component.HeaderItem)
-                    globalComponentsDict.Add("facet", component);
-            }
-            var categories = GetGlobalCategories();
-            foreach (var component in categories)
-            {
-                if (component.HeaderItem)
-                    globalComponentsDict.Add("category", component);
-            }
-            var props = GetGlobalProperties();
-            foreach (var component in props)
-            {
-                if (component.HeaderItem)
-                    globalComponentsDict.Add("property", component);
-            }
-            var generals = GetGlobalGenerals();
-            foreach (var component in generals)
-            {
-                if (component.HeaderItem)
-                    globalComponentsDict.Add("general", component);
+                foreach (var localObj in GetLocalObj(componentType))
+                {
+                    if (globalObj.Id == localObj.GlobalId)
+                        configComponents.Add(new SearchComponentConfigObj(globalObj, localObj, componentType));
+                }
             }
 
-
-            return globalComponentsDict;
+            return configComponents;
         }
 
-        public static Dictionary<string, GlobalComponent> GetGlobalComponentsAsDict()
+        public static IEnumerable<SearchComponentConfigObj> GetAllHeaderComponents()
         {
-            Dictionary<string, GlobalComponent> globalComponentsDict = new Dictionary<string, GlobalComponent>();
 
-            var facets = GetGlobalFacets();
-            foreach (var component in facets)
-                globalComponentsDict.Add("facet", component);
+            return GetSearchComponentConfigObj(SearchComponentBaseType.Facet)
+                .Concat(GetSearchComponentConfigObj(SearchComponentBaseType.Category))
+                .Concat(GetSearchComponentConfigObj(SearchComponentBaseType.Property))
+                .Concat(GetSearchComponentConfigObj(SearchComponentBaseType.General))
+                .Where(c => c.HeaderItem);
+        }
 
-            var categories = GetGlobalCategories();
-            foreach (var component in categories)
-                globalComponentsDict.Add("category", component);
-            
-            var props = GetGlobalProperties();
-            foreach (var component in props)
-                globalComponentsDict.Add("property", component);
-            
-            var generals = GetGlobalGenerals();
-            foreach (var component in generals)
-                globalComponentsDict.Add("general", component);
-            
-            return globalComponentsDict;
+        public static IEnumerable<SearchComponentConfigObj> GetAllComponents()
+        {
+
+            return GetSearchComponentConfigObj(SearchComponentBaseType.Facet)
+                .Concat(GetSearchComponentConfigObj(SearchComponentBaseType.Category))
+                .Concat(GetSearchComponentConfigObj(SearchComponentBaseType.Property))
+                .Concat(GetSearchComponentConfigObj(SearchComponentBaseType.General));
         }
 
         public static IEnumerable<GlobalComponent> GetGlobalFacets() => _configSnapshot.Global.SearchComponents.Facets;
@@ -138,7 +188,7 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config
         {
             return _configSnapshot.Local
                 .Where(c => c != null && c.SearchComponents != null && c.SearchComponents.Categories != null)
-                .SelectMany(c => c.SearchComponents.Facets);
+                .SelectMany(c => c.SearchComponents.Categories);
         }
 
 
@@ -146,7 +196,7 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config
         {
             return _configSnapshot.Local
                 .Where(c => c != null && c.SearchComponents != null && c.SearchComponents.Properties != null)
-                .SelectMany(c => c.SearchComponents.Facets);
+                .SelectMany(c => c.SearchComponents.Properties);
         }
 
 
@@ -154,7 +204,7 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config
         {
             return _configSnapshot.Local
                 .Where(c => c != null && c.SearchComponents != null && c.SearchComponents.General != null)
-                .SelectMany(c => c.SearchComponents.Facets);
+                .SelectMany(c => c.SearchComponents.General);
         }
 
         public static List<LocalComponent> GetAllLocalSearchComponentsById(int componentId, string componentType)
@@ -232,24 +282,66 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config
             }
         }
 
-        private static List<SearchComponentConfigObj> GetSearchComponentConfigObj(SearchComponentBaseType componentType)
+        /// <summary>
+        /// Returns a List<LocalConfig> colleciton which is basically a list of Entity Templates by comparing globalId from GlobalComponent and the Search ComponentBaseType like Facet, Category,...
+        /// </summary>
+        /// <param name="localConfigs"></param>
+        /// <param name="globalId"></param>
+        /// <param name="componentType"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidEnumArgumentException"></exception>
+        public static List<LocalConfig> GetRelatedLocalConfigsByGlobalId(int globalId, SearchComponentBaseType componentType)
         {
-            List<SearchComponentConfigObj> configComponents = new List<SearchComponentConfigObj>();
-            foreach (var globalObj in GetGlobalObj(componentType))
+            List<LocalConfig> results = new List<LocalConfig>();
+            foreach (var localConfig in _configSnapshot.Local)
             {
-                foreach (var localObj in GetLocalObj(componentType))
+                if (componentType == SearchComponentBaseType.Facet)
                 {
-                    if (globalObj.Id == localObj.GlobalId)
-                        configComponents.Add(new SearchComponentConfigObj(globalObj, localObj, componentType));
+                    foreach (var component in localConfig.SearchComponents.Facets)
+                    {
+                        if (globalId == component.GlobalId)
+                        {
+                            results.Add(localConfig);
+                        }
+                    }
+                }
+                else if (componentType == SearchComponentBaseType.Category)
+                {
+                    foreach (var component in localConfig.SearchComponents.Categories)
+                    {
+                        if (globalId == component.GlobalId)
+                        {
+                            results.Add(localConfig);
+                        }
+                    }
+                }
+                else if (componentType == SearchComponentBaseType.General)
+                {
+                    foreach (var component in localConfig.SearchComponents.General)
+                    {
+                        if (globalId == component.GlobalId)
+                        {
+                            results.Add(localConfig);
+                        }
+                    }
+                }
+                else if (componentType == SearchComponentBaseType.Property)
+                {
+                    foreach (var component in localConfig.SearchComponents.Properties)
+                    {
+                        if (globalId == component.GlobalId)
+                        {
+                            results.Add(localConfig);
+                        }
+                    }
+                }
+                else
+                {
+                    throw new InvalidEnumArgumentException("Search Component Base Type is not supported: " + componentType);
                 }
             }
-            return configComponents;
+            return results;
         }
-
-
-
-
-        // nullable
         public static List<string> GetMetadataNodes(int componentId, string componentType)
         {
             foreach (var entityTemplate in _configSnapshot.Local)

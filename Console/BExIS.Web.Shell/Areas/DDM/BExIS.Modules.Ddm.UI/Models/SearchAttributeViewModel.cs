@@ -1,4 +1,6 @@
-﻿using BExIS.Utils.Models;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Security.Entities.Objects;
+using BExIS.Utils.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -70,6 +72,11 @@ namespace BExIS.Modules.Ddm.UI.Models
         [Display(Name = "Placeholder")]
         public string placeholder { get; set; }
 
+        [Display(Name = "Entity Template Id")]
+        public long entityTemplateId { get; set; }
+
+        [Display(Name = "Entity Template Name")]
+        public string entityTemplateName { get; set; }
         /*[Display(Name = "Date Format")]
         public string dateFormat = "bgc:format";*/
 
@@ -114,6 +121,8 @@ namespace BExIS.Modules.Ddm.UI.Models
             sa.aggregationType = SearchAttribute.GetAggregationType(searchAttributeViewModel.aggregationType);
             sa.placeholder = searchAttributeViewModel.placeholder;
             //sa.dateFormat = searchAttributeViewModel.dateFormat;
+            sa.EntityTemplateId = searchAttributeViewModel.entityTemplateId;
+            sa.EntityTemplateName = searchAttributeViewModel.entityTemplateName;
 
             return sa;
         }
@@ -148,6 +157,8 @@ namespace BExIS.Modules.Ddm.UI.Models
             sa.aggregationType = SearchAttribute.GetAggregationTypeAsString(searchAttribute.aggregationType);
             //sa.dateFormat = searchAttribute.dateFormat;
             sa.placeholder = searchAttribute.placeholder;
+            sa.entityTemplateId = searchAttribute.EntityTemplateId;
+            sa.entityTemplateName = searchAttribute.EntityTemplateName;
 
             return sa;
         }

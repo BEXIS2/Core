@@ -52,6 +52,14 @@
 	const placeholderStore = writable<any>([]);
 	let authorLabel = 'Authors';
 
+	const handleTest = async () =>  {
+		const response = await Api.post('/ddm/' + controller + "/TestQuery", "Dies ist ein Test");
+				if (response.status !== 200) {
+			console.error(response);
+			return;
+				}
+	}
+
 	const handleSearch = async (init: boolean = false) => {
 		const response = await Api.post(
 			'/ddm/' + controller + '/Query',
@@ -412,6 +420,7 @@
 	
 	onMount(async () => {
 		await handleSearch(true);
+		await handleTest();
 	});
 </script>
 

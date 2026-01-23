@@ -8,5 +8,6 @@
 		<a class="btn variant-filled-secondary" href="./curation">curation</a>
 		<a class="btn variant-filled-secondary" href="./publicsearch">publicsearch</a>
 		<a class="btn variant-filled-secondary" href="./taginfo">taginfo</a>
+		<a class="btn variant-filled-secondary" href="./managesearch">Manage Search</a>
 	</div>
 </Page>
