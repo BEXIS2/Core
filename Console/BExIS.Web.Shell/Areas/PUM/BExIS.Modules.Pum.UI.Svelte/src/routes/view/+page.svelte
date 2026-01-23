@@ -19,7 +19,13 @@
 	let groupedResources: Record<string, ResourceArray[]> = {};
 
 	onMount(async () => {
-		metadata = await apiCalls.GetMetadata(48);
+
+		// get id from url
+		const urlSearchParams = new URLSearchParams(window.location.search);
+		const urlDatasetId = urlSearchParams.get('id');
+		let datasetId = urlDatasetId ? parseInt(urlDatasetId) : 1;
+
+		metadata = await apiCalls.GetMetadata(datasetId);
 		console.log(metadata);
 
 		datasetTitle = metadata?.publication?.Title?.['#text'] ?? 'Title not available';
