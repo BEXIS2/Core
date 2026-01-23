@@ -638,6 +638,8 @@ namespace BExIS.Ddm.Providers.OpenSearch
             List<TextValue> result = new List<TextValue>();
             ISearchResponse<AutoCompleteDocument> response = null;
 
+            // Test
+
             if (queryFilter == "all")
             {
                 response = _client.Search<AutoCompleteDocument>(s => s
