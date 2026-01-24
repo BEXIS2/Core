@@ -234,7 +234,7 @@
 		let searchEntity = entities.find((entity) => entity.id == selectedEntity);
 
 		dataset.EntityTemplateId = selectedEntity;
-		metadataStructureId = dataset.MetadataStructureId = searchEntity.metadataStructure.id;
+		dataset.MetadataStructureId = searchEntity.metadataStructure.id;
 	}
 
 	function toggleValidForm() {

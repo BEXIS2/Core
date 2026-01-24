@@ -1,7 +1,7 @@
-import type { dataSetType, ValidationReturn, createDatasetReturn } from './models.ts';
+import type { dataSetType, ValidationReturn, createDatasetReturn } from './models.js';
 import mappingPublication from './mappingPublication.json';
-import * as mapMetadata from './mapMetadata';
-import * as apiCalls from './services/apiCalls';
+import * as mapMetadata from './mapMetadata.js';
+import * as apiCalls from './services/apiCalls.js';
 import { tick } from 'svelte';
 import { DataCounterStore } from './stores.js';
 

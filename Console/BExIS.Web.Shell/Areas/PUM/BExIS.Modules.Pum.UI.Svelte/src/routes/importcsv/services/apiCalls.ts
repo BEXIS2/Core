@@ -1,5 +1,5 @@
 import { Api } from '@bexis2/bexis2-core-ui';
-import type { Dataset } from '../models.ts';
+import type { Dataset } from '../models.js';
 
 export const getEntityTemplateList = async () => {
 	try {

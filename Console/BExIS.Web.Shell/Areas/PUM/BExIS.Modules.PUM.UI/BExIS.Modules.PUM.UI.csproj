@@ -106,7 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\ImportCSV.cs" />
+    <Compile Include="Controllers\ImportCSVController.cs" />
     <Compile Include="Controllers\ImportJSONController.cs" />
     <Compile Include="Controllers\ViewController.cs" />
     <Compile Include="Helpers\PUMSeedDataGenerator.cs" />
