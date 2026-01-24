@@ -28,10 +28,7 @@ datasetId = 0
 </script>
 
 <!-- How the component might be used with data next to it -->
-<div class="flex gap-x-12">
-	<div
-		class="max-h-fit-screen size-full overflow-y-auto rounded border border-surface-500 bg-surface-300"
-	>
+
 	
 
 	
@@ -39,9 +36,7 @@ datasetId = 0
 				<MetadataDiffTool {datasetId} />
 		
 
-	</div>
 
-</div>
 
 <style lang="postcss">
 	.max-h-fit-screen {

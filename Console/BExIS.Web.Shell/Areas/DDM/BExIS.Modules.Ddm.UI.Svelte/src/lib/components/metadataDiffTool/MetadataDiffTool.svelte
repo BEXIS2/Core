@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Api, Spinner, DropdownKVP, MultiSelect } from '@bexis2/bexis2-core-ui';
+	import { Api, Spinner, DropdownKVP, MultiSelect, Page } from '@bexis2/bexis2-core-ui';
 	import { onMount } from 'svelte';
 	import DiffNode from './DiffNode.svelte';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
@@ -55,6 +55,9 @@
 		try {
 			let response = await Api.get('/api/dataset/' + id);
 			console.log('Fetched dataset info:', response.data);
+			if (response.data.version === undefined) {
+				return { error: { message: 'Dataset not found' } };
+			}
 			return { maxVersion: response.data.version };
 		} catch (error) {
 			return { error };
@@ -93,23 +96,47 @@
 	function onChangeSelectedDataset1(event: Event) {
 		selectedVersion1 = null;
 
+		if (selectedDataset1 === null) {
+			datasetResponse1.error = { message: "Id not selected or doesn't exist" }	;
+			return;
+		}
+
 		fetchDataset(selectedDataset1.id).then((response) => {
+			if (response.error) {
+				console.error('Error fetching dataset 1:', response.error);
+				datasetResponse1 = response;
+			}
+			else {	
 			datasetResponse1 = response;
 			console.log('Dataset Response 1:', datasetResponse1);
 			versions1 = Array.from({ length: datasetResponse1.maxVersion ?? 0 }, (_, i) => i + 1);
 			selectedVersion1 = datasetResponse1.maxVersion ?? null;
 			onChangeSelectedVersion1(new Event('init'));
+			}
 		});
 	}
 
 	function onChangeSelectedDataset2(event: Event) {
 		selectedVersion2 = null;
 
+		if (selectedDataset2 === null) {
+			datasetResponse2.error = { message: "Id not selected or doesn't exist" };
+			return;
+		}
+
 		fetchDataset(selectedDataset2.id).then((response) => {
+			if (response.error) {
+				console.error('Error fetching dataset 2:', response.error);
+				datasetResponse2 = response;
+			}
+			else {
+			
+			
 			datasetResponse2 = response;
 			versions2 = Array.from({ length: datasetResponse2.maxVersion ?? 0 }, (_, i) => i + 1);
 			selectedVersion2 = datasetResponse2.maxVersion ?? null;
 			onChangeSelectedVersion2(new Event('init'));
+			}
 		});
 	}
 
@@ -125,11 +152,12 @@
 		}
 		metadata1 = null;
 		loading1 = true;
-		if (selectedVersion1 === null) {
+		if (selectedVersion1 === null || selectedDataset1 === null) {
 			return;
 		}
 		console.log('Fetching metadata for version 1:', selectedVersion1);
 		fetchMetadataVersion(selectedVersion1, selectedDataset1.id).then((data) => {
+
 			metadata1 = data;
 			loading1 = false;
 		});
@@ -155,7 +183,7 @@
 	let syncSelections: boolean = true;
 </script>
 
-
+<Page help={true} title="Metadata Diff Tool">
 <h2 class="m-4 text-2xl font-bold">Metadata Diff Tool</h2>
 <p class="mx-4 mb-2 text-sm ">Select datasets and versions to compare their metadata.</p>
 
@@ -284,3 +312,4 @@
 		<p>Loading dataset information...</p>
 	</div>
 {/if}
+</Page>
