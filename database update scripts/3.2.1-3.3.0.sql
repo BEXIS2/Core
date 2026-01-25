@@ -115,7 +115,7 @@ INSERT INTO public.dim_mappingkeys (name, optional, iscomplex, concept, parentre
 
 INSERT INTO public.dim_mappingkeys (name, optional, iscomplex, concept, parentref, xpath)
     SELECT 'PublisherIdentifier', true, false, (select id from dim_mappingconcepts where name='datacite'), (select id from dim_mappingkeys where name='Publisher' AND xpath='data/attributes/publisher'), 'data/attributes/publisher/publisherIdentifier'
-    WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='datacite') AND xpath='data/attributes/publisher/name');
+    WHERE NOT EXISTS (select * from public.dim_mappingkeys where concept=(select id from dim_mappingconcepts where name='datacite') AND xpath='data/attributes/publisher/publisherIdentifier');
 
 
 INSERT INTO public.dim_mappingkeys (name, optional, iscomplex, concept, parentref, xpath)

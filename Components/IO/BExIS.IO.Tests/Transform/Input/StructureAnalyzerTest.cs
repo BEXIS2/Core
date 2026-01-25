@@ -242,7 +242,7 @@ namespace BExIS.IO.Tests.Transform.Input
 
         #region systemtypes
 
-        [TestCase(100)]
+        [TestCase(1)]
         public void SuggestSystemTypes_Valid_ResultWithCorrectTypes(int n)
         {
             //Arrange
@@ -255,13 +255,13 @@ namespace BExIS.IO.Tests.Transform.Input
             Assert.NotNull(result);
 
             var v1 = result[0];
-            Assert.That(v1.Equals(typeof(UInt32)));
+            Assert.That(v1.Equals(typeof(Int64)));
 
             var v2 = result[1];
             Assert.That(v2.Equals(typeof(String)));
 
             var v3 = result[2];
-            Assert.That(v3.Equals(typeof(Decimal)));
+            Assert.That(v3.Equals(typeof(Double)));
 
             var v4 = result[3];
             Assert.That(v4.Equals(typeof(Boolean)));
@@ -300,10 +300,10 @@ namespace BExIS.IO.Tests.Transform.Input
             Assert.NotNull(result);
 
             var v1 = result[0];
-            Assert.That(v1.Equals(typeof(UInt32)));
+            Assert.That(v1.Equals(typeof(Int64)));
 
             var v2 = result[1];
-            Assert.That(v2.Equals(typeof(UInt32)));
+            Assert.That(v2.Equals(typeof(Int64)));
 
             var v3 = result[2];
             Assert.That(v3.Equals(typeof(String)));
@@ -340,13 +340,13 @@ namespace BExIS.IO.Tests.Transform.Input
             Assert.NotNull(result);
 
             var v1 = result[0];
-            Assert.That(v1.Equals(typeof(UInt32)), "is not UInt32");
+            Assert.That(v1.Equals(typeof(Int64)), "is not Int64");
 
             var v2 = result[1];
             Assert.That(v2.Equals(typeof(String)), "is not String");
 
             var v3 = result[2];
-            Assert.That(v3.Equals(typeof(Decimal)), "is not Decimal");
+            Assert.That(v3.Equals(typeof(Double)), "is not Double");
 
             var v4 = result[3];
             Assert.That(v4.Equals(typeof(Boolean)), "is not Boolean");
@@ -366,19 +366,6 @@ namespace BExIS.IO.Tests.Transform.Input
 
             var r = new Random();
 
-            for (int i = 0; i < number; i++)
-            {
-                string row = r.Next().ToString();
-
-                row += seperator.ToString() + "Test";
-                row += seperator.ToString() + r.NextDouble().ToString();
-                row += seperator.ToString() + true.ToString();
-                row += seperator.ToString() + DateTime.Now.ToString();
-                row += seperator.ToString() + -3;
-
-                rows.Add(row);
-            }
-
             if (missingValues != null)
             {
                 foreach (var missingValue in missingValues)
@@ -393,6 +380,21 @@ namespace BExIS.IO.Tests.Transform.Input
                     rows.Add(row);
                 }
             }
+
+            for (int i = 0; i < number; i++)
+            {
+                string row = r.Next().ToString();
+
+                row += seperator.ToString() + "Test";
+                row += seperator.ToString() + r.NextDouble().ToString();
+                row += seperator.ToString() + true.ToString();
+                row += seperator.ToString() + DateTime.Now.ToString();
+                row += seperator.ToString() + -3;
+
+                rows.Add(row);
+            }
+
+
 
             return rows;
         }

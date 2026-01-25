@@ -1,0 +1,483 @@
+<Metadata id="3">
+ <publication type="MetadataPackageUsage" name="publication" id="20">
+  <publicationType type="MetadataPackage" name="publicationType" roleId="20" id="20" number="1">
+   <Journal type="MetadataAttributeUsage" name="Journal" id="63">
+    <JournalType type="MetadataAttribute" name="JournalType" roleId="63" id="125" number="1">NA</JournalType>
+   </Journal>
+   <Title type="MetadataAttributeUsage" name="Title" id="64">
+    <TitleType type="MetadataAttribute" name="TitleType" roleId="64" id="126" number="1">Extreme drought impacts have been underestimated in grasslands and shrublands globally</TitleType>
+   </Title>
+   <Abstract type="MetadataAttributeUsage" name="Abstract" id="65">
+    <AbstractType type="MetadataAttribute" name="AbstractType" roleId="65" id="127" number="1">Climate change is increasing the frequency and severity of short-term (~1 y) drought events—the most common duration of drought—globally. Yet the impact of this intensification of drought on ecosystem functioning remains poorly resolved. This is due in part to the widely disparate approaches ecologists have employed to study drought, variation in the severity and duration of drought studied, and differences among ecosystems in vegetation, edaphic and climatic attributes that can mediate drought impacts. To overcome these problems and better identify the factors that modulate drought responses, we used a coordinated distributed experiment to quantify the impact of short-term drought on grassland and shrubland ecosystems. With a standardized approach, we imposed ~a single year of drought at 100 sites on six continents. Here we show that loss of a foundational ecosystem function—aboveground net primary production (ANPP)—was 60% greater at sites that experienced statistically extreme drought (1-in-100-y event) vs. those sites where drought was nominal (historically more common) in magnitude (35% vs. 21%, respectively). This reduction in a key carbon cycle process with a single year of extreme drought greatly exceeds previously reported losses for grasslands and shrublands. Our global experiment also revealed high variability in drought response but that relative reductions in ANPP were greater in drier ecosystems and those with fewer plant species. Overall, our results demonstrate with unprecedented rigor that the global impacts of projected increases in drought severity have been significantly underestimated and that drier and less diverse sites are likely to be most vulnerable to extreme drought.</AbstractType>
+   </Abstract>
+   <Author type="MetadataAttributeUsage" name="Author" id="66">
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="1">Smith, Melinda D.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="2">Wilkins, Kate D.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="3">Holdrege, Martin C.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="4">Wilfahrt, Peter</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="5">Collins, Scott L.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="6">Knapp, Alan K.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="7">Sala, Osvaldo E.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="8">Dukes, Jeffrey S.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="9">Phillips, Richard P.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="10">Yahdjian, Laura</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="11">Gherardi, Laureano A.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="12">Ohlert, Timothy</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="13">Beier, Claus</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="14">Fraser, Lauchlan H.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="15">Jentsch, Anke</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="16">Loik, Michael E.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="17">Maestre, Fernando T.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="18">Power, Sally A.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="19">Yu, Qiang</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="20">Felton, Andrew J.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="21">Munson, Seth M.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="22">Luo, Yiqi</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="23">Abdoli, Hamed</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="24">Abedi, Mehdi</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="25">Alados, Concepción L.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="26">Alberti, Juan</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="27">Alon, Moshe</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="28">An, Hui</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="29">Anacker, Brian</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="30">Anderson, Maggie</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="31">Auge, Harald</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="32">Bachle, Seton</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="33">Bahalkeh, Khadijeh</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="34">Bahn, Michael</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="35">Batbaatar, Amgaa</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="36">Bauerle, Taryn</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="37">Beard, Karen H.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="38">Behn, Kai</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="39">Beil, Ilka</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="40">Biancari, Lucio</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="41">Blindow, Irmgard</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="42">Bondaruk, Viviana Florencia</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="43">Borer, Elizabeth T.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="44">Bork, Edward W.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="45">Bruschetti, Carlos Martin</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="46">Byrne, Kerry M.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="47">Cahill Jr., James F.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="48">Calvo, Dianela A.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="49">Carbognani, Michele</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="50">Cardoni, Augusto</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="51">Carlyle, Cameron N.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="52">Castillo-Garcia, Miguel</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="53">Chang, Scott X.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="54">Chieppa, Jeff</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="55">Cianciaruso, Marcus V.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="56">Cohen, Ofer</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="57">Cordeiro, Amanda L.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="58">Cusack, Daniela F.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="59">Dahlke, Sven</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="60">Daleo, Pedro</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="61">D'Antonio, Carla M.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="62">Dietterich, Lee H.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="63">S. Doherty, Tim</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="64">Dubbert, Maren</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="65">Ebeling, Anne</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="66">Eisenhauer, Nico</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="67">Fischer, Felícia M.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="68">Forte, T'ai G. W.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="69">Gebauer, Tobias</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="70">Gozalo, Beatriz</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="71">Greenville, Aaron C.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="72">Guidoni-Martins, Karlo G.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="73">Hannusch, Heather J.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="74">Vatsø Haugum, Siri</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="75">Hautier, Yann</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="76">Hefting, Mariet</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="77">Henry, Hugh A. L.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="78">Hoss, Daniela</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="79">Ingrisch, Johannes</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="80">Iribarne, Oscar</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="81">Isbell, Forest</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="82">Johnson, Yari</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="83">Jordan, Samuel</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="84">Kelly, Eugene F.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="85">Kimmel, Kaitlin</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="86">Kreyling, Juergen</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="87">Kröel-Dulay, György</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="88">Kröpfl, Alicia</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="89">Kübert, Angelika</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="90">Kulmatiski, Andrew</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="91">Lamb, Eric G.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="92">Larsen, Klaus Steenberg</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="93">Larson, Julie</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="94">Lawson, Jason</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="95">Leder, Cintia V.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="96">Linstädter, Anja</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="97">Liu, Jielin</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="98">Liu, Shirong</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="99">Lodge, Alexandra G.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="100">Longo, Grisel</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="101">Loydi, Alejandro</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="102">Luan, Junwei</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="103">Curtis Lubbe, Frederick</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="104">Macfarlane, Craig</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="105">Mackie-Haas, Kathleen</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="106">Malyshev, Andrey V.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="107">Maturano-Ruiz, Adrián</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="108">Merchant, Thomas</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="109">Metcalfe, Daniel B.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="110">Mori, Akira S.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="111">Mudongo, Edwin</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="112">Newman, Gregory S.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="113">Nielsen, Uffe N.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="114">Nimmo, Dale</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="115">Niu, Yujie</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="116">Nobre, Paola</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="117">O'Connor, Rory C.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="118">Ogaya, Romà</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="119">Oñatibia, Gastón R.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="120">Orbán, Ildikó</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="121">Osborne, Brooke</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="122">Otfinowski, Rafael</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="123">Pärtel, Meelis</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="124">Penuelas, Josep</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="125">Peri, Pablo L.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="126">Peter, Guadalupe</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="127">Petraglia, Alessandro</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="128">Picon-Cochard, Catherine</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="129">Pillar, Valério D.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="130">Piñeiro-Guerra, Juan Manuel</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="131">Ploughe, Laura W.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="132">Plowes, Robert M.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="133">Portales-Reyes, Cristy</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="134">Prober, Suzanne M.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="135">Pueyo, Yolanda</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="136">Reed, Sasha C.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="137">Ritchie, Euan G.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="138">Rodríguez, Dana Aylén</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="139">Rogers, William E.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="140">Roscher, Christiane</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="141">Sánchez, Ana M.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="142">Santos, Bráulio A.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="143">Cecilia Scarfó, María</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="144">Seabloom, Eric W.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="145">Shi, Baoku</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="146">Souza, Lara</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="147">Stampfli, Andreas</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="148">Standish, Rachel J.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="149">Sternberg, Marcelo</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="150">Sun, Wei</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="151">Sünnemann, Marie</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="152">Tedder, Michelle</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="153">Thorvaldsen, Pål</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="154">Tian, Dashuan</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="155">Tielbörger, Katja</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="156">Valdecantos, Alejandro</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="157">van den Brink, Liesbeth</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="158">Vandvik, Vigdis</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="159">Vankoughnett, Mathew R.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="160">Guri Velle, Liv</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="161">Wang, Changhui</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="162">Wang, Yi</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="163">Wardle, Glenda M.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="164">Werner, Christiane</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="165">Wei, Cunzheng</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="166">Wiehl, Georg</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="167">Williams, Jennifer L.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="168">Wolf, Amelia A.</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="169">Zeiter, Michaela</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="170">Zhang, Fawei</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="171">Zhu, Juntao</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="172">Zong, Ning</AuthorType>
+    <AuthorType type="MetadataAttribute" name="AuthorType" roleId="66" id="128" number="173">Zuo, Xiaoan</AuthorType>
+   </Author>
+   <Affiliations type="MetadataAttributeUsage" name="Affiliations" id="67">
+    <AffiliationsType type="MetadataAttribute" name="AffiliationsType" roleId="67" id="129" number="1"></AffiliationsType>
+   </Affiliations>
+   <Curation type="MetadataAttributeUsage" name="Curation" id="68">
+    <curation type="MetadataAttribute" name="curation" roleId="68" id="135" number="1">
+     <curated type="MetadataAttributeUsage" name="curated" id="109">
+      <curatedType type="MetadataAttribute" name="curatedType" roleId="109" id="130" number="1"></curatedType>
+     </curated>
+     <rated_by type="MetadataAttributeUsage" name="rated_by" id="110">
+      <rated_byType type="MetadataAttribute" name="rated_byType" roleId="110" id="131" number="1">Ludmilla Figueiredo</rated_byType>
+     </rated_by>
+     <access_date type="MetadataAttributeUsage" name="access_date" id="111">
+      <access_dateType type="MetadataAttribute" name="access_dateType" roleId="111" id="132" number="1">NA</access_dateType>
+     </access_date>
+     <date_added type="MetadataAttributeUsage" name="date_added" id="112">
+      <date_addedType type="MetadataAttribute" name="date_addedType" roleId="112" id="133" number="1">07.05.2024 00:00</date_addedType>
+     </date_added>
+     <date_modified type="MetadataAttributeUsage" name="date_modified" id="113">
+      <date_modifiedType type="MetadataAttribute" name="date_modifiedType" roleId="113" id="134" number="1">07.05.2024 00:00</date_modifiedType>
+     </date_modified>
+    </curation>
+   </Curation>
+   <Identifiers type="MetadataAttributeUsage" name="Identifiers" id="69">
+    <identifiers type="MetadataAttribute" name="identifiers" roleId="69" id="141" number="1">
+     <isbn type="MetadataAttributeUsage" name="isbn" id="114">
+      <isbnType type="MetadataAttribute" name="isbnType" roleId="114" id="136" number="1">NA</isbnType>
+     </isbn>
+     <issn type="MetadataAttributeUsage" name="issn" id="115">
+      <issnType type="MetadataAttribute" name="issnType" roleId="115" id="137" number="1">NA</issnType>
+     </issn>
+     <doi type="MetadataAttributeUsage" name="doi" id="116">
+      <doiType type="MetadataAttribute" name="doiType" roleId="116" id="138" number="1">10.1073/pnas.2309881120</doiType>
+     </doi>
+     <uri type="MetadataAttributeUsage" name="uri" id="117">
+      <uriType type="MetadataAttribute" name="uriType" roleId="117" id="139" number="1">https://www.pnas.org/doi/abs/10.1073/pnas.2309881120</uriType>
+     </uri>
+     <alt_uri type="MetadataAttributeUsage" name="alt_uri" id="118">
+      <alt_uriType type="MetadataAttribute" name="alt_uriType" roleId="118" id="140" number="1">none</alt_uriType>
+     </alt_uri>
+    </identifiers>
+   </Identifiers>
+   <Type type="MetadataAttributeUsage" name="Type" id="70">
+    <TypeType type="MetadataAttribute" name="TypeType" roleId="70" id="142" number="1">journalArticle</TypeType>
+   </Type>
+   <license type="MetadataAttributeUsage" name="license" id="71">
+    <licenseType type="MetadataAttribute" name="licenseType" roleId="71" id="143" number="1"></licenseType>
+   </license>
+   <publication_date type="MetadataAttributeUsage" name="publication_date" id="72">
+    <publication_dateType type="MetadataAttribute" name="publication_dateType" roleId="72" id="144" number="1"></publication_dateType>
+   </publication_date>
+   <preprint type="MetadataAttributeUsage" name="preprint" id="73">
+    <preprintType type="MetadataAttribute" name="preprintType" roleId="73" id="145" number="1"></preprintType>
+   </preprint>
+   <pages type="MetadataAttributeUsage" name="pages" id="74">
+    <pagesType type="MetadataAttribute" name="pagesType" roleId="74" id="146" number="1">e2309881120</pagesType>
+   </pages>
+   <issue type="MetadataAttributeUsage" name="issue" id="75">
+    <issueType type="MetadataAttribute" name="issueType" roleId="75" id="147" number="1">4</issueType>
+   </issue>
+   <volume type="MetadataAttributeUsage" name="volume" id="76">
+    <volumeType type="MetadataAttribute" name="volumeType" roleId="76" id="148" number="1">121</volumeType>
+   </volume>
+   <comment type="MetadataAttributeUsage" name="comment" id="77">
+    <commentType type="MetadataAttribute" name="commentType" roleId="77" id="149" number="1">States that data and code are shared, but only data is. In Dryad, asks future users to contact authors to ensure use according to best practices.</commentType>
+   </comment>
+   <keywords type="MetadataAttributeUsage" name="keywords" id="78">
+    <keywordsType type="MetadataAttribute" name="keywordsType" roleId="78" id="150" number="1">NA</keywordsType>
+   </keywords>
+   <supplementary_info type="MetadataAttributeUsage" name="supplementary_info" id="79">
+    <supplementary_infoType type="MetadataAttribute" name="supplementary_infoType" roleId="79" id="151" number="1"></supplementary_infoType>
+   </supplementary_info>
+   <Recourses type="MetadataAttributeUsage" name="Recourses" id="80">
+    <recourses type="MetadataAttribute" name="recourses" roleId="80" id="156" number="1">
+     <data_availability type="MetadataAttributeUsage" name="data_availability" id="119">
+      <data_availabilityType type="MetadataAttribute" name="data_availabilityType" roleId="119" id="152" number="1"></data_availabilityType>
+     </data_availability>
+     <code_availability type="MetadataAttributeUsage" name="code_availability" id="120">
+      <code_availabilityType type="MetadataAttribute" name="code_availabilityType" roleId="120" id="153" number="1"></code_availabilityType>
+     </code_availability>
+     <Data_code_availiablity_title type="MetadataAttributeUsage" name="Data_code_availiablity_title" id="121">
+      <Data_code_availiablity_titleType type="MetadataAttribute" name="Data_code_availiablity_titleType" roleId="121" id="154" number="1">none</Data_code_availiablity_titleType>
+     </Data_code_availiablity_title>
+     <Data_code_availiablity_statement type="MetadataAttributeUsage" name="Data_code_availiablity_statement" id="122">
+      <Data_code_availiablity_statementType type="MetadataAttribute" name="Data_code_availiablity_statementType" roleId="122" id="155" number="1">none</Data_code_availiablity_statementType>
+     </Data_code_availiablity_statement>
+    </recourses>
+   </Recourses>
+  </publicationType>
+ </publication>
+ <Resource type="MetadataPackageUsage" name="Resource" id="21">
+  <ResourceType type="MetadataPackage" name="ResourceType" roleId="21" id="21" number="1">
+   <Resources_Type type="MetadataAttributeUsage" name="Resources_Type" id="81">
+    <Resources_TypeType type="MetadataAttribute" name="Resources_TypeType" roleId="81" id="157" number="1">Dataset</Resources_TypeType>
+   </Resources_Type>
+   <Name type="MetadataAttributeUsage" name="Name" id="82">
+    <NameType type="MetadataAttribute" name="NameType" roleId="82" id="158" number="1"></NameType>
+   </Name>
+   <Language type="MetadataAttributeUsage" name="Language" id="83">
+    <LanguageType type="MetadataAttribute" name="LanguageType" roleId="83" id="159" number="1"></LanguageType>
+   </Language>
+   <Access type="MetadataAttributeUsage" name="Access" id="84">
+    <accessType type="MetadataAttribute" name="accessType" roleId="84" id="166" number="1">
+     <URI type="MetadataAttributeUsage" name="URI" id="123">
+      <URIType type="MetadataAttribute" name="URIType" roleId="123" id="160" number="1">https://datadryad.org/stash/dataset/doi:10.5061/dryad.3j9kd51rb</URIType>
+     </URI>
+     <URI_Health type="MetadataAttributeUsage" name="URI_Health" id="124">
+      <URI_HealthType type="MetadataAttribute" name="URI_HealthType" roleId="124" id="161" number="1">yes</URI_HealthType>
+     </URI_Health>
+     <DOI type="MetadataAttributeUsage" name="DOI" id="125">
+      <DOIType type="MetadataAttribute" name="DOIType" roleId="125" id="162" number="1">https://doi.org/10.5061/dryad.3j9kd51rb</DOIType>
+     </DOI>
+     <DOI_Health type="MetadataAttributeUsage" name="DOI_Health" id="126">
+      <DOI_HealthType type="MetadataAttribute" name="DOI_HealthType" roleId="126" id="163" number="1">yes</DOI_HealthType>
+     </DOI_Health>
+     <Repository_Name type="MetadataAttributeUsage" name="Repository_Name" id="127">
+      <Repository_NameType type="MetadataAttribute" name="Repository_NameType" roleId="127" id="164" number="1"></Repository_NameType>
+     </Repository_Name>
+     <Licence type="MetadataAttributeUsage" name="Licence" id="128">
+      <LicenceType type="MetadataAttribute" name="LicenceType" roleId="128" id="165" number="1">cc0 1.0</LicenceType>
+     </Licence>
+    </accessType>
+   </Access>
+   <Submitted_By type="MetadataAttributeUsage" name="Submitted_By" id="85">
+    <Submitted_ByType type="MetadataAttribute" name="Submitted_ByType" roleId="85" id="167" number="1">dryad</Submitted_ByType>
+   </Submitted_By>
+   <Submission_Date type="MetadataAttributeUsage" name="Submission_Date" id="86">
+    <Submission_DateType type="MetadataAttribute" name="Submission_DateType" roleId="86" id="168" number="1"></Submission_DateType>
+   </Submission_Date>
+   <Embargo type="MetadataAttributeUsage" name="Embargo" id="87">
+    <EmbargoType type="MetadataAttribute" name="EmbargoType" roleId="87" id="169" number="1"></EmbargoType>
+   </Embargo>
+   <Embargo_End type="MetadataAttributeUsage" name="Embargo_End" id="88">
+    <Embargo_EndType type="MetadataAttribute" name="Embargo_EndType" roleId="88" id="170" number="1"></Embargo_EndType>
+   </Embargo_End>
+   <File type="MetadataAttributeUsage" name="File" id="89">
+    <file type="MetadataAttribute" name="file" roleId="89" id="174" number="1">
+     <SizeIn_MB type="MetadataAttributeUsage" name="SizeIn_MB" id="129">
+      <SizeIn_MBType type="MetadataAttribute" name="SizeIn_MBType" roleId="129" id="171" number="1"></SizeIn_MBType>
+     </SizeIn_MB>
+     <File_Format type="MetadataAttributeUsage" name="File_Format" id="130">
+      <File_FormatType type="MetadataAttribute" name="File_FormatType" roleId="130" id="172" number="1">csv</File_FormatType>
+     </File_Format>
+     <Data_Type type="MetadataAttributeUsage" name="Data_Type" id="131">
+      <Data_TypeType type="MetadataAttribute" name="Data_TypeType" roleId="131" id="173" number="1"></Data_TypeType>
+     </Data_Type>
+    </file>
+   </File>
+   <Code type="MetadataAttributeUsage" name="Code" id="90">
+    <code type="MetadataAttribute" name="code" roleId="90" id="177" number="1">
+     <Code_Type type="MetadataAttributeUsage" name="Code_Type" id="132">
+      <Code_TypeType type="MetadataAttribute" name="Code_TypeType" roleId="132" id="175" number="1"></Code_TypeType>
+     </Code_Type>
+     <Programing_Language type="MetadataAttributeUsage" name="Programing_Language" id="133">
+      <Programing_LanguageType type="MetadataAttribute" name="Programing_LanguageType" roleId="133" id="176" number="1">NA</Programing_LanguageType>
+     </Programing_Language>
+    </code>
+   </Code>
+  </ResourceType>
+  <ResourceType type="MetadataPackage" name="ResourceType" roleId="21" id="21" number="2">
+   <Resources_Type type="MetadataAttributeUsage" name="Resources_Type" id="81">
+    <Resources_TypeType type="MetadataAttribute" name="Resources_TypeType" roleId="81" id="157" number="1" />
+   </Resources_Type>
+   <Name type="MetadataAttributeUsage" name="Name" id="82">
+    <NameType type="MetadataAttribute" name="NameType" roleId="82" id="158" number="1">Test1</NameType>
+   </Name>
+   <Language type="MetadataAttributeUsage" name="Language" id="83">
+    <LanguageType type="MetadataAttribute" name="LanguageType" roleId="83" id="159" number="1" />
+   </Language>
+   <Access type="MetadataAttributeUsage" name="Access" id="84">
+    <accessType type="MetadataAttribute" name="accessType" roleId="84" id="166" number="1">
+     <URI type="MetadataAttributeUsage" name="URI" id="123">
+      <URIType type="MetadataAttribute" name="URIType" roleId="123" id="160" number="1">hi</URIType>
+     </URI>
+     <URI_Health type="MetadataAttributeUsage" name="URI_Health" id="124">
+      <URI_HealthType type="MetadataAttribute" name="URI_HealthType" roleId="124" id="161" number="1">maybe</URI_HealthType>
+     </URI_Health>
+     <DOI type="MetadataAttributeUsage" name="DOI" id="125">
+      <DOIType type="MetadataAttribute" name="DOIType" roleId="125" id="162" number="1" />
+     </DOI>
+     <DOI_Health type="MetadataAttributeUsage" name="DOI_Health" id="126">
+      <DOI_HealthType type="MetadataAttribute" name="DOI_HealthType" roleId="126" id="163" number="1" />
+     </DOI_Health>
+     <Repository_Name type="MetadataAttributeUsage" name="Repository_Name" id="127">
+      <Repository_NameType type="MetadataAttribute" name="Repository_NameType" roleId="127" id="164" number="1" />
+     </Repository_Name>
+     <Licence type="MetadataAttributeUsage" name="Licence" id="128">
+      <LicenceType type="MetadataAttribute" name="LicenceType" roleId="128" id="165" number="1" />
+     </Licence>
+    </accessType>
+   </Access>
+   <Submitted_By type="MetadataAttributeUsage" name="Submitted_By" id="85">
+    <Submitted_ByType type="MetadataAttribute" name="Submitted_ByType" roleId="85" id="167" number="1">Felix</Submitted_ByType>
+   </Submitted_By>
+   <Submission_Date type="MetadataAttributeUsage" name="Submission_Date" id="86">
+    <Submission_DateType type="MetadataAttribute" name="Submission_DateType" roleId="86" id="168" number="1" />
+   </Submission_Date>
+   <Embargo type="MetadataAttributeUsage" name="Embargo" id="87">
+    <EmbargoType type="MetadataAttribute" name="EmbargoType" roleId="87" id="169" number="1" />
+   </Embargo>
+   <Embargo_End type="MetadataAttributeUsage" name="Embargo_End" id="88">
+    <Embargo_EndType type="MetadataAttribute" name="Embargo_EndType" roleId="88" id="170" number="1" />
+   </Embargo_End>
+   <File type="MetadataAttributeUsage" name="File" id="89">
+    <file type="MetadataAttribute" name="file" roleId="89" id="174" number="1">
+     <SizeIn_MB type="MetadataAttributeUsage" name="SizeIn_MB" id="129">
+      <SizeIn_MBType type="MetadataAttribute" name="SizeIn_MBType" roleId="129" id="171" number="1" />
+     </SizeIn_MB>
+     <File_Format type="MetadataAttributeUsage" name="File_Format" id="130">
+      <File_FormatType type="MetadataAttribute" name="File_FormatType" roleId="130" id="172" number="1" />
+     </File_Format>
+     <Data_Type type="MetadataAttributeUsage" name="Data_Type" id="131">
+      <Data_TypeType type="MetadataAttribute" name="Data_TypeType" roleId="131" id="173" number="1" />
+     </Data_Type>
+    </file>
+   </File>
+   <Code type="MetadataAttributeUsage" name="Code" id="90">
+    <code type="MetadataAttribute" name="code" roleId="90" id="177" number="1">
+     <Code_Type type="MetadataAttributeUsage" name="Code_Type" id="132">
+      <Code_TypeType type="MetadataAttribute" name="Code_TypeType" roleId="132" id="175" number="1" />
+     </Code_Type>
+     <Programing_Language type="MetadataAttributeUsage" name="Programing_Language" id="133">
+      <Programing_LanguageType type="MetadataAttribute" name="Programing_LanguageType" roleId="133" id="176" number="1" />
+     </Programing_Language>
+    </code>
+   </Code>
+  </ResourceType>
+  <ResourceType type="MetadataPackage" name="ResourceType" roleId="21" id="21" number="3">
+   <Resources_Type type="MetadataAttributeUsage" name="Resources_Type" id="81">
+    <Resources_TypeType type="MetadataAttribute" name="Resources_TypeType" roleId="81" id="157" number="1" />
+   </Resources_Type>
+   <Name type="MetadataAttributeUsage" name="Name" id="82">
+    <NameType type="MetadataAttribute" name="NameType" roleId="82" id="158" number="1">hier steht der name</NameType>
+   </Name>
+   <Language type="MetadataAttributeUsage" name="Language" id="83">
+    <LanguageType type="MetadataAttribute" name="LanguageType" roleId="83" id="159" number="1" />
+   </Language>
+   <Access type="MetadataAttributeUsage" name="Access" id="84">
+    <accessType type="MetadataAttribute" name="accessType" roleId="84" id="166" number="1">
+     <URI type="MetadataAttributeUsage" name="URI" id="123">
+      <URIType type="MetadataAttribute" name="URIType" roleId="123" id="160" number="1">link</URIType>
+     </URI>
+     <URI_Health type="MetadataAttributeUsage" name="URI_Health" id="124">
+      <URI_HealthType type="MetadataAttribute" name="URI_HealthType" roleId="124" id="161" number="1">verfügbar</URI_HealthType>
+     </URI_Health>
+     <DOI type="MetadataAttributeUsage" name="DOI" id="125">
+      <DOIType type="MetadataAttribute" name="DOIType" roleId="125" id="162" number="1">IOD</DOIType>
+     </DOI>
+     <DOI_Health type="MetadataAttributeUsage" name="DOI_Health" id="126">
+      <DOI_HealthType type="MetadataAttribute" name="DOI_HealthType" roleId="126" id="163" number="1">test</DOI_HealthType>
+     </DOI_Health>
+     <Repository_Name type="MetadataAttributeUsage" name="Repository_Name" id="127">
+      <Repository_NameType type="MetadataAttribute" name="Repository_NameType" roleId="127" id="164" number="1" />
+     </Repository_Name>
+     <Licence type="MetadataAttributeUsage" name="Licence" id="128">
+      <LicenceType type="MetadataAttribute" name="LicenceType" roleId="128" id="165" number="1" />
+     </Licence>
+    </accessType>
+   </Access>
+   <Submitted_By type="MetadataAttributeUsage" name="Submitted_By" id="85">
+    <Submitted_ByType type="MetadataAttribute" name="Submitted_ByType" roleId="85" id="167" number="1" />
+   </Submitted_By>
+   <Submission_Date type="MetadataAttributeUsage" name="Submission_Date" id="86">
+    <Submission_DateType type="MetadataAttribute" name="Submission_DateType" roleId="86" id="168" number="1" />
+   </Submission_Date>
+   <Embargo type="MetadataAttributeUsage" name="Embargo" id="87">
+    <EmbargoType type="MetadataAttribute" name="EmbargoType" roleId="87" id="169" number="1" />
+   </Embargo>
+   <Embargo_End type="MetadataAttributeUsage" name="Embargo_End" id="88">
+    <Embargo_EndType type="MetadataAttribute" name="Embargo_EndType" roleId="88" id="170" number="1" />
+   </Embargo_End>
+   <File type="MetadataAttributeUsage" name="File" id="89">
+    <file type="MetadataAttribute" name="file" roleId="89" id="174" number="1">
+     <SizeIn_MB type="MetadataAttributeUsage" name="SizeIn_MB" id="129">
+      <SizeIn_MBType type="MetadataAttribute" name="SizeIn_MBType" roleId="129" id="171" number="1" />
+     </SizeIn_MB>
+     <File_Format type="MetadataAttributeUsage" name="File_Format" id="130">
+      <File_FormatType type="MetadataAttribute" name="File_FormatType" roleId="130" id="172" number="1" />
+     </File_Format>
+     <Data_Type type="MetadataAttributeUsage" name="Data_Type" id="131">
+      <Data_TypeType type="MetadataAttribute" name="Data_TypeType" roleId="131" id="173" number="1" />
+     </Data_Type>
+    </file>
+   </File>
+   <Code type="MetadataAttributeUsage" name="Code" id="90">
+    <code type="MetadataAttribute" name="code" roleId="90" id="177" number="1">
+     <Code_Type type="MetadataAttributeUsage" name="Code_Type" id="132">
+      <Code_TypeType type="MetadataAttribute" name="Code_TypeType" roleId="132" id="175" number="1" />
+     </Code_Type>
+     <Programing_Language type="MetadataAttributeUsage" name="Programing_Language" id="133">
+      <Programing_LanguageType type="MetadataAttribute" name="Programing_LanguageType" roleId="133" id="176" number="1" />
+     </Programing_Language>
+    </code>
+   </Code>
+  </ResourceType>
+ </Resource>
+</Metadata>

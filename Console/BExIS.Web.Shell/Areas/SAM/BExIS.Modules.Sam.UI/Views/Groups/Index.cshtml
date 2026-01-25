@@ -76,11 +76,11 @@
             $("input[name='selectedUsers']:checkbox")
                 .click(function () {
                     if ($(this).is(':checked')) {
-                        $.post('@Url.Action("AddUserToGroup", "Groups", new { area = "sam" })', { UserId: $(this).data('userid'), GroupName: $(this).data('groupname') }, function (data) {
+                        $.post('@Url.Action("AddUserToGroupAsync", "Groups", new { area = "sam" })', { UserId: $(this).data('userid'), GroupName: $(this).data('groupname') }, function (data) {
                             $("#grid_users .t-refresh").trigger('click');
                         });
                     } else {
-                        $.post('@Url.Action("RemoveUserFromGroup", "Groups", new { area = "sam" })', { UserId: $(this).data('userid'), GroupName: $(this).data('groupname') }, function (data) {
+                        $.post('@Url.Action("RemoveUserFromGroupAsync", "Groups", new { area = "sam" })', { UserId: $(this).data('userid'), GroupName: $(this).data('groupname') }, function (data) {
                             $("#grid_users .t-refresh").trigger('click');
                         });
                     }
@@ -157,7 +157,7 @@
                     var title = $(this).attr("title");
                     $.ajax({
                         type: 'GET',
-                        url: '@Url.Action("Update", "Groups")',
+                        url: '@Url.Action("UpdateAsync", "Groups")',
                         data: { GroupId: $(this).attr("value") },
                         dataType: 'html',
                         success: function (htmlData) {
@@ -227,7 +227,7 @@
                     var result = confirm('Are you sure you want to delete this group (Id:' + $(this).attr("value") + ')?');
 
                     if (result) {
-                        $.post('@Url.Action("Delete", "Groups")', { GroupId: $(this).attr("value") }, function (e) {
+                        $.post('@Url.Action("DeleteAsync", "Groups")', { GroupId: $(this).attr("value") }, function (e) {
                             $("#grid_groups .t-refresh").trigger('click');
                         });
                     }

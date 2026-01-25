@@ -95,7 +95,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
 
                     await userManager.CreateAsync(user);
 
-                    return Request.CreateResponse(HttpStatusCode.OK);
+                    return Request.CreateResponse(HttpStatusCode.Created);
                 }
             }
             catch (Exception ex)

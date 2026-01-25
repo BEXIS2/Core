@@ -94,6 +94,7 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 	let x: listItemType = { id: 0, text: '', group: '', description: '' };
 
 	onMount(() => {
+		console.log("datatypes", $dataTypeStore);
 		// set suggestions
 		setList();
 		suggestedDataType = variable.dataType;
@@ -131,6 +132,7 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 
 	afterUpdate(() => {
 		displayPattern = updateDisplayPattern(variable.dataType, false);
+		console.log("🚀 ~ afterUpdate ~ displayPattern:", displayPattern)
 		res = suite(variable, '');
 		setValidationState(res);
 	});
@@ -150,8 +152,8 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 	// *** is the id of the input component
 	function onSelectHandler(e: any, id: string) {
 
-		console.log("🚀 ~ onSelectHandler ~ e.detail", e.detail, variable)
-		console.log("🚀 ~ display patterns", displayPattern)
+		//console.log("🚀 ~ onSelectHandler ~ e.detail", e.detail, variable)
+		//console.log("🚀 ~ display patterns", displayPattern)
 
 		setTimeout(async () => {
 			res = suite(variable, id);
@@ -162,7 +164,7 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 				updateDisplayPattern(variable.dataType);
 			}
 
-			console.log(id, e.detail, variable);
+			//console.log(id, e.detail, variable);
 
 			if (id.includes('variableTemplate')) {
 
@@ -179,7 +181,7 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 
 			updateLists();
 		}, 100);
-			console.log("🚀 ~ setTimeout ~ e.detail:", e.detail)
+			//console.log("🚀 ~ setTimeout ~ e.detail:", e.detail)
 	}
 
 	function updateTemplateFn(template:any)

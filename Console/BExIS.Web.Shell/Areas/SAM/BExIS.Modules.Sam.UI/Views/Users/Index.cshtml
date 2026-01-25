@@ -32,7 +32,7 @@
       columns.Bound(u => u.DisplayName);
       columns.Bound(u => u.Email);
       columns.Bound(u => u.IsEmailConfirmed);
-      columns.Bound(u => u.RegistrationDate).Format("{0:yyyy-MM-dd}");
+      columns.Bound(u => u.RegistrationDate).Format("{0:yyyy-MM-dd}").Filterable(false);
       columns.Template(@<text>
                 <button type="button" class="bx bx-grid-function bx-edit"></button>
                 <button type="button" class="bx bx-grid-function bx-group"></button>

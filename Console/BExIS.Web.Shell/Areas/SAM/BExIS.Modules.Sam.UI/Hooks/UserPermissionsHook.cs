@@ -11,7 +11,7 @@ namespace BExIS.Modules.Sam.UI.Hooks
     {
         public UserPermissionsHook()
         {
-            Start = "sam/UserPermissions/start";
+            Start = "/sam/UserPermissions/start";
         }
 
         public override void Check(long id, string username)

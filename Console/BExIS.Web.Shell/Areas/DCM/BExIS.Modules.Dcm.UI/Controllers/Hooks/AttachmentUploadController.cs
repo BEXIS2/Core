@@ -224,7 +224,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [HttpPost]
-        public JsonResult SaveFileDescription(long id, string file, string description)
+        public JsonResult SaveFileDescription(long id, BExIS.UI.Hooks.Caches.FileInfo file, string description)
         {
             HookManager hookManager = new HookManager();
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
@@ -232,14 +232,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             using (var dm = new DatasetManager())
             {
-                var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "Attachments", file);
+                var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), "Attachments", file.Name);
                 var dataset = dm.GetDataset(id);
                 var datasetVersion = dm.GetDatasetLatestVersion(dataset);
-                var contentDescriptor = datasetVersion.ContentDescriptors.FirstOrDefault(item => item.Name == file);
+                var contentDescriptor = datasetVersion.ContentDescriptors.FirstOrDefault(item => item.Name == file.Name);
                 if (contentDescriptor == null)
                     throw new Exception("There is not any content descriptor having file name '" + file + "'. ");
 
-                contentDescriptor.Description = description;
+                contentDescriptor.Description = file.Description;
 
                 dm.UpdateContentDescriptor(contentDescriptor);
             }

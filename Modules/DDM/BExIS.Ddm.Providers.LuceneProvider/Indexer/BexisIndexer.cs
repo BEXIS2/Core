@@ -757,16 +757,19 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             foreach (string pDataValue in sdsStrings)
             // Loop through List with foreach
             {
-                Field a = new Field("category_" + lucene_name, pDataValue,
-                    Lucene.Net.Documents.Field.Store.NO, toAnalyse);
-                a.Boost = boosting;
-                dataset.Add(a);
-                dataset.Add(new Field("ng_" + lucene_name, pDataValue,
-                    Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
-                dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES,
-                    Lucene.Net.Documents.Field.Index.ANALYZED));
-                writeAutoCompleteIndex(docId, lucene_name, pDataValue);
-                writeAutoCompleteIndex(docId, "ng_all", pDataValue);
+                if (string.IsNullOrEmpty(pDataValue))
+                { 
+                    Field a = new Field("category_" + lucene_name, pDataValue,
+                        Lucene.Net.Documents.Field.Store.NO, toAnalyse);
+                    a.Boost = boosting;
+                    dataset.Add(a);
+                    dataset.Add(new Field("ng_" + lucene_name, pDataValue,
+                        Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+                    dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES,
+                        Lucene.Net.Documents.Field.Index.ANALYZED));
+                    writeAutoCompleteIndex(docId, lucene_name, pDataValue);
+                    writeAutoCompleteIndex(docId, "ng_all", pDataValue);
+                }
             }
         }
 

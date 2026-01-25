@@ -193,19 +193,19 @@
                         {
                             if (!locked)
                             {
-                @Html.TextAreaFor(m => m.Value,
-                        new
-                        {
-                            OnChange = "OnChange(this)",
-                            Name = @displayName,
-                            Id = @idInput,
-                            idbyxpath = @idByXpath,
-                            PackageId = @Model.Parent.Id,
-                            Title = @errorMessage,
-                            @class = "bx-input bx-metadataFormTextInput " + @errorClass,
+                    @Html.TextAreaFor(m => m.Value,
+                                         new
+                                         {
+                                             OnChange = "OnChange(this)",
+                                             Name = @displayName,
+                                             Id = @idInput,
+                                             idbyxpath = @idByXpath,
+                                             PackageId = @Model.Parent.Id,
+                                             Title = @errorMessage,
+                                             @class = "bx-input bx-metadataFormTextInput " + @errorClass,
 
-                            OnLoad = "OnKeyUpTextInput(this)"
-                        })
+                                             OnLoad = "OnKeyUpTextInput(this)"
+                                         })
                             }
                             else
                             {
@@ -218,7 +218,8 @@
                                 else
                                 {
                                     //Attention: leave the below code in one line to avoid a leading emtpy line
-                <div class="bx-metadataForm-textArea-display">@if(Model.Value != null){@Html.DisplayWithLinksFor(m => m.Value)}</div>
+                                    <div class="bx-metadataForm-textArea-display">@if (Model.Value != null)
+                                    {@Html.DisplayWithLinksFor(m => m.Value)}</div>
                                 }
                             }
 
@@ -329,32 +330,32 @@
                             {
 
                 <div class="bx-input bx-metadataFormTextInput  bx-disabled" style="padding-top: 4px;">
-                    @if (Model.Value!=null)
-                                    {
-                                        if (Model.EntityMappingExist && !string.IsNullOrEmpty(Model.EntityUrl))
-                                        {
+                    @if (Model.Value != null)
+                    {
+                        if (Model.EntityMappingExist && !string.IsNullOrEmpty(Model.EntityUrl))
+                        {
                                             <a href="@Model.EntityUrl" target="_blank">@Model.Value</a>
-                                        }
-                                        else if (displayName == "Email")
-                                        {
-                                            string value = Model.Value.ToString();
-                                            if (!string.IsNullOrEmpty(value) && value.Contains('@'))
-                                            {
-                                                string[] email_parts = value.Split('@');
-                                                value = String.Join("<span>werwe</span>", email_parts);
+                        }
+                        else if (displayName == "Email")
+                        {
+                            string value = Model.Value.ToString();
+                            if (!string.IsNullOrEmpty(value) && value.Contains('@'))
+                            {
+                                string[] email_parts = value.Split('@');
+                                value = String.Join("<span>werwe</span>", email_parts);
                                                 @email_parts[0]<span>&#x40;</span><!--<span>werwe</span>-->@email_parts[1]
-                                            }
-                                            else
-                                            {
+                            }
+                            else
+                            {
                                                 @value;
-                                            }
+                            }
 
-                                        }
-                                        else
-                                        {
+                        }
+                        else
+                        {
                                             @Html.DisplayWithLinksFor(m => m.Value)
-                                        }
-                                    }
+                        }
+                    }
                 </div>
 
                             }
@@ -362,38 +363,39 @@
                         }
 
                     }
-                }
 
-                @if (Model.SystemType.Equals(TypeCode.Boolean.ToString()))
-                {
 
-                @Html.Partial("_bool", uiComponentModel)
+                    if (Model.SystemType.Equals(TypeCode.Boolean.ToString()))
+                    {
 
-                }
+                        @Html.Partial("_bool", uiComponentModel)
 
-                @if(Model.SystemType.Equals(TypeCode.Int32.ToString()) ||
-                    Model.SystemType.Equals(TypeCode.Int64.ToString()) ||
-                    Model.SystemType.Equals(TypeCode.Int16.ToString()) ||
-                    Model.SystemType.Equals(TypeCode.UInt16.ToString()) ||
-                    Model.SystemType.Equals(TypeCode.UInt32.ToString()) ||
-                    Model.SystemType.Equals(TypeCode.UInt64.ToString())
+                    }
 
-                )
-                {
-                @Html.Partial("_integer", uiComponentModel)
-                }
+                    if (Model.SystemType.Equals(TypeCode.Int32.ToString()) ||
+                            Model.SystemType.Equals(TypeCode.Int64.ToString()) ||
+                            Model.SystemType.Equals(TypeCode.Int16.ToString()) ||
+                            Model.SystemType.Equals(TypeCode.UInt16.ToString()) ||
+                            Model.SystemType.Equals(TypeCode.UInt32.ToString()) ||
+                            Model.SystemType.Equals(TypeCode.UInt64.ToString())
 
-                @if (Model.SystemType.Equals(TypeCode.Decimal.ToString()) ||
-                Model.SystemType.Equals(TypeCode.Double.ToString()) ||
-                Model.SystemType.Equals(TypeCode.Single.ToString())
-                )
-                {
-                @Html.Partial("_number", uiComponentModel)
-                }
+                        )
+                    {
+                        @Html.Partial("_integer", uiComponentModel)
+                    }
 
-                @if (Model.SystemType.Equals(TypeCode.DateTime.ToString()))
-                {
-                @Html.Partial("_date", uiComponentModel)
+                    if (Model.SystemType.Equals(TypeCode.Decimal.ToString()) ||
+                        Model.SystemType.Equals(TypeCode.Double.ToString()) ||
+                        Model.SystemType.Equals(TypeCode.Single.ToString())
+                        )
+                    {
+                        @Html.Partial("_number", uiComponentModel)
+                    }
+
+                    if (Model.SystemType.Equals(TypeCode.DateTime.ToString()))
+                    {
+                        @Html.Partial("_date", uiComponentModel)
+                    }
                 }
             </td>
             <td class="metadataAttributeOption">

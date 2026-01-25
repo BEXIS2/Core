@@ -53,8 +53,8 @@ namespace BExIS.IO.Tests.Transform.Input
             Assert.IsTrue(exist,"not exist");
         }
 
-        [TestCase("double", 1, 105)] // datatype, id, count
-        [TestCase("string", 1, 1)] // datatype, id, count
+        [TestCase("Floating Point Number", 1, 105)] // datatype, id, count
+        [TestCase("Text", 1, 1)] // datatype, id, count
         public void SuggestUnit_InputIsEmptyButDatatypeExist_ReturnUnit(string dataType, long firstId, int count)
         {
             //Arrange

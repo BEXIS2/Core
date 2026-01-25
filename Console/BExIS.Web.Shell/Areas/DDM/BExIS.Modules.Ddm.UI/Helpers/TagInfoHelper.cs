@@ -50,8 +50,13 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 model.VersionId = dsv.Id;
                 model.VersionNr = versionNr;
                 model.ReleaseNote = dsv.ChangeDescription;
-                model.SystemDescription = dsv.ModificationInfo?.Comment;
-                model.SystemAuthor = dsv.ModificationInfo?.Performer;
+
+                if(dsv.ModificationInfo != null && !string.IsNullOrEmpty(dsv.ModificationInfo.Comment))
+                    model.SystemDescription = dsv.ModificationInfo.Comment;
+
+                if (dsv.ModificationInfo != null && !string.IsNullOrEmpty(dsv.ModificationInfo.Performer))
+                    model.SystemAuthor = dsv.ModificationInfo.Performer;
+
                 model.Show = dsv.Show;
 
                 if(dsv.ModificationInfo?.Timestamp != null)

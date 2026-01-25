@@ -3,6 +3,7 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO;
+using BExIS.IO.DataType;
 using BExIS.Xml.Models.Mapping;
 using System;
 using System.Collections;
@@ -1594,10 +1595,10 @@ namespace BExIS.Xml.Helpers.Mapping
                 // create a compoundAttribute
                 MetadataCompoundAttribute mca = getExistingMetadataCompoundAttribute(complexType.Name);// = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(p => p.Name == complexType.Name).FirstOrDefault();
 
-                DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.ToLower().Equals("string")).FirstOrDefault();
+                DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.ToLower().Equals("text")).FirstOrDefault();
                 if (dt1 == null)
                 {
-                    dt1 = dataTypeManager.Create("string", "A test String", System.TypeCode.String);
+                    dt1 = dataTypeManager.Create("Text", "Text", System.TypeCode.String);
                 }
 
                 if (mca == null)
@@ -1629,10 +1630,10 @@ namespace BExIS.Xml.Helpers.Mapping
                 int i = 0;
                 MetadataCompoundAttribute mca = getExistingMetadataCompoundAttribute(element.Name + "Type"); ;// = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(p => p.Name == element.Name+"Type").FirstOrDefault();
                                                                                                               //Debug.WriteLine("createMetadataCompoundAttribute" + i++);
-                DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.ToLower().Equals("string")).FirstOrDefault();
+                DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.ToLower().Equals("text")).FirstOrDefault();
                 if (dt1 == null)
                 {
-                    dt1 = dataTypeManager.Create("string", "A test String", System.TypeCode.String);
+                    dt1 = dataTypeManager.Create("Text", "Text", System.TypeCode.String);
                 }
 
                 if (mca == null)
@@ -2111,17 +2112,18 @@ namespace BExIS.Xml.Helpers.Mapping
                     DataType dataType = null;
                     // if datatime - need to check typeCodeName for date, time , datetime
 
-                    string name = typeCode.ToString();
+    
+                    TypeCode c = DataTypeHelper.GetMaxTypeCode(typeCode);
+                    string label = DataTypeHelper.GetLabel(typeCode);
 
                     if (dataTypeAsString.Equals(TypeCode.DateTime.ToString()))
                     {
-                        name = typeCodeName;
 
                         dataType =
                             dataTypeManager.Repo.Query()
                                 .Where(
-                                    d => d.SystemType.Equals(typeCode.ToString()) &&
-                                    d.Name.ToLower().Equals(name.ToLower())
+                                    d => d.SystemType.Equals(c.ToString()) &&
+                                    d.Name.ToLower().Equals(label.ToLower())
                                     )
                                 .FirstOrDefault();
                     }
@@ -2129,15 +2131,13 @@ namespace BExIS.Xml.Helpers.Mapping
                         dataType =
                             dataTypeManager.Repo.Query()
                                 .Where(
-                                    d =>
-                                        d.SystemType.Equals(typeCode.ToString()) &&
-                                        d.Name.ToLower().Equals(name.ToString().ToLower()))
+                                    d =>                         
+                                        d.Name.ToLower().Equals(label.ToString().ToLower()))
                                 .FirstOrDefault();
 
                     if (dataType == null)
                     {
-                        dataType = dataTypeManager.Create(name.ToLower(), typeCode.ToString(),
-                            typeCode);
+                        dataType = dataTypeManager.Create(label, c.ToString(),c);
                     }
 
                     return dataType;
@@ -2163,6 +2163,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
             return TypeCode.String;
         }
+
 
         private string GetDescription(XmlSchemaAnnotation annotation)
         {

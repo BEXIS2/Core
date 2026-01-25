@@ -193,6 +193,7 @@
 						},
 						datatypes: {
 							header: 'Data Types',
+							minWidth: '170',
 							disableFiltering: true,
 							instructions: {
 								renderComponent: TableElements

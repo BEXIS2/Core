@@ -45,6 +45,7 @@ using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
+using BExIS.Utils.Data.Helpers;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {

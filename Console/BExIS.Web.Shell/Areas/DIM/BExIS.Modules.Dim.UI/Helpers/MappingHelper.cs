@@ -213,7 +213,8 @@ namespace BExIS.Modules.Dim.UI.Helper
             // add usage
             xPath = parentXpath + "/" + usageName.Replace(" ", string.Empty);
 
-            if(complexity == LinkElementComplexity.Complex) xPath = xPath + "/" + typeName;
+            //if(complexity == LinkElementComplexity.Complex) 
+            xPath = xPath + "/" + typeName;
 
             long linkElementId = 0;
             string mask = "";
@@ -713,7 +714,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
                     type = LinkElementType.MetadataNestedAttributeUsage;
 
-                    string attrXPath = xpath + "/" + attr.Label;// + "/" + attr.Member.Name;
+                    string attrXPath = xpath + "/" + attr.Label + "/" + attr.Member.Name;
 
                     tmp.Add(
                             new LinkElementModel(
@@ -835,7 +836,7 @@ namespace BExIS.Modules.Dim.UI.Helper
 
                     type = LinkElementType.MetadataAttributeUsage;
 
-                    string attrXPath = xpath + "/" + attr.Label;//xpath + "/" + attr.Label + "/" + attr.MetadataAttribute.Name;
+                    string attrXPath = xpath + "/" + attr.Label + "/" + attr.MetadataAttribute.Name;
 
                     tmp.Add(
                             new LinkElementModel(

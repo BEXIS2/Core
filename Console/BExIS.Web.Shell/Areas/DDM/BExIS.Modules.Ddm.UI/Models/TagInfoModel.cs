@@ -59,9 +59,9 @@ namespace BExIS.Modules.Ddm.UI.Models
             VersionNr = versionNr;
             TagNr = tagNr;
             ReleaseNote = releaseNote;
-            ReleaseDate = releaseDate;
-            SystemDescription = systemDescription;
-            SystemAuthor = systemAuthor;
+            ReleaseDate = releaseDate;       
+            if(!string.IsNullOrEmpty(systemAuthor))SystemAuthor = systemAuthor;
+            if(!string.IsNullOrEmpty(systemDescription))SystemAuthor = systemDescription;
             SystemDate = systemDate;
             Link = link;
         }

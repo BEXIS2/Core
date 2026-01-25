@@ -3,7 +3,7 @@
 
 @model BExIS.Modules.Sam.UI.Models.CreateGroupModel
 
-@using (Ajax.BeginForm("Create", "Groups", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_createGroup", OnSuccess = "createGroup_onSuccess" }))
+@using (Ajax.BeginForm("CreateAsync", "Groups", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "content_createGroup", OnSuccess = "createGroup_onSuccess" }))
 {
 @Html.ValidationSummary(true)
 

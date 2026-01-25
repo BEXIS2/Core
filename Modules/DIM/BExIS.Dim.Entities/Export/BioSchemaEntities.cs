@@ -86,7 +86,7 @@ namespace BExIS.Dim.Entities.Export
         [JsonProperty("givenName")]
         public string GivenName { get; set; }
 
-        [JsonProperty("familiName")]
+        [JsonProperty("familyName")]
         public string FamiliName { get; set; }
 
         [JsonProperty("email")]

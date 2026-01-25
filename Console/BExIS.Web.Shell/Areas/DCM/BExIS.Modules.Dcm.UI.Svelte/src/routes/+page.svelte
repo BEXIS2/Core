@@ -19,5 +19,6 @@
 		<a class="btn variant-filled-secondary" href="./edit">edit</a>
 		<a class="btn variant-filled-secondary" href="./view">view</a>
 		<a class="btn variant-filled-secondary" href="./componentconfiguration">Component Configuration</a>
+		<a class="btn variant-filled-secondary" href="./metadata">metadata</a>
 	</div>
 </Page>

@@ -1,468 +1,468 @@
 ﻿{
-  "@id": "1",
-  "Basic": {
-    "@ref": "",
-    "DatasetGUID": {
-      "@ref": "",
-      "#text": "123456"
-    }
-  },
-  "TechnicalContacts": {
-    "@ref": "",
-    "TechnicalContact": [
-      {
-        "@ref": "",
-        "@partyid": "1",
-        "Name": {
-          "@ref": "",
-          "#text": "David Schöne"
-        },
-        "Email": {
-          "@ref": "",
-          "#text": ""
-        },
-        "Phone": {
-          "@ref": "",
-          "#text": "01608037788"
-        },
-        "Address": {
-          "@ref": "",
-          "#text": "Von der Gabelentz Straße 9 erfurt 99089 Deutschland"
-        }
-      },
-      {
-        "@ref": "",
-        "Name": {
-          "@ref": "",
-          "#text": "Sven Thiel"
-        },
-        "Email": {
-          "@ref": "",
-          "#text": ""
-        },
-        "Phone": {
-          "@ref": "",
-          "#text": ""
-        },
-        "Address": {
-          "@ref": "",
-          "#text": ""
-        }
-      },
-      {
-        "@ref": "",
-        "Name": {
-          "@ref": "",
-          "#text": "Franziska"
-        },
-        "Email": {
-          "@ref": "",
-          "#text": ""
-        },
-        "Phone": {
-          "@ref": "",
-          "#text": ""
-        },
-        "Address": {
-          "@ref": "",
-          "#text": ""
-        }
-      }
-    ]
-  },
-  "ContentContacts": {
-    "@ref": "",
-    "ContentContact": [
-      {
-        "@ref": "",
-        "@partyid": "1",
-        "Name": {
-          "@ref": "",
-          "#text": "David Schöne"
-        },
-        "Email": {
-          "@ref": "",
-          "#text": ""
-        },
-        "Phone": {
-          "@ref": "",
-          "#text": "01608037788"
-        },
-        "Address": {
-          "@ref": "",
-          "#text": "Von der Gabelentz Straße 9 erfurt 99089 Deutschland"
-        }
-      }
-    ]
-  },
-  "OtherProviders": {
-    "@ref": "",
-    "OtherProvider": [
-      {
-        "@ref": "",
-        "#text": ""
-      }
-    ]
-  },
-  "Metadata": {
-    "@ref": "",
-    "Description": {
-      "@ref": "",
-      "Representation": [
-        {
-          "@ref": "",
-          "Title": {
-            "@ref": "",
-            "#text": "Test"
-          },
-          "Details": {
-            "@ref": "",
-            "#text": ""
-          },
-          "Coverage": {
-            "@ref": "",
-            "#text": ""
-          },
-          "URI": {
-            "@ref": "",
-            "#text": ""
-          }
-        }
-      ]
-    },
-    "IconURI": {
-      "@ref": "",
-      "#text": ""
-    },
-    "Scope": {
-      "@ref": "",
-      "GeoecologicalTerms": {
-        "@ref": "",
-        "GeoEcologicalTerm": [
-          {
-            "@ref": "",
-            "#text": ""
-          }
-        ]
-      },
-      "TaxonomicTerms": {
-        "@ref": "",
-        "TaxonomicTerm": [
-          {
-            "@ref": "",
-            "#text": ""
-          }
-        ]
-      }
-    },
-    "Version": {
-      "@ref": "",
-      "Major": {
-        "@ref": "",
-        "#text": ""
-      },
-      "Minor": {
-        "@ref": "",
-        "#text": ""
-      },
-      "Modifier": {
-        "@ref": "",
-        "#text": ""
-      },
-      "DateIssued": {
-        "@ref": "",
-        "#text": ""
-      }
-    },
-    "RevisionData": {
-      "@ref": "",
-      "Creators": {
-        "@ref": "",
-        "#text": ""
-      },
-      "Contributors": {
-        "@ref": "",
-        "#text": ""
-      },
-      "DateCreated": {
-        "@ref": "",
-        "#text": ""
-      },
-      "DateModified": {
-        "@ref": "",
-        "#text": "2022-07-06"
-      }
-    },
-    "Owners": {
-      "@ref": "",
-      "Owner": [
-        {
-          "@ref": "",
-          "Organisation": {
-            "@ref": "",
-            "Name": {
-              "@ref": "",
-              "Representation": [
-                {
-                  "@ref": "",
-                  "Text": {
-                    "@ref": "",
-                    "#text": ""
-                  },
-                  "Abbreviation": {
-                    "@ref": "",
-                    "#text": ""
-                  }
-                }
-              ]
-            },
-            "OrgUnits": {
-              "@ref": "",
-              "OrgUnit": [
-                {
-                  "@ref": "",
-                  "#text": ""
-                }
-              ]
-            }
-          },
-          "Person": {
-            "@ref": "",
-            "FullName": {
-              "@ref": "",
-              "#text": ""
-            },
-            "SortingName": {
-              "@ref": "",
-              "#text": ""
-            },
-            "AtomisedName": {
-              "@ref": "",
-              "InheritedName": {
-                "@ref": "",
-                "#text": ""
-              },
-              "Prefix": {
-                "@ref": "",
-                "#text": ""
-              },
-              "Suffix": {
-                "@ref": "",
-                "#text": ""
-              },
-              "GivenNames": {
-                "@ref": "",
-                "#text": ""
-              },
-              "PreferredName": {
-                "@ref": "",
-                "#text": ""
-              }
-            }
-          },
-          "Roles": {
-            "@ref": "",
-            "Role": [
-              {
-                "@ref": "",
-                "#text": ""
-              }
-            ]
-          },
-          "Addresses": {
-            "@ref": "",
-            "Address": [
-              {
-                "@ref": "",
-                "#text": ""
-              }
-            ]
-          },
-          "TelephoneNumbers": {
-            "@ref": "",
-            "TelephoneNumber": [
-              {
-                "@ref": "",
-                "Number": {
-                  "@ref": "",
-                  "#text": ""
-                },
-                "Device": {
-                  "@ref": "",
-                  "#text": ""
-                },
-                "UsageNotes": {
-                  "@ref": "",
-                  "#text": ""
-                }
-              }
-            ]
-          },
-          "EmailAddresses": {
-            "@ref": "",
-            "EmailAddress": [
-              {
-                "@ref": "",
-                "#text": ""
-              }
-            ]
-          },
-          "URIs": {
-            "@ref": "",
-            "URL": [
-              {
-                "@ref": "",
-                "#text": ""
-              }
-            ]
-          },
-          "LogoURI": {
-            "@ref": "",
-            "#text": ""
-          }
-        }
-      ]
-    },
-    "IPRStatements": {
-      "@ref": "",
-      "IPRDeclarations": {
-        "@ref": "",
-        "IPRDeclaration": [
-          {
-            "@ref": "",
-            "Text": {
-              "@ref": "",
-              "#text": ""
-            },
-            "Details": {
-              "@ref": "",
-              "#text": ""
-            },
-            "URI": {
-              "@ref": "",
-              "#text": ""
-            }
-          }
-        ]
-      },
-      "Copyrights": {
-        "@ref": "",
-        "Copyright": [
-          {
-            "@ref": "",
-            "Text": {
-              "@ref": "",
-              "#text": ""
-            },
-            "Details": {
-              "@ref": "",
-              "#text": ""
-            },
-            "URI": {
-              "@ref": "",
-              "#text": ""
-            }
-          }
-        ]
-      },
-      "Licenses": {
-        "@ref": "",
-        "License": [
-          {
-            "@ref": "",
-            "Text": {
-              "@ref": "",
-              "#text": ""
-            },
-            "Details": {
-              "@ref": "",
-              "#text": ""
-            },
-            "URI": {
-              "@ref": "",
-              "#text": ""
-            }
-          }
-        ]
-      },
-      "TermsOfUseStatements": {
-        "@ref": "",
-        "TermsOfUse": [
-          {
-            "@ref": "",
-            "Text": {
-              "@ref": "",
-              "#text": ""
-            },
-            "Details": {
-              "@ref": "",
-              "#text": ""
-            },
-            "URI": {
-              "@ref": "",
-              "#text": ""
-            }
-          }
-        ]
-      },
-      "Disclaimers": {
-        "@ref": "",
-        "Disclaimer": [
-          {
-            "@ref": "",
-            "Text": {
-              "@ref": "",
-              "#text": ""
-            },
-            "Details": {
-              "@ref": "",
-              "#text": ""
-            },
-            "URI": {
-              "@ref": "",
-              "#text": ""
-            }
-          }
-        ]
-      },
-      "Acknowledgements": {
-        "@ref": "",
-        "Acknowledgement": [
-          {
-            "@ref": "",
-            "Text": {
-              "@ref": "",
-              "#text": ""
-            },
-            "Details": {
-              "@ref": "",
-              "#text": ""
-            },
-            "URI": {
-              "@ref": "",
-              "#text": ""
-            }
-          }
-        ]
-      },
-      "Citations": {
-        "@ref": "",
-        "Citation": {
-          "@ref": "",
-          "Text": {
-            "@ref": "",
-            "#text": ""
-          },
-          "Details": {
-            "@ref": "",
-            "#text": ""
-          },
-          "URI": {
-            "@ref": "",
-            "#text": ""
-          }
-        }
-      }
-    }
-  }
+	"@id": "1",
+	"Basic": {
+		"@ref": "",
+		"DatasetGUID": {
+			"@ref": "",
+			"#text": "123456"
+		}
+	},
+	"TechnicalContacts": {
+		"@ref": "",
+		"TechnicalContact": [
+			{
+				"@ref": "",
+				"@partyid": "1",
+				"Name": {
+					"@ref": "",
+					"#text": "David Schöne"
+				},
+				"Email": {
+					"@ref": "",
+					"#text": ""
+				},
+				"Phone": {
+					"@ref": "",
+					"#text": "01608037788"
+				},
+				"Address": {
+					"@ref": "",
+					"#text": "Von der Gabelentz Straße 9 erfurt 99089 Deutschland"
+				}
+			},
+			{
+				"@ref": "",
+				"Name": {
+					"@ref": "",
+					"#text": "Sven Thiel"
+				},
+				"Email": {
+					"@ref": "",
+					"#text": ""
+				},
+				"Phone": {
+					"@ref": "",
+					"#text": ""
+				},
+				"Address": {
+					"@ref": "",
+					"#text": ""
+				}
+			},
+			{
+				"@ref": "",
+				"Name": {
+					"@ref": "",
+					"#text": "Franziska"
+				},
+				"Email": {
+					"@ref": "",
+					"#text": ""
+				},
+				"Phone": {
+					"@ref": "",
+					"#text": ""
+				},
+				"Address": {
+					"@ref": "",
+					"#text": ""
+				}
+			}
+		]
+	},
+	"ContentContacts": {
+		"@ref": "",
+		"ContentContact": [
+			{
+				"@ref": "",
+				"@partyid": "1",
+				"Name": {
+					"@ref": "",
+					"#text": "David Schöne"
+				},
+				"Email": {
+					"@ref": "",
+					"#text": ""
+				},
+				"Phone": {
+					"@ref": "",
+					"#text": "01608037788"
+				},
+				"Address": {
+					"@ref": "",
+					"#text": "Von der Gabelentz Straße 9 erfurt 99089 Deutschland"
+				}
+			}
+		]
+	},
+	"OtherProviders": {
+		"@ref": "",
+		"OtherProvider": [
+			{
+				"@ref": "",
+				"#text": ""
+			}
+		]
+	},
+	"Metadata": {
+		"@ref": "",
+		"Description": {
+			"@ref": "",
+			"Representation": [
+				{
+					"@ref": "",
+					"Title": {
+						"@ref": "",
+						"#text": "Test"
+					},
+					"Details": {
+						"@ref": "",
+						"#text": ""
+					},
+					"Coverage": {
+						"@ref": "",
+						"#text": ""
+					},
+					"URI": {
+						"@ref": "",
+						"#text": ""
+					}
+				}
+			]
+		},
+		"IconURI": {
+			"@ref": "",
+			"#text": ""
+		},
+		"Scope": {
+			"@ref": "",
+			"GeoecologicalTerms": {
+				"@ref": "",
+				"GeoEcologicalTerm": [
+					{
+						"@ref": "",
+						"#text": ""
+					}
+				]
+			},
+			"TaxonomicTerms": {
+				"@ref": "",
+				"TaxonomicTerm": [
+					{
+						"@ref": "",
+						"#text": ""
+					}
+				]
+			}
+		},
+		"Version": {
+			"@ref": "",
+			"Major": {
+				"@ref": "",
+				"#text": ""
+			},
+			"Minor": {
+				"@ref": "",
+				"#text": ""
+			},
+			"Modifier": {
+				"@ref": "",
+				"#text": ""
+			},
+			"DateIssued": {
+				"@ref": "",
+				"#text": ""
+			}
+		},
+		"RevisionData": {
+			"@ref": "",
+			"Creators": {
+				"@ref": "",
+				"#text": ""
+			},
+			"Contributors": {
+				"@ref": "",
+				"#text": ""
+			},
+			"DateCreated": {
+				"@ref": "",
+				"#text": ""
+			},
+			"DateModified": {
+				"@ref": "",
+				"#text": "2022-07-06"
+			}
+		},
+		"Owners": {
+			"@ref": "",
+			"Owner": [
+				{
+					"@ref": "",
+					"Organisation": {
+						"@ref": "",
+						"Name": {
+							"@ref": "",
+							"Representation": [
+								{
+									"@ref": "",
+									"Text": {
+										"@ref": "",
+										"#text": ""
+									},
+									"Abbreviation": {
+										"@ref": "",
+										"#text": ""
+									}
+								}
+							]
+						},
+						"OrgUnits": {
+							"@ref": "",
+							"OrgUnit": [
+								{
+									"@ref": "",
+									"#text": ""
+								}
+							]
+						}
+					},
+					"Person": {
+						"@ref": "",
+						"FullName": {
+							"@ref": "",
+							"#text": ""
+						},
+						"SortingName": {
+							"@ref": "",
+							"#text": ""
+						},
+						"AtomisedName": {
+							"@ref": "",
+							"InheritedName": {
+								"@ref": "",
+								"#text": ""
+							},
+							"Prefix": {
+								"@ref": "",
+								"#text": ""
+							},
+							"Suffix": {
+								"@ref": "",
+								"#text": ""
+							},
+							"GivenNames": {
+								"@ref": "",
+								"#text": ""
+							},
+							"PreferredName": {
+								"@ref": "",
+								"#text": ""
+							}
+						}
+					},
+					"Roles": {
+						"@ref": "",
+						"Role": [
+							{
+								"@ref": "",
+								"#text": ""
+							}
+						]
+					},
+					"Addresses": {
+						"@ref": "",
+						"Address": [
+							{
+								"@ref": "",
+								"#text": ""
+							}
+						]
+					},
+					"TelephoneNumbers": {
+						"@ref": "",
+						"TelephoneNumber": [
+							{
+								"@ref": "",
+								"Number": {
+									"@ref": "",
+									"#text": ""
+								},
+								"Device": {
+									"@ref": "",
+									"#text": ""
+								},
+								"UsageNotes": {
+									"@ref": "",
+									"#text": ""
+								}
+							}
+						]
+					},
+					"EmailAddresses": {
+						"@ref": "",
+						"EmailAddress": [
+							{
+								"@ref": "",
+								"#text": ""
+							}
+						]
+					},
+					"URIs": {
+						"@ref": "",
+						"URL": [
+							{
+								"@ref": "",
+								"#text": ""
+							}
+						]
+					},
+					"LogoURI": {
+						"@ref": "",
+						"#text": ""
+					}
+				}
+			]
+		},
+		"IPRStatements": {
+			"@ref": "",
+			"IPRDeclarations": {
+				"@ref": "",
+				"IPRDeclaration": [
+					{
+						"@ref": "",
+						"Text": {
+							"@ref": "",
+							"#text": ""
+						},
+						"Details": {
+							"@ref": "",
+							"#text": ""
+						},
+						"URI": {
+							"@ref": "",
+							"#text": ""
+						}
+					}
+				]
+			},
+			"Copyrights": {
+				"@ref": "",
+				"Copyright": [
+					{
+						"@ref": "",
+						"Text": {
+							"@ref": "",
+							"#text": ""
+						},
+						"Details": {
+							"@ref": "",
+							"#text": ""
+						},
+						"URI": {
+							"@ref": "",
+							"#text": ""
+						}
+					}
+				]
+			},
+			"Licenses": {
+				"@ref": "",
+				"License": [
+					{
+						"@ref": "",
+						"Text": {
+							"@ref": "",
+							"#text": ""
+						},
+						"Details": {
+							"@ref": "",
+							"#text": ""
+						},
+						"URI": {
+							"@ref": "",
+							"#text": ""
+						}
+					}
+				]
+			},
+			"TermsOfUseStatements": {
+				"@ref": "",
+				"TermsOfUse": [
+					{
+						"@ref": "",
+						"Text": {
+							"@ref": "",
+							"#text": ""
+						},
+						"Details": {
+							"@ref": "",
+							"#text": ""
+						},
+						"URI": {
+							"@ref": "",
+							"#text": ""
+						}
+					}
+				]
+			},
+			"Disclaimers": {
+				"@ref": "",
+				"Disclaimer": [
+					{
+						"@ref": "",
+						"Text": {
+							"@ref": "",
+							"#text": ""
+						},
+						"Details": {
+							"@ref": "",
+							"#text": ""
+						},
+						"URI": {
+							"@ref": "",
+							"#text": ""
+						}
+					}
+				]
+			},
+			"Acknowledgements": {
+				"@ref": "",
+				"Acknowledgement": [
+					{
+						"@ref": "",
+						"Text": {
+							"@ref": "",
+							"#text": ""
+						},
+						"Details": {
+							"@ref": "",
+							"#text": ""
+						},
+						"URI": {
+							"@ref": "",
+							"#text": ""
+						}
+					}
+				]
+			},
+			"Citations": {
+				"@ref": "",
+				"Citation": {
+					"@ref": "",
+					"Text": {
+						"@ref": "",
+						"#text": ""
+					},
+					"Details": {
+						"@ref": "",
+						"#text": ""
+					},
+					"URI": {
+						"@ref": "",
+						"#text": ""
+					}
+				}
+			}
+		}
+	}
 }

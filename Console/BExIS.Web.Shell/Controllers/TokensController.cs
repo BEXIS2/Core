@@ -27,8 +27,8 @@ namespace BExIS.Web.Shell.Controllers
         {
             try
             {
-                using (var identityUserService = new IdentityUserService())
                 using (var userManager = new UserManager())
+                using (var identityUserService = new IdentityUserService(userManager))
                 {
                     var jwtConfiguration = GeneralSettings.JwtConfiguration;
 

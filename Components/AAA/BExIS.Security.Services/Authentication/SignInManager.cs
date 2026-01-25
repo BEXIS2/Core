@@ -8,8 +8,8 @@ namespace BExIS.Security.Services.Authentication
     public sealed class SignInManager : SignInManager<User, long>
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
-        public SignInManager(IAuthenticationManager authenticationManager)
-             : base(new IdentityUserService(), authenticationManager)
+        public SignInManager(IAuthenticationManager authenticationManager, UserManager userManager)
+             : base(new IdentityUserService(userManager), authenticationManager)
         {
         }
     }

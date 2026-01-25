@@ -1,13 +1,13 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Modules.Dcm.UI.Helpers;
-using BExIS.Modules.Dcm.UI.Models.EntityReference;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using BExIS.UI.Models.EntityReference;
+using BExIS.Utils.Data.Helpers;
 using BExIS.Xml.Helpers;
 using NHibernate.Util;
 using System;

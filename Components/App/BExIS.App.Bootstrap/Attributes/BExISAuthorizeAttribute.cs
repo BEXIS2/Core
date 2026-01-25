@@ -22,7 +22,7 @@ namespace BExIS.App.Bootstrap.Attributes
                 using (var featurePermissionManager = new FeaturePermissionManager())
                 using (var operationManager = new OperationManager())
                 using (var userManager = new UserManager())
-                using (var identityUserService = new IdentityUserService())
+                using (var identityUserService = new IdentityUserService(userManager))
                 {
                     var areaName = filterContext.RouteData.DataTokens.Keys.Contains("area") ? filterContext.RouteData.DataTokens["area"].ToString() : "Shell";
                     var controllerName = filterContext.ActionDescriptor.ControllerDescriptor.ControllerName;

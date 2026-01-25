@@ -44,6 +44,23 @@
       "value": false,
       "type": "Boolean",
       "description": "If set to true, the minor version tag can be assigned to dataset versions to display changes in more detail."
+    },
+    {
+      "key": "citationSettings",
+      "title": "settings for citations",
+      "options": [],
+      "type": "JSON",
+      "value": {
+        "publisher": "BEXIS2 DevOps Team",
+        "instance": "BEXIS2 - DevOps Test",
+        "numberOfAuthors": 0,
+        "showCitation": true,
+        "defaultViewCitationFormat": "Text",
+        "viewCitationFormats": ["Text", "APA"],
+        "downloadCitationFormats": [ "Text", "APA", "RIS", "BibTex" ]
+      },
+      "description": "..."
     }
+
   ]
 }

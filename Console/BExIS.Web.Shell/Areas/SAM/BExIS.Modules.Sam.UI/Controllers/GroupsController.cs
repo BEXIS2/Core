@@ -4,6 +4,7 @@ using BExIS.Security.Services.Subjects;
 using BExIS.UI.Helpers;
 using BExIS.Utils.NH.Querying;
 using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -17,113 +18,114 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class GroupsController : BaseController
     {
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="groupName"></param>
         [HttpPost]
-        public async Task<bool> AddUserToGroup(long userId, string groupName)
+        public async Task<bool> AddUserToGroupAsync(long userId, string groupName)
         {
-            var identityUserService = new IdentityUserService();
-
-            try
+            using (var userManager = new UserManager())
+            using (var identityUserService = new IdentityUserService(userManager))
             {
-                var user = identityUserService.FindByIdAsync(userId).Result;
-                var result = await identityUserService.AddToRoleAsync(user.Id, groupName);
-                return result.Succeeded;
-            }
-            finally
-            {
-                identityUserService.Dispose();
+                try
+                {
+                    var user = identityUserService.FindByIdAsync(userId).Result;
+                    var result = await identityUserService.AddToRoleAsync(user.Id, groupName);
+                    return result.Succeeded;
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
             }
         }
 
-        /// <summary>
-        /// ToDo: Documentation
-        /// </summary>
-        /// <returns></returns>
         public ActionResult Create()
         {
             return PartialView("_Create", new CreateGroupModel());
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult> Create(CreateGroupModel model)
+        public async Task<ActionResult> CreateAsync(CreateGroupModel model)
         {
-            using (var identityGroupService = new IdentityGroupService())
+            using (var groupManager = new GroupManager())
+            using (var identityGroupService = new IdentityGroupService(groupManager))
             {
-                if (!ModelState.IsValid) return PartialView("_Create", model);
-
-                var group = new Group()
+                try
                 {
-                    Name = model.Name,
-                    DisplayName = model.Name,
-                    Description = model.Description
-                };
+                    if (!ModelState.IsValid) return PartialView("_Create", model);
 
-                var result = await identityGroupService.CreateAsync(group);
-                if (result.Succeeded)
-                {
-                    return Json(new { success = true });
+                    var group = new Group()
+                    {
+                        Name = model.Name,
+                        DisplayName = model.Name,
+                        Description = model.Description
+                    };
+
+                    var result = await identityGroupService.CreateAsync(group);
+                    if (result.Succeeded)
+                    {
+                        return Json(new { success = true });
+                    }
+
+                    AddErrors(result);
+
+                    return PartialView("_Create", model);
                 }
-
-                AddErrors(result);
-
-                return PartialView("_Create", model);
+                catch(Exception ex)
+                {
+                    return PartialView("_Create", model);
+                }
+                
             }
         }
 
         [HttpPost]
-        public async Task<bool> Delete(long groupId)
+        public async Task<bool> DeleteAsync(long groupId)
         {
-            using (var identityGroupService = new IdentityGroupService())
+            using (var groupManager = new GroupManager())
+            using (var identityGroupService = new IdentityGroupService(groupManager))
             {
-                var group = identityGroupService.FindByIdAsync(groupId).Result;
-
-                foreach (var user in group.Users)
+                try
                 {
-                    await RemoveUserFromGroup(user.Id, @group.Name);
+                    var result = await identityGroupService.DeleteByIdAsync(groupId);
+                    return result;
                 }
-
-                var result = await identityGroupService.DeleteAsync(group);
-                return result.Succeeded;
+                catch(Exception ex)
+                {
+                    return false;
+                }
+                
             }
         }
 
         [GridAction(EnableCustomBinding = true)]
         public ActionResult Groups_Select(GridCommand command)
         {
-            var groupManager = new GroupManager();
-
-            try
+            using (var groupManager = new GroupManager())
+            using (var identityGroupService = new IdentityGroupService(groupManager))
             {
-                var groups = new List<GroupGridRowModel>();
-                int count = groupManager.Groups.Count();
-                if (command != null)// filter subjects based on grid filter settings
+                try
                 {
-                    FilterExpression filter = TelerikGridHelper.Convert(command.FilterDescriptors.ToList());
-                    OrderByExpression orderBy = TelerikGridHelper.Convert(command.SortDescriptors.ToList());
+                    var groups = new List<GroupGridRowModel>();
+                    int count = identityGroupService.Roles.Count();
+                    if (command != null)// filter subjects based on grid filter settings
+                    {
+                        FilterExpression filter = TelerikGridHelper.Convert(command.FilterDescriptors.ToList());
+                        OrderByExpression orderBy = TelerikGridHelper.Convert(command.SortDescriptors.ToList());
 
-                    groups = groupManager.GetGroups(filter, orderBy, command.Page, command.PageSize, out count).Select(GroupGridRowModel.Convert).ToList();
+                        groups = identityGroupService.GetGroups(filter, orderBy, command.Page, command.PageSize, out count).Select(GroupGridRowModel.Convert).ToList();
+                    }
+                    else
+                    {
+                        groups = identityGroupService.Roles.Select(GroupGridRowModel.Convert).ToList();
+                        count = identityGroupService.Roles.Count();
+                    }
+
+                    return View(new GridModel<GroupGridRowModel> { Data = groups, Total = count });
                 }
-                else
+                catch(Exception ex)
                 {
-                    groups = groupManager.Groups.Select(GroupGridRowModel.Convert).ToList();
-                    count = groupManager.Groups.Count();
+                    return View(new GridModel<GroupGridRowModel> { Data = new List<GroupGridRowModel>(), Total = 0 });
                 }
-
-                return View(new GridModel<GroupGridRowModel> { Data = groups, Total = count });
-            }
-            finally
-            {
-                groupManager.Dispose();
-            }
+            }            
         }
 
         /// <summary>
@@ -146,20 +148,22 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="userId"></param>
         /// <param name="groupName"></param>
         [HttpPost]
-        public async Task<bool> RemoveUserFromGroup(long userId, string groupName)
+        public async Task<bool> RemoveUserFromGroupAsync(long userId, string groupName)
         {
-            var identityUserService = new IdentityUserService();
-
-            try
+            using (var userManager = new UserManager())
+            using (var identityUserService = new IdentityUserService(userManager))
             {
-                var user = identityUserService.FindByIdAsync(userId).Result;
-                var result = await identityUserService.RemoveFromRoleAsync(user.Id, groupName);
-                return result.Succeeded;
-            }
-            finally
-            {
-                identityUserService.Dispose();
-            }
+                try
+                {
+                    var user = identityUserService.FindByIdAsync(userId).Result;
+                    var result = await identityUserService.RemoveFromRoleAsync(user.Id, groupName);
+                    return result.Succeeded;
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
+            }    
         }
 
         /// <summary>
@@ -167,19 +171,21 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// </summary>
         /// <param name="groupId"></param>
         /// <returns></returns>
-        public ActionResult Update(long groupId)
+        public async Task<ActionResult> UpdateAsync(long groupId)
         {
-            var groupManager = new GroupManager();
-
-            try
+            using (var groupManager = new GroupManager())
+            using (var identityGroupService = new IdentityGroupService(groupManager))
             {
-                var group = groupManager.FindByIdAsync(groupId).Result;
-                return PartialView("_Update", UpdateGroupModel.Convert(group));
-            }
-            finally
-            {
-                groupManager.Dispose();
-            }
+                try
+                {
+                    var group = await identityGroupService.FindByIdAsync(groupId);
+                    return PartialView("_Update", UpdateGroupModel.Convert(group));
+                }
+                catch(Exception ex)
+                {
+                    return View();
+                }
+            }           
         }
 
         /// <summary>
@@ -188,37 +194,39 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Update(UpdateGroupModel model)
+        public async Task<ActionResult> UpdateAsync(UpdateGroupModel model)
         {
-            var groupManager = new GroupManager();
-
-            try
+            using (var groupManager = new GroupManager())
+            using (var identityGroupService = new IdentityGroupService(groupManager))
             {
-                // check wheter model is valid or not
-                if (!ModelState.IsValid) return PartialView("_Update", model);
-
-                // check if a group with the incoming id exist
-                var group = groupManager.FindByIdAsync(model.Id).Result;
-                if (group == null) return PartialView("_Update", model);
-
-                // check group name exist
-                if (groupManager.FindByNameAsync(model.Name).Result != null &&
-                    !groupManager.FindByNameAsync(model.Name).Result.Id.Equals(model.Id))
+                try
                 {
-                    ModelState.AddModelError("Name", "The name exists already.");
+                    // check wheter model is valid or not
                     if (!ModelState.IsValid) return PartialView("_Update", model);
+
+                    // check if a group with the incoming id exist
+                    var group = identityGroupService.FindByIdAsync(model.Id).Result;
+                    if (group == null) return PartialView("_Update", model);
+
+                    // check group name exist
+                    if (identityGroupService.FindByNameAsync(model.Name).Result != null &&
+                        !identityGroupService.FindByNameAsync(model.Name).Result.Id.Equals(model.Id))
+                    {
+                        ModelState.AddModelError("Name", "The name exists already.");
+                        if (!ModelState.IsValid) return PartialView("_Update", model);
+                    }
+
+                    group.Name = model.Name;
+                    group.DisplayName = group.Name;
+                    group.Description = model.Description;
+
+                    await identityGroupService.UpdateAsync(group);
+                    return Json(new { success = true });
                 }
-
-                group.Name = model.Name;
-                group.DisplayName = group.Name;
-                group.Description = model.Description;
-
-                groupManager.UpdateAsync(group);
-                return Json(new { success = true });
-            }
-            finally
-            {
-                groupManager.Dispose();
+                catch(Exception ex)
+                {
+                    return Json(new { success = false });
+                }
             }
         }
 
@@ -235,23 +243,24 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [GridAction]
         public ActionResult Users_Select(string groupName = "")
         {
-            var userManager = new UserManager();
-
-            try
+            using (var userManager = new UserManager())
             {
-                var users = new List<UserMembershipGridRowModel>();
-
-                foreach (var user in userManager.Users)
+                try
                 {
-                    users.Add(UserMembershipGridRowModel.Convert(user, groupName));
-                }
+                    var users = new List<UserMembershipGridRowModel>();
 
-                return View(new GridModel<UserMembershipGridRowModel> { Data = users });
-            }
-            finally
-            {
-                userManager.Dispose();
-            }
+                    foreach (var user in userManager.Users)
+                    {
+                        users.Add(UserMembershipGridRowModel.Convert(user, groupName));
+                    }
+
+                    return View(new GridModel<UserMembershipGridRowModel> { Data = users, Total = users.Count });
+                }
+                catch (Exception ex)
+                {
+                    return View(new GridModel<UserMembershipGridRowModel> { Data = new List<UserMembershipGridRowModel>(), Total = 0 });
+                }
+            } 
         }
 
         #region Hilfsprogramme
@@ -270,34 +279,39 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         public JsonResult ValidateGroupname(string username, long id = 0)
         {
-            var groupManager = new GroupManager();
-
-            try
+            using (var groupManager = new GroupManager())
+            using (var identityGroupService = new IdentityGroupService(groupManager))
             {
-                var group = groupManager.FindByNameAsync(username);
+                try
+                {
+                    var group = identityGroupService.FindByNameAsync(username);
 
-                if (group == null)
-                {
-                    return Json(true, JsonRequestBehavior.AllowGet);
-                }
-                else
-                {
-                    if (group.Id == id)
+                    if (group == null)
                     {
                         return Json(true, JsonRequestBehavior.AllowGet);
                     }
                     else
                     {
-                        var error = string.Format(CultureInfo.InvariantCulture, "The groupname exists already.", username);
+                        if (group.Id == id)
+                        {
+                            return Json(true, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            var error = string.Format(CultureInfo.InvariantCulture, "The groupname exists already.", username);
 
-                        return Json(error, JsonRequestBehavior.AllowGet);
+                            return Json(error, JsonRequestBehavior.AllowGet);
+                        }
                     }
                 }
+                catch(Exception ex)
+                {
+                    var error = string.Format(CultureInfo.InvariantCulture, "The groupname exists already.", username);
+                    return Json(error, JsonRequestBehavior.AllowGet);
+                }
             }
-            finally
-            {
-                groupManager.Dispose();
-            }
+
+                
         }
 
         #endregion Remote Validation

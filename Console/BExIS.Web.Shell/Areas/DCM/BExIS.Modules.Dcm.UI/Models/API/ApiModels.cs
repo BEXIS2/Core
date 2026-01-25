@@ -1,5 +1,10 @@
 ﻿namespace BExIS.Modules.Dcm.UI.Models.API
 {
+    public class  SimpleApiResponceModel
+    {
+        public long Id { get; set; }
+    }
+
     public class DataApiModel
     {
         public long DatasetId { get; set; }
@@ -10,14 +15,6 @@
         public string[][] Data { get; set; }
     }
 
-    //public class PushDataApiModel : DataApiModel
-    //{
-    //}
-
-    //public class PutDataApiModel : DataApiModel
-    //{
-    //    public string[] PrimaryKeys { get; set; }
-    //}
 
     public class PostApiDatasetModel
     {

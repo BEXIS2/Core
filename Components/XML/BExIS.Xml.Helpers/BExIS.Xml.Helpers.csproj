@@ -74,6 +74,7 @@
     <Compile Include="IOHelper.cs" />
     <Compile Include="Mapping\XmlMapperManager.cs" />
     <Compile Include="Mapping\XmlSchemaManager.cs" />
+    <Compile Include="SampleStore.cs" />
     <Compile Include="PublicationStore.cs" />
     <Compile Include="XExtentsions.cs" />
     <Compile Include="XmlDatasetHelper.cs" />

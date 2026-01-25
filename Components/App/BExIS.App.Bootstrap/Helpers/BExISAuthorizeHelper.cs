@@ -63,7 +63,7 @@ namespace BExIS.App.Bootstrap.Helpers
                     var basic = code;
                     if (basic != null)
                     {
-                        using (var identityUserService = new IdentityUserService())
+                        using (var identityUserService = new IdentityUserService(userManager))
                         {
                             user = userManager.FindByNameAsync(System.Text.Encoding.UTF8.GetString(
                             Convert.FromBase64String(basic)).Split(':')[0]).Result;
@@ -141,7 +141,7 @@ namespace BExIS.App.Bootstrap.Helpers
             try
             {
                 using (var userManager = new UserManager())
-                using (var identityUserService = new IdentityUserService())
+                using (var identityUserService = new IdentityUserService(userManager))
                 {
                     if (string.IsNullOrEmpty(authorization))
                     {
@@ -240,7 +240,7 @@ namespace BExIS.App.Bootstrap.Helpers
                     var basic = code;
                     if (basic != null)
                     {
-                        using (var identityUserService = new IdentityUserService())
+                        using (var identityUserService = new IdentityUserService(userManager))
                         {
                             user = userManager.FindByNameAsync(System.Text.Encoding.UTF8.GetString(
                             Convert.FromBase64String(basic)).Split(':')[0]).Result;

@@ -88,6 +88,21 @@
       "options": []
     },
     {
+      "key": "exception",
+      "title": "Exception Configurations",
+      "value": {
+        "sendExceptions": true,
+        "excludedMessages": [
+          "Multiple types were found that match the controller named"
+        ],
+        "excludedHttpStatusCodes": [
+          404
+        ]
+      },
+      "type": "JSON",
+      "description": "send or excluded exception sending via email."
+    },
+    {
       "key": "landingPage",
       "title": "Landing Page (without login)",
       "value": "ddm, publicsearch, index",
@@ -135,13 +150,6 @@
       "value": "david.schoene@uni-jena.de",
       "type": "String",
       "description": "All administrative information will be sent to this email."
-    },
-    {
-      "key": "sendExceptions",
-      "title": "Send Exceptions to system email address",
-      "value": true,
-      "type": "Boolean",
-      "description": "If this flag is set to true, all exceptions will be forwarded to the system email address."
     },
     {
       "key": "usePersonEmailAttributeName",

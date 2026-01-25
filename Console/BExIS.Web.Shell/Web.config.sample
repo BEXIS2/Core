@@ -22,7 +22,7 @@
 		<add key="UseSchemaInDatabaseGeneration" value="False" />
 		<add key="ThrowErrorWhenParialContentNotFound" value="False" />
 		<add key="ApplicationName" value="{APPLICATIONNAME}" />
-		<add key="ApplicationVersion" value="4.0.2" />
+		<add key="ApplicationVersion" value="4.1.0" />
 		<add key="SessionWarningDelaySecond" value="30" />
 		<!-- Keep it as false, there are some test data in the database-->
 		<add key="CreateDatabase" value="false" />
@@ -34,6 +34,7 @@
 		<!--PostgreSQL82Dialect, DB2Dialect-->
 		<add key="AutoCommitTransactions" value="False" />
 		<add key="IoCProviderTypeInfo" value="Vaiona.IoC.Unity.UnityIoC, Vaiona.IoC" />
+		<add key="Glimpse:DisableAsyncSupport" value="true" />
 		<!--
       an absolute path like: D:\bpp\Tech\ModuleBranches\C_DLM\Workspace, a relative path like: ..\..\ or empty.
       The default is empty and it point to the place of automatically generated workspace for debug mode which is the level as the folder containing the web.config file.

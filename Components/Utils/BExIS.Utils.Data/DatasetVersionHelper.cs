@@ -104,10 +104,23 @@ namespace BExIS.Utils.Data
                             }
                         }
                     }
-                    else // use latest version
+                    else // use latest version or latest tag
                     {
-                        var datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
-                        return datasetVersion.Id;
+                        if (!useTags) // if tags are not used
+                        {
+                            var datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                            return datasetVersion.Id;
+                        }
+                        else // if tags are used
+                        {
+                            Tag tag = datasetManager.GetLatestTag(datasetId, true);
+                            if (tag == null) return -1;
+                            else
+                            {
+                                var datasetVersion = datasetManager.GetLatestVersionByTagNr(datasetId, tag.Nr);
+                                return datasetVersion.Id;
+                            }
+                        }
                     }
                 }
                 else // no rigths
