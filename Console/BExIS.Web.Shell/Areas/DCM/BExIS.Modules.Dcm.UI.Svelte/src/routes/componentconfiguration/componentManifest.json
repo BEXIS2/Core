@@ -1,0 +1,254 @@
+{
+  "meta": {
+    "title": "Map Component",
+    "component_name": "map_v1.17.6.25",
+    "author": "GeoTeam",
+    "version": "1.0.0",
+    "description": "Component for geographic data visualization"
+  },
+  "globalSettings": {
+    "globalsetting": [
+      {
+        "name": "Default SRS",
+        "description": "Default spatial reference system",
+        "type": "string",
+        "target_variable": "defaultSRS",
+        "default_value": {
+          "type": "string",
+          "value": "EPSG:4326"
+        }
+      },
+      {
+        "name": "Map Provider",
+        "description": "Base map provider",
+        "type": "string",
+        "target_variable": "mapProvider",
+        "default_value": {
+          "type": "string",
+          "value": "OpenStreetMap"
+        }
+      }
+    ]
+  },
+  "modes": {
+    "edit": [
+      {
+        "mode_name": "coordinates_area",
+        "description": "Berechnet eine Area aus xmin, xmax, ymin, ymax und gibt area als Output.",
+        "settings": {
+          "setting": [
+            {
+              "name": "Initial View Extent",
+              "description": "Initial map view extent",
+              "type": "string",
+              "target_variable": "initViewExtent",
+              "default_value": {
+                "type": "string",
+                "value": "[10,10,35,40]"
+              }
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "X Minimum",
+              "description": "Minimum X coordinate (longitude)",
+              "type": "number",
+              "format": "decimal",
+              "target_variable": "xmin",
+              "allowregex_input": true,
+              "allowregex_output": true,
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "number",
+                "value": "20.0"
+              }
+            },
+            {
+              "name": "X Maximum",
+              "description": "Maximum X coordinate (longitude)",
+              "type": "number",
+              "format": "decimal",
+              "target_variable": "xmax",
+              "allowregex_input": false,
+              "allowregex_output": false,
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "number",
+                "value": "23.0"
+              }
+            },
+            {
+              "name": "Y Minimum",
+              "description": "Minimum Y coordinate (latitude)",
+              "type": "number",
+              "format": "decimal",
+              "target_variable": "ymin",
+              "allowregex_input": true,
+              "allowregex_output": false,
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "number",
+                "value": "20.0"
+              }
+            },
+            {
+              "name": "Y Maximum",
+              "description": "Maximum Y coordinate (latitude)",
+              "type": "number",
+              "format": "decimal",
+              "target_variable": "ymax",
+              "allowregex_input": false,
+              "allowregex_output": true,
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "number",
+                "value": "25.0"
+              }
+            },
+            {
+              "name": "Area",
+              "description": "Geographic area in square meters",
+              "type": "number",
+              "format": "m^2",
+              "target_variable": "area",
+              "allowregex_input": false,
+              "allowregex_output": true,
+              "is_input": false,
+              "is_output": true,
+              "default_value": {
+                "type": "number",
+                "value": "800000.0"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "mode_name": "coordinates",
+        "description": "Gibt xmin, xmax, ymin, ymax als Input und Output weiter.",
+        "settings": {
+          "setting": [
+            {
+              "name": "Fit to Data",
+              "description": "Automatically fit map bounds to the data extent",
+              "type": "boolean",
+              "target_variable": "fitToData",
+              "default_value": {
+                "type": "boolean",
+                "value": "true"
+              }
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "X Minimum",
+              "description": "Minimum X coordinate (longitude)",
+              "type": "number",
+              "format": "decimal",
+              "target_variable": "xmin",
+              "allowregex_input": true,
+              "allowregex_output": true,
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "number",
+                "value": "8.0"
+              }
+            },
+            {
+              "name": "X Maximum",
+              "description": "Maximum X coordinate (longitude)",
+              "type": "number",
+              "format": "decimal",
+              "target_variable": "xmax",
+              "allowregex_input": true,
+              "allowregex_output": true,
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "number",
+                "value": "12.0"
+              }
+            },
+            {
+              "name": "Y Minimum",
+              "description": "Minimum Y coordinate (latitude)",
+              "type": "number",
+              "format": "decimal",
+              "target_variable": "ymin",
+              "allowregex_input": true,
+              "allowregex_output": true,
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "number",
+                "value": "8.0"
+              }
+            },
+            {
+              "name": "Y Maximum",
+              "description": "Maximum Y coordinate (latitude)",
+              "type": "number",
+              "format": "decimal",
+              "target_variable": "ymax",
+              "allowregex_input": true,
+              "allowregex_output": true,
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "number",
+                "value": "11.0"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "view": [
+      {
+        "mode_name": "display_area",
+        "description": "Mode for area display",
+        "settings": {
+          "setting": [
+            {
+              "name": "View Extent",
+              "description": "Map extent for view mode",
+              "type": "string",
+              "target_variable": "viewExtent",
+              "default_value": {
+                "type": "string",
+                "value": "[15,15,25,25]"
+              }
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Display Area",
+              "description": "Area to display",
+              "type": "string",
+              "target_variable": "displayArea",
+              "allowregex_input": true,
+              "allowregex_output": false,
+              "is_input": true,
+              "is_output": false,
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

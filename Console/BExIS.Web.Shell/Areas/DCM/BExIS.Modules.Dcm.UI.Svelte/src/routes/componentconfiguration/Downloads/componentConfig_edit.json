@@ -1,0 +1,137 @@
+{
+  "components": [
+    {
+      "meta": {
+        "component_name": "map_v1.17.6.25",
+        "component_ui_id": "map_v1.17.6.25-edit-coordinates_area-1765237545195"
+      },
+      "globalSettings": {
+        "interaction_mode": "edit",
+        "anchorpoint": "associatedParty.phone",
+        "globalsetting": [
+          {
+            "target_variable": "defaultSRS",
+            "value": "EPSG:4326"
+          },
+          {
+            "target_variable": "mapProvider",
+            "value": "Google Maps"
+          }
+        ]
+      },
+      "mode": {
+        "mode_name": "coordinates_area",
+        "settings": {
+          "setting": [
+            {
+              "target_variable": "initViewExtent",
+              "value": "[10,10,35,40]"
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "target_variable": "xmin",
+              "is_input": true,
+              "is_output": true,
+              "type": "number",
+              "JSONPath": "associatedParty.phone",
+              "is_visible": false,
+              "input_regex": "$test",
+              "output_regex": "$test2"
+            },
+            {
+              "target_variable": "xmin",
+              "is_input": false,
+              "is_output": true,
+              "type": "number",
+              "JSONPath": "associatedParty.electronicMailAddress",
+              "is_visible": false,
+              "input_regex": "$test",
+              "output_regex": "$test2"
+            },
+            {
+              "target_variable": "xmin",
+              "is_input": false,
+              "is_output": true,
+              "type": "number",
+              "JSONPath": "associatedParty.onlineUrl",
+              "is_visible": true,
+              "input_regex": "$test",
+              "output_regex": "$test2"
+            },
+            {
+              "target_variable": "ymax",
+              "is_input": true,
+              "is_output": true,
+              "type": "number",
+              "JSONPath": "associatedParty.role",
+              "is_visible": true,
+              "output_regex": "$test3"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "meta": {
+        "component_name": "map_v1.17.6.25",
+        "component_ui_id": "map_v1.17.6.25-edit-coordinates-1765237558848"
+      },
+      "globalSettings": {
+        "interaction_mode": "edit",
+        "anchorpoint": "keywordSet.keywordThesaurus",
+        "globalsetting": [
+          {
+            "target_variable": "defaultSRS",
+            "value": "EPSG:4326"
+          },
+          {
+            "target_variable": "mapProvider",
+            "value": "OpenStreetMap"
+          }
+        ]
+      },
+      "mode": {
+        "mode_name": "coordinates",
+        "settings": {
+          "setting": [
+            {
+              "target_variable": "fitToData",
+              "value": "true"
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "target_variable": "xmax",
+              "is_input": true,
+              "is_output": false,
+              "type": "number",
+              "JSONPath": "intellectualRights.para",
+              "is_visible": false
+            },
+            {
+              "target_variable": "ymax",
+              "is_input": true,
+              "is_output": true,
+              "type": "number",
+              "JSONPath": "keywordSet.keywordThesaurus",
+              "is_visible": true
+            },
+            {
+              "target_variable": "ymax",
+              "is_input": false,
+              "is_output": true,
+              "type": "number",
+              "JSONPath": "additionalInfo.para",
+              "is_visible": false
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
