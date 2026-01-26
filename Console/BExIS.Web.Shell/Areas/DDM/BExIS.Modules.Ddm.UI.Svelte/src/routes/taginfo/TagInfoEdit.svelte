@@ -124,7 +124,7 @@
 		<TablePlaceholder cols={7} {rows} />
 	</div>
 {:then model}
-	<h2 class="h2">Release Tag Management</h2>
+	<h2 class="h2">Release Tag Management - Dataset ID {id}</h2>
 	<div class="table table-compact w-full">
 		<Table
 			on:action={tableActions}
