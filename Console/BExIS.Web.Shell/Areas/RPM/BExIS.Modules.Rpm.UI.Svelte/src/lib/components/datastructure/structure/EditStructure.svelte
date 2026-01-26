@@ -118,7 +118,7 @@
 			>
 		</div>
 		<div class="flex-none text-end">
-			{#if pksHasChanged && !pksValid}
+			{#if pksHasChanged && !pksValid && dataExist}
 				<button
 					id="check"
 					title="Check changed primary key against datasets that belong to the data structure."
@@ -137,7 +137,7 @@
 				disabled={!areVariablesValid ||
 					!areAttributesValid ||
 					!((enforcePrimaryKey && isPKSet) || !enforcePrimaryKey) ||
-					(pksHasChanged && !pksValid)}><Fa icon={faSave} /><span class="pl-1">Save</span></button
+					(pksHasChanged && !pksValid && dataExist)}><Fa icon={faSave} /><span class="pl-1">Save</span></button
 			>
 		</div>
 	</div>
