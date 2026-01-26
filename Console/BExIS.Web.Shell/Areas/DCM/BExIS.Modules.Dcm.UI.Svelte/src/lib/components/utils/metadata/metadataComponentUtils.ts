@@ -1,0 +1,240 @@
+import exp from 'constants';
+import type { SimpleComponentData, validationStoretype } from './models';
+import { metadataStore, hideStore, validationStore, configStore } from './stores';
+// Utility functions for metadata handling
+// Get and set values in the metadata store based on a dot-separated path
+export function setMetadataStore(metadata: any) {
+	metadataStore.set(metadata);
+}
+// Get value from an object based on a dot-separated path
+export function getValueBySchemaPath(path: string) {
+	let obj: any;
+	metadataStore.subscribe((v) => {
+		obj = v;
+	});
+	return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+}
+
+export function getValueByPath(path: string) {
+	path = path + '.#text';
+	return getValueBySchemaPath(path);
+}
+// Set value in an object based on a dot-separated path
+export function setValueByPath(obj: any, path: string, value: any) {
+	const parts = path.split('.');
+	let current = obj;
+	for (let i = 0; i < parts.length - 1; i++) {
+		if (!(parts[i] in current) || typeof current[parts[i]] !== 'object') {
+			current[parts[i]] = {};
+		}
+		current = current[parts[i]];
+	}
+	current[parts[parts.length - 1]] = value;
+	return obj;
+}
+// Update metadata store with a new value at the specified path
+export function updateMetadataStore(path: string, value: any):any {
+	let obj: any = {};
+	if (path !== undefined && path !== null && path !== '') {
+		metadataStore.subscribe((v) => {
+			obj = v;
+		});
+		{
+			if (value !== undefined && value !== null && value !== getValueByPath(path)) {
+				obj = setValueByPath(obj, path + '.#text', value);
+				if (
+					obj !== undefined &&
+					obj !== null &&
+					obj !==
+						metadataStore.subscribe((value) => {
+							obj = value;
+						})
+				) {
+					metadataStore.set(obj);
+				}
+			}
+		}
+	}
+	return obj;
+}
+// Config Store Functions
+// Set configuration data in the config store
+export function setConfigStore(config: any) {
+	configStore.set(config);
+}
+
+// Get configuration data from the config store
+export function getConfigStore(): any {
+	let config: any;
+	configStore.subscribe((v) => {
+		config = v;
+	});
+	return config;
+}
+
+// Get anchor point for a given component name from the config store
+// export function getAnchorFromConfig(componentName: string): string {	
+// 	if(componentName != null && componentName != undefined && componentName != ''){
+// 		let config: any = getConfigStore();
+// 		for (const component of config.components) {
+// 			if (component.meta.component_name.toLowerCase() === componentName.toLowerCase() && component.globalSettings.anchorpoint === anchor) {
+// 				return component.globalSettings.anchorpoint;
+// 			}
+// 		}
+// 	}
+// 	return '';
+// }
+
+export function getVariablesFromConfig(componentName: string, anchor: string): any[] {	
+	let variables: any[] = [];
+	if(componentName != null && componentName != undefined && componentName != ''){
+		let config: any = getConfigStore();
+		for (const component of config.components) {
+			if (component.meta.component_name.toLowerCase() === componentName.toLowerCase() && component.globalSettings.anchorpoint === anchor) {
+				variables = component.mode.variables.variable;
+			}
+		}
+	}
+	return variables;
+}
+
+export function getVariableSoursePathFromConfig(componentName: string, anchor: string, targetVariableName: string): string {
+	if(componentName != null && componentName != undefined && componentName != ''){	
+		let variables = getVariablesFromConfig(componentName, anchor);
+			for (const variable of variables) {
+				if (variable.target_variable === targetVariableName) {
+					console.log('Found variable:', variable.JSONPath);
+					return variable.JSONPath;
+				}
+			}
+		}
+return '';
+}
+
+// Convert a schema node to a JSON object with default values
+export function schemaToJson(schema: any): any {
+	if (!schema) return null;
+
+	if (schema.type === 'object' && schema.properties) {
+		const obj: any = {};
+		for (const [key, value] of Object.entries(schema.properties)) {
+			obj[key] = schemaToJson(value);
+		}
+		return obj;
+	}
+	if (schema.type === 'array' && schema.items) {
+		return [schemaToJson(schema.items)];
+	}
+	// Standardwerte für primitive Typen
+	switch (schema.type) {
+		case 'string':
+			return '';
+		case 'boolean':
+			return false;
+		case 'number':
+			return 0;
+		case 'int':
+			return 0;
+		case 'date':
+			return new Date().toISOString().split('T')[0];
+		default:
+			return null;
+	}
+}
+// Toggle visibility of a metadata component based on its path
+export function toggleShow(path: string) {
+		let hideStoreValue: string[] = [];
+		hideStore.subscribe((v) => {
+			hideStoreValue = [...v];
+		})();
+
+		if (hideStoreValue.includes(path)) {
+			let idx = hideStoreValue.findIndex((x) => x == path);
+			if (idx > -1) hideStoreValue.splice(idx, 1);
+		} else {
+			hideStoreValue.push(path);
+		}
+		hideStore.set(hideStoreValue);
+	}
+// Validation Store Functions
+// Get current values from the validation store
+// If undefined, initialize with default values
+// and return the validation store values
+export function getValidationStore(): validationStoretype {
+	let validationStoreValues: validationStoretype = { allSimpleRequiredValid: false, simpleTypeValidationItems: [] };
+			validationStore.subscribe(n => {
+				validationStoreValues = n;
+			});
+		if(validationStoreValues == undefined) {
+			clearValidationStore();
+		}
+	return validationStoreValues;
+	}
+
+export function clearValidationStore(): void {
+	validationStore.set({ allSimpleRequiredValid: false, simpleTypeValidationItems: [] });
+}
+// Add a simple component's validation data to the validation store
+// if it doesn't already exist
+// and has relevant validation criteria
+// Returns the updated validation store values
+export function ValidationStoreAddSimpleComponent(item: SimpleComponentData): validationStoretype {
+	let validationStoreValues: validationStoretype = getValidationStore();
+		if( validationStoreValues.simpleTypeValidationItems.find(i => i.path === item.path) === undefined && (item.required || item.regex !== undefined || item.lowerBound !== undefined || item.upperBound !== undefined || (item.domainList && item.domainList.length > 0)) ) {
+			validationStoreValues.simpleTypeValidationItems.push(item);
+			validationStore.set(validationStoreValues);
+		}
+	return validationStoreValues;
+	}
+// Set overall validity for all simple required components in the validation store
+// based on the validity of an individual component identified by its path
+// Returns the updated validity of the specified component
+export function ValidationStoreSetSimpleTypeValid(path:string, isValid: boolean): boolean {
+		let valid :boolean = false;
+		let validationStoreValues: validationStoretype = getValidationStore();
+		if(isValid && isValid != null && isValid != undefined){
+			validationStoreValues.simpleTypeValidationItems.find(item => item.path === path)!.isValid = isValid;
+			valid = validationStoreValues.simpleTypeValidationItems.find(item => item.path === path)!.isValid;
+		}
+		validationStoreValues.allSimpleRequiredValid = true;
+		for (const item of validationStoreValues.simpleTypeValidationItems) {
+			if (!item.isValid && item.required) {
+				validationStoreValues.allSimpleRequiredValid = false;
+				break;
+			}
+		}
+		validationStore.set(validationStoreValues);
+		return valid;
+	}
+// Create a SimpleComponentData validation item
+// based on the provided parameters and simple component properties
+export function createSimpleComponentValidationItem(path: string,label: string, required: boolean, simpleComponent: any): SimpleComponentData {
+	let simpleComponentValidationItem: SimpleComponentData = {label: label,path: path, required: required , isValid: false};
+
+	// set regex if defined
+	if(simpleComponent.properties['#text'].pattern && simpleComponent.properties['#text'].pattern != undefined && simpleComponent.properties['#text'].pattern != null && simpleComponent.properties['#text'].pattern != '') {
+		simpleComponentValidationItem.regex = simpleComponent.properties['#text'].pattern;				
+	}
+	// set minLength if defined
+	if(simpleComponent.properties['#text'].minLength && simpleComponent.properties['#text'].minLength != undefined && simpleComponent.properties['#text'].minLength != null && simpleComponent.properties['#text'].minLength != '') {
+		simpleComponentValidationItem.minLength = simpleComponent.properties['#text'].minLength;				
+	}
+	// set maxLength if defined
+	if(simpleComponent.properties['#text'].maxLength && simpleComponent.properties['#text'].maxLength != undefined && simpleComponent.properties['#text'].maxLength != null && simpleComponent.properties['#text'].maxLength != '') {
+		simpleComponentValidationItem.maxLength = simpleComponent.properties['#text'].maxLength;				
+	}
+	// set domainList if defined
+	if(simpleComponent.properties['#text'].domainList && simpleComponent.properties['#text'].domainList != undefined && simpleComponent.properties['#text'].domainList != null && simpleComponent.properties['#text'].domainList.length > 0) {
+		simpleComponentValidationItem.domainList = simpleComponent.properties['#text'].domainList;				
+	}
+	// set lowerBound if defined
+	if(simpleComponent.properties['#text'].lowerBound && simpleComponent.properties['#text'].lowerBound != undefined && simpleComponent.properties['#text'].lowerBound != null && simpleComponent.properties['#text'].lowerBound.length != '') {
+		simpleComponentValidationItem.lowerBound = simpleComponent.properties['#text'].lowerBound;				
+	}
+	// set upperBound if defined
+	if(simpleComponent.properties['#text'].upperBound && simpleComponent.properties['#text'].upperBound != undefined && simpleComponent.properties['#text'].upperBound != null && simpleComponent.properties['#text'].upperBound.length != '') {
+		simpleComponentValidationItem.upperBound = simpleComponent.properties['#text'].upperBound;				
+	}
+
+	return simpleComponentValidationItem;
+}
