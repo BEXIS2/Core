@@ -20,7 +20,9 @@
 		faAngleUp,
 		faAngleDown,
 		faAnglesDown,
-		faAnglesUp
+		faAnglesUp,
+		faChevronUp,
+		faChevronDown
 	} from '@fortawesome/free-solid-svg-icons';
 
 	// services
@@ -40,6 +42,7 @@
 		constraintsStore
 	} from '../store';
 	import DwcRequirements from './DwcRequirements.svelte';
+	
 
 	export let variables: VariableInstanceModel[] = [];
 	export let missingValues: missingValueType[] = [];
@@ -55,7 +58,7 @@
 	// validation array
 	let variableValidationStates: any = [];
 
-	export let valid = true;
+	export let valid: boolean | null = null;
 
 	let ready: boolean = false;
 
@@ -95,16 +98,15 @@
 		}
 	}
 
-	function varChangeFn()
-	{
+	function varChangeFn() {
 		checkValidationState();
-		dispatch("changed")
+		dispatch('changed');
 	}
 	// every time when validation state of a variable is change,
 	// this function triggered an check whether save button can be active or not
 	function checkValidationState() {
 		valid = variableValidationStates.every((v: boolean) => v === true);
-		
+
 		//console.log("TCL ~ file: Variables.svelte:63 ~ checkValidationState ~ variableValidationStates:", variableValidationStates)
 	}
 
@@ -229,32 +231,15 @@
 	}
 </script>
 
-<div class="p-2">
-	<div class="flex gap-2 items-end">
-		<button
-			id="variables-expander"
-			class="btn variant-filled-secondary"
-			title={expandAll ? 'collapse all' : 'expand all'}
-			on:mouseover={() => helpStore.show('variables-expander')}
-			on:click={() => (expandAll = !expandAll)}
-		>
-			{#if expandAll}
-				<Fa icon={faAnglesUp} />
-			{:else}
-				<Fa icon={faAnglesDown} />
-			{/if}
-		</button>
+{#if ready}
+	<div><DwcRequirements bind:variables /></div>
 
-		<DwcRequirements bind:variables={variables} />
-		
-		
-	</div>
-	<div class="pr-32 w-auto">
-		{#if !valid}
-			<span class="text-sm">Variables with errors:</span>
+	{#if !valid}
+		<div class="pr-32 w-auto mt-4 mb-2 p-2 rounded-md border border-gray-200 bg-gray-50">
+			<span class="">Variables with errors:</span>
 			{#each variableValidationStates as v, i}
 				{#if v == false && variables[i] != undefined}
-					<a class="chip variant-filled-error m-1" href="#{i}">
+					<a class="chip variant-soft-error m-1" href="#{i}">
 						{#if variables[i].name != ''}
 							{variables[i].name}
 						{:else}
@@ -263,8 +248,29 @@
 					</a>
 				{/if}
 			{/each}
-		{/if}
-	</div>
+		</div>
+	{/if}
+{/if}
+<div class="p-2">
+	{#if ready}
+		<div class="flex gap-2 items-end">
+			<button
+				id="variables-expander"
+				class="btn variant-filled-secondary flex gap-1 items-center"
+				title={expandAll ? 'collapse all' : 'expand all'}
+				on:mouseover={() => helpStore.show('variables-expander')}
+				on:focus={() => helpStore.show('variables-expander')}
+				on:click={() => (expandAll = !expandAll)}
+			>
+				{#if expandAll}
+					<Fa icon={faChevronUp} />
+				{:else}
+					<Fa icon={faChevronDown} />
+				{/if}
+				<span>{expandAll ? 'Collapse All' : 'Expand All'}</span>
+			</button>
+		</div>
+	{/if}
 	<div class="flex-col space-y-2 mt-1">
 		{#if variables && missingValues && ready}
 			<!-- else content here -->
@@ -326,7 +332,7 @@
 								<button
 									id="up-{i}"
 									title="move up"
-									class="chip variant-filled-surface disbaled"
+									class="chip variant-filled-surface disabled"
 									disabled
 									on:mouseover={() => helpStore.show('up-var')}
 									on:focus={() => helpStore.show('up-var')}
@@ -349,7 +355,7 @@
 									title="move down"
 									class="chip variant-filled-surface"
 									on:mouseover={() => helpStore.show('down-var')}
-								 on:focus={() => helpStore.show('down-var')}
+									on:focus={() => helpStore.show('down-var')}
 									on:click={() => downFn(i)}><Fa icon={faAngleDown}></Fa></button
 								>
 							{:else}
@@ -375,12 +381,10 @@
 					</button>
 				{/if}
 			</div>
-		{:else}
-		 {#if dataExist}
+		{:else if dataExist}
 			<Spinner label="loading suggested structure based on your file." />
-			{:else}
+		{:else}
 			<Spinner label="loading structure." />
-		{/if}
 		{/if}
 	</div>
 </div>

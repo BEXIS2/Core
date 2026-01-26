@@ -20,7 +20,7 @@
 	import type { DataStructureCreationModel, dwcExtention } from '../types';
 	import { Alert, helpStore, MultiSelect } from '@bexis2/bexis2-core-ui';
 	import { type ModalSettings, getModalStore } from '@skeletonlabs/skeleton';
-	import DwcRequirements from './DwcRequirements.svelte';
+
 	const modalStore = getModalStore();
 
 	export let model: DataStructureCreationModel;
