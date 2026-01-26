@@ -497,7 +497,7 @@
 
         if (confirm('Are you sure you want to leave the form? All changes will be lost.')) {
 
-            window.open(document.referrer)
+            window.location.href = document.referrer; // navigate back in the same tab
 
         } else {
             return false;
