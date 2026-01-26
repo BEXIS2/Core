@@ -134,7 +134,7 @@
 
 	<Attributes {model} bind:valid={areAttributesValid} />
 	{#if enforcePrimaryKey && model.variables.length > 0 && !isPKSet}
-		<Alert message="Please select a (combined) primary key." cssClass="variant-filled-warning"
+		<Alert message="Please select a (combined) primary key." cssClass="variant-soft-error p-1"
 		></Alert>
 	{/if}
 
