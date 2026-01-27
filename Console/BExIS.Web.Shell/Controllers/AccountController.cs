@@ -250,7 +250,7 @@ namespace BExIS.Web.Shell.Controllers
         // GET: /Account/Login
         public ActionResult Login(string returnUrl)
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Log In", this.Session.GetTenant());
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Login", this.Session.GetTenant());
             ViewBag.ReturnUrl = returnUrl;
 
             return View();
@@ -277,7 +277,7 @@ namespace BExIS.Web.Shell.Controllers
                         return View(model);
                     }
             
-                    // Search for user by email, if not found search by user name
+                    // Search for user by email, if not found search by username
                     var user = await identityUserService.FindByEmailAsync(model.UserName);
             
                     if (user != null)

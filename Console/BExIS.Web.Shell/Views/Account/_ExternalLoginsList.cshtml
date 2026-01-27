@@ -7,7 +7,7 @@
     var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
     if (loginProviders.Any() || GeneralSettings.LdapConfigurations.Any(l => l.Enabled == true))
     {
-        <h4>Use different service for log in.</h4>
+        <h4>Use a different service for login:</h4>
         <hr />
 
         using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = Model.ReturnUrl }))
