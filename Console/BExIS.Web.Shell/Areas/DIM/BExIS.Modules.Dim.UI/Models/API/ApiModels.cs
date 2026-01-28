@@ -21,6 +21,7 @@ namespace BExIS.Modules.Dim.UI.Models.Api
         public long Id { get; set; }
         public long Number { get; set; }
         public double Tag { get; set; }
+        public string ChangeDescription { get; set; }
     }
 
     /// <summary>
