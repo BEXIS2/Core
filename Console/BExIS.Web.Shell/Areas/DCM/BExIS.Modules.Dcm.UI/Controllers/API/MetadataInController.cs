@@ -73,6 +73,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             var request = Request.CreateResponse();
             User user = null;
             string error = "";
+            string comment = "Update via API";
 
             DatasetManager datasetManager = new DatasetManager();
             UserManager userManager = new UserManager();
@@ -207,6 +208,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 {
                                     return Request.CreateErrorResponse(HttpStatusCode.ExpectationFailed, "the json does not have the expected structure");
                                 }
+
+                                var commentProperty = metadataJson.Property("@comment");
+                                if (commentProperty != null && commentProperty.Value != null && commentProperty.Value.ToString().Length > 0)
+                                {
+                                    comment = commentProperty.Value.ToString();
+                                }
                             }
                             else
                             {
@@ -254,12 +261,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         workingCopy.ModificationInfo = new EntityAuditInfo()
                         {
                             Performer = user.UserName,
-                            Comment = "via API",
-                            ActionType = AuditActionType.Create
+                            Comment = "Metadata",
+                            ActionType = AuditActionType.Create,
                         };
 
                         datasetManager.EditDatasetVersion(workingCopy, null, null, null);
-                        datasetManager.CheckInDataset(id, "via API", user.Name, ViewCreationBehavior.None);
+                        datasetManager.CheckInDataset(id, comment, user.Name, ViewCreationBehavior.None);
                     }
 
                     LoggerFactory.LogData(id.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);

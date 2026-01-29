@@ -160,7 +160,7 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetWithdrawRequestHeader(long datasetid, string requester)
         {
-            return $"Data request from {requester} for dataset with ID <b>{datasetid}</b> withdrawn";
+            return $"Data request from {requester} for dataset with ID {datasetid} withdrawn";
         }
 
         public static string GetWithdrawRequestMessage(long datasetid, string title, string requester)
@@ -173,7 +173,7 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetAcceptRequestHeader(long datasetid, string requester)
         {
-            return $"Data request from {requester} for dataset with ID <b>{datasetid}</b> granted";
+            return $"Data request from {requester} for dataset with ID {datasetid} granted";
         }
 
         public static string GetAcceptRequestMessage(long datasetid, string title)
@@ -186,7 +186,7 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetRejectedRequestHeader(long datasetid, string requester)
         {
-            return $"Data request from {requester} for dataset with ID <b>{datasetid}</b> rejected";
+            return $"Data request from {requester} for dataset with ID {datasetid} rejected";
         }
 
         public static string GetRejectedRequestMessage(long datasetid, string title)
@@ -342,7 +342,7 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetPushApiStoreHeader(long datasetid, string title)
         {
-            return $"Receive data for dataset '{title}' with ID <b>{datasetid}</b>";
+            return $"Receive data for dataset '{title}' with ID {datasetid}";
         }
 
         public static string GetPushApiStoreMessage(long datasetid, string userName, string[] errors = null)
@@ -386,7 +386,7 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetPushApiUploadSuccessHeader(long datasetid, string title)
         {
-            return $"Upload <b>completed</b> for dataset: '{title}' with ID <b>{datasetid}</b>";
+            return $"Upload completed for dataset: '{title}' with ID {datasetid}";
         }
 
         public static string GetPushApiUploadSuccessMessage(long datasetid, string userName)
@@ -396,7 +396,7 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetPushApiUploadFailHeader(long datasetid, string title)
         {
-            return $"Upload  was not successful for dataset '{title}' with ID <b>{datasetid}</b>";
+            return $"Upload  was not successful for dataset '{title}' with ID {datasetid}";
         }
 
         public static string GetPushApiUploadFailMessage(long datasetid, string userName, string[] errors)
