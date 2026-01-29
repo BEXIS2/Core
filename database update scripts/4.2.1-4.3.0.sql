@@ -21,6 +21,8 @@ INSERT INTO public.operations (versionno, extra, module, controller, action, fea
 SELECT 1, NULL, 'PUM', 'view', '*', null 
 WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='PUM' AND controller='view');
 
-
+INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
+SELECT 1, NULL, 'DDM', 'curation', '*', null 
+WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DDM' AND controller='curation');
 
 commit;
