@@ -3,6 +3,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.UI.Models;
 using BExIS.Web.Shell.Helpers;
 using System;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Vaiona.Web.Extensions;
@@ -56,6 +57,8 @@ namespace BExIS.Web.Shell.Controllers
             menu.LaunchBar = MenuHelper.MenuBar("lunchbarRoot");
             menu.MenuBar = MenuHelper.MenuBarSecured("menubarRoot", userName);
             menu.Settings = MenuHelper.MenuBarSecured("settingsRoot", userName, true);
+            MenuHelper.AdditionalHelpBar(menu.LaunchBar.FirstOrDefault(i =>i.Title.Equals("Help")));
+
 
             menu.AccountBar = MenuHelper.AccountBar(isAuthenticated, userName);
 

@@ -42,7 +42,6 @@
 		constraintsStore
 	} from '../store';
 	import DwcRequirements from './DwcRequirements.svelte';
-	
 
 	export let variables: VariableInstanceModel[] = [];
 	export let missingValues: missingValueType[] = [];
@@ -98,7 +97,16 @@
 		}
 	}
 
+	let isUnique: boolean;
+	let uniqueNames: string[] = [];
+	// triggered when a variable changed its validation state
 	function varChangeFn() {
+		uniqueNames = checkNamesUnique();
+		if (uniqueNames.length == 0) {
+			isUnique = true;
+		} else {
+			isUnique = false;
+		}
 		checkValidationState();
 		dispatch('changed');
 	}
@@ -106,7 +114,8 @@
 	// this function triggered an check whether save button can be active or not
 	function checkValidationState() {
 		valid = variableValidationStates.every((v: boolean) => v === true);
-
+		valid = valid && isUnique;
+		// console.log('🚀 ~ file: Variables.svelte:87 ~ checkValidationState ~ valid:', valid);
 		//console.log("TCL ~ file: Variables.svelte:63 ~ checkValidationState ~ variableValidationStates:", variableValidationStates)
 	}
 
@@ -117,6 +126,26 @@
 			cValues.push(c);
 		}
 		return cValues;
+	}
+	// return non-unique names
+	function checkNamesUnique() {
+		let names: string[] = [];
+		let nonUniqueNames: string[] = [];
+
+		variables.forEach((v) => {
+			if (names.includes(v.name)) {
+				if (!nonUniqueNames.includes(v.name)) {
+					nonUniqueNames.push(v.name);
+				}
+			} else {
+				names.push(v.name);
+			}
+		});
+		console.log(
+			'🚀 ~ file: Variables.svelte:130 ~ checkNamesUnique ~ nonUniqueNames:',
+			nonUniqueNames
+		);
+		return nonUniqueNames;
 	}
 
 	// copy data from variable on index i to the next one
@@ -247,6 +276,16 @@
 						{/if}
 					</a>
 				{/if}
+			{/each}
+		</div>
+	{/if}
+	{#if !isUnique}
+		<div class="pr-32 w-auto mt-4 mb-2 p-2 rounded-md border border-gray-200 bg-gray-50">
+			<span class="">Variable names must be unique. Non-unique names:</span>
+			{#each uniqueNames as name}
+				<div class="chip variant-soft-error m-1">
+					{name}
+				</div>
 			{/each}
 		</div>
 	{/if}

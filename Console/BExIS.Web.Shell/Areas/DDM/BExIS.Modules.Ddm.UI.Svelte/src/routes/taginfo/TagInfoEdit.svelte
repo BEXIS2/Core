@@ -4,9 +4,18 @@
 		Table,
 		notificationStore,
 		notificationType,
-		ErrorMessage
+		ErrorMessage,
+		TextArea
 	} from '@bexis2/bexis2-core-ui';
-	import { add, get, save, updateSearch } from './services';
+	import {
+		add,
+		get,
+		save,
+		updateSearch,
+		sendRequestForTagApproval,
+		isCurator,
+		isCuratorRequired
+	} from './services';
 
 	import { tagInfoModelStore, withMinorStore, originalTagInfoModelStore } from './stores.js';
 	import TablePublish from './table/tablePublish.svelte';
@@ -50,8 +59,18 @@
 
 		console.log('🚀 ~ reload ~ tagInfoModelStore:', $tagInfoModelStore);
 	}
+	let isCuratorUser: boolean = false;
+	let isCuratorRequiredForTags: boolean = true;
 
 	onMount(() => {
+		isCurator().then((res) => {
+			isCuratorUser = res;
+			console.log('🚀 ~ onMount ~ isCuratorUser:', isCuratorUser);
+		});
+		isCuratorRequired().then((res) => {
+			isCuratorRequiredForTags = res;
+			console.log('🚀 ~ onMount ~ isCuratorRequired:', isCuratorRequiredForTags);
+		});
 		reload();
 	});
 
@@ -117,6 +136,25 @@
 			});
 		}
 	}
+
+	function sendRequestForTagApprovalFn(value: string) {
+		const data = { message: value, id: id };
+		sendRequestForTagApproval(data).then((response) => {
+			if (response.status === 200) {
+				notificationStore.showNotification({
+					notificationType: notificationType.success,
+					message: 'Request for tag approval sent.'
+				});
+			} else {
+				notificationStore.showNotification({
+					notificationType: notificationType.error,
+					message: 'Request for tag approval not sent.'
+				});
+			}
+		});
+	}
+
+	let requestTagApprovalMessage: string = '';
 </script>
 
 {#await promise}
@@ -125,6 +163,49 @@
 	</div>
 {:then model}
 	<h2 class="h2">Release Tag Management - Dataset ID {id}</h2>
+
+	<div class="mt-4 mb-4 flex flex-col gap-4">
+		<p class="mb-2">
+			To make your dataset visible in the search, at least one released dataset version is required. {#if !isCuratorUser && isCuratorRequiredForTags}Only
+				curators can create releases.{/if}
+		</p>
+		<p class="mb-2">
+			Once released, the specific dataset version will be visible to users. As long as you only make
+			changes to the metadata, the latest version is shown automatically. If changes are made to the
+			data itself, a new release request is required so that these updates become visible to all
+			users.
+		</p>
+		{#if !isCuratorUser && isCuratorRequiredForTags}
+			<p class="mb-2">
+				Use the form below to request a new release from a curator. Please provide a short release
+				message and specify the version you refer to (if not specified the latest version will be
+				used).
+			</p>
+			<p class="mb-2">
+				The curator will review your request, create the release accordingly, and may contact you if
+				needed.
+			</p>
+			<div class="flex flex-row gap-4 items-end">
+				<form class="form-control w-full max-w-lg">
+					<TextArea
+						id="requestTagApprovalMessage"
+						bind:value={requestTagApprovalMessage}
+						placeholder="Enter your message here..."
+					/>
+				</form>
+				<button
+					class="btn variant-filled-primary mb-2"
+					on:click={() => sendRequestForTagApprovalFn(requestTagApprovalMessage)}
+					>Send Request to Curator</button
+				>
+			</div>
+		{/if}
+	</div>
+
+	{#if $tagInfoModelStore.length === 0}
+		<p>No release tags available for this dataset.</p>
+	{/if}
+
 	<div class="table table-compact w-full">
 		<Table
 			on:action={tableActions}
