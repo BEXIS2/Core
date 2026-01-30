@@ -16,9 +16,5 @@
             controller="visualization" action="index"
             extends="./settingsRoot" />
 
-    <Export tag="lunchbar" id="helpVim" order="8"
-            title="Visualization" description="Visualization Help Manual" icon=""
-            controller="Help" action="index"
-            extends="./lunchbarRoot/help" />
   </Exports>
 </Manifest>
