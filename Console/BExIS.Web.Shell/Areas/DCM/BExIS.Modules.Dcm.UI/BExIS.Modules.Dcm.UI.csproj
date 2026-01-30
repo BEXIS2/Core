@@ -66,7 +66,6 @@
     <Compile Include="Controllers\Hooks\EntityReferenceController.cs" />
     <Compile Include="Controllers\FormController.cs" />
     <Compile Include="Controllers\Legacy\CreateDatasetController.cs" />
-    <Compile Include="Controllers\Legacy\HelpController.cs" />
     <Compile Include="Controllers\Legacy\ImportMetadataStructureController.cs" />
     <Compile Include="Controllers\Legacy\ImportMetadataStructureReadSourceController.cs" />
     <Compile Include="Controllers\Legacy\ImportMetadataStructureSelectAFileController.cs" />
@@ -408,7 +407,6 @@
     <Content Include="Scripts\minimap\minimap.min.css" />
     <Content Include="Scripts\minimap\minimap.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
-    <Content Include="Views\Help\Informations.xml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_errorMessages.cshtml" />
@@ -417,7 +415,6 @@
     <Content Include="Views\Form\_metadataAttributeView.cshtml" />
     <Content Include="Views\Form\_metadataCompoundAttributeUsageView.cshtml" />
     <Content Include="Views\Form\_metadataCompoundAttributeView.cshtml" />
-    <Content Include="Views\Help\Index.cshtml" />
     <Content Include="Views\ImportMetadataStructure\ImportMetadataStructureWizard.cshtml" />
     <Content Include="Views\ImportMetadataStructure\Index.cshtml" />
     <Content Include="Views\ImportMetadataStructure\_taskListView.cshtml" />

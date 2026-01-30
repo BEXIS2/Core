@@ -494,7 +494,6 @@
     <Compile Include="Controllers\PublicationsController.cs" />
     <Compile Include="Controllers\API\DataOutController.cs" />
     <Compile Include="Controllers\ExportGFBIOController.cs" />
-    <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\MappingController.cs" />
     <Compile Include="Controllers\API\MetadataOutController.cs" />
     <Compile Include="Controllers\PublishController.cs" />
@@ -794,14 +793,12 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Views\Help\Informations.xml" />
     <Content Include="Views\Web.config">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Admin\_metadataStructureView.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
-    <Content Include="Views\Help\Index.cshtml" />
     <Content Include="Views\Import\Index.cshtml" />
     <Content Include="Views\Mapping\Index.cshtml" />
     <Content Include="Views\Mapping\LinkElemenRoot.cshtml" />
