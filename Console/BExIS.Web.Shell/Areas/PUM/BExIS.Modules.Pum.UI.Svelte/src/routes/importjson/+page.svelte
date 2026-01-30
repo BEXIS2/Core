@@ -302,6 +302,11 @@
 			// apply custom rules from transformations.ts
 			const transformedData = applyTransformations(data);
 
+			// remove tags in descr
+			if (transformedData.abstract) {
+				transformedData.abstract = stripJatsTags(transformedData.abstract);
+			}
+
 			// Filter data based on mapping.json
 			validatedData.data = filterData(transformedData, mapping);
 
@@ -417,6 +422,15 @@
 		}
 	}
 
+
+	   function stripJatsTags(value: string): string {
+		if (!value) return value;
+		return value
+		.replace(/<jats:p[^>]*>/gi, "")
+		.replace(/<\/jats:p>/gi, "")
+		.trim();
+	}
+		
 
 
 	/* ============================================================

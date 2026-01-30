@@ -34,6 +34,7 @@
 		"@types/node": "22.0.2",
 		"@typescript-eslint/eslint-plugin": "8.0.0",
 		"@typescript-eslint/parser": "8.0.0",
+		"@ts4nfdi/terminology-service-suite-js": "^6.0.0",
 		"autoprefixer": "10.4.19",
 		"eslint": "9.8.0",
 		"eslint-config-prettier": "9.1.0",
@@ -50,7 +51,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@bexis2/bexis2-core-ui": "0.4.64",
+		"@bexis2/bexis2-core-ui": "0.4.65",
 		"@bexis2/bexis2-rpm-ui": "0.2.15",
 		"@floating-ui/dom": "1.6.8",
 		"@fortawesome/free-solid-svg-icons": "6.6.0",
