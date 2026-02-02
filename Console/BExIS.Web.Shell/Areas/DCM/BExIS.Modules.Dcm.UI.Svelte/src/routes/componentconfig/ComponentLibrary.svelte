@@ -1,5 +1,5 @@
 <script lang="ts">
-  import TreeComponent from './TreeComponent.svelte';
+  import componentManifestJson from './componentManifest.json';
   export let currentInteractionMode: string;
   export let componentConfig: any;
   export let componentManifest: any;
@@ -28,10 +28,10 @@
     selectedModeForAdd = mode;
   }
 
-  function handleAddComponent() {
+  function handleAddComponent(componentManifest: any) {
     
     // get selected mode for current interaction mode, default = first
-    const modeToAdd = selectedModeForAdd || availableModes[0];
+    const modeToAdd = selectedModeForAdd || getAvailableModes(currentInteractionMode, componentManifest)[0];
     if (!modeToAdd) {
       return;
     }
@@ -57,7 +57,7 @@
 
 <div class="component-library">
   <h3>Component Library</h3>
-
+{#each componentManifestJson as componentManifest}
   <div class="components-section">
     {#if componentManifest?.meta}
       <div class="component-card">
@@ -69,11 +69,11 @@
           {componentManifest.meta.description || 'No description available'}
         </div>
         
-        {#if availableModes.length > 0}
+        {#if getAvailableModes(currentInteractionMode, componentManifest).length > 0}
           <div class="component-modes">
 
             <div class="modes-list">
-              {#each availableModes as mode}
+              {#each getAvailableModes(currentInteractionMode, componentManifest) as mode}
                 <div 
                   class="mode-item" 
                   class:selected={selectedModeForAdd?.mode_name === mode.mode_name}
@@ -94,7 +94,7 @@
           <div class="component-actions">
             <button 
               class="add-component-button" 
-              on:click={handleAddComponent}
+              on:click={() => handleAddComponent(componentManifest)}
             >
               Add Component
             </button>
@@ -124,13 +124,14 @@
       </div>
     {/if}
   </div>
-  
+ {/each} 
   <div class="save-mappings-section">
     <button class="save-mappings-button" on:click={onSave}>
       Save
     </button>
   </div>
 </div>
+
 
 <style>
   .component-library {

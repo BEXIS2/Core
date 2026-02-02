@@ -53,7 +53,10 @@
   let componentConfig_view: ConfigFile = createEmptyConfig();
   let componentPositions: PositionFile = createEmptyPositions();
   
-  const componentManifest = componentManifestJson;
+  const componentManifestList = Array.isArray(componentManifestJson)
+    ? componentManifestJson
+    : [componentManifestJson];
+  let selectedComponentManifest: any = componentManifestList[0] ?? null;
 
   // schema nodes from treecomponent
   let schemaNodes: any[] = [];
@@ -195,7 +198,7 @@
     // set initial sub-mode based on first manifest component
     const firstComponent = getCurrentConfig()?.components?.[0];
     if (firstComponent?.mode?.mode_name) {
-      const manifestModes = componentManifest?.modes?.edit || [];
+      const manifestModes = selectedComponentManifest?.modes?.edit || [];
       const foundMode = manifestModes.find((mode: any) => mode.mode_name === firstComponent.mode.mode_name);
       if (foundMode) {
         selectedMode = foundMode;
@@ -274,7 +277,7 @@
     // structure as in config files
     const componentData: any = {
       meta: {
-        component_name: node.data.componentName || componentManifest.meta.component_name,
+        component_name: node.data.componentName || selectedComponentManifest?.meta?.component_name,
         component_ui_id: node.id
       },
       globalSettings: {
@@ -294,7 +297,7 @@
     };
 
     const modeKey = node.data.interactionMode || currentInteractionMode;
-    const manifestModes = componentManifest?.modes?.[modeKey as string] || [];
+    const manifestModes = selectedComponentManifest?.modes?.[modeKey as string] || [];
     const manifestMode = manifestModes.find((m: any) => m.mode_name === node.data.modeName);
     const currentConfigRef = modeKey === 'edit' ? componentConfig_edit : componentConfig_view;
     
@@ -303,7 +306,7 @@
     );
     
     // global settings
-    const manifestGlobalSettings = componentManifest?.globalSettings?.globalsetting || [];
+    const manifestGlobalSettings = selectedComponentManifest?.globalSettings?.globalsetting || [];
     const configGlobalSettings = existingComponent?.globalSettings?.globalsetting || [];
     
     // cycle through manifest global settings and fill from config or default
@@ -506,7 +509,7 @@
     }
     
     // get manifest submodes for new interaction mode
-    const newModes = componentManifest?.modes?.[newMode];
+    const newModes = selectedComponentManifest?.modes?.[newMode];
     if (newModes && newModes.length > 0) {
       selectedMode = newModes[0];
     } else {
@@ -958,7 +961,7 @@
   }
 
   // dynamically create nodes
-  $: configNodes = createConfigNodes(currentInteractionMode, getCurrentConfig(), componentManifest, nodeVersion, editModeNodes, viewModeNodes);
+  $: configNodes = createConfigNodes(currentInteractionMode, getCurrentConfig(), selectedComponentManifest, nodeVersion, editModeNodes, viewModeNodes);
 
   // function to create config nodes on start or mode change based on config / saved nodes
   function createConfigNodes(
@@ -989,7 +992,7 @@
     const components = config?.components || [];
     if (!components || !Array.isArray(components)) return [];
     
-    const currentManifest = manifest || componentManifest;
+    const currentManifest = manifest || selectedComponentManifest;
     const configNodesArray: Node[] = [];
     
     // create nodes for each component in config matching current interaction mode
@@ -1375,7 +1378,7 @@
     if (selectedMode) return selectedMode;
 
     // fallback to first available mode in manifest
-    const availableModes = componentManifest?.modes?.[currentInteractionMode] || [];
+    const availableModes = selectedComponentManifest?.modes?.[currentInteractionMode] || [];
     return availableModes[0] || null;
   }
 
@@ -1390,7 +1393,7 @@
 
     if ($selectedNode.data?.modeName) {
       const interactionMode = $selectedNode.data?.interactionMode || currentInteractionMode;
-      const manifestModes = componentManifest?.modes?.[interactionMode as string] || [];
+      const manifestModes = selectedComponentManifest?.modes?.[interactionMode as string] || [];
       const nodeMode = manifestModes.find((mode: any) => mode.mode_name === $selectedNode.data.modeName);
       
       if (nodeMode) {
@@ -2281,7 +2284,7 @@
         <ComponentLibrary 
           {currentInteractionMode}
           componentConfig={getCurrentConfig()}
-          {componentManifest}
+          componentManifest={selectedComponentManifest}
           onAddComponent={handleAddComponent}
           onSaveMappings={handleSaveMappingsOnly}
           onSave={handleSaveEdit}
@@ -2309,7 +2312,7 @@
         <div class="tab-content">
           {#if activeTab === 0}
             <ModesTab 
-              {componentManifest}
+              componentManifest={selectedComponentManifest}
               selectedMode={currentNodeMode}
               {currentInteractionMode}
               selectedNode={$selectedNode}
@@ -2322,14 +2325,14 @@
               {edges}
               {nodes}
               selectedMode={currentNodeMode}
-              {componentManifest}
+              componentManifest={selectedComponentManifest}
               selectedNode={$selectedNode}
               onSetAnchorpoint={handleSetAnchorpoint}
               onConfigChange={handleConfigChange}
             />
           {:else if activeTab === 2}
             <PreviewTab 
-              {componentManifest}
+              componentManifest={selectedComponentManifest}
               selectedNode={$selectedNode}
               selectedMode={effectivePreviewMode}
               {currentInteractionMode}
