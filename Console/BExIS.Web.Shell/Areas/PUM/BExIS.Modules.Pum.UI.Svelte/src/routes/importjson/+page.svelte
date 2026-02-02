@@ -302,7 +302,6 @@
 			// apply custom rules from transformations.ts
 			const transformedData = applyTransformations(data);
 
-			// remove tags in descr
 			if (transformedData.abstract) {
 				transformedData.abstract = stripJatsTags(transformedData.abstract);
 			}
@@ -423,15 +422,6 @@
 	}
 
 
-	   function stripJatsTags(value: string): string {
-		if (!value) return value;
-		return value
-		.replace(/<jats:p[^>]*>/gi, "")
-		.replace(/<\/jats:p>/gi, "")
-		.trim();
-	}
-		
-
 
 	/* ============================================================
 	   FILTER DATA ACCORDING TO MAPPING.JSON
@@ -471,51 +461,56 @@
 	}
 
 	function IssueInformation(dataArray: any[]) {
-		dataArray.forEach((data, index) => {
+	// 🧹 Zuerst alte Fehler löschen
+	issueBlock = [];
+	groupedIssues = [];
 
-			// Missing fields
-			data.MissingFields.forEach(field => {
-				IssueRow = {
-					Index: index + 1,
-					errorType: "Error",
-					msg: "Missing Fields: " + field
-				};
-				issueBlock.push({ ...IssueRow });
-			});
+	dataArray.forEach((data, index) => {
 
-			// Type warnings
-			if (data.TypeMessage) {
-				IssueRow = {
-					Index: index + 1,
-					errorType: "Warning",
-					msg: "Type Message: " + data.TypeMessage
-				};
-				issueBlock.push({ ...IssueRow });
-			}
+		// Missing fields
+		data.MissingFields.forEach(field => {
+			IssueRow = {
+				Index: index + 1,
+				errorType: "Error",
+				msg: "Missing Fields: " + field
+			};
+			issueBlock.push({ ...IssueRow });
 		});
 
-		console.log("Issue Information:", issueBlock);
-
-		// Group issues by dataset index
-		for (const issue of issueBlock) {
-			let group = groupedIssues.find(g => g.Index === issue.Index);
-
-			if (!group) {
-				group = {
-					Index: issue.Index,
-					issues: [],
-					checkboxValue: [{ key: issue.Index, value: "" }],
-					selected: []
-				};
-				groupedIssues.push(group);
-			}
-
-			group.issues.push({
-				errorType: issue.errorType,
-				msg: issue.msg
-			});
+		// Type warnings
+		if (data.TypeMessage) {
+			IssueRow = {
+				Index: index + 1,
+				errorType: "Warning",
+				msg: "Type Message: " + data.TypeMessage
+			};
+			issueBlock.push({ ...IssueRow });
 		}
+	});
+
+	console.log("Issue Information:", issueBlock);
+
+	// Group issues by dataset index
+	for (const issue of issueBlock) {
+		let group = groupedIssues.find(g => g.Index === issue.Index);
+
+		if (!group) {
+			group = {
+				Index: issue.Index,
+				issues: [],
+				checkboxValue: [{ key: issue.Index, value: "" }],
+				selected: []
+			};
+			groupedIssues.push(group);
+		}
+
+		group.issues.push({
+			errorType: issue.errorType,
+			msg: issue.msg
+		});
 	}
+}
+
 
 
 
@@ -551,6 +546,21 @@
 	/* ============================================================
 	   MAP VALIDATED DATA TO BEXIS API FORMAT
 	   ============================================================ */
+	function stripJatsTags(value: string): string {
+		if (!value) return value;
+
+		console.log("Stripping JATS tags from:", value);
+
+		return value
+			// Entfernt <jats:title> ... </jats:title> inklusive Inhalt
+			.replace(/<jats:title[^>]*>.*?<\/jats:title>/gis, "")
+			// Entfernt <jats:p> Tags (öffnend und schließend)
+			.replace(/<jats:p[^>]*>/gi, "")
+			.replace(/<\/jats:p>/gi, "")
+			.trim();
+	}
+
+
 	function mapToApiFormat(data: any) {
 		const dataset: datasetType = {
 			Title: "",
@@ -559,6 +569,9 @@
 			MetadataStructureId: MetadataStructureId,
 			EntityTemplateId: EntityTemplateId
 		};
+
+	
+
 
 		dataset.Title = data.data.title?.toString() ?? "";
 		dataset.Description = data.data.abstract?.toString() ?? "";
@@ -613,75 +626,116 @@
 	/* ============================================================
 	   UTILITY: SET VALUE INSIDE NESTED METADATA STRUCTURE
 	   ============================================================ */
-	function setNestedValue(obj: any, path: string, value: any) {
-		path = path.replace(/^\$\./, "");
-		const parts = path.split(".");
-		let cur = obj;
+function setNestedValue(obj: any, path: string, value: any) {
+	path = path.replace(/^\$\./, "");
+	const parts = path.split(".");
+	let cur = obj;
 
-		for (let i = 0; i < parts.length - 1; i++) {
-			const part = parts[i];
+	for (let i = 0; i < parts.length - 1; i++) {
+		const part = parts[i];
+		let key = Object.keys(cur)
+			.find(k => k.toLowerCase() === part.toLowerCase());
 
-			let key = Object.keys(cur)
-				.find(k => k.toLowerCase() === part.toLowerCase());
+		if (!key) {
+			key = part;
+			cur[key] = {};
+		}
+		cur = cur[key];
+	}
 
-			if (!key) {
-				key = part;
-				cur[key] = {};
+	const lastKeyPart = parts[parts.length - 1];
+	let lastKey =
+		Object.keys(cur)
+			.find(k => k.toLowerCase() === lastKeyPart.toLowerCase())
+		?? lastKeyPart;
+
+	// 🔹 Fall 1: Autorenfelder (Authors / Author)
+	if (
+		typeof value === "string" &&
+		(lastKey.toLowerCase().includes("author") || path.toLowerCase().includes("author"))
+	) {
+		const authors = value
+			.split(/,\s*/g)
+			.map(a => a.trim())
+			.filter(a => a.length > 0);
+
+		cur[lastKey] = authors.map(a => ({
+			"@ref": "",
+			"@partyid": "",
+			"#text": a
+		}));
+		return;
+	}
+
+	// 🔹 Fall 2: Affiliations (Affiliation / Affiliations)
+	if (
+		typeof value === "string" &&
+		(lastKey.toLowerCase().includes("affiliation") || path.toLowerCase().includes("affiliation"))
+	) {
+		let affiliations: string[] = [];
+
+		// Wenn der Wert ein JSON-Array als String ist:
+		try {
+			const parsed = JSON.parse(value);
+			if (Array.isArray(parsed)) {
+				affiliations = parsed
+					.map(a => a.name ?? a) // falls Objekt mit "name"
+					.map(a => String(a).trim())
+					.filter(a => a.length > 0);
 			}
-
-			cur = cur[key];
+		} catch {
+			// kein JSON → evtl. Kommagetrennt
+			affiliations = value.split(/,\s*/g).map(a => a.trim()).filter(a => a.length > 0);
 		}
 
-		const lastKeyPart = parts[parts.length - 1];
-		let lastKey =
-			Object.keys(cur)
-				.find(k => k.toLowerCase() === lastKeyPart.toLowerCase())
-			?? lastKeyPart;
+		cur[lastKey] = affiliations.map(a => ({
+			"@ref": "",
+			"@partyid": "",
+			"#text": a
+		}));
+		return;
+	}
 
-		const isArrayTarget = Array.isArray(cur[lastKey]);
+	// 🔹 Standardverhalten beibehalten
+	const isArrayTarget = Array.isArray(cur[lastKey]);
+	if (isArrayTarget) {
+		const values = Array.isArray(value) ? value : [value];
+		cur[lastKey] = values.map(v => ({
+			"@ref": "",
+			"@partyid": "",
+			"#text": typeof v === "object"
+				? JSON.stringify(v)
+				: String(v)
+		}));
+		return;
+	}
 
-		// Case 1: Target is array → create list of {#text} items
-		if (isArrayTarget) {
-			const values = Array.isArray(value) ? value : [value];
-
-			cur[lastKey] = values.map(v => ({
+	if (Array.isArray(value)) {
+		if (cur[lastKey] && typeof cur[lastKey] === "object" && cur[lastKey]["#text"] !== undefined) {
+			cur[lastKey] = value.map(v => ({
 				"@ref": "",
 				"@partyid": "",
 				"#text": typeof v === "object"
 					? JSON.stringify(v)
 					: String(v)
 			}));
-
 			return;
 		}
-
-		// Case 2: Source is array but target is single → try coercing
-		if (Array.isArray(value)) {
-			if (cur[lastKey] && typeof cur[lastKey] === "object" && cur[lastKey]["#text"] !== undefined) {
-				cur[lastKey] = value.map(v => ({
-					"@ref": "",
-					"@partyid": "",
-					"#text": typeof v === "object"
-						? JSON.stringify(v)
-						: String(v)
-				}));
-				return;
-			}
-		}
-
-		// Case 3: Simple #text value
-		if (typeof cur[lastKey] !== "object" || cur[lastKey] === null) {
-			cur[lastKey] = { "#text": "" };
-		} else if (!("#text" in cur[lastKey])) {
-			cur[lastKey]["#text"] = "";
-		}
-
-		cur[lastKey]["#text"] = Array.isArray(value)
-			? value.join(", ")
-			: typeof value === "object"
-				? JSON.stringify(value)
-				: String(value);
 	}
+
+	if (typeof cur[lastKey] !== "object" || cur[lastKey] === null) {
+		cur[lastKey] = { "#text": "" };
+	} else if (!("#text" in cur[lastKey])) {
+		cur[lastKey]["#text"] = "";
+	}
+
+	cur[lastKey]["#text"] = Array.isArray(value)
+		? value.join(", ")
+		: typeof value === "object"
+			? JSON.stringify(value)
+			: String(value);
+}
+
 
 
 
