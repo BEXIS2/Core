@@ -15,7 +15,7 @@
   } from '@xyflow/svelte';
   import { writable, type Writable, get } from 'svelte/store';
   import '@xyflow/svelte/dist/style.css';
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
 
   // import custom components
   import TreeComponent from './TreeComponent.svelte';
@@ -43,6 +43,7 @@
   } from './Services/fileHelpers';
   
   import componentManifestJson from './componentManifest.json';
+	import { Page, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
   // separate configs for edit/view modes
   let componentConfig_edit: ConfigFile = createEmptyConfig();
@@ -82,9 +83,17 @@
 
   // load configs from file and apply component position & edges reconstruct on mount
   onMount(async () => {
+    await tick();
+
+    // wait until header around is loaded
+    const header = document.getElementById('appShell');
+    while (!header) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    
     try {
       const loaded = await loadConfigsFromDownloads();
-      
+      console.log('🚀 ~ onMount ~ loaded:', loaded);
       if (loaded) {
         componentConfig_edit = JSON.parse(JSON.stringify(loaded.edit));
         componentConfig_view = JSON.parse(JSON.stringify(loaded.view));
@@ -102,6 +111,7 @@
       }
     } catch (error) {
       // silent fail
+      console.error('Error loading configs:', error);
     }
     
 
@@ -2113,15 +2123,195 @@
   };
 </script>
 
+
+
+<Page title="Component Configuration" 
+      note="Configure data components and their mappings using the visual flow editor." 
+      contentLayoutType={pageContentLayoutType.full}>
+
+<div class="app-container_treeflow">
+  <div class="top-bar_treeflow">
+    <div class="project-name">
+      Data Configuration Project
+    </div>
+    
+    <div class="mode-controls">
+      <button 
+        class="mode-button" 
+        class:active={currentInteractionMode === 'edit'}
+        on:click={() => handleInteractionModeToggle('edit')}
+      >
+        EDIT
+      </button>
+      <button 
+        class="mode-button" 
+        class:active={currentInteractionMode === 'view'}
+        on:click={() => handleInteractionModeToggle('view')}
+      >
+        VIEW
+      </button>
+    </div>
+  </div>
+
+  <div class="layout_treeflow-sidebar">
+    <div class="flow-wrapper">
+      <SvelteFlowProvider>
+        <SvelteFlow
+          {nodes}
+          {edges}
+          {nodeTypes}
+          {edgeTypes}
+          on:nodeclick={handleNodeClick}
+          on:edgeclick={handleEdgeClick}
+          on:paneclick={handlePaneClick}
+          on:connect={onConnect}
+          {isValidConnection}
+          defaultEdgeOptions={{type: 'button'}}
+          fitView
+          selectionMode={SelectionMode.Partial}
+          connectionLineType={ConnectionLineType.SmoothStep}
+        >
+          <Background />
+          <Controls />
+        </SvelteFlow>
+        <ResetViewButton />
+      </SvelteFlowProvider>
+    </div>
+
+    <div class="sidebar" class:empty={sidebarMode === 'empty'}>
+      {#if sidebarMode === 'empty'}
+        <ComponentLibrary 
+          {currentInteractionMode}
+          componentConfig={getCurrentConfig()}
+          {componentManifest}
+          onAddComponent={handleAddComponent}
+          onSaveMappings={handleSaveMappingsOnly}
+          onSave={handleSaveEdit}
+        />
+      {:else if sidebarMode === 'overview'}
+        <ComponentOverview 
+          selectedNode={$selectedNode} 
+          onEdit={handleEdit}
+          onSave={handleSaveEdit}
+          onDelete={handleDeleteComponent}
+        />
+      {:else if sidebarMode === 'edit'}
+        <div class="tabs">
+          <button class="tab" class:active={activeTab === 0} on:click={() => activeTab = 0}>
+            Modes
+          </button>
+          <button class="tab" class:active={activeTab === 1} on:click={() => activeTab = 1}>
+            Config
+          </button>
+          <button class="tab" class:active={activeTab === 2} on:click={() => activeTab = 2}>
+            Preview
+          </button>
+        </div>
+        
+        <div class="tab-content">
+          {#if activeTab === 0}
+            <ModesTab 
+              {componentManifest}
+              selectedMode={currentNodeMode}
+              {currentInteractionMode}
+              selectedNode={$selectedNode}
+              onModeChange={handleModeChange}
+            />
+          {:else if activeTab === 1}
+            <ConfigTab 
+              componentConfig={getCurrentConfig()}
+              {validationStatus}
+              {edges}
+              {nodes}
+              selectedMode={currentNodeMode}
+              {componentManifest}
+              selectedNode={$selectedNode}
+              onSetAnchorpoint={handleSetAnchorpoint}
+              onConfigChange={handleConfigChange}
+            />
+          {:else if activeTab === 2}
+            <PreviewTab 
+              {componentManifest}
+              selectedNode={$selectedNode}
+              selectedMode={effectivePreviewMode}
+              {currentInteractionMode}
+              componentConfig={getCurrentConfig()}
+            />
+          {/if}
+        </div>
+        
+        <!-- save/cancel buttons -->
+        <div class="edit-actions">
+          <button class="cancel-edit-button" on:click={handleCancelEdit}>
+            Cancel
+          </button>
+          <button class="save-edit-button" on:click={handleSaveEdit}>
+            Save
+          </button>
+        </div>
+      {/if}
+    </div>
+  </div>
+</div>
+
+
+{#if showModeChangeWarning}
+  <div class="modal-overlay">
+    <div class="modal">
+      <h3>Switch Interaction Mode</h3>
+      <p>You are currently editing a component. Switching to {pendingInteractionMode.toUpperCase()} mode will close the editor and any unsaved changes will be lost.</p>
+      <p>Do you want to continue?</p>
+      <div class="modal-buttons">
+        <button class="cancel-button" on:click={cancelModeChange}>Cancel</button>
+        <button class="confirm-button" on:click={confirmModeChange}>Yes, Switch Mode</button>
+      </div>
+    </div>
+  </div>
+{/if}
+
+<!-- cancel confirmation dialog -->
+{#if showCancelWarning}
+  <div class="modal-overlay">
+    <div class="modal">
+      <h3>Cancel Changes</h3>
+      <p>Are you sure? All unsaved changes will be lost.</p>
+      <div class="modal-buttons">
+        <button class="cancel-button" on:click={rejectCancel}>No, Keep Editing</button>
+        <button class="confirm-button" on:click={confirmCancel}>Yes, Cancel</button>
+      </div>
+    </div>
+  </div>
+{/if}
+
+<!-- delete confirmation dialog -->
+{#if showDeleteWarning}
+  <div class="modal-overlay">
+    <div class="modal">
+      <h3>Delete Component</h3>
+      <p>Are you sure you want to delete "{nodeToDelete?.data.componentName}"?</p>
+      <p>This can remove all connections and cannot be undone.</p>
+      <div class="modal-buttons">
+        <button class="cancel-button" on:click={rejectDelete}>Cancel</button>
+        <button class="confirm-button" on:click={confirmDelete}>Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+{/if}
+
+<!-- schema tree component for node generation -->
+<TreeComponent on:nodesGenerated={handleSchemaNodesGenerated} />
+
+</Page>
+
 <style>
-  .app-container {
+  .app-container_treeflow {
     display: flex;
     flex-direction: column;
     height: 100vh;
     width: 100%;
   }
   
-  .top-bar {
+  .top-bar_treeflow {
     height: 60px;
     background: #ffffff;
     border-bottom: 2px solid #007acc;
@@ -2164,7 +2354,7 @@
     background: #f0f8ff;
   }
   
-  .layout {
+  .layout_treeflow-sidebar {
     display: flex;
     flex: 1;
     height: calc(100vh - 60px);
@@ -2376,174 +2566,3 @@
     background: #c82333;
   }
 </style>
-
-<div class="app-container">
-  <div class="top-bar">
-    <div class="project-name">
-      Data Configuration Project
-    </div>
-    
-    <div class="mode-controls">
-      <button 
-        class="mode-button" 
-        class:active={currentInteractionMode === 'edit'}
-        on:click={() => handleInteractionModeToggle('edit')}
-      >
-        EDIT
-      </button>
-      <button 
-        class="mode-button" 
-        class:active={currentInteractionMode === 'view'}
-        on:click={() => handleInteractionModeToggle('view')}
-      >
-        VIEW
-      </button>
-    </div>
-  </div>
-
-  <div class="layout">
-    <div class="flow-wrapper">
-      <SvelteFlowProvider>
-        <SvelteFlow
-          {nodes}
-          {edges}
-          {nodeTypes}
-          {edgeTypes}
-          on:nodeclick={handleNodeClick}
-          on:edgeclick={handleEdgeClick}
-          on:paneclick={handlePaneClick}
-          on:connect={onConnect}
-          {isValidConnection}
-          defaultEdgeOptions={{type: 'button'}}
-          fitView
-          selectionMode={SelectionMode.Partial}
-          connectionLineType={ConnectionLineType.SmoothStep}
-        >
-          <Background />
-          <Controls />
-        </SvelteFlow>
-        <ResetViewButton />
-      </SvelteFlowProvider>
-    </div>
-
-    <div class="sidebar" class:empty={sidebarMode === 'empty'}>
-      {#if sidebarMode === 'empty'}
-        <ComponentLibrary 
-          {currentInteractionMode}
-          componentConfig={getCurrentConfig()}
-          {componentManifest}
-          onAddComponent={handleAddComponent}
-          onSaveMappings={handleSaveMappingsOnly}
-          onSave={handleSaveEdit}
-        />
-      {:else if sidebarMode === 'overview'}
-        <ComponentOverview 
-          selectedNode={$selectedNode} 
-          onEdit={handleEdit}
-          onSave={handleSaveEdit}
-          onDelete={handleDeleteComponent}
-        />
-      {:else if sidebarMode === 'edit'}
-        <div class="tabs">
-          <button class="tab" class:active={activeTab === 0} on:click={() => activeTab = 0}>
-            Modes
-          </button>
-          <button class="tab" class:active={activeTab === 1} on:click={() => activeTab = 1}>
-            Config
-          </button>
-          <button class="tab" class:active={activeTab === 2} on:click={() => activeTab = 2}>
-            Preview
-          </button>
-        </div>
-        
-        <div class="tab-content">
-          {#if activeTab === 0}
-            <ModesTab 
-              {componentManifest}
-              selectedMode={currentNodeMode}
-              {currentInteractionMode}
-              selectedNode={$selectedNode}
-              onModeChange={handleModeChange}
-            />
-          {:else if activeTab === 1}
-            <ConfigTab 
-              componentConfig={getCurrentConfig()}
-              {validationStatus}
-              {edges}
-              {nodes}
-              selectedMode={currentNodeMode}
-              {componentManifest}
-              selectedNode={$selectedNode}
-              onSetAnchorpoint={handleSetAnchorpoint}
-              onConfigChange={handleConfigChange}
-            />
-          {:else if activeTab === 2}
-            <PreviewTab 
-              {componentManifest}
-              selectedNode={$selectedNode}
-              selectedMode={effectivePreviewMode}
-              {currentInteractionMode}
-              componentConfig={getCurrentConfig()}
-            />
-          {/if}
-        </div>
-        
-        <!-- save/cancel buttons -->
-        <div class="edit-actions">
-          <button class="cancel-edit-button" on:click={handleCancelEdit}>
-            Cancel
-          </button>
-          <button class="save-edit-button" on:click={handleSaveEdit}>
-            Save
-          </button>
-        </div>
-      {/if}
-    </div>
-  </div>
-</div>
-
-{#if showModeChangeWarning}
-  <div class="modal-overlay">
-    <div class="modal">
-      <h3>Switch Interaction Mode</h3>
-      <p>You are currently editing a component. Switching to {pendingInteractionMode.toUpperCase()} mode will close the editor and any unsaved changes will be lost.</p>
-      <p>Do you want to continue?</p>
-      <div class="modal-buttons">
-        <button class="cancel-button" on:click={cancelModeChange}>Cancel</button>
-        <button class="confirm-button" on:click={confirmModeChange}>Yes, Switch Mode</button>
-      </div>
-    </div>
-  </div>
-{/if}
-
-<!-- cancel confirmation dialog -->
-{#if showCancelWarning}
-  <div class="modal-overlay">
-    <div class="modal">
-      <h3>Cancel Changes</h3>
-      <p>Are you sure? All unsaved changes will be lost.</p>
-      <div class="modal-buttons">
-        <button class="cancel-button" on:click={rejectCancel}>No, Keep Editing</button>
-        <button class="confirm-button" on:click={confirmCancel}>Yes, Cancel</button>
-      </div>
-    </div>
-  </div>
-{/if}
-
-<!-- delete confirmation dialog -->
-{#if showDeleteWarning}
-  <div class="modal-overlay">
-    <div class="modal">
-      <h3>Delete Component</h3>
-      <p>Are you sure you want to delete "{nodeToDelete?.data.componentName}"?</p>
-      <p>This can remove all connections and cannot be undone.</p>
-      <div class="modal-buttons">
-        <button class="cancel-button" on:click={rejectDelete}>Cancel</button>
-        <button class="confirm-button" on:click={confirmDelete}>Yes, Delete</button>
-      </div>
-    </div>
-  </div>
-{/if}
-
-<!-- schema tree component for node generation -->
-<TreeComponent on:nodesGenerated={handleSchemaNodesGenerated} />

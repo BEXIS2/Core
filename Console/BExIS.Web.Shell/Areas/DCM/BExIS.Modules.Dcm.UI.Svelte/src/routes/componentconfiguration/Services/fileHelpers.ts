@@ -58,7 +58,8 @@ export async function loadConfigsFromDownloads(): Promise<{
     const basePath = '/src/routes/componentconfiguration/Downloads/';
     
     // adjust bounds as needed
-    for (let version = 100; version >= 0; version--) {
+    //for (let version = 100; version >= 0; version--) {
+    let version = 1;
       const suffix = version === 1 ? '' : ` (${version})`;
       
       try {
@@ -78,9 +79,9 @@ export async function loadConfigsFromDownloads(): Promise<{
           return { edit, view, positions };
         }
       } catch (error) {
-        continue;
+  //      continue;
       }
-    }
+  //  }
     
     return null;
     
