@@ -45,8 +45,8 @@
   import componentManifestJson from './componentManifest.json';
 	import { Page, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 	import { SaveConfig, LoadConfig } from './Services/apiCalls';
-	import { id } from 'svelty-picker/i18n';
-	import { entityTemplatesStore } from '../entitytemplates/store';
+	import { getEntityTemplateList } from '$services/EntityTemplateCaller';
+
 
   // separate configs for edit/view modes
   let componentConfig_edit: ConfigFile = createEmptyConfig();
@@ -64,9 +64,39 @@
   // initial interaction mode
   let currentInteractionMode = 'edit';
   let selectedMode: any = null;
+  let selectedEntityTemplate: any = null;
+  let selectedEntityTemplateId: string | number = '';
 
   // store for node specific modes
   let nodeSpecificModes = new Map<string, any>();
+
+  // reactive: convert template ID to full object
+  $: if (selectedEntityTemplateId && entityTemplateList.length > 0) {
+    const found = entityTemplateList.find(t => String(t.id) === String(selectedEntityTemplateId));
+    if (found) {
+      selectedEntityTemplate = found;
+    }
+  }
+
+  // reactive: handle template changes
+  $: if (selectedEntityTemplate && selectedEntityTemplate.id) {
+    // reset state from previous template
+    componentConfig_edit = createEmptyConfig();
+    componentConfig_view = createEmptyConfig();
+    componentPositions = createEmptyPositions();
+    editModeNodes = [];
+    viewModeNodes = [];
+    nodeSpecificModes.clear();
+    selectedNode.set(null);
+    selectedEdge.set(null);
+    sidebarMode = 'empty';
+    activeTab = 0;
+    edges.set([]);
+    nodes.set([]);
+    lastNodesSnapshot = '';
+    
+    load();
+  }
 
   // popup state for mode switch warning
   let showModeChangeWarning = false;
@@ -84,26 +114,61 @@
   // track last node state
   let lastNodesSnapshot = '';
 
+  // entity template list
+  let entityTemplateList: any[] = [];
+  
+
   // load configs from file and apply component position & edges reconstruct on mount
   onMount(async () => {
+    // get teamplate id from url
+
+    await getEntityTemplateList().then((list) => {
+        entityTemplateList = list;
+    });    
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const templateIdParam = urlParams.get('id');
+    if (templateIdParam) {
+      const templateId = Number(templateIdParam);
+      selectedEntityTemplateId = templateId;
+      // reactive statement will set selectedEntityTemplate automatically
+    }
+
+    load();
+
+  });
+
+  async function load(){
+   
     
-    
+    console.log('Loading configs for template:', selectedEntityTemplate);
     try {
-      await LoadConfig(1, 'edit').then((loadedEdit) => {
+      await LoadConfig(selectedEntityTemplate.id, 'edit').then((loadedEdit) => {
         if (loadedEdit) {
           componentConfig_edit = JSON.parse(JSON.stringify(loadedEdit));
         }
+        else {
+          componentConfig_edit = createEmptyConfig();
+        }
       });
-      await LoadConfig(1, 'view').then((loadedView) => {
+      await LoadConfig(selectedEntityTemplate.id, 'view').then((loadedView) => {
         if (loadedView) {
           componentConfig_view = JSON.parse(JSON.stringify(loadedView));
         }
+        else {
+          componentConfig_view = createEmptyConfig();
+        }
       });
-      await LoadConfig(1, 'positions').then((loadedPositions) => {
+      await LoadConfig(selectedEntityTemplate.id, 'positions').then((loadedPositions) => {
         if (loadedPositions) {
           componentPositions = JSON.parse(JSON.stringify(loadedPositions));
         }
+        else {
+          componentPositions = createEmptyPositions();
+        }
       });
+
+      
 
      /* const loaded = await loadConfigsFromDownloads();
       console.log('🚀 ~ onMount ~ loaded:', loaded);
@@ -137,7 +202,12 @@
         forceNodeUpdate();
       }
     }
-  });
+  }
+
+  // reload configs when entity template changes (via reactive statement)
+  function handleEntityTemplateChange() {
+    // no longer needed - reactive statement handles it
+  }
 
   // get current config based on interaction mode
   function getCurrentConfig(): ConfigFile {
@@ -2156,6 +2226,13 @@
       Data Configuration Project
     </div>
     
+    <!--Select entity template-->
+    <select bind:value={selectedEntityTemplateId} on:change={handleEntityTemplateChange}>
+      <option value="" disabled selected>Select entity template</option>
+      {#each entityTemplateList as template}
+        <option value={template.id}>{template.name}</option>
+      {/each}
+    </select>
     <div class="mode-controls">
       <button 
         class="mode-button" 
@@ -2320,7 +2397,7 @@
 {/if}
 
 <!-- schema tree component for node generation -->
-<TreeComponent on:nodesGenerated={handleSchemaNodesGenerated} />
+<TreeComponent on:nodesGenerated={handleSchemaNodesGenerated} bind:entity={selectedEntityTemplate}/>
 
 </Page>
 

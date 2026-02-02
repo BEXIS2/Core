@@ -1,6 +1,6 @@
 import { Api } from '@bexis2/bexis2-core-ui';
 
-export const GetMetadataSchema = async (id: number) => {
+export const GetMetadataSchema_old = async (id: number) => {
     try {
         // // API
         // const response = await Api.get('/api/MetadataStructure/' + id);
@@ -18,10 +18,11 @@ export const GetMetadataSchema = async (id: number) => {
     }
 };
 
-export const GetMetadataSchema_new = async (id: number) => {
+export const GetMetadataSchema = async (id: number) => {
 	try {
 		const response = await Api.get('/api/MetadataStructure/' + id);
-		return response.data;
+		console.log(" response.data in GetMetadataSchema:", response);
+        return response.data;
 	} catch (error) {
 		console.error(error);
 		throw error;
@@ -78,6 +79,25 @@ export const LoadConfig = async (id: any, type: string) => {
 	}
 };
 
+export const getEntityTemplate = async (id: number) => {
+    try {
+        const response = await Api.get('/dcm/entitytemplates/Get?id=' + id);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+export const getEntityTemplateList = async () => {
+    try {
+        const response = await Api.get('/dcm/entitytemplates/Load');
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
 
 
 
