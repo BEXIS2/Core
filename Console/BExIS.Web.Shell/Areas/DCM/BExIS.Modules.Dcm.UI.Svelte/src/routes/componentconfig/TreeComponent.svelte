@@ -22,9 +22,6 @@
         console.log('treecomponent: loading schema for entity:', entity);       
         if (entity == null) return;
         
-
-
-
         try {
             schema = await ApiCalls.GetMetadataSchema(entity.metadataStructure.id);
             s = schema;
