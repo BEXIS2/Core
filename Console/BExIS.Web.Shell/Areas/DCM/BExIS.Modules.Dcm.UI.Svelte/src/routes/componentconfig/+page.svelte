@@ -44,6 +44,9 @@
   
   import componentManifestJson from './componentManifest.json';
 	import { Page, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
+	import { SaveConfig, LoadConfig } from './Services/apiCalls';
+	import { id } from 'svelty-picker/i18n';
+	import { entityTemplatesStore } from '../entitytemplates/store';
 
   // separate configs for edit/view modes
   let componentConfig_edit: ConfigFile = createEmptyConfig();
@@ -83,22 +86,32 @@
 
   // load configs from file and apply component position & edges reconstruct on mount
   onMount(async () => {
-    await tick();
-
-    // wait until header around is loaded
-    const header = document.getElementById('appShell');
-    while (!header) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
+    
     
     try {
-      const loaded = await loadConfigsFromDownloads();
+      await LoadConfig(1, 'edit').then((loadedEdit) => {
+        if (loadedEdit) {
+          componentConfig_edit = JSON.parse(JSON.stringify(loadedEdit));
+        }
+      });
+      await LoadConfig(1, 'view').then((loadedView) => {
+        if (loadedView) {
+          componentConfig_view = JSON.parse(JSON.stringify(loadedView));
+        }
+      });
+      await LoadConfig(1, 'positions').then((loadedPositions) => {
+        if (loadedPositions) {
+          componentPositions = JSON.parse(JSON.stringify(loadedPositions));
+        }
+      });
+
+     /* const loaded = await loadConfigsFromDownloads();
       console.log('🚀 ~ onMount ~ loaded:', loaded);
       if (loaded) {
         componentConfig_edit = JSON.parse(JSON.stringify(loaded.edit));
         componentConfig_view = JSON.parse(JSON.stringify(loaded.view));
         componentPositions = loaded.positions;
-        
+       */ 
         editModeNodes = [];
         viewModeNodes = [];
         
@@ -109,10 +122,9 @@
           reconstructEdgesForMode('edit'); // load only edit edges (view loads on mode switch)
         }, 500);
       }
-    } catch (error) {
-      // silent fail
-      console.error('Error loading configs:', error);
-    }
+      catch (error) {
+        console.error('Error loading configs on mount:', error);
+      }
     
 
     // set initial sub-mode based on first manifest component
@@ -567,8 +579,12 @@
     // force config reactivity
     componentConfig_edit = { ...componentConfig_edit };
     componentConfig_view = { ...componentConfig_view };
-
-    downloadAllConfigs(componentConfig_edit, componentConfig_view, componentPositions);
+    
+    SaveConfig(componentConfig_edit, 1, 'edit');
+    SaveConfig(componentConfig_view, 1, 'view');
+    SaveConfig(componentPositions, 1, 'positions');
+    
+    (componentConfig_edit, componentConfig_view, componentPositions);
     
     alert(`Configuration saved!
 
@@ -669,10 +685,15 @@
         }
       }
     });
+      
+    
+    SaveConfig(componentConfig_edit, 1, 'edit');
+    SaveConfig(componentConfig_view, 1, 'view');
+    SaveConfig(componentPositions, 1, 'positions');
     
     // download all configs
     downloadAllConfigs(componentConfig_edit, componentConfig_view, componentPositions);
-    
+  
     // alert('Mappings saved!');
   }
 
