@@ -796,6 +796,9 @@ function confirmSelectedDatasets() {
 		return !filteredDataArray.some((_, i) => i === dataIndex);
 	});
 
+	function showMessage(msg: string) {
+		console.log(msg);
+	}
 	// optional: Erfolgsmeldung
 	showMessage(`${filteredDataArray.length} Datensatz${filteredDataArray.length > 1 ? 'e' : ''} importiert.`);
 

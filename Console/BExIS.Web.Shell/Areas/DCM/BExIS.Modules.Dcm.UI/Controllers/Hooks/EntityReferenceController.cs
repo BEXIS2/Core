@@ -64,7 +64,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
-        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
+        
         public ActionResult StartView(long id, int version)
         {
             var sourceTypeId = 0;

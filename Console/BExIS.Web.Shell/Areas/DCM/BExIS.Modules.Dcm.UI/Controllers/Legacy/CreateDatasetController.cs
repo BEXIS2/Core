@@ -1,5 +1,6 @@
 ﻿using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.Wizard;
+using BExIS.Ddm.Api;
 using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dlm.Entities.Administration;
@@ -24,28 +25,31 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Helpers;
 using BExIS.UI.Models;
+using BExIS.Utils.Config;
+using BExIS.Utils.Data.Helpers;
 using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Extensions;
 using BExIS.Xml.Helpers;
-using NHibernate.Cfg.MappingSchema;
 using BEXIS.JSON.Helpers;
 using Newtonsoft.Json.Schema;
+using NHibernate.Cfg.MappingSchema;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Entities.Common;
+using Vaiona.IoC;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
-using BExIS.Utils.Data.Helpers;
-using BExIS.Utils.Config;
+
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -57,13 +61,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         #region Submit And Create And Finish And Cancel and Reset
 
-        public JsonResult Submit(bool valid, string commitMessage, long entityId)
+        public async Task<JsonResult> Submit(bool valid, string commitMessage, long entityId)
         {
             try
             {
                 // create and submit Dataset
 
-                long datasetId = SubmitDataset(entityId, valid, "Dataset", commitMessage);
+                long datasetId = await SubmitDataset(entityId, valid, "Dataset", commitMessage);
 
                 return Json(new { result = "redirect", url = Url.Action("Show", "Data", new { area = "DDM", id = datasetId }) }, JsonRequestBehavior.AllowGet);
             }
@@ -77,7 +81,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// Submit a Dataset based on the imformations
         /// in the CreateTaskManager
         /// </summary>
-        public long SubmitDataset(long entityId, bool valid, string entityname, string commitMessage = "")
+        public async Task<long> SubmitDataset(long entityId, bool valid, string entityname, string commitMessage = "")
         {
             #region create dataset
 
@@ -205,10 +209,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             #endregion set references
 
-                            if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
-                            {
-                                var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", datasetId } });
-                            }
+                            Task.Run(() => reindex(datasetId));
 
                             LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
 
@@ -843,6 +844,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             workingCopy.ModificationInfo.Timestamp = DateTime.Now;
 
             return workingCopy;
+        }
+
+        private async Task<bool> reindex(long datasetId)
+        {
+            // reindex
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
+            provider?.UpdateSingleDatasetIndex(datasetId, (IndexingAction)Enum.Parse(typeof(IndexingAction), "CREATE"), false);
+
+            return true;
+
         }
 
         #endregion Helper

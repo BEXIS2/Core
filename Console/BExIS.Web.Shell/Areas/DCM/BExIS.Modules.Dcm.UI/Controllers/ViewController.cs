@@ -136,13 +136,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
-        /// <summary>
-        /// Start from DataSrtucturePreview Hook - view
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="version"></param>
-        /// <returns></returns>
-        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
+
         public ActionResult StartDataStructure(long id, int version)
         {
             //throw new NotImplementedException();

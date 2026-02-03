@@ -796,6 +796,10 @@
       <Project>{0815d220-3625-4e23-bbbc-8152345637fe}</Project>
       <Name>Vaiona.Entities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.IoC\Vaiona.IoC.csproj">
+      <Project>{29A7BE0F-A17C-4AE8-8CA1-15FE4DD74129}</Project>
+      <Name>Vaiona.IoC</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
       <Project>{e8b37581-1cac-463d-903b-b4bee8b2b0e3}</Project>
       <Name>Vaiona.Logging</Name>
@@ -847,6 +851,10 @@
     <ProjectReference Include="..\..\..\..\..\Modules\DCM\BExIS.Dcm.Wizard\BExIS.Dcm.Wizard.csproj">
       <Project>{d17cdd9d-b87b-441b-9248-5c54e92ffc81}</Project>
       <Name>BExIS.Dcm.Wizard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
+      <Project>{8519EAC6-FBF8-48B3-813F-E0B9D3CC4A52}</Project>
+      <Name>BExIS.Ddm.Api</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Modules\DIM\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
       <Project>{34cad2a2-6928-458b-b8dc-af71d55f20cc}</Project>

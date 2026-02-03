@@ -3243,7 +3243,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 errors = validationAgainstJsonSchema();
             }
 
-            bool valid = errors.Any();
+            bool valid = !errors.Any();
             return Json(valid, JsonRequestBehavior.AllowGet);
          }
 
