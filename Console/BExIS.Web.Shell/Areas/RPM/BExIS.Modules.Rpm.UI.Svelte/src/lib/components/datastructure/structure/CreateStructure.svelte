@@ -20,7 +20,7 @@
 	import type { DataStructureCreationModel, dwcExtention } from '../types';
 	import { Alert, helpStore, MultiSelect } from '@bexis2/bexis2-core-ui';
 	import { type ModalSettings, getModalStore } from '@skeletonlabs/skeleton';
-	import DwcRequirements from './DwcRequirements.svelte';
+
 	const modalStore = getModalStore();
 
 	export let model: DataStructureCreationModel;
@@ -134,7 +134,7 @@
 
 	<Attributes {model} bind:valid={areAttributesValid} />
 	{#if enforcePrimaryKey && model.variables.length > 0 && !isPKSet}
-		<Alert message="Please select a (combined) primary key." cssClass="variant-filled-warning"
+		<Alert message="Please select a (combined) primary key." cssClass="variant-soft-error p-1"
 		></Alert>
 	{/if}
 

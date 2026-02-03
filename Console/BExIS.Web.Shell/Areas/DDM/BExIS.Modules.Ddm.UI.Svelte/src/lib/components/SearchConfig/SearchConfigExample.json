@@ -1,0 +1,206 @@
+{
+  "global": {
+    "search_components": {
+      "facets_to_index": true,
+      "categories_to_index": true,
+      "properties_to_index": true,
+      "generals_to_index": false,
+      "facets": [
+        {
+          "id": 1,
+          "component_name": "KeywordFacet",
+          "description": "Facet on keywords",
+          "placeholder": "Select keyword",
+          "header_item": true,
+          "default_header_item": true
+        }
+      ],
+      "categories": [
+        {
+          "id": 2,
+          "component_name": "CategoryFacet",
+          "description": "Facet on categories",
+          "placeholder": "Select category",
+          "header_item": false,
+          "default_header_item": false
+        }
+      ],
+      "properties": [
+        {
+          "id": 3,
+          "component_name": "PropertyFacet",
+          "description": "Facet on properties",
+          "placeholder": "Select property",
+          "header_item": false,
+          "default_header_item": false
+        }
+      ],
+      "general": [
+        {
+          "id": 4,
+          "component_name": "FreeTextSearch",
+          "description": "Full text search",
+          "placeholder": "Search...",
+          "header_item": true,
+          "default_header_item": true
+        }
+      ]
+    },
+    "primary_data": {
+      "to_index": true,
+      "calc": [{
+        "operation": "avg",
+        "allowed_meanings": [10, 20, 15]
+      }],
+      "spatial_data": {
+        "allowed_data_type_ids": [1, 2],
+        "lat_meaning": 100,
+        "long_meaning": 200
+      }
+    },
+    "spatial_data": {
+      "spatial_search": true,
+      "spatial_search_settings": {
+        "crs": "EPSG:4326",
+        "axis_order": ["lat", "lon"],
+        "basemap": "satellite",
+        "start_extend": "0,0,10,10"
+      }
+    },
+    "general": {
+      "show_only_completed_metadata": true,
+      "auto_complete_trigger": 3,
+      "show_empty_facets": false
+    }
+  },
+  "local": [
+    {
+      "entity_template_id": 2,
+      "index_not_completed_metadata": false,
+      "search_components": {
+        "facets": [
+          {
+            "global_id": 1,
+            "data_type_id": "keyword",
+            "metadata_nodes": [
+              "Metadata/Keywords/Keyword",
+              "Metadata/Subjects/Subject"
+            ]
+          }
+        ],
+        "categories": [
+          {
+            "global_id": 2,
+            "data_type_id": "keyword",
+            "metadata_nodes": ["Metadata/Category"]
+          }
+        ],
+        "properties": [
+          {
+            "global_id": 3,
+            "data_type_id": "integer",
+            "metadata_nodes": ["Metadata/Properties/Property"]
+          }
+        ],
+        "general": [
+          {
+            "global_id": 4,
+            "data_type_id": "text",
+            "metadata_nodes": ["Metadata/Title", "Metadata/Description"]
+          }
+        ]
+      },
+      "spatial_data": {
+        "spatial_metadata": {
+          "type": "bbox",
+          "WestBoundLongitude": -10.0,
+          "EastBoundLongitude": 10.0,
+          "SouthBoundLatitude": -5.0,
+          "NorthBoundLatitude": 5.0
+        }
+      },
+      "primary_data": {
+        "to_index": true,
+        "calc": [
+          {
+            "operation": "sum",
+            "allowed_meanings": [4, 5]
+          },
+          {
+            "operation": "min/max",
+            "allowed_meanings": [6]
+          }
+        ]
+      },
+      "external_sources": {
+        "source": "filesystem",
+        "local_path": "C:/data/search_index.json",
+        "external_name": "PrimaryDataIndex"
+      }
+    },
+     {
+      "entity_template_id": 3,
+      "index_not_completed_metadata": false,
+      "search_components": {
+        "facets": [
+          {
+            "global_id": 1,
+            "data_type_id": "keyword",
+            "metadata_nodes": [
+              "Metadata/Keywords/Keyword",
+              "Metadata/Subjects/Subject"
+            ]
+          }
+        ],
+        "categories": [
+          {
+            "global_id": 2,
+            "data_type_id": "keyword",
+            "metadata_nodes": ["Metadata/Category"]
+          }
+        ],
+        "properties": [
+          {
+            "global_id": 3,
+            "data_type_id": "integer",
+            "metadata_nodes": ["Metadata/Properties/Property"]
+          }
+        ],
+        "general": [
+          {
+            "global_id": 4,
+            "data_type_id": "text",
+            "metadata_nodes": ["Metadata/Title", "Metadata/Description"]
+          }
+        ]
+      },
+      "spatial_data": {
+        "spatial_metadata": {
+          "type": "bbox",
+          "WestBoundLongitude": -10.0,
+          "EastBoundLongitude": 10.0,
+          "SouthBoundLatitude": -5.0,
+          "NorthBoundLatitude": 5.0
+        }
+      },
+      "primary_data": {
+        "to_index": false,
+        "calc": [
+          {
+            "operation": "sum",
+            "allowed_meanings": [4, 5]
+          },
+          {
+            "operation": "min/max",
+            "allowed_meanings": [8]
+          }
+        ]
+      },
+      "external_sources": {
+        "source": "filesystem",
+        "local_path": "C:/data/search_index.json",
+        "external_name": "PrimaryDataIndex"
+      }
+    }
+  ]
+}

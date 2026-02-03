@@ -260,7 +260,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             // Throw error if no version id was found.
                             if (versionId <= 0)
                             {
-                                ModelState.AddModelError("", string.Format("The version with the requested name {1} or id {0} does not exist or is not publicly accessible", version, versionName));
+                                ModelState.AddModelError("", string.Format("The requested version (release tag or version ID: {0}{1}) could not be found or you don’t have permission to access it.", version, versionName));
                             }
                             else
                             {

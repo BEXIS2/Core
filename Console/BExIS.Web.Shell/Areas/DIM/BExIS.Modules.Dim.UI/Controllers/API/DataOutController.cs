@@ -299,7 +299,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             string title = datasetVersion.Title;
 
                             // check the data sturcture type ...
-                            if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                            if (datasetVersion.Dataset.DataStructure != null)
                             {
                                 // apply selection and projection
                                 long count = datasetManager.GetDataTuplesCount(datasetVersion.Id);
@@ -343,7 +343,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             string title = datasetVersion.Title;
 
                             // check the data sturcture type ...
-                            if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                            if (datasetVersion.Dataset.DataStructure!=null)
                             {
                                 //FilterExpression filter = null;
                                 //OrderByExpression orderBy = null;

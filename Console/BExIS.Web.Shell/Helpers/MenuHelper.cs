@@ -2,6 +2,7 @@
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.UI.Models;
+using BExIS.Utils.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -207,6 +208,36 @@ namespace BExIS.Web.Shell.Helpers
                     {
                         menuItem.Url = getUrl(menuBarItem);
                     }
+
+                    menuItems.Add(menuItem);
+                }
+            }
+
+            return menuItems;
+        }
+
+        /// <summary>
+        /// defaul menubar load with bar name like
+        /// menubarRoot
+        /// Accountbar
+        /// </summary>
+        /// <param name="menuBar"></param>
+        /// <returns></returns>
+        public static List<MenuItem> AdditionalHelpBar(MenuItem help)
+        {
+            List<MenuItem> menuItems = help.Items;
+
+            var help_list = GeneralSettings.GetValueByKey("help") as List<Vaiona.Utils.Cfg.Entry>;
+
+            // go throw each item
+            foreach (var link in help_list)
+            {
+                if (link != null)
+                {
+                    MenuItem menuItem = new MenuItem();
+                    //get title of the item
+                    menuItem.Title = link.Description;
+                    menuItem.Url = link.Value;
 
                     menuItems.Add(menuItem);
                 }

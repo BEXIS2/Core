@@ -146,7 +146,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         string title = datasetVersion.Title;
 
                         // check the data sturcture type ...
-                        if (datasetVersion.Dataset.DataStructure != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                        if (datasetVersion.Dataset.DataStructure != null)
                         {
                             object stats = new object();
 

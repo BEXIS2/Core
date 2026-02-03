@@ -4,13 +4,6 @@
   "description": "...",
   "entries": [
     {
-      "key": "help",
-      "title": "Help URL",
-      "value": "",
-      "type": "String",
-      "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
-    },
-    {
       "key": "check_public_metadata",
       "title": "Check public metadata for not-logged in users",
       "value": false,

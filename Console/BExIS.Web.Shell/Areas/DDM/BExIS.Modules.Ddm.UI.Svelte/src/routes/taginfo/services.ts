@@ -64,3 +64,37 @@ export const add = async (model: TagInfoEditModel, type: TagType) => {
 		throw error;
 	}
 };
+
+export const isCurator = async () => {
+	try {
+		const response = await Api.get('/ddm/taginfo/GetUserRole');
+
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+export const isCuratorRequired = async () => {
+	try {
+		const response = await Api.get('/ddm/taginfo/GetCuratorRequired');
+
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+
+export const sendRequestForTagApproval = async (data: { message: string }) => {
+	try {
+		console.log('🚀 ~ sendRequestForTagApproval ~ data:', data);
+		const response = await Api.post('/ddm/taginfo/SendTagRequest', data);
+
+		return response;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}

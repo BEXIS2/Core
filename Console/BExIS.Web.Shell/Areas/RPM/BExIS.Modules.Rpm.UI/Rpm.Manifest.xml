@@ -11,11 +11,6 @@
   </Dependencies>
   <Exports>
 
-    <Export tag="lunchbar" id="helpRpm" order="4"
-            title="Data Structure" description="Data Planning Help Manual" icon=""
-            controller="Help" action="index"
-            extends="./lunchbarRoot/help" />
-
 	<Export tag="settings" id="ManageDataStructures" order="1"
             title="Manage Data Structures" description="Edit, Create or Delet Data Structures" icon=""
             controller="DataStructure" action="" argument=""

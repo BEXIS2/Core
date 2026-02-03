@@ -3,13 +3,7 @@
   "name": "Dataset Creation",
   "description": "...",
   "entries": [
-    {
-      "key": "help",
-      "title": "Help URL",
-      "value": "",
-      "type": "String",
-      "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
-    },
+
     {
       "key": "celllimit",
       "title": "Number of cells for direct upload instead of async",

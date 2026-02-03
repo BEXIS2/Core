@@ -74,6 +74,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                             Number = i + 1
                         };
                         if(dsv.Tag != null) datasetVersionModel.Tag = dsv.Tag.Nr;
+                        if(dsv.ChangeDescription != null) datasetVersionModel.ChangeDescription = dsv.ChangeDescription;
 
 
                         datasetModel.Versions.Add(datasetVersionModel);

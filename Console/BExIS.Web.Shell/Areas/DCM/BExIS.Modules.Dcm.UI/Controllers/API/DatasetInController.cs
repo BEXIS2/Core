@@ -135,7 +135,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
                     datasetId = newDataset.Id;
 
                     // add security
-                    entityPermissionManager.CreateAsync<User>(user.UserName, "Dataset", typeof(Dataset), newDataset.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                    entityPermissionManager.CreateAsync<User>(user.UserName, entityTemplate.EntityType.Name, typeof(Dataset), newDataset.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
 
                     //add title and description to the metadata
 

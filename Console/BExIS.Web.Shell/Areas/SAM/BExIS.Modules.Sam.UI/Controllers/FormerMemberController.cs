@@ -9,6 +9,7 @@ using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Services;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BEXIS.Modules.SAM.UI.Controllers
 {
@@ -28,9 +29,9 @@ namespace BEXIS.Modules.SAM.UI.Controllers
         /// <returns></returns>
         public void ChangeStatusToFormerMember(string userName)
         {
-            SettingsHelper helper = new SettingsHelper();
-            string formerMemberRole = helper.GetValue("formerMemberRole").ToString();
-
+            var settings = ModuleManager.GetModuleSettings("sam");
+            string formerMemberRole = settings.GetValueByKey("formerMemberRole").ToString();
+ 
             if (userName != null)
             {
                 using (UserManager userManager = new UserManager())
@@ -44,14 +45,14 @@ namespace BEXIS.Modules.SAM.UI.Controllers
                         FormerMemberStatus.ChangeToFormerMember(user, formerMemberRole);
 
                         //build email with text blocks from the settings file
-                        string mailTextBody = helper.GetValue("mailTextTitle").ToString() + " " + user.DisplayName + "," + "<br/><br/>" +
-                                                helper.GetValue("mailTextMainApplied").ToString() + "<br/><br/>" +
-                                                helper.GetValue("mailTextClosing").ToString();
+                        string mailTextBody = settings.GetValueByKey("mailTextTitle").ToString() + " " + user.DisplayName + "," + "<br/><br/>" +
+                                                settings.GetValueByKey("mailTextMainApplied").ToString() + "<br/><br/>" +
+                                                settings.GetValueByKey("mailTextClosing").ToString();
 
                         //if there is no subject defined in settings use system subject
                         string subject;
-                        if (!string.IsNullOrEmpty(helper.GetValue("mailTextSubject").ToString()))
-                            subject = helper.GetValue("mailTextSubject").ToString();
+                        if (!string.IsNullOrEmpty(settings.GetValueByKey("mailTextSubject").ToString()))
+                            subject = settings.GetValueByKey("mailTextSubject").ToString();
                         else
                             subject = MessageHelper.GetChangedRoleHeader(user.DisplayName, formerMemberRole, "set to");
 
@@ -75,8 +76,8 @@ namespace BEXIS.Modules.SAM.UI.Controllers
         /// <returns></returns>
         public void ChangeStatusToNonFormerMember(string userName)
         {
-            SettingsHelper helper = new SettingsHelper();
-            string formerMemberRole = helper.GetValue("formerMemberRole").ToString();
+            var settings = ModuleManager.GetModuleSettings("sam");
+            string formerMemberRole = settings.GetValueByKey("formerMemberRole").ToString();
 
             if (userName != null)
             {
@@ -91,9 +92,9 @@ namespace BEXIS.Modules.SAM.UI.Controllers
                         FormerMemberStatus.ChangeToNonFormerMember(user, formerMemberRole);
 
                         //build email with text blocks from the settings file
-                        string mailTextBody = helper.GetValue("mailTextTitle").ToString() + " " + user.DisplayName + "," + "<br/><br/>" +
-                                              helper.GetValue("mailTextMainRevoked").ToString() + "<br/><br/>" +
-                                             helper.GetValue("mailTextClosing").ToString();
+                        string mailTextBody = settings.GetValueByKey("mailTextTitle").ToString() + " " + user.DisplayName + "," + "<br/><br/>" +
+                                              settings.GetValueByKey("mailTextMainRevoked").ToString() + "<br/><br/>" +
+                                             settings.GetValueByKey("mailTextClosing").ToString();
 
                         string subject = MessageHelper.GetChangedRoleHeader(user.DisplayName, formerMemberRole, "revoke from");
 
@@ -135,10 +136,10 @@ namespace BEXIS.Modules.SAM.UI.Controllers
 
         public ActionResult Index()
         {
-            SettingsHelper helper = new SettingsHelper();
+            var settings = ModuleManager.GetModuleSettings("sam");
+            string formerMemberRole = settings.GetValueByKey("formerMemberRole").ToString();
 
             List<FormerMemberUserModel> model = new List<FormerMemberUserModel>();
-            string formerMemberRole = helper.GetValue("formerMemberRole").ToString();
 
             using (GroupStore groupManager = new GroupStore())
             using (UserManager userManager = new UserManager())

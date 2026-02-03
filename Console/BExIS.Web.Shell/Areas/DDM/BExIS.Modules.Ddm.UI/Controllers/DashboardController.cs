@@ -329,7 +329,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     bool isOwn = rightType == RightType.Grant || rightType == RightType.Write ? true : false ;
 
                     string type = "file";
-                    if (dsv.Dataset.DataStructure?.Self is StructuredDataStructure)
+                    if (dsv.Dataset.DataStructure!=null)
                     {
                         type = "tabular";
                     }

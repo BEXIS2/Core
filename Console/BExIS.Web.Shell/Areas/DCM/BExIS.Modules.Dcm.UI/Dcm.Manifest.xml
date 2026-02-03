@@ -30,11 +30,6 @@
 				controller="Push" action="index"
 				extends="./menubarRoot/collect" />-->
 
-		<Export tag="lunchbar" id="helpDcm" order="3"
-				title=" Metadata and Data" description="Data Collection Help Manual" icon=""
-				controller="help" action="index"
-				extends="./lunchbarRoot/help" />
-
 		<Export tag="api" id="tntList"
 				title="No thing" description="Change me!" icon=""
 				controller="home" action="index"
