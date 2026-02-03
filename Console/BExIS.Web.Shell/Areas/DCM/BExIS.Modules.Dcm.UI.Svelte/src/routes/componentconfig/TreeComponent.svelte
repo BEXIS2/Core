@@ -3,6 +3,7 @@
     import ComplexComponent from './complexComponentWrapper.svelte';
     import { createEventDispatcher } from 'svelte';
 
+    export let entity : any = null;
     const dispatch = createEventDispatcher();
 
     let schema: any;
@@ -12,9 +13,17 @@
     
     $: schema = s;
 
+    // reactive: call loader when entity changes
+    $: if (entity) {
+        loader(currentSchema);
+    }
+
     async function loader(currentSchema: number) {
+        console.log('treecomponent: loading schema for entity:', entity);       
+        if (entity == null) return;
+        
         try {
-            schema = await ApiCalls.GetMetadataSchema(currentSchema);
+            schema = await ApiCalls.GetMetadataSchema(entity.metadataStructure.id);
             s = schema;
             
             // generate nodes after schema is loaded

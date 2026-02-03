@@ -534,17 +534,11 @@
         console.log("commit_message", commit_message)
 
 
-        $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}, { "entityId", entityId } })',
+        $.get('@Url.Action("IsValid", "Form", new RouteValueDictionary {{"area", "DCM"}, { "entityId", entityId }})',
             function (response) {
-                
-                $('#MetadataEditor').replaceWith(response);
-                bindMinimap(true);
-                var errors = $('.bx-input-error');
+            
 
-                var errorsFromJsonSchema = $('.bx-error');
-
-                console.log(errors);
-                if (errors.length == 0 && errorsFromJsonSchema.length == 0) {
+                if (response == true) {
 
                     callSubmitAction(true, commit_message);
                 } else {
