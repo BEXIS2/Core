@@ -35,7 +35,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (TaskManager != null)
                 TaskManager.SetCurrent(index);
 
-            //Get Bus infomations
+            //Find Bus infomations
             SelectFileViewModel model = new SelectFileViewModel();
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.FILENAME))
             {
@@ -45,7 +45,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             //get datastuctureType
             model.SupportedFileExtentions = ImportMetadataStructureWizardHelper.GetExtentionList();
 
-            //Get StepInfo
+            //Find StepInfo
             model.StepInfo = TaskManager.Current();
 
             model.serverFileList = GetServerFileList();

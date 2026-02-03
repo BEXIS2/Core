@@ -29,7 +29,7 @@ namespace BExIS.Security.Services.Tests.Subjects
         public void CreateAsync_GroupIsNull_ReturnZero()
         {
             //Arrange
-            using (var a = new GroupManager())
+            using (var a = new GroupStore())
             {
                 //Act
                 var result = a.CreateAsync(null);

@@ -322,27 +322,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private bool hasEditRights(HttpContextBase context)
         {
-            using (var featurePermissionManager = new FeaturePermissionManager())
-            using (var operationManager = new OperationManager())
-            {
-                var operation = operationManager.Find("rpm", "datastructure", "*");
-                var user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(context).Result;
+            var operationManager = new OperationManager();
+            var featurePermissionManager = new FeaturePermissionManager();
+            var operation = operationManager.Get("rpm", "datastructure", "*");
+            var user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(context).Result;
 
-                var feature = operation.Feature;
+            var feature = operation.Feature;
 
-                //if opration has no feature and is public
-                if (operation.Feature == null) return true;
+            //if opration has no feature and is public
+            if (operation.Feature == null) return true;
 
-                // if feature is public
-                if (featurePermissionManager.ExistsAsync(null, feature.Id).Result) return true;
+            // if feature is public
+            if (featurePermissionManager.Exists(null, feature.Id)) return true;
 
-                // feature and user exist
-                if (feature != null && !featurePermissionManager.ExistsAsync(null, feature.Id).Result)
-                    if (featurePermissionManager.HasAccessAsync(user.Id, feature.Id).Result)
-                        return true;
+            // feature and user exist
+            if (feature != null && !featurePermissionManager.Exists(null, feature.Id))
+                if (featurePermissionManager.HasAccess(user.Id, feature.Id))
+                    return true;
 
-                return false;
-            }
+            return false;
         }
     }
 }

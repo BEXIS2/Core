@@ -152,7 +152,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 try
                 {
-                    //  Get all files from Request object
+                    //  Find all files from Request object
                     HttpFileCollectionBase files = Request.Files;
                     for (int i = 0; i < files.Count; i++)
                     {

@@ -64,7 +64,7 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
 
         // GET api/Citation/GetCitations
         /// <summary>
-        /// Get citation a set of datasets by ids.
+        /// Find citation a set of datasets by ids.
         /// </summary>
         ///
         /// <param name="id">Identifier of a dataset</param>

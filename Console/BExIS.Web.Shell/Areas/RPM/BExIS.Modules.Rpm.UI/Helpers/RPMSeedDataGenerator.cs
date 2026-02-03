@@ -1,6 +1,7 @@
 ﻿using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Services.Administration;
 using BExIS.Modules.Rpm.UI.Helpers.SeedData;
+using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
@@ -25,19 +26,10 @@ namespace BExIS.Modules.Rpm.UI.Helpers
             try
             {
                 featureManager = new FeatureManager();
-                List<Feature> features = featureManager.FeatureRepository.Get().ToList();
 
-                Feature dataPlanning = features.FirstOrDefault(f => f.Name.Equals("Data Planning"));
-                if (dataPlanning == null)
-                    dataPlanning = featureManager.Create("Data Planning", "Data Planning Management");
+                var dataPlanningFeature = featureManager.Find(f => f.Name == "Data Planning" && f.Parent == null).SingleOrDefault() ?? featureManager.Create("Data Planning", "Data Planning");
 
-                Feature datastructureFeature = features.FirstOrDefault(f =>
-                    f.Name.Equals("Datastructure Management") &&
-                    f.Parent != null &&
-                    f.Parent.Id.Equals(dataPlanning.Id));
-
-                if (datastructureFeature == null)
-                    datastructureFeature = featureManager.Create("Datastructure Management", "Datastructure Management", dataPlanning);
+                var datastructureFeature = featureManager.Find(f => f.Name == "Datastructure Management" && f.Parent == dataPlanningFeature).SingleOrDefault() ?? featureManager.Create("Datastructure Management", "Datastructure Management", dataPlanningFeature);
 
                 if (!operationManager.Exists("RPM", "DataStructureSearch", "*"))
                     operationManager.Create("RPM", "DataStructureSearch", "*", datastructureFeature);
@@ -53,136 +45,85 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 if (!operationManager.Exists("RPM", "DataStructure", "*")) operationManager.Create("RPM", "DataStructure", "*", datastructureFeature);
 
-                Feature atributeFeature = features.FirstOrDefault(f =>
-                    f.Name.Equals("Variables Template Management") &&
-                    f.Parent != null &&
-                    f.Parent.Id.Equals(dataPlanning.Id));
-
-                if (atributeFeature == null)
-                    atributeFeature = featureManager.Create("Variables Template Management", "Variables Template Management", dataPlanning); ;
+                var variableTemplatesFeature = featureManager.Find(f => f.Name == "Variable Templates Management" && f.Parent == dataPlanningFeature).SingleOrDefault() ?? featureManager.Create("Variable Templates Management", "Variable Templates Management", dataPlanningFeature);
 
                 if (!operationManager.Exists("RPM", "DataAttribute", "*"))
-                    operationManager.Create("RPM", "DataAttribute", "*", atributeFeature);
+                    operationManager.Create("RPM", "DataAttribute", "*", variableTemplatesFeature);
 
                 if (!operationManager.Exists("RPM", "VariableTemplate", "*"))
-                    operationManager.Create("RPM", "VariableTemplate", "*", atributeFeature);
+                    operationManager.Create("RPM", "VariableTemplate", "*", variableTemplatesFeature);
 
-                Feature unitFeature = features.FirstOrDefault(f =>
-                    f.Name.Equals("Unit Management") &&
-                    f.Parent != null &&
-                    f.Parent.Id.Equals(dataPlanning.Id));
-
-                if (unitFeature == null)
-                    unitFeature = featureManager.Create("Unit Management", "Unit Management", dataPlanning);
+                var unitsFeature = featureManager.Find(f => f.Name == "Units Management" && f.Parent == dataPlanningFeature).SingleOrDefault() ?? featureManager.Create("Units Management", "Units Management", dataPlanningFeature);
 
                 if (!operationManager.Exists("RPM", "Unit", "*"))
-                    operationManager.Create("RPM", "Unit", "*", unitFeature);
+                    operationManager.Create("RPM", "Unit", "*", unitsFeature);
 
-                Feature dimensionFeature = features.FirstOrDefault(f =>
-                   f.Name.Equals("Dimension Management") &&
-                   f.Parent != null &&
-                   f.Parent.Id.Equals(dataPlanning.Id));
-
-                if (dimensionFeature == null)
-                    dimensionFeature = featureManager.Create("Dimension Management", "Dimension Management", dataPlanning);
+                var dimensionsFeature = featureManager.Find(f => f.Name == "Dimensions Management" && f.Parent == dataPlanningFeature).SingleOrDefault() ?? featureManager.Create("Dimensions Management", "Dimensions Management", dataPlanningFeature);
 
                 if (!operationManager.Exists("RPM", "Dimension", "*"))
-                    operationManager.Create("RPM", "Dimension", "*", dimensionFeature);
+                    operationManager.Create("RPM", "Dimension", "*", dimensionsFeature);
 
-                Feature constraintsFeature = features.FirstOrDefault(f =>
-                   f.Name.Equals("Constraint Management") &&
-                   f.Parent != null &&
-                   f.Parent.Id.Equals(dataPlanning.Id));
-
-                if (constraintsFeature == null)
-                    constraintsFeature = featureManager.Create("Constraint Management", "Constraint Management", dataPlanning);
+                var constraintsFeature = featureManager.Find(f => f.Name == "Constraints Management" && f.Parent == dataPlanningFeature).SingleOrDefault() ?? featureManager.Create("Constraints Management", "Constraints Management", dataPlanningFeature);
 
                 if (!operationManager.Exists("RPM", "Constraints", "*"))
                     operationManager.Create("RPM", "Constraints", "*", constraintsFeature);
 
-                Feature dataTypeFeature = features.FirstOrDefault(f =>
-                    f.Name.Equals("Data Type Management") &&
-                    f.Parent != null &&
-                    f.Parent.Id.Equals(dataPlanning.Id));
-
-                if (dataTypeFeature == null)
-                    dataTypeFeature = featureManager.Create("Data Type Management", "Data Type Management", dataPlanning); ;
+                var dataTypesFeature = featureManager.Find(f => f.Name == "Data Types Management" && f.Parent == dataPlanningFeature).SingleOrDefault() ?? featureManager.Create("Data Types Management", "Data Types Management", dataPlanningFeature);
 
                 if (!operationManager.Exists("RPM", "Home", "*"))
-                    operationManager.Create("RPM", "Home", "*", dataTypeFeature);
+                    operationManager.Create("RPM", "Home", "*", dataTypesFeature);
 
                 if (!operationManager.Exists("RPM", "Help", "*"))
                     operationManager.Create("RPM", "Help", "*");
 
-                Feature newDataTypeFeature = features.FirstOrDefault(f =>
-                    f.Name.Equals("New Data Type Management") &&
-                    f.Parent != null &&
-                    f.Parent.Id.Equals(dataPlanning.Id));
+                var newDataTypesFeature = featureManager.Find(f => f.Name == "New Data Types Management" && f.Parent == dataPlanningFeature).SingleOrDefault() ?? featureManager.Create("New Data Types Management", "New Data Types Management", dataPlanningFeature);
 
                 //if (newDataTypeFeature == null)
-                //newDataTypeFeature = featureManager.Create("New Data Type Management", "New Data Type Management", dataPlanning);
+                //    newDataTypeFeature = featureManager.Create("New Data Type Management", "New Data Type Management", dataPlanning);
 
                 if (!operationManager.Exists("RPM", "DataType", "*"))
-                    operationManager.Create("RPM", "DataType", "*", dataTypeFeature);
+                    operationManager.Create("RPM", "DataType", "*", dataTypesFeature);
 
-                Feature api = features.FirstOrDefault(f =>
-                    f.Name.Equals("API") &&
-                    f.Parent != null &&
-                    f.Parent.Id.Equals(dataPlanning.Id));
-
-                if (api == null)
-                    api = featureManager.Create("API", "API", dataPlanning);
+                var apiFeature = featureManager.Find(f => f.Name == "Api" && f.Parent == dataPlanningFeature).SingleOrDefault() ?? featureManager.Create("Api", "Api", dataPlanningFeature);
 
                 if (!operationManager.Exists("API", "Structures", "*"))
-                    operationManager.Create("API", "Structures", "*", api);
+                    operationManager.Create("API", "Structures", "*", apiFeature);
 
                 //set api public
-                bool result_create;
-                result_create = featurePermissionManager.CreateAsync(null, api.Id, Security.Entities.Authorization.PermissionType.Grant).Result;
+                FeaturePermission result_create;
+                result_create = featurePermissionManager.Create(null, apiFeature.Id, PermissionType.Grant);
 
                 //meanings features and security levels
-                Feature dataMeaning = features.FirstOrDefault(f =>
-                    f.Name.Equals("Meaning Manager") &&
-                    f.Parent != null &&
-                    f.Parent.Id.Equals(dataPlanning.Id));
-                if (dataMeaning == null)
-                    dataMeaning = featureManager.Create("Meaning", "Meaning Management", dataPlanning);
-                if (!operationManager.Exists("API", "MeaningsAdmin", "*"))
-                {
-                    operationManager.Create("API", "MeaningsAdmin", "*", dataMeaning);
-                }
+                var dataMeaningsFeature = featureManager.Find(f => f.Name == "Meanings Management" && f.Parent == dataPlanningFeature).SingleOrDefault() ?? featureManager.Create("Meanings Management", "Meanings Management", dataPlanningFeature);
 
-                Feature dataMeaning_pub = features.FirstOrDefault(f =>
-                    f.Name.Equals("Meaning API") &&
-                    f.Parent != null &&
-                    f.Parent.Id.Equals(dataPlanning.Id));
-                if (dataMeaning_pub == null)
-                    dataMeaning_pub = featureManager.Create("Meaning API", "Meaning Management", dataPlanning);
+                if (!operationManager.Exists("Meaning", "MeaningsAdmin", "*"))
+                    operationManager.Create("Meaning", "MeaningsAdmin", "*", dataMeaningsFeature);
+
+                var dataMeaningsPublicFeature = featureManager.Find(f => f.Name == "Meanings Api" && f.Parent == dataPlanningFeature).SingleOrDefault() ?? featureManager.Create("Meanings Api", "Meanings Api Management", dataPlanningFeature);
+
                 if (!operationManager.Exists("API", "Meanings", "*"))
                 {
-                    operationManager.Create("API", "Meanings", "*", dataMeaning_pub);
-                    result_create = featurePermissionManager.CreateAsync(null, dataMeaning_pub.Id, Security.Entities.Authorization.PermissionType.Grant).Result;
+                    operationManager.Create("API", "Meanings", "*", dataMeaningsPublicFeature);
+                    result_create = featurePermissionManager.Create(null, dataMeaningsPublicFeature.Id, PermissionType.Grant);
                 }
 
                 if (!operationManager.Exists("RPM", "Meaning", "*"))
                 {
-                    operationManager.Create("RPM", "Meaning", "*", dataMeaning);
+                    operationManager.Create("RPM", "Meaning", "*", dataMeaningsFeature);
                 }
 
                 if (!operationManager.Exists("RPM", "ExternalLink", "*"))
                 {
-                    operationManager.Create("RPM", "ExternalLink", "*", dataMeaning);
+                    operationManager.Create("RPM", "ExternalLink", "*", dataMeaningsFeature);
                 }
 
                 if (!operationManager.Exists("RPM", "Help", "*")) operationManager.Create("RPM", "Help", "*");
 
                 if (!operationManager.Exists("RPM", "File", "*")) operationManager.Create("RPM", "File", "*");
             }
-            finally
+            catch
             {
-                featureManager.Dispose();
-                featurePermissionManager.Dispose();
-                operationManager.Dispose();
+                throw;
             }
 
             #endregion security

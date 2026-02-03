@@ -1143,7 +1143,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             TaskManager = FormHelper.GetTaskManager(entityId);
             ViewData["ShowOptional"] = true;
-            //TaskManager.SetCurrent(TaskManager.Get(parentStepId));
+            //TaskManager.SetCurrent(TaskManager.Find(parentStepId));
 
             var metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
             var position = number + 1;
@@ -1504,7 +1504,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         int version = 0;
 
                         // if an enity mapping exists, the question is whether the entity has a version or not. The url created may have to be created with version.
-                        // Get version of a entity with the entity store
+                        // Find version of a entity with the entity store
 
                         #region entity
 
@@ -2828,7 +2828,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             /*
              <Export tag="internalApi" id="freeTextSearch"
                 title="Free Text Search" description="free Text Search" icon=""
-                controller="SearchIndex" action="Get"
+                controller="SearchIndex" action="Find"
                 extends="" />
              */
             //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
@@ -3563,7 +3563,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             //if(MetadataStructureUsageHelper.HasRequiredSimpleTypes(stepModeHelper.Usage))
                             //{
-                            //    StepInfo step = TaskManager.Get(stepModeHelper.StepId);
+                            //    StepInfo step = TaskManager.Find(stepModeHelper.StepId);
                             //    if (step != null && step.IsInstanze)
                             //    {
                             //        BExISExceptions.Error error = new BExISExceptions.Error(BExISExceptions.ErrorType.Other, String.Format("{0} : {1} {2}", "Step: ", stepModeHelper.Usage.Label, "is not valid. There are fields that are required and not yet completed are."));
@@ -3619,7 +3619,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         //private BaseUsage GetPackageUsage(long Id)
         //{
         //    var mpm = new MetadataStructureManager();
-        //    return mpm.PackageUsageRepo.Get(Id);
+        //    return mpm.PackageUsageRepo.Find(Id);
         //}
 
         private long GetUsageId(int stepId)
@@ -3924,15 +3924,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private bool hasUserEditAccessRights(long entityId)
         {
             FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager();
-
-            try
-            {
-                return featurePermissionManager.HasAccessAsync<User>(GetUsernameOrDefault(), "DCM", "CreateDataset", "*").Result;
-            }
-            finally
-            {
-                featurePermissionManager.Dispose();
-            }
+            return featurePermissionManager.HasAccess<User>(GetUsernameOrDefault(), "DCM", "CreateDataset", "*");
         }
 
         /// <summary>

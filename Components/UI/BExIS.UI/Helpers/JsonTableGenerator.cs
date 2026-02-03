@@ -40,7 +40,7 @@ namespace BExIS.UI.Helpers
                 WorksheetPart worksheetPart = null;
                 foreach (Sheet worksheet in workbookPart.Workbook.Descendants<Sheet>())
                 {
-                    //Get the current worksheetpart and see if it is the correct one
+                    //Find the current worksheetpart and see if it is the correct one
                     WorksheetPart tmp = (WorksheetPart)workbookPart.GetPartById(worksheet.Id);
                     if (tmp.Uri.ToString() == worksheetUri)
                     {

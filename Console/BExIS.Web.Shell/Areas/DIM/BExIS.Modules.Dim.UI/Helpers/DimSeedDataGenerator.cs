@@ -53,22 +53,14 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 //1.controller -> 1.Operation
 
-                Feature DataDissemination =
-                    featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Data Dissemination"));
-                if (DataDissemination == null)
-                    DataDissemination = featureManager.Create("Data Dissemination", "Data Dissemination");
+                var dataDisseminationFeature = featureManager.Find(f => f.Name == "Data Dissemination" && f.Parent == null).SingleOrDefault() ?? featureManager.Create("Data Dissemination", "Data Dissemination");
 
-                Feature Mapping = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Mapping"));
-                if (Mapping == null) Mapping = featureManager.Create("Mapping", "Mapping", DataDissemination);
-
-                Feature Submission = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Submission"));
-                if (Submission == null) Submission = featureManager.Create("Submission", "Submission", DataDissemination);
-
-                Feature API = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("API") && f.Parent.Equals(DataDissemination));
-                if (API == null) API = featureManager.Create("API", "API", DataDissemination);
+                var mappingFeature = featureManager.Find(f => f.Name == "Mapping" && f.Parent == dataDisseminationFeature).SingleOrDefault() ?? featureManager.Create("Mapping", "Mapping", dataDisseminationFeature);
+                var submissionFeature = featureManager.Find(f => f.Name == "Submission" && f.Parent == dataDisseminationFeature).SingleOrDefault() ?? featureManager.Create("Submission", "Submission", dataDisseminationFeature);
+                var apiFeature = featureManager.Find(f => f.Name == "Api" && f.Parent == dataDisseminationFeature).SingleOrDefault() ?? featureManager.Create("Api", "Api", dataDisseminationFeature);
 
                 //set api public
-                var result_create = featurePermissionManager.CreateAsync(null, API.Id, Security.Entities.Authorization.PermissionType.Grant).Result;
+                var result_create = featurePermissionManager.Create(null, apiFeature.Id, Security.Entities.Authorization.PermissionType.Grant);
 
                 Operation operation = null;
 
@@ -80,10 +72,10 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 #region Admin Workflow
 
-                if (!operationManager.Exists("dim", "admin", "*")) operationManager.Create("DIM", "Admin", "*", DataDissemination);
-                if (!operationManager.Exists("dim", "datacitedoi", "*")) operationManager.Create("DIM", "DataCiteDoi", "*", DataDissemination);
-                if (!operationManager.Exists("dim", "gbif", "*")) operationManager.Create("DIM", "gbif", "*", DataDissemination);
-                if (!operationManager.Exists("dim", "mapping", "*")) operationManager.Create("DIM", "Mapping", "*", Mapping);
+                if (!operationManager.Exists("Dim", "Admin", "*")) operationManager.Create("Dim", "Admin", "*", dataDisseminationFeature);
+                if (!operationManager.Exists("Dim", "Datacitedoi", "*")) operationManager.Create("Dim", "DataCiteDoi", "*", dataDisseminationFeature);
+                if (!operationManager.Exists("Dim", "gbif", "*")) operationManager.Create("Dim", "Gbif", "*", dataDisseminationFeature);
+                if (!operationManager.Exists("Dim", "mapping", "*")) operationManager.Create("Dim", "Mapping", "*", mappingFeature);
 
                 #endregion Admin Workflow
 
@@ -125,18 +117,18 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 #region API
 
-                if (!operationManager.Exists("api", "MetadataOut", "*")) operationManager.Create("API", "MetadataOut", "*", API);
-                if (!operationManager.Exists("api", "MetadataStructureOut", "*")) operationManager.Create("API", "MetadataStructureOut", "*", API);
-                if (!operationManager.Exists("api", "DataOut", "*")) operationManager.Create("api", "DataOut", "*", API);
-                if (!operationManager.Exists("api", "DatasetOut", "*")) operationManager.Create("api", "DatasetOut", "*", API);
-                if (!operationManager.Exists("api", "DataStatisticOut", "*")) operationManager.Create("api", "DataStatisticOut", "*", API);
-                if (!operationManager.Exists("api", "DataQualityOut", "*")) operationManager.Create("api", "DataQualityOut", "*", API);
-                if (!operationManager.Exists("api", "AttachmentOut", "*")) operationManager.Create("api", "AttachmentOut", "*", API);
+                if (!operationManager.Exists("api", "MetadataOut", "*")) operationManager.Create("API", "MetadataOut", "*", apiFeature);
+                if (!operationManager.Exists("api", "MetadataStructureOut", "*")) operationManager.Create("API", "MetadataStructureOut", "*", apiFeature);
+                if (!operationManager.Exists("api", "DataOut", "*")) operationManager.Create("api", "DataOut", "*", apiFeature);
+                if (!operationManager.Exists("api", "DatasetOut", "*")) operationManager.Create("api", "DatasetOut", "*", apiFeature);
+                if (!operationManager.Exists("api", "DataStatisticOut", "*")) operationManager.Create("api", "DataStatisticOut", "*", apiFeature);
+                if (!operationManager.Exists("api", "DataQualityOut", "*")) operationManager.Create("api", "DataQualityOut", "*", apiFeature);
+                if (!operationManager.Exists("api", "AttachmentOut", "*")) operationManager.Create("api", "AttachmentOut", "*", apiFeature);
 
-                if (!operationManager.Exists("api", "Metadata", "*")) operationManager.Create("API", "Metadata", "*", API);
-                if (!operationManager.Exists("api", "Data", "*")) operationManager.Create("api", "Data", "*", API);
-                if (!operationManager.Exists("api", "Dataset", "*")) operationManager.Create("api", "Dataset", "*", API);
-                if (!operationManager.Exists("api", "Attachment", "*")) operationManager.Create("api", "Attachment", "*", API);
+                if (!operationManager.Exists("api", "Metadata", "*")) operationManager.Create("API", "Metadata", "*", apiFeature);
+                if (!operationManager.Exists("api", "Data", "*")) operationManager.Create("api", "Data", "*", apiFeature);
+                if (!operationManager.Exists("api", "Dataset", "*")) operationManager.Create("api", "Dataset", "*", apiFeature);
+                if (!operationManager.Exists("api", "Attachment", "*")) operationManager.Create("api", "Attachment", "*", apiFeature);
 
                 #endregion API
 
@@ -190,12 +182,6 @@ namespace BExIS.Modules.Dim.UI.Helpers
             catch (Exception ex)
             {
                 throw ex;
-            }
-            finally
-            {
-                featureManager.Dispose();
-                operationManager.Dispose();
-                featurePermissionManager.Dispose();
             }
 
             //ImportPartyTypes();

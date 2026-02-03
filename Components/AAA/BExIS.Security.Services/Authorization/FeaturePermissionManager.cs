@@ -1,43 +1,36 @@
-﻿using BExIS.Security.Entities.Authorization;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
+using BExIS.Security.Entities.Requests;
 using BExIS.Security.Entities.Subjects;
+using Newtonsoft.Json.Linq;
 using Org.BouncyCastle.Bcpg.Sig;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Authorization
 {
-    public class FeaturePermissionManager : IDisposable
+    public class FeaturePermissionManager
     {
-        private readonly IUnitOfWork _guow;
-        private bool _isDisposed;
-
-        public FeaturePermissionManager()
-        {
-            _guow = this.GetIsolatedUnitOfWork();
-            FeaturePermissionRepository = _guow.GetReadOnlyRepository<FeaturePermission>();
-        }
-
-        ~FeaturePermissionManager()
-        {
-            Dispose(true);
-        }
-
-        public IReadOnlyRepository<FeaturePermission> FeaturePermissionRepository { get; }
-
-        public IQueryable<FeaturePermission> FeaturePermissions => FeaturePermissionRepository.Query();
-
-        public async Task<bool> CreateAsync(long? subjectId, long featureId, PermissionType permissionType)
+        public FeaturePermission Create(long? subjectId, long featureId, PermissionType permissionType)
         {
             using (var uow = this.GetUnitOfWork())
             {
                 var featureRepository = uow.GetReadOnlyRepository<Feature>();
+                var feature = featureRepository.Get(featureId);
+
+                if (feature == null)
+                    return null;
+
                 var subjectRepository = uow.GetReadOnlyRepository<Subject>();
 
-                if (await ExistsAsync(subjectId, featureId, permissionType)) return await Task.FromResult(false);
+                if (existsInternal(uow, subjectId, featureId, permissionType)) 
+                    return null;
 
                 var featurePermission = new FeaturePermission
                 {
@@ -47,14 +40,14 @@ namespace BExIS.Security.Services.Authorization
                 };
 
                 var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
-                 var result = featurePermissionRepository.Put(featurePermission);
+                featurePermissionRepository.Put(featurePermission);
                 uow.Commit();
 
-                return await Task.FromResult(result);
+                return featurePermission;
             }
         }
 
-        public async Task<bool> CreateAsync(Subject subject, Feature feature, PermissionType permissionType = PermissionType.Grant)
+        public FeaturePermission Create(Subject subject, Feature feature, PermissionType permissionType = PermissionType.Grant)
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -72,21 +65,21 @@ namespace BExIS.Security.Services.Authorization
                 var result = featurePermissionRepository.Put(featurePermission);
                 uow.Commit();
 
-                return await Task.FromResult(result);
+                return featurePermission;
             }
         }
 
-        public async Task<bool> DeleteAsync(long? subjectId, long featureId)
+        public bool Delete(long? subjectId, long featureId)
         {
             using (var uow = this.GetUnitOfWork())
             {
                 var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
 
-                var featurePermission = await FindAsync(subjectId, featureId);
-                if (featurePermission == null)
+                var featurePermissions = featurePermissionRepository.Get(f => f.Subject.Id == subjectId && f.Feature.Id == featureId);
+                if (featurePermissions.Count() != 1)
                     return false;
 
-                var result = featurePermissionRepository.Delete(featurePermission.Id);
+                var result = featurePermissionRepository.Delete(featurePermissions.FirstOrDefault().Id);
 
                 uow.Commit();
 
@@ -94,220 +87,252 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        public void Dispose()
+        public bool Exists(Subject subject, Feature feature, PermissionType permissionType)
         {
-            Dispose(true);
-        }
-
-        public async Task<bool> ExistsAsync(Subject subject, Feature feature, PermissionType permissionType)
-        {
-            var featurePermissionRepository = _guow.GetReadOnlyRepository<FeaturePermission>();
-
             if (feature == null)
-                return await Task.FromResult(false);
+                return false;
 
-            if (subject == null)
-                return await Task.FromResult(featurePermissionRepository.Query(p => p.Subject == null && p.Feature.Id == feature.Id && p.PermissionType == permissionType).Count() == 1);
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
 
-            return await Task.FromResult(featurePermissionRepository.Query(p => p.Subject.Id == subject.Id && p.Feature.Id == feature.Id && p.PermissionType == permissionType).Count() == 1);
+                if (subject == null)
+                    return featurePermissionRepository.Query(p => p.Subject == null && p.Feature.Id == feature.Id && p.PermissionType == permissionType).Take(2).Count() == 1;
+
+                return featurePermissionRepository.Query(p => p.Subject.Id == subject.Id && p.Feature.Id == feature.Id && p.PermissionType == permissionType).Take(2).Count() == 1;
+            }
         }
 
-        public async Task<bool> ExistsAsync(long? subjectId, long featureId, PermissionType permissionType)
+        private bool existsInternal(IUnitOfWork uow, long? subjectId, long featureId, PermissionType permissionType)
         {
-            var featurePermissionRepository = _guow.GetReadOnlyRepository<FeaturePermission>();
+            var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
 
             if (subjectId == null)
-                return await Task.FromResult(featurePermissionRepository.Query(p => p.Subject == null && p.Feature.Id == featureId && p.PermissionType == permissionType).Count() == 1);
-            return await Task.FromResult(featurePermissionRepository.Query(p => p.Subject.Id == subjectId && p.Feature.Id == featureId && p.PermissionType == permissionType).Count() == 1);
+                return featurePermissionRepository.Query(p => p.Subject == null && p.Feature.Id == featureId && p.PermissionType == permissionType).Take(2).Count() == 1;
+
+            return featurePermissionRepository.Query(p => p.Subject.Id == subjectId && p.Feature.Id == featureId && p.PermissionType == permissionType).Take(2).Count() == 1;
         }
 
-        public async Task<bool> ExistsAsync(long? subjectId, long featureId)
+        public bool Exists(long? subjectId, long featureId, PermissionType permissionType)
         {
-            var featurePermissionRepository = _guow.GetReadOnlyRepository<FeaturePermission>();
-
-            if (subjectId == null)
-                return await Task.FromResult(featurePermissionRepository.Query(p => p.Subject == null && p.Feature.Id == featureId).Count() == 1);
-
-            return await Task.FromResult(featurePermissionRepository.Query(p => p.Subject.Id == subjectId && p.Feature.Id == featureId).Count() == 1);
-        }
-
-        public async Task<bool> ExistsAsync(IEnumerable<long> subjectIds, IEnumerable<long> featureIds, PermissionType permissionType)
-        {
-            var featurePermissionRepository = _guow.GetReadOnlyRepository<FeaturePermission>();
-            return await Task.FromResult(featurePermissionRepository.Query(p => featureIds.Contains(p.Feature.Id) && subjectIds.Contains(p.Subject.Id) && p.PermissionType == permissionType).Any());
-        }
-
-        public async Task<FeaturePermission> FindAsync(long? subjectId, long featureId)
-        {
-            return subjectId == null ? await Task.FromResult(FeaturePermissionRepository.Query(f => f.Subject == null && f.Feature.Id == featureId).FirstOrDefault()) : await Task.FromResult(FeaturePermissionRepository.Query(f => f.Feature.Id == featureId && f.Subject.Id == subjectId).FirstOrDefault());
-        }
-
-        public async Task<long?> FindIdAsync(long? subjectId, long featureId)
-        {
-            var featurePermissionRepository = _guow.GetReadOnlyRepository<FeaturePermission>();
-            return subjectId == null ? await Task.FromResult(featurePermissionRepository.Query(f => f.Subject == null && f.Feature.Id == featureId).FirstOrDefault().Id) : await Task.FromResult(featurePermissionRepository.Query(f => f.Feature.Id == featureId && f.Subject.Id == subjectId).FirstOrDefault().Id);
-        }
-
-        public async Task<FeaturePermission> FindAsync(Subject subject, Feature feature)
-        {
-            var featurePermissionRepository = _guow.GetReadOnlyRepository<FeaturePermission>();
-            return await Task.FromResult(featurePermissionRepository.Query(f => f.Feature.Id == feature.Id && f.Subject.Id == subject.Id).FirstOrDefault());
-        }
-
-        public async Task<FeaturePermission> FindByIdAsync(long id)
-        {
-            var featurePermissionRepository = _guow.GetReadOnlyRepository<FeaturePermission>();
-            return await Task.FromResult(featurePermissionRepository.Get(id));
-        }
-
-        public async Task<int> GetPermissionTypeAsync(long subjectId, long featureId)
-        {
-            var featurePermission = await FindAsync(subjectId, featureId);
-
-            if (featurePermission != null)
+            using (var uow = this.GetUnitOfWork())
             {
-                return await Task.FromResult<int>((int)featurePermission.PermissionType);
+                return existsInternal(uow, subjectId, featureId, permissionType);
             }
-
-            return await Task.FromResult(0);
         }
 
-        public async Task<Dictionary<long, int>> GetPermissionTypeAsync(IEnumerable<long> subjectIds, long featureId)
+        public bool Exists(long? subjectId, long featureId)
         {
-            Dictionary<long, int> tmp = new Dictionary<long, int>();
-
-            foreach (var subjectId in subjectIds)
+            using (var uow = this.GetUnitOfWork())
             {
-                var featurePermissionRepository = _guow.GetReadOnlyRepository<FeaturePermission>();
-                var featurePermission = featurePermissionRepository.Query(f => f.Feature.Id == featureId && f.Subject.Id == subjectId).FirstOrDefault();
+                var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
 
-                tmp.Add(subjectId, featurePermission != null ? (int)featurePermission.PermissionType : 2);
+                if (subjectId == null)
+                    return featurePermissionRepository.Query(p => p.Subject == null && p.Feature.Id == featureId).Take(2).Count() == 1;
+
+                return featurePermissionRepository.Query(p => p.Subject.Id == subjectId && p.Feature.Id == featureId).Take(2).Count() == 1;
             }
-
-            return await Task.FromResult(tmp);
         }
 
-        public async Task<bool> HasAccessAsync(long? subjectId, long featureId)
+        public bool ExistsAny(IEnumerable<long> subjectIds, IEnumerable<long> featureIds, PermissionType permissionType)
         {
-            var featureRepository = _guow.GetReadOnlyRepository<Feature>();
-            var subjectRepository = _guow.GetReadOnlyRepository<Subject>();
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
 
+                return featurePermissionRepository.Query(p => featureIds.Contains(p.Feature.Id) && subjectIds.Contains(p.Subject.Id) && p.PermissionType == permissionType).Any();
+            }
+        }
+
+        public FeaturePermission Get(long? subjectId, long featureId)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
+                return subjectId == null ? featurePermissionRepository.Query(f => f.Subject == null && f.Feature.Id == featureId).FirstOrDefault() : featurePermissionRepository.Query(f => f.Feature.Id == featureId && f.Subject.Id == subjectId).FirstOrDefault();
+            }
+        }
+
+        public List<FeaturePermission> Get()
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
+                return featurePermissionRepository.Query().ToList();
+            }
+        }
+
+        public List<FeaturePermission> Get(Expression<Func<FeaturePermission, bool>> predicate)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
+                return featurePermissionRepository.Query(predicate).ToList();
+            }
+        }
+
+        public long GetId(long? subjectId, long featureId)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
+                return featurePermissionRepository.Query(f => f.Subject == null && f.Feature.Id == featureId).Select(f => f.Id).SingleOrDefault();
+            }
+        }
+
+        public FeaturePermission Get(Subject subject, Feature feature)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
+                return featurePermissionRepository.Query(f => f.Feature.Id == feature.Id && f.Subject.Id == subject.Id).FirstOrDefault();
+            }
+        }
+
+        public FeaturePermission Get(long id)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
+                return featurePermissionRepository.Get(id);
+            }
+        }
+
+        public int GetPermissionType(long? subjectId, long featureId)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
+
+                var featurePermissions = featurePermissionRepository.Query(f => f.Feature.Id == featureId && (subjectId == null ? f.Subject == null : f.Subject.Id == subjectId)).Take(2);
+
+                if (featurePermissions.Count() == 1)
+                {
+                    return (int)featurePermissions.FirstOrDefault().PermissionType;
+                }
+
+                return 0;
+            }
+        }
+
+        public Dictionary<long, int> GetPermissionTypes(IEnumerable<long> subjectIds, long featureId)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
+
+                var featurePermissions = featurePermissionRepository.Query(f => f.Feature.Id == featureId && subjectIds.Contains(f.Subject.Id)).ToList();
+
+                return subjectIds.ToDictionary(
+                    id => id,
+                    id => (int?)featurePermissions.FirstOrDefault(p => p.Subject.Id == id)?.PermissionType ?? 2
+                );
+            }
+        }
+
+        public bool HasAccess(long? subjectId, long featureId)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                return hasAccessInternal(uow, subjectId, featureId);
+            }
+        }
+
+        private bool hasAccessInternal(IUnitOfWork uow, long? subjectId, long featureId)
+        {
+            var featureRepository = uow.GetReadOnlyRepository<Feature>();
+            var subjectRepository = uow.GetReadOnlyRepository<Subject>();
+            var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
             var feature = featureRepository.Get(featureId);
             var subject = subjectId == null ? null : subjectRepository.Query(s => s.Id == subjectId).FirstOrDefault();
-
             // Anonymous
             if (subject == null)
             {
-                while (feature != null)
-                {
-                    if (await ExistsAsync(null, feature.Id, PermissionType.Grant))
-                        return true;
-
-                    feature = feature.Parent;
-                }
-
+                if (featurePermissionRepository.Query(p => p.Subject == null && p.Feature.Id == feature.Id && p.PermissionType == PermissionType.Grant).Take(2).Count() == 1)
+                    return true;
                 return false;
             }
-
             // Non-Anonymous
-            while (feature != null)
+
+            while(feature != null)
             {
-                if (await ExistsAsync(null, feature.Id, PermissionType.Grant))
+                if (featurePermissionRepository.Query(p => p.Subject == null && p.Feature.Id == feature.Id && p.PermissionType == PermissionType.Grant).Take(2).Count() == 1)
                     return true;
-
-                if (await ExistsAsync(subject.Id, feature.Id, PermissionType.Deny))
+                if (featurePermissionRepository.Query(p => p.Subject.Id == subjectId && p.Feature.Id == feature.Id && p.PermissionType == PermissionType.Deny).Take(2).Count() == 1)
                     return false;
-
-                if (await ExistsAsync(subject.Id, feature.Id, PermissionType.Grant))
+                if (featurePermissionRepository.Query(p => p.Subject.Id == subjectId && p.Feature.Id == feature.Id && p.PermissionType == PermissionType.Grant).Take(2).Count() == 1)
                     return true;
-
                 if (subject is User)
                 {
                     var user = subject as User;
                     var groupIds = user.Groups.Select(g => g.Id).ToList();
-
-                    if (await ExistsAsync(groupIds, new[] { feature.Id }, PermissionType.Deny))
+                    if (featurePermissionRepository.Query(p => p.Feature.Id == feature.Id && groupIds.Contains(p.Subject.Id) && p.PermissionType == PermissionType.Deny).Any())
                     {
                         return false;
                     }
-
-                    if (await ExistsAsync(groupIds, new[] { feature.Id }, PermissionType.Grant))
+                    if (featurePermissionRepository.Query(p => p.Feature.Id == feature.Id && groupIds.Contains(p.Subject.Id) && p.PermissionType == PermissionType.Grant).Any())
                     {
                         return true;
                     }
+
+                    feature = feature.Parent;
                 }
-
-                feature = feature.Parent;
             }
-
+            
             return false;
         }
 
-        public async Task<Dictionary<long, bool>> GetAccessListAsync(IEnumerable<Subject> subjects, long featureId)
+        public Dictionary<long, bool> GetAccessList(IEnumerable<Subject> subjects, long featureId)
         {
             Dictionary<long, bool> accessDictionary = new Dictionary<long, bool>();
 
-            // check user rights
-            foreach (var subject in subjects)
+            using (var uow = this.GetUnitOfWork())
             {
-                if (subject != null)
-                    accessDictionary.Add(subject.Id, await HasAccessAsync(subject.Id, featureId));
+                return subjects.Where(s => s != null).ToDictionary(s => s.Id, s => hasAccessInternal(uow, s.Id, featureId));
             }
-
-            return await Task.FromResult(accessDictionary);
         }
 
-        public async Task<bool> HasAccessAsync<T>(string subjectName, string module, string controller, string action) where T : Subject
-        {
-            var operationRepository = _guow.GetReadOnlyRepository<Operation>();
-            var SubjectRepository = _guow.GetReadOnlyRepository<Subject>();
-
-            var operation = operationRepository.Query(x => x.Module.ToUpperInvariant() == module.ToUpperInvariant() && x.Controller.ToUpperInvariant() == controller.ToUpperInvariant() && x.Action.ToUpperInvariant() == action.ToUpperInvariant()).FirstOrDefault();
-            if (operation == null) return false;
-
-            var feature = operation?.Feature;
-            var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
-
-            //both exits
-            if (feature != null)
-                return await HasAccessAsync(subject?.Id, feature.Id);
-
-            // operation exist but feature not exist -  operatioen is public
-            if (feature == null && subject != null)
-                return await Task.FromResult(true);
-
-            // operation exist but the features is null -> operation is public
-            // subject = null if no user is logged in
-            if (feature == null && subject == null)
-                return await Task.FromResult(true);
-
-            return await Task.FromResult(false);
-        }
-
-        public async Task<bool> UpdateAsync(FeaturePermission entity)
+        public bool HasAccess<T>(string subjectName, string module, string controller, string action) where T : Subject
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var repo = uow.GetRepository<FeaturePermission>();
-                repo.Merge(entity);
-                var merged = repo.Get(entity.Id);
-                var result = repo.Put(merged);
-                uow.Commit();
+                var operationRepository = uow.GetReadOnlyRepository<Operation>();
+                var SubjectRepository = uow.GetReadOnlyRepository<Subject>();
 
-                return await Task.FromResult(result);
+                var operation = operationRepository.Query(x => x.Module== module && x.Controller == controller && x.Action == action).FirstOrDefault();
+                if (operation == null) return false;
+
+                var feature = operation?.Feature;
+                var subject = SubjectRepository.Query(s => s.Name == subjectName && s is T).FirstOrDefault();
+
+                //both exits
+                if (feature != null)
+                    return hasAccessInternal(uow, subject?.Id, feature.Id);
+
+                // operation exist but feature not exist -  operatioen is public
+                if (feature == null && subject != null)
+                    return true;
+
+                // operation exist but the features is null -> operation is public
+                // subject = null if no user is logged in
+                if (feature == null && subject == null)
+                    return true;
+
+                return false;
             }
         }
 
-        protected void Dispose(bool disposing)
+        public bool Update(FeaturePermission featurePermission)
         {
-            if (!_isDisposed)
+            using (var uow = this.GetUnitOfWork())
             {
-                if (disposing)
-                {
-                    if (_guow != null)
-                        _guow.Dispose();
-                    _isDisposed = true;
-                }
+                var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
+                featurePermissionRepository.Merge(featurePermission);
+                var merged = featurePermissionRepository.Get(featurePermission.Id);
+                var result = featurePermissionRepository.Put(merged);
+                uow.Commit();
+
+                return result;
             }
         }
     }

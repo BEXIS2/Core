@@ -31,10 +31,10 @@ namespace BExIS.App.Bootstrap.Helpers
 
         public static User GetUserFromAuthorization(string authorisation, out User user)
         {
-            using (var featurePermissionManager = new FeaturePermissionManager())
-            using (var operationManager = new OperationManager())
             using (var userManager = new UserManager())
             {
+                var operationManager = new OperationManager();
+                var featurePermissionManager = new FeaturePermissionManager();
                 if (string.IsNullOrEmpty(authorisation))
                 {
                     user = null;
@@ -194,10 +194,10 @@ namespace BExIS.App.Bootstrap.Helpers
         {
             HttpResponseMessage response = null;
 
-            using (var featurePermissionManager = new FeaturePermissionManager())
-            using (var operationManager = new OperationManager())
             using (var userManager = new UserManager())
             {
+                var operationManager = new OperationManager();
+                var featurePermissionManager = new FeaturePermissionManager();
                 if (string.IsNullOrEmpty(authorisation))
                 {
                     response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
@@ -256,7 +256,7 @@ namespace BExIS.App.Bootstrap.Helpers
                                     response.Content = new StringContent("UserName and/or Password are incorrect.");
                                 }
 
-                                if (!featurePermissionManager.HasAccessAsync(user.Id, featureId).Result)
+                                if (!featurePermissionManager.HasAccess(user.Id, featureId))
                                 {
                                     response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
                                     response.Content = new StringContent("User is not valid.");

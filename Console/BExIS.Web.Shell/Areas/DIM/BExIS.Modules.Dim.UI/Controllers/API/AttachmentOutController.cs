@@ -32,10 +32,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         // GET: api/Attachment
         /// <summary>
-        /// With the Get function you get an overview of the exiting datasets and there attachments.
+        /// With the Find function you get an overview of the exiting datasets and there attachments.
         /// </summary>
         /// <remarks>
-        /// With the Get function you get an overview of the exiting datasets and there attachments.
+        /// With the Find function you get an overview of the exiting datasets and there attachments.
         /// </remarks>
         /// <returns>List of ApiDatasetAttachmentsModel</returns>
         [BExISApiAuthorize]
@@ -64,10 +64,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         // GET: api/Attachment/{id}
         /// <summary>
-        /// With the Get function you get an overview of one specific dataset and there attachments.
+        /// With the Find function you get an overview of one specific dataset and there attachments.
         /// </summary>
         /// <remarks>
-        /// With the Get function you get an overview of one specific dataset and there attachments.
+        /// With the Find function you get an overview of one specific dataset and there attachments.
         /// </remarks>
         /// <returns>ApiDatasetAttachmentsModel</returns>
         [BExISApiAuthorize]
@@ -143,7 +143,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         // HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(doc.innerXml, Encoding.UTF8,"application/xml") };
 
         /// <summary>
-        /// This Get function has been extended by a parameter id. The id refers to the dataset. The metadata will be loaded from the dataset
+        /// This Find function has been extended by a parameter id. The id refers to the dataset. The metadata will be loaded from the dataset
         /// </summary>
         /// <param name="id">Dataset Id</param>
         /// <returns>Xml Document</returns>

@@ -24,12 +24,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="featureId"></param>
         public void AddFeatureToPublic(long featureId)
         {
-            using (var featurePermissionManager = new FeaturePermissionManager())
+            var featurePermissionManager = new FeaturePermissionManager();
+            if (!featurePermissionManager.Exists(null, featureId))
             {
-                if (!featurePermissionManager.ExistsAsync(null, featureId).Result)
-                {
-                    var result_create = featurePermissionManager.CreateAsync(null, featureId, PermissionType.Grant).Result;
-                }
+                var result_create = featurePermissionManager.Create(null, featureId, PermissionType.Grant);
             }
         }
 
@@ -41,19 +39,17 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="permissionType"></param>
         public void CreateOrUpdateFeaturePermission(long? subjectId, long featureId, int permissionType)
         {
-            using (var featurePermissionManager = new FeaturePermissionManager())
-            {
-                var featurePermission = featurePermissionManager.FindAsync(subjectId, featureId).Result;
+            var featurePermissionManager = new FeaturePermissionManager();
+                var featurePermission = featurePermissionManager.Get(subjectId, featureId);
 
-                if (featurePermission != null)
-                {
-                    featurePermission.PermissionType = (PermissionType)permissionType;
-                    var result_update= featurePermissionManager.UpdateAsync(featurePermission).Result;
-                }
-                else
-                {
-                    var result_create = featurePermissionManager.CreateAsync(subjectId, featureId, (PermissionType)permissionType).Result;
-                }
+            if (featurePermission != null)
+            {
+                featurePermission.PermissionType = (PermissionType)permissionType;
+                var result_update = featurePermissionManager.Update(featurePermission);
+            }
+            else
+            {
+                var result_create = featurePermissionManager.Create(subjectId, featureId, (PermissionType)permissionType);
             }
         }
 
@@ -67,14 +63,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             var featurePermissionManager = new FeaturePermissionManager();
 
-            try
-            {
-                var result_delete = featurePermissionManager.DeleteAsync(subjectId, featureId).Result;
-            }
-            finally
-            {
-                featurePermissionManager.Dispose();
-            }
+            var result_delete = featurePermissionManager.Delete(subjectId, featureId);
         }
 
         /// <summary>
@@ -89,7 +78,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Features", this.Session.GetTenant());
 
-                var features = featureManager.Features.Select(f => FeatureTreeViewModel.Convert(f, f.Permissions.Any(p => p.Subject == null), f.Parent.Id)).ToList();
+                var features = featureManager.Find().Select(f => FeatureTreeViewModel.Convert(f, f.Permissions.Any(p => p.Subject == null), f.Parent.Id));
 
                 foreach (var feature in features)
                 {
@@ -98,9 +87,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                 return View(features.Where(f => f.ParentId == null).AsEnumerable());
             }
-            finally
+            catch
             {
-                featureManager.Dispose();
+                throw;
             }
         }
 
@@ -110,12 +99,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <param name="featureId"></param>
         public void RemoveFeatureFromPublic(long featureId)
         {
-            using (var featurePermissionManager = new FeaturePermissionManager())
+            var featurePermissionManager = new FeaturePermissionManager();
+            if (featurePermissionManager.Exists(null, featureId))
             {
-                if (featurePermissionManager.ExistsAsync(null, featureId).Result)
-                {
-                    var result_delete = featurePermissionManager.DeleteAsync(null, featureId).Result;
-                }
+                var result_delete = featurePermissionManager.Delete(null, featureId);
             }
         }
 
@@ -132,11 +119,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [GridAction(EnableCustomBinding = true)]
         public ActionResult Subjects_Select(GridCommand command, long featureId)
         {
-            using (var featurePermissionManager = new FeaturePermissionManager())
+            var featureManager = new FeatureManager();
+
             using (var subjectManager = new SubjectManager())
-            using (var featureManager = new FeatureManager())
             {
-                var feature = featureManager.FindById(featureId);
+                var featurePermissionManager = new FeaturePermissionManager();
+                var feature = featureManager.GetById(featureId);
 
                 var featurePermissions = new List<FeaturePermissionGridRowModel>();
 
@@ -167,8 +155,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 //}
 
                 var subjectIds = subjects.Select(s => s.Id);
-                var userPermissionDic = featurePermissionManager.GetPermissionTypeAsync(subjectIds, feature.Id).Result;
-                var userHasAccessDic = featurePermissionManager.GetAccessListAsync(subjects, feature.Id).Result;
+                var userPermissionDic = featurePermissionManager.GetPermissionTypes(subjectIds, feature.Id);
+                var userHasAccessDic = featurePermissionManager.GetAccessList(subjects, feature.Id);
 
                 foreach (var item in userPermissionDic)
                 {

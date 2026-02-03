@@ -73,10 +73,8 @@ namespace BExIS.UI.Hooks
 
         protected bool hasUserAccessRights(string username)
         {
-            using (FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager())
-            {
-                return featurePermissionManager.HasAccessAsync<User>(username, Start.Split('/')[1], Start.Split('/')[2], "*").Result;
-            }
+            var featurePermissionManager = new FeaturePermissionManager();
+            return featurePermissionManager.HasAccess<User>(username, Start.Split('/')[1], Start.Split('/')[2], "*");
         }
 
         /// <summary>

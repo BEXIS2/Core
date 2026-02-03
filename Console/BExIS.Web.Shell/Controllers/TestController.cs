@@ -45,16 +45,9 @@ namespace BExIS.Web.Shell.Controllers
         {
             var requestManager = new RequestManager();
 
-            try
-            {
-                requestManager.Create(32768, 1, 5);
+            requestManager.Create(32768, 1, 5);
 
-                return View("Index");
-            }
-            finally
-            {
-                requestManager.Dispose();
-            }
+            return View("Index");
         }
 
         public void Add2UnitsAnd1Conversion()
@@ -73,9 +66,9 @@ namespace BExIS.Web.Shell.Controllers
             //    //repo2.Put(cmo.Target);
             //    unit.Commit();
 
-            //    //var received = repo1.Get(1);
-            //    //var received2 = repo1.Get(p => p.Id == 1 && p.Source.Id == 1);
-            //    //var u1 = repo2.Get(1);
+            //    //var received = repo1.Find(1);
+            //    //var received2 = repo1.Find(p => p.Id == 1 && p.Source.Id == 1);
+            //    //var u1 = repo2.Find(1);
             //    ////repo1.Delete(received);
 
             //    //u1.ConversionsIamTheSource.ForEach(p => repo1.Delete(p));
@@ -131,7 +124,7 @@ namespace BExIS.Web.Shell.Controllers
             //var ab = a.Union(b);
 
             //dm.DatasetRepo.LoadIfNot(ds.Tuples);
-            ////dm.DatasetRepo.Get(
+            ////dm.DatasetRepo.Find(
             //LoggerFactory.LogCustom("Hi, I am a custom message!");
             //LoggerFactory.LogData(id.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Deleted);
             //LoggerFactory.LogDataRelation(id.ToString(), typeof(Dataset).Name, "20", typeof(DatasetVersion).Name, Vaiona.Entities.Logging.CrudState.Deleted);
@@ -274,7 +267,7 @@ namespace BExIS.Web.Shell.Controllers
             var userManager = new UserManager();
             userManager.CreateAsync(user);
 
-            var groupManager = new GroupManager();
+            var groupManager = new GroupStore();
             groupManager.CreateAsync(group);
 
             userManager.AddToRoleAsync(user, group.Name);
@@ -338,7 +331,7 @@ namespace BExIS.Web.Shell.Controllers
         private void addConstraintsTo()
         {
             //DataContainerManager dcManager = new DataContainerManager();
-            //var attr = dcManager.DataAttributeRepo.Get(1);
+            //var attr = dcManager.DataAttributeRepo.Find(1);
 
             //var c1 = new RangeConstraint(ConstraintProviderSource.Internal, "", "en-US",
             //    "should be between 1 and 12 meter", true, null, null, null, 1.00, true, 12.00, true);
@@ -564,7 +557,7 @@ namespace BExIS.Web.Shell.Controllers
         private void deleteTupleFromDatasetVersion(long datasetId)
         {
             //DatasetManager dm = new DatasetManager();
-            //Dataset ds = dm.DatasetRepo.Get(datasetId);
+            //Dataset ds = dm.DatasetRepo.Find(datasetId);
             ////if (!dm.IsDatasetCheckedIn(ds.Id))
             ////    return;
             //if (dm.IsDatasetCheckedOutFor(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
@@ -581,7 +574,7 @@ namespace BExIS.Web.Shell.Controllers
         private void editDatasetVersion(Int64 datasetId)
         {
             //DatasetManager dm = new DatasetManager();
-            //Dataset ds = dm.DatasetRepo.Get(datasetId);
+            //Dataset ds = dm.DatasetRepo.Find(datasetId);
             ////if (!dm.IsDatasetCheckedIn(ds.Id))
             ////    return;
             //if (dm.IsDatasetCheckedOutFor(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
@@ -591,7 +584,7 @@ namespace BExIS.Web.Shell.Controllers
             //    AbstractTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
             //    changed.VariableValues.First().Value = (new Random()).Next().ToString();
 
-            //    //DataTuple dt = dm.DataTupleRepo.Get(40);
+            //    //DataTuple dt = dm.DataTupleRepo.Find(40);
             //    //DataTuple newDt = new DataTuple();
             //    //newDt.XmlAmendments = dt.XmlAmendments;
             //    //newDt.XmlVariableValues = dt.XmlVariableValues; // in normal cases, the VariableValues are set and then Dematerialize is called
@@ -678,7 +671,7 @@ namespace BExIS.Web.Shell.Controllers
             //    DatasetGeneator dsGen = new DatasetGeneator();
             //    Dataset sent = dsGen.GenerateDatasetWithStructuredDatasetObjectTuples();
             //    DataStructureManager dsm = new DataStructureManager();
-            //    sent.DataStructure = dsm.SdsRepo.Get(1);
+            //    sent.DataStructure = dsm.SdsRepo.Find(1);
             //    // push object to xml to make them ready for perso=istence
             //    sent.Dematerialize();
 
@@ -1185,7 +1178,7 @@ namespace BExIS.Web.Shell.Controllers
         private void testSecuirty()
         {
             //PermissionManager pManager = new PermissionManager();
-            //var user = pManager.UsersRepo.Get(3); // Roman
+            //var user = pManager.UsersRepo.Find(3); // Roman
             //var the = pManager.UsersRepo.Refresh(user.Id);
             //var the2 = pManager.UsersRepo.Reload(user);
         }

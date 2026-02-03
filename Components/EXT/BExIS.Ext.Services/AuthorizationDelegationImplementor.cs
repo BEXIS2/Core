@@ -15,11 +15,12 @@ namespace BExIS.Ext.Services
 
             // Ask for specific URLs (LogOn, Register, ...)
 
-            using (var operationManager = new OperationManager())
-            using (var featurePermissionManager = new FeaturePermissionManager())
             using (var userManager = new UserManager())
             {
-                var operation = operationManager.Find(areaName, controllerName, "*");
+                var featurePermissionManager = new FeaturePermissionManager();
+                var operationManager = new OperationManager();
+
+                var operation = operationManager.Get(areaName, controllerName, "*");
                 if (operation == null)
                 {
                     throw new UnauthorizedAccessException();
@@ -30,7 +31,7 @@ namespace BExIS.Ext.Services
                 if (feature == null) return;
 
                 var result = userManager.FindByNameAsync(username);
-                if (!featurePermissionManager.HasAccessAsync(result.Result?.Id, feature.Id).Result)
+                if (!featurePermissionManager.HasAccess(result.Result?.Id, feature.Id))
                 {
                     throw new UnauthorizedAccessException();
                 }

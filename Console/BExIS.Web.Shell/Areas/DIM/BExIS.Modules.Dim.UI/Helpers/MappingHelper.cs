@@ -39,7 +39,7 @@ namespace BExIS.Modules.Dim.UI.Helper
                 tmp.Add(li);
 
                 //load Metadata Strutcure
-                //IEnumerable<MetadataStructure> metadataStructures = metadataStructureManager.Repo.Get();
+                //IEnumerable<MetadataStructure> metadataStructures = metadataStructureManager.Repo.Find();
 
                 //foreach (var metadataStructure in metadataStructures)
                 //{
@@ -219,7 +219,7 @@ namespace BExIS.Modules.Dim.UI.Helper
             long linkElementId = 0;
             string mask = "";
 
-            //LinkElement linkElement = type.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get()
+            //LinkElement linkElement = type.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Find()
             //        .FirstOrDefault(le => le.ElementId.Equals(usage.Id) && le.Type.Equals(type));
 
             LinkElement linkElement = linkElements.FirstOrDefault(le => le.ElementId.Equals(usage.Id) && le.Type.Equals(type));

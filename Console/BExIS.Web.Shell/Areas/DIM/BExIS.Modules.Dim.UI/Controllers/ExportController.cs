@@ -115,7 +115,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         }
 
         /// <summary>
-        /// Get a html file of the data structure from a dataset
+        /// Find a html file of the data structure from a dataset
         /// </summary>
         /// <param name="id">dataset id</param>
         /// <returns>html file</returns>

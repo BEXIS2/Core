@@ -48,22 +48,21 @@ namespace BExIS.Modules.Bam.UI.Helpers
             //#region Security
 
             //// Tasks
-            using (var operationManager = new OperationManager())
-            using (var featureManager = new FeatureManager())
-            {
-                var root = featureManager.FindRoots().FirstOrDefault();
-                if (featureManager.Exists("Business administration module (BAM)", root))
-                    return false;
-                var bamFeature = featureManager.Create("Business administration module (BAM)", "", root);
-                if (featureManager.Exists("Party", bamFeature))
-                    return true;
-                var partyFeature = featureManager.Create("Party", "", bamFeature);
+            var featureManager = new FeatureManager();
+            var operationManager = new OperationManager();
 
-                var partyOperation = operationManager.Create("BAM", "Party", "*", partyFeature);
-                var partyServiceOperation = operationManager.Create("BAM", "PartyService", "*");
-                var partyHelp = operationManager.Create("BAM", "Help", "*");
+            var root = featureManager.FindRoots().FirstOrDefault();
+            if (featureManager.Exists("Business administration module (BAM)", root))
+                return false;
+            var bamFeature = featureManager.Create("Business administration module (BAM)", "", root);
+            if (featureManager.Exists("Party", bamFeature))
                 return true;
-            }
+            var partyFeature = featureManager.Create("Party", "", bamFeature);
+
+            var partyOperation = operationManager.Create("BAM", "Party", "*", partyFeature);
+            var partyServiceOperation = operationManager.Create("BAM", "PartyService", "*");
+            var partyHelp = operationManager.Create("BAM", "Help", "*");
+            return true;
         }
 
         /// <summary>

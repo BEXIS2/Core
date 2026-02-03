@@ -14,16 +14,22 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
 {
     public class GroupsController : ApiController
     {
+        private readonly GroupManager _groupManager;
+
+        public GroupsController(GroupManager groupManager)
+        {
+            _groupManager = groupManager;
+        }
+
         // GET: Groups
         [HttpGet, GetRoute("api/groups/{groupId}")]
         public async Task<HttpResponseMessage> GetById(long groupId)
         {
             try
             {
-                using (var groupManager = new GroupManager())
-                using (var identityGroupService = new IdentityGroupService(groupManager))
+                using (var groupManager = new GroupStore())
                 {
-                    var group = await identityGroupService.FindByIdAsync(groupId);
+                    var group = await groupManager.FindByIdAsync(groupId);
 
                     if (group == null)
                         return Request.CreateResponse(HttpStatusCode.BadRequest, $"group with id: {groupId} does not exist.");
@@ -42,10 +48,9 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
         {
             try
             {
-                using (var groupManager = new GroupManager())
-                using (var identityGroupService = new IdentityGroupService(groupManager))
+                using (var groupManager = new GroupStore())
                 {
-                    var groups = identityGroupService.Roles.ToList();
+                    var groups = groupManager.Roles.ToList();
 
                     var model = groups.Select(g => ReadGroupModel.Convert(g));
 
@@ -63,8 +68,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
         {
             try
             {
-                using (var groupManager = new GroupManager())
-                using (var identityGroupService = new IdentityGroupService(groupManager))
+                using (var groupManager = new GroupStore())
                 {
                     var group = new Group()
                     {
@@ -72,7 +76,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
                         Name = model.Name
                     };
 
-                    await identityGroupService.CreateAsync(group);
+                    await groupManager.CreateAsync(group);
 
                     return Request.CreateResponse(HttpStatusCode.Created);
                 }
@@ -86,15 +90,14 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
         [HttpPut, PutRoute("api/groups/{groupId}")]
         public async Task<HttpResponseMessage> PutByIdAsync(long groupId, UpdateGroupModel model)
         {
-            using (var groupManager = new GroupManager())
-            using (var identityGroupService = new IdentityGroupService(groupManager))
+            using (var groupManager = new GroupStore())
             {
-                var group = await identityGroupService.FindByIdAsync(groupId) ?? throw new ArgumentNullException();
+                var group = await groupManager.FindByIdAsync(groupId) ?? throw new ArgumentNullException();
 
                 group.Name = model.Name;
                 group.Description = model.Description;
 
-                await identityGroupService.UpdateAsync(group);
+                await groupManager.UpdateAsync(group);
 
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
@@ -103,13 +106,12 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
         [HttpDelete, DeleteRoute("api/groups/{groupId}")]
         public async Task<HttpResponseMessage> DeleteByIdAsync(long groupId)
         {
-            using (var groupManager = new GroupManager())
-            using (var identityGroupService = new IdentityGroupService(groupManager))
-            {
-                await identityGroupService.DeleteByIdAsync(groupId);
+            var deleted = _groupManager.Delete(groupId);
 
+            if(deleted)
                 return Request.CreateResponse(HttpStatusCode.OK);
-            }
+            else
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
         }
     }
 }

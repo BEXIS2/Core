@@ -43,7 +43,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         // GET: api/data
         /// <summary>
-        /// Get a list of all dataset ids
+        /// Find a list of all dataset ids
         /// </summary>
         /// <returns>List of ids</returns>
         [BExISApiAuthorize]

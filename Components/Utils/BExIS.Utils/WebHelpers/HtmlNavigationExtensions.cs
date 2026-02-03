@@ -247,7 +247,7 @@ namespace BExIS.Utils.WebHelpers
 
                 ////or user has rights
                 //if (string.IsNullOrEmpty(userName)) return false;
-                bool permission = featurePermissionManager.HasAccessAsync<User>(name, area, controller, action).Result;
+                bool permission = featurePermissionManager.HasAccess<User>(name, area, controller, action);
 
                 System.Web.HttpContext.Current.Session[identifier] = permission;
 
@@ -264,11 +264,6 @@ namespace BExIS.Utils.WebHelpers
             catch (Exception ex)
             {
                 throw ex;
-            }
-            finally
-            {
-                featurePermissionManager.Dispose();
-                operationManager.Dispose();
             }
         }
     }

@@ -35,7 +35,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
     {
         // GET api/DataStatistic
         /// <summary>
-        /// Get a list of all dataset ids
+        /// Find a list of all dataset ids
         /// </summary>
         /// <returns>List of ids</returns>
         [BExISApiAuthorize]
@@ -66,7 +66,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         // GET api/DataStatistic/{id}
         /// <summary>
-        /// Get unique values, max and min values, and max and min length for all variables
+        /// Find unique values, max and min values, and max and min length for all variables
         /// </summary>
         /// <param name="id">Dataset Id</param>
         [BExISApiAuthorize]
@@ -82,7 +82,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         // GET api/DataStatistic/{id}/{variableId}
         /// <summary>
-        /// Get unique values, max and min values, and max and min length for one variable
+        /// Find unique values, max and min values, and max and min length for one variable
         /// </summary>
         /// <param name="id">Dataset Id</param>
         /// <param name="variableId">Variable id</param>

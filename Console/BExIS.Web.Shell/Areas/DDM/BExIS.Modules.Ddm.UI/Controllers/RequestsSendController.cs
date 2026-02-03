@@ -37,7 +37,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         //reload request
                         long requestId = request.Id;
-                        request = requestManager.FindById(requestId);
+                        request = requestManager.Get(requestId);
 
                         var datasetVersion = datasetManager.GetDatasetLatestVersion(id);
                         string title = datasetVersion.Title;
@@ -72,7 +72,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             finally
             {
                 subjectManager.Dispose();
-                requestManager.Dispose();
                 entityManager.Dispose();
                 datasetManager.Dispose();
             }

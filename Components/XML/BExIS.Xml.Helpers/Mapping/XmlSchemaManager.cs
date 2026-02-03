@@ -300,7 +300,7 @@ namespace BExIS.Xml.Helpers.Mapping
         }
 
         /// <summary>
-        /// Get all elements in a list which have a simpletype as type
+        /// Find all elements in a list which have a simpletype as type
         /// </summary>
         /// <returns></returns>
         public List<XmlSchemaElement> GetAllElementsTypeIsSimpleType()
@@ -435,7 +435,7 @@ namespace BExIS.Xml.Helpers.Mapping
         }
 
         /// <summary>
-        /// Get a list of all attributes from the xmlnode
+        /// Find a list of all attributes from the xmlnode
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
@@ -559,7 +559,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 List<XmlSchemaComplexType> complexTypesWithSimpleTypesAsChildrensOnly = GetAllComplextTypesWithSimpleTypesAsChildrens();
 
                 // create default metadataStructure
-                MetadataStructure test = null; //mdsManager.Repo.Get(p => p.Name == SchemaName).FirstOrDefault();
+                MetadataStructure test = null; //mdsManager.Repo.Find(p => p.Name == SchemaName).FirstOrDefault();
                 if (test == null) test = mdsManager.Create(SchemaName, SchemaName, "", "", null);
 
                 XmlSchemaObject root = new XmlSchemaElement();
@@ -684,7 +684,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     if (simpleElements.Count > 0)
                     {
-                        MetadataPackage package = getExistingMetadataPackage(rootNodePackage);// = mdpManager.MetadataPackageRepo.Get(p => p.Name == rootNodePackage).FirstOrDefault();
+                        MetadataPackage package = getExistingMetadataPackage(rootNodePackage);// = mdpManager.MetadataPackageRepo.Find(p => p.Name == rootNodePackage).FirstOrDefault();
                         if (package == null)
                         {
                             package = mdpManager.Create(rootNodePackage, rootNodePackageDescription, true);
@@ -1619,7 +1619,7 @@ namespace BExIS.Xml.Helpers.Mapping
             try
             {
                 // create a compoundAttribute
-                MetadataCompoundAttribute mca = getExistingMetadataCompoundAttribute(complexType.Name);// = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(p => p.Name == complexType.Name).FirstOrDefault();
+                MetadataCompoundAttribute mca = getExistingMetadataCompoundAttribute(complexType.Name);// = metadataAttributeManager.MetadataCompoundAttributeRepo.Find(p => p.Name == complexType.Name).FirstOrDefault();
 
                 DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.ToLower().Equals("text")).FirstOrDefault();
                 if (dt1 == null)
@@ -1655,7 +1655,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 // create a compoundAttribute
                 int i = 0;
                 string typeName = GetTypeOfName(element);
-                MetadataCompoundAttribute mca = getExistingMetadataCompoundAttribute(typeName); ;// = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(p => p.Name == element.Name+"Type").FirstOrDefault();
+                MetadataCompoundAttribute mca = getExistingMetadataCompoundAttribute(typeName); ;// = metadataAttributeManager.MetadataCompoundAttributeRepo.Find(p => p.Name == element.Name+"Type").FirstOrDefault();
                                                                                                               //Debug.WriteLine("createMetadataCompoundAttribute" + i++);
                 DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.ToLower().Equals("text")).FirstOrDefault();
                 if (dt1 == null)

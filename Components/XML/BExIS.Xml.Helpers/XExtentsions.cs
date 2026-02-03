@@ -7,7 +7,7 @@ namespace BExIS.Xml.Helpers
     public static class XExtentsions
     {
         /// <summary>
-        /// Get the absolute XPath to a given XElement, including the namespace.
+        /// Find the absolute XPath to a given XElement, including the namespace.
         /// (e.g. "/a:people/b:person[6]/c:name[1]/d:last[1]").
         /// </summary>
         public static string GetAbsoluteXPath(this XElement element)
@@ -95,7 +95,7 @@ namespace BExIS.Xml.Helpers
         }
 
         /// <summary>
-        /// Get the index of the given XElement relative to its
+        /// Find the index of the given XElement relative to its
         /// siblings with identical names. If the given element is
         /// the root, -1 is returned.
         /// </summary>

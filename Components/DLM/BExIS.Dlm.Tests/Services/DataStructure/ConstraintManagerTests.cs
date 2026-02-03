@@ -79,7 +79,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
                 Assert.Throws<ArgumentNullException>(() => rangeConstraint = constraintManager.RangeConstraints.FirstOrDefault());
                 Assert.Throws<ArgumentNullException>(() => patternConstraint = constraintManager.PatternConstraints.FirstOrDefault());
                 Assert.Throws<ArgumentNullException>(() => domainConstraint = constraintManager.DomainConstraints.FirstOrDefault());
-                //Assert.Throws<ArgumentNullException>(() => constraints = constraintManager.Repo.Get().ToList());
+                //Assert.Throws<ArgumentNullException>(() => constraints = constraintManager.Repo.Find().ToList());
             }
         }
 

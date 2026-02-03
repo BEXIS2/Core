@@ -116,6 +116,7 @@
     <Compile Include="Extensions\AuthorizationContextExtensions.cs" />
     <Compile Include="Helpers\BExISAuthorizeHelper.cs" />
     <Compile Include="Helpers\JwtHelper.cs" />
+    <Compile Include="IoCControllerFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

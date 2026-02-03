@@ -245,7 +245,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
 
                                 // get comment for checkin
                                 string comment = "File deleted (" + Path.GetFileName(path) + ")";
-                                // ToDo: Get Comment from ui and users
+                                // ToDo: Find Comment from ui and users
                                 datasetManager.CheckInDataset(datasetID, comment, HttpContext.User.Identity.Name, ViewCreationBehavior.None);
 
 

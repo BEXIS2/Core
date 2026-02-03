@@ -14,6 +14,13 @@ namespace BEXIS.Modules.SAM.UI.Controllers
 {
     public class FormerMemberController : Controller
     {
+        private readonly GroupManager _groupManager;
+
+        public FormerMemberController(GroupManager groupManager)
+        {
+            _groupManager = groupManager;
+        }
+
         /// <summary>
         /// Change status to defined former member role
         /// </summary>
@@ -133,11 +140,11 @@ namespace BEXIS.Modules.SAM.UI.Controllers
             List<FormerMemberUserModel> model = new List<FormerMemberUserModel>();
             string formerMemberRole = helper.GetValue("formerMemberRole").ToString();
 
-            using (GroupManager groupManager = new GroupManager())
+            using (GroupStore groupManager = new GroupStore())
             using (UserManager userManager = new UserManager())
             using (var partyManager = new PartyManager())
             {
-                var alumniGroup = groupManager.Groups.Where(g => g.Name.ToLower() == formerMemberRole.ToLower()).FirstOrDefault();
+                var alumniGroup = _groupManager.Find(g => g.Name == formerMemberRole).FirstOrDefault();
                 if (alumniGroup != null)
                 {
                     List<object> userObjectList = new List<object>();

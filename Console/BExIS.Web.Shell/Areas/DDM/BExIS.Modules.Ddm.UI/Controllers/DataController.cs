@@ -221,7 +221,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         if (!dm.IsDatasetDeleted(id)) // dataset should not be in delete state
                         {
-                            // Get version id based on public or internal access. Version name has a higher priority as version.
+                            // Find version id based on public or internal access. Version name has a higher priority as version.
                             // Public access has higher priority as major/minor versions
                             versionId = getVersionId(id, version, versionName, tag).Result;
 
@@ -251,7 +251,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 latestVersion = (versionId == latestVersionId);
 
                             }
-                            // Get version number based on version id
+                            // Find version number based on version id
                             if (versionId >= 0)
                             {
                                 version = dm.GetDatasetVersionNr(versionId);
@@ -274,7 +274,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 metadataStructureId = dsv.Dataset.MetadataStructure.Id;
 
                                 //MetadataStructureManager msm = new MetadataStructureManager();
-                                //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+                                //dsv.Dataset.MetadataStructure = msm.Repo.Find(dsv.Dataset.MetadataStructure.Id);
 
                                 title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
                                 labels = getLabels(id, versionId, tag, dsv.Dataset.EntityTemplate.Name);
@@ -542,7 +542,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     metadataStructureId = dsv.Dataset.MetadataStructure.Id;
 
                     //MetadataStructureManager msm = new MetadataStructureManager();
-                    //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+                    //dsv.Dataset.MetadataStructure = msm.Repo.Find(dsv.Dataset.MetadataStructure.Id);
 
                     title = dsv.Title; // this function only needs metadata and extra fields, there is no need to pass the version to it.
                     dataStructureId = dsv.Dataset.DataStructure.Id;
@@ -1674,10 +1674,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             using (DatasetManager dm = new DatasetManager())
             using (DataStructureManager dsm = new DataStructureManager())
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
-            using (OperationManager operationManager = new OperationManager())
-            using (FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager())
             using (SubjectManager subjectManager = new SubjectManager())
             {
+                var operationManager = new OperationManager();
+                var featurePermissionManager = new FeaturePermissionManager();
                 using (var uow = this.GetUnitOfWork())
                 {
                     Dataset dataset = dm.GetDataset(datasetID);
@@ -1703,10 +1703,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             {
                                 if (entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Write).Result)
                                 {
-                                    Feature feature = operationManager.OperationRepository.Query().Where(o => o.Module.ToLower().Equals("rpm") && o.Controller.ToLower().Equals("datastructureedit")).FirstOrDefault().Feature;
+                                    Feature feature = operationManager.Find(o => o.Module.ToLower().Equals("rpm") && o.Controller.ToLower().Equals("datastructureedit")).FirstOrDefault().Feature;
                                     Subject subject = subjectManager.SubjectRepository.Query().Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).FirstOrDefault();
 
-                                    if (featurePermissionManager.HasAccessAsync(subject.Id, feature.Id).Result)
+                                    if (featurePermissionManager.HasAccess(subject.Id, feature.Id))
                                         DSlink = "/RPM/DataStructureEdit/?dataStructureId=" + dataStructureId;
                                 }
                             }
@@ -2161,10 +2161,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         private bool hasUserRequestRight()
         {
             using (var userManager = new UserManager())
-            using (var featurePermissionManager = new FeaturePermissionManager())
-            using (var operationManager = new OperationManager())
             {
-                var operation = operationManager.Find("DDM", "RequestsSend", "*");
+                var operationManager = new OperationManager();
+                var featurePermissionManager = new FeaturePermissionManager();
+                var operation = operationManager.Get("DDM", "RequestsSend", "*");
                 if (operation != null)
                 {
                     var feature = operation.Feature;
@@ -2173,7 +2173,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         var result = userManager.FindByNameAsync(GetUsernameOrDefault());
 
-                        if (featurePermissionManager.HasAccessAsync(result.Result?.Id, feature.Id).Result) return true;
+                        if (featurePermissionManager.HasAccess(result.Result?.Id, feature.Id)) return true;
                     }
                 }
             }
@@ -2183,17 +2183,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         private bool HasOpenRequest(long datasetId)
         {
-            using (RequestManager requestManager = new RequestManager())
-            using (DecisionManager decisionManager = new DecisionManager())
             using (SubjectManager subjectManager = new SubjectManager())
             using (EntityManager entityManager = new EntityManager())
             {
+                var decisionManager = new DecisionManager();
+                var requestManager = new RequestManager();
+
                 if (HttpContext.User != null && HttpContext.User.Identity != null && !string.IsNullOrEmpty(HttpContext.User.Identity.Name))
                 {
                     long userId = subjectManager.Subjects.Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).Select(s => s.Id).First();
                     long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).First().Id;
 
-                    var request = requestManager.Requests.Where(r =>
+                    var request = requestManager.Find(r =>
                                             r.Applicant.Id.Equals(userId) &&
                                             r.Entity.Id.Equals(entityId) &&
                                             r.Key.Equals(datasetId) &&

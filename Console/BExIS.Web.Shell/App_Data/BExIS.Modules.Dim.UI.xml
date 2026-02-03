@@ -468,7 +468,7 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.DataQualityOutController.Get">
             <summary>
-            Get a list of all dataset ids
+            Find a list of all dataset ids
             </summary>
             <returns>List of ids</returns>
         </member>
@@ -491,19 +491,19 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get">
             <summary>
-            Get a list of all datasets Id´s in the system.
+            Find a list of all datasets Id´s in the system.
             </summary>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64)">
              <summary>
-             Get dataset information of the latest version of a dataset by id.
+             Find dataset information of the latest version of a dataset by id.
              </summary>
             
              <param name="id">Identifier of a dataset</param>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64,System.Int64)">
              <summary>
-             Get dataset information of a specific version of a dataset by id and version id.
+             Find dataset information of a specific version of a dataset by id and version id.
              </summary>
             
              <param name="id">Identifier of a dataset</param>
@@ -511,7 +511,7 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64,System.Int32)">
              <summary>
-             Get dataset information of a specific version of a dataset by id and version number.
+             Find dataset information of a specific version of a dataset by id and version number.
              </summary>
             
              <param name="id">Identifier of a dataset</param>
@@ -519,7 +519,7 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64,System.String)">
              <summary>
-             Get dataset information of a specific version of a dataset by id and version name.
+             Find dataset information of a specific version of a dataset by id and version name.
              </summary>
             
              <param name="id">Identifier of a dataset</param>
@@ -527,7 +527,7 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64,System.Double)">
              <summary>
-             Get dataset informations of a specific version of a dataset by id and tag.
+             Find dataset informations of a specific version of a dataset by id and tag.
              </summary>
             
              <param name="id">Identifier of a dataset</param>
@@ -540,44 +540,44 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.AttachmentOutController.Get">
             <summary>
-            With the Get function you get an overview of the exiting datasets and there attachments.
+            With the Find function you get an overview of the exiting datasets and there attachments.
             </summary>
             <remarks>
-            With the Get function you get an overview of the exiting datasets and there attachments.
+            With the Find function you get an overview of the exiting datasets and there attachments.
             </remarks>
             <returns>List of ApiDatasetAttachmentsModel</returns>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.AttachmentOutController.Get(System.Int32)">
             <summary>
-            With the Get function you get an overview of one specific dataset and there attachments.
+            With the Find function you get an overview of one specific dataset and there attachments.
             </summary>
             <remarks>
-            With the Get function you get an overview of one specific dataset and there attachments.
+            With the Find function you get an overview of one specific dataset and there attachments.
             </remarks>
             <returns>ApiDatasetAttachmentsModel</returns>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.AttachmentOutController.Get(System.Int32,System.Int64)">
             <summary>
-            This Get function has been extended by a parameter id. The id refers to the dataset. The metadata will be loaded from the dataset
+            This Find function has been extended by a parameter id. The id refers to the dataset. The metadata will be loaded from the dataset
             </summary>
             <param name="id">Dataset Id</param>
             <returns>Xml Document</returns>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.DataStatisticOutController.Get">
             <summary>
-            Get a list of all dataset ids
+            Find a list of all dataset ids
             </summary>
             <returns>List of ids</returns>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.DataStatisticOutController.Get(System.Int32)">
             <summary>
-            Get unique values, max and min values, and max and min length for all variables
+            Find unique values, max and min values, and max and min length for all variables
             </summary>
             <param name="id">Dataset Id</param>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.DataStatisticOutController.Get(System.Int64,System.Int32)">
             <summary>
-            Get unique values, max and min values, and max and min length for one variable
+            Find unique values, max and min values, and max and min length for one variable
             </summary>
             <param name="id">Dataset Id</param>
             <param name="variableId">Variable id</param>
@@ -612,7 +612,7 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataStatisticOutController.Post(BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel)">
             <summary>
-            Get a list of unique metadata values, count and list of occurrence for a given XPath.
+            Find a list of unique metadata values, count and list of occurrence for a given XPath.
             </summary>
             <remarks>Data is directly returned from the database. A valid token is needed to access also non-public dataset.</remarks>
             <returns>JSON object</returns>
@@ -659,7 +659,7 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.ExportController.GetDataStructureAsHtmlFile(System.Int64)">
             <summary>
-            Get a html file of the data structure from a dataset
+            Find a html file of the data structure from a dataset
             </summary>
             <param name="id">dataset id</param>
             <returns>html file</returns>
@@ -680,7 +680,7 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.DataOutController.Get">
             <summary>
-            Get a list of all dataset ids
+            Find a list of all dataset ids
             </summary>
             <returns>List of ids</returns>
         </member>
@@ -763,23 +763,23 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.Get">
             <summary>
-            Get list of exiting datasets from which metadata can be loaded.
+            Find list of exiting datasets from which metadata can be loaded.
             </summary>
             <remarks>
-            With the Get function you get an overview of the exiting datasets from which you can load metadata.
+            With the Find function you get an overview of the exiting datasets from which you can load metadata.
             The format indicates the possible conversions. Without format the system internal metadata xml document is loaded.
             </remarks>
             <returns>List of MetadataViewObject</returns>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.GetBySchema(System.String)">
             <summary>
-            Get all metadata of all datasets based on the given metadata schema name as XML
+            Find all metadata of all datasets based on the given metadata schema name as XML
             </summary>
             <returns>XML with all metadata of the metadata schema</returns>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.Get(System.Int32,BExIS.Modules.Dim.UI.Controllers.Format,System.String,System.Int32)">
              <summary>
-             Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+             Find metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
              </summary>
              <remarks>
             
@@ -801,7 +801,7 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.Get(System.Int64,System.Nullable{System.Int64},BExIS.Modules.Dim.UI.Controllers.Format,System.String,System.Int32)">
              <summary>
-             Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+             Find metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
              </summary>
              <remarks>
             
@@ -824,7 +824,7 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.Get(System.Int64,System.Int32,BExIS.Modules.Dim.UI.Controllers.Format,System.String,System.Int32)">
              <summary>
-             Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+             Find metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
              </summary>
              <remarks>
             
@@ -847,7 +847,7 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.Get(System.Int64,System.String,BExIS.Modules.Dim.UI.Controllers.Format,System.String,System.Int32)">
              <summary>
-             Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+             Find metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
              </summary>
              <remarks>
             
@@ -870,7 +870,7 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataOutController.Get(System.Int64,System.Double,BExIS.Modules.Dim.UI.Controllers.Format,System.String,System.Int32)">
              <summary>
-             Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+             Find metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
              </summary>
              <remarks>
             
@@ -936,7 +936,7 @@
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.SubmissionController.GetStatus(BExIS.Dim.Entities.Publications.Publication)">
             <summary>
-            Get Status from publiction
+            Find Status from publiction
             </summary>
             <param name="publication"></param>
             <returns></returns>

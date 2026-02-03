@@ -69,7 +69,7 @@ namespace BExIS.Dim.Helpers.GBIF
             }
         }
 
-        // Get Dataset
+        // Find Dataset
         public async Task<HttpResponseMessage> GetDataset(string key)
         {
             try

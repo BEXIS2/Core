@@ -33,10 +33,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         // GET: api/Metadata
         /// <summary>
-        /// Get list of exiting datasets from which metadata can be loaded.
+        /// Find list of exiting datasets from which metadata can be loaded.
         /// </summary>
         /// <remarks>
-        /// With the Get function you get an overview of the exiting datasets from which you can load metadata.
+        /// With the Find function you get an overview of the exiting datasets from which you can load metadata.
         /// The format indicates the possible conversions. Without format the system internal metadata xml document is loaded.
         /// </remarks>
         /// <returns>List of MetadataViewObject</returns>
@@ -79,7 +79,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         // GET:api/MetadataBySchema/GBIF
         /// <summary>
-        /// Get all metadata of all datasets based on the given metadata schema name as XML
+        /// Find all metadata of all datasets based on the given metadata schema name as XML
         /// </summary>
         /// <returns>XML with all metadata of the metadata schema</returns>
         [BExISApiAuthorize]
@@ -141,7 +141,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         }
 
         /// <summary>
-        /// Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+        /// Find metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
         /// </summary>
         /// <remarks>
         ///
@@ -168,7 +168,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         }
 
         /// <summary>
-        /// Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+        /// Find metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
         /// </summary>
         /// <remarks>
         ///
@@ -199,7 +199,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         }
 
         /// <summary>
-        /// Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+        /// Find metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
         /// </summary>
         /// <remarks>
         ///
@@ -246,7 +246,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         }
 
         /// <summary>
-        /// Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+        /// Find metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
         /// </summary>
         /// <remarks>
         ///
@@ -288,7 +288,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         }
 
         /// <summary>
-        /// Get metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
+        /// Find metadata for a dataset as XML (default) or JSON (internal, complete or simplified structure)
         /// </summary>
         /// <remarks>
         ///

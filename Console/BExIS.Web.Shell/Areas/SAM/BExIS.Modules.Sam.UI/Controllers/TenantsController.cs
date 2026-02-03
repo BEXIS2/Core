@@ -190,12 +190,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
             tenantResolver.Load(new BExISTenantPathProvider());
 
-            // Get tenant
+            // Find tenant
             var tenant = tenantResolver.Manifest.Where(x => x.Id.Equals(id)).FirstOrDefault();
 
             if (!tenant.IsDefault && tenant.Status == TenantStatus.Inactive)
             {
-                // Get all tenants
+                // Find all tenants
                 var tenants = tenantResolver.Manifest;
 
                 if (tenants.Select(x => x.IsDefault || x.Status == TenantStatus.Active && x.Id != id).Count() >= 1)

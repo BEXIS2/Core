@@ -18,12 +18,8 @@ namespace BExIS.Modules.Smm.UI.Helpers
         public void GenerateSeedData()
         {
             // Operations
-            using (OperationManager operationManager = new OperationManager())
-            {
-                var homeController = operationManager.Find("SMM", "Home", "*") ?? operationManager.Create("SMM", "Home", "*");
-            }
-
-
+            var operationManager = new OperationManager();
+            var homeController = operationManager.Get("SMM", "Home", "*") ?? operationManager.Create("SMM", "Home", "*");
         }
 
         public void Dispose()

@@ -164,23 +164,12 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 //1.controller-> 1.Operation
 
-                Feature DataCollectionFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Data Collection"));
-                if (DataCollectionFeature == null) DataCollectionFeature = featureManager.Create("Data Collection", "Data Collection");
-
-                Feature DatasetCreationFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Data Creation"));
-                if (DatasetCreationFeature == null) DatasetCreationFeature = featureManager.Create("Data Creation", "Data Creation", DataCollectionFeature);
-
-                Feature DatasetUploadFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Dataset Upload"));
-                if (DatasetUploadFeature == null) DatasetUploadFeature = featureManager.Create("Dataset Upload", "Dataset Upload", DataCollectionFeature);
-
-                Feature ImportDataFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Import Data"));
-                if (ImportDataFeature == null) ImportDataFeature = featureManager.Create("Import Data", "Easy way to load data into bexis", DataCollectionFeature);
-
-                Feature MetadataManagementFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Metadata Management"));
-                if (MetadataManagementFeature == null) MetadataManagementFeature = featureManager.Create("Metadata Management", "Metadata Management", DataCollectionFeature);
-
-                Feature EntityTemplateManagementFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Entity Template Management"));
-                if (EntityTemplateManagementFeature == null) EntityTemplateManagementFeature = featureManager.Create("Entity Template Management", "Entity Template Management", DataCollectionFeature);
+                Feature DataCollectionFeature = featureManager.GetByName("Data Collection") ?? featureManager.Create("Data Collection", "Data Collection");
+                Feature DatasetCreationFeature = featureManager.GetByName("Data Creation") ?? featureManager.Create("Data Creation", "Data Creation", DataCollectionFeature);
+                Feature DatasetUploadFeature = featureManager.GetByName("Dataset Upload") ?? featureManager.Create("Dataset Upload", "Dataset Upload", DataCollectionFeature);
+                Feature ImportDataFeature = featureManager.GetByName("Import Data") ?? featureManager.Create("Import Data", "Easy way to load data into bexis", DataCollectionFeature);
+                Feature MetadataManagementFeature = featureManager.GetByName("Metadata Management") ?? featureManager.Create("Metadata Management", "Metadata Management", DataCollectionFeature);
+                Feature EntityTemplateManagementFeature = featureManager.GetByName("Entity Template Management") ?? featureManager.Create("Entity Template Management", "Entity Template Management", DataCollectionFeature);
 
                 #region Help Workflow
 
@@ -398,8 +387,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 dataStructureManager.Dispose();
                 unitManager.Dispose();
                 entityManager.Dispose();
-                featureManager.Dispose();
-                operationManager.Dispose();
                 metadataStructureManager.Dispose();
                 entityTemplateManager.Dispose();
             }

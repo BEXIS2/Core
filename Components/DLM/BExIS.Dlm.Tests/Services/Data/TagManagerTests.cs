@@ -34,7 +34,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             //{
             //    IRepository<Tag> repo = uow.GetRepository<Tag>();
 
-            //    repo.Get().ToList().ForEach(v => repo.Delete(v));
+            //    repo.Find().ToList().ForEach(v => repo.Delete(v));
             //    uow.Commit();
             //}
 

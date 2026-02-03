@@ -97,7 +97,7 @@ namespace BExIS.Xml.Helpers
             name += element.Name;
             Debug.WriteLine(name);
 
-            // Get the complex type of the Customer element.
+            // Find the complex type of the Customer element.
             XmlSchemaComplexType complexType = element.ElementSchemaType as XmlSchemaComplexType;
 
             if (complexType != null)
@@ -144,7 +144,7 @@ namespace BExIS.Xml.Helpers
 
                 //Debug.WriteLine("    ContentModel Type : null");
 
-                // Get the sequence particle of the complex type.
+                // Find the sequence particle of the complex type.
                 XmlSchemaSequence sequence = complexType.ContentTypeParticle as XmlSchemaSequence;
                 if (sequence != null)
                 {
@@ -186,7 +186,7 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         private int GetXmlSchemaElementCount(XmlSchemaElement xmlSchemaElement)
         {
-            // Get the complex type of the Customer element.
+            // Find the complex type of the Customer element.
             XmlSchemaComplexType complexType = xmlSchemaElement.ElementSchemaType as XmlSchemaComplexType;
 
             if (complexType != null)

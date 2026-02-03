@@ -59,7 +59,7 @@ namespace BExIS.Dim.Helpers.GFBIO
             return await BasicWebService.Call(url, Broker.UserName, Broker.Password, encodedParameters);
         }
 
-        //Get projects by username
+        //Find projects by username
         public async Task<string> GetProjectsByUser(long id)
         {
             string functionName = "get-projects-by-user";

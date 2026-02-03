@@ -71,7 +71,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         [HttpPost]
         public async Task<ActionResult> Update(UpdatePublicationModel model)
         {
-            var groupManager = new GroupManager();
+            var groupManager = new GroupStore();
 
             try
             {

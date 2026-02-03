@@ -8,7 +8,7 @@ namespace BExIS.Xml.Helpers
     public class XmlSchemaUtility
     {
         /// <summary>
-        /// Get All Complex Types from the Schema.
+        /// Find All Complex Types from the Schema.
         /// </summary>
         /// <param name="schema"></param>
         /// <returns></returns>
@@ -25,7 +25,7 @@ namespace BExIS.Xml.Helpers
         }
 
         /// <summary>
-        /// Get all simple types from the schema.
+        /// Find all simple types from the schema.
         /// </summary>
         /// <param name="schema"></param>
         /// <returns></returns>
@@ -42,7 +42,7 @@ namespace BExIS.Xml.Helpers
         }
 
         /// <summary>
-        /// Get all simple types from the schema.
+        /// Find all simple types from the schema.
         /// </summary>
         /// <param name="schema"></param>
         /// <returns></returns>
@@ -59,7 +59,7 @@ namespace BExIS.Xml.Helpers
         }
 
         /// <summary>
-        /// Get all elements from the schema.
+        /// Find all elements from the schema.
         /// </summary>
         /// <param name="schema"></param>
         /// <returns></returns>
@@ -112,7 +112,7 @@ namespace BExIS.Xml.Helpers
                 {
                     #region sequence  as XmlSchemaSequence
 
-                    /// Get the sequence particle of the complex type.
+                    /// Find the sequence particle of the complex type.
                     XmlSchemaSequence sequence = complexType.ContentTypeParticle as XmlSchemaSequence;
                     if (sequence != null)
                     {
@@ -127,7 +127,7 @@ namespace BExIS.Xml.Helpers
 
                     #region sequence as XmlSchemaAll
 
-                    /// Get the sequence particle of the complex type.
+                    /// Find the sequence particle of the complex type.
                     XmlSchemaAll all = complexType.ContentTypeParticle as XmlSchemaAll;
                     if (all != null)
                     {
@@ -141,7 +141,7 @@ namespace BExIS.Xml.Helpers
                     #endregion sequence as XmlSchemaAll
 
                     //#region sequence as XmlSchemaAll
-                    ///// Get the sequence particle of the complex type.
+                    ///// Find the sequence particle of the complex type.
                     //XmlSchemaAll all = complexType.ContentTypeParticle as Content;
                     //if (all != null)
                     //{
@@ -179,7 +179,7 @@ namespace BExIS.Xml.Helpers
                 {
                     #region sequence
 
-                    /// Get the sequence particle of the complex type.
+                    /// Find the sequence particle of the complex type.
                     XmlSchemaSequence sequence = complexType.ContentTypeParticle as XmlSchemaSequence;
                     if (sequence != null)
                     {
@@ -215,7 +215,7 @@ namespace BExIS.Xml.Helpers
 
                 #region sequence
 
-                /// Get the sequence particle of the complex type.
+                /// Find the sequence particle of the complex type.
                 XmlSchemaSequence sequence = group.Particle as XmlSchemaSequence;
                 if (sequence != null)
                 {
@@ -289,7 +289,7 @@ namespace BExIS.Xml.Helpers
                             {
                                 #region sequence
 
-                                /// Get the sequence particle of the complex type.
+                                /// Find the sequence particle of the complex type.
                                 XmlSchemaSequence sequence = complexType.ContentTypeParticle as XmlSchemaSequence;
                                 if (sequence != null)
                                 {
@@ -344,7 +344,7 @@ namespace BExIS.Xml.Helpers
                                 {
                                     #region sequence
 
-                                    /// Get the sequence particle of the complex type.
+                                    /// Find the sequence particle of the complex type.
                                     XmlSchemaSequence sequence = complexType.ContentTypeParticle as XmlSchemaSequence;
                                     if (sequence != null)
                                     {

@@ -267,7 +267,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         /// <summary>
-        /// Get all simple attributes of a metadata Structure
+        /// Find all simple attributes of a metadata Structure
         /// </summary>
         /// <param name="metadatastructureId"></param>
         /// <returns></returns>

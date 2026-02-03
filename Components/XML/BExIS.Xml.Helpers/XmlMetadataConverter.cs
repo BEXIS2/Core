@@ -92,7 +92,7 @@ namespace BExIS.Xml.Helpers
                     //{
                     //    XmlNode node = root.ChildNodes[i];
                     //    long usageId = metadataStructure.MetadataPackageUsages.ElementAt(i).Id;
-                    //    var usage = metadataStructureManager.PackageUsageRepo.Get(usageId);
+                    //    var usage = metadataStructureManager.PackageUsageRepo.Find(usageId);
 
                     //    var packageUsageJson = _convertPackageUsage(node, usage, includeEmpty);
                     //    if (packageUsageJson != null)

@@ -55,7 +55,7 @@ namespace BExIS.UI.Wizard
         }
 
         /// <summary>
-        /// Get true back if all needed parameter are set
+        /// Find true back if all needed parameter are set
         /// </summary>
         /// <returns></returns>
         public bool IsComplete()

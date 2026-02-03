@@ -101,7 +101,7 @@ namespace BExIS.Utils.Models
         }
 
         /// <summary>
-        /// Get a facet from Facets where facename and parentname equal
+        /// Find a facet from Facets where facename and parentname equal
         /// to facets child
         /// </summary>
         /// <remarks></remarks>
@@ -180,7 +180,7 @@ namespace BExIS.Utils.Models
         }
 
         /// <summary>
-        /// Get a category from Categories where value equal
+        /// Find a category from Categories where value equal
         /// to facets category
         /// </summary>
         /// <remarks></remarks>
@@ -239,7 +239,7 @@ namespace BExIS.Utils.Models
         }
 
         /// <summary>
-        /// Get a proptery from Properties where value and DataSourceKey are equal
+        /// Find a proptery from Properties where value and DataSourceKey are equal
         /// otherwise null
         /// </summary>
         /// <remarks></remarks>

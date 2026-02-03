@@ -43,7 +43,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
     {
         // GET api/Dataset
         /// <summary>
-        /// Get a list of all datasets Id´s in the system.
+        /// Find a list of all datasets Id´s in the system.
         /// </summary>
         [BExISApiAuthorize]
         [HttpGet]
@@ -88,7 +88,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
         // GET api/Dataset/{id}
         /// <summary>
-        /// Get dataset information of the latest version of a dataset by id.
+        /// Find dataset information of the latest version of a dataset by id.
         /// </summary>
         ///
         /// <param name="id">Identifier of a dataset</param>
@@ -140,7 +140,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
         // GET api/DatasetOut/{id}/{version}
         /// <summary>
-        /// Get dataset information of a specific version of a dataset by id and version id.
+        /// Find dataset information of a specific version of a dataset by id and version id.
         /// </summary>
         ///
         /// <param name="id">Identifier of a dataset</param>
@@ -155,7 +155,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
         // GET api/DatasetOut/{id}/{version}
         /// <summary>
-        /// Get dataset information of a specific version of a dataset by id and version number.
+        /// Find dataset information of a specific version of a dataset by id and version number.
         /// </summary>
         ///
         /// <param name="id">Identifier of a dataset</param>
@@ -189,7 +189,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
         // GET api/DatasetOut/{id}/{version}
         /// <summary>
-        /// Get dataset information of a specific version of a dataset by id and version name.
+        /// Find dataset information of a specific version of a dataset by id and version name.
         /// </summary>
         ///
         /// <param name="id">Identifier of a dataset</param>
@@ -218,7 +218,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
         // GET api/DatasetOut/{id}/{version}
         /// <summary>
-        /// Get dataset informations of a specific version of a dataset by id and tag.
+        /// Find dataset informations of a specific version of a dataset by id and tag.
         /// </summary>
         ///
         /// <param name="id">Identifier of a dataset</param>

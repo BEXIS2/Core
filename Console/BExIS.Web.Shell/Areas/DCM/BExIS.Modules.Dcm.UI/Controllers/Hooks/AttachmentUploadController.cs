@@ -106,7 +106,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 try
                 {
-                    //  Get all files from Request object and store it on the server
+                    //  Find all files from Request object and store it on the server
 
                     #region store on server
 

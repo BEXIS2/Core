@@ -54,18 +54,6 @@ namespace BExIS.Security.Services.Versions
             }
         }
 
-        public bool Exists(string module)
-        {
-            if (string.IsNullOrWhiteSpace(module))
-                return false;
-
-            using (var uow = this.GetUnitOfWork())
-            {
-                var versionsRepository = uow.GetReadOnlyRepository<Version>();
-                return versionsRepository.Query(v => v.Module == module).Any();
-            }
-        }
-
         public Version Create(string module, string value)
         {
             if (string.IsNullOrWhiteSpace(module))

@@ -82,7 +82,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 //    foreach (var missingValueItem in model.MissingValues)
                 //    {
                 //        if (missingValueItem.Id > 0)
-                //            missingValueManager.Repo.Get(missingValueItem.Id);
+                //            missingValueManager.Repo.Find(missingValueItem.Id);
                 //        else
                 //            missingValueManager.Create(missingValueItem.DisplayName, missingValueItem.Description, variableTemplate);
                 //    }

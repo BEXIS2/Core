@@ -10,24 +10,23 @@ namespace BExIS.Modules.Vim.UI.Helper
     {
         public void GenerateSeedData()
         {
-            using (FeatureManager featureManager = new FeatureManager())
-            using (OperationManager operationManager = new OperationManager())
+            var featureManager = new FeatureManager();
+            var operationManager = new OperationManager();
+
+            try
             {
-                try
-                {
-                    Feature visualization =
-                        featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Visualization"));
-                    if (visualization == null)
-                        visualization = featureManager.Create("Visualization", "Visualization");
+                Feature visualization =
+                    featureManager.GetByName("Visualization");
+                if (visualization == null)
+                    visualization = featureManager.Create("Visualization", "Visualization");
 
-                    operationManager.Create("VIM", "Visualization", "*", visualization);
+                operationManager.Create("VIM", "Visualization", "*", visualization);
 
-                    operationManager.Create("VIM", "Help", "*");
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                operationManager.Create("VIM", "Help", "*");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
 

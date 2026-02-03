@@ -29,11 +29,11 @@
         //        //create relationshiptype and one "typePair"
         //        var partyRelationshipType = partyRelationshipTypeManager.Create("title", "T i t l e", "Descr", false, 100, -1, false, sourcePartyType, targetPartyType, "typepairTitle", "", "", "", 0);
         //        long partyRelationshipTypeId = partyRelationshipType.Id;
-        //        PartyTypePair partyRelationshipTypePair1 = partyRelationshipTypeManager.PartyTypePairRepository.Get(cc => cc.PartyRelationshipType.Id == partyRelationshipType.Id).First();
+        //        PartyTypePair partyRelationshipTypePair1 = partyRelationshipTypeManager.PartyTypePairRepository.Find(cc => cc.PartyRelationshipType.Id == partyRelationshipType.Id).First();
         //        long partyRelationshipTypePairId = partyRelationshipTypePair1.Id;
         //        partyRelationshipType.Should().NotBeNull();
         //        partyRelationshipType.Id.Should().BeGreaterThan(0);
-        //        var fetchedpartyRelationshipType = partyRelationshipTypeManager.PartyRelationshipTypeRepository.Get(partyRelationshipType.Id);
+        //        var fetchedpartyRelationshipType = partyRelationshipTypeManager.PartyRelationshipTypeRepository.Find(partyRelationshipType.Id);
         //        partyRelationshipType.Title.Should().BeEquivalentTo(fetchedpartyRelationshipType.Title);
         //        partyRelationshipType.DisplayName.Should().BeEquivalentTo(fetchedpartyRelationshipType.DisplayName);
         //        partyRelationshipType.Description.Should().BeEquivalentTo(fetchedpartyRelationshipType.Description);
@@ -47,7 +47,7 @@
         //        partyRelationshipTypePair2.Id.Should().BeGreaterThan(0);
         //        // partyRelationshipTypePair1 added differently than the other one; therefor, two test cases needed
         //        // test partyRelationshipTypePair1
-        //        var fetchedpartyRelationshipTypePair1 = partyRelationshipTypeManager.PartyTypePairRepository.Get(partyRelationshipTypePairId);
+        //        var fetchedpartyRelationshipTypePair1 = partyRelationshipTypeManager.PartyTypePairRepository.Find(partyRelationshipTypePairId);
         //        partyRelationshipTypePair1.SourcePartyType.Should().Equals(fetchedpartyRelationshipTypePair1.SourcePartyType);
         //        partyRelationshipTypePair1.TargetPartyType.Should().Equals(fetchedpartyRelationshipTypePair1.TargetPartyType);
         //        partyRelationshipTypePair1.ConditionSource.Should().BeEquivalentTo(fetchedpartyRelationshipTypePair1.ConditionSource);
@@ -58,7 +58,7 @@
         //        partyRelationshipTypePair1.Title.Should().Equals(fetchedpartyRelationshipTypePair1.Title);
         //        partyRelationshipTypePair1.PartyRelationshipType.Should().Equals(fetchedpartyRelationshipTypePair1.PartyRelationshipType);
         //        // test partyRelationshipTypePair2
-        //        var fetchedpartyRelationshipTypePair2 = partyRelationshipTypeManager.PartyTypePairRepository.Get(partyRelationshipTypePair2Id);
+        //        var fetchedpartyRelationshipTypePair2 = partyRelationshipTypeManager.PartyTypePairRepository.Find(partyRelationshipTypePair2Id);
         //        partyRelationshipTypePair2.SourcePartyType.Should().Equals(fetchedpartyRelationshipTypePair2.SourcePartyType);
         //        partyRelationshipTypePair2.TargetPartyType.Should().Equals(fetchedpartyRelationshipTypePair2.TargetPartyType);
         //        partyRelationshipTypePair2.ConditionSource.Should().BeEquivalentTo(fetchedpartyRelationshipTypePair2.ConditionSource);
@@ -73,10 +73,10 @@
         //        partyTypeManager.Delete(sourcePartyType);
         //        partyTypeManager.Delete(targetPartyType);
         //        //check if delete is successful
-        //        PartyRelationshipType partyRelationshipTypeAfterDelete = partyRelationshipTypeManager.PartyRelationshipTypeRepository.Get(cc => cc.Id == partyRelationshipTypeId).FirstOrDefault();
+        //        PartyRelationshipType partyRelationshipTypeAfterDelete = partyRelationshipTypeManager.PartyRelationshipTypeRepository.Find(cc => cc.Id == partyRelationshipTypeId).FirstOrDefault();
         //        //By Deleting relationshiptype, partyTypePairs should be deleted as well
-        //        PartyTypePair partyTypePair1AfterDelete = partyRelationshipTypeManager.PartyTypePairRepository.Get(cc => cc.Id == partyRelationshipTypePairId).FirstOrDefault();
-        //        PartyTypePair partyTypePair2AfterDelete = partyRelationshipTypeManager.PartyTypePairRepository.Get(cc => cc.Id == partyRelationshipTypePair2Id).FirstOrDefault();
+        //        PartyTypePair partyTypePair1AfterDelete = partyRelationshipTypeManager.PartyTypePairRepository.Find(cc => cc.Id == partyRelationshipTypePairId).FirstOrDefault();
+        //        PartyTypePair partyTypePair2AfterDelete = partyRelationshipTypeManager.PartyTypePairRepository.Find(cc => cc.Id == partyRelationshipTypePair2Id).FirstOrDefault();
         //        partyRelationshipTypeAfterDelete.Should().BeNull();
         //        partyTypePair1AfterDelete.Should().BeNull();
         //        partyTypePair2AfterDelete.Should().BeNull();
@@ -95,7 +95,7 @@
         //        var partyRelationshipType = partyRelationshipTypeManager.Create("title", "T i t l e", "Descr", false, 100, -1, false, sourcePartyType, targetPartyType, "typepairTitle", "", "", "", 0);
         //        long partyRelationshipTypeId = partyRelationshipType.Id;
         //        partyRelationshipTypeManager.Update(partyRelationshipTypeId, "updatedTitle", "updated Title", "updatedDescription", true, 10, 5);
-        //        PartyRelationshipType partyRelationshipTypeAfterUpdate = partyRelationshipTypeManager.PartyRelationshipTypeRepository.Get(cc => cc.Id == partyRelationshipTypeId).FirstOrDefault();
+        //        PartyRelationshipType partyRelationshipTypeAfterUpdate = partyRelationshipTypeManager.PartyRelationshipTypeRepository.Find(cc => cc.Id == partyRelationshipTypeId).FirstOrDefault();
         //        partyRelationshipTypeAfterUpdate.Title.Should().BeEquivalentTo("updatedTitle");
         //        partyRelationshipTypeAfterUpdate.DisplayName.Should().BeEquivalentTo("updated Title");
         //        partyRelationshipTypeAfterUpdate.Description.Should().BeEquivalentTo("updatedDescription");
@@ -130,8 +130,8 @@
         //            partyRelationshipTypes.Add(partyRelationshipType2);
 
         //            partyRelationshipTypeManager.Delete(partyRelationshipTypes);
-        //            PartyRelationshipType partyRelationshipType1AfterDelete = partyRelationshipTypeManager.PartyRelationshipTypeRepository.Get(cc => cc.Id == partyRelationshipTypeId).FirstOrDefault();
-        //            PartyRelationshipType partyRelationshipType2AfterDelete = partyRelationshipTypeManager.PartyRelationshipTypeRepository.Get(cc => cc.Id == partyRelationshipType2Id).FirstOrDefault();
+        //            PartyRelationshipType partyRelationshipType1AfterDelete = partyRelationshipTypeManager.PartyRelationshipTypeRepository.Find(cc => cc.Id == partyRelationshipTypeId).FirstOrDefault();
+        //            PartyRelationshipType partyRelationshipType2AfterDelete = partyRelationshipTypeManager.PartyRelationshipTypeRepository.Find(cc => cc.Id == partyRelationshipType2Id).FirstOrDefault();
         //            partyRelationshipType1AfterDelete.Should().BeNull();
         //            partyRelationshipType2AfterDelete.Should().BeNull();
 
@@ -202,10 +202,10 @@
         //        var TargetPartyType = partyTypeManager.Create("secondTestType", "", "", partyStatusTypes);
         //        var thirdPartyType = partyTypeManager.Create("thirdTestType", "", "", partyStatusTypes);
         //        var partyRelationshipType = partyRelationshipTypeManager.Create("title", "T i t l e", "Descr", false, 100, -1, false, personPartyType, TargetPartyType, "typepairTitle1", "", "", "", 0);
-        //        var partyTypePairId = partyRelationshipTypeManager.PartyTypePairRepository.Get(cc => cc.PartyRelationshipType.Id == partyRelationshipType.Id).First().Id;
+        //        var partyTypePairId = partyRelationshipTypeManager.PartyTypePairRepository.Find(cc => cc.PartyRelationshipType.Id == partyRelationshipType.Id).First().Id;
         //        var partyRelationshipType2 = partyRelationshipTypeManager.Create("title2", "T i t l e2", "Descr", false, 100, -1, false, personPartyType, TargetPartyType, "typepairTitle2", "", "", "", 0);
 
-        //        PartyTypePair typePair = partyRelationshipTypeManager.PartyTypePairRepository.Get(partyTypePairId);
+        //        PartyTypePair typePair = partyRelationshipTypeManager.PartyTypePairRepository.Find(partyTypePairId);
         //        typePair.Title = "updatedTitle";
         //        typePair.SourcePartyType = thirdPartyType;
         //        typePair.TargetPartyType = personPartyType;
@@ -218,7 +218,7 @@
         //        partyRelationshipTypeManager.UpdatePartyTypePair(typePair);
         //        //partyRelationshipTypeManager.UpdatePartyTypePair(partyTypePairId, typePair.Title, typePair.SourcePartyType,typePair.TargetPartyType, typePair.Description,typePair.ConditionSource, typePair.ConditionTarget, typePair.PartyRelationShipTypeDefault, typePair.PartyRelationshipType, typePair.PermissionTemplate);
         //        // test partyRelationshipTypePair
-        //        var fetchedpartyRelationshipTypePair = partyRelationshipTypeManager.PartyTypePairRepository.Get(partyTypePairId);
+        //        var fetchedpartyRelationshipTypePair = partyRelationshipTypeManager.PartyTypePairRepository.Find(partyTypePairId);
         //        fetchedpartyRelationshipTypePair.SourcePartyType.Id.Should().Equals(typePair.SourcePartyType.Id);
         //        fetchedpartyRelationshipTypePair.TargetPartyType.Id.Should().Equals(typePair.TargetPartyType.Id);
         //        fetchedpartyRelationshipTypePair.Description.Should().BeEquivalentTo(typePair.Description);
@@ -250,7 +250,7 @@
         //        //create relationshiptype and one "typePair"
         //        var partyRelationshipType = partyRelationshipTypeManager.Create("title", "T i t l e", "Descr", false, 100, -1, false, personPartyType, TargetPartyType, "typepairTitle", "", "", "", 0);
         //        long partyRelationshipTypeId = partyRelationshipType.Id;
-        //        var partyRelationshipTypePair = partyRelationshipTypeManager.PartyTypePairRepository.Get(cc => cc.PartyRelationshipType.Id == partyRelationshipType.Id).First();
+        //        var partyRelationshipTypePair = partyRelationshipTypeManager.PartyTypePairRepository.Find(cc => cc.PartyRelationshipType.Id == partyRelationshipType.Id).First();
         //        var partyRelationshipTypePair2 = partyRelationshipTypeManager.AddPartyTypePair("typePair2", TargetPartyType, thirdPartyType, "pair description", true, partyRelationshipType, "", "", 0);
         //        var partyRelationshipTypePair2Id = partyRelationshipTypePair2.Id;
         //        var partyRelationshipTypePair3 = partyRelationshipTypeManager.AddPartyTypePair("typePair2", TargetPartyType, thirdPartyType, "pair description", true, partyRelationshipType, "", "", 0);
@@ -260,7 +260,7 @@
         //        partyRelationshipTypeManager.RemovePartyTypePair(partyRelationshipTypePair);
         //        partyRelationshipTypeManager.RemovePartyTypePair(partyRelationshipTypePair2);
         //        partyRelationshipTypeManager.RemovePartyTypePair(partyRelationshipTypePair3);
-        //        var partyTypePairsAfterDelete = partyRelationshipTypeManager.PartyTypePairRepository.Get(cc => cc.PartyRelationshipType.Id == partyRelationshipTypeId);
+        //        var partyTypePairsAfterDelete = partyRelationshipTypeManager.PartyTypePairRepository.Find(cc => cc.PartyRelationshipType.Id == partyRelationshipTypeId);
         //        partyTypePairsAfterDelete.Count().Should().Be(0);
         //    }
         //}

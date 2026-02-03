@@ -522,7 +522,7 @@
         </member>
         <member name="M:BExIS.Web.Shell.Controllers.API.PersonNameComponentsController.Post(System.String)">
             <summary>
-            Get the separate parts of a person's name.
+            Find the separate parts of a person's name.
             </summary>
             <param name="name">complete name of the person</param>
             <returns>separated person names (e.g. first, middle, last,...)</returns>
@@ -534,7 +534,7 @@
         </member>
         <member name="M:BExIS.Web.Shell.Controllers.API.TokensController.Get">
             <summary>
-            Get the token based on basic authentication
+            Find the token based on basic authentication
             </summary>
             <returns>Token</returns>
         </member>

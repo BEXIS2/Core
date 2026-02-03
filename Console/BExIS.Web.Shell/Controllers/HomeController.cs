@@ -9,6 +9,7 @@ using BExIS.Web.Shell.Models;
 using System;
 using System.Configuration;
 using System.IO;
+using System.Security.Cryptography;
 using System.Web;
 using System.Web.Mvc;
 using Vaiona.Web.Extensions;
@@ -187,25 +188,33 @@ namespace BExIS.Web.Shell.Controllers
             var site = ConfigurationManager.AppSettings["ApplicationVersion"];
 
             // Database
-            using (var versionManager = new VersionManager())
+            var versionManager = new VersionManager();
+
+            versionManager.Create(Guid.NewGuid().ToString("N").Substring(0, 6), Guid.NewGuid().ToString("N").Substring(0, 3));
+            versionManager.Create(Guid.NewGuid().ToString("N").Substring(0, 6), Guid.NewGuid().ToString("N").Substring(0, 3));
+            versionManager.Create(Guid.NewGuid().ToString("N").Substring(0, 6), Guid.NewGuid().ToString("N").Substring(0, 3));
+            versionManager.Create(Guid.NewGuid().ToString("N").Substring(0, 6), Guid.NewGuid().ToString("N").Substring(0, 3));
+            versionManager.Create(Guid.NewGuid().ToString("N").Substring(0, 6), Guid.NewGuid().ToString("N").Substring(0, 3));
+            versionManager.Create(Guid.NewGuid().ToString("N").Substring(0, 6), Guid.NewGuid().ToString("N").Substring(0, 3));
+            versionManager.Create(Guid.NewGuid().ToString("N").Substring(0, 6), Guid.NewGuid().ToString("N").Substring(0, 3));
+            versionManager.Create(Guid.NewGuid().ToString("N").Substring(0, 6), Guid.NewGuid().ToString("N").Substring(0, 3));
+
+            var database = versionManager.GetLatestVersion().Value;
+
+            // load version from workspace in settings file of general
+
+            string workspace = GeneralSettings.ApplicationVersion;
+
+            var model = new ReadVersionsModel()
             {
-                var database = versionManager.GetLatestVersion().Value;
+                Site = site,
+                Database = database,
+                Workspace = workspace
+            };
 
-                // load version from workspace in settings file of general
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Session Timeout", this.Session.GetTenant());
 
-                string workspace = GeneralSettings.ApplicationVersion;
-
-                var model = new ReadVersionsModel()
-                {
-                    Site = site,
-                    Database = database,
-                    Workspace = workspace
-                };
-
-                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Session Timeout", this.Session.GetTenant());
-
-                return View(model);
-            }
+            return View(model);
         }
 
         protected bool checkPermission(Tuple<string, string, string> LandingPage)
@@ -225,14 +234,14 @@ namespace BExIS.Web.Shell.Controllers
                 var actionName = LandingPage.Item3;
 
                 var userName = HttpContext.User?.Identity?.Name;
-                var operation = operationManager.Find(areaName, controllerName, "*");
+                var operation = operationManager.Get(areaName, controllerName, "*");
 
                 var feature = operation?.Feature;
                 if (feature == null) return true;
 
                 var result = userManager.FindByNameAsync(userName);
 
-                if (featurePermissionManager.HasAccessAsync(result.Result?.Id, feature.Id).Result)
+                if (featurePermissionManager.HasAccess(result.Result?.Id, feature.Id))
                 {
                     return true;
                 }
@@ -243,8 +252,6 @@ namespace BExIS.Web.Shell.Controllers
             }
             finally
             {
-                featurePermissionManager.Dispose();
-                operationManager.Dispose();
                 userManager.Dispose();
             }
         }

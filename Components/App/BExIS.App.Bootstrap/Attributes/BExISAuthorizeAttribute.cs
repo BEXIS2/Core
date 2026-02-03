@@ -19,15 +19,15 @@ namespace BExIS.App.Bootstrap.Attributes
         {
             try
             {
-                using (var featurePermissionManager = new FeaturePermissionManager())
-                using (var operationManager = new OperationManager())
                 using (var userManager = new UserManager())
                 using (var identityUserService = new IdentityUserService(userManager))
                 {
+                    var operationManager = new OperationManager();
+                    var featurePermissionManager = new FeaturePermissionManager();
                     var areaName = filterContext.RouteData.DataTokens.Keys.Contains("area") ? filterContext.RouteData.DataTokens["area"].ToString() : "Shell";
                     var controllerName = filterContext.ActionDescriptor.ControllerDescriptor.ControllerName;
                     var actionName = filterContext.ActionDescriptor.ActionName;
-                    var operation = operationManager.Find(areaName, controllerName, "*");
+                    var operation = operationManager.Get(areaName, controllerName, "*");
 
                     if (operation == null)
                     {
@@ -37,7 +37,7 @@ namespace BExIS.App.Bootstrap.Attributes
                     else
                     {
                         var feature = operation.Feature;
-                        if (feature != null && !featurePermissionManager.HasAccessAsync(null, feature.Id).Result)
+                        if (feature != null && !featurePermissionManager.HasAccess(null, feature.Id))
                         {
                             User user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(filterContext.HttpContext).Result;
 
@@ -47,7 +47,7 @@ namespace BExIS.App.Bootstrap.Attributes
                             }
                             else
                             {
-                                if (!featurePermissionManager.HasAccessAsync(user.Id, feature.Id).Result)
+                                if (!featurePermissionManager.HasAccess(user.Id, feature.Id))
                                 {
                                     filterContext.SetResponse(HttpStatusCode.Forbidden);
                                 }

@@ -198,16 +198,16 @@ namespace BExIS.Utils.Models
         }
 
         ///// <summary>
-        ///// Get a SearchCriterion from SerachCriteriaList
+        ///// Find a SearchCriterion from SerachCriteriaList
         ///// </summary>
         ///// <param name="name">Name of the SearchCriterion</param>
         ///// <returns>SearchCriterion or null</returns>
-        //private SearchCriterion Get(string name) {
+        //private SearchCriterion Find(string name) {
         //    return SearchCriteriaList.Where(p => p.SearchComponent.Name.Equals(name, StringComparison.InvariantCulture)).FirstOrDefault();
         //}
 
         /// <summary>
-        /// Get a SearchCriterion from SerachCriteriaList
+        /// Find a SearchCriterion from SerachCriteriaList
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>

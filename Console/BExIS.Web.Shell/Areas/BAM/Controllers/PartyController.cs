@@ -323,8 +323,8 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 partyRelationshipManager = new PartyRelationshipTypeManager();
                 foreach (var partyRelationship in partyRelationships)
                 {
-                    // Party TargetParty = partyManager.PartyRepository.Get(partyRelationship.TargetParty.Id);
-                    // PartyRelationshipType partyRelationshipType = partyRelationshipManager.PartyRelationshipTypeRepository.Get(partyRelationship.PartyRelationshipType.Id);
+                    // Party TargetParty = partyManager.PartyRepository.Find(partyRelationship.TargetParty.Id);
+                    // PartyRelationshipType partyRelationshipType = partyRelationshipManager.PartyRelationshipTypeRepository.Find(partyRelationship.PartyRelationshipType.Id);
                     PartyTypePair partyTypePair = partyRelationshipManager.PartyTypePairRepository.Get(partyRelationship.PartyTypePair.Id);
                     //Min date value is sent from telerik date time element, if it was empty
                     if (partyRelationship.EndDate == DateTime.MinValue)

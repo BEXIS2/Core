@@ -17,7 +17,7 @@ namespace BExIS.Utils.Extensions
 
             foreach (var filePath in files)
             {
-                // Get the file name (not the full path)
+                // Find the file name (not the full path)
                 string fileName = Path.GetFileName(filePath);
 
                 var entry = !string.IsNullOrEmpty(zipPath) ? archive.CreateEntry($"{zipPath}{fileName}") : archive.CreateEntry($"{fileName}");              

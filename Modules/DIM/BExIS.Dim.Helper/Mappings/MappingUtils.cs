@@ -1230,7 +1230,7 @@ namespace BExIS.Dim.Helpers.Mappings
         }
 
         /// <summary>
-        /// Get datatype from a target as one of the type of MetadataAttributeUsage,MetadataNestedAttributeUsage, SimpleMetadataAttribute
+        /// Find datatype from a target as one of the type of MetadataAttributeUsage,MetadataNestedAttributeUsage, SimpleMetadataAttribute
         /// </summary>
         /// <param name="key"></param>
         /// <param name="metadataStrutcureId"></param>
@@ -1268,7 +1268,7 @@ namespace BExIS.Dim.Helpers.Mappings
 
         #region concept
         ///// <summary>
-        ///// Get Metadata of a dataset in a select concept structure
+        ///// Find Metadata of a dataset in a select concept structure
         ///// </summary>
         ///// <param name="metadataStructureId"></param>
         ///// <param name="conceptId"></param>
@@ -1371,7 +1371,7 @@ namespace BExIS.Dim.Helpers.Mappings
         //}
 
         /// <summary>
-        /// Get Metadata of a dataset in a select concept and use the structure of the existing xpath
+        /// Find Metadata of a dataset in a select concept and use the structure of the existing xpath
         /// </summary>
         /// <param name="metadataStructureId"></param>
         /// <param name="conceptId"></param>

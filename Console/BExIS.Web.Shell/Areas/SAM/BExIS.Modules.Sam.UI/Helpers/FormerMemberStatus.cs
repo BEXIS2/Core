@@ -17,21 +17,17 @@ namespace BExIS.Modules.SAM.UI.Helpers
         /// <returns>True if user is in role.</returns>
         public static bool IsFormerMember(long userId, string formerMemberRole)
         {
-            bool isAlumni = false;
-            try
+            using (GroupStore groupManager = new GroupStore())
             {
-                using (GroupManager groupManager = new GroupManager())
-                {
-                    var alumniGroup = groupManager.Groups.Where(g => g.Name.ToLower() == formerMemberRole.ToLower()).FirstOrDefault();
-                    isAlumni = alumniGroup.Users.Any(u => u.Id == userId);
-                }
-            }
-            catch
-            {
-                // do nothing
-            }
+                var alumniGroup = groupManager.FindByNameAsync(formerMemberRole).Result;
 
-            return isAlumni;
+                if(alumniGroup == null)
+                {
+                    return false;
+                }
+
+                return alumniGroup.Users.Any(u => u.Id == userId);
+            }
         }
 
         /// <summary>
@@ -46,16 +42,17 @@ namespace BExIS.Modules.SAM.UI.Helpers
             //entity and feature permissions
             using (var alumniEntityPermissionManager = new FormerMemberEntityPermissionManager())
             using (var alumniFeaturePermissionManager = new FormerMemberFeaturePermissionManager())
-            using (var featurePermissionManager = new FeaturePermissionManager())
-            using (var groupManager = new GroupManager())
+            using (var groupManager = new GroupStore())
             using (var alumniUsersGroupsRelationManager = new FormerMemberUsersGroupsRelationManager())
             {
+                var featurePermissionManager = new FeaturePermissionManager();
+
                 //get former member group
                 var group = groupManager.FindByNameAsync(formerMemberRole).Result;
                 if (!group.Users.Contains(user))
                 {
                     //transfer all feature permission
-                    var featurePermissions = featurePermissionManager.FeaturePermissionRepository.Get(a => a.Subject.Id == user.Id).ToList();
+                    var featurePermissions = featurePermissionManager.Get(a => a.Subject.Id == user.Id).ToList();
                     if (featurePermissions.Count > 0)
                     {
                         //Create for each feature permission a alumni feature permission
@@ -64,7 +61,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
                         //Remove original feature permissions
                         for (int i = 0; i < featurePermissions.Count; i++)
                         {
-                            var result_delete = featurePermissionManager.DeleteAsync(featurePermissions[i].Subject.Id, featurePermissions[i].Feature.Id).Result;
+                            var result_delete = featurePermissionManager.Delete(featurePermissions[i].Subject.Id, featurePermissions[i].Feature.Id);
                         }
                     }
 
@@ -106,10 +103,10 @@ namespace BExIS.Modules.SAM.UI.Helpers
 
             using (var alumniEntityPermissionManager = new FormerMemberEntityPermissionManager())
             using (var alumniFeaturePermissionManager = new FormerMemberFeaturePermissionManager())
-            using (var featurePermissionManager = new FeaturePermissionManager())
-            using (var groupManager = new GroupManager())
+            using (var groupManager = new GroupStore())
             using (var alumniUsersGroupsRelationManager = new FormerMemberUsersGroupsRelationManager())
             {
+                var featurePermissionManager = new FeaturePermissionManager();
                 var group = groupManager.FindByNameAsync(formerMemberRole).Result;
                 if (group.Users.Any(u => u.Id == user.Id))
                 {
@@ -119,7 +116,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
                     {
                         foreach (var permission in alumniFeaturePermissions)
                         {
-                            var r = featurePermissionManager.CreateAsync(user, permission.Feature, permission.PermissionType).Result;
+                            var r = featurePermissionManager.Create(user, permission.Feature, permission.PermissionType);
                         }
 
                         //remove

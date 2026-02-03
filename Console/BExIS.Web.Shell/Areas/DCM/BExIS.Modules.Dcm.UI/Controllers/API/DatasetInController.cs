@@ -102,7 +102,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
                         dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructureId);
 
                     //if datastructure is not a structured one
-                    //if (dataStructure == null) dataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(dataset.DataStructureId);
+                    //if (dataStructure == null) dataStructure = dataStructureManager.UnStructuredDataStructureRepo.Find(dataset.DataStructureId);
 
                     //if (dataStructure == null)
                     //{

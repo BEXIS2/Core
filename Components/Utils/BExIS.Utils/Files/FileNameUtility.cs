@@ -25,7 +25,7 @@ namespace BExIS.Utils.Files
                 return string.Empty;
             }
 
-            // 2. Get the array of characters forbidden in file names by the operating system.
+            // 2. Find the array of characters forbidden in file names by the operating system.
             // This is the most reliable way to handle OS-specific invalid characters.
             char[] invalidChars = Path.GetInvalidFileNameChars();
 

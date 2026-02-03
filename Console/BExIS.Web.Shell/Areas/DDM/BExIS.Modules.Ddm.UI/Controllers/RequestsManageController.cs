@@ -23,11 +23,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             using (var entityManager = new EntityManager())
             using (var entityPermissionManager = new EntityPermissionManager())
-            using (var decisionManager = new DecisionManager())
             using (var uow = this.GetUnitOfWork())
             {
                 try
                 {
+                    var decisionManager = new DecisionManager();
                     decisionManager.Accept(decisionId, "");
 
                     var requestRepository = uow.GetRepository<Request>();
@@ -58,12 +58,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             using (var entityManager = new EntityManager())
             using (var entityPermissionManager = new EntityPermissionManager())
-            using (var decisionManager = new DecisionManager())
             {
+                var decisionManager = new DecisionManager();
                 var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
 
                 // Source + Transformation - Data
-                var decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId && d.DecisionMaker.Name == HttpContext.User.Identity.Name);
+                var decisions = decisionManager.Find(d => d.Request.Entity.Id == entityId && d.DecisionMaker.Name == HttpContext.User.Identity.Name);
 
                 List<DecisionGridRowModel> model = new List<DecisionGridRowModel>();
 
@@ -123,11 +123,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             using (var entityManager = new EntityManager())
             using (var entityPermissionManager = new EntityPermissionManager())
-            using (var decisionManager = new DecisionManager())
             using (var uow = this.GetUnitOfWork())
             {
                 try
                 {
+                    var decisionManager = new DecisionManager();
                     decisionManager.Reject(requestId, "");
 
                     var requestRepository = uow.GetRepository<Request>();
@@ -151,10 +151,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 {
                     throw e;
                 }
-                finally
-                {
-                    decisionManager.Dispose();
-                }
             }
         }
 
@@ -162,12 +158,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             using (var entityManager = new EntityManager())
             using (var entityPermissionManager = new EntityPermissionManager())
-            using (var requestManager = new RequestManager())
             {
+                var requestManager = new RequestManager();
                 var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
 
                 // Source + Transformation - Data
-                var requests = requestManager.Requests.Where(r => r.Entity.Id == entityId && r.Applicant.Name == HttpContext.User.Identity.Name);
+                var requests = requestManager.Find(r => r.Entity.Id == entityId && r.Applicant.Name == HttpContext.User.Identity.Name);
 
                 List<RequestGridRowModel> model = new List<RequestGridRowModel>();
 
@@ -204,12 +200,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         [HttpPost]
         public void Withdraw(long requestId)
         {
-            using (var decisionManager = new DecisionManager())
             using (var entityManager = new EntityManager())
             using (var uow = this.GetUnitOfWork())
             {
                 try
                 {
+                    var decisionManager = new DecisionManager();
                     decisionManager.Withdraw(requestId);
 
                     var requestRepository = uow.GetRepository<Request>();

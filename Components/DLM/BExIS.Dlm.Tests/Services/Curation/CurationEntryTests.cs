@@ -30,7 +30,7 @@ namespace BExIS.Dlm.Tests.Services.Curation
             helper = new TestSetupHelper(WebApiConfig.Register, false);
 
             using (UserManager userManager = new UserManager())
-            using (GroupManager groupManager = new GroupManager())
+            using (GroupStore groupManager = new GroupStore())
             {
                 Group group = new Group();
                 group.Name = "curator";

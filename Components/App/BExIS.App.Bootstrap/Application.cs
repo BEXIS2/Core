@@ -146,6 +146,8 @@ namespace BExIS.App.Bootstrap
             ModuleManager.StartModules();
 
             // generate settings
+
+            ControllerBuilder.Current.SetControllerFactory(new IoCControllerFactory());
         }
 
         private void initTenancy()

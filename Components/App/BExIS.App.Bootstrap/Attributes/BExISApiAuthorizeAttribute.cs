@@ -23,15 +23,15 @@ namespace BExIS.App.Bootstrap.Attributes
         {
             try
             {
-                using (var featurePermissionManager = new FeaturePermissionManager())
-                using (var operationManager = new OperationManager())
                 using (var userManager = new UserManager())
                 using (var identityUserService = new IdentityUserService(userManager))
                 {
+                    var operationManager = new OperationManager();
+                    var featurePermissionManager = new FeaturePermissionManager();
                     var areaName = "Api";
                     var controllerName = actionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
                     var actionName = actionContext.ActionDescriptor.ActionName;
-                    var operation = operationManager.Find(areaName, controllerName, "*");
+                    var operation = operationManager.Get(areaName, controllerName, "*");
 
                     if (operation == null)
                     {
@@ -124,9 +124,9 @@ namespace BExIS.App.Bootstrap.Attributes
                     }
 
                     var feature = operation.Feature;
-                    if (feature != null && !featurePermissionManager.ExistsAsync(null, feature.Id).Result)
+                    if (feature != null && !featurePermissionManager.Exists(null, feature.Id))
                     {
-                        if (!featurePermissionManager.HasAccessAsync(user.Id, feature.Id).Result)
+                        if (!featurePermissionManager.HasAccess(user.Id, feature.Id))
                         {
                             actionContext.Response = new HttpResponseMessage(HttpStatusCode.Forbidden);
                             actionContext.Response.Content = new StringContent("The system denied the access.");

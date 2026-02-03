@@ -21,6 +21,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class UsersController : BaseController
     {
+        private readonly GroupManager _groupManager;
+
+        public UsersController(GroupManager groupManager)
+        {
+            _groupManager = groupManager;
+        }
+
         [HttpPost]
         public async Task<bool> AddUserToGroup(long userId, string groupName)
         {
@@ -116,22 +123,20 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [GridAction]
         public ActionResult Groups_Select(long userId)
         {
-            var groupManager = new GroupManager();
-
             try
             {
                 var groups = new List<GroupMembershipGridRowModel>();
 
-                foreach (var group in groupManager.Groups)
+                foreach (var group in _groupManager.Roles)
                 {
                     groups.Add(GroupMembershipGridRowModel.Convert(group, userId));
                 }
 
                 return View(new GridModel<GroupMembershipGridRowModel> { Data = groups });
             }
-            finally
+            catch(Exception e)
             {
-                groupManager.Dispose();
+                return View(new GridModel<GroupMembershipGridRowModel> { Data = new List<GroupMembershipGridRowModel>() });
             }
         }
 

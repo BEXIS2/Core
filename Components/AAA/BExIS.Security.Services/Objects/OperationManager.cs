@@ -1,35 +1,31 @@
 ﻿using BExIS.Security.Entities.Objects;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Objects
 {
-    public class OperationManager : IDisposable
+    public class OperationManager
     {
-        private readonly IUnitOfWork _guow;
-        private bool _isDisposed;
-
-        public OperationManager()
-        {
-            _guow = this.GetIsolatedUnitOfWork();
-            OperationRepository = _guow.GetReadOnlyRepository<Operation>();
-        }
-
-        ~OperationManager()
-        {
-            Dispose(true);
-        }
-
-        public IReadOnlyRepository<Operation> OperationRepository { get; }
-
-        public IQueryable<Operation> Operations => OperationRepository.Query();
-
         public Operation Create(string module, string controller, string action, Feature feature = null)
         {
+            if (string.IsNullOrWhiteSpace(module))
+                throw new ArgumentException(nameof(module));
+
+            if (string.IsNullOrWhiteSpace(controller))
+                throw new ArgumentException(nameof(controller));
+
+            if (string.IsNullOrWhiteSpace(action))
+                throw new ArgumentException(nameof(action));
+
             using (var uow = this.GetUnitOfWork())
             {
-                if (Exists(module, controller, action))
+                var operationRepository = uow.GetRepository<Operation>();
+                
+                if (operationRepository.Query(r => r.Module == module && r.Controller == controller && r.Action == action).Any())
                     return null;
 
                 var operation = new Operation()
@@ -40,17 +36,11 @@ namespace BExIS.Security.Services.Objects
                     Feature = feature
                 };
 
-                var operationRepository = uow.GetRepository<Operation>();
                 operationRepository.Put(operation);
                 uow.Commit();
 
                 return operation;
             }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
         }
 
         public bool Exists(string module, string controller, string action)
@@ -68,20 +58,30 @@ namespace BExIS.Security.Services.Objects
                 if (string.IsNullOrEmpty(action))
                     return false;
 
-                return operationRepository.Query(o => o.Module.ToUpperInvariant() == module.ToUpperInvariant() && o.Controller.ToUpperInvariant() == controller.ToUpperInvariant() && o.Action.ToUpperInvariant() == action.ToUpperInvariant()).Count() == 1;
+                return operationRepository.Query(o => o.Module == module && o.Controller == controller && o.Action == action).Take(2).Count() == 1;
             }
         }
 
-        public Operation Find(string module, string controller, string action)
+
+        public IList<Operation> Find(Expression<Func<Operation, bool>> predicate)
+        {
+            using(var uow = this.GetUnitOfWork())
+            {
+                var operationRepository = uow.GetReadOnlyRepository<Operation>();
+                return operationRepository.Query(predicate).ToList();
+            }
+        }
+
+        public Operation Get(string module, string controller, string action)
         {
             using (var uow = this.GetUnitOfWork())
             {
                 var operationRepository = uow.GetReadOnlyRepository<Operation>();
-                return operationRepository.Query(x => x.Module.ToUpperInvariant() == module.ToUpperInvariant() && x.Controller.ToUpperInvariant() == controller.ToUpperInvariant() && x.Action.ToUpperInvariant() == action.ToUpperInvariant()).FirstOrDefault();
+                return operationRepository.Query(x => x.Module == module && x.Controller == controller && x.Action == action).SingleOrDefault();
             }
         }
 
-        public Operation FindById(long operationId)
+        public Operation GetById(long operationId)
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -90,28 +90,13 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
-        public void Update(Operation entity)
+        public void Update(Operation operation)
         {
             using (var uow = this.GetUnitOfWork())
             {
                 var repo = uow.GetRepository<Operation>();
-                repo.Merge(entity);
-                var merged = repo.Get(entity.Id);
-                repo.Put(merged);
+                repo.Merge(operation);
                 uow.Commit();
-            }
-        }
-
-        protected void Dispose(bool disposing)
-        {
-            if (!_isDisposed)
-            {
-                if (disposing)
-                {
-                    if (_guow != null)
-                        _guow.Dispose();
-                    _isDisposed = true;
-                }
             }
         }
     }

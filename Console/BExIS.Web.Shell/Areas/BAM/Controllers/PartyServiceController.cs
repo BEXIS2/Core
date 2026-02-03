@@ -63,7 +63,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         {
                             //the duration is from current datetime up to the end of target party date
                             var TargetParty = partyManager.PartyRepository.Get(partyRelationship.TargetParty.Id);
-                            // var partyRelationshipType = partyRelationshipManager.PartyRelationshipTypeRepository.Get(partyRelationship.PartyRelationshipType.Id);
+                            // var partyRelationshipType = partyRelationshipManager.PartyRelationshipTypeRepository.Find(partyRelationship.PartyRelationshipType.Id);
                             var partyTypePair = partyRelationshipManager.PartyTypePairRepository.Get(partyRelationship.PartyTypePair.Id);
                             partyManager.AddPartyRelationship(party, TargetParty, partyRelationship.Title, partyRelationship.Description, partyTypePair, DateTime.Now, TargetParty.EndDate, partyRelationship.Scope);
                         }

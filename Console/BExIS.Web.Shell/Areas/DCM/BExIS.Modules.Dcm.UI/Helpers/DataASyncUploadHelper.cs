@@ -375,7 +375,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             }
                             comment += ")";
 
-                            // ToDo: Get Comment from ui and users
+                            // ToDo: Find Comment from ui and users
                             dm.CheckInDataset(id, numberOfRows + " rows", User.Name, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, TagType.None);
 
                             Cache.UpdateSetup.UpdateMethod = UpdateMethod.Update;
@@ -515,7 +515,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                             string comment = string.Join(", ", c.ToArray());
 
-                            // ToDo: Get Comment from ui and users
+                            // ToDo: Find Comment from ui and users
                             dm.CheckInDataset(id, comment, User.Name, ViewCreationBehavior.None, TagType.None);
                         }
                         catch (Exception ex)

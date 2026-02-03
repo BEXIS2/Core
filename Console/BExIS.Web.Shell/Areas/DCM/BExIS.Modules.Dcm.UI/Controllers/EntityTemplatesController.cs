@@ -24,6 +24,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class EntityTemplatesController : Controller
     {
+        private readonly GroupManager _groupManager;
+
+        public EntityTemplatesController(GroupManager groupManager)
+        {
+            _groupManager = groupManager;
+        }
+
         // GET: EntityTemplate
         public ActionResult Index()
         {
@@ -214,12 +221,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public JsonResult Groups()
         {
             List<KeyValuePair<long, string>> tmp = new List<KeyValuePair<long, string>>();
-            using (var groupManager = new GroupManager())
+            foreach (var group in _groupManager.Get())
             {
-                foreach (var group in groupManager.Groups)
-                {
-                    tmp.Add(new KeyValuePair<long, string>(group.Id, group.Name));
-                }
+                tmp.Add(new KeyValuePair<long, string>(group.Id, group.Name));
             }
 
             return Json(tmp, JsonRequestBehavior.AllowGet);

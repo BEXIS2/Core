@@ -93,7 +93,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             SearchConfig.LoadConfig();
             this.DefaultSearchModel = initDefault();
             this.WorkingSearchModel = initWorking(); //init(WorkingSearchModel); // its better to make a clone form DefualtSearchModel than calling the function twice
-            //this.DefaultSearchModel = Get(this.WorkingSearchModel.CriteriaComponent);
+            //this.DefaultSearchModel = Find(this.WorkingSearchModel.CriteriaComponent);
             this.WorkingSearchModel = Get(this.WorkingSearchModel.CriteriaComponent);
         }
 

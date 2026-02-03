@@ -5,92 +5,23 @@ using BExIS.Security.Entities.Subjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Requests
 {
     public class DecisionManager
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="decisionId"></param>
-        /// <param name="reason"></param>
         public void Accept(long decisionId, string reason)
         {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var decisionRepository = uow.GetRepository<Decision>();
-                var requestRepository = uow.GetRepository<Request>();
-                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                var entityRepository = uow.GetRepository<Entity>();
-                var userRepository = uow.GetRepository<User>();
-
-                var decision = decisionRepository.Get(decisionId);
-
-                if (decision != null)
-                {
-                    decision.Status = DecisionStatus.Accepted;
-                    decision.DecisionDate = DateTime.Now;
-                    decision.Reason = reason;
-
-                    decisionRepository.Merge(decision);
-                    var mergedDecision = decisionRepository.Get(decision.Id);
-                    decisionRepository.Put(mergedDecision);
-
-                    if (decisionRepository.Query(m => m.Request.Id == decision.Request.Id).ToList()
-                        .All(m => m.Status != DecisionStatus.Open))
-                    {
-                        var request = requestRepository.Get(decision.Request.Id);
-
-                        if (request != null)
-                        {
-                            request.Status = RequestStatus.Accepted;
-
-                            requestRepository.Merge(request);
-                            var mergedRequest = requestRepository.Get(request.Id);
-                            requestRepository.Put(mergedRequest);
-
-                            var entityPermission =
-                            entityPermissionRepository.Query(
-                                m =>
-                                    m.Subject.Id == request.Applicant.Id && m.Entity.Id == request.Entity.Id &&
-                                    m.Key == request.Key).FirstOrDefault();
-
-                            if (entityPermission != null)
-                            {
-                                if ((entityPermission.Rights & 1) == 0) entityPermission.Rights += 1;
-                                if ((entityPermission.Rights & 2) == 0) entityPermission.Rights += 2;
-
-                                entityPermissionRepository.Merge(entityPermission);
-                                var mergedEntityPermission = entityPermissionRepository.Get(request.Id);
-                                entityPermissionRepository.Put(mergedEntityPermission);
-                            }
-                            else
-                            {
-                                entityPermission = new EntityPermission()
-                                {
-                                    Entity = entityRepository.Get(request.Entity.Id),
-                                    Key = request.Key,
-                                    Rights = request.Rights,
-                                    Subject = userRepository.Get(request.Applicant.Id)
-                                };
-
-                                entityPermissionRepository.Put(entityPermission);
-                            }
-                        }
-                    }
-                }
-
-                uow.Commit();
-            }
+            updateDecision(decisionId, DecisionStatus.Accepted, reason, RequestStatus.Accepted, grantEntityPermissions: true);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="decisionId"></param>
-        /// <returns></returns>
+        public void Reject(long decisionId, string reason)
+        {
+            updateDecision(decisionId, DecisionStatus.Rejected, reason, RequestStatus.Rejected, grantEntityPermissions: false);
+        }
+
         public bool Delete(long decisionId)
         {
             using (var uow = this.GetUnitOfWork())
@@ -107,7 +38,7 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
-        public List<Decision> Get()
+        public IList<Decision> Find()
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -116,7 +47,7 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
-        public List<Decision> Get(Func<Decision, bool> predicate)
+        public IList<Decision> Find(Expression<Func<Decision, bool>> predicate)
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -125,12 +56,7 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
-        public bool Exists(Func<Decision, bool> predicate)
+        public bool Exists(Expression<Func<Decision, bool>> predicate)
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -139,61 +65,12 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="decisionId"></param>
-        /// <returns></returns>
         public Decision Get(long decisionId)
         {
             using (var uow = this.GetUnitOfWork())
             {
                 var decisionRepository = uow.GetReadOnlyRepository<Decision>();
                 return decisionRepository.Get(decisionId);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="decisionId"></param>
-        /// <param name="reason"></param>
-        public void Reject(long decisionId, string reason)
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var decisionRepository = uow.GetRepository<Decision>();
-                var requestRepository = uow.GetRepository<Request>();
-
-                var decision = decisionRepository.Get(decisionId);
-
-                if (decision != null)
-                {
-                    decision.Status = DecisionStatus.Rejected;
-                    decision.DecisionDate = DateTime.Now;
-                    decision.Reason = reason;
-
-                    decisionRepository.Merge(decision);
-                    var mergedDecision = decisionRepository.Get(decision.Id);
-                    decisionRepository.Put(mergedDecision);
-
-                    if (decisionRepository.Query(m => m.Request.Id == decision.Request.Id).ToList()
-                        .All(m => m.Status != DecisionStatus.Open))
-                    {
-                        var request = requestRepository.Get(decision.Request.Id);
-
-                        if (request != null)
-                        {
-                            request.Status = RequestStatus.Rejected;
-
-                            requestRepository.Merge(request);
-                            var mergedRequest = requestRepository.Get(request.Id);
-                            requestRepository.Put(mergedRequest);
-                        }
-                    }
-
-                    uow.Commit();
-                }
             }
         }
 
@@ -205,22 +82,16 @@ namespace BExIS.Security.Services.Requests
                 var requestRepository = uow.GetRepository<Request>();
 
                 var request = requestRepository.Get(requestId);
+                if (request == null) return;
 
-                if (request != null)
-                {
-                    request.Status = RequestStatus.Withdrawn;
+                request.Status = RequestStatus.Withdrawn;
+                requestRepository.Put(request);
 
-                    requestRepository.Merge(request);
-                    var mergedRequest = requestRepository.Get(request.Id);
-                    requestRepository.Put(mergedRequest);
+                var decision = decisionRepository.Query(m => m.Request.Id == requestId).FirstOrDefault();
+                if (decision == null) return;
 
-                    var decision = decisionRepository.Query(m => m.Request.Id == requestId).FirstOrDefault();
-                    decision.Status = DecisionStatus.Withdrawn;
-
-                    decisionRepository.Merge(decision);
-                    var mergedDecision = decisionRepository.Get(decision.Id);
-                    decisionRepository.Put(mergedDecision);
-                }
+                decision.Status = DecisionStatus.Withdrawn;
+                decisionRepository.Put(decision);
 
                 uow.Commit();
             }
@@ -232,8 +103,70 @@ namespace BExIS.Security.Services.Requests
             {
                 var decisionRepository = uow.GetRepository<Decision>();
                 decisionRepository.Merge(decision);
-                var merged = decisionRepository.Get(decision.Id);
-                decisionRepository.Put(merged);
+                uow.Commit();
+            }
+        }
+
+        private void updateDecision(long decisionId, DecisionStatus decisionStatus, string reason, RequestStatus requestStatus, bool grantEntityPermissions)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var decisionRepository = uow.GetRepository<Decision>();
+                var requestRepository = uow.GetRepository<Request>();
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                var entityRepository = uow.GetRepository<Entity>();
+                var userRepository = uow.GetRepository<User>();
+
+                var decision = decisionRepository.Get(decisionId);
+                if (decision == null) return;
+
+                decision.Status = decisionStatus;
+                decision.DecisionDate = DateTime.UtcNow;
+                decision.Reason = reason;
+                decisionRepository.Put(decision);
+
+                // Prüfen, ob alle Decisions für Request geschlossen sind
+                var allClosed = !decisionRepository.Query(d => d.Request.Id == decision.Request.Id).Any(d => d.Status == DecisionStatus.Open);
+
+                if (!allClosed)
+                {
+                    uow.Commit();
+                    return;
+                }
+
+                var request = requestRepository.Get(decision.Request.Id);
+                if (request != null)
+                {
+                    request.Status = requestStatus;
+                    requestRepository.Put(request);
+
+                    if (grantEntityPermissions)
+                    {
+                        var entityPermission = entityPermissionRepository
+                            .Query(ep => ep.Subject.Id == request.Applicant.Id &&
+                                         ep.Entity.Id == request.Entity.Id &&
+                                         ep.Key == request.Key)
+                            .FirstOrDefault();
+
+                        if (entityPermission != null)
+                        {
+                            entityPermission.Rights |= request.Rights;
+                            entityPermissionRepository.Put(entityPermission);
+                        }
+                        else
+                        {
+                            entityPermission = new EntityPermission
+                            {
+                                Entity = entityRepository.Get(request.Entity.Id),
+                                Key = request.Key,
+                                Rights = request.Rights,
+                                Subject = userRepository.Get(request.Applicant.Id)
+                            };
+                            entityPermissionRepository.Put(entityPermission);
+                        }
+                    }
+                }
+
                 uow.Commit();
             }
         }

@@ -24,10 +24,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public void Accept(long decisionId)
         {
-            using (var decisionManager = new DecisionManager())
             using (var entityManager = new EntityManager())
             using (var uow = this.GetUnitOfWork())
             {
+                var decisionManager = new DecisionManager();
                 decisionManager.Accept(decisionId, "");
 
                 var requestRepository = uow.GetRepository<Request>();
@@ -54,20 +54,20 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             using (var entityManager = new EntityManager())
             using (var entityPermissionManager = new EntityPermissionManager())
-            using (var decisionManager = new DecisionManager())
             {
+                var decisionManager = new DecisionManager();
                 var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
 
-                IQueryable<Decision> decisions = null;
+                IList<Decision> decisions = null;
 
                 if (status == "Open")
                 {
                     ViewData["status"] = "Open";
-                    decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId && d.Request.Status == 0);
+                    decisions = decisionManager.Find(d => d.Request.Entity.Id == entityId && d.Request.Status == 0);
                 }
                 else
                 {
-                    decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId);
+                    decisions = decisionManager.Find(d => d.Request.Entity.Id == entityId);
                 }
 
                 List<DecisionGridRowModel> model = new List<DecisionGridRowModel>();
@@ -123,12 +123,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public void Reject(long requestId)
         {
-            using (var decisionManager = new DecisionManager())
             using (var entityManager = new EntityManager())
             using (var uow = this.GetUnitOfWork())
             {
                 try
                 {
+                    var decisionManager = new DecisionManager();
                     decisionManager.Reject(requestId, "");
 
                     var requestRepository = uow.GetRepository<Request>();
@@ -159,12 +159,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public void Withdraw(long requestId)
         {
-            using (var decisionManager = new DecisionManager())
             using (var entityManager = new EntityManager())
             using (var uow = this.GetUnitOfWork())
             {
                 try
                 {
+                    var decisionManager = new DecisionManager();
                     decisionManager.Withdraw(requestId);
 
                     var requestRepository = uow.GetRepository<Request>();

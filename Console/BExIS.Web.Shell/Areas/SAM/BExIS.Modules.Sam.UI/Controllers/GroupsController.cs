@@ -13,12 +13,18 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
-using Vaiona.Web.Mvc;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
-    public class GroupsController : BaseController
+    public class GroupsController : Controller
     {
+        private readonly GroupManager _groupManager;
+
+        public GroupsController(GroupManager groupManager)
+        {
+            _groupManager = groupManager ?? throw new ArgumentNullException(nameof(groupManager));
+        }
+
         [HttpPost]
         public async Task<bool> AddUserToGroupAsync(long userId, string groupName)
         {
@@ -47,87 +53,73 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateAsync(CreateGroupModel model)
         {
-            using (var groupManager = new GroupManager())
-            using (var identityGroupService = new IdentityGroupService(groupManager))
+            try
             {
-                try
+                if (!ModelState.IsValid) return PartialView("_Create", model);
+
+                var group = new Group()
                 {
-                    if (!ModelState.IsValid) return PartialView("_Create", model);
+                    Name = model.Name,
+                    DisplayName = model.Name,
+                    Description = model.Description
+                };
 
-                    var group = new Group()
-                    {
-                        Name = model.Name,
-                        DisplayName = model.Name,
-                        Description = model.Description
-                    };
-
-                    var result = await identityGroupService.CreateAsync(group);
-                    if (result.Succeeded)
-                    {
-                        return Json(new { success = true });
-                    }
-
-                    AddErrors(result);
-
-                    return PartialView("_Create", model);
-                }
-                catch(Exception ex)
+                var result = await _groupManager.CreateAsync(group);
+                if (result.Succeeded)
                 {
-                    return PartialView("_Create", model);
+                    return Json(new { success = true });
                 }
-                
+
+                AddErrors(result);
+
+                return PartialView("_Create", model);
+            }
+            catch (Exception ex)
+            {
+                return PartialView("_Create", model);
             }
         }
 
         [HttpPost]
         public async Task<bool> DeleteAsync(long groupId)
         {
-            using (var groupManager = new GroupManager())
-            using (var identityGroupService = new IdentityGroupService(groupManager))
+            try
             {
-                try
-                {
-                    var result = await identityGroupService.DeleteByIdAsync(groupId);
-                    return result;
-                }
-                catch(Exception ex)
-                {
-                    return false;
-                }
-                
+                var result = _groupManager.Delete(groupId);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return false;
             }
         }
 
         [GridAction(EnableCustomBinding = true)]
         public ActionResult Groups_Select(GridCommand command)
         {
-            using (var groupManager = new GroupManager())
-            using (var identityGroupService = new IdentityGroupService(groupManager))
+            try
             {
-                try
+                var groups = new List<GroupGridRowModel>();
+                int count = _groupManager.Roles.Count();
+                if (command != null)// filter subjects based on grid filter settings
                 {
-                    var groups = new List<GroupGridRowModel>();
-                    int count = identityGroupService.Roles.Count();
-                    if (command != null)// filter subjects based on grid filter settings
-                    {
-                        FilterExpression filter = TelerikGridHelper.Convert(command.FilterDescriptors.ToList());
-                        OrderByExpression orderBy = TelerikGridHelper.Convert(command.SortDescriptors.ToList());
+                    FilterExpression filter = TelerikGridHelper.Convert(command.FilterDescriptors.ToList());
+                    OrderByExpression orderBy = TelerikGridHelper.Convert(command.SortDescriptors.ToList());
 
-                        groups = identityGroupService.GetGroups(filter, orderBy, command.Page, command.PageSize, out count).Select(GroupGridRowModel.Convert).ToList();
-                    }
-                    else
-                    {
-                        groups = identityGroupService.Roles.Select(GroupGridRowModel.Convert).ToList();
-                        count = identityGroupService.Roles.Count();
-                    }
-
-                    return View(new GridModel<GroupGridRowModel> { Data = groups, Total = count });
+                    groups = _groupManager.Find(filter, orderBy, command.Page, command.PageSize, out count).Select(GroupGridRowModel.Convert).ToList();
                 }
-                catch(Exception ex)
+                else
                 {
-                    return View(new GridModel<GroupGridRowModel> { Data = new List<GroupGridRowModel>(), Total = 0 });
+                    groups = _groupManager.Roles.Select(GroupGridRowModel.Convert).ToList();
+                    count = _groupManager.Roles.Count();
                 }
-            }            
+
+                return View(new GridModel<GroupGridRowModel> { Data = groups, Total = count });
+            }
+            catch (Exception ex)
+            {
+                return View(new GridModel<GroupGridRowModel> { Data = new List<GroupGridRowModel>(), Total = 0 });
+            }
         }
 
         /// <summary>
@@ -175,12 +167,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <returns></returns>
         public async Task<ActionResult> UpdateAsync(long groupId)
         {
-            using (var groupManager = new GroupManager())
-            using (var identityGroupService = new IdentityGroupService(groupManager))
+            using (var groupManager = new GroupStore())
             {
                 try
                 {
-                    var group = await identityGroupService.FindByIdAsync(groupId);
+                    var group = await groupManager.FindByIdAsync(groupId);
                     return PartialView("_Update", UpdateGroupModel.Convert(group));
                 }
                 catch(Exception ex)
@@ -198,8 +189,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public async Task<ActionResult> UpdateAsync(UpdateGroupModel model)
         {
-            using (var groupManager = new GroupManager())
-            using (var identityGroupService = new IdentityGroupService(groupManager))
+            using (var groupManager = new GroupStore())
             {
                 try
                 {
@@ -207,12 +197,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     if (!ModelState.IsValid) return PartialView("_Update", model);
 
                     // check if a group with the incoming id exist
-                    var group = identityGroupService.FindByIdAsync(model.Id).Result;
+                    var group = groupManager.FindByIdAsync(model.Id).Result;
                     if (group == null) return PartialView("_Update", model);
 
                     // check group name exist
-                    if (identityGroupService.FindByNameAsync(model.Name).Result != null &&
-                        !identityGroupService.FindByNameAsync(model.Name).Result.Id.Equals(model.Id))
+                    if (groupManager.FindByNameAsync(model.Name).Result != null &&
+                        !groupManager.FindByNameAsync(model.Name).Result.Id.Equals(model.Id))
                     {
                         ModelState.AddModelError("Name", "The name exists already.");
                         if (!ModelState.IsValid) return PartialView("_Update", model);
@@ -222,7 +212,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     group.DisplayName = group.Name;
                     group.Description = model.Description;
 
-                    await identityGroupService.UpdateAsync(group);
+                    await _groupManager.UpdateAsync(group);
                     return Json(new { success = true });
                 }
                 catch(Exception ex)
@@ -281,12 +271,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         public JsonResult ValidateGroupname(string username, long id = 0)
         {
-            using (var groupManager = new GroupManager())
-            using (var identityGroupService = new IdentityGroupService(groupManager))
+            using (var groupManager = new GroupStore())
             {
                 try
                 {
-                    var group = identityGroupService.FindByNameAsync(username);
+                    var group = groupManager.FindByNameAsync(username);
 
                     if (group == null)
                     {

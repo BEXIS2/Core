@@ -25,7 +25,7 @@ namespace BExIS.Web.Shell.Controllers.API
     {
         // GET api/Token/
         /// <summary>
-        /// Get the token based on basic authentication
+        /// Find the token based on basic authentication
         /// </summary>
         /// <returns>Token</returns>
         [HttpGet, GetRoute("api/tokens"), BExISApiAuthorize]

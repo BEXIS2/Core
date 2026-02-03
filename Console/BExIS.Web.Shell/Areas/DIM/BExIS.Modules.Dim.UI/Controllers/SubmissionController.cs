@@ -664,7 +664,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         #region webservices calls STATUS
 
         /// <summary>
-        /// Get Status from publiction
+        /// Find Status from publiction
         /// </summary>
         /// <param name="publication"></param>
         /// <returns></returns>

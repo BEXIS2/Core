@@ -5,6 +5,7 @@ using BExIS.Security.Entities.Subjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -12,11 +13,6 @@ namespace BExIS.Security.Services.Requests
 {
     public class RequestManager
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="requestId"></param>
-        /// <exception cref="InvalidOperationException"></exception>
         public void Accept(long requestId)
         {
             using (var uow = this.GetUnitOfWork())
@@ -36,15 +32,6 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="applicantId"></param>
-        /// <param name="entityId"></param>
-        /// <param name="key"></param>
-        /// <param name="rights"></param>
-        /// <param name="intention"></param>
-        /// <returns></returns>
         public Request Create(long applicantId, long entityId, long key, short rights = 1, string intention = "")
         {
             using (var uow = this.GetUnitOfWork())
@@ -109,11 +96,6 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="requestId"></param>
-        /// <returns></returns>
         public bool Delete(long requestId)
         {
             using (var uow = this.GetUnitOfWork())
@@ -130,12 +112,7 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
-        public bool Exists(Func<Request, bool> predicate)
+        public bool Exists(Expression<Func<Request, bool>> predicate)
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -144,11 +121,34 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        public bool Exists(long applicantId, long entityId, long key)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var requestRepository = uow.GetReadOnlyRepository<Request>();
+
+                var request =
+                    requestRepository.Query(
+                        m => m.Applicant.Id == applicantId && m.Entity.Id == entityId && m.Key == key).FirstOrDefault();
+
+                return request != null;
+            }
+        }
+
+        public bool Exists(long applicantId, long entityId, long key, RequestStatus status)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var requestRepository = uow.GetReadOnlyRepository<Request>();
+
+                var request =
+                    requestRepository.Query(
+                        m => m.Applicant.Id == applicantId && m.Entity.Id == entityId && m.Key == key && m.Status == status).FirstOrDefault();
+
+                return request != null;
+            }
+        }
+
         public Request Get(long id)
         {
             using (var uow = this.GetUnitOfWork())
@@ -158,11 +158,7 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public List<Request> Get()
+        public List<Request> Find()
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -171,12 +167,7 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
-        public List<Request> Get(Func<Request, bool> predicate)
+        public List<Request> Find(Expression<Func<Request, bool>> predicate)
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -185,11 +176,6 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="requestId"></param>
-        /// <exception cref="InvalidOperationException"></exception>
         public void Reject(long requestId)
         {
             using (var uow = this.GetUnitOfWork())
@@ -204,24 +190,18 @@ namespace BExIS.Security.Services.Requests
                 if(request.Status != RequestStatus.Open)
                     throw new InvalidOperationException($"Request {requestId} is not open and cannot be rejected.");
 
-                request.Status = RequestStatus.Accepted;
+                request.Status = RequestStatus.Rejected;
                 requestRepository.Put(request);
                 uow.Commit();
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="request"></param>
         public void Update(Request request)
         {
             using (var uow = this.GetUnitOfWork())
             {
                 var requestRepository = uow.GetRepository<Request>();
                 requestRepository.Merge(request);
-                var merged = requestRepository.Get(request.Id);
-                requestRepository.Put(merged);
                 uow.Commit();
             }
         }

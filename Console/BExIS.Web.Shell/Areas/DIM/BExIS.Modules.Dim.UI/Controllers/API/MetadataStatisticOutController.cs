@@ -20,7 +20,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
     {
         // GET: "api/MetadataStatistic"
         /// <summary>
-        /// Get a list of unique metadata values, count and list of occurrence for a given XPath.
+        /// Find a list of unique metadata values, count and list of occurrence for a given XPath.
         /// </summary>
         /// <remarks>Data is directly returned from the database. A valid token is needed to access also non-public dataset.</remarks>
         /// <returns>JSON object</returns>
