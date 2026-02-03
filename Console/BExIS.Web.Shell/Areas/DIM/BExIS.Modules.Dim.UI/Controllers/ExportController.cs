@@ -369,7 +369,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         // manifest
                         ApiDatasetHelper apiDatasetHelper = new ApiDatasetHelper();
                         // get content
-                        ApiDatasetModel apimodel = apiDatasetHelper.GetContent(datasetVersion, id, datasetVersionNumber, datasetVersion.Dataset.MetadataStructure.Id, dataStructureId);
+                        ApiDatasetModel apimodel = apiDatasetHelper.GetContent(datasetVersion, id, datasetVersionNumber, datasetVersion.Dataset.MetadataStructure.Id, dataStructureId, datasetVersion.Dataset.EntityTemplate.Id);
                         GeneralMetadataModel datasetModel = GeneralMetadataModel.Map(apimodel);
 
                         datasetModel.DownloadInformation.DownloadDate = DateTime.Now.ToString(new CultureInfo("en-US"));

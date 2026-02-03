@@ -283,7 +283,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
                     ApiDatasetHelper apiDatasetHelper = new ApiDatasetHelper();
                     // get content
-                    ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, version, metadataStructureId, dataset.DataStructure.Id);
+                    ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, version, metadataStructureId, dataset.DataStructure.Id, dataset.EntityTemplate.Id);
 
 
                     EntityReferenceHelper entityReferenceHelper = new EntityReferenceHelper();
