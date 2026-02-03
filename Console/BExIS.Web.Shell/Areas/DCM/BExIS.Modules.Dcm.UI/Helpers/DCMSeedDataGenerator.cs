@@ -267,6 +267,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 #endregion entity template
 
+                #region New Metadata Edit, Config and View
+                // TODO add to feature
+                operationManager.Create("DCM", "ComponentConfig", "*");
+                // operationManager.Create("DCM", "MetadateEdit", "*");
+
+                #endregion
+
                 #region public available
 
                 //because of reuse in ddm this controller must be public
