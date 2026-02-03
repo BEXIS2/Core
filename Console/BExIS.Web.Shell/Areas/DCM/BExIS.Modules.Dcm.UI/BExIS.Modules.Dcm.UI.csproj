@@ -54,6 +54,7 @@
     <Compile Include="Controllers\API\DataInController.cs" />
     <Compile Include="Controllers\API\DatasetInController.cs" />
     <Compile Include="Controllers\API\MetadataInController.cs" />
+    <Compile Include="Controllers\ComponentConfigController.cs" />
     <Compile Include="Controllers\CreateController.cs" />
     <Compile Include="Controllers\EditController.cs" />
     <Compile Include="Controllers\EntityTemplatesController.cs" />
@@ -468,6 +469,8 @@
     <Content Include="Views\Form\_metadataParameterViewOffline.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Views\Form\_displayname.cshtml" />
+    <Content Include="Views\Metadiff\Index.cshtml" />
+    <Content Include="Views\ComponentConfig\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
