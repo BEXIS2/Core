@@ -1,0 +1,1542 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Basic ABCD",
+  "description": "Basic ABCD",
+  "type": "object",
+  "properties": {
+    "Basic": {
+      "title": "Basic",
+      "description": "Attributes from the root node",
+      "type": "object",
+      "properties": {
+        "DatasetGUID": {
+          "title": "DatasetGUID",
+          "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "@ref": {
+          "type": "string"
+        }
+      }
+    },
+    "TechnicalContacts": {
+      "title": "TechnicalContacts",
+      "description": "Metadata item normally not used for end-user display. UDDI registry element for GBIF registry. Questions and feedback about availability of a provider or resource should be directed to the technical contact. This contact normally represents the Agent acting as the publisher of the datasets in the network. The element is unbounded to provide for alternative contacts (vacation etc.).",
+      "type": "object",
+      "properties": {
+        "TechnicalContact": {
+          "type": "array",
+          "items": {
+            "title": "TechnicalContact",
+            "description": "",
+            "type": "object",
+            "properties": {
+              "Name": {
+                "title": "Name",
+                "description": "Person, person team, or role name (e. g., 'head of departement')",
+                "type": "object",
+                "properties": {
+                  "#text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "Email": {
+                "title": "Email",
+                "description": "Person, person team, or role name (e. g., 'head of departement')",
+                "type": "object",
+                "properties": {
+                  "#text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "Phone": {
+                "title": "Phone",
+                "description": "Person, person team, or role name (e. g., 'head of departement')",
+                "type": "object",
+                "properties": {
+                  "#text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "Address": {
+                "title": "Address",
+                "description": "Person, person team, or role name (e. g., 'head of departement')",
+                "type": "object",
+                "properties": {
+                  "#text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "@ref": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "Name"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 2147483647
+        },
+        "@ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "TechnicalContact"
+      ]
+    },
+    "ContentContacts": {
+      "title": "ContentContacts",
+      "description": "UDDI registry element (\"AdministrativeContact\")  for GBIF registry. Questions and feedback about data, or restrictions on use of the data should be directed to the adminstrative contact. This contact normally represents the agent acting as the original supplier or custodian of the dataset. If a content contact is given on the unit-level, that one should be used for end-user purposes. The element is unbounded to provide for alternative contacts (vacation etc.).",
+      "type": "object",
+      "properties": {
+        "ContentContact": {
+          "type": "array",
+          "items": {
+            "title": "ContentContact",
+            "description": "",
+            "type": "object",
+            "properties": {
+              "Name": {
+                "title": "Name",
+                "description": "Person, person team, or role name (e. g., 'head of departement')",
+                "type": "object",
+                "properties": {
+                  "#text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "Email": {
+                "title": "Email",
+                "description": "Person, person team, or role name (e. g., 'head of departement')",
+                "type": "object",
+                "properties": {
+                  "#text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "Phone": {
+                "title": "Phone",
+                "description": "Person, person team, or role name (e. g., 'head of departement')",
+                "type": "object",
+                "properties": {
+                  "#text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "Address": {
+                "title": "Address",
+                "description": "Person, person team, or role name (e. g., 'head of departement')",
+                "type": "object",
+                "properties": {
+                  "#text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "@ref": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "Name"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 2147483647
+        },
+        "@ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ContentContact"
+      ]
+    },
+    "OtherProviders": {
+      "title": "OtherProviders",
+      "description": "Other known on-line providers of this dataset.",
+      "type": "object",
+      "properties": {
+        "OtherProvider": {
+          "type": "array",
+          "items": {
+            "title": "OtherProvider",
+            "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+            "type": "object",
+            "properties": {
+              "#text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "@ref": {
+                "type": "string"
+              }
+            }
+          },
+          "minItems": 1,
+          "maxItems": 2147483647
+        },
+        "@ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "OtherProvider"
+      ]
+    },
+    "Metadata": {
+      "title": "Metadata",
+      "description": "Metadata referring to the principal source of the entire data collection (the metadata scope may be wider than the objects actually contained in the data set). In its current form, this collection represents a mixture of elements useful for resource discovery (e.g. scope) with metadata actually pertaining to the received (partial) dataset.",
+      "type": "object",
+      "properties": {
+        "Description": {
+          "title": "Description",
+          "description": "Dublin Core conformant elements describing the content of the data source queried, representation in different languages possible",
+          "type": "object",
+          "properties": {
+            "Representation": {
+              "type": "array",
+              "items": {
+                "title": "Representation",
+                "description": "The description in a specified language. Only one representation should be delivered for each language. [ATTR: language]",
+                "type": "object",
+                "properties": {
+                  "Title": {
+                    "title": "Title",
+                    "description": "Person, person team, or role name (e. g., 'head of departement')",
+                    "type": "object",
+                    "properties": {
+                      "#text": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "Details": {
+                    "title": "Details",
+                    "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+                    "type": "object",
+                    "properties": {
+                      "#text": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "Coverage": {
+                    "title": "Coverage",
+                    "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+                    "type": "object",
+                    "properties": {
+                      "#text": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "URI": {
+                    "title": "URI",
+                    "description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
+                    "type": "object",
+                    "properties": {
+                      "#text": {
+                        "type": "string"
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "Title"
+                ]
+              },
+              "minItems": 1,
+              "maxItems": 2147483647
+            },
+            "@ref": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "Representation"
+          ]
+        },
+        "IconURI": {
+          "title": "IconURI",
+          "description": "The URI of an icon/logo symbolizing the project.",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "Scope": {
+          "title": "Scope",
+          "description": "Keyword lists of geographical, taxonomic, etc. scopes. In the case of projects in progress, 'scope' may define the planned or intended, rather than the achieved scope (or coverage). If scope is given, the content available should be entirely within scope, because this item is for resource discovery purposes. Compare also Coverage in DC.Description (which is language-specific). (Items from Scope may be added to DC.Coverage)",
+          "type": "object",
+          "properties": {
+            "GeoecologicalTerms": {
+              "title": "GeoecologicalTerms",
+              "description": "A collection of terms describing the geoecological scope of the source queried by means of area names (e.g. 'Worldl', 'Germany', 'Atlantic Ocean', 'Andes', 'Mountains'. A list of recommended terms should be developed.",
+              "type": "object",
+              "properties": {
+                "GeoEcologicalTerm": {
+                  "type": "array",
+                  "items": {
+                    "title": "GeoEcologicalTerm",
+                    "description": "",
+                    "type": "object",
+                    "properties": {
+                      "#text": {
+                        "type": "string"
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "minItems": 1,
+                  "maxItems": 2147483647
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "GeoEcologicalTerm"
+              ]
+            },
+            "TaxonomicTerms": {
+              "title": "TaxonomicTerms",
+              "description": "A collection of taxon names of higher rank describing the taxonomic scope of the source queried. A list of recommended terms should be developed.",
+              "type": "object",
+              "properties": {
+                "TaxonomicTerm": {
+                  "type": "array",
+                  "items": {
+                    "title": "TaxonomicTerm",
+                    "description": "",
+                    "type": "object",
+                    "properties": {
+                      "#text": {
+                        "type": "string"
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "minItems": 1,
+                  "maxItems": 2147483647
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "TaxonomicTerm"
+              ]
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "Version": {
+          "title": "Version",
+          "description": "Number and date of current version (particularly for citing purposes)",
+          "type": "object",
+          "properties": {
+            "Major": {
+              "title": "Major",
+              "description": "The major version number ('1' in 1.2) as defined by the content creators.",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "number"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "Minor": {
+              "title": "Minor",
+              "description": "An optional minor version number ('2' in 1.2)",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "number"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "Modifier": {
+              "title": "Modifier",
+              "description": "Person, person team, or role name (e. g., 'head of departement')",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "DateIssued": {
+              "title": "DateIssued",
+              "description": "Source for Dublin-Core standard element Date.Issued: Citable 'publication date' of the current version (comp. RevisionData/DateCreated and DateModified for version- independent dates). This date should be missing if the current version is not yet published!",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "@ref": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "Major"
+          ]
+        },
+        "RevisionData": {
+          "title": "RevisionData",
+          "description": "Creators, Revision status, and dates of the entire data collection from which the current dataset is derived.",
+          "type": "object",
+          "properties": {
+            "Creators": {
+              "title": "Creators",
+              "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "Contributors": {
+              "title": "Contributors",
+              "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "DateCreated": {
+              "title": "DateCreated",
+              "description": "Source for Dublin-Core standard element \"Date.Created\": Date/time when the intellectual content (project, term, description, etc.) was created. Applications may initially set this to the system date for new data objects, but authors must be able to change it to an earlier date if necessary. If for legacy data this is imprecisely known, it may be missing here. Earlier versions in other data formats should then be mentioned in the copyright or acknowl. statements.",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "format": "date and time"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "DateModified": {
+              "title": "DateModified",
+              "description": "Source for Dublin-Core standard element Date.Modified: Date/time when the last modification of the object was made. If in online data sources the provider can not assess this, the current date/time may be substituted. For legacy data this may be set to the file date of imported data, or estimated.",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "format": "date and time"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "@ref": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "DateModified"
+          ]
+        },
+        "Owners": {
+          "title": "Owners",
+          "description": "Entities having legal possession of the data collection content. Here defined for the entire data collection, not for individual units. If an owner statement is present on the unit level, it should override this dataset-level statement.",
+          "type": "object",
+          "properties": {
+            "Owner": {
+              "type": "array",
+              "items": {
+                "title": "Owner",
+                "description": "Entitiy having legal possession of the data collection content.",
+                "type": "object",
+                "properties": {
+                  "Organisation": {
+                    "title": "Organisation",
+                    "description": "Organisation to contact",
+                    "type": "object",
+                    "properties": {
+                      "Name": {
+                        "title": "Name",
+                        "description": "Full organization or corporate name in multiple languages (en: 'Botanical Garden of ...', de: 'Botanischer Garten von ...'). vCard:Org.OrgName). The Label mechanism also supports acronyms / abbreviations (no vCard equivalent!).",
+                        "type": "object",
+                        "properties": {
+                          "Representation": {
+                            "type": "array",
+                            "items": {
+                              "title": "Representation",
+                              "description": "Language-specific label representation\n[ATTR: language]",
+                              "type": "object",
+                              "properties": {
+                                "Text": {
+                                  "title": "Text",
+                                  "description": "Person, person team, or role name (e. g., 'head of departement')",
+                                  "type": "object",
+                                  "properties": {
+                                    "#text": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 255
+                                    },
+                                    "@ref": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                "Abbreviation": {
+                                  "title": "Abbreviation",
+                                  "description": "Restricted to 50 characters maximum length, including blanks (recommended to be shorter!). Label abbreviations are especially important when displaying information in a tabular format.",
+                                  "type": "object",
+                                  "properties": {
+                                    "#text": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 50
+                                    },
+                                    "@ref": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                "@ref": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "Text"
+                              ]
+                            },
+                            "minItems": 1,
+                            "maxItems": 2147483647
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "Representation"
+                        ]
+                      },
+                      "OrgUnits": {
+                        "title": "OrgUnits",
+                        "description": "If the contact contains no person definition: the unit within the organization the agent represents; else a list of the various organisational units to which a person may belong. (vCard:OrgUnit)",
+                        "type": "object",
+                        "properties": {
+                          "OrgUnit": {
+                            "type": "array",
+                            "items": {
+                              "title": "OrgUnit",
+                              "description": "(vCard:OrgUnit)",
+                              "type": "object",
+                              "properties": {
+                                "#text": {
+                                  "type": "string"
+                                },
+                                "@ref": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "minItems": 1,
+                            "maxItems": 2147483647
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "OrgUnit"
+                        ]
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "Name"
+                    ]
+                  },
+                  "Person": {
+                    "title": "Person",
+                    "description": "Person to contact",
+                    "type": "object",
+                    "properties": {
+                      "FullName": {
+                        "title": "FullName",
+                        "description": "Person, person team, or role name (e. g., 'head of departement')",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 255
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "SortingName": {
+                        "title": "SortingName",
+                        "description": "Person, person team, or role name (e. g., 'head of departement')",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 255
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "AtomisedName": {
+                        "title": "AtomisedName",
+                        "description": "",
+                        "type": "object",
+                        "properties": {
+                          "InheritedName": {
+                            "title": "InheritedName",
+                            "description": "Person, person team, or role name (e. g., 'head of departement')",
+                            "type": "object",
+                            "properties": {
+                              "#text": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 255
+                              },
+                              "@ref": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "Prefix": {
+                            "title": "Prefix",
+                            "description": "Person, person team, or role name (e. g., 'head of departement')",
+                            "type": "object",
+                            "properties": {
+                              "#text": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 255
+                              },
+                              "@ref": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "Suffix": {
+                            "title": "Suffix",
+                            "description": "Person, person team, or role name (e. g., 'head of departement')",
+                            "type": "object",
+                            "properties": {
+                              "#text": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 255
+                              },
+                              "@ref": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "GivenNames": {
+                            "title": "GivenNames",
+                            "description": "Person, person team, or role name (e. g., 'head of departement')",
+                            "type": "object",
+                            "properties": {
+                              "#text": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 255
+                              },
+                              "@ref": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "PreferredName": {
+                            "title": "PreferredName",
+                            "description": "Person, person team, or role name (e. g., 'head of departement')",
+                            "type": "object",
+                            "properties": {
+                              "#text": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 255
+                              },
+                              "@ref": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "InheritedName"
+                        ]
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "FullName"
+                    ]
+                  },
+                  "Roles": {
+                    "title": "Roles",
+                    "description": "",
+                    "type": "object",
+                    "properties": {
+                      "Role": {
+                        "type": "array",
+                        "items": {
+                          "title": "Role",
+                          "description": "(vCard:OrgUnit)",
+                          "type": "object",
+                          "properties": {
+                            "#text": {
+                              "type": "string"
+                            },
+                            "@ref": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "minItems": 1,
+                        "maxItems": 2147483647
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "Role"
+                    ]
+                  },
+                  "Addresses": {
+                    "title": "Addresses",
+                    "description": "Contact addresses (one preferred, different languages possible)",
+                    "type": "object",
+                    "properties": {
+                      "Address": {
+                        "type": "array",
+                        "items": {
+                          "title": "Address",
+                          "description": "Contact address as string.",
+                          "type": "object",
+                          "properties": {
+                            "#text": {
+                              "type": "string"
+                            },
+                            "@ref": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "minItems": 0,
+                        "maxItems": 2147483647
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "TelephoneNumbers": {
+                    "title": "TelephoneNumbers",
+                    "description": "Telephone and fax numbers",
+                    "type": "object",
+                    "properties": {
+                      "TelephoneNumber": {
+                        "type": "array",
+                        "items": {
+                          "title": "TelephoneNumber",
+                          "description": "Telephone or fax number",
+                          "type": "object",
+                          "properties": {
+                            "Number": {
+                              "title": "Number",
+                              "description": "Person, person team, or role name (e. g., 'head of departement')",
+                              "type": "object",
+                              "properties": {
+                                "#text": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 255
+                                },
+                                "@ref": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "Device": {
+                              "title": "Device",
+                              "description": "",
+                              "type": "object",
+                              "properties": {
+                                "#text": {
+                                  "type": "string"
+                                },
+                                "@ref": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "UsageNotes": {
+                              "title": "UsageNotes",
+                              "description": "(vCard:OrgUnit)",
+                              "type": "object",
+                              "properties": {
+                                "#text": {
+                                  "type": "string"
+                                },
+                                "@ref": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "@ref": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "Number"
+                          ]
+                        },
+                        "minItems": 0,
+                        "maxItems": 2147483647
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "EmailAddresses": {
+                    "title": "EmailAddresses",
+                    "description": "E-mail addresses",
+                    "type": "object",
+                    "properties": {
+                      "EmailAddress": {
+                        "type": "array",
+                        "items": {
+                          "title": "EmailAddress",
+                          "description": "E-mail address for contact",
+                          "type": "object",
+                          "properties": {
+                            "#text": {
+                              "type": "string"
+                            },
+                            "@ref": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "minItems": 0,
+                        "maxItems": 2147483647
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "URIs": {
+                    "title": "URIs",
+                    "description": "URIs for person or organisation",
+                    "type": "object",
+                    "properties": {
+                      "URL": {
+                        "type": "array",
+                        "items": {
+                          "title": "URL",
+                          "description": "URI for person or organisation",
+                          "type": "object",
+                          "properties": {
+                            "#text": {
+                              "type": "string"
+                            },
+                            "@ref": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "minItems": 0,
+                        "maxItems": 2147483647
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "LogoURI": {
+                    "title": "LogoURI",
+                    "description": "URL of a logo image.",
+                    "type": "object",
+                    "properties": {
+                      "#text": {
+                        "type": "string"
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "minItems": 0,
+              "maxItems": 2147483647
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "IPRStatements": {
+          "title": "IPRStatements",
+          "description": "Copyright, terms of use, license and other IPR-related statements like disclaimer or acknowledgement. Giving a copyright statement and a (if possible public) licence is highly recommended! (=DC.Rights)",
+          "type": "object",
+          "properties": {
+            "IPRDeclarations": {
+              "title": "IPRDeclarations",
+              "description": "Container element for one to several statements, normally representing different language representations of the same content.",
+              "type": "object",
+              "properties": {
+                "IPRDeclaration": {
+                  "type": "array",
+                  "items": {
+                    "title": "IPRDeclaration",
+                    "description": "Used where the IPR declaration cannot be parsed into the specific items or for forms of IPR declaration not yet covered  (e.g. database rights),",
+                    "type": "object",
+                    "properties": {
+                      "Text": {
+                        "title": "Text",
+                        "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "Details": {
+                        "title": "Details",
+                        "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "URI": {
+                        "title": "URI",
+                        "description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string"
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "Text"
+                    ]
+                  },
+                  "minItems": 1,
+                  "maxItems": 2147483647
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "IPRDeclaration"
+              ]
+            },
+            "Copyrights": {
+              "title": "Copyrights",
+              "description": "Container element for one to several statements, normally representing different language representations of the same content.",
+              "type": "object",
+              "properties": {
+                "Copyright": {
+                  "type": "array",
+                  "items": {
+                    "title": "Copyright",
+                    "description": "Copyright may include the information that the data has been released to the public domain.",
+                    "type": "object",
+                    "properties": {
+                      "Text": {
+                        "title": "Text",
+                        "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "Details": {
+                        "title": "Details",
+                        "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "URI": {
+                        "title": "URI",
+                        "description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string"
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "Text"
+                    ]
+                  },
+                  "minItems": 1,
+                  "maxItems": 2147483647
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "Copyright"
+              ]
+            },
+            "Licenses": {
+              "title": "Licenses",
+              "description": "Container element for one to several statements, normally representing different language representations of the same content.",
+              "type": "object",
+              "properties": {
+                "License": {
+                  "type": "array",
+                  "items": {
+                    "title": "License",
+                    "description": "To be used if data are placed under a public license (GPL, GFDL, OpenDocument). Placing data under a public license while maintaining copyright is recommended!",
+                    "type": "object",
+                    "properties": {
+                      "Text": {
+                        "title": "Text",
+                        "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "Details": {
+                        "title": "Details",
+                        "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "URI": {
+                        "title": "URI",
+                        "description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string"
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "Text"
+                    ]
+                  },
+                  "minItems": 1,
+                  "maxItems": 2147483647
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "License"
+              ]
+            },
+            "TermsOfUseStatements": {
+              "title": "TermsOfUseStatements",
+              "description": "Container element for one to several statements, normally representing different language representations of the same content.",
+              "type": "object",
+              "properties": {
+                "TermsOfUse": {
+                  "type": "array",
+                  "items": {
+                    "title": "TermsOfUse",
+                    "description": "Defines conditions under which the data may be analised, distributed or changed. \"Terms of use\" includes concepts like \"Usage conditions\" and \"Specific Restrictions\".",
+                    "type": "object",
+                    "properties": {
+                      "Text": {
+                        "title": "Text",
+                        "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "Details": {
+                        "title": "Details",
+                        "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "URI": {
+                        "title": "URI",
+                        "description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string"
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "Text"
+                    ]
+                  },
+                  "minItems": 1,
+                  "maxItems": 2147483647
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "TermsOfUse"
+              ]
+            },
+            "Disclaimers": {
+              "title": "Disclaimers",
+              "description": "Container element for one to several statements, normally representing different language representations of the same content.",
+              "type": "object",
+              "properties": {
+                "Disclaimer": {
+                  "type": "array",
+                  "items": {
+                    "title": "Disclaimer",
+                    "description": "Disclaimer statement, e. g. concerning responsibility for data quality or legal implications.",
+                    "type": "object",
+                    "properties": {
+                      "Text": {
+                        "title": "Text",
+                        "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "Details": {
+                        "title": "Details",
+                        "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "URI": {
+                        "title": "URI",
+                        "description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string"
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "Text"
+                    ]
+                  },
+                  "minItems": 1,
+                  "maxItems": 2147483647
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "Disclaimer"
+              ]
+            },
+            "Acknowledgements": {
+              "title": "Acknowledgements",
+              "description": "Container element for one to several statements, normally representing different language representations of the same content.",
+              "type": "object",
+              "properties": {
+                "Acknowledgement": {
+                  "type": "array",
+                  "items": {
+                    "title": "Acknowledgement",
+                    "description": "A free form text acknowledging support (e. g. grant money, help, permission to reuse published material, etc.)",
+                    "type": "object",
+                    "properties": {
+                      "Text": {
+                        "title": "Text",
+                        "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "Details": {
+                        "title": "Details",
+                        "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "URI": {
+                        "title": "URI",
+                        "description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string"
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "Text"
+                    ]
+                  },
+                  "minItems": 1,
+                  "maxItems": 2147483647
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "Acknowledgement"
+              ]
+            },
+            "Citations": {
+              "title": "Citations",
+              "description": "Container element for one to several statements, normally representing different language representations of the same content.",
+              "type": "object",
+              "properties": {
+                "Citation": {
+                  "title": "Citation",
+                  "description": "Indicates how this dataset or record should be attributed if used [OBIF 1.0]",
+                  "type": "object",
+                  "properties": {
+                    "Text": {
+                      "title": "Text",
+                      "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+                      "type": "object",
+                      "properties": {
+                        "#text": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "@ref": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "Details": {
+                      "title": "Details",
+                      "description": "A globally unique identifier for the entire data collection the present dataset was derived from. The exact format and/or semantics are still under discussion.",
+                      "type": "object",
+                      "properties": {
+                        "#text": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "@ref": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "URI": {
+                      "title": "URI",
+                      "description": "URL pointing to an online source related to the current project, which may or may not serve an updated version of the description data.",
+                      "type": "object",
+                      "properties": {
+                        "#text": {
+                          "type": "string"
+                        },
+                        "@ref": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "@ref": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "Text"
+                  ]
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "Citation"
+              ]
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "@ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "Description",
+        "RevisionData"
+      ]
+    }
+  },
+  "required": [
+    "Basic",
+    "TechnicalContacts",
+    "ContentContacts",
+    "Metadata"
+  ]
+}

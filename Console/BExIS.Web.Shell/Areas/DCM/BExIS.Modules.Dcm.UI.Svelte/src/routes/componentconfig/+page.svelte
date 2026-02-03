@@ -15,7 +15,7 @@
   } from '@xyflow/svelte';
   import { writable, type Writable, get } from 'svelte/store';
   import '@xyflow/svelte/dist/style.css';
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
 
   // import custom components
   import TreeComponent from './TreeComponent.svelte';
@@ -43,13 +43,20 @@
   } from './Services/fileHelpers';
   
   import componentManifestJson from './componentManifest.json';
+	import { Page, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
+	import { SaveConfig, LoadConfig } from './Services/apiCalls';
+	import { getEntityTemplateList } from '$services/EntityTemplateCaller';
+
 
   // separate configs for edit/view modes
   let componentConfig_edit: ConfigFile = createEmptyConfig();
   let componentConfig_view: ConfigFile = createEmptyConfig();
   let componentPositions: PositionFile = createEmptyPositions();
   
-  const componentManifest = componentManifestJson;
+  const componentManifestList = Array.isArray(componentManifestJson)
+    ? componentManifestJson
+    : [componentManifestJson];
+  let selectedComponentManifest: any = componentManifestList[0] ?? null;
 
   // schema nodes from treecomponent
   let schemaNodes: any[] = [];
@@ -60,9 +67,39 @@
   // initial interaction mode
   let currentInteractionMode = 'edit';
   let selectedMode: any = null;
+  let selectedEntityTemplate: any = null;
+  let selectedEntityTemplateId: string | number = '';
 
   // store for node specific modes
   let nodeSpecificModes = new Map<string, any>();
+
+  // reactive: convert template ID to full object
+  $: if (selectedEntityTemplateId && entityTemplateList.length > 0) {
+    const found = entityTemplateList.find(t => String(t.id) === String(selectedEntityTemplateId));
+    if (found) {
+      selectedEntityTemplate = found;
+    }
+  }
+
+  // reactive: handle template changes
+  $: if (selectedEntityTemplate && selectedEntityTemplate.id) {
+    // reset state from previous template
+    componentConfig_edit = createEmptyConfig();
+    componentConfig_view = createEmptyConfig();
+    componentPositions = createEmptyPositions();
+    editModeNodes = [];
+    viewModeNodes = [];
+    nodeSpecificModes.clear();
+    selectedNode.set(null);
+    selectedEdge.set(null);
+    sidebarMode = 'empty';
+    activeTab = 0;
+    edges.set([]);
+    nodes.set([]);
+    lastNodesSnapshot = '';
+    
+    load();
+  }
 
   // popup state for mode switch warning
   let showModeChangeWarning = false;
@@ -80,16 +117,69 @@
   // track last node state
   let lastNodesSnapshot = '';
 
+  // entity template list
+  let entityTemplateList: any[] = [];
+  
+
   // load configs from file and apply component position & edges reconstruct on mount
   onMount(async () => {
+    // get teamplate id from url
+
+    await getEntityTemplateList().then((list) => {
+        entityTemplateList = list;
+    });    
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const templateIdParam = urlParams.get('id');
+    if (templateIdParam) {
+      const templateId = Number(templateIdParam);
+      selectedEntityTemplateId = templateId;
+      // reactive statement will set selectedEntityTemplate automatically
+    }
+
+    load();
+
+  });
+
+  async function load(){
+   
+    
+    console.log('Loading configs for template:', selectedEntityTemplate);
     try {
-      const loaded = await loadConfigsFromDownloads();
+      await LoadConfig(selectedEntityTemplate.id, 'edit').then((loadedEdit) => {
+        if (loadedEdit) {
+          componentConfig_edit = JSON.parse(JSON.stringify(loadedEdit));
+        }
+        else {
+          componentConfig_edit = createEmptyConfig();
+        }
+      });
+      await LoadConfig(selectedEntityTemplate.id, 'view').then((loadedView) => {
+        if (loadedView) {
+          componentConfig_view = JSON.parse(JSON.stringify(loadedView));
+        }
+        else {
+          componentConfig_view = createEmptyConfig();
+        }
+      });
+      await LoadConfig(selectedEntityTemplate.id, 'positions').then((loadedPositions) => {
+        if (loadedPositions) {
+          componentPositions = JSON.parse(JSON.stringify(loadedPositions));
+        }
+        else {
+          componentPositions = createEmptyPositions();
+        }
+      });
+
       
+
+     /* const loaded = await loadConfigsFromDownloads();
+      console.log('🚀 ~ onMount ~ loaded:', loaded);
       if (loaded) {
         componentConfig_edit = JSON.parse(JSON.stringify(loaded.edit));
         componentConfig_view = JSON.parse(JSON.stringify(loaded.view));
         componentPositions = loaded.positions;
-        
+       */ 
         editModeNodes = [];
         viewModeNodes = [];
         
@@ -100,22 +190,27 @@
           reconstructEdgesForMode('edit'); // load only edit edges (view loads on mode switch)
         }, 500);
       }
-    } catch (error) {
-      // silent fail
-    }
+      catch (error) {
+        console.error('Error loading configs on mount:', error);
+      }
     
 
     // set initial sub-mode based on first manifest component
     const firstComponent = getCurrentConfig()?.components?.[0];
     if (firstComponent?.mode?.mode_name) {
-      const manifestModes = componentManifest?.modes?.edit || [];
+      const manifestModes = selectedComponentManifest?.modes?.edit || [];
       const foundMode = manifestModes.find((mode: any) => mode.mode_name === firstComponent.mode.mode_name);
       if (foundMode) {
         selectedMode = foundMode;
         forceNodeUpdate();
       }
     }
-  });
+  }
+
+  // reload configs when entity template changes (via reactive statement)
+  function handleEntityTemplateChange() {
+    // no longer needed - reactive statement handles it
+  }
 
   // get current config based on interaction mode
   function getCurrentConfig(): ConfigFile {
@@ -182,7 +277,7 @@
     // structure as in config files
     const componentData: any = {
       meta: {
-        component_name: node.data.componentName || componentManifest.meta.component_name,
+        component_name: node.data.componentName || selectedComponentManifest?.meta?.component_name,
         component_ui_id: node.id
       },
       globalSettings: {
@@ -202,7 +297,7 @@
     };
 
     const modeKey = node.data.interactionMode || currentInteractionMode;
-    const manifestModes = componentManifest?.modes?.[modeKey as string] || [];
+    const manifestModes = selectedComponentManifest?.modes?.[modeKey as string] || [];
     const manifestMode = manifestModes.find((m: any) => m.mode_name === node.data.modeName);
     const currentConfigRef = modeKey === 'edit' ? componentConfig_edit : componentConfig_view;
     
@@ -211,7 +306,7 @@
     );
     
     // global settings
-    const manifestGlobalSettings = componentManifest?.globalSettings?.globalsetting || [];
+    const manifestGlobalSettings = selectedComponentManifest?.globalSettings?.globalsetting || [];
     const configGlobalSettings = existingComponent?.globalSettings?.globalsetting || [];
     
     // cycle through manifest global settings and fill from config or default
@@ -414,7 +509,7 @@
     }
     
     // get manifest submodes for new interaction mode
-    const newModes = componentManifest?.modes?.[newMode];
+    const newModes = selectedComponentManifest?.modes?.[newMode];
     if (newModes && newModes.length > 0) {
       selectedMode = newModes[0];
     } else {
@@ -557,8 +652,12 @@
     // force config reactivity
     componentConfig_edit = { ...componentConfig_edit };
     componentConfig_view = { ...componentConfig_view };
-
-    downloadAllConfigs(componentConfig_edit, componentConfig_view, componentPositions);
+    
+    SaveConfig(componentConfig_edit, 1, 'edit');
+    SaveConfig(componentConfig_view, 1, 'view');
+    SaveConfig(componentPositions, 1, 'positions');
+    
+    (componentConfig_edit, componentConfig_view, componentPositions);
     
     alert(`Configuration saved!
 
@@ -659,10 +758,15 @@
         }
       }
     });
+      
+    
+    SaveConfig(componentConfig_edit, 1, 'edit');
+    SaveConfig(componentConfig_view, 1, 'view');
+    SaveConfig(componentPositions, 1, 'positions');
     
     // download all configs
     downloadAllConfigs(componentConfig_edit, componentConfig_view, componentPositions);
-    
+  
     // alert('Mappings saved!');
   }
 
@@ -857,7 +961,7 @@
   }
 
   // dynamically create nodes
-  $: configNodes = createConfigNodes(currentInteractionMode, getCurrentConfig(), componentManifest, nodeVersion, editModeNodes, viewModeNodes);
+  $: configNodes = createConfigNodes(currentInteractionMode, getCurrentConfig(), selectedComponentManifest, nodeVersion, editModeNodes, viewModeNodes);
 
   // function to create config nodes on start or mode change based on config / saved nodes
   function createConfigNodes(
@@ -888,7 +992,7 @@
     const components = config?.components || [];
     if (!components || !Array.isArray(components)) return [];
     
-    const currentManifest = manifest || componentManifest;
+    const currentManifest = manifest || selectedComponentManifest;
     const configNodesArray: Node[] = [];
     
     // create nodes for each component in config matching current interaction mode
@@ -1274,7 +1378,7 @@
     if (selectedMode) return selectedMode;
 
     // fallback to first available mode in manifest
-    const availableModes = componentManifest?.modes?.[currentInteractionMode] || [];
+    const availableModes = selectedComponentManifest?.modes?.[currentInteractionMode] || [];
     return availableModes[0] || null;
   }
 
@@ -1289,7 +1393,7 @@
 
     if ($selectedNode.data?.modeName) {
       const interactionMode = $selectedNode.data?.interactionMode || currentInteractionMode;
-      const manifestModes = componentManifest?.modes?.[interactionMode as string] || [];
+      const manifestModes = selectedComponentManifest?.modes?.[interactionMode as string] || [];
       const nodeMode = manifestModes.find((mode: any) => mode.mode_name === $selectedNode.data.modeName);
       
       if (nodeMode) {
@@ -2113,15 +2217,202 @@
   };
 </script>
 
+
+
+<Page title="Component Configuration" 
+      note="Configure data components and their mappings using the visual flow editor." 
+      contentLayoutType={pageContentLayoutType.full}>
+
+<div class="app-container_treeflow">
+  <div class="top-bar_treeflow">
+    <div class="project-name">
+      Data Configuration Project
+    </div>
+    
+    <!--Select entity template-->
+    <select bind:value={selectedEntityTemplateId} on:change={handleEntityTemplateChange}>
+      <option value="" disabled selected>Select entity template</option>
+      {#each entityTemplateList as template}
+        <option value={template.id}>{template.name}</option>
+      {/each}
+    </select>
+    <div class="mode-controls">
+      <button 
+        class="mode-button" 
+        class:active={currentInteractionMode === 'edit'}
+        on:click={() => handleInteractionModeToggle('edit')}
+      >
+        EDIT
+      </button>
+      <button 
+        class="mode-button" 
+        class:active={currentInteractionMode === 'view'}
+        on:click={() => handleInteractionModeToggle('view')}
+      >
+        VIEW
+      </button>
+    </div>
+  </div>
+
+  <div class="layout_treeflow-sidebar">
+    <div class="flow-wrapper">
+      <SvelteFlowProvider>
+        <SvelteFlow
+          {nodes}
+          {edges}
+          {nodeTypes}
+          {edgeTypes}
+          on:nodeclick={handleNodeClick}
+          on:edgeclick={handleEdgeClick}
+          on:paneclick={handlePaneClick}
+          on:connect={onConnect}
+          {isValidConnection}
+          defaultEdgeOptions={{type: 'button'}}
+          fitView
+          selectionMode={SelectionMode.Partial}
+          connectionLineType={ConnectionLineType.SmoothStep}
+        >
+          <Background />
+          <Controls />
+        </SvelteFlow>
+        <ResetViewButton />
+      </SvelteFlowProvider>
+    </div>
+
+    <div class="sidebar" class:empty={sidebarMode === 'empty'}>
+      {#if sidebarMode === 'empty'}
+        <ComponentLibrary 
+          {currentInteractionMode}
+          componentConfig={getCurrentConfig()}
+          componentManifest={selectedComponentManifest}
+          onAddComponent={handleAddComponent}
+          onSaveMappings={handleSaveMappingsOnly}
+          onSave={handleSaveEdit}
+        />
+      {:else if sidebarMode === 'overview'}
+        <ComponentOverview 
+          selectedNode={$selectedNode} 
+          onEdit={handleEdit}
+          onSave={handleSaveEdit}
+          onDelete={handleDeleteComponent}
+        />
+      {:else if sidebarMode === 'edit'}
+        <div class="tabs">
+          <button class="tab" class:active={activeTab === 0} on:click={() => activeTab = 0}>
+            Modes
+          </button>
+          <button class="tab" class:active={activeTab === 1} on:click={() => activeTab = 1}>
+            Config
+          </button>
+          <button class="tab" class:active={activeTab === 2} on:click={() => activeTab = 2}>
+            Preview
+          </button>
+        </div>
+        
+        <div class="tab-content">
+          {#if activeTab === 0}
+            <ModesTab 
+              componentManifest={selectedComponentManifest}
+              selectedMode={currentNodeMode}
+              {currentInteractionMode}
+              selectedNode={$selectedNode}
+              onModeChange={handleModeChange}
+            />
+          {:else if activeTab === 1}
+            <ConfigTab 
+              componentConfig={getCurrentConfig()}
+              {validationStatus}
+              {edges}
+              {nodes}
+              selectedMode={currentNodeMode}
+              componentManifest={selectedComponentManifest}
+              selectedNode={$selectedNode}
+              onSetAnchorpoint={handleSetAnchorpoint}
+              onConfigChange={handleConfigChange}
+            />
+          {:else if activeTab === 2}
+            <PreviewTab 
+              componentManifest={selectedComponentManifest}
+              selectedNode={$selectedNode}
+              selectedMode={effectivePreviewMode}
+              {currentInteractionMode}
+              componentConfig={getCurrentConfig()}
+            />
+          {/if}
+        </div>
+        
+        <!-- save/cancel buttons -->
+        <div class="edit-actions">
+          <button class="cancel-edit-button" on:click={handleCancelEdit}>
+            Cancel
+          </button>
+          <button class="save-edit-button" on:click={handleSaveEdit}>
+            Save
+          </button>
+        </div>
+      {/if}
+    </div>
+  </div>
+</div>
+
+
+{#if showModeChangeWarning}
+  <div class="modal-overlay">
+    <div class="modal">
+      <h3>Switch Interaction Mode</h3>
+      <p>You are currently editing a component. Switching to {pendingInteractionMode.toUpperCase()} mode will close the editor and any unsaved changes will be lost.</p>
+      <p>Do you want to continue?</p>
+      <div class="modal-buttons">
+        <button class="cancel-button" on:click={cancelModeChange}>Cancel</button>
+        <button class="confirm-button" on:click={confirmModeChange}>Yes, Switch Mode</button>
+      </div>
+    </div>
+  </div>
+{/if}
+
+<!-- cancel confirmation dialog -->
+{#if showCancelWarning}
+  <div class="modal-overlay">
+    <div class="modal">
+      <h3>Cancel Changes</h3>
+      <p>Are you sure? All unsaved changes will be lost.</p>
+      <div class="modal-buttons">
+        <button class="cancel-button" on:click={rejectCancel}>No, Keep Editing</button>
+        <button class="confirm-button" on:click={confirmCancel}>Yes, Cancel</button>
+      </div>
+    </div>
+  </div>
+{/if}
+
+<!-- delete confirmation dialog -->
+{#if showDeleteWarning}
+  <div class="modal-overlay">
+    <div class="modal">
+      <h3>Delete Component</h3>
+      <p>Are you sure you want to delete "{nodeToDelete?.data.componentName}"?</p>
+      <p>This can remove all connections and cannot be undone.</p>
+      <div class="modal-buttons">
+        <button class="cancel-button" on:click={rejectDelete}>Cancel</button>
+        <button class="confirm-button" on:click={confirmDelete}>Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+{/if}
+
+<!-- schema tree component for node generation -->
+<TreeComponent on:nodesGenerated={handleSchemaNodesGenerated} bind:entity={selectedEntityTemplate}/>
+
+</Page>
+
 <style>
-  .app-container {
+  .app-container_treeflow {
     display: flex;
     flex-direction: column;
     height: 100vh;
     width: 100%;
   }
   
-  .top-bar {
+  .top-bar_treeflow {
     height: 60px;
     background: #ffffff;
     border-bottom: 2px solid #007acc;
@@ -2164,7 +2455,7 @@
     background: #f0f8ff;
   }
   
-  .layout {
+  .layout_treeflow-sidebar {
     display: flex;
     flex: 1;
     height: calc(100vh - 60px);
@@ -2376,174 +2667,3 @@
     background: #c82333;
   }
 </style>
-
-<div class="app-container">
-  <div class="top-bar">
-    <div class="project-name">
-      Data Configuration Project
-    </div>
-    
-    <div class="mode-controls">
-      <button 
-        class="mode-button" 
-        class:active={currentInteractionMode === 'edit'}
-        on:click={() => handleInteractionModeToggle('edit')}
-      >
-        EDIT
-      </button>
-      <button 
-        class="mode-button" 
-        class:active={currentInteractionMode === 'view'}
-        on:click={() => handleInteractionModeToggle('view')}
-      >
-        VIEW
-      </button>
-    </div>
-  </div>
-
-  <div class="layout">
-    <div class="flow-wrapper">
-      <SvelteFlowProvider>
-        <SvelteFlow
-          {nodes}
-          {edges}
-          {nodeTypes}
-          {edgeTypes}
-          on:nodeclick={handleNodeClick}
-          on:edgeclick={handleEdgeClick}
-          on:paneclick={handlePaneClick}
-          on:connect={onConnect}
-          {isValidConnection}
-          defaultEdgeOptions={{type: 'button'}}
-          fitView
-          selectionMode={SelectionMode.Partial}
-          connectionLineType={ConnectionLineType.SmoothStep}
-        >
-          <Background />
-          <Controls />
-        </SvelteFlow>
-        <ResetViewButton />
-      </SvelteFlowProvider>
-    </div>
-
-    <div class="sidebar" class:empty={sidebarMode === 'empty'}>
-      {#if sidebarMode === 'empty'}
-        <ComponentLibrary 
-          {currentInteractionMode}
-          componentConfig={getCurrentConfig()}
-          {componentManifest}
-          onAddComponent={handleAddComponent}
-          onSaveMappings={handleSaveMappingsOnly}
-          onSave={handleSaveEdit}
-        />
-      {:else if sidebarMode === 'overview'}
-        <ComponentOverview 
-          selectedNode={$selectedNode} 
-          onEdit={handleEdit}
-          onSave={handleSaveEdit}
-          onDelete={handleDeleteComponent}
-        />
-      {:else if sidebarMode === 'edit'}
-        <div class="tabs">
-          <button class="tab" class:active={activeTab === 0} on:click={() => activeTab = 0}>
-            Modes
-          </button>
-          <button class="tab" class:active={activeTab === 1} on:click={() => activeTab = 1}>
-            Config
-          </button>
-          <button class="tab" class:active={activeTab === 2} on:click={() => activeTab = 2}>
-            Preview
-          </button>
-        </div>
-        
-        <div class="tab-content">
-          {#if activeTab === 0}
-            <ModesTab 
-              {componentManifest}
-              selectedMode={currentNodeMode}
-              {currentInteractionMode}
-              selectedNode={$selectedNode}
-              onModeChange={handleModeChange}
-            />
-          {:else if activeTab === 1}
-            <ConfigTab 
-              componentConfig={getCurrentConfig()}
-              {validationStatus}
-              {edges}
-              {nodes}
-              selectedMode={currentNodeMode}
-              {componentManifest}
-              selectedNode={$selectedNode}
-              onSetAnchorpoint={handleSetAnchorpoint}
-              onConfigChange={handleConfigChange}
-            />
-          {:else if activeTab === 2}
-            <PreviewTab 
-              {componentManifest}
-              selectedNode={$selectedNode}
-              selectedMode={effectivePreviewMode}
-              {currentInteractionMode}
-              componentConfig={getCurrentConfig()}
-            />
-          {/if}
-        </div>
-        
-        <!-- save/cancel buttons -->
-        <div class="edit-actions">
-          <button class="cancel-edit-button" on:click={handleCancelEdit}>
-            Cancel
-          </button>
-          <button class="save-edit-button" on:click={handleSaveEdit}>
-            Save
-          </button>
-        </div>
-      {/if}
-    </div>
-  </div>
-</div>
-
-{#if showModeChangeWarning}
-  <div class="modal-overlay">
-    <div class="modal">
-      <h3>Switch Interaction Mode</h3>
-      <p>You are currently editing a component. Switching to {pendingInteractionMode.toUpperCase()} mode will close the editor and any unsaved changes will be lost.</p>
-      <p>Do you want to continue?</p>
-      <div class="modal-buttons">
-        <button class="cancel-button" on:click={cancelModeChange}>Cancel</button>
-        <button class="confirm-button" on:click={confirmModeChange}>Yes, Switch Mode</button>
-      </div>
-    </div>
-  </div>
-{/if}
-
-<!-- cancel confirmation dialog -->
-{#if showCancelWarning}
-  <div class="modal-overlay">
-    <div class="modal">
-      <h3>Cancel Changes</h3>
-      <p>Are you sure? All unsaved changes will be lost.</p>
-      <div class="modal-buttons">
-        <button class="cancel-button" on:click={rejectCancel}>No, Keep Editing</button>
-        <button class="confirm-button" on:click={confirmCancel}>Yes, Cancel</button>
-      </div>
-    </div>
-  </div>
-{/if}
-
-<!-- delete confirmation dialog -->
-{#if showDeleteWarning}
-  <div class="modal-overlay">
-    <div class="modal">
-      <h3>Delete Component</h3>
-      <p>Are you sure you want to delete "{nodeToDelete?.data.componentName}"?</p>
-      <p>This can remove all connections and cannot be undone.</p>
-      <div class="modal-buttons">
-        <button class="cancel-button" on:click={rejectDelete}>Cancel</button>
-        <button class="confirm-button" on:click={confirmDelete}>Yes, Delete</button>
-      </div>
-    </div>
-  </div>
-{/if}
-
-<!-- schema tree component for node generation -->
-<TreeComponent on:nodesGenerated={handleSchemaNodesGenerated} />
