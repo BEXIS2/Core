@@ -1,28 +1,35 @@
 <script lang="ts">
 	import {
 		Table,
-		ErrorMessage,
 		TablePlaceholder,
-		TextInput,
-		MultiSelect,
-		DropdownKVP, 
+		DropdownKVP,
+		NumberInput, 
 	} from '@bexis2/bexis2-core-ui';
 	import TableElements from '$lib/components/SearchConfig/tableElements.svelte';
 	import TableOption from '$lib/components/SearchConfig/tableOptions.svelte';
 	import { writable, type Writable } from 'svelte/store';
-	import { getModalStore, Modal } from '@skeletonlabs/skeleton';
+	import { getModalStore, Modal, type ModalSettings } from '@skeletonlabs/skeleton';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import Fa from 'svelte-fa';
 	import { faPlus, faSave, faXmark } from '@fortawesome/free-solid-svg-icons';
 	import { fade, slide } from 'svelte/transition';
-	import suite from './primaryDataValidation';
+	import suite from './spatialDataValidation';
 	import { onMount, tick } from 'svelte';
   
-
+	const tableOptionComponent = TableOption as any;
+	const tableElementsComponent = TableElements as any;
 	const modalStore = getModalStore();
 
-	import type { MeaningModel } from '$lib/components/SearchConfig/SearchConfigModel.ts';
-	import type { CalcBlockListItem } from '$lib/components/SearchConfig/SearchConfigModel.ts';
+	import type { MeaningModel, LocalSpatialMetadata, BBoxSpatialMetadata, PointSpatialMetadata } from '$lib/components/SearchConfig/SearchConfigModel.ts';
+	import { getMetadataNodes } from '$lib/services/searchConfigServices';
+
+	interface SpatialDataListItem {
+		id: string;
+		template_name: string;
+		type: 'bbox' | 'point';
+		metadata_nodes: string[];
+		config: LocalSpatialMetadata;
+	}
 
 	export let entitytemplates: any[] = [];
 	export let meanings: MeaningModel[] = [];
@@ -34,47 +41,25 @@
 
 	let loading: boolean = false;
 
-	// adapt meanings to MultiSelect's expected shape (id, text, group)
-	let meaningsSource: any[] = [];
-	$: meaningsSource = Array.isArray(meanings)
-		? meanings.map((m) => ({
-				...m,
-				text: m.name,
-				group: 'Meanings'
-			}))
-		: [];
-	// adapt entity templates to DropdownKVP's expected shape (id, text, group)
-	// add global option on first position
-	$: entitytemplatesSource = [{ id: 'global', text: 'Global', group: 'Entity Templates' }].concat(
-		Array.isArray(entitytemplates)
-			? entitytemplates.map((et) => ({
-					...et,
-					text: et.name,
-					group: 'Entity Templates'
-				}))
-			: []
-	);
-
-	// add operations to DropdownKVP's expected shape (id, text, group)
-	let operationsSource: any[] = [
-		{ id: 'min/max', text: 'Min/Max', group: 'Operations' },
-		{ id: 'avg', text: 'Average', group: 'Operations' },
-		{ id: 'sum', text: 'Sum', group: 'Operations' }
-	];
+	let metadataNodes: any[] = [];
+	getMetadataNodes().then((nodes) => {
+		metadataNodes = nodes;
+	});
 
 	const tableStore: Writable<any[]> = writable([]);
 
-	let currentItem: CalcBlockListItem | null = null;
+	let currentItem: SpatialDataListItem | null = null;
 	let isEditing: boolean = false;
 
 	onMount(async () => {
 		// reset suite and initialize with an empty item so resValidation is valid
 		suite.reset();
-		const initial: CalcBlockListItem = {
+		const initial: SpatialDataListItem = {
 			id: '',
 			template_name: '',
-			operation: '',
-			allowed_meanings: []
+			type: 'bbox',
+			metadata_nodes: [],
+			config: { type: 'bbox', WestBoundLongitude: "", EastBoundLongitude: "", SouthBoundLatitude: "", NorthBoundLatitude: "" }
 		};
 		resValidation = suite(initial);
 	});
@@ -83,24 +68,54 @@
 	async function onChangeHandlerPrimaryData(e: any, fieldName: string) {
 		// wait for Svelte bind:target updates (selected* vars) to flush
 		await tick();
+		
+		console.log('After tick - fieldName:', fieldName);
+		console.log('After tick - bboxWestNode:', bboxWestNode);
+		console.log('After tick - event:', e);
+		console.log('After tick - event.detail:', e?.detail);
 
 		setTimeout(async () => {
 			console.log('input changed', e);
 			console.log('fieldName', fieldName);
 			console.log('currentItem', currentItem);
+			console.log('Bbox nodes:', bboxWestNode, bboxEastNode, bboxSouthNode, bboxNorthNode);
+			
+			const configForValidation: LocalSpatialMetadata = selectedSpatialType === 'bbox'
+				? {
+						type: 'bbox',
+						WestBoundLongitude: nodeToId(bboxWestNode),
+						EastBoundLongitude: nodeToId(bboxEastNode),
+						SouthBoundLatitude: nodeToId(bboxSouthNode),
+						NorthBoundLatitude: nodeToId(bboxNorthNode)
+					}
+				: {
+						type: 'point',
+						longitude: nodeToId(pointLongitudeNode),
+						latitude: nodeToId(pointLatitudeNode),
+						radius: parseFloat(pointRadiusValue)
+					};
+
+			// keep the current item in sync while editing
+			if (currentItem) {
+				currentItem = {
+					...currentItem,
+					type: selectedSpatialType,
+					config: configForValidation
+				};
+			}
 
 			// Build the data object for validation from current form state,
 			// regardless of whether we are editing an existing item or creating a new one.
-			const dataForValidation: CalcBlockListItem = {
+			const dataForValidation: SpatialDataListItem = {
 				id: currentItem?.id ?? '',
 				template_name:
 					currentItem?.template_name ??
 					(selectedEntityTemplate ? selectedEntityTemplate.id.toString() : ''),
-				operation: (currentItem?.operation ?? selectedOperation?.id ?? '') as any,
-				allowed_meanings: selectedAllowedMeanings.map((m) => ({ id: m.id, name: m.name }))
+				type: (currentItem?.type ?? selectedSpatialType ?? 'bbox') as any,
+				metadata_nodes: selectedMetadataNodes,
+				config: configForValidation
 			};
 			console.log('dataForValidation', dataForValidation);
-			console.log('length meanings', dataForValidation.allowed_meanings.length);
 
 			// reset Vest state so old errors don't linger between runs
 			suite.reset();
@@ -109,80 +124,59 @@
 		}, 100);
 	}
 
-	function editPrimaryDataCalc(type: any) {
+	function editSpatialData(type: any) {
 		if (type.action == 'edit') {
-			// set selectedAllowedMeanings based on the current item's allowed_meanings
-			currentItem = primaryData.find((item) => item.id === type.id);
+			currentItem = spatialData.find((item) => item.id === type.id) ?? null;
 			console.log('currentItem', currentItem);
 			if (currentItem) {
-				selectedAllowedMeanings = currentItem.allowed_meanings;
+				didHydrateFromItem = false;
+				selectedMetadataNodes = currentItem.metadata_nodes;
+				selectedSpatialType = currentItem.type;
+				updateCoordinatesFromCurrentItem();
 				if (currentItem?.template_name === 'global') {
-					// use your special global option
 					selectedEntityTemplate = { id: 'global', name: 'global' };
 				} else {
 					selectedEntityTemplate =
 						entitytemplates.find((et) => et.id.toString() === currentItem?.template_name) ?? null;
 				}
-				console.log('currentItem operation', currentItem?.operation);
-				console.log('operationsSource', selectedEntityTemplate);
-				selectedOperation = operationsSource.find((op) => op.id === currentItem?.operation);
 			}
 			isEditing = true;
 			showForm = true;
-			console.log('edit primary data', type.id);
+			console.log('edit spatial data', type.id);
 		}
 		if (type.action == 'delete') {
-			console.log('delete primary data', type.id);
-			let item: CalcBlockListItem = primaryData.find((item) => item.id === type.id)!;
-			const modalSettings = {
+			console.log('delete spatial data', type.id);
+			let item: SpatialDataListItem = spatialData.find((item) => item.id === type.id)!;
+			const modalSettings: ModalSettings = {
 				type: 'confirm',
-				title: 'Delete Primary Data Configuration',
+				title: 'Delete Spatial Data Configuration',
 				body:
-					'Are you sure you wish to delete Primary Data Configuration with Operation "' +
-					item.operation +
+					'Are you sure you wish to delete Spatial Data Configuration with Type "' +
+					item.type +
 					'" for Entity Template "' +
 					item.template_name +
 					'"?',
 				// TRUE if confirm pressed, FALSE if cancel pressed
 				response: async (r: boolean) => {
 					if (r === true) {
-						// remove from primaryData (table view)
-						primaryData = primaryData.filter((pd) => pd.id !== item.id);
-						console.log('Updated primaryData after deletion:', primaryData);
+						// remove from spatialData (table view)
+						spatialData = spatialData.filter((sd) => sd.id !== item.id);
+						console.log('Updated spatialData after deletion:', spatialData);
 						// propagate deletion into underlying searchConfigData structure
-						if (item.template_name === 'global') {
-							// global calc
-							const calc = searchConfigData.global.primary_data?.calc;
-							if (Array.isArray(calc)) {
-								searchConfigData.global.primary_data.calc = calc.filter(
-									(block) => block.operation !== item.operation
-								);
-							} else if (calc) {
-								if (calc.operation === item.operation) {
-									searchConfigData.global.primary_data.calc = null;
-								}
-							}
-						} else if (Array.isArray(searchConfigData?.local)) {
-							searchConfigData.local.forEach((localCfg) => {
+						if (Array.isArray(searchConfigData?.local)) {
+							searchConfigData.local.forEach((localCfg: any) => {
 								if (
-									!localCfg.primary_data &&
+									!localCfg.spatial_data &&
 									localCfg.entity_template_id.toString() !== item.template_name
 								)
 									return;
-								const calc = localCfg.primary_data.calc;
-								if (Array.isArray(calc)) {
-									localCfg.primary_data.calc = calc.filter(
-										(block) => block.operation !== item.operation
-									);
-								} else if (calc) {
-									if (calc.operation === item.operation) {
-										localCfg.primary_data.calc = null;
-									}
+								if (localCfg.spatial_data?.spatial_metadata) {
+									localCfg.spatial_data.spatial_metadata = undefined;
 								}
 							});
 						}
 						// notify parent so validation can run for this logical field
-						onChangeHandler({ target: { id: 'allowed_meanings' } } as any);
+						onChangeHandler({ target: { id: 'spatial_metadata' } } as any);
 					}
 				}
 			};
@@ -192,74 +186,109 @@
     
 
 
-	let primaryData: CalcBlockListItem[] = [];
+	let spatialData: SpatialDataListItem[] = [];
 
 	// create reactive statement to build table data from ALL local entries
 	$: {
-		const items: CalcBlockListItem[] = [];
+		const items: SpatialDataListItem[] = [];
 		console.log('searchConfigData', searchConfigData);
 
-		const calc = searchConfigData.global.primary_data?.calc;
-		console.log('global calc', calc);
-		// if (!calc) return;
-
-		const calcArray = Array.isArray(calc) ? calc : [calc];
-
-		calcArray.forEach((item) => {
-			console.log('global calc item', item);
-			// convert allowed_meanings to object array (id and name)
-			const meaningsArray = item.allowed_meanings.map((meaningId: number) => {
-				const meaning = meanings.find((m) => m.id === meaningId);
-				return meaning ? { id: meaning.id, name: meaning.name } : { id: meaningId, name: '' };
-			});
-
-			items.push({
-				id: 'global_' + (items.length + 1),
-				template_name: 'global',
-				operation: item.operation,
-
-				// add the meanings array at string
-				allowed_meanings: meaningsArray
-			});
-		});
-
 		if (Array.isArray(searchConfigData?.local)) {
-			searchConfigData.local.forEach((localCfg) => {
-				const calc = localCfg.primary_data?.calc;
-				if (!calc) return;
+			searchConfigData.local.forEach((localCfg: any) => {
+				const spatialMetadata = localCfg.spatial_data?.spatial_metadata;
+				if (!spatialMetadata) return;
 
-				const calcArray = Array.isArray(calc) ? calc : [calc];
-				let position = 0;
-				calcArray.forEach((item) => {
-					// convert allowed_meanings to object array (id and name)
-					const meaningsArray = item.allowed_meanings.map((meaningId: number) => {
-						const meaning = meanings.find((m) => m.id === meaningId);
-						return meaning ? { id: meaning.id, name: meaning.name } : { id: meaningId, name: '' };
-					});
-
-					items.push({
-						id: 'local_' + localCfg.entity_template_id.toString() + '_' + position,
-						template_name: localCfg.entity_template_id.toString(),
-						operation: item.operation,
-						// add the meanings array at string
-						allowed_meanings: meaningsArray
-					});
-					position++;
+				items.push({
+					id: 'local_' + localCfg.entity_template_id.toString(),
+					template_name: localCfg.entity_template_id.toString(),
+					type: spatialMetadata.type,
+					metadata_nodes: getMetadataNodeNamesFromConfig(spatialMetadata),
+					config: spatialMetadata
 				});
 			});
 		}
 
-		primaryData = items;
-		console.log('primaryData', primaryData);
-		tableStore.set(primaryData);
+		spatialData = items;
+		console.log('spatialData', spatialData);
+		tableStore.set(spatialData);
 	}
 
-	$: tableStore.set(primaryData);
+	$: tableStore.set(spatialData);
 
 	let showForm = false;
-	let selectedAllowedMeanings: any[] = [];
+	let selectedMetadataNodes: string[] = [];
 	let selectedEntityTemplate: any = null;
-	let selectedOperation: any = null;
+	let selectedSpatialType: 'bbox' | 'point' = 'bbox';
+	let didHydrateFromItem: boolean = false;
+	
+	// Spatial coordinate inputs
+	// Spatial coordinate inputs - metadata nodes
+	let bboxWestNode: any = null;
+	let bboxEastNode: any = null;
+	let bboxSouthNode: any = null;
+	let bboxNorthNode: any = null;
+	let pointLongitudeNode: any = null;
+	let pointLatitudeNode: any = null;
+	let pointRadiusValue: string = "0";
+
+	// adapt entity templates to DropdownKVP's expected shape (id, text, group)
+	$: entitytemplatesSource = Array.isArray(entitytemplates)
+		? entitytemplates.map((et) => ({
+				...et,
+				text: et.name,
+				group: 'Entity Templates'
+			}))
+		: [];
+
+	let spatialTypeSource: any[] = [
+		{ id: 'bbox', text: 'Bounding Box', group: 'Spatial Types' },
+		{ id: 'point', text: 'Point with Radius', group: 'Spatial Types' }
+	];
+
+	let metadataNodesSource: any[] = [];
+	$: metadataNodesSource = Array.isArray(metadataNodes)
+		? metadataNodes.map((node) => ({
+				id: node.xPath ?? node.id,
+				text: node.displayName || node.id,
+				group: 'Metadata Nodes'
+			}))
+		: [];
+
+	const nodeToId = (node: any): string => {
+		if (node == null) return '';
+		if (typeof node === 'string') return node;
+		return (node.id ?? node.value ?? node.key ?? '') as string;
+	};
+
+	const resolveNodeById = (id: string | undefined | null): any => {
+		if (!id) return null;
+		return (
+			metadataNodesSource.find((n) => n.id === id) ??
+			{ id: id, text: id, value: id, label: id, group: 'Metadata Nodes' }
+		);
+	};
+
+	const getMetadataNodeNamesFromConfig = (config: LocalSpatialMetadata): string[] => {
+		const paths: string[] = [];
+		if (config.type === 'bbox' && 'WestBoundLongitude' in config) {
+			if (config.WestBoundLongitude) paths.push(config.WestBoundLongitude);
+			if (config.EastBoundLongitude) paths.push(config.EastBoundLongitude);
+			if (config.SouthBoundLatitude) paths.push(config.SouthBoundLatitude);
+			if (config.NorthBoundLatitude) paths.push(config.NorthBoundLatitude);
+		} else if (config.type === 'point' && 'longitude' in config) {
+			if (config.longitude) paths.push(config.longitude);
+			if (config.latitude) paths.push(config.latitude);
+			if (config.radius) paths.push(config.radius.toString());
+		}
+		
+console.log(paths);
+
+		// Resolve xPaths to display names
+		return paths.map(path => {
+			const node = metadataNodesSource.find(n => n.id === path);
+			return node?.text ?? path;
+		});
+	};
 
 	function toggleForm() {
 		if (showForm) {
@@ -269,121 +298,134 @@
 		showForm = !showForm;
 	}
 
+	function updateCoordinatesFromCurrentItem() {
+		if (!currentItem) return;
+		
+		if (currentItem.type === 'bbox' && 'WestBoundLongitude' in currentItem.config) {
+			bboxWestNode = resolveNodeById(currentItem.config.WestBoundLongitude ?? '');
+			bboxEastNode = resolveNodeById(currentItem.config.EastBoundLongitude ?? '');
+			bboxSouthNode = resolveNodeById(currentItem.config.SouthBoundLatitude ?? '');
+			bboxNorthNode = resolveNodeById(currentItem.config.NorthBoundLatitude ?? '');
+		} else if (currentItem.type === 'point' && 'longitude' in currentItem.config) {
+			pointLongitudeNode = resolveNodeById(currentItem.config.longitude ?? '');
+			pointLatitudeNode = resolveNodeById(currentItem.config.latitude ?? '');
+			pointRadiusValue = currentItem.config.radius?.toString() ?? "0";
+		}
+	}
+
+	$: if (isEditing && showForm && currentItem && metadataNodesSource.length && !didHydrateFromItem) {
+		updateCoordinatesFromCurrentItem();
+		didHydrateFromItem = true;
+	}
+
 	function applyChanges() {
-		console.log('Applying changes with selected meanings:', selectedAllowedMeanings);
-		// numeric ids from selected meanings
-		const allowedIds = selectedAllowedMeanings.map((m) => m.id);
-
-		// update allowed_meanings for all items in primaryData (table view)
-		primaryData = primaryData.map((item) => ({
-			...item,
-			allowed_meanings: selectedAllowedMeanings.map((m) => ({ id: m.id, name: m.name }))
-		}));
-		// tableStore.set(primaryData);
-		console.log('Updated primaryData:', primaryData);
-
-		console.log('Before update, searchConfigData:', searchConfigData);
-		console.log('Allowed IDs to set:', allowedIds);
+		console.log('Applying changes with selected metadata nodes:', selectedMetadataNodes);
 		console.log('Current Item being edited:', currentItem);
 
-		// propagate changes into underlying searchConfigData structure
-		if (selectedEntityTemplate.id === 'global') {
-			// global calc
-			const calc = searchConfigData.global.primary_data?.calc;
-			if (Array.isArray(calc)) {
-				calc.forEach((block) => {
-					if (block.operation === currentItem?.operation) {
-						block.allowed_meanings = allowedIds;
-					}
-				});
-			} else if (calc) {
-				if (calc.operation === currentItem?.operation) {
-					calc.allowed_meanings = allowedIds;
-				}
+		if (!currentItem) return;
+
+		// update the item in spatialData (table view)
+		spatialData = spatialData.map((item) => {
+			if (item.id === currentItem?.id) {
+				const updatedConfig: LocalSpatialMetadata = selectedSpatialType === 'bbox'
+					? { type: 'bbox', WestBoundLongitude: nodeToId(bboxWestNode), EastBoundLongitude: nodeToId(bboxEastNode), SouthBoundLatitude: nodeToId(bboxSouthNode), NorthBoundLatitude: nodeToId(bboxNorthNode) }
+					: { type: 'point', longitude: nodeToId(pointLongitudeNode), latitude: nodeToId(pointLatitudeNode), radius: parseFloat(pointRadiusValue) };
+				
+				return {
+					...item,
+					metadata_nodes: selectedMetadataNodes,
+					config: updatedConfig
+				};
 			}
-		} else if (
-			Array.isArray(searchConfigData?.local) &&
-			currentItem &&
-			currentItem.id.startsWith('local_')
-		) {
-			searchConfigData.local.forEach((localCfg) => {
-				if (!localCfg.primary_data && localCfg.entity_template_id !== currentItem.id.split('_')[1])
-					return;
-				const calc = localCfg.primary_data.calc;
-				if (Array.isArray(calc)) {
-					calc.forEach((block) => {
-						if (block.operation === currentItem?.operation) {
-							block.allowed_meanings = allowedIds;
-						}
-					});
-				} else if (calc) {
-					calc.allowed_meanings = allowedIds;
+			return item;
+		});
+		console.log('Updated spatialData:', spatialData);
+
+		// propagate changes into underlying searchConfigData structure
+		if (Array.isArray(searchConfigData?.local) && currentItem.id.startsWith('local_')) {
+			const templateId = currentItem.template_name;
+			searchConfigData.local.forEach((localCfg: any) => {
+				if (localCfg.entity_template_id.toString() === templateId) {
+					if (!localCfg.spatial_data) {
+						localCfg.spatial_data = {};
+					}
+					const updatedConfig: LocalSpatialMetadata = selectedSpatialType === 'bbox'
+						? { type: 'bbox', WestBoundLongitude: nodeToId(bboxWestNode), EastBoundLongitude: nodeToId(bboxEastNode), SouthBoundLatitude: nodeToId(bboxSouthNode), NorthBoundLatitude: nodeToId(bboxNorthNode) }
+						: { type: 'point', longitude: nodeToId(pointLongitudeNode), latitude: nodeToId(pointLatitudeNode), radius: parseFloat(pointRadiusValue) };
+					
+					localCfg.spatial_data.spatial_metadata = updatedConfig;
 				}
 			});
 		}
 
 		// notify parent so validation can run for this logical field
-		onChangeHandler({ target: { id: 'allowed_meanings' } } as any);
+		onChangeHandler({ target: { id: 'spatial_metadata' } } as any);
 
 		toggleForm();
 	}
 
-	function addPrimaryDataCalc() {
+	function addSpatialData() {
 		console.log(
-			'Adding new primary data calculation with selected meanings:',
-			selectedAllowedMeanings
+			'Adding new spatial data configuration with type:',
+			selectedSpatialType,
+			'and metadata nodes:',
+			selectedMetadataNodes
 		);
-		// numeric ids from selected meanings
-		const allowedIds = selectedAllowedMeanings.map((m) => m.id);
-		console.log('Allowed IDs to add:', allowedIds);
-		// create new calc block
-		const CalcBlockListItem = {
+
+		// create the appropriate spatial metadata object based on type
+		const spatialMetadata: LocalSpatialMetadata = selectedSpatialType === 'bbox'
+			? {
+					type: 'bbox',
+					WestBoundLongitude: nodeToId(bboxWestNode),
+					EastBoundLongitude: nodeToId(bboxEastNode),
+					SouthBoundLatitude: nodeToId(bboxSouthNode),
+					NorthBoundLatitude: nodeToId(bboxNorthNode)
+				}
+			: {
+					type: 'point',
+					longitude: nodeToId(pointLongitudeNode),
+					latitude: nodeToId(pointLatitudeNode),
+					radius: parseFloat(pointRadiusValue)
+				};
+
+		// create new spatial data item
+		const newItem: SpatialDataListItem = {
 			id: 'local_' + selectedEntityTemplate.id.toString() + '_' + Date.now(),
 			template_name: selectedEntityTemplate.id.toString(),
-			operation: selectedOperation.id,
-			allowed_meanings: selectedAllowedMeanings.map((m) => ({ id: m.id, name: m.name }))
+			type: selectedSpatialType,
+			metadata_nodes: selectedMetadataNodes,
+			config: spatialMetadata
 		};
-		// add to primaryData (table view)
-		primaryData = [...primaryData, CalcBlockListItem];
-		console.log('Updated primaryData:', primaryData);
+
+		// add to spatialData (table view)
+		spatialData = [...spatialData, newItem];
+		console.log('Updated spatialData:', spatialData);
+
 		// propagate changes into underlying searchConfigData structure
-		if (selectedEntityTemplate.id === 'global') {
-			// global calc
-			if (!searchConfigData.global.primary_data) {
-				searchConfigData.global.primary_data = { calc: [] };
-			}
-			if (!Array.isArray(searchConfigData.global.primary_data.calc)) {
-				searchConfigData.global.primary_data.calc = [];
-			}
-			searchConfigData.global.primary_data.calc.push({
-				operation: selectedOperation.id,
-				allowed_meanings: allowedIds
-			});
-		} else if (Array.isArray(searchConfigData?.local)) {
+		if (Array.isArray(searchConfigData?.local)) {
 			let localCfg = searchConfigData.local.find(
-				(cfg) => cfg.entity_template_id.toString() === selectedEntityTemplate.id.toString()
+				(cfg: any) => cfg.entity_template_id.toString() === selectedEntityTemplate.id.toString()
 			);
 			if (!localCfg) {
 				// create new local config if not existing
 				localCfg = {
 					entity_template_id: selectedEntityTemplate.id,
-					primary_data: { calc: [] }
+					index_not_completed_metadata: false,
+					search_components: {},
+					spatial_data: {},
+					primary_data: { to_index: false },
+					external_sources: { source: '', local_path: '', external_name: '' }
 				};
 				searchConfigData.local.push(localCfg);
 			}
-			if (!localCfg.primary_data) {
-				localCfg.primary_data = { calc: [] };
+			if (!localCfg.spatial_data) {
+				localCfg.spatial_data = {};
 			}
-			if (!Array.isArray(localCfg.primary_data.calc)) {
-				localCfg.primary_data.calc = [];
-			}
-			localCfg.primary_data.calc.push({
-				operation: selectedOperation.id,
-				allowed_meanings: allowedIds
-			});
+			localCfg.spatial_data.spatial_metadata = spatialMetadata;
 		}
+
 		// notify parent so validation can run for this logical field
-		onChangeHandler({ target: { id: 'allowed_meanings' } } as any);
+		onChangeHandler({ target: { id: 'spatial_metadata' } } as any);
 		toggleForm();
 	}
 
@@ -393,81 +435,35 @@
 	}
 
 	function clear() {
-		selectedAllowedMeanings = [];
+		selectedMetadataNodes = [];
 		selectedEntityTemplate = null;
-		selectedOperation = null;
+		selectedSpatialType = 'bbox';
 		currentItem = null;
 		isEditing = false;
+		didHydrateFromItem = false;
+		bboxWestNode = null;
+		bboxEastNode = null;
+		bboxSouthNode = null;
+		bboxNorthNode = null;
+		pointLongitudeNode = null;
+		pointLatitudeNode = null;
+		pointRadiusValue = "0";
 	}
 </script>
 
-<h2 class="text-xl font-semibold mb-4">Primary Data Configuration</h2>
+<h2 class="text-xl font-semibold mb-4">Spatial Search Configuration</h2>
 
 <div>
 	<SlideToggle
 		active="bg-secondary-500"
 		size="sm"
-		id="to_index"
-		name="Index Primary Data"
-		bind:checked={searchConfigData.global.primary_data.to_index}
-		on:change={onChangeHandler}>Index Primary Data</SlideToggle
+		id="spatial_search"
+		name="Enable Spatial Search"
+		bind:checked={searchConfigData.global.spatial_data.spatial_search}
+		on:change={onChangeHandler}>Enable Spatial Search</SlideToggle
 	>
 </div>
-<div class="flex w-full">
-	<!--List of entity templates which overwrite global settings (to_index = true)-->
-	<div class="my-4 pl-16">
-		<h4 class="text-lg font-semibold mb-2">Overriding</h4>
-		{#if searchConfigData.local && searchConfigData.local.length > 0}
-			<ul class="list-disc list-inside">
-				{#each searchConfigData.local as localCfg}
-					{#if localCfg.primary_data}
-						{#if localCfg.primary_data.to_index != searchConfigData.global.primary_data.to_index}
-							<SlideToggle
-								active="bg-secondary-500"
-								size="sm"
-								id="to_index"
-								name={`Index Primary Data for Entity Template ID: ${localCfg.entity_template_id}`}
-								bind:checked={localCfg.primary_data.to_index}
-								on:change={onChangeHandler}
-								>{entitytemplates.find((et) => et.id === localCfg.entity_template_id)?.name ||
-									localCfg.entity_template_id}</SlideToggle
-							>
-							<br />
-						{/if}
-					{/if}
-				{/each}
-			</ul>
-		{:else}
-			<p class="text-surface-600 italic">No entity templates are overriding the global settings.</p>
-		{/if}
-	</div>
-	<div class="my-4 pl-8">
-		<h4 class="text-lg font-semibold mb-2">Matching</h4>
-		{#if searchConfigData.local && searchConfigData.local.length > 0}
-			<ul class="list-disc list-inside">
-				{#each searchConfigData.local as localCfg}
-					{#if localCfg.primary_data}
-						{#if localCfg.primary_data.to_index === searchConfigData.global.primary_data.to_index}
-							<SlideToggle
-								active="bg-secondary-500"
-								size="sm"
-								id="to_index"
-								name={`Index Primary Data for Entity Template ID: ${localCfg.entity_template_id}`}
-								bind:checked={localCfg.primary_data.to_index}
-								on:change={onChangeHandler}
-								>{entitytemplates.find((et) => et.id === localCfg.entity_template_id)?.name ||
-									localCfg.entity_template_id}</SlideToggle
-							>
-							<br />
-						{/if}
-					{/if}
-				{/each}
-			</ul>
-		{:else}
-			<p class="text-surface-600 italic">No entity templates are matching the global settings.</p>
-		{/if}
-	</div>
-</div>
+
 
 {#if !searchConfigData}
 	<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
@@ -513,7 +509,7 @@
 				{#if isEditing}
 					<div class="pb-2">
 						<div><b>Entity Template:</b> {selectedEntityTemplate.name}</div>
-						<div><b>Operation:</b> {selectedOperation.text}</div>
+						<div><b>Spatial Type:</b> {selectedSpatialType === 'bbox' ? 'Bounding Box' : 'Point with Radius'}</div>
 					</div>
 				{:else}
 					<div class="grow w-1/2">
@@ -521,7 +517,12 @@
 							id="entityTemplate"
 							title="Entity Template"
 							bind:target={selectedEntityTemplate}
-							source={entitytemplatesSource}
+							source={entitytemplatesSource.filter(
+								(et) =>
+									!spatialData.some(
+										(item) => item.template_name.toString() === et.id.toString()
+									)
+							)}
 							required={true}
 							complexTarget={true}
 							help={true}
@@ -532,49 +533,85 @@
 					</div>
 					<div class="grow w-1/2">
 						<DropdownKVP
-							id="operation"
-							title="Operation"
-							bind:target={selectedOperation}
-							source={operationsSource.filter(
-								(op) =>
-									!primaryData.some(
-										(item) =>
-											item.template_name.toString() === selectedEntityTemplate?.id.toString() &&
-											item.operation === op.id
-									)
-							)}
+							id="spatialType"
+							title="Spatial Type"
+							bind:target={selectedSpatialType}
+							source={spatialTypeSource}
 							required={true}
-							complexTarget={true}
+							complexTarget={false}
 							help={true}
-							invalid={resValidation?.hasErrors('operation')}
-							feedback={resValidation?.getErrors('operation')}
-							on:change={(e) => onChangeHandlerPrimaryData(e, 'operation')}
+							invalid={resValidation?.hasErrors('spatialType')}
+							feedback={resValidation?.getErrors('spatialType')}
+							on:change={(e) => onChangeHandlerPrimaryData(e, 'spatialType')}
 						/>
 					</div>
 				{/if}
 			</div>
-			<MultiSelect
-				id="meanings"
-				title="Meanings"
-				bind:source={meaningsSource}
-				itemId="id"
-				itemLabel="text"
-				itemGroup="group"
-				complexSource={true}
-				complexTarget={true}
-				bind:target={selectedAllowedMeanings}
-				isMulti={true}
-				placeholder="-- Please select --"
-				invalid={resValidation?.hasErrors('meanings')}
-				feedback={resValidation?.getErrors('meanings')}
-				clearable={false}
-				on:clear={(e) => onChangeHandlerPrimaryData(e, 'meanings')}
-				on:change={(e) => onChangeHandlerPrimaryData(e, 'meanings')}
-				{loading}
-			/>
-		</div>
-
-		<div>
+			
+			{#if selectedSpatialType === 'bbox'}
+				<div class="grid grid-cols-2 gap-4 my-4">
+					<DropdownKVP
+						id="bboxWest"
+						title="West Bound Longitude"
+						source={metadataNodesSource}
+						bind:target={bboxWestNode}
+						complexTarget={true}
+						on:change={(e) => onChangeHandlerPrimaryData(e, 'bboxWest')}
+					/>
+					<DropdownKVP
+						id="bboxEast"
+						title="East Bound Longitude"
+						source={metadataNodesSource}
+						bind:target={bboxEastNode}
+						complexTarget={true}
+						on:change={(e) => onChangeHandlerPrimaryData(e, 'bboxEast')}
+					/>
+					<DropdownKVP
+						id="bboxSouth"
+						title="South Bound Latitude"
+						source={metadataNodesSource}
+						bind:target={bboxSouthNode}
+						complexTarget={true}
+						on:change={(e) => onChangeHandlerPrimaryData(e, 'bboxSouth')}
+					/>
+					<DropdownKVP
+						id="bboxNorth"
+						title="North Bound Latitude"
+						source={metadataNodesSource}
+						bind:target={bboxNorthNode}
+						complexTarget={true}
+						on:change={(e) => onChangeHandlerPrimaryData(e, 'bboxNorth')}
+					/>
+				</div>
+			{:else if selectedSpatialType === 'point'}
+				<div class="grid grid-cols-3 gap-4 my-4">
+					<DropdownKVP
+						id="pointLongitude"
+						title="Longitude"
+						source={metadataNodesSource}
+						bind:target={pointLongitudeNode}
+						complexTarget={true}
+						on:change={(e) => onChangeHandlerPrimaryData(e, 'pointLongitude')}
+					/>
+					<DropdownKVP
+						id="pointLatitude"
+						title="Latitude"
+						source={metadataNodesSource}
+						bind:target={pointLatitudeNode}
+						complexTarget={true}
+						on:change={(e) => onChangeHandlerPrimaryData(e, 'pointLatitude')}
+					/>
+					<!--@ts-ignore-->
+					<NumberInput
+						id="pointRadiusValue"
+						label="Radius Value"
+						bind:value={pointRadiusValue}  
+						on:change={(e) => onChangeHandlerPrimaryData(e, 'pointRadiusValue')}
+					/>
+	
+				</div>
+			{/if}
+			
 			<div class="grow text-right gap-2">
 				<button title="cancel" type="button" class="btn variant-filled-warning" on:click={onCancel}
 					><Fa icon={faXmark} /></button
@@ -589,7 +626,7 @@
 					>
 				{:else}
 					<button
-						on:click={addPrimaryDataCalc}
+						on:click={addSpatialData}
 						title="save"
 						type="submit"
 						class="btn variant-filled-primary"><Fa icon={faPlus} /></button
@@ -601,22 +638,23 @@
 
 	<div class="table table-compact w-full">
 		<Table
-			on:action={(obj) => editPrimaryDataCalc(obj.detail.type)}
+			on:action={(obj) => editSpatialData(obj.detail.type)}
 			config={{
-				id: 'primaryDataCalcTable',
+				id: 'spatialDataTable',
 				data: tableStore,
 				search: false,
-				paginated: false,
-				optionsComponent: TableOption,
+				optionsComponent: tableOptionComponent,
 				columns: {
 					id: {
+						exclude: true
+					},
+					config: {
 						exclude: true
 					},
 					template_name: {
 						header: 'Entity Template',
 						instructions: {
 							toStringFn: (key) => {
-								// find entity template name by id
 								const et = entitytemplates.find((item) => item.id.toString() === key.toString());
 								if (et) {
 									return et.name;
@@ -626,18 +664,24 @@
 							}
 						}
 					},
-					operation: {
-						header: 'Calculation Operation'
+					type: {
+						header: 'Spatial Type',
+						instructions: {
+							toStringFn: (key) => key === 'bbox' ? 'Bounding Box' : 'Point with Radius'
+						}
 					},
-					allowed_meanings: {
-						header: 'Meanings to include',
+					metadata_nodes: {
+						header: 'Metadata Nodes',
 						disableFiltering: true,
 						instructions: {
-							renderComponent: TableElements
+							renderComponent: tableElementsComponent
 						}
 					}
 				}
 			}}
+		
+		
+		
 		/>
 	</div>
 {/if}

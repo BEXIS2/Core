@@ -113,10 +113,10 @@
       "spatial_data": {
         "spatial_metadata": {
           "type": "bbox",
-          "WestBoundLongitude": -10.0,
-          "EastBoundLongitude": 10.0,
-          "SouthBoundLatitude": -5.0,
-          "NorthBoundLatitude": 5.0
+          "WestBoundLongitude": "-10.0",
+          "EastBoundLongitude": "10.0",
+          "SouthBoundLatitude": "-5.0",
+          "NorthBoundLatitude": "5.0"
         }
       },
       "primary_data": {
@@ -177,10 +177,10 @@
       "spatial_data": {
         "spatial_metadata": {
           "type": "bbox",
-          "WestBoundLongitude": -10.0,
-          "EastBoundLongitude": 10.0,
-          "SouthBoundLatitude": -5.0,
-          "NorthBoundLatitude": 5.0
+          "WestBoundLongitude": "-10.0",
+          "EastBoundLongitude": "10.0",
+          "SouthBoundLatitude": "-5.0",
+          "NorthBoundLatitude": "5.0"
         }
       },
       "primary_data": {

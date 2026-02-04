@@ -100,16 +100,16 @@ export type LocalSpatialMetadata =
 
 export interface BBoxSpatialMetadata {
   type: "bbox";
-  WestBoundLongitude: number;
-  EastBoundLongitude: number;
-  SouthBoundLatitude: number;
-  NorthBoundLatitude: number;
+  WestBoundLongitude: string;
+  EastBoundLongitude: string;
+  SouthBoundLatitude: string;
+  NorthBoundLatitude: string;
 }
 
 export interface PointSpatialMetadata {
   type: "point";
-  longitude: number;
-  latitude: number;
+  longitude: string;
+  latitude: string;
   radius: number;
 }
 

@@ -1,9 +1,7 @@
 <script lang="ts">
 	import {
 		Table,
-		ErrorMessage,
 		TablePlaceholder,
-		TextInput,
 		MultiSelect,
 		DropdownKVP, 
 	} from '@bexis2/bexis2-core-ui';
@@ -17,8 +15,9 @@
 	import { fade, slide } from 'svelte/transition';
 	import suite from './primaryDataValidation';
 	import { onMount, tick } from 'svelte';
-  
-
+    import type { ModalSettings } from '@skeletonlabs/skeleton';
+	const tableOptionComponent = TableOption as any;
+	const tableElementsComponent = TableElements as any;
 	const modalStore = getModalStore();
 
 	import type { MeaningModel } from '$lib/components/SearchConfig/SearchConfigModel.ts';
@@ -70,9 +69,11 @@
 	onMount(async () => {
 		// reset suite and initialize with an empty item so resValidation is valid
 		suite.reset();
+		
 		const initial: CalcBlockListItem = {
 			id: '',
 			template_name: '',
+			// @ts-ignore
 			operation: '',
 			allowed_meanings: []
 		};
@@ -112,7 +113,7 @@
 	function editPrimaryDataCalc(type: any) {
 		if (type.action == 'edit') {
 			// set selectedAllowedMeanings based on the current item's allowed_meanings
-			currentItem = primaryData.find((item) => item.id === type.id);
+			currentItem = primaryData.find((item) => item.id === type.id) ?? null;
 			console.log('currentItem', currentItem);
 			if (currentItem) {
 				selectedAllowedMeanings = currentItem.allowed_meanings;
@@ -134,7 +135,7 @@
 		if (type.action == 'delete') {
 			console.log('delete primary data', type.id);
 			let item: CalcBlockListItem = primaryData.find((item) => item.id === type.id)!;
-			const modalSettings = {
+			const modalSettings: ModalSettings = {
 				type: 'confirm',
 				title: 'Delete Primary Data Configuration',
 				body:
@@ -163,7 +164,7 @@
 								}
 							}
 						} else if (Array.isArray(searchConfigData?.local)) {
-							searchConfigData.local.forEach((localCfg) => {
+							searchConfigData.local.forEach((localCfg: any) => {
 								if (
 									!localCfg.primary_data &&
 									localCfg.entity_template_id.toString() !== item.template_name
@@ -224,7 +225,7 @@
 		});
 
 		if (Array.isArray(searchConfigData?.local)) {
-			searchConfigData.local.forEach((localCfg) => {
+			searchConfigData.local.forEach((localCfg: any) => {
 				const calc = localCfg.primary_data?.calc;
 				if (!calc) return;
 
@@ -306,8 +307,8 @@
 			currentItem &&
 			currentItem.id.startsWith('local_')
 		) {
-			searchConfigData.local.forEach((localCfg) => {
-				if (!localCfg.primary_data && localCfg.entity_template_id !== currentItem.id.split('_')[1])
+			searchConfigData.local.forEach((localCfg: any) => {
+				if (!localCfg.primary_data || !currentItem || localCfg.entity_template_id !== currentItem.id.split('_')[1])
 					return;
 				const calc = localCfg.primary_data.calc;
 				if (Array.isArray(calc)) {
@@ -361,7 +362,7 @@
 			});
 		} else if (Array.isArray(searchConfigData?.local)) {
 			let localCfg = searchConfigData.local.find(
-				(cfg) => cfg.entity_template_id.toString() === selectedEntityTemplate.id.toString()
+				(cfg: any) => cfg.entity_template_id.toString() === selectedEntityTemplate.id.toString()
 			);
 			if (!localCfg) {
 				// create new local config if not existing
@@ -606,8 +607,7 @@
 				id: 'primaryDataCalcTable',
 				data: tableStore,
 				search: false,
-				paginated: false,
-				optionsComponent: TableOption,
+				optionsComponent: tableOptionComponent,
 				columns: {
 					id: {
 						exclude: true
@@ -633,7 +633,7 @@
 						header: 'Meanings to include',
 						disableFiltering: true,
 						instructions: {
-							renderComponent: TableElements
+							renderComponent: tableElementsComponent
 						}
 					}
 				}
