@@ -100,7 +100,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             try
             {
                 var groups = new List<GroupGridRowModel>();
-                int count = _groupManager.Roles.Count();
+                int count = _groupManager.Count();
                 if (command != null)// filter subjects based on grid filter settings
                 {
                     FilterExpression filter = TelerikGridHelper.Convert(command.FilterDescriptors.ToList());
@@ -110,8 +110,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 }
                 else
                 {
-                    groups = _groupManager.Roles.Select(GroupGridRowModel.Convert).ToList();
-                    count = _groupManager.Roles.Count();
+                    groups = _groupManager.Find().Select(GroupGridRowModel.Convert).ToList();
                 }
 
                 return View(new GridModel<GroupGridRowModel> { Data = groups, Total = count });

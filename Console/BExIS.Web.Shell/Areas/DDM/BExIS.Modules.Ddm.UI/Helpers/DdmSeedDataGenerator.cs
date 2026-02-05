@@ -130,8 +130,8 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
                 #region Metadata Diff Tool
 
-                Feature MetadiffFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Metadiff") && f.Parent.Equals(DataDiscovery));
-                if (MetadiffFeature == null) MetadiffFeature = featureManager.Create("Metadiff", "Metadiff", DataDiscovery);
+                Feature MetadiffFeature = featureManager.Find(f => f.Name.Equals("Metadiff") && f.Parent.Equals(dataDiscoveryFeature)).SingleOrDefault();
+                if (MetadiffFeature == null) MetadiffFeature = featureManager.Create("Metadiff", "Metadiff", dataDiscoveryFeature);
 
                 operationManager.Create("DDM", "Metadiff", "*", MetadiffFeature);
 

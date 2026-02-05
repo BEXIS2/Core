@@ -167,6 +167,24 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
+        public int Count(Expression<Func<Request, bool>> predicate)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var requestRepository = uow.GetReadOnlyRepository<Request>();
+                return requestRepository.Query(predicate).Count();
+            }
+        }
+
+        public int Count()
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var requestRepository = uow.GetReadOnlyRepository<Request>();
+                return requestRepository.Query().Count();
+            }
+        }
+
         public List<Request> Find(Expression<Func<Request, bool>> predicate)
         {
             using (var uow = this.GetUnitOfWork())

@@ -98,6 +98,24 @@ namespace BExIS.Security.Services.Subjects
             }
         }
 
+        public int Count(Expression<Func<Group, bool>> predicate)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var groupRepository = uow.GetReadOnlyRepository<Group>();
+                return groupRepository.Query(predicate).Count();
+            }
+        }
+
+        public int Count()
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var groupRepository = uow.GetReadOnlyRepository<Group>();
+                return groupRepository.Query().Count();
+            }
+        }
+
         public Group Get(long id)
         {
             using (var uow = this.GetUnitOfWork())
@@ -136,6 +154,16 @@ namespace BExIS.Security.Services.Subjects
             {
                 var groupRepository = uow.GetReadOnlyRepository<Group>();
                 var groups = groupRepository.Query(predicate).ToList();
+                return groups;
+            }
+        }
+
+        public IList<Group> Find()
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var groupRepository = uow.GetReadOnlyRepository<Group>();
+                var groups = groupRepository.Query().ToList();
                 return groups;
             }
         }

@@ -17,32 +17,12 @@ namespace BExIS.Modules.Pum.UI.Helpers
     {
         public void GenerateSeedData()
         {
-
-
-            
-
+            var operationManager = new OperationManager();
             // Operations
-            using (OperationManager operationManager = new OperationManager())
-            {
-                var homeController = operationManager.Find("PUM", "Home", "*") ?? operationManager.Create("PUM", "Home", "*");
-            }
-
-            using (OperationManager operationManager = new OperationManager())
-            {
-                var importJSONController = operationManager.Find("PUM", "ImportJSON", "*") ?? operationManager.Create("PUM", "ImportJSON", "*");
-            }
-
-            using (OperationManager operationManager = new OperationManager())
-            {
-                var importCSVController = operationManager.Find("PUM", "ImportCSV", "*") ?? operationManager.Create("PUM", "ImportCSV", "*");
-            }
-
-            using (OperationManager operationManager = new OperationManager())
-            {
-                var viewController = operationManager.Find("PUM", "View", "*") ?? operationManager.Create("PUM", "View", "*");
-            }
-
-
+            var homeController = operationManager.Get("PUM", "Home", "*") ?? operationManager.Create("PUM", "Home", "*");
+            var importJSONController = operationManager.Get("PUM", "ImportJSON", "*") ?? operationManager.Create("PUM", "ImportJSON", "*");
+            var importCSVController = operationManager.Get("PUM", "ImportCSV", "*") ?? operationManager.Create("PUM", "ImportCSV", "*");
+            var viewController = operationManager.Get("PUM", "View", "*") ?? operationManager.Create("PUM", "View", "*");
         }
 
         public void Dispose()
