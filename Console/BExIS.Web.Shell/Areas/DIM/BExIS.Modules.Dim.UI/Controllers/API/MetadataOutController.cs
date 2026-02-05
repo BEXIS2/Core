@@ -332,7 +332,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         private HttpResponseMessage GetMetadata(long id, long versionId, Format format, string subsetType, int simplifiedJson)
         {
             DatasetVersion datasetVersion = null;
-
+            string flatmetadata = string.Empty;
             string returnType = "";
             //returnType = Request.Content.Headers.ContentType?.MediaType;
             if (Request.Headers.Accept.Any())
@@ -417,6 +417,16 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     xmlDoc = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport, convertTo);
                 }
 
+                //format = flatten
+                
+                if (format == Format.Flatten)
+                {
+                    List<string> t = xmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
+                    string convertTo = t.ToArray().FirstOrDefault();
+                    xmlDoc = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport, convertTo);
+                    flatmetadata = OutputMetadataManager.GetFlattenMetadata(xmlDoc);
+                }
+               
                 //format subset && subsetType
                 if (format == Format.Subset)
                 {
@@ -478,6 +488,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(xmlDoc.InnerXml, Encoding.UTF8, "application/xml") };
                                 return response;
                             }
+                        case "text/plain":
+                            {
+                                HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(flatmetadata, Encoding.UTF8, "text/plain") };
+                                return response;
+                            }
                         default:
                             {
                                 HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(xmlDoc.InnerXml, Encoding.UTF8, "application/xml") };
@@ -527,6 +542,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
     {
         Internal,
         External,
-        Subset
+        Subset,
+        Flatten
     }
 }
