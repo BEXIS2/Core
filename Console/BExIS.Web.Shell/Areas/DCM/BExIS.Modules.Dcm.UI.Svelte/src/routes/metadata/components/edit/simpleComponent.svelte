@@ -14,6 +14,7 @@
 	import suite from './simpleComponent';
 	import type { SimpleComponentData } from '../../../../lib/components/utils/metadata/models';
 	import SveltyPicker from 'svelty-picker';
+	import {convertDisplayName} from './../../metadataShared';
 	//import { en, de } from 'svelty-picker/dist/i18n';
 
 	export let simpleComponent: any;
@@ -54,7 +55,9 @@
 			ValidationStoreAddSimpleComponent(simpleComponentValidationItem);
 			config = getConfigStore();
 			// check if this component is an anchor point
+			console.log("check for anchorpoin", config)
 			for (const component of config.components) {
+				console.log("ghjgJ", component.globalSettings.anchorpoint, path)
 				if (component.globalSettings.anchorpoint == path){
 					isAnchor = true;
 					customComponent = customComponentsCatalog[component.meta.component_name].component;
@@ -87,44 +90,55 @@
 				<!-- Handle date format -->
 				{#if simpleComponent.properties['#text'].format.toLowerCase() === 'date'}
 					<span id = {path}>
-						{label}	
+						<span class="mr-2">
+						{convertDisplayName(label)}	
+						 </span>
 						<SveltyPicker
 							mode="date"
 							name={label}
 							format="yyyy-mm-dd"
 							initialDate={date}
 							bind:value
+							inputClasses="input variant-form-material dark:bg-zinc-700 bg-zinc-50 placeholder:text-gray-400 w-32"
+							
 							/>
 					</span>
 				<!-- Handle datetime format -->
 				{:else if simpleComponent.properties['#text'].format.toLowerCase() === 'datetime' || simpleComponent.properties['#text'].format.toLowerCase() === 'date and time'}
 					<span id = {path}>
-						{label}	
+						<span class="mr-2">
+						{convertDisplayName(label)}	
+						</span>
 						<SveltyPicker
 							mode="datetime"
 							name={label}
 							format="yyyy-mm-dd hh:ii"
 							initialDate={date}
 							bind:value
+							inputClasses="input variant-form-material dark:bg-zinc-700 bg-zinc-50 placeholder:text-gray-400 w-32"
 							/>
 					</span>
 				<!-- Handle time format -->
 				{:else if simpleComponent.properties['#text'].format.toLowerCase() === 'time'}
 					<span id = {path}>
-						{label}	
+						<span class="mr-2">
+						{convertDisplayName(label)}	
+						</span>
 						<SveltyPicker
 							mode="time"
 							name={label}
 							format="hh:ii"
 							initialDate={date}
 							bind:value
+							inputClasses="input variant-form-material dark:bg-zinc-700 bg-zinc-50 placeholder:text-gray-400 w-32"
+						
 							/>
 					</span>
 				<!-- Handle textarea format -->
-				{:else if simpleComponent.properties['#text'].type === 'string' &&simpleComponent.properties['#text'].format.toLowerCase() === 'textarea' || simpleComponent.properties['#text'].format.toLowerCase() === 'text'}
+				{:else if simpleComponent.properties['#text'].type === 'string' &&simpleComponent.properties['#text'].format.toLowerCase() === 'textarea' || simpleComponent.properties['#text'].format.toLowerCase() === 'text' || (simpleComponent.properties['#text'].type === 'string' && value.length >= 25)}
 					<TextArea 
 						id={path}
-						label={label}
+						label={convertDisplayName(label)}
 						required={required} 
 						bind:value
 						on:input={onChangeHandler}
@@ -136,9 +150,10 @@
 			<!-- Handle different types without specific format -->
 			<!-- Handle string type -->
 			{:else if simpleComponent.properties['#text'].type === 'string'}
+			{#if value != null && value.length < 80}
 				<TextInput 
 					id={path}
-					label={label}
+					label={convertDisplayName(label)}
 					required={required} 
 					bind:value
 					on:input={onChangeHandler}
@@ -146,11 +161,22 @@
 					invalid={res.hasErrors(path)}
 					feedback={res.getErrors(path)}	 				
 				/>
-			<!-- Handle number and integer types -->
+			{:else}
+				<TextArea 
+					id={path}
+					label={convertDisplayName(label)}
+					required={required} 
+					bind:value
+					on:input={onChangeHandler}
+					valid={res.isValid(path)}
+					invalid={res.hasErrors(path)}
+					feedback={res.getErrors(path)}
+				/>
+			{/if}
 			{:else if simpleComponent.properties['#text'].type === 'number'||simpleComponent.properties['#text'].type === 'integer'}
 				<NumberInput 
 					id={path}
-					label={label}
+					label={convertDisplayName(label)}
 					required={required} 
 					bind:value
 					on:input={onChangeHandler}
@@ -163,20 +189,20 @@
 				{@const v = value = true}
 				<SlideToggle 
 					id={path}
-					label={label}
-					name={label}
+					label={convertDisplayName(label)}
+					name={convertDisplayName(label)}
 					required={required} 
 					bind:value
 					on:input={onChangeHandler}
 					valid={res.isValid(path)}
 					invalid={res.hasErrors(path)}
 					feedback={res.getErrors(path)}
-				>{label}</SlideToggle>
+				>{convertDisplayName(label)}</SlideToggle>
 			{/if}
 		</div>
 	{/if}
 {:else if isAnchor}
 	<div class="px-5" id={path + '.item'}>
-		<svelte:component this={customComponent} anchor={path} label={label}/>
+		<svelte:component this={customComponent} anchor={path} label={convertDisplayName(label)}/>
 	</div>	
 {/if}

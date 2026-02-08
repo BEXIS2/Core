@@ -17,6 +17,7 @@
 	import { slide, fade } from 'svelte/transition';
 	import { hideStore } from '../../../../lib/components/utils/metadata/stores';
 	import { toggleShow } from '../../../../lib/components/utils/metadata/metadataComponentUtils';
+	import { convertDisplayName } from './../../metadataShared';
 
 	export let complexComponent: any;
 	export let path: string;
@@ -38,33 +39,35 @@
 			{#if value.oneOf || value.anyOf || value.allOf}
 				<ChoiceComponent choiceComponent={value} {path} />
 			{:else}
-				<div class="grid grid-cols-1 gap-0 m-2">
-					<div class="card bg-primary-300 dark:bg-primary-800 px-5 py-2 grid grid-cols-2">
-						<div class="text-left w-4/5">
+				<div class="grid grid-cols-1 gap-0 mb-4 mt-2 ml-4">
+					<div
+						class="card bg-primary-300 dark:bg-primary-800 px-4 flex flex-row items-center space-x-2"
+					>
+						<div class="text-left flex justify-start w-full">
 							{#if required}
-								<h3 class="h3">{label} *</h3>
+								<h4 class="h4">{convertDisplayName(label, true)} *</h4>
 							{:else}
-								<h3 class="h3">{label}</h3>
+								<h4 class="h4">{convertDisplayName(label, true)}</h4>
 							{/if}
 						</div>
-						<div class="text-right">
+						<div class="text-left flex justify-end w-2">
 							{#if !$hideStore.includes(path)}
 								<button
 									class="h-9 w-10 text-right"
-									title="Open or close {label}"
+									title="Open or close {convertDisplayName(label, true)}"
 									on:click={() => toggleShow(p)}><Fa icon={faChevronUp} /></button
 								>
 							{:else}
 								<button
 									class="h-9 w-10 text-right"
-									title="Open or close {label}"
+									title="Open or close {convertDisplayName(label, true)}"
 									on:click={() => toggleShow(p)}><Fa icon={faChevronDown} /></button
 								>
 							{/if}
 						</div>
 					</div>
 					{#if !$hideStore.includes(path)}
-						<div in:slide out:slide class="card px-5 py-4" id={path}>
+						<div in:slide out:slide class="card py-4" id={path}>
 							<ComplexComponent
 								complexComponent={value}
 								{path}
@@ -75,8 +78,13 @@
 				</div>
 			{/if}
 		{:else if value.type === 'object' && value.properties['#text']}
-			<div class="px-5 py-2">
-				<SimpleComponent simpleComponent={value} {path} required={requiredList.includes(key)} />
+			<div class="mb-2">
+				<div class="flex flex-col md:flex-row md:items-center gap-2">
+					<div class="flex-1 min-w-[100px]">
+						<SimpleComponent simpleComponent={value} {path} required={requiredList.includes(key)} />
+					</div>
+				</div>
+			
 			</div>
 		{:else if value.type === 'array' && value.items}
 			<ArrayComponent arrayComponent={value} {path} />
