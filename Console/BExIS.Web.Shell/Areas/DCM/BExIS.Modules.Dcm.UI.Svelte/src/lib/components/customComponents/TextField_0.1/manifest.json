@@ -1,0 +1,93 @@
+{
+  "meta": {
+    "title": "Text Field Widget",
+    "component_name": "textField_v4.2.26",
+    "author": "Franziska Zander",
+    "version": "1.0.0",
+    "description": "Component for Text Field input"
+  },
+  "globalSettings": {
+    "globalsetting": [
+      {
+        "name": "Default Value",
+        "description": "String to configure the text field widget",
+        "type": "string",
+        "target_variable": "defaultValue",
+        "default_value": {
+          "type": "string",
+          "value": ""
+        }
+      }
+    ]
+  },
+  "modes": {
+    "edit": [
+      {
+        "mode_name": "simple",
+        "description": "Basic Configuration of the text field widget",
+        "settings": {
+          "setting": [
+            {
+              "name": "Disable",
+              "description": "Disable the text field",
+              "type": "boolean",
+              "target_variable": "disable",
+              "default_value": {
+                "type": "boolean",
+                "value": false
+              }
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Text Field",
+              "description": "Text field input",
+              "type": "string",
+              "format": "",
+              "target_variable": "text_field",
+              "allowregex_input": true,
+              "allowregex_output": true,
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "string",
+                "value": "Rainforest"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "view": [
+      {
+        "mode_name": "Text Field Display",
+        "description": "Mode for displaying simple text field",
+        "settings": {
+          "setting": [
+          
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Display Text",
+              "description": "Text to display",
+              "type": "string",
+              "target_variable": "displayText",
+              "allowregex_input": true,
+              "allowregex_output": false,
+              "is_input": true,
+              "is_output": false,
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
