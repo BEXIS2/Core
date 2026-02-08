@@ -1,11 +1,18 @@
 <script lang="ts">
-  import componentManifestJson from './componentManifest.json';
+  // import componentManifestJson from './componentManifest.json';
   export let currentInteractionMode: string;
   export let componentConfig: any;
   export let componentManifest: any;
   export let onAddComponent: (component: any) => void;
   export let onSaveMappings: () => void;
   export let onSave: () => void;
+
+
+  // get all component manifests.json from lib/components/customComponents/*/manifest.json and combine to one array
+  let files = import.meta.glob('../../lib/components/customComponents/*/manifest.json', { as: 'json', eager: true });
+  
+  let componentManifestJson = Object.values(files).map((module: any) => module.default);
+
 
   // get all submodes for current interaction mode from manifest
   $: availableModes = getAvailableModes(currentInteractionMode, componentManifest);
