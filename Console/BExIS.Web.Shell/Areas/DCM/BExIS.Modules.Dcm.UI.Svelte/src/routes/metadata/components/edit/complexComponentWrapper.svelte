@@ -38,8 +38,8 @@
 			{#if value.oneOf || value.anyOf || value.allOf}
 				<ChoiceComponent choiceComponent={value} {path} />
 			{:else}
-				<div class="grid grid-cols-1 gap-0 m-2">
-					<div class="card bg-primary-300 dark:bg-primary-800 px-5 py-2 grid grid-cols-2">
+				<div class="grid grid-cols-1 gap-0 ">
+					<div class="card bg-primary-300 dark:bg-primary-800 pl-5 py-2 grid grid-cols-2">
 						<div class="text-left w-4/5">
 							{#if required}
 								<h3 class="h3">{label} *</h3>
@@ -64,7 +64,7 @@
 						</div>
 					</div>
 					{#if !$hideStore.includes(path)}
-						<div in:slide out:slide class="card px-5 py-4" id={path}>
+						<div in:slide out:slide class="card pl-5 py-4" id={path}>
 							<ComplexComponent
 								complexComponent={value}
 								{path}

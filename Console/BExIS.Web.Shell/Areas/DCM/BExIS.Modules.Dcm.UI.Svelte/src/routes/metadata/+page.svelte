@@ -17,7 +17,15 @@
 	let schema: any = s;
 	$: schema = s;
 
+	let container
+
 	async function load() {
+
+		container = document.getElementById('metadata');
+		datasetId = Number(container?.getAttribute('dataset'));
+		schemaId = Number(container?.getAttribute('schema'));
+
+
 		if (schemaId > 0) {
 			s = await apiCalls.GetMetadataSchema(schemaId);
 			console.log('Schema loaded', s);

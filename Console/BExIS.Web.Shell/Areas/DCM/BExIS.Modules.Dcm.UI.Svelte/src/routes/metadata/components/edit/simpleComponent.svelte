@@ -4,8 +4,12 @@
 		NumberInput,
 		TextArea,
 		DropdownKVP,
+		Dropdown,
 		helpStore,
-		CodeEditor
+		CodeEditor,
+
+		MultiSelect
+
 	} from '@bexis2/bexis2-core-ui';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
@@ -36,6 +40,10 @@
 	$: updateMetadataStore(path, value);
 
 	onMount(async () => {
+
+		 console.log("value",value);
+		 console.log("enum", simpleComponent.properties['#text'].enum);
+
 			// initial check
 			setTimeout(async () => {
 				if(value == undefined || value == null || value == '') {
@@ -77,11 +85,15 @@
 			res = suite(value, e.target.id);
 		}, 10);
 	}
+
+
+	let x:string = null;
+
 </script>
 <!-- Simple Component Rendering -->
 {#if isVisible && !isAnchor}
 	{#if path && simpleComponent.properties}
-		<div class="px-5" id={path + '.item'}>
+		<div class="pl-5" id={path + '.item'}>
 			<!-- Handle different formats and types -->
 			{#if simpleComponent.properties['#text'].format !== undefined && simpleComponent.properties['#text'].format !== null} 		
 				<!-- Handle date format -->
@@ -135,7 +147,7 @@
 				{/if}
 			<!-- Handle different types without specific format -->
 			<!-- Handle string type -->
-			{:else if simpleComponent.properties['#text'].type === 'string'}
+			{:else if simpleComponent.properties['#text'].type === 'string' && simpleComponent.properties['#text'].enum	=== undefined}	
 				<TextInput 
 					id={path}
 					label={label}
@@ -146,6 +158,34 @@
 					invalid={res.hasErrors(path)}
 					feedback={res.getErrors(path)}	 				
 				/>
+			<!-- Handle string type with enum  -->
+			{:else if simpleComponent.properties['#text'].type === 'string' && simpleComponent.properties['#text'].enum}
+			
+					{#if simpleComponent.properties['#text'].enum.length <= 10}<!-- Handle string type with enum with short numer of  entries -->
+						<Dropdown
+								id="{path}"
+								title="{label}"
+								bind:target={value}
+								source={simpleComponent.properties['#text'].enum}
+								on:change={onChangeHandler}
+								invalid={res.hasErrors(path)}
+								feedback={res.getErrors(path)}	 
+							/>
+					{:else} <!-- Handle string type with enum with many entries -->
+							
+								<MultiSelect
+										id="{path}"
+										title="{label}"
+										required={required}
+										source={simpleComponent.properties['#text'].enum}
+										bind:target={value}
+										isMulti={false}
+										clearable={required	? false : true} 
+										invalid={res.hasErrors(path)}
+										feedback={res.getErrors(path)}	 
+									/>
+						{/if}
+
 			<!-- Handle number and integer types -->
 			{:else if simpleComponent.properties['#text'].type === 'number'||simpleComponent.properties['#text'].type === 'integer'}
 				<NumberInput 
@@ -176,7 +216,7 @@
 		</div>
 	{/if}
 {:else if isAnchor}
-	<div class="px-5" id={path + '.item'}>
+	<div class="pl-5" id={path + '.item'}>
 		<svelte:component this={customComponent} anchor={path} label={label}/>
 	</div>	
 {/if}

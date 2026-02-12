@@ -30,3 +30,4 @@
 {#if path && simpleComponent.properties}
 	<SimpleComponent {simpleComponent} {path} {required} {label} {value} />
 {/if}
+
