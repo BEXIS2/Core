@@ -41,9 +41,6 @@
 
 	onMount(async () => {
 
-		 console.log("value",value);
-		 console.log("enum", simpleComponent.properties['#text'].enum);
-
 			// initial check
 			setTimeout(async () => {
 				if(value == undefined || value == null || value == '') {
@@ -143,6 +140,7 @@
 						valid={res.isValid(path)}
 						invalid={res.hasErrors(path)}
 						feedback={res.getErrors(path)}
+						description={simpleComponent.description}
 					/>
 				{/if}
 			<!-- Handle different types without specific format -->
@@ -157,6 +155,7 @@
 					valid={res.isValid(path)}
 					invalid={res.hasErrors(path)}
 					feedback={res.getErrors(path)}	 				
+					description={simpleComponent.description}
 				/>
 			<!-- Handle string type with enum  -->
 			{:else if simpleComponent.properties['#text'].type === 'string' && simpleComponent.properties['#text'].enum}
@@ -170,6 +169,7 @@
 								on:change={onChangeHandler}
 								invalid={res.hasErrors(path)}
 								feedback={res.getErrors(path)}	 
+								description={simpleComponent.description}
 							/>
 					{:else} <!-- Handle string type with enum with many entries -->
 							
@@ -183,6 +183,7 @@
 										clearable={required	? false : true} 
 										invalid={res.hasErrors(path)}
 										feedback={res.getErrors(path)}	 
+										description={simpleComponent.description}
 									/>
 						{/if}
 
@@ -197,6 +198,7 @@
 					valid={res.isValid(path)}
 					invalid={res.hasErrors(path)}
 					feedback={res.getErrors(path)}
+					description={simpleComponent.description}
 				/>
 			<!-- Handle boolean type -->
 			{:else if simpleComponent.properties['#text'].type === 'boolean'}
@@ -211,6 +213,7 @@
 					valid={res.isValid(path)}
 					invalid={res.hasErrors(path)}
 					feedback={res.getErrors(path)}
+					description={simpleComponent.description}
 				>{label}</SlideToggle>
 			{/if}
 		</div>

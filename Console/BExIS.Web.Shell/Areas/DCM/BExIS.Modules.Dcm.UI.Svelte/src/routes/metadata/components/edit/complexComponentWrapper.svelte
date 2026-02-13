@@ -46,6 +46,7 @@
 							{:else}
 								<h3 class="h3">{label}</h3>
 							{/if}
+			
 						</div>
 						<div class="text-right">
 							{#if !$hideStore.includes(path)}
@@ -82,4 +83,5 @@
 			<ArrayComponent arrayComponent={value} {path} />
 		{/if}
 	{/each}
+	
 {/if}
