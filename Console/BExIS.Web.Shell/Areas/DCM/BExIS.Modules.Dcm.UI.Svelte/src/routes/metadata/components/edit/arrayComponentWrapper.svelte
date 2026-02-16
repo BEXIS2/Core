@@ -1,13 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import {
-		TextInput,
-		NumberInput,
-		TextArea,
-		DropdownKVP,
-		helpStore,
-		CodeEditor
-	} from '@bexis2/bexis2-core-ui';
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from './simpleComponent.svelte';
 	import { getValueBySchemaPath, setValueByPath, updateMetadataStore, schemaToJson, toggleShow } from '../../../../lib/components/utils/metadata/metadataComponentUtils';
@@ -72,7 +63,7 @@
 		{#key render}
 			{#if arrayComponent.items.type === 'object' && arrayComponent.items.properties && !arrayComponent.items.properties['#text']}
 				<div class="grid grid-cols-1 gap-0">
-					<div class="card bg-primary-300 dark:bg-primary-800 px-5 py-2 grid grid-cols-2">
+					<div class="card bg-primary-300 dark:bg-primary-800 pl-5 py-2 grid grid-cols-2">
 						<div class="text-left w-4/5">						
 							<h3 class="h3">{convertDisplayName(label, true)}</h3>
 						</div>
@@ -93,10 +84,10 @@
 						</div>
 					</div>
 					{#if !$hideStore.includes(path)}
-						<div in:slide out:slide class="card px-5 py-4" id={path}>
+						<div in:slide out:slide class="card pl-5 py-4" id={path}>
 						{#if value && value.length > 0}
 							{#each value as item, index}
-								<div in:slide out:slide class="p-5 card mb-2">
+								<div in:slide out:slide class="pl-5 py-5 card mb-2">
 									<div class="grid grid-cols-2 gap-2">
 									<div>
 										<h3 class="h3 text-primary-500">{convertDisplayName(label, true)} {index+1}</h3>
