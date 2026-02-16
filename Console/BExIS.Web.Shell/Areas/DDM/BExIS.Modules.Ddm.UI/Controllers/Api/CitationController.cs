@@ -136,18 +136,6 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                         isPublic = false;
                         isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
 
-                        // If dataset is not public check if a valid token is provided
-                        if (isPublic == false)
-                        {
-                            User user = ControllerContext.RouteData.Values["user"] as User;
-
-                            // If user is registered pass
-                            if (user == null)
-                            {
-                                return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "The dataset is not public and the token is not valid.");
-                            }
-                        }
-
                         if (dataset == null)
                             return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "The dataset with the id (" + id + ") does not exist.");
                     }
@@ -213,22 +201,6 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                         entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
                         isPublic = false;
                         isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
-
-                        // If dataset is not public check if a valid token is provided
-                        if (isPublic == false)
-                        {
-
-                            User user = ControllerContext.RouteData.Values["user"] as User;
-
-                            // If user is registered pass
-                            if (user == null)
-                            {
-                                return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "The dataset is not public and the token is not valid.");
-                            }
-                        }
-
-                        //if (dataset == null)
-                        //return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "The dataset with the id (" + id + ") does not exist.");
                     }
 
                     if (datasetVersion == null)
@@ -309,18 +281,6 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                     long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
                     entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
                     isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
-
-                    // If dataset is not public check if a valid token is provided
-                    if (isPublic == false)
-                    {
-                        User user = ControllerContext.RouteData.Values["user"] as User;
-
-                        // If user is registered pass
-                        if (user == null)
-                        {
-                            return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "The dataset is not public and the token is not valid.");
-                        }
-                    }
 
                     if (dataset == null)
                         return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "The dataset with the id (" + id + ") does not exist.");
