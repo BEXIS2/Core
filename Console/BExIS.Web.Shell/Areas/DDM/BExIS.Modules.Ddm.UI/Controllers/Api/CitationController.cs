@@ -34,7 +34,7 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
         [BExISApiAuthorize]
         [GetRoute("api/datasets/citations")]
         //[ResponseType(typeof(CitationModel))]
-        public HttpResponseMessage Get([FromUri] CitationFormat format = CitationFormat.Bibtex)
+        public HttpResponseMessage Get()
         {
             return GetAllCitations();
         }
@@ -197,9 +197,7 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                     try
                     {
                         Dataset dataset = dm.GetDataset(id);
-
                         datasetVersion = dataset.Versions.OrderByDescending(t => t.Id).Where(p => p.Timestamp <= dataset.LastCheckIOTimestamp).First();
-
                     }
                     catch (Exception ex)
                     {
@@ -219,6 +217,7 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                         // If dataset is not public check if a valid token is provided
                         if (isPublic == false)
                         {
+
                             User user = ControllerContext.RouteData.Values["user"] as User;
 
                             // If user is registered pass
@@ -236,31 +235,12 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                         continue;
                     else
                     {
-                        XmlDocument xmlDoc = datasetVersion.Metadata;
-                        //get citation concept
-                        using (var conceptManager = new ConceptManager())
-                        {
-                            var concept = conceptManager.MappingConceptRepository.Get().Where(c => c.Name.Equals("Citation")).FirstOrDefault();
+                        CitationDataModel model = CitationsHelper.CreateCitationDataModel(datasetVersion, CitationFormat.Text);
+                        if (model != null)
+                            allDatasetCitations.Add(CreateCitationEntry(id, model, isPublic));
+                        else
+                            continue;
 
-                            if (concept == null)
-                                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "In combination with the format subset - subsettype must not be empty");
-
-                            long mdId = datasetVersion.Dataset.MetadataStructure.Id;
-
-                            xmlDoc = MappingUtils.GetConceptOutput(mdId, concept.Id, xmlDoc);
-
-                            CitationDataModel model = new CitationDataModel();
-
-                            XmlSerializer serializer = new XmlSerializer(typeof(CitationDataModel), new XmlRootAttribute("data"));
-                            using (XmlReader reader = new XmlNodeReader(xmlDoc))
-                            {
-                                model = (CitationDataModel)serializer.Deserialize(reader);
-                                if (model != null)
-                                    allDatasetCitations.Add(CreateCitationEntry(id, model, isPublic));
-                                else
-                                    continue;
-                            }
-                        }
                     }
                 }
             }
