@@ -343,6 +343,7 @@ namespace BEXIS.JSON.Helpers
                     if (constraint is DomainConstraint)
                     {
                         var d = (DomainConstraint)constraint;
+                        if (!d.Items.Any()) d.Materialize();
                         d.Items.ForEach(i => current.Enum.Add(new JValue(i.Value)));
                     }
 

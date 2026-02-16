@@ -1,13 +1,13 @@
-import type { dataSetType, ValidationReturn, createDatasetReturn } from './models.js';
+import type { dataSetType, ValidationReturn, createDatasetReturn } from './models.ts';
 import mappingPublication from './mappingPublication.json';
-import * as mapMetadata from './mapMetadata.js';
-import * as apiCalls from './services/apiCalls.js';
+import * as mapMetadata from './mapMetadata';
+import * as apiCalls from './services/apiCalls';
 import { tick } from 'svelte';
 import { DataCounterStore } from './stores.js';
 
 export async function createAllDatasets(
-    metadataStructureId: any, // wenn type = number, dann Fehler bei Funktionsaufruf in +page.svelte <- war vor dem auslagern number
-    entityTemplateId: any,  // wenn type = number, dann Fehler bei Funktionsaufruf in +page.svelte <- war vor dem auslagern number
+    metadataStructureId: any,
+    entityTemplateId: any,
     validationReturnObj: ValidationReturn,
     createDatasetReturnObj: createDatasetReturn,
     dataStructureId: number = 0
@@ -15,12 +15,14 @@ export async function createAllDatasets(
     try {
         let dss: dataSetType[] = [];
 
+        // 1️⃣ CSV → Dataset-Grundobjekte (Title / Description)
         for (const row of validationReturnObj.validData) {
             dss.push(mapToApiFormat(row, mappingPublication, createDatasetReturnObj));
         }
 
-        createDatasetReturnObj.uploadedCount = 0; // Reset beim Start
+        createDatasetReturnObj.uploadedCount = 0;
 
+        // 2️⃣ Datasets anlegen
         for (let index = 0; index < dss.length; index++) {
             const ds = dss[index];
             const csvId = index;
@@ -35,26 +37,56 @@ export async function createAllDatasets(
             createDatasetReturnObj.uploadedCount++;
             DataCounterStore.set(createDatasetReturnObj.uploadedCount);
 
-            // Update alle 100 oder beim letzten
-            if (createDatasetReturnObj.uploadedCount % 100 === 0 || createDatasetReturnObj.uploadedCount === validationReturnObj.validData.length) {
-                await tick(); // sorgt für UI-Update
+            if (
+                createDatasetReturnObj.uploadedCount % 100 === 0 ||
+                createDatasetReturnObj.uploadedCount === validationReturnObj.validData.length
+            ) {
+                await tick();
             }
         }
 
+        // 3️⃣ Metadaten holen, mappen & aktualisieren
         for (const map of createDatasetReturnObj.idMapping) {
             const rowIndex = map[0];
             const metadataId = map[1];
 
             let metadata = await apiCalls.GetMetadata(metadataId);
+
             let MetadataScheema: any = null;
             if (MetadataScheema == null) {
                 MetadataScheema = await apiCalls.GetMetadataScheema(metadata['@id']);
             }
 
-            // console.log('metadata', metadata);
+            // bestehendes Mapping (Publication, Authors, etc.)
+            mapMetadata.applyMappingToMetadata(
+                metadata,
+                validationReturnObj.validData[rowIndex],
+                mappingPublication.Mappings
+            );
 
-            mapMetadata.applyMappingToMetadata(metadata, validationReturnObj.validData[rowIndex], mappingPublication.Mappings);
+            // ✅ NEU: Endnote-ID als @comment auf Root-Ebene setzen
+            const csvRow = validationReturnObj.validData[rowIndex];
+            const endnoteId = csvRow?.ID;
+
+            if (endnoteId) {
+                const comment = `Import based on endnote ID: ${endnoteId}`;
+
+                const reorderedMetadata: any = {};
+
+                for (const key of Object.keys(metadata)) {
+                    // zuerst alles bis inkl. @id übernehmen
+                    reorderedMetadata[key] = metadata[key];
+
+                    if (key === '@id') {
+                        reorderedMetadata['@comment'] = comment;
+                    }
+                }
+
+                metadata = reorderedMetadata;
+            }
+
             console.log('finaldata', metadata);
+
             await apiCalls.putMetadata(metadataId, metadata);
             await apiCalls.GetMetadata(metadataId);
         }
@@ -63,7 +95,11 @@ export async function createAllDatasets(
     }
 }
 
-function mapToApiFormat(csvRow: any, mapping: any, createDatasetReturnObj: createDatasetReturn) {
+function mapToApiFormat(
+    csvRow: any,
+    mapping: any,
+    createDatasetReturnObj: createDatasetReturn
+) {
     let ds: dataSetType = {
         Title: '',
         Description: '',
@@ -72,20 +108,19 @@ function mapToApiFormat(csvRow: any, mapping: any, createDatasetReturnObj: creat
         EntityTemplateId: 0
     };
 
+    // Mapping für Title / Description
     for (let index = 0; index < 2; index++) {
         const map = mapping.Mappings[index];
         let sourceField = map.Source;
 
         if (sourceField) {
             if (index % 2 === 0) {
-                // Jeder 1. Durchgang (Titel)
                 ds.Title = csvRow[sourceField];
             } else if (ds.Title !== null) {
-                // Jeder 2. Durchgang (Beschreibung)
                 ds.Title = ds.Title;
                 ds.Description = csvRow[sourceField];
             } else {
-                createDatasetReturnObj.tempTitle = null; // Zurücksetzen für das nächste Paar
+                createDatasetReturnObj.tempTitle = null;
             }
         }
     }
@@ -93,6 +128,10 @@ function mapToApiFormat(csvRow: any, mapping: any, createDatasetReturnObj: creat
     return ds;
 }
 
-function getDatasets(response: any, csvId: number, createDatasetReturnObj: createDatasetReturn) {
+function getDatasets(
+    response: any,
+    csvId: number,
+    createDatasetReturnObj: createDatasetReturn
+) {
     createDatasetReturnObj.idMapping.push([csvId, response.id]);
 }

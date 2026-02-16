@@ -18,6 +18,8 @@
 	$: schema = s;
 	let mode: 'edit' | 'view' = 'edit';
 
+	let container
+
 	async function load() {
 		// read id from url
 		datasetId = Number(new URLSearchParams(window.location.search).get('id'));
