@@ -28,12 +28,29 @@ const suite = create((data: any, fieldName: string) => {
                         
                     });
                 }
+
                 // Validate maximum length if defined
                 if(item.maxLength != null && item.maxLength != undefined){
                     console.log('Validating maxLength for field:', item.path);
                     test( item.path, `${item.label} must have a maximum length of ${item.maxLength}`, () => {
                         enforce(data).shorterThanOrEquals(item.maxLength);
                         
+                    });
+                }
+
+                // Validate minimum if defined
+                if(item.minimum != null && item.minimum != undefined){
+                    console.log('Validating minimum for field:', item.path);
+                    test( item.path, `${item.label} must have a minimum length of ${item.minimum}`, () => {
+                        enforce(data).greaterThanOrEquals(item.minimum);
+                    });
+                }
+                
+                // Validate maximum if defined
+                if(item.maximum != null && item.maximum != undefined){
+                    console.log('Validating maximum for field:', item.path);
+                    test( item.path, `${item.label} must have a maximum length of ${item.maximum}`, () => {
+                        enforce(data).lessThanOrEquals(item.maximum);
                     });
                 }
                 // Validate regex pattern if defined

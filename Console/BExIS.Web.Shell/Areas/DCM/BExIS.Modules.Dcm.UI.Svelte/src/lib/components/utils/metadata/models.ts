@@ -20,6 +20,8 @@ export interface SimpleComponentData {
 	domainList?: string[];
 	minLength?: number;
 	maxLength?: number;
+	minimum?: number;
+	maximum?: number;
 	isValid: boolean;
 }
 
