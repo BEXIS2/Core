@@ -56,6 +56,7 @@
 			}
 			// create validation item and add to store
 			let simpleComponentValidationItem: SimpleComponentData = createSimpleComponentValidationItem(path, label, required, simpleComponent); 
+		
 			// add to validation store
 			ValidationStoreAddSimpleComponent(simpleComponentValidationItem);
 			config = getConfigStore();

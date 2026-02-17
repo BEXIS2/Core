@@ -260,30 +260,44 @@ export function ValidationStoreSetSimpleTypeValid(path: string, isValid: boolean
 export function createSimpleComponentValidationItem(path: string, label: string, required: boolean, simpleComponent: any): SimpleComponentData {
 	let simpleComponentValidationItem: SimpleComponentData = { label: label, path: path, required: required, isValid: false };
 
+ let item = simpleComponent.properties['#text'];
+
 	// set regex if defined
-	if (simpleComponent.properties['#text'].pattern && simpleComponent.properties['#text'].pattern != undefined && simpleComponent.properties['#text'].pattern != null && simpleComponent.properties['#text'].pattern != '') {
-		simpleComponentValidationItem.regex = simpleComponent.properties['#text'].pattern;
+	if (item.pattern && item.pattern != undefined && item.pattern != null && item.pattern != '') {
+		simpleComponentValidationItem.regex = item.pattern;
 	}
 	// set minLength if defined
-	if (simpleComponent.properties['#text'].minLength && simpleComponent.properties['#text'].minLength != undefined && simpleComponent.properties['#text'].minLength != null && simpleComponent.properties['#text'].minLength != '') {
-		simpleComponentValidationItem.minLength = simpleComponent.properties['#text'].minLength;
+	if (item.minLength && item.minLength != undefined && item.minLength != null && item.minLength != '') {
+		simpleComponentValidationItem.minLength = item.minLength;
 	}
 	// set maxLength if defined
-	if (simpleComponent.properties['#text'].maxLength && simpleComponent.properties['#text'].maxLength != undefined && simpleComponent.properties['#text'].maxLength != null && simpleComponent.properties['#text'].maxLength != '') {
-		simpleComponentValidationItem.maxLength = simpleComponent.properties['#text'].maxLength;
+	if (item.maxLength && item.maxLength != undefined && item.maxLength != null && item.maxLength != '') {
+		simpleComponentValidationItem.maxLength = item.maxLength;
 	}
 	// set domainList if defined
-	if (simpleComponent.properties['#text'].domainList && simpleComponent.properties['#text'].domainList != undefined && simpleComponent.properties['#text'].domainList != null && simpleComponent.properties['#text'].domainList.length > 0) {
-		simpleComponentValidationItem.domainList = simpleComponent.properties['#text'].domainList;
+	if (item.domainList && item.domainList != undefined && item.domainList != null && item.domainList.length > 0) {
+		simpleComponentValidationItem.domainList = item.domainList;
 	}
 	// set lowerBound if defined
-	if (simpleComponent.properties['#text'].lowerBound && simpleComponent.properties['#text'].lowerBound != undefined && simpleComponent.properties['#text'].lowerBound != null && simpleComponent.properties['#text'].lowerBound.length != '') {
-		simpleComponentValidationItem.lowerBound = simpleComponent.properties['#text'].lowerBound;
+	if (item.lowerBound && item.lowerBound != undefined && item.lowerBound != null && item.lowerBound.length != '') {
+		simpleComponentValidationItem.lowerBound = item.lowerBound;
 	}
 	// set upperBound if defined
-	if (simpleComponent.properties['#text'].upperBound && simpleComponent.properties['#text'].upperBound != undefined && simpleComponent.properties['#text'].upperBound != null && simpleComponent.properties['#text'].upperBound.length != '') {
-		simpleComponentValidationItem.upperBound = simpleComponent.properties['#text'].upperBound;
+	if (item.upperBound && item.upperBound != undefined && item.upperBound != null && item.upperBound.length != '') {
+		simpleComponentValidationItem.upperBound = item.upperBound;
 	}
+
+// type secific	validation criteria
+// set minium if if defined
+if ((item.minimum && item.minimum != undefined && item.minimum != null && item.minimum != '') || item.minimum == 0) {
+
+	simpleComponentValidationItem.minimum = item.minimum;
+}
+
+if (item.maximum && item.maximum != undefined && item.maximum != null && item.maximum != '') {
+	simpleComponentValidationItem.maximum = item.maximum;
+}
+
 
 	return simpleComponentValidationItem;
 }
