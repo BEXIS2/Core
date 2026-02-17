@@ -93,7 +93,7 @@
 <!-- Simple Component Rendering -->
 {#if isVisible && !isAnchor}
 	{#if path && simpleComponent.properties}
-		<div class="pl-5" id={path + '.item'}>
+		<div class="pl-5 pr-2" id={path + '.item'}>
 			<!-- Handle different formats and types -->
 			{#if simpleComponent.properties['#text'].format !== undefined && simpleComponent.properties['#text'].format !== null} 		
 				<!-- Handle date format -->

@@ -40,8 +40,8 @@
 				<ChoiceComponent choiceComponent={value} {path} />
 			{:else}
 				<div class="grid grid-cols-1 gap-0 ">
-					<div class="card bg-primary-300 dark:bg-primary-800 pl-5 py-2 grid grid-cols-2">
-						<div class="text-left w-4/5">
+					<div class="card flex bg-primary-300 dark:bg-primary-800 pl-5 py-2 grid grid-cols-2">
+						<div class="text-left grow">
 							{#if required}
 								<h4 class="h4">{convertDisplayName(label, true)} *</h4>
 							{:else}
@@ -49,7 +49,7 @@
 							{/if}
 			
 						</div>
-						<div class="text-left flex justify-end w-2">
+						<div class="text-left flex justify-end w-2 px-5">
 							{#if !$hideStore.includes(path)}
 								<button
 									class="h-9 w-10 text-right"
