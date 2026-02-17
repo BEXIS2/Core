@@ -45,7 +45,7 @@ const suite = create((data: any, fieldName: string) => {
                         enforce(data).greaterThanOrEquals(item.minimum);
                     });
                 }
-
+                
                 // Validate maximum if defined
                 if(item.maximum != null && item.maximum != undefined){
                     console.log('Validating maximum for field:', item.path);

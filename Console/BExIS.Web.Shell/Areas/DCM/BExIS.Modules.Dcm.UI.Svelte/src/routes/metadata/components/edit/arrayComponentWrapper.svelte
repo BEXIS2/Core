@@ -7,6 +7,7 @@
 	import { slide, fade } from 'svelte/transition';
 	import { hideStore } from '../../../../lib/components/utils/metadata/stores';
 	import { convertDisplayName } from './../../metadataShared';
+	import Header from './MetadataComponentHeader.svelte';
 
 	export let arrayComponent: any;
 	export let path: string;
@@ -63,34 +64,17 @@
 		{#key render}
 			{#if arrayComponent.items.type === 'object' && arrayComponent.items.properties && !arrayComponent.items.properties['#text']}
 				<div class="grid grid-cols-1 gap-0">
-					<div class="card bg-primary-300 dark:bg-primary-800 pl-5 py-2 grid grid-cols-2">
-						<div class="text-left w-4/5">						
-							<h3 class="h3">{convertDisplayName(label, true)}</h3>
-						</div>
-						<div class="text-right">
-							{#if !$hideStore.includes(path)}
-								<button
-									class="h-9 w-10 text-right"
-									title="Open or close {convertDisplayName(label, true)}"
-									on:click={() => toggleShow(path)}><Fa icon={faChevronUp} /></button
-								>
-							{:else}
-								<button
-									class="h-9 w-10 text-right"
-									title="Open or close {convertDisplayName(label, true)}"
-									on:click={() => toggleShow(path)}><Fa icon={faChevronDown} /></button
-								>
-							{/if}
-						</div>
-					</div>
+					
+					<Header	path={path} required={requiredList.includes(label)} />
+					
 					{#if !$hideStore.includes(path)}
-						<div in:slide out:slide class="card pl-5 py-4" id={path}>
+						<div in:slide out:slide class="card pl-5 py-2" id={path}>						
 						{#if value && value.length > 0}
 							{#each value as item, index}
 								<div in:slide out:slide class="pl-5 py-5 card mb-2">
 									<div class="grid grid-cols-2 gap-2">
 									<div>
-										<h3 class="h3 text-primary-500">{convertDisplayName(label, true)} {index+1}</h3>
+										<h4 class="h4 text-primary-500">{convertDisplayName(label, true)} {index+1}</h4>
 									</div>
 									<div class="text-right w-full pr-2">
 										<button

@@ -94,7 +94,7 @@
 <!-- Simple Component Rendering -->
 {#if isVisible && !isAnchor}
 	{#if path && simpleComponent.properties}
-		<div class="pl-5 pr-2" id={path + '.item'}>
+		<div class="pr-2" id={path + '.item'}>
 			<!-- Handle different formats and types -->
 			{#if simpleComponent.properties['#text'].format !== undefined && simpleComponent.properties['#text'].format !== null} 		
 				<!-- Handle date format -->
@@ -229,6 +229,7 @@
 					invalid={res.hasErrors(path)}
 					feedback={res.getErrors(path)}
 					description={simpleComponent.description}
+					size="sm"
 				>{label}</SlideToggle>
 			{/if}
 		</div>
