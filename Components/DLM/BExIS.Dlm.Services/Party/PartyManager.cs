@@ -241,10 +241,9 @@ namespace BExIS.Dlm.Services.Party
             {
                 var party = uow.GetReadOnlyRepository<PartyX>().Get(newParty.Id);
 
-                if (party.StartDate == null)
-                    party.StartDate = DateTime.MinValue;
-                if (party.EndDate == null || party.EndDate == DateTime.MinValue)
-                    party.EndDate = DateTime.MaxValue;
+                party.StartDate = newParty.StartDate;
+                party.EndDate = newParty.EndDate;
+
                 if (party.StartDate > party.EndDate)
                     BexisException.Throw(null, "End date should be greater than start date.");
                 if ((ValidateRelationships(party.Id)).Any())
