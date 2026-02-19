@@ -228,7 +228,7 @@ namespace BExIS.Web.Shell.Controllers
                     var code = await identityUserService.GeneratePasswordResetTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code }, Request.Url.Scheme);
                     await identityUserService.SendEmailAsync(user.Id, "Password Reset",
-                        $"<p>Dear {user.DisplayName},</p>" +
+                        $"<p>Dear {user.DisplayName ?? user.Name},</p>" +
                         $"<p>We received a request to reset the password for your account. " +
                         $"If you made this request, please reset your password by following the secure link below:</p>" +
                         $"<p><a href=\"{callbackUrl}\">Reset Password</a></p>" +
