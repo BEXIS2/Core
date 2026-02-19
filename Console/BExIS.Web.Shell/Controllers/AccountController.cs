@@ -227,7 +227,14 @@ namespace BExIS.Web.Shell.Controllers
 
                     var code = await identityUserService.GeneratePasswordResetTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code }, Request.Url.Scheme);
-                    await identityUserService.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    await identityUserService.SendEmailAsync(user.Id, "Password Reset",
+                        $"<p>Dear {user.DisplayName},</p>" +
+                        $"<p>We received a request to reset the password for your account. " +
+                        $"If you made this request, please reset your password by following the secure link below:</p>" +
+                        $"<p><a href=\"{callbackUrl}\">Reset Password</a></p>" +
+                        $"<p>If you did not request a password reset, you can safely ignore this message. Your account will remain unchanged.</p>" +
+                        $"<p>Best regards,</br>" +
+                        $"Your Support Team</p>");
                     return RedirectToAction("ForgotPasswordConfirmation", "Account");
                 }
                 catch(Exception ex)
