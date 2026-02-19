@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading;
 using Vaiona.Persistence.Api;
 
 namespace Vaiona.PersistenceProviders.NH
@@ -21,8 +22,19 @@ namespace Vaiona.PersistenceProviders.NH
 
         public IPersistenceManager PersistenceManager { get; internal set; }
 
+        private static AsyncLocal<int> _requestUoWCount = new AsyncLocal<int>();
+        public static int CurrentRequestUoWCount => _requestUoWCount.Value;
+
+        public static void ResetCounter()
+        {
+            _requestUoWCount.Value = 0;
+        }
+
         internal NHibernateUnitOfWork(NHibernatePersistenceManager persistenceManager, Conversation conversation, bool autoCommit = false, bool throwExceptionOnError = true)
         {
+            _requestUoWCount.Value++;
+            System.Diagnostics.Debug.WriteLine($"[UoW] Created. Total in this request: {_requestUoWCount.Value}");
+
             this.PersistenceManager = persistenceManager;
             this.autoCommit = autoCommit;
             this.throwExceptionOnError = throwExceptionOnError;
@@ -69,6 +81,8 @@ namespace Vaiona.PersistenceProviders.NH
 
         public void Commit()
         {
+            System.Diagnostics.Debug.WriteLine("[UoW] Commit");
+
             lock (this)
             {
                 try
@@ -382,6 +396,7 @@ namespace Vaiona.PersistenceProviders.NH
 
         public void Dispose()
         {
+            System.Diagnostics.Debug.WriteLine("[UoW] Disposed");
             Dispose(true);
             GC.SuppressFinalize(this);
         }

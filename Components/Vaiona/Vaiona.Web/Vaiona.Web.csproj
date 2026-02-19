@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="Extensions\SessionExtensions.cs" />
     <Compile Include="Helpers\GlobalizationHelper.cs" />
+    <Compile Include="HttpModules\UoWLoggingModule.cs" />
     <Compile Include="Models\OperationMode.cs" />
     <Compile Include="HttpModules\SessionPerRequestModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -76,6 +77,14 @@
     <ProjectReference Include="..\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj">
       <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
       <Name>Vaiona.Persistence.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Vaiona.Persistence.NH\Vaiona.Persistence.NH.csproj">
+      <Project>{8C5C0209-69A3-4579-9F9B-4D5F084A3B85}</Project>
+      <Name>Vaiona.Persistence.NH</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Vaiona.PersistenceProviders.NH\Vaiona.PersistenceProviders.NH.csproj">
+      <Project>{2FB8DEF8-5749-4EAE-8588-8A5AAED251A5}</Project>
+      <Name>Vaiona.PersistenceProviders.NH</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
