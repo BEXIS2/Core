@@ -16,8 +16,8 @@ namespace BExIS.Utils.Data.Helpers
             // Features
             using (var featureManager = new FeatureManager())
             using (var operationManager = new OperationManager())
-            using (var versionManager = new VersionManager())
             {
+                var versionManager = new VersionManager();
                 var bexisFeature = featureManager.FindByName("BExIS") ?? featureManager.Create("BExIS", "This is the root!");
                 var settings = featureManager.FindByName("Settings") ?? featureManager.Create("Settings", "This is the settings page!", bexisFeature);
 

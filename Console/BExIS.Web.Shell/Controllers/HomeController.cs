@@ -187,25 +187,23 @@ namespace BExIS.Web.Shell.Controllers
             var site = ConfigurationManager.AppSettings["ApplicationVersion"];
 
             // Database
-            using (var versionManager = new VersionManager())
+            var versionManager = new VersionManager();
+            var database = versionManager.GetLatestVersion().Value;
+
+            // load version from workspace in settings file of general
+
+            string workspace = GeneralSettings.ApplicationVersion;
+
+            var model = new ReadVersionsModel()
             {
-                var database = versionManager.GetLatestVersion().Value;
+                Site = site,
+                Database = database,
+                Workspace = workspace
+            };
 
-                // load version from workspace in settings file of general
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Session Timeout", this.Session.GetTenant());
 
-                string workspace = GeneralSettings.ApplicationVersion;
-
-                var model = new ReadVersionsModel()
-                {
-                    Site = site,
-                    Database = database,
-                    Workspace = workspace
-                };
-
-                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Session Timeout", this.Session.GetTenant());
-
-                return View(model);
-            }
+            return View(model);
         }
 
         protected bool checkPermission(Tuple<string, string, string> LandingPage)
