@@ -58,7 +58,7 @@
 			let simpleComponentValidationItem: SimpleComponentData = createSimpleComponentValidationItem(path, label, required, simpleComponent); 
 		
 			// add to validation store
-			ValidationStoreAddSimpleComponent(simpleComponentValidationItem);
+			//ValidationStoreAddSimpleComponent(simpleComponentValidationItem);
 			config = getConfigStore();
 			// check if this component is an anchor point
 			console.log("check for anchorpoin", config)
@@ -79,6 +79,7 @@
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
 	function onChangeHandler(e: any) {
+		console.log(e);
 		// add some delay so the entityTemplate is updated
 		// otherwise the values are old
 		setTimeout(async () => {
@@ -137,7 +138,8 @@
 						<SveltyPicker
 							mode="time"
 							name={label}
-							format="hh:ii"
+							format="hh:ii" 
+							displayFormat="hh:mm"
 							initialDate={date}
 							bind:value
 							inputClasses="input variant-form-material dark:bg-zinc-700 bg-zinc-50 placeholder:text-gray-400 w-32"
@@ -217,13 +219,13 @@
 				/>
 			<!-- Handle boolean type -->
 			{:else if simpleComponent.properties['#text'].type === 'boolean'}
-				{@const v = value = true}
+				<!-- {@const v = value = true} -->
 				<SlideToggle 
 					id={path}
 					label={convertDisplayName(label)}
 					name={convertDisplayName(label)}
 					required={required} 
-					bind:value
+					bind:checked={value}
 					on:input={onChangeHandler}
 					valid={res.isValid(path)}
 					invalid={res.hasErrors(path)}

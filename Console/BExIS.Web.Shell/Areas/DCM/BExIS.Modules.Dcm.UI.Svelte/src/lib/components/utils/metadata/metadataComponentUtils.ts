@@ -39,6 +39,7 @@ export function setValueByPath(obj: any, path: string, value: any) {
 }
 // Update metadata store with a new value at the specified path
 export function updateMetadataStore(path: string, value: any, ref?: any): any {
+ 
 	let obj: any = {};
 	if (path !== undefined && path !== null && path !== '') {
 		metadataStore.subscribe((v) => {
@@ -67,6 +68,38 @@ export function updateMetadataStore(path: string, value: any, ref?: any): any {
 	console.log('Updated metadata store:', obj);
 	return obj;
 }
+
+export function removeFromMetadataStore(path: string): any {
+ 
+	let obj: any = {};
+	if (path !== undefined && path !== null && path !== '') {
+		metadataStore.subscribe((v) => {
+			obj = v;
+		});
+		{
+			removeByPath(obj, path);
+	}
+	console.log('remove metadata store:', obj);
+	return obj;
+}
+}
+
+function removeByPath(obj, path) {
+	const parts = path.split('.');
+	const lastKey = parts.pop(); // The property to delete
+	
+	// Reach the parent of the last key
+	const parent = parts.reduce((current, part) => {
+					return (current && current[part] !== undefined) ? current[part] : undefined;
+	}, obj);
+
+	if (parent && parent.hasOwnProperty(lastKey)) {
+					delete parent[lastKey];
+					return true; // Success
+	}
+	return false; // Path not found
+}
+
 // Config Store Functions
 // Set configuration data in the config store
 export function setConfigStore(config: any) {
