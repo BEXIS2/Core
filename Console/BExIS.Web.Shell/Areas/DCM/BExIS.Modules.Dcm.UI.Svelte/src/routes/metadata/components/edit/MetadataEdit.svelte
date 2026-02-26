@@ -4,27 +4,17 @@
 
 	import * as apiCalls from '../../services/apiCalls';
 	import { helpStore, Spinner } from '@bexis2/bexis2-core-ui';
+	import suite from './simpleComponent';
 
 	// import { Page } from '@bexis2/bexis2-core-ui';
 	import { schemaToJson, setConfigStore, setMetadataStore } from '../../../../lib/components/utils/metadata/metadataComponentUtils';
 
-	import Ajv from "ajv";
-import addFormats from "ajv-formats";
-
-const ajv = new Ajv({ allErrors: true, discriminator: true  });
 // This regex accepts HH:mm:ss without requiring Z
 
-addFormats(ajv); // This registers "date", "date-time", "email", etc.
-const timeRegex = /^([01]\d|2[0-3]):[0-5]\d$/;
-ajv.addFormat("time", timeRegex);
 
 	// import configJson from './customComponents/config.json';
-
 	//export let schemaId: number = 3;
 	export let datasetId: number = 1;
-
- let validate;
- $:validate;
 
 	let errors:any[]	= [];
 
@@ -41,7 +31,7 @@ ajv.addFormat("time", timeRegex);
 			const datasetInfos = await apiCalls.GetDatasetInfoById(datasetId);
 			s = await apiCalls.GetMetadataSchema(datasetInfos.metadataStructureId);
 			console.log('Schema loaded', s);
-			validate = ajv.compile(s);
+
 			if (datasetId > 0) m = await apiCalls.GetMetadata(datasetId);
 			else m = schemaToJson(s);
 			console.log('Metadata loaded', m);
@@ -54,14 +44,21 @@ ajv.addFormat("time", timeRegex);
 
  let valid: boolean = true;
 	$:valid;
-	 
+	let validationResult;
+	$:validationResult
+
+
+
 	function validateFn() {
 		
-		valid = validate(m);
-		if (!valid) 
+		validationResult = suite(m);
+		console.log("🚀 ~ validateFn ~ validationResult:", validationResult)
+		validationResult.hasErrors();
+		// valid = validate(m);
+		if (!validationResult.isValid()) 
 		{
-			console.log(validate.errors);
-			errors = validate.errors;
+			 console.log(validationResult.errors);
+			// errors = validate.errors;
 		}
 		else {
 			errors = [];
@@ -75,23 +72,21 @@ ajv.addFormat("time", timeRegex);
  {#await load()}
 		<Spinner />
 	{:then}
+	<div class="p-2">
+		{#if validationResult && validationResult.hasErrors()}
 
-	 <!-- {valid} 
-		{validate}
-		{validate.errors} -->
-		{#if errors && errors.length > 0}
-
-			<div class="p-2">
-				<h2 class="text-red-500">Validation Errors:</h2>
-				<ul class="list-disc list-inside text-red-500">
-					{#each errors as err}
-						<li>{err.instancePath || "Root"}: {err.message}</li>
-					{/each}
-				</ul>
-			</div>
+		<ul class="list">
+			{#each validationResult.errors as error}
+				<li >
+					<span class="text-error-500">-</span>
+					<span class="text-error-500 flex-auto">{error.fieldName} - {error.message}</span>
+				</li>
+				
+			{/each}
+		</ul>
 
 		{/if}
-
+</div>
 
 		<div class="p-2">
 			<ComplexComponent complexComponent={schema} path={''} />

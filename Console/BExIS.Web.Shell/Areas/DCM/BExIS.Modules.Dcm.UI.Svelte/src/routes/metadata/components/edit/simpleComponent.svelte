@@ -36,7 +36,7 @@
 	let customComponent: any;
 
 	// set overall validity
-	$: ValidationStoreSetSimpleTypeValid(path, res.isValid());
+	$: ValidationStoreSetSimpleTypeValid(path, res.isValid(path));
 	// update metadata store on value change
 	$: updateMetadataStore(path, value);
 
@@ -45,7 +45,7 @@
 			// initial check
 			setTimeout(async () => {
 				if(value == undefined || value == null || value == '') {
-					res = suite(value, '');
+					//res = suite(value, '');
 				}
 				else {
 					res = suite(value, path);
@@ -58,7 +58,7 @@
 			let simpleComponentValidationItem: SimpleComponentData = createSimpleComponentValidationItem(path, label, required, simpleComponent); 
 		
 			// add to validation store
-			//ValidationStoreAddSimpleComponent(simpleComponentValidationItem);
+			ValidationStoreAddSimpleComponent(simpleComponentValidationItem);
 			config = getConfigStore();
 			// check if this component is an anchor point
 			console.log("check for anchorpoin", config)
@@ -88,8 +88,6 @@
 		}, 10);
 	}
 
-
-	let x:string = null;
 
 </script>
 <!-- Simple Component Rendering -->

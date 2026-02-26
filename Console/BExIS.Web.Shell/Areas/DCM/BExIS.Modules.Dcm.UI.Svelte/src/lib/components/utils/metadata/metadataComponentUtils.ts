@@ -308,8 +308,8 @@ export function createSimpleComponentValidationItem(path: string, label: string,
 		simpleComponentValidationItem.maxLength = item.maxLength;
 	}
 	// set domainList if defined
-	if (item.domainList && item.domainList != undefined && item.domainList != null && item.domainList.length > 0) {
-		simpleComponentValidationItem.domainList = item.domainList;
+	if (item.enum && item.enum != undefined && item.enum != null && item.enum.length > 0) {
+		simpleComponentValidationItem.enum = item.enum;
 	}
 	// set lowerBound if defined
 	if (item.lowerBound && item.lowerBound != undefined && item.lowerBound != null && item.lowerBound.length != '') {
@@ -323,7 +323,6 @@ export function createSimpleComponentValidationItem(path: string, label: string,
 // type secific	validation criteria
 // set minium if if defined
 if ((item.minimum && item.minimum != undefined && item.minimum != null && item.minimum != '') || item.minimum == 0) {
-
 	simpleComponentValidationItem.minimum = item.minimum;
 }
 

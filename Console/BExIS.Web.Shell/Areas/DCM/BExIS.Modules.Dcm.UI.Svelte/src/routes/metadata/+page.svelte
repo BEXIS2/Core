@@ -15,7 +15,7 @@
 
 	onMount(() => {
 				// read id from url
-				datasetId = Number(new URLSearchParams(window.location.search).get('id'));
+				//datasetId = Number(new URLSearchParams(window.location.search).get('id'));
 			console.log('Loading metadata for datasetId:', datasetId);
 		});
 

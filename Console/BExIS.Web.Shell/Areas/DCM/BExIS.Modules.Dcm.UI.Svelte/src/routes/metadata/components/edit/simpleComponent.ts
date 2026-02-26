@@ -6,13 +6,17 @@ import { getValidationStore } from '../../../../lib/components/utils/metadata/me
 let validationStoreValues: validationStoretype = getValidationStore();
 // Define a Vest test suite for validating simple component data
 // based on the validation rules defined in the validation store
-const suite = create((data: any, fieldName: string) => {
-    only(fieldName);
-    console.log('Validation Store Values:', validationStoreValues);
+const suite = create((data: any, fieldName: string='') => {
+
+    if (fieldName) {
+      only(fieldName);
+    }
+
+    //console.log('Validation Store Values:', validationStoreValues);
     if (validationStoreValues.simpleTypeValidationItems.length > 0) {
         // Iterate over each validation item in the store
         each(validationStoreValues.simpleTypeValidationItems, (item) => {
-            if(fieldName == item.path){
+            if((fieldName && fieldName == item.path) || fieldName === ''){
                 // Validate required field
                 if(item.required){
                     console.log('Validating required for field:', item.path);
@@ -56,8 +60,16 @@ const suite = create((data: any, fieldName: string) => {
                 // Validate regex pattern if defined
                 if(item.regex != '' && item.regex != null && item.regex != undefined){
                     console.log('Validating regex pattern for field:', item.path);
-                    test( item.path, `${item.label} dosn't match the required pattern (${item.regex})`, () => {
+                    test( item.path, `${item.label} doesn't match the required pattern (${item.regex})`, () => {
                         enforce(data).matches(new RegExp(item.regex!));
+                    });
+                }
+
+                // Validate enum values if defined
+                if(item.enum && item.enum.length>0){
+                    console.log('Validating regex pattern for field:', item.path);
+                    test( item.path, `Invalid ${item.label}. Choose from the list.`, () => {
+                        enforce(data).isValueOf(item.enum);
                     });
                 }
             }

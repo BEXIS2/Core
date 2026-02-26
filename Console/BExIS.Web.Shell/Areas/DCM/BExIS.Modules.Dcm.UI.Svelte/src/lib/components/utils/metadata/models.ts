@@ -2,7 +2,7 @@ export interface schemaNode {
 	title: string;
 	description: string;
 	type: string;
-	properties: scheemaNode[];
+	properties: schemaNode[];
 }
 
 export interface validationStoretype {
@@ -23,6 +23,7 @@ export interface SimpleComponentData {
 	minimum?: number;
 	maximum?: number;
 	isValid: boolean;
+	enum?: string[];
 }
 
 export interface ComplexComponentData {
