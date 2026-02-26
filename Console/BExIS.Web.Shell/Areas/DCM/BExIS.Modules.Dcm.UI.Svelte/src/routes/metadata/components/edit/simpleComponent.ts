@@ -45,7 +45,7 @@ const suite = create((data: any, fieldName: string='') => {
                 // Validate minimum if defined
                 if(item.minimum != null && item.minimum != undefined){
                     console.log('Validating minimum for field:', item.path);
-                    test( item.path, `${item.label} must have a minimum length of ${item.minimum}`, () => {
+                    test( item.path, `${item.label} must have a minimum of ${item.minimum}`, () => {
                         enforce(data).greaterThanOrEquals(item.minimum);
                     });
                 }
@@ -53,7 +53,7 @@ const suite = create((data: any, fieldName: string='') => {
                 // Validate maximum if defined
                 if(item.maximum != null && item.maximum != undefined){
                     console.log('Validating maximum for field:', item.path);
-                    test( item.path, `${item.label} must have a maximum length of ${item.maximum}`, () => {
+                    test( item.path, `${item.label} must have a maximum of ${item.maximum}`, () => {
                         enforce(data).lessThanOrEquals(item.maximum);
                     });
                 }

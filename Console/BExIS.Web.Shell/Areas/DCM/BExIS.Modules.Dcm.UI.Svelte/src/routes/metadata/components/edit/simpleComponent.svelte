@@ -54,11 +54,14 @@
 			if(simpleComponent.properties['#text'].format === 'date' || simpleComponent.properties['#text'].format === 'datetime' || simpleComponent.properties['#text'].format === 'date and time' || simpleComponent.properties['#text'].format === 'time'){
 				date = value !== undefined || value == '' ? value as Date : Date.now() as unknown as Date;
 			}
+
+			//#### VALIDATION	 ####
 			// create validation item and add to store
 			let simpleComponentValidationItem: SimpleComponentData = createSimpleComponentValidationItem(path, label, required, simpleComponent); 
-		
 			// add to validation store
 			ValidationStoreAddSimpleComponent(simpleComponentValidationItem);
+
+			//#### CONFIGURATION	 ####
 			config = getConfigStore();
 			// check if this component is an anchor point
 			console.log("check for anchorpoin", config)
@@ -85,6 +88,16 @@
 		setTimeout(async () => {
 			// check changed field
 			res = suite(value, e.target.id);
+			console.log("🚀 ~ onChangeHandler ~ res:", res)
+			let errorMessage = '';
+			if(res.hasErrors(e.target.id)){
+					errorMessage = res.getErrors(e.target.id).join('.  ');
+					console.log("🚀 ~ onChangeHandler ~ errorMessage:", errorMessage)
+			}
+
+			// update validationstore
+			ValidationStoreSetSimpleTypeValid(path, res.isValid(path), errorMessage);
+
 		}, 10);
 	}
 
@@ -196,6 +209,7 @@
 										bind:target={value}
 										isMulti={false}
 										clearable={required	? false : true} 
+										on:change={onChangeHandler}
 										invalid={res.hasErrors(path)}
 										feedback={res.getErrors(path)}	 
 										description={simpleComponent.description}

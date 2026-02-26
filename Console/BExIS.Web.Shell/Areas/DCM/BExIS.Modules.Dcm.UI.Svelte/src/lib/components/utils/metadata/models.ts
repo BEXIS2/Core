@@ -24,9 +24,12 @@ export interface SimpleComponentData {
 	maximum?: number;
 	isValid: boolean;
 	enum?: string[];
+	errorMessage: string
 }
 
 export interface ComplexComponentData {
 	complexComponent: any;
 	label: string;
+	required: boolean;
+	errorMessage: string
 }
