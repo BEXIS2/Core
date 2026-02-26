@@ -27,8 +27,7 @@
 	{#each Object.entries(complexComponent.properties) as [key, value]}
 		{@const p = path = path ? path + '.' + key : key}
 		{@const l = label = key}
-
-		{#if value.type === 'object' && value.properties && !value.properties['#text']}
+		{#if (value.type === 'object' && value.properties && !value.properties['#text']) }
 			{#if value.oneOf || value.anyOf || value.allOf}
 				<ChoiceComponent choiceComponent={value} {path} />
 			{:else}
