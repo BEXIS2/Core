@@ -2,7 +2,7 @@
 	import { toggleShow } from '../../../../lib/components/utils/metadata/metadataComponentUtils';
 	import { convertDisplayName } from '../../metadataShared';
 
-	import { faPlus, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+	import { faPlus, faChevronUp, faChevronDown, faQuestion } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 
  import { hideStore } from '../../../../lib/components/utils/metadata/stores';
@@ -10,8 +10,11 @@
  export let required: boolean = false;
 	export let path: string;
  export let p:string = '';
+ export let description: string = '';
+ console.log("🚀 ~ description:", description)
 
 	let label: string = path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path;
+ let showDescription: boolean = false;
 
  const togglePath = p!=='' ? p : path; 
 
@@ -19,15 +22,22 @@
 
 
 
-<div class="card flex bg-primary-300 dark:bg-primary-800 pl-5 grid grid-cols-2">
- <div class="text-left grow pt-1">
-	
-  {#if required}
-   <h4 class="h4">{convertDisplayName(label, true)} *</h4>
-  {:else}
-   <h4 class="h4">{convertDisplayName(label, true)}</h4>
-  {/if}
+<div class="card flex bg-primary-300 dark:bg-primary-800 pl-5 grid grid-cols-2 items-center">
+ <div class="text-left grow">
+	   <h4 class="h4">
+    {convertDisplayName(label, true)} 
+    {#if required}*{/if}
+   </h4>
 
+
+ </div>
+ {#if description && showDescription}
+  <div	class="text-sm text-gray-500 py-1">{@html description}</div>
+ {/if}
+ <div class="text-left flex justify-end w-2 px-6">
+  {#if description}
+				<button class="badge" on:click={()=>showDescription = !showDescription}><Fa icon={faQuestion} /></button>
+		{/if}
  </div>
  <div class="text-left flex justify-end w-2 px-2">
   {#if !$hideStore.includes(path)}

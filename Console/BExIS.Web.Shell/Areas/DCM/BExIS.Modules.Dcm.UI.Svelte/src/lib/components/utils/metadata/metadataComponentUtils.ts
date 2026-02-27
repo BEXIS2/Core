@@ -276,16 +276,11 @@ export function ValidationStoreSetSimpleTypeValid(path: string, isValid: boolean
 	let valid: boolean = false;
 	let validationStoreValues: validationStoretype = getValidationStore(); 
 
-	console.log("a");
 
 	if (isValid != null && isValid != undefined) {
-		console.log("b");
-
 		const	item = validationStoreValues.simpleTypeValidationItems.find(item => {
 			return item.path === path;
 		});
-		console.log("🚀 ~ ValidationStoreSetSimpleTypeValid ~ item:", item)
-
 		if(item)
 		{
 				item!.isValid = isValid;
@@ -293,10 +288,7 @@ export function ValidationStoreSetSimpleTypeValid(path: string, isValid: boolean
 				valid = item!.isValid;
 
 				if(item && errorMessage){
-					console.log("🚀 ~ ValidationStoreSetSimpleTypeValid ~ errorMessage:", errorMessage)
 					item.errorMessage = errorMessage;
-					console.log("🚀 ~ ValidationStoreSetSimpleTypeValid ~ item:", item)
-
 				}
 
 				if(valid == true && item) // reset errors if item is valid

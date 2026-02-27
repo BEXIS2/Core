@@ -114,9 +114,7 @@
 										</button>
 									</div>
 									</div>
-									<div>
-			      <b>ARRAY-Complex</b>
-										
+									<div>								
 										<ComplexComponent
 											complexComponent={arrayComponent.items}
 											path={path + '.' + index}

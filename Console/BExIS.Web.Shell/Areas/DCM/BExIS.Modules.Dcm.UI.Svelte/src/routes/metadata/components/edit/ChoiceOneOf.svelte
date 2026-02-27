@@ -79,26 +79,8 @@
 				{#if choiceComponent.properties[target].type === 'object' && choiceComponent.properties[target].properties && !choiceComponent.properties[target].properties['#text']}
 	
 				<div class="grid grid-cols-1 gap-0 m-2">
-					<div class="card bg-primary-300 dark:bg-primary-800 px-5 py-2 grid grid-cols-2">
-						<div class="text-left w-4/5">						
-							<h3 class="h3">{target}</h3>
-						</div>
-						<div class="text-right">
-							{#if !$hideStore.includes(target)}
-								<button
-									class="h-9 w-10 text-right"
-									title="Open or close {target}"
-									on:click={() => toggleShow(target)}><Fa icon={faChevronUp} /></button
-								>
-							{:else}
-								<button
-									class="h-9 w-10 text-right"
-									title="Open or close {target}"
-									on:click={() => toggleShow(target)}><Fa icon={faChevronDown} /></button
-								>
-							{/if}
-						</div>
-					</div>
+					<Header path = {path + '.' + target} />
+					
 					{#if !$hideStore.includes(path + '.' + target)}
 					<div in:slide out:slide class="card px-5 py-4" id={path + '.' + target}>
 					{#key target}

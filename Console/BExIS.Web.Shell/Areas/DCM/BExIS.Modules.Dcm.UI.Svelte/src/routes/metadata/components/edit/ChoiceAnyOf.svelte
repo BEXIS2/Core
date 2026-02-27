@@ -54,8 +54,8 @@ function getChoices(cComponent: any): {key:string, value:string}[] {
 </script>
 
 
-<div class="grid grid-cols-1 gap-0">
- <Header {path} />
+<div class="card grid grid-cols-1 gap-0">
+ 	<Header {path} />
 
   {#if !$hideStore.includes(path)}
     <div in:slide out:slide class="card px-5 py-4" id={path}>
@@ -68,64 +68,50 @@ function getChoices(cComponent: any): {key:string, value:string}[] {
         source={choices}
         bind:target
         feedback={[]}
+								vertical={false}
        />
+
+					{#if target && target.length > 0}
+
+					{#each target as item}
+
+						{#if choiceComponent.items.properties[item].type === 'object' && choiceComponent.items.properties[item].properties && !choiceComponent.items.properties[item].properties['#text']}
+							<div class="grid grid-cols-1 gap-0 pl-1">
+								<Header path = {path + '.' + item}  description={choiceComponent.items.properties[item].description}/>
+
+								{#if !$hideStore.includes(path + '.' + item)}
+								<div in:slide out:slide class="card px-5 py-4" id={path + '.' + item}>
+								<ComplexComponent
+									complexComponent={choiceComponent.items.properties[item]}
+									path={path + '.' + item}
+									required={choiceComponent.required && choiceComponent.required.includes(item)}
+								/>
+								</div>
+
+								{/if}
+							</div>
+
+							{:else if choiceComponent.items.properties[item].type === 'object' && choiceComponent.items.properties[item].properties['#text']}
+								<div class="px-5 py-2">
+									<SimpleComponent
+										simpleComponent={choiceComponent.items.properties[item].properties['#text']}
+										path={path + '.' + item}
+										required={choiceComponent.items.required && choiceComponent.items.required.includes(item)}
+										value={null}
+										label={item}
+									/>
+								</div>
+						
+								{/if}
+
+						{/each}
+					{/if}
+					
 
      {/if}
     </div>
   {/if}
 </div>
 
-{#if target && target.length > 0}
 
-		{#each target as item}
 
-   {#if choiceComponent.items.properties[item].type === 'object' && choiceComponent.items.properties[item].properties && !choiceComponent.items.properties[item].properties['#text']}
-				<div class="grid grid-cols-1 gap-0 m-2">
-					<div class="card bg-primary-300 dark:bg-primary-800 px-5 py-2 grid grid-cols-2">
-						<div class="text-left w-4/5">						
-							<h3 class="h3">{item}</h3>
-						</div>
-						<div class="text-right">
-							{#if !$hideStore.includes(path + '.' + item)}
-								<button
-									class="h-9 w-10 text-right"
-									title="Open or close {item}"
-									on:click={() => toggleShow(path + '.' + item)}><Fa icon={faChevronUp} /></button
-								>
-							{:else}
-								<button
-									class="h-9 w-10 text-right"
-									title="Open or close {item}"
-									on:click={() => toggleShow(path + '.' + item)}><Fa icon={faChevronDown} /></button
-								>
-							{/if}
-						</div>
-					</div>
-
-					{#if !$hideStore.includes(path + '.' + item)}
-					<div in:slide out:slide class="card px-5 py-4" id={path + '.' + item}>
-					<ComplexComponent
-						complexComponent={choiceComponent.items.properties[item]}
-						path={path + '.' + item}
-						required={choiceComponent.required && choiceComponent.required.includes(item)}
-					/>
-					</div>
- 
-					{/if}
-    </div>
-	
-				{:else if choiceComponent.items.properties[item].type === 'object' && choiceComponent.items.properties[item].properties['#text']}
-					<div class="px-5 py-2">
-						<SimpleComponent
-							simpleComponent={choiceComponent.items.properties[item].properties['#text']}
-							path={path + '.' + item}
-							required={choiceComponent.items.required && choiceComponent.items.required.includes(item)}
-							value={null}
-							label={item}
-						/>
-					</div>
-			
-     {/if}
-
-			{/each}
-  {/if}
