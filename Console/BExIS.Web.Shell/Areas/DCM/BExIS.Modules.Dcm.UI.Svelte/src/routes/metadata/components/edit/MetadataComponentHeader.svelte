@@ -22,15 +22,15 @@
 
 
 
-<div class="card flex bg-primary-300 dark:bg-primary-800 pl-5 grid grid-cols-2 items-center">
+<div class="card flex bg-primary-300 dark:bg-primary-800 pl-5 items-center">
  <div class="text-left grow">
-	   <h4 class="h4">
+	   <h4 id="{path}" class="h4">
     {convertDisplayName(label, true)} 
     {#if required}*{/if}
    </h4>
-
-
  </div>
+
+ 
  {#if description && showDescription}
   <div	class="text-sm text-gray-500 py-1">{@html description}</div>
  {/if}

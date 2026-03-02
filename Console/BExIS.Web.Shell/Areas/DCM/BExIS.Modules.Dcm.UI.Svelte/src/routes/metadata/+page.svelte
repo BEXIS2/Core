@@ -50,6 +50,7 @@
 		{#if mode	=== 'view'}
 			<MetadataView bind:datasetId={datasetId} />
 		{:else}
+		<b>old</b>
 			<MetadataEdit	bind:datasetId={datasetId} />
 		{/if}
  {/key}

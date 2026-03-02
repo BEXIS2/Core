@@ -1,21 +1,25 @@
+
+
+
+
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import ComplexComponent from './complexComponentWrapper.svelte';
+	import ComplexComponent from '../components/edit/complexComponentWrapper.svelte';
 
-	import * as apiCalls from '../../services/apiCalls';
-	import { helpStore, Spinner } from '@bexis2/bexis2-core-ui';
-	import suite from './simpleComponent';
+	import * as apiCalls from '../services/apiCalls';
+	import { helpStore, Page, pageContentLayoutType, Spinner } from '@bexis2/bexis2-core-ui';
+	import suite from '../components/edit//simpleComponent';
 
 	// import { Page } from '@bexis2/bexis2-core-ui';
-	import { schemaToJson, setConfigStore, setMetadataStore } from '../../../../lib/components/utils/metadata/metadataComponentUtils';
-	import Tree from './Tree.svelte';
+	import { schemaToJson, setConfigStore, setMetadataStore } from '../../../lib/components/utils/metadata/metadataComponentUtils';
+	import Tree from '../components/edit/Tree.svelte';
 
 // This regex accepts HH:mm:ss without requiring Z
 
 
 	// import configJson from './customComponents/config.json';
 	//export let schemaId: number = 3;
-	export let datasetId: number = 1;
+	export let datasetId: number = 2;
 
 	let errors:any[]	= [];
 
@@ -48,8 +52,6 @@
 	let validationResult;
 	$:validationResult
 
-
-
 	function validateFn() {
 		
 		validationResult = suite(m);
@@ -69,38 +71,17 @@
 
 </script>
 
-<div>
 
 
-	 
- {#await load()}
+<Page contentLayoutType={pageContentLayoutType.full}  footer={false} >
+	{#await load()}
 		<Spinner />
 	{:then}
 
-	<div id="content" class="content">
+<div	class="container">
+	<div class="nav-left scrollable">
 
-		<div class="p-2">
-			{#if validationResult && validationResult.hasErrors()}
-
-			<ul class="list">
-				{#each validationResult.errors as error}
-					<li >
-						<span class="text-error-500">-</span>
-						<span class="text-error-500 flex-auto">{error.fieldName} - {error.message}</span>
-					</li>
-					
-				{/each}
-			</ul>
-
-			{/if}
-	</div>
-
-	 
-		<div class="p-2">
-			<ComplexComponent complexComponent={schema} path={''} />
-		</div>
-
-		<div id="metadata-options">
+		<div id="metadata-options" >
 			<button class="btn variant-filled-secondary m-2" on:click={validateFn}>
 				validate
 			</button>
@@ -121,34 +102,49 @@
 				Save Metadata
 			</button>
 		</div>
-		</div>
-	{/await}
-</div>
 
+		{#if m}
+			<Tree bind:data={m}/>
+		{/if}
+	</div>
+
+
+
+	 <div class="content scrollable">
+			<div class="p-2">
+				<ComplexComponent complexComponent={schema} path={''} />
+			</div>
+		</div>
+ </div>
+
+		{/await}
+</Page>
 
 <style>
-	.left-nav {
-		position: fixed;
-		left: 0;
-		width: 300px;
-		/*	height: calc(100vh - 180px); set vai function */
+
+.container {
+  display: flex;
+  overflow: hidden; /* Wichtig: Der Content-Bereich selbst scrollt nicht */
+		height: calc(100dvh - 180px); /* Höhe des Viewports minus Höhe des Headers */
+}
+
+.nav-left {
+		width: 400px; /* Feste Breite für die Navigation */
+		padding: 1rem;
+		overflow-y: auto; /* Ermöglicht vertikales Scrollen in der Navigation */
+
+}
+	
+.content {
+		flex-grow: 1;
+		overflow-y: auto; /* Aktiviert das unabhängige Scrollen */
+}
+
+.scrollable {
 		overflow-y: auto;
 		scrollbar-width: thin; /* Makes scrollbar smaller in Firefox */
 		scrollbar-color: rgba(0, 0, 0, 0.3) transparent; /* Colors scrollbar */
-	}
-
-		.content {
-		flex-grow: 1;
-		overflow-y: auto;
-
-		/*  height: calc(100vh - 180px); /* Subtracts header height set via function  */
-
-		/* padding-top: 20px; */
-		/* background: #f4f4f4; */
-		width: calc(100% - 400px);
-		margin-left: 300px;
-		overflow-y: scroll; /* Allow scrolling */
-		scrollbar-width: none; /* Hide scrollbar (Firefox) */
-	}
-
+}
 </style>
+
+

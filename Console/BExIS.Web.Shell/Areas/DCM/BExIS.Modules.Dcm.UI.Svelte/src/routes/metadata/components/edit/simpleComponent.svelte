@@ -198,6 +198,7 @@
 								invalid={res.hasErrors(path)}
 								feedback={res.getErrors(path)}	 
 								description={simpleComponent.description}
+								required={required}
 							/>
 					{:else} <!-- Handle string type with enum with many entries -->
 							
@@ -249,7 +250,7 @@
 		</div>
 	{/if}
 {:else if isAnchor}
-	<div class="px-5" id={path + '.item'}>
+	<div class="" id={path + '.item'}>
 		<svelte:component this={customComponent} anchor={path} label={convertDisplayName(label)}/>
 	</div>	
 {/if}
