@@ -1,4 +1,4 @@
-<script lang="ts">
+ä-<script lang="ts">
 	
 	import { onMount } from 'svelte';
 	import { getValueByPath, updateMetadataStore, getVariableSoursePathFromConfig } from '../../utils/metadata/metadataComponentUtils';

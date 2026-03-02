@@ -1,6 +1,7 @@
 import exp from 'constants';
 import type { SimpleComponentData, validationStoretype } from './models';
 import { metadataStore, hideStore, validationStore, configStore } from './stores';
+import { get } from 'svelte/store';
 // Utility functions for metadata handling
 // Get and set values in the metadata store based on a dot-separated path
 export function setMetadataStore(metadata: any) {
@@ -39,6 +40,7 @@ export function setValueByPath(obj: any, path: string, value: any) {
 }
 // Update metadata store with a new value at the specified path
 export function updateMetadataStore(path: string, value: any, ref?: any): any {
+ 
 	let obj: any = {};
 	if (path !== undefined && path !== null && path !== '') {
 		metadataStore.subscribe((v) => {
@@ -67,6 +69,38 @@ export function updateMetadataStore(path: string, value: any, ref?: any): any {
 	console.log('Updated metadata store:', obj);
 	return obj;
 }
+
+export function removeFromMetadataStore(path: string): any {
+ 
+	let obj: any = {};
+	if (path !== undefined && path !== null && path !== '') {
+		metadataStore.subscribe((v) => {
+			obj = v;
+		});
+		{
+			removeByPath(obj, path);
+	}
+	console.log('remove metadata store:', obj);
+	return obj;
+}
+}
+
+function removeByPath(obj, path) {
+	const parts = path.split('.');
+	const lastKey = parts.pop(); // The property to delete
+	
+	// Reach the parent of the last key
+	const parent = parts.reduce((current, part) => {
+					return (current && current[part] !== undefined) ? current[part] : undefined;
+	}, obj);
+
+	if (parent && parent.hasOwnProperty(lastKey)) {
+					delete parent[lastKey];
+					return true; // Success
+	}
+	return false; // Path not found
+}
+
 // Config Store Functions
 // Set configuration data in the config store
 export function setConfigStore(config: any) {
@@ -238,27 +272,48 @@ export function ValidationStoreAddSimpleComponent(item: SimpleComponentData): va
 // Set overall validity for all simple required components in the validation store
 // based on the validity of an individual component identified by its path
 // Returns the updated validity of the specified component
-export function ValidationStoreSetSimpleTypeValid(path: string, isValid: boolean): boolean {
+export function ValidationStoreSetSimpleTypeValid(path: string, isValid: boolean, errorMessage:string = ''): boolean {
 	let valid: boolean = false;
-	let validationStoreValues: validationStoretype = getValidationStore();
-	if (isValid && isValid != null && isValid != undefined) {
-		validationStoreValues.simpleTypeValidationItems.find(item => item.path === path)!.isValid = isValid;
-		valid = validationStoreValues.simpleTypeValidationItems.find(item => item.path === path)!.isValid;
-	}
-	validationStoreValues.allSimpleRequiredValid = true;
-	for (const item of validationStoreValues.simpleTypeValidationItems) {
-		if (!item.isValid && item.required) {
-			validationStoreValues.allSimpleRequiredValid = false;
-			break;
+	let validationStoreValues: validationStoretype = getValidationStore(); 
+
+
+	if (isValid != null && isValid != undefined) {
+		const	item = validationStoreValues.simpleTypeValidationItems.find(item => {
+			return item.path === path;
+		});
+		if(item)
+		{
+				item!.isValid = isValid;
+
+				valid = item!.isValid;
+
+				if(item && errorMessage){
+					item.errorMessage = errorMessage;
+				}
+
+				if(valid == true && item) // reset errors if item is valid
+				{	
+						item.errorMessage	= '';
+				}
+
+
+			}
+			validationStoreValues.allSimpleRequiredValid = true;
+			for (const item of validationStoreValues.simpleTypeValidationItems) {
+				if (!item.isValid && item.required) {
+					validationStoreValues.allSimpleRequiredValid = false;
+					break;
+				}
 		}
 	}
 	validationStore.set(validationStoreValues);
+	console.log("🚀 ~ ValidationStoreSetSimpleTypeValid ~ validationStore:", get(validationStore))
 	return valid;
 }
 // Create a SimpleComponentData validation item
 // based on the provided parameters and simple component properties
 export function createSimpleComponentValidationItem(path: string, label: string, required: boolean, simpleComponent: any): SimpleComponentData {
-	let simpleComponentValidationItem: SimpleComponentData = { label: label, path: path, required: required, isValid: false };
+	let simpleComponentValidationItem: SimpleComponentData = { label: label, path: path, required: required, isValid: false,	errorMessage: '' };
 
  let item = simpleComponent.properties['#text'];
 
@@ -275,8 +330,8 @@ export function createSimpleComponentValidationItem(path: string, label: string,
 		simpleComponentValidationItem.maxLength = item.maxLength;
 	}
 	// set domainList if defined
-	if (item.domainList && item.domainList != undefined && item.domainList != null && item.domainList.length > 0) {
-		simpleComponentValidationItem.domainList = item.domainList;
+	if (item.enum && item.enum != undefined && item.enum != null && item.enum.length > 0) {
+		simpleComponentValidationItem.enum = item.enum;
 	}
 	// set lowerBound if defined
 	if (item.lowerBound && item.lowerBound != undefined && item.lowerBound != null && item.lowerBound.length != '') {
@@ -290,7 +345,6 @@ export function createSimpleComponentValidationItem(path: string, label: string,
 // type secific	validation criteria
 // set minium if if defined
 if ((item.minimum && item.minimum != undefined && item.minimum != null && item.minimum != '') || item.minimum == 0) {
-
 	simpleComponentValidationItem.minimum = item.minimum;
 }
 

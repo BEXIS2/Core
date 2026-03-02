@@ -13,12 +13,12 @@
 	} from '@bexis2/bexis2-core-ui';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
-	import { ValidationStoreAddSimpleComponent, ValidationStoreSetSimpleTypeValid, updateMetadataStore, createSimpleComponentValidationItem, getConfigStore } from '../../../../lib/components/utils/metadata/metadataComponentUtils';
-	import { customComponentsCatalog } from '../../../../lib/components/customComponents/componentCatalog';
+	import { ValidationStoreAddSimpleComponent, ValidationStoreSetSimpleTypeValid, updateMetadataStore, createSimpleComponentValidationItem, getConfigStore } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { customComponentsCatalog } from '$lib/components/customComponents/componentCatalog';
 	import suite from './simpleComponent';
-	import type { SimpleComponentData } from '../../../../lib/components/utils/metadata/models';
+	import type { SimpleComponentData } from '$lib/components/utils/metadata/models';
 	import SveltyPicker from 'svelty-picker';
-	import {convertDisplayName} from './../../metadataShared';
+	import {convertDisplayName} from '../metadataShared';
 	//import { en, de } from 'svelty-picker/dist/i18n';
 
 	export let simpleComponent: any;
@@ -36,7 +36,7 @@
 	let customComponent: any;
 
 	// set overall validity
-	$: ValidationStoreSetSimpleTypeValid(path, res.isValid());
+	$: ValidationStoreSetSimpleTypeValid(path, res.isValid(path));
 	// update metadata store on value change
 	$: updateMetadataStore(path, value);
 
@@ -45,7 +45,7 @@
 			// initial check
 			setTimeout(async () => {
 				if(value == undefined || value == null || value == '') {
-					res = suite(value, '');
+					//res = suite(value, '');
 				}
 				else {
 					res = suite(value, path);
@@ -54,11 +54,14 @@
 			if(simpleComponent.properties['#text'].format === 'date' || simpleComponent.properties['#text'].format === 'datetime' || simpleComponent.properties['#text'].format === 'date and time' || simpleComponent.properties['#text'].format === 'time'){
 				date = value !== undefined || value == '' ? value as Date : Date.now() as unknown as Date;
 			}
+
+			//#### VALIDATION	 ####
 			// create validation item and add to store
 			let simpleComponentValidationItem: SimpleComponentData = createSimpleComponentValidationItem(path, label, required, simpleComponent); 
-		
 			// add to validation store
 			ValidationStoreAddSimpleComponent(simpleComponentValidationItem);
+
+			//#### CONFIGURATION	 ####
 			config = getConfigStore();
 			// check if this component is an anchor point
 			console.log("check for anchorpoin", config)
@@ -79,16 +82,25 @@
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
 	function onChangeHandler(e: any) {
+		console.log(e);
 		// add some delay so the entityTemplate is updated
 		// otherwise the values are old
 		setTimeout(async () => {
 			// check changed field
 			res = suite(value, e.target.id);
+			console.log("🚀 ~ onChangeHandler ~ res:", res)
+			let errorMessage = '';
+			if(res.hasErrors(e.target.id)){
+					errorMessage = res.getErrors(e.target.id).join('.  ');
+					console.log("🚀 ~ onChangeHandler ~ errorMessage:", errorMessage)
+			}
+
+			// update validationstore
+			ValidationStoreSetSimpleTypeValid(path, res.isValid(path), errorMessage);
+
 		}, 10);
 	}
 
-
-	let x:string = null;
 
 </script>
 <!-- Simple Component Rendering -->
@@ -137,7 +149,8 @@
 						<SveltyPicker
 							mode="time"
 							name={label}
-							format="hh:ii"
+							format="hh:ii" 
+							displayFormat="hh:mm"
 							initialDate={date}
 							bind:value
 							inputClasses="input variant-form-material dark:bg-zinc-700 bg-zinc-50 placeholder:text-gray-400 w-32"
@@ -185,6 +198,7 @@
 								invalid={res.hasErrors(path)}
 								feedback={res.getErrors(path)}	 
 								description={simpleComponent.description}
+								required={required}
 							/>
 					{:else} <!-- Handle string type with enum with many entries -->
 							
@@ -196,6 +210,7 @@
 										bind:target={value}
 										isMulti={false}
 										clearable={required	? false : true} 
+										on:change={onChangeHandler}
 										invalid={res.hasErrors(path)}
 										feedback={res.getErrors(path)}	 
 										description={simpleComponent.description}
@@ -217,13 +232,13 @@
 				/>
 			<!-- Handle boolean type -->
 			{:else if simpleComponent.properties['#text'].type === 'boolean'}
-				{@const v = value = true}
+				<!-- {@const v = value = true} -->
 				<SlideToggle 
 					id={path}
 					label={convertDisplayName(label)}
 					name={convertDisplayName(label)}
 					required={required} 
-					bind:value
+					bind:checked={value}
 					on:input={onChangeHandler}
 					valid={res.isValid(path)}
 					invalid={res.hasErrors(path)}
@@ -235,7 +250,7 @@
 		</div>
 	{/if}
 {:else if isAnchor}
-	<div class="px-5" id={path + '.item'}>
+	<div class="" id={path + '.item'}>
 		<svelte:component this={customComponent} anchor={path} label={convertDisplayName(label)}/>
 	</div>	
 {/if}

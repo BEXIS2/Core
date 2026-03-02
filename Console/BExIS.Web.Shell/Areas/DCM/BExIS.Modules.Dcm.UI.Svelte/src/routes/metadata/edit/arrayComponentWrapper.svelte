@@ -1,12 +1,13 @@
 <script lang="ts">
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from './simpleComponent.svelte';
-	import { getValueBySchemaPath, setValueByPath, updateMetadataStore, schemaToJson, toggleShow } from '../../../../lib/components/utils/metadata/metadataComponentUtils';
+	import ChoiceComponent from './choiceComponentWrapper.svelte';
+	import { getValueBySchemaPath, setValueByPath, updateMetadataStore, schemaToJson, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { faPlus, faChevronUp, faChevronDown, faTrash } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { slide, fade } from 'svelte/transition';
-	import { hideStore } from '../../../../lib/components/utils/metadata/stores';
-	import { convertDisplayName } from './../../metadataShared';
+	import { hideStore } from '$lib/components/utils/metadata/stores';
+	import { convertDisplayName } from '../metadataShared';
 	import Header from './MetadataComponentHeader.svelte';
 
 	export let arrayComponent: any;
@@ -64,9 +65,11 @@
 		{#key render}
 			{#if arrayComponent.items.type === 'object' && arrayComponent.items.properties && !arrayComponent.items.properties['#text']}
 				<div class="grid grid-cols-1 gap-0">
-					
+					{#if arrayComponent.items.anyOf || arrayComponent.items.allOf}
+					 <ChoiceComponent choiceComponent={arrayComponent} {path} />
+					{:else}
+
 					<Header	path={path} required={requiredList.includes(label)} />
-					
 					{#if !$hideStore.includes(path)}
 						<div in:slide out:slide class="card pl-5 py-2" id={path}>						
 						{#if value && value.length > 0}
@@ -111,7 +114,7 @@
 										</button>
 									</div>
 									</div>
-									<div>
+									<div>								
 										<ComplexComponent
 											complexComponent={arrayComponent.items}
 											path={path + '.' + index}
@@ -119,10 +122,14 @@
 										/>
 									</div>
 								</div>
+							
 							{/each}
 						{/if}
+
 						</div>
+						{/if}
 					{/if}
+
 				</div>
 			{:else if arrayComponent.items.type === 'object' && arrayComponent.items.properties['#text']}
 				{#if value && value.length > 0}

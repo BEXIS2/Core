@@ -5,7 +5,7 @@
 	import ChoiceComponent from './choiceComponentWrapper.svelte';
 
 	import { slide, fade } from 'svelte/transition';
-	import { hideStore } from '../../../../lib/components/utils/metadata/stores';
+	import { hideStore } from '$lib/components/utils/metadata/stores';
 	import Header from './MetadataComponentHeader.svelte';
 
 
@@ -27,15 +27,12 @@
 	{#each Object.entries(complexComponent.properties) as [key, value]}
 		{@const p = path = path ? path + '.' + key : key}
 		{@const l = label = key}
-
-		{#if value.type === 'object' && value.properties && !value.properties['#text']}
+		{#if (value.type === 'object' && value.properties && !value.properties['#text']) }
 			{#if value.oneOf || value.anyOf || value.allOf}
 				<ChoiceComponent choiceComponent={value} {path} />
 			{:else}
 				<div class="grid grid-cols-1 gap-0 ">
-
-					<Header	{required} {path} {p} />
-
+					<Header	{required} {path} {p} description={value.description}/>
 					{#if !$hideStore.includes(path)}
 						<div in:slide out:slide class="card pl-5 py-4" id={path}>
 							<ComplexComponent

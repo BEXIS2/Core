@@ -1,7 +1,7 @@
 <script lang="ts">
 	
 	import { onMount } from 'svelte';
-	import { getValueByPath, updateMetadataStore, getVariableSoursePathFromConfig , getFullConfig, getTargetVariablesWithValues } from '../../utils/metadata/metadataComponentUtils';
+	import { getValueByPath, updateMetadataStore, getVariableSoursePathFromConfig , getFullConfig, getTargetVariablesWithValues, ValidationStoreSetSimpleTypeValid } from '../../utils/metadata/metadataComponentUtils';
 	import {TextInput} from '@bexis2/bexis2-core-ui';
 	import {convertDisplayName} from '../../../../routes/metadata/metadataShared';
 	//import { en, de } from 'svelty-picker/dist/i18n';
@@ -21,16 +21,17 @@
 
 	let disabled = (targetVar?.find(v => v.target_variable == 'disable')?.value ?? false) === 'true';
 	let defaultValue = targetVar?.find(v => v.target_variable === 'defaultValue')?.value ?? '';
-	console.log("default", defaultValue)
-	console.log("value before", value)
-	console.log("disabled", disabled)
+	// console.log("default", defaultValue)
+	// console.log("value before", value)
+	// console.log("disabled", disabled)
 
 	if((value == undefined || value == null || value == '') && (defaultValue != undefined && defaultValue != null && defaultValue != '')){
 		value = defaultValue;
 	}
-	
+
 	onMount(async () => {
 
+		ValidationStoreSetSimpleTypeValid(anchor, true, "");
 			
 	});
 
@@ -38,14 +39,8 @@
 //change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
 	function onChangeHandler(e: any) {
-		// add some delay so the entityTemplate is updated
-		// otherwise the values are old
-	//	setTimeout(async () => {
-			// check changed field
-		//	res = suite(value, e.target.id);
-	//	}, 10);
+		console.log(e);
 	}
-
 
 	</script>
 		<span id = {anchor}>
