@@ -9,6 +9,7 @@
 	import type { validationStoretype } from '$lib/components/utils/metadata/models';
  import {validationStore} from '$lib/components/utils/metadata/stores';
 	import { get } from 'svelte/store';
+	import { each } from 'vest';
 
   export let data;
   
@@ -41,27 +42,25 @@
   });
 
 </script>
-
-		<!-- <div class="p-2">
-			{#if validationResult && validationResult.hasErrors()}
-
-			<ul class="list">
-				{#each validationResult.errors as error}
-					<li >
-						<span class="text-error-500">-</span>
-						<span class="text-error-500 flex-auto">{error.fieldName} - {error.message}</span>
-					</li>
-					
-				{/each}
-			</ul>
-
-			{/if}
-	</div> -->
-
-
 <nav class="list-nav">
 {#if validationStoreValues}
+
+
 {#key validationStoreValues}
+ 
+ {#if validationStoreValues.allSimpleRequiredValid}
+  <span class="text-success-500"><Fa icon={faCheck} /></span>
+  {:else}
+  <span class="text-error-500">#</span>
+  {#each validationStoreValues.simpleTypeValidationItems.filter(item => item.isValid === false) as item}
+   <div class="text-error-500 ml-4">
+    {item.path}: {item.errorMessage}
+   </div>
+  {/each}
+  {/if}
+
+
+
  <ul>
   {#each Object.entries(data) as [key, value]}
   {#if typeof value === 'object' && value !== null}
@@ -72,7 +71,6 @@
      {:else if validationStoreValues && !hasErrors(key)}
       <span class="text-success-500"><Fa icon={faCheck} /></span>
      {/if}
-
 			</a>
   {/if}
   {/each}

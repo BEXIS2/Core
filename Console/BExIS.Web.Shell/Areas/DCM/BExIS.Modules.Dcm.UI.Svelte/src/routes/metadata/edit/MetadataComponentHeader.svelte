@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { toggleShow } from '../../../../lib/components/utils/metadata/metadataComponentUtils';
-	import { convertDisplayName } from '../../metadataShared';
+	import { toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { convertDisplayName } from '../metadataShared';
 
 	import { faPlus, faChevronUp, faChevronDown, faQuestion } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 
- import { hideStore } from '../../../../lib/components/utils/metadata/stores';
+ import { hideStore } from '$lib/components/utils/metadata/stores';
 
  export let required: boolean = false;
 	export let path: string;

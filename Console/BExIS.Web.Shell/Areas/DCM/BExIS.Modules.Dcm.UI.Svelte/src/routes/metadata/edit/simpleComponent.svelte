@@ -13,12 +13,12 @@
 	} from '@bexis2/bexis2-core-ui';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
-	import { ValidationStoreAddSimpleComponent, ValidationStoreSetSimpleTypeValid, updateMetadataStore, createSimpleComponentValidationItem, getConfigStore } from '../../../../lib/components/utils/metadata/metadataComponentUtils';
-	import { customComponentsCatalog } from '../../../../lib/components/customComponents/componentCatalog';
+	import { ValidationStoreAddSimpleComponent, ValidationStoreSetSimpleTypeValid, updateMetadataStore, createSimpleComponentValidationItem, getConfigStore } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { customComponentsCatalog } from '$lib/components/customComponents/componentCatalog';
 	import suite from './simpleComponent';
-	import type { SimpleComponentData } from '../../../../lib/components/utils/metadata/models';
+	import type { SimpleComponentData } from '$lib/components/utils/metadata/models';
 	import SveltyPicker from 'svelty-picker';
-	import {convertDisplayName} from './../../metadataShared';
+	import {convertDisplayName} from '../metadataShared';
 	//import { en, de } from 'svelty-picker/dist/i18n';
 
 	export let simpleComponent: any;

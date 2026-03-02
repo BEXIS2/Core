@@ -8,7 +8,6 @@
 
 	// import { Page } from '@bexis2/bexis2-core-ui';
 	import { schemaToJson, setConfigStore, setMetadataStore } from '../../../../lib/components/utils/metadata/metadataComponentUtils';
-	import Tree from './Tree.svelte';
 
 // This regex accepts HH:mm:ss without requiring Z
 

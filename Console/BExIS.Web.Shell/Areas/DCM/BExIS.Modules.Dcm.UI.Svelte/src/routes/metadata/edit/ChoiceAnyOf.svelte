@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { CheckboxKVPList } from '@bexis2/bexis2-core-ui';
-import { removeFromMetadataStore, toggleShow} from '../../../../lib/components/utils/metadata/metadataComponentUtils';
+import { removeFromMetadataStore, toggleShow} from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { hideStore } from '$lib/components/utils/metadata/stores';
  import Header from './MetadataComponentHeader.svelte';
 	import SimpleComponent from './simpleComponent.svelte';

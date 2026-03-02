@@ -6,8 +6,8 @@
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from './simpleComponent.svelte';
-	import { removeFromMetadataStore, toggleShow, updateMetadataStore } from '../../../../lib/components/utils/metadata/metadataComponentUtils';
-	import { hideStore } from '../../../../lib/components/utils/metadata/stores';
+	import { removeFromMetadataStore, toggleShow, updateMetadataStore } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { hideStore } from '$lib/components/utils/metadata/stores';
 	import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { slide } from 'svelte/transition';

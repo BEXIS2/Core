@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 
 	import { NumberInput, Page } from '@bexis2/bexis2-core-ui';
-	import MetadataEdit from './components/edit/MetadataEdit.svelte';
+
 	import MetadataView from './components/view/MetadataView.svelte';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 
@@ -51,7 +51,7 @@
 			<MetadataView bind:datasetId={datasetId} />
 		{:else}
 		<b>old</b>
-			<MetadataEdit	bind:datasetId={datasetId} />
+
 		{/if}
  {/key}
  {/if}

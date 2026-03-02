@@ -5,7 +5,7 @@
 	import ChoiceComponent from './choiceComponentWrapper.svelte';
 
 	import { slide, fade } from 'svelte/transition';
-	import { hideStore } from '../../../../lib/components/utils/metadata/stores';
+	import { hideStore } from '$lib/components/utils/metadata/stores';
 	import Header from './MetadataComponentHeader.svelte';
 
 

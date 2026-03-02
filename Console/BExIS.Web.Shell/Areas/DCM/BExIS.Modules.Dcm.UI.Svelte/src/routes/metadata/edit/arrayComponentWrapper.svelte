@@ -2,12 +2,12 @@
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from './simpleComponent.svelte';
 	import ChoiceComponent from './choiceComponentWrapper.svelte';
-	import { getValueBySchemaPath, setValueByPath, updateMetadataStore, schemaToJson, toggleShow } from '../../../../lib/components/utils/metadata/metadataComponentUtils';
+	import { getValueBySchemaPath, setValueByPath, updateMetadataStore, schemaToJson, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { faPlus, faChevronUp, faChevronDown, faTrash } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { slide, fade } from 'svelte/transition';
-	import { hideStore } from '../../../../lib/components/utils/metadata/stores';
-	import { convertDisplayName } from './../../metadataShared';
+	import { hideStore } from '$lib/components/utils/metadata/stores';
+	import { convertDisplayName } from '../metadataShared';
 	import Header from './MetadataComponentHeader.svelte';
 
 	export let arrayComponent: any;
