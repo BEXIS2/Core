@@ -8,6 +8,7 @@ export interface schemaNode {
 export interface validationStoretype {
 	allSimpleRequiredValid: boolean;
 	simpleTypeValidationItems: SimpleComponentData[];
+	complexTypeValidationItems: ComplexComponentData[];
 }
 
 export interface SimpleComponentData {

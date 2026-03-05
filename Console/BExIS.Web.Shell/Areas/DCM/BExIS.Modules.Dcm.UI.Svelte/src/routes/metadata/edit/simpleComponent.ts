@@ -1,9 +1,15 @@
 import { create, test, enforce, only, each } from 'vest';
 import type { validationStoretype } from '$lib/components/utils/metadata/models';
 import { getValidationStore } from '$lib/components/utils/metadata/metadataComponentUtils';
+import { hideStore } from '$lib/components/utils/metadata/stores';
+import { get } from 'svelte/store';
 
 // Get current values from the validation store
 let validationStoreValues: validationStoretype = getValidationStore();
+// if the elements hidden by hideStore are not validated, we need to get the current values of the hideStore to check in the validation if the field is hidden or not
+let hideStoreValues: any = get(hideStore);
+
+
 // Define a Vest test suite for validating simple component data
 // based on the validation rules defined in the validation store
 const suite = create((data: any, fieldName: string='') => {

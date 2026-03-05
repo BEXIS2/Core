@@ -19,6 +19,7 @@
 	import type { SimpleComponentData } from '$lib/components/utils/metadata/models';
 	import SveltyPicker from 'svelty-picker';
 	import {convertDisplayName} from '../metadataShared';
+
 	//import { en, de } from 'svelty-picker/dist/i18n';
 
 	export let simpleComponent: any;
@@ -34,6 +35,8 @@
 	let isAnchor: boolean = false;
 	let isVisible: boolean = true;
 	let customComponent: any;
+	let min: number = Number.MIN_VALUE;
+	let max: number = Number.MAX_VALUE;
 
 	// set overall validity
 	$: ValidationStoreSetSimpleTypeValid(path, res.isValid(path));
@@ -51,8 +54,18 @@
 					res = suite(value, path);
 				}
 			}, 10);
+
+			// checks for date
 			if(simpleComponent.properties['#text'].format === 'date' || simpleComponent.properties['#text'].format === 'datetime' || simpleComponent.properties['#text'].format === 'date and time' || simpleComponent.properties['#text'].format === 'time'){
 				date = value !== undefined || value == '' ? value as Date : Date.now() as unknown as Date;
+			}
+
+			// numeric - set min and max if exist	in schema
+			if(simpleComponent.properties['#text'].minimum !== undefined){
+				min = simpleComponent.properties['#text'].minimum;
+			}
+			if(simpleComponent.properties['#text'].maximum !== undefined){
+				max = simpleComponent.properties['#text'].maximum;
 			}
 
 			//#### VALIDATION	 ####
@@ -219,12 +232,15 @@
 
 			<!-- Handle number and integer types -->
 			{:else if simpleComponent.properties['#text'].type === 'number'||simpleComponent.properties['#text'].type === 'integer'}
+
 				<NumberInput 
 					id={path}
 					label={convertDisplayName(label)}
 					required={required} 
 					bind:value
 					on:input={onChangeHandler}
+     {min}
+					{max}
 					valid={res.isValid(path)}
 					invalid={res.hasErrors(path)}
 					feedback={res.getErrors(path)}

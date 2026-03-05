@@ -7,8 +7,8 @@ import { get } from 'svelte/store';
 export function setMetadataStore(metadata: any) {
 	metadataStore.set(metadata);
 }
-// Get value from an object based on a dot-separated path
-export function getValueBySchemaPath(path: string) {
+// returns a node, that can be complex	or simple, based on the given path in the metadata store
+export function getNodeByPath(path: string) {
 	let obj: any;
 	metadataStore.subscribe((v) => {
 		obj = v;
@@ -18,12 +18,12 @@ export function getValueBySchemaPath(path: string) {
 
 export function getValueByPath(path: string) {
 	path = path + '.#text';
-	return getValueBySchemaPath(path);
+	return getNodeByPath(path);
 }
 
 export function getRefByPath(path: string) {
 	path = path + '.@ref';
-	return getValueBySchemaPath(path);
+	return getNodeByPath(path);
 }
 // Set value in an object based on a dot-separated path
 export function setValueByPath(obj: any, path: string, value: any) {
@@ -239,6 +239,39 @@ export function toggleShow(path: string) {
 	}
 	hideStore.set(hideStoreValue);
 }
+
+// Toggle visibility of a metadata component based on its path
+export function show(path: string) {
+	let hideStoreValue: string[] = [];
+	hideStore.subscribe((v) => {
+		hideStoreValue = [...v];
+	})();
+
+	if (!hideStoreValue.includes(path)) {
+		hideStoreValue.push(path);
+	}
+	hideStore.set(hideStoreValue);
+}
+
+
+// utils.js or inside <script>
+export function hasValue(node) {
+  if (node === null || node === undefined) return false;
+
+  // If it's an array, check if any element has a value
+  if (Array.isArray(node)) {
+    return node.some(hasValue);
+  }
+
+  // If it's an object, check if any property has a value
+  if (typeof node === 'object') {
+    return Object.values(node).some(hasValue);
+  }
+
+  // If it's a string, trim it and check length; otherwise, check truthiness (for numbers/bools)
+  return typeof node === 'string' ? node.trim().length > 0 : true;
+}
+
 // Validation Store Functions
 // Get current values from the validation store
 // If undefined, initialize with default values
