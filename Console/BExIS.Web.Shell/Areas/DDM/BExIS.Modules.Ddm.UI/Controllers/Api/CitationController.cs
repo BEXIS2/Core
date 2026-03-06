@@ -310,8 +310,8 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             string url = model.URL;
             if (isPublic)
             {
-                if (useTags)
-                    url += "/ddm/data/Showdata/" + datasetId + "?tag=" + model.Version + "";
+                if (useTags && !String.IsNullOrEmpty(model.Tag))
+                    url += "/ddm/data/Showdata/" + datasetId + "?tag=" + model.Tag + "";
                 else
                     url += "/ddm/data/Showdata/" + datasetId + "?version=" + model.Version + "";
             }
@@ -337,7 +337,12 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             datasetCitationEntry.DatasetId = datasetId.ToString();
             datasetCitationEntry.IsPublic = isPublic;
             datasetCitationEntry.Title = model.Title;
-            datasetCitationEntry.Version = model.Version;
+
+            if (useTags && !String.IsNullOrEmpty(model.Tag))
+                datasetCitationEntry.Version = model.Tag;
+            else
+                datasetCitationEntry.Version = model.Version;
+
             if (!String.IsNullOrEmpty(model.DOI))
                 datasetCitationEntry.DOI = model.DOI;
             datasetCitationEntry.Authors = model.Authors;
