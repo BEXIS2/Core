@@ -62,7 +62,7 @@
 
 
 	 <div class="content scrollable">
-			<div class="p-2">
+			<div class="px-2">
 				<ComplexComponent complexComponent={schema} path={''} />
 			</div>
 		</div>
