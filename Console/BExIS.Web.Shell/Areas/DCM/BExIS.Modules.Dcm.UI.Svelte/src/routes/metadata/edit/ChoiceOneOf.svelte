@@ -1,15 +1,10 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import {
-		CheckboxKVPList,
-	} from '@bexis2/bexis2-core-ui';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from './simpleComponent.svelte';
 	import { removeFromMetadataStore, toggleShow, updateMetadataStore } from '$lib/components/utils/metadata/metadataComponentUtils';
-	import { hideStore } from '$lib/components/utils/metadata/stores';
-	import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
-	import Fa from 'svelte-fa';
+	import { activeStore, hideStore } from '$lib/components/utils/metadata/stores';
+
 	import { slide } from 'svelte/transition';
 	import Header from './MetadataComponentHeader.svelte';
 
@@ -64,7 +59,7 @@
 
 <div class="grid grid-cols-1 gap-0 m-2">
 		<Header {path} />
-	{#if !$hideStore.includes(path)}
+	{#if !$hideStore.includes(path) && $activeStore.includes(path)}
 	<div in:slide out:slide class="card px-5 py-4" id={path}>
 		{#if choiceComponent.oneOf}
 			<RadioGroup bind:value={target} on:change={changeFn}>
@@ -81,7 +76,7 @@
 				<div class="grid grid-cols-1 gap-0 m-2">
 					<Header path = {path + '.' + target} />
 					
-					{#if !$hideStore.includes(path + '.' + target)}
+					{#if !$hideStore.includes(path + '.' + target) && $activeStore.includes(path)}
 					<div in:slide out:slide class="card px-5 py-4" id={path + '.' + target}>
 					{#key target}
 					<ComplexComponent

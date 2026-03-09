@@ -19,6 +19,7 @@
 	import type { SimpleComponentData } from '$lib/components/utils/metadata/models';
 	import SveltyPicker from 'svelty-picker';
 	import {convertDisplayName} from '../metadataShared';
+
 	//import { en, de } from 'svelty-picker/dist/i18n';
 
 	export let simpleComponent: any;
@@ -34,25 +35,29 @@
 	let isAnchor: boolean = false;
 	let isVisible: boolean = true;
 	let customComponent: any;
+	let min: number | undefined = -10000000;
+	let max: number | undefined = 1000000;
 
 	// set overall validity
-	$: ValidationStoreSetSimpleTypeValid(path, res.isValid(path));
+	$: ValidationStoreSetSimpleTypeValid(path, res.isValid(path), res.hasErrors(path) ? res.getErrors(path).join('.  ') : '');
 	// update metadata store on value change
 	$: updateMetadataStore(path, value);
 
 	onMount(async () => {
 
-			// initial check
-			setTimeout(async () => {
-				if(value == undefined || value == null || value == '') {
-					//res = suite(value, '');
-				}
-				else {
-					res = suite(value, path);
-				}
-			}, 10);
+
+
+			// checks for date
 			if(simpleComponent.properties['#text'].format === 'date' || simpleComponent.properties['#text'].format === 'datetime' || simpleComponent.properties['#text'].format === 'date and time' || simpleComponent.properties['#text'].format === 'time'){
 				date = value !== undefined || value == '' ? value as Date : Date.now() as unknown as Date;
+			}
+
+			// numeric - set min and max if exist	in schema
+			if(simpleComponent.properties['#text'].minimum !== undefined){
+				min = simpleComponent.properties['#text'].minimum;
+			}
+			if(simpleComponent.properties['#text'].maximum !== undefined){
+				max = simpleComponent.properties['#text'].maximum;
 			}
 
 			//#### VALIDATION	 ####
@@ -64,9 +69,9 @@
 			//#### CONFIGURATION	 ####
 			config = getConfigStore();
 			// check if this component is an anchor point
-			console.log("check for anchorpoin", config)
+			//console.log("check for anchorpoin", config)
 			for (const component of config.components) {
-				console.log("ghjgJ", component.globalSettings.anchorpoint, path)
+				//console.log("ghjgJ", component.globalSettings.anchorpoint, path)
 				if (component.globalSettings.anchorpoint == path){
 					isAnchor = true;
 					customComponent = customComponentsCatalog[component.meta.component_name].component;
@@ -77,6 +82,16 @@
 					}
 				}
 			}
+
+			// initial check
+			setTimeout(async () => {
+				if(value == undefined || value == null || value == '') {
+					//res = suite(value, '');
+				}
+				else {
+					res = suite(value, path);
+				}
+			}, 10);
 	});
 
 	//change event: if input change check also validation only on the field
@@ -88,11 +103,11 @@
 		setTimeout(async () => {
 			// check changed field
 			res = suite(value, e.target.id);
-			console.log("🚀 ~ onChangeHandler ~ res:", res)
+			//console.log("🚀 ~ onChangeHandler ~ res:", res)
 			let errorMessage = '';
 			if(res.hasErrors(e.target.id)){
 					errorMessage = res.getErrors(e.target.id).join('.  ');
-					console.log("🚀 ~ onChangeHandler ~ errorMessage:", errorMessage)
+					//console.log("🚀 ~ onChangeHandler ~ errorMessage:", errorMessage)
 			}
 
 			// update validationstore
@@ -219,17 +234,21 @@
 
 			<!-- Handle number and integer types -->
 			{:else if simpleComponent.properties['#text'].type === 'number'||simpleComponent.properties['#text'].type === 'integer'}
+
 				<NumberInput 
 					id={path}
 					label={convertDisplayName(label)}
 					required={required} 
 					bind:value
 					on:input={onChangeHandler}
+			  min={min}
+					max={max}
 					valid={res.isValid(path)}
 					invalid={res.hasErrors(path)}
 					feedback={res.getErrors(path)}
 					description={simpleComponent.description}
 				/>
+
 			<!-- Handle boolean type -->
 			{:else if simpleComponent.properties['#text'].type === 'boolean'}
 				<!-- {@const v = value = true} -->

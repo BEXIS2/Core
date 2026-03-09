@@ -5,31 +5,35 @@
   import { faCheck } from '@fortawesome/free-solid-svg-icons';
 	import { onMount } from 'svelte';
   import * as apiCalls from '../services/apiCalls';
-	import { getValidationStore } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { activateShow, getValidationStore, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import type { validationStoretype } from '$lib/components/utils/metadata/models';
   import {metadataStore, validationStore} from '$lib/components/utils/metadata/stores';
 
 
 	import { notificationStore, notificationType } from '@bexis2/bexis2-core-ui';
+	import { goTo } from '$services/BaseCaller';
 
   export let datasetId: number;
   export let metadata;
   export let saveWithError: boolean = false;
   let hasChanged: boolean = true; // need to implement change detection to enable/disable save button based on whether there are unsaved changes or not, for now it's always enabled
 
+  let showErrorOverview: boolean = false;
+
   const unsubscribedMetadata = metadata;
 
-
-  $:metadata, console.log("functions - metadata:", metadata);
+  $:showErrorOverview;
+  $:metadata; //console.log("functions - metadata:", metadata);
 
 	let disbaleSaveBtn: boolean = false;
 	$:disbaleSaveBtn;
 
 	 let validationStoreValues: validationStoretype;
   $:{
-   validationStoreValues;
+    validationStoreValues;
     disbaleSaveBtn = disableSaveFn();
-    console.log("🚀 ~ file: +page.svelte:92 ~ $: ~ disbaleSaveBtn:", disbaleSaveBtn)
+    //console.log("🚀 ~ file: +page.svelte:92 ~ $: ~ disbaleSaveBtn:", disbaleSaveBtn)
+    //console.log("🚀 ~ validationStoreValues ~ $: ~ validationStoreValues:", validationStoreValues)
   }
 
   onMount(() => {
@@ -79,16 +83,37 @@
 	
 		return !validationStoreValues.allSimpleRequiredValid; //	disable save button when the metadata is not valid
 	}
+
+  function toggleAll(path: string) {
+
+    const complexItem=path.split(".");
+    console.log("🚀 ~ toggleAll",path,complexItem)
+
+    for(let i=complexItem.length;i>0;i--){
+      const p = complexItem.slice(0,i).join(".");
+      console.log("🚀 ~ toggleAll ~ p:", p)
+      activateShow(p);
+    }
+
+    setTimeout(() => {
+      const ziel = document.getElementById(path+".item");
+      ziel?.scrollIntoView({ behavior: "smooth" });
+    }, 500);
+    
+  }
+
 </script>
+
+
 <div class="flex flex-col gap-2" >
 <div id="metadata-options" class="flex w-full" >
     <div class="flex-auto"> 
-          <button class="btn variant-filled-secondary m-2" on:click={validateFn}>
+          <button class="btn variant-filled-secondary" on:click={validateFn}>
             validate
           </button>
     </div>
 			<button
-				class="btn variant-filled-primary m-2"
+				class="btn variant-filled-primary"
 				disabled={disbaleSaveBtn}
 
 				on:click={async () => {
@@ -113,19 +138,23 @@
 			</button>
 </div>
 <!-- Error messages-->
- <div >
+ <div class="text-error-500">
  {#if validationStoreValues}
   {#key validationStoreValues}
-  
   {#if !validationStoreValues.allSimpleRequiredValid}
-  <hr/>
-    <span class="text-error-500">#</span>
-    {#each validationStoreValues.simpleTypeValidationItems.filter(item => item.isValid === false) as item}
-    <div class="text-error-500 ml-4">
-      {item.path}: {item.errorMessage}
-    </div>
-    {/each}
-  {/if}
+      <button class="chip variant-soft-error" on:click={() => (showErrorOverview = !showErrorOverview)}>
+        Errors: {validationStoreValues.simpleTypeValidationItems.filter(item => item.isValid === false).length}
+      </button>
+      {#if showErrorOverview}
+      <div class="card py-3 my-2 ">
+        {#each validationStoreValues.simpleTypeValidationItems.filter(item => item.isValid === false) as item}
+          <div class="ml-4 flex flex-col gap-2 ">
+            <a  class="text-sm text-error-500" on:click={()=>toggleAll(item.path) }>{item.path.replaceAll(".", "/")}</a>
+          </div>
+        {/each}
+      </div>
+      {/if}
+    {/if}
   {/key}
   {/if}
 </div>

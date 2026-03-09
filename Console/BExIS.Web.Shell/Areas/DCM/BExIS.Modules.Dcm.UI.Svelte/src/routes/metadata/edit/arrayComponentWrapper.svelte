@@ -2,11 +2,11 @@
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from './simpleComponent.svelte';
 	import ChoiceComponent from './choiceComponentWrapper.svelte';
-	import { getValueBySchemaPath, setValueByPath, updateMetadataStore, schemaToJson, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { setValueByPath, updateMetadataStore, schemaToJson, toggleShow, getNodeByPath } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { faPlus, faChevronUp, faChevronDown, faTrash } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { slide, fade } from 'svelte/transition';
-	import { hideStore } from '$lib/components/utils/metadata/stores';
+	import { activeStore, hideStore } from '$lib/components/utils/metadata/stores';
 	import { convertDisplayName } from '../metadataShared';
 	import Header from './MetadataComponentHeader.svelte';
 
@@ -19,7 +19,7 @@
 			? arrayComponent.items.required
 			: [];
 
-	let value = getValueBySchemaPath(path) == undefined ? [] : getValueBySchemaPath(path);
+	let value = getNodeByPath(path) == undefined ? [] : getNodeByPath(path);
 	let render: boolean = false;
 
 	let maxItems: number = arrayComponent.maxItems ? arrayComponent.maxItems : 2147483647;
@@ -70,7 +70,7 @@
 					{:else}
 
 					<Header	path={path} required={requiredList.includes(label)} />
-					{#if !$hideStore.includes(path)}
+					{#if !$hideStore.includes(path) &&	$activeStore.includes(path)}
 						<div in:slide out:slide class="card pl-5 py-2" id={path}>						
 						{#if value && value.length > 0}
 							{#each value as item, index}
@@ -140,7 +140,7 @@
 									<SimpleComponent
 										simpleComponent={arrayComponent.items}
 										path={path + '.' + index}
-										value={getValueBySchemaPath(path + '.' + index + '.#text')}
+										value={getNodeByPath(path + '.' + index + '.#text')}
 										{label}
 										required={requiredList.includes(label)}
 									/>
