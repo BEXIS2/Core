@@ -5,12 +5,13 @@
   import { faCheck } from '@fortawesome/free-solid-svg-icons';
 	import { onMount } from 'svelte';
   import * as apiCalls from '../services/apiCalls';
-	import { getValidationStore, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { activateShow, getValidationStore, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import type { validationStoretype } from '$lib/components/utils/metadata/models';
   import {metadataStore, validationStore} from '$lib/components/utils/metadata/stores';
 
 
 	import { notificationStore, notificationType } from '@bexis2/bexis2-core-ui';
+	import { goTo } from '$services/BaseCaller';
 
   export let datasetId: number;
   export let metadata;
@@ -82,6 +83,25 @@
 	
 		return !validationStoreValues.allSimpleRequiredValid; //	disable save button when the metadata is not valid
 	}
+
+  function toggleAll(path: string) {
+
+    const complexItem=path.split(".");
+    console.log("🚀 ~ toggleAll",path,complexItem)
+
+    for(let i=complexItem.length;i>0;i--){
+      const p = complexItem.slice(0,i).join(".");
+      console.log("🚀 ~ toggleAll ~ p:", p)
+      activateShow(p);
+    }
+
+    setTimeout(() => {
+      const ziel = document.getElementById(path+".item");
+      ziel?.scrollIntoView({ behavior: "smooth" });
+    }, 500);
+    
+  }
+
 </script>
 
 
@@ -129,7 +149,7 @@
       <div class="card py-3 my-2 ">
         {#each validationStoreValues.simpleTypeValidationItems.filter(item => item.isValid === false) as item}
           <div class="ml-4 flex flex-col gap-2 ">
-            <a href={"#" + item.path+".item"} class="text-sm text-error-500" on:click={()=>toggleShow(item.path)}>{item.path.replaceAll(".", "/")}</a>
+            <a  class="text-sm text-error-500" on:click={()=>toggleAll(item.path) }>{item.path.replaceAll(".", "/")}</a>
           </div>
         {/each}
       </div>

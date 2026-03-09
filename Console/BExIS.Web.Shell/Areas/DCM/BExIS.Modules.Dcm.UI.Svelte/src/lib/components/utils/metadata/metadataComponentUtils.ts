@@ -239,6 +239,20 @@ export function toggleShow(path: string) {
 	hideStore.set(hideStoreValue);
 }
 
+export function activateShow(path: string) {
+	let hideStoreValue: string[] = [];
+	hideStore.subscribe((v) => {
+		hideStoreValue = [...v];
+	})();
+
+	if (hideStoreValue.includes(path)) {
+		let idx = hideStoreValue.findIndex((x) => x == path);
+		if (idx > -1) hideStoreValue.splice(idx, 1);
+	} 
+
+	hideStore.set(hideStoreValue);
+}
+
 
 // utils.js or inside <script>
 export function hasValue(node) {
