@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { getValueByPath, updateMetadataStore, getVariableSoursePathFromConfig , getFullConfig, getTargetVariablesWithValues, ValidationStoreSetSimpleTypeValid } from '../../utils/metadata/metadataComponentUtils';
 	import {TextInput} from '@bexis2/bexis2-core-ui';
-	import {convertDisplayName} from '../../../../routes/metadata/metadataShared';
+	import {convertDisplayName} from '../../../../routes/m/metadataShared';
 	//import { en, de } from 'svelty-picker/dist/i18n';
 
 	let componentName: string = 'textField_v4.2.26';

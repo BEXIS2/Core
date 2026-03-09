@@ -13,10 +13,11 @@
 	import { schemaToJson, setConfigStore, setMetadataStore } from '$lib/components/utils/metadata/metadataComponentUtils';
 
 	// import configJson from './customComponents/config.json';
-	//export let schemaId: number = 3;
-	export let datasetId: number = 3;
+
+	export let id: number = 3;
 	export let saveWithError: boolean = true;
 
+	let container;
 	let s: any;
 	let m: any = null;
 	let schema: any = s;
@@ -24,15 +25,20 @@
 
 
 	async function load() {
+
+			container = document.getElementById('metadata');
+			id = Number(container?.getAttribute('dataset'));
+			saveWithError = Boolean(container?.getAttribute('savewitherror'));
+
 		// read id from url
 		//datasetId = Number(new URLSearchParams(window.location.search).get('id'));
-		console.log('Loading metadata for datasetId:', datasetId);
-		if (datasetId > 0) {
-			const datasetInfos = await apiCalls.GetDatasetInfoById(datasetId);
+		console.log('Loading metadata for datasetId:', id);
+		if (id > 0) {
+			const datasetInfos = await apiCalls.GetDatasetInfoById(id);
 			s = await apiCalls.GetMetadataSchema(datasetInfos.metadataStructureId);
 			console.log('Schema loaded', s);
 
-			if (datasetId > 0) m = await apiCalls.GetMetadata(datasetId);
+			if (id > 0) m = await apiCalls.GetMetadata(id);
 			else m = schemaToJson(s);
 			console.log('Metadata loaded', m);
 			setMetadataStore(m);
@@ -55,7 +61,7 @@
 <div	class="container">
 	<div class="nav-left scrollable">
 		{#if m}
-			<Functions bind:metadata={m} saveWithError={saveWithError} bind:datasetId={datasetId} />
+			<Functions bind:metadata={m} saveWithError={saveWithError} bind:datasetId={id} />
 		{/if}
 	</div>
 

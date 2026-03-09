@@ -9,7 +9,7 @@
 		getTargetVariablesWithValues
 	} from '../../utils/metadata/metadataComponentUtils';
 	import * as ts4nfdiWidgets from '@ts4nfdi/terminology-service-suite-js';
-	import {convertDisplayName} from '../../../../routes/metadata/metadataShared';
+	import {convertDisplayName} from '../../../../routes/m/metadataShared';
 
 	const controller = 'search';
 	let containerElement: HTMLDivElement;
