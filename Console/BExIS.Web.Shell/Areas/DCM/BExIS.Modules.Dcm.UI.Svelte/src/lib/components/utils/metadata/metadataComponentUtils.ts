@@ -249,7 +249,6 @@ export function activateShow(path: string) {
 		let idx = hideStoreValue.findIndex((x) => x == path);
 		if (idx > -1) hideStoreValue.splice(idx, 1);
 	} 
-
 	hideStore.set(hideStoreValue);
 }
 
@@ -459,3 +458,4 @@ if (item.maximum && item.maximum != undefined && item.maximum != null && item.ma
 
 	return simpleComponentValidationItem;
 }
+

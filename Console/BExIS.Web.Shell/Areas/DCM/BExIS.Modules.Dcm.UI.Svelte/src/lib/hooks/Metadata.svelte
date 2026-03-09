@@ -16,6 +16,7 @@
 	export let isExtern: boolean = true;
 
 	const defaultFormUrl = host + '/dcm/metadata/loadform' + '?id=' + id + '&version=' + version;
+	const edit = host + '/dcm/m/edit' + '?id=' + id + '&version=' + version;
 
 	let open: boolean = false;
 	let model: MetadataModel;
@@ -41,12 +42,21 @@
 		return true; // every other status enable the hook
 	}
 
-	function editFn() {
+	function editOldFn() {
 		if (model.useExternalMetadataForm) {
 			open = true;
 		} else {
 			window.open(defaultFormUrl, '_blank')?.focus();
 		} // default form
+	}
+
+	function editFn() {
+		if (model.useExternalMetadataForm) {
+			open = true;
+		} else {
+			window.open(edit)?.focus();
+		} // default form
+		
 	}
 
 	// function copyFn() {
@@ -61,8 +71,11 @@
 
 <div class="flex-col space-y-1">
 	<div class="flex gap-3 justify-left">
-		<button class="btn btn-sm variant-filled-secondary flex-none" on:click={editFn}
+		<button class="btn btn-sm variant-filled-secondary flex-none" on:click={editOldFn}
 			><Fa icon={faPen} /><span class="pl-1">Edit</span></button
+		>
+		<button class="btn btn-sm variant-filled-secondary flex-none" on:click={editFn}
+			><Fa icon={faPen} /><span class="pl-1">Edit (beta)</span></button
 		>
 	</div>
 </div>
