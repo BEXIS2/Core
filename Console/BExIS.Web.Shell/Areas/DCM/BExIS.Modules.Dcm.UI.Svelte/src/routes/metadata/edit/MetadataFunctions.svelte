@@ -22,7 +22,7 @@
   const unsubscribedMetadata = metadata;
 
   $:showErrorOverview;
-  $:metadata, console.log("functions - metadata:", metadata);
+  $:metadata; //console.log("functions - metadata:", metadata);
 
 	let disbaleSaveBtn: boolean = false;
 	$:disbaleSaveBtn;
@@ -31,8 +31,8 @@
   $:{
     validationStoreValues;
     disbaleSaveBtn = disableSaveFn();
-    console.log("🚀 ~ file: +page.svelte:92 ~ $: ~ disbaleSaveBtn:", disbaleSaveBtn)
-    console.log("🚀 ~ validationStoreValues ~ $: ~ validationStoreValues:", validationStoreValues)
+    //console.log("🚀 ~ file: +page.svelte:92 ~ $: ~ disbaleSaveBtn:", disbaleSaveBtn)
+    //console.log("🚀 ~ validationStoreValues ~ $: ~ validationStoreValues:", validationStoreValues)
   }
 
   onMount(() => {

@@ -77,9 +77,9 @@
 			//#### CONFIGURATION	 ####
 			config = getConfigStore();
 			// check if this component is an anchor point
-			console.log("check for anchorpoin", config)
+			//console.log("check for anchorpoin", config)
 			for (const component of config.components) {
-				console.log("ghjgJ", component.globalSettings.anchorpoint, path)
+				//console.log("ghjgJ", component.globalSettings.anchorpoint, path)
 				if (component.globalSettings.anchorpoint == path){
 					isAnchor = true;
 					customComponent = customComponentsCatalog[component.meta.component_name].component;
@@ -101,11 +101,11 @@
 		setTimeout(async () => {
 			// check changed field
 			res = suite(value, e.target.id);
-			console.log("🚀 ~ onChangeHandler ~ res:", res)
+			//console.log("🚀 ~ onChangeHandler ~ res:", res)
 			let errorMessage = '';
 			if(res.hasErrors(e.target.id)){
 					errorMessage = res.getErrors(e.target.id).join('.  ');
-					console.log("🚀 ~ onChangeHandler ~ errorMessage:", errorMessage)
+					//console.log("🚀 ~ onChangeHandler ~ errorMessage:", errorMessage)
 			}
 
 			// update validationstore

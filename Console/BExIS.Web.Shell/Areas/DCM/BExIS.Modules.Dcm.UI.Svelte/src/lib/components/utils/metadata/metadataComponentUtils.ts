@@ -295,11 +295,18 @@ export function setInactive(path: string): void {
 // #t should be ''
 // arrays should have one empty element	to preserve structure
 export function empty(node) {
+	 console.log('emptying node:', node);
   if (node === null || node === undefined) return node;
 
 		if (Array.isArray(node)) {
+			console.log('array node:', node);
+
+			if(node.length >	0){ 
+					empty(node[0]); // clear the first element to preserve structure
+			}
+
 			// remove all	elements but only first one  stay to preserve structure
-			return node.length > 0 ? [empty(node[0])] : [];
+			return node.length = 1;
 		}
 
 		if(node.hasOwnProperty('#text')) {

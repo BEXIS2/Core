@@ -23,9 +23,14 @@
 
 
  onMount(() => {
-  // console.log('MetadataComponentHeader mounted with path: ', path);    
-    initActivity();
-    console.log('active', $activeStore);
+  // console.log('MetadataComponentHeader mounted with path: ', path);   
+    if(!$activeStore.includes(path)) {
+      initActivity();
+    }
+    else {
+      active = true;
+    }
+    //console.log('init-active', $activeStore);
  });
 
 function initActivity() {
@@ -39,6 +44,7 @@ function initActivity() {
 }
 
 function changeFn(active: boolean) {
+  
   if(active) {
     setActive(path)
   }
@@ -47,10 +53,11 @@ function changeFn(active: boolean) {
     // remove from validation store
     removeFromValidationStore(path);
     // empty data in metadata store for this path and all child paths
-    empty(path);
+    const data = getNodeByPath(path); 
+    empty(data);
   } 
 
-  console.log('active',active,path, $activeStore);
+  // console.log('active',active,path, $activeStore);
 }
 
 function removeFromValidationStore(path: string) {
