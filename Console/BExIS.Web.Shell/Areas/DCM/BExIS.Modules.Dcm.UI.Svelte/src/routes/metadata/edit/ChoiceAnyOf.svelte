@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { CheckboxKVPList } from '@bexis2/bexis2-core-ui';
 import { removeFromMetadataStore, toggleShow} from '$lib/components/utils/metadata/metadataComponentUtils';
-	import { hideStore } from '$lib/components/utils/metadata/stores';
+	import { activeStore, hideStore } from '$lib/components/utils/metadata/stores';
  import Header from './MetadataComponentHeader.svelte';
 	import SimpleComponent from './simpleComponent.svelte';
  import ComplexComponent from './complexComponentWrapper.svelte';
@@ -57,7 +57,7 @@ function getChoices(cComponent: any): {key:string, value:string}[] {
 <div class="card grid grid-cols-1 gap-0">
  	<Header {path} />
 
-  {#if !$hideStore.includes(path)}
+  {#if !$hideStore.includes(path)  && $activeStore.includes(path)}
     <div in:slide out:slide class="card px-5 py-4" id={path}>
      {#if choiceComponent.items && choiceComponent.items.anyOf}
       <CheckboxKVPList
@@ -79,7 +79,7 @@ function getChoices(cComponent: any): {key:string, value:string}[] {
 							<div class="grid grid-cols-1 gap-0 pl-1">
 								<Header path = {path + '.' + item}  description={choiceComponent.items.properties[item].description}/>
 
-								{#if !$hideStore.includes(path + '.' + item)}
+								{#if !$hideStore.includes(path + '.' + item) }
 								<div in:slide out:slide class="card px-5 py-4" id={path + '.' + item}>
 								<ComplexComponent
 									complexComponent={choiceComponent.items.properties[item]}

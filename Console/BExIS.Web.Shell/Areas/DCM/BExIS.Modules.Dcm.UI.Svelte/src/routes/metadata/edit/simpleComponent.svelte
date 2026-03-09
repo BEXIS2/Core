@@ -35,8 +35,8 @@
 	let isAnchor: boolean = false;
 	let isVisible: boolean = true;
 	let customComponent: any;
-	let min: number = Number.MIN_VALUE;
-	let max: number = Number.MAX_VALUE;
+	let min: number | undefined = -10000000;
+	let max: number | undefined = 1000000;
 
 	// set overall validity
 	$: ValidationStoreSetSimpleTypeValid(path, res.isValid(path));
@@ -239,13 +239,14 @@
 					required={required} 
 					bind:value
 					on:input={onChangeHandler}
-     {min}
-					{max}
+			  min={min}
+					max={max}
 					valid={res.isValid(path)}
 					invalid={res.hasErrors(path)}
 					feedback={res.getErrors(path)}
 					description={simpleComponent.description}
 				/>
+
 			<!-- Handle boolean type -->
 			{:else if simpleComponent.properties['#text'].type === 'boolean'}
 				<!-- {@const v = value = true} -->

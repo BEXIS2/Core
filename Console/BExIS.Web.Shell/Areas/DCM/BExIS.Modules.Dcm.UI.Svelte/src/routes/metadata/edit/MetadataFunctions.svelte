@@ -5,7 +5,7 @@
   import { faCheck } from '@fortawesome/free-solid-svg-icons';
 	import { onMount } from 'svelte';
   import * as apiCalls from '../services/apiCalls';
-	import { getValidationStore } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { getValidationStore, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import type { validationStoretype } from '$lib/components/utils/metadata/models';
   import {metadataStore, validationStore} from '$lib/components/utils/metadata/stores';
 
@@ -17,9 +17,11 @@
   export let saveWithError: boolean = false;
   let hasChanged: boolean = true; // need to implement change detection to enable/disable save button based on whether there are unsaved changes or not, for now it's always enabled
 
+  let showErrorOverview: boolean = false;
+
   const unsubscribedMetadata = metadata;
 
-
+  $:showErrorOverview;
   $:metadata, console.log("functions - metadata:", metadata);
 
 	let disbaleSaveBtn: boolean = false;
@@ -27,9 +29,10 @@
 
 	 let validationStoreValues: validationStoretype;
   $:{
-   validationStoreValues;
+    validationStoreValues;
     disbaleSaveBtn = disableSaveFn();
     console.log("🚀 ~ file: +page.svelte:92 ~ $: ~ disbaleSaveBtn:", disbaleSaveBtn)
+    console.log("🚀 ~ validationStoreValues ~ $: ~ validationStoreValues:", validationStoreValues)
   }
 
   onMount(() => {
@@ -80,6 +83,8 @@
 		return !validationStoreValues.allSimpleRequiredValid; //	disable save button when the metadata is not valid
 	}
 </script>
+
+
 <div class="flex flex-col gap-2" >
 <div id="metadata-options" class="flex w-full" >
     <div class="flex-auto"> 
@@ -113,19 +118,23 @@
 			</button>
 </div>
 <!-- Error messages-->
- <div >
+ <div class="text-error-500">
  {#if validationStoreValues}
   {#key validationStoreValues}
-  
   {#if !validationStoreValues.allSimpleRequiredValid}
-  <hr/>
-    <span class="text-error-500">#</span>
-    {#each validationStoreValues.simpleTypeValidationItems.filter(item => item.isValid === false) as item}
-    <div class="text-error-500 ml-4">
-      {item.path}: {item.errorMessage}
-    </div>
-    {/each}
-  {/if}
+      <button class="chip variant-ringed-error ml-2" on:click={() => (showErrorOverview = !showErrorOverview)}>
+        {validationStoreValues.simpleTypeValidationItems.filter(item => item.isValid === false).length}
+      </button>
+      {#if showErrorOverview}
+      <div class="card py-3 my-2 ">
+        {#each validationStoreValues.simpleTypeValidationItems.filter(item => item.isValid === false) as item}
+          <div class="ml-4 flex flex-col gap-2 ">
+            <a href={"#" + item.path+".item"} class="text-sm text-error-500" on:click={()=>toggleShow(item.path)}>{item.path.replaceAll(".", "/")}</a>
+          </div>
+        {/each}
+      </div>
+      {/if}
+    {/if}
   {/key}
   {/if}
 </div>

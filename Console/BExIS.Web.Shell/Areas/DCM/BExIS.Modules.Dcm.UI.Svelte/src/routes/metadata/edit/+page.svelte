@@ -15,8 +15,8 @@
 
 	// import configJson from './customComponents/config.json';
 	//export let schemaId: number = 3;
-	export let datasetId: number = 2;
-	export let saveWithError: boolean = false;
+	export let datasetId: number = 3;
+	export let saveWithError: boolean = true;
 
 	let s: any;
 	let m: any = null;
@@ -48,7 +48,7 @@
 
 
 
-<Page contentLayoutType={pageContentLayoutType.full}  footer={true} >
+<Page contentLayoutType={pageContentLayoutType.full}  footer={false} >
 	{#await load()}
 		<Spinner />
 	{:then}

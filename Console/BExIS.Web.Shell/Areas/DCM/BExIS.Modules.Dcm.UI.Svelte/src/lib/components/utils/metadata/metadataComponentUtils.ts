@@ -1,6 +1,5 @@
-import exp from 'constants';
 import type { SimpleComponentData, validationStoretype } from './models';
-import { metadataStore, hideStore, validationStore, configStore } from './stores';
+import { metadataStore, hideStore, validationStore, configStore, activeStore } from './stores';
 import { get } from 'svelte/store';
 // Utility functions for metadata handling
 // Get and set values in the metadata store based on a dot-separated path
@@ -240,19 +239,6 @@ export function toggleShow(path: string) {
 	hideStore.set(hideStoreValue);
 }
 
-// Toggle visibility of a metadata component based on its path
-export function show(path: string) {
-	let hideStoreValue: string[] = [];
-	hideStore.subscribe((v) => {
-		hideStoreValue = [...v];
-	})();
-
-	if (!hideStoreValue.includes(path)) {
-		hideStoreValue.push(path);
-	}
-	hideStore.set(hideStoreValue);
-}
-
 
 // utils.js or inside <script>
 export function hasValue(node) {
@@ -272,12 +258,76 @@ export function hasValue(node) {
   return typeof node === 'string' ? node.trim().length > 0 : true;
 }
 
+// p = path:string & r = required: boolean
+export function isActive(p:string, r:boolean):boolean {
+  // logic to determine if the component is active
+  const node = getNodeByPath(p);
+  const hasData = hasValue(node); // replace with actual check for data presence
+
+  if(r) {
+    return true; // if required, it's always active
+  } else if (hasData)
+  {    return true; // if it has data, it's active
+  } else {
+    return false; // otherwise, it's not active
+  }
+} 
+
+export function setActive(path: string): void {
+	let activeStoreValue: string[] = get(activeStore);
+	if (!activeStoreValue.includes(path)) {
+		activeStoreValue.push(path);
+		activeStore.set(activeStoreValue);
+	}
+}
+
+export function setInactive(path: string): void {			
+	let activeStoreValue: string[] = get(activeStore);
+	if (activeStoreValue.includes(path)) {
+		let idx = activeStoreValue.findIndex((x) => x == path);
+		if (idx > -1) activeStoreValue.splice(idx, 1);
+		activeStore.set(activeStoreValue);
+	}
+}
+
+
+// element at this node should be cleaned
+// #t should be ''
+// arrays should have one empty element	to preserve structure
+export function empty(node) {
+  if (node === null || node === undefined) return node;
+
+		if (Array.isArray(node)) {
+			// remove all	elements but only first one  stay to preserve structure
+			return node.length > 0 ? [empty(node[0])] : [];
+		}
+
+		if(node.hasOwnProperty('#text')) {
+				return node['#text'] = '';
+		}
+  
+		if (typeof node === 'object') {
+		
+				Object.keys(node).forEach(key => {
+					const value = node[key];
+					return empty(value);
+				});
+		}
+
+  if(node.hasOwnProperty('#text')) {
+				return node['#text'] = '';
+		}
+
+		return node;
+
+}
+
 // Validation Store Functions
 // Get current values from the validation store
 // If undefined, initialize with default values
 // and return the validation store values
 export function getValidationStore(): validationStoretype {
-	let validationStoreValues: validationStoretype = { allSimpleRequiredValid: false, simpleTypeValidationItems: [] };
+	let validationStoreValues: validationStoretype = { allSimpleRequiredValid: false, simpleTypeValidationItems: [], complexTypeValidationItems: []	};
 	validationStore.subscribe(n => {
 		validationStoreValues = n;
 	});
@@ -288,7 +338,7 @@ export function getValidationStore(): validationStoretype {
 }
 
 export function clearValidationStore(): void {
-	validationStore.set({ allSimpleRequiredValid: false, simpleTypeValidationItems: [] });
+	validationStore.set({ allSimpleRequiredValid: false, simpleTypeValidationItems: [],complexTypeValidationItems : [] });
 }
 // Add a simple component's validation data to the validation store
 // if it doesn't already exist
@@ -340,7 +390,7 @@ export function ValidationStoreSetSimpleTypeValid(path: string, isValid: boolean
 		}
 	}
 	validationStore.set(validationStoreValues);
-	console.log("🚀 ~ ValidationStoreSetSimpleTypeValid ~ validationStore:", get(validationStore))
+	//console.log("🚀 ~ ValidationStoreSetSimpleTypeValid ~ validationStore:", get(validationStore))
 	return valid;
 }
 // Create a SimpleComponentData validation item
