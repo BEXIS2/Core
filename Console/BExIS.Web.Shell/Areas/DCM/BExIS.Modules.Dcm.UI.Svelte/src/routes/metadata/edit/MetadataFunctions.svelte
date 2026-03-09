@@ -108,12 +108,12 @@
 <div class="flex flex-col gap-2" >
 <div id="metadata-options" class="flex w-full" >
     <div class="flex-auto"> 
-          <button class="btn variant-filled-secondary m-2" on:click={validateFn}>
+          <button class="btn variant-filled-secondary" on:click={validateFn}>
             validate
           </button>
     </div>
 			<button
-				class="btn variant-filled-primary m-2"
+				class="btn variant-filled-primary"
 				disabled={disbaleSaveBtn}
 
 				on:click={async () => {
@@ -142,8 +142,8 @@
  {#if validationStoreValues}
   {#key validationStoreValues}
   {#if !validationStoreValues.allSimpleRequiredValid}
-      <button class="chip variant-ringed-error ml-2" on:click={() => (showErrorOverview = !showErrorOverview)}>
-        {validationStoreValues.simpleTypeValidationItems.filter(item => item.isValid === false).length}
+      <button class="chip variant-soft-error" on:click={() => (showErrorOverview = !showErrorOverview)}>
+        Errors: {validationStoreValues.simpleTypeValidationItems.filter(item => item.isValid === false).length}
       </button>
       {#if showErrorOverview}
       <div class="card py-3 my-2 ">

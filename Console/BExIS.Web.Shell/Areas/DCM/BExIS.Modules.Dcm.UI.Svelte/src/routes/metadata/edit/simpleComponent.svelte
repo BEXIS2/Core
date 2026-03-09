@@ -39,21 +39,13 @@
 	let max: number | undefined = 1000000;
 
 	// set overall validity
-	$: ValidationStoreSetSimpleTypeValid(path, res.isValid(path));
+	$: ValidationStoreSetSimpleTypeValid(path, res.isValid(path), res.hasErrors(path) ? res.getErrors(path).join('.  ') : '');
 	// update metadata store on value change
 	$: updateMetadataStore(path, value);
 
 	onMount(async () => {
 
-			// initial check
-			setTimeout(async () => {
-				if(value == undefined || value == null || value == '') {
-					//res = suite(value, '');
-				}
-				else {
-					res = suite(value, path);
-				}
-			}, 10);
+
 
 			// checks for date
 			if(simpleComponent.properties['#text'].format === 'date' || simpleComponent.properties['#text'].format === 'datetime' || simpleComponent.properties['#text'].format === 'date and time' || simpleComponent.properties['#text'].format === 'time'){
@@ -90,6 +82,16 @@
 					}
 				}
 			}
+
+			// initial check
+			setTimeout(async () => {
+				if(value == undefined || value == null || value == '') {
+					//res = suite(value, '');
+				}
+				else {
+					res = suite(value, path);
+				}
+			}, 10);
 	});
 
 	//change event: if input change check also validation only on the field

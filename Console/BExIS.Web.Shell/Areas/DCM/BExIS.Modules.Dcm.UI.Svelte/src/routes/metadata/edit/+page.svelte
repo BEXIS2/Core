@@ -12,7 +12,6 @@
 	// import { Page } from '@bexis2/bexis2-core-ui';
 	import { schemaToJson, setConfigStore, setMetadataStore } from '$lib/components/utils/metadata/metadataComponentUtils';
 
-
 	// import configJson from './customComponents/config.json';
 	//export let schemaId: number = 3;
 	export let datasetId: number = 3;
@@ -82,7 +81,6 @@
 
 .nav-left {
 		width: 400px; /* Feste Breite für die Navigation */
-		padding: 1rem;
 		overflow-y: auto; /* Ermöglicht vertikales Scrollen in der Navigation */
 
 }
