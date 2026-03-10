@@ -1,6 +1,7 @@
 ﻿using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using BExIS.Utils.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,8 @@ namespace BExIS.Utils.WebHelpers
 
             foreach (var launchBarItem in lunchBarRoot.Elements())
             {
+
+
                 if (launchBarItem.HasElements)
                 {
                     sb.Append($"<li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>{launchBarItem.Attribute("title").Value}<span class='caret'></span></a><ul class='dropdown-menu'>");
@@ -47,10 +50,19 @@ namespace BExIS.Utils.WebHelpers
                         if (!string.IsNullOrWhiteSpace(child.Attribute("action").Value))
                             sb.Append(@"/").Append(child.Attribute("action").Value.ToLower());
 
-                        if (child.Attribute("argument") != null &&  !string.IsNullOrWhiteSpace(child.Attribute("argument").Value))
+                        if (child.Attribute("argument") != null && !string.IsNullOrWhiteSpace(child.Attribute("argument").Value))
                             sb.Append(@"/").Append(child.Attribute("argument").Value.ToLower());
 
                         sb.Append("' target=\"_blank\" >").Append(child.Attribute("title").Value).Append("</a></li>");
+                    }
+
+                    if (launchBarItem.HasAttributes && launchBarItem.Attribute("id").Value.Equals("help"))
+                    {
+                        var help_list = GeneralSettings.GetValueByKey("help") as List<Vaiona.Utils.Cfg.Entry>;
+                        foreach (var help in help_list)
+                        {
+                            sb.Append($"<li><a href='{help.Value}' target=\"_blank\" >{help.Description}</a></li>");
+                        }
                     }
 
                     sb.Append($"</ul></li>");
@@ -72,6 +84,7 @@ namespace BExIS.Utils.WebHelpers
 
                     sb.Append("'>").Append(launchBarItem.Attribute("title").Value).Append("</a></li>");
                 }
+                
             }
 
             return new MvcHtmlString(sb.ToString());
