@@ -18,16 +18,26 @@
 			arr.map((x) => (x.versionId === currentRow.versionId ? { ...x, releaseNote: value } : x))
 		);
 	}
+
+	function inputChangeFn(v:string) {
+
+		console.log('🚀 ~ inputChangeFn ~ value:', value);
+
+			setTimeout(() => {
+				console.log('🚀 ~ inputChangeFn ~ value after timeout:', value);
+				tagInfoModelStore.update((arr) =>
+				arr.map((x) => (x.versionId === currentRow.versionId ? { ...x, releaseNote: v } : x))
+			);
+		}, 0);
+	}
+		
+
 </script>
 
 <span title="Release Note; Click save to apply changes.">
 	<TextArea
+		id="releaseNote"
 		bind:value={currentRow.releaseNote}
-		on:input={() =>
-			tagInfoModelStore.update((arr) =>
-				arr.map((x) =>
-					x.versionId === currentRow.versionId ? { ...x, releaseNote: currentRow.releaseNote } : x
-				)
-			)}
+		on:input={() => inputChangeFn(currentRow.releaseNote)}
 	></TextArea>
 </span>
