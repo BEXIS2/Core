@@ -336,10 +336,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     {
                                         name = IOHelper.GetFileName(FileType.PrimaryData, id, datasetVersionNumber, dataStructureId) + ext;
                                     }
-                                    else
+                                    else // all other files from unstructured and attachments
+                                    // get filename from path
+                                    // the files stay with there original file names
                                     {
-                                        name = IOHelper.GetFileName(FileType.None, id, datasetVersionNumber, dataStructureId,cd.Name) + ext;
+                                        name = Path.GetFileName(cd.URI);
                                     }
+      
 
                                     // if data is filtered, do not add full data file
                                     if (cd.Name.Contains("generated") == false || (cd.Name.Contains("generated") && withFilter == false))
