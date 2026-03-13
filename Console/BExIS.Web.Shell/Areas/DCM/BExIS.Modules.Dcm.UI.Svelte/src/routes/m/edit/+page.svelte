@@ -27,8 +27,10 @@
 	async function load() {
 
 			container = document.getElementById('metadata');
+			console.log("🚀 ~ load ~ container:", container)
+			
 			id = Number(container?.getAttribute('dataset'));
-			saveWithError = Boolean(container?.getAttribute('savewitherror'));
+			saveWithError = container?.getAttribute('saveWithError') === 'true';
 
 		// read id from url
 		//datasetId = Number(new URLSearchParams(window.location.search).get('id'));

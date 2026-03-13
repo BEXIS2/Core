@@ -32,7 +32,7 @@
   $:{
     validationStoreValues;
     disbaleSaveBtn = disableSaveFn();
-    //console.log("🚀 ~ file: +page.svelte:92 ~ $: ~ disbaleSaveBtn:", disbaleSaveBtn)
+    console.log("🚀 ~ file: +page.svelte:92 ~ $: ~ disbaleSaveBtn:", disbaleSaveBtn)
     //console.log("🚀 ~ validationStoreValues ~ $: ~ validationStoreValues:", validationStoreValues)
   }
 
@@ -59,6 +59,7 @@
 
 
 	function disableSaveFn():boolean {
+    console.log("🚀 ~ disableSaveFn ~ hasChanged:", hasChanged, saveWithError)
     if (hasChanged == false) return true; // when there are changes, the save button is enabled, so return false for disabled
 		if (saveWithError) return false; // when save with error is allowd, the save button is always enabled
 		if (!validationStoreValues) return true; // if there is no validation result, we consider the form as not valid, so the save button is disabled
