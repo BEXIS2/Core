@@ -28,7 +28,7 @@
 	export let value: any;
 	export let label: string;
 	
-	let date: Date = new Date();
+	let date: Date = undefined as unknown as Date;
 	// load form result object
 	let res = suite.get();
 	let config: any;
@@ -45,11 +45,12 @@
 
 	onMount(async () => {
 
-
-
 			// checks for date
 			if(simpleComponent.properties['#text'].format === 'date' || simpleComponent.properties['#text'].format === 'datetime' || simpleComponent.properties['#text'].format === 'date and time' || simpleComponent.properties['#text'].format === 'time'){
+				// console.log("date format detected, set date value", value, value as Date);
 				date = value !== undefined || value == '' ? value as Date : Date.now() as unknown as Date;
+				// console.log("date format detected, set date", date);
+
 			}
 
 			// numeric - set min and max if exist	in schema

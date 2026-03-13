@@ -2,28 +2,28 @@
 <script lang="ts">
 
 	import Fa from 'svelte-fa';
-  import { faCheck } from '@fortawesome/free-solid-svg-icons';
+  import { faCheck, faSave } from '@fortawesome/free-solid-svg-icons';
 	import { onMount } from 'svelte';
   import * as apiCalls from '../services/apiCalls';
 	import { activateShow, getValidationStore, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import type { validationStoretype } from '$lib/components/utils/metadata/models';
   import {metadataStore, validationStore} from '$lib/components/utils/metadata/stores';
 
-
-	import { notificationStore, notificationType } from '@bexis2/bexis2-core-ui';
+	import { notificationStore, notificationType, TextInput } from '@bexis2/bexis2-core-ui';
 	import { goTo } from '$services/BaseCaller';
 
   export let datasetId: number;
   export let metadata;
   export let saveWithError: boolean = false;
   let hasChanged: boolean = true; // need to implement change detection to enable/disable save button based on whether there are unsaved changes or not, for now it's always enabled
-
   let showErrorOverview: boolean = false;
+  let comment: string = '';
 
   const unsubscribedMetadata = metadata;
 
   $:showErrorOverview;
   $:metadata; //console.log("functions - metadata:", metadata);
+  
 
 	let disbaleSaveBtn: boolean = false;
 	$:disbaleSaveBtn;
@@ -57,24 +57,6 @@
    };
   }
 
-	function validateFn() {
-		
-		if (!validationStoreValues.allSimpleRequiredValid) 
-		{
-
-			notificationStore.showNotification({
-				notificationType: notificationType.error,
-				message: 'error validating metadata. Please check the console for details.',
-			});
-
-		}
-		else {
-			notificationStore.showNotification({
-				notificationType: notificationType.success,
-				message: 'Metadata is valid.',
-			});
-		}
-	}
 
 	function disableSaveFn():boolean {
     if (hasChanged == false) return true; // when there are changes, the save button is enabled, so return false for disabled
@@ -106,11 +88,14 @@
 
 
 <div class="flex flex-col gap-2" >
-<div id="metadata-options" class="flex w-full" >
+<div id="metadata-options" class="flex w-full gap-2" >
     <div class="flex-auto"> 
-          <button class="btn variant-filled-secondary" on:click={validateFn}>
-            validate
-          </button>
+     <TextInput
+        label=""
+        placeholder="What changed? Add a comment..."
+        bind:value={comment}
+      />
+
     </div>
 			<button
 				class="btn variant-filled-primary"
@@ -120,7 +105,7 @@
 					try {
 
 						console.log('Saving metadata:', datasetId, metadata);
-						const savedMetadata = await apiCalls.SaveMetadata(datasetId, metadata);
+						const savedMetadata = await apiCalls.SaveMetadata(datasetId, metadata,comment);
 						console.log('Metadata saved successfully:', savedMetadata);
 						notificationStore.showNotification({
 							notificationType: notificationType.success,
@@ -134,7 +119,7 @@
 						});
 					}
 				}}>
-				Save Metadata
+				<Fa icon={faSave}/>
 			</button>
 </div>
 <!-- Error messages-->

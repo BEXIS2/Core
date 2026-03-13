@@ -623,7 +623,7 @@ namespace BExIS.Xml.Helpers
 
             // load example xml based on metadata structure
             var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
-            var metadataExample = xmlMetadatWriter.CreateMetadataXml(metadataStructureId);
+            var metadataExample = xmlMetadatWriter.CreateTempMetadataXmlWithChoiceChildrens(metadataStructureId);
 
             // get all elements from xml documents to compare
             var listOfElementsInput = XmlUtility.GetAllChildren(XmlUtility.ToXDocument(metadataInput).Root).Select(e => e.Name.LocalName);

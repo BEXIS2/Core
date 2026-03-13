@@ -45,10 +45,10 @@ export const GetDatasetInfoById = async (datasetId: number) => {
 	}
 };
 
-export const SaveMetadata = async (id: number, value: any) => {
+export const SaveMetadata = async (id: number, value: any, comment: string) => {
 	try {
 		console.log(" value:", value);
-		value["@comment"] = "saved via svelte ui";
+		value["@comment"] = comment;
 		const response = await Api.put('/api/Metadata/' + id, value);
 		// console.log('Dataset filled:', response);
 		return response.data;
