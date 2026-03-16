@@ -194,9 +194,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
         // @TODO: move to dataset manager?
         private static Tuple<bool, DateTime> getPublicAndDate(long id)
         {
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (EntityManager entityManager = new EntityManager())
             {
+                var entityPermissionManager = new EntityPermissionManager();
                 long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
                 entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
                 return entityPermissionManager.GetPublicAndDate(entityTypeId.Value, id);

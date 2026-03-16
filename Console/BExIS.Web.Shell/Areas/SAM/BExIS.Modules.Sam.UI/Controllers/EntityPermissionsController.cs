@@ -54,9 +54,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     }
                 }
             }
-            finally
-            {
-                entityPermissionManager.Dispose();
+            catch(Exception ex) {
+                throw;
             }
         }
 
@@ -79,9 +78,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     await entityPermissionManager.UpdateAsync(entityPermission);
                 }
             }
-            finally
-            {
-                entityPermissionManager.Dispose();
+            catch(Exception e) {
+                throw;
             }
         }
 
@@ -129,7 +127,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             finally
             {
                 entityManager.Dispose();
-                entityPermissionManager.Dispose();
             }
         }
 
@@ -141,11 +138,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [GridAction]
         public async Task<ActionResult> Permissions_Select(long subjectId, long entityId, long instanceId)
         {
-            using (var entityPermissionManager = new EntityPermissionManager())
             using (var subjectManager = new SubjectManager())
             using (var partyManager = new PartyManager())
             using (var entityManager = new EntityManager())
             {
+                var entityPermissionManager = new EntityPermissionManager();
                 var subject = subjectManager.SubjectRepository.Get(subjectId);
 
                 var entityPermissions = new List<ReferredEntityPermissionGridRowModel>();
@@ -193,46 +190,42 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         public async Task RemoveInstanceFromPublic(long entityId, long instanceId)
         {
-            using (var entityPermissionManager = new EntityPermissionManager())
+            var entityPermissionManager = new EntityPermissionManager();
+            var entityPermission = await entityPermissionManager.FindAsync(entityId, instanceId);
+
+            if (entityPermission == null) return;
+            await entityPermissionManager.DeleteAsync(entityPermission);
+
+            if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
             {
-                var entityPermission = await entityPermissionManager.FindAsync(entityId, instanceId);
+                var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", instanceId } });
+            }
 
-                if (entityPermission == null) return;
-                await entityPermissionManager.DeleteAsync(entityPermission);
-
-                if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
-                {
-                    var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", instanceId } });
-                }
-
-                using (var emailService = new EmailService())
-                {
-                    emailService.Send(MessageHelper.GetUnsetPublicHeader(instanceId, typeof(Dataset).Name),
-                        MessageHelper.GetUnsetPublicMessage(getPartyNameOrDefault(), instanceId, typeof(Dataset).Name),
-                        ConfigurationManager.AppSettings["SystemEmail"]
-                        );
-                }
+            using (var emailService = new EmailService())
+            {
+                emailService.Send(MessageHelper.GetUnsetPublicHeader(instanceId, typeof(Dataset).Name),
+                    MessageHelper.GetUnsetPublicMessage(getPartyNameOrDefault(), instanceId, typeof(Dataset).Name),
+                    ConfigurationManager.AppSettings["SystemEmail"]
+                    );
             }
         }
 
         public async Task RemoveRightFromEntityPermission(long subjectId, long entityId, long instanceId, int rightType)
         {
-            using (var entityPermissionManager = new EntityPermissionManager())
+            var entityPermissionManager = new EntityPermissionManager();
+            var entityPermission = await entityPermissionManager.FindAsync(subjectId, entityId, instanceId);
+
+            if (entityPermission == null) return;
+
+            if (entityPermission.Rights == rightType)
             {
-                var entityPermission = await entityPermissionManager.FindAsync(subjectId, entityId, instanceId);
-
-                if (entityPermission == null) return;
-
-                if (entityPermission.Rights == rightType)
-                {
-                    await entityPermissionManager.DeleteAsync(entityPermission);
-                }
-                else
-                {
-                    if ((entityPermission.Rights & rightType) == 0) return;
-                    entityPermission.Rights -= rightType;
-                    await entityPermissionManager.UpdateAsync(entityPermission);
-                }
+                await entityPermissionManager.DeleteAsync(entityPermission);
+            }
+            else
+            {
+                if ((entityPermission.Rights & rightType) == 0) return;
+                entityPermission.Rights -= rightType;
+                await entityPermissionManager.UpdateAsync(entityPermission);
             }
         }
 
@@ -292,7 +285,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             finally
             {
                 subjectManager.Dispose();
-                entityPermissionManager.Dispose();
             }
         }
 

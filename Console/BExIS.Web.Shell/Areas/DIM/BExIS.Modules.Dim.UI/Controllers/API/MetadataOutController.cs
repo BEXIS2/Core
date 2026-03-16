@@ -31,6 +31,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
+        private readonly UserManager _userManager;
+
+        public MetadataOutController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         // GET: api/Metadata
         /// <summary>
         /// Get list of exiting datasets from which metadata can be loaded.
@@ -343,9 +350,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             using (DatasetManager dm = new DatasetManager())
             using (EntityManager entityManager = new EntityManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
-            using (UserManager userManager = new UserManager())
             {
+                var entityPermissionManager = new EntityPermissionManager();
                 if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Dataset id should be greater then 0.");
 
                 // try to get latest dataset version

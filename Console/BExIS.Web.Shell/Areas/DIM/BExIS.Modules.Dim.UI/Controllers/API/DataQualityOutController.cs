@@ -76,7 +76,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
         private HttpResponseMessage getData(long id, int variableId, string token)
         {
             DatasetManager datasetManager = new DatasetManager();
-            UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             EntityManager entityManager = new EntityManager();
             DataStructureManager dataStructureManager = null;
@@ -184,8 +183,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             finally
             {
                 datasetManager.Dispose();
-                userManager.Dispose();
-                entityPermissionManager.Dispose();
                 entityManager.Dispose();
                 dataStructureManager.Dispose();
             }

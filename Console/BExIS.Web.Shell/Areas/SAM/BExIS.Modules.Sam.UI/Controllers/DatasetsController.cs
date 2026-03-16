@@ -27,6 +27,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
     /// </summary>
     public class DatasetsController : BaseController
     {
+        private readonly UserManager _userManager;
+
+        public DatasetsController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
         public ActionResult Checkin(int id)
         {
             return View();
@@ -71,15 +77,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Delete(long id)
         {
             using (var datasetManager = new DatasetManager())
-            using (var entityPermissionManager = new EntityPermissionManager())
             using (var entityManager = new EntityManager())
             using (var subjectManager = new SubjectManager())
-            using (var userManager = new UserManager())
             {
                 try
                 {
+                    var entityPermissionManager = new EntityPermissionManager();
                     var userName = GetUsernameOrDefault();
-                    var user = userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
+                    var user = _userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
 
                     // check if a user is logged in
                     if (user != null)
@@ -153,15 +158,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult UndoDelete(long id)
         {
             using (var datasetManager = new DatasetManager())
-            using (var entityPermissionManager = new EntityPermissionManager())
             using (var entityManager = new EntityManager())
             using (var subjectManager = new SubjectManager())
-            using (var userManager = new UserManager())
             {
                 try
                 {
+                    var entityPermissionManager = new EntityPermissionManager();
                     var userName = GetUsernameOrDefault();
-                    var user = userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
+                    var user = _userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
 
                     // check if a user is logged in
                     if (user != null)
@@ -290,9 +294,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             using (DatasetManager dm = new DatasetManager())
             using (VariableManager vm = new VariableManager())
-            using (var entityPermissionManager = new EntityPermissionManager())
             using (DataStructureManager dsm = new DataStructureManager())
             {
+                var entityPermissionManager = new EntityPermissionManager();
                 Dictionary<long, int> variablesCount = new Dictionary<long, int>();
 
                 //List<long> datastructureIds = dsm.StructuredDataStructureRepo.Query().Select(d => d.Id).ToList();
@@ -402,15 +406,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Purge", Session.GetTenant());
 
             using (DatasetManager dm = new DatasetManager())
-            using (var entityPermissionManager = new EntityPermissionManager())
             using (var datasetManager = new DatasetManager())
             using (var entityManager = new EntityManager())
-            using (var userManager = new UserManager())
             {
                 try
                 {
+                    var entityPermissionManager = new EntityPermissionManager();
                     var userName = GetUsernameOrDefault();
-                    var user = userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
+                    var user = _userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
 
                     // check if a user is logged in
                     if (user != null)

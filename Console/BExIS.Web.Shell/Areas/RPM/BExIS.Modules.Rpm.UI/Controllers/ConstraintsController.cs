@@ -10,6 +10,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.UI.Helpers;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -21,6 +22,13 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class ConstraintsController : Controller
     {
+        private readonly UserManager _userManager;
+
+        public ConstraintsController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         public ActionResult Index()
         {
             string module = "RPM";
@@ -235,17 +243,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             string username = null;
             User user = null;
 
-            using (UserManager userManager = new UserManager())
+            try
             {
-                try
-                {
-                    username = HttpContext.User.Identity.Name;
-                    user = userManager.FindByNameAsync(username).Result;
-                }
-                catch
-                {
-                    user = null;
-                }
+                username = HttpContext.User.Identity.Name;
+                user = _userManager.FindByNameAsync(username).Result;
+            }
+            catch
+            {
+                user = null;
             }
 
             ValidationResult validationResult = new ValidationResult
@@ -338,17 +343,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             string username = null;
             User user = null;
 
-            using (UserManager userManager = new UserManager())
+            try
             {
-                try
-                {
-                    username = HttpContext.User.Identity.Name;
-                    user = userManager.FindByNameAsync(username).Result;
-                }
-                catch
-                {
-                    user = null;
-                }
+                username = HttpContext.User.Identity.Name;
+                user = _userManager.FindByNameAsync(username).Result;
+            }
+            catch
+            {
+                user = null;
             }
 
             ValidationResult validationResult = new ValidationResult
@@ -438,17 +440,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             string username = null;
             User user = null;
 
-            using (UserManager userManager = new UserManager())
+            try
             {
-                try
-                {
-                    username = HttpContext.User.Identity.Name;
-                    user = userManager.FindByNameAsync(username).Result;
-                }
-                catch
-                {
-                    user = null;
-                }
+                username = HttpContext.User.Identity.Name;
+                user = _userManager.FindByNameAsync(username).Result;
+            }
+            catch
+            {
+                user = null;
             }
 
             ValidationResult validationResult = new ValidationResult
@@ -594,17 +593,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             List<DatasetInfo> datasetInfos = new List<DatasetInfo>();
             List<Dataset> datasets = new List<Dataset>();
 
-            using (UserManager userManager = new UserManager())
+            try
             {
-                try
-                {
-                    username = HttpContext.User.Identity.Name;
-                    user = userManager.FindByNameAsync(username).Result;
-                }
-                catch
-                {
-                    user = null;
-                }
+                username = HttpContext.User.Identity.Name;
+                user = _userManager.FindByNameAsync(username).Result;
+            }
+            catch
+            {
+                user = null;
             }
 
             if (user != null)
@@ -613,25 +609,23 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 {
                     datasets = datasetManager.DatasetRepo.Get().Where(ds => ds.DataStructure != null).ToList();
 
-                    using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+                    var entityPermissionManager = new EntityPermissionManager();
+                    foreach (Dataset ds in datasets)
                     {
-                        foreach (Dataset ds in datasets)
-                        {
-                            rights = entityPermissionManager.GetEffectiveRightsAsync(user.Id, ds.EntityTemplate.EntityType.Id, ds.Id).Result;
+                        rights = entityPermissionManager.GetEffectiveRightsAsync(user.Id, ds.EntityTemplate.EntityType.Id, ds.Id).Result;
 
-                            if (rights > 0)
+                        if (rights > 0)
+                        {
+                            DatasetInfo dsi = new DatasetInfo()
                             {
-                                DatasetInfo dsi = new DatasetInfo()
-                                {
-                                    Id = ds.Id,
-                                    Name = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Title) ? "no Title" : ds.Versions.OrderBy(dv => dv.Id).Last().Title,
-                                    Description = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Description) ? "no Description" : ds.Versions.OrderBy(dv => dv.Id).Last().Description,
-                                    DatasetVersionId = ds.Versions.OrderBy(dv => dv.Id).Last().Id,
-                                    DatasetVersionNumber = ds.Versions.OrderBy(dv => dv.Id).Last().VersionNo,
-                                    DatastructureId = ds.DataStructure.Id,
-                                };
-                                datasetInfos.Add(dsi);
-                            }
+                                Id = ds.Id,
+                                Name = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Title) ? "no Title" : ds.Versions.OrderBy(dv => dv.Id).Last().Title,
+                                Description = String.IsNullOrEmpty(ds.Versions.OrderBy(dv => dv.Id).Last().Description) ? "no Description" : ds.Versions.OrderBy(dv => dv.Id).Last().Description,
+                                DatasetVersionId = ds.Versions.OrderBy(dv => dv.Id).Last().Id,
+                                DatasetVersionNumber = ds.Versions.OrderBy(dv => dv.Id).Last().VersionNo,
+                                DatastructureId = ds.DataStructure.Id,
+                            };
+                            datasetInfos.Add(dsi);
                         }
                     }
                 }
@@ -691,120 +685,115 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             DataTable dt = new DataTable();
             DataTable tempDt = new DataTable();
 
-            using (UserManager userManager = new UserManager())
+            try
             {
-                try
-                {
-                    username = HttpContext.User.Identity.Name;
-                    user = userManager.FindByNameAsync(username).Result;
-                }
-                catch
-                {
-                    user = null;
-                }
+                username = HttpContext.User.Identity.Name;
+                user = _userManager.FindByNameAsync(username).Result;
+            }
+            catch
+            {
+                user = null;
             }
 
             if (user != null)
             {
-                using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+                using (DatasetManager datasetManager = new DatasetManager())
                 {
-                    using (DatasetManager datasetManager = new DatasetManager())
+                    var entityPermissionManager = new EntityPermissionManager();
+                    Dataset dataset = datasetManager.DatasetRepo.Get(Id);
+
+                    StructuredDataStructure dataStructure = new StructuredDataStructure();
+
+                    using (DataStructureManager dataStructureManager = new DataStructureManager())
                     {
-                        Dataset dataset = datasetManager.DatasetRepo.Get(Id);
+                        dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructure.Id);
 
-                        StructuredDataStructure dataStructure = new StructuredDataStructure();
-
-                        using (DataStructureManager dataStructureManager = new DataStructureManager())
+                        rights = entityPermissionManager.GetEffectiveRightsAsync(user.Id, dataset.EntityTemplate.EntityType.Id, dataset.Id).Result;
+                        if (rights > 0 && dataStructure != null && dataStructure.Id != 0)
                         {
-                            dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataset.DataStructure.Id);
-
-                            rights = entityPermissionManager.GetEffectiveRightsAsync(user.Id, dataset.EntityTemplate.EntityType.Id, dataset.Id).Result;
-                            if (rights > 0 && dataStructure != null && dataStructure.Id != 0)
+                            if (pageSize > 0)
                             {
-                                if (pageSize > 0)
+                                try
                                 {
-                                    try
-                                    {
-                                        dt = datasetManager.GetLatestDatasetVersionTuples(dataset.Id, 0, pageSize);
-                                    }
-                                    catch
-                                    {
-                                        return Json(dt, JsonRequestBehavior.AllowGet);
-                                    }
-                                    dt.Strip();
-
-                                    tempDt = dt.Clone();
-                                    foreach (DataColumn column in tempDt.Columns)
-                                    {
-                                        column.DataType = typeof(string);
-                                    }
-
-                                    foreach (DataRow row in dt.Rows)
-                                    {
-                                        tempDt.ImportRow(row);
-                                    }
-
-                                    VariableInstance variable = new VariableInstance();
-                                    for (int i = 0; i < tempDt.Columns.Count; i++)
-                                    {
-                                        variable = dataStructure.Variables.Where(v => ("var" + v.Id).Equals(tempDt.Columns[i].ColumnName)).FirstOrDefault();
-                                        for (int j = 0; j < tempDt.Rows.Count; j++)
-                                        {
-                                            foreach (MissingValue missingValue in variable.MissingValues)
-                                            {
-                                                if (tempDt.Rows[j].ItemArray[i].ToString() == missingValue.Placeholder)
-                                                {
-                                                    tempDt.Rows[j].SetField(i, missingValue.DisplayName);
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    dt = tempDt.Copy();
+                                    dt = datasetManager.GetLatestDatasetVersionTuples(dataset.Id, 0, pageSize);
                                 }
-                                else if (variableId > 0 && pageSize == 0)
+                                catch
                                 {
-                                    try
-                                    {
-                                        dt = datasetManager.GetLatestDatasetVersionTuples(dataset.Id, 0, pageSize);
-                                    }
-                                    catch
-                                    {
-                                        return Json(dt, JsonRequestBehavior.AllowGet);
-                                    }
-                                    dt.Strip();
+                                    return Json(dt, JsonRequestBehavior.AllowGet);
+                                }
+                                dt.Strip();
 
-                                    string columnName = "var" + variableId;
+                                tempDt = dt.Clone();
+                                foreach (DataColumn column in tempDt.Columns)
+                                {
+                                    column.DataType = typeof(string);
+                                }
 
-                                    while (dt.Columns[0] != dt.Columns[dt.Columns.Count - 1])
-                                    {
-                                        if (dt.Columns[0].ColumnName != columnName)
-                                            dt.Columns.RemoveAt(0);
+                                foreach (DataRow row in dt.Rows)
+                                {
+                                    tempDt.ImportRow(row);
+                                }
 
-                                        if (dt.Columns[dt.Columns.Count - 1].ColumnName != columnName)
-                                            dt.Columns.RemoveAt(dt.Columns.Count - 1);
-                                    }
-
-                                    VariableInstance variable = new VariableInstance();
-
-                                    variable = dataStructure.Variables.Where(v => ("var" + v.Id).Equals(dt.Columns[0].ColumnName)).FirstOrDefault();
-
-                                    int i = 0;
-
-                                    do
+                                VariableInstance variable = new VariableInstance();
+                                for (int i = 0; i < tempDt.Columns.Count; i++)
+                                {
+                                    variable = dataStructure.Variables.Where(v => ("var" + v.Id).Equals(tempDt.Columns[i].ColumnName)).FirstOrDefault();
+                                    for (int j = 0; j < tempDt.Rows.Count; j++)
                                     {
                                         foreach (MissingValue missingValue in variable.MissingValues)
                                         {
-                                            if (dt.Rows[i].ItemArray[0].ToString() == missingValue.Placeholder)
+                                            if (tempDt.Rows[j].ItemArray[i].ToString() == missingValue.Placeholder)
                                             {
-                                                dt.Rows.Remove(dt.Rows[i]);
-                                                i--;
+                                                tempDt.Rows[j].SetField(i, missingValue.DisplayName);
                                                 break;
                                             }
                                         }
-                                        i++;
-                                    } while (dt.Rows[i] != dt.Rows[dt.Rows.Count - 1]);
+                                    }
                                 }
+                                dt = tempDt.Copy();
+                            }
+                            else if (variableId > 0 && pageSize == 0)
+                            {
+                                try
+                                {
+                                    dt = datasetManager.GetLatestDatasetVersionTuples(dataset.Id, 0, pageSize);
+                                }
+                                catch
+                                {
+                                    return Json(dt, JsonRequestBehavior.AllowGet);
+                                }
+                                dt.Strip();
+
+                                string columnName = "var" + variableId;
+
+                                while (dt.Columns[0] != dt.Columns[dt.Columns.Count - 1])
+                                {
+                                    if (dt.Columns[0].ColumnName != columnName)
+                                        dt.Columns.RemoveAt(0);
+
+                                    if (dt.Columns[dt.Columns.Count - 1].ColumnName != columnName)
+                                        dt.Columns.RemoveAt(dt.Columns.Count - 1);
+                                }
+
+                                VariableInstance variable = new VariableInstance();
+
+                                variable = dataStructure.Variables.Where(v => ("var" + v.Id).Equals(dt.Columns[0].ColumnName)).FirstOrDefault();
+
+                                int i = 0;
+
+                                do
+                                {
+                                    foreach (MissingValue missingValue in variable.MissingValues)
+                                    {
+                                        if (dt.Rows[i].ItemArray[0].ToString() == missingValue.Placeholder)
+                                        {
+                                            dt.Rows.Remove(dt.Rows[i]);
+                                            i--;
+                                            break;
+                                        }
+                                    }
+                                    i++;
+                                } while (dt.Rows[i] != dt.Rows[dt.Rows.Count - 1]);
                             }
                         }
                     }
