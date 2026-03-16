@@ -14,6 +14,7 @@ using System.Text;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Controllers;
+using Vaiona.IoC;
 
 namespace BExIS.App.Bootstrap.Attributes
 {
@@ -25,9 +26,9 @@ namespace BExIS.App.Bootstrap.Attributes
             {
                 using (var featurePermissionManager = new FeaturePermissionManager())
                 using (var operationManager = new OperationManager())
-                using (var userManager = new UserManager())
-                using (var identityUserService = new IdentityUserService(userManager))
                 {
+                    var userManager = IoCFactory.Container.Resolve<UserManager>();
+
                     var areaName = "Api";
                     var controllerName = actionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
                     var actionName = actionContext.ActionDescriptor.ActionName;
@@ -101,7 +102,7 @@ namespace BExIS.App.Bootstrap.Attributes
                                 return;
                             }
 
-                            var result = identityUserService.CheckPasswordAsync(user, Encoding.UTF8.GetString(Convert.FromBase64String(basicParameter)).Split(':')[1]).Result;
+                            var result = userManager.CheckPasswordAsync(user, Encoding.UTF8.GetString(Convert.FromBase64String(basicParameter)).Split(':')[1]).Result;
 
                             if (!result)
                             {

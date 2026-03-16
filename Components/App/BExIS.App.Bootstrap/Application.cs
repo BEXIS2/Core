@@ -1,11 +1,14 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Ext.Services;
 using BExIS.Utils.Config;
+using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading;
+using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -16,6 +19,8 @@ using Vaiona.MultiTenancy.Api;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
+using Microsoft.Owin;
+using Microsoft.Owin.Host.SystemWeb;
 
 namespace BExIS.App.Bootstrap
 {
@@ -146,6 +151,7 @@ namespace BExIS.App.Bootstrap
             ModuleManager.StartModules();
 
             // generate settings
+            ControllerBuilder.Current.SetControllerFactory(new IoCControllerFactory());
         }
 
         private void initTenancy()
