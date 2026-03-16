@@ -6,6 +6,7 @@ using BExIS.Security.Services.Versions;
 using BExIS.UI.Helpers;
 using BExIS.Utils.Config;
 using BExIS.Web.Shell.Models;
+using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Configuration;
 using System.IO;
@@ -20,6 +21,13 @@ namespace BExIS.Web.Shell.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly UserManager _userManager;
+
+        public HomeController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         [DoesNotNeedDataAccess]
         public ActionResult Index()
         {
@@ -210,7 +218,6 @@ namespace BExIS.Web.Shell.Controllers
         {
             var featurePermissionManager = new FeaturePermissionManager();
             var operationManager = new OperationManager();
-            var userManager = new UserManager();
 
             try
             {
@@ -228,7 +235,7 @@ namespace BExIS.Web.Shell.Controllers
                 var feature = operation?.Feature;
                 if (feature == null) return true;
 
-                var result = userManager.FindByNameAsync(userName);
+                var result = _userManager.FindByNameAsync(userName);
 
                 if (featurePermissionManager.HasAccessAsync(result.Result?.Id, feature.Id).Result)
                 {
@@ -243,7 +250,6 @@ namespace BExIS.Web.Shell.Controllers
             {
                 featurePermissionManager.Dispose();
                 operationManager.Dispose();
-                userManager.Dispose();
             }
         }
     }

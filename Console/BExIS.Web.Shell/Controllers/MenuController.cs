@@ -1,7 +1,10 @@
-﻿using BExIS.App.Bootstrap.Helpers;
+﻿using BExIS.App.Bootstrap.Extensions;
+using BExIS.App.Bootstrap.Helpers;
 using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Subjects;
 using BExIS.UI.Models;
 using BExIS.Web.Shell.Helpers;
+using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Linq;
 using System.Web;
@@ -12,6 +15,12 @@ namespace BExIS.Web.Shell.Controllers
 {
     public class MenuController : Controller
     {
+        private readonly UserManager _userManager;
+
+        public MenuController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
         // GET: Menu
         public JsonResult Index()
         {
@@ -20,7 +29,9 @@ namespace BExIS.Web.Shell.Controllers
 
             if (HttpContext.User != null && !string.IsNullOrEmpty(HttpContext.User.Identity.Name))
             {
-                userName = HttpContext.User.Identity.Name;
+                var user = _userManager.FindByNameAsync(HttpContext.User.Identity.Name).Result;
+
+                userName = user.FullName ?? user.UserName;
                 isAuthenticated = true;
             }
             else
