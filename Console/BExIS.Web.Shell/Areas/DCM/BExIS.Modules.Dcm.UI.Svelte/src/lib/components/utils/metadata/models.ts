@@ -2,12 +2,13 @@ export interface schemaNode {
 	title: string;
 	description: string;
 	type: string;
-	properties: scheemaNode[];
+	properties: schemaNode[];
 }
 
 export interface validationStoretype {
 	allSimpleRequiredValid: boolean;
 	simpleTypeValidationItems: SimpleComponentData[];
+	complexTypeValidationItems: ComplexComponentData[];
 }
 
 export interface SimpleComponentData {
@@ -23,9 +24,13 @@ export interface SimpleComponentData {
 	minimum?: number;
 	maximum?: number;
 	isValid: boolean;
+	enum?: string[];
+	errorMessage: string
 }
 
 export interface ComplexComponentData {
 	complexComponent: any;
 	label: string;
+	required: boolean;
+	errorMessage: string
 }

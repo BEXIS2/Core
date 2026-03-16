@@ -177,6 +177,8 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             }
 
             List<DatasetCitationEntry> allDatasetCitations = new List<DatasetCitationEntry>();
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            var useTags = Convert.ToBoolean(moduleSettings.GetValueByKey("use_tags"));
 
             foreach (long id in datasetIds)
             {
@@ -215,7 +217,7 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                     {
                         CitationDataModel model = CitationsHelper.CreateCitationDataModel(datasetVersion, CitationFormat.Text);
                         if (model != null)
-                            allDatasetCitations.Add(CreateCitationEntry(id, model, isPublic));
+                            allDatasetCitations.Add(CreateCitationEntry(id, model, isPublic, useTags));
                         else
                             continue;
 
@@ -306,17 +308,19 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             }
         }
 
-        private DatasetCitationEntry CreateCitationEntry(long datasetId, CitationDataModel model, bool isPublic)
+        private DatasetCitationEntry CreateCitationEntry(long datasetId, CitationDataModel model, bool isPublic, bool useTags)
         {
             DatasetCitationEntry datasetCitationEntry = new DatasetCitationEntry();
-            var settings = ModuleManager.GetModuleSettings("ddm");
 
-            string url = String.Format("{0}://{1}", HttpContext.Current.Request.Url.Scheme, HttpContext.Current.Request.Url.Host);
-
+            string url = model.URL;
             if (isPublic)
-                datasetCitationEntry.URL = url + "/ddm/data/Showdata/" + datasetId + "?version=" + model.Version + "";
-            else
-                datasetCitationEntry.URL = url;
+            {
+                if (useTags && !String.IsNullOrEmpty(model.Tag))
+                    url += "/ddm/data/Showdata/" + datasetId + "?tag=" + model.Tag + "";
+                else
+                    url += "/ddm/data/Showdata/" + datasetId + "?version=" + model.Version + "";
+            }
+            datasetCitationEntry.URL = url;
 
             datasetCitationEntry.Publisher = model.Publisher;
             //datasetCitationEntry.InstanceName = settings.GetValueByKey("instanceName").ToString();
@@ -338,7 +342,12 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             datasetCitationEntry.DatasetId = datasetId.ToString();
             datasetCitationEntry.IsPublic = isPublic;
             datasetCitationEntry.Title = model.Title;
-            datasetCitationEntry.Version = model.Version;
+
+            if (useTags && !String.IsNullOrEmpty(model.Tag))
+                datasetCitationEntry.Version = model.Tag;
+            else
+                datasetCitationEntry.Version = model.Version;
+
             if (!String.IsNullOrEmpty(model.DOI))
                 datasetCitationEntry.DOI = model.DOI;
             datasetCitationEntry.Authors = model.Authors;
@@ -355,7 +364,6 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                     authors.Add(name.Last + ", " + name.First + " " + name.Middle);
             }
 
-            var useTags = Convert.ToBoolean(settings.GetValueByKey("use_tags"));
             if (CitationsHelper.IsCitationDataModelValid(model))
             {
                 datasetCitationEntry.CitationStringTxt = CitationsHelper.GetCitationString(model, CitationFormat.Text, isPublic, datasetId, useTags);

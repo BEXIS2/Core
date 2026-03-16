@@ -55,6 +55,8 @@
 
 	// Check if there are changes compared to the original rows
 	$: hasChanges = (() => {
+
+		console.log('🚀 ~ hasChanges ~ $tagInfoModelStore:', $tagInfoModelStore);
 		const originalRows = $originalTagInfoModelStore;
 		const currentRow = $tagInfoModelStore.find((x) => x.versionId == row.versionId);
 		const originalRow = originalRows.find((x) => x.versionId == row.versionId);
@@ -68,6 +70,7 @@
 			currentRow.publish !== originalRow.publish ||
 			currentRow.show !== originalRow.show
 		);
+		
 	})();
 </script>
 

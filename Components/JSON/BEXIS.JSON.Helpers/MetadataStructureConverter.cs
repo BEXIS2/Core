@@ -102,9 +102,37 @@ namespace BEXIS.JSON.Helpers
                     current = addMetadataAttrUsage(metadataAttrUsage, current, out _childRequired);
 
                     // if current is required add it to the parent
-                    if (_childRequired) current.Required.Add(metadataAttrUsage.Label);
-                    if (IsChoice(usage.Extra) && getMaxCardinality(usage) > 1) current.AnyOf.Add(current.Properties.Last().Value);
-                    else if (IsChoice(usage.Extra)) current.OneOf.Add(current.Properties.Last().Value);
+                    //if (_childRequired) current.Required.Add(metadataAttrUsage.Label);
+                    //if (IsChoice(usage.Extra) && getMaxCardinality(usage) > 1) current.AnyOf.Add(current.Properties.Last().Value);
+                    //else if (IsChoice(usage.Extra)) current.OneOf.Add(current.Properties.Last().Value);
+
+                    var lastPropName = metadataAttrUsage.Label; // z.B. "Kreditkarte"
+                    var lastPropSchema = current.Properties[lastPropName];
+
+                    // falls das Kind für sich Required-Kinder hat, hast du das schon in lastPropSchema gesetzt
+
+                    if (IsChoice(usage.Extra))
+                    {
+                        // Subschema für den Choice-Fall
+                        var choiceSchema = new JSchema
+                        {
+                            Type = JSchemaType.Object
+                        };
+
+                        // gleiche Properties wie im Parent (damit die Validierung Sinn ergibt)
+                        // minimal reicht i.d.R. das eine relevante Property:
+                        choiceSchema.Properties.Add(lastPropName, lastPropSchema);
+                        choiceSchema.Required.Add(lastPropName);
+
+                        if (getMaxCardinality(usage) > 1)
+                            current.AnyOf.Add(choiceSchema);
+                        else
+                            current.OneOf.Add(choiceSchema);
+                    }
+                    else if (_childRequired)
+                    {
+                        current.Required.Add(lastPropName);
+                    }
                 }
             }
 
@@ -217,10 +245,38 @@ namespace BEXIS.JSON.Helpers
                     {
                         bool _childIsRequired = false;
                         current = addMetadataAttrUsage(mnau, current, out _childIsRequired);
-                        // if current is required add it to the parent
-                        if (_childIsRequired) current.Required.Add(mnau.Label);
-                        if (IsChoice(usage.Extra) && getMaxCardinality(usage) > 1) current.AnyOf.Add(current.Properties.Last().Value);
-                        else if (IsChoice(usage.Extra)) current.OneOf.Add(current.Properties.Last().Value);
+                        //// if current is required add it to the parent
+                        //if (_childIsRequired) current.Required.Add(mnau.Label);
+                        //if (IsChoice(usage.Extra) && getMaxCardinality(usage) > 1) current.AnyOf.Add(current.Properties.Last().Value);
+                        //else if (IsChoice(usage.Extra)) current.OneOf.Add(current.Properties.Last().Value);
+
+                        var lastPropName = mnau.Label; // z.B. "Kreditkarte"
+                        var lastPropSchema = current.Properties[lastPropName];
+
+                        // falls das Kind für sich Required-Kinder hat, hast du das schon in lastPropSchema gesetzt
+
+                        if (IsChoice(usage.Extra))
+                        {
+                            // Subschema für den Choice-Fall
+                            var choiceSchema = new JSchema
+                            {
+                                Type = JSchemaType.Object
+                            };
+
+                            // gleiche Properties wie im Parent (damit die Validierung Sinn ergibt)
+                            // minimal reicht i.d.R. das eine relevante Property:
+                            choiceSchema.Properties.Add(lastPropName, lastPropSchema);
+                            choiceSchema.Required.Add(lastPropName);
+
+                            if (getMaxCardinality(usage) > 1)
+                                current.AnyOf.Add(choiceSchema);
+                            else
+                                current.OneOf.Add(choiceSchema);
+                        }
+                        else if (_childIsRequired)
+                        {
+                            current.Required.Add(lastPropName);
+                        }
                     }
                 }
             }

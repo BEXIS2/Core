@@ -2,12 +2,12 @@
 	import { onMount } from 'svelte';
 
 	import { NumberInput, Page } from '@bexis2/bexis2-core-ui';
-	import MetadataEdit from './components/edit/MetadataEdit.svelte';
+
 	import MetadataView from './components/view/MetadataView.svelte';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 
 	//export let schemaId: number = 3;
-	export let datasetId: number = 1;
+	export let datasetId: number = 3;
  $:datasetId;
 
 	let mode: 'edit' | 'view' = 'edit';
@@ -15,7 +15,7 @@
 
 	onMount(() => {
 				// read id from url
-				datasetId = Number(new URLSearchParams(window.location.search).get('id'));
+				//datasetId = Number(new URLSearchParams(window.location.search).get('id'));
 			console.log('Loading metadata for datasetId:', datasetId);
 		});
 
@@ -50,7 +50,8 @@
 		{#if mode	=== 'view'}
 			<MetadataView bind:datasetId={datasetId} />
 		{:else}
-			<MetadataEdit	bind:datasetId={datasetId} />
+		<b>old</b>
+
 		{/if}
  {/key}
  {/if}

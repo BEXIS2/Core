@@ -75,6 +75,7 @@
     <Compile Include="Controllers\Legacy\ManageMetadataStructureController.cs" />
     <Compile Include="Controllers\Hooks\MetadataController.cs" />
     <Compile Include="Controllers\API\LinkController.cs" />
+    <Compile Include="Controllers\MController.cs" />
     <Compile Include="Controllers\Views\MessagesController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\Hooks\ValidationController.cs" />
@@ -470,6 +471,8 @@
     <Content Include="Web.config" />
     <Content Include="Views\Form\_displayname.cshtml" />
     <Content Include="Views\ComponentConfig\Index.cshtml" />
+    <Content Include="Views\M\Index.cshtml" />
+    <Content Include="Views\M\Edit.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
