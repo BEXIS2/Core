@@ -27,9 +27,9 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             {
                 using (var datasetManager = new DatasetManager())
                 using (var conceptManager = new ConceptManager())
-                using (var entityPermissionManager = new EntityPermissionManager())
                 using (var entityManager = new EntityManager())
                 {
+                    var entityPermissionManager = new EntityPermissionManager();
                     var metadata = datasetVersion.Metadata;
 
                     var concept = conceptManager.MappingConceptRepository.Query(c => c.Name.ToLower() == "citation_" + format.ToString().ToLower()).FirstOrDefault();

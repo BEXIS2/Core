@@ -22,6 +22,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
+        private readonly UserManager _userManager;
+
+        public EntityReferenceController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         // GET: EntityReference
         public ActionResult Index()
         {
@@ -292,14 +299,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private bool hasUserRights(long instanceId, long entityId, RightType rightType)
         {
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            UserManager userManager = new UserManager();
             EntityManager entityManager = new EntityManager();
 
             try
             {
                 #region security permissions and authorisations check
 
-                var user = userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
+                var user = _userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
                 if (user == null) return false;
 
                 var entity = entityManager.FindByName("Dataset");
@@ -314,8 +320,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
             finally
             {
-                entityPermissionManager.Dispose();
-                userManager.Dispose();
                 entityManager.Dispose();
             }
         }

@@ -61,13 +61,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
             using (DatasetManager datasetManager = new DatasetManager())
             using (DataStructureManager dataStructureManager = new DataStructureManager())
             using (ResearchPlanManager researchPlanManager = new ResearchPlanManager())
-            using (UserManager userManager = new UserManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
             using (EntityTemplateManager entityTemplateManager = new EntityTemplateManager())
             {
                 try
                 {
+                    EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                     #region security
 
                     user = ControllerContext.RouteData.Values["user"] as User;

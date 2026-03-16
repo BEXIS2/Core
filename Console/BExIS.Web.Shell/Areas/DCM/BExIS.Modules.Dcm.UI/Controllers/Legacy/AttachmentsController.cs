@@ -11,6 +11,7 @@ using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,6 +28,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class AttachmentsController : Controller
     {
+        private readonly UserManager _userManager;
+
+        public AttachmentsController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         // GET: Attachments
         public ActionResult Index()
         {
@@ -152,11 +160,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private DatasetFilesModel LoadDatasetModel(long versionId)
         {
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (EntityManager entityManager = new EntityManager())
-            using (UserManager userManager = new UserManager())
             using (DatasetManager dm = new DatasetManager())
             {
+                EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                 var datasetVersion = dm.GetDatasetVersion(versionId);
                 var model = new DatasetFilesModel
                 {
@@ -168,7 +175,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 var entity = entityManager.EntityRepository.Query(e => e.Name.ToUpperInvariant() == "Dataset".ToUpperInvariant() && e.EntityType == typeof(Dataset)).FirstOrDefault();
 
-                var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                var userTask = _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
                 userTask.Wait();
                 var user = userTask.Result;
                 int rights = 0;
@@ -214,41 +221,38 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
         public ActionResult ProcessSubmit(IEnumerable<HttpPostedFileBase> attachments, long datasetId, String description)
         {
-            using (UserManager userManager = new UserManager())
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Attach file to dataset", this.Session.GetTenant());
+            // The Name of the Upload component is "attachments"
+            if (attachments != null)
             {
-                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Attach file to dataset", this.Session.GetTenant());
-                // The Name of the Upload component is "attachments"
-                if (attachments != null)
+                Session["FileInfos"] = attachments;
+                uploadFiles(attachments, datasetId, description);
+
+
+                var filemNames = "";
+
+                var userTask = _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                userTask.Wait();
+                var user = userTask.Result;
+
+                foreach (var file in attachments)
                 {
-                    Session["FileInfos"] = attachments;
-                    uploadFiles(attachments, datasetId, description);
-
-                    
-                        var filemNames = "";
-
-                    var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
-                    userTask.Wait();
-                    var user = userTask.Result;
-
-                    foreach (var file in attachments)
-                    {
-                        var fileName = Path.GetFileName(file.FileName);
-                        filemNames += fileName.ToString() + ",";
-                    }
-
-                    using (var emailService = new EmailService())
-                    {
-                        emailService.Send(MessageHelper.GetAttachmentUploadHeader(datasetId, typeof(Dataset).Name),
-                    MessageHelper.GetAttachmentUploadMessage(datasetId, filemNames, user.DisplayName),
-                    GeneralSettings.SystemEmail
-                    );
-                    }
-                    
+                    var fileName = Path.GetFileName(file.FileName);
+                    filemNames += fileName.ToString() + ",";
                 }
 
-                // Redirect to a view showing the result of the form submission.
-                return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
+                using (var emailService = new EmailService())
+                {
+                    emailService.Send(MessageHelper.GetAttachmentUploadHeader(datasetId, typeof(Dataset).Name),
+                MessageHelper.GetAttachmentUploadMessage(datasetId, filemNames, user.DisplayName),
+                GeneralSettings.SystemEmail
+                );
+                }
+
             }
+
+            // Redirect to a view showing the result of the form submission.
+            return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]

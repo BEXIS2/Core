@@ -90,10 +90,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (DatasetManager dm = new DatasetManager())
             using (DataStructureManager dsm = new DataStructureManager())
             using (ResearchPlanManager rpm = new ResearchPlanManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (EntityTemplateManager entityTemplateManager = new EntityTemplateManager())
             using (MetadataStructureManager msm = new MetadataStructureManager())
             {
+                EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             
                 string title = "";
@@ -380,7 +380,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             DatasetManager datasetManager = new DatasetManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             //get all datasetsid where the current userer has access to
-            UserManager userManager = new UserManager();
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
             try
@@ -402,8 +401,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             finally
             {
                 datasetManager.Dispose();
-                entityPermissionManager.Dispose();
-                userManager.Dispose();
             }
         }
 

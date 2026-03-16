@@ -3970,9 +3970,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 return entityPermissionManager.HasEffectiveRightsAsync(GetUsernameOrDefault(), typeof(Dataset), entityId, RightType.Write).Result;
             }
-            finally
+            catch (Exception ex)
             {
-                entityPermissionManager.Dispose();
+                return false;
             }
 
             #endregion security permissions and authorisations check

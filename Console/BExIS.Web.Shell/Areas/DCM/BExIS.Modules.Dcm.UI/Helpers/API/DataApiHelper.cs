@@ -44,14 +44,12 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
         private AsciiReader reader = null;
         private FileStream Stream = null;
         private UploadHelper uploadHelper = new UploadHelper();
-        private UserManager userManager = new UserManager();
         private List<long> variableIds = new List<long>();
         //private UploadMethod _uploadMethod;
 
         public DataApiHelper(Dataset dataset, User user, DataApiModel data, string title, UploadMethod uploadMethod)
         {
             datasetManager = new DatasetManager();
-            userManager = new UserManager();
             entityPermissionManager = new EntityPermissionManager();
             dataStructureManager = new DataStructureManager();
             uploadHelper = new UploadHelper();

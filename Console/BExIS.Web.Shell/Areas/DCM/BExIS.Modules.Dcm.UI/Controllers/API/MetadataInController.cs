@@ -76,7 +76,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             string comment = "Update via API";
 
             DatasetManager datasetManager = new DatasetManager();
-            UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             XmlMetadataConverter converter = new XmlMetadataConverter();
             MetadataStructureConverter metadataStructureConverter = new MetadataStructureConverter();
@@ -290,8 +289,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             finally
             {
                 datasetManager.Dispose();
-                entityPermissionManager.Dispose();
-                userManager.Dispose();
                 request.Dispose();
             }
         }

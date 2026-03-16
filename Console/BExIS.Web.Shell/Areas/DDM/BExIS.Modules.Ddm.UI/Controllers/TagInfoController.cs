@@ -5,6 +5,7 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Helpers;
 using BExIS.Utils.Config;
+using Microsoft.AspNet.Identity;
 using NHibernate.Linq;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 {
     public class TagInfoController : BaseController
     {
+        private readonly UserManager _userManager;
+
+        public TagInfoController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         // GET: TagInfo
         public ActionResult Index(long id)
         {
@@ -44,17 +52,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
            
             string userName = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
-            using (var userManager = new UserManager())
-            {
-                var userWithGroups = userManager.Users
-                    .Where(u => u.Name == userName)
-                    .Fetch(u => u.Groups)
-                    .SingleOrDefault();
+            var userWithGroups = _userManager.Users
+                                .Where(u => u.Name == userName)
+                                .Fetch(u => u.Groups)
+                                .SingleOrDefault();
 
-                var userIsCurator = CurationEntry.GetCurationUserType(userWithGroups, GetCurationGroupName()).Equals(CurationUserType.Curator);
-                return Json(userIsCurator, JsonRequestBehavior.AllowGet);
-
-            }
+            var userIsCurator = CurationEntry.GetCurationUserType(userWithGroups, GetCurationGroupName()).Equals(CurationUserType.Curator);
+            return Json(userIsCurator, JsonRequestBehavior.AllowGet);
         }
 
         [BExISApiAuthorize]

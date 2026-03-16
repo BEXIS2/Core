@@ -11,6 +11,7 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Route;
+using Microsoft.AspNet.Identity;
 using NameParser;
 using Newtonsoft.Json;
 using System;
@@ -31,6 +32,13 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
 {
     public class CitationController : ApiController
     {
+        private readonly UserManager<User, long> _userManager;
+
+        public CitationController(UserManager<User, long> userManager)
+        {
+            _userManager = userManager;
+        }
+
         [BExISApiAuthorize]
         [GetRoute("api/datasets/citations")]
         //[ResponseType(typeof(CitationModel))]
@@ -87,9 +95,8 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
 
                 using (DatasetManager dm = new DatasetManager())
                 using (EntityManager entityManager = new EntityManager())
-                using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
-                using (UserManager userManager = new UserManager())
                 {
+                    EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                     bool isPublic = false;
                     if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Dataset id should be greater then 0.");
 
@@ -177,9 +184,8 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
 
                 using (DatasetManager dm = new DatasetManager())
                 using (EntityManager entityManager = new EntityManager())
-                using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
-                using (UserManager userManager = new UserManager())
                 {
+                    EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                     bool isPublic = false;
 
                     try
@@ -233,9 +239,8 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
 
             using (DatasetManager dm = new DatasetManager())
             using (EntityManager entityManager = new EntityManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
-            using (UserManager userManager = new UserManager())
             {
+                EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                 bool isPublic = false;
                 if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Dataset id should be greater then 0.");
 
