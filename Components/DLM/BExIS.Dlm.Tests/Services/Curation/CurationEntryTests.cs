@@ -16,6 +16,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Vaiona.IoC;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Tests.Services.Curation
@@ -23,39 +24,40 @@ namespace BExIS.Dlm.Tests.Services.Curation
     public class CurationEntryTests
     {
         private TestSetupHelper helper = null;
+        private readonly GroupManager _groupManager;
+
+        public CurationEntryTests(GroupManager groupManager)
+        {
+            _groupManager = groupManager;
+        }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
 
-            using (UserManager userManager = new UserManager())
-            using (GroupManager groupManager = new GroupManager())
+            var userManager = IoCFactory.Container.Resolve<UserManager>();
+
+            Group group = new Group();
+            group.Name = "curator";
+            group.Description = "curators group";
+            _groupManager.CreateAsync(group);
+
+
+
+            User admin = new User()
             {
-                Group group = new Group();
-                group.Name = "curator";
-                group.Description = "curators group";
-                groupManager.CreateAsync(group);
+                Name = "Admin",
+                DisplayName = "Admin",
+                Email = "bexis2-support@uni-jena.de"
+            };
 
-            
+            userManager.CreateAsync(admin).Wait();
 
-                User admin = new User()
-                {
-                    Name = "Admin",
-                    DisplayName = "Admin",
-                    Email = "bexis2-support@uni-jena.de"
-                };
+            admin = userManager.FindByNameAsync("Admin").Result;
+            group = _groupManager.FindByNameAsync("curator").Result;
 
-                userManager.CreateAsync(admin).Wait();
-
-                admin = userManager.FindByNameAsync("Admin").Result;
-                group = groupManager.FindByNameAsync("curator").Result;
-
-                userManager.AddToRoleAsync(admin, group.Name).Wait();
-
-
-
-            }
+            userManager.AddToRoleAsync(admin.Id, group.Name).Wait();
         }
 
         [SetUp]
@@ -117,8 +119,8 @@ namespace BExIS.Dlm.Tests.Services.Curation
 
             //act
             using (var curationEntryManager = new CurationManager())
-            using (var userManager = new UserManager())
             {
+                var userManager = IoCFactory.Container.Resolve<UserManager>();
 
                 //Arrange
                 var dsHelper = new DatasetHelper();
@@ -155,8 +157,8 @@ namespace BExIS.Dlm.Tests.Services.Curation
 
             //act
             using (var curationEntryManager = new CurationManager())
-            using (var userManager = new UserManager())
             {
+                var userManager = IoCFactory.Container.Resolve<UserManager>();
 
                 //Arrange
                 var dsHelper = new DatasetHelper();
