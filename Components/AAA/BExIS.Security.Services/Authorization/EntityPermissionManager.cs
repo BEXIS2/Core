@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
@@ -15,30 +16,42 @@ using Vaiona.Utils.Cfg;
 
 namespace BExIS.Security.Services.Authorization
 {
-    public class EntityPermissionManager : IDisposable
+    public class EntityPermissionManager
     {
-        private readonly IUnitOfWork _guow;
-        private bool _isDisposed;
-
-        public EntityPermissionManager()
+        public int Count()
         {
-            _guow = this.GetIsolatedUnitOfWork();
-            EntityPermissionRepository = _guow.GetReadOnlyRepository<EntityPermission>();
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
+                return entityPermissionRepository.Query().Count();
+            }
         }
 
-        ~EntityPermissionManager()
+        public int Count(Expression<Func<Group, bool>> predicate)
         {
-            Dispose(true);
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
+                return entityPermissionRepository.Query(predicate).Count();
+            }
         }
 
-        public IReadOnlyRepository<EntityPermission> EntityPermissionRepository { get; }
-        public IQueryable<EntityPermission> EntityPermissions => EntityPermissionRepository.Query();
+        public IList<EntityPermission> Get()
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
+
+                var entityPermissions = entityPermissionRepository.Get();
+                return entityPermissions;
+            }
+        }
 
         public async Task<bool> CreateAsync(EntityPermission entityPermission)
         {
             using (var uow = this.GetUnitOfWork())
             {
-                var entityPermissionRepository = _guow.GetRepository<EntityPermission>();
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
                 var result = entityPermissionRepository.Put(entityPermission);
                 uow.Commit();
 
@@ -175,11 +188,6 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
         public async Task<bool> ExistsAsync(long entityId, long key)
         {
             using (var uow = this.GetUnitOfWork())
@@ -229,6 +237,16 @@ namespace BExIS.Security.Services.Authorization
                     return entityPermissionRepository.Query(p => p.Subject == null && p.Entity.Id == entity.Id && p.Key == key).Count() == 1;
 
                 return entityPermissionRepository.Query(p => p.Subject.Id == subject.Id && p.Entity.Id == entity.Id && p.Key == key).Count() == 1;
+            }
+        }
+
+        public IList<EntityPermission> Find(Expression<Func<EntityPermission, bool>> predicate)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetReadOnlyRepository<EntityPermission>();
+                var entityPermissions = entityPermissionRepository.Query(predicate).ToList();
+                return entityPermissions;
             }
         }
 
@@ -577,13 +595,6 @@ namespace BExIS.Security.Services.Authorization
             }
 
             await Task.CompletedTask;
-        }
-
-        protected void Dispose(bool disposing)
-        {
-            if (_isDisposed || !disposing) return;
-            _guow?.Dispose();
-            _isDisposed = true;
         }
     }
 }

@@ -6,6 +6,10 @@ namespace BExIS.Security.Services.Tests.Subjects
     [TestFixture]
     public class GroupManagerTests
     {
+        private readonly GroupManager _groupManager;
+
+
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
@@ -28,15 +32,11 @@ namespace BExIS.Security.Services.Tests.Subjects
 
         public void CreateAsync_GroupIsNull_ReturnZero()
         {
-            //Arrange
-            using (var a = new GroupManager())
-            {
-                //Act
-                var result = a.CreateAsync(null);
+            //Act
+            var result = _groupManager.CreateAsync(null);
 
-                //Assert
-                Assert.That(result, Is.EqualTo(0));
-            }
+            //Assert
+            Assert.That(result, Is.EqualTo(0));
         }
     }
 }
