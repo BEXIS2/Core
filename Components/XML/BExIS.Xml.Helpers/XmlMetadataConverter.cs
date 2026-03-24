@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -123,6 +124,7 @@ namespace BExIS.Xml.Helpers
                         // add all children nodes
                         JObject complex = new JObject();
                         setReference(complex, (XmlElement)tCHild, includeEmpty);
+                        setParameters(complex, (XmlElement)tCHild, includeEmpty);
 
                         for (int i = 0; i < tCHild.ChildNodes.Count; i++)
                         {
@@ -217,6 +219,7 @@ namespace BExIS.Xml.Helpers
                             // add all children nodes
                             JObject complex = new JObject();
                             setReference(complex, (XmlElement)tCHild, includeEmpty);
+                            setParameters(complex, (XmlElement)tCHild, includeEmpty);
 
                             for (int i = 0; i < tCHild.ChildNodes.Count; i++)
                             {
@@ -324,6 +327,7 @@ namespace BExIS.Xml.Helpers
             }
 
             setReference(simple, reference, includeEmpty);
+            setParameters(simple, reference, includeEmpty);
 
             simple.Add(new JProperty("#text", value));
 
@@ -348,6 +352,22 @@ namespace BExIS.Xml.Helpers
             else if (includeEmpty)
             {
                 target.Add("@partyid", "");
+            }
+        }
+
+        private void setParameters(JObject target, XmlElement element, bool includeEmpty)
+        { 
+            if(element.HasAttributes)
+            {
+                List<String> ignore = new List<String>() { "type", "ref", "id", "roleId", "number", "name" }; // system attributes
+
+                foreach (XmlAttribute attr in element.Attributes)
+                {
+                    if (!ignore.Contains(attr.Name))
+                    {
+                        target.Add("@" + attr.Name, attr.Value);
+                    }
+                }
             }
         }
 
