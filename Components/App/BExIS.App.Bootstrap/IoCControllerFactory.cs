@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Vaiona.IoC;
@@ -11,34 +12,33 @@ namespace BExIS.App.Bootstrap
             RequestContext requestContext,
             Type controllerType)
         {
-            // Fall 1: Controller-Typ wurde gar nicht gefunden (z.B. /dasisteintest)
+            // Fall 1: MVC konnte den Controller-Typ nicht finden (z. B. "wp-includes", "dasisteintest")
             if (controllerType == null)
             {
-                return null;                    // → MVC zeigt automatisch 404
+                // WICHTIG: HttpException 404 werfen → MVC behandelt das als 404
+                throw new HttpException(404, "The requested controller was not found.");
             }
 
             try
             {
-                // Versuch über Unity aufzulösen
+                // Versuch, den Controller über Unity aufzulösen
                 var controller = IoCFactory.Container.Resolve(controllerType) as IController;
 
                 if (controller == null)
                 {
-                    // Sollte eigentlich nie passieren, aber sicher ist sicher
-                    return null;
+                    throw new HttpException(404, $"Could not create controller instance for type: {controllerType.FullName}");
                 }
 
                 return controller;
             }
             catch (Exception ex)
             {
-                // WICHTIG: Hier NICHT mehr throwen!
-                // Stattdessen null zurückgeben → MVC behandelt das als 404
+                // Loggen (empfohlen)
+                // Vaiona.Logging.ILogger.LogError(ex, $"Controller resolution failed for {controllerType.FullName}");
 
-                // Optional: Loggen des Fehlers (sehr empfohlen!)
-                // Vaiona.Logging.ILogger.LogError(ex, $"Controller resolution failed for type: {controllerType.FullName}");
-
-                return null;
+                // HttpException 404 werfen → sauberes 404 statt InvalidOperationException
+                throw new HttpException(404,
+                    $"The controller '{controllerType.Name}' could not be created.", ex);
             }
         }
     }
