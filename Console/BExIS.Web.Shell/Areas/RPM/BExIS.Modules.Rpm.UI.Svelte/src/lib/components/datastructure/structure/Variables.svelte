@@ -141,10 +141,7 @@
 				names.push(v.name);
 			}
 		});
-		console.log(
-			'🚀 ~ file: Variables.svelte:130 ~ checkNamesUnique ~ nonUniqueNames:',
-			nonUniqueNames
-		);
+
 		return nonUniqueNames;
 	}
 

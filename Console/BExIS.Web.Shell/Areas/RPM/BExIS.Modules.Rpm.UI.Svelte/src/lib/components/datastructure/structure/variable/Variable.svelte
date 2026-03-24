@@ -99,7 +99,7 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 		setList();
 		suggestedDataType = variable.dataType;
 		suggestedUnits = variable.possibleUnits;
-		suggestedTemplates = variable.possibleTemplates;
+		setTemplates()
 		console.log('🚀 ~ onMount ~ variable:', variable);
 
 		// reset & reload validation
@@ -136,6 +136,14 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 		res = suite(variable, '');
 		setValidationState(res);
 	});
+
+	function setTemplates() {
+		suggestedTemplates = $templateStore.filter((t) => variable.possibleTemplates.includes(t.id));
+		suggestedTemplates.forEach((t) => {
+			t.group = "detect"
+		});
+		console.log('🚀 ~ setTemplates ~ suggestedTemplates:', suggestedTemplates);
+	}
 
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
