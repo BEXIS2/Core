@@ -11,24 +11,34 @@ namespace BExIS.App.Bootstrap
             RequestContext requestContext,
             Type controllerType)
         {
+            // Fall 1: Controller-Typ wurde gar nicht gefunden (z.B. /dasisteintest)
             if (controllerType == null)
-                return null;
+            {
+                return null;                    // → MVC zeigt automatisch 404
+            }
 
             try
             {
-                var controller = (IController)IoCFactory.Container.Resolve(controllerType);
+                // Versuch über Unity aufzulösen
+                var controller = IoCFactory.Container.Resolve(controllerType) as IController;
 
-                // Optional: Loggen, falls du willst
-                // Vaiona.Logging.ILogger.Log($"Resolved controller: {controllerType.FullName}");
+                if (controller == null)
+                {
+                    // Sollte eigentlich nie passieren, aber sicher ist sicher
+                    return null;
+                }
 
                 return controller;
             }
             catch (Exception ex)
             {
-                // ← Hier siehst du jetzt den echten Fehler!
-                // z. B. "Unity cannot resolve type SignInManager" oder "IAuthenticationManager not registered"
-                throw new InvalidOperationException(
-                    $"Unity konnte Controller {controllerType.FullName} nicht erstellen.", ex);
+                // WICHTIG: Hier NICHT mehr throwen!
+                // Stattdessen null zurückgeben → MVC behandelt das als 404
+
+                // Optional: Loggen des Fehlers (sehr empfohlen!)
+                // Vaiona.Logging.ILogger.LogError(ex, $"Controller resolution failed for type: {controllerType.FullName}");
+
+                return null;
             }
         }
     }
