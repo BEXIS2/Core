@@ -628,7 +628,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             if (this.IsAccessible("DIM", "Export", "GenerateZip"))
             {
-                var actionresult = this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", version }, { "format", format }, { "withFilter", withFilter }, { "withUnits", withUnits } });
+                var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+                bool useTags = (Boolean)moduleSettings.GetValueByKey("use_tags");
+                bool useMinorTag = (Boolean)moduleSettings.GetValueByKey("use_minor");
+
+                var actionresult = this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", version }, { "format", format }, { "withFilter", withFilter }, { "withUnits", withUnits },{"useTags", useTags}, { "useMinor", useMinorTag} });
 
                 return actionresult;
             }

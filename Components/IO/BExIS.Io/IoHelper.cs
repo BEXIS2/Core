@@ -35,7 +35,7 @@ namespace BExIS.IO
             return Path.Combine(storePath, fileName + extention);
         }
 
-        public static string GetFileName(FileType type, long datasetId, int versionNr, long datastructureId, string title = "")
+        public static string GetFileName(FileType type, long datasetId, int versionNr,  long datastructureId, string title = "", double tagNr = 0, bool useTags = false, bool useMinor = false)
         {
             string appName = GeneralSettings.ApplicationName;
             if (string.IsNullOrEmpty(appName)) appName = "BEXIS2";
@@ -45,41 +45,42 @@ namespace BExIS.IO
 
             string downloadTitle = FileNameUtility.SanitizeFileName(title,'-');
 
-            
+            string versionOrTagLabel = useTags? "t"+tagNr : "v" + versionNr;
 
             // tag vs version?
+            // if tag active but not tag is set, t0
 
             switch (type)
             {
                 case FileType.Metadata:
                     // filename should contain: application name, dataset ID, and version ID
-                    downloadName = string.Format("{0}_{1}_v{2}_metadata", appName, datasetId, versionNr);
+                    downloadName = string.Format("{0}_{1}_{2}_metadata", appName, datasetId, versionOrTagLabel);
                     break;
                 case FileType.MetadataExport:
                     // filename should contain: application name, dataset ID, and version ID
-                    downloadName = string.Format("{0}_{1}_v{2}_metadata_{3}", appName, datasetId, versionNr, title);
+                    downloadName = string.Format("{0}_{1}_{2}_metadata_{3}", appName, datasetId, versionOrTagLabel, title);
                     break;
                 case FileType.DataStructure:
                     downloadName = string.Format("{0}_{1}_data_structure_{2}", appName, datasetId, datastructureId);
                     break;
                 case FileType.PrimaryData:
-                    downloadName = string.Format("{0}_{1}_v{2}_data", appName, datasetId, versionNr);
+                    downloadName = string.Format("{0}_{1}_{2}_data", appName, datasetId, versionOrTagLabel);
 
                     break;
                 case FileType.PrimaryDataFiles:
-                    downloadName = string.Format("{0}_{1}_v{2}_data_{3}", appName, datasetId, versionNr, title);
+                    downloadName = string.Format("{0}_{1}_v{2}_data_{3}", appName, datasetId, versionOrTagLabel, title);
                     break;
                 case FileType.Attachments:
-                    downloadName = string.Format("{0}_{1}_v{2}_attachment_{3}", appName, datasetId, versionNr, title);
+                    downloadName = string.Format("{0}_{1}_{2}_attachment_{3}", appName, datasetId, versionOrTagLabel, title);
                     break;
                 case FileType.Bundle:
-                    downloadName = string.Format("{0}_{1}_v{2}_{3}_{4}", appName, datasetId, versionNr, downloadTitle, downloadDate);
+                    downloadName = string.Format("{0}_{1}_{2}_{3}_{4}", appName, datasetId, versionOrTagLabel, downloadTitle, downloadDate);
                     break;
                 case FileType.Manifest:
-                    downloadName = string.Format("{0}_{1}_v{2}_general_metadata", appName, datasetId, versionNr);
+                    downloadName = string.Format("{0}_{1}_{2}_general_metadata", appName, datasetId, versionOrTagLabel);
                     break;
                 default:
-                    downloadName = string.Format("{0}_{1}_v{2}_{3}", appName, datasetId, versionNr, title);
+                    downloadName = string.Format("{0}_{1}_{2}_{3}", appName, datasetId, versionOrTagLabel, title);
                     break;
             }
 
