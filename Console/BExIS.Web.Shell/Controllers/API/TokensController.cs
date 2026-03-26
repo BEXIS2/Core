@@ -25,13 +25,6 @@ namespace BExIS.Web.Shell.Controllers.API
     /// </summary>
     public class TokensController : ApiController
     {
-        private readonly UserManager _userManager;
-
-        public TokensController(UserManager userManager)
-        {
-            _userManager = userManager;
-        }
-
         // GET api/Token/
         /// <summary>
         /// Get the token based on basic authentication
