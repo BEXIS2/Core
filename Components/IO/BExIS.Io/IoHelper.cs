@@ -68,7 +68,7 @@ namespace BExIS.IO
 
                     break;
                 case FileType.PrimaryDataFiles:
-                    downloadName = string.Format("{0}_{1}_v{2}_data_{3}", appName, datasetId, versionOrTagLabel, title);
+                    downloadName = string.Format("{0}_{1}_{2}_data_{3}", appName, datasetId, versionOrTagLabel, title);
                     break;
                 case FileType.Attachments:
                     downloadName = string.Format("{0}_{1}_{2}_attachment_{3}", appName, datasetId, versionOrTagLabel, title);
