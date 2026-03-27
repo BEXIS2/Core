@@ -1,4 +1,5 @@
-﻿using BExIS.Modules.Sam.UI.Models;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Route;
@@ -24,7 +25,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
         }
 
         // GET: Groups
-        [HttpGet, GetRoute("api/users/{userId}")]
+        [BExISApiAuthorize, HttpGet, GetRoute("api/users/{userId}")]
         public async Task<HttpResponseMessage> GetByIdAsync(long userId)
         {
             try
@@ -42,7 +43,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             }
         }
 
-        [HttpGet, GetRoute("api/users/{userId}/groups")]
+        [BExISApiAuthorize, HttpGet, GetRoute("api/users/{userId}/groups")]
         public async Task<HttpResponseMessage> GetGroupsByUserIdAsync(long userId)
         {
             try
@@ -62,7 +63,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             }
         }
 
-        [HttpGet, GetRoute("api/users")]
+        [BExISApiAuthorize, HttpGet, GetRoute("api/users")]
         public async Task<HttpResponseMessage> GetAsync()
         {
             try
@@ -79,7 +80,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             }
         }
 
-        [HttpPost, PostRoute("api/users")]
+        [BExISApiAuthorize, HttpPost, PostRoute("api/users")]
         public async Task<HttpResponseMessage> PostAsync(CreateUserModel model)
         {
             try
@@ -100,7 +101,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             }
         }
 
-        [HttpPut, PutRoute("api/users/{userId}")]
+        [BExISApiAuthorize, HttpPut, PutRoute("api/users/{userId}")]
         public async Task<HttpResponseMessage> PutByIdAsync(long userId, UpdateUserModel model)
         {
             var user = await _userManager.FindByIdAsync(userId) ?? throw new ArgumentNullException();
@@ -108,7 +109,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
-        [HttpPut, PutRoute("api/users/{userId}/groups")]
+        [BExISApiAuthorize, HttpPut, PutRoute("api/users/{userId}/groups")]
         public async Task<HttpResponseMessage> PutGroupsByUserIdAsync(long userId, List<string> groupNames)
         {
             var user = await _userManager.FindByIdAsync(userId) ?? throw new ArgumentNullException();
@@ -121,7 +122,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
-        [HttpDelete, DeleteRoute("api/users/{userId}")]
+        [BExISApiAuthorize, HttpDelete, DeleteRoute("api/users/{userId}")]
         public async Task<HttpResponseMessage> DeleteByIdAsync(long userId)
         {
             var user = await _userManager.FindByIdAsync(userId) ?? throw new ArgumentNullException();
@@ -130,7 +131,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
-        [HttpDelete, DeleteRoute("api/users/{userId}/groups")]
+        [BExISApiAuthorize, HttpDelete, DeleteRoute("api/users/{userId}/groups")]
         public async Task<HttpResponseMessage> DeleteByIdAsync(long userId, List<string> groupNames)
         {
             var user = await _userManager.FindByIdAsync(userId) ?? throw new ArgumentNullException();

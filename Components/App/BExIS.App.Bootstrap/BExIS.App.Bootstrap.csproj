@@ -141,6 +141,7 @@
     <Compile Include="Helpers\JwtHelper.cs" />
     <Compile Include="IoCControllerFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnityHttpControllerActivator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">

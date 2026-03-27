@@ -31,6 +31,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
+        private readonly UserManager _userManager;
+
+        public MetadataOutController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         // GET: api/Metadata
         /// <summary>
         /// Get list of exiting datasets from which metadata can be loaded.

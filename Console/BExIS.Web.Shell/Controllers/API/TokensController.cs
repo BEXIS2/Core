@@ -1,6 +1,7 @@
 ﻿using BExIS.App.Bootstrap;
 using BExIS.App.Bootstrap.Attributes;
 using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authentication;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Config;
 using BExIS.Utils.Route;
@@ -25,6 +26,13 @@ namespace BExIS.Web.Shell.Controllers.API
     /// </summary>
     public class TokensController : ApiController
     {
+        private readonly UserManager _userManager;
+
+        public TokensController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         // GET api/Token/
         /// <summary>
         /// Get the token based on basic authentication

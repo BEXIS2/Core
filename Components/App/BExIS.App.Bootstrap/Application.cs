@@ -1,6 +1,8 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Ext.Services;
 using BExIS.Utils.Config;
+using Microsoft.Owin;
+using Microsoft.Owin.Host.SystemWeb;
 using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
@@ -10,6 +12,7 @@ using System.Net;
 using System.Threading;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Dispatcher;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Vaiona.IoC;
@@ -19,8 +22,6 @@ using Vaiona.MultiTenancy.Api;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
-using Microsoft.Owin;
-using Microsoft.Owin.Host.SystemWeb;
 
 namespace BExIS.App.Bootstrap
 {
@@ -133,7 +134,26 @@ namespace BExIS.App.Bootstrap
             // This MUST be before IoC initialization.
             AppDomain.CurrentDomain.AssemblyResolve += ModuleManager.ResolveCurrentDomainAssembly;
             initIoC();
-            GlobalConfiguration.Configure(configurationCallback);
+
+            // ================================================
+            // Web API konfigurieren + unseren Activator setzen
+            // ================================================
+            GlobalConfiguration.Configure(config =>
+            {
+                // Deine bestehende Konfiguration (falls du eine Callback-Methode hast)
+                configurationCallback?.Invoke(config);
+
+                // WICHTIG: Hier den Unity Activator für alle ApiController registrieren
+                config.Services.Replace(
+                    typeof(IHttpControllerActivator),
+                    new UnityHttpControllerActivator()
+                );
+
+                // Optional: Vollständiger Dependency Resolver (für Filter, etc.)
+                // config.DependencyResolver = new UnityDependencyResolver(IoCFactory.Container);
+            });
+
+            //GlobalConfiguration.Configure(configurationCallback);
 
             // This method initializes the registered modules. It MUST be before initializing the persistence!
             initModules();

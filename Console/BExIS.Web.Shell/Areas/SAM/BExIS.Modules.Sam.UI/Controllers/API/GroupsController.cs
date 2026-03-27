@@ -1,4 +1,5 @@
-﻿using BExIS.Modules.Sam.UI.Models;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Route;
@@ -22,7 +23,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
         }
 
         // GET: Groups
-        [HttpGet, GetRoute("api/groups/{groupId}")]
+        [BExISApiAuthorize, HttpGet, GetRoute("api/groups/{groupId}")]
         public async Task<HttpResponseMessage> GetById(long groupId)
         {
             try
@@ -40,7 +41,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             }
         }
 
-        [HttpGet, GetRoute("api/groups")]
+        [BExISApiAuthorize, HttpGet, GetRoute("api/groups")]
         public async Task<HttpResponseMessage> Get()
         {
             try
@@ -57,7 +58,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             }
         }
 
-        [HttpPost, PostRoute("api/groups")]
+        [BExISApiAuthorize, HttpPost, PostRoute("api/groups")]
         public async Task<HttpResponseMessage> Post(CreateGroupModel model)
         {
             try
@@ -78,7 +79,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             }
         }
 
-        [HttpPut, PutRoute("api/groups/{groupId}")]
+        [BExISApiAuthorize, HttpPut, PutRoute("api/groups/{groupId}")]
         public async Task<HttpResponseMessage> PutByIdAsync(long groupId, UpdateGroupModel model)
         {
             var group = await _groupManager.FindByIdAsync(groupId) ?? throw new ArgumentNullException();
@@ -91,7 +92,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
-        [HttpDelete, DeleteRoute("api/groups/{groupId}")]
+        [BExISApiAuthorize, HttpDelete, DeleteRoute("api/groups/{groupId}")]
         public async Task<HttpResponseMessage> DeleteByIdAsync(long groupId)
         {
             var deleted = _groupManager.Delete(groupId);
