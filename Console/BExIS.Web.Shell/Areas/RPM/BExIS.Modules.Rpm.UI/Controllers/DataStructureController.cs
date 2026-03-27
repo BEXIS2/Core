@@ -134,7 +134,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             ViewData["enforcePrimaryKey"] = enforcePrimaryKey;
 
             bool showDarwinCoreValidation = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("showDarwinCoreValidation");
-            ViewData["showDarwinCoreValidation"] = enforcePrimaryKey;
+            ViewData["showDarwinCoreValidation"] = showDarwinCoreValidation;
 
             return View("Create");
         }
@@ -169,7 +169,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             ViewData["enforcePrimaryKey"] = enforcePrimaryKey;
 
             bool showDarwinCoreValidation = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("showDarwinCoreValidation");
-            ViewData["showDarwinCoreValidation"] = enforcePrimaryKey;
+            ViewData["showDarwinCoreValidation"] = showDarwinCoreValidation;
 
             ViewData["dataExist"] = structureHelper.InUseAndDataExist(structureId);
 

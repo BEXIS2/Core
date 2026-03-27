@@ -43,9 +43,9 @@
 		}
 	}
 </script>
+{#if dwcExtensions && isActive}
 
 <div class="flex items-end gap-2 mt-4 mb-2 bg-gray-50 p-2 rounded-md border border-gray-200">
-	{#if dwcExtensions && isActive}
 		<MultiSelect
 			id="check_dwc"
 			title="Check Darwin Core Requirements"
@@ -76,5 +76,6 @@
 				<div><span class="chip variant-filled-success">All required fields are set.</span></div>
 			{/if}
 		{/if}
-	{/if}
 </div>
+	{/if}
+
