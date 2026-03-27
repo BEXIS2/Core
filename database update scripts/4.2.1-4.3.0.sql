@@ -5,6 +5,8 @@ INSERT INTO public.versions(
 	versionno, extra, module, value, date)
 	VALUES (1, null, 'Shell', '4.3.0',NOW());
 
+
+--- operations	for new features
 INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
 SELECT 1, NULL, 'DDM', 'metadiff', '*', null 
 WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DDM' AND controller='metadiff');
@@ -28,5 +30,9 @@ WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DDM' AND control
 INSERT INTO public.operations (versionno, extra, module, controller, action, featureref)
 SELECT 1, NULL, 'DCM', 'componentconfig', '*', null 
 WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DCM' AND controller='componentconfig');
+
+-- add order column in entity template table
+ALTER TABLE entitytemplates 
+ADD COLUMN "ordernr" INTEGER;
 
 commit;

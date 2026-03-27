@@ -462,7 +462,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<EntityTemplateModel> entityTemplateModels = new List<EntityTemplateModel>();
             using (var entityTemplateManager = new EntityTemplateManager())
             {
-                foreach (var e in entityTemplateManager.Repo.Query(e=>e.Activated).ToList())
+                foreach (var e in entityTemplateManager.Repo.Query(e=>e.Activated).OrderBy(e=>e.Order).ToList())
                 {
                     entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e, false));
                 }

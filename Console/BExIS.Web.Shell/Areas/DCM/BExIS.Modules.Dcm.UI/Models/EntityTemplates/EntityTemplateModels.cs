@@ -22,6 +22,11 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
         public string Description { get; set; }
 
         /// <summary>
+        /// Order of the Entity Template in the list of templates
+        /// </summary>
+        public int Order { get; set; }
+
+        /// <summary>
         /// Entity
         /// </summary>
         public ListItem EntityType { get; set; }
@@ -101,6 +106,7 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
 
             LinkedSubjects = new List<ListItem>();
             InUse = false;
+            Order = 0;
         }
 
         public class KvP

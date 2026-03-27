@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using Telerik.Web.Mvc.Extensions;
 using Vaiona.Web.Extensions;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -49,7 +50,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<EntityTemplateModel> entityTemplateModels = new List<EntityTemplateModel>();
             using (var entityTemplateManager = new EntityTemplateManager())
             {
-                foreach (var e in entityTemplateManager.Repo.Get())
+                var l = entityTemplateManager.Repo.Query().OrderBy(e => e.Order).ToList();
+
+                foreach (var e in l)
                 {
                     entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e));
                 }
