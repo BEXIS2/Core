@@ -160,6 +160,9 @@ namespace BExIS.App.Bootstrap.Attributes
             }
             catch (Exception ex)
             {
+                actionContext.Response = new HttpResponseMessage(HttpStatusCode.Forbidden);
+                actionContext.Response.Content = new StringContent("The system denied the access.");
+                return;
             }
         }
 

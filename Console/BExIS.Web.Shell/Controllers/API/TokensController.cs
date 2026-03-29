@@ -38,7 +38,7 @@ namespace BExIS.Web.Shell.Controllers.API
         /// Get the token based on basic authentication
         /// </summary>
         /// <returns>Token</returns>
-        [HttpGet, GetRoute("api/tokens"), BExISApiAuthorize]
+        [BExISApiAuthorize, HttpGet, GetRoute("api/tokens")]
         public async Task<HttpResponseMessage> Get()
         {
             try
@@ -70,7 +70,7 @@ namespace BExIS.Web.Shell.Controllers.API
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
-        [HttpPost, PostRoute("api/tokens/verify"), BExISApiAuthorize]
+        [BExISApiAuthorize, HttpPost, PostRoute("api/tokens/verify")]
         public async Task<HttpResponseMessage> Verify(string token)
         {
             try
