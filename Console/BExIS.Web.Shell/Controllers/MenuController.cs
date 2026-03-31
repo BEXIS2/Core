@@ -25,13 +25,15 @@ namespace BExIS.Web.Shell.Controllers
         public JsonResult Index()
         {
             string userName = "";
+            string fullName = "";
             bool isAuthenticated = false;
 
             if (HttpContext.User != null && !string.IsNullOrEmpty(HttpContext.User.Identity.Name))
             {
                 var user = _userManager.FindByNameAsync(HttpContext.User.Identity.Name).Result;
 
-                userName = user.FullName ?? user.UserName;
+                userName = user.UserName;
+                fullName = user.FullName ?? user.UserName;
                 isAuthenticated = true;
             }
             else
@@ -42,6 +44,7 @@ namespace BExIS.Web.Shell.Controllers
                 if (user != null)
                 {
                     userName = user.Name;
+                    fullName = user.FullName ?? user.UserName;
                     isAuthenticated = true;
                 }
             }
@@ -71,7 +74,7 @@ namespace BExIS.Web.Shell.Controllers
             MenuHelper.AdditionalHelpBar(menu.LaunchBar.FirstOrDefault(i =>i.Title.Equals("Help")));
 
 
-            menu.AccountBar = MenuHelper.AccountBar(isAuthenticated, userName);
+            menu.AccountBar = MenuHelper.AccountBar(isAuthenticated, fullName);
 
             if (Session.GetTenant().ExtendedMenus != null)
                 menu.Extended = MenuHelper.ExtendedMenu(Session.GetTenant().ExtendedMenus.Element("ExtendedMenu"));
