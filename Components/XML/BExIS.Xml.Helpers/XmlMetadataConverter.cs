@@ -123,8 +123,8 @@ namespace BExIS.Xml.Helpers
                         // complex stuff
                         // add all children nodes
                         JObject complex = new JObject();
-                        setReference(complex, (XmlElement)tCHild, includeEmpty);
-                        setParameters(complex, (XmlElement)tCHild, includeEmpty);
+                        //setReference(complex, (XmlElement)tCHild, includeEmpty);
+                        //setParameters(complex, (XmlElement)tCHild, includeEmpty);
 
                         for (int i = 0; i < tCHild.ChildNodes.Count; i++)
                         {
@@ -144,6 +144,13 @@ namespace BExIS.Xml.Helpers
                         }
 
                         if (!complex.Children().Any()) return null;
+                        else
+                        {
+                            setReference(complex, (XmlElement)tCHild, includeEmpty);
+                            setParameters(complex, (XmlElement)tCHild, includeEmpty);
+
+                        }
+
 
                         if (getMaxCardinality(usage) <= 1) return complex;
                         else
@@ -218,9 +225,7 @@ namespace BExIS.Xml.Helpers
                             // complex stuff
                             // add all children nodes
                             JObject complex = new JObject();
-                            setReference(complex, (XmlElement)tCHild, includeEmpty);
-                            setParameters(complex, (XmlElement)tCHild, includeEmpty);
-
+                     
                             for (int i = 0; i < tCHild.ChildNodes.Count; i++)
                             {
                                 XmlNode child = tCHild.ChildNodes[i];
@@ -242,6 +247,13 @@ namespace BExIS.Xml.Helpers
                             }
 
                             if (!complex.Children().Any()) return null;
+                            else
+                            {
+                                setReference(complex, (XmlElement)tCHild, includeEmpty);
+                                setParameters(complex, (XmlElement)tCHild, includeEmpty);
+
+                            }
+
 
                             if (getMaxCardinality(usage) <= 1) return complex;
                             else
@@ -359,7 +371,7 @@ namespace BExIS.Xml.Helpers
         { 
             if(element.HasAttributes)
             {
-                List<String> ignore = new List<String>() { "type", "ref", "id", "roleId", "number", "name" }; // system attributes
+                List<String> ignore = new List<String>() { "type", "ref", "id", "roleId", "number", "name","partyid"  }; // system attributes
 
                 foreach (XmlAttribute attr in element.Attributes)
                 {
