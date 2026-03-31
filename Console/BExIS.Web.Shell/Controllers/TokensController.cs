@@ -37,6 +37,9 @@ namespace BExIS.Web.Shell.Controllers
             {
                 var jwtConfiguration = GeneralSettings.JwtConfiguration;
 
+                if (!jwtConfiguration.IsActive)
+                    return View("NotAuthorized");
+
                 long userId = 0;
                 long.TryParse(this.User.Identity.GetUserId(), out userId);
 
@@ -81,6 +84,9 @@ namespace BExIS.Web.Shell.Controllers
             try
             {
                 var jwtConfiguration = GeneralSettings.JwtConfiguration;
+
+                if (!jwtConfiguration.IsActive)
+                    return View("NotAuthorized");
 
                 var user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(HttpContext).Result;
 
@@ -141,6 +147,9 @@ namespace BExIS.Web.Shell.Controllers
             try
             {
                 var jwtConfiguration = GeneralSettings.JwtConfiguration;
+
+                if (!jwtConfiguration.IsActive)
+                    return Json("NotAuthorized", JsonRequestBehavior.AllowGet);
 
                 var user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(HttpContext).Result;
                 if (user != null)

@@ -14,16 +14,17 @@
       "key": "jwt",
       "title": "JWT",
       "value": {
-        "validateAudience": false,
-        "validateIssuer": false,
+        "isActive": false,
+        "validateAudience": true,
+        "validateIssuer": true,
         "validAudience": "http://localhost:3000",
         "validIssuer": "https://localhost:7041",
-        "issuerSigningKey": "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7Xzyr",
-        "validateLifetime": false,
+        "issuerSigningKey": "",
+        "validateLifetime": true,
         "validLifetime": 1
       },
       "type": "JSON",
-      "description": "JWT settings. <br><b>Do not change any keys!</b>"
+      "description": "JWT settings. You need to set/change all necessary properties - e.g. \"issuerSigningKey\", \"validAudience\" and \"validIssuer\"."
     },
     {
       "key": "smtp",

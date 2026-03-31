@@ -28,12 +28,12 @@
         <div id="navbarCollapse" class="collapse navbar-collapse">
             @*menubar*@
             <ul class="nav navbar-nav">
-                @Html.MenuBar(User.GetDisplayName())
+                @Html.MenuBar(User.Identity.Name)
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
                 @Html.LaunchBar()
-                @Html.Settings(User.GetDisplayName())
+                @Html.Settings(User.Identity.Name)
             </ul>
 
             @* Move this to Html.LaunchBar. Urls should come from Shell not SAM. MyAccount can go to index. unify login/logoff/logout, etc. *@
