@@ -32,9 +32,12 @@ namespace BExIS.Web.Shell.Controllers
             {
                 var user = _userManager.FindByNameAsync(HttpContext.User.Identity.Name).Result;
 
-                userName = user.UserName;
-                fullName = user.FullName ?? user.UserName;
-                isAuthenticated = true;
+                if(user != null)
+                {
+                    userName = user.UserName;
+                    fullName = user.FullName ?? user.UserName;
+                    isAuthenticated = true;
+                }
             }
             else
             {
