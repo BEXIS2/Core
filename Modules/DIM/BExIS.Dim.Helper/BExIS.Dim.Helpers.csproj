@@ -150,8 +150,8 @@
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="Vaelastrasz.Library, Version=6.1.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Vaelastrasz.Library.6.1.7\lib\netstandard2.0\Vaelastrasz.Library.dll</HintPath>
+    <Reference Include="Vaelastrasz.Library, Version=6.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Vaelastrasz.Library.6.2.0\lib\netstandard2.0\Vaelastrasz.Library.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
