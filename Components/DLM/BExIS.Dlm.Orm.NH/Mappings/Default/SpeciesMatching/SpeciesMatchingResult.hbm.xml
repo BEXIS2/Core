@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.SpeciesMatching">
+
+	<class name="SpeciesMatchingResult" table="smm_species_matching_result" lazy="true">
+		<id name="Id" column="id" type="Int64">
+			<generator class="native"/>
+		</id>
+
+		<property name="OriginalName" column="original_name" type="string" not-null="false" />
+
+		<property name="CleanedName" column="cleaned_name" type="string" not-null="false" />
+
+		<property name="EditedName" column="edited_name" type="string" not-null="false" />
+
+		<property name="MatchedName" column="matched_name" type="string" not-null="false" />
+
+		<property name="Status" column="status" type="string" not-null="false" />
+
+		<property name="MatchType" column="match_type" type="string" not-null="false" />
+
+		<property name="TimestampMatch" column="timestamp_match" type="DateTime" not-null="false" />
+
+		<property name="MatchSource" column="match_source" type="string" not-null="false" />
+
+		<property name="MatchSourceVersion" column="match_source_version" type="string" not-null="false" />
+
+		<property name="ConfirmedByUser" column="confirmed_by_user" type="bool" not-null="false" />
+
+		<!-- Mapping entity associations -->
+		
+		<!--Dataset-->
+		<many-to-one name="Dataset" class="BExIS.Dlm.Entities.Data.Dataset" not-null="false" column="DatasetRef" />
+		
+		<!--Creator-->
+		<many-to-one name="Creator" class="BExIS.Security.Entities.Subjects.User" not-null="false" column="UserRef" />
+
+		<!--DatasetVersion (does not work this way ... Error: refers to unmapped ...-->
+		<!--
+		<many-to-one class="DatasetVersion" name="DatasetVersion" column="DatasetVersionRef">
+		</many-to-one>
+		-->
+		
+	</class>
+
+</hibernate-mapping>

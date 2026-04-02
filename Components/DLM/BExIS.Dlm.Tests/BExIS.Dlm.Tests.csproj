@@ -227,6 +227,7 @@
     <Compile Include="Services\Party\PartyManagerTests.cs" />
     <Compile Include="Services\Party\PartyRelationshipTypeManagerTest.cs" />
     <Compile Include="Services\Party\PartyTypeManagerTests.cs" />
+    <Compile Include="Services\SpeciesMatching\SpeciesMatchingResultManagerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
