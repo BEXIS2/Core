@@ -1,10 +1,7 @@
 ﻿using BExIS.Security.Entities.Authentication;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
-using BExIS.Utils.NH.Querying;
 using Microsoft.AspNet.Identity;
-using NHibernate;
-using Owin.Security.Providers.Orcid.Message;
 using System;
 using System.Collections.Generic;
 using System.Data;

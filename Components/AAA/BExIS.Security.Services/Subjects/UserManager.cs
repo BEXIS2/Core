@@ -1,6 +1,8 @@
 ﻿using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authentication;
 using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Config;
+using BExIS.Utils.Config.Configurations;
 using BExIS.Utils.NH.Querying;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -16,23 +18,26 @@ namespace BExIS.Security.Services.Subjects
 {
     public class UserManager : UserManager<User, long>
     {
+        private SecurityConfiguration _securityConfiguration;
         public UserManager(IUserStore<User, long> store): base(store)
         {
+            _securityConfiguration = GeneralSettings.SecurityConfiguration;
+
             // Configure validation logic for usernames
             UserValidator = new UserValidator<User, long>(this)
             {
-                AllowOnlyAlphanumericUserNames = false,
-                RequireUniqueEmail = true
+                AllowOnlyAlphanumericUserNames = _securityConfiguration.UserValidatorConfiguration.AllowOnlyAlphanumericUserNames,
+                RequireUniqueEmail = _securityConfiguration.UserValidatorConfiguration.RequireUniqueEmail
             };
 
             // Configure validation logic for passwords
             PasswordValidator = new PasswordValidator
             {
-                RequiredLength = 12,
-                RequireNonLetterOrDigit = true,
-                RequireDigit = true,
-                RequireLowercase = true,
-                RequireUppercase = true
+                RequiredLength = _securityConfiguration.PasswordValidatorConfiguration.RequiredLength,
+                RequireNonLetterOrDigit = _securityConfiguration.PasswordValidatorConfiguration.RequireNonLetterOrDigit,
+                RequireDigit = _securityConfiguration.PasswordValidatorConfiguration.RequireDigit,
+                RequireLowercase = _securityConfiguration.PasswordValidatorConfiguration.RequireLowercase,
+                RequireUppercase = _securityConfiguration.PasswordValidatorConfiguration.RequireUppercase
             };
 
             // Configure user lockout defaults

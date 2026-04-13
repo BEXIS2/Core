@@ -124,6 +124,14 @@ namespace BExIS.Utils.Config
             }
         }
 
+        public static SecurityConfiguration SecurityConfiguration
+        {
+            get
+            {
+                return JsonConvert.DeserializeObject<SecurityConfiguration>(GetValueByKey("security").ToString());
+            }
+        }
+
         public static JwtConfiguration JwtConfiguration
         {
             get
