@@ -38,6 +38,18 @@ namespace BExIS.Utils.Config
             }
         }
 
+        public SecurityConfiguration GetSecurityConfiguration()
+        {
+            try
+            {
+                return GetValueByKey<SecurityConfiguration>("security");
+            }
+            catch (Exception ex)
+            {
+                return new SecurityConfiguration();
+            }
+        }
+
         public JwtConfiguration GetJwtConfiguration()
         {
             try
