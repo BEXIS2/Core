@@ -1,9 +1,9 @@
 import { Api } from '@bexis2/bexis2-core-ui';
 import type { ServiceResult } from '$lib/types/types';
 
-export const loadDatasetProgress = async (datasetId: number): Promise<ServiceResult<any>> => {
+export const loadDatasetProgress = async (datasetId: number, versionId: number): Promise<ServiceResult<any>> => {
     try {
-        const response = await Api.get(`/smm/species/ViewProgress?datasetId=${datasetId}`);
+        const response = await Api.get(`/smm/species/ViewProgress?datasetId=${datasetId}&versionId=${versionId}`);
 
         return { success: true, data: response.data };
     } catch (error: any) {
@@ -11,9 +11,9 @@ export const loadDatasetProgress = async (datasetId: number): Promise<ServiceRes
     }
 };
 
-export const tailorDataset = async (datasetId: number): Promise<ServiceResult<any>> => {
+export const tailorDataset = async (datasetId: number, versionId: number): Promise<ServiceResult<any>> => {
     try {
-        const response = await Api.post('/smm/species/tailor', { datasetId });
+        const response = await Api.post('/smm/species/Tailor', { datasetId, versionId });
 
         return { success: true, data: response.data };
     } catch (error: any) {
@@ -22,9 +22,9 @@ export const tailorDataset = async (datasetId: number): Promise<ServiceResult<an
     }
 }
 
-export const genNewMatchFile = async (datasetId: number): Promise<ServiceResult<any>> => {
+export const genNewMatchFile = async (datasetId: number, versionId: number): Promise<ServiceResult<any>> => {
     try {
-        const response = await Api.post('/smm/species/GenNewMatchInputFile', { datasetId });
+        const response = await Api.post('/smm/species/GenNewMatchInputFile', { datasetId, versionId });
 
         return { success: true, data: response.data };
     } catch (error: any) {
@@ -32,9 +32,9 @@ export const genNewMatchFile = async (datasetId: number): Promise<ServiceResult<
     }
 }
 
-export const matchNextFile = async (datasetId: number): Promise<ServiceResult<any>> => {
+export const matchNextFile = async (datasetId: number, versionId: number): Promise<ServiceResult<any>> => {
     try {
-        const response = await Api.post('/smm/species/MatchNextFile', { datasetId });
+        const response = await Api.post('/smm/species/MatchNextFile', { datasetId, versionId });
 
         return { success: true, data: response.data };
     } catch (error: any) {

@@ -6,6 +6,7 @@ import { persisted } from "./persist";
  */
 export const mappingSelection = persisted('mappingSelection', {
     datasetId: -1,
-    datastructureId: -1
+    datastructureId: -1,
+    versionId: -1
 });
 

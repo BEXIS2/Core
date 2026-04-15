@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { ErrorMessage, Page, pageContentLayoutType, positionType, Spinner } from "@bexis2/bexis2-core-ui";
-	import { load } from "./services";
 	import type { SpeciesModel } from "./types";
 	import { Table } from '@bexis2/bexis2-core-ui';
 	import type { TableConfig } from '@bexis2/bexis2-core-ui';

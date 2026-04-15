@@ -1,17 +1,18 @@
 <script lang="ts">
 	import { ErrorMessage, Page, pageContentLayoutType, positionType, Spinner } from "@bexis2/bexis2-core-ui";
 	import { Table } from '@bexis2/bexis2-core-ui';
-    import { loadMatchingResult } from "./services";
+    import { loadMatchingResult, submitAcceptedIds } from "./services";
     import { mappingSelection } from "$lib/stores/selectionStore";
-    import type { CLBMatchingResult } from "$lib/types/types";
+    import type { AcceptMatchesRequest, CLBMatchingResult } from "$lib/types/types";
     import type { TableConfig } from "@bexis2/bexis2-core-ui";
     import AcceptedTableOptions from "./AcceptedTableOptions.svelte";
     import { resultStore, acceptedStore } from "./data";
 	import ResultTableOptions from "./ResultTableOptions.svelte";
+	import { get } from "svelte/store";
 
     async function load(): Promise<CLBMatchingResult[]> {
         // TODO: stepId
-        var response = await loadMatchingResult($mappingSelection.datasetId, 0);
+        var response = await loadMatchingResult($mappingSelection.datasetId, $mappingSelection.versionId, 0);
         if (!response.success) {
             throw new Error(response.error);
         } else {
@@ -24,8 +25,30 @@
     }
 
     async function submitAccepted() {
+		const payload = getAcceptedMatchIdsPayload();
+		const response = await submitAcceptedIds(payload);
 
+		if (!response.success) {
+            console.log(response);
+        } else {
+			console.log(response);
+        }
     }
+
+	function getAcceptedMatchIdsPayload(): AcceptMatchesRequest {
+		return {
+			datasetId: $mappingSelection.datasetId,
+			versionId: $mappingSelection.versionId,
+			stepId: $mappingSelection.stepId,
+			matchIds: getMatchIds()
+		}
+	}
+
+	function getMatchIds(): string[] {
+		const items = get(acceptedStore);
+
+		return items.map(item => item.original_ID);
+	}
 
 	const resultTableConfig: TableConfig<CLBMatchingResult> = {						
 		id: 'resultRows',						

@@ -25,6 +25,19 @@ namespace BExIS.Modules.Smm.UI.Models
         }
     }
 
+    public class SubmitHeaderMappingsRequest
+    {
+        [JsonProperty("data")]
+        public HeaderMappingsModel Data { get; set; }
+
+        [JsonProperty("versionId")]
+        public long VersionId { get; set; }
+
+        [JsonProperty("datasetId")]
+        [Range(1, long.MaxValue, ErrorMessage = "DatasetId must be provided and greater than 0.")]
+        public long DatasetId { get; set; }
+    }
+
     public class MappingEntry
     {
         public long VariableId { get; set; }

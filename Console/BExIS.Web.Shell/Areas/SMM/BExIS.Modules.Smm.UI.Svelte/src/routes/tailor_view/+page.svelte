@@ -16,7 +16,7 @@
 
     onMount(() => {
         async function test() {
-            var responseData = await loadResult($mappingSelection.datasetId);
+            var responseData = await loadResult($mappingSelection.datasetId, $mappingSelection.versionId);
             console.log(responseData);
             let filteredData = responseData.message.map(({ creator, dataset, extra, versionNo, ...keep }) => keep);
             tailorResultStore.update(() => {

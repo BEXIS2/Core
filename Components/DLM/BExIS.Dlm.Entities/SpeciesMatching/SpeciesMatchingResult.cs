@@ -8,16 +8,13 @@ namespace BExIS.Dlm.Entities.SpeciesMatching
     public class SpeciesMatchingResult : BaseEntity
     {
 
-        // original unchanged name submitted for matching
+        // original unchanged name (used for matching if EditedName is empty, and for display purposes)
         public virtual string OriginalName { get; set; }
 
-        // cleaned name after preprocessing (e.g. trimming, removing special characters, etc.)
-        public virtual string CleanedName { get; set; }
-
-        // edited name after manual corrections (if any)
+        // edited name after data cleaning + manual corrections (used for matching)
         public virtual string EditedName { get; set; }
 
-        // matched name from the external source
+        // matched name from the external source (the result)
         public virtual string MatchedName { get; set; }
 
         // taxonomic status of the matched name (e.g. accepted, synonym, etc.)
@@ -41,11 +38,7 @@ namespace BExIS.Dlm.Entities.SpeciesMatching
         // reference to the dataset where the original name was taken from
         public virtual Dataset Dataset { get; set; }
 
-        // reference to the specific version of the dataset
-        // TODO: get this to work (maybe as a normal field instead of many-to-one relation)
-        //public virtual DatasetVersion DatasetVersion { get; set; }
-
-        // reference to the user who owns this matching result
-        public virtual User Creator { get; set; }
+        // VersionId + Dataset make the unique key for the matching result
+        public virtual long DatasetVersionId { get; set; }
     }
 }

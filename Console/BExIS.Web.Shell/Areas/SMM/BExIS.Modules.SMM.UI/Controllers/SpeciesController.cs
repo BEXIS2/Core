@@ -1,5 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
+using BExIS.Dim.Entities.Export.GBIF;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.SpeciesMatching;
@@ -35,6 +36,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Mvc.Modularity;
 
 
 namespace BExIS.Modules.Smm.UI.Controllers
@@ -60,8 +62,8 @@ namespace BExIS.Modules.Smm.UI.Controllers
         public JsonResult GetMyDatasetsJson()
         {
             var result = new List<object>();
-            const string entityname = "Dataset";
-            const RightType rightType = RightType.Write;
+            const string EntityName = "Dataset";
+            const RightType RightTypeCondition = RightType.Write;
 
             var user = ResolveRouteUser(out ActionResult userError);
             if (user == null)
@@ -79,42 +81,135 @@ namespace BExIS.Modules.Smm.UI.Controllers
             using (var speciesMatchingResultManager = new SpeciesMatchingResultManager())
             {
                 // Find entity (defensive)
-                var entity = entityManager.FindByName(entityname);
+                var entity = entityManager.FindByName(EntityName);
                 if (entity == null)
                 {
-                    return JsonWithStatus(new { error = $"Entity '{entityname}' not found." }, HttpStatusCode.Conflict, JsonRequestBehavior.AllowGet);
+                    return JsonWithStatus(new { error = $"Entity '{EntityName}' not found." }, HttpStatusCode.Conflict, JsonRequestBehavior.AllowGet);
                 }
 
                 // collect dataset ids the current user has the requested right for
-                List<long> datasetIds = entityPermissionManager.GetKeys(username, entityname, typeof(Dataset), rightType).Result ?? new List<long>();
-
-                // load latest versions for those dataset ids
-                List<DatasetVersion> versions = datasetManager.GetDatasetLatestVersions(datasetIds, includeCheckouts: true);
+                List<long> datasetIds = entityPermissionManager.GetKeys(username, EntityName, typeof(Dataset), RightTypeCondition).Result ?? new List<long>();
 
                 var smrmRepo = speciesMatchingResultManager.GetBulkUnitOfWork().GetReadOnlyRepository<SpeciesMatchingResult>();
 
-                foreach (var dsv in versions)
+                // For each dataset id retrieve all versions (and working copy if present) and include version id and version number
+                foreach (var dsId in datasetIds)
                 {
-                    bool isTabular = dsv.Dataset.DataStructure?.Self is StructuredDataStructure;
-                    bool metadataComplete = false;
-                    if (dsv.StateInfo != null)
+                    try
                     {
-                        metadataComplete = string.Equals(dsv.StateInfo.State, DatasetStateInfo.Valid.ToString(), StringComparison.OrdinalIgnoreCase);
+                        var versions = datasetManager.GetDatasetVersions(dsId) ?? new List<DatasetVersion>();
+
+                        if (versions == null || versions.Count == 0) continue;
+
+                        // choose a representative version for dataset-level info (prefer latest by timestamp)
+                        var representative = versions.OrderByDescending(v => v.Timestamp).First();
+
+                        bool isTabular = representative.Dataset.DataStructure?.Self is StructuredDataStructure;
+
+                        // we only consider tabular datasets
+                        if (!isTabular) continue;
+
+                        bool metadataComplete = false;
+                        if (representative.StateInfo != null)
+                        {
+                            metadataComplete = string.Equals(representative.StateInfo.State, DatasetStateInfo.Valid.ToString(), StringComparison.OrdinalIgnoreCase);
+                        }
+
+                        bool hasSpeciesMatches = smrmRepo.Query().Any(r => r.Dataset.Id == dsId);
+
+                        // build versions info list
+                        var orderedVersions = versions.OrderBy(v => v.Timestamp).ToList();
+
+                        List<object> versionsInfo;
+
+                        if (!hasSpeciesMatches)
+                        {
+                            // If there are no species matches for this dataset at all, only include the latest version info
+                            var v = orderedVersions.Last();
+                            versionsInfo = new List<object>
+                            {
+                                new
+                                {
+                                    VersionId = v.Id,
+                                    VersionNr = datasetManager.GetDatasetVersionNr(v),
+                                    Timestamp = v.Timestamp,
+                                    Status = v.Status.ToString(),
+                                    VersionName = v.VersionName ?? string.Empty,
+                                    HasMatchingProgress = false
+                                }
+                            };
+                        }
+                        else
+                        {
+                            // Iterate from latest to oldest and apply header-mapping rules
+                            var descVersions = orderedVersions.OrderByDescending(v => v.Timestamp).ToList();
+                            var filtered = new List<object>();
+
+                            for (int i = 0; i < descVersions.Count; i++)
+                            {
+                                var v = descVersions[i];
+                                bool isLatest = (i == 0);
+
+                                bool hasHeader = ProgressHelper.HasHeaderMappings(dsId, v.Id);
+
+                                if (!hasHeader)
+                                {
+                                    if (isLatest)
+                                    {
+                                        // keep latest but mark matching progress as false
+                                        filtered.Add(new
+                                        {
+                                            VersionId = v.Id,
+                                            VersionNr = datasetManager.GetDatasetVersionNr(v),
+                                            Timestamp = v.Timestamp,
+                                            Status = v.Status.ToString(),
+                                            VersionName = v.VersionName ?? string.Empty,
+                                            HasMatchingProgress = false
+                                        });
+                                    }
+                                    else
+                                    {
+                                        // drop this older version without header mappings
+                                        continue;
+                                    }
+                                }
+                                else
+                                {
+                                    // keep version and mark that header mappings exist
+                                    filtered.Add(new
+                                    {
+                                        VersionId = v.Id,
+                                        VersionNr = datasetManager.GetDatasetVersionNr(v),
+                                        Timestamp = v.Timestamp,
+                                        Status = v.Status.ToString(),
+                                        VersionName = v.VersionName ?? string.Empty,
+                                        HasMatchingProgress = true
+                                    });
+                                }
+                            }
+
+                            // filtered currently in descending order (latest first). Return ascending to keep previous ordering.
+                            versionsInfo = filtered.OrderBy(v => ((DateTime)((dynamic)v).Timestamp)).ToList<object>();
+                        }
+
+                        result.Add(new
+                        {
+                            Id = representative.Dataset.Id,
+                            Title = representative.Title ?? string.Empty,
+                            Abstract = representative.Description ?? string.Empty,
+                            IsTabular = isTabular,
+                            MetadataComplete = metadataComplete,
+                            HasMatchingProgress = hasSpeciesMatches,
+                            DataStructureId = representative.Dataset.DataStructure?.Id,
+                            Versions = versionsInfo
+                        });
                     }
-
-                    bool hasSpeciesMatches = smrmRepo.Query().Any(r => r.Dataset.Id == dsv.Dataset.Id);
-                    bool hasHeaderMappings = ProgressHelper.HasHeaderMappings(dsv.Dataset.Id);
-
-                    result.Add(new
+                    catch (Exception ex)
                     {
-                        Id = dsv.Dataset.Id,
-                        Title = dsv.Title ?? string.Empty,
-                        Abstract = dsv.Description ?? string.Empty,
-                        IsTabular = isTabular,
-                        MetadataComplete = metadataComplete,
-                        HasMatchingProgress = hasSpeciesMatches || hasHeaderMappings,
-                        DataStructureId = dsv.Dataset.DataStructure?.Id
-                    });
+                        Debug.WriteLine("Error while retrieving versions for dataset " + dsId + ": " + ex.Message);
+                        // ignore dataset on error and continue with others
+                        continue;
+                    }
                 }
             }
 
@@ -123,13 +218,17 @@ namespace BExIS.Modules.Smm.UI.Controllers
 
         [JsonNetFilter]
         [HttpPost]
-        public JsonResult SubmitHeaderMappings(HeaderMappingsModel data)
+        public JsonResult SubmitHeaderMappings(SubmitHeaderMappingsRequest request)
         {
             // basic model binding validation: ensure payload present and DatasetId provided (>0)
-            if (data == null)
+            if (request.Data == null)
             {
                 return JsonWithStatus(new { success = false, message = "Request body missing or invalid." }, HttpStatusCode.BadRequest);
             }
+
+            var data = request.Data;
+            var datasetId = data.DatasetId;
+            var versionId = request.VersionId;
 
             if (!ModelState.IsValid)
             {
@@ -138,15 +237,24 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, message = "Validation failed." }, HttpStatusCode.BadRequest);
             }
 
-            long datasetId = data.DatasetId;
-
             var user = ResolveUserAndRights(datasetId, out ActionResult errorResult);
             if (user == null)
             {
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Authentification error." }, HttpStatusCode.Unauthorized);
             }
 
-            var success = ProgressHelper.CreateHeaderMappingsFile(data, datasetId, out string errorMessage);
+            if (ProgressHelper.HasHeaderMappings(datasetId, versionId))
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Header Mappings already exist and cannot be directly overwritten." }, HttpStatusCode.InternalServerError);
+            }
+
+            var folderSuccess = ProgressHelper.CreateMatchingFolder(datasetId, versionId);
+            if (!folderSuccess)
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Failed to create matching folder." }, HttpStatusCode.InternalServerError);
+            }
+
+            var success = ProgressHelper.CreateHeaderMappingsFile(data, datasetId, versionId, out string errorMessage);
 
             if (success)
             {
@@ -164,7 +272,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
         [JsonNetFilter]
         [HttpPost]
         // Calls Datastatistic API with the given dataset id and variable id, creates a SpeciesMatchingResult for each unique name and saves to database.
-        public async Task<ActionResult> Tailor(long datasetId)
+        public async Task<ActionResult> Tailor(long datasetId, long versionId)
         {
             /* 
              This method is supposed to be called after the user has set up the header mappings and wants to start the matching process. 
@@ -179,7 +287,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
             }
 
             // load header mappings for this dataset
-            var headerMappings = ProgressHelper.LoadHeaderMappings(datasetId);
+            var headerMappings = ProgressHelper.LoadHeaderMappings(datasetId, versionId);
             if (headerMappings == null)
             {
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Header mappings not found for this dataset." }, HttpStatusCode.Conflict);
@@ -192,7 +300,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
             }
 
             // check mapping progress
-            if (ProgressHelper.HasMappingProgress(datasetId))
+            if (ProgressHelper.HasMappingProgress(datasetId, versionId))
             {
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Mapping progress file already exists for this dataset. Please complete or reset existing mapping progress before starting a new tailoring process." }, HttpStatusCode.Conflict);
             }
@@ -254,7 +362,6 @@ namespace BExIS.Modules.Smm.UI.Controllers
                         var matchingResult = new SpeciesMatchingResult
                         {
                             OriginalName = varValue,
-                            CleanedName = "",
                             EditedName = "",
                             MatchedName = "",
                             Status = "",
@@ -264,7 +371,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                             MatchSourceVersion = "",
                             ConfirmedByUser = false,
                             Dataset = dataset,
-                            Creator = user
+                            DatasetVersionId = versionId
                         };
 
                         repo.Put(matchingResult);
@@ -272,7 +379,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                     }
 
                     // TODO: check success (but in general should be built in a way that it never fails)
-                    ProgressHelper.CreateMappingProgressFile(datasetId, rowCount);
+                    ProgressHelper.CreateMappingProgressFile(datasetId, versionId, rowCount);
 
                     // batch commit
                     uow.Commit();
@@ -320,7 +427,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
 
         [JsonNetFilter]
         [HttpGet]
-        public JsonResult ViewProgress(long datasetId)
+        public JsonResult ViewProgress(long datasetId, long versionId)
         {
             var user = ResolveUserAndRights(datasetId, out ActionResult errorResult);
             if (user == null)
@@ -331,8 +438,8 @@ namespace BExIS.Modules.Smm.UI.Controllers
             try
             {
                 // header mappings
-                bool hasHeaderMappings = ProgressHelper.HasHeaderMappings(datasetId);
-                var headerMappings = hasHeaderMappings ? ProgressHelper.LoadHeaderMappings(datasetId) : null;
+                bool hasHeaderMappings = ProgressHelper.HasHeaderMappings(datasetId, versionId);
+                var headerMappings = hasHeaderMappings ? ProgressHelper.LoadHeaderMappings(datasetId, versionId) : null;
 
                 // tailored check: any SpeciesMatchingResult entries for this dataset?
                 bool isTailored = false;
@@ -343,8 +450,8 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 }
 
                 // mapping progress
-                bool hasMappingProgress = ProgressHelper.HasMappingProgress(datasetId);
-                var mappingProgress = hasMappingProgress ? ProgressHelper.LoadMappingProgress(datasetId) : null;
+                bool hasMappingProgress = ProgressHelper.HasMappingProgress(datasetId, versionId);
+                var mappingProgress = hasMappingProgress ? ProgressHelper.LoadMappingProgress(datasetId, versionId) : null;
 
                 return Json(new
                 {
@@ -366,7 +473,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
 
         [JsonNetFilter]
         [HttpPost]
-        public JsonResult GenNewMatchInputFile(long datasetId)
+        public JsonResult GenNewMatchInputFile(long datasetId, long versionId)
         {
             var user = ResolveUserAndRights(datasetId, out ActionResult errorResult);
             if (user == null)
@@ -374,7 +481,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Authentification error." }, HttpStatusCode.Unauthorized);
             }
 
-            var mappingProgress = ProgressHelper.LoadMappingProgress(datasetId);
+            var mappingProgress = ProgressHelper.LoadMappingProgress(datasetId, versionId);
             if (mappingProgress == null)
             {
                 return JsonWithStatus(new { success = false, id = datasetId, message = "No mapping progress found." }, HttpStatusCode.Unauthorized);
@@ -392,7 +499,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Dataset or datastructure not found." }, HttpStatusCode.NotFound);
             }
 
-            var (FilePath, RowCount) = MatchingResultHelper.GenerateUnmatchedCsv(datasetId, datastructureId.Value, newStepId);
+            var (FilePath, RowCount) = MatchingResultHelper.GenerateUnmatchedCsv(datasetId, datastructureId.Value, versionId, newStepId);
             string filepath = FilePath;
             int rows = RowCount;
             if (filepath == null)
@@ -404,14 +511,14 @@ namespace BExIS.Modules.Smm.UI.Controllers
             var filename = ProgressHelper.GenMatchingFileName(false, datasetId, newStepId);
 
             mappingProgress.AddStep(newStepId, rows, filename);
-            ProgressHelper.SaveMappingProgress(mappingProgress);
+            ProgressHelper.SaveMappingProgress(mappingProgress, datasetId, versionId);
 
             return Json(new { success = true, id = datasetId, message = "Matching input file generated." });
         }
 
         [JsonNetFilter]
         [HttpPost]
-        public async Task<JsonResult> MatchNextFile(long datasetId)
+        public async Task<JsonResult> MatchNextFile(long datasetId, long versionId)
         {
             var user = ResolveUserAndRights(datasetId, out ActionResult errorResult);
             if (user == null)
@@ -419,7 +526,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Authentification error." }, HttpStatusCode.Unauthorized);
             }
 
-            var mappingProgress = ProgressHelper.LoadMappingProgress(datasetId);
+            var mappingProgress = ProgressHelper.LoadMappingProgress(datasetId, versionId);
             if (mappingProgress == null)
             {
                 return JsonWithStatus(new { success = false, id = datasetId, message = "No mapping progress found." }, HttpStatusCode.Unauthorized);
@@ -432,7 +539,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
             }
 
             // TODO: - pfad logik vereinfachen
-            string directory = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString());
+            string directory = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), ProgressHelper.MatchingFolderName, versionId.ToString());
 
             if (!Directory.Exists(directory))
             {
@@ -454,7 +561,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
 
         [JsonNetFilter]
         [HttpGet]
-        public JsonResult ViewMatchingResult(long datasetId, int stepId)
+        public JsonResult ViewMatchingResult(long datasetId, long versionId, int stepId)
         {
             var user = ResolveUserAndRights(datasetId, out ActionResult errorResult);
             if (user == null)
@@ -462,7 +569,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Authentification error." }, HttpStatusCode.Unauthorized, JsonRequestBehavior.AllowGet);
             }
 
-            var matchingProgress = ProgressHelper.LoadMappingProgress(datasetId);
+            var matchingProgress = ProgressHelper.LoadMappingProgress(datasetId, versionId);
             if (matchingProgress == null)
             {
                 return JsonWithStatus(new { success = false, id = datasetId, message = "No matching progress found under the given datasetId." }, HttpStatusCode.Conflict, JsonRequestBehavior.AllowGet);
@@ -473,7 +580,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "No valid matching job found in the matching progress data for the given stepId." }, HttpStatusCode.Conflict, JsonRequestBehavior.AllowGet);
             }
 
-            var filepath = ProgressHelper.GetMatchedFilepath(datasetId, stepId);
+            var filepath = ProgressHelper.GetMatchedFilepath(datasetId, versionId, stepId);
 
             if (filepath == null)
             {
@@ -491,14 +598,32 @@ namespace BExIS.Modules.Smm.UI.Controllers
             if (request == null) return JsonWithStatus(new { success = false, message = "Request body missing or invalid." }, HttpStatusCode.BadRequest);
 
             if (!ModelState.IsValid) return JsonWithStatus(new { success = false, message = "Validation failed." }, HttpStatusCode.BadRequest);
+            
+            var datasetId = request.DatasetId;
+            var versionId = request.VersionId;
 
+            var user = ResolveUserAndRights(datasetId, out ActionResult errorResult);
+            if (user == null)
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Authentification error." }, HttpStatusCode.Unauthorized);
+            }
+
+            try
+            {
+                // Convert incoming List<string> MatchIds into a HashSet<long> for fast lookups
+                var matchIdsSet = ConversionHelper.ConvertStringListToLongHashSet(request.MatchIds);
+                MatchingResultHelper.AcceptClbMatches(datasetId, versionId, request.StepId, matchIdsSet);
+            } catch (Exception ex)
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Error: " + ex.Message }, HttpStatusCode.BadRequest);
+            }
+
+            // matchIdsSet is now available for efficient contains checks further down the method
             return Json(new { success = true, id = request.DatasetId });
         }
 
         public async Task<(bool IsSuccess, string Content)> TailorDataset(long datasetId, long variableId, string jwtToken)
         {
-            // TODO: 
-            //   - add variableId, change route, test again
             string url = "http://localhost:44345/api/DataStatistic/" + datasetId.ToString() + "/" + variableId.ToString();
 
             using (var request = new HttpRequestMessage(HttpMethod.Get, url))
@@ -541,6 +666,8 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return Json(new { success = false, id = datasetId, message = "Export file not generated." });
             }
 
+            Debug.WriteLine("{====================FILEPATH:====================}");
+            Debug.WriteLine(filepath);
             byte[] fileBytes = System.IO.File.ReadAllBytes(filepath);
 
             using (var content = new ByteArrayContent(fileBytes))
@@ -549,13 +676,16 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 content.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
 
                 // TODO: replace with secure configuration
-                var username = "";
-                var password = "";
+                GBFICrendentials credentials = ModuleManager.GetModuleSettings("DIM").GetValueByKey<GBFICrendentials>("gbifapicredentials");
+                var username = credentials.Username;
+                var password = credentials.Password;
+
                 var authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
 
                 // Test for now : query parameter format=csv
-                var url = "https://api.checklistbank.org/dataset/3LR/match/nameusage/job?format=csv";
+                //var url = "https://api.checklistbank.org/dataset/3LR/match/nameusage/job?format=csv";
+                var url = "https://api.checklistbank.org/match/nameusage?format=csv&sourceDatasetKey=3";
                 try
                 {
                     HttpResponseMessage response = await _httpClient.PostAsync(url, content);
@@ -571,6 +701,8 @@ namespace BExIS.Modules.Smm.UI.Controllers
                     catch (Exception ex)
                     {
                         Debug.WriteLine("Failed to deserialize ChecklistBank response as JSON: " + ex.Message);
+                        Debug.WriteLine("RESPONSE STRING: ");
+                        Debug.WriteLine(responseString);
                         // Return a failure result when the response cannot be parsed as JSON.
                         return Json(new { success = false, id = datasetId, status = response.StatusCode, message = "Failed to parse API response as JSON.", response = responseString });
                     }

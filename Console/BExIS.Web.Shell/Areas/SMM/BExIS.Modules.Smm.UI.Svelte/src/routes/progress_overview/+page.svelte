@@ -40,7 +40,7 @@
 	};
 
     async function loadProgress(): Promise<ProgressOverview> {
-        var response = await loadDatasetProgress($mappingSelection.datasetId);
+        var response = await loadDatasetProgress($mappingSelection.datasetId, $mappingSelection.versionId);
         if (!response.success) {
             throw new Error(response.error);
         } else {
@@ -65,7 +65,7 @@
 
     async function handleTailor() {
         tailorLoading = true;
-        const response = await tailorDataset($mappingSelection.datasetId);
+        const response = await tailorDataset($mappingSelection.datasetId, $mappingSelection.versionId);
 
         if (response.success) {
             console.log(response);
@@ -79,7 +79,7 @@
     }
 
     async function requestFileAndMatching() {
-        //const responseCreate = await genNewMatchFile($mappingSelection.datasetId);
+        //const responseCreate = await genNewMatchFile($mappingSelection.datasetId, $mappingSelection.versionId);
         //if (!responseCreate.success) {
         //    console.error("Error generating new Matching input file.");
         //    console.log(responseCreate);
@@ -87,14 +87,14 @@
         //}
         //console.log(responseCreate);
 
-        const responseMatch = await matchNextFile($mappingSelection.datasetId);
+        // const responseMatch = await matchNextFile($mappingSelection.datasetId, $mappingSelection.versionId);
         
-        if (!responseMatch.success) {
-            console.error("Error generating new Matching input file.");
-            console.log(responseMatch);
-            return;
-        }
-        console.log(responseMatch);
+        // if (!responseMatch.success) {
+        //     console.error("Error generating new Matching input file.");
+        //     console.log(responseMatch);
+        //     return;
+        // }
+        // console.log(responseMatch);
     }
 
 </script>

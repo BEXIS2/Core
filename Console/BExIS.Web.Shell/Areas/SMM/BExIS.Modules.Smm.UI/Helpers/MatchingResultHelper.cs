@@ -2,6 +2,7 @@
 using BExIS.Dlm.Services.SpeciesMatching;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Smm.UI.Models;
+using BExIS.Utils.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -39,7 +40,7 @@ namespace BExIS.Modules.Smm.UI.Helpers
         }
 
         // Generate a CSV file containing all confirmed SpeciesMatchingResults for a given datasetId. Returns the file path and the number of rows written, or (null, 0) if an error occurs.
-        public static (string FilePath, int RowCount) GenerateUnmatchedCsv(long datasetId, long dataStructureId, int stepId)
+        public static (string FilePath, int RowCount) GenerateUnmatchedCsv(long datasetId, long dataStructureId, long versionId, int stepId)
         {
             DataTable dt = new DataTable("SpeciesUnmatched");
             dt.Columns.Add("ID", typeof(long));
@@ -63,11 +64,6 @@ namespace BExIS.Modules.Smm.UI.Helpers
                         dt.Rows.Add(item.Id, item.EditedName, "species", "", "");
                         writtenCount++;
                     }
-                    else if (item.CleanedName != null && item.CleanedName != "")
-                    {
-                        dt.Rows.Add(item.Id, item.CleanedName, "species", "", "");
-                        writtenCount++;
-                    }
                     else if (item.OriginalName != null && item.OriginalName != "")
                     {
                         dt.Rows.Add(item.Id, item.OriginalName, "species", "", "");
@@ -81,7 +77,8 @@ namespace BExIS.Modules.Smm.UI.Helpers
             }
 
             var outputManager = new OutputDataManager();
-            string ns = datasetId.ToString();
+            // put matching files under Datasets/<datasetId>/Matching/<versionId>/
+            string ns = Path.Combine(datasetId.ToString(), "Matching", versionId.ToString());
             string title = ProgressHelper.GenMatchingFileName(false, datasetId, stepId, false);
 
             string filepath = outputManager.GenerateAsciiFile(ns, dt, title, "text/csv", dataStructureId);
@@ -168,14 +165,19 @@ namespace BExIS.Modules.Smm.UI.Helpers
             }
         }
 
-        public static bool AcceptClbMatches(long datasetId, int stepId, HashSet<long> acceptedIds)
+        public static bool AcceptClbMatches(long datasetId, long versionId, int stepId, HashSet<long> acceptedIds)
         {
-            var filepath = ProgressHelper.GetMatchedFilepath(datasetId, stepId);
+            var filepath = ProgressHelper.GetMatchedFilepath(datasetId, versionId, stepId);
             if (filepath == null) return false;
 
-            try
+            using (var speciesMatchingResultManager = new SpeciesMatchingResultManager())
+            // Use a regular (stateful) unit of work here so that modified entities are tracked by NHibernate.
+            // The bulk unit of work uses a stateless session which does not track changes to entities,
+            // therefore modifications made to retrieved objects would not be persisted on Commit.
+            using (var uow = speciesMatchingResultManager.GetUnitOfWork())
+            using (var sr = new StreamReader(filepath, Encoding.UTF8))
             {
-                using (var sr = new StreamReader(filepath, Encoding.UTF8))
+                try
                 {
                     string headerLine = sr.ReadLine();
                     if (headerLine == null) return false;
@@ -192,6 +194,12 @@ namespace BExIS.Modules.Smm.UI.Helpers
                         }
                     }
 
+                    // pre-filter the species matching results for this dataset/version so we only operate on this subset
+                    var repo = uow.GetRepository<SpeciesMatchingResult>();
+                    var subsetIds = repo.Query().Where(r => r.Dataset.Id == datasetId && r.DatasetVersionId == versionId);
+
+                    Debug.WriteLine("Read file header and mapped columns. Now processing lines...");
+
                     string line;
                     while ((line = sr.ReadLine()) != null)
                     {
@@ -207,47 +215,59 @@ namespace BExIS.Modules.Smm.UI.Helpers
                         }
 
                         var original_id = GetField("Original_ID");
-                        if (acceptedIds.Contains(long.Parse(original_id)))
-                        {
-                            // query for the SpeciesMatchingResult with this Original_ID and mark it as confirmed
-                            
-                        }
 
                         var entry = new CLBMatchingResultFile
                         {
                             Original_ID = GetField("Original_ID"),
-                            Original_scientificName = GetField("Original_scientificName"),
-                            Original_rank = GetField("Original_rank"),
-                            Original_kingdom = GetField("Original_kingdom"),
-                            Original_authorship = GetField("Original_authorship"),
+                            //Original_scientificName = GetField("Original_scientificName"),
+                            //Original_rank = GetField("Original_rank"),
+                            //Original_kingdom = GetField("Original_kingdom"),
+                            //Original_authorship = GetField("Original_authorship"),
                             MatchType = GetField("MatchType"),
-                            MatchIssues = GetField("MatchIssues"),
-                            ID = GetField("ID"),
-                            Rank = GetField("Rank"),
+                            //MatchIssues = GetField("MatchIssues"),
+                            //ID = GetField("ID"),
+                            //Rank = GetField("Rank"),
                             ScientificName = GetField("ScientificName"),
-                            Authorship = GetField("Authorship"),
+                            //Authorship = GetField("Authorship"),
                             Status = GetField("Status"),
-                            AcceptedID = GetField("AcceptedID"),
-                            AcceptedScientificName = GetField("AcceptedScientificName"),
-                            AcceptedAuthorship = GetField("AcceptedAuthorship"),
-                            Kingdom = GetField("Kingdom"),
-                            Phylum = GetField("Phylum"),
-                            Class = GetField("Class"),
-                            Order = GetField("Order"),
-                            Family = GetField("Family"),
-                            Genus = GetField("Genus"),
-                            Classification = GetField("Classification")
+                            //AcceptedID = GetField("AcceptedID"),
+                            //AcceptedScientificName = GetField("AcceptedScientificName"),
+                            //AcceptedAuthorship = GetField("AcceptedAuthorship"),
+                            //Kingdom = GetField("Kingdom"),
+                            //Phylum = GetField("Phylum"),
+                            //Class = GetField("Class"),
+                            //Order = GetField("Order"),
+                            //Family = GetField("Family"),
+                            //Genus = GetField("Genus"),
+                            //Classification = GetField("Classification")
                         };
 
+                        if (acceptedIds.Contains(long.Parse(original_id)))
+                        {
+                            // query for the SpeciesMatchingResult with this Original_ID and mark it as confirmed
+                            var result = subsetIds.FirstOrDefault(r => r.Id == long.Parse(original_id));
+                            if (result != null)
+                            {
+                                result.ConfirmedByUser = true;
+                                result.MatchedName = entry.ScientificName;
+                                result.MatchType = entry.MatchType;
+                                result.Status = entry.Status;
+                            }
+                        }
 
+                        Debug.WriteLine("Processed line with Original_ID=" + original_id);
                     }
-                }
 
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
+                    Debug.WriteLine("Commiting  results to database...");
+                    uow.Commit();
+                    Debug.WriteLine("Finished commiting results.");
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    uow.Ignore();
+                    return false;
+                }
             }
         }
 

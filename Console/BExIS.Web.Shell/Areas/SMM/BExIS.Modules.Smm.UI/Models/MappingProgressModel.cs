@@ -14,6 +14,8 @@ namespace BExIS.Modules.Smm.UI.Models
 
         public long DatasetId { get; set; }
 
+        public long VersionId { get; set; }
+
         public int GetNewId()
         {
             return Steps.Count;

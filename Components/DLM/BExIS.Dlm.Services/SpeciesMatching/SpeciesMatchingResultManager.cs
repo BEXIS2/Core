@@ -51,7 +51,6 @@ namespace BExIS.Dlm.Services.SpeciesMatching
         public SpeciesMatchingResult Create(SpeciesMatchingResult matchingResult)
         {
             if (matchingResult == null) throw new ArgumentNullException("Species matching result must not be null.");
-            if (matchingResult.Creator == null) throw new ArgumentNullException("Creator type must not be null.");
             if (matchingResult.Dataset == null) throw new ArgumentNullException("Dataset must not be null.");
             if (matchingResult.OriginalName == null) throw new ArgumentNullException("Dataset must not be null.");
 

@@ -14,17 +14,24 @@ namespace BExIS.Modules.Smm.UI.Helpers
 {
     public class ProgressHelper
     {
-        const string HM_FILENAME = "header_mappings.json";
-        const string MP_FILENAME = "mapping_progress.json";
-        const string MATCHED_PREFIX = "species_matched";
-        const string UNMATCHED_PREFIX = "species_unmatched";
+        public const string MappingFilename = "header_mappings.json";
+        public const string MatchingFilename = "mapping_progress.json";
+        public const string MatchedPrefix = "species_matched";
+        public const string UnmatchedPrefix = "species_unmatched";
+        public const string MatchingFolderName = "Matching";
 
-        public static MappingProgressModel LoadMappingProgress(long datasetId)
+        public static MappingProgressModel LoadMappingProgress(long datasetId, long versionId)
         {
             try
             {
-                string directory = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString());
-                string filepath = Path.Combine(directory, MP_FILENAME);
+                string directory = GetVersionedMatchingPath(datasetId, versionId);
+                if (directory == null)
+                {
+                    Debug.WriteLine("LoadMappingProgress: dataset directory does not exist.");
+                    return null;
+                }
+
+                string filepath = Path.Combine(directory, MatchingFilename);
 
                 if (!System.IO.File.Exists(filepath))
                 {
@@ -53,12 +60,18 @@ namespace BExIS.Modules.Smm.UI.Helpers
         // Loads the header mappings JSON file for the given dataset id.
         // Returns the deserialized HeaderMappingsModel or null when the file
         // does not exist, is empty or cannot be parsed.
-        public static HeaderMappingsModel LoadHeaderMappings(long datasetId)
+        public static HeaderMappingsModel LoadHeaderMappings(long datasetId, long versionId)
         {
             try
             {
-                string directory = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString());
-                string filepath = Path.Combine(directory, HM_FILENAME);
+                string directory = GetVersionedMatchingPath(datasetId, versionId);
+                if (directory == null)
+                {
+                    Debug.WriteLine("LoadHeaderMappings: dataset directory does not exist.");
+                    return null;
+                }
+
+                string filepath = Path.Combine(directory, MappingFilename);
 
                 if (!System.IO.File.Exists(filepath))
                 {
@@ -83,23 +96,50 @@ namespace BExIS.Modules.Smm.UI.Helpers
             }
         }
 
-
-        // Creates a mapping_progress.json file for the given dataset with an empty Steps list.
-        // Returns true when the file was created successfully, false on error.
-        public static bool CreateMappingProgressFile(long datasetId, int numRowsGlobal)
+        public static bool CreateMatchingFolder(long datasetId, long versionId)
         {
             try
             {
-                string directory = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString());
-
-                // TODO: auto generate if missing?
-                if (!Directory.Exists(directory))
+                string subdirectory = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString());
+                if (!Directory.Exists(subdirectory))
                 {
-                    Debug.WriteLine("CreateMappingProgressFile: dataset directory does not exist: " + directory);
+                    Debug.WriteLine("CreateMatchingFolder: dataset directory does not exist: " + subdirectory);
                     return false;
                 }
 
-                string filepath = Path.Combine(directory, MP_FILENAME);
+                string directory = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), MatchingFolderName, versionId.ToString());
+                if (!Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+                else
+                {
+                    Debug.WriteLine("Matching folder already exists: " + directory);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Failed to create matching folder: " + ex);
+                return false;
+            }
+        }
+
+        // Creates a mapping_progress.json file for the given dataset with an empty Steps list.
+        // Returns true when the file was created successfully, false on error.
+        public static bool CreateMappingProgressFile(long datasetId, long versionId, int numRowsGlobal)
+        {
+            try
+            {
+                string directory = GetVersionedMatchingPath(datasetId, versionId);
+
+                if (directory == null)
+                {
+                    Debug.WriteLine("CreateMappingProgressFile: dataset directory does not exist.");
+                    return false;
+                }
+
+                string filepath = Path.Combine(directory, MatchingFilename);
 
                 var model = new MappingProgressModel
                 {
@@ -121,7 +161,7 @@ namespace BExIS.Modules.Smm.UI.Helpers
             }
         }
 
-        public static bool CreateHeaderMappingsFile(HeaderMappingsModel data, long datasetId, out string errorMessage)
+        public static bool CreateHeaderMappingsFile(HeaderMappingsModel data, long datasetId, long versionId, out string errorMessage)
         {
             foreach (var entry in data.Mappings)
             {
@@ -132,10 +172,10 @@ namespace BExIS.Modules.Smm.UI.Helpers
                 }
             }
 
-            string directory = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString());
-            string filepath = Path.Combine(directory, HM_FILENAME);
+            string directory = GetVersionedMatchingPath(datasetId, versionId);
+            string filepath = Path.Combine(directory, MappingFilename);
 
-            if (!Directory.Exists(directory))
+            if (directory == null)
             {
                 errorMessage = "The dataset folder with id " + datasetId + " does not exist.";
                 return false;
@@ -151,7 +191,7 @@ namespace BExIS.Modules.Smm.UI.Helpers
         // Persist the provided MappingProgressModel to the dataset's mapping_progress.json file.
         // This method will overwrite the file regardless of whether it already exists.
         // Returns true on success, false on failure.
-        public static bool SaveMappingProgress(MappingProgressModel model)
+        public static bool SaveMappingProgress(MappingProgressModel model, long datasetId, long versionId)
         {
             if (model == null)
             {
@@ -159,24 +199,17 @@ namespace BExIS.Modules.Smm.UI.Helpers
                 return false;
             }
 
-            long datasetId = model.DatasetId;
-            if (datasetId <= 0)
-            {
-                Debug.WriteLine($"SaveMappingProgress: invalid dataset id: {datasetId}");
-                return false;
-            }
-
             try
             {
-                string directory = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString());
+                string directory = GetVersionedMatchingPath(datasetId, versionId);
 
-                if (!Directory.Exists(directory))
+                if (directory == null)
                 {
-                    Debug.WriteLine("SaveMappingProgress: dataset directory does not exist: " + directory);
+                    Debug.WriteLine("SaveMappingProgress: dataset directory does not exist.");
                     return false;
                 }
 
-                string filepath = Path.Combine(directory, MP_FILENAME);
+                string filepath = Path.Combine(directory, MatchingFilename);
 
                 string json = JsonConvert.SerializeObject(model, Formatting.Indented);
 
@@ -195,7 +228,7 @@ namespace BExIS.Modules.Smm.UI.Helpers
 
         public static string GenMatchingFileName(bool matched, long datasetId, int suffixId, bool withFileEnding = true)
         {
-            string prefix = matched ? MATCHED_PREFIX : UNMATCHED_PREFIX;
+            string prefix = matched ? MatchedPrefix : UnmatchedPrefix;
             if (withFileEnding)
             {
                 return $"{prefix}_{datasetId}_{suffixId}.csv";
@@ -206,9 +239,13 @@ namespace BExIS.Modules.Smm.UI.Helpers
             }
         }
 
-        public static string GetMatchedFilepath(long datasetId, int stepId)
+        public static string GetMatchedFilepath(long datasetId, long versionId, int stepId)
         {
-            string directory = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString());
+            string directory = GetVersionedMatchingPath(datasetId, versionId);
+            if (directory == null) {
+                return null;
+            }
+
             string filename = GenMatchingFileName(true, datasetId, stepId);
             string filepath = Path.Combine(directory, filename);
             if (System.IO.File.Exists(filepath))
@@ -222,17 +259,30 @@ namespace BExIS.Modules.Smm.UI.Helpers
 
         }
 
-        public static bool HasMappingProgress(long datasetId)
+        public static string GetVersionedMatchingPath(long datasetId, long versionId)
         {
-            string directory = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString());
-            string filepath = Path.Combine(directory, MP_FILENAME);
+            string directory = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), MatchingFolderName, versionId.ToString());
+            if (Directory.Exists(directory))
+            {
+                return directory;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static bool HasMappingProgress(long datasetId, long versionId)
+        {
+            string directory = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), MatchingFolderName, versionId.ToString());
+            string filepath = Path.Combine(directory, MatchingFilename);
             return System.IO.File.Exists(filepath);
         }
 
-        public static bool HasHeaderMappings(long datasetId)
+        public static bool HasHeaderMappings(long datasetId, long versionId)
         {
-            string directory = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString());
-            string filepath = Path.Combine(directory, HM_FILENAME);
+            string directory = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), MatchingFolderName, versionId.ToString());
+            string filepath = Path.Combine(directory, MappingFilename);
             return System.IO.File.Exists(filepath);
         }
     }

@@ -3,7 +3,7 @@
 	import { ErrorMessage, Page, pageContentLayoutType, positionType, Spinner, type TableConfig } from "@bexis2/bexis2-core-ui";
     import { onMount } from "svelte";
     import { loadBasicDatasetInfo } from "./services";
-    import { type BasicDatasetInfo } from "./data";
+    import { type BasicDatasetInfo, type DisplayDatasetVersion } from "./data";
     import { datasetsStore } from "./data";
 	import { Table } from '@bexis2/bexis2-core-ui';
     import ResultTableOptions from "./ResultTableOptions.svelte";
@@ -15,6 +15,7 @@
 
 	const modalStore = getModalStore()
     let datasetInfo: BasicDatasetInfo[];
+    let displayDatasetInfo: DisplayDatasetVersion[] = [];
 
     onMount(() => {
         async function init() {
@@ -24,11 +25,29 @@
                 item.isTabular === true && item.metadataComplete === true
             );
 
-            datasetsStore.update(() => {
-                return filteredData;
+            
+            filteredData.forEach(item => {
+                item.versions.forEach(versionItem => {
+                    displayDatasetInfo.push({
+                        id: item.id,
+                        dataStructureId: item.dataStructureId,
+                        title: item.title,
+                        abstract: item.abstract,
+                        isTabular: item.isTabular,
+                        metadataComplete: item.metadataComplete,
+                        timestamp: versionItem.timestamp,
+                        versionType: versionItem.versionType,
+                        versionName: versionItem.versionName,
+                        hasMatchingProgress: versionItem.hasMatchingProgress,
+                        versionId: versionItem.versionId,
+                        versionNr: versionItem.versionNr,
+                    })
+                });
             });
 
-            datasetInfo = filteredData;
+            datasetsStore.update(() => {
+                return displayDatasetInfo;
+            });
         }
 
         // console.log(get(datasetsStore));
@@ -36,18 +55,18 @@
     });
 
 
-	const tableActions = (action: CustomEvent<{ row: BasicDatasetInfo; type: string }>) => {
+	const tableActions = (action: CustomEvent<{ row: DisplayDatasetVersion; type: string }>) => {
 		const { type, row } = action.detail;
 		switch (type) {
             // action to begin new mapping process on selected dataset
 			case 'BEGIN':
-                mappingSelection.update(s => ({ datasetId: row.id, datastructureId: row.dataStructureId }));
+                mappingSelection.update(s => ({ datasetId: row.id, datastructureId: row.dataStructureId, versionId: row.versionId }));
                 goto("/headermapping");
 				break;
 
             // action to continue mapping process on selected dataset 
             case 'CONTINUE':
-                mappingSelection.update(s => ({ datasetId: row.id, datastructureId: row.dataStructureId }));
+                mappingSelection.update(s => ({ datasetId: row.id, datastructureId: row.dataStructureId, versionId: row.versionId }));
                 goto("/progress_overview");
                 break;
 
@@ -57,7 +76,7 @@
 	};
 
 
-    const tableConfig: TableConfig<BasicDatasetInfo> = {						
+    const tableConfig: TableConfig<DisplayDatasetVersion> = {						
 		id: 'resultRows',						
 		data: datasetsStore,
 		resizable: "columns",
@@ -75,6 +94,18 @@
             },
             hasMatchingProgress: {
                 disableFiltering: true
+            },
+            versionId: {
+                exclude: true
+            },
+            timestamp: {
+                exclude: true
+            },
+            versionType: {
+                exclude: true
+            },
+            versionName: {
+                exclude: true
             }
         },
 		optionsComponent: ResultTableOptions

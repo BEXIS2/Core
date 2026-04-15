@@ -45,7 +45,6 @@ namespace BExIS.Dlm.Tests.Services.SpeciesMatching
                 var dataset = datasetManager.DatasetRepo.Get().FirstOrDefault();
 
                 matchingResult.OriginalName = "Sunflower";
-                matchingResult.CleanedName = "";
                 matchingResult.EditedName = "";
                 matchingResult.MatchedName = "";
                 matchingResult.Status = "";
@@ -55,7 +54,7 @@ namespace BExIS.Dlm.Tests.Services.SpeciesMatching
                 matchingResult.MatchSourceVersion = "";
                 matchingResult.ConfirmedByUser = false;
                 matchingResult.Dataset = dataset;
-                matchingResult.Creator = user;
+                matchingResult.DatasetVersionId = 1;
 
                 //Act
                 var created = speciesMatchingResultManager.Create(matchingResult);

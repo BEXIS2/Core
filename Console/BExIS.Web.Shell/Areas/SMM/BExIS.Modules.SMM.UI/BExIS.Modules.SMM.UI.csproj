@@ -121,6 +121,7 @@
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SpeciesController.cs" />
+    <Compile Include="Helpers\ConversionHelper.cs" />
     <Compile Include="Helpers\MatchingResultHelper.cs" />
     <Compile Include="Helpers\ProgressHelper.cs" />
     <Compile Include="Helpers\SMMSeedDataGenerator.cs" />
@@ -248,6 +249,10 @@
     <ProjectReference Include="..\..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252F7872-A69C-43A6-84B4-4D2ABDBDD9AB}</Project>
       <Name>BExIS.Xml.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Modules\DIM\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
+      <Project>{34CAD2A2-6928-458B-B8DC-AF71D55F20CC}</Project>
+      <Name>BExIS.Dim.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DIM\BExIS.Modules.Dim.UI\BExIS.Modules.Dim.UI.csproj">
       <Project>{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}</Project>

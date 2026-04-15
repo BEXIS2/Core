@@ -8,8 +8,6 @@
 
 		<property name="OriginalName" column="original_name" type="string" not-null="false" />
 
-		<property name="CleanedName" column="cleaned_name" type="string" not-null="false" />
-
 		<property name="EditedName" column="edited_name" type="string" not-null="false" />
 
 		<property name="MatchedName" column="matched_name" type="string" not-null="false" />
@@ -28,12 +26,11 @@
 
 		<!-- Mapping entity associations -->
 		
+		<property name="DatasetVersionId" column="dataset_version_id" type="Int64" not-null="false" />
+		
 		<!--Dataset-->
 		<many-to-one name="Dataset" class="BExIS.Dlm.Entities.Data.Dataset" not-null="false" column="DatasetRef" />
 		
-		<!--Creator-->
-		<many-to-one name="Creator" class="BExIS.Security.Entities.Subjects.User" not-null="false" column="UserRef" />
-
 		<!--DatasetVersion (does not work this way ... Error: refers to unmapped ...-->
 		<!--
 		<many-to-one class="DatasetVersion" name="DatasetVersion" column="DatasetVersionRef">

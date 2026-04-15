@@ -7,6 +7,7 @@
 	import { MultiSelect } from "@bexis2/bexis2-core-ui";
     import { submitHeaderMappings } from "./services";
     import { mappingSelection } from '../../lib/stores/selectionStore';
+	import { goto } from "$app/navigation";
 
     let dataStructure: DataStructureEditModel;
     let headerMappings: HeaderMappings = {
@@ -28,7 +29,13 @@
 
     onMount(() => {
         async function test() {
-            var dataStructureHelper: DataStructureEditModel = await loadDataStructure($mappingSelection.datastructureId);
+            const response = await loadDataStructure($mappingSelection.datastructureId);
+            if (!response.success) {
+                console.log(response.error);
+                return;
+            }
+
+            var dataStructureHelper: DataStructureEditModel = response.data;
             
             // build headerMappings and pre-assign values if possible based on meanings
             for (let i = 0; i < dataStructureHelper.variables.length; i++) {
@@ -121,8 +128,12 @@
     async function handleSubmit() {
         handlingSubmit = true;
         console.log(headerMappings);
-        const response = await submitHeaderMappings(headerMappings);
-        console.log(response);
+        const response = await submitHeaderMappings(headerMappings, $mappingSelection.datasetId, $mappingSelection.versionId);
+        if (!response.success) {
+            console.log(response);
+        } else {
+            goto("/progress_overview");
+        }
     }
 
 </script>
@@ -136,7 +147,7 @@
 <h2 class="h2">Select header mapping</h2>
 
 <p>
-    You are working on <b>Dataset: {$mappingSelection.datasetId}</b>. Below this text, the corresponding <b>Datastructure: {$mappingSelection.datastructureId}</b> is shown. Each row corresponds to a column in the original dataset,
+    You are working on <b>Dataset: {$mappingSelection.datasetId}</b>. Below this text, the corresponding <b>Datastructure: {$mappingSelection.datastructureId}</b> and <b>VersionID: {$mappingSelection.versionId}</b> is shown. Each row corresponds to a column in the original dataset,
     and an option to select a mapping for it. Some mappings might already be pre-assigned based on your datasets metadata. Please try to select as many matching mappings as possible, but at the very least select a scientificName mapping.
     For columns that have no clear associated mapping, just select IGNORE. If there are no conflicts, you should be able to submit the mappings with the button below.
 </p>

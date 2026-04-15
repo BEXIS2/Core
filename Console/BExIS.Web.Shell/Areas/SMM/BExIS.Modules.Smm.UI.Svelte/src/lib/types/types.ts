@@ -58,3 +58,10 @@ export interface CLBMatchingResult {
     genus: string,
     classification: string,
 }
+
+export type AcceptMatchesRequest = {
+    datasetId: number,
+    versionId: number,
+    stepId: number,
+    matchIds: string[]
+}
