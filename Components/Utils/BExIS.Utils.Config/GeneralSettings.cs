@@ -1,10 +1,15 @@
 ﻿using BExIS.Utils.Config.Configurations;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Text;
+using System.Web.Http.Results;
 using Vaiona.IoC;
 using Vaiona.Utils.Cfg;
 
@@ -140,7 +145,21 @@ namespace BExIS.Utils.Config
         {
             get
             {
-                return JsonConvert.DeserializeObject<SecurityConfiguration>(GetValueByKey("security").ToString());
+                var json = GetValueByKey("security")?.ToString();
+
+                if (string.IsNullOrWhiteSpace(json))
+                    return new SecurityConfiguration();
+
+                try
+                {
+                    var config = JsonConvert.DeserializeObject<SecurityConfiguration>(json);
+                    return config ?? new SecurityConfiguration();
+                }
+                catch (JsonException ex)
+                {
+
+                    return new SecurityConfiguration();
+                }
             }
         }
 
@@ -148,7 +167,69 @@ namespace BExIS.Utils.Config
         {
             get
             {
-                return JsonConvert.DeserializeObject<JwtConfiguration>(GetValueByKey("jwt").ToString());
+                var json = GetValueByKey("jwt")?.ToString();
+
+                if (string.IsNullOrWhiteSpace(json))
+                    return new JwtConfiguration(); 
+
+                try
+                {
+                    var config = JsonConvert.DeserializeObject<JwtConfiguration>(json);
+                    return config ?? new JwtConfiguration() { IsActive = false };
+                }
+                catch (JsonException ex)
+                {
+                    return new JwtConfiguration() { IsActive = false };
+                }
+            }
+        }
+
+        public static bool CreateIssuerSigningKey()
+        {
+            GeneralSettings settings = Get();
+            JsonSettings jsonSettings = settings.GetAsJsonModel();
+
+            // Finde den Eintrag mit key = "jwt"
+            var jwtEntry = jsonSettings.Entries.FirstOrDefault(e => e.Key == "jwt");
+            if (jwtEntry == null)
+                throw new InvalidOperationException("Kein Eintrag mit key='jwt' gefunden.");
+
+            // Annahme: jwtEntry.Value ist ein JObject
+            if (jwtEntry.Value is JObject jwtValueObj)
+            {
+                // Ändere den Wert direkt im Objekt
+                jwtValueObj["issuerSigningKey"] = generateRandomAlphanumericString(48);
+            }
+            else
+            {
+                throw new InvalidOperationException("Der Wert von 'jwt' ist kein JObject.");
+            }
+
+            // Speichere zurück
+            settings.Update(jsonSettings);
+
+            return true;
+        }
+
+        private static string generateRandomAlphanumericString(int length = 48)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                var result = new StringBuilder(length);
+                var buffer = new byte[16]; // Genügend für mehrere Zeichen
+
+                while (result.Length < length)
+                {
+                    rng.GetBytes(buffer);
+                    for (int i = 0; i < buffer.Length && result.Length < length; i++)
+                    {
+                        // Nutze den Wert als Index in den Zeichen
+                        result.Append(chars[buffer[i] % chars.Length]);
+                    }
+                }
+
+                return result.ToString();
             }
         }
 
@@ -156,7 +237,20 @@ namespace BExIS.Utils.Config
         {
             get
             {
-                return JsonConvert.DeserializeObject<SmtpConfiguration>(GetValueByKey("smtp").ToString());
+                var json = GetValueByKey("smtp")?.ToString();
+
+                if (string.IsNullOrWhiteSpace(json))
+                    return new SmtpConfiguration() { IsActive = false };
+
+                try
+                {
+                    var config = JsonConvert.DeserializeObject<SmtpConfiguration>(json);
+                    return config ?? new SmtpConfiguration() { IsActive = false };
+                }
+                catch (JsonException ex)
+                {
+                    return new SmtpConfiguration() { IsActive = false };
+                }
             }
         }
 
@@ -164,7 +258,21 @@ namespace BExIS.Utils.Config
         {
             get
             {
-                return JsonConvert.DeserializeObject<ExceptionConfiguration>(GetValueByKey("exception").ToString());
+                var json = GetValueByKey("exception")?.ToString();
+
+                if (string.IsNullOrWhiteSpace(json))
+                    return new ExceptionConfiguration();   // leere Instanz mit Defaults
+
+                try
+                {
+                    var config = JsonConvert.DeserializeObject<ExceptionConfiguration>(json);
+                    return config ?? new ExceptionConfiguration();
+                }
+                catch (JsonException ex)
+                {
+                    // Logger.Error($"Fehler beim Deserialisieren der SecurityConfiguration: {ex.Message}");
+                    return new ExceptionConfiguration();   // Fallback auf Defaults
+                }
             }
         }
 

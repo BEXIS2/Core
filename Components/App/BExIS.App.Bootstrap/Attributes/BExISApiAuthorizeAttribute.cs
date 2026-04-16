@@ -137,10 +137,10 @@ namespace BExIS.App.Bootstrap.Attributes
 
                     actionContext.ControllerContext.RouteData.Values.Add("user", user);
 
+                    var jwtConfiguration = GeneralSettings.JwtConfiguration;
                     // update jwt cookie
-                    if (user != null)
+                    if (user != null && jwtConfiguration.IsActive)
                     {
-                        var jwtConfiguration = GeneralSettings.JwtConfiguration;
                         var jwt = JwtHelper.GetTokenByUser(user);
               
                         // Create a new cookie

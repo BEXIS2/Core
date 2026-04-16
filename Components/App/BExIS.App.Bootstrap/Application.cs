@@ -1,14 +1,18 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Ext.Services;
 using BExIS.Utils.Config;
+using BExIS.Utils.Config.Configurations;
 using Microsoft.Owin;
 using Microsoft.Owin.Host.SystemWeb;
 using Microsoft.Owin.Security;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
+using System.Runtime;
 using System.Threading;
 using System.Web;
 using System.Web.Http;
@@ -170,8 +174,9 @@ namespace BExIS.App.Bootstrap
             // This call starts them.
             ModuleManager.StartModules();
 
-            // generate settings
             ControllerBuilder.Current.SetControllerFactory(new IoCControllerFactory());
+
+            GeneralSettings.CreateIssuerSigningKey();
         }
 
         private void initTenancy()

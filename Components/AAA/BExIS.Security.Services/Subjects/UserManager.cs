@@ -23,21 +23,26 @@ namespace BExIS.Security.Services.Subjects
         {
             _securityConfiguration = GeneralSettings.SecurityConfiguration;
 
+            var userValidatorConfiguration = _securityConfiguration?.UserValidatorConfiguration;
+
             // Configure validation logic for usernames
             UserValidator = new UserValidator<User, long>(this)
             {
-                AllowOnlyAlphanumericUserNames = _securityConfiguration.UserValidatorConfiguration.AllowOnlyAlphanumericUserNames,
-                RequireUniqueEmail = _securityConfiguration.UserValidatorConfiguration.RequireUniqueEmail
+                AllowOnlyAlphanumericUserNames = userValidatorConfiguration?.AllowOnlyAlphanumericUserNames ?? false,
+                RequireUniqueEmail = userValidatorConfiguration?.RequireUniqueEmail ?? true
             };
+
+            var passwordValidatorConfiguration = _securityConfiguration?.PasswordValidatorConfiguration;
+
 
             // Configure validation logic for passwords
             PasswordValidator = new PasswordValidator
             {
-                RequiredLength = _securityConfiguration.PasswordValidatorConfiguration.RequiredLength,
-                RequireNonLetterOrDigit = _securityConfiguration.PasswordValidatorConfiguration.RequireNonLetterOrDigit,
-                RequireDigit = _securityConfiguration.PasswordValidatorConfiguration.RequireDigit,
-                RequireLowercase = _securityConfiguration.PasswordValidatorConfiguration.RequireLowercase,
-                RequireUppercase = _securityConfiguration.PasswordValidatorConfiguration.RequireUppercase
+                RequiredLength = passwordValidatorConfiguration?.RequiredLength ?? 6,
+                RequireNonLetterOrDigit = passwordValidatorConfiguration?.RequireNonLetterOrDigit ?? false,
+                RequireDigit = passwordValidatorConfiguration?.RequireDigit?? false,
+                RequireLowercase = passwordValidatorConfiguration?.RequireLowercase ?? false,
+                RequireUppercase = passwordValidatorConfiguration?.RequireUppercase ?? false
             };
 
             // Configure user lockout defaults
