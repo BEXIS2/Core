@@ -49,6 +49,7 @@
       "key": "smtp",
       "title": "SMTP Configurations",
       "value": {
+        "isActive": true,
         "hostName": "smtp.uni-jena.de",
         "hostPort": 587,
         "hostAnonymous": false,
