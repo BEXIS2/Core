@@ -53,7 +53,7 @@ using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class CreateDatasetController : BaseController
+    public class CreateDatasetController : Controller
     {
         private CreateTaskmanager TaskManager;
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
@@ -209,7 +209,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             #endregion set references
 
-                            Task.Run(() => reindex(datasetId));
+                            //update search
+                            await reindex(datasetId);
+
 
                             LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
 
@@ -845,6 +847,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private async Task<bool> reindex(long datasetId)
         {
+
             // reindex
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             provider?.UpdateSingleDatasetIndex(datasetId, (IndexingAction)Enum.Parse(typeof(IndexingAction), "CREATE"), false);
