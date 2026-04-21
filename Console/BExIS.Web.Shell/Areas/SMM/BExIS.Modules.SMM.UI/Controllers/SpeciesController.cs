@@ -9,6 +9,7 @@ using BExIS.Dlm.Services.SpeciesMatching;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Modules.Smm.UI.Helpers;
+using BExIS.Modules.Smm.UI.Helpers.MatchingAPIs;
 using BExIS.Modules.Smm.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
@@ -44,6 +45,8 @@ namespace BExIS.Modules.Smm.UI.Controllers
     public class SpeciesController : Controller
     {
         // GET: Species
+
+        MatchingApiProvider matchingApiProvider = new Helpers.MatchingAPIs.MatchingApiProvider();
 
         public ActionResult Index()
         {
@@ -473,7 +476,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
 
         [JsonNetFilter]
         [HttpPost]
-        public JsonResult GenNewMatchInputFile(long datasetId, long versionId)
+        public JsonResult GenNewMatchInputFile(long datasetId, long versionId, string apiIdentifier)
         {
             var user = ResolveUserAndRights(datasetId, out ActionResult errorResult);
             if (user == null)
@@ -499,19 +502,29 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Dataset or datastructure not found." }, HttpStatusCode.NotFound);
             }
 
-            var (FilePath, RowCount) = MatchingResultHelper.GenerateUnmatchedCsv(datasetId, datastructureId.Value, versionId, newStepId);
-            string filepath = FilePath;
-            int rows = RowCount;
-            if (filepath == null)
+            try
             {
-                return JsonWithStatus(new { success = false, id = datasetId, message = "Could not generate MatchingInput file." }, HttpStatusCode.Conflict);
+                MatchingApiBase apiBase =  matchingApiProvider.GetApi(apiIdentifier);
+                var (FilePath, RowCount) = apiBase.GenerateInputFile(datasetId, datastructureId.Value, versionId, newStepId);
+                string filepath = FilePath;
+                int rows = RowCount;
+                if (filepath == null)
+                {
+                    return JsonWithStatus(new { success = false, id = datasetId, message = "Could not generate MatchingInput file." }, HttpStatusCode.Conflict);
+                }
+
+                // this is double generated, but simpler
+                var filename = ProgressHelper.GenMatchingFileName(false, datasetId, newStepId);
+
+                mappingProgress.AddStep(newStepId, rows, filename, apiIdentifier);
+                ProgressHelper.SaveMappingProgress(mappingProgress, datasetId, versionId);
+            } catch (KeyNotFoundException ex)
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Matching API not found for the given identifier." }, HttpStatusCode.Conflict);
+            } catch (Exception ex)
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Unexpected error while generating matching input file: " + ex.Message  }, HttpStatusCode.InternalServerError);
             }
-
-            // this is double generated, but simpler
-            var filename = ProgressHelper.GenMatchingFileName(false, datasetId, newStepId);
-
-            mappingProgress.AddStep(newStepId, rows, filename);
-            ProgressHelper.SaveMappingProgress(mappingProgress, datasetId, versionId);
 
             return Json(new { success = true, id = datasetId, message = "Matching input file generated." });
         }
@@ -587,8 +600,28 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "No result file found." }, HttpStatusCode.Conflict, JsonRequestBehavior.AllowGet);
             }
 
-            var matchingResults = MatchingResultHelper.ReadClbMatchingResultFile(filepath);
-            return Json(new { success = true, data = matchingResults }, JsonRequestBehavior.AllowGet);
+            try
+            {
+                var apiIdentifier = matchingProgress.GetApiIdentifier(stepId);
+                Debug.WriteLine("SEARCHING MATCHING PROGRESS FOR: " + datasetId.ToString() + " " + versionId.ToString());
+                Debug.WriteLine("API IDENTIFIER: " + apiIdentifier);
+                MatchingApiBase apiBase = matchingApiProvider.GetApi(apiIdentifier);
+                var matchingResults = apiBase.ReadResultFile(filepath);
+
+                return Json(new { success = true, data = matchingResults }, JsonRequestBehavior.AllowGet);
+            }
+            catch (ArgumentException ex)
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = ex.Message }, HttpStatusCode.Conflict, JsonRequestBehavior.AllowGet);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Matching API not found for the given identifier." }, HttpStatusCode.Conflict, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Unexpected error while generating matching input file: " + ex.Message }, HttpStatusCode.InternalServerError, JsonRequestBehavior.AllowGet);
+            }
         }
 
         [JsonNetFilter]

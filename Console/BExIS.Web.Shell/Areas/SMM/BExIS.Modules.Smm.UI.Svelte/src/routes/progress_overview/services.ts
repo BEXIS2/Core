@@ -22,9 +22,9 @@ export const tailorDataset = async (datasetId: number, versionId: number): Promi
     }
 }
 
-export const genNewMatchFile = async (datasetId: number, versionId: number): Promise<ServiceResult<any>> => {
+export const genNewMatchFile = async (datasetId: number, versionId: number, apiIdentifier: string): Promise<ServiceResult<any>> => {
     try {
-        const response = await Api.post('/smm/species/GenNewMatchInputFile', { datasetId, versionId });
+        const response = await Api.post('/smm/species/GenNewMatchInputFile', { datasetId, versionId, apiIdentifier });
 
         return { success: true, data: response.data };
     } catch (error: any) {

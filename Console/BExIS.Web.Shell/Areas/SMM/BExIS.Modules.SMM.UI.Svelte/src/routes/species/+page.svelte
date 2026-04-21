@@ -12,6 +12,7 @@
 	import ResultTableOptions from "./ResultTableOptions.svelte";
 	import AcceptedTableOptions from "./AcceptedTableOptions.svelte";
 	import EditResult from "./EditResult.svelte";
+	import { get } from "svelte/store";
 	
 	// let files: FileList;
 	const ONE_MB: number = 1000000;
@@ -72,34 +73,40 @@
 
 	function synthTestData() {
 		var synthRows: ResultRow[] = [];
-		for (let i = 0; i < 100; i++) {
+		for (let i = 0; i < 10; i++) {
 			synthRows.push({
 				inputID: i,
 				inputName: `inputName_${i}`,
 				matchType: "exact",
-				scientificName: `exactName_${i}`
+				scientificName: `exactName_${i}`,
+				id: Math.floor(Math.random() * (10 - 1) + 1)
 			})
 		}
 
-		for (let i = 100; i < 200; i++) {
-			synthRows.push({
-				inputID: i,
-				inputName: `inputName_${i}`,
-				matchType: "variant",
-				scientificName: `variantName_${i}`
-			})
-		}
+		// for (let i = 100; i < 200; i++) {
+		// 	synthRows.push({
+		// 		inputID: i,
+		// 		inputName: `inputName_${i}`,
+		// 		matchType: "variant",
+		// 		scientificName: `variantName_${i}`
+		// 	})
+		// }
 
-		for (let i = 200; i < 300; i++) {
+		for (let i = 10; i < 20; i++) {
 			synthRows.push({
 				inputID: i,
 				inputName: `inputName_${i}`,
 				matchType: "none",
-				scientificName: ""
+				scientificName: "ABC",
+				id: Math.floor(Math.random() * (10 - 1) + 1)
 			})
 		}
 
 		resultStore.update(items => [...items, ...synthRows]);
+	}
+
+	function logStore() {
+		console.log(get(resultStore));
 	}
 
 	function acceptAllByMatchType(match_type: string) {
@@ -225,6 +232,7 @@
 	<button class="btn variant-filled-success" on:click={() => acceptAllByMatchType('exact')}>Accept all Exact</button>
 	<button class="btn variant-filled-success" on:click={() => acceptAllByMatchType('variant')}>Accept all Variant</button>
 	<button class="btn variant-filled-success" on:click={() => acceptAllByMatchType('none')}>Accept all None</button>
+	<button class="btn variant-filled-secondary" on:click={() => logStore()}>Log Store</button>
 	<h2 class="h2">Result</h2>
 	<div class="flex items-center justify-center">
 		<Table config={resultConfig} on:action={resultTableActions}/>

@@ -21,14 +21,15 @@ namespace BExIS.Modules.Smm.UI.Models
             return Steps.Count;
         }
 
-        public void AddStep(int id, int numRows, string inputFileName)
+        public void AddStep(int id, int numRows, string inputFileName, string apiIdentifier)
         {
             var entry = new StepEntry
             {
                 Id = id,
                 NumRows = numRows,
-                InputFileName = inputFileName ?? string.Empty,
+                InputFileName = inputFileName,
                 ResultFileName = string.Empty,
+                ApiIdentifier = apiIdentifier,
                 DownloadLink = string.Empty,
                 JobKey = string.Empty,
                 Done = false
@@ -64,6 +65,16 @@ namespace BExIS.Modules.Smm.UI.Models
             // Valid and matched when the step exists and has a non-empty ResultFileName
             return entry != null && !string.IsNullOrEmpty(entry.ResultFileName);
         }
+
+        public string GetApiIdentifier(int stepId)
+        {
+            // Return null when there are no steps
+            if (Steps == null || Steps.Count == 0) return null;
+
+            var entry = Steps.FirstOrDefault(s => s.Id == stepId);
+
+            return entry?.ApiIdentifier;
+        }
     }
 
 
@@ -76,6 +87,8 @@ namespace BExIS.Modules.Smm.UI.Models
         public string InputFileName { get; set; }
 
         public string ResultFileName { get; set; }
+
+        public string ApiIdentifier { get; set; }
 
         public string DownloadLink { get; set; }
 

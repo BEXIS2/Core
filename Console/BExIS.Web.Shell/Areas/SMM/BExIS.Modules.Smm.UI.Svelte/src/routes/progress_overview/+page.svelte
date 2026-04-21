@@ -79,13 +79,14 @@
     }
 
     async function requestFileAndMatching() {
-        //const responseCreate = await genNewMatchFile($mappingSelection.datasetId, $mappingSelection.versionId);
-        //if (!responseCreate.success) {
-        //    console.error("Error generating new Matching input file.");
-        //    console.log(responseCreate);
-        //    return;
-        //}
-        //console.log(responseCreate);
+        // TODO: apiIdentifier handling
+        const responseCreate = await genNewMatchFile($mappingSelection.datasetId, $mappingSelection.versionId, "CLB");
+        if (!responseCreate.success) {
+           console.error("Error generating new Matching input file.");
+           console.log(responseCreate);
+           return;
+        }
+        console.log(responseCreate);
 
         // const responseMatch = await matchNextFile($mappingSelection.datasetId, $mappingSelection.versionId);
         

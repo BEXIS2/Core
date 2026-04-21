@@ -147,8 +147,10 @@
 <h2 class="h2">Select header mapping</h2>
 
 <p>
-    You are working on <b>Dataset: {$mappingSelection.datasetId}</b>. Below this text, the corresponding <b>Datastructure: {$mappingSelection.datastructureId}</b> and <b>VersionID: {$mappingSelection.versionId}</b> is shown. Each row corresponds to a column in the original dataset,
-    and an option to select a mapping for it. Some mappings might already be pre-assigned based on your datasets metadata. Please try to select as many matching mappings as possible, but at the very least select a scientificName mapping.
+    You are working on <b>Dataset: {$mappingSelection.datasetId}</b>, <b>Datastructure: {$mappingSelection.datastructureId}</b> and <b>VersionID: {$mappingSelection.versionId}</b>. 
+</p>
+<p>
+    The <b>original column headers</b> are shown on the <b>left</b>. <b>Selectable mappings</b> are shown on the <b>right</b>. Some mappings might already be pre-assigned based on your datasets metadata. Please try to select as many matching mappings as possible, but at the very least select a scientificName mapping.
     For columns that have no clear associated mapping, just select IGNORE. If there are no conflicts, you should be able to submit the mappings with the button below.
 </p>
 
@@ -174,7 +176,9 @@
 		</div>
     {/each}
 
-    <button class="btn variant-filled-secondary" disabled={(!headerMappingValid || handlingSubmit)} on:click|preventDefault={handleSubmit}>Submit</button>
+    <div class="flex items-center justify-center">
+        <button class="btn variant-filled-secondary" disabled={(!headerMappingValid || handlingSubmit)} on:click|preventDefault={handleSubmit}>Submit</button>
+    </div>
 {/if}
 
 <div class="h-80"></div>

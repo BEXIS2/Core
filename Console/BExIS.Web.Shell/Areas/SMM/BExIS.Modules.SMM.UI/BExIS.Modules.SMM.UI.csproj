@@ -122,14 +122,21 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SpeciesController.cs" />
     <Compile Include="Helpers\ConversionHelper.cs" />
+    <Compile Include="Helpers\MatchingAPIs\CLBApi.cs" />
+    <Compile Include="Helpers\MatchingAPIs\HttpClientRegistry.cs" />
+    <Compile Include="Helpers\MatchingAPIs\MatchingApiBase.cs" />
+    <Compile Include="Helpers\MatchingAPIs\MatchingApiProvider.cs" />
     <Compile Include="Helpers\MatchingResultHelper.cs" />
     <Compile Include="Helpers\ProgressHelper.cs" />
     <Compile Include="Helpers\SMMSeedDataGenerator.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
+    <Compile Include="Helpers\TabularFileHelper.cs" />
     <Compile Include="Models\AcceptMatchesRequestModel.cs" />
     <Compile Include="Models\CLBMatchingResultFile.cs" />
     <Compile Include="Models\HeaderMappingsModel.cs" />
     <Compile Include="Models\MappingProgressModel.cs" />
+    <Compile Include="Models\MatchingApiResponse.cs" />
+    <Compile Include="Models\MatchingResultRow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SmmModule.cs" />
   </ItemGroup>

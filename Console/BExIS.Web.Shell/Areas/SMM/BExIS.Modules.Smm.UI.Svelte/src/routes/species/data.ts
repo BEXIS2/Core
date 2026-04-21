@@ -5,7 +5,7 @@ export type ResultRow = {
 	inputRank?: string,
 	inputName: string,
 	matchType: string,
-	ID: string,
+	id: number,
 	rank: string,
 	label?: string,
 	scientificName: string,

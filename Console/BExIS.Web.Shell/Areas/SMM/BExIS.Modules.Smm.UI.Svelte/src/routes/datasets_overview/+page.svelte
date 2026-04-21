@@ -119,12 +119,9 @@
 >
     <h2 class="h2">Datasets Overview</h2>
 
-    <p>This page gives an overview of all your datasets and their respective mapping progress. Currently only tabular datasets with complete metadata are shown!</p>
-    <p class="flex">If there is an Eye <Fa class="px-2" icon={faEye} /> icon at the end of the row, the dataset mapping has already been started. Click it to get an overview and continue the process as you wish.</p>
-    <p class="flex">If there is a Plus <Fa class="px-2" icon={faPlus} /> icon, no mapping has been started. Click it to start a fresh mapping process on this dataset.</p>
-
-    <p>Dataset ID: {$mappingSelection.datasetId}</p>
-    <p>Structure ID: {$mappingSelection.datastructureId}</p>
+    <p>This page gives an overview of all your datasets and their respective matching progress. This matching process is bound to a specific dataset version (shown by the column <b>VersionNr</b>). Currently only tabular datasets with complete metadata are shown!</p>
+    <p class="">If there is an Eye <span class="inline-flex"><Fa class="px-2" icon={faEye} /></span> icon at the end of the row, the dataset matching has already been started. Click it to get an overview and continue the process as you wish.</p>
+    <p class="">If there is a Plus <span class="inline-flex self-center"><Fa class="px-2" icon={faPlus} /></span> icon, no matching has been started. Click it to start a fresh matching process on this dataset version. Keep in mind that a new matching process right now can only be started with the latest version of a dataset.</p>
 
     <div class="flex items-center justify-center">
 		<Table config={tableConfig} on:action={tableActions}/>
