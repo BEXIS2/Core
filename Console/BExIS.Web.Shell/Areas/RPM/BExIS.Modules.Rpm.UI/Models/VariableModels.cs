@@ -43,7 +43,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public ListItem DisplayPattern { get; set; }
 
         public List<UnitItem> PossibleUnits { get; set; }
-        public List<VariableTemplateItem> PossibleTemplates { get; set; }
+        public List<long> PossibleTemplates { get; set; }
         public List<ListItem> PossibleDisplayPattern { get; set; }
 
         public VariableInstanceModel()
@@ -51,7 +51,7 @@ namespace BExIS.Modules.Rpm.UI.Models
             Template = new VariableTemplateItem();
             DisplayPattern = new ListItem(-1, "", "", "");
             PossibleUnits = new List<UnitItem>();
-            PossibleTemplates = new List<VariableTemplateItem>();
+            PossibleTemplates = new List<long>();
             PossibleDisplayPattern = new List<ListItem>();
         }
     }

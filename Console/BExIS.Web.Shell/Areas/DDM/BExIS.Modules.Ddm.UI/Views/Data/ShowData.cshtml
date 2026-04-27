@@ -311,7 +311,7 @@
                         }
                         else
                         {
-                        <a class="bx-button small function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, version = Model.VersionId, format = "" })"><span class="fa fa-download" style="padding-right: 5px;"></span>Download Dataset</a>
+                        <a id="downloadBt" class="bx-button small function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, version = Model.VersionId, format = "" })"><span class="fa fa-download" style="padding-right: 5px;"></span>Download Dataset</a>
                         }
                         }
                         else
@@ -569,11 +569,17 @@
         if (aggreed == 'true' || aggreed == 'True' || aggreed == true) {
             $("#dropdownMenu1").removeAttr("disabled");
             $("#dropdownMenu1").removeClass("bx-disabled")
+            //downloadBt
+            $("#downloadBt").removeAttr("disabled");
+            $("#downloadBt").removeClass("bx-disabled")
+
         }
         else
         {
             $("#dropdownMenu1").attr("disabled", "disabled");
             $("#dropdownMenu1").addClass("bx-disabled")
+            $("#downloadBt").attr("disabled", "disabled");
+            $("#downloadBt").addClass("bx-disabled")
         }
         }
 

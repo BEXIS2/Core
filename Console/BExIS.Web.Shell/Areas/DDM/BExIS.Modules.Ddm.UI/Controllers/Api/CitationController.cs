@@ -11,6 +11,7 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Route;
+using Microsoft.AspNet.Identity;
 using NameParser;
 using Newtonsoft.Json;
 using System;
@@ -31,10 +32,11 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
 {
     public class CitationController : ApiController
     {
+
         [BExISApiAuthorize]
         [GetRoute("api/datasets/citations")]
         //[ResponseType(typeof(CitationModel))]
-        public HttpResponseMessage Get([FromUri] CitationFormat format = CitationFormat.Bibtex)
+        public HttpResponseMessage Get()
         {
             return GetAllCitations();
         }
@@ -55,11 +57,19 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
         }
 
         [BExISApiAuthorize]
-        [GetRoute("api/datasets/{datasetId}/citations/{versionNumber}")]
+        [GetRoute("api/datasets/{datasetId}/version_number/{versionNumber}/citations")]
         [ResponseType(typeof(CitationModel))]
         public HttpResponseMessage GetCitationFromSpecificVersionNumber(long datasetId, int versionNumber, [FromUri] CitationFormat format = CitationFormat.Bibtex)
         {
             return GetCitation(datasetId, format, versionNumber);
+        }
+
+        [BExISApiAuthorize]
+        [GetRoute("api/datasets/{datasetId}/tag/{tagNumber}/citations")]
+        [ResponseType(typeof(CitationModel))]
+        public HttpResponseMessage GetCitationFromSpecificTagNumber(long datasetId, double tagNumber, [FromUri] CitationFormat format = CitationFormat.Bibtex)
+        {
+            return GetCitation(datasetId, format,0,tagNumber);
         }
 
         // GET api/Citation/GetCitations
@@ -87,9 +97,8 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
 
                 using (DatasetManager dm = new DatasetManager())
                 using (EntityManager entityManager = new EntityManager())
-                using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
-                using (UserManager userManager = new UserManager())
                 {
+                    EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                     bool isPublic = false;
                     if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Dataset id should be greater then 0.");
 
@@ -136,18 +145,6 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                         isPublic = false;
                         isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
 
-                        // If dataset is not public check if a valid token is provided
-                        if (isPublic == false)
-                        {
-                            User user = ControllerContext.RouteData.Values["user"] as User;
-
-                            // If user is registered pass
-                            if (user == null)
-                            {
-                                return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "The dataset is not public and the token is not valid.");
-                            }
-                        }
-
                         if (dataset == null)
                             return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "The dataset with the id (" + id + ") does not exist.");
                     }
@@ -182,6 +179,8 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             }
 
             List<DatasetCitationEntry> allDatasetCitations = new List<DatasetCitationEntry>();
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            var useTags = Convert.ToBoolean(moduleSettings.GetValueByKey("use_tags"));
 
             foreach (long id in datasetIds)
             {
@@ -189,17 +188,14 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
 
                 using (DatasetManager dm = new DatasetManager())
                 using (EntityManager entityManager = new EntityManager())
-                using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
-                using (UserManager userManager = new UserManager())
                 {
+                    EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                     bool isPublic = false;
 
                     try
                     {
                         Dataset dataset = dm.GetDataset(id);
-
                         datasetVersion = dataset.Versions.OrderByDescending(t => t.Id).Where(p => p.Timestamp <= dataset.LastCheckIOTimestamp).First();
-
                     }
                     catch (Exception ex)
                     {
@@ -215,52 +211,18 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                         entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
                         isPublic = false;
                         isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
-
-                        // If dataset is not public check if a valid token is provided
-                        if (isPublic == false)
-                        {
-                            User user = ControllerContext.RouteData.Values["user"] as User;
-
-                            // If user is registered pass
-                            if (user == null)
-                            {
-                                return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "The dataset is not public and the token is not valid.");
-                            }
-                        }
-
-                        //if (dataset == null)
-                        //return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "The dataset with the id (" + id + ") does not exist.");
                     }
 
                     if (datasetVersion == null)
                         continue;
                     else
                     {
-                        XmlDocument xmlDoc = datasetVersion.Metadata;
-                        //get citation concept
-                        using (var conceptManager = new ConceptManager())
-                        {
-                            var concept = conceptManager.MappingConceptRepository.Get().Where(c => c.Name.Equals("Citation")).FirstOrDefault();
+                        CitationDataModel model = CitationsHelper.CreateCitationDataModel(datasetVersion, CitationFormat.Text);
+                        if (model != null)
+                            allDatasetCitations.Add(CreateCitationEntry(id, model, isPublic, useTags));
+                        else
+                            continue;
 
-                            if (concept == null)
-                                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "In combination with the format subset - subsettype must not be empty");
-
-                            long mdId = datasetVersion.Dataset.MetadataStructure.Id;
-
-                            xmlDoc = MappingUtils.GetConceptOutput(mdId, concept.Id, xmlDoc);
-
-                            CitationDataModel model = new CitationDataModel();
-
-                            XmlSerializer serializer = new XmlSerializer(typeof(CitationDataModel), new XmlRootAttribute("data"));
-                            using (XmlReader reader = new XmlNodeReader(xmlDoc))
-                            {
-                                model = (CitationDataModel)serializer.Deserialize(reader);
-                                if (model != null)
-                                    allDatasetCitations.Add(CreateCitationEntry(id, model, isPublic));
-                                else
-                                    continue;
-                            }
-                        }
                     }
                 }
             }
@@ -275,44 +237,64 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             return response;
         }
 
-        private HttpResponseMessage GetCitation(long id, CitationFormat format, int version_number = 0)
+        private HttpResponseMessage GetCitation(long id, CitationFormat format, int version_number = 0, double tag_number = 0.0)
         {
             DatasetVersion datasetVersion = null;
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            var useTags = Convert.ToBoolean(moduleSettings.GetValueByKey("use_tags"));
 
             using (DatasetManager dm = new DatasetManager())
             using (EntityManager entityManager = new EntityManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
-            using (UserManager userManager = new UserManager())
             {
+                EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                 bool isPublic = false;
                 if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Dataset id should be greater then 0.");
 
-                // try to get latest dataset version 
-                if (version_number <= 0)
+                if(useTags)
                 {
-                    datasetVersion = dm.GetDatasetLatestVersion(id);
-                }
-                // try to get dataset version by version number
-                else
-                {
-                    if (version_number <= 0)
-                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This version name does not exist for this dataset");
-
+                    if (tag_number <= 0)
+                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Tag not exist");
                     try
                     {
-                        int index = version_number - 1;
-                        Dataset dataset = dm.GetDataset(id);
+                        var versionId = dm.GetLatestVersionByTagNr(id, tag_number).Id;
+                        datasetVersion = dm.GetDatasetVersion(versionId);
+                    }
+                    catch
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This tag does not exist for this dataset");
+                    }
+                }
+                else 
+                {
 
-                        int versions = dataset.Versions.Count;
-
-                        if (versions < version_number)
+                    // try to get latest dataset version 
+                    if (version_number <= 0)
+                    {
+                        datasetVersion = dm.GetDatasetLatestVersion(id);
+                    }
+                    // try to get dataset version by version number
+                    else
+                    {
+                        if (version_number <= 0)
                             return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This version number does not exist for this dataset");
 
-                        datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
+                        try
+                        {
+                            int index = version_number - 1;
+                            Dataset dataset = dm.GetDataset(id);
 
-                    }
-                    catch (Exception ex)
-                    {
+                            int versions = dataset.Versions.Count;
+
+                            if (versions < version_number)
+                                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This version number does not exist for this dataset");
+
+                            datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
+
+                        }
+
+                        catch (Exception ex)
+                        {
+                        }
                     }
                 }
 
@@ -330,24 +312,9 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                     entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
                     isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
 
-                    // If dataset is not public check if a valid token is provided
-                    if (isPublic == false)
-                    {
-                        User user = ControllerContext.RouteData.Values["user"] as User;
-
-                        // If user is registered pass
-                        if (user == null)
-                        {
-                            return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "The dataset is not public and the token is not valid.");
-                        }
-                    }
-
                     if (dataset == null)
                         return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "The dataset with the id (" + id + ") does not exist.");
                 }
-
-                var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
-                var useTags = Convert.ToBoolean(moduleSettings.GetValueByKey("use_tags"));
 
                 CitationDataModel model = CitationsHelper.CreateCitationDataModel(datasetVersion, format);
                 string citationString = "";
@@ -361,17 +328,19 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             }
         }
 
-        private DatasetCitationEntry CreateCitationEntry(long datasetId, CitationDataModel model, bool isPublic)
+        private DatasetCitationEntry CreateCitationEntry(long datasetId, CitationDataModel model, bool isPublic, bool useTags)
         {
             DatasetCitationEntry datasetCitationEntry = new DatasetCitationEntry();
-            var settings = ModuleManager.GetModuleSettings("ddm");
 
-            string url = String.Format("{0}://{1}", HttpContext.Current.Request.Url.Scheme, HttpContext.Current.Request.Url.Host);
-
+            string url = model.URL;
             if (isPublic)
-                datasetCitationEntry.URL = url + "/ddm/data/Showdata/" + datasetId + "?version=" + model.Version + "";
-            else
-                datasetCitationEntry.URL = url;
+            {
+                if (useTags && !String.IsNullOrEmpty(model.Tag))
+                    url += "/ddm/data/Showdata/" + datasetId + "?tag=" + model.Tag + "";
+                else
+                    url += "/ddm/data/Showdata/" + datasetId + "?version=" + model.Version + "";
+            }
+            datasetCitationEntry.URL = url;
 
             datasetCitationEntry.Publisher = model.Publisher;
             //datasetCitationEntry.InstanceName = settings.GetValueByKey("instanceName").ToString();
@@ -393,7 +362,12 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             datasetCitationEntry.DatasetId = datasetId.ToString();
             datasetCitationEntry.IsPublic = isPublic;
             datasetCitationEntry.Title = model.Title;
-            datasetCitationEntry.Version = model.Version;
+
+            if (useTags && !String.IsNullOrEmpty(model.Tag))
+                datasetCitationEntry.Version = model.Tag;
+            else
+                datasetCitationEntry.Version = model.Version;
+
             if (!String.IsNullOrEmpty(model.DOI))
                 datasetCitationEntry.DOI = model.DOI;
             datasetCitationEntry.Authors = model.Authors;
@@ -410,7 +384,6 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                     authors.Add(name.Last + ", " + name.First + " " + name.Middle);
             }
 
-            var useTags = Convert.ToBoolean(settings.GetValueByKey("use_tags"));
             if (CitationsHelper.IsCitationDataModelValid(model))
             {
                 datasetCitationEntry.CitationStringTxt = CitationsHelper.GetCitationString(model, CitationFormat.Text, isPublic, datasetId, useTags);

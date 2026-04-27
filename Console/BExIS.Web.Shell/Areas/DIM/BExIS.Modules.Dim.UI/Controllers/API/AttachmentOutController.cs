@@ -30,6 +30,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
+        private readonly UserManager _userManager;
+
+        public AttachmentOutController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         // GET: api/Attachment
         /// <summary>
         /// With the Get function you get an overview of the exiting datasets and there attachments.
@@ -77,8 +84,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset id can not be 0.");
 
             using (DatasetManager datasetManager = new DatasetManager())
-            using (UserManager userManager = new UserManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (EntityManager entityManager = new EntityManager())
             {
                 bool isPublic = false;
@@ -86,6 +91,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 try
                 {
+                    var entityPermissionManager = new EntityPermissionManager();
+
                     #region is public
 
                     long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
@@ -155,7 +162,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             if (attachmentid == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the attachment id can not be 0.");
 
             DatasetManager datasetManager = new DatasetManager();
-            UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             EntityManager entityManager = new EntityManager();
 
@@ -237,8 +243,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             finally
             {
                 datasetManager.Dispose();
-                userManager.Dispose();
-                entityPermissionManager.Dispose();
                 entityManager.Dispose();
             }
         }

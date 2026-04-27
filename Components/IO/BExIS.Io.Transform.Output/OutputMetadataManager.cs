@@ -8,7 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.IO.Transform.Output
@@ -101,6 +103,41 @@ namespace BExIS.IO.Transform.Output
 
                 return newXml;
             }
+        }
+
+        public static string GetFlattenMetadata(XmlDocument metadata)
+        {
+            using (DatasetManager datasetManager = new DatasetManager())
+            {
+               StringBuilder sb = new StringBuilder();
+
+               sb = flatten(sb, XElement.Parse(metadata.OuterXml));
+
+               return sb.ToString();
+            }
+        }
+
+        public static StringBuilder flatten(StringBuilder sb, XElement element, string currentPath = "")
+        {
+            // Construct the path: Parent/Child
+            string newPath = string.IsNullOrEmpty(currentPath)
+                ? element.Name.LocalName
+                : $"{currentPath}/{element.Name.LocalName}";
+
+            // If the element has no child elements, it's a leaf node—print the value
+            if (!element.Elements().Any())
+            {
+               sb.AppendLine($"{newPath}:\t{element.Value.Trim()}");
+                                                
+            }
+
+            // Recurse through all child elements
+            foreach (var child in element.Elements())
+            {
+                flatten(sb,child, newPath);
+            }
+
+            return sb;
         }
 
         public static string GetSchemaDirectoryPath(long datasetId)

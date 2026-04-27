@@ -1,12 +1,14 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
 using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
+using Microsoft.Web.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -17,7 +19,6 @@ using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
-using Microsoft.Web.Helpers;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
@@ -26,6 +27,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
     /// </summary>
     public class DatasetsController : BaseController
     {
+        private readonly UserManager _userManager;
+
+        public DatasetsController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
         public ActionResult Checkin(int id)
         {
             return View();
@@ -47,7 +54,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     if (id > 0)
                     {
                         Dataset ds = dm.GetDataset(id);
-                        number = ds.DataStructure.Self is StructuredDataStructure ? dm.GetDatasetLatestVersionEffectiveTupleCount(ds) : 0;
+                        number = ds.DataStructure != null ? dm.GetDatasetLatestVersionEffectiveTupleCount(ds) : 0;
                     }
 
                     return Json(number, JsonRequestBehavior.AllowGet);
@@ -70,15 +77,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Delete(long id)
         {
             using (var datasetManager = new DatasetManager())
-            using (var entityPermissionManager = new EntityPermissionManager())
             using (var entityManager = new EntityManager())
             using (var subjectManager = new SubjectManager())
-            using (var userManager = new UserManager())
             {
                 try
                 {
+                    var entityPermissionManager = new EntityPermissionManager();
                     var userName = GetUsernameOrDefault();
-                    var user = userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
+                    var user = _userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
 
                     // check if a user is logged in
                     if (user != null)
@@ -152,15 +158,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult UndoDelete(long id)
         {
             using (var datasetManager = new DatasetManager())
-            using (var entityPermissionManager = new EntityPermissionManager())
             using (var entityManager = new EntityManager())
             using (var subjectManager = new SubjectManager())
-            using (var userManager = new UserManager())
             {
                 try
                 {
+                    var entityPermissionManager = new EntityPermissionManager();
                     var userName = GetUsernameOrDefault();
-                    var user = userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
+                    var user = _userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
 
                     // check if a user is logged in
                     if (user != null)
@@ -288,8 +293,20 @@ namespace BExIS.Modules.Sam.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Maintain Datasets", Session.GetTenant());
 
             using (DatasetManager dm = new DatasetManager())
-            using (var entityPermissionManager = new EntityPermissionManager())
+            using (VariableManager vm = new VariableManager())
+            using (DataStructureManager dsm = new DataStructureManager())
             {
+                var entityPermissionManager = new EntityPermissionManager();
+                Dictionary<long, int> variablesCount = new Dictionary<long, int>();
+
+                //List<long> datastructureIds = dsm.StructuredDataStructureRepo.Query().Select(d => d.Id).ToList();
+                //foreach (long dsId in datastructureIds)
+                //{
+                //    int count = vm.VariableInstanceRepo.Query(v => v.DataStructure.Id == dsId).Count();
+                //    variablesCount.Add(dsId, count);
+                //}
+
+
                 List<Dataset> datasets = new List<Dataset>();
                 List<long> datasetIds = new List<long>();
 
@@ -300,8 +317,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 List<DatasetStatModel> datasetStat = new List<DatasetStatModel>();
                 foreach (Dataset ds in datasets)
                 {
-                    long noColumns = ds.DataStructure != null && ds.DataStructure.Self is StructuredDataStructure ? (ds.DataStructure.Self as StructuredDataStructure).Variables.Count() : 0L;
-                    long noRows = 0; //ds.DataStructure.Self is StructuredDataStructure ? dm.GetDatasetLatestVersionEffectiveTupleCount(ds) : 0; // It would save time to calc the row count for all the datasets at once!
+                    long noRows = 0;
+                    long noColumns = 0;
+                    //if (ds.DataStructure != null)
+                    //{
+                    //    noColumns = variablesCount.ContainsKey(ds.DataStructure.Id) ? variablesCount[ds.DataStructure.Id] : 0;
+                    //}
+
                     bool synced = false;
                     if (string.Compare(ds.StateInfo?.State, "Synced", true) == 0
                             && ds.StateInfo?.Timestamp != null
@@ -325,8 +347,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     List<DatasetVersion> listDatasetversion = null;
                     if (ds.Status == DatasetStatus.CheckedIn)
                     {
-                        datasetversion = dm.GetDatasetLatestVersion(ds.Id);
+                        //dm.GetDatasetLatestVersion(ds.Id);
                         listDatasetversion = dm.GetDatasetVersions(ds.Id).OrderBy(d => d.Id).ToList();
+                        datasetversion = listDatasetversion.LastOrDefault();
                     }
                     // in very seldom cases datasets exists without a any dataset version -> check for null
                     if (datasetversion != null)
@@ -383,15 +406,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Purge", Session.GetTenant());
 
             using (DatasetManager dm = new DatasetManager())
-            using (var entityPermissionManager = new EntityPermissionManager())
             using (var datasetManager = new DatasetManager())
             using (var entityManager = new EntityManager())
-            using (var userManager = new UserManager())
             {
                 try
                 {
+                    var entityPermissionManager = new EntityPermissionManager();
                     var userName = GetUsernameOrDefault();
-                    var user = userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
+                    var user = _userManager.Users.Where(u => u.Name.Equals(userName)).FirstOrDefault();
 
                     // check if a user is logged in
                     if (user != null)

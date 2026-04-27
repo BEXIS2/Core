@@ -5,113 +5,82 @@ using Version = BExIS.Security.Entities.Versions.Version;
 
 namespace BExIS.Security.Services.Versions
 {
-    public class VersionManager : IDisposable
+    public class VersionManager
     {
-        private readonly IUnitOfWork _guow;
-        private bool _isDisposed;
-
-        public VersionManager()
-        {
-            _guow = this.GetIsolatedUnitOfWork();
-            VersionRepository = _guow.GetReadOnlyRepository<Version>();
-        }
-
-        ~VersionManager()
-        {
-            Dispose(true);
-        }
-
-        public IReadOnlyRepository<Version> VersionRepository { get; }
-
-        public IQueryable<Version> Versions => VersionRepository.Query();
-
-        public Version LatestVersion => VersionRepository.Query().OrderByDescending(v => v.Date).FirstOrDefault();
-
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
         public Version GetLatestVersion(string module = "Shell")
         {
+            if (string.IsNullOrWhiteSpace(module))
+                return null;
+
             using (var uow = this.GetUnitOfWork())
             {
-                return !Exists(module) ? null : VersionRepository.Query(v => v.Module.Equals(module)).OrderByDescending(v => v.Date).FirstOrDefault();
+                var versionsRepository = uow.GetReadOnlyRepository<Version>();
+                return versionsRepository.Query(v => v.Module == module)
+                       .OrderByDescending(v => v.Date)
+                       .FirstOrDefault();
             }
         }
 
-        protected void Dispose(bool disposing)
+        public void Update(Version version)
         {
-            if (!_isDisposed)
-            {
-                if (disposing)
-                {
-                    _guow?.Dispose();
-                    _isDisposed = true;
-                }
-            }
-        }
+            if (version == null)
+                throw new ArgumentNullException(nameof(version));
 
-        public void Update(Version entity)
-        {
             using (var uow = this.GetUnitOfWork())
             {
-                var repo = uow.GetRepository<Version>();
-                repo.Merge(entity);
-                var merged = repo.Get(entity.Id);
+                var versionsRepository = uow.GetRepository<Version>();
+                versionsRepository.Merge(version);
+                var merged = versionsRepository.Get(version.Id);
 
                 merged.Date = DateTime.Now;
 
-                repo.Put(merged);
+                versionsRepository.Put(merged);
                 uow.Commit();
             }
         }
 
         public bool Exists(string module, string value)
         {
+            if (string.IsNullOrEmpty(module))
+                return false;
+
+            if (string.IsNullOrEmpty(value))
+                return false;
+
             using (var uow = this.GetUnitOfWork())
             {
-                var operationRepository = uow.GetReadOnlyRepository<Version>();
-
-                if (string.IsNullOrEmpty(module))
-                    return false;
-
-                if (string.IsNullOrEmpty(value))
-                    return false;
-
-                return operationRepository.Query(v => v.Module.ToUpperInvariant() == module.ToUpperInvariant() && v.Value.ToUpperInvariant() == value.ToUpperInvariant()).Count() == 1;
-            }
-        }
-
-        public bool Exists(string module)
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var operationRepository = uow.GetReadOnlyRepository<Version>();
-
-                if (string.IsNullOrEmpty(module))
-                    return false;
-
-                return operationRepository.Query(v => v.Module.ToUpperInvariant() == module.ToUpperInvariant()).Any();
+                var versionsRepository = uow.GetReadOnlyRepository<Version>();
+                return versionsRepository.Query(v => v.Module == module && v.Value == value).Any();
             }
         }
 
         public Version Create(string module, string value)
         {
+            if (string.IsNullOrWhiteSpace(module))
+                throw new ArgumentException(nameof(module));
+
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException(nameof(value));
+
             using (var uow = this.GetUnitOfWork())
             {
-                if (Exists(module, value))
+                var versionsRepository = uow.GetRepository<Version>();
+
+                var exists = versionsRepository.Query(v =>
+                v.Module == module &&
+                v.Value == value).Any();
+
+                if (exists)
                     return null;
 
-                var version = new Version()
+                var version = new Version
                 {
                     Module = module,
                     Value = value,
                     Date = DateTime.Now
                 };
 
-                var versionRepository = uow.GetRepository<Version>();
-                versionRepository.Put(version);
+                versionsRepository.Put(version);
                 uow.Commit();
 
                 return version;

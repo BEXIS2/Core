@@ -245,6 +245,7 @@ namespace BExIS.Dlm.Services.Party
                     party.StartDate = DateTime.MinValue;
                 if (party.EndDate == null || party.EndDate == DateTime.MinValue)
                     party.EndDate = DateTime.MaxValue;
+
                 if (party.StartDate > party.EndDate)
                     BexisException.Throw(null, "End date should be greater than start date.");
                 if ((ValidateRelationships(party.Id)).Any())
@@ -1137,4 +1138,5 @@ namespace BExIS.Dlm.Services.Party
 
         #endregion privateMethod
     }
+
 }

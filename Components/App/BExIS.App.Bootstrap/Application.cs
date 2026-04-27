@@ -1,12 +1,22 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Ext.Services;
 using BExIS.Utils.Config;
+using BExIS.Utils.Config.Configurations;
+using Microsoft.Owin;
+using Microsoft.Owin.Host.SystemWeb;
+using Microsoft.Owin.Security;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Runtime;
 using System.Threading;
+using System.Web;
 using System.Web.Http;
+using System.Web.Http.Dispatcher;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Vaiona.IoC;
@@ -128,7 +138,26 @@ namespace BExIS.App.Bootstrap
             // This MUST be before IoC initialization.
             AppDomain.CurrentDomain.AssemblyResolve += ModuleManager.ResolveCurrentDomainAssembly;
             initIoC();
-            GlobalConfiguration.Configure(configurationCallback);
+
+            // ================================================
+            // Web API konfigurieren + unseren Activator setzen
+            // ================================================
+            GlobalConfiguration.Configure(config =>
+            {
+                // Deine bestehende Konfiguration (falls du eine Callback-Methode hast)
+                configurationCallback?.Invoke(config);
+
+                // WICHTIG: Hier den Unity Activator für alle ApiController registrieren
+                config.Services.Replace(
+                    typeof(IHttpControllerActivator),
+                    new UnityHttpControllerActivator()
+                );
+
+                // Optional: Vollständiger Dependency Resolver (für Filter, etc.)
+                // config.DependencyResolver = new UnityDependencyResolver(IoCFactory.Container);
+            });
+
+            //GlobalConfiguration.Configure(configurationCallback);
 
             // This method initializes the registered modules. It MUST be before initializing the persistence!
             initModules();
@@ -145,7 +174,9 @@ namespace BExIS.App.Bootstrap
             // This call starts them.
             ModuleManager.StartModules();
 
-            // generate settings
+            ControllerBuilder.Current.SetControllerFactory(new IoCControllerFactory());
+
+            GeneralSettings.CreateIssuerSigningKey();
         }
 
         private void initTenancy()

@@ -193,6 +193,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "Create", "*", DatasetCreationFeature);
                 operationManager.Create("DCM", "CreateDataset", "*", DatasetCreationFeature);
                 operationManager.Create("DCM", "Form", "*");
+                operationManager.Create("DCM", "M", "*");
 
                 operationManager.Create("Api", "DatasetIn", "*", DatasetCreationFeature);
                 operationManager.Create("Api", "Dataset", "*", DatasetCreationFeature);
@@ -266,6 +267,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "EntityTemplates", "*", EntityTemplateManagementFeature);
 
                 #endregion entity template
+
+                #region New Metadata Edit, Config and View
+                // TODO add to feature
+                operationManager.Create("DCM", "ComponentConfig", "*");
+                // operationManager.Create("DCM", "MetadateEdit", "*");
+
+                #endregion
 
                 #region public available
 

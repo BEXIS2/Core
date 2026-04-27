@@ -28,6 +28,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             entityTemplate.NotificationGroups = model.NotificationGroups;
             entityTemplate.MetadataFields = model.MetadataFields;
             entityTemplate.Activated = model.Activated;
+            entityTemplate.Order = model.Order;
 
             // load entites
             // metadata
@@ -68,6 +69,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     entityTemplate.NotificationGroups = model.NotificationGroups;
                     entityTemplate.MetadataFields = model.MetadataFields;
                     entityTemplate.Activated = model.Activated;
+                    entityTemplate.Order = model.Order;
 
                     // load entites
                     // metadata
@@ -98,6 +100,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             model.NotificationGroups = entityTemplate.NotificationGroups != null ? entityTemplate.NotificationGroups : new List<long>();
             model.MetadataFields = entityTemplate.MetadataFields != null ? entityTemplate.MetadataFields : new List<int>();
             model.Activated = entityTemplate.Activated;
+            model.Order = entityTemplate.Order;
+
 
 
             var xmlDatasetHelper = new XmlDatasetHelper();

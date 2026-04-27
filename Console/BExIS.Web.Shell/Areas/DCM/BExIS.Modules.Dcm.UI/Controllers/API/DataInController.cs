@@ -68,7 +68,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             string error = "";
 
             DatasetManager datasetManager = new DatasetManager();
-            UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             DataStructureManager dataStructureManager = new DataStructureManager();
 
@@ -314,9 +313,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             finally
             {
                 datasetManager.Dispose();
-                entityPermissionManager.Dispose();
                 dataStructureManager.Dispose();
-                userManager.Dispose();
                 request.Dispose();
             }
         }

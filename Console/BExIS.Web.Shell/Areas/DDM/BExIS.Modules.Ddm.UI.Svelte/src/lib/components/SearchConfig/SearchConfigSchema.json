@@ -1,0 +1,267 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "global": {
+      "type": "object",
+      "properties": {
+        "search_components": {
+          "type": "object",
+          "properties": {
+            "facets_to_index": { "type": "boolean" },
+            "categories_to_index": { "type": "boolean" },
+            "properties_to_index": { "type": "boolean" },
+            "generals_to_index": { "type": "boolean" },
+
+            "facets": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/globalComponent" }
+            },
+            "categories": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/globalComponent" }
+            },
+            "properties": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/globalComponent" }
+            },
+            "general": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/globalComponent" }
+            }
+          },
+          "required": [
+            "facets_to_index", "categories_to_index",
+            "properties_to_index", "generals_to_index"
+          ]
+        },
+
+        "primary_data": {
+          "type": "object",
+          "properties": {
+            "to_index": { "type": "boolean" },
+            "calc": {
+              "$ref": "#/$defs/calcBlock"
+            },
+            "spatial_data": {
+              "type": "object",
+              "properties": {
+                "allowed_data_type_ids": {
+                  "type": "array",
+                  "items": { "type": "integer" }
+                },
+                "lat_meaning": { "type": "integer" },
+                "long_meaning": { "type": "integer" }
+              },
+              "required": ["allowed_data_type_ids", "lat_meaning", "long_meaning"]
+            }
+          },
+          "required": ["to_index", "calc", "spatial_data"]
+        },
+
+        "spatial_data": {
+          "type": "object",
+          "properties": {
+            "spatial_search": { "type": "boolean" },
+            "spatial_search_settings": {
+              "type": "object",
+              "properties": {
+                "crs": { "enum": ["EPSG:4326"] },
+                "axis_order": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "basemap": { "enum": ["satellite"] },
+                "start_extend": { "type": "string" }
+              },
+              "required": ["crs", "axis_order", "basemap", "start_extend"]
+            }
+          }
+        },
+
+        "general": {
+          "type": "object",
+          "properties": {
+            "show_only_completed_metadata": { "type": "boolean" },
+            "auto_complete_trigger": { "type": "integer" },
+            "show_empty_facets": { "type": "boolean" }
+          }
+        }
+      },
+      "required": ["search_components", "primary_data", "spatial_data", "general"]
+    },
+
+    "local": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "entity_template_id": { "type": "integer" },
+          "index_not_completed_metadata": { "type": "boolean" },
+
+          "search_components": {
+            "type": "object",
+            "properties": {
+              "facets": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/localComponent" }
+              },
+              "categories": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/localComponent" }
+              },
+              "properties": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/localComponent" }
+              },
+              "general": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/localComponent" }
+              }
+            }
+          },
+
+          "spatial_data": {
+            "type": "object",
+            "properties": {
+              "spatial_metadata": {
+                "type": "object",
+                "properties": {
+                  "type": { "enum": ["bbox", "point"] }
+                },
+                "required": ["type"],
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": { "type": { "const": "bbox" } }
+                    },
+                    "then": {
+                      "required": [
+                        "WestBoundLongitude",
+                        "EastBoundLongitude",
+                        "SouthBoundLatitude",
+                        "NorthBoundLatitude"
+                      ],
+                      "properties": {
+                        "WestBoundLongitude": { "type": "number" },
+                        "EastBoundLongitude": { "type": "number" },
+                        "SouthBoundLatitude": { "type": "number" },
+                        "NorthBoundLatitude": { "type": "number" }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": { "type": { "const": "point" } }
+                    },
+                    "then": {
+                      "required": ["longitude", "latitude", "radius"],
+                      "properties": {
+                        "longitude": { "type": "number" },
+                        "latitude": { "type": "number" },
+                        "radius": { "type": "number" }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+
+          "primary_data": {
+            "type": "object",
+            "properties": {
+              "to_index": { "type": "boolean" },
+              "calc": {
+                "oneOf": [
+                  { "$ref": "#/$defs/calcBlock" },
+                  {
+                    "type": "array",
+                    "items": { "$ref": "#/$defs/calcBlock" }
+                  }
+                ]
+              }
+            },
+            "required": ["to_index", "calc"]
+          },
+
+          "external_sources": {
+            "type": "object",
+            "properties": {
+              "source": { "type": "string" },
+              "local_path": { "type": "string" },
+              "external_name": { "type": "string" }
+            },
+            "required": ["source", "local_path", "external_name"]
+          }
+        },
+        "required": ["entity_template_id", "index_not_completed_metadata", "search_components", "spatial_data", "primary_data", "external_sources"]
+      }
+    }
+  },
+
+  "required": ["global", "local"],
+
+  "$defs": {
+    "globalComponent": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "integer" },
+        "component_name": { "type": "string" },
+        "description": { "type": "string" },
+        "placeholder": { "type": "string" },
+        "header_item": { "type": "boolean" },
+        "default_header_item": { "type": "boolean" }
+      },
+      "required": ["id", "component_name", "description", "placeholder", "header_item", "default_header_item"]
+    },
+
+    "localComponent": {
+      "type": "object",
+      "properties": {
+        "global_id": { "type": "integer" },
+        "data_type_id": {
+          "enum": [
+            "byte",
+            "short",
+            "integer",
+            "long",
+            "float",
+            "half_float",
+            "double",
+            "scaled_float",
+            "text",
+            "keyword",
+            "date",
+            "date_nanos",
+            "boolean",
+            "geo_point",
+            "geo_shape",
+            "object",
+            "nested",
+            "ip",
+            "version",
+            "binary"
+          ]
+        },
+        "metadata_nodes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["global_id", "data_type_id", "metadata_nodes"]
+    },
+
+    "calcBlock": {
+      "type": "object",
+      "properties": {
+        "operation": { "enum": ["min/max", "avg", "sum"] },
+        "allowed_meanings": {
+          "type": "array",
+          "items": { "type": "integer" }
+        }
+      },
+      "required": ["operation", "allowed_meanings"]
+    }
+  }
+}

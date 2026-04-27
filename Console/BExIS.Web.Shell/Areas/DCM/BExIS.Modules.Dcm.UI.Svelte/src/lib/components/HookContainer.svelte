@@ -40,7 +40,8 @@
 
 	function errorHandler(e) {
 		resetInformations();
-		error = e.detail.messages;
+		error = e.detail.messages.filter((item) => item != null &&	item != undefined &&	item != '');
+
 	}
 
 	function successHandler(e) {

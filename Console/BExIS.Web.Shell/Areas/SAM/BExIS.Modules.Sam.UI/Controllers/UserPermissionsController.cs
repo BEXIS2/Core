@@ -26,41 +26,37 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         public async Task AddRightToEntityPermission(long subjectId, long entityId, long instanceId, int rightType)
         {
-            using (var entityPermissionManager = new EntityPermissionManager())
-            {
-                var entityPermission = await entityPermissionManager.FindAsync(subjectId, entityId, instanceId);
+            var entityPermissionManager = new EntityPermissionManager();
+            var entityPermission = await entityPermissionManager.FindAsync(subjectId, entityId, instanceId);
 
-                if (entityPermission == null)
-                {
-                    await entityPermissionManager.CreateAsync(subjectId, entityId, instanceId, rightType);
-                }
-                else
-                {
-                    if ((entityPermission.Rights & rightType) != 0) return;
-                    entityPermission.Rights += rightType;
-                    await entityPermissionManager.UpdateAsync(entityPermission);
-                }
+            if (entityPermission == null)
+            {
+                await entityPermissionManager.CreateAsync(subjectId, entityId, instanceId, rightType);
+            }
+            else
+            {
+                if ((entityPermission.Rights & rightType) != 0) return;
+                entityPermission.Rights += rightType;
+                await entityPermissionManager.UpdateAsync(entityPermission);
             }
         }
 
         public async Task RemoveRightFromEntityPermission(long subjectId, long entityId, long instanceId, int rightType)
         {
-            using (var entityPermissionManager = new EntityPermissionManager())
+            var entityPermissionManager = new EntityPermissionManager();
+            var entityPermission = await entityPermissionManager.FindAsync(subjectId, entityId, instanceId);
+
+            if (entityPermission == null) return;
+
+            if (entityPermission.Rights == rightType)
             {
-                var entityPermission = await entityPermissionManager.FindAsync(subjectId, entityId, instanceId);
-
-                if (entityPermission == null) return;
-
-                if (entityPermission.Rights == rightType)
-                {
-                    await entityPermissionManager.DeleteAsync(entityPermission);
-                }
-                else
-                {
-                    if ((entityPermission.Rights & rightType) == 0) return;
-                    entityPermission.Rights -= rightType;
-                    await entityPermissionManager.UpdateAsync(entityPermission);
-                }
+                await entityPermissionManager.DeleteAsync(entityPermission);
+            }
+            else
+            {
+                if ((entityPermission.Rights & rightType) == 0) return;
+                entityPermission.Rights -= rightType;
+                await entityPermissionManager.UpdateAsync(entityPermission);
             }
         }
 
@@ -93,7 +89,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             finally
             {
                 subjectManager.Dispose();
-                entityPermissionManager.Dispose();
             }
         }
     }
