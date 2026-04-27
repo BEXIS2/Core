@@ -312,7 +312,8 @@ namespace BExIS.Modules.Rpm.UI.Helpers
                 IsKey = variable.IsKey,
                 IsOptional = variable.IsValueOptional,
                 Meanings = ConvertTo(variable.Meanings),
-                Constraints = ConvertTo(variable.VariableConstraints)
+                Constraints = ConvertTo(variable.VariableConstraints),
+                MissingValues = ConvertTo(variable.MissingValues)
             };
 
             // add template if exist

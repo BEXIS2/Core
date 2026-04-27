@@ -92,6 +92,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     //set modification - create
                     workingCopy = setModificationInfo(workingCopy, true, GetUsernameOrDefault(), "Metadata");
 
+                    //setSystemVariables
+                    setSystemValuesToMetadata(workingCopy.Dataset.Id, 1, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
+
                     // save version in database
                     dm.EditDatasetVersion(workingCopy, null, null, null);
                     // close check out

@@ -1173,7 +1173,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 string mimetype = MimeMapping.GetMimeMapping(ext);
 
                 DatasetManager datasetManager = new DatasetManager();
-
+                long versionNr = 0;
                 try
                 {
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
@@ -1182,7 +1182,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     string title = getTitle(writer.GetTitle(id));
 
                     string path = "";
-                    long versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
+                    versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
                     string message = string.Format("dataset {0} version {1} was downloaded as excel.", id,
                         versionNr);
 
@@ -1235,7 +1235,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 {
                     using (var emailService = new EmailService())
                     {
-                        emailService.Send(MessageHelper.GetUpdateDatasetHeader(id),
+                        emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
                             ex.Message,
                             GeneralSettings.SystemEmail
                             );
