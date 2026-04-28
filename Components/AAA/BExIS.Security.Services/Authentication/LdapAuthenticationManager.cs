@@ -10,28 +10,10 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Authentication
 {
-    public class LdapAuthenticationManager : IDisposable
+    public class LdapAuthenticationManager
     {
-        private readonly IUnitOfWork _guow;
-        private bool _isDisposed;
-
         private readonly List<LdapConfiguration> _ldapConfigurations;
 
-        public LdapAuthenticationManager()
-        {
-            _guow = this.GetIsolatedUnitOfWork();
-            _ldapConfigurations = GeneralSettings.LdapConfigurations;
-        }
-
-        ~LdapAuthenticationManager()
-        {
-            Dispose(true);
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-        }
 
         public User GetUser(string name, string username, string password)
         {
@@ -87,19 +69,6 @@ namespace BExIS.Security.Services.Authentication
                 return SignInStatus.Success;
 
             return SignInStatus.Failure;
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_isDisposed)
-            {
-                if (disposing)
-                {
-                    if (_guow != null)
-                        _guow.Dispose();
-                    _isDisposed = true;
-                }
-            }
         }
     }
 }

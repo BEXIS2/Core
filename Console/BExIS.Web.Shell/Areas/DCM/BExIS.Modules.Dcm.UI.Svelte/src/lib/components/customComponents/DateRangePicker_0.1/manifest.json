@@ -1,0 +1,122 @@
+{
+  "meta": {
+    "title": "Date Range Picker Widget",
+    "component_name": "date_range_picker_v1.0.0",
+    "author": "Franziska Zander",
+    "version": "1.0.0",
+    "description": "Component for selecting a date range"
+  },
+  "globalSettings": {
+    "globalsetting": [
+      {
+        "name": "Parameter",
+        "description": "String to configure the terminology widget",
+        "type": "string",
+        "target_variable": "",
+        "default_value": {
+          "type": "string",
+          "value": ""
+        }
+      }
+    ]
+  },
+  "modes": {
+    "edit": [
+      {
+        "mode_name": "range_selection",
+        "description": "Basic Configuration of the date range picker widget",
+        "settings": {
+          "setting": [
+            {
+              "name": "Range Limit",
+              "description": "Limit the selectable date range",
+              "type": "string",
+              "target_variable": "rangeLimit",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Start Date",
+              "description": "Start date of the range",
+              "type": "string",
+              "format": "",
+              "target_variable": "startDate",
+              "allowregex_input": true,
+              "allowregex_output": true,
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "string",
+                "value": "2024-01-01"
+              }
+            },
+            {
+              "name": "End Date",
+              "description": "End date of the range",
+              "type": "string",
+              "format": "",
+              "target_variable": "endDate",
+              "allowregex_input": true,
+              "allowregex_output": true,
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "string",
+                "value": "2024-12-31"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "view": [
+      {
+        "mode_name": "Range Display",
+        "description": "Mode for displaying selected date range",
+        "settings": {
+          "setting": [
+          
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Start Date",
+              "description": "Start date of the range",
+              "type": "string",
+              "target_variable": "startDate",
+              "allowregex_input": true,
+              "allowregex_output": false,
+              "is_input": true,
+              "is_output": false,
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "End Date",
+              "description": "End date of the range",
+              "type": "string",
+              "target_variable": "endDate",
+              "allowregex_input": true,
+              "allowregex_output": false,
+              "is_input": true,
+              "is_output": false,
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

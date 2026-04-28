@@ -116,7 +116,7 @@ namespace BExIS.Dim.Helpers.Export
                 {
                     DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
-                    if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                    if (datasetVersion.Dataset.DataStructure!=null)
                     {
                         OutputDataManager outputDataManager = new OutputDataManager();
                         SubmissionManager submissionManager = new SubmissionManager();

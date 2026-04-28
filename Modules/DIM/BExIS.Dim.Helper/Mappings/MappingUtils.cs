@@ -291,7 +291,6 @@ namespace BExIS.Dim.Helpers.Mappings
             finally
             {
                 entityManager.Dispose();
-                entityPermissionManager.Dispose();
             }
 
             return tmp.OrderBy(i => i.Value).ToList();

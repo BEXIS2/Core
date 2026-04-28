@@ -1,0 +1,18 @@
+﻿
+@{
+    ViewBag.Title = "Import JSON";
+    Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
+
+    long id = 0;
+
+
+    if (ViewData["id"] != null)
+    {
+        id = (long)ViewData["id"];
+    }
+
+}
+
+<div id="importjson" dataset-id="@id">
+    @Html.Partial("_sveltePage")
+</div>

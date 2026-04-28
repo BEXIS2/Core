@@ -68,11 +68,11 @@
 				></SlideToggle>
 			</div>
 			<div class="flex gap-2 pb-2 justify-end">
-				<div>{isOptional ? 'Value is optional' : 'Value is required'}</div>
+				<div>{isOptional ? 'Empty values allowed' : 'Empty values not allowed'}</div>
 				<SlideToggle
 					size="sm"
 					name="isOptional"
-					title={isOptional ? 'Value is optional' : 'Value is required'}
+					title={isOptional ? 'Empty values allowed' : 'Empty values not allowed'}
 					active="bg-primary-500"
 					bind:checked={isOptional}
 					disabled={blockDataRelevant}

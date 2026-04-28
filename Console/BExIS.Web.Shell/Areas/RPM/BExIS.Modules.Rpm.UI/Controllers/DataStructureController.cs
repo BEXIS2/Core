@@ -26,6 +26,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI.HtmlControls;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Data;
 using Vaiona.Web.Mvc.Modularity;
@@ -133,7 +134,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             ViewData["enforcePrimaryKey"] = enforcePrimaryKey;
 
             bool showDarwinCoreValidation = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("showDarwinCoreValidation");
-            ViewData["showDarwinCoreValidation"] = enforcePrimaryKey;
+            ViewData["showDarwinCoreValidation"] = showDarwinCoreValidation;
 
             return View("Create");
         }
@@ -168,7 +169,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             ViewData["enforcePrimaryKey"] = enforcePrimaryKey;
 
             bool showDarwinCoreValidation = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("showDarwinCoreValidation");
-            ViewData["showDarwinCoreValidation"] = enforcePrimaryKey;
+            ViewData["showDarwinCoreValidation"] = showDarwinCoreValidation;
 
             ViewData["dataExist"] = structureHelper.InUseAndDataExist(structureId);
 
@@ -541,10 +542,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         }
 
                         // variable template
-                        templates.ForEach(t => var.PossibleTemplates.Add(helper.ConvertTo(t, "detect")));
+                        templates.ForEach(t => var.PossibleTemplates.Add(t.Id));
 
                         if (var.PossibleTemplates.Any())
-                            var.Template = var.PossibleTemplates.FirstOrDefault();
+                        {
+                            var ft = var.PossibleTemplates.First();
+                            var template = templates.FirstOrDefault(t => t.Id.Equals(ft));
+                            var.Template = helper.ConvertTo(template,"detect");
+                        }
+
 
                         // set meanings,constraints and description from template
                         if (var.Template?.Id == 0) var.Template = null;

@@ -69,6 +69,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
+        private readonly UserManager _userManager;
+
+        public DataController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Grant)]
         public ActionResult DatasetPermissions(long datasetId)
         {
@@ -163,9 +170,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult ShowData(long id, int version = 0, bool asPartial = false, string versionName = "", double tag = 0)
         {
             using (DatasetManager dm = new DatasetManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (EntityManager entityManager = new EntityManager())
             {
+                EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                 // load settings
                 var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
                 ViewData["use_tags"] = moduleSettings.GetValueByKey("use_tags");
@@ -260,7 +267,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             // Throw error if no version id was found.
                             if (versionId <= 0)
                             {
-                                ModelState.AddModelError("", string.Format("The version with the requested name {1} or id {0} does not exist or is not publicly accessible", version, versionName));
+                                ModelState.AddModelError("", string.Format("The requested version (release tag or version ID: {0}{1}) could not be found or you don’t have permission to access it.", version, versionName));
                             }
                             else
                             {
@@ -613,7 +620,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             finally
             {
                 dm.Dispose();
-                entityPermissionManager.Dispose();
             }
         }
 
@@ -622,7 +628,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             if (this.IsAccessible("DIM", "Export", "GenerateZip"))
             {
-                var actionresult = this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", version }, { "format", format }, { "withFilter", withFilter }, { "withUnits", withUnits } });
+                var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+                bool useTags = (Boolean)moduleSettings.GetValueByKey("use_tags");
+                bool useMinorTag = (Boolean)moduleSettings.GetValueByKey("use_minor");
+
+                var actionresult = this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", version }, { "format", format }, { "withFilter", withFilter }, { "withUnits", withUnits },{"useTags", useTags}, { "useMinor", useMinorTag} });
 
                 return actionresult;
             }
@@ -801,6 +811,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             try
                             {
                                 long count = dm.RowCount(datasetID, null);
+                                ViewData["gridTotal"] = count;
                                 if (count > 0) table = dm.GetLatestDatasetVersionTuples(datasetID, null, null, null, "", 0, 10);
                                 else ModelState.AddModelError(string.Empty, "<span style=\"color: black;\"> There is no primary data available/uploaded. </span><br/><br/> <span style=\"font-weight: normal;color: black;\">Please note that the data may have been uploaded to another repository and is referenced here in the metadata.</span>");
                             }
@@ -815,7 +826,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             ViewData["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
                         }
 
-                        ViewData["gridTotal"] = dm.RowCount(dataset.Id, null);
                         ViewData["isPublic"] = entityPermissionManager.ExistsAsync(dataset.EntityTemplate.EntityType.Id, dataset.Id).Result;
 
                         sds.Variables = sds.Variables.OrderBy(v => v.OrderNo).ToList();
@@ -861,7 +871,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 dm.Dispose();
                 dsm.Dispose();
-                entityPermissionManager.Dispose();
             }
         }
 
@@ -1164,7 +1173,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 string mimetype = MimeMapping.GetMimeMapping(ext);
 
                 DatasetManager datasetManager = new DatasetManager();
-
+                long versionNr = 0;
                 try
                 {
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
@@ -1173,7 +1182,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     string title = getTitle(writer.GetTitle(id));
 
                     string path = "";
-                    long versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
+                    versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
                     string message = string.Format("dataset {0} version {1} was downloaded as excel.", id,
                         versionNr);
 
@@ -1226,7 +1235,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 {
                     using (var emailService = new EmailService())
                     {
-                        emailService.Send(MessageHelper.GetUpdateDatasetHeader(id),
+                        emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
                             ex.Message,
                             GeneralSettings.SystemEmail
                             );
@@ -1673,11 +1682,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             using (DatasetManager dm = new DatasetManager())
             using (DataStructureManager dsm = new DataStructureManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (OperationManager operationManager = new OperationManager())
             using (FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager())
             using (SubjectManager subjectManager = new SubjectManager())
             {
+                EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                 using (var uow = this.GetUnitOfWork())
                 {
                     Dataset dataset = dm.GetDataset(datasetID);
@@ -1864,38 +1873,36 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             SettingsHelper helper = new SettingsHelper();
 
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            bool hasEditPermission = false;
+
+            if (GetUsernameOrDefault() != "DEFAULT")
             {
-                bool hasEditPermission = false;
-
-                if (GetUsernameOrDefault() != "DEFAULT")
-                {
-                    hasEditPermission = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Write).Result;
-                }
-
-                // user has edit permission and can see all versions -> show full list
-                var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
-                if (hasEditPermission || !Convert.ToBoolean(moduleSettings.GetValueByKey("reduce_versions_select_logged_in")))
-                {
-                    datasetVersionsAllowed = datasetVersions;
-                }
-                // user is not logged in or has no edit permission -> show reduced list
-                else
-                {
-                    datasetVersionsAllowed = datasetManager.GetDatasetVersionsAllowed(id, true, false, datasetVersions).OrderByDescending(d => d.Id).ToList();
-                }
-
-                // use reduced/ or full list, but allways create version number from full list.
-                datasetVersionsAllowed.ForEach(d => tmp.Add(
-                    new SelectListItem()
-                    {
-                        Text = CreateVersionNumber(d, datasetVersions) + " " + getVersionInfo(d),
-                        Value = "" + (datasetVersions.Count - datasetVersions.IndexOf(d))
-                    }
-                    ));
-
-                return new SelectList(tmp, "Value", "Text");
+                hasEditPermission = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Write).Result;
             }
+
+            // user has edit permission and can see all versions -> show full list
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            if (hasEditPermission || !Convert.ToBoolean(moduleSettings.GetValueByKey("reduce_versions_select_logged_in")))
+            {
+                datasetVersionsAllowed = datasetVersions;
+            }
+            // user is not logged in or has no edit permission -> show reduced list
+            else
+            {
+                datasetVersionsAllowed = datasetManager.GetDatasetVersionsAllowed(id, true, false, datasetVersions).OrderByDescending(d => d.Id).ToList();
+            }
+
+            // use reduced/ or full list, but allways create version number from full list.
+            datasetVersionsAllowed.ForEach(d => tmp.Add(
+                new SelectListItem()
+                {
+                    Text = CreateVersionNumber(d, datasetVersions) + " " + getVersionInfo(d),
+                    Value = "" + (datasetVersions.Count - datasetVersions.IndexOf(d))
+                }
+                ));
+
+            return new SelectList(tmp, "Value", "Text");
         }
 
         private static string CreateVersionNumber(DatasetVersion d, List<DatasetVersion> dsvs)
@@ -1913,10 +1920,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         private string createEditedBy(string performer)
         {
             using (var partyManager = new PartyManager())
-            using (var userManager = new UserManager())
-            using (var identityUserService = new IdentityUserService(userManager))
             {
-                var user_performer = identityUserService.FindByNameAsync(performer);
+                var user_performer = _userManager.FindByNameAsync(performer);
 
                 // Replace account name by party name if exists
                 if (user_performer.Result != null)
@@ -2152,15 +2157,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         {
             #region security permissions and authorizations check
 
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
-                return entityPermissionManager.HasEffectiveRightsAsync(GetUsernameOrDefault(), typeof(Dataset), entityId, rightType).Result;
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            return entityPermissionManager.HasEffectiveRightsAsync(GetUsernameOrDefault(), typeof(Dataset), entityId, rightType).Result;
 
             #endregion security permissions and authorizations check
         }
 
         private bool hasUserRequestRight()
         {
-            using (var userManager = new UserManager())
             using (var featurePermissionManager = new FeaturePermissionManager())
             using (var operationManager = new OperationManager())
             {
@@ -2171,7 +2175,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     if (feature != null)
                     {
-                        var result = userManager.FindByNameAsync(GetUsernameOrDefault());
+                        var result = _userManager.FindByNameAsync(GetUsernameOrDefault());
 
                         if (featurePermissionManager.HasAccessAsync(result.Result?.Id, feature.Id).Result) return true;
                     }

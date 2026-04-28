@@ -1,16 +1,27 @@
 ﻿using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin;
 using Microsoft.Owin.Security;
+using Org.BouncyCastle.Crypto;
+using Vaiona.IoC;
 
 namespace BExIS.Security.Services.Authentication
 {
-    public sealed class SignInManager : SignInManager<User, long>
+    public class SignInManager : SignInManager<User, long>
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
-        public SignInManager(IAuthenticationManager authenticationManager, UserManager userManager)
-             : base(new IdentityUserService(userManager), authenticationManager)
+        // Konstruktor bleibt gleich
+        public SignInManager(
+            UserManager userManager,
+            IAuthenticationManager authenticationManager)
+            : base(userManager, authenticationManager)
+        { }
+
+        public static SignInManager Create(IdentityFactoryOptions<SignInManager> options, IOwinContext context)
         {
+            var userManager = IoCFactory.Container.Resolve<UserManager>();   // ← aus Unity!
+            var authManager = context.Authentication;
+            return new SignInManager(userManager, authManager);
         }
     }
 }

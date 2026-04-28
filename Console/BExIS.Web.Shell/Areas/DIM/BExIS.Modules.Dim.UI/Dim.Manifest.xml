@@ -30,10 +30,6 @@
         controller="Gbif" action=""
         extends="./settingsRoot" />
 		
-		<Export tag="lunchbar" id="helpDim" order="5"
-				title="Data Dissemination" description="Data Dissemination Help Manual" icon=""
-				controller="Help" action="index"
-				extends="./lunchbarRoot/help" />
 
 		<Export tag="internalAction" id="publishDataset" order="1"
 					title="Data Dissemination Publish Dataset" description="Publish a dataset." icon=""

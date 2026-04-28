@@ -13,11 +13,16 @@ namespace BExIS.Modules.Dcm.UI.Hooks
 
         public override void Check(long id, string username)
         {
-            // check status
-            checkPermissionStatus(id, username);
+            //// check status
+            //checkPermissionStatus(id, username);
 
-            // if status is open then check if data is available
-            if (Status == HookStatus.Open) checkDataStatus(id, username);
+            //// if status is open then check if data is available
+            //if (Status == HookStatus.Open) checkDataStatus(id, username);
+
+            checkDataStatus(id, username);
+
+
+
         }
 
         private void checkPermissionStatus(long id, string username)

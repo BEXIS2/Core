@@ -4,6 +4,7 @@ export interface EntityTemplateModel {
 	id: number;
 	name: string;
 	description: string;
+	order: number;
 	entityType: ListItem;
 	metadataStructure: ListItem;
 	metadataFields: number[];

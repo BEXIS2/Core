@@ -22,7 +22,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 {
     public class ApiDatasetHelper
     {
-        public ApiDatasetModel GetContent(DatasetVersion datasetVersion, long id, int versionNumber, long metadataStructureId, long dataStructureId)
+        public ApiDatasetModel GetContent(DatasetVersion datasetVersion, long id, int versionNumber, long metadataStructureId, long dataStructureId, long entityTemplateId)
         {
             ApiDatasetModel datasetModel = new ApiDatasetModel()
             {
@@ -33,7 +33,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 Title = datasetVersion.Title,
                 Description = datasetVersion.Description,
                 DataStructureId = dataStructureId,
-                MetadataStructureId = metadataStructureId
+                MetadataStructureId = metadataStructureId,
+                EntityTemplateId = entityTemplateId
             };
 
             Dictionary<string, List<XObject>> objects = new Dictionary<string, List<XObject>>();
@@ -193,9 +194,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
         // @TODO: move to dataset manager?
         private static Tuple<bool, DateTime> getPublicAndDate(long id)
         {
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (EntityManager entityManager = new EntityManager())
             {
+                var entityPermissionManager = new EntityPermissionManager();
                 long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
                 entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
                 return entityPermissionManager.GetPublicAndDate(entityTypeId.Value, id);

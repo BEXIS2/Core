@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Vaiona.IoC;
 
 namespace BExIS.App.Bootstrap.Attributes
 {
@@ -29,7 +30,7 @@ namespace BExIS.App.Bootstrap.Attributes
         public async override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var entityPermissionManager = new EntityPermissionManager();
-            var userManager = new UserManager();
+            var userManager = IoCFactory.Container.Resolve<UserManager>();
 
             try
             {
@@ -69,7 +70,6 @@ namespace BExIS.App.Bootstrap.Attributes
             }
             finally
             {
-                entityPermissionManager.Dispose();
                 userManager.Dispose();
             }
         }

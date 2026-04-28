@@ -1,0 +1,14 @@
+{
+  "description": "...",
+  "entries": [
+    {
+      "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2",
+      "key": "help",
+      "title": "Help URL",
+      "type": "String",
+      "value": ""
+    }
+  ],
+  "id": "pum",
+  "name": "Publication Tracking Module"
+}

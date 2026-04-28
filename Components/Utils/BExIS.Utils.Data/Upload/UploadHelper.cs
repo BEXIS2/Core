@@ -467,11 +467,7 @@ namespace BExIS.Utils.Upload
                             // 2 [2][Javad] = 2Javad
                             foreach (List<string> l in tempList)
                             {
-                                string tempString = "";
-                                foreach (string s in l)
-                                {
-                                    tempString += s;
-                                }
+                                string tempString = String.Join("_", l);
                                 if (!String.IsNullOrEmpty(tempString)) primaryValuesAsOneString.Add(tempString);
                             }
 

@@ -3,15 +3,15 @@ $do$
 DECLARE
 
 dwclinks text[] := ARRAY[
-'measurementAccuracy'
-'measurementDeterminedBy'
-'measurementDeterminedDate'
-'measurementID'
-'measurementMethod'
-'measurementRemarks'
-'measurementType'
-'measurementUnit'
-'measurementValue'
+'measurementAccuracy',
+'measurementDeterminedBy',
+'measurementDeterminedDate',
+'measurementID',
+'measurementMethod',
+'measurementRemarks',
+'measurementType',
+'measurementUnit',
+'measurementValue',
 'parentMeasurementID'      
 ];
 

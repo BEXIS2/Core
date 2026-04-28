@@ -16,8 +16,8 @@ namespace BExIS.Utils.Data.Helpers
             // Features
             using (var featureManager = new FeatureManager())
             using (var operationManager = new OperationManager())
-            using (var versionManager = new VersionManager())
             {
+                var versionManager = new VersionManager();
                 var bexisFeature = featureManager.FindByName("BExIS") ?? featureManager.Create("BExIS", "This is the root!");
                 var settings = featureManager.FindByName("Settings") ?? featureManager.Create("Settings", "This is the settings page!", bexisFeature);
 
@@ -40,9 +40,9 @@ namespace BExIS.Utils.Data.Helpers
 
                 var o12 = operationManager.Find("Shell", "Settings", "*") ?? operationManager.Create("Shell", "Settings", "*", settings);
 
-                if (!versionManager.Exists("Shell", "4.2.1"))
+                if (!versionManager.Exists("Shell", "4.3.0"))
                 {
-                    versionManager.Create("Shell", "4.2.1");
+                    versionManager.Create("Shell", "4.3.0");
                 }
             }
         }

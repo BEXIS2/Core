@@ -6,6 +6,7 @@ using BExIS.Security.Services.Versions;
 using BExIS.UI.Helpers;
 using BExIS.Utils.Config;
 using BExIS.Web.Shell.Models;
+using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Configuration;
 using System.IO;
@@ -20,6 +21,13 @@ namespace BExIS.Web.Shell.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly UserManager _userManager;
+
+        public HomeController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         [DoesNotNeedDataAccess]
         public ActionResult Index()
         {
@@ -187,32 +195,29 @@ namespace BExIS.Web.Shell.Controllers
             var site = ConfigurationManager.AppSettings["ApplicationVersion"];
 
             // Database
-            using (var versionManager = new VersionManager())
+            var versionManager = new VersionManager();
+            var database = versionManager.GetLatestVersion().Value;
+
+            // load version from workspace in settings file of general
+
+            string workspace = GeneralSettings.ApplicationVersion;
+
+            var model = new ReadVersionsModel()
             {
-                var database = versionManager.GetLatestVersion().Value;
+                Site = site,
+                Database = database,
+                Workspace = workspace
+            };
 
-                // load version from workspace in settings file of general
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Session Timeout", this.Session.GetTenant());
 
-                string workspace = GeneralSettings.ApplicationVersion;
-
-                var model = new ReadVersionsModel()
-                {
-                    Site = site,
-                    Database = database,
-                    Workspace = workspace
-                };
-
-                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Session Timeout", this.Session.GetTenant());
-
-                return View(model);
-            }
+            return View(model);
         }
 
         protected bool checkPermission(Tuple<string, string, string> LandingPage)
         {
             var featurePermissionManager = new FeaturePermissionManager();
             var operationManager = new OperationManager();
-            var userManager = new UserManager();
 
             try
             {
@@ -230,7 +235,7 @@ namespace BExIS.Web.Shell.Controllers
                 var feature = operation?.Feature;
                 if (feature == null) return true;
 
-                var result = userManager.FindByNameAsync(userName);
+                var result = _userManager.FindByNameAsync(userName);
 
                 if (featurePermissionManager.HasAccessAsync(result.Result?.Id, feature.Id).Result)
                 {
@@ -245,7 +250,6 @@ namespace BExIS.Web.Shell.Controllers
             {
                 featurePermissionManager.Dispose();
                 operationManager.Dispose();
-                userManager.Dispose();
             }
         }
     }

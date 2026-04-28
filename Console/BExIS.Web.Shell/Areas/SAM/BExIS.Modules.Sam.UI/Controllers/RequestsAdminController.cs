@@ -53,9 +53,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Decisions(long entityId, string status = "")
         {
             using (var entityManager = new EntityManager())
-            using (var entityPermissionManager = new EntityPermissionManager())
             using (var decisionManager = new DecisionManager())
             {
+                var entityPermissionManager = new EntityPermissionManager();
                 var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
 
                 IQueryable<Decision> decisions = null;

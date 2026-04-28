@@ -22,12 +22,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public void Accept(long decisionId)
         {
             using (var entityManager = new EntityManager())
-            using (var entityPermissionManager = new EntityPermissionManager())
             using (var decisionManager = new DecisionManager())
             using (var uow = this.GetUnitOfWork())
             {
                 try
                 {
+                    var entityPermissionManager = new EntityPermissionManager();
                     decisionManager.Accept(decisionId, "");
 
                     var requestRepository = uow.GetRepository<Request>();
@@ -57,9 +57,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult Decisions(long entityId)
         {
             using (var entityManager = new EntityManager())
-            using (var entityPermissionManager = new EntityPermissionManager())
             using (var decisionManager = new DecisionManager())
             {
+                var entityPermissionManager = new EntityPermissionManager();
                 var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
 
                 // Source + Transformation - Data
@@ -122,12 +122,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public void Reject(long requestId)
         {
             using (var entityManager = new EntityManager())
-            using (var entityPermissionManager = new EntityPermissionManager())
             using (var decisionManager = new DecisionManager())
             using (var uow = this.GetUnitOfWork())
             {
                 try
                 {
+                    var entityPermissionManager = new EntityPermissionManager();
                     decisionManager.Reject(requestId, "");
 
                     var requestRepository = uow.GetRepository<Request>();
@@ -161,9 +161,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult Requests(long entityId)
         {
             using (var entityManager = new EntityManager())
-            using (var entityPermissionManager = new EntityPermissionManager())
             using (var requestManager = new RequestManager())
             {
+                var entityPermissionManager = new EntityPermissionManager();
                 var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
 
                 // Source + Transformation - Data

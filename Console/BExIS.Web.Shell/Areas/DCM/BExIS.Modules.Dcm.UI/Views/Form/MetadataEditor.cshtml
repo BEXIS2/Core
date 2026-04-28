@@ -293,20 +293,27 @@
             <button id="validate" onclick="validate()" class="bx-button function" style="float: left;">Validate</button>
 
             @*@if (@Model.FromEditMode)
-                {
-                    <button onclick="reset()" class="bx-button function" style="float: left;">Reset</button>
-                }*@
+        {
+            <button onclick="reset()" class="bx-button function" style="float: left;">Reset</button>
+        }*@
 
+        <div id="savecontainer" style="flex: auto;">
             @if (@submit.IsComplete())
             {
+
+             
+
                 <input id="commit_message" class="bx-commit-message bx-input bx-metadataFormTextInput" placeholder="Please describe what you have changed" type="text" value="" />
-                <button id="save" onclick="submit()" class="bx-button action">Save</button>
+                <button id="save" onclick="submit()" class="bx-button action"> Save</button>
+
+
             }
 
             @if (@Model.FromEditMode)
             {
                 <button id="cancel" onclick="cancel()" class="bx-button action">Cancel</button>
             }
+        </div>
         </div>
     }
 
@@ -497,7 +504,7 @@
 
         if (confirm('Are you sure you want to leave the form? All changes will be lost.')) {
 
-            window.open(document.referrer)
+            window.location.href = document.referrer; // navigate back in the same tab
 
         } else {
             return false;
@@ -529,23 +536,16 @@
 
     function submit() {
 
+          $("#savecontainer").preloader(20, "saving", 50);
 
+        
         var commit_message = $('#commit_message').val();
         console.log("commit_message", commit_message)
 
-
-        $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}, { "entityId", entityId } })',
+        $.get('@Url.Action("IsValid", "Form", new RouteValueDictionary {{"area", "DCM"}, { "entityId", entityId }})',
             function (response) {
-                
-                $('#MetadataEditor').replaceWith(response);
-                bindMinimap(true);
-                var errors = $('.bx-input-error');
 
-                var errorsFromJsonSchema = $('.bx-error');
-
-                console.log(errors);
-                if (errors.length == 0 && errorsFromJsonSchema.length == 0) {
-
+                if (response == true) {
                     callSubmitAction(true, commit_message);
                 } else {
 
@@ -553,16 +553,26 @@
 
                     if ('@Model.SaveWithErrors.ToString().ToLowerInvariant()' == "true") {
 
-                        console.log("inside");
+                       
                         if (confirm('Warning: Some fields are not complete or contain entries that do not meet the requirements. Press OK to save anyways and resume later.')) {
                             callSubmitAction(false, commit_message);
                         }
+                        else {
+                            $("#savecontainer").removePreloader();
+                        }
+
                     }
                 }
+
+               
             })
+
+
     }
 
     function callSubmitAction(valid, commit_message) {
+
+       
 
         var entityId = '@Model.DatasetId';
          $.get('@Url.Action(

@@ -4,13 +4,6 @@
   "description": "...",
   "entries": [
     {
-      "key": "help",
-      "title": "Help URL",
-      "value": "",
-      "type": "String",
-      "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
-    },
-    {
       "key": "check_public_metadata",
       "title": "Check public metadata for not-logged in users",
       "value": false,
@@ -44,6 +37,13 @@
       "value": false,
       "type": "Boolean",
       "description": "If set to true, the minor version tag can be assigned to dataset versions to display changes in more detail."
+    },
+    {
+      "key": "curator_required_for_tags",
+      "title": "Manage release tags requires curator",
+      "value": false,
+      "type": "Boolean",
+      "description": "If set to true, only curators can edit and set tags. Users can only send a request."
     },
     {
       "key": "search_result_presentation",
@@ -89,18 +89,18 @@
       "description": "Group name all curators assigned to. This is needed for the curation tool to know who is curator."
     },
     {
-        "key": "curation",
-        "title": "Configuration Settings for Curation",
-        "value": {
-            "curationLabels": [
-                {
-                    "name": "custom-label-1",
-                    "color": "#ff0000"
-                }
-            ]
-        },
-        "type": "JSON",
-        "description": "Customize the labels that can be used in the curation. \nExample: \"curationLabels\": [ { \"name\": \"custom-label-1\", \"color\": \"#ff0000\" }, ... ]"
+      "key": "curation",
+      "title": "Configuration Settings for Curation",
+      "value": {
+        "curationLabels": [
+          {
+            "name": "custom-label-1",
+            "color": "#ff0000"
+          }
+        ]
+      },
+      "type": "JSON",
+      "description": "Customize the labels that can be used in the curation. \nExample: \"curationLabels\": [ { \"name\": \"custom-label-1\", \"color\": \"#ff0000\" }, ... ]"
     }
 
   ]

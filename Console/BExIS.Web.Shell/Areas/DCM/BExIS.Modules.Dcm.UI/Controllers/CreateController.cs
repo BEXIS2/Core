@@ -34,6 +34,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class CreateController : Controller
     {
+        private readonly GroupManager _groupManager;
+
+        public CreateController(GroupManager groupManager)
+        {
+            _groupManager = groupManager;
+        }
+
         // GET: Create
         public ActionResult Index()
         {
@@ -52,13 +59,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (DatasetManager dm = new DatasetManager())
             using (ResearchPlanManager rpm = new ResearchPlanManager())
             using (EntityTemplateManager entityTemplateManager = new EntityTemplateManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (MetadataStructureManager msm = new MetadataStructureManager())
             using (DataStructureManager dsm = new DataStructureManager())
-            using (GroupManager gm = new GroupManager())
             {
+                EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                 // create Entity based on entity template
-
                 var datasetToCopy = dm.GetDataset(id);
                 var datasetVersionToCopy = dm.GetDatasetLatestVersion(datasetToCopy.Id);
                 var entityTemplate = datasetToCopy.EntityTemplate;
@@ -87,6 +92,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     //set modification - create
                     workingCopy = setModificationInfo(workingCopy, true, GetUsernameOrDefault(), "Metadata");
 
+                    //setSystemVariables
+                    setSystemValuesToMetadata(workingCopy.Dataset.Id, 1, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
+
                     // save version in database
                     dm.EditDatasetVersion(workingCopy, null, null, null);
                     // close check out
@@ -104,14 +112,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // full
                     foreach (var groupId in entityTemplate.PermissionGroups.Full)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                     }
 
                     // ViewEditGrant
                     foreach (var groupId in entityTemplate.PermissionGroups.ViewEditGrant)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         var l = new List<RightType>() { RightType.Read, RightType.Write, RightType.Grant };
 
                         entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
@@ -120,7 +128,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // ViewEdit
                     foreach (var groupId in entityTemplate.PermissionGroups.ViewEdit)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         var l = new List<RightType>() { RightType.Read, RightType.Write };
                         entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
                     }
@@ -128,7 +136,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // View
                     foreach (var groupId in entityTemplate.PermissionGroups.View)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         var l = new List<RightType>() { RightType.Read };
                         entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
                     }
@@ -152,7 +160,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // add emails from groups
                     foreach (var groupId in entityTemplate.NotificationGroups)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         destinations.AddRange(group.Users.Select(u => u.Email));
                     }
                 }
@@ -257,12 +265,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (DatasetManager dm = new DatasetManager())
             using (DataStructureManager dsm = new DataStructureManager())
             using (ResearchPlanManager rpm = new ResearchPlanManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (MetadataStructureManager msm = new MetadataStructureManager())
-            using (GroupManager gm = new GroupManager())
             using (EntityTemplateManager entityTemplateManager = new EntityTemplateManager())
             using (TagManager tagManager = new TagManager())
             {
+                EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                 // create Entity based on entity template
                 // load entitytemplate
                 var entityTemplate = entityTemplateManager.Repo.Get(data.Id);
@@ -382,14 +389,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // full
                     foreach (var groupId in entityTemplate.PermissionGroups.Full)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                     }
 
                     // ViewEditGrant
                     foreach (var groupId in entityTemplate.PermissionGroups.ViewEditGrant)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         var l = new List<RightType>() { RightType.Read, RightType.Write, RightType.Grant };
 
                         entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
@@ -398,7 +405,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // ViewEdit
                     foreach (var groupId in entityTemplate.PermissionGroups.ViewEdit)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         var l = new List<RightType>() { RightType.Read, RightType.Write };
                         entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
                     }
@@ -406,7 +413,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // View
                     foreach (var groupId in entityTemplate.PermissionGroups.View)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         var l = new List<RightType>() { RightType.Read };
                         entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
                     }
@@ -430,7 +437,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // add emails from groups
                     foreach (var groupId in entityTemplate.NotificationGroups)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         destinations.AddRange(group.Users.Select(u => u.Email));
                     }
                 }
@@ -458,7 +465,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<EntityTemplateModel> entityTemplateModels = new List<EntityTemplateModel>();
             using (var entityTemplateManager = new EntityTemplateManager())
             {
-                foreach (var e in entityTemplateManager.Repo.Query(e=>e.Activated).ToList())
+                foreach (var e in entityTemplateManager.Repo.Query(e=>e.Activated).OrderBy(e=>e.Order).ToList())
                 {
                     entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e, false));
                 }

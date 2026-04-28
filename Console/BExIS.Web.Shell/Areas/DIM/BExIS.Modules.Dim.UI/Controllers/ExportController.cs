@@ -192,7 +192,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
-        public ActionResult GenerateZip(long id, long versionid, string format,bool withFilter = false, bool withUnits = false)
+        public ActionResult GenerateZip(long id, long versionid, string format, bool withFilter = false, bool withUnits = false, bool useTags = false, bool useMinor = false)
         {
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             DatasetManager dm = new DatasetManager();
@@ -213,7 +213,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     long dataStructureId = 0;
                     int datasetVersionNumber = dm.GetDatasetVersionNr(datasetVersionId);
                     DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
-                    string title = "";    
+
+                    double tagNr = datasetVersion.Tag!=null?datasetVersion.Tag.Nr:0;
+
+
+                    string title = "";
+               
 
                     #region Metadata
 
@@ -222,6 +227,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     //generate data structure as html 
                     generateMetadataAsHtml(datasetVersion);
+
+                    // generate flat metadata as txt
+                    generateFlatMetadata(datasetVersion);
 
                     #endregion
 
@@ -298,7 +306,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     #region zip file
 
-                    string zipName = IOHelper.GetFileName(FileType.Bundle, id, datasetVersionNumber, dataStructureId, title); //publishingManager.GetZipFileName(id, datasetVersionNumber);
+                    string zipName = IOHelper.GetFileName(FileType.Bundle, id, datasetVersionNumber, dataStructureId, title,tagNr,useTags,useMinor); //publishingManager.GetZipFileName(id, datasetVersionNumber);
                     // add suffix if filter is in use
                     if (isFilterInUse & withFilter) zipName += "_filtered";
 
@@ -326,20 +334,23 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 {
                                     if (cd.Name.Equals("metadata"))
                                     {
-                                        name = IOHelper.GetFileName(FileType.Metadata, id, datasetVersionNumber, dataStructureId) + ext;
+                                        name = IOHelper.GetFileName(FileType.Metadata, id, datasetVersionNumber, dataStructureId,"", tagNr, useTags, useMinor) + ext;
                                     }
                                     else if (cd.Name.Equals("datastructure"))
                                     {
-                                        name = IOHelper.GetFileName(FileType.DataStructure, id, datasetVersionNumber, dataStructureId) + ext;
+                                        name = IOHelper.GetFileName(FileType.DataStructure, id, datasetVersionNumber, dataStructureId,"", tagNr, useTags, useMinor) + ext;
                                     }
                                     else if (cd.Name.Contains("generated"))
                                     {
-                                        name = IOHelper.GetFileName(FileType.PrimaryData, id, datasetVersionNumber, dataStructureId) + ext;
+                                        name = IOHelper.GetFileName(FileType.PrimaryData, id, datasetVersionNumber, dataStructureId, "", tagNr, useTags, useMinor) + ext;
                                     }
-                                    else
+                                    else // all other files from unstructured and attachments
+                                    // get filename from path
+                                    // the files stay with there original file names
                                     {
-                                        name = IOHelper.GetFileName(FileType.None, id, datasetVersionNumber, dataStructureId,cd.Name) + ext;
+                                        name = Path.GetFileName(cd.URI);
                                     }
+      
 
                                     // if data is filtered, do not add full data file
                                     if (cd.Name.Contains("generated") == false || (cd.Name.Contains("generated") && withFilter == false))
@@ -353,7 +364,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         {
                             string path = Path.Combine(AppConfiguration.DataPath, filteredFilePath);
                             string ext = Path.GetExtension(filteredFilePath).ToLower();
-                            string name = IOHelper.GetFileName(FileType.PrimaryData, id, datasetVersionNumber, dataStructureId)+"_filtered"+ ext;
+                            string name = IOHelper.GetFileName(FileType.PrimaryData, id, datasetVersionNumber, dataStructureId, "", tagNr, useTags, useMinor)+"_filtered"+ ext;
 
                             archive.AddFileToArchive(filteredFilePath, name);
                         }
@@ -369,7 +380,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         // manifest
                         ApiDatasetHelper apiDatasetHelper = new ApiDatasetHelper();
                         // get content
-                        ApiDatasetModel apimodel = apiDatasetHelper.GetContent(datasetVersion, id, datasetVersionNumber, datasetVersion.Dataset.MetadataStructure.Id, dataStructureId);
+                        ApiDatasetModel apimodel = apiDatasetHelper.GetContent(datasetVersion, id, datasetVersionNumber, datasetVersion.Dataset.MetadataStructure.Id, dataStructureId, datasetVersion.Dataset.EntityTemplate.Id);
                         GeneralMetadataModel datasetModel = GeneralMetadataModel.Map(apimodel);
 
                         datasetModel.DownloadInformation.DownloadDate = DateTime.Now.ToString(new CultureInfo("en-US"));
@@ -386,7 +397,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                        
                         if (manifest != null)
                         {
-                            string manifestFileName = IOHelper.GetFileName(FileType.Manifest, id, datasetVersionNumber, dataStructureId);
+                            string manifestFileName = IOHelper.GetFileName(FileType.Manifest, id, datasetVersionNumber, dataStructureId,"", tagNr, useTags, useMinor);
                             string manifestPath = OutputDatasetManager.GetDynamicDatasetStorePath(id,
                                 datasetVersionNumber, "general_metadata", ".json");
                             string fullFilePath = Path.Combine(AppConfiguration.DataPath, manifestPath);
@@ -498,6 +509,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 mimeType = "application/html";
             }
 
+            if (ext.Contains("txt"))
+            {
+                name = title;
+                mimeType = "text/plain";
+            }
+
             using (DatasetManager dm = new DatasetManager())
             {
                 int versionNr = dm.GetDatasetVersionNr(datasetVersion);
@@ -572,6 +589,26 @@ namespace BExIS.Modules.Dim.UI.Controllers
             string metadataFilePath = AsciiWriter.CreateFile(dynamicPathOfMD);
 
             AsciiWriter.AllTextToFile(metadataFilePath, view.ToString());
+        }
+
+        private void generateFlatMetadata(DatasetVersion dsv)
+        {
+            XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+            long datasetId = dsv.Dataset.Id;
+            long metadatastructureId = dsv.Dataset.MetadataStructure.Id;
+            long datastructureId = dsv.Dataset.DataStructure == null ? 0 : dsv.Dataset.DataStructure.Id;
+            long researchplanId = dsv.Dataset.ResearchPlan.Id;
+
+            string title = dsv.Title;
+
+            string flatmetadata = OutputMetadataManager.GetFlattenMetadata(dsv.Metadata);
+
+            string dynamicPathOfMD = "";
+            dynamicPathOfMD = storeGeneratedFilePathToContentDiscriptor(datasetId, dsv,
+                "metadata", ".txt");
+            string metadataFilePath = AsciiWriter.CreateFile(dynamicPathOfMD);
+
+            AsciiWriter.AllTextToFile(metadataFilePath, flatmetadata);
         }
 
         private void generateDataStructureHtml(DatasetVersion dsv)
