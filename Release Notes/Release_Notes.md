@@ -4,7 +4,7 @@
 
 ### Workspace changes:
 - Workspace changes: [4.2.1..4.3.0](https://github.com/BEXIS2/Workspace/compare/4.2.1..4.3.0)
-- ...
+
 
 ### Database Update(s):
 - Update script from version 4.2.1 to 4.3.0: [Update_Script_4.2.1_4.3.0.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/4.2.1-4.3.0.sql)
@@ -12,6 +12,9 @@
 ### Web.config changes
 - ...
 
+### Configuration
+- General Settings: Additional Help Links
+- General Settings: Security Settings
 
 
 # Bugfixes and enhancements
