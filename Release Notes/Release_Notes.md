@@ -45,6 +45,7 @@
 - **PUM - CSV Import**: Insert id into metadata (@comment) ([#2376](https://github.com/BEXIS2/Core/issues/2376))
 - **Data Structure**: Identical column name currently not checked during creation ([#2336](https://github.com/BEXIS2/Core/issues/2336))
 - **Data structure**: Select linked datasets ends in Not Found Exception ([#2423](https://github.com/BEXIS2/Core/issues/2423))
+- **Data structure**: Missing values are carried over when the data structure is copied.([#2444](https://github.com/BEXIS2/Core/issues/2444))
 - **JsonMaxLimit**: Reached by generation of a data structure ([#2417](https://github.com/BEXIS2/Core/issues/2417))
 - **Darwin Core Check**: Setting is false, but it is shown ([#2372](https://github.com/BEXIS2/Core/issues/2372))
 - **Primary key**: Combination of two keys does not work ([#2419](https://github.com/BEXIS2/Core/issues/2419))
@@ -52,10 +53,12 @@
 - **Entity Template**: If the entity template supports many file formats, the icons are not right-aligned ([#2380](https://github.com/BEXIS2/Core/issues/2380))
 - **RPM Seed data**: Description improvements and boolean exists twice ([#2403](https://github.com/BEXIS2/Core/issues/2403))
 - **Citation API**: Remove check if a valid token is provided for non-public entities ([#2382](https://github.com/BEXIS2/Core/issues/2382))
+- **Citation API**: Expanding the API to include the ability to call tags. ([#2394](https://github.com/BEXIS2/Core/issues/2394))
 
 #### Data
 - **Data**: Data count always count of latest version ([#2441](https://github.com/BEXIS2/Core/issues/2441))
 - **Display Pattern**: Add "yyyy-MM-dd hh:mm:ss" ([#2400](https://github.com/BEXIS2/Core/issues/2400))
+- **Missing Values**: String values are no longer replaced by numbers and remain constant. ([#2452](https://github.com/BEXIS2/Core/issues/2452))
 
 #### Download and upload
 - **Upload Attachement**: Error shown twice ([#2191](https://github.com/BEXIS2/Core/issues/2191))
