@@ -811,6 +811,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             try
                             {
                                 long count = dm.RowCount(datasetID, null);
+                                ViewData["gridTotal"] = count;
                                 if (count > 0) table = dm.GetLatestDatasetVersionTuples(datasetID, null, null, null, "", 0, 10);
                                 else ModelState.AddModelError(string.Empty, "<span style=\"color: black;\"> There is no primary data available/uploaded. </span><br/><br/> <span style=\"font-weight: normal;color: black;\">Please note that the data may have been uploaded to another repository and is referenced here in the metadata.</span>");
                             }
@@ -825,7 +826,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             ViewData["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
                         }
 
-                        ViewData["gridTotal"] = dm.RowCount(dataset.Id, null);
                         ViewData["isPublic"] = entityPermissionManager.ExistsAsync(dataset.EntityTemplate.EntityType.Id, dataset.Id).Result;
 
                         sds.Variables = sds.Variables.OrderBy(v => v.OrderNo).ToList();
@@ -1173,7 +1173,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 string mimetype = MimeMapping.GetMimeMapping(ext);
 
                 DatasetManager datasetManager = new DatasetManager();
-
+                long versionNr = 0;
                 try
                 {
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
@@ -1182,7 +1182,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     string title = getTitle(writer.GetTitle(id));
 
                     string path = "";
-                    long versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
+                    versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
                     string message = string.Format("dataset {0} version {1} was downloaded as excel.", id,
                         versionNr);
 
@@ -1235,7 +1235,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 {
                     using (var emailService = new EmailService())
                     {
-                        emailService.Send(MessageHelper.GetUpdateDatasetHeader(id),
+                        emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
                             ex.Message,
                             GeneralSettings.SystemEmail
                             );

@@ -98,10 +98,10 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     // Publication Year
                     if (model.Year == null || String.IsNullOrEmpty(model.Year))
                     {
-                        if (isPublic)
-                            model.Year = datasetVersion.PublicAccessDate.Date.ToString("yyyy");
-
-                        model.Year = datasetVersion.Timestamp.Date.ToString("yyyy");
+                       if(useTags)
+                            model.Year = datasetVersion.Tag != null ? datasetVersion.Tag.ReleaseDate.Date.ToString("yyyy") : datasetVersion.Timestamp.Date.ToString("yyyy");
+                        else
+                            model.Year = datasetVersion.Timestamp.Date.ToString("yyyy");
                     }
 
                     // URL

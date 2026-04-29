@@ -32,12 +32,6 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
 {
     public class CitationController : ApiController
     {
-        private readonly UserManager<User, long> _userManager;
-
-        public CitationController(UserManager<User, long> userManager)
-        {
-            _userManager = userManager;
-        }
 
         [BExISApiAuthorize]
         [GetRoute("api/datasets/citations")]
@@ -63,11 +57,19 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
         }
 
         [BExISApiAuthorize]
-        [GetRoute("api/datasets/{datasetId}/citations/{versionNumber}")]
+        [GetRoute("api/datasets/{datasetId}/version_number/{versionNumber}/citations")]
         [ResponseType(typeof(CitationModel))]
         public HttpResponseMessage GetCitationFromSpecificVersionNumber(long datasetId, int versionNumber, [FromUri] CitationFormat format = CitationFormat.Bibtex)
         {
             return GetCitation(datasetId, format, versionNumber);
+        }
+
+        [BExISApiAuthorize]
+        [GetRoute("api/datasets/{datasetId}/tag/{tagNumber}/citations")]
+        [ResponseType(typeof(CitationModel))]
+        public HttpResponseMessage GetCitationFromSpecificTagNumber(long datasetId, double tagNumber, [FromUri] CitationFormat format = CitationFormat.Bibtex)
+        {
+            return GetCitation(datasetId, format,0,tagNumber);
         }
 
         // GET api/Citation/GetCitations
@@ -235,9 +237,11 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             return response;
         }
 
-        private HttpResponseMessage GetCitation(long id, CitationFormat format, int version_number = 0)
+        private HttpResponseMessage GetCitation(long id, CitationFormat format, int version_number = 0, double tag_number = 0.0)
         {
             DatasetVersion datasetVersion = null;
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            var useTags = Convert.ToBoolean(moduleSettings.GetValueByKey("use_tags"));
 
             using (DatasetManager dm = new DatasetManager())
             using (EntityManager entityManager = new EntityManager())
@@ -246,32 +250,51 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                 bool isPublic = false;
                 if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Dataset id should be greater then 0.");
 
-                // try to get latest dataset version 
-                if (version_number <= 0)
+                if(useTags && version_number == 0)
                 {
-                    datasetVersion = dm.GetDatasetLatestVersion(id);
-                }
-                // try to get dataset version by version number
-                else
-                {
-                    if (version_number <= 0)
-                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This version name does not exist for this dataset");
-
+                    if (tag_number <= 0)
+                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Tag not exist");
                     try
                     {
-                        int index = version_number - 1;
-                        Dataset dataset = dm.GetDataset(id);
+                        var versionId = dm.GetLatestVersionByTagNr(id, tag_number).Id;
+                        datasetVersion = dm.GetDatasetVersion(versionId);
+                    }
+                    catch
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This tag does not exist for this dataset");
+                    }
+                }
+                else 
+                {
 
-                        int versions = dataset.Versions.Count;
-
-                        if (versions < version_number)
+                    // try to get latest dataset version 
+                    if (version_number <= 0)
+                    {
+                        datasetVersion = dm.GetDatasetLatestVersion(id);
+                    }
+                    // try to get dataset version by version number
+                    else
+                    {
+                        if (version_number <= 0)
                             return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This version number does not exist for this dataset");
 
-                        datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
+                        try
+                        {
+                            int index = version_number - 1;
+                            Dataset dataset = dm.GetDataset(id);
 
-                    }
-                    catch (Exception ex)
-                    {
+                            int versions = dataset.Versions.Count;
+
+                            if (versions < version_number)
+                                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This version number does not exist for this dataset");
+
+                            datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
+
+                        }
+
+                        catch (Exception ex)
+                        {
+                        }
                     }
                 }
 
@@ -292,9 +315,6 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                     if (dataset == null)
                         return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "The dataset with the id (" + id + ") does not exist.");
                 }
-
-                var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
-                var useTags = Convert.ToBoolean(moduleSettings.GetValueByKey("use_tags"));
 
                 CitationDataModel model = CitationsHelper.CreateCitationDataModel(datasetVersion, format);
                 string citationString = "";

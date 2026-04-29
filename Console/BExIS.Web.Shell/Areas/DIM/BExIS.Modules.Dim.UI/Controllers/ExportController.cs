@@ -228,6 +228,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     //generate data structure as html 
                     generateMetadataAsHtml(datasetVersion);
 
+                    // generate flat metadata as txt
+                    generateFlatMetadata(datasetVersion);
+
                     #endregion
 
                     #region primary data
@@ -506,6 +509,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 mimeType = "application/html";
             }
 
+            if (ext.Contains("txt"))
+            {
+                name = title;
+                mimeType = "text/plain";
+            }
+
             using (DatasetManager dm = new DatasetManager())
             {
                 int versionNr = dm.GetDatasetVersionNr(datasetVersion);
@@ -580,6 +589,26 @@ namespace BExIS.Modules.Dim.UI.Controllers
             string metadataFilePath = AsciiWriter.CreateFile(dynamicPathOfMD);
 
             AsciiWriter.AllTextToFile(metadataFilePath, view.ToString());
+        }
+
+        private void generateFlatMetadata(DatasetVersion dsv)
+        {
+            XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+            long datasetId = dsv.Dataset.Id;
+            long metadatastructureId = dsv.Dataset.MetadataStructure.Id;
+            long datastructureId = dsv.Dataset.DataStructure == null ? 0 : dsv.Dataset.DataStructure.Id;
+            long researchplanId = dsv.Dataset.ResearchPlan.Id;
+
+            string title = dsv.Title;
+
+            string flatmetadata = OutputMetadataManager.GetFlattenMetadata(dsv.Metadata);
+
+            string dynamicPathOfMD = "";
+            dynamicPathOfMD = storeGeneratedFilePathToContentDiscriptor(datasetId, dsv,
+                "metadata", ".txt");
+            string metadataFilePath = AsciiWriter.CreateFile(dynamicPathOfMD);
+
+            AsciiWriter.AllTextToFile(metadataFilePath, flatmetadata);
         }
 
         private void generateDataStructureHtml(DatasetVersion dsv)
