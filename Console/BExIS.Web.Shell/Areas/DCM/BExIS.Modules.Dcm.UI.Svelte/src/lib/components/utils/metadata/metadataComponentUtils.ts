@@ -15,6 +15,14 @@ export function getNodeByPath(path: string) {
 	return path.split('.').reduce((acc, part) => acc && acc[part], obj);
 }
 
+export function getByPath(path: string) {
+	let obj: any;
+		metadataStore.subscribe((v) => {
+			obj = v;
+		});
+  return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+};
+
 export function getValueByPath(path: string) {
 	path = path + '.#text';
 	return getNodeByPath(path);
@@ -38,7 +46,7 @@ export function setValueByPath(obj: any, path: string, value: any) {
 	return obj;
 }
 // Update metadata store with a new value at the specified path
-export function updateMetadataStore(path: string, value: any, ref?: any): any {
+export function updateMetadataStore(path: string, value: any, isMulti?: boolean, ref?: any): any {
  
 	let obj: any = {};
 	if (path !== undefined && path !== null && path !== '') {
@@ -47,19 +55,24 @@ export function updateMetadataStore(path: string, value: any, ref?: any): any {
 		});
 		{
 			if (value !== undefined && value !== null && value !== getValueByPath(path)) {
-				obj = setValueByPath(obj, path + '.#text', value);
-				if (ref !== undefined && ref !== null) {
-					obj = setValueByPath(obj, path + '.@ref', ref);
-				}
-				if (
-					obj !== undefined &&
-					obj !== null &&
-					obj !==
-					metadataStore.subscribe((value) => {
-						obj = value;
-					})
-				) {
-					metadataStore.set(obj);
+
+				if (isMulti) {
+						obj = setValueByPath(obj, path, value);
+				} else {
+					obj = setValueByPath(obj, path + '.#text', value);
+					if (ref !== undefined && ref !== null) {
+						obj = setValueByPath(obj, path + '.@ref', ref);
+					}
+					if (
+						obj !== undefined &&
+						obj !== null &&
+						obj !==
+						metadataStore.subscribe((value) => {
+							obj = value;
+						})
+					) {
+						metadataStore.set(obj);
+					}
 				}
 			}
 
