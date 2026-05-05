@@ -12,12 +12,12 @@ using BExIS.IO;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using BExIS.Utils.Extensions;
+using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -95,7 +95,7 @@ namespace BExIS.Dim.Helpers.Export
                     string xsdPath = Path.Combine(AppConfiguration.WorkspaceRootPath, concept.XSD);
 
                     using (var zipFileStream = new FileStream(zipfilepath, FileMode.Create))
-                    using (var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Update))
+                    using (var archive = new ZipOutputStream(zipFileStream))
                     {
                         // generate metadata
                         string metadataFilePath = helper.GenerateResourceMetadata(concept.Id, metadatastructureId, datasetversion.Metadata, folder, xsdPath);

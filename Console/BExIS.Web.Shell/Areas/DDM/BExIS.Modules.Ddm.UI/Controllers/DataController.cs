@@ -34,6 +34,7 @@ using BExIS.Utils.Data;
 using BExIS.Utils.Extensions;
 using BExIS.Utils.NH.Querying;
 using BExIS.Xml.Helpers;
+using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
@@ -1564,7 +1565,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                     var memoryStream = new MemoryStream();
 
-                    using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+                    using (var archive = new ZipOutputStream(memoryStream))
                     {
                         foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                         {
