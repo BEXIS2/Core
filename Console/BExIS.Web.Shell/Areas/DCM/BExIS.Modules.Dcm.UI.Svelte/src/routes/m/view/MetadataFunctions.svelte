@@ -10,7 +10,6 @@
   import {metadataStore, validationStore} from '$lib/components/utils/metadata/stores';
 
 	import { notificationStore, notificationType, TextInput } from '@bexis2/bexis2-core-ui';
-  import {convertDisplayName} from '../metadataShared';
 	import { goTo } from '$services/BaseCaller';
 
   export let datasetId: number;
@@ -156,7 +155,7 @@
     {#each Object.entries(metadata) as [key, value]}
     {#if typeof value === 'object' && value !== null}
       <a href="#{key}" >
-      <span class="flex-auto">{convertDisplayName(key)}</span>
+      <span class="flex-auto">{key}</span>
       {#if validationStoreValues && hasErrors(key)}
         <span class="text-error-500">#</span>
       {:else if validationStoreValues && !hasErrors(key)}
