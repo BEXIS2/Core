@@ -94,7 +94,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     workingCopy = setModificationInfo(workingCopy, true, GetUsernameOrDefault(), "Metadata");
 
                     //setSystemVariables
-                    setSystemValuesToMetadata(workingCopy.Dataset.Id, 1, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
+                    setAllSystemValuesToMetadata(workingCopy.Dataset.Id, 1, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
 
                     // save version in database
                     dm.EditDatasetVersion(workingCopy, null, null, null);
@@ -492,6 +492,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public DatasetVersion setMetadata(DatasetVersion datasetVersionToCopy, DatasetVersion datasetVersion)
         {
             XmlDocument copyMetadata = new XmlDocument();
+            copyMetadata.LoadXml(datasetVersionToCopy.Metadata.OuterXml);
             datasetVersion.Metadata =  copyMetadata;
 
             return datasetVersion;
@@ -538,6 +539,27 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             Key[] myObjArray = { };
 
             myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied };
+
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+
+            return XmlUtility.ToXDocument(metadata);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datasetid"></param>
+        /// <param name="version"></param>
+        /// <param name="metadataStructureId"></param>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        private XDocument setAllSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata)
+        {
+            SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
+
+            Key[] myObjArray = { };
+
+            myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied, Key.DataCreationDate, Key.DataLastModified };
 
             metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
 
