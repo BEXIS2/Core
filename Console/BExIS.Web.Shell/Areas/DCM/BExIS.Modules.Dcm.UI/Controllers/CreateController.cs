@@ -80,8 +80,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
 
-                    workingCopy.Metadata = datasetVersionToCopy.Metadata;
-
+                    // set metadata
+                    workingCopy = setMetadata(datasetVersionToCopy,workingCopy);
+                
                     // set title if exist
                     workingCopy.Title = datasetVersionToCopy.Title + "_copy";
                     workingCopy.Description = datasetVersionToCopy.Description;
@@ -486,6 +487,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             catch { }
 
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+        }
+
+        public DatasetVersion setMetadata(DatasetVersion datasetVersionToCopy, DatasetVersion datasetVersion)
+        {
+            XmlDocument copyMetadata = new XmlDocument();
+            datasetVersion.Metadata =  copyMetadata;
+
+            return datasetVersion;
         }
 
         private DatasetVersion setStateInfo(DatasetVersion workingCopy, bool valid)
