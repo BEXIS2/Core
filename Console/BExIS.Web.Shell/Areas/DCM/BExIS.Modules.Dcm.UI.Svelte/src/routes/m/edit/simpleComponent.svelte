@@ -19,6 +19,7 @@
 	import type { SimpleComponentData } from '$lib/components/utils/metadata/models';
 	import SveltyPicker from 'svelty-picker';
 	import {convertDisplayName} from '../metadataShared';
+	import type { JsonListItem } from '../components/types';
 
 	//import { en, de } from 'svelty-picker/dist/i18n';
 
@@ -27,6 +28,7 @@
 	export let required: boolean = false;
 	export let value: any;
 	export let label: string;
+	export let isMulti:boolean	= false; // for array	of simple types, that should use multiselect ui component
 	
 	let date: Date = undefined as unknown as Date;
 	// load form result object
@@ -38,12 +40,19 @@
 	let min: number | undefined = -10000000;
 	let max: number | undefined = 1000000;
 
+	// if mulitselect for array of simple types, create items array for multiselect component
+	// we need to convert the enum of the schema to a list entry of the jsons because we more informations on each value then only the value
+	// like ref and partyid
+	let jsonItems:	JsonListItem[] = []; 
+
 	// set overall validity
 	$: ValidationStoreSetSimpleTypeValid(path, res.isValid(path), res.hasErrors(path) ? res.getErrors(path).join('.  ') : '');
 	// update metadata store on value change
-	$: updateMetadataStore(path, value);
+	$: updateMetadataStore(path, value, isMulti);
 
 	onMount(async () => {
+
+   console.log('🚀 ~ onMount ~ simpleComponent:', value)
 
 			// checks for date
 			if(simpleComponent.properties['#text'].format === 'date' || simpleComponent.properties['#text'].format === 'datetime' || simpleComponent.properties['#text'].format === 'date and time' || simpleComponent.properties['#text'].format === 'time'){
@@ -59,6 +68,17 @@
 			}
 			if(simpleComponent.properties['#text'].maximum !== undefined){
 				max = simpleComponent.properties['#text'].maximum;
+			}
+
+			if(isMulti && simpleComponent.properties['#text'].enum){
+				jsonItems = simpleComponent.properties['#text'].enum.map((item: any) => {
+					return {
+						"@ref": '',
+						"@partyid": 0,
+						"#text": item
+					}
+				
+				});
 			}
 
 			//#### VALIDATION	 ####
@@ -204,6 +224,8 @@
 			<!-- Handle string type with enum  -->
 			{:else if simpleComponent.properties['#text'].type === 'string' && simpleComponent.properties['#text'].enum}
 			
+					{#if !isMulti} <!-- Handle single select -->
+
 					{#if simpleComponent.properties['#text'].enum.length <= 10}<!-- Handle string type with enum with short numer of  entries -->
 						<Dropdown
 								id="{path}"
@@ -232,6 +254,26 @@
 										description={simpleComponent.description}
 									/>
 						{/if}
+						{:else} <!-- Handle multi select for array of simple types -->
+						{#if isMulti}
+							<MultiSelect
+										id="{path}"
+										title="{label}"
+										complexSource={true}
+										complexTarget={true}
+										source={jsonItems}
+										itemId="#text"
+										itemLabel="#text"
+										bind:target={value}
+										isMulti={true}
+										clearable={required	? false : true} 
+										on:change={onChangeHandler}
+										invalid={res.hasErrors(path)}
+										feedback={res.getErrors(path)}	 
+										description={simpleComponent.description}
+									/>
+						{/if}
+						{/if}
 
 			<!-- Handle number and integer types -->
 			{:else if simpleComponent.properties['#text'].type === 'number'||simpleComponent.properties['#text'].type === 'integer'}
@@ -257,12 +299,8 @@
 					id={path}
 					label={convertDisplayName(label)}
 					name={convertDisplayName(label)}
-					required={required} 
 					bind:checked={value}
 					on:input={onChangeHandler}
-					valid={res.isValid(path)}
-					invalid={res.hasErrors(path)}
-					feedback={res.getErrors(path)}
 					description={simpleComponent.description}
 					size="sm"
 				>{label}</SlideToggle>

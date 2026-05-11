@@ -80,8 +80,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
 
-                    workingCopy.Metadata = datasetVersionToCopy.Metadata;
-
+                    // set metadata
+                    workingCopy = setMetadata(datasetVersionToCopy,workingCopy);
+                
                     // set title if exist
                     workingCopy.Title = datasetVersionToCopy.Title + "_copy";
                     workingCopy.Description = datasetVersionToCopy.Description;
@@ -93,7 +94,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     workingCopy = setModificationInfo(workingCopy, true, GetUsernameOrDefault(), "Metadata");
 
                     //setSystemVariables
-                    setSystemValuesToMetadata(workingCopy.Dataset.Id, 1, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
+                    setAllSystemValuesToMetadata(workingCopy.Dataset.Id, 1, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
 
                     // save version in database
                     dm.EditDatasetVersion(workingCopy, null, null, null);
@@ -488,6 +489,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
+        public DatasetVersion setMetadata(DatasetVersion datasetVersionToCopy, DatasetVersion datasetVersion)
+        {
+            XmlDocument copyMetadata = new XmlDocument();
+            copyMetadata.LoadXml(datasetVersionToCopy.Metadata.OuterXml);
+            datasetVersion.Metadata =  copyMetadata;
+
+            return datasetVersion;
+        }
+
         private DatasetVersion setStateInfo(DatasetVersion workingCopy, bool valid)
         {
             //StateInfo
@@ -529,6 +539,27 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             Key[] myObjArray = { };
 
             myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied };
+
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+
+            return XmlUtility.ToXDocument(metadata);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datasetid"></param>
+        /// <param name="version"></param>
+        /// <param name="metadataStructureId"></param>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        private XDocument setAllSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata)
+        {
+            SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
+
+            Key[] myObjArray = { };
+
+            myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied, Key.DataCreationDate, Key.DataLastModified };
 
             metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
 

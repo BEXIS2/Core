@@ -25,6 +25,7 @@ using BExIS.Utils.Extensions;
 using BExIS.Utils.Models;
 using BExIS.Utils.NH.Querying;
 using BExIS.Xml.Helpers;
+using ICSharpCode.SharpZipLib.Zip;
 using Newtonsoft.Json;
 using System;
 using System.Data;
@@ -314,7 +315,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipPath));
 
                     using (var zipFileStream = new FileStream(zipPath, FileMode.Create))
-                    using (var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Update))
+                    using (var archive = new ZipOutputStream(zipFileStream))
+
                     {
                         // stored contentdescriptior key name in db for the format and the dataname
                         string dataName = getCDTypeName(format);
@@ -330,8 +332,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                             if (FileHelper.FileExist(path))
                             {
-                                if (!archive.Entries.Any(entry => entry.Name.EndsWith(name)))
-                                {
+                                //if (!archive.Entries.Any(entry => entry.Name.EndsWith(name)))
+                                //{
                                     if (cd.Name.Equals("metadata"))
                                     {
                                         name = IOHelper.GetFileName(FileType.Metadata, id, datasetVersionNumber, dataStructureId,"", tagNr, useTags, useMinor) + ext;
@@ -355,7 +357,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                     // if data is filtered, do not add full data file
                                     if (cd.Name.Contains("generated") == false || (cd.Name.Contains("generated") && withFilter == false))
                                        archive.AddFileToArchive(path, name);
-                                }
+                                //}
                             }
                         }
 
