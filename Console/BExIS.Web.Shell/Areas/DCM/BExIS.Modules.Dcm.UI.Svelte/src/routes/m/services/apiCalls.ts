@@ -57,3 +57,26 @@ export const SaveMetadata = async (id: number, value: any, comment: string) => {
 		throw error;
 	}
 };
+
+export const GetSystemMappings = async (metadataStructureId: number) => {
+	try {
+		const response = await Api.get('/dcm/m/LoadSystemMappings?id=' + metadataStructureId);
+		// console.log(" response.data.MetadataStructureId:", response);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
+export const GetPartyValue = async (partyid: number, linkid) => {
+	try {
+		const response = await Api.get('/dcm/m/GetPartyValue?partyId=' + partyid + '&linkId=' + linkid);
+		// console.log(" response.data.MetadataStructureId:", response);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+

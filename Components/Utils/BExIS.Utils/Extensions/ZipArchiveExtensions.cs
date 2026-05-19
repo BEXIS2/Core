@@ -31,9 +31,9 @@ namespace BExIS.Utils.Extensions
                 {
                     fileStream.CopyTo(zipStream);
                 }
-
-                zipStream.CloseEntry();
             }
+       
+            zipStream.CloseEntry();
         }
 
         public static void AddFile(this ZipOutputStream zipStream, string filePath, string zipPath = null)
