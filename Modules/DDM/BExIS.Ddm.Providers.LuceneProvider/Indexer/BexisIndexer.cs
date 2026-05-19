@@ -426,14 +426,14 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     metadata = dm.GetDatasetLatestMetadataVersion(id);
                 }
 
-                if (version != null)
-                {
-                    // doi
-                    entityTemplate = version.Dataset.EntityTemplate.Name;
-                    date = version.ModificationInfo?.Timestamp?.ToString("yyyy-MM-dd");
-                    if(date == null) version.CreationInfo?.Timestamp?.ToString("yyyy-MM-dd");
-                    if (date == null) date = "";
-                }
+            if (version != null)
+            {
+                // doi
+                entityTemplate = version.Dataset.EntityTemplate.Name;
+                date = version.ModificationInfo?.Timestamp?.ToString("yyyy-MM-dd");
+                if (date == null) version.CreationInfo?.Timestamp?.ToString("yyyy-MM-dd");
+                if (date == null) date = "";
+
 
                 var dataset = new Document();
                 List<XmlNode> facetNodes = facetXmlNodeList;
@@ -657,6 +657,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 }
 
                 indexWriter.AddDocument(dataset);
+            }
 
             
         }
