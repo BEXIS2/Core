@@ -1,5 +1,5 @@
 import type { SimpleComponentData, validationStoretype } from './models';
-import { metadataStore, hideStore, validationStore, configStore, activeStore } from './stores';
+import { metadataStore,systemMappingsStore, hideStore, validationStore, configStore, activeStore } from './stores';
 import { get } from 'svelte/store';
 // Utility functions for metadata handling
 // Get and set values in the metadata store based on a dot-separated path
@@ -46,7 +46,7 @@ export function setValueByPath(obj: any, path: string, value: any) {
 	return obj;
 }
 // Update metadata store with a new value at the specified path
-export function updateMetadataStore(path: string, value: any, isMulti?: boolean, ref?: any): any {
+export function updateMetadataStore(path: string, value: any, isMulti?: boolean, ref?: any, partyid?:number): any {
  
 	let obj: any = {};
 	if (path !== undefined && path !== null && path !== '') {
@@ -62,6 +62,9 @@ export function updateMetadataStore(path: string, value: any, isMulti?: boolean,
 					obj = setValueByPath(obj, path + '.#text', value);
 					if (ref !== undefined && ref !== null) {
 						obj = setValueByPath(obj, path + '.@ref', ref);
+					}
+					if (partyid !== undefined && partyid !== null) {
+						obj = setValueByPath(obj, path + '.@partyid', partyid);
 					}
 					if (
 						obj !== undefined &&
@@ -126,6 +129,21 @@ export function getConfigStore(): any {
 		config = v;
 	});
 	return config;
+}
+
+// SystemMappings Store Functions
+// Set system mappings data in the systemMappings store
+export function setSystemMappingsStore(systemMappings: any) {
+	systemMappingsStore.set(systemMappings);
+}
+
+// Get system mappings data from the systemMappings store
+export function getSystemMappingsStore(): any {
+	let systemMappings: any;
+	systemMappingsStore.subscribe((v) => {
+		systemMappings = v;
+	});
+	return systemMappings;
 }
 
 // Get anchor point for a given component name from the config store
@@ -315,7 +333,6 @@ export function setInactive(path: string): void {
 		activeStore.set(activeStoreValue);
 	}
 }
-
 
 // element at this node should be cleaned
 // #t should be ''

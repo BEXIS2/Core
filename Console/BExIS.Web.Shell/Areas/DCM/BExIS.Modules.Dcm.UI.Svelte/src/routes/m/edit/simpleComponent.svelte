@@ -13,13 +13,18 @@
 	} from '@bexis2/bexis2-core-ui';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
-	import { ValidationStoreAddSimpleComponent, ValidationStoreSetSimpleTypeValid, updateMetadataStore, createSimpleComponentValidationItem, getConfigStore } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { ValidationStoreAddSimpleComponent, ValidationStoreSetSimpleTypeValid, updateMetadataStore, createSimpleComponentValidationItem, getConfigStore, getSystemMappingsStore } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { customComponentsCatalog } from '$lib/components/customComponents/componentCatalog';
 	import suite from './simpleComponent';
 	import type { SimpleComponentData } from '$lib/components/utils/metadata/models';
 	import SveltyPicker from 'svelty-picker';
 	import {convertDisplayName} from '../metadataShared';
 	import type { JsonListItem } from '../components/types';
+	import Blocked from './Blocked.svelte';
+	import { getParentPath, removeJsonPathIndices } from './helper';
+	import { systemMappingsStore } from '$lib/components/utils/metadata/stores';
+	import { GetPartyValue } from '../services/apiCalls';
+	import { createEventDispatcher } from 'svelte';
 
 	//import { en, de } from 'svelty-picker/dist/i18n';
 
@@ -49,6 +54,17 @@
 	$: ValidationStoreSetSimpleTypeValid(path, res.isValid(path), res.hasErrors(path) ? res.getErrors(path).join('.  ') : '');
 	// update metadata store on value change
 	$: updateMetadataStore(path, value, isMulti);
+
+
+	// System mapping
+let isMappedToParty: boolean = false;
+let isSelector: boolean = false;
+let partyMappingObject: any = null;
+let isMappedToKey: boolean = false;
+let pathWithoutIndices: string = '';
+let selectorValue: any = null;
+
+const dispatch = createEventDispatcher();
 
 	onMount(async () => {
 
@@ -104,6 +120,34 @@
 				}
 			}
 
+			// ### SYSTEM MAPPING ###
+			const systemMappings = getSystemMappingsStore();
+		
+
+			//	remove indices from path to check if the field is mapped to party or key, because in system mapping there are no indices but in the path there are because of arrays
+			pathWithoutIndices = removeJsonPathIndices(path);
+
+			if(systemMappings.partyMappings.some((mapping: any) => mapping.path == pathWithoutIndices)){
+
+				isMappedToParty = true;
+				partyMappingObject = systemMappings.partyMappings.find((mapping: any) => mapping.path == pathWithoutIndices);
+				isSelector = partyMappingObject.selector;
+
+				if(isSelector)
+				{
+					selectorValue = {
+						"partyId": 0,
+						"value": value
+					}
+				}
+
+		
+			}
+
+			if(systemMappings.keyMappings.some((mapping: any) => mapping.path == pathWithoutIndices)){
+				isMappedToKey = true;
+			}
+
 			// initial check
 			setTimeout(async () => {
 				if(value == undefined || value == null || value == '') {
@@ -118,31 +162,118 @@
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
 	function onChangeHandler(e: any) {
-		console.log(e);
 		// add some delay so the entityTemplate is updated
-		// otherwise the values are old
-		setTimeout(async () => {
+			// otherwise the values are old
+			setTimeout(async () => {
+
+				updateValue(value, e.target.id);
+			}, 10);
+	}
+
+	//handle mapping change of party mapping with selector
+	// we need to update the value with the new selected party and also trigger the validation for this field because maybe there are some validation rules on the party id
+	async function onUpdateParty(e: any){
+			
+				console.log("xyz Update Party",value, e.detail);
+				const partyid = e.detail.partyId;
+				const newValue	= e.detail.value;
+			// add some delay so the entityTemplate is updated
+			// otherwise the values are old
+			setTimeout(async () => {
+				 // update selected value
+						updateValue(newValue, path);
+						console.log("🚀 ~ onUpdateParty ~ value after updateValue:", newValue)
+
+						// if mapping is simple, set party id 
+						if(!partyMappingObject.complexity){
+								//value['@partyid'] = e.detail.selectedItem.partyId;
+								console.log("🚀 ~ onUpdateParty ~ simple mapping, add party id to value:", e.detail)
+								updateMetadataStore(path, newValue, isMulti, undefined, e.detail.partyId);
+
+						}
+						else	if(partyMappingObject.complexity){
+
+							console.log("🚀 ~ onUpdateParty ~ complex mapping, add party id to value:", e.detail)
+
+							updateMetadataStore(path, newValue, isMulti, undefined, undefined);
+							console.log("🚀 ~ onUpdateParty ~ value:", newValue)
+							console.log("🚀 ~ onUpdateParty ~ path:", path)
+
+							console.log("🚀 ~ onUpdateParty ~ complex mapping, need to update all values with same parent path:", e.detail,partyMappingObject)
+							const parentPath = getParentPath(path);
+							const parentPathWithoutIndices = removeJsonPathIndices(parentPath);
+							console.log("🚀 ~ onUpdateParty ~ parentPath:", parentPath)
+						// if mapping is complex
+						// get all partymappings where parent path is the same as the changed one
+							$systemMappingsStore.partyMappings.filter((mapping: any) => mapping.parentPath == parentPathWithoutIndices && mapping.path !== pathWithoutIndices).forEach(async (mapping: any) => {
+								// updateMetadataStore(mapping.path, value,	isMulti, undefined, e.detail.partyId);
+								const childvalue = await GetPartyValue(partyid, mapping.linkElementId);
+								console.log("🚀 ~ onUpdateParty ~ childvalue:", childvalue)
+
+								const childPathWithIndex = parentPath+"."+mapping.path.split('.').slice(-1)[0];
+
+								console.log("🚀 ~ onUpdateParty ~ updateMetadataStore for path:", childPathWithIndex, childvalue, isMulti, undefined, undefined)
+								updateMetadataStore(childPathWithIndex, childvalue, isMulti, undefined, undefined);
+								updateValue(childvalue, childPathWithIndex)
+
+								// trigger reload parent	component to update all child components with new values
+								dispatch("reload");
+						}	)					
+					}
+				}, 10)
+	}
+
+
+	function updateValue(value: any, _path:string){
+		
+   //selectorValue.value = value;
+
 			// check changed field
-			res = suite(value, e.target.id);
+			res = suite(value, _path);
 			//console.log("🚀 ~ onChangeHandler ~ res:", res)
 			let errorMessage = '';
-			if(res.hasErrors(e.target.id)){
-					errorMessage = res.getErrors(e.target.id).join('.  ');
+			if(res.hasErrors(_path)){
+					errorMessage = res.getErrors(_path).join('.  ');
 					//console.log("🚀 ~ onChangeHandler ~ errorMessage:", errorMessage)
 			}
 
 			// update validationstore
-			ValidationStoreSetSimpleTypeValid(path, res.isValid(path), errorMessage);
+			ValidationStoreSetSimpleTypeValid(_path, res.isValid(_path), errorMessage);
 
-		}, 10);
+
 	}
 
 
 </script>
+
 <!-- Simple Component Rendering -->
 {#if isVisible && !isAnchor}
-	{#if path && simpleComponent.properties}
 		<div class="pr-2" id={path + '.item'}>
+
+  <!--	if the field is mapped to a party or key, show blocked component with info, otherwise show the normal input component based on the type and format of the field -->
+	{#if (isMappedToParty && !isSelector)  || isMappedToKey}
+		<Blocked	isKeyMapped={isMappedToKey} isPartyMapped={isMappedToParty} label={label} bind:value={value} path={path}/>
+	{:else if isMappedToParty && isSelector}
+
+			<MultiSelect
+						id="{path}"
+						title="{label}"
+						required={required}
+						source={partyMappingObject.list}
+						complexSource={true}
+						complexTarget={true}
+						itemId="partyId"
+						itemLabel="value"
+						bind:target={selectorValue}
+						isMulti={false}
+						clearable={required	? false : true} 
+						on:change={onUpdateParty}
+						invalid={res.hasErrors(path)}
+						feedback={res.getErrors(path)}	 
+						description={simpleComponent.description}
+					/>
+
+	{:else if path && simpleComponent.properties}
 			<!-- Handle different formats and types -->
 			{#if simpleComponent.properties['#text'].format !== undefined && simpleComponent.properties['#text'].format !== null} 		
 				<!-- Handle date format -->
@@ -157,8 +288,7 @@
 							format="yyyy-mm-dd"
 							initialDate={date}
 							bind:value
-							inputClasses="input variant-form-material dark:bg-zinc-700 bg-zinc-50 placeholder:text-gray-400 w-32"
-							
+							inputClasses="input variant-form-material dark:bg-zinc-700 bg-zinc-50 placeholder:text-gray-400 w-32"			
 							/>
 					</span>
 				<!-- Handle datetime format -->
@@ -225,7 +355,8 @@
 			{:else if simpleComponent.properties['#text'].type === 'string' && simpleComponent.properties['#text'].enum}
 			
 					{#if !isMulti} <!-- Handle single select -->
-
+					
+			
 					{#if simpleComponent.properties['#text'].enum.length <= 10}<!-- Handle string type with enum with short numer of  entries -->
 						<Dropdown
 								id="{path}"
@@ -305,8 +436,9 @@
 					size="sm"
 				>{label}</SlideToggle>
 			{/if}
-		</div>
+
 	{/if}
+			</div>
 {:else if isAnchor}
 	<div class="" id={path + '.item'}>
 		<svelte:component this={customComponent} anchor={path} label={convertDisplayName(label)}/>

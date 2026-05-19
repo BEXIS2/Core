@@ -21,8 +21,11 @@
 			? complexComponent.required
 			: [];
 
-</script>
+let reload = false;
 
+
+</script>
+{#key reload}
 {#if complexComponent && complexComponent.type === 'object' && complexComponent.properties}
 	{#each Object.entries(complexComponent.properties) as [key, value]}
 		{@const p = path = path ? path + '.' + key : key}
@@ -51,7 +54,7 @@
 			<div class="mb-2">
 				<div class="flex flex-col md:flex-row md:items-center gap-2">
 					<div class="flex-1 min-w-[100px]">
-						<SimpleComponent simpleComponent={value} {path} required={requiredList.includes(key)} />
+						<SimpleComponent simpleComponent={value} {path} required={requiredList.includes(key)} on:reload={() => reload = !reload} />
 					</div>
 				</div>
 			
@@ -62,3 +65,4 @@
 	{/each}
 	
 {/if}
+{/key}
