@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Metadata";
+    Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
+
+    long id = 0;
+    string saveWithErrors = "";
+
+    if (ViewData["id"] != null) { id = Convert.ToInt64(ViewData["id"]); }
+
+
+}
+
+
+
+<div id="metadata" dataset="@id" >
+    @Html.Partial("_sveltePage")
+</div>

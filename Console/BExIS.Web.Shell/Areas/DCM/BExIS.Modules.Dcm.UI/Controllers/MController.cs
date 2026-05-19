@@ -46,5 +46,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return View();
         }
+
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
+        public ActionResult View(long id, int version = 0)
+        {
+
+            string module = "DCM";
+
+            ViewData["id"] = id;
+            ViewData["version"] = version;
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
+
+            return View();
+        }
     }
 }

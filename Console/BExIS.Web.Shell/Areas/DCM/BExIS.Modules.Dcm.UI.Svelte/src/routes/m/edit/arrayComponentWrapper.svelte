@@ -2,7 +2,7 @@
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from './simpleComponent.svelte';
 	import ChoiceComponent from './choiceComponentWrapper.svelte';
-	import { setValueByPath, updateMetadataStore, schemaToJson, toggleShow, getNodeByPath } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { setValueByPath, updateMetadataStore, schemaToJson, toggleShow, getNodeByPath, getByPath } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { faPlus, faChevronUp, faChevronDown, faTrash } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { slide, fade } from 'svelte/transition';
@@ -24,6 +24,9 @@
 
 	let maxItems: number = arrayComponent.maxItems ? arrayComponent.maxItems : 2147483647;
 	let minItems: number = arrayComponent.minItems ? arrayComponent.minItems : 1;
+
+
+	console.log('🚀 ~ getByPath:', getByPath(path));
 
 	function addItem(idx: number) {
 		value.push(schemaToJson(arrayComponent.items));
@@ -133,7 +136,17 @@
 				</div>
 			{:else if arrayComponent.items.type === 'object' && arrayComponent.items.properties['#text']}
 				{#if value && value.length > 0}
-					{#each value as item, index}
+
+				<SimpleComponent
+										simpleComponent={arrayComponent.items}
+										path={path}
+										value={getNodeByPath(path)}
+										{label}
+										required={requiredList.includes(label)}
+										isMulti={true}
+									/>
+
+					<!-- {#each value as item, index}
 						<div in:slide out:slide class="py-2">
 							<div class="flex flex-col md:flex-row md:items-center gap-2">
 								<div class="flex-1 min-w-[100px]">
@@ -181,7 +194,7 @@
 							</div>
 							</div>
 						</div>
-					{/each}
+					{/each} -->
 				{/if}
 			{/if}
 		{/key}

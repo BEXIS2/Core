@@ -16,11 +16,12 @@ namespace BExIS.Modules.SAM.UI.Helpers
         /// <param name="userId"></param>
         /// <param name="formerMemberRole"></param>
         /// <returns>True if user is in role.</returns>
-        public static bool IsFormerMember(long userId, string formerMemberRole, GroupManager groupManager)
+        public static bool IsFormerMember(long userId, string formerMemberRole)
         {
             bool isAlumni = false;
             try
             {
+                var groupManager = IoCFactory.Container.Resolve<GroupManager>();
                 var alumniGroup = groupManager.Roles.Where(g => g.Name.ToLower() == formerMemberRole.ToLower()).FirstOrDefault();
                 isAlumni = alumniGroup.Users.Any(u => u.Id == userId);
             }
@@ -42,7 +43,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
         /// <param name="user"></param>
         /// <param name="formerMemberRole"></param>
         /// <returns>True if status changed.</returns>
-        public static bool ChangeToFormerMember(User user, string formerMemberRole, GroupManager groupManager)
+        public static bool ChangeToFormerMember(User user, string formerMemberRole)
         {
             bool statuschanged = false;
             //entity and feature permissions
@@ -52,6 +53,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
             using (var alumniUsersGroupsRelationManager = new FormerMemberUsersGroupsRelationManager())
             {
                 //get former member group
+                var groupManager = IoCFactory.Container.Resolve<GroupManager>();
                 var group = groupManager.FindByNameAsync(formerMemberRole).Result;
                 if (!group.Users.Contains(user))
                 {
@@ -99,7 +101,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
         /// <param name="user"></param>
         /// <param name="formerMemberRole"></param>
         /// <returns>True if status changed.</returns>
-        public static bool ChangeToNonFormerMember(User user, string formerMemberRole, GroupManager groupManager)
+        public static bool ChangeToNonFormerMember(User user, string formerMemberRole)
         {
             bool statuschanged = false;
 
@@ -108,6 +110,7 @@ namespace BExIS.Modules.SAM.UI.Helpers
             using (var featurePermissionManager = new FeaturePermissionManager())
             using (var alumniUsersGroupsRelationManager = new FormerMemberUsersGroupsRelationManager())
             {
+                var groupManager = IoCFactory.Container.Resolve<GroupManager>();
                 var group = groupManager.FindByNameAsync(formerMemberRole).Result;
                 if (group.Users.Any(u => u.Id == user.Id))
                 {

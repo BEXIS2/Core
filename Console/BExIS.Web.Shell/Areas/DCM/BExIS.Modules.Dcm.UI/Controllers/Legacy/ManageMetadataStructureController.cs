@@ -9,6 +9,7 @@ using BExIS.Utils.Extensions;
 using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
+using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -76,7 +77,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     
                     var memoryStream = new MemoryStream();
 
-                    using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+                    using (var archive = new ZipOutputStream(memoryStream))
                     {
                         // Add each file from the folder to the archive
                         archive.AddAllFilesFromDirectory(path);

@@ -40,10 +40,10 @@ namespace BEXIS.Modules.SAM.UI.Controllers
                 var userTask = _userManager.FindByNameAsync(userName);
                 userTask.Wait();
                 var user = userTask.Result;
-                bool isAlumni = FormerMemberStatus.IsFormerMember(user.Id, formerMemberRole, _groupManager);
+                bool isAlumni = FormerMemberStatus.IsFormerMember(user.Id, formerMemberRole);
                 if (!isAlumni)
                 {
-                    FormerMemberStatus.ChangeToFormerMember(user, formerMemberRole, _groupManager);
+                    FormerMemberStatus.ChangeToFormerMember(user, formerMemberRole);
 
                     //build email with text blocks from the settings file
                     string mailTextBody = settings.GetValueByKey("mailTextTitle").ToString() + " " + user.DisplayName + "," + "<br/><br/>" +
@@ -84,10 +84,10 @@ namespace BEXIS.Modules.SAM.UI.Controllers
                 var userTask = _userManager.FindByNameAsync(userName);
                 userTask.Wait();
                 var user = userTask.Result;
-                bool isAlumni = FormerMemberStatus.IsFormerMember(user.Id, formerMemberRole, _groupManager);
+                bool isAlumni = FormerMemberStatus.IsFormerMember(user.Id, formerMemberRole);
                 if (isAlumni)
                 {
-                    FormerMemberStatus.ChangeToNonFormerMember(user, formerMemberRole, _groupManager);
+                    FormerMemberStatus.ChangeToNonFormerMember(user, formerMemberRole);
 
                     //build email with text blocks from the settings file
                     string mailTextBody = settings.GetValueByKey("mailTextTitle").ToString() + " " + user.DisplayName + "," + "<br/><br/>" +
@@ -148,9 +148,9 @@ namespace BEXIS.Modules.SAM.UI.Controllers
                     {
                         var party = partyManager.GetPartyByUser(user.Id);
                         if (party != null)
-                            model.Add(new FormerMemberUserModel(user, FormerMemberStatus.IsFormerMember(user.Id, formerMemberRole, _groupManager), party));
+                            model.Add(new FormerMemberUserModel(user, FormerMemberStatus.IsFormerMember(user.Id, formerMemberRole), party));
                         else
-                            model.Add(new FormerMemberUserModel(user, FormerMemberStatus.IsFormerMember(user.Id, formerMemberRole, _groupManager)));
+                            model.Add(new FormerMemberUserModel(user, FormerMemberStatus.IsFormerMember(user.Id, formerMemberRole)));
                     }
                 }
                 else
