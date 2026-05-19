@@ -80,12 +80,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     using (var archive = new ZipOutputStream(memoryStream))
                     {
                         // Add each file from the folder to the archive
+                        archive.IsStreamOwner = false;
                         archive.AddAllFilesFromDirectory(path);
-                    }
+                        //archive.Finish();
+                        //archive.Close();
+                      
+                        archive.Finish();
 
+                    }
                     memoryStream.Position = 0;
 
                     return File(memoryStream, "application/zip", $"{metadataStructure.Name}.zip");
+
                 }
             }
             catch (Exception ex)

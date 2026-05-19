@@ -25,9 +25,10 @@
 			: path;
 
 	let value = getValueByPath(path);
+	
 </script>
 
 {#if path && simpleComponent.properties}
-	<SimpleComponent {simpleComponent} {path} {required} {label} {value} />
+	<SimpleComponent {simpleComponent} {path} {required} {label} {value} on:reload />
 {/if}
 
