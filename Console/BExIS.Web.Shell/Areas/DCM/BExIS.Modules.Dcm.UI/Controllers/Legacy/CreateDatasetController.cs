@@ -100,6 +100,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 long datasetId = 0;
                 bool newDataset = true;
 
+                var useTags = (bool)ModuleManager.GetModuleSettings("DDM").GetValueByKey("use_tags");
+
                 try
                 {
                     TaskManager = FormHelper.GetTaskManager(entityId);
@@ -210,7 +212,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             #endregion set references
 
                             //update search
-                            await reindex(datasetId);
+                            await reindex(datasetId, useTags);
 
 
                             LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
@@ -845,12 +847,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return workingCopy;
         }
 
-        private async Task<bool> reindex(long datasetId)
+        private async Task<bool> reindex(long datasetId, bool useTags)
         {
 
             // reindex
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
-            provider?.UpdateSingleDatasetIndex(datasetId, (IndexingAction)Enum.Parse(typeof(IndexingAction), "CREATE"), false);
+            provider?.UpdateSingleDatasetIndex(datasetId, (IndexingAction)Enum.Parse(typeof(IndexingAction), "CREATE"), useTags);
 
             return true;
 
