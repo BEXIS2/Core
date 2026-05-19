@@ -143,7 +143,7 @@
 										value={getNodeByPath(path)}
 										{label}
 										required={requiredList.includes(label)}
-										isMulti={true}
+										isMulti={true}							
 									/>
 
 					<!-- {#each value as item, index}
