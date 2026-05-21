@@ -123,29 +123,33 @@ const dispatch = createEventDispatcher();
 			// ### SYSTEM MAPPING ###
 			const systemMappings = getSystemMappingsStore();
 		
+			if(systemMappings){
 
-			//	remove indices from path to check if the field is mapped to party or key, because in system mapping there are no indices but in the path there are because of arrays
-			pathWithoutIndices = removeJsonPathIndices(path);
+				//	remove indices from path to check if the field is mapped to party or key, because in system mapping there are no indices but in the path there are because of arrays
+					pathWithoutIndices = removeJsonPathIndices(path);
+					console.log("🚀 ~ pathWithoutIndices:", pathWithoutIndices)
+					console.log("🚀 ~ systemMappings:", systemMappings)
 
-			if(systemMappings.partyMappings.some((mapping: any) => mapping.path == pathWithoutIndices)){
+					if(systemMappings.partyMappings.some((mapping: any) => mapping.path == pathWithoutIndices)){
 
-				isMappedToParty = true;
-				partyMappingObject = systemMappings.partyMappings.find((mapping: any) => mapping.path == pathWithoutIndices);
-				isSelector = partyMappingObject.selector;
+						isMappedToParty = true;
+						partyMappingObject = systemMappings.partyMappings.find((mapping: any) => mapping.path == pathWithoutIndices);
+						isSelector = partyMappingObject.selector;
 
-				if(isSelector)
-				{
-					selectorValue = {
-						"partyId": 0,
-						"value": value
+						if(isSelector)
+						{
+							selectorValue = {
+								"partyId": 0,
+								"value": value
+							}
+						}
+
+				
 					}
-				}
 
-		
-			}
-
-			if(systemMappings.keyMappings.some((mapping: any) => mapping.path == pathWithoutIndices)){
-				isMappedToKey = true;
+					if(systemMappings.keyMappings.some((mapping: any) => mapping.path == pathWithoutIndices)){
+						isMappedToKey = true;
+					}
 			}
 
 			// initial check
@@ -254,7 +258,6 @@ const dispatch = createEventDispatcher();
 	{#if (isMappedToParty && !isSelector)  || isMappedToKey}
 		<Blocked	isKeyMapped={isMappedToKey} isPartyMapped={isMappedToParty} label={label} bind:value={value} path={path}/>
 	{:else if isMappedToParty && isSelector}
-
 			<MultiSelect
 						id="{path}"
 						title="{label}"
@@ -274,6 +277,7 @@ const dispatch = createEventDispatcher();
 					/>
 
 	{:else if path && simpleComponent.properties}
+
 			<!-- Handle different formats and types -->
 			{#if simpleComponent.properties['#text'].format !== undefined && simpleComponent.properties['#text'].format !== null} 		
 				<!-- Handle date format -->
@@ -340,6 +344,7 @@ const dispatch = createEventDispatcher();
 			<!-- Handle different types without specific format -->
 			<!-- Handle string type -->
 			{:else if simpleComponent.properties['#text'].type === 'string' && simpleComponent.properties['#text'].enum	=== undefined}	
+
 				<TextInput 
 					id={path}
 					label={convertDisplayName(label)}
@@ -353,10 +358,8 @@ const dispatch = createEventDispatcher();
 				/>
 			<!-- Handle string type with enum  -->
 			{:else if simpleComponent.properties['#text'].type === 'string' && simpleComponent.properties['#text'].enum}
-			
+
 					{#if !isMulti} <!-- Handle single select -->
-					
-			
 					{#if simpleComponent.properties['#text'].enum.length <= 10}<!-- Handle string type with enum with short numer of  entries -->
 						<Dropdown
 								id="{path}"
@@ -370,7 +373,6 @@ const dispatch = createEventDispatcher();
 								required={required}
 							/>
 					{:else} <!-- Handle string type with enum with many entries -->
-							
 								<MultiSelect
 										id="{path}"
 										title="{label}"
@@ -387,6 +389,7 @@ const dispatch = createEventDispatcher();
 						{/if}
 						{:else} <!-- Handle multi select for array of simple types -->
 						{#if isMulti}
+						
 							<MultiSelect
 										id="{path}"
 										title="{label}"

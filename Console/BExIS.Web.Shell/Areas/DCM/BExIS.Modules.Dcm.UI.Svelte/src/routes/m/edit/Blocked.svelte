@@ -21,7 +21,7 @@ else if(isPartyMapped){
 
 
 </script>
-
+<b>blocked</b>
 <TextInput 
     id={path}
     label={convertDisplayName(label)}
