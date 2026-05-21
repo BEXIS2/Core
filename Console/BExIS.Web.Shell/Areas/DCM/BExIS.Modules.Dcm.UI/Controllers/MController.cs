@@ -91,6 +91,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     var sourceLE = mappingManager.GetLinkElement(id, LinkElementType.MetadataStructure);
                     var targetLE = mappingManager.GetLinkElement(0, LinkElementType.System);
 
+                    if(sourceLE == null || targetLE == null)
+                    {
+                        return Json("", JsonRequestBehavior.AllowGet);
+                    }
+
                     var rootMapping = mappingManager.GetMapping(sourceLE, targetLE);
 
                     var mappings = mappingManager.GetChildMappingFromRoot(rootMapping.Id, 2);

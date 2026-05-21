@@ -136,6 +136,7 @@
 				</div>
 			{:else if arrayComponent.items.type === 'object' && arrayComponent.items.properties['#text']}
 				{#if value && value.length > 0}
+				{#if arrayComponent.items.properties['#text'].enum	!= undefined}
 
 				<SimpleComponent
 										simpleComponent={arrayComponent.items}
@@ -145,8 +146,10 @@
 										required={requiredList.includes(label)}
 										isMulti={true}							
 									/>
+				{:else}
 
-					<!-- {#each value as item, index}
+				
+					{#each value as item, index}
 						<div in:slide out:slide class="py-2">
 							<div class="flex flex-col md:flex-row md:items-center gap-2">
 								<div class="flex-1 min-w-[100px]">
@@ -194,7 +197,8 @@
 							</div>
 							</div>
 						</div>
-					{/each} -->
+					{/each}
+					{/if}
 				{/if}
 			{/if}
 		{/key}
