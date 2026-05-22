@@ -11,13 +11,13 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config
     public sealed class BBoxSpatialMetadata : SpatialMetadata
     {
         // bbox
-        [JsonProperty("west_bound_longitude")]
-        public double WestBoundLongitude { get; set; }
-        [JsonProperty("east_bound_longitude")]
-        public double EastBoundLongitude { get; set; }
-        [JsonProperty("south_bound_latitude")]
-        public double SouthBoundLatitude { get; set; }
-        [JsonProperty("north_bound_latitude")]
-        public double NorthBoundLatitude { get; set; }
+        [JsonProperty("WestBoundLongitude")]
+        public string WestBoundLongitude { get; set; }
+        [JsonProperty("EastBoundLongitude")]
+        public string EastBoundLongitude { get; set; }
+        [JsonProperty("SouthBoundLatitude")]
+        public string SouthBoundLatitude { get; set; }
+        [JsonProperty("NorthBoundLatitude")]
+        public string NorthBoundLatitude { get; set; }
     }
 }

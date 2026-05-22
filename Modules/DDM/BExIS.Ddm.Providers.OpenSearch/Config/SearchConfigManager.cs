@@ -4,16 +4,15 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading;
-using System.Threading.Tasks;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
 using BExIS.Utils.Models;
-using DocumentFormat.OpenXml.Drawing.Diagrams;
-using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentFormat.OpenXml.Wordprocessing;
+using Json.Schema;
 using Newtonsoft.Json;  
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Category = BExIS.Utils.Models.Category;
@@ -24,19 +23,80 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config
     {
         private static string _configFilePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "OpenSearch", "Config", "SearchConfig.json");
         private static string _defaultConfigFilePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "OpenSearch", "Config", "backup", "SearchConfig_backup.json)");
+        private static string _configSchemaPath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "OpenSearch", "Config", "backup", "SearchConfig_schema.json");
 
         private static volatile SearchConfig _configSnapshot;
         private static readonly object _Lock = new object();
 
         public static SearchConfig GetSnapshot()
         {
-            if (_configSnapshot == null)
-            {
-                Reload();
-            }
-            return _configSnapshot;
+            if (_configSnapshot != null)
+                return _configSnapshot;
 
+            lock (_Lock)
+            {
+                if (_configSnapshot == null)
+                {
+                    Reload();
+                }
+
+                return _configSnapshot;
+            }
         }
+
+        public static bool ValidateConfig(string configToValidate)
+        {
+            if (string.IsNullOrWhiteSpace(configToValidate))
+                return false;
+
+            try
+            {
+                // parsing string to json
+                JToken json;
+                try
+                {
+                    json = JToken.Parse(configToValidate);
+                }
+                catch (JsonReaderException)
+                {
+                    return false; // invalid JSON
+                }
+
+                // load schema
+                if (!File.Exists(_configSchemaPath))
+                    return false;
+
+                JSchema schema;
+                try
+                {
+                    var schemaText = File.ReadAllText(_configSchemaPath);
+                    schema = JSchema.Parse(schemaText);
+                }
+                catch (Exception)
+                {
+                    return false; // Schema invalid
+                }
+
+                // validate process
+                IList<string> errors;
+                bool isValid = json.IsValid(schema, out errors);
+
+                // check result is valid
+                if (!isValid && errors != null)
+                {
+                    foreach (var error in errors)
+                    {
+                        Console.WriteLine("Validation error: " + error);
+                    }
+                }
+                return isValid;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
 
         public static void Reload(string filePath = null)
         {
@@ -57,6 +117,7 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config
             {
                 new StringEnumConverter(),
                 // new CalcBlockListConverter()
+                new SpatialMetadataConverter()
             }
                 };
 
@@ -100,30 +161,15 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config
             }
         }
 
-        public static void Save()
+
+        public static void Save(string json)
         {
             lock (_Lock)
             {
-                if (_configSnapshot == null)
-                    throw new InvalidOperationException("No config loaded to save");
-
-                var settings = new JsonSerializerSettings
-                {
-                    Formatting = Formatting.Indented,
-                    Converters =
-                    {
-                        new StringEnumConverter()
-                    }
-                };
-
-                var json = JsonConvert.SerializeObject(_configSnapshot, settings);
-
                 var tempFile = _configFilePath + ".tmp";
-                // atomic
+
                 File.WriteAllText(tempFile, json);
                 File.Copy(tempFile, _configFilePath, true);
-                // for windows
-                //File.Replace(tempFile, _configFilePath, null);
                 File.Delete(tempFile);
             }
         }
@@ -205,6 +251,45 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config
             return _configSnapshot.Local
                 .Where(c => c != null && c.SearchComponents != null && c.SearchComponents.General != null)
                 .SelectMany(c => c.SearchComponents.General);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entityTemplateId"></param>
+        /// <returns></returns>
+        public static LocalConfig GetLocalConfigForEntityTemplate(long entityTemplateId)
+        {
+            foreach (var localConfig in _configSnapshot.Local)
+            {
+                if (localConfig.EntityTemplateId == entityTemplateId) return localConfig;
+            }
+            return null;
+        }
+
+        public static GlobalComponent GetGlobalSearchComponentById(int componentId, SearchComponentBaseType type)
+        {
+            IEnumerable<GlobalComponent> source;
+            switch (type)
+            {
+                case SearchComponentBaseType.Category:
+                    source = _configSnapshot.Global.SearchComponents.Categories;
+                    break;
+                case SearchComponentBaseType.Facet:
+                    source = _configSnapshot.Global.SearchComponents.Facets;
+                    break;
+                case SearchComponentBaseType.General:
+                    source = _configSnapshot.Global.SearchComponents.General;
+                    break;
+                case SearchComponentBaseType.Property:
+                    source = _configSnapshot.Global.SearchComponents.Properties;
+                    break;
+                default:
+                    throw new InvalidEnumArgumentException(
+                        "Invalid Search Component Type: " + type);
+            }
+
+            return source.SingleOrDefault(c => c.Id == componentId);
         }
 
         public static List<LocalComponent> GetAllLocalSearchComponentsById(int componentId, string componentType)
@@ -342,6 +427,8 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config
             }
             return results;
         }
+
+        // glaube fehlerhaft, denn die Methode bricht shcon beim ersten Fund ab, mehrere sind aber moeglich?
         public static List<string> GetMetadataNodes(int componentId, string componentType)
         {
             foreach (var entityTemplate in _configSnapshot.Local)
@@ -388,6 +475,9 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config
         {
             return _configSnapshot.Global.SearchComponents;
         }
+
+        public static GlobalConfig GetGlobal() => _configSnapshot.Global;
+        public static LocalConfig GetLocal(long entityTemplateId) => _configSnapshot.Local.FirstOrDefault(et => et.EntityTemplateId == entityTemplateId);
 
         public static Dictionary<GlobalSearchComponent, List<LocalConfig>> GetLocalConfigForComponent(string componentType, int componentId)
         {

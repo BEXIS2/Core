@@ -8,14 +8,14 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config.Snapshots
 {
     public sealed class PointSpatialMetadataSnapshot : SpatialMetadataSnapshot
     {
-        public double Longitude { get; }
-        public double Latitude { get; }
-        public double Radius { get; }
+        public string Longitude { get; }
+        public string Latitude { get; }
+        public string Radius { get; }
 
         private PointSpatialMetadataSnapshot(
-            double longitude,
-            double latitude,
-            double radius)
+            string longitude,
+            string latitude,
+            string radius)
             : base("point")
         {
             Longitude = longitude;

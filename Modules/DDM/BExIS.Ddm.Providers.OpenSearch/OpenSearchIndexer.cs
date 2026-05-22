@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -10,6 +11,7 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Xml;
+using System.Xml.Linq;
 using BExIS.Ddm.Api;
 using BExIS.Ddm.Providers.OpenSearch.Config;
 using BExIS.Ddm.Providers.OpenSearch.Config.enums;
@@ -24,21 +26,26 @@ using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
 using BExIS.Utils.Models;
 using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
+using DocumentFormat.OpenXml.Wordprocessing;
+using Newtonsoft.Json;
 using OpenSearch.Client;
 using OpenSearch.Net;
 using Vaiona.Entities.Common;
 using Vaiona.Logging;
 using Vaiona.Utils.Cfg;
 using Vaiona.Utils.IO;
+using Category = BExIS.Utils.Models.Category;
+using DataTable = System.Data.DataTable;
 
 namespace BExIS.Ddm.Providers.OpenSearch
 {
     public class OpenSearchIndexer : IDisposable
     {
         // TODO: kann vermutlich weg, da nicht genutzt?
-        private List<Facet> _allFacets = new List<Facet>();
-        private List<Property> _allProperties = new List<Property>();
-        private List<Category> _allCategories = new List<Category>();
+        //private List<Facet> _allFacets = new List<Facet>();
+        //private List<Property> _allProperties = new List<Property>();
+        //private List<Category> _allCategories = new List<Category>();
         private bool _reIndex = false;
         private bool _isIndexConfigured = false;
         private bool _includePrimaryData = false;
@@ -107,7 +114,7 @@ namespace BExIS.Ddm.Providers.OpenSearch
                 throw new Exception($"Mapping konnte nicht abgerufen werden: {getMappingResponse.OriginalException?.Message}");
             }
 
-            var existingMappingJson = JsonSerializer.Serialize(getMappingResponse.Indices[indexName].Mappings);
+            var existingMappingJson = System.Text.Json.JsonSerializer.Serialize(getMappingResponse.Indices[indexName].Mappings);
             var existingDict = JsonNode.Parse(existingMappingJson);
 
             // Vergleichen
@@ -138,7 +145,7 @@ namespace BExIS.Ddm.Providers.OpenSearch
             category.Name = "All";
             category.Value = "All";
             category.DefaultValue = "nothing";
-            _allCategories.Add(category);
+            //_allCategories.Add(category);
 
             foreach (var item in globalComponents)
             {
@@ -150,7 +157,7 @@ namespace BExIS.Ddm.Providers.OpenSearch
                     c.Text = item.ComponentName;
                     c.Value = item.ComponentName;
                     c.Childrens = new List<Facet>();
-                    _allFacets.Add(c);
+                    //_allFacets.Add(c);
                 }
                 else if (item.ComponentType == SearchComponentBaseType.Property)
                 {
@@ -174,7 +181,7 @@ namespace BExIS.Ddm.Providers.OpenSearch
                     c.Name = item.ComponentName;
                     c.Value = item.ComponentName;
                     c.DefaultValue = "nothing";
-                    _allCategories.Add(c);
+                    //_allCategories.Add(c);
                 }
                 else if (item.ComponentType == SearchComponentBaseType.General)
                 {
@@ -253,8 +260,7 @@ namespace BExIS.Ddm.Providers.OpenSearch
                                 date = version.ModificationInfo?.Timestamp?.ToString("yyyy-MM-dd");
                                 entityTemplate = version.Dataset.EntityTemplate.Name;
                             }
-
-                            WriteBexisIndex(id, onlyReleasedTags, dm);
+                            WriteToIndex(id, onlyReleasedTags, dm);
                             //GC.Collect();
                         }
                         catch (Exception ex)
@@ -274,13 +280,13 @@ namespace BExIS.Ddm.Providers.OpenSearch
             }
             finally
             {
-                GC.Collect();
-                using (var emailService = new EmailService())
-                {
-                    emailService.Send(MessageHelper.GetSearchReIndexHeader(),
-                        MessageHelper.GetSearchReIndexMessage(errors),
-                        GeneralSettings.SystemEmail);
-                }
+                //GC.Collect();
+                //using (var emailService = new EmailService())
+                //{
+                //    emailService.Send(MessageHelper.GetSearchReIndexHeader(),
+                //        MessageHelper.GetSearchReIndexMessage(errors),
+                //        GeneralSettings.SystemEmail);
+                //}
 
             }
         }
@@ -385,8 +391,8 @@ namespace BExIS.Ddm.Providers.OpenSearch
             // 1. OpenSearch-Query ausführen
             var searchResponse = _client.Search<Dictionary<string, object>>(s => s
                 .Index(OpenSearchProvider.DefaultIndex)
-                .Query(q => q.MatchAll())
-                .Size(n) // Anzahl der Treffer, optional anpassen
+                .Query(q => query)
+                .Size(n)
             );
 
 
@@ -464,6 +470,232 @@ namespace BExIS.Ddm.Providers.OpenSearch
             search_res.Rows = rowList;
 
             return search_res;
+        }
+
+        public SearchResult SearchWithGeo(
+            QueryContainer baseQuery,
+            List<SearchComponentConfigObj> headerItemList,
+            double? latitude = null,
+            double? longitude = null,
+            double? radiusKm = null,
+            double? topLeftLat = null,
+            double? topLeftLon = null,
+            double? bottomRightLat = null,
+            double? bottomRightLon = null)
+        {
+            int n = 1000;
+
+            SearchResult search_res = new SearchResult
+            {
+                PageSize = 10,
+                CurrentPage = 1,
+                NumberOfHits = 100
+            };
+
+            var header = new List<HeaderItem>();
+            var defaultHeader = new List<HeaderItem>();
+
+            // Standard Header
+            HeaderItem id = new HeaderItem();
+            id.DisplayName = "ID";
+            id.Name = "ID";
+            id.DataType = "Integer";
+            search_res.Id = id;
+            header.Add(id);
+            defaultHeader.Add(id);
+
+            header.Add(new HeaderItem { Name = "entity_name", DisplayName = "Type", DataType = "string", Placeholder = "entity" });
+            header.Add(new HeaderItem { Name = "entitytemplate", DisplayName = "Template", DataType = "string", Placeholder = "entitytemplate" });
+            header.Add(new HeaderItem { Name = "modifieddate", DisplayName = "Last modified date", DataType = "string", Placeholder = "date" });
+            header.Add(new HeaderItem { Name = "doi", DisplayName = "DOI", DataType = "string", Placeholder = "doi" });
+
+            // geo header
+            header.Add(new HeaderItem { Name = "geo", DisplayName = "Location", DataType = "string", Placeholder = "geodata" });
+
+
+            foreach (var item in headerItemList)
+            {
+                HeaderItem hi = new HeaderItem();
+                hi.Name = item.ComponentName;
+                hi.DisplayName = item.ComponentName;
+                hi.Placeholder = item.Placeholder;
+                header.Add(hi);
+
+                if (item.DefaultHeaderItem)
+                {
+                    defaultHeader.Add(hi);
+                }
+            }
+            // create filter for geo data
+            QueryContainer geoFilter = null;
+
+            if (latitude.HasValue && longitude.HasValue && radiusKm.HasValue)
+            {
+                geoFilter = new GeoDistanceQuery
+                {
+                    Field = "gen_geopoint",
+                    Location = new GeoLocation(latitude.Value, longitude.Value),
+                    Distance = $"{radiusKm.Value}km"
+                };
+            }
+            else if (topLeftLat.HasValue && topLeftLon.HasValue &&
+                     bottomRightLat.HasValue && bottomRightLon.HasValue)
+            {
+                geoFilter = new GeoBoundingBoxQuery
+                {
+                    Field = "gen_geopoint",
+                    BoundingBox = new BoundingBox
+                    {
+                        TopLeft = new GeoLocation(topLeftLat.Value, topLeftLon.Value),
+                        BottomRight = new GeoLocation(bottomRightLat.Value, bottomRightLon.Value)
+                    }
+                };
+            }
+
+            var finalQuery = new BoolQuery
+            {
+                Must = new List<QueryContainer> { baseQuery ?? new MatchAllQuery() },
+                Filter = geoFilter != null ? new List<QueryContainer> { geoFilter } : null
+            };
+
+            var searchResponse = _client.Search<Dictionary<string, object>>(s => s
+                .Index(OpenSearchProvider.DefaultIndex)
+                .Query(q => finalQuery)
+                .Size(n)
+            );
+
+            var rowList = new List<Row>();
+
+            foreach (var hit in searchResponse.Hits)
+            {
+                var source = hit.Source;
+                var values = new List<object>();
+
+                source.TryGetValue("doc_id", out var docId);
+                source.TryGetValue("gen_entity_name", out var entityName);
+                source.TryGetValue("gen_entitytemplate", out var template);
+                source.TryGetValue("gen_modifieddate", out var modifiedDate);
+                source.TryGetValue("gen_doi", out var doi);
+
+                values.Add(docId);
+                values.Add(entityName);
+                values.Add(template);
+                values.Add(modifiedDate);
+                values.Add(doi);
+
+                // geosearch
+                if (source.TryGetValue("gen_geopoint", out var geoObj))
+                {
+                    if (geoObj is Dictionary<string, object> geoDict)
+                    {
+                        var lat = geoDict.ContainsKey("lat") ? geoDict["lat"] : null;
+                        var lon = geoDict.ContainsKey("lon") ? geoDict["lon"] : null;
+
+                        values.Add($"{lat}, {lon}");
+                    }
+                    else
+                    {
+                        values.Add("");
+                    }
+                }
+                else if (source.TryGetValue("gen_geobbox", out var bboxObj))
+                {
+                    values.Add("BBox");
+                }
+                else
+                {
+                    values.Add("");
+                }
+
+                // dynamic fields
+                foreach (var item in headerItemList)
+                {
+                    string componentName = item.ComponentName;
+
+                    if (item.ComponentType == SearchComponentBaseType.Facet)
+                        componentName = "facet_" + componentName;
+                    else if (item.ComponentType == SearchComponentBaseType.Category)
+                        componentName = "category_" + componentName;
+                    else if (item.ComponentType == SearchComponentBaseType.Property)
+                        componentName = "property_" + componentName;
+
+                    if (source.TryGetValue(componentName, out var fieldValues))
+                    {
+                        if (fieldValues is IEnumerable<object> multi)
+                            values.Add(string.Join(", ", multi));
+                        else
+                            values.Add(fieldValues?.ToString());
+                    }
+                    else
+                    {
+                        values.Add("");
+                    }
+                }
+
+                rowList.Add(new Row { Values = values });
+            }
+
+            search_res.Header = header;
+            search_res.DefaultVisibleHeaderItem = header;
+            search_res.Rows = rowList;
+
+            return search_res;
+        }
+
+        public IEnumerable<Dictionary<string, object>> GeoPointSearch(
+            QueryContainer baseQuery,
+            double latitude,
+            double longitude,
+            double radiusKm,
+            int size = 1000)
+        {
+            var searchResponse = _client.Search<Dictionary<string, object>>(s => s
+                .Index(OpenSearchProvider.DefaultIndex)
+                .Size(size)
+                .Query(q => q
+                    .Bool(b => b
+                        .Must(baseQuery ?? new MatchAllQuery())
+                        .Filter(f => f
+                            .GeoDistance(g => g
+                                .Field("gen_geopoint")
+                                .Location(latitude, longitude)
+                                .Distance($"{radiusKm}km")
+                            )
+                        )
+                    )
+                )
+            );
+
+            return searchResponse.Hits.Select(h => h.Source);
+        }
+        public IEnumerable<Dictionary<string, object>> GeoBoundingBoxSearch(
+            QueryContainer baseQuery,
+            double topLeftLat,
+            double topLeftLon,
+            double bottomRightLat,
+            double bottomRightLon,
+            int size = 1000)
+        {
+            var searchResponse = _client.Search<Dictionary<string, object>>(s => s
+                .Index(OpenSearchProvider.DefaultIndex)
+                .Size(size)
+                .Query(q => q
+                    .Bool(b => b
+                        .Must(baseQuery ?? new MatchAllQuery())
+                        .Filter(f => f
+                            .GeoBoundingBox(g => g
+                                .Field("gen_geopoint")
+                                .BoundingBox(bb => bb
+                                    .TopLeft(topLeftLat, topLeftLon)
+                                    .BottomRight(bottomRightLat, bottomRightLon)
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+
+            return searchResponse.Hits.Select(h => h.Source);
         }
 
         public IEnumerable<Facet> FacetSearch(QueryContainer query, IEnumerable<Facet> facets,
@@ -596,7 +828,7 @@ namespace BExIS.Ddm.Providers.OpenSearch
                 facetObj.Count = childCount;
                 result.Add(facetObj);
             }
-
+            
             return result;
         }
 
@@ -638,8 +870,31 @@ namespace BExIS.Ddm.Providers.OpenSearch
             List<TextValue> result = new List<TextValue>();
             ISearchResponse<AutoCompleteDocument> response = null;
 
-            // Test
+            // For Debugging
+            ///*
+            var lowLevelResponse = _client.LowLevel.Search<StringResponse>(
+                OpenSearchProvider.AutoCompleteIndex,
+                PostData.Serializable(new
+                {
+                    suggest = new
+                    {
+                        autocomplete_suggest = new
+                        {
+                            prefix = searchText,
+                            completion = new
+                            {
+                                field = "all",
+                                size = 10
+                            }
+                        }
+                    }
+                })
+            );
 
+            var json = lowLevelResponse.Body;
+            Debug.WriteLine(json);
+
+            // */
             if (queryFilter == "all")
             {
                 response = _client.Search<AutoCompleteDocument>(s => s
@@ -728,7 +983,7 @@ namespace BExIS.Ddm.Providers.OpenSearch
                                 _client.Delete<object>(pair.Key, idx => idx.Index(OpenSearchProvider.DefaultIndex));
                                 _client.Delete<object>(pair.Key, idx => idx.Index(OpenSearchProvider.AutoCompleteIndex));
                             }
-                            WriteBexisIndex(pair.Key, onlyReleasedTags, dm);
+                            WriteToIndex(pair.Key, onlyReleasedTags, dm);
                         }
                         else if (pair.Value == IndexingAction.UPDATE)
                         {
@@ -738,7 +993,7 @@ namespace BExIS.Ddm.Providers.OpenSearch
                                 _client.Delete<object>(pair.Key, idx => idx.Index(OpenSearchProvider.AutoCompleteIndex));
 
                             }
-                            WriteBexisIndex(pair.Key, onlyReleasedTags, dm);
+                            WriteToIndex(pair.Key, onlyReleasedTags, dm);
                         }
                         else if (pair.Value == IndexingAction.DELETE)
                         {
@@ -753,6 +1008,180 @@ namespace BExIS.Ddm.Providers.OpenSearch
                     throw ex;
                 }
             }
+        }
+
+        //public void IndexIntegratedDatasets(long entityTemplateId, bool onlyReleasedTags, DatasetManager dm)
+
+        public void IndexIntegratedDatasets(long entityTemplateId, bool onlyReleasedTags)
+        {
+            // integratedIndex is related to EntityTemplate, so templateId is necessary to get related config
+            var localConfig = SearchConfigManager.GetLocal(entityTemplateId);
+            // get path to folder where the external xml files are located
+            var folderPath = localConfig?.ExternalSource?.LocalPath;
+            
+            if (string.IsNullOrWhiteSpace(folderPath))
+
+                throw new ArgumentException("Folder path must not be empty.", nameof(folderPath));
+
+            if (!Directory.Exists(folderPath))
+                throw new DirectoryNotFoundException(folderPath);
+
+            // gather all xml files in topdir and subfirs either
+            var xmlFiles = Directory
+                .EnumerateFiles(folderPath, "*.xml", SearchOption.AllDirectories)
+                .ToList();
+
+            if (!xmlFiles.Any())
+                return;
+
+            foreach (var file in xmlFiles)
+            {
+                try
+                {
+                    // TODO: Woher die ID bekommen?
+                    var fileName = Path.GetFileNameWithoutExtension(file);
+                    var xmlDoc = new XmlDocument();
+                    xmlDoc.Load(file);
+
+                    // will not work, because dataManager DM is only necessary when working with the postgres db
+                    // WriteToIndex(id, onlyReleasedTags, dm);
+
+                    var name = xmlDoc.SelectSingleNode("//name")?.InnerText;
+                    var source = xmlDoc.SelectSingleNode("//source")?.InnerText;
+                    var externalName = xmlDoc.SelectSingleNode("//external_name")?.InnerText;
+
+                    IntegratedSourceToIdx(entityTemplateId, xmlDoc);
+                }
+                catch (Exception ex)
+                {
+                    // TODO: Logging
+                    // logger.Error(ex, $"Failed to index file {file}");
+                }
+            }
+        }
+
+        private void IntegratedSourceToIdx(long entityTemplateId, XmlDocument metadata)
+        {
+            string doi = "";
+            string date = "2020-01-01";
+            string entityTemplate = "Test Data Template";
+            // TODO: how to handle external document ids?
+            long id = 99999999;
+            var entityName = "";
+            List<string> ng_all_list = new List<string>();
+            // document for index
+            Dictionary<string, object> doc = new Dictionary<string, object>
+            {
+                ["doc_id"] = id,
+                ["gen_modifieddate"] = date,
+                ["gen_entitytemplate"] = entityTemplate,
+                ["ng_all"] = ng_all_list
+            };
+
+            // autocomplete to Index
+            List<string> autocomplete_ng_all_list = new List<string>();
+            // autocomplete index new
+            var autocompleteDoc = new AutoCompleteDocument(id.ToString());
+
+            SystemInfosToIndex(id, doi, entityName, entityTemplate, doc, id, autocompleteDoc);
+
+            var globalSearchComponents = SearchConfigManager.GetGlobalSearchComponent();
+
+            // ----------- SEARCH COMPONENTS
+            // get dataset
+            var localConfig = SearchConfigManager.GetLocalConfigForEntityTemplate(entityTemplateId);
+
+            // facets
+            if (globalSearchComponents.FacetsToIndex)
+            {
+                foreach (var facet in localConfig.SearchComponents.Facets)
+                {
+                    foreach (var metadataNode in facet.MetadataNodes)
+                    {
+                        XmlNodeList elementList = metadata.SelectNodes(metadataNode);
+                        // check if data are at this position in dataset
+                        if (elementList != null)
+                        {
+                            foreach (XmlNode element in elementList)
+                            {
+                                string elementName = element.InnerText;
+                                if (!element.InnerText.Trim().Equals(""))
+                                    AppendFacetToDocument(facet, element.InnerText.Trim(), doc, id, metadataNode, ng_all_list, autocompleteDoc);
+                            }
+                        }
+
+                    }
+                }
+            } // end facets
+
+            // category
+            // TODO: in der alten Version beginnt bei den Categories das indexing fuer primary data?!?
+            if (globalSearchComponents.CategoriesToIndex)
+            {
+                foreach (var category in localConfig.SearchComponents.Categories)
+                {
+                    foreach (var metadataNode in category.MetadataNodes)
+                    {
+                        XmlNodeList elementList = metadata.SelectNodes(metadataNode);
+                        if (elementList != null)
+                        {
+                            foreach (XmlNode elemnt in elementList)
+                            {
+                                var globalComponent = SearchConfigManager.GetGlobalSearchComponentById(category.GlobalId, SearchComponentBaseType.Category);
+                                string value = elemnt.InnerText;
+                                doc["category_" + globalComponent.ComponentName] = value;
+                                doc["ng_" + globalComponent.ComponentName] = value;
+                                ng_all_list.Add(value);
+                                //doc["ng_all"] = elemList[i].InnerText;
+                                autocompleteDoc.AddCategory(value, globalComponent.ComponentName);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // generals
+            if (globalSearchComponents.GeneralsToIndex)
+            {
+                foreach (var general in localConfig.SearchComponents.General)
+                {
+                    foreach (var metadataNode in general.MetadataNodes)
+                    {
+                        XmlNodeList elementList = metadata.SelectNodes(metadataNode);
+                        if (elementList != null)
+                        {
+                            foreach (XmlNode element in elementList)
+                            {
+                                var globalComponent = SearchConfigManager.GetGlobalSearchComponentById(general.GlobalId, SearchComponentBaseType.General);
+                                string value = element.InnerText;
+                                doc[globalComponent.ComponentName] = value;
+                                ng_all_list.Add(value);
+                                //doc["ng_all"] = elemList[i].InnerText;
+                                autocompleteDoc.AddCategory(value, globalComponent.ComponentName);
+                            }
+
+                        }
+                    }
+                }
+            }
+
+            // properties
+            if (globalSearchComponents.PropertiesToIndex)
+            {
+                foreach (var prop in localConfig.SearchComponents.Properties)
+                {
+                    throw new NotSupportedException("Properties are not supported to index");
+                }
+            }
+            var globalConfig = SearchConfigManager.GetGlobal();
+            //var localConfig = SearchConfigManager.GetLocal(entityTemplateId);
+
+            WriteAutocompleteIndex(id, autocompleteDoc);
+            var indexResponse = _client.Index(doc, i => i
+                .Index(OpenSearchProvider.DefaultIndex)
+                .Id(doc["doc_id"].ToString())
+            );
+            
         }
 
         public void UpdateSingleDatasetIndex(long datasetId, IndexingAction indAction, bool onlyReleasedTags)
@@ -790,7 +1219,7 @@ namespace BExIS.Ddm.Providers.OpenSearch
                         // 2. Wenn kein Treffer: neu schreiben
                         if (searchResponse.Total < 1)
                         {
-                            WriteBexisIndex(datasetId, onlyReleasedTags, dm);
+                            WriteToIndex(datasetId, onlyReleasedTags, dm);
                         }
                         else
                         {
@@ -821,7 +1250,7 @@ namespace BExIS.Ddm.Providers.OpenSearch
                             }
 
                             // 4. Neu schreiben
-                            WriteBexisIndex(datasetId, onlyReleasedTags, dm);
+                            WriteToIndex(datasetId, onlyReleasedTags, dm);
                         }
                     }
                     else if (indAction == IndexingAction.DELETE)
@@ -879,7 +1308,7 @@ namespace BExIS.Ddm.Providers.OpenSearch
                         }
 
                         // 4. Neu schreiben
-                        WriteBexisIndex(datasetId, onlyReleasedTags, dm);
+                        WriteToIndex(datasetId, onlyReleasedTags, dm);
                     }
                 }
                 catch (Exception ex)
@@ -893,12 +1322,19 @@ namespace BExIS.Ddm.Providers.OpenSearch
             }
         }
 
-        private void WriteBexisIndex(long id, bool onlyReleasedTags, DatasetManager dm)
+        /// <summary>
+        /// Triggers when someone upload or edit a dataset, used to write data to opensearch index via SearchConfig.json
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="onlyReleasedTags"></param>
+        /// <param name="dm"></param>
+        /// <exception cref="NotSupportedException"></exception>
+        private void WriteToIndex(long id, bool onlyReleasedTags, DatasetManager dm)
         {
-            string docId = id.ToString();//metadata.GetElementsByTagName("bgc:id")[0].InnerText;
             string doi = "";
             string date = "";
             string entityTemplate = "";
+            long entityTemplateId;
             DatasetVersion version = null;
             XmlDocument metadata = null;
 
@@ -916,27 +1352,24 @@ namespace BExIS.Ddm.Providers.OpenSearch
                 version = dm.GetDatasetLatestVersion(id);
                 metadata = dm.GetDatasetLatestMetadataVersion(id);
             }
-
             if (version != null)
             {
                 // doi
                 entityTemplate = version.Dataset.EntityTemplate.Name;
+                entityTemplateId = version.Dataset.EntityTemplate.Id;
                 date = version.ModificationInfo?.Timestamp?.ToString("yyyy-MM-dd");
                 if (date == null) version.CreationInfo?.Timestamp?.ToString("yyyy-MM-dd");
                 if (date == null) date = "";
             }
-            List<XmlNode> faceNodes = new List<XmlNode>();
 
-            //List<XmlNode> faceNodes = facetXmlNodeList;
-            //XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-            //var entityName = xmlDatasetHelper.GetEntityName(id);
+
+
             var entityName = "";
-
-            // Doc to Index
             List<string> ng_all_list = new List<string>();
+            // document for index
             Dictionary<string, object> doc = new Dictionary<string, object>
             {
-                ["doc_id"] = docId,
+                ["doc_id"] = id,
                 ["gen_isPublic"] = _entityPermissionManager.ExistsAsync(_entityTypeId.Value, id).Result,
                 ["gen_entity_name"] = entityName,
                 ["gen_modifieddate"] = date,
@@ -946,196 +1379,378 @@ namespace BExIS.Ddm.Providers.OpenSearch
 
             // autocomplete to Index
             List<string> autocomplete_ng_all_list = new List<string>();
-
             // autocomplete index new
-            var autocompleteDoc = new AutoCompleteDocument(docId);
+            var autocompleteDoc = new AutoCompleteDocument(id.ToString());
 
+            SystemInfosToIndex(id, doi, entityName, entityTemplate, doc, id, autocompleteDoc);
 
-            IndexSystemInfos(id, doi, entityName, entityTemplate, doc, docId, autocompleteDoc);
+            var globalSearchComponents = SearchConfigManager.GetGlobalSearchComponent();
 
-            foreach (XmlNode facet in faceNodes)
+            // ----------- SEARCH COMPONENTS
+            // get dataset
+            if (dm.GetDataset(id) is Dataset dataset)
             {
-                string multivalued = facet.Attributes.GetNamedItem("multivalued").Value;
-                string[] metadataElementNames = facet.Attributes.GetNamedItem("metadata_name").Value.Split(',');
-                string lucene_name = facet.Attributes.GetNamedItem("lucene_name").Value;
+                entityTemplateId = dataset.EntityTemplate.Id;
+                var localConfig = SearchConfigManager.GetLocalConfigForEntityTemplate(entityTemplateId);
 
-                // holt Elemente aus der Datenbank
-                foreach (string metadataElementName in metadataElementNames)
+                // facets
+                if (globalSearchComponents.FacetsToIndex)
                 {
-                    if (!string.IsNullOrEmpty(metadataElementName))
+                    foreach (var facet in localConfig.SearchComponents.Facets)
                     {
-                        XmlNodeList elemList = metadata.SelectNodes(metadataElementName);
-                        if (elemList != null)
+                        foreach (var metadataNode in facet.MetadataNodes)
                         {
-                            for (int i = 0; i < elemList.Count; i++)
+                            XmlNodeList elementList = metadata.SelectNodes(metadataNode);
+                            // check if data are at this position in dataset
+                            if (elementList != null)
                             {
-                                string eleme = elemList[i].InnerText;
-                                if (!elemList[i].InnerText.Trim().Equals(""))
+                                foreach (XmlNode element in elementList)
                                 {
-                                    // write_data_facet()-Method in lucene BexisIndexer.cs
-                                    AppendFacetDataToDocument(facet, elemList[i].InnerText.Trim(), doc, docId, metadataElementName, ng_all_list, autocompleteDoc);
+                                    string elementName = element.InnerText;
+                                    // if ist wichtig, weil leere Felder mit "" haeufig codiert sind bzw als \"NonEmptyStringType\""
+                                    if (!element.InnerText.Trim().Equals(""))
+                                        AppendFacetToDocument(facet, element.InnerText.Trim(), doc, id, metadataNode, ng_all_list, autocompleteDoc);
+                                }
+                            }
+
+                        }
+                    }
+                } // end facets
+
+                // category
+                // TODO: in der alten Version beginnt bei den Categories das indexing fuer primary data?!?
+                if (globalSearchComponents.CategoriesToIndex)
+                {
+                    foreach (var category in localConfig.SearchComponents.Categories)
+                    {
+                        foreach (var metadataNode in category.MetadataNodes)
+                        {
+                            XmlNodeList elementList = metadata.SelectNodes(metadataNode);
+                            if (elementList != null)
+                            {
+                                foreach (XmlNode elemnt in elementList)
+                                {
+                                    var globalComponent = SearchConfigManager.GetGlobalSearchComponentById(category.GlobalId, SearchComponentBaseType.Category);
+                                    string value = elemnt.InnerText;
+                                    doc["category_" + globalComponent.ComponentName] = value;
+                                    doc["ng_" + globalComponent.ComponentName] = value;
+                                    ng_all_list.Add(value);
+                                    //doc["ng_all"] = elemList[i].InnerText;
+                                    autocompleteDoc.AddCategory(value, globalComponent.ComponentName);
                                 }
                             }
                         }
                     }
                 }
-            } // end foreach metadataElementNames
-            List<XmlNode> propertyNodes = new List<XmlNode>();
 
-            //List<XmlNode> propertyNodes = propertyXmlNodeList;
-            foreach (XmlNode property in propertyNodes)
-            {
-                string multivalued = property.Attributes.GetNamedItem("multivalued").Value;
-                string lucene_name = property.Attributes.GetNamedItem("lucene_name").Value;
-                string[] metadataElementNames = property.Attributes.GetNamedItem("metadata_name").Value.Split(',');
-
-                foreach (string metadataElementName in metadataElementNames)
+                // generals
+                if (globalSearchComponents.GeneralsToIndex)
                 {
-                    XmlNodeList elemList = metadata.SelectNodes(metadataElementName);
-                    if (elemList != null)
+                    foreach (var general in localConfig.SearchComponents.General)
                     {
-                        string primitiveType = property.Attributes.GetNamedItem("primitive_type").Value;
-                        if (elemList[0] != null)
+                        foreach (var metadataNode in general.MetadataNodes)
                         {
-                            if (primitiveType.ToLower().Equals("string"))
+                            XmlNodeList elementList = metadata.SelectNodes(metadataNode);
+                            if (elementList != null)
                             {
-                                // indexing
-                                doc["property_" + lucene_name] = elemList[0].InnerText;
-                                ng_all_list.Add(elemList[0].InnerText);
-                                //doc["ng_all"] = elemList[0].InnerText;
-
-                                // autocomplete
-                                autocompleteDoc.AddCategory(elemList[0].InnerText, lucene_name);
-                                //AddAutoCompleteDocument(autocompleteDoc, autocomplete_ng_all_list, lucene_name, elemList[0].InnerText);
-                                //WriteAutoCompleteIndex(docId, lucene_name, elemList[0].InnerText);
-                                //WriteAutoCompleteIndex(docId, "ng_all", elemList[0].InnerText);
-                            }
-                            else if (primitiveType.ToLower().Equals("date"))
-                            {
-                                DateTime MyDateTime = new DateTime();
-
-                                if (DateTime.TryParse(elemList[0].InnerText, out MyDateTime))
+                                foreach (XmlNode element in elementList)
                                 {
-                                    long t = MyDateTime.Ticks;
-
-                                    doc["property_numeric_" + lucene_name] = MyDateTime.Ticks;
-                                    string dateToString = MyDateTime.Date.ToString("d", CultureInfo.CreateSpecificCulture("en-US"));
-                                    doc["property_" + lucene_name] = dateToString;
-                                    autocompleteDoc.AddCategory(MyDateTime.Date.ToString(), lucene_name);
-                                    //AddAutoCompleteDocument(autocompleteDoc, autocomplete_ng_all_list, lucene_name, MyDateTime.Date.ToString());
-                                    //WriteAutoCompleteIndex(docId, lucene_name, MyDateTime.Date.ToString());
-                                    //WriteAutoCompleteIndex(docId, "ng_all", MyDateTime.Date.ToString());
+                                    var globalComponent = SearchConfigManager.GetGlobalSearchComponentById(general.GlobalId, SearchComponentBaseType.General);
+                                    string value = element.InnerText;
+                                    doc[globalComponent.ComponentName] = value;
+                                    ng_all_list.Add(value);
+                                    //doc["ng_all"] = elemList[i].InnerText;
+                                    autocompleteDoc.AddCategory(value, globalComponent.ComponentName);
                                 }
-                            }
-                            else if (primitiveType.ToLower().Equals("integer"))
-                            {
-                                doc["property_numeric" + lucene_name] = Convert.ToInt32(elemList[0].InnerText);
-                                doc["property_" + lucene_name] = elemList[0].InnerText;
-                                //  writeAutoCompleteIndex(lucene_name, elemList[0].InnerText);
-                            }
-                            else if (primitiveType.ToLower().Equals("double"))
-                            {
-                                doc["property_numeric" + lucene_name] = Convert.ToDouble(elemList[0].InnerText);
-                                doc["property_" + lucene_name] = elemList[0].InnerText;
-                                autocompleteDoc.AddCategory(elemList[0].InnerText, lucene_name);
-                                //AddAutoCompleteDocument(autocompleteDoc, autocomplete_ng_all_list, lucene_name, elemList[0].InnerText);
-                                //WriteAutoCompleteIndex(docId, lucene_name, elemList[0].InnerText);
-                                //WriteAutoCompleteIndex(docId, "ng_all", elemList[0].InnerText);
+
                             }
                         }
                     }
                 }
-            } // end foreach propertyNodes
-            List<XmlNode> categoryNodes = new List<XmlNode>();
-            //List<XmlNode> categoryNodes = categoryXmlNodeList;
 
-            // add categories to index
-            foreach (XmlNode category in categoryNodes)
-            {
-                string primitiveType = category.Attributes.GetNamedItem("primitive_type").Value;
-                string lucene_name = category.Attributes.GetNamedItem("lucene_name").Value;
-                string analysing = category.Attributes.GetNamedItem("analysed").Value;
-                float boosting = Convert.ToSingle(category.Attributes.GetNamedItem("boost").Value);
-
-                if (!category.Attributes.GetNamedItem("type").Value.Equals("primary_data_field"))
+                // properties
+                if (globalSearchComponents.PropertiesToIndex)
                 {
-                    string multivalued = category.Attributes.GetNamedItem("multivalued").Value;
-                    string storing = category.Attributes.GetNamedItem("store").Value;
-
-                    string[] metadataElementNames = category.Attributes.GetNamedItem("metadata_name").Value.Split(',');
-
-                    foreach (string metadataElementName in metadataElementNames)
+                    foreach (var prop in localConfig.SearchComponents.Properties)
                     {
-                        XmlNodeList elemList = metadata.SelectNodes(metadataElementName);
-                        if (elemList != null)
-                        {
-                            for (int i = 0; i < elemList.Count; i++)
-                            {
-                                doc["category_" + lucene_name] = elemList[i].InnerText;
-                                doc["ng_" + lucene_name] = elemList[i].InnerText;
-                                ng_all_list.Add(elemList[i].InnerText);
-                                //doc["ng_all"] = elemList[i].InnerText;
-                                autocompleteDoc.AddCategory(elemList[i].InnerText, lucene_name);
-                                //AddAutoCompleteDocument(autocompleteDoc, autocomplete_ng_all_list, lucene_name, elemList[i].InnerText);
-                                //WriteAutoCompleteIndex(docId, lucene_name, elemList[i].InnerText);
-                                //WriteAutoCompleteIndex(docId, "ng_all", elemList[i].InnerText);
-                            }
-                        }
+                        throw new NotSupportedException("Properties are not supported to index");
                     }
                 }
-                else
+                var globalConfig = SearchConfigManager.GetGlobal();
+                //var localConfig = SearchConfigManager.GetLocal(entityTemplateId);
+
+                // Ingest Geodata
+                AppendBoundingBoxSpatialData(localConfig, metadata,doc);
+                AppendGeoPointSpatialData(localConfig, metadata, doc);
+
+                if (dm.IsDatasetCheckedIn(id))
                 {
-                    //if the primary data index exist in the config - this means the primary data should be indexed
-                    _includePrimaryData = true;
+                    AppendPrimaryData(globalConfig, localConfig, dm.GetDatasetLatestVersion(id),doc, ng_all_list, autocompleteDoc, id);
                 }
-            } // end foreach categoryNodes
-            IndexPrimaryData(id, categoryNodes, doc, docId, metadata, ng_all_list, autocompleteDoc);
 
-            //List<XmlNode> generalNodes = generalXmlNodeList;
-            List<XmlNode> generalNodes = new List<XmlNode>();
+                WriteAutocompleteIndex(id, autocompleteDoc);
+                var indexResponse = _client.Index(doc, i => i
+                    .Index(OpenSearchProvider.DefaultIndex)
+                    .Id(doc["doc_id"].ToString())
+                );
+            }
+        }
 
-            foreach (XmlNode general in generalNodes)
+        public void TestToIdx(Dictionary<string, object> doc)
+        {
+            var indexResponse = _client.Index(doc, i => i
+                .Index("bexissearchindex2")
+                .Id(doc["doc_id"].ToString())
+            );
+            Debug.WriteLine(indexResponse);
+
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(doc);
+            Debug.WriteLine(json);
+
+            var response = _client.LowLevel.Index<StringResponse>(
+                "bexissearchindex2",
+                "888888",
+                global::OpenSearch.Net.PostData.String(json));
+
+            Debug.WriteLine(response.Body);
+        }
+
+        // Add bbox data to existing opensearch document
+        public void AppendBoundingBoxSpatialData(LocalConfig localConfig, XmlDocument metadata, Dictionary<string, object> doc)
+        {
+            if (metadata == null || localConfig?.SpatialData?.SpatialMetadata == null)
+                return;
+
+            var bbox = localConfig.SpatialData.SpatialMetadata as BBoxSpatialMetadata;
+            if (bbox == null)
+                return;
+
+            double? west = GetDouble(metadata, bbox.WestBoundLongitude);
+            double? east = GetDouble(metadata, bbox.EastBoundLongitude);
+            double? north = GetDouble(metadata, bbox.NorthBoundLatitude);
+            double? south = GetDouble(metadata, bbox.SouthBoundLatitude);
+
+            if (west.HasValue && east.HasValue && north.HasValue && south.HasValue)
             {
-                string multivalued = general.Attributes.GetNamedItem("multivalued").Value;
-                string primitiveType = general.Attributes.GetNamedItem("primitive_type").Value;
-                string lucene_name = general.Attributes.GetNamedItem("lucene_name").Value;
-
-                string storing = general.Attributes.GetNamedItem("store").Value;
-                string analysing = general.Attributes.GetNamedItem("analysed").Value;
-
-                float boosting = Convert.ToSingle(general.Attributes.GetNamedItem("boost").Value);
-
-                string[] metadataElementNames = general.Attributes.GetNamedItem("metadata_name").Value.Split(',');
-
-                foreach (string metadataElementName in metadataElementNames)
+                doc["gen_geobbox"] = new
                 {
-                    XmlNodeList elemList = metadata.SelectNodes(metadataElementName);
-                    for (int i = 0; i < elemList.Count; i++)
+                    type = "envelope",
+                    coordinates = new[]
                     {
-                        if (!elemList[i].InnerText.Trim().Equals(""))
-                        {
-                            doc[lucene_name] = elemList[i].InnerText;
-                            ng_all_list.Add(elemList[i].InnerText);
-                            //doc["ng_all"] = elemList[i].InnerText;
-                            autocompleteDoc.AddCategory(elemList[i].InnerText, lucene_name);
-                            //AddAutoCompleteDocument(autocompleteDoc, autocomplete_ng_all_list, lucene_name, elemList[i].InnerText);
+                        new[] { west.Value, north.Value },
+                        new[] { east.Value, south.Value }
+                    }
+                };
+                Debug.WriteLine(JsonConvert.SerializeObject(doc, Newtonsoft.Json.Formatting.Indented));
 
-                            //WriteAutoCompleteIndex(docId, lucene_name, elemList[i].InnerText);
-                            //WriteAutoCompleteIndex(docId, "ng_all", elemList[i].InnerText);
+            }
+        }
+
+        // Add geopoint data to existing opensearch document
+
+        public void AppendGeoPointSpatialData(LocalConfig localConfig, XmlDocument metadata, Dictionary<string, object> doc)
+        {
+            if (metadata == null || localConfig?.SpatialData?.SpatialMetadata == null)
+                return;
+
+            var point = localConfig.SpatialData.SpatialMetadata as PointSpatialMetadata;
+            if (point == null)
+                return;
+
+            double? lat = GetDouble(metadata, point.Latitude);
+            double? lon = GetDouble(metadata, point.Longitude);
+            double? radius = GetDouble(metadata, point.Radius);
+
+            if (lat.HasValue && lon.HasValue)
+            {
+                doc["gen_geopoint"] = new Dictionary<string, object>
+                {
+                    { "lat", lat.Value },
+                    { "lon", lon.Value }
+                };
+
+                if (radius.HasValue)
+                {
+                    doc["location_radius"] = radius.Value;
+                }
+            }
+        }
+
+        // Helper for Geodata parsing from xml
+        private double? GetDouble(XmlDocument doc, string xpath)
+        {
+            if (string.IsNullOrWhiteSpace(xpath))
+                return null;
+
+            var node = doc.SelectSingleNode(xpath);
+
+            if (node == null || string.IsNullOrWhiteSpace(node.InnerText))
+                return null;
+
+            if (double.TryParse(node.InnerText, NumberStyles.Any, CultureInfo.InvariantCulture, out var value))
+                return value;
+
+            return null;
+        }
+
+        private void AppendPrimaryData(GlobalConfig globalConfig, LocalConfig localConfig, DatasetVersion datasetVersion, Dictionary<string, object> doc, List<string> ngAllList, AutoCompleteDocument autoCompleteDocument, long docId)
+        {
+            if (!localConfig.PrimaryData.ToIndex)
+                return;
+
+            if (datasetVersion == null) return;
+
+            if (localConfig.PrimaryData.Calc != null)
+            {
+                using (DatasetManager dm = new DatasetManager())
+                using (DataStructureManager dsm = new DataStructureManager())
+                {
+                    if (datasetVersion.Dataset.DataStructure == null) return;
+                    StructuredDataStructure dataStructure = dsm.StructuredDataStructureRepo.Get(datasetVersion.Dataset.DataStructure.Id);
+                    if (dataStructure == null) return;
+
+                    if (!_includePrimaryData) return;
+
+                    int fetchSize = dm.PreferedBatchSize;
+                    long tupleSize = dm.GetDatasetVersionEffectiveTupleCount(datasetVersion);
+                    long noOfFetchs = tupleSize / fetchSize + 1;
+
+                    if (tupleSize > 0)
+                    {
+                        for (int round = 0; round < noOfFetchs; round++)
+                        {
+                            List<string> primaryDataStringsToIndex = new List<string>();
+                            using (DataTable table = dm.GetLatestDatasetVersionTuples(datasetVersion.Dataset.Id, round, fetchSize))
+                            {
+                                primaryDataStringsToIndex = GetAllStringValuesFromTable(table);
+                            }
+
                         }
                     }
+
+
+
+
+                    // variablen --> meanings
+                    // localconfig hol die liste von calc-objects
+                    // global gibt es keine meanings?
+                    /*
+                             "primary_data": {
+                                "to_index": true,
+                                "calc": [
+                                    {
+                                    "operation": "min/max",
+                                    "allowed_meanings": [123,456,789]
+                                    }
+                                ],
+
+                     */
+
+
+
+
+                    AppendDataStructure(dataStructure, doc, docId);
+
                 }
             }
 
-            WriteAutocompleteIndex(docId, autocompleteDoc);
 
-            var indexResponse = _client.Index(doc, i => i
-                .Index(OpenSearchProvider.DefaultIndex)
-                .Id(doc["doc_id"].ToString())
-            );
         }
 
-        private void WriteAutocompleteIndex(string docId, AutoCompleteDocument autocompleteDoc)
+        private void AppendDataStructure(StructuredDataStructure dataStructure, Dictionary<string, object> doc, long docId)
+        {
+            List<string> dataStructureStringList = GetListOfValuesFromDataStructure(dataStructure);
+            var s = dataStructure.Variables;
+            foreach (var variable in s)
+            {
+                var t = variable.Meanings;
+            }
+            // Variableinstance hat meanings hinterlegt
+
+        }
+
+        private void AppendFacetToDocument(LocalComponent facet, string val, Dictionary<string, object> doc, long docId, string variableNodeLabel, List<string> ng_all, AutoCompleteDocument autoCompleteDocument)
+        {
+            var globalComponent = SearchConfigManager.GetGlobalSearchComponentById(facet.GlobalId, SearchComponentBaseType.Facet);
+            if (facet.DataTypeId == DataTypeId.Text)
+            {
+                doc["facet_" + globalComponent.ComponentName] = val.ToString();
+                ng_all.Add(val.ToString());
+                autoCompleteDocument.AddCategory(val.ToString(), globalComponent.ComponentName);
+            }
+            else
+            {
+                if (facet.DataTypeId == DataTypeId.Date)
+                {
+                    DateTime dateValue = DateTime.MinValue;
+                    DateTime dateValue_ = dateValue;
+
+                    DateTime.TryParse(val.ToString(), out dateValue);
+                    if ((dateValue != dateValue_) && (!string.IsNullOrEmpty(val.ToString())))
+                    {
+                        string formattedDate = dateValue.ToString("yyyy-MM-dd");
+                        doc["facet_" + globalComponent.ComponentName] = formattedDate;
+                    }
+                    else
+                    {
+                        DebugEmptyNodes(variableNodeLabel, " ", docId.ToString());
+                    }
+                }
+                else if (facet.DataTypeId == DataTypeId.Integer || 
+                    facet.DataTypeId == DataTypeId.Double || 
+                    facet.DataTypeId == DataTypeId.Float || 
+                    facet.DataTypeId == DataTypeId.Long ||
+                    facet.DataTypeId == DataTypeId.HalfFloat)
+                {
+                    if (!string.IsNullOrEmpty(val.ToString()))
+                        doc["facet_" + globalComponent.ComponentName] = double.Parse(val.ToString());
+                    else
+                    {
+                        DebugEmptyNodes(variableNodeLabel, " ", docId.ToString());
+                    }
+                }
+            }
+        }
+
+        private void SystemInfosToIndex(long id, string doi, string entity, string template, Dictionary<string, object> doc, long docId, AutoCompleteDocument autocompleteDoc)
+        {
+            // ID
+            string idStr = id.ToString();
+            doc["category_id"] = idStr;
+            doc["ng_id"] = idStr;
+            doc["ng_all"] = idStr;
+            autocompleteDoc.AddCategory(idStr, "category_id");
+            //WriteAutoCompleteIndex(docId, "id", idStr);
+            //WriteAutoCompleteIndex(docId, "ng_all", idStr);
+
+            // DOI
+            doc["category_doi"] = doi;
+            doc["ng_doi"] = doi;
+            doc["ng_all"] = doi;
+            autocompleteDoc.AddCategory(doi, "category_doi");
+            //AddAutoCompleteDocument(autocompleteDoc, autocompleteNgAllList, "doi", doi);
+            //WriteAutoCompleteIndex(docId, "ng_all", doi);
+
+            // Entity
+            doc["category_entity"] = entity;
+            doc["ng_entity"] = entity;
+            doc["ng_all"] = entity;
+            autocompleteDoc.AddCategory(entity, "category_entity");
+
+            //AddAutoCompleteDocument(autocompleteDoc, autocompleteNgAllList, "entity", entity);
+            //WriteAutoCompleteIndex(docId, "ng_all", entity);
+
+            // Template
+            doc["category_template"] = template;
+            doc["ng_template"] = template;
+            doc["ng_all"] = template;
+            autocompleteDoc.AddCategory(template, "category_template");
+            //AddAutoCompleteDocument(autocompleteDoc, autocompleteNgAllList, "template", template);
+            //WriteAutoCompleteIndex(docId, "ng_all", template);
+        }
+
+
+        private void WriteAutocompleteIndex(long docId, AutoCompleteDocument autocompleteDoc)
         {
             var indexName = OpenSearchProvider.AutoCompleteIndex;
             autocompleteDoc.WithAllCompletion(); // TODO: dirty hack

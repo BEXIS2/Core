@@ -8,7 +8,7 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config.Snapshots
 {
     public sealed class LocalSnapshot
     {
-        public int EntityTemplateId { get; }
+        public long EntityTemplateId { get; }
         public bool IndexNotCompletedMetadata { get; }
         public LocalSearchComponentSnapshot SearchComponents { get; }
         public LocalSpatialDataSnapshot SpatialData { get; }
@@ -16,7 +16,7 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config.Snapshots
         public ExternalSourceSnapshot ExternalSources { get; }
 
         private LocalSnapshot(
-            int entityTemplateId,
+            long entityTemplateId,
             bool indexNotCompletedMetadata,
             LocalSearchComponentSnapshot searchComponents,
             LocalSpatialDataSnapshot spatialData,

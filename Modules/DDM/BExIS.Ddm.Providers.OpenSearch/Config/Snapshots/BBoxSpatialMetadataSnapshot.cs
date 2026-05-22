@@ -8,16 +8,16 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config.Snapshots
 {
     public sealed class BBoxSpatialMetadataSnapshot : SpatialMetadataSnapshot
     {
-        public double WestBoundLongitude { get; }
-        public double EastBoundLongitude { get; }
-        public double SouthBoundLatitude { get; }
-        public double NorthBoundLatitude { get; }
+        public string WestBoundLongitude { get; }
+        public string EastBoundLongitude { get; }
+        public string SouthBoundLatitude { get; }
+        public string NorthBoundLatitude { get; }
 
         private BBoxSpatialMetadataSnapshot(
-            double west,
-            double east,
-            double south,
-            double north)
+            string west,
+            string east,
+            string south,
+            string north)
             : base("bbox")
         {
             WestBoundLongitude = west;

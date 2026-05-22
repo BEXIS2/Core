@@ -1,15 +1,18 @@
-﻿using BExIS.Ddm.Api;
-using BExIS.Ddm.Providers.LuceneProvider;
-using BExIS.Ddm.Providers.OpenSearch;
-using BExIS.Dim.Entities.Mappings;
-using BExIS.Dim.Services.Mappings;
-using BExIS.Modules.Ddm.UI.Models;
-using BExIS.Utils.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
+using BExIS.App.Bootstrap.Attributes;
+using BExIS.Ddm.Api;
+using BExIS.Ddm.Providers.LuceneProvider;
+using BExIS.Ddm.Providers.OpenSearch;
+using BExIS.Ddm.Providers.OpenSearch.Config;
+using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Services.Mappings;
+using BExIS.Modules.Ddm.UI.Models;
+using BExIS.UI.Helpers;
+using BExIS.Utils.Models;
 using Telerik.Web.Mvc;
 using Vaiona.IoC;
 using Vaiona.Web.Extensions;
@@ -25,13 +28,31 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         public ActionResult Index()
         {
+            string module = "DDM";
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
+
+            var settings = ModuleManager.GetModuleSettings("DDM");
+
+
             return View();
         }
 
+        //public ActionResult SearchDesigner()
+        //{
+        //    string module = "DDM";
+        //    ViewData["app"] = SvelteHelper.GetApp(module);
+        //    ViewData["start"] = SvelteHelper.GetStart(module);
+
+        //    var settings = ModuleManager.GetModuleSettings("DDM");
+
+        //    return View("SearchDesignerSvelte");
+        //}
+
         #region SearchDesigner
 
-        // To David: please think about the naming, maybe the index, or configure. /ddm/admin/configure
-        //[ActionName("configure")]
+      //  To David: please think about the naming, maybe the index, or configure. /ddm/admin/configure
+       //[ActionName("configure")]
         public ActionResult SearchDesigner()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Search", this.Session.GetTenant());
@@ -56,6 +77,16 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             return View((List<SearchAttributeViewModel>)Session["searchAttributeList"]);
         }
+
+        //[HttpGet, CustomValidateAntiForgeryToken]
+        //public JsonResult GetEntityTemplates()
+        //{
+        //    ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Search", this.Session.GetTenant());
+        //    ISearchDesigner sd = GetSearchDesigner();
+        //    sd.Entity
+        //    var response = Json();
+
+        //}
 
         [GridAction]
         public ActionResult _CustomSearchDesignerGridBinding(GridCommand command)

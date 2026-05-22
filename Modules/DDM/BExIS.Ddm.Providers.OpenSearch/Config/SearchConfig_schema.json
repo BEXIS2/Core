@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "global": {
+      "type": "object",
+      "properties": {
+        "search_components": {
+          "type": "object",
+          "properties": {
+            "facets_to_index": { "type": "boolean" },
+            "categories_to_index": { "type": "boolean" },
+            "properties_to_index": { "type": "boolean" },
+            "general_to_index": { "type": "boolean" },
+
+            "facets": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/globalComponent" }
+            },
+            "categories": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/globalComponent" }
+            },
+            "properties": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/globalComponent" }
+            },
+            "general": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/globalComponent" }
+            }
+          }
+        },
+
+        "primary_data": {
+          "type": "object",
+          "properties": {
+            "to_index": { "type": "boolean" },
+            "calc": {
+              "$ref": "#/$defs/calcBlock"
+            },
+            "spatial_data": {
+              "type": "object",
+              "properties": {
+                "allowed_data_type_ids": {
+                  "type": "array",
+                  "items": { "type": "integer" }
+                },
+                "lat_meaning": { "type": "integer" },
+                "long_meaning": { "type": "integer" }
+              }
+            }
+          }
+        },
+
+        "spatial_data": {
+          "type": "object",
+          "properties": {
+            "spatial_search": { "type": "boolean" },
+            "spatial_search_settings": {
+              "type": "object",
+              "properties": {
+                "crs": { "enum": ["EPSG:4326"] },
+                "axis_order": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "basemap": { "enum": ["satellite"] },
+                "start_extend": { "type": "string" }
+              }
+            }
+          }
+        },
+
+        "general": {
+          "type": "object",
+          "properties": {
+            "show_only_completed_metadata": { "type": "boolean" },
+            "auto_complete_trigger": { "type": "integer" },
+            "show_empty_facets": { "type": "boolean" }
+          }
+        }
+      }
+    },
+
+    "local": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "entity_template_id": { "type": "integer" },
+          "index_not_completed_metadata": { "type": "boolean" },
+
+          "search_components": {
+            "type": "object",
+            "properties": {
+              "facets": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/localComponent" }
+              },
+              "categories": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/localComponent" }
+              },
+              "properties": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/localComponent" }
+              },
+              "general": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/localComponent" }
+              }
+            }
+          },
+
+        "spatial_metadata": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": { "const": "bbox" },
+                "WestBoundLongitude": { "type": "string" },
+                "EastBoundLongitude": { "type": "string" },
+                "SouthBoundLatitude": { "type": "string" },
+                "NorthBoundLatitude": { "type": "string" }
+              },
+              "required": [
+                "type",
+                "WestBoundLongitude",
+                "EastBoundLongitude",
+                "SouthBoundLatitude",
+                "NorthBoundLatitude"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "type": { "const": "point" },
+                "longitude": { "type": "string" },
+                "latitude": { "type": "string" },
+                "radius": { "type": "number" }
+              },
+              "required": [
+                "type",
+                "longitude",
+                "latitude",
+                "radius"
+              ]
+            }
+          ]
+        },
+          "primary_data": {
+            "type": "object",
+            "properties": {
+              "to_index": { "type": "boolean" },
+              "calc": {
+                "oneOf": [
+                  { "$ref": "#/$defs/calcBlock" },
+                  {
+                    "type": "array",
+                    "items": { "$ref": "#/$defs/calcBlock" }
+                  }
+                ]
+              }
+            }
+          },
+
+          "external_sources": {
+            "type": "object",
+            "properties": {
+              "source": { "type": "string" },
+              "local_path": { "type": "string" },
+              "external_name": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "required": ["global", "local"],
+
+  "$defs": {
+    "globalComponent": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "integer" },
+        "component_name": { "type": "string" },
+        "description": { "type": "string" },
+        "placeholder": { "type": "string" },
+        "header_item": { "type": "boolean" },
+        "default_header_item": { "type": "boolean" }
+      }
+    },
+
+    "localComponent": {
+      "type": "object",
+      "properties": {
+        "global_id": { "type": "integer" },
+        "data_type_id": {
+          "enum": [
+            "byte",
+            "short",
+            "integer",
+            "long",
+            "float",
+            "half_float",
+            "double",
+            "scaled_float",
+            "Text",
+            "keyword",
+            "date",
+            "date_nanos",
+            "boolean",
+            "geo_point",
+            "geo_shape",
+            "object",
+            "nested",
+            "ip",
+            "version",
+            "binary"
+          ]
+        },
+        "metadata_nodes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+
+    "calcBlock": {
+      "type": "object",
+      "properties": {
+        "operation": { "enum": ["min/max", "avg", "sum"] },
+        "allowed_meanings": {
+          "type": "array",
+          "items": { "type": "integer" }
+        }
+      }
+    }
+  }
+}

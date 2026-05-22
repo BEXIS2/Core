@@ -12,6 +12,8 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Ddm.Providers.OpenSearch
@@ -32,90 +34,6 @@ namespace BExIS.Ddm.Providers.OpenSearch
             this._metadataNodes = new List<SearchMetadataNode>();
             return this._searchAttributeList;
         }
-
-        //read json config file
-        //private void Load()
-        //{
-        //    int index = 0;
-        //    var entityTemplates = GetEntityTemplatesAsDict();
-
-
-        //    // Looking for Facets in config
-        //    foreach (var globalComponent in SearchConfigManager.GetGlobalFacets())
-        //    {
-        //        var localConfigs = SearchConfigManager.GetRelatedLocalConfigsByGlobalId(globalComponent.Id, SearchComponentBaseType.Facet);
-        //        foreach (var localConfig in localConfigs)
-        //        {
-        //            foreach (var facet in localConfig.SearchComponents.Facets)
-        //            {
-        //                if (facet.GlobalId == globalComponent.Id)
-        //                {
-        //                    var etName = GetEntityTemplateName(localConfig.EntityTemplateId);
-        //                    var sa =  SearchViewModelMapper.ToSearchAttribute(index, globalComponent, facet, SearchComponentBaseType.Facet, localConfig.EntityTemplateId, etName);
-        //                    _searchAttributeList.Add(sa);
-        //                    index++;
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    // Categories
-        //    foreach (var globalComponent in SearchConfigManager.GetGlobalCategories())
-        //    {
-        //        var localConfigs = SearchConfigManager.GetRelatedLocalConfigsByGlobalId(globalComponent.Id, SearchComponentBaseType.Category);
-        //        foreach (var localConfig in localConfigs)
-        //        {
-        //            foreach (var category in localConfig.SearchComponents.Categories)
-        //            {
-        //                if (category.GlobalId == globalComponent.Id)
-        //                {
-        //                    var etName = GetEntityTemplateName(localConfig.EntityTemplateId);
-        //                    var sa = SearchViewModelMapper.ToSearchAttribute(index, globalComponent, category, SearchComponentBaseType.Category, localConfig.EntityTemplateId, etName);
-        //                    _searchAttributeList.Add(sa);
-        //                    index++;
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    // Generals
-        //    foreach (var globalComponent in SearchConfigManager.GetGlobalGenerals())
-        //    {
-        //        var localConfigs = SearchConfigManager.GetRelatedLocalConfigsByGlobalId(globalComponent.Id, SearchComponentBaseType.General);
-        //        foreach (var localConfig in localConfigs)
-        //        {
-        //            foreach (var general in localConfig.SearchComponents.General)
-        //            {
-        //                if (general.GlobalId == globalComponent.Id)
-        //                {
-        //                    var etName = GetEntityTemplateName(localConfig.EntityTemplateId);
-        //                    var sa = SearchViewModelMapper.ToSearchAttribute(index, globalComponent, general, SearchComponentBaseType.General, localConfig.EntityTemplateId, etName);
-        //                    _searchAttributeList.Add(sa);
-        //                    index++;
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    // Properties
-        //    foreach (var globalComponent in SearchConfigManager.GetGlobalProperties())
-        //    {
-        //        var localConfigs = SearchConfigManager.GetRelatedLocalConfigsByGlobalId(globalComponent.Id, SearchComponentBaseType.Property);
-        //        foreach (var localConfig in localConfigs)
-        //        {
-        //            foreach (var property in localConfig.SearchComponents.Properties)
-        //            {
-        //                if (property.GlobalId == globalComponent.Id)
-        //                {
-        //                    var etName = GetEntityTemplateName(localConfig.EntityTemplateId);
-        //                    var sa = SearchViewModelMapper.ToSearchAttribute(index, globalComponent, property, SearchComponentBaseType.Property, localConfig.EntityTemplateId, etName);
-        //                    _searchAttributeList.Add(sa);
-        //                    index++;
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
 
         private void Load()
         {
@@ -255,24 +173,100 @@ namespace BExIS.Ddm.Providers.OpenSearch
 
         public void Set(List<SearchAttribute> SearchAttributeList)
         {
+            // deprecated: old coding model, should be removed in future, but necessary for now
             this._searchAttributeList = SearchAttributeList;
-            Save();
-        }
-
-        public void Set(List<SearchAttribute> SearchAttributeList, bool includePrimaryData)
-        {
-            this._searchAttributeList = SearchAttributeList;
-
+            // parse old VielModel to new SearchConfig obj format
             var newConfig = SearchViewModelMapper.ToSearchConfig(SearchAttributeList);
-            this._includePrimaryData = includePrimaryData;
-            Save();
+            //newConfig.IncludePrimaryData = includePrimaryData;
+
+            // convert to json string
+            var json = newConfig.ToJson();
+
+            // validate 
+            if (!SearchConfigManager.ValidateConfig(json))
+            {
+                throw new InvalidOperationException("Config is invalid");
+            }
+
+            // save 
+            SearchConfigManager.Save(json);
         }
 
-        // write xml config file
-        private void Save()
+        //public void Set(List<SearchAttribute> SearchAttributeList, bool includePrimaryData)
+        //{
+        //    this._searchAttributeList = SearchAttributeList;
+
+        //    var newConfig = SearchViewModelMapper.ToSearchConfig(SearchAttributeList);
+        //    this._includePrimaryData = includePrimaryData;
+        //    Save();
+        //}
+        public void Set(List<SearchAttribute> searchAttributeList, bool includePrimaryData)
         {
-            SearchConfigManager.Save();
+            // deprecated: old coding model, should be removed in future, but necessary for now
+            this._searchAttributeList = searchAttributeList;
+
+            // parse old VielModel to new SearchConfig obj format
+            //var newConfig = SearchViewModelMapper.ToSearchConfig(searchAttributeList);
+
+            // FOR TESTING: Loading an edited configuration
+            var edit_config = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "OpenSearch", "Config", "edit_SearchConfig.json");
+            if (!File.Exists(edit_config))
+                return;
+            var json_str = File.ReadAllText(edit_config);
+            var settings = new JsonSerializerSettings
+            {
+                Converters =
+                {
+                    new StringEnumConverter(),
+                    // new CalcBlockListConverter()
+                    new SpatialMetadataConverter()
+                }
+            };
+
+            var newConfig = JsonConvert.DeserializeObject<SearchConfig>(json_str, settings);
+
+            if (newConfig == null)
+                throw new InvalidOperationException("Invalid config");
+
+            //newConfig.IncludePrimaryData = includePrimaryData;
+
+            // convert to json string
+            var json = newConfig.ToJson();
+
+            // validate 
+            if (!SearchConfigManager.ValidateConfig(json))
+            {
+                throw new InvalidOperationException("Config is invalid");
+            }
+
+            // save 
+            SearchConfigManager.Save(json);
+            SearchConfigManager.Reload();
+
+            // for testing integrated idx
+            //_indexer.IndexIntegratedDatasets(2,false);
+
+            // testing spatial data
+            var xml = @"
+                <root>
+                    <west>-10</west>
+                    <east>10</east>
+                    <north>50</north>
+                    <south>40</south>
+                    <lat>51.0</lat>
+                    <lon>11.0</lon>
+                    <radius>5</radius>
+                </root>";
+
+            var metadata = new XmlDocument();
+            metadata.LoadXml(xml);
+            var doc = new Dictionary<string, object>();
+
+            _indexer.AppendBoundingBoxSpatialData(SearchConfigManager.GetLocalConfigForEntityTemplate(2), metadata, doc);
+
+            _indexer.TestToIdx(doc);
         }
+
 
         /// <summary>
         /// Method locks, than load default config and save to config file path -> Release Lock

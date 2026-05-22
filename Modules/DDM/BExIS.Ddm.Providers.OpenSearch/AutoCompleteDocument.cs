@@ -17,7 +17,7 @@ namespace BExIS.Ddm.Providers.OpenSearch
 
         public AutoCompleteDocument(string id)
         {
-            Id = id ?? throw new ArgumentNullException(nameof(id));
+            Id = id;
         }
 
         /// <summary>

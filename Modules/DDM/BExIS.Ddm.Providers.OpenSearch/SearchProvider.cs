@@ -37,7 +37,7 @@ namespace BExIS.Ddm.Providers.OpenSearch
             {
                 SearchConfigManager.Reload();
             }
-SearchConfigManager.Reload();
+            SearchConfigManager.Reload();
             DefaultSearchModel = InitDefault();
             WorkingSearchModel = InitWorking();
             WorkingSearchModel = Get(WorkingSearchModel.CriteriaComponent);
@@ -121,189 +121,191 @@ SearchConfigManager.Reload();
                             };
                             mustQueries.Add(innerBool);
                         }
-                    }
-                    else if (criteria.SearchComponent.Type.Equals(Utils.Models.SearchComponentBaseType.Category))
-                    {
-                        string fieldName = $"category_{criteria.SearchComponent.Name}";
-                        List<QueryContainer> shouldQueries = new List<QueryContainer>();
 
-                        List<string> fields;
-                        if (fieldName.ToLower() == "category_all")
+                        else if (criteria.SearchComponent.Type.Equals(Utils.Models.SearchComponentBaseType.Category))
                         {
-                            fields = new List<string>();
-                            foreach (var cat in SearchConfigManager.GetGlobalCategories())
+                            string fieldName = $"category_{criteria.SearchComponent.Name}";
+                            List<QueryContainer> shouldQueries = new List<QueryContainer>();
+
+                            List<string> fields;
+                            if (fieldName.ToLower() == "category_all")
                             {
-                                fields.Add("category_"+cat.ComponentName);
-                            }
-
-                            //fields = _indexer.CategoryFieldList;
-                            //fields.AddRange(_indexer.StoredFieldList);
-                            fields.Add("ng_all");
-                        }
-                        else
-                        {
-                            fields = new List<string> { fieldName };
-                        }
-
-                        foreach (string value in criteria.Values)
-                        {
-                            string encodedValue = value;
-                            if (string.IsNullOrEmpty(encodedValue))
-                            {
-                                encodedValue = "*";
-                            }
-
-                            shouldQueries.Add(new MultiMatchQuery()
-                            {
-                                Query = encodedValue,
-                                Fields = Infer.Fields(fields.ToArray()),
-                                Fuzziness = Fuzziness.Auto,
-                                Operator = Operator.And,
-                                Slop = 5,
-                                Type = TextQueryType.MostFields
-                            });
-
-                        }
-
-                        mustQueries.Add(new BoolQuery
-                        {
-                            Should = shouldQueries
-                        });
-                    }
-                    else if (criteria.SearchComponent.Type.Equals(Utils.Models.SearchComponentBaseType.Facet))
-                    {
-                        String fieldName = $"facet_{criteria.SearchComponent.Name}";
-                        List<QueryContainer> mustFacet = new List<QueryContainer>();
-                        List<QueryContainer> shouldFacet = new List<QueryContainer>();
-
-
-                        foreach (String value in criteria.Values)
-                        {
-                            var valueSplitted = value.Split(new[] { " - " }, StringSplitOptions.None);
-                            QueryContainer query;
-                            try
-                            {
-                                double startNum, endNum;
-                                if (valueSplitted.Length == 2 &&
-                                    DateTime.TryParse(valueSplitted[0], out var startDate) &&
-                                    DateTime.TryParse(valueSplitted[1], out var endDate))
+                                fields = new List<string>();
+                                foreach (var cat in SearchConfigManager.GetGlobalCategories())
                                 {
-                                    query = new DateRangeQuery
-                                    {
-                                        Field = fieldName,
-                                        GreaterThanOrEqualTo = startDate,
-                                        LessThanOrEqualTo = endDate
-                                    };
-                                }
-                                else if (valueSplitted.Length == 2 &&
-                                        double.TryParse(valueSplitted[0], out startNum) &&
-                                        double.TryParse(valueSplitted[1], out endNum)) // check if range values are numbers
-                                {
-                                    query = new NumericRangeQuery()
-                                    {
-                                        Field = fieldName,
-                                        GreaterThanOrEqualTo = startNum,
-                                        LessThanOrEqualTo = endNum
-                                    };
-                                }
-                                else
-                                {
-                                    query = new TermQuery
-                                    {
-                                        Field = $"{fieldName}.keyword",
-                                        Value = value
-                                    };
+                                    fields.Add("category_" + cat.ComponentName);
                                 }
 
-                                if (criteria.ValueSearchOperation == "AND")
-                                    mustFacet.Add(query);
-                                else
-                                    shouldFacet.Add(query);
+                                //fields = _indexer.CategoryFieldList;
+                                //fields.AddRange(_indexer.StoredFieldList);
+                                fields.Add("ng_all");
                             }
-                            catch (Exception excep)
+                            else
                             {
-                                LoggerFactory.GetFileLogger().LogCustom(excep.Message);
-                                LoggerFactory.GetFileLogger().LogCustom(excep.InnerException.Message);
+                                fields = new List<string> { fieldName };
                             }
-                        } // end foreach
-
-                        if (criteria.ValueSearchOperation == "AND")
-                            mustQueries.AddRange(mustFacet);
-                        else
-                        {
-                            mustQueries.Add(new BoolQuery
-                            {
-                                Should = shouldFacet,
-                                MinimumShouldMatch = 1
-                            });
-                        }
-                    }
-                    else if (criteria.SearchComponent.Type.Equals(Utils.Models.SearchComponentBaseType.Property))
-                    {
-                        String fieldName = $"property_{criteria.SearchComponent.Name}";
-                        List<QueryContainer> shoudQueries = new List<QueryContainer>();
-
-                        if (criteria.SearchComponent is Property pp && pp.UIComponent?.ToLower() == "range")
-                        {
-                            fieldName = $"property_numeric_{criteria.SearchComponent.Name}";
-
-                            DateTime dd = new DateTime(int.Parse(criteria.Values[0]), 1, 1, 1, 1, 1);
-                            if (int.TryParse(criteria.Values[0], out int year))
-                            {
-                                var date = new DateTime(year, 1, 1, 1, 1, 1);
-                                long ticks = date.Ticks;
-
-                                var rangeQuery = new LongRangeQuery
-                                {
-                                    Field = fieldName,
-                                    GreaterThan = (pp.Direction == Direction.increase) ? ticks : (long?)null,
-                                    LessThanOrEqualTo = (pp.Direction == Direction.increase) ? ticks : (long?)null,
-                                };
-                                mustQueries.Add(rangeQuery);
-                            }
-                        }
-                        else // case: not range
-                        {
 
                             foreach (string value in criteria.Values)
                             {
-                                if (value.ToLower() == "all")
+                                string encodedValue = value;
+                                if (string.IsNullOrEmpty(encodedValue))
                                 {
-                                    shoudQueries.Add(new MatchAllQuery());
+                                    encodedValue = "*";
                                 }
-                                else
+
+                                shouldQueries.Add(new MultiMatchQuery()
                                 {
-                                    var encodedValue = value;
-                                    //if (SearchConfigManager.GetNumericPropertiers().Contains(criteria.SearchComponent.Name.ToLower()))
-                                    //{
-                                    //}
-                                    //else
-                                    //{
+                                    Query = encodedValue,
+                                    Fields = Infer.Fields(fields.ToArray()),
+                                    Fuzziness = Fuzziness.Auto,
+                                    Operator = Operator.And,
+                                    Slop = 5,
+                                    Type = TextQueryType.MostFields
+                                });
+
+                            }
+
+                            mustQueries.Add(new BoolQuery
+                            {
+                                Should = shouldQueries
+                            });
+                        }
+                        else if (criteria.SearchComponent.Type.Equals(Utils.Models.SearchComponentBaseType.Facet))
+                        {
+                            String fieldName = $"facet_{criteria.SearchComponent.Name}";
+                            List<QueryContainer> mustFacet = new List<QueryContainer>();
+                            List<QueryContainer> shouldFacet = new List<QueryContainer>();
+
+
+                            foreach (String value in criteria.Values)
+                            {
+                                var valueSplitted = value.Split(new[] { " - " }, StringSplitOptions.None);
+                                QueryContainer query;
+                                try
+                                {
+                                    double startNum, endNum;
+                                    if (valueSplitted.Length == 2 &&
+                                        DateTime.TryParse(valueSplitted[0], out var startDate) &&
+                                        DateTime.TryParse(valueSplitted[1], out var endDate))
+                                    {
+                                        query = new DateRangeQuery
+                                        {
+                                            Field = fieldName,
+                                            GreaterThanOrEqualTo = startDate,
+                                            LessThanOrEqualTo = endDate
+                                        };
+                                    }
+                                    else if (valueSplitted.Length == 2 &&
+                                            double.TryParse(valueSplitted[0], out startNum) &&
+                                            double.TryParse(valueSplitted[1], out endNum)) // check if range values are numbers
+                                    {
+                                        query = new NumericRangeQuery()
+                                        {
+                                            Field = fieldName,
+                                            GreaterThanOrEqualTo = startNum,
+                                            LessThanOrEqualTo = endNum
+                                        };
+                                    }
+                                    else
+                                    {
+                                        query = new TermQuery
+                                        {
+                                            Field = $"{fieldName}.keyword",
+                                            Value = value
+                                        };
+                                    }
+
+                                    if (criteria.ValueSearchOperation == "AND")
+                                        mustFacet.Add(query);
+                                    else
+                                        shouldFacet.Add(query);
+                                }
+                                catch (Exception excep)
+                                {
+                                    LoggerFactory.GetFileLogger().LogCustom(excep.Message);
+                                    LoggerFactory.GetFileLogger().LogCustom(excep.InnerException.Message);
+                                }
+                            } // end foreach
+
+                            if (criteria.ValueSearchOperation == "AND")
+                                mustQueries.AddRange(mustFacet);
+                            else
+                            {
+                                mustQueries.Add(new BoolQuery
+                                {
+                                    Should = shouldFacet,
+                                    MinimumShouldMatch = 1
+                                });
+                            }
+                        }
+                        else if (criteria.SearchComponent.Type.Equals(Utils.Models.SearchComponentBaseType.Property))
+                        {
+                            String fieldName = $"property_{criteria.SearchComponent.Name}";
+                            List<QueryContainer> shoudQueries = new List<QueryContainer>();
+
+                            if (criteria.SearchComponent is Property pp && pp.UIComponent?.ToLower() == "range")
+                            {
+                                fieldName = $"property_numeric_{criteria.SearchComponent.Name}";
+
+                                DateTime dd = new DateTime(int.Parse(criteria.Values[0]), 1, 1, 1, 1, 1);
+                                if (int.TryParse(criteria.Values[0], out int year))
+                                {
+                                    var date = new DateTime(year, 1, 1, 1, 1, 1);
+                                    long ticks = date.Ticks;
+
+                                    var rangeQuery = new LongRangeQuery
+                                    {
+                                        Field = fieldName,
+                                        GreaterThan = (pp.Direction == Direction.increase) ? ticks : (long?)null,
+                                        LessThanOrEqualTo = (pp.Direction == Direction.increase) ? ticks : (long?)null,
+                                    };
+                                    mustQueries.Add(rangeQuery);
+                                }
+                            }
+                            else // case: not range
+                            {
+
+                                foreach (string value in criteria.Values)
+                                {
+                                    if (value.ToLower() == "all")
+                                    {
+                                        shoudQueries.Add(new MatchAllQuery());
+                                    }
+                                    else
+                                    {
+                                        var encodedValue = value;
+                                        //if (SearchConfigManager.GetNumericPropertiers().Contains(criteria.SearchComponent.Name.ToLower()))
+                                        //{
+                                        //}
+                                        //else
+                                        //{
                                         shoudQueries.Add(new TermQuery
                                         {
                                             Field = $"{fieldName}.keyword",
                                             Value = encodedValue
                                         });
-                                    //}
+                                        //}
+                                    }
                                 }
+                                mustQueries.Add(new BoolQuery
+                                {
+                                    Should = shoudQueries,
+                                    MinimumShouldMatch = 1
+                                });
                             }
-                            mustQueries.Add(new BoolQuery
-                            {
-                                Should = shoudQueries,
-                                MinimumShouldMatch = 1
-                            });
                         }
                     }
                     else
                     {
                         // do nothing yet
                     }
-                    }
+                }
                 this._searchQuery = new BoolQuery
                 {
                     Must = mustQueries
                 };
             } // end if criteria.Count > 0
+            // no criteria provides? --> set searchcriteria to all
             else
             {
                 _searchQuery = new MatchAllQuery();
@@ -352,6 +354,7 @@ SearchConfigManager.Reload();
             return this.WorkingSearchModel;
         }
 
+        // called everytime...
         public void SearchAndUpdate(SearchCriteria searchCriteria)
         {
             this.WorkingSearchModel = Get(searchCriteria);
@@ -360,6 +363,7 @@ SearchConfigManager.Reload();
             this.WorkingSearchModel.ResultComponent.Rows = this.WorkingSearchModel.ResultComponent.Rows.OrderByDescending(r => Convert.ToDecimal(r.Values.First()));
         }
 
+        
         public SearchModel UpdateFacets(SearchCriteria searchCriteria)
         {
             if (searchCriteria == null)

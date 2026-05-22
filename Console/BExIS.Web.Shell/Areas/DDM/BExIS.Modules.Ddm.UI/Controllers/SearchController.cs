@@ -63,7 +63,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
 
-        [HttpPost, CustomValidateAntiForgeryToken]
+        //[HttpPost, CustomValidateAntiForgeryToken]
+        [HttpPost]
         public JsonResult TestQuery(string test)
         {
             Debug.WriteLine(test);

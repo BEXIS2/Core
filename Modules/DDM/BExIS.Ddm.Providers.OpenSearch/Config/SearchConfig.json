@@ -1,0 +1,133 @@
+{
+  "global": {
+    "search_components": {
+      "facets_to_index": true,
+      "categories_to_index": true,
+      "properties_to_index": false,
+      "general_to_index": true,
+      "facets": [
+        {
+          "id": 0,
+          "component_name": "Person",
+          "header_item": false,
+          "default_header_item": false
+        }
+      ],
+      "categories": [
+        {
+          "id": 0,
+          "component_name": "Title",
+          "placeholder": "title",
+          "header_item": true,
+          "default_header_item": true
+        },
+        {
+          "id": 1,
+          "component_name": "Owner",
+          "placeholder": "author",
+          "header_item": true,
+          "default_header_item": true
+        },
+        {
+          "id": 2,
+          "component_name": "Contact",
+          "placeholder": "",
+          "header_item": true,
+          "default_header_item": true
+        },
+        {
+          "id": 3,
+          "component_name": "Description",
+          "placeholder": "description",
+          "header_item": true,
+          "default_header_item": true
+        }
+      ],
+      "properties": [],
+      "general": []
+    }
+  },
+  "local": [
+    {
+      "entity_template_id": 2,
+      "index_not_completed_metadata": false,
+      "search_components": {
+        "facets": [
+          {
+            "global_id": 0,
+            "data_type_id": "Text",
+            "metadata_nodes": [
+              "Metadata/ContentContacts/ContentContactsXmlSchemaComplexType/ContentContact/MicroAgentP/Name/String255",
+              "Metadata/Metadata/ContentMetadata/Owners/OwnersXmlSchemaComplexType/Owner/Contact/Person/PersonName/FullName/String255",
+              "Metadata/TechnicalContacts/TechnicalContactsXmlSchemaComplexType/TechnicalContact/MicroAgentP/Name/String255",
+              "Metadata/associatedParty/agentWithRoleType/individualName/individualNameXmlSchemaComplexType/surName/NonEmptyStringType",
+              "Metadata/contact/agentType/individualName/individualNameXmlSchemaComplexType/surName/NonEmptyStringType",
+              "Metadata/creator/agentType/individualName/individualNameXmlSchemaComplexType/surName/NonEmptyStringType",
+              "Metadata/metadataProvider/agentType/individualName/individualNameXmlSchemaComplexType/surName/NonEmptyStringType",
+              "Metadata/project/projectXmlSchemaComplexType/personnel/agentWithRoleType/individualName/individualNameXmlSchemaComplexType/surName/NonEmptyStringType"
+            ]
+          }
+        ],
+        "categories": [
+          {
+            "global_id": 0,
+            "data_type_id": "Text",
+            "metadata_nodes": [
+              "Metadata/Metadata/ContentMetadata/Description/DescriptionXmlSchemaComplexType/Representation/MetadataDescriptionRepr/Title/String255",
+              "Metadata/Basic/BasicType/title/i18nString",
+              "Metadata/publication/publication/Title/TitleDatatype_string"
+            ]
+          },
+          {
+            "global_id": 1,
+            "data_type_id": "Text",
+            "metadata_nodes": [
+              "Metadata/Metadata/ContentMetadata/Owners/OwnersXmlSchemaComplexType/Owner/Contact/Person/PersonName/FullName/String255",
+              "Metadata/creator/agentType/individualName/individualNameXmlSchemaComplexType/surName/NonEmptyStringType",
+              "Metadata/publication/publication/Authors/AuthorsDatatype_string"
+            ]
+          },
+          {
+            "global_id": 2,
+            "data_type_id": "Text",
+            "metadata_nodes": [
+              "Metadata/ContentContacts/ContentContactsXmlSchemaComplexType/ContentContact/MicroAgentP/Name/String255",
+              "Metadata/TechnicalContacts/TechnicalContactsXmlSchemaComplexType/TechnicalContact/MicroAgentP/Name/String255",
+              "Metadata/contact/agentType/individualName/individualNameXmlSchemaComplexType/surName/NonEmptyStringType",
+              "Metadata/publication/publication/Author/AuthorDatatype_string"
+            ]
+          },
+          {
+            "global_id": 3,
+            "data_type_id": "Text",
+            "metadata_nodes": [
+              "Metadata/Metadata/ContentMetadata/Description/DescriptionXmlSchemaComplexType/Representation/MetadataDescriptionRepr/Details/String",
+              "Metadata/abstract/abstractXmlSchemaComplexType/para/paraDatatype_string",
+              "Metadata/publication/publication/Abstract/AbstractXmlSchemaSimpleType"
+            ]
+          }
+        ],
+        "properties": [],
+        "general": []
+      },
+      "spatial_data": {
+        "spatial_metadata": {
+          "westBoundLongitude": "/root/west",
+          "eastBoundLongitude": "/root/east",
+          "southBoundLatitude": "/root/south",
+          "northBoundLatitude": "/root/north",
+          "type": "bbox"
+        }
+      },
+      "primary_data": {
+        "to_index": true,
+        "calc": []
+      },
+      "external_sources": {
+        "source": "bla",
+        "local_path": "c:\\Users\\Paul\\Desktop\\integrated_idx",
+        "external_name": "BeispielName"
+      }
+    }
+  ]
+}

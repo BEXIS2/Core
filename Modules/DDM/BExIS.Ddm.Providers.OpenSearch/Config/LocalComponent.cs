@@ -12,9 +12,11 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config
     {
         [JsonProperty("global_id")]
         public int GlobalId { get; set; }
+
         [JsonProperty("data_type_id")]
         [JsonConverter(typeof(StringToEnumConverter<DataTypeId>))]
         public DataTypeId DataTypeId { get; set; }
+
         [JsonProperty("metadata_nodes")]
         public List<string> MetadataNodes { get; set; } = new List<string>();
     }

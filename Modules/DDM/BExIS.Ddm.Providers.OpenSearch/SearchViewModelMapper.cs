@@ -43,6 +43,7 @@ namespace BExIS.Ddm.Providers.OpenSearch
             var searchConfig = new SearchConfig();
             GlobalConfig global = new GlobalConfig();
             global.SearchComponents = new GlobalSearchComponent();
+            searchConfig.Global = global;
 
             foreach (SearchAttribute searchAttribute in searchAttributeList)
             {
@@ -56,69 +57,49 @@ namespace BExIS.Ddm.Providers.OpenSearch
 
                         //}
                     }
-
                 }
 
+                // global stats
+                var globalComp = new GlobalComponent
+                {
+                    Id = searchAttribute.id,
+                    ComponentName = searchAttribute.displayName,
+                    Placeholder = searchAttribute.placeholder,
+                    DefaultHeaderItem = searchAttribute.defaultHeaderItem,
+                    HeaderItem = searchAttribute.headerItem,
+                };
+
                 LocalConfig local = new LocalConfig();
+                local.EntityTemplateId = searchAttribute.EntityTemplateId;
+                local.SearchComponents.Facets.Add(new LocalComponent
+                {
+                    GlobalId = globalComp.Id,
+                    DataTypeId = FromTypeCode(searchAttribute.dataType),
+                    MetadataNodes = searchAttribute.metadataName
+                    .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => s.Trim())
+                    .ToList()
+                });
 
                 if (searchAttribute.searchType.Equals(SearchComponentBaseType.Facet))
                 {
-                    var globalComp = new GlobalComponent {
-                        Id = searchAttribute.id,
-                        ComponentName = searchAttribute.displayName,
-                        Placeholder = searchAttribute.placeholder,
-                        DefaultHeaderItem = searchAttribute.defaultHeaderItem,
-                        HeaderItem = searchAttribute.headerItem,
-                    };
-
-                    local.EntityTemplateId = 00;
-                    local.SearchComponents.Facets.Add(new LocalComponent
-                    {
-                        GlobalId = globalComp.Id,
-                        DataTypeId = FromTypeCode(searchAttribute.dataType),
-                        MetadataNodes = searchAttribute.metadataName
-                        .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                        .Select(s => s.Trim())
-                        .ToList()
-                    });
-
                     global.SearchComponents.Facets.Add(globalComp);
                     searchConfig.Local.Add(local);
-
-
                 }
                 else if (searchAttribute.searchType.Equals(SearchComponentBaseType.Category))
                 {
-                    global.SearchComponents.Categories.Add(new GlobalComponent
-                    {
-                        Id = searchAttribute.id,
-                        ComponentName = searchAttribute.displayName,
-                        Placeholder = searchAttribute.placeholder,
-                        DefaultHeaderItem = searchAttribute.defaultHeaderItem,
-                        HeaderItem = searchAttribute.headerItem,
-                    });
+                    global.SearchComponents.Categories.Add(globalComp);
+                    searchConfig.Local.Add(local);
                 }
                 else if (searchAttribute.searchType.Equals(SearchComponentBaseType.General))
                 {
-                    global.SearchComponents.General.Add(new GlobalComponent
-                    {
-                        Id = searchAttribute.id,
-                        ComponentName = searchAttribute.displayName,
-                        Placeholder = searchAttribute.placeholder,
-                        DefaultHeaderItem = searchAttribute.defaultHeaderItem,
-                        HeaderItem = searchAttribute.headerItem,
-                    });
+                    global.SearchComponents.General.Add(globalComp);
+                    searchConfig.Local.Add(local);
                 }
                 else if (searchAttribute.searchType.Equals(SearchComponentBaseType.Property))
                 {
-                    global.SearchComponents.Properties.Add(new GlobalComponent
-                    {
-                        Id = searchAttribute.id,
-                        ComponentName = searchAttribute.displayName,
-                        Placeholder = searchAttribute.placeholder,
-                        DefaultHeaderItem = searchAttribute.defaultHeaderItem,
-                        HeaderItem = searchAttribute.headerItem,
-                    });
+                    global.SearchComponents.Properties.Add(globalComp);
+                    searchConfig.Local.Add(local);
                 }
                 else
                 {

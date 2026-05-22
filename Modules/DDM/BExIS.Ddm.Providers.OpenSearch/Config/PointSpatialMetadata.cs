@@ -10,12 +10,12 @@ namespace BExIS.Ddm.Providers.OpenSearch.Config
     public sealed class PointSpatialMetadata : SpatialMetadata
     {
         [JsonProperty("longitude")]
-        public double Longitude { get; set; }
+        public string Longitude { get; set; }
 
         [JsonProperty("latitude")]
-        public double Latitude { get; set; }
+        public string Latitude { get; set; }
 
         [JsonProperty("radius")]
-        public double Radius { get; set; }
+        public string Radius { get; set; }
     }
 }
