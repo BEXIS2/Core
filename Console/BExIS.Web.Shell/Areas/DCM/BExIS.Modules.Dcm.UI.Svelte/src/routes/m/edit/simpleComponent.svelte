@@ -13,18 +13,17 @@
 	} from '@bexis2/bexis2-core-ui';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
-	import { ValidationStoreAddSimpleComponent, ValidationStoreSetSimpleTypeValid, updateMetadataStore, createSimpleComponentValidationItem, getConfigStore, getSystemMappingsStore } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { ValidationStoreAddSimpleComponent, ValidationStoreSetSimpleTypeValid, updateMetadataStore, createSimpleComponentValidationItem, getConfigStore} from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { customComponentsCatalog } from '$lib/components/customComponents/componentCatalog';
-	import suite from './simpleComponent';
-	import type { SimpleComponentData } from '$lib/components/utils/metadata/models';
+	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import type { MappingComponentConfig, SimpleComponentData } from '$lib/components/utils/metadata/models';
 	import SveltyPicker from 'svelty-picker';
 	import {convertDisplayName} from '../metadataShared';
 	import type { JsonListItem } from '../components/types';
 	import Blocked from './Blocked.svelte';
-	import { getParentPath, removeJsonPathIndices } from './helper';
-	import { systemMappingsStore } from '$lib/components/utils/metadata/stores';
-	import { GetPartyValue } from '../services/apiCalls';
 	import { createEventDispatcher } from 'svelte';
+	import PartySelector from './PartySelector.svelte';
+	import { getMappingComponentConfig } from '$lib/components/utils/metadata/mappingHelper';
 
 	//import { en, de } from 'svelty-picker/dist/i18n';
 
@@ -55,16 +54,8 @@
 	// update metadata store on value change
 	$: updateMetadataStore(path, value, isMulti);
 
-
 	// System mapping
-let isMappedToParty: boolean = false;
-let isSelector: boolean = false;
-let partyMappingObject: any = null;
-let isMappedToKey: boolean = false;
-let pathWithoutIndices: string = '';
-let selectorValue: any = null;
-
-const dispatch = createEventDispatcher();
+let mappingComponentConfig: MappingComponentConfig;
 
 	onMount(async () => {
 
@@ -120,37 +111,8 @@ const dispatch = createEventDispatcher();
 				}
 			}
 
-			// ### SYSTEM MAPPING ###
-			const systemMappings = getSystemMappingsStore();
-		
-			if(systemMappings){
-
-				//	remove indices from path to check if the field is mapped to party or key, because in system mapping there are no indices but in the path there are because of arrays
-					pathWithoutIndices = removeJsonPathIndices(path);
-					console.log("🚀 ~ pathWithoutIndices:", pathWithoutIndices)
-					console.log("🚀 ~ systemMappings:", systemMappings)
-
-					if(systemMappings.partyMappings.some((mapping: any) => mapping.path == pathWithoutIndices)){
-
-						isMappedToParty = true;
-						partyMappingObject = systemMappings.partyMappings.find((mapping: any) => mapping.path == pathWithoutIndices);
-						isSelector = partyMappingObject.selector;
-
-						if(isSelector)
-						{
-							selectorValue = {
-								"partyId": 0,
-								"value": value
-							}
-						}
-
-				
-					}
-
-					if(systemMappings.keyMappings.some((mapping: any) => mapping.path == pathWithoutIndices)){
-						isMappedToKey = true;
-					}
-			}
+			mappingComponentConfig = getMappingComponentConfig(path, value);
+			//console.log("🚀 ~ mappingComponentConfig:", mappingComponentConfig)
 
 			// initial check
 			setTimeout(async () => {
@@ -174,63 +136,10 @@ const dispatch = createEventDispatcher();
 			}, 10);
 	}
 
-	//handle mapping change of party mapping with selector
-	// we need to update the value with the new selected party and also trigger the validation for this field because maybe there are some validation rules on the party id
-	async function onUpdateParty(e: any){
-			
-				console.log("xyz Update Party",value, e.detail);
-				const partyid = e.detail.partyId;
-				const newValue	= e.detail.value;
-			// add some delay so the entityTemplate is updated
-			// otherwise the values are old
-			setTimeout(async () => {
-				 // update selected value
-						updateValue(newValue, path);
-						console.log("🚀 ~ onUpdateParty ~ value after updateValue:", newValue)
-
-						// if mapping is simple, set party id 
-						if(!partyMappingObject.complexity){
-								//value['@partyid'] = e.detail.selectedItem.partyId;
-								console.log("🚀 ~ onUpdateParty ~ simple mapping, add party id to value:", e.detail)
-								updateMetadataStore(path, newValue, isMulti, undefined, e.detail.partyId);
-
-						}
-						else	if(partyMappingObject.complexity){
-
-							console.log("🚀 ~ onUpdateParty ~ complex mapping, add party id to value:", e.detail)
-
-							updateMetadataStore(path, newValue, isMulti, undefined, undefined);
-							console.log("🚀 ~ onUpdateParty ~ value:", newValue)
-							console.log("🚀 ~ onUpdateParty ~ path:", path)
-
-							console.log("🚀 ~ onUpdateParty ~ complex mapping, need to update all values with same parent path:", e.detail,partyMappingObject)
-							const parentPath = getParentPath(path);
-							const parentPathWithoutIndices = removeJsonPathIndices(parentPath);
-							console.log("🚀 ~ onUpdateParty ~ parentPath:", parentPath)
-						// if mapping is complex
-						// get all partymappings where parent path is the same as the changed one
-							$systemMappingsStore.partyMappings.filter((mapping: any) => mapping.parentPath == parentPathWithoutIndices && mapping.path !== pathWithoutIndices).forEach(async (mapping: any) => {
-								// updateMetadataStore(mapping.path, value,	isMulti, undefined, e.detail.partyId);
-								const childvalue = await GetPartyValue(partyid, mapping.linkElementId);
-								console.log("🚀 ~ onUpdateParty ~ childvalue:", childvalue)
-
-								const childPathWithIndex = parentPath+"."+mapping.path.split('.').slice(-1)[0];
-
-								console.log("🚀 ~ onUpdateParty ~ updateMetadataStore for path:", childPathWithIndex, childvalue, isMulti, undefined, undefined)
-								updateMetadataStore(childPathWithIndex, childvalue, isMulti, undefined, undefined);
-								updateValue(childvalue, childPathWithIndex)
-
-								// trigger reload parent	component to update all child components with new values
-								dispatch("reload");
-						}	)					
-					}
-				}, 10)
-	}
 
 
 	function updateValue(value: any, _path:string){
 		
-   //selectorValue.value = value;
 
 			// check changed field
 			res = suite(value, _path);
@@ -255,26 +164,20 @@ const dispatch = createEventDispatcher();
 		<div class="pr-2" id={path + '.item'}>
 
   <!--	if the field is mapped to a party or key, show blocked component with info, otherwise show the normal input component based on the type and format of the field -->
-	{#if (isMappedToParty && !isSelector)  || isMappedToKey}
-		<Blocked	isKeyMapped={isMappedToKey} isPartyMapped={isMappedToParty} label={label} bind:value={value} path={path}/>
-	{:else if isMappedToParty && isSelector}
-			<MultiSelect
-						id="{path}"
-						title="{label}"
-						required={required}
-						source={partyMappingObject.list}
-						complexSource={true}
-						complexTarget={true}
-						itemId="partyId"
-						itemLabel="value"
-						bind:target={selectorValue}
-						isMulti={false}
-						clearable={required	? false : true} 
-						on:change={onUpdateParty}
-						invalid={res.hasErrors(path)}
-						feedback={res.getErrors(path)}	 
-						description={simpleComponent.description}
-					/>
+	{#if (mappingComponentConfig && ((mappingComponentConfig.isMappedToParty && !mappingComponentConfig.isSelector)  || mappingComponentConfig.isMappedToKey))}
+		<Blocked	isKeyMapped={mappingComponentConfig.isMappedToKey} isPartyMapped={mappingComponentConfig.isMappedToParty} label={label} bind:value={value} path={path}/>
+	{:else if mappingComponentConfig && mappingComponentConfig.isMappedToParty && mappingComponentConfig.isSelector}
+
+			<PartySelector
+				path={path}
+				value={value}
+				label={label}
+				mappingComponentConfig={mappingComponentConfig}	
+				required={required}
+				isMulti={isMulti}
+				description={simpleComponent.description}
+				on:reload
+				/>
 
 	{:else if path && simpleComponent.properties}
 
