@@ -18,10 +18,8 @@ else if(isPartyMapped){
  message = 'This field is mapped to a party and cannot be edited here.';
 }
 
-
-
 </script>
-<b>blocked</b>
+
 <TextInput 
     id={path}
     label={convertDisplayName(label)}
