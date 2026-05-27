@@ -1,20 +1,27 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dcm.UploadWizard;
 using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
+using BExIS.IO.Transform.Output;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Helpers;
 using BExIS.Utils.Route;
+using BExIS.Xml.Helpers;
 using DocumentFormat.OpenXml.Presentation;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Http.Results;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
+using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -53,6 +60,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return View();
         }
 
+        #region mapping
 
         /// <summary>
         /// load System mappings based on metadatastructure id
@@ -166,7 +174,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return n;
         }
 
-
         public JsonResult GetPartyValue(long partyId, long linkId)
         {
             // not implemented
@@ -186,6 +193,53 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return Json("", JsonRequestBehavior.AllowGet);
         }
+
+        #endregion
+
+        #region download
+
+        //html
+
+        public ActionResult DownloadAsHtml(long id, int version )
+        {
+         
+
+            return Content("not implemented.");
+        }
+
+        //flatten
+
+
+        //json
+        public ActionResult DownloadAsJson(long id, int version)
+        {
+            try
+            {
+                string metadata = OutputMetadataManager.GetMetadataAsJson(id, version, 2);
+
+                byte[] bytes = Encoding.ASCII.GetBytes(metadata);
+
+                return File(bytes, "application/json");
+        
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message);
+            }
+        }
+
+
+        //xml
+        public ActionResult DownloadAsXml(long id, int version)
+        {
+
+
+            return Content("no metadata xml file is loaded.");
+        }
+
+
+        #endregion
+
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public ActionResult View(long id, int version = 0)

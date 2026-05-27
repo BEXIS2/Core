@@ -3,15 +3,17 @@
     Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
 
     long id = 0;
+    int version = 0;
     string saveWithErrors = "";
 
     if (ViewData["id"] != null) { id = Convert.ToInt64(ViewData["id"]); }
+    if (ViewData["version"] != null) { version = Convert.ToInt32(ViewData["version"]); }
 
 
 }
 
 
 
-<div id="metadata" dataset="@id" >
+<div id="metadata" dataset="@id" version="@version" >
     @Html.Partial("_sveltePage")
 </div>
