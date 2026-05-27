@@ -108,11 +108,45 @@
 			}
 	}
 
+	function downloadSectionWithCSS(elementId, filename = 'styled-section.html') {
+    const element = document.getElementById(elementId);
+    if (!element) return console.error('Element not found');
+
+    // 1. Gather all style and link tags from the current page
+    let cssContent = '';
+    const styles = document.querySelectorAll('style, link[rel="stylesheet"]');
+    styles.forEach(styleTag => {
+        cssContent += styleTag.outerHTML + '\n';
+    });
+
+    // 2. Build a complete, self-contained HTML document string
+    const fullHTML = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Downloaded Section</title>
+    ${cssContent}
+</head>
+<body>
+    ${element.outerHTML}
+</body>
+</html>`;
+
+    // 3. Trigger the client-side download
+    const blob = new Blob([fullHTML], { type: 'text/html' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(link.href);
+}
+
 </script>
 
 
 
-<Page contentLayoutType={pageContentLayoutType.center}  footer={false} >
+<Page  contentLayoutType={pageContentLayoutType.center}  footer={false} >
 	{#await load()}
 		<Spinner />
 	{:then}
@@ -129,11 +163,15 @@
 									<div class="flex gap-2"><Fa icon={faDownload} />XML</div>
 							</button>
 							<button class="chip variant-filled-primary" on:click={() => DownloadMetadata(id, version,"flatten")}>
-									<div class="flex gap-2"><Fa icon={faDownload} />Flattened</div>
+									<div class="flex gap-2"><Fa icon={faDownload} />Text</div>
+							</button>
+	
+							<button class="chip variant-filled-primary" on:click={() => downloadSectionWithCSS('metadata-content', `metadata_${id}_v${version}.html`)}>
+									<div class="flex gap-2"><Fa icon={faDownload} />HTML</div>
 							</button>
 			</div>
 		</div>
-			<div class="content scrollable">
+			<div id="metadata-content" class="content scrollable">
 				<div class="px-2">
 					<ComplexComponent complexComponent={schema} path={''} />
 				</div>
@@ -168,5 +206,6 @@
 		scrollbar-color: rgba(0, 0, 0, 0.3) transparent; /* Colors scrollbar */
 }
 </style>
+
 
 
