@@ -58,8 +58,27 @@
 
 	async function DownloadMetadata(datasetId: number, versionNumber: number, format: string) {
 
-			const type = format === "json" ?  'application/json': 'application/xml'
-			const filename	= format === "json" ? 'metadata.json' : 'metadata.xml';
+			let type = '';
+			let filename = '';	
+
+			switch(format) {
+				case "json":
+				 type = 'application/json';
+				 filename = 'metadata.json';
+					break;
+				case "xml":
+				 type = 'application/xml';
+				 filename = 'metadata.xml';
+					break;
+				case "flatten":
+				 type = 'text/plain';
+				 filename = 'metadata_flattened.txt';
+					break;
+				default:
+
+					return;
+			}
+			
    let data = null;
 			if(format === "json") {
 				//helpStore.showNotification("Your download will start shortly. If it doesn't, please check your popup blocker settings.", notificationType.info, 5000);
@@ -68,6 +87,9 @@
 			else	if(format === "xml") {
 				//helpStore.showNotification("Your download will start shortly. If it doesn't, please check your popup blocker settings.", notificationType.info, 5000);
 				data = await apiCalls.GetMetadataAsXml(datasetId, versionNumber);
+			} else if(format === "flatten") {
+				//helpStore.showNotification("Your download will start shortly. If it doesn't, please check your popup blocker settings.", notificationType.info, 5000);
+				data = await apiCalls.GetMetadataAsFlattened(datasetId, versionNumber);
 			}
 
 		 if(data) {
@@ -103,9 +125,12 @@
 					<button class="chip variant-filled-primary" on:click={() => DownloadMetadata(id, version,"json")}>
 					 	<div class="flex gap-2"><Fa icon={faDownload} />JSON </div>
 					</button>
-					<button class="chip variant-filled-primary" on:click={() => DownloadMetadata(id, version,"xml")}>
-							<div class="flex gap-2"><Fa icon={faDownload} /> XML</div>
-					</button>
+							<button class="chip variant-filled-primary" on:click={() => DownloadMetadata(id, version,"xml")}>
+									<div class="flex gap-2"><Fa icon={faDownload} />XML</div>
+							</button>
+							<button class="chip variant-filled-primary" on:click={() => DownloadMetadata(id, version,"flatten")}>
+									<div class="flex gap-2"><Fa icon={faDownload} />Flattened</div>
+							</button>
 			</div>
 		</div>
 			<div class="content scrollable">
