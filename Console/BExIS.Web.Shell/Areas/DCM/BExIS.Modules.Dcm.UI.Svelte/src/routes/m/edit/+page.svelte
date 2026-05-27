@@ -22,6 +22,7 @@
 	let s: any;
 	let m: any = null;
 	let schema: any = s;
+	let reload = false;
 	$: schema = s;
 
 
@@ -56,6 +57,7 @@
 	}
 
 
+
 </script>
 
 
@@ -64,23 +66,25 @@
 	{#await load()}
 		<Spinner />
 	{:then}
-
-<div	class="container">
-	<div class="nav-left scrollable">
-		{#if m}
-			<Functions bind:metadata={m} saveWithError={saveWithError} bind:datasetId={id} />
-		{/if}
-	</div>
-
-
-
-	 <div class="content scrollable">
-			<div class="px-2">
-				<ComplexComponent complexComponent={schema} path={''} />
+  {#key reload}
+		<!-- {Date.now()} -->
+		<div	class="container">
+			<div class="nav-left scrollable">
+				{#if m}
+					<Functions bind:metadata={m} saveWithError={saveWithError} bind:datasetId={id} on:metadataUpdated={ () => reload = !reload }	/>
+				{/if}
 			</div>
-		</div>
- </div>
 
+
+
+				<div class="content scrollable">
+					<div class="px-2">
+						<ComplexComponent complexComponent={schema} path={''} />
+					</div>
+				</div>
+
+			</div>
+		{/key}
 		{/await}
 </Page>
 

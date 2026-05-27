@@ -4,6 +4,7 @@ using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dcm.UI.Helpers;
@@ -11,16 +12,25 @@ using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Helpers;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
+using BExIS.Xml.Helpers.Mapping;
+using BEXIS.JSON.Helpers;
 using DocumentFormat.OpenXml.Presentation;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Web;
 using System.Web.Http.Results;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
+using System.Xml;
+using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -195,6 +205,140 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         #endregion
+
+        #region import
+
+        [HttpPost]
+        public JsonResult Import(long id)
+        {
+            #region check incomming metadata
+            string errorMessage = "";
+
+            if (Request.Files.Count > 0)
+            {
+                using (var datasetManager = new DatasetManager())
+                {
+                    Dataset dataset = datasetManager.GetDataset(id);
+                    long metadataStructureId = dataset.MetadataStructure.Id;
+
+                    Stream requestStream;
+                    HttpFileCollectionBase files = Request.Files;
+                    var file = files[0]; // one file only
+                    requestStream = file.InputStream;
+                    #endregion check incomming metadata
+                    string contentType = file.ContentType;
+                    XmlDocument completeMetadata = null;
+                    JSchema schema;
+                    XmlMetadataConverter converter = new XmlMetadataConverter();
+                    MetadataStructureConverter metadataStructureConverter = new MetadataStructureConverter();
+
+
+                    if (contentType.Contains("xml"))
+                    {
+                        #region application/xml
+
+                        XmlDocument metadataForImport = new XmlDocument();
+                        metadataForImport.Load(requestStream);
+
+                        // metadataStructure ID
+
+                        var metadataStructrueName = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(metadataStructureId).Name;
+
+                        // loadMapping file
+                        var path_mappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), XmlMetadataImportHelper.GetMappingFileName(metadataStructureId, TransmissionType.mappingFileImport, metadataStructrueName));
+
+                        // XML mapper + mapping file
+                        var xmlMapperManager = new XmlMapperManager(TransactionDirection.ExternToIntern);
+                        xmlMapperManager.Load(path_mappingFile, "IDIV");
+
+                        // generate intern metadata without internal attributes
+                        var metadataResult = xmlMapperManager.Generate(metadataForImport, 1, true);
+
+                        // generate intern template metadata xml with needed attribtes
+                        var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
+                        var metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStructureId,
+                            XmlUtility.ToXDocument(metadataResult));
+
+                        var metadataXmlTemplate = XmlMetadataWriter.ToXmlDocument(metadataXml);
+
+                        // set attributes FROM metadataXmlTemplate TO metadataResult
+                        completeMetadata = XmlMetadataImportHelper.FillInXmlValues(metadataResult,
+                            metadataXmlTemplate);
+
+                        #endregion application/xml
+                    }
+                    else
+                    if (contentType.Contains("json"))
+                    {
+                        #region application/json
+
+                        using (var streamReader = new StreamReader(requestStream))
+                        using (var jsonReader = new JsonTextReader(streamReader))
+                        {
+                            JsonSerializer serializer = new JsonSerializer();
+
+                            try
+                            {
+                                JObject metadataJson = serializer.Deserialize<JObject>(jsonReader);
+
+                                long mdid = 0;
+                                if (metadataJson.ContainsKey("@id"))
+                                {
+                                    if (Int64.TryParse(metadataJson.Property("@id").Value.ToString(), out mdid))
+                                    {
+                                        schema = metadataStructureConverter.ConvertToJsonSchema(mdid);
+
+                                        List<string> notAllowedElements = new List<string>();
+                                        if (converter.HasValidStructure(metadataJson, mdid, out notAllowedElements))
+                                        {
+                                            completeMetadata = converter.ConvertTo(metadataJson);
+                                            ;
+                                        }
+                                        else
+                                        {
+                                            HttpStatusCode statusCode = HttpStatusCode.ExpectationFailed;
+                                            errorMessage = "the json does not have the expected structure";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        HttpStatusCode statusCode = HttpStatusCode.ExpectationFailed;
+                                        errorMessage = "the json does not have the expected structure";
+                                    }
+
+                                }
+                                else
+                                {
+                                    HttpStatusCode statusCode = HttpStatusCode.ExpectationFailed;
+                                    errorMessage = "the json does not contain any information about the metadata structure";
+                                }
+                            }
+                            catch (JsonReaderException)
+                            {
+                                Console.WriteLine("Invalid JSON.");
+                            }
+                        }
+
+                        #endregion application/json
+                    }
+
+                    if (completeMetadata != null)
+                    {
+                        HttpStatusCode statusCode = HttpStatusCode.OK;
+
+                        string json = "";
+
+                        json = OutputMetadataManager.GetMetadataAsJson(completeMetadata, 1);
+                        return Json(json);
+
+                    }
+
+                }
+            }
+            #endregion 
+
+            return Json(errorMessage);
+        }
 
         #region download
 

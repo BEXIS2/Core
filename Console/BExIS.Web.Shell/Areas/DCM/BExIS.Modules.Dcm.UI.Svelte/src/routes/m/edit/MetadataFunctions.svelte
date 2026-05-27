@@ -4,14 +4,16 @@
   import { faCheck, faSave } from '@fortawesome/free-solid-svg-icons';
 	import { onMount } from 'svelte';
   import * as apiCalls from '../services/apiCalls';
-	import { activateShow, getValidationStore, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { activateShow, getValidationStore, setMetadataStore, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import type { validationStoretype } from '$lib/components/utils/metadata/models';
   import {metadataStore, validationStore} from '$lib/components/utils/metadata/stores';
 
-	import { notificationStore, notificationType, TextInput } from '@bexis2/bexis2-core-ui';
+	import { FileUploader, notificationStore, notificationType, TextInput, type fileUploaderType } from '@bexis2/bexis2-core-ui';
   import {convertDisplayName} from '../metadataShared';
 	import { goTo } from '$services/BaseCaller';
-	import { on } from 'events';
+  import { createEventDispatcher } from 'svelte';
+
+  const dispatch = createEventDispatcher();
 
   export let datasetId: number;
 
@@ -20,6 +22,13 @@
   let hasChanged: boolean = true; // need to implement change detection to enable/disable save button based on whether there are unsaved changes or not, for now it's always enabled
   let showErrorOverview: boolean = false;
   let comment: string = '';
+  let fileUploadType:fileUploaderType = {
+    accept: [".json", ".xml"],
+    existingFiles: [],
+    descriptionType: 0,
+    multiple: false,
+    maxSize: 10, // 10MB
+  };
 
   const unsubscribedMetadata = metadata;
 
@@ -87,43 +96,75 @@
     
   }
 
+  function successHandler(e){
+
+    console.log("🚀 ~ successHandler ~ e:", e)
+
+    const status = e.detail.status;
+    if(status === 200){
+      notificationStore.showNotification({
+        notificationType: notificationType.success,
+        message: 'Metadata successfully imported.',
+      });
+
+      console.log("🚀 ~ successHandler ~ metadata:", metadata)
+      metadata = JSON.parse(String(e.detail.data));
+      console.log("🚀 ~ successHandler ~ metadata:", metadata)
+      setMetadataStore(metadata);
+      dispatch('metadataUpdated');
+
+      }
+  }
+
+ 
+
 </script>
 
 
 <div class="flex flex-col gap-2" >
-<div id="metadata-options" class="flex w-full gap-2" >
-    <div class="flex-auto"> 
-     <TextInput
-        label=""
-        placeholder="What changed? Add a comment..."
-        bind:value={comment}
+<div id="metadata-options" class="flex-col w-full gap-4" >
+  <div class="flex">
+      <div class="flex-auto"> 
+      <TextInput
+          label=""
+          placeholder="What changed? Add a comment..."
+          bind:value={comment}
+        />
+
+      </div>
+        <button
+          class="btn variant-filled-primary"
+          disabled={disbaleSaveBtn}
+
+          on:click={async () => {
+            try {
+
+              console.log('Saving metadata:', datasetId, metadata);
+              const savedMetadata = await apiCalls.SaveMetadata(datasetId, metadata,comment);
+              console.log('Metadata saved successfully:', savedMetadata);
+              notificationStore.showNotification({
+                notificationType: notificationType.success,
+                message: 'Metadata saved successfully.',
+              });
+            } catch (error) {
+              console.error('Error saving metadata:', error);
+              notificationStore.showNotification({
+                notificationType: notificationType.error,
+                message: 'Error saving metadata. Please check the console for details.',
+              });
+            }
+          }}>
+          <Fa icon={faSave}/>
+        </button>
+  </div>
+  <div>
+      <FileUploader
+        id={datasetId}
+        submit = "/dcm/m/import"
+        data = {fileUploadType}
+        on:submited={successHandler}
       />
-
-    </div>
-			<button
-				class="btn variant-filled-primary"
-				disabled={disbaleSaveBtn}
-
-				on:click={async () => {
-					try {
-
-						console.log('Saving metadata:', datasetId, metadata);
-						const savedMetadata = await apiCalls.SaveMetadata(datasetId, metadata,comment);
-						console.log('Metadata saved successfully:', savedMetadata);
-						notificationStore.showNotification({
-							notificationType: notificationType.success,
-							message: 'Metadata saved successfully.',
-						});
-					} catch (error) {
-						console.error('Error saving metadata:', error);
-						notificationStore.showNotification({
-							notificationType: notificationType.error,
-							message: 'Error saving metadata. Please check the console for details.',
-						});
-					}
-				}}>
-				<Fa icon={faSave}/>
-			</button>
+  </div>
 </div>
 
 <!-- Error messages-->
