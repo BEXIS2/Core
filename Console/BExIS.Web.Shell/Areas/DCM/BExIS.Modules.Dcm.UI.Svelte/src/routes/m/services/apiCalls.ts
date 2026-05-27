@@ -103,7 +103,7 @@ export const GetMetadataAsXml = async (id: number, version) => {
 		const header = { 'Accept': 'application/xml' }
 		const config = { responseType: 'blob' }
 
-		const response = await Api.get('/api/metadata/' + id + "?version=" + version, '', header, config);
+		const response = await Api.get('/api/metadata/' + id + '/version_number/' + version + '?format=1', '', header, config);
 		// console.log(" response.data.MetadataStructureId:", response);
 
 		return response.data;
@@ -112,5 +112,24 @@ export const GetMetadataAsXml = async (id: number, version) => {
 		throw error;
 	}
 };
+
+export const GetMetadataAsFlattened = async (id: number, version) => {
+	try {
+
+		const header = { 'Accept': 'text/plain' }
+		const config = { responseType: 'blob' }
+
+		//http://localhost:44345/api/metadata/1/version_number/1/?format=3
+		const response = await Api.get('/api/metadata/' + id + '/version_number/' + version + '?format=3', '', header, config);
+		// console.log(" response.data.MetadataStructureId:", response);
+
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		alert("An error occurred while downloading the metadata. Please try again later.");
+		throw error;
+	}
+};
+
 
 
