@@ -4,6 +4,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -139,6 +140,56 @@ namespace BExIS.IO.Transform.Output
 
             return sb;
         }
+
+        /// <summary>
+        /// returns metadata as json string. simplifiedJson: 0,1,2 (0: all metadata, 1: metadata with value and empty, 2: only metadata with value and reference)
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <param name="simplifiedJson">0,1,2</param>
+        /// <returns></returns>
+        public static string GetMetadataAsJson(XmlDocument metadata, int simplifiedJson)
+        {
+            using (DatasetManager datasetManager = new DatasetManager())
+            {
+                string json = "";
+
+                switch (simplifiedJson)
+                {
+                    case 0:
+                        {
+                            json = JsonConvert.SerializeObject(metadata.DocumentElement);
+                            break;
+                        }
+                    case 1:
+                        {
+                            XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
+                            json = xmlMetadataConverter.ConvertTo(metadata, true).ToString();
+
+                            break;
+                        }
+                    case 2:
+                        {
+                            XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
+                            json = xmlMetadataConverter.ConvertTo(metadata).ToString();
+
+                            break;
+                        }
+                }
+
+
+                return json;
+            }
+        }
+        public static string GetMetadataAsJson(long id , int versionNr, int simplifiedJson)
+        {
+            using (DatasetManager datasetManager = new DatasetManager())
+            {
+                var datasetVersion = datasetManager.GetDatasetVersion(id, versionNr);
+                
+                return GetMetadataAsJson(datasetVersion.Metadata, simplifiedJson);
+            }
+        }
+
 
         public static string GetSchemaDirectoryPath(long datasetId)
         {

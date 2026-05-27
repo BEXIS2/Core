@@ -1,6 +1,5 @@
 
 <script lang="ts">
-
 	import Fa from 'svelte-fa';
   import { faCheck, faSave } from '@fortawesome/free-solid-svg-icons';
 	import { onMount } from 'svelte';
@@ -12,8 +11,10 @@
 	import { notificationStore, notificationType, TextInput } from '@bexis2/bexis2-core-ui';
   import {convertDisplayName} from '../metadataShared';
 	import { goTo } from '$services/BaseCaller';
+	import { on } from 'events';
 
   export let datasetId: number;
+
   export let metadata;
   export let saveWithError: boolean = false;
   let hasChanged: boolean = true; // need to implement change detection to enable/disable save button based on whether there are unsaved changes or not, for now it's always enabled
@@ -124,6 +125,7 @@
 				<Fa icon={faSave}/>
 			</button>
 </div>
+
 <!-- Error messages-->
  <div class="text-error-500">
  {#if validationStoreValues}

@@ -7,14 +7,18 @@
 
 	import * as apiCalls from '../services/apiCalls';
 	import { helpStore, notificationType, Page, pageContentLayoutType, Spinner } from '@bexis2/bexis2-core-ui';
+	import Fa from 'svelte-fa';
+	import	{ faDownload } from '@fortawesome/free-solid-svg-icons';
 
 
 	// import { Page } from '@bexis2/bexis2-core-ui';
 	import { schemaToJson, setConfigStore, setMetadataStore } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { da } from 'svelty-picker/i18n';
 
 	// import configJson from './customComponents/config.json';
 
 	export let id: number = 3;
+	export	let version: number = 0;
 
 
 	let container;
@@ -30,10 +34,13 @@
 			console.log("🚀 ~ load ~ container:", container)
 			
 			id = Number(container?.getAttribute('dataset'));
+			version = Number(container?.getAttribute('version'));
 		
+
+
 		// read id from url
 		//datasetId = Number(new URLSearchParams(window.location.search).get('id'));
-		console.log('Loading metadata for datasetId:', id);
+		console.log('Loading metadata for datasetId:', id, version);
 		if (id > 0) {
 			const datasetInfos = await apiCalls.GetDatasetInfoById(id);
 			s = await apiCalls.GetMetadataSchema(datasetInfos.metadataStructureId);
@@ -49,6 +56,35 @@
 		}
 	}
 
+	async function DownloadMetadata(datasetId: number, versionNumber: number, format: string) {
+
+			const type = format === "json" ?  'application/json': 'application/xml'
+			const filename	= format === "json" ? 'metadata.json' : 'metadata.xml';
+   let data = null;
+			if(format === "json") {
+				//helpStore.showNotification("Your download will start shortly. If it doesn't, please check your popup blocker settings.", notificationType.info, 5000);
+				data = await apiCalls.GetMetadataAsJson(datasetId, versionNumber);
+			}
+			else	if(format === "xml") {
+				//helpStore.showNotification("Your download will start shortly. If it doesn't, please check your popup blocker settings.", notificationType.info, 5000);
+				data = await apiCalls.GetMetadataAsXml(datasetId, versionNumber);
+			}
+
+		 if(data) {
+	
+					const blob = new Blob([data], { type: type });
+					const url = window.URL.createObjectURL(blob);
+
+					const a = document.createElement('a');
+					a.href = url;
+					a.download = filename;
+					document.body.appendChild(a);
+					a.click();
+
+					a.remove();
+					window.URL.revokeObjectURL(url);
+			}
+	}
 
 </script>
 
@@ -60,14 +96,24 @@
 	{:then}
 
 
-<div	class="container">
+<div	class="container flex">
 
-	 <div class="content scrollable">
-			<div class="px-2">
-				<ComplexComponent complexComponent={schema} path={''} />
+		<div class="flex-col">
+				<div class="flex flex-col	gap-2">
+					<button class="chip variant-filled-primary" on:click={() => DownloadMetadata(id, version,"json")}>
+					 	<div class="flex gap-2"><Fa icon={faDownload} />JSON </div>
+					</button>
+					<button class="chip variant-filled-primary" on:click={() => DownloadMetadata(id, version,"xml")}>
+							<div class="flex gap-2"><Fa icon={faDownload} /> XML</div>
+					</button>
 			</div>
 		</div>
- </div>
+			<div class="content scrollable">
+				<div class="px-2">
+					<ComplexComponent complexComponent={schema} path={''} />
+				</div>
+			</div>
+		</div>
 
 		{/await}
 </Page>

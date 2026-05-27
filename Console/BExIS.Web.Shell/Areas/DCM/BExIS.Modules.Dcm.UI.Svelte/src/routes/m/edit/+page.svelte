@@ -11,7 +11,7 @@
 
 	// import { Page } from '@bexis2/bexis2-core-ui';
 	import { schemaToJson, setConfigStore, setMetadataStore, setSystemMappingsStore } from '$lib/components/utils/metadata/metadataComponentUtils';
-	import type { SystemMappingEditModel } from './types';
+	import type { SystemMappingEditModel } from '$lib/components/utils/metadata/models';
 
 	// import configJson from './customComponents/config.json';
 

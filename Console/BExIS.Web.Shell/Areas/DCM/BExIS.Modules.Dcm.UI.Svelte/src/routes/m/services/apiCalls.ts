@@ -80,3 +80,37 @@ export const GetPartyValue = async (partyid: number, linkid) => {
 	}
 };
 
+
+export const GetMetadataAsJson = async (id: number, version) => {
+	try {
+
+		const header = { 'Accept': 'application/json' }
+		const config = { responseType: 'blob' }
+
+		const response = await Api.get('/api/metadata/' + id + "?version=" + version, '', header, config);
+		// console.log(" response.data.MetadataStructureId:", response);
+
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
+export const GetMetadataAsXml = async (id: number, version) => {
+	try {
+
+		const header = { 'Accept': 'application/xml' }
+		const config = { responseType: 'blob' }
+
+		const response = await Api.get('/api/metadata/' + id + "?version=" + version, '', header, config);
+		// console.log(" response.data.MetadataStructureId:", response);
+
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
+
