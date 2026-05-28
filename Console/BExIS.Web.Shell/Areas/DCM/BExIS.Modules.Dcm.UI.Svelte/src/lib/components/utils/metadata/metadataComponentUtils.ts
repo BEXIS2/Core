@@ -34,8 +34,10 @@ export function getRefByPath(path: string) {
 }
 
 export function getPartyIdByPath(path: string) {
-	path = path + '.@partyid';
-	return getNodeByPath(path);
+
+	const obj	= getNodeByPath(path);
+	const	partyId = obj ? obj['@partyid'] : null;
+	return partyId;
 }
 
 // Set value in an object based on a dot-separated path
@@ -87,13 +89,13 @@ export function updateMetadataStore(path: string, value: any, isMulti?: boolean,
 			else if(value === undefined || value === null)
 			{
 				const parent = getByPath(path);
-			//	console.log("🚀 ~ updateMetadataStore ~ parent:", parent)
 				parent["@partyid"] = partyid;
+			 console.log("🚀 ~ updateMetadataStore ~ parent:", parent)
 			}
 
 		}
 	}
-	//console.log('Updated metadata store:', obj);
+	console.log('Updated metadata store:', obj);
 	return obj;
 }
 
