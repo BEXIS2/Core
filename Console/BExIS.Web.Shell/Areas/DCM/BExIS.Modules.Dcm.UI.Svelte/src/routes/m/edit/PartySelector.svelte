@@ -4,7 +4,7 @@
 	import { createEventDispatcher, onMount } from 'svelte';
  import suite from '$lib/components/utils/metadata/simpleComponentSuite';
 
-	import { getParentPath, getPartyIdByPath, removeJsonPathIndices, updateMetadataStore, ValidationStoreSetSimpleTypeValid } from "$lib/components/utils/metadata/metadataComponentUtils";
+	import { getByPath, getParentPath, getPartyIdByPath, removeJsonPathIndices, updateMetadataStore, ValidationStoreSetSimpleTypeValid } from "$lib/components/utils/metadata/metadataComponentUtils";
 
 	import { getMappingComponentConfig } from "$lib/components/utils/metadata/mappingHelper";
 	import { GetPartyValue } from "../services/apiCalls";
@@ -49,15 +49,19 @@ const dispatch = createEventDispatcher();
 			if(value)
 			{
 				 if(mappingComponentConfig.partyMappingObject.complexity){
+
 						// get party id from parent
+						console.log("🚀 ~ onMount ~ path:", path)
 						const parentPath = getParentPath(path);
 						partyId = getPartyIdByPath(parentPath);
+  
 				 }
 				 else {
 						// get party id from this
 						partyId = getPartyIdByPath(path);
 					}
 					selectorValue = list.find((item: any) => item.partyId == partyId);
+
 			}
 			
  
@@ -115,13 +119,12 @@ const dispatch = createEventDispatcher();
 								updateMetadataStore(childPathWithIndex, childvalue, isMulti, undefined, undefined);
 
 								// update parent with pary	id if not already set
+								console.log("🚀 ~ onUpdateParty ~ parentPath:", parentPath)
 								updateMetadataStore(parentPath, null, false, undefined, partyid);
 
 								// update because of validation
 								updateValue(childvalue, childPathWithIndex)
 								
-
-
         console.log("🚀 ~ onUpdateParty ~ dispatch reload for path:", selectorValue)
 						}	)					
 					}

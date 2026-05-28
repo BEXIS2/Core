@@ -21,7 +21,6 @@
 	import {convertDisplayName} from '../metadataShared';
 	import type { JsonListItem } from '../components/types';
 	import Blocked from './Blocked.svelte';
-	import { createEventDispatcher } from 'svelte';
 	import PartySelector from './PartySelector.svelte';
 	import { getMappingComponentConfig } from '$lib/components/utils/metadata/mappingHelper';
 
@@ -131,16 +130,18 @@ let mappingComponentConfig: MappingComponentConfig;
 		// add some delay so the entityTemplate is updated
 			// otherwise the values are old
 			setTimeout(async () => {
+				console.log("🚀 ~ onChangeHandler ~ value:", value, e)
 
-				updateValue(value, e.target.id);
-			}, 10);
+				updateValue(value, path);
+				
+			}, 10);	
 	}
 
 
 
 	function updateValue(value: any, _path:string){
 		
-
+			
 			// check changed field
 			res = suite(value, _path);
 			//console.log("🚀 ~ onChangeHandler ~ res:", res)
@@ -169,6 +170,8 @@ let mappingComponentConfig: MappingComponentConfig;
 	{:else if mappingComponentConfig && mappingComponentConfig.isMappedToParty && mappingComponentConfig.isSelector}
 
 			<PartySelector
+			 id={path}
+
 				path={path}
 				value={value}
 				label={label}

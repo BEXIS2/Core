@@ -165,7 +165,6 @@
 							<button class="chip variant-filled-primary" on:click={() => DownloadMetadata(id, version,"flatten")}>
 									<div class="flex gap-2"><Fa icon={faDownload} />Text</div>
 							</button>
-	
 							<button class="chip variant-filled-primary" on:click={() => downloadSectionWithCSS('metadata-content', `metadata_${id}_v${version}.html`)}>
 									<div class="flex gap-2"><Fa icon={faDownload} />HTML</div>
 							</button>
