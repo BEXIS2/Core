@@ -74,7 +74,7 @@ function removeFromValidationStore(path: string) {
 
 
 
-<div class="card flex h-10 bg-primary-300 dark:bg-primary-800 pl-2 items-center">
+<div class="card flex min-h-10 bg-primary-300 dark:bg-primary-800 pl-2 items-center gap-2">
 
  
 <div>
