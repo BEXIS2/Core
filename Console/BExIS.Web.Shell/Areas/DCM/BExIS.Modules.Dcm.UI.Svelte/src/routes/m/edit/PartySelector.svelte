@@ -36,6 +36,7 @@ const dispatch = createEventDispatcher();
 
  onMount(() => {
  
+
    if(!mappingComponentConfig){ 
     mappingComponentConfig=getMappingComponentConfig(path, value);
    }
@@ -54,6 +55,7 @@ const dispatch = createEventDispatcher();
 						console.log("🚀 ~ onMount ~ path:", path)
 						const parentPath = getParentPath(path);
 						partyId = getPartyIdByPath(parentPath);
+									//alert(partyId);
   
 				 }
 				 else {
@@ -71,7 +73,7 @@ const dispatch = createEventDispatcher();
 					//res = suite(value, '');
 				}
 				else {
-					res = suite(value, path);
+					res = suite(path);
 				}
 			}, 10);
  })
@@ -132,17 +134,16 @@ const dispatch = createEventDispatcher();
 						// trigger reload parent	component to update all child components with new values
 						dispatch("reload");
 
-				}, 10)
+				}, 100)
 	}
  
 
 function updateValue(value: any, _path:string){
 		
-    
     console.log("🚀 ~ updateValue ~ value:", value)
 		
   // check changed field
-			res = suite(value, _path);
+			res = suite(_path);
 			//console.log("🚀 ~ onChangeHandler ~ res:", res)
 			let errorMessage = '';
 			if(res.hasErrors(_path)){

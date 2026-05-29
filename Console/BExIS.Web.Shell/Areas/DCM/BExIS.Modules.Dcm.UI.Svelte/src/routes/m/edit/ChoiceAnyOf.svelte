@@ -60,17 +60,17 @@ function getChoices(cComponent: any): {key:string, value:string}[] {
   {#if !$hideStore.includes(path)  && $activeStore.includes(path)}
     <div in:slide out:slide class="card px-5 py-4" id={path}>
      {#if choiceComponent.items && choiceComponent.items.anyOf}
+					<div class="pl-1 pb-2">
       <CheckboxKVPList
         title=""
         id={path}
-        description="Select one or more options"
         key="id"
         source={choices}
         bind:target
         feedback={[]}
 								vertical={false}
        />
-
+					</div>
 					{#if target && target.length > 0}
 
 					{#each target as item}

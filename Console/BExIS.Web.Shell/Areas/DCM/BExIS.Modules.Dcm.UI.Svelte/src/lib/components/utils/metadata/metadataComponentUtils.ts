@@ -86,16 +86,16 @@ export function updateMetadataStore(path: string, value: any, isMulti?: boolean,
 					}
 				}
 			}
-			else if(value === undefined || value === null)
+			else if((value === undefined || value === null) && partyid	!== undefined && partyid !== null &&partyid>0)
 			{
 				const parent = getByPath(path);
-				parent["@partyid"] = partyid;
 			 console.log("🚀 ~ updateMetadataStore ~ parent:", parent)
+				parent["@partyid"] = partyid;
 			}
 
 		}
 	}
-	console.log('Updated metadata store:', obj);
+	//console.log('Updated metadata store:', obj);
 	return obj;
 }
 
@@ -460,6 +460,7 @@ export function ValidationStoreSetSimpleTypeValid(path: string, isValid: boolean
 // Create a SimpleComponentData validation item
 // based on the provided parameters and simple component properties
 export function createSimpleComponentValidationItem(path: string, label: string, required: boolean, simpleComponent: any): SimpleComponentData {
+
 	let simpleComponentValidationItem: SimpleComponentData = { label: label, path: path, required: required, isValid: false,	errorMessage: '' };
 
  let item = simpleComponent.properties['#text'];

@@ -12,6 +12,7 @@
   import {convertDisplayName} from '../metadataShared';
 	import { goTo } from '$services/BaseCaller';
   import { createEventDispatcher } from 'svelte';
+	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
 
   const dispatch = createEventDispatcher();
 
@@ -39,6 +40,9 @@
 	let disbaleSaveBtn: boolean = false;
 	$:disbaleSaveBtn;
 
+  let vestResults:any = null;
+  $vestResults;
+
 	 let validationStoreValues: validationStoretype;
   $:{
     validationStoreValues;
@@ -54,8 +58,11 @@
     });
 
     validationStore.subscribe((s) => {
+    //console.log("🚀 ~ validationStore subscribe ~ s:", s)
      validationStoreValues = s;
     });
+
+    
   
   });
 
@@ -107,16 +114,14 @@
         message: 'Metadata successfully imported.',
       });
 
-      console.log("🚀 ~ successHandler ~ metadata:", metadata)
+      //console.log("🚀 ~ successHandler ~ metadata:", metadata)
       metadata = JSON.parse(String(e.detail.data));
-      console.log("🚀 ~ successHandler ~ metadata:", metadata)
+      //console.log("🚀 ~ successHandler ~ metadata:", metadata)
       setMetadataStore(metadata);
       dispatch('metadataUpdated');
 
       }
   }
-
- 
 
 </script>
 
@@ -167,19 +172,21 @@
   </div>
 </div>
 
+
 <!-- Error messages-->
- <div class="text-error-500">
+ <div class="text-warning-500">
  {#if validationStoreValues}
   {#key validationStoreValues}
-  {#if !validationStoreValues.allSimpleRequiredValid}
-      <button class="chip variant-soft-error" on:click={() => (showErrorOverview = !showErrorOverview)}>
-        Errors: {validationStoreValues.simpleTypeValidationItems.filter(item => item.isValid === false).length}
+  {#if validationStoreValues.simpleTypeValidationItems.filter(item => item.isValid === false).length > 0}
+      <button class="chip variant-soft-warning" on:click={() => (showErrorOverview = !showErrorOverview)}>
+        Warnings: {validationStoreValues.simpleTypeValidationItems.filter(item => item.isValid === false).length}
       </button>
       {#if showErrorOverview}
-      <div class="card py-3 my-2 ">
+      <div class="card py-3 my-2 flex-col gap-2">
         {#each validationStoreValues.simpleTypeValidationItems.filter(item => item.isValid === false) as item}
-          <div class="ml-4 flex flex-col gap-2 ">
-            <a  class="text-sm text-error-500" on:click={()=>toggleAll(item.path) }>{item.path.replaceAll(".", "/")}</a>
+          <div class="ml-4 flex flex-col">
+            <a  class="text-sm text-gray-500" on:click={()=>toggleAll(item.path) }>{item.path.replaceAll(".", "/")}</a>
+            <span class="text-xs italic">{item.errorMessage}</span>
           </div>
         {/each}
       </div>
@@ -189,7 +196,6 @@
   {/if}
 </div>
 
-<!-- Main blocks-->
 <div>
   <hr/>
   <nav class="list-nav">
