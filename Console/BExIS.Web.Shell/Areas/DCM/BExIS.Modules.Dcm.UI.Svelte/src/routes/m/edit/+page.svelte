@@ -10,8 +10,9 @@
 	import Functions from './MetadataFunctions.svelte';
 
 	// import { Page } from '@bexis2/bexis2-core-ui';
-	import { schemaToJson, setConfigStore, setMetadataStore, setSystemMappingsStore } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { clearValidationStore, getValidationStore, schemaToJson, setConfigStore, setMetadataStore, setSystemMappingsStore } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import type { SystemMappingEditModel } from '$lib/components/utils/metadata/models';
+	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
 
 	// import configJson from './customComponents/config.json';
 
@@ -52,7 +53,14 @@
 			const systemMappings:SystemMappingEditModel = await apiCalls.GetSystemMappings(datasetInfos.metadataStructureId);
 			console.log("🚀 ~ load ~ systemMappings:", systemMappings)
 			setSystemMappingsStore(systemMappings);
+		
+			let v = getValidationStore();
+			//clearValidationStore();
+
+			const res = suite('');
+			console.log("🚀 ~ load ~ res:", res.isValid())
 			
+
 		}
 	}
 
@@ -74,9 +82,6 @@
 					<Functions bind:metadata={m} saveWithError={saveWithError} bind:datasetId={id} on:metadataUpdated={ () => reload = !reload }	/>
 				{/if}
 			</div>
-
-
-
 				<div class="content scrollable">
 					<div class="px-2">
 						<ComplexComponent complexComponent={schema} path={''} />

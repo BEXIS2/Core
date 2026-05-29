@@ -95,7 +95,7 @@ export function updateMetadataStore(path: string, value: any, isMulti?: boolean,
 
 		}
 	}
-	console.log('Updated metadata store:', obj);
+	//console.log('Updated metadata store:', obj);
 	return obj;
 }
 
@@ -460,6 +460,7 @@ export function ValidationStoreSetSimpleTypeValid(path: string, isValid: boolean
 // Create a SimpleComponentData validation item
 // based on the provided parameters and simple component properties
 export function createSimpleComponentValidationItem(path: string, label: string, required: boolean, simpleComponent: any): SimpleComponentData {
+
 	let simpleComponentValidationItem: SimpleComponentData = { label: label, path: path, required: required, isValid: false,	errorMessage: '' };
 
  let item = simpleComponent.properties['#text'];

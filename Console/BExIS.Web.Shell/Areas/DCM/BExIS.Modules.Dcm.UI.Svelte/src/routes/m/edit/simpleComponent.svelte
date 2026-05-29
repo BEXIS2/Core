@@ -13,7 +13,7 @@
 	} from '@bexis2/bexis2-core-ui';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
-	import { ValidationStoreAddSimpleComponent, ValidationStoreSetSimpleTypeValid, updateMetadataStore, createSimpleComponentValidationItem, getConfigStore} from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { ValidationStoreAddSimpleComponent, ValidationStoreSetSimpleTypeValid, updateMetadataStore, createSimpleComponentValidationItem, getConfigStore, getValidationStore} from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { customComponentsCatalog } from '$lib/components/customComponents/componentCatalog';
 	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
 	import type { MappingComponentConfig, SimpleComponentData } from '$lib/components/utils/metadata/models';
@@ -58,7 +58,7 @@ let mappingComponentConfig: MappingComponentConfig;
 
 	onMount(async () => {
 
-   console.log('🚀 ~ onMount ~ simpleComponent:', value)
+   //console.log('🚀 ~ onMount ~ simpleComponent:', value)
 
 			// checks for date
 			if(simpleComponent.properties['#text'].format === 'date' || simpleComponent.properties['#text'].format === 'datetime' || simpleComponent.properties['#text'].format === 'date and time' || simpleComponent.properties['#text'].format === 'time'){
@@ -90,8 +90,12 @@ let mappingComponentConfig: MappingComponentConfig;
 			//#### VALIDATION	 ####
 			// create validation item and add to store
 			let simpleComponentValidationItem: SimpleComponentData = createSimpleComponentValidationItem(path, label, required, simpleComponent); 
+			//console.log("🚀 ~ onMount ~ simpleComponentValidationItem:", simpleComponentValidationItem	)
 			// add to validation store
 			ValidationStoreAddSimpleComponent(simpleComponentValidationItem);
+
+
+			
 
 			//#### CONFIGURATION	 ####
 			config = getConfigStore();
@@ -115,13 +119,9 @@ let mappingComponentConfig: MappingComponentConfig;
 
 			// initial check
 			setTimeout(async () => {
-				if(value == undefined || value == null || value == '') {
-					//res = suite(value, '');
-				}
-				else {
-					res = suite(value, path);
-				}
-			}, 10);
+
+				updateValue(value, path);
+			}, 100);
 	});
 
 	//change event: if input change check also validation only on the field
@@ -130,31 +130,30 @@ let mappingComponentConfig: MappingComponentConfig;
 		// add some delay so the entityTemplate is updated
 			// otherwise the values are old
 			setTimeout(async () => {
-				console.log("🚀 ~ onChangeHandler ~ value:", value, e)
 
 				updateValue(value, path);
-				
+
 			}, 10);	
 	}
 
 
 
 	function updateValue(value: any, _path:string){
-		
-			
-			// check changed field
-			res = suite(value, _path);
-			//console.log("🚀 ~ onChangeHandler ~ res:", res)
-			let errorMessage = '';
-			if(res.hasErrors(_path)){
-					errorMessage = res.getErrors(_path).join('.  ');
-					//console.log("🚀 ~ onChangeHandler ~ errorMessage:", errorMessage)
-			}
 
-			// update validationstore
-			ValidationStoreSetSimpleTypeValid(_path, res.isValid(_path), errorMessage);
+			// check changed field only
+			res = suite(_path);
 
+			setTimeout(async () => {
+						//console.log("🚀 ~ updateValue ~ res:",res, res.isValid(_path), path, value)
 
+						let errorMessage = '';
+						if(res.hasErrors(_path)){
+								errorMessage = res.getErrors(_path).join('.  ');
+						}
+
+						// update validationstore
+						ValidationStoreSetSimpleTypeValid(_path, res.isValid(_path), errorMessage);
+			}, 10);
 	}
 
 
