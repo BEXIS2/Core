@@ -28,7 +28,7 @@ let reloading = false;
 function reloadFn(){
 	setTimeout(() => {
 		reloading = !reloading;
-	}, 200);
+	}, 500);
 }
 
 

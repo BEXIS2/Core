@@ -2,7 +2,7 @@
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from './simpleComponent.svelte';
 	import ChoiceComponent from './choiceComponentWrapper.svelte';
-	import { setValueByPath, updateMetadataStore, schemaToJson, toggleShow, getNodeByPath, getByPath, isActive, setActive, setInactive } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { setValueByPath, updateMetadataStore, schemaToJson, toggleShow, getNodeByPath, getByPath, isActive, setActive, setInactive, getPartyIdByPath } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { faPlus, faChevronUp, faChevronDown, faTrash } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { slide, fade } from 'svelte/transition';
@@ -73,15 +73,16 @@
 					{:else}
 					
 					 <Header	path={path} required={requiredList.includes(label)} />
-						
+
 						{#if !$hideStore.includes(path) && $activeStore.includes(path)}
 								<div in:slide out:slide class="card pl-5 py-2" id={path}>						
 								{#if value && value.length > 0}
 									{#each value as item, index}
+									{@const p = path + '.'+ index}
 										<div in:slide out:slide class="pl-5 py-5 card mb-2">
 											<div class="grid grid-cols-2 gap-2">
 											<div>
-												<h4 class="h4 text-primary-500">{convertDisplayName(label, true)} {index+1}</h4>
+												<h4 class="h4 text-primary-500">{convertDisplayName(label, true)} ( {index+1} ) </h4>
 											</div>
 											<div class="text-right w-full pr-2">
 												<button

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { empty, getNodeByPath, hasValue, isActive, setActive, setInactive, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { empty, getNodeByPath, getPartyIdByPath, hasValue, isActive, setActive, setInactive, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { convertDisplayName } from '../metadataShared';
 	import { faPlus, faChevronUp, faChevronDown, faQuestion } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
@@ -94,7 +94,6 @@ function removeFromValidationStore(path: string) {
    </h4>
  </div>
 
- 
  {#if description && showDescription}
   <div	class="text-sm text-gray-500 py-1">{@html description}</div>
  {/if}

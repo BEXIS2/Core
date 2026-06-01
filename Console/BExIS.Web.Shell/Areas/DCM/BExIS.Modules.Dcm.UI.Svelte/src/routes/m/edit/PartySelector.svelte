@@ -9,6 +9,9 @@
 	import { getMappingComponentConfig } from "$lib/components/utils/metadata/mappingHelper";
 	import { GetPartyValue } from "../services/apiCalls";
 	import { systemMappingsStore } from "$lib/components/utils/metadata/stores";
+
+	import Fa from "svelte-fa";
+	import	{ faLink } from "@fortawesome/free-solid-svg-icons";
  
 const dispatch = createEventDispatcher();
 
@@ -156,7 +159,8 @@ function updateValue(value: any, _path:string){
 	}
 
 </script>
-
+<div class="flex items-center gap-2 ">
+<div class="grow">
 <MultiSelect
 						id="{path}"
 						title="{label}"
@@ -174,3 +178,8 @@ function updateValue(value: any, _path:string){
 						feedback={res.getErrors(path)}	 
 						description={description}
 					/>
+</div>
+<div class="pt-7" title="This field is linked to a party. Changing the value here will update all other fields linked to the same party."	>
+		<Fa	icon={faLink} class="text-gray-500" />
+</div>
+</div>
