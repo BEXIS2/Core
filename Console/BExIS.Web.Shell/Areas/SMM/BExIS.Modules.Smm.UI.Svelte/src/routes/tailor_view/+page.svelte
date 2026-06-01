@@ -10,20 +10,42 @@
     import EditResult from "./EditResult.svelte";
     import { faPen, faMousePointer } from "@fortawesome/free-solid-svg-icons";
     import { mappingSelection } from '../../lib/stores/selectionStore';
+    import { get } from "svelte/store";
     import Fa from 'svelte-fa';
+    import { getDifference } from "$lib/helper/custom_diff";
+    import CleanedName from "./cleanedName.svelte";
 
 	const modalStore = getModalStore();
 
     onMount(() => {
         async function test() {
             var responseData = await loadResult($mappingSelection.datasetId, $mappingSelection.versionId);
-            console.log(responseData);
-            let filteredData = responseData.message.map(({ creator, dataset, extra, versionNo, ...keep }) => keep);
+
+            // filter out redundant data and determine column order
+            let filteredData = responseData.message.map((row: any): TailorResultRow => 
+            { 
+                return { 
+                    id: row.id,
+                    originalName: row.originalName,
+                    editedName: row.editedName,
+                    cleanedName: row.cleanedName,
+                    confirmedByUser: row.confirmedByUser,
+                    matchedName: row.matchedName,
+                    matchType: row.matchType,
+                    status: row.status,
+                    matchSource: row.matchSource,
+                    matchSourceVersion: row.matchSourceVersion,
+                    timeStampMatch: row.timeStampMatch
+                }
+            });
+
             tailorResultStore.update(() => {
                 return filteredData;
             });
-
+            
             initializeTableData(filteredData);
+            
+            console.log(getDifference("Abies spectabilis (D. Don) Mirbel", "Abies spectabilis D. Don"));
         }
 
         test();
@@ -58,30 +80,56 @@
 		pageSizes: [20, 50, 100],
 		showColumnsMenu: true,
         columns: {
+            id: {
+                exclude: true
+            },
+            originalName: {
+                header: "Original name"
+            },
+            cleanedName: {
+                header: "Cleaned name",
+                instructions: {
+                    renderComponent: CleanedName
+                },
+            },
+            editedName: {
+                header: "Edited name"
+            },
+            matchedName: {
+                header: "Matched name",
+                // exclude: true
+            },
             confirmedByUser: {
-                disableFiltering: true
+                disableFiltering: true,
+                header: "Confirmed by user"
+            },
+            datasetVersionId: {
+                exclude: true
             },
             status: {
+                header: "Status",
                 exclude: true
             },
             timestampMatch: {
+                header: "Match date",
                 exclude: true
             },
             matchType: {
+                header: "Match type",
                 exclude: true
             },
             matchSource: {
+                header: "Match source",
                 exclude: true
             },
             matchVersion: {
+                header: "Match version",
                 exclude: true
             },
             matchSourceVersion: {
+                header: "Match source version",
                 exclude: true
             },
-            matchedName: {
-                exclude: true
-            }
         },
 		optionsComponent: ResultTableOptions
 	};

@@ -1,6 +1,6 @@
 <script lang="ts">
     import Fa from 'svelte-fa';
-	import { faEye, faPen, faTrash, faCheck } from '@fortawesome/free-solid-svg-icons';
+	import { faPen } from '@fortawesome/free-solid-svg-icons';
 
 	export let row;
 	export let dispatchFn;
@@ -10,16 +10,6 @@
 	};
 
     	const buttons = [
-		{
-			icon: faCheck,
-			color: 'variant-filled-primary',
-			type: 'ACCEPT'
-		},
-		{
-			icon: faEye,
-			color: 'variant-filled-secondary',
-			type: 'READ'
-		},
 		{
 			icon: faPen,
 			color: 'variant-filled-warning',

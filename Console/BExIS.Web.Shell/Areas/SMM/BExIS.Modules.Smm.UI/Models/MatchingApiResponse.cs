@@ -11,5 +11,6 @@ namespace BExIS.Modules.Smm.UI.Models
         public int? StatusCode { get; set; }
         public string Message { get; set; }
         public object Payload { get; set; }
+        public int StepId { get; set; }
     }
 }

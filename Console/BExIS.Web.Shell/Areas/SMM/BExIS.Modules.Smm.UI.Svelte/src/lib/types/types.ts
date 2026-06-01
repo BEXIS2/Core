@@ -34,6 +34,44 @@ export type ServiceResult<T> =
     | { success: true, data: T }
     | { success: false, error: string };
 
+export interface MatchingFileStatus {
+    directoryExists: boolean,
+    fileExists: boolean,
+    markerExists: boolean,
+    markerStale: boolean,
+    markerStart: string,
+    mappingProgressExists: boolean,
+    stepExists: boolean,
+    stepDone: boolean,
+    downloadLinkPresent: boolean,
+    jobKeyPresent: boolean,
+}
+
+export interface GenericMatchingResult {
+    original_ID?: string,
+    original_scientificName: string,
+    scientificName: string,
+    original_rank?: string,
+    original_kingdom?: string,
+    original_authorship?: string,
+    matchType?: string,
+    matchIssues?: string,
+    id: string,
+    rank?: string,
+    authorship?: string,
+    status?: string,
+    acceptedID?: string,
+    acceptedScientificName?: string,
+    acceptedAuthorship?: string,
+    kingdom?: string,
+    phylum?: string,
+    class?: string,
+    order?: string,
+    family?: string,
+    genus?: string,
+    classification?: string,
+}
+
 export interface CLBMatchingResult {
     original_ID: string,
     original_scientificName: string,
@@ -63,5 +101,5 @@ export type AcceptMatchesRequest = {
     datasetId: number,
     versionId: number,
     stepId: number,
-    matchIds: string[]
+    matchIds: (string | undefined)[]
 }

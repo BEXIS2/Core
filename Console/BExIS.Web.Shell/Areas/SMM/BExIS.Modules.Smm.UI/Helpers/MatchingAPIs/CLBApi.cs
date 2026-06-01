@@ -4,6 +4,7 @@ using BExIS.Dlm.Services.SpeciesMatching;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Smm.UI.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,6 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.IO.Compression;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -287,6 +289,8 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
                 });
             }
 
+            var step = mappingProgress.GetLatestStep();
+
             Debug.WriteLine("{====================FILEPATH:====================}");
             Debug.WriteLine(filepath);
             byte[] fileBytes = System.IO.File.ReadAllBytes(filepath);
@@ -321,7 +325,29 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
                         object responseJson;
                         try
                         {
-                            responseJson = JsonConvert.DeserializeObject(responseString);
+                            // TODO: source out handling and/or better failure handling
+                            // Try to parse response as JSON object so we can extract result.download and result.key
+                            var responseObject = JObject.Parse(responseString);
+                            responseJson = responseObject;
+
+                            // If we have a mapping progress step available, update it with download and key
+                            if (step != null)
+                            {
+                                var resultToken = responseObject["result"];
+                                if (resultToken != null)
+                                {
+                                    var download = resultToken["download"]?.ToString();
+                                    var key = resultToken["key"]?.ToString();
+
+                                    if (!string.IsNullOrEmpty(download)) step.DownloadLink = download;
+                                    if (!string.IsNullOrEmpty(key)) step.JobKey = key;
+                                    step.ApiIdentifier = this.Identifier;
+
+                                    // persist the updated step back to the mapping progress
+                                    mappingProgress.UpdateStep(step);
+                                    ProgressHelper.SaveMappingProgress(mappingProgress, datasetId, versionId);
+                                }
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -370,6 +396,119 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
                         };
                     }
                 }
+            }
+        }
+
+        public override async Task<string> DownloadResultFile(long datasetId, long versionId, int stepId, MappingProgressModel mappingProgress)
+        {
+            var step = mappingProgress.GetStepById(stepId);
+            if (step == null) return null;
+            Debug.WriteLine("Succesfully loaded step from mappingProgress...");
+
+            var downloadLink = step.DownloadLink;
+            Debug.WriteLine(downloadLink, "DownloadLink: ");
+            Debug.WriteLine(datasetId.ToString(), versionId.ToString(), stepId.ToString(), "Getting Matched Filepath...");
+            var filepath = ProgressHelper.GetMatchedFilepath(datasetId, versionId, stepId, false);
+            Debug.WriteLine(filepath, "Retrieved filepath...");
+
+            if (filepath == null) return null;
+
+            if (string.IsNullOrWhiteSpace(downloadLink)) return null;
+
+            Debug.WriteLine("Starting download attempt on filepath: ", filepath);
+
+            try
+            {
+                // create a download marker file to indicate active download
+                var markerPath = filepath + ".downloading";
+                if (File.Exists(markerPath))
+                {
+                    // if marker is recent assume another process is downloading
+                    var lastWrite = File.GetLastWriteTimeUtc(markerPath);
+                    if (DateTime.UtcNow - lastWrite < TimeSpan.FromHours(24))
+                    {
+                        Debug.WriteLine("Download already in progress for " + filepath);
+                        return null;
+                    }
+                    else
+                    {
+                        // stale marker, try to remove
+                        try { File.Delete(markerPath); } catch { }
+                    }
+                }
+
+                try
+                {
+                    // write basic metadata to marker so other processes can inspect
+                    var markerContent = "download_start=" + DateTime.UtcNow.ToString("o") +
+                                        "\njobKey=" + (step?.JobKey ?? string.Empty) +
+                                        "\ndownloadLink=" + (step?.DownloadLink ?? string.Empty);
+                    File.WriteAllText(markerPath, markerContent, Encoding.UTF8);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Could not create marker file: " + ex.Message);
+                }
+                // ensure target directory exists
+                var targetDir = Path.GetDirectoryName(filepath);
+                if (!string.IsNullOrEmpty(targetDir) && !Directory.Exists(targetDir))
+                {
+                    Directory.CreateDirectory(targetDir);
+                }
+
+                // download the zip to a temporary file
+                var tempZip = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".zip");
+                using (var response = await _http.GetAsync(downloadLink))
+                {
+                    if (!response.IsSuccessStatusCode) return null;
+
+                    using (var fs = new FileStream(tempZip, FileMode.Create, FileAccess.Write, FileShare.None))
+                    {
+                        await response.Content.CopyToAsync(fs);
+                    }
+                }
+
+                // open the zip and find the first .csv entry
+                using (var archive = ZipFile.OpenRead(tempZip))
+                {
+                    ZipArchiveEntry csvEntry = null;
+                    foreach (var entry in archive.Entries)
+                    {
+                        if (entry == null) continue;
+                        if (entry.FullName.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
+                        {
+                            csvEntry = entry;
+                            break;
+                        }
+                    }
+
+                    if (csvEntry == null)
+                    {
+                        // no csv found
+                        try { File.Delete(markerPath); } catch { }
+                        return null;
+                    }
+
+                    // extract the csv entry to the desired filepath (overwrite if exists)
+                    // ZipArchiveEntry.ExtractToFile throws if file exists and overwrite not specified in older frameworks,
+                    // so delete target if exists first.
+                    if (File.Exists(filepath)) File.Delete(filepath);
+                    csvEntry.ExtractToFile(filepath);
+                }
+
+                // cleanup temp file
+                try { File.Delete(tempZip); } catch { }
+
+                try { File.Delete(markerPath); } catch { }
+
+                return filepath;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Failed to download or extract CLB result file: " + ex.Message);
+                // ensure marker cleanup on failure
+                try { var markerPath = filepath + ".downloading"; if (File.Exists(markerPath)) File.Delete(markerPath); } catch { }
+                return null;
             }
         }
 

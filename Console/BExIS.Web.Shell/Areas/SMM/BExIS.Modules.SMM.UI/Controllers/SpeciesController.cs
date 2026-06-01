@@ -31,6 +31,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,6 +47,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
     {
         // GET: Species
 
+        // Provides access to file based matching Api functions (file creation, - reading, matching via request, ...)
         MatchingApiProvider matchingApiProvider = new Helpers.MatchingAPIs.MatchingApiProvider();
 
         public ActionResult Index()
@@ -57,6 +59,150 @@ namespace BExIS.Modules.Smm.UI.Controllers
 
             return View();
         }
+
+        [JsonNetFilter]
+        [HttpGet]
+        public async Task<JsonResult> StartDownloadResultFile(long datasetId, long versionId, int stepId)
+        {
+            var user = ResolveUserAndRights(datasetId, out ActionResult errorResult);
+            if (user == null)
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Authentification error." }, HttpStatusCode.Unauthorized, JsonRequestBehavior.AllowGet);
+            }
+
+            var mappingProgressLocal = ProgressHelper.LoadMappingProgress(datasetId, versionId);
+            if (mappingProgressLocal == null)
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = "No mapping progress found." }, HttpStatusCode.Conflict, JsonRequestBehavior.AllowGet);
+            }
+
+            try
+            {
+                var stepLocal = mappingProgressLocal.GetStepById(stepId);
+                var apiIdentifier = stepLocal.ApiIdentifier;
+
+                MatchingApiBase apiBase = matchingApiProvider.GetApi(apiIdentifier);
+                Debug.WriteLine("Starting DownloadResultFile function with apiIdentifier: ", apiIdentifier);
+                var downloadedFilepath = await apiBase.DownloadResultFile(datasetId, versionId, stepId, mappingProgressLocal);
+
+                if (string.IsNullOrWhiteSpace(downloadedFilepath))
+                {
+                    return JsonWithStatus(new { success = false, id = datasetId, message = "Failed to download or extract matching result file." }, HttpStatusCode.Conflict, JsonRequestBehavior.AllowGet);
+                }
+
+                // TODO: this should never fail
+                // update mapping progress entry
+                if (stepLocal != null)
+                {
+                    stepLocal.ResultFileName = Path.GetFileName(downloadedFilepath);
+                    stepLocal.Done = true;
+                    mappingProgressLocal.UpdateStep(stepLocal);
+                    ProgressHelper.SaveMappingProgress(mappingProgressLocal, datasetId, versionId);
+                }
+
+                // return filepath for client to use (or filename)
+                return Json(new { success = true, id = datasetId }, JsonRequestBehavior.AllowGet);
+            }
+            catch (KeyNotFoundException)
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Matching API not found for the given identifier." }, HttpStatusCode.Conflict, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Unexpected error while downloading matching result file: " + ex.Message }, HttpStatusCode.InternalServerError, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [JsonNetFilter]
+        [HttpGet]
+        // Returns status information about a matching result file (exists, downloading, mapping progress coherence)
+        public JsonResult GetMatchingFileStatus(long datasetId, long versionId, int stepId)
+        {
+            var user = ResolveUserAndRights(datasetId, out ActionResult errorResult);
+            if (user == null)
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Authentification error." }, HttpStatusCode.Unauthorized, JsonRequestBehavior.AllowGet);
+            }
+
+            try
+            {
+                // locate versioned matching directory (may be null if folder missing)
+                var directory = ProgressHelper.GetVersionedMatchingPath(datasetId, versionId);
+                bool directoryExists = !string.IsNullOrEmpty(directory);
+
+                // expected final filepath for matched csv
+                var filename = ProgressHelper.GenMatchingFileName(true, datasetId, stepId);
+                string filepath = directoryExists ? Path.Combine(directory, filename) : Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), ProgressHelper.MatchingFolderName, versionId.ToString(), filename);
+
+                bool fileExists = System.IO.File.Exists(filepath);
+
+                // marker file indicates active download
+                var markerPath = filepath + ".downloading";
+                bool markerExists = System.IO.File.Exists(markerPath);
+
+                // inspect marker for potential staleness
+                bool markerStale = false;
+                DateTime? markerStart = null;
+                if (markerExists)
+                {
+                    try
+                    {
+                        var content = System.IO.File.ReadAllText(markerPath);
+                        // look for a line starting with download_start=
+                        foreach (var line in content.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            var trimmed = line.Trim();
+                            if (trimmed.StartsWith("download_start=", StringComparison.OrdinalIgnoreCase))
+                            {
+                                var ts = trimmed.Substring("download_start=".Length);
+                                if (DateTime.TryParse(ts, null, System.Globalization.DateTimeStyles.RoundtripKind, out DateTime dt))
+                                {
+                                    markerStart = dt.ToUniversalTime();
+                                }
+                                break;
+                            }
+                        }
+
+                        if (markerStart.HasValue)
+                        {
+                            markerStale = (DateTime.UtcNow - markerStart.Value) > TimeSpan.FromHours(24);
+                        }
+                    }
+                    catch { /* ignore parsing errors */ }
+                }
+
+                // mapping progress and step info
+                var mappingProgress = ProgressHelper.LoadMappingProgress(datasetId, versionId);
+                bool mappingProgressExists = mappingProgress != null;
+                var step = mappingProgress?.GetStepById(stepId);
+                bool stepExists = step != null;
+
+                return Json(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        DirectoryExists = directoryExists,
+                        FileExists = fileExists,
+                        MarkerExists = markerExists,
+                        MarkerStale = markerStale,
+                        MarkerStart = markerStart,
+                        MappingProgressExists = mappingProgressExists,
+                        StepExists = stepExists,
+                        StepDone = step?.Done ?? false,
+                        DownloadLinkPresent = !string.IsNullOrWhiteSpace(step?.DownloadLink),
+                        JobKeyPresent = !string.IsNullOrWhiteSpace(step?.JobKey)
+                    }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error while checking matching file status: " + ex.Message);
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Error while checking matching file status." }, HttpStatusCode.Conflict, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
 
         private static readonly HttpClient _httpClient = new HttpClient();
 
@@ -531,7 +677,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
 
         [JsonNetFilter]
         [HttpPost]
-        public async Task<JsonResult> MatchNextFile(long datasetId, long versionId)
+        public async Task<JsonResult> MatchNextFile(long datasetId, long versionId, string apiIdentifier)
         {
             var user = ResolveUserAndRights(datasetId, out ActionResult errorResult);
             if (user == null)
@@ -545,11 +691,13 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "No mapping progress found." }, HttpStatusCode.Unauthorized);
             }
 
-            string nextFileName = mappingProgress.GetNextPendingInputFileName();
-            if (string.IsNullOrWhiteSpace(nextFileName))
+            StepEntry step = mappingProgress.GetNextPendingStepEntry();
+            if (step == null)
             {
-                return JsonWithStatus(new { success = false, id = datasetId, message = "No pending matching input file found." }, HttpStatusCode.Conflict);
+                return JsonWithStatus(new { success = false, id = datasetId, message = "No pending StepEntry found." }, HttpStatusCode.Conflict);
             }
+
+            string nextFileName = step.InputFileName;
 
             // TODO: - pfad logik vereinfachen
             string directory = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), ProgressHelper.MatchingFolderName, versionId.ToString());
@@ -562,13 +710,25 @@ namespace BExIS.Modules.Smm.UI.Controllers
 
             string filepath = Path.Combine(directory, nextFileName);
 
-            var api_result = await SendToChecklistBank(datasetId, filepath, mappingProgress);
-
-            if (api_result == null) { 
-                return JsonWithStatus(new { success = false, id = datasetId, message = "Error while calling ChecklistBank API." }, HttpStatusCode.Conflict);
-            } else
+            try
             {
-                return api_result;
+                MatchingApiBase apiBase = matchingApiProvider.GetApi(apiIdentifier);
+                MatchingApiResponse response = await apiBase.MatchAsync(datasetId, versionId, filepath, mappingProgress);
+                response.StepId = step.Id;
+
+                return Json(new { success = true, data = response.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = ex.Message }, HttpStatusCode.Conflict);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Matching API not found for the given identifier." }, HttpStatusCode.Conflict);
+            }
+            catch (Exception ex)
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Unexpected error while generating matching input file: " + ex.Message }, HttpStatusCode.InternalServerError);
             }
         }
 

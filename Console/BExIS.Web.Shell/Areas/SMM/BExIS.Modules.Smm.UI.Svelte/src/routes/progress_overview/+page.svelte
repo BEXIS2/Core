@@ -56,6 +56,8 @@
 		const { type, row } = action.detail;
 		switch (type) {
 			case 'READ':
+                mappingSelection.update(s => ({ ...s, stepId: row.id }));
+                goto("/matchingresult");
 				break;
 
 			default:
@@ -88,14 +90,15 @@
         }
         console.log(responseCreate);
 
-        // const responseMatch = await matchNextFile($mappingSelection.datasetId, $mappingSelection.versionId);
+        const responseMatch = await matchNextFile($mappingSelection.datasetId, $mappingSelection.versionId, "CLB");
         
-        // if (!responseMatch.success) {
-        //     console.error("Error generating new Matching input file.");
-        //     console.log(responseMatch);
-        //     return;
-        // }
-        // console.log(responseMatch);
+        if (!responseMatch.success) {
+            console.error("Error generating new Matching input file.");
+            console.log(responseMatch);
+            return;
+        }
+        console.log(responseMatch);
+        mappingSelection.update(s => ({ stepId: responseMatch.data.data?.stepId }));
     }
 
 </script>
@@ -107,7 +110,7 @@
 >
     <h2 class="h2">Progress Overview</h2>
 
-    <p>This page shows your current mapping progress for the selected Dataset with ID: {$mappingSelection.datasetId}</p>
+    <p>This page shows your current mapping progress for the selected Dataset with <b>ID:</b> {$mappingSelection.datasetId} <b>VerionNr:</b> {$mappingSelection.versionNr} <b>VersionID:</b> {$mappingSelection.versionId} <b>StepID:</b> {$mappingSelection.stepId}</p>
 
     {#if tailorError}
         <Alert cssClass="variant-filled-error">
@@ -134,7 +137,7 @@
                 {#if !data.hasMappingProgress}
                     <p>No mapping progress data available. Something went wrong.</p>
                 {:else}
-                    {#if true || data.mappingProgress.steps.length == 0}
+                    {#if data.mappingProgress.steps.length == 0}
                         <p>For this dataset, no matching request have been done to external APIs. Feel free to check/edit the current state or begin matching.</p>
                         <div class="flex items-center justify-center gap-x-2">
                             <button class="btn variant-filled-secondary" on:click|preventDefault={() => goto("/tailor_view")}>View State</button>

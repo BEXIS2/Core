@@ -239,7 +239,7 @@ namespace BExIS.Modules.Smm.UI.Helpers
             }
         }
 
-        public static string GetMatchedFilepath(long datasetId, long versionId, int stepId)
+        public static string GetMatchedFilepath(long datasetId, long versionId, int stepId, bool exists = true)
         {
             string directory = GetVersionedMatchingPath(datasetId, versionId);
             if (directory == null) {
@@ -254,7 +254,13 @@ namespace BExIS.Modules.Smm.UI.Helpers
             }
             else
             {
-                return null;
+                if (exists)
+                {
+                    return null;
+                } else
+                {
+                    return filepath;
+                }
             }
 
         }

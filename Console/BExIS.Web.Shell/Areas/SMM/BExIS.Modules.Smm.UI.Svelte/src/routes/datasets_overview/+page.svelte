@@ -60,13 +60,13 @@
 		switch (type) {
             // action to begin new mapping process on selected dataset
 			case 'BEGIN':
-                mappingSelection.update(s => ({ datasetId: row.id, datastructureId: row.dataStructureId, versionId: row.versionId }));
+                mappingSelection.update(s => ({ datasetId: row.id, datastructureId: row.dataStructureId, versionId: row.versionId, versionNr: row.versionNr }));
                 goto("/headermapping");
 				break;
 
             // action to continue mapping process on selected dataset 
             case 'CONTINUE':
-                mappingSelection.update(s => ({ datasetId: row.id, datastructureId: row.dataStructureId, versionId: row.versionId }));
+                mappingSelection.update(s => ({ datasetId: row.id, datastructureId: row.dataStructureId, versionId: row.versionId, versionNr: row.versionNr }));
                 goto("/progress_overview");
                 break;
 

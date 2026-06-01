@@ -38,9 +38,11 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
         // NOTE: different APIs need different file structure and input format
         public abstract (string FilePath, int RowCount) GenerateInputFile(long datasetId, long dataStructureId, long versionId, int stepId);
 
+        public abstract Task<string> DownloadResultFile(long datasetId, long versionId, int stepId, MappingProgressModel mappingProgress);
+
         // Method to read the result file and return a list of matching results
         // NOTE: different APIs have different result file structure and output format
-        // GOAL: unify this process into one format for display (the frontend should not care about different formats)
+        // NOTE: Try to always parse the file into a List of MatchingResultRow
         public abstract List<MatchingResultRow> ReadResultFile(string filepath);
 
         // Method to iterate result file and accept a subset of results
