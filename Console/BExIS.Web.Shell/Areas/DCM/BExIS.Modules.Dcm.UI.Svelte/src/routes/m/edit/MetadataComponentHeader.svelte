@@ -3,8 +3,9 @@
 	import { convertDisplayName } from '../metadataShared';
 	import { faPlus, faChevronUp, faChevronDown, faQuestion } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
-  import { activeStore, hideStore, validationStore } from '$lib/components/utils/metadata/stores';
+  import { activeStore, hideStore, metadataStore, validationStore } from '$lib/components/utils/metadata/stores';
   import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
 	
 
  export let required: boolean = false;
@@ -13,28 +14,33 @@
  export let p:string = '';
  export let description: string = '';
  
- let active: boolean = false;
- $:active;
+
+
 
  let label: string = path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path;
  let showDescription: boolean = false;
 
  const togglePath = p!=='' ? p : path; 
 
+export let active: boolean = false;
+ $:active;
 
- onMount(() => {
-  // console.log('MetadataComponentHeader mounted with path: ', path);   
+
+ onMount(() => { 
+
+		console.log('complexComponentWrapper onMount', path, $activeStore);
     if(!$activeStore.includes(path)) {
       initActivity();
     }
     else {
       active = true;
     }
-    //console.log('init-active', $activeStore);
- });
+
+  });
 
 function initActivity() {
-  active = isActive(p,required);
+  active = isActive(path,required);
+
   if(active) {
     setActive(path)
   }
@@ -72,11 +78,7 @@ function removeFromValidationStore(path: string) {
 
 </script>
 
-
-
 <div class="card flex min-h-10 bg-primary-300 dark:bg-primary-800 pl-2 items-center gap-2">
-
- 
 <div>
     {#if !required}
       <input class="checkbox" type="checkbox" bind:checked={active} on:change={()=>changeFn(active)}/>
