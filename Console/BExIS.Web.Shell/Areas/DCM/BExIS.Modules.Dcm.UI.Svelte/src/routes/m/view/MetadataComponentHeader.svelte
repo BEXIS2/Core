@@ -29,11 +29,12 @@
     else {
       active = true;
     }
-    //console.log('init-active', $activeStore);
+    console.log('init-active', $activeStore);
  });
 
 function initActivity() {
   active = isActive(p,required);
+
   if(active) {
     setActive(path)
   }

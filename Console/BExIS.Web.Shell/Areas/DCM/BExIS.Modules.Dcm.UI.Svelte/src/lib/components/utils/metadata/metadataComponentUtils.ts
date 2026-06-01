@@ -297,31 +297,36 @@ export function activateShow(path: string) {
 	hideStore.set(hideStoreValue);
 }
 
-
-// utils.js or inside <script>
 export function hasValue(node) {
-  if (node === null || node === undefined) return false;
+  if (node == null) return false;
 
-  // If it's an array, check if any element has a value
-  if (Array.isArray(node)) {
-    return node.some(hasValue);
-  }
+  // if (Array.isArray(node)) {
+  //   return node.some(hasValue);
+  // }
 
-  // If it's an object, check if any property has a value
   if (typeof node === 'object') {
-    return Object.values(node).some(hasValue);
+    return Object.entries(node).some(([key, value]) => {
+      if (key === '@ref' || key === '@partyid' || key.charAt(0) === '@') return false;
+      return hasValue(value);
+    });
   }
 
-  // If it's a string, trim it and check length; otherwise, check truthiness (for numbers/bools)
-  return typeof node === 'string' ? node.trim().length > 0 : true;
+  if (typeof node === 'string') {
+  	console.log("🚀 ~ hasValue ~ node:", node, node.trim().length)
+		 return node.trim().length > 0;
+  }
+
+  //return Boolean(node);
+
+		return false;
 }
 
 // p = path:string & r = required: boolean
 export function isActive(p:string, r:boolean):boolean {
   // logic to determine if the component is active
+
   const node = getNodeByPath(p);
   const hasData = hasValue(node); // replace with actual check for data presence
-
   if(r) {
     return true; // if required, it's always active
   } else if (hasData)

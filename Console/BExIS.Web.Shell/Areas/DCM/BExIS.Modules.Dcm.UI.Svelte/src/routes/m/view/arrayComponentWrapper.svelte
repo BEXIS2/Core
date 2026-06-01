@@ -50,7 +50,7 @@
 									</div>
 									
 									</div>
-									<div>								
+									<div>					
 										<ComplexComponent
 											complexComponent={arrayComponent.items}
 											path={path + '.' + index}
