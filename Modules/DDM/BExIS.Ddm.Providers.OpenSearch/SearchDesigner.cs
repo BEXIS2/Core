@@ -208,6 +208,8 @@ namespace BExIS.Ddm.Providers.OpenSearch
             // parse old VielModel to new SearchConfig obj format
             //var newConfig = SearchViewModelMapper.ToSearchConfig(searchAttributeList);
 
+            #region ForTesting
+            /* FOR TESTING PURPOSE ONLY
             // FOR TESTING: Loading an edited configuration
             var edit_config = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "OpenSearch", "Config", "edit_SearchConfig.json");
             if (!File.Exists(edit_config))
@@ -265,6 +267,8 @@ namespace BExIS.Ddm.Providers.OpenSearch
             _indexer.AppendBoundingBoxSpatialData(SearchConfigManager.GetLocalConfigForEntityTemplate(2), metadata, doc);
 
             _indexer.TestToIdx(doc);
+            */
+            #endregion
         }
 
 
