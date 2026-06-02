@@ -49,13 +49,14 @@ const dispatch = createEventDispatcher();
    partyMappingObject = mappingComponentConfig?.partyMappingObject;
    pathWithoutIndices = removeJsonPathIndices(path);
    list = mappingComponentConfig?.partyMappingObject?.list ?? [];
+   console.log("🚀 ~ list:",partyMappingObject, list)
 
 			if(value)
 			{
 				 if(mappingComponentConfig.partyMappingObject.complexity){
 
 						// get party id from parent
-						console.log("🚀 ~ onMount ~ path:", path)
+						//console.log("🚀 ~ onMount ~ path:", path)
 						const parentPath = getParentPath(path);
 						partyId = getPartyIdByPath(parentPath);
 									//alert(partyId);
@@ -86,7 +87,7 @@ const dispatch = createEventDispatcher();
 	// we need to update the value with the new selected party and also trigger the validation for this field because maybe there are some validation rules on the party id
 	async function onUpdateParty(e: any){
 			
-				// console.log("xyz Update Party",value, e.detail);
+				console.log("onUpdateParty",value, e.detail);
 				const partyid = e.detail.partyId;
 				const newValue	= e.detail.value;
 
@@ -109,6 +110,7 @@ const dispatch = createEventDispatcher();
 							updateMetadataStore(path, newValue, isMulti, undefined, undefined);
 
 							const parentPath = getParentPath(path);
+							console.log("🚀 ~ onUpdateParty ~ parentPath:", parentPath)
 							const parentPathWithoutIndices = removeJsonPathIndices(parentPath);
 							
 						// if mapping is complex
