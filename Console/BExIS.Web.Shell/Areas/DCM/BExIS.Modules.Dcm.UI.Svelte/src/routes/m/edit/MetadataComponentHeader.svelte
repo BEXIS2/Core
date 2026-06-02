@@ -28,7 +28,7 @@ export let active: boolean = false;
 
  onMount(() => { 
 
-		console.log('complexComponentWrapper onMount', path, $activeStore);
+		//console.log('complexComponentWrapper onMount', path, $activeStore);
     if(!$activeStore.includes(path)) {
       initActivity();
     }

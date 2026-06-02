@@ -165,6 +165,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (MappingUtils.PartyAttrIsMain(id, type))
             {
                 x = MappingUtils.GetAllMatchesInSystem(id, type, "");
+                //x = x.Distinct(e => e.Id);   
             }
 
             return x;

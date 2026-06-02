@@ -312,7 +312,7 @@ export function hasValue(node) {
   }
 
   if (typeof node === 'string') {
-  	console.log("🚀 ~ hasValue ~ node:", node, node.trim().length)
+  	//console.log("🚀 ~ hasValue ~ node:", node, node.trim().length)
 		 return node.trim().length > 0;
   }
 

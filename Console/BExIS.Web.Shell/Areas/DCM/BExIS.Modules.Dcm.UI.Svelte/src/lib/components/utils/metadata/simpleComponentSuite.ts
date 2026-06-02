@@ -25,7 +25,7 @@ const suite = create((fieldName: string='') => {
             if((fieldName && fieldName == item.path) || fieldName === ''){
 
                 const data = getValueByPath(item.path);
-                console.log("🚀 ~ data:", data)
+                //console.log("🚀 ~ data:", data)
 
                 //Validate required field
                 if(item.required){
