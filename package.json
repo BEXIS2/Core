@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "install:all": "pnpm install",
+    "install:all": "pnpm install --frozen-lockfile --side-effects-cache=false",
     "build:all": "pnpm -r --if-present run build",
     "build:all:parallel": "pnpm -r --parallel --if-present run build",
     "postinstall": "patch-package"
