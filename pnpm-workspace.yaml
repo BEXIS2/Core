@@ -1,0 +1,14 @@
+packages:
+  - 'Console/BExIS.Web.Shell.Svelte'
+  - 'Console/BExIS.Web.Shell/Areas/**/BExIS.Modules.*.UI.Svelte'
+allowBuilds:
+  '@bexis2/bexis2-rpm-ui': true
+  '@bexis2/bexis2-dim-ui@0.0.1': true
+  '@sveltejs/kit': true
+  esbuild: true
+  svelte-preprocess: true
+minimumReleaseAge: 1440
+minimumReleaseAgeExclude: 
+  - '@bexis2/*'
+shamefullyHoist: true
+  

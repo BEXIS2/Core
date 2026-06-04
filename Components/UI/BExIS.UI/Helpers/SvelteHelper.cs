@@ -9,7 +9,7 @@ namespace BExIS.UI.Helpers
     {
         public static string GetApp(string module)
         {
-            return getScript(module, ".svelte-kit/generated/client-optimized/app.js");
+            return getScript(module, "entry/app");
         }
 
         public static string GetAppPath(string module)
@@ -75,7 +75,7 @@ namespace BExIS.UI.Helpers
                 string json = r.ReadToEnd();
                 Dictionary<string, Dictionary<string, object>> manifest = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(json);
 
-                var page = manifest[key];
+                var page = manifest["entry/start"];
 
                 string pagehash = page["file"].ToString();//"_page.svelte-2b7e1fbb.js";
 
@@ -85,7 +85,7 @@ namespace BExIS.UI.Helpers
 
         public static string GetStart(string module)
         {
-            return getScript(module, "node_modules/@sveltejs/kit/src/runtime/client/entry.js");
+            return getScript(module, "entry/start");
         }
 
         private static string getCss(string module, string key)
@@ -129,11 +129,21 @@ namespace BExIS.UI.Helpers
             {
                 string json = r.ReadToEnd();
                 Dictionary<string, Dictionary<string, object>> manifest = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(json);
+ 
+                string pagehash = "";
 
-                var page = manifest[key];
-
-                string pagehash = page["file"].ToString();//"_page.svelte-2b7e1fbb.js";
-
+                foreach (var child in manifest)
+                { 
+                    var o = child.Value;
+                    if(o!=null && o.ContainsKey("name") && !string.IsNullOrEmpty(key) &&
+                    o["name"].Equals(key))
+                    {
+                        pagehash = o["file"].ToString();
+                        continue;
+                    }
+                }
+              
+          
                 return svelteBuildPath + pagehash;
             }
         }
