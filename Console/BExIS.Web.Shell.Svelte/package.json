@@ -6,7 +6,7 @@
 	"scripts": {
 		"preinstall": "npx only-allow pnpm",
 		"dev": "pnpm vite --filter bexis.web.shell.svelte dev",
-		"build": "pnpm vite --filter bexis.web.shell.svelte build",
+		"build": "pnpm vite --filter bexis.web.shell.svelte build --logLevel error",
 		"preview": "pnpm vite --filter bexis.web.shell.svelte preview",
 		"test": "pnpm playwright test",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -14,7 +14,6 @@
 		"test:unit": "vitest",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
-		
 		"create patch": "npx patch-package @sveltejs/kit",
 		"install local bexis2-core-ui": "pnpm install C:/Projects/github.com/BEXIS2/bexis2-core-ui",
 		"reinstall packages": "pnpm install --force",
@@ -26,11 +25,7 @@
 		"@codemirror/lang-javascript": "6.2.2",
 		"@codemirror/lang-json": "6.0.1",
 		"@codemirror/theme-one-dark": "6.1.2",
-	
-		"autoprefixer": "10.4.19",
 		"codemirror": "6.0.1"
-		
-		
 	},
 	"type": "module",
 	"dependencies": {

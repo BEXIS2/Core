@@ -4,7 +4,7 @@
 	"private": false,
 	"scripts": {
 		"dev": "pnpm vite --filter @bexis2/bexis2-ddm-ui dev",
-		"build": "pnpm vite --filter @bexis2/bexis2-ddm-ui build",
+		"build": "pnpm vite --filter @bexis2/bexis2-ddm-ui build --logLevel error",
 		"build watch": "pnpm vite --filter @bexis2/bexis2-ddm-ui build --watch",
 		"preview": "pnpm vite --filter @bexis2/bexis2-ddm-ui preview",
 		"test": "playwright test",
@@ -13,7 +13,6 @@
 		"test:unit": "vitest",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
-		
 		"create patch": "npx patch-package @sveltejs/kit",
 		"package": "svelte-package",
 		"build package": "svelte-kit sync && svelte-package --watch",
@@ -22,18 +21,11 @@
 		"check outdated": "pnpm outdated",
 		"upgrade all": "pnpm ncu --upgrade"
 	},
-	"devDependencies": {
-		
-	},
 	"type": "module",
 	"dependencies": {
 		"@bexis2/bexis2-core-ui": "0.4.81",
 		"@floating-ui/dom": "1.6.8",
-		"@sveltejs/adapter-static": "3.0.2",
-		"@sveltejs/package": "2.3.2",
 		"paneforge": "^0.0.6",
-		"patch-package": "8.0.0",
-		"svelte-adapter-github": "1.0.0-next.0",
 		"svelte-fa": "4.0.2",
 		"svelte-headless-table": "0.18.2",
 		"svelte-select": "5.8.3",
