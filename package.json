@@ -10,6 +10,8 @@
 		"check outdated": "pnpm outdated"
 	},
 	"devDependencies": {
+		"@fortawesome/free-regular-svg-icons": "^7.2.0",
+		"@fortawesome/free-solid-svg-icons": "6.6.0",
 		"@playwright/test": "1.45.3",
 		"@skeletonlabs/skeleton": "2.10.2",
 		"@skeletonlabs/tw-plugin": "0.4.0",
