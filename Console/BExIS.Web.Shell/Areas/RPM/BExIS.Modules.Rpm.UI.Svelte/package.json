@@ -5,7 +5,7 @@
   "description": "Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).",
   "keywords": [
     "bexis2",
-    "libary"
+    "library"
   ],
   "homepage": "https://github.com/BEXIS2/Core#readme",
   "bugs": {
@@ -38,61 +38,29 @@
     "src/lib"
   ],
   "scripts": {
-    "dev": "vite dev",
-    "build": "vite build ",
-    "preview": "vite preview",
+    "dev": "pnpm vite --filter @bexis2/bexis2-rpm-ui dev",
+    "build": "pnpm vite --filter @bexis2/bexis2-rpm-ui build --logLevel error",
+    "preview": "pnpm vite --filter @bexis2/bexis2-rpm-ui preview",
     "test": "playwright test",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "test:unit": "vitest",
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
     "format": "prettier --plugin-search-dir . --write .",
-    "postinstall": "patch-package",
     "create patch": "npx patch-package @sveltejs/kit",
     "build package": "svelte-kit sync && svelte-package --watch",
-    "check outdated": "npm outdated",
-    "upgrade all": "ncu --upgrade",
-    "0.npm login": "npm login",
-    "1.npm - init": "npm init --scope bexis2",
+    "check outdated": "pnpm outdated",
+    "upgrade all": "pnpm ncu --upgrade",
+    "0.npm login": "pnpm login",
+    "1.npm - init": "pnpm init --scope bexis2",
     "2.npm - package": "svelte-package",
-    "3.npm - publish": "npm publish --access public"
+    "3.npm - publish": "pnpm publish --access public"
   },
   "dependencies": {
     "@bexis2/bexis2-core-ui": "0.4.69",
     "@floating-ui/dom": "1.6.8",
-    "@sveltejs/adapter-static": "3.0.2",
-    "@sveltejs/package": "2.3.2",
     "papaparse": "5.4.1",
-    "patch-package": "8.0.0",
     "svelte-fa": "4.0.2"
-  },
-  "devDependencies": {
-    "@playwright/test": "1.45.3",
-    "@skeletonlabs/skeleton": "2.10.2",
-    "@skeletonlabs/tw-plugin": "0.4.0",
-    "@sveltejs/adapter-auto": "3.2.2",
-    "@sveltejs/kit": "2.5.19",
-    "@tailwindcss/forms": "0.5.7",
-    "@tailwindcss/line-clamp": "0.4.4",
-    "@tailwindcss/typography": "0.5.13",
-    "@types/node": "22.0.2",
-    "@types/papaparse": "5.3.14",
-    "@typescript-eslint/eslint-plugin": "8.0.0",
-    "@typescript-eslint/parser": "8.0.0",
-    "autoprefixer": "10.4.19",
-    "eslint": "9.8.0",
-    "eslint-config-prettier": "9.1.0",
-    "postcss": "8.4.40",
-    "prettier": "3.3.3",
-    "prettier-plugin-svelte": "3.2.6",
-    "svelte": "4.2.18",
-    "svelte-check": "3.8.5",
-    "svelte-headless-table": "0.18.2",
-    "tailwindcss": "3.4.7",
-    "tslib": "2.6.3",
-    "typescript": "5.5.4",
-    "vite": "5.3.5",
-    "vitest": "2.0.5"
   },
   "module": "./src/lib/index.ts"
 }
