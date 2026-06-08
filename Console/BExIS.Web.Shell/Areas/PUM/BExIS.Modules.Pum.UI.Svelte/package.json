@@ -22,15 +22,15 @@
 		"upgrade all": "pnpm ncu --upgrade"
 	},
 	"devDependencies": {
-		"@types/papaparse": "5.3.14"
+		"@types/papaparse": "5.5.2"
 	},
 	"type": "module",
 	"dependencies": {
-		"@bexis2/bexis2-core-ui": "0.4.76",
-		"@floating-ui/dom": "1.6.8",
-		"jsonpath-plus": "^10.3.0",
-		"papaparse": "5.4.1",
-		"svelte-fa": "4.0.2",
+		"@bexis2/bexis2-core-ui": "0.4.81",
+		"@floating-ui/dom": "1.7.6",
+		"jsonpath-plus": "^10.4.0",
+		"papaparse": "5.5.2",
+		"svelte-fa": "4.0.4",
 		"svelte-json-tree": "^2.2.0"
 	},
 	"author": "David Schöne",

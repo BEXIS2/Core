@@ -11,8 +11,9 @@ allowBuilds:
   svelte-preprocess: true
 # only use versions that are at least 1 day old, to avoid issues with broken or dangerous releases
 minimumReleaseAge: 1440
-minimumReleaseAgeExclude: 
+minimumReleaseAgeExclude:
   - '@bexis2/*'
+patchedDependencies:
+  '@sveltejs/kit@2.63.0': patches/@sveltejs__kit@2.63.0.patch
 # hoist all dependencies to the workspace root, to avoid issues with multiple versions of the same dependency
 shamefullyHoist: true
-  
