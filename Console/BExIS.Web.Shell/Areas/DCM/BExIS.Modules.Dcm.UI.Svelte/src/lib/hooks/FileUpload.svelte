@@ -31,9 +31,12 @@
 	let context = 'fileupload';
 	let error = '';
 
-	$: $latestFileReaderDate, load();
-	$: $latestSubmitDate, load();
-	$: $latestDataDescriptionDate, load();
+	// only run reactive reloads after initial load has completed
+	let mounted = false;
+	$: $latestFileReaderDate, reload();
+	$: $latestSubmitDate, reload();
+	$: $latestDataDescriptionDate, reload();
+
 
 	let model: FileUploadModel;
 	$: model;
@@ -41,7 +44,8 @@
 	let fileReaderSelectedFile = '';
 
 	onMount(async () => {
-		load();
+		await load();
+		mounted = true;
 	});
 
 	$: loading = false;
@@ -58,11 +62,14 @@
 	}
 
 	async function reload() {
-		/*update store*/
-		latestFileUploadDate.set(Date.now());
+		if(mounted) {
+	
+			/*update store*/
+			latestFileUploadDate.set(Date.now());
 
-		/* load data*/
-		load();
+			/* load data*/
+			load();
+		}
 	}
 
 	function success(e) {
