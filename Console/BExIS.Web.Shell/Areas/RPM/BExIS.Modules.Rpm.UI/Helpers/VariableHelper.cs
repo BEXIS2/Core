@@ -126,7 +126,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
         {
             using (var constraintManager = new ConstraintManager())
             {
-                var constraints = constraintManager.Get().Where(c => c.DataContainer == null);
+                var constraints = constraintManager.ConstraintRepository.Query(c => c.DataContainer == null);
                 List<ListItem> list = new List<ListItem>();
 
                 if (constraints.Any())
@@ -196,6 +196,36 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
                 return item;
             }
+        }
+
+        public VariableTemplateItem ConvertTo(VariableTemplate variableTemplate, UnitManager unitManager, string group = "")
+        {
+          
+            VariableTemplateItem item = new VariableTemplateItem();
+            item.Id = variableTemplate.Id;
+            item.Text = variableTemplate.Label;
+            item.DataType = variableTemplate.DataType.Name;
+            item.DataTypes = variableTemplate.Unit.AssociatedDataTypes.Select(x => x.Name).ToList();
+            item.Meanings = variableTemplate.Meanings.Select(x => x.Name).ToList();
+            item.Group = group;
+            item.Description = variableTemplate.Description;
+            item.Unit = variableTemplate.Unit.Abbreviation;
+
+
+            if (variableTemplate.VariableConstraints.Any())
+                item.Constraints = variableTemplate.VariableConstraints.Select(x => x.Name).ToList();
+
+            // set units also from dimensions
+            item.Units = new List<string>() { variableTemplate.Unit.Abbreviation }; // add unit
+            if (variableTemplate.Unit.Dimension != null) // if dimension exist add all units belong to this dimension
+            {
+                var dimension = unitManager.DimensionRepo.Get(variableTemplate.Unit.Dimension.Id);
+                dimension.Units.ToList().ForEach(u => item.Units.Add(u.Abbreviation));
+                item.Units.Distinct();
+            }
+
+            return item;
+            
         }
 
         public List<MeaningItem> ConvertTo(ICollection<Meaning> meanings)

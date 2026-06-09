@@ -804,7 +804,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 {
                     foreach (var variableTemplate in variableTemplates.Where(t => t.Approved))
                     {
-                        list.Add(_helper.ConvertTo(variableTemplate, "other"));
+                        list.Add(_helper.ConvertTo(variableTemplate, unitManager, "other"));
                     }
                 }
 
