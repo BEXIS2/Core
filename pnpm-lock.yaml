@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      pnpm:
+        specifier: ^10.34.1
+        version: 10.34.1
     devDependencies:
       '@fortawesome/free-regular-svg-icons':
         specifier: ^7.2.0
@@ -2015,6 +2019,11 @@ packages:
   playwright@1.45.3:
     resolution: {integrity: sha512-QhVaS+lpluxCaioejDZ95l4Y4jSFCsBvl2UZkpeXlzxmqS+aABr5c82YmfMHrL6x27nvrvykJAFpkzT2eWdJww==}
     engines: {node: '>=18'}
+    hasBin: true
+
+  pnpm@10.34.1:
+    resolution: {integrity: sha512-tY+95tymapKVOAIVgfZItFcLbKGbGOfL1/LAenskRUFVOI2s3wjyrzZ46IptH+BPnWCd8kv1FzWgYOoEGzdKtw==}
+    engines: {node: '>=18.12'}
     hasBin: true
 
   postcss-import@15.1.0:
@@ -4346,6 +4355,8 @@ snapshots:
       playwright-core: 1.45.3
     optionalDependencies:
       fsevents: 2.3.2
+
+  pnpm@10.34.1: {}
 
   postcss-import@15.1.0(postcss@8.5.15):
     dependencies:

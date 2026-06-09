@@ -5,7 +5,7 @@
 	"scripts": {
 		"install:all": "pnpm install --frozen-lockfile --side-effects-cache=false",
 		"install:all:local": "pnpm install",
-		"build:all": "pnpm -r --sort run build",
+		"build:all": "pnpm -r --sort run build ",
 		"postinstall": "patch-package",
 		"check outdated": "pnpm outdated"
 	},
@@ -30,8 +30,8 @@
 		"autoprefixer": "10.5.0",
 		"eslint": "9.8.0",
 		"eslint-config-prettier": "9.1.0",
-		"postcss": "8.5.15",
 		"patch-package": "8.0.0",
+		"postcss": "8.5.15",
 		"prettier": "3.8.3",
 		"prettier-plugin-svelte": "3.2.6",
 		"svelte": "^4.2.19",
@@ -41,6 +41,8 @@
 		"typescript": "5.5.4",
 		"vite": "5.4.14",
 		"vitest": "2.0.5"
+	},
+	"dependencies": {
+		"pnpm": "^10.34.1"
 	}
-
 }
