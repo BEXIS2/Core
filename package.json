@@ -39,5 +39,8 @@
 		"typescript": "5.5.4",
 		"vite": "5.4.21",
 		"vitest": "2.0.5"
+	},
+	"dependencies": {
+		"pnpm": "^10.34.1"
 	}
 }

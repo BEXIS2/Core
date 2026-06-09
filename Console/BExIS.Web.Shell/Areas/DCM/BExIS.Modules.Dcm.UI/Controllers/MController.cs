@@ -119,14 +119,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     var mappings = mappingManager.GetChildMappingFromRoot(rootMapping.Id, 2);
 
                     // get party mappings 
-                    var partymappings = mappings.Where(m => m.Target.Type == LinkElementType.PartyType || m.Target.Type == LinkElementType.PartyCustomType).ToList();
+                    var partymappings = mappings.Where(m => m.Target.Type == LinkElementType.PartyCustomType).ToList();
                     var keymappings = mappings.Where(m => m.Target.Type == LinkElementType.Key && ints.Contains(m.Target.ElementId)).ToList();
-
 
                     var presult = partymappings.Select(m => new
                     {
                         Path = cleanPath(m.Source.XPath),
-                        ParentPath = cleanPath(m.Parent.Source.XPath),
+                        ParentPath = getParentPath(cleanPath(m.Source.XPath)),   // use tha path from the source and create tha parent path because parent is allways one level up.
                         LinkElementId = m.Source.Id,    
                         Selector = MappingUtils.PartyAttrIsMain(m.Source.ElementId, m.Source.Type),
                         Complexity = m.Source.ElementId != m.Parent.Source.ElementId,
@@ -183,6 +182,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             n = n.Replace("/", ".");
 
             return n;
+        }
+
+        private string getParentPath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return "";
+            }
+
+            // Split the path by '/'
+            string[] parts = path.Split('.');
+
+            // Join everything back together except the last item
+            // (parts.Length - 1 ignores the last element)
+            return string.Join(".", parts, 0, parts.Length - 1);
         }
 
         public JsonResult GetPartyValue(long partyId, long linkId)
