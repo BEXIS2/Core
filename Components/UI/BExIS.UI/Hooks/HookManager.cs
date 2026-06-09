@@ -137,10 +137,21 @@ namespace BExIS.UI.Hooks
 
             if (File.Exists(filepath)) // check if file exist
             {
-                FileHelper.WaitForFile(filepath, FileAccess.Read); // wait if the file is still open
+                //FileHelper.WaitForFile(filepath, FileAccess.Read); // wait if the file is still open
+                using (var fs = new FileStream(
+                        filepath,
+                        FileMode.Open,
+                        FileAccess.Read,
+                        FileShare.Read))
+                {
+                    using (var reader = new StreamReader(fs))
+                    {
 
-                // convert json to object
-                cache = JsonConvert.DeserializeObject<T>(File.ReadAllText(filepath));
+                        var j = reader.ReadToEnd();
+                        cache = JsonConvert.DeserializeObject<T>(j);
+
+                    }
+                }
             }
 
             return cache;

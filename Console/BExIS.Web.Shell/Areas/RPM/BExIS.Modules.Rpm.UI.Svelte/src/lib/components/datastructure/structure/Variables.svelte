@@ -64,21 +64,21 @@
 	const modalStore = getModalStore();
 
 	onMount(async () => {
-		const datatypes = await getDataTypes();
-		dataTypeStore.set(datatypes);
+		// Fire all requests simultaneously
+const [datatypes, units, variableTemplates, meanings, constraints] = await Promise.all([
+    getDataTypes(),
+    getUnits(),
+    getVariableTemplates(),
+    getMeanings(),
+    getConstraints()
+]);
 
-		const units = await getUnits();
-		unitStore.set(units);
-
-		const variableTemplates = await getVariableTemplates();
-		templateStore.set(variableTemplates);
-
-		const meanings = await getMeanings();
-		meaningsStore.set(meanings);
-		console.log('🚀 ~ file: Variables.svelte:50 ~ onMount ~ meanings:', meanings);
-
-		const constraints = await getConstraints();
-		constraintsStore.set(constraints);
+// Once they ALL resolve, update your stores
+dataTypeStore.set(datatypes);
+unitStore.set(units);
+templateStore.set(variableTemplates);
+meaningsStore.set(meanings);
+constraintsStore.set(constraints);
 
 		fillVariableValdationStates(variables);
 

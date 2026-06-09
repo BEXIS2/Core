@@ -23,10 +23,10 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@bexis2/bexis2-core-ui": "^0.4.9",
-		"@floating-ui/dom": "1.6.8",
-		"svelte-fa": "4.0.2",
-		"svelte-headless-table": "0.18.2",
+		"@bexis2/bexis2-core-ui": "^0.4.81",
+		"@floating-ui/dom": "1.7.6",
+		"svelte-fa": "4.0.4",
+		"svelte-headless-table": "0.18.3",
 		"svelte-select": "5.8.3",
 		"vest": "5.4.0"
 	},

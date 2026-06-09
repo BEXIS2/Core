@@ -338,6 +338,16 @@ namespace BExIS.Security.Services.Utilities
             return $"The {entityname} with ID {datasetid} was unset from public by {userName}.";
         }
 
+        public static string GetReleaseTagHeader(long datasetid, string entityname)
+        {
+            return $"{entityname}: Release tag requested (ID {datasetid})";
+        }
+
+        public static string GetReleaseTagMessage(string userName, long datasetid, string entityname, string title, string message)
+        {
+            return $"User {userName} has submitted a release request for the dataset \"{title}\" (ID: {datasetid}). <br/><br/>Request: {message}";
+        }
+
         #region upload api
 
         public static string GetPushApiStoreHeader(long datasetid, string title)

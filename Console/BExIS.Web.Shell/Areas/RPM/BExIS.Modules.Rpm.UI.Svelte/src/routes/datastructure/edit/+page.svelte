@@ -101,15 +101,20 @@
 
 		//console.log('edit structure', datastructureId);
 
+		const [ model_, structures, displayPattern] = await Promise.all([
+			get(datastructureId),
+			getStructures(),
+			getDisplayPattern()
+		]);
 		// copy structure
-		model = await get(datastructureId);
-
+		// model = await get(datastructureId);
+		model = model_;
 		// load sturctures for validation against existings
-		const structures = await getStructures();
+		//const structures = await getStructures();
 		structureStore.set(structures);
 
 		// load display pattern onces for all edit types
-		const displayPattern = await getDisplayPattern();
+		//const displayPattern = await getDisplayPattern();
 		displayPatternStore.set(displayPattern);
 
 		// console.log('model', model);
