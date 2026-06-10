@@ -39,7 +39,7 @@
 		optionsComponent: TableOptions
 	};
 
-    async function loadProgress(): Promise<ProgressOverview> {
+    async function load(): Promise<ProgressOverview> {
         var response = await loadDatasetProgress($mappingSelection.datasetId, $mappingSelection.versionId);
         if (!response.success) {
             throw new Error(response.error);
@@ -118,7 +118,7 @@
         </Alert>
     {/if}
 
-    {#await loadProgress()}
+    {#await load()}
         <Spinner />
     {:then data}
         {#if !data.hasHeaderMappings}

@@ -1,6 +1,5 @@
 <script lang="ts">
     import { ErrorMessage, Page, pageContentLayoutType, positionType, Spinner, type TableConfig } from "@bexis2/bexis2-core-ui";
-	import { onMount } from "svelte";
     import { loadResult } from "./services";
     import { tailorResultStore, tailorCleanedStore, initializeTableData, toggleDataCleaning, cleanConfig, getChangedTailorRows } from "./data";
     import { type SpeciesMatchingRow } from "$lib/types/types";
@@ -13,7 +12,6 @@
     import { mappingSelection } from '../../lib/stores/selectionStore';
     import { get } from "svelte/store";
     import Fa from 'svelte-fa';
-    import { getDifference } from "$lib/helper/custom_diff";
     import CleanedName from "./cleanedName.svelte";
 	import EditSubmit from "./EditSubmit.svelte";
 
@@ -24,9 +22,9 @@
 
     let rowChangesToSubmit: SpeciesMatchingRow[];
 
-    onMount(() => {
-        async function test() {
-            var responseData = await loadResult($mappingSelection.datasetId, $mappingSelection.versionId);
+
+    async function load() {
+        var responseData = await loadResult($mappingSelection.datasetId, $mappingSelection.versionId);
 
             // filter out redundant data and determine column order
             let filteredData: SpeciesMatchingRow[] = responseData.message.map((row: any): SpeciesMatchingRow => 
@@ -67,10 +65,7 @@
             });
             
             initializeTableData(filteredData);
-        }
-
-        test();
-    });
+    }
 
     function prepareForSubmit() {
         rowChangesToSubmit = getChangedTailorRows();
@@ -221,37 +216,40 @@
         When you're done here, be sure to SUBMIT the changes for them to take effect!
     </div>
 
-
-    <h2 class="h2">Data cleaning config</h2>
-    <div class="grid grid-cols-3 gap-x-14 gap-y-1">
-        {#each Object.entries(cleanConfig) as [key, conf]}
-        <div>
-            <span class="flex items-center gap-x-2"><SlideToggle name={"label"} bind:checked={conf.apply} on:change={toggleDataCleaning}></SlideToggle> {key}</span>
-        </div>
-        {/each}
-    </div>
-
-    <h2 class="h2">Global Actions</h2>
-    <button class="btn variant-filled-primary">Match all internal</button>
-
-    <div class="w-full max-w-md mx-auto my-4 space-y-2">
-        <div class="flex justify-between text-sm font-medium text-gray-700">
-            <span>Confirmed Progress ({confirmedCount}/{totalCount})</span>
-            <span>{Math.round(percentage)}%</span>
+    {#await load()}
+        <Spinner textCss="text-surface-800" label="Loading content and preparing visualization"/>
+    {:then data} 
+        <h2 class="h2">Data cleaning config</h2>
+        <div class="grid grid-cols-3 gap-x-14 gap-y-1">
+            {#each Object.entries(cleanConfig) as [key, conf]}
+            <div>
+                <span class="flex items-center gap-x-2"><SlideToggle name={"label"} bind:checked={conf.apply} on:change={toggleDataCleaning}></SlideToggle> {key}</span>
+            </div>
+            {/each}
         </div>
 
-        <div class="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
-            <div 
-            class="h-full bg-blue-600 transition-all duration-300 ease-out"
-            style="width: {percentage}%"
-            ></div>
-        </div>
-    </div>
+        <h2 class="h2">Global Actions</h2>
+        <button class="btn variant-filled-primary">Match all internal</button>
 
-	<div class="flex items-center justify-center">
-		<Table config={tableConfig} on:action={tableActions}/>
-		<Modal />
-	</div>
+        <div class="w-full max-w-md mx-auto my-4 space-y-2">
+            <div class="flex justify-between text-sm font-medium text-gray-700">
+                <span>Confirmed Progress ({confirmedCount}/{totalCount})</span>
+                <span>{Math.round(percentage)}%</span>
+            </div>
+
+            <div class="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                <div 
+                class="h-full bg-blue-600 transition-all duration-300 ease-out"
+                style="width: {percentage}%"
+                ></div>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-center">
+            <Table config={tableConfig} on:action={tableActions}/>
+            <Modal />
+        </div>
+    {/await}
 
     <div class="h-4">
 

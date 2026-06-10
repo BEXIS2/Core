@@ -17,43 +17,37 @@
     let datasetInfo: BasicDatasetInfo[];
     let displayDatasetInfo: DisplayDatasetVersion[] = [];
 
-    onMount(() => {
-        async function init() {
-            var responseData: BasicDatasetInfo[] = await loadBasicDatasetInfo();
-            console.log(responseData);
-            var filteredData: BasicDatasetInfo[] = responseData.filter(item => 
-                item.isTabular === true && item.metadataComplete === true
-            );
+    async function load() {
+        var responseData: BasicDatasetInfo[] = await loadBasicDatasetInfo();
+        console.log(responseData);
+        var filteredData: BasicDatasetInfo[] = responseData.filter(item => 
+            item.isTabular === true && item.metadataComplete === true
+        );
 
-            
-            filteredData.forEach(item => {
-                item.versions.forEach(versionItem => {
-                    displayDatasetInfo.push({
-                        id: item.id,
-                        dataStructureId: item.dataStructureId,
-                        title: item.title,
-                        abstract: item.abstract,
-                        isTabular: item.isTabular,
-                        metadataComplete: item.metadataComplete,
-                        timestamp: versionItem.timestamp,
-                        versionType: versionItem.versionType,
-                        versionName: versionItem.versionName,
-                        hasMatchingProgress: versionItem.hasMatchingProgress,
-                        versionId: versionItem.versionId,
-                        versionNr: versionItem.versionNr,
-                    })
-                });
+        
+        filteredData.forEach(item => {
+            item.versions.forEach(versionItem => {
+                displayDatasetInfo.push({
+                    id: item.id,
+                    dataStructureId: item.dataStructureId,
+                    title: item.title,
+                    abstract: item.abstract,
+                    isTabular: item.isTabular,
+                    metadataComplete: item.metadataComplete,
+                    timestamp: versionItem.timestamp,
+                    versionType: versionItem.versionType,
+                    versionName: versionItem.versionName,
+                    hasMatchingProgress: versionItem.hasMatchingProgress,
+                    versionId: versionItem.versionId,
+                    versionNr: versionItem.versionNr,
+                })
             });
+        });
 
-            datasetsStore.update(() => {
-                return displayDatasetInfo;
-            });
-        }
-
-        // console.log(get(datasetsStore));
-        init();
-    });
-
+        datasetsStore.update(() => {
+            return displayDatasetInfo;
+        });
+    }
 
 	const tableActions = (action: CustomEvent<{ row: DisplayDatasetVersion; type: string }>) => {
 		const { type, row } = action.detail;
@@ -123,9 +117,13 @@
     <p class="">If there is an Eye <span class="inline-flex"><Fa class="px-2" icon={faEye} /></span> icon at the end of the row, the dataset matching has already been started. Click it to get an overview and continue the process as you wish.</p>
     <p class="">If there is a Plus <span class="inline-flex self-center"><Fa class="px-2" icon={faPlus} /></span> icon, no matching has been started. Click it to start a fresh matching process on this dataset version. Keep in mind that a new matching process right now can only be started with the latest version of a dataset.</p>
 
-    <div class="flex items-center justify-center">
-		<Table config={tableConfig} on:action={tableActions}/>
-	</div>
+    {#await load()}
+        <Spinner textCss="text-surface-800" label="Loading content and preparing dataset info"/>
+    {:then data} 
+        <div class="flex items-center justify-center">
+            <Table config={tableConfig} on:action={tableActions}/>
+        </div>
+    {/await}
 
     <div class="h-80"></div>
 
