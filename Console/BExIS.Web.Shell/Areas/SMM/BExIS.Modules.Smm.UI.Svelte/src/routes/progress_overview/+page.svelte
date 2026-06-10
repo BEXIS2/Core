@@ -98,7 +98,7 @@
             return;
         }
         console.log(responseMatch);
-        mappingSelection.update(s => ({ stepId: responseMatch.data.data?.stepId }));
+        mappingSelection.update(s => ({ ...s, stepId: responseMatch.data.data?.stepId }));
     }
 
 </script>
