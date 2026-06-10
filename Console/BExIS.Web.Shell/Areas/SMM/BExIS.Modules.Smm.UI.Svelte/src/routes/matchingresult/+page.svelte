@@ -68,6 +68,16 @@
 		}
 	}
 
+	let totalCount = 100;
+	$: wipCount = get(resultStore).length;
+	$: mismatchCount = get(mismatchStore).length;
+	$: doneCount = get(doneStore).length;
+
+	// Calculate percentages relative to the total
+	$: wipPercent = totalCount > 0 ? (wipCount / totalCount) * 100 : 0;
+	$: mismatchPercent = totalCount > 0 ? (mismatchCount / totalCount) * 100 : 0;
+	$: donePercent = totalCount > 0 ? (doneCount / totalCount) * 100 : 0;
+
 	/**
 	 * Loads content of the currently selected result file for display.
 	 * Once succesfully loaded, the user can continue the result confirmation.
@@ -135,6 +145,7 @@
 			console.log(mismatchData)
 			console.log(doneData)
 
+			totalCount = responseData.length;
 
             resultStore.update(() => {
                 return workInProgressData;
@@ -482,7 +493,50 @@
 	{#if statusLoaded && resultFileExists}
 		{#await load()}
 			<Spinner textCss="text-surface-800" label="Loading content and preparing visualization"/>
-		{:then data} 
+		{:then data}
+			<div class="w-full max-w-xl mx-auto my-6 space-y-3">
+				<div class="grid grid-cols-2 gap-2 sm:flex sm:justify-between text-sm font-medium text-gray-700">
+					<div class="flex items-center space-x-2">
+						<span class="w-3 h-3 bg-emerald-500 rounded-full"></span>
+						<span>Done ({doneCount})</span>
+					</div>
+					<div class="flex items-center space-x-2">
+						<span class="w-3 h-3 bg-yellow-300 rounded-full"></span>
+						<span>WIP ({wipCount})</span>
+					</div>
+					<div class="flex items-center space-x-2">
+						<span class="w-3 h-3 bg-red-400 rounded-full"></span>
+						<span>Mismatch ({mismatchCount})</span>
+					</div>
+					
+					<div class="text-gray-400 sm:ml-auto">
+						Total: {totalCount}
+					</div>
+					</div>
+
+					<div class="w-full h-5 bg-gray-100 rounded-full overflow-hidden flex shadow-inner">
+
+
+					<div 
+						class="h-full bg-emerald-500 transition-all duration-300 ease-out"
+						style="width: {donePercent}%"
+						title="Mismatch"
+					></div>
+
+					<div 
+						class="h-full bg-yellow-300 transition-all duration-300 ease-out"
+						style="width: {wipPercent}%"
+						title="Accepted"
+					></div>
+
+					<div 
+						class="h-full bg-red-400 transition-all duration-300 ease-out"
+						style="width: {mismatchPercent}%"
+						title="Done"
+					></div>
+				</div>
+			</div>
+
 			<div class="text-5xl">
 				Work in progress
 			</div>
