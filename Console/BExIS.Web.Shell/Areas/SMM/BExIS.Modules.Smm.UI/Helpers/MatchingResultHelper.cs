@@ -117,7 +117,6 @@ namespace BExIS.Modules.Smm.UI.Helpers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
                 return false;
             }
         }

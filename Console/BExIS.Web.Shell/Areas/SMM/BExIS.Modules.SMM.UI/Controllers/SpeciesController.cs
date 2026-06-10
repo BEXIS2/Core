@@ -820,27 +820,11 @@ namespace BExIS.Modules.Smm.UI.Controllers
         [HttpPost]
         public JsonResult ApplyTailorEdits(long datasetId, long versionId, TailorEdit[] edits)
         {
-            Debug.WriteLine("Received request to apply tailor edits...");
+            // Debug.WriteLine("Received request to apply tailor edits...");
 
             if (edits == null) return JsonWithStatus(new { success = false, message = "Request body missing or invalid." }, HttpStatusCode.BadRequest);
 
-            if (!ModelState.IsValid)
-            {
-                var realJsonErrors = ModelState
-                        .Where(x => x.Value.Errors.Count > 0)
-                        .SelectMany(x => x.Value.Errors)
-                        // Look specifically for the internal exception thrown by the JSON reader
-                        .Select(e => e.Exception?.ToString() ?? e.ErrorMessage)
-                        .ToList();
-
-                return JsonWithStatus(new
-                {
-                    success = false,
-                    message = "The JSON parser crashed.",
-                    details = realJsonErrors
-                }, HttpStatusCode.BadRequest);
-                return JsonWithStatus(new { success = false, message = "Validation failed." }, HttpStatusCode.BadRequest);
-            }
+            if (!ModelState.IsValid) return JsonWithStatus(new { success = false, message = "Validation failed." }, HttpStatusCode.BadRequest);
 
             var user = ResolveUserAndRights(datasetId, out ActionResult errorResult);
             if (user == null)
@@ -848,7 +832,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Authentification error." }, HttpStatusCode.Unauthorized);
             }
 
-            Debug.WriteLine("Received request to apply tailor edits for dataset " + datasetId + " version " + versionId);
+            // Debug.WriteLine("Received request to apply tailor edits for dataset " + datasetId + " version " + versionId);
 
             try
             {
@@ -858,13 +842,13 @@ namespace BExIS.Modules.Smm.UI.Controllers
                     return JsonWithStatus(new { success = false, id = datasetId, message = "Failed to apply edits." }, HttpStatusCode.InternalServerError);
                 }
 
-                Debug.WriteLine("Successfully applied tailor edits for dataset " + datasetId + " version " + versionId);
+                // Debug.WriteLine("Successfully applied tailor edits for dataset " + datasetId + " version " + versionId);
 
                 return Json(new { success = true, id = datasetId });
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Error while applying tailor edits for dataset " + datasetId + " version " + versionId + ": " + ex);
+                // Debug.WriteLine("Error while applying tailor edits for dataset " + datasetId + " version " + versionId + ": " + ex);
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Error while applying edits: " + ex.Message }, HttpStatusCode.BadRequest);
             }
         }
