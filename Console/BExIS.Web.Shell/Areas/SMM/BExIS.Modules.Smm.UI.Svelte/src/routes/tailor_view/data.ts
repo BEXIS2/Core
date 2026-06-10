@@ -37,6 +37,37 @@ export function initializeTableData(data: TailorResultRow[]) {
     tailorCleanedStore.set(processed);
 }
 
+/**
+ * This function filters out all effectively changed rows from the TailorTable. Effectively changed means, the row is unconfirmed
+ * and the EditedName should change either due to data cleaning or manual user changes.
+ * @returns Array of effectively changed ResultRows
+ */
+export function getChangedTailorRows(): TailorResultRow[] {
+    const currentCleaned = get(tailorCleanedStore);
+    const currentOriginal = get(tailorResultStore);
+
+    const resultStoreMap = new Map<string | number, TailorResultRow>(
+        currentOriginal.map(row => [row.id, row])
+    );
+
+    return currentCleaned.filter(cleanedRow => {
+        const resultRow = resultStoreMap.get(cleanedRow.id);
+
+        if (!resultRow) return false;
+
+        // Entry needs to be unconfirmed
+        if (resultRow.confirmedByUser) return false;
+
+        // data cleaning detected and has not been applied yet
+        const condition1 = !cleanedRow.editedName && cleanedRow.cleanedName !== cleanedRow.originalName;
+
+        // editedName has changed
+        const condition2 = cleanedRow.editedName !== '' && cleanedRow.editedName !== resultRow.editedName;
+
+        return condition1 || condition2;
+    })
+}
+
 export function toggleDataCleaning() {
     const currentRows = get(tailorCleanedStore);
 

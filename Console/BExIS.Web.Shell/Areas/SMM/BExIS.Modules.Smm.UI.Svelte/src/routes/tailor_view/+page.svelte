@@ -2,7 +2,7 @@
     import { ErrorMessage, Page, pageContentLayoutType, positionType, Spinner, type TableConfig } from "@bexis2/bexis2-core-ui";
 	import { onMount } from "svelte";
     import { loadResult } from "./services";
-    import { tailorResultStore, tailorCleanedStore, initializeTableData, toggleDataCleaning, cleanConfig, type TailorResultRow } from "./data";
+    import { tailorResultStore, tailorCleanedStore, initializeTableData, toggleDataCleaning, cleanConfig, type TailorResultRow, getChangedTailorRows } from "./data";
 	import { Table } from '@bexis2/bexis2-core-ui';
     import ResultTableOptions from "./ResultTableOptions.svelte";
 	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
@@ -14,15 +14,21 @@
     import Fa from 'svelte-fa';
     import { getDifference } from "$lib/helper/custom_diff";
     import CleanedName from "./cleanedName.svelte";
+	import EditSubmit from "./EditSubmit.svelte";
 
 	const modalStore = getModalStore();
+    let totalCount: number = 1000;
+    let confirmedCount: number = 0;
+    let percentage: number = totalCount > 0 ? (confirmedCount / totalCount) * 100 : 0;
+
+    let rowChangesToSubmit: TailorResultRow[];
 
     onMount(() => {
         async function test() {
             var responseData = await loadResult($mappingSelection.datasetId, $mappingSelection.versionId);
 
             // filter out redundant data and determine column order
-            let filteredData = responseData.message.map((row: any): TailorResultRow => 
+            let filteredData: TailorResultRow[] = responseData.message.map((row: any): TailorResultRow => 
             { 
                 return { 
                     id: row.id,
@@ -39,17 +45,34 @@
                 }
             });
 
+            totalCount = filteredData.length;
+            confirmedCount = filteredData.filter(item => item.confirmedByUser).length;
+            percentage = totalCount > 0 ? (confirmedCount / totalCount) * 100 : 0;
             tailorResultStore.update(() => {
                 return filteredData;
             });
             
             initializeTableData(filteredData);
             
-            console.log(getDifference("Abies spectabilis (D. Don) Mirbel", "Abies spectabilis D. Don"));
+            console.log("CURRENT STORE STATE: \n", get(tailorCleanedStore));
+            console.log("CURRENT RESULT STATE: \n", get(tailorResultStore));
+            console.log("CURRENT CHANGED DIFF: \n", getChangedTailorRows());
         }
 
         test();
     });
+
+    function prepareForSubmit() {
+        rowChangesToSubmit = getChangedTailorRows();
+        modalStore.trigger({
+            type: 'component',
+            title: `Submitting user changes`,
+            component: {
+                ref: EditSubmit,
+                props: { changedRows: rowChangesToSubmit }
+            }
+        });
+    }
 
 	const tableActions = (action: CustomEvent<{ row: TailorResultRow; type: string }>) => {
 		const { type, row } = action.detail;
@@ -110,25 +133,25 @@
                 header: "Status",
                 exclude: true
             },
-            timestampMatch: {
+            timeStampMatch: {
                 header: "Match date",
                 exclude: true
             },
             matchType: {
                 header: "Match type",
-                exclude: true
+                // exclude: true
             },
             matchSource: {
                 header: "Match source",
-                exclude: true
+                // exclude: true
             },
             matchVersion: {
                 header: "Match version",
-                exclude: true
+                // exclude: true
             },
             matchSourceVersion: {
                 header: "Match source version",
-                exclude: true
+                // exclude: true
             },
         },
 		optionsComponent: ResultTableOptions
@@ -166,6 +189,20 @@
     <h2 class="h2">Global Actions</h2>
     <button class="btn variant-filled-primary">Match all internal</button>
 
+    <div class="w-full max-w-md mx-auto my-4 space-y-2">
+        <div class="flex justify-between text-sm font-medium text-gray-700">
+            <span>Confirmed Progress ({confirmedCount}/{totalCount})</span>
+            <span>{Math.round(percentage)}%</span>
+        </div>
+
+        <div class="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+            <div 
+            class="h-full bg-blue-600 transition-all duration-300 ease-out"
+            style="width: {percentage}%"
+            ></div>
+        </div>
+    </div>
+
 	<div class="flex items-center justify-center">
 		<Table config={tableConfig} on:action={tableActions}/>
 		<Modal />
@@ -176,7 +213,7 @@
     </div>
 
     <div class="flex justify-center items-center">
-        <button class="btn variant-filled-secondary">SUBMIT</button>
+        <button class="btn variant-filled-secondary" on:click|preventDefault={prepareForSubmit}>SUBMIT</button>
     </div>
 
     <div class="h-80"></div>

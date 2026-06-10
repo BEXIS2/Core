@@ -80,7 +80,7 @@ export interface CLBMatchingResult {
     original_authorship: string,
     matchType: string,
     matchIssues: string,
-    iD: string,
+    id: string,
     rank: string,
     scientificName: string,
     authorship: string,

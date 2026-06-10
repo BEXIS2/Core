@@ -87,6 +87,41 @@ namespace BExIS.Modules.Smm.UI.Helpers
             return (filepath, writtenCount);
         }
 
+        public static bool ApplyTailorEdits(long datasetId, long versionId, List<TailorEdit> edits)
+        {
+            try
+            {
+                using (var smrm = new SpeciesMatchingResultManager())
+                using (var uow = smrm.GetUnitOfWork())
+                {
+                    var repo = uow.GetRepository<SpeciesMatchingResult>();
+                    foreach (var edit in edits)
+                    {
+                        var entity = repo.Query().FirstOrDefault(e => e.Id == edit.Id && e.Dataset.Id == datasetId && e.DatasetVersionId == versionId && e.ConfirmedByUser == false);
+                        if (entity != null)
+                        {
+                            // TODO: - adapt this when further data cleaning constraints are clearer
+                            // optionally also update other fields
+                            if (edit.EditedName != "")
+                            {
+                                entity.EditedName = edit.EditedName;
+                            } else
+                            {
+                                entity.EditedName = edit.CleanedName;
+                            }
+                        }
+                    }
+                    uow.Commit();
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                return false;
+            }
+        }
+
         // Read a ChecklistBank matching CSV file and map rows to CLBMatchingResultFile objects
         public static List<CLBMatchingResultFile> ReadClbMatchingResultFile(string filepath)
         {

@@ -12,6 +12,7 @@ using BExIS.Modules.Smm.UI.Helpers;
 using BExIS.Modules.Smm.UI.Helpers.MatchingAPIs;
 using BExIS.Modules.Smm.UI.Models;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Requests;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
@@ -813,6 +814,59 @@ namespace BExIS.Modules.Smm.UI.Controllers
 
             // matchIdsSet is now available for efficient contains checks further down the method
             return Json(new { success = true, id = request.DatasetId });
+        }
+
+        [JsonNetFilter]
+        [HttpPost]
+        public JsonResult ApplyTailorEdits(long datasetId, long versionId, TailorEdit[] edits)
+        {
+            Debug.WriteLine("Received request to apply tailor edits...");
+
+            if (edits == null) return JsonWithStatus(new { success = false, message = "Request body missing or invalid." }, HttpStatusCode.BadRequest);
+
+            if (!ModelState.IsValid)
+            {
+                var realJsonErrors = ModelState
+                        .Where(x => x.Value.Errors.Count > 0)
+                        .SelectMany(x => x.Value.Errors)
+                        // Look specifically for the internal exception thrown by the JSON reader
+                        .Select(e => e.Exception?.ToString() ?? e.ErrorMessage)
+                        .ToList();
+
+                return JsonWithStatus(new
+                {
+                    success = false,
+                    message = "The JSON parser crashed.",
+                    details = realJsonErrors
+                }, HttpStatusCode.BadRequest);
+                return JsonWithStatus(new { success = false, message = "Validation failed." }, HttpStatusCode.BadRequest);
+            }
+
+            var user = ResolveUserAndRights(datasetId, out ActionResult errorResult);
+            if (user == null)
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Authentification error." }, HttpStatusCode.Unauthorized);
+            }
+
+            Debug.WriteLine("Received request to apply tailor edits for dataset " + datasetId + " version " + versionId);
+
+            try
+            {
+                var result = MatchingResultHelper.ApplyTailorEdits(datasetId, versionId, edits.ToList());
+                if (result == false)
+                {
+                    return JsonWithStatus(new { success = false, id = datasetId, message = "Failed to apply edits." }, HttpStatusCode.InternalServerError);
+                }
+
+                Debug.WriteLine("Successfully applied tailor edits for dataset " + datasetId + " version " + versionId);
+
+                return Json(new { success = true, id = datasetId });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error while applying tailor edits for dataset " + datasetId + " version " + versionId + ": " + ex);
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Error while applying edits: " + ex.Message }, HttpStatusCode.BadRequest);
+            }
         }
 
         public async Task<(bool IsSuccess, string Content)> TailorDataset(long datasetId, long variableId, string jwtToken)
