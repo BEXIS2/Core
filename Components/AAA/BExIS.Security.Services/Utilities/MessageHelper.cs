@@ -212,20 +212,30 @@ namespace BExIS.Security.Services.Utilities
             return $"{entityname}: Metadata updated (ID {datasetid})";
         }
 
-        public static string GeFileUpdatHeader(long datasetid)
+        public static string GeFileUploadHeader(long datasetid)
         {
             return $"File was uploaded (ID {datasetid})";
         }
 
-        public static string GetFileUploaddMessage(long userId, string title, string userName, string filename)
+        public static string GeFileUpdateHeader(long datasetid)
         {
-            return $"User <b>\"{userName}\"</b>(ID {userId}) has uploaded to the dataset <b>\"{title}\"</b> a file: <b>{filename}</b>.";
+            return $"File(s) were updated (ID {datasetid})";
         }
 
-        public static string GetFilesUploaddMessage(long userId,string title, string userName, string[] filenames)
+        public static string GetFileUpdatedMessage(long userId, string title, string userName, string filenames, string type)
+        {
+            return $"User <b>\"{userName}\"</b>(ID {userId}) has {type} files to/at the dataset <b>\"{title}\"</b>. File(s): <b>{filenames}</b>.";
+        }
+
+        public static string GetFilesUploadMessage(long userId,string title, string userName, string[] filenames)
         {
             var fnames = string.Join(",", filenames);
             return $"User <b>\"{userName}\"</b>(ID {userId}) has uploaded to the dataset <b>\"{title}\"</b> this files: <b>{fnames}</b>.";
+        }
+
+        public static string GetFilesUploadMessage(long userId, string title, string userName, string filename)
+        {
+            return $"User <b>\"{userName}\"</b>(ID {userId}) has uploaded to the dataset <b>\"{title}\"</b> this files: <b>{filename}</b>.";
         }
 
         public static string GetFileDownloadHeader(long datasetid, long version)

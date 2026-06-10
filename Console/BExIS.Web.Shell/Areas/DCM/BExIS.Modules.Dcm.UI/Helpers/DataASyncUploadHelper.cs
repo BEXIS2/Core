@@ -409,8 +409,11 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                     #region unstructured data
                     string filecomment = "";
+                    string newFiles = "";
                     string modcomments = "";
+                    string modifiedFiles = "";
                     string deletedComments = "";
+                    string deletedFiles = "";
 
 
                     if (structureId <= 0)
@@ -436,7 +439,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                 unitOfWork.GetReadOnlyRepository<DatasetVersion>().Load(workingCopy.ContentDescriptors);
 
-                          
+
 
                                 // save all incoming files in content descriptor
                                 foreach (var file in Cache.Files)
@@ -445,6 +448,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                     //filenames
                                     string fileNames = string.Join(",", Cache.Files.Select(f => f.Name).ToArray());
+                                    newFiles = fileNames;
                                     filecomment = "File(s) uploaded (" + fileNames + ")";
                                 }
 
@@ -456,6 +460,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                     //filenames
                                     string fileNames = string.Join(",", Cache.ModifiedFiles.Select(f => f.Name).ToArray());
+                                    modifiedFiles = fileNames;
                                     modcomments = "File(s) updated (" + fileNames + ")";
 
                                     var contentDescriptor = workingCopy.ContentDescriptors.FirstOrDefault(item => item.URI == dynamicStorePath);
@@ -479,12 +484,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     }
 
                                     if (File.Exists(storePath))
-                                    { 
+                                    {
                                         File.Delete(storePath);
                                     }
 
                                     //filenames
                                     string fileNames = string.Join(",", Cache.DeleteFiles.Select(f => f.Name).ToArray());
+                                    deletedFiles = fileNames;
                                     deletedComments = "File(s) deleted (" + fileNames + ")";
 
                                 }
@@ -517,6 +523,26 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                             // ToDo: Get Comment from ui and users
                             dm.CheckInDataset(id, comment, User.Name, ViewCreationBehavior.None, TagType.None);
+                            var user = User;
+                            using (var emailService = new EmailService())
+                            {
+                                if (!string.IsNullOrEmpty(filecomment))
+                                    emailService.Send(MessageHelper.GeFileUpdateHeader(id),
+                                 MessageHelper.GetFileUpdatedMessage(id, title, user.DisplayName, newFiles, "added"),
+                                 null, null, new List<string> { GeneralSettings.SystemEmail });
+
+                                if (!string.IsNullOrEmpty(modcomments))
+                                    emailService.Send(MessageHelper.GeFileUpdateHeader(id),
+                                    MessageHelper.GetFileUpdatedMessage(id, title, user.DisplayName, modifiedFiles, "modified" ),
+                                    null, null, new List<string> { GeneralSettings.SystemEmail });
+
+                                if (!string.IsNullOrEmpty(deletedComments))
+                                    emailService.Send(MessageHelper.GeFileUpdateHeader(id),
+                                    MessageHelper.GetFileUpdatedMessage(id, title, user.DisplayName, deletedFiles, "deleted"),
+                                    null, null, new List<string> { GeneralSettings.SystemEmail });
+
+                            }
+                        
                         }
                         catch (Exception ex)
                         {
@@ -572,15 +598,16 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         }
 
                         if (Cache.Files.Count == 1)
-                            emailService.Send(MessageHelper.GeFileUpdatHeader(id),
-                                MessageHelper.GetFileUploaddMessage(id,title, user.DisplayName, Cache.Files.FirstOrDefault().Name),
+                            emailService.Send(MessageHelper.GeFileUploadHeader(id),
+                                MessageHelper.GetFilesUploadMessage(id,title, user.DisplayName, Cache.Files.FirstOrDefault().Name),
                                 new List<string> { user.Email }, null, new List<string> { GeneralSettings.SystemEmail });
 
                         if (Cache.Files.Count > 1)
-                            emailService.Send(MessageHelper.GeFileUpdatHeader(id),
-                                MessageHelper.GetFilesUploaddMessage(id,title, user.DisplayName, Cache.Files.Select(f => f.Name).ToArray()),
+                            emailService.Send(MessageHelper.GeFileUploadHeader(id),
+                                MessageHelper.GetFilesUploadMessage(id,title, user.DisplayName, Cache.Files.Select(f => f.Name).ToArray()),
                                 new List<string> { user.Email }, null, new List<string> { GeneralSettings.SystemEmail });
-                    }
+                        }
+           
                 }
 
                 dm.Dispose();
