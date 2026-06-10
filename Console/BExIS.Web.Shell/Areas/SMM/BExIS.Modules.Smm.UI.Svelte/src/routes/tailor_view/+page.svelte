@@ -2,7 +2,8 @@
     import { ErrorMessage, Page, pageContentLayoutType, positionType, Spinner, type TableConfig } from "@bexis2/bexis2-core-ui";
 	import { onMount } from "svelte";
     import { loadResult } from "./services";
-    import { tailorResultStore, tailorCleanedStore, initializeTableData, toggleDataCleaning, cleanConfig, type TailorResultRow, getChangedTailorRows } from "./data";
+    import { tailorResultStore, tailorCleanedStore, initializeTableData, toggleDataCleaning, cleanConfig, getChangedTailorRows } from "./data";
+    import { type SpeciesMatchingRow } from "$lib/types/types";
 	import { Table } from '@bexis2/bexis2-core-ui';
     import ResultTableOptions from "./ResultTableOptions.svelte";
 	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
@@ -21,27 +22,40 @@
     let confirmedCount: number = 0;
     let percentage: number = totalCount > 0 ? (confirmedCount / totalCount) * 100 : 0;
 
-    let rowChangesToSubmit: TailorResultRow[];
+    let rowChangesToSubmit: SpeciesMatchingRow[];
 
     onMount(() => {
         async function test() {
             var responseData = await loadResult($mappingSelection.datasetId, $mappingSelection.versionId);
 
             // filter out redundant data and determine column order
-            let filteredData: TailorResultRow[] = responseData.message.map((row: any): TailorResultRow => 
-            { 
+            let filteredData: SpeciesMatchingRow[] = responseData.message.map((row: any): SpeciesMatchingRow => 
+            {
                 return { 
                     id: row.id,
                     originalName: row.originalName,
-                    editedName: row.editedName,
-                    cleanedName: row.cleanedName,
-                    confirmedByUser: row.confirmedByUser,
-                    matchedName: row.matchedName,
-                    matchType: row.matchType,
-                    status: row.status,
-                    matchSource: row.matchSource,
-                    matchSourceVersion: row.matchSourceVersion,
-                    timeStampMatch: row.timeStampMatch
+                    editedName: row.editedName ?? "",
+                    cleanedName: row.cleanedName ?? "",
+                    confirmedByUser: row.confirmedByUser ?? false,
+                    matchType: row.matchType ?? "",
+                    matchedName: row.matchedName ?? "",
+                    matchAuthorship: row.matchAuthorship ?? "",
+                    status: row.status ?? "",
+                    matchRank: row.matchRank ?? "",
+                    acceptedScientificName: row.acceptedScientificName ?? "",
+                    acceptedId: row.acceptedId ?? "",
+                    acceptedAuthorship: row.acceptedAuthorship ?? "",
+                    taxonKingdom: row.taxonKingdom ?? "",
+                    taxonPhylum: row.taxonPhylum ?? "",
+                    taxonClass: row.taxonClass ?? "",
+                    taxonOrder: row.taxonOrder ?? "",
+                    taxonFamily: row.taxonFamily ?? "",
+                    taxonGenus: row.taxonGenus ?? "",
+                    matchId: row.matchId ?? "",
+                    matchSource: row.matchSource ?? "",
+                    matchSourceVersion: row.matchSourceVersion ?? "",
+                    timeStampMatch: row.timeStampMatch ?? ""
+
                 }
             });
 
@@ -53,10 +67,6 @@
             });
             
             initializeTableData(filteredData);
-            
-            console.log("CURRENT STORE STATE: \n", get(tailorCleanedStore));
-            console.log("CURRENT RESULT STATE: \n", get(tailorResultStore));
-            console.log("CURRENT CHANGED DIFF: \n", getChangedTailorRows());
         }
 
         test();
@@ -74,7 +84,7 @@
         });
     }
 
-	const tableActions = (action: CustomEvent<{ row: TailorResultRow; type: string }>) => {
+	const tableActions = (action: CustomEvent<{ row: SpeciesMatchingRow; type: string }>) => {
 		const { type, row } = action.detail;
 		switch (type) {
 			case 'UPDATE':
@@ -93,7 +103,7 @@
 		}
 	};
 
-    const tableConfig: TableConfig<TailorResultRow> = {						
+    const tableConfig: TableConfig<SpeciesMatchingRow> = {						
 		id: 'resultRows',						
 		data: tailorCleanedStore,
 		resizable: "columns",
@@ -127,6 +137,7 @@
                 header: "Confirmed by user"
             },
             datasetVersionId: {
+                header: "Dataset Version ID",
                 exclude: true
             },
             status: {
@@ -140,6 +151,40 @@
             matchType: {
                 header: "Match type",
                 // exclude: true
+            },
+            matchRank: {
+                header: "Match rank"
+            },
+            matchAuthorship: {
+                header: "Match authorship"
+            },
+            acceptedScientificName: {
+                header: "Accepted scientific name"
+            },
+            acceptedId: {
+                header: "Accepted ID",
+                exclude: true,
+            },
+            acceptedAuthorship: {
+                header: "Accepted authorship",
+            },
+            taxonKingdom: {
+                header: "Kingdom"
+            },
+            taxonPhylum: {
+                header: "Phylum"
+            },
+            taxonClass: {
+                header: "Class"
+            },
+            taxonOrder: {
+                header: "Order"
+            },
+            taxonFamily: {
+                header: "Family"
+            },
+            taxonGenus: {
+                header: "Genus"
             },
             matchSource: {
                 header: "Match source",

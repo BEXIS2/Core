@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-    import { tailorCleanedStore, type TailorResultRow } from "./data";
+    import { tailorCleanedStore } from "./data";
 	import { getModalStore } from "@skeletonlabs/skeleton";
+	import { type SpeciesMatchingRow } from "$lib/types/types";
 
-	export let row: TailorResultRow;
+	export let row: SpeciesMatchingRow;
 	const modalStore = getModalStore();
 	let editedValue: string = row.editedName;
 

@@ -1,12 +1,12 @@
 <script lang="ts">
-    import { type TailorResultRow } from "./data";
 	import { getModalStore } from "@skeletonlabs/skeleton";
 	import { submitTailorEdits } from "./services";
     import { mappingSelection } from '../../lib/stores/selectionStore';
     import { type TailorEdit, type TailorEditsRequest } from "./types";
 	import { goto } from "$app/navigation";
+    import { type SpeciesMatchingRow } from "$lib/types/types";
 
-	export let changedRows: TailorResultRow[];
+	export let changedRows: SpeciesMatchingRow[];
 	const modalStore = getModalStore();
 
     function createEditsPayload(): TailorEdit[] {

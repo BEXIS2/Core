@@ -29,7 +29,7 @@ namespace BExIS.Dlm.Entities.SpeciesMatching
         // unique identifier of the matched name in the external source (e.g. GBIF taxon ID)
         public virtual string MatchId { get; set; }
 
-        // authorship of the matched name (e.g. Linnaeus, 1758)
+        // authorship of the matched name
         public virtual string MatchAuthorship { get; set; }
 
         // accepted name if (for example) the matched name is a synonym
@@ -54,7 +54,7 @@ namespace BExIS.Dlm.Entities.SpeciesMatching
 
         public virtual string TaxonGenus { get; set; }
 
-        // timestamp of the match
+        // timestamp of the match (can vary by hours due to processing and queue times on different APIs)
         public virtual DateTime TimestampMatch { get; set; }
 
         // source of the match (e.g. Catalogue of Life, GBIF, etc.)

@@ -1,33 +1,20 @@
 import { writable } from 'svelte/store';
 import { get } from 'svelte/store';
 import * as CleaningUtils from './dataCleaningUtils';
+import { type SpeciesMatchingRow } from "$lib/types/types";
 
-export type TailorResultRow = {
-	id: number,
-    originalName: string,
-    cleanedName: string,
-    editedName: string,
-    confirmedByUser: boolean,
-    matchedName: string,
-    matchType: string,
-    status: string,
-    matchSource: string,
-    matchSourceVersion: string,
-    timeStampMatch: string
-}
-
-let originalRows: TailorResultRow[] = [
+let originalRows: SpeciesMatchingRow[] = [
 
 ]
 
-let cleanedRows: TailorResultRow[] = [
+let cleanedRows: SpeciesMatchingRow[] = [
 
 ]
 
-export let tailorResultStore = writable<TailorResultRow[]>(originalRows);
-export let tailorCleanedStore = writable<TailorResultRow[]>(cleanedRows);
+export let tailorResultStore = writable<SpeciesMatchingRow[]>(originalRows);
+export let tailorCleanedStore = writable<SpeciesMatchingRow[]>(cleanedRows);
 
-export function initializeTableData(data: TailorResultRow[]) {
+export function initializeTableData(data: SpeciesMatchingRow[]) {
     const processed = data.map(item => ({
         ...item,
         cleanedName: cleanName(item.originalName),
@@ -42,11 +29,11 @@ export function initializeTableData(data: TailorResultRow[]) {
  * and the EditedName should change either due to data cleaning or manual user changes.
  * @returns Array of effectively changed ResultRows
  */
-export function getChangedTailorRows(): TailorResultRow[] {
+export function getChangedTailorRows(): SpeciesMatchingRow[] {
     const currentCleaned = get(tailorCleanedStore);
     const currentOriginal = get(tailorResultStore);
 
-    const resultStoreMap = new Map<string | number, TailorResultRow>(
+    const resultStoreMap = new Map<string | number, SpeciesMatchingRow>(
         currentOriginal.map(row => [row.id, row])
     );
 
