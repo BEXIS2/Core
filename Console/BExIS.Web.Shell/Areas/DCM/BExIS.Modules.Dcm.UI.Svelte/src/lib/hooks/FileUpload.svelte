@@ -103,8 +103,13 @@
 			on:success
 		/>
 		{#if model.fileUploader.existingFiles.length}
+
+			<div class="pt-2 variant-ghost-warning warning border-l-4 border-yellow-500  p-2" role="alert">
+				<b>Info:</b> Please click submit to start import. For tabular data import validation must be first successful based on a data structure. 
+			</div>
+
 			<div class="pt-2">
-				<b>Uploaded File(s)</b>
+				<b>File(s) ready for tabular data / file import</b>
 			</div>
 			<FileOverview
 				{id}

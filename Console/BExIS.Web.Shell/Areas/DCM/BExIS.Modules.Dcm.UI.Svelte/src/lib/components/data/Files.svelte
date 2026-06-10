@@ -36,9 +36,9 @@
 		deletedFiles = [...deletedFiles, e.detail.file];
 
 		latestDataDate.set(Date.now());
-		const text = 'File removed: ' + e.detail.file.name;
+		// const text = 'Please click submit to save the changes.';
 
-		dispatch('warning', { text });
+		// dispatch('warning', { text });
 	}
 
 	function handleRevert(e) {
@@ -52,7 +52,7 @@
 		latestDataDate.set(Date.now());
 		const text = 'File reverted: ' + e.detail.file.name;
 
-		dispatch('warning', { text });
+		dispatch('info', { text });
 	}
 
 	//  async function handleRevert(e, index){
@@ -79,7 +79,7 @@
 {#if files.length > 0}
 	<div>
 		<div class="pt-4">
-			<b>Existing File(s)</b>
+			<b>Uploaded File(s)</b>
 		</div>
 		<FileOverview
 			{id}
@@ -95,6 +95,9 @@
 
 {#if deletedFiles && deletedFiles.length > 0}
 	<div>
+		<div class="pt-2 variant-ghost-warning warning border-l-4 border-yellow-500  p-2" role="alert">
+			<b>Info:</b> Please click submit to finally delete the files.
+		</div>
 		<div class="pt-4">
 			<b>File(s) to delete</b>
 		</div>

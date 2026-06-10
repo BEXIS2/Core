@@ -46,7 +46,7 @@
 	async function handleSaveFileDescription() {
 		const res = await saveFileDescription(save, id, file);
 		if (res) {
-			let message = 'Description of ' + file.name + ' is updated.';
+			let message = 'Description of ' + file.name + ' was updated.';
 			dispatch('saved', { text: message });
 		}
 	}
