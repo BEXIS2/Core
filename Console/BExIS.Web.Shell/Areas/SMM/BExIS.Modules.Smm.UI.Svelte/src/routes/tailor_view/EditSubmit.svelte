@@ -4,6 +4,7 @@
 	import { submitTailorEdits } from "./services";
     import { mappingSelection } from '../../lib/stores/selectionStore';
     import { type TailorEdit, type TailorEditsRequest } from "./types";
+	import { goto } from "$app/navigation";
 
 	export let changedRows: TailorResultRow[];
 	const modalStore = getModalStore();
@@ -25,11 +26,12 @@
         const response = await submitTailorEdits($mappingSelection.datasetId, $mappingSelection.versionId, payload);
 
 		if (!response.success) {
-            console.log("ERROR");
+            // TODO: - handling
         } else {
-            console.log("SUCCESS");
-			console.log(response);
+			goto('/progress_overview');
         }
+
+        modalStore.close();
     }
 </script>
 
