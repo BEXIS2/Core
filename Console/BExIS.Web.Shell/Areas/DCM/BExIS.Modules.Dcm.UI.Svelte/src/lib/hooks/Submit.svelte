@@ -91,13 +91,13 @@
 	const confirm: ModalSettings = {
 		type: 'confirm',
 		title: 'Submit',
-		body: 'Are you sure you wish to submit the data?',
+		body: 'Are you sure you wish to submit the data? <br ><br>Editing will be disabled until the import is complete. If you are importing a large amount of tabular data it may take a while. You will be notified by email when it is complete. <br><br> Once the import is complete, please check the imported data. ',
 		// TRUE if confirm pressed, FALSE if cancel pressed
 		response: (r: boolean) => {
 			if (r === true) {
 				submitBt();
-				modalStore.trigger(next);
-				dispatch('success', { text: 'The import of your data has been started.' });
+				// modalStore.trigger(next);
+				// dispatch('success', { text: 'The import of your data has been started.' });
 			}
 		}
 	};
@@ -105,7 +105,7 @@
 	const next: ModalSettings = {
 		type: 'alert',
 		title: 'Import started',
-		body: 'Editing will be disabled until the upload is complete. If you are uploading a large amount of data, the upload will take a while, and you will be notified by email when it is complete. Please check the data you have uploaded. ',
+		body: 'Editing will be disabled until the import is complete. If you are importing a large amount of tabular data it may take a while. You will be notified by email when it is complete. <br><br> Once the import is complete, please check the imported data you have uploaded. ',
 		buttonTextCancel: 'Ok'
 		// TRUE if confirm pressed, FALSE if cancel pressed
 	};
