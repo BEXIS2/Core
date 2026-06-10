@@ -29,7 +29,7 @@
             throw new Error(response.error);
         } else {
             console.log(response.data);
-			var responseData: GenericMatchingResult[] = response.data.data;
+			var responseData: GenericMatchingResult[] = response.data.matchingResults;
 			var orderedTableData = responseData.map((row: any): GenericMatchingResult => {
 				return {
 					original_ID: row.original_ID,

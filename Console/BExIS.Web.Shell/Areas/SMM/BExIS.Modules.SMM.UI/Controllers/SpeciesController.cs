@@ -769,7 +769,44 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 MatchingApiBase apiBase = matchingApiProvider.GetApi(apiIdentifier);
                 var matchingResults = apiBase.ReadResultFile(filepath);
 
-                return Json(new { success = true, data = matchingResults }, JsonRequestBehavior.AllowGet);
+                // If matching results were read, build a set of IDs from the file and then
+                // query the SpeciesMatchingResult table for the subset of rows that belong
+                // to this dataset/version and whose IDs are present in the matching result file.
+                List<SpeciesMatchingResult> dbResults = null;
+
+                if (matchingResults != null && matchingResults.Count > 0)
+                {
+                    try
+                    {
+                        // collect ids from matching result rows
+                        var idsFromFile = new HashSet<long>();
+                        foreach (var m in matchingResults)
+                        {
+                            if (string.IsNullOrWhiteSpace(m.Original_ID)) continue;
+                            if (long.TryParse(m.Original_ID, out long mid)) idsFromFile.Add(mid);
+                        }
+
+                        Debug.WriteLine("Creating HashSet<long> from file MatchingResultRows:");
+                        Debug.WriteLine(idsFromFile.Count);
+
+                        using (var smrm = new SpeciesMatchingResultManager())
+                        {
+                            var repo = smrm.GetBulkUnitOfWork().GetReadOnlyRepository<SpeciesMatchingResult>();
+
+                            // query only the subset matching dataset/version and the ids from file
+                            dbResults = repo.Query()
+                                .Where(r => r.Dataset.Id == datasetId && r.DatasetVersionId == versionId && idsFromFile.Contains(r.Id))
+                                .ToList();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("Error while querying SpeciesMatchingResult subset: " + ex.Message);
+                        dbResults = null; // fall back to null on error
+                    }
+                }
+
+                return Json(new { success = true, matchingResults = matchingResults, speciesMatchingResults = dbResults }, JsonRequestBehavior.AllowGet);
             }
             catch (ArgumentException ex)
             {
