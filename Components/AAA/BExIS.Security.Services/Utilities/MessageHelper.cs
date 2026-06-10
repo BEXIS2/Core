@@ -247,7 +247,7 @@ namespace BExIS.Security.Services.Utilities
         {
 
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"{entityname} <b>\"{title}\"</b> with ID <b>{datasetid}</b> was updated");
+            stringBuilder.AppendLine($"{entityname} <b>\"{title}\"</b> with ID <b>{datasetid}</b> was updated by {userName}");
             if(numberOfRows>0)
                 stringBuilder.AppendLine($"<b>\"{numberOfRows}\"</b> rows have been successfully added/edited.");
             if(numberOfSkippedRows>0)
