@@ -92,7 +92,7 @@ export type SpeciesMatchingRow = {
 }
 
 export interface GenericMatchingResult {
-    original_ID?: string,
+    original_ID: string,
     original_scientificName: string,
     scientificName: string,
     original_rank?: string,

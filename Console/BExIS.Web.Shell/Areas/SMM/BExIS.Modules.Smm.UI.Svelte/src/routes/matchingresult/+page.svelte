@@ -3,21 +3,70 @@
 	import { Table } from '@bexis2/bexis2-core-ui';
     import { loadMatchingFileStatus, loadMatchingResult, requestResultFileDownload, submitAcceptedIds } from "./services";
     import { mappingSelection } from "$lib/stores/selectionStore";
-    import type { AcceptMatchesRequest, GenericMatchingResult, MatchingFileStatus } from "$lib/types/types";
-    import type { TableConfig } from "@bexis2/bexis2-core-ui";
+    import type { AcceptMatchesRequest, GenericMatchingResult, MatchingFileStatus, SpeciesMatchingRow } from "$lib/types/types";
+    import type { Columns, TableConfig } from "@bexis2/bexis2-core-ui";
     import AcceptedTableOptions from "./AcceptedTableOptions.svelte";
-    import { resultStore, acceptedStore } from "./data";
+    import { resultStore, acceptedStore, mismatchStore, doneStore } from "./data";
 	import ResultTableOptions from "./ResultTableOptions.svelte";
 	import { get } from "svelte/store";
 	import { onMount } from "svelte";
+	import Fa from 'svelte-fa';
+	import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
+	import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 
 	let resultFileStatus: MatchingFileStatus;
 	let statusLoaded: boolean = false;
 	let resultFileExists: boolean = false;
 	let pollInterval: number | undefined = undefined;
 
+	let hideMismatches: boolean = true;
+	let hideDone: boolean = true;
+
+	// TODO: - adapt this to handle different APIs
+	// - right now hardcoded for CLB bulk matching API
+	let acceptableMatchTypes: Set<string> = new Set(["exact", "variant", "canonical", "ambiguous"])
+
 	// TODO: - use for error handling and display
 	let criticalError: boolean = false;
+
+	let resultColumns: Columns = {
+		original_ID: {
+			exclude: true
+		},
+		original_scientificName: {
+			header: "Original scientificname"
+		},
+		original_rank: {
+			header: "Original rank"
+		},
+		original_kingdom: {
+			header: "Original kingdom"
+		},
+		original_authorship: {
+			header: "Original authorship"
+		},
+		matchType: {
+			header: "Match type"
+		},
+		matchIssues: {
+			header: "Match issues"
+		},
+		id: {
+			header: "Match ID"
+		},
+		acceptedID: {
+			header: "Accepted ID"
+		},
+		acceptedScientificName: {
+			header: "Accepted scientificname"
+		},
+		acceptedAuthorship: {
+			header: "Accepted authorship"
+		},
+		classification: {
+			exclude: true,
+		}
+	}
 
 	/**
 	 * Loads content of the currently selected result file for display.
@@ -30,8 +79,15 @@
         } else {
             console.log(response.data);
 			var responseData: GenericMatchingResult[] = response.data.matchingResults;
-			var orderedTableData = responseData.map((row: any): GenericMatchingResult => {
-				return {
+
+			const doneMap: Map<number, SpeciesMatchingRow> = new Map(response.data.speciesMatchingResults.map((row: SpeciesMatchingRow) => [row.id, row]));
+
+			const workInProgressData: GenericMatchingResult[] = [];
+			const mismatchData: GenericMatchingResult[] = [];
+			const doneData: SpeciesMatchingRow[] = [];
+
+			for (const row of responseData) {
+				const mappedRow: GenericMatchingResult = {
 					original_ID: row.original_ID,
 					original_scientificName: row.original_scientificName,
 					scientificName: row.scientificName,
@@ -54,12 +110,73 @@
 					family: row.family,
 					genus: row.genus,
 					classification: row.classification,
+				};
+
+				if (doneMap.has(parseInt(row.original_ID))) {
+					var doneRow = doneMap.get(parseInt(row.original_ID));
+					if (doneRow && doneRow.confirmedByUser) {
+						doneData.push(doneRow)
+						continue;
+					}
 				}
-			});
+
+				if (row.matchType && row.matchType !== "") {
+					if (acceptableMatchTypes.has(row.matchType.toLowerCase())) {
+						workInProgressData.push(mappedRow);
+					} else {
+						mismatchData.push(mappedRow);
+					}
+				} else {
+					mismatchData.push(mappedRow);
+				}
+			}
+
+			console.log(workInProgressData)
+			console.log(mismatchData)
+			console.log(doneData)
+
 
             resultStore.update(() => {
-                return orderedTableData;
+                return workInProgressData;
             });
+
+			mismatchStore.update(() => {
+				return mismatchData;
+			});
+
+			var doneDataOrdered: SpeciesMatchingRow[] = doneData.map((row: any): SpeciesMatchingRow => 
+            {
+                return { 
+                    id: row.id,
+                    originalName: row.originalName,
+                    editedName: row.editedName ?? "",
+                    cleanedName: row.cleanedName ?? "",
+                    confirmedByUser: row.confirmedByUser ?? false,
+                    matchType: row.matchType ?? "",
+                    matchedName: row.matchedName ?? "",
+                    matchAuthorship: row.matchAuthorship ?? "",
+                    status: row.status ?? "",
+                    matchRank: row.matchRank ?? "",
+                    acceptedScientificName: row.acceptedScientificName ?? "",
+                    acceptedId: row.acceptedId ?? "",
+                    acceptedAuthorship: row.acceptedAuthorship ?? "",
+                    taxonKingdom: row.taxonKingdom ?? "",
+                    taxonPhylum: row.taxonPhylum ?? "",
+                    taxonClass: row.taxonClass ?? "",
+                    taxonOrder: row.taxonOrder ?? "",
+                    taxonFamily: row.taxonFamily ?? "",
+                    taxonGenus: row.taxonGenus ?? "",
+                    matchId: row.matchId ?? "",
+                    matchSource: row.matchSource ?? "",
+                    matchSourceVersion: row.matchSourceVersion ?? "",
+                    timeStampMatch: row.timeStampMatch ?? ""
+                }
+            });
+
+			doneStore.update(() => {
+				return doneDataOrdered;
+			});
+
             return response.data.data;
         }
     }
@@ -206,44 +323,7 @@
 		defaultPageSize: 50,
 		pageSizes: [20, 50, 100],
 		showColumnsMenu: true,					
-		columns: {
-			original_ID: {
-				exclude: true
-			},
-			original_scientificName: {
-				header: "Original scientificname"
-			},
-			original_rank: {
-				header: "Original rank"
-			},
-			original_kingdom: {
-				header: "Original kingdom"
-			},
-			original_authorship: {
-				header: "Original authorship"
-			},
-			matchType: {
-				header: "Match type"
-			},
-			matchIssues: {
-				header: "Match issues"
-			},
-			id: {
-				header: "Match ID"
-			},
-			acceptedID: {
-				header: "Accepted ID"
-			},
-			acceptedScientificName: {
-				header: "Accepted scientificname"
-			},
-			acceptedAuthorship: {
-				header: "Accepted authorship"
-			},
-            classification: {
-                exclude: true,
-            },
-		},
+		columns: resultColumns,
 		optionsComponent: ResultTableOptions
 	};
 
@@ -256,46 +336,113 @@
 		defaultPageSize: 50,
 		pageSizes: [20, 50, 100],
 		showColumnsMenu: true,
-		columns: {
-			original_ID: {
-				exclude: true
-			},
-			original_scientificName: {
-				header: "Original scientificname"
-			},
-			original_rank: {
-				header: "Original rank"
-			},
-			original_kingdom: {
-				header: "Original kingdom"
-			},
-			original_authorship: {
-				header: "Original authorship"
-			},
-			matchType: {
-				header: "Match type"
-			},
-			matchIssues: {
-				header: "Match issues"
-			},
-			id: {
-				header: "Match ID"
-			},
-			acceptedID: {
-				header: "Accepted ID"
-			},
-			acceptedScientificName: {
-				header: "Accepted scientificname"
-			},
-			acceptedAuthorship: {
-				header: "Accepted authorship"
-			},
-            classification: {
-                exclude: true,
-            },
-		},
+		columns: resultColumns,
 		optionsComponent: AcceptedTableOptions
 	};
+
+	const mismatchConfig: TableConfig<GenericMatchingResult> = {
+		id: 'mismatchRows',
+		data: mismatchStore,
+		resizable: "columns",
+		height: 700,
+		fitToScreen: false,
+		defaultPageSize: 50,
+		pageSizes: [20, 50, 100],
+		showColumnsMenu: true,
+		columns: resultColumns,
+	};
+
+	const doneConfig: TableConfig<SpeciesMatchingRow> = {
+		id: 'doneRows',
+		data: doneStore,
+		resizable: "columns",
+		height: 700,
+		fitToScreen: false,
+		defaultPageSize: 50,
+		pageSizes: [20, 50, 100],
+		showColumnsMenu: true,
+		columns: {
+			id: {
+                exclude: true
+            },
+            originalName: {
+                header: "Original name"
+            },
+            editedName: {
+                header: "Edited name"
+            },
+            matchedName: {
+                header: "Matched name",
+                // exclude: true
+            },
+            confirmedByUser: {
+                disableFiltering: true,
+                header: "Confirmed by user"
+            },
+            datasetVersionId: {
+                header: "Dataset Version ID",
+                exclude: true
+            },
+            status: {
+                header: "Status",
+                exclude: true
+            },
+            timeStampMatch: {
+                header: "Match date",
+                exclude: true
+            },
+            matchType: {
+                header: "Match type",
+                // exclude: true
+            },
+            matchRank: {
+                header: "Match rank"
+            },
+            matchAuthorship: {
+                header: "Match authorship"
+            },
+            acceptedScientificName: {
+                header: "Accepted scientific name"
+            },
+            acceptedId: {
+                header: "Accepted ID",
+                exclude: true,
+            },
+            acceptedAuthorship: {
+                header: "Accepted authorship",
+            },
+            taxonKingdom: {
+                header: "Kingdom"
+            },
+            taxonPhylum: {
+                header: "Phylum"
+            },
+            taxonClass: {
+                header: "Class"
+            },
+            taxonOrder: {
+                header: "Order"
+            },
+            taxonFamily: {
+                header: "Family"
+            },
+            taxonGenus: {
+                header: "Genus"
+            },
+            matchSource: {
+                header: "Match source",
+                // exclude: true
+            },
+            matchVersion: {
+                header: "Match version",
+                // exclude: true
+            },
+            matchSourceVersion: {
+                header: "Match source version",
+                // exclude: true
+            },
+		}
+	}
 
     const resultTableActions = (action: CustomEvent<{ row: GenericMatchingResult; type: string }>) => {
 		const { type, row } = action.detail;
@@ -336,16 +483,72 @@
 		{#await load()}
 			<Spinner textCss="text-surface-800" label="Loading content and preparing visualization"/>
 		{:then data} 
-			<h2 class="h2">Result</h2>
+			<div class="text-5xl">
+				Work in progress
+			</div>
+			<h4 class="h4 !mt-0">(Acceptable results from this matching step)</h4>
 			<div class="flex items-center justify-center">
 				<Table config={resultTableConfig} on:action={resultTableActions}/>
 			</div>
 		
 			<div class="h-10"></div>
-			
-			<h2 class="h2">Accepted</h2>
+			<div class="text-5xl">
+				Accepted
+			</div>
+			<h4 class="h4 !mt-0">(Will be stored on Submit)</h4>
 			<div class="flex items-center justify-center">
 				<Table config={acceptedConfig} on:action={acceptedTableActions}/>
+			</div>
+
+			<div class="h-10"></div>
+			
+			<div class="text-5xl">
+				<button
+				type="button"
+				class="unstyled flex items-center gap-2 text-left"
+				on:click={() => hideMismatches = !hideMismatches}
+				>
+					Mismatches
+					<span class="inline-block items-center ml-2">
+						{#if hideMismatches}
+							<Fa icon={faAngleDown} />
+						{:else}
+							<Fa icon={faAngleRight} />
+						{/if}
+					</span>
+				</button>
+			</div>
+			<h4 class="h4 !mt-0">(Can not be accepted)</h4>
+			<div class="{hideMismatches ? 'hidden' : ''}">
+				<div class="flex items-center justify-center">
+					<Table config={mismatchConfig}/>
+				</div>
+	
+			</div>
+			<div class="h-10"></div>
+
+			<div class="text-5xl">
+				<button
+				type="button"
+				class="unstyled flex items-center gap-2 text-left"
+				on:click={() => hideDone = !hideDone}
+				>
+					Done
+					<span class="inline-block items-center ml-2">
+						{#if hideDone}
+							<Fa icon={faAngleDown} />
+						{:else}
+							<Fa icon={faAngleRight} />
+						{/if}
+					</span>
+				</button>
+			</div>
+			<h4 class="h4 !mt-0">(Already accepted and stored previously)</h4>
+
+			<div class="{hideDone ? 'hidden' : ''}">
+				<div class="flex items-center justify-center">
+					<Table config={doneConfig}/>
+				</div>
 			</div>
 
 			<div class="h-4"></div>

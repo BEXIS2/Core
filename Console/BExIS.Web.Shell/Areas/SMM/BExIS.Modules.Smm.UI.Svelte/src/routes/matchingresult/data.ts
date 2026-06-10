@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { GenericMatchingResult } from '$lib/types/types';
+import type { GenericMatchingResult, SpeciesMatchingRow } from '$lib/types/types';
 
 
 
@@ -16,3 +16,17 @@ let resultRows: GenericMatchingResult[] = [
 ]
 
 export let resultStore = writable<GenericMatchingResult[]>(resultRows)
+
+
+let mismatchRows: GenericMatchingResult[] = [
+
+]
+
+export let mismatchStore = writable<GenericMatchingResult[]>(mismatchRows)
+
+
+let doneRows: SpeciesMatchingRow[] = [
+
+]
+
+export let doneStore = writable<SpeciesMatchingRow[]>(doneRows)
