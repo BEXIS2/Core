@@ -15,6 +15,30 @@
 		<property name="Status" column="status" type="string" not-null="false" />
 
 		<property name="MatchType" column="match_type" type="string" not-null="false" />
+		
+		<property name="MatchRank" column="match_rank" type="string" not-null="false" />
+		
+		<property name="MatchId" column="match_id" type="string" not-null="false" />
+		
+		<property name="MatchAuthorship" column="match_authorship" type="string" not-null="false" />
+		
+		<property name="AcceptedScientificName" column="accepted_scientific_name" type="string" not-null="false" />
+		
+		<property name="AcceptedId" column="accepted_id" type="string" not-null="false" />
+		
+		<property name="AcceptedAuthorship" column="accepted_authorship" type="string" not-null="false" />
+		
+		<property name="TaxonKingdom" column="taxon_kingdom" type="string" not-null="false" />
+		
+		<property name="TaxonPhylum" column="taxon_phylum" type="string" not-null="false" />
+		
+		<property name="TaxonClass" column="taxon_class" type="string" not-null="false" />
+		
+		<property name="TaxonOrder" column="taxon_order" type="string" not-null="false" />
+		
+		<property name="TaxonFamily" column="taxon_family" type="string" not-null="false" />
+		
+		<property name="TaxonGenus" column="taxon_genus" type="string" not-null="false" />	
 
 		<property name="TimestampMatch" column="timestamp_match" type="DateTime" not-null="false" />
 

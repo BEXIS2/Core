@@ -23,6 +23,37 @@ namespace BExIS.Dlm.Entities.SpeciesMatching
         // type of the match (e.g. exact, fuzzy, etc.)
         public virtual string MatchType { get; set; }
 
+        // taxonomic rank of the matched name (e.g. species, genus, etc.)
+        public virtual string MatchRank { get; set; }
+
+        // unique identifier of the matched name in the external source (e.g. GBIF taxon ID)
+        public virtual string MatchId { get; set; }
+
+        // authorship of the matched name (e.g. Linnaeus, 1758)
+        public virtual string MatchAuthorship { get; set; }
+
+        // accepted name if (for example) the matched name is a synonym
+        public virtual string AcceptedScientificName { get; set; }
+
+        // unique identifier of the accepted name in the external source (e.g. GBIF taxon ID)
+        public virtual string AcceptedId { get; set; }
+
+        // authorship of the accepted name
+        public virtual string AcceptedAuthorship { get; set; }
+
+        // higher classification of the matched name (e.g. kingdom, phylum, class, order, family, genus)
+        public virtual string TaxonKingdom { get; set; }
+
+        public virtual string TaxonPhylum { get; set; }
+
+        public virtual string TaxonClass { get; set; }
+
+        public virtual string TaxonOrder { get; set; }
+
+        public virtual string TaxonFamily { get; set; }
+
+        public virtual string TaxonGenus { get; set; }
+
         // timestamp of the match
         public virtual DateTime TimestampMatch { get; set; }
 
