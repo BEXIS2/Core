@@ -123,9 +123,15 @@
 			if (res.asyncUpload) {
 				dispatch('success', { text: res.asyncUploadMessage });
 			}
-			// update store
-			latestSubmitDate.set(Date.now());
 			isSubmitting = false;
+			setTimeout(() => {
+					
+				// update store
+			latestSubmitDate.set(Date.now());
+			
+			console.log('goto view');
+			}, 500);
+			
 		}
 	}
 
@@ -169,19 +175,28 @@
 </script>
 
 {#await reload()}
-	<PlaceHolderHookContent />
+	<!-- <PlaceHolderHookContent /> remove to avoid to much layout shift-->
 {:then m}
 	<div class="flex gap-3 items-center">
+	{#if !isSubmitting && !canSubmit}
+
+			<div class="pt-2 variant-ghost-success success border-l-4 border-green-500  p-2" role="alert">
+				<b>Info:</b> Submission completed. Please wait for the view to update.
+			</div>
+		{:else}
 		<button
 			type="button"
 			class="btn variant-filled-primary"
 			disabled={!canSubmit || isSubmitting}
 			on:click={() => modalStore.trigger(confirm)}>Submit</button
 		>
+		{/if}
 		{#if isSubmitting}
 			<div class="flex-none">
 				<Spinner />
 			</div>
+		{:else if canSubmit}
+			<div class="flex-none text-sm">Please click submit to start import.</div>
 		{/if}
 	</div>
 {:catch error}
