@@ -2506,9 +2506,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         //FirstName
 
                         List<string> complexUsages = new List<string>();
-                        complexUsages.Add("Metadata/creator/agentType/individualName/");
-                        complexUsages.Add("Metadata/metadataProvider/metadataProviderType/individualName");
-                        complexUsages.Add("Metadata/associatedParty/associatedPartyType/individualName");
+                        complexUsages.Add("Metadata/creator/agentType/individualName");
+                        complexUsages.Add("Metadata/metadataProvider/agentType/individualName");
+                        complexUsages.Add("Metadata/associatedParty/agentTypeWithRoleType/individualName");
                         complexUsages.Add("Metadata/contact/contactType/individualName");
                         complexUsages.Add("Metadata/project/projectType/personnel/agentWithRoleType/individualName");
 
@@ -2522,7 +2522,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                                 createToPartyTypeMapping(
                                     "givenName", LinkElementType.MetadataNestedAttributeUsage,
-                                    complexUsage, LinkElementType.MetadataNestedAttributeUsage,
+                                    complexUsage, LinkElementType.MetadataAttributeUsage,
                                     partyCustomAttribute, partyType, rootTo, metadataRef,
                                     mappingManager,
                                     metadataAttributeManager,
@@ -2530,7 +2530,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                                 createFromPartyTypeMapping(
                                     "givenName", LinkElementType.MetadataNestedAttributeUsage,
-                                    complexUsage, LinkElementType.MetadataNestedAttributeUsage,
+                                    complexUsage, LinkElementType.MetadataAttributeUsage,
                                     partyCustomAttribute, partyType, rootFrom, metadataRef,
                                     mappingManager,
                                     metadataAttributeManager,
@@ -2545,7 +2545,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                                 createToPartyTypeMapping(
                                     "surName", LinkElementType.MetadataNestedAttributeUsage,
-                                    complexUsage, LinkElementType.MetadataNestedAttributeUsage,
+                                    complexUsage, LinkElementType.MetadataAttributeUsage,
                                     partyCustomAttribute, partyType, rootTo, metadataRef,
                                     mappingManager,
                                     metadataAttributeManager,
@@ -2553,7 +2553,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                                 createFromPartyTypeMapping(
                                     "surName", LinkElementType.MetadataNestedAttributeUsage,
-                                    complexUsage, LinkElementType.MetadataNestedAttributeUsage,
+                                    complexUsage, LinkElementType.MetadataAttributeUsage,
                                     partyCustomAttribute, partyType, rootFrom, metadataRef,
                                     mappingManager,
                                     metadataAttributeManager,
