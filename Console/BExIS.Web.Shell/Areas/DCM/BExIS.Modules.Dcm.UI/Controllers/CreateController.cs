@@ -37,13 +37,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private readonly UserManager _userManager;
         private readonly GroupManager _groupManager;
         
-        public CreateController(UserManager userManager)
+        public CreateController(UserManager userManager, GroupManager groupManager)
         {
             _userManager = userManager;
-        }
-
-        public CreateController(GroupManager groupManager)
-        {
             _groupManager = groupManager;
         }
 
