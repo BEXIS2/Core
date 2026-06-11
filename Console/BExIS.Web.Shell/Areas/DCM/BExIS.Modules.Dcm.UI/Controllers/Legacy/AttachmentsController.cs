@@ -6,6 +6,7 @@ using BExIS.IO;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.Attachments;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
@@ -148,7 +149,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     using (var emailService = new EmailService())
                     {
                         emailService.Send(MessageHelper.GetAttachmentDeleteHeader(datasetId, typeof(Dataset).Name),
-                        MessageHelper.GetAttachmentDeleteMessage(datasetId, fileName, GetUsernameOrDefault()),
+                        MessageHelper.GetAttachmentDeleteMessage(datasetId, fileName, GetDisplayName()),
                         GeneralSettings.SystemEmail
                         );
                     }
@@ -385,6 +386,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             catch { }
 
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+        }
+        public string GetDisplayName()
+        {
+            string username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+                User user = _userManager.FindByNameAsync(username).Result;
+
+                return user.DisplayName;
+            }
+            catch
+            {
+                return "DEFAULT";
+            }
         }
     }
 }

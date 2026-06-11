@@ -3,6 +3,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Modules.Sam.UI.Models;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
@@ -99,7 +100,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                                 using (var emailService = new EmailService())
                                 {
                                     emailService.Send(MessageHelper.GetDeleteDatasetHeader(id, typeof(Dataset).Name),
-                                    MessageHelper.GetDeleteDatasetMessage(id, user.Name, typeof(Dataset).Name),
+                                    MessageHelper.GetDeleteDatasetMessage(id, user.DisplayName, typeof(Dataset).Name),
                                     GeneralSettings.SystemEmail
                                     );
                                 }
@@ -119,7 +120,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                             using (var emailService = new EmailService())
                             {
                                 emailService.Send(MessageHelper.GetTryToDeleteDatasetHeader(id, typeof(Dataset).Name),
-                                MessageHelper.GetTryToDeleteDatasetMessage(id, GetUsernameOrDefault(), typeof(Dataset).Name),
+                                MessageHelper.GetTryToDeleteDatasetMessage(id, GetDisplayName(), typeof(Dataset).Name),
                                 GeneralSettings.SystemEmail
                                 );
                             }
@@ -132,7 +133,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         using (var emailService = new EmailService())
                         {
                             emailService.Send(MessageHelper.GetTryToDeleteDatasetHeader(id, typeof(Dataset).Name),
-                                                            MessageHelper.GetTryToDeleteDatasetMessage(id, userName, typeof(Dataset).Name),
+                                                            MessageHelper.GetTryToDeleteDatasetMessage(id, GetDisplayName(), typeof(Dataset).Name),
                                                             GeneralSettings.SystemEmail
                                                             );
                         }
@@ -180,7 +181,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                                 using (var emailService = new EmailService())
                                 {
                                     emailService.Send(MessageHelper.GetDeleteDatasetHeader(id, typeof(Dataset).Name),
-                                    MessageHelper.GetDeleteDatasetMessage(id, user.Name, typeof(Dataset).Name),
+                                    MessageHelper.GetDeleteDatasetMessage(id, user.DisplayName, typeof(Dataset).Name),
                                     GeneralSettings.SystemEmail
                                     );
                                 }
@@ -200,7 +201,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                             using (var emailService = new EmailService())
                             {
                                 emailService.Send(MessageHelper.GetTryToDeleteDatasetHeader(id, typeof(Dataset).Name),
-                                MessageHelper.GetTryToDeleteDatasetMessage(id, GetUsernameOrDefault(), typeof(Dataset).Name),
+                                MessageHelper.GetTryToDeleteDatasetMessage(id, GetDisplayName(), typeof(Dataset).Name),
                                 GeneralSettings.SystemEmail
                                 );
                             }
@@ -213,7 +214,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         using (var emailService = new EmailService())
                         {
                             emailService.Send(MessageHelper.GetTryToDeleteDatasetHeader(id, typeof(Dataset).Name),
-                                                            MessageHelper.GetTryToDeleteDatasetMessage(id, userName, typeof(Dataset).Name),
+                                                            MessageHelper.GetTryToDeleteDatasetMessage(id, GetDisplayName(), typeof(Dataset).Name),
                                                             GeneralSettings.SystemEmail
                                                             );
                         }
@@ -428,7 +429,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                                 using (var emailService = new EmailService())
                                 {
                                     emailService.Send(MessageHelper.GetPurgeDatasetHeader(id, typeof(Dataset).Name),
-                                    MessageHelper.GetPurgeDatasetMessage(id, user.Name, typeof(Dataset).Name),
+                                    MessageHelper.GetPurgeDatasetMessage(id, user.DisplayName, typeof(Dataset).Name),
                                     GeneralSettings.SystemEmail
                                     );
                                 }
@@ -446,7 +447,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                             using (var emailService = new EmailService())
                             {
                                 emailService.Send(MessageHelper.GetTryToPurgeDatasetHeader(id, typeof(Dataset).Name),
-                                MessageHelper.GetTryToPurgeDatasetMessage(id, user.Name, typeof(Dataset).Name),
+                                MessageHelper.GetTryToPurgeDatasetMessage(id, user.DisplayName, typeof(Dataset).Name),
                                 GeneralSettings.SystemEmail
                                 );
                             }
@@ -458,7 +459,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                         using (var emailService = new EmailService())
                         {
                             emailService.Send(MessageHelper.GetTryToPurgeDatasetHeader(id, typeof(Dataset).Name),
-                                MessageHelper.GetTryToPurgeDatasetMessage(id, userName, typeof(Dataset).Name),
+                                MessageHelper.GetTryToPurgeDatasetMessage(id, GetDisplayName(), typeof(Dataset).Name),
                                 GeneralSettings.SystemEmail
                                 );
                         }
@@ -581,6 +582,22 @@ namespace BExIS.Modules.Sam.UI.Controllers
             needUpdate = false;
 
             return dateTime;
+        }
+
+        public string GetDisplayName()
+        {
+            string username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+                User user = _userManager.FindByNameAsync(username).Result;
+
+                return user.DisplayName;
+            }
+            catch
+            {
+                return "DEFAULT";
+            }
         }
     }
 }

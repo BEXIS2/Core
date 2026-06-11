@@ -31,6 +31,7 @@ using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Extensions;
 using BExIS.Xml.Helpers;
 using BEXIS.JSON.Helpers;
+using Microsoft.AspNet.Identity;
 using Newtonsoft.Json.Schema;
 using NHibernate.Cfg.MappingSchema;
 using System;
@@ -57,7 +58,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     {
         private CreateTaskmanager TaskManager;
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+        private readonly UserManager _userManager;
 
+        public CreateDatasetController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
 
         #region Submit And Create And Finish And Cancel and Reset
 
@@ -216,20 +222,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
 
                             LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
-
-                            using(var emailService = new EmailService())
+                            
+                            using (var emailService = new EmailService())
                             {
                                 if (newDataset)
                                 {
                                     emailService.Send(MessageHelper.GetCreateDatasetHeader(datasetId, entityname),
-                                        MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
+                                        MessageHelper.GetCreateDatasetMessage(datasetId, title, GetDisplayName(), entityname),
                                         GeneralSettings.SystemEmail
                                         );
                                 }
                                 else
                                 {
                                     emailService.Send(MessageHelper.GetMetadataUpdatHeader(datasetId, entityname),
-                                        MessageHelper.GetUpdateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
+                                        MessageHelper.GetUpdateDatasetMessage(datasetId, title, GetDisplayName(), entityname),
                                         GeneralSettings.SystemEmail
                                         );
                                 }
@@ -375,6 +381,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             catch { }
 
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+        }
+
+        public string GetDisplayName()
+        {
+            string username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+                User user = _userManager.FindByNameAsync(username).Result;
+
+                return user.DisplayName;
+            }
+            catch { 
+                return "DEFAULT";
+            } 
         }
 
         public List<ListViewItem> LoadDatasetViewList()

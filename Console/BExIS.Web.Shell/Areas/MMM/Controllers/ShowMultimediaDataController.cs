@@ -4,7 +4,9 @@ using BExIS.Dlm.Services.Data;
 using BExIS.IO;
 using BExIS.Modules.Mmm.UI.Helpers;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
 using IDIV.Modules.Mmm.UI.Models;
@@ -27,6 +29,14 @@ namespace IDIV.Modules.Mmm.UI.Controllers
 {
     public class ShowMultimediaDataController : Controller
     {
+
+        private readonly UserManager _userManager;
+
+        public ShowMultimediaDataController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         // GET: ShowMultimediaData
         public ActionResult Index(long datasetID, string entityType = "Dataset")
         {
@@ -144,7 +154,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                             using (var emailService = new EmailService())
                             {
                                 emailService.Send(MessageHelper.GetFileDownloadHeader(datasetID, versionNr),
-                                                                                        MessageHelper.GetFileDownloadMessage(GetUsernameOrDefault(), datasetID, fileInfo.Name),
+                                                                                        MessageHelper.GetFileDownloadMessage(GetDisplayName(), datasetID, fileInfo.Name),
                                                                                         GeneralSettings.SystemEmail
                                                                                         );
                             }
@@ -648,6 +658,22 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             catch { }
 
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+        }
+
+        public string GetDisplayName()
+        {
+            string username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+                User user = _userManager.FindByNameAsync(username).Result;
+
+                return user.DisplayName;
+            }
+            catch
+            {
+                return "DEFAULT";
+            }
         }
     }
 }

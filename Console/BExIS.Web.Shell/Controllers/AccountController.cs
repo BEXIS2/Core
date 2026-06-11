@@ -409,7 +409,7 @@ namespace BExIS.Web.Shell.Controllers
                     using (var emailService = new EmailService())
                     {
                         emailService.Send(MessageHelper.GetTryToRegisterUserHeader(),
-                            MessageHelper.GetTryToRegisterUserMessage(user.Id, user.Name, user.Email),
+                            MessageHelper.GetTryToRegisterUserMessage(user.Id, user.DisplayName, user.Email),
                             GeneralSettings.SystemEmail
                             );
                     }

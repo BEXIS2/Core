@@ -585,7 +585,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         if (temp.Any())
                         {
                             emailService.Send(MessageHelper.GetPushApiUploadFailHeader(id, title),
-                                MessageHelper.GetPushApiUploadFailMessage(id, user.Name, temp.Select(e => e.ToString()).ToArray()),
+                                MessageHelper.GetPushApiUploadFailMessage(id, user.DisplayName, temp.Select(e => e.ToString()).ToArray()),
                                 new List<string> { user.Email }, null, new List<string> { GeneralSettings.SystemEmail });
                         }
                         else
