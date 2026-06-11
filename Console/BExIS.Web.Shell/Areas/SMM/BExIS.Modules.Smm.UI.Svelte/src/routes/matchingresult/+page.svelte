@@ -68,15 +68,13 @@
 		}
 	}
 
-	let totalCount = 100;
-	$: wipCount = get(resultStore).length;
-	$: mismatchCount = get(mismatchStore).length;
-	$: doneCount = get(doneStore).length;
-
-	// Calculate percentages relative to the total
-	$: wipPercent = totalCount > 0 ? (wipCount / totalCount) * 100 : 0;
-	$: mismatchPercent = totalCount > 0 ? (mismatchCount / totalCount) * 100 : 0;
-	$: donePercent = totalCount > 0 ? (doneCount / totalCount) * 100 : 0;
+	let totalCount = 1000;
+	let wipCount: number = 0;
+	let mismatchCount: number = 0;
+	let doneCount: number = 0;
+	let wipPercent: number = 0.0;
+	let mismatchPercent: number = 0.0;
+	let donePercent: number = 0.0;
 
 	/**
 	 * Loads content of the currently selected result file for display.
@@ -145,7 +143,15 @@
 			console.log(mismatchData)
 			console.log(doneData)
 
+			// updating progress bar values
 			totalCount = responseData.length;
+			wipCount = workInProgressData.length;
+			mismatchCount = mismatchData.length;
+			doneCount = doneData.length;
+
+			wipPercent = totalCount > 0 ? (wipCount / totalCount) * 100 : 0;
+			mismatchPercent = totalCount > 0 ? (mismatchCount / totalCount) * 100 : 0;
+			donePercent = totalCount > 0 ? (doneCount / totalCount) * 100 : 0;
 
             resultStore.update(() => {
                 return workInProgressData;
