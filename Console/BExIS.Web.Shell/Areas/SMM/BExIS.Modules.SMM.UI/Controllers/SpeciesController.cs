@@ -71,20 +71,20 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Authentification error." }, HttpStatusCode.Unauthorized, JsonRequestBehavior.AllowGet);
             }
 
-            var mappingProgressLocal = ProgressHelper.LoadMappingProgress(datasetId, versionId);
-            if (mappingProgressLocal == null)
+            var matchingProgressLocal = ProgressHelper.LoadMatchingProgress(datasetId, versionId);
+            if (matchingProgressLocal == null)
             {
-                return JsonWithStatus(new { success = false, id = datasetId, message = "No mapping progress found." }, HttpStatusCode.Conflict, JsonRequestBehavior.AllowGet);
+                return JsonWithStatus(new { success = false, id = datasetId, message = "No matching progress found." }, HttpStatusCode.Conflict, JsonRequestBehavior.AllowGet);
             }
 
             try
             {
-                var stepLocal = mappingProgressLocal.GetStepById(stepId);
+                var stepLocal = matchingProgressLocal.GetStepById(stepId);
                 var apiIdentifier = stepLocal.ApiIdentifier;
 
                 MatchingApiBase apiBase = matchingApiProvider.GetApi(apiIdentifier);
                 Debug.WriteLine("Starting DownloadResultFile function with apiIdentifier: ", apiIdentifier);
-                var downloadedFilepath = await apiBase.DownloadResultFile(datasetId, versionId, stepId, mappingProgressLocal);
+                var downloadedFilepath = await apiBase.DownloadResultFile(datasetId, versionId, stepId, matchingProgressLocal);
 
                 if (string.IsNullOrWhiteSpace(downloadedFilepath))
                 {
@@ -92,13 +92,13 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 }
 
                 // TODO: this should never fail
-                // update mapping progress entry
+                // update matching progress entry
                 if (stepLocal != null)
                 {
                     stepLocal.ResultFileName = Path.GetFileName(downloadedFilepath);
                     stepLocal.Done = true;
-                    mappingProgressLocal.UpdateStep(stepLocal);
-                    ProgressHelper.SaveMappingProgress(mappingProgressLocal, datasetId, versionId);
+                    matchingProgressLocal.UpdateStep(stepLocal);
+                    ProgressHelper.SaveMatchingProgress(matchingProgressLocal, datasetId, versionId);
                 }
 
                 // return filepath for client to use (or filename)
@@ -116,7 +116,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
 
         [JsonNetFilter]
         [HttpGet]
-        // Returns status information about a matching result file (exists, downloading, mapping progress coherence)
+        // Returns status information about a matching result file (exists, downloading, matching progress coherence)
         public JsonResult GetMatchingFileStatus(long datasetId, long versionId, int stepId)
         {
             var user = ResolveUserAndRights(datasetId, out ActionResult errorResult);
@@ -172,10 +172,10 @@ namespace BExIS.Modules.Smm.UI.Controllers
                     catch { /* ignore parsing errors */ }
                 }
 
-                // mapping progress and step info
-                var mappingProgress = ProgressHelper.LoadMappingProgress(datasetId, versionId);
-                bool mappingProgressExists = mappingProgress != null;
-                var step = mappingProgress?.GetStepById(stepId);
+                // matching progress and step info
+                var matchingProgress = ProgressHelper.LoadMatchingProgress(datasetId, versionId);
+                bool matchingProgressExists = matchingProgress != null;
+                var step = matchingProgress?.GetStepById(stepId);
                 bool stepExists = step != null;
 
                 return Json(new
@@ -188,7 +188,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                         MarkerExists = markerExists,
                         MarkerStale = markerStale,
                         MarkerStart = markerStart,
-                        MatchingProgressExists = mappingProgressExists,
+                        MatchingProgressExists = matchingProgressExists,
                         StepExists = stepExists,
                         StepDone = step?.Done ?? false,
                         DownloadLinkPresent = !string.IsNullOrWhiteSpace(step?.DownloadLink),
@@ -449,10 +449,10 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "No variable mapped for scientific name found in header mappings." }, HttpStatusCode.Conflict);
             }
 
-            // check mapping progress
-            if (ProgressHelper.HasMappingProgress(datasetId, versionId))
+            // check matching progress
+            if (ProgressHelper.HasMatchingProgress(datasetId, versionId))
             {
-                return JsonWithStatus(new { success = false, id = datasetId, message = "Mapping progress file already exists for this dataset. Please complete or reset existing mapping progress before starting a new tailoring process." }, HttpStatusCode.Conflict);
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Matching progress file already exists for this dataset. Please complete or reset existing matching progress before starting a new tailoring process." }, HttpStatusCode.Conflict);
             }
 
             // generate token for local api call
@@ -497,7 +497,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                     // double check if there are already species matching results for this dataset
                     bool hasSpeciesMatches = repo.Query().Any(r => r.Dataset.Id == datasetId);
                     if (hasSpeciesMatches) {
-                        return JsonWithStatus(new { success = false, id = datasetId, message = "Species matching results already exist for this dataset. Please complete or reset existing mapping progress before starting a new tailoring process." }, HttpStatusCode.BadRequest);
+                        return JsonWithStatus(new { success = false, id = datasetId, message = "Species matching results already exist for this dataset. Please complete or reset existing matching progress before starting a new tailoring process." }, HttpStatusCode.BadRequest);
                     }
 
                     int rowCount = 0;
@@ -529,7 +529,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                     }
 
                     // TODO: check success (but in general should be built in a way that it never fails)
-                    ProgressHelper.CreateMappingProgressFile(datasetId, versionId, rowCount);
+                    ProgressHelper.CreateMatchingProgressFile(datasetId, versionId, rowCount);
 
                     // batch commit
                     uow.Commit();
@@ -599,18 +599,18 @@ namespace BExIS.Modules.Smm.UI.Controllers
                     isTailored = repo.Query().Any(r => r.Dataset.Id == datasetId);
                 }
 
-                // mapping progress
-                bool hasMappingProgress = ProgressHelper.HasMappingProgress(datasetId, versionId);
-                var mappingProgress = hasMappingProgress ? ProgressHelper.LoadMappingProgress(datasetId, versionId) : null;
+                // matching progress
+                bool hasMatchingProgress = ProgressHelper.HasMatchingProgress(datasetId, versionId);
+                var matchingProgress = hasMatchingProgress ? ProgressHelper.LoadMatchingProgress(datasetId, versionId) : null;
 
                 return Json(new
                 {
                     success = true,
-                    hasHeaderMappings = hasHeaderMappings,
-                    headerMappings = headerMappings,
-                    isTailored = isTailored,
-                    hasMatchingProgress = hasMappingProgress,
-                    matchingProgress = mappingProgress
+                    hasHeaderMappings,
+                    headerMappings,
+                    isTailored,
+                    hasMatchingProgress,
+                    matchingProgress
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -631,18 +631,18 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Authentification error." }, HttpStatusCode.Unauthorized);
             }
 
-            var mappingProgress = ProgressHelper.LoadMappingProgress(datasetId, versionId);
-            if (mappingProgress == null)
+            var matchingProgress = ProgressHelper.LoadMatchingProgress(datasetId, versionId);
+            if (matchingProgress == null)
             {
-                return JsonWithStatus(new { success = false, id = datasetId, message = "No mapping progress found." }, HttpStatusCode.Unauthorized);
+                return JsonWithStatus(new { success = false, id = datasetId, message = "No matching progress found." }, HttpStatusCode.Unauthorized);
             }
 
-            if (!mappingProgress.AreAllStepsDone())
+            if (!matchingProgress.AreAllStepsDone())
             {
-                return JsonWithStatus(new { success = false, id = datasetId, message = "Not all mapping steps are completed yet. Please complete existing steps before generating a new matching input file." }, HttpStatusCode.Conflict);
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Not all matching steps are completed yet. Please complete existing steps before generating a new matching input file." }, HttpStatusCode.Conflict);
             }
 
-            var newStepId = mappingProgress.GetNewId();
+            var newStepId = matchingProgress.GetNewId();
             var datastructureId = GetDatastructureIdFromDatasetId(datasetId);
             if (datastructureId == null)
             {
@@ -663,8 +663,8 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 // this is double generated, but simpler
                 var filename = ProgressHelper.GenMatchingFileName(false, datasetId, newStepId);
 
-                mappingProgress.AddStep(newStepId, rows, filename, apiIdentifier);
-                ProgressHelper.SaveMappingProgress(mappingProgress, datasetId, versionId);
+                matchingProgress.AddStep(newStepId, rows, filename, apiIdentifier);
+                ProgressHelper.SaveMatchingProgress(matchingProgress, datasetId, versionId);
             } catch (KeyNotFoundException ex)
             {
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Matching API not found for the given identifier." }, HttpStatusCode.Conflict);
@@ -686,13 +686,13 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Authentification error." }, HttpStatusCode.Unauthorized);
             }
 
-            var mappingProgress = ProgressHelper.LoadMappingProgress(datasetId, versionId);
-            if (mappingProgress == null)
+            var matchingProgress = ProgressHelper.LoadMatchingProgress(datasetId, versionId);
+            if (matchingProgress == null)
             {
-                return JsonWithStatus(new { success = false, id = datasetId, message = "No mapping progress found." }, HttpStatusCode.Unauthorized);
+                return JsonWithStatus(new { success = false, id = datasetId, message = "No matching progress found." }, HttpStatusCode.Unauthorized);
             }
 
-            StepEntry step = mappingProgress.GetNextPendingStepEntry();
+            StepEntry step = matchingProgress.GetNextPendingStepEntry();
             if (step == null)
             {
                 return JsonWithStatus(new { success = false, id = datasetId, message = "No pending StepEntry found." }, HttpStatusCode.Conflict);
@@ -705,7 +705,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
 
             if (!Directory.Exists(directory))
             {
-                Debug.WriteLine("SaveMappingProgress: dataset directory does not exist: " + directory);
+                Debug.WriteLine("SaveMatchingProgress: dataset directory does not exist: " + directory);
                 return JsonWithStatus(new { success = false, id = datasetId, message = "No matching input file found on disk." }, HttpStatusCode.Conflict);
             }
 
@@ -714,7 +714,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
             try
             {
                 MatchingApiBase apiBase = matchingApiProvider.GetApi(apiIdentifier);
-                MatchingApiResponse response = await apiBase.MatchAsync(datasetId, versionId, filepath, mappingProgress);
+                MatchingApiResponse response = await apiBase.MatchAsync(datasetId, versionId, filepath, matchingProgress);
                 response.StepId = step.Id;
 
                 return Json(new { success = true, data = response.Message });
@@ -743,7 +743,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Authentification error." }, HttpStatusCode.Unauthorized, JsonRequestBehavior.AllowGet);
             }
 
-            var matchingProgress = ProgressHelper.LoadMappingProgress(datasetId, versionId);
+            var matchingProgress = ProgressHelper.LoadMatchingProgress(datasetId, versionId);
             if (matchingProgress == null)
             {
                 return JsonWithStatus(new { success = false, id = datasetId, message = "No matching progress found under the given datasetId." }, HttpStatusCode.Conflict, JsonRequestBehavior.AllowGet);
@@ -845,6 +845,8 @@ namespace BExIS.Modules.Smm.UI.Controllers
             {
                 // Convert incoming List<string> MatchIds into a HashSet<long> for fast lookups
                 var matchIdsSet = ConversionHelper.ConvertStringListToLongHashSet(request.MatchIds);
+
+                // TODO: - adapt to use ApiProvider
                 MatchingResultHelper.AcceptClbMatches(datasetId, versionId, request.StepId, matchIdsSet);
             } catch (Exception ex)
             {
@@ -929,7 +931,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
             }
         }
 
-        public async Task<JsonResult> SendToChecklistBank(long datasetId, string filepath, MappingProgressModel mappingProgress)
+        public async Task<JsonResult> SendToChecklistBank(long datasetId, string filepath, MatchingProgressModel matchingProgress)
         {
             if (string.IsNullOrWhiteSpace(filepath) || !System.IO.File.Exists(filepath))
             {

@@ -136,7 +136,7 @@
     <Compile Include="Models\AcceptMatchesRequestModel.cs" />
     <Compile Include="Models\CLBMatchingResultFile.cs" />
     <Compile Include="Models\HeaderMappingsModel.cs" />
-    <Compile Include="Models\MappingProgressModel.cs" />
+    <Compile Include="Models\MatchingProgressModel.cs" />
     <Compile Include="Models\MatchingApiResponse.cs" />
     <Compile Include="Models\MatchingResultRow.cs" />
     <Compile Include="Models\TailorEditsModel.cs" />

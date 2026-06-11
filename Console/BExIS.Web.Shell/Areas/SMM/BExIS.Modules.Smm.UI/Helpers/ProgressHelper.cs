@@ -15,19 +15,19 @@ namespace BExIS.Modules.Smm.UI.Helpers
     public class ProgressHelper
     {
         public const string MappingFilename = "header_mappings.json";
-        public const string MatchingFilename = "mapping_progress.json";
+        public const string MatchingFilename = "matching_progress.json";
         public const string MatchedPrefix = "species_matched";
         public const string UnmatchedPrefix = "species_unmatched";
         public const string MatchingFolderName = "Matching";
 
-        public static MappingProgressModel LoadMappingProgress(long datasetId, long versionId)
+        public static MatchingProgressModel LoadMatchingProgress(long datasetId, long versionId)
         {
             try
             {
                 string directory = GetVersionedMatchingPath(datasetId, versionId);
                 if (directory == null)
                 {
-                    Debug.WriteLine("LoadMappingProgress: dataset directory does not exist.");
+                    Debug.WriteLine("LoadMatchingProgress: dataset directory does not exist.");
                     return null;
                 }
 
@@ -35,23 +35,23 @@ namespace BExIS.Modules.Smm.UI.Helpers
 
                 if (!System.IO.File.Exists(filepath))
                 {
-                    Debug.WriteLine($"Mapping Progress file not found: {filepath}");
+                    Debug.WriteLine($"Matching Progress file not found: {filepath}");
                     return null;
                 }
 
                 string content = System.IO.File.ReadAllText(filepath);
                 if (string.IsNullOrWhiteSpace(content))
                 {
-                    Debug.WriteLine($"Mapping progress file empty: {filepath}");
+                    Debug.WriteLine($"Matching progress file empty: {filepath}");
                     return null;
                 }
 
-                var model = JsonConvert.DeserializeObject<MappingProgressModel>(content);
+                var model = JsonConvert.DeserializeObject<MatchingProgressModel>(content);
                 return model;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Failed to load mapping progress: " + ex);
+                Debug.WriteLine("Failed to load matching progress: " + ex);
                 return null;
             }
         }
@@ -125,9 +125,9 @@ namespace BExIS.Modules.Smm.UI.Helpers
             }
         }
 
-        // Creates a mapping_progress.json file for the given dataset with an empty Steps list.
+        // Creates a matching_progress.json file for the given dataset with an empty Steps list.
         // Returns true when the file was created successfully, false on error.
-        public static bool CreateMappingProgressFile(long datasetId, long versionId, int numRowsGlobal)
+        public static bool CreateMatchingProgressFile(long datasetId, long versionId, int numRowsGlobal)
         {
             try
             {
@@ -135,13 +135,13 @@ namespace BExIS.Modules.Smm.UI.Helpers
 
                 if (directory == null)
                 {
-                    Debug.WriteLine("CreateMappingProgressFile: dataset directory does not exist.");
+                    Debug.WriteLine("CreateMatchingProgressFile: dataset directory does not exist.");
                     return false;
                 }
 
                 string filepath = Path.Combine(directory, MatchingFilename);
 
-                var model = new MappingProgressModel
+                var model = new MatchingProgressModel
                 {
                     DatasetId = datasetId,
                     NumRowsGlobal = numRowsGlobal,
@@ -151,12 +151,12 @@ namespace BExIS.Modules.Smm.UI.Helpers
                 string json = JsonConvert.SerializeObject(model, Formatting.Indented);
                 System.IO.File.WriteAllText(filepath, json);
 
-                Debug.WriteLine("Created mapping progress file: " + filepath);
+                Debug.WriteLine("Created matching progress file: " + filepath);
                 return true;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Failed to create mapping progress file: " + ex);
+                Debug.WriteLine("Failed to create matching progress file: " + ex);
                 return false;
             }
         }
@@ -188,14 +188,14 @@ namespace BExIS.Modules.Smm.UI.Helpers
             }
         }
 
-        // Persist the provided MappingProgressModel to the dataset's mapping_progress.json file.
+        // Persist the provided MatchingProgressModel to the dataset's matching_progress.json file.
         // This method will overwrite the file regardless of whether it already exists.
         // Returns true on success, false on failure.
-        public static bool SaveMappingProgress(MappingProgressModel model, long datasetId, long versionId)
+        public static bool SaveMatchingProgress(MatchingProgressModel model, long datasetId, long versionId)
         {
             if (model == null)
             {
-                Debug.WriteLine("SaveMappingProgress: model is null.");
+                Debug.WriteLine("SaveMatchingProgress: model is null.");
                 return false;
             }
 
@@ -205,7 +205,7 @@ namespace BExIS.Modules.Smm.UI.Helpers
 
                 if (directory == null)
                 {
-                    Debug.WriteLine("SaveMappingProgress: dataset directory does not exist.");
+                    Debug.WriteLine("SaveMatchingProgress: dataset directory does not exist.");
                     return false;
                 }
 
@@ -216,12 +216,12 @@ namespace BExIS.Modules.Smm.UI.Helpers
                 // Overwrite the file (or create it if missing)
                 System.IO.File.WriteAllText(filepath, json, Encoding.UTF8);
 
-                Debug.WriteLine("Saved mapping progress file: " + filepath);
+                Debug.WriteLine("Saved matching progress file: " + filepath);
                 return true;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Failed to save mapping progress: " + ex);
+                Debug.WriteLine("Failed to save matching progress: " + ex);
                 return false;
             }
         }
@@ -278,7 +278,7 @@ namespace BExIS.Modules.Smm.UI.Helpers
             }
         }
 
-        public static bool HasMappingProgress(long datasetId, long versionId)
+        public static bool HasMatchingProgress(long datasetId, long versionId)
         {
             string directory = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), MatchingFolderName, versionId.ToString());
             string filepath = Path.Combine(directory, MatchingFilename);

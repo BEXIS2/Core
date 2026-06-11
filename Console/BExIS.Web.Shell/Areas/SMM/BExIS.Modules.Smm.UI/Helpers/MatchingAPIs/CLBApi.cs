@@ -289,7 +289,7 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
             }
         }
 
-        public override async Task<MatchingApiResponse> MatchAsync(long datasetId, long versionId, string filepath, MappingProgressModel mappingProgress)
+        public override async Task<MatchingApiResponse> MatchAsync(long datasetId, long versionId, string filepath, MatchingProgressModel matchingProgress)
         {
             if (string.IsNullOrWhiteSpace(filepath) || !System.IO.File.Exists(filepath))
             {
@@ -302,7 +302,7 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
                 });
             }
 
-            var step = mappingProgress.GetLatestStep();
+            var step = matchingProgress.GetLatestStep();
 
             Debug.WriteLine("{====================FILEPATH:====================}");
             Debug.WriteLine(filepath);
@@ -343,7 +343,7 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
                             var responseObject = JObject.Parse(responseString);
                             responseJson = responseObject;
 
-                            // If we have a mapping progress step available, update it with download and key
+                            // If we have a matching progress step available, update it with download and key
                             if (step != null)
                             {
                                 var resultToken = responseObject["result"];
@@ -356,9 +356,9 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
                                     if (!string.IsNullOrEmpty(key)) step.JobKey = key;
                                     step.ApiIdentifier = this.Identifier;
 
-                                    // persist the updated step back to the mapping progress
-                                    mappingProgress.UpdateStep(step);
-                                    ProgressHelper.SaveMappingProgress(mappingProgress, datasetId, versionId);
+                                    // persist the updated step back to the matching progress
+                                    matchingProgress.UpdateStep(step);
+                                    ProgressHelper.SaveMatchingProgress(matchingProgress, datasetId, versionId);
                                 }
                             }
                         }
@@ -412,11 +412,11 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
             }
         }
 
-        public override async Task<string> DownloadResultFile(long datasetId, long versionId, int stepId, MappingProgressModel mappingProgress)
+        public override async Task<string> DownloadResultFile(long datasetId, long versionId, int stepId, MatchingProgressModel matchingProgress)
         {
-            var step = mappingProgress.GetStepById(stepId);
+            var step = matchingProgress.GetStepById(stepId);
             if (step == null) return null;
-            Debug.WriteLine("Succesfully loaded step from mappingProgress...");
+            Debug.WriteLine("Succesfully loaded step from matchingProgress...");
 
             var downloadLink = step.DownloadLink;
             Debug.WriteLine(downloadLink, "DownloadLink: ");

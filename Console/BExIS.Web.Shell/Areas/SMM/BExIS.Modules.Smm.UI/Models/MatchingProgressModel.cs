@@ -5,7 +5,7 @@ using System.Web;
 
 namespace BExIS.Modules.Smm.UI.Models
 {
-    public class MappingProgressModel
+    public class MatchingProgressModel
     {
 
         public List<StepEntry> Steps { get; set; } = new List<StepEntry>();

@@ -32,13 +32,13 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
 
         // Method to perform the matching based on the provided file path
         // (this actually makes the post request to the API and returns the result as a JsonResult)
-        public abstract Task<MatchingApiResponse> MatchAsync(long datasetId, long versionId, string filepath, MappingProgressModel mappingProgress);
+        public abstract Task<MatchingApiResponse> MatchAsync(long datasetId, long versionId, string filepath, MatchingProgressModel matchingProgress);
 
         // Method to generate the unmatched input file (source file for matching)
         // NOTE: different APIs need different file structure and input format
         public abstract (string FilePath, int RowCount) GenerateInputFile(long datasetId, long dataStructureId, long versionId, int stepId);
 
-        public abstract Task<string> DownloadResultFile(long datasetId, long versionId, int stepId, MappingProgressModel mappingProgress);
+        public abstract Task<string> DownloadResultFile(long datasetId, long versionId, int stepId, MatchingProgressModel matchingProgress);
 
         // Method to read the result file and return a list of matching results
         // NOTE: different APIs have different result file structure and output format
