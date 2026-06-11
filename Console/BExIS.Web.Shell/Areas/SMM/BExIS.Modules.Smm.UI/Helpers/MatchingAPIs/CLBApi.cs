@@ -231,20 +231,20 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
                             //Original_authorship = GetField("Original_authorship"),
                             MatchType = GetField("MatchType"),
                             //MatchIssues = GetField("MatchIssues"),
-                            //ID = GetField("ID"),
-                            //Rank = GetField("Rank"),
+                            ID = GetField("ID"),
+                            Rank = GetField("Rank"),
                             ScientificName = GetField("ScientificName"),
-                            //Authorship = GetField("Authorship"),
+                            Authorship = GetField("Authorship"),
                             Status = GetField("Status"),
-                            //AcceptedID = GetField("AcceptedID"),
-                            //AcceptedScientificName = GetField("AcceptedScientificName"),
-                            //AcceptedAuthorship = GetField("AcceptedAuthorship"),
-                            //Kingdom = GetField("Kingdom"),
-                            //Phylum = GetField("Phylum"),
-                            //Class = GetField("Class"),
-                            //Order = GetField("Order"),
-                            //Family = GetField("Family"),
-                            //Genus = GetField("Genus"),
+                            AcceptedID = GetField("AcceptedID"),
+                            AcceptedScientificName = GetField("AcceptedScientificName"),
+                            AcceptedAuthorship = GetField("AcceptedAuthorship"),
+                            Kingdom = GetField("Kingdom"),
+                            Phylum = GetField("Phylum"),
+                            Class = GetField("Class"),
+                            Order = GetField("Order"),
+                            Family = GetField("Family"),
+                            Genus = GetField("Genus"),
                             //Classification = GetField("Classification")
                         };
 
@@ -258,6 +258,18 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
                                 result.MatchedName = entry.ScientificName;
                                 result.MatchType = entry.MatchType;
                                 result.Status = entry.Status;
+                                result.MatchId = entry.ID;
+                                result.MatchRank = entry.Rank;
+                                result.MatchAuthorship = entry.Authorship;
+                                result.AcceptedId = entry.AcceptedID;
+                                result.AcceptedScientificName = entry.AcceptedScientificName;
+                                result.AcceptedAuthorship = entry.AcceptedAuthorship;
+                                result.TaxonKingdom = entry.Kingdom;
+                                result.TaxonPhylum = entry.Phylum;
+                                result.TaxonClass = entry.Class;
+                                result.TaxonOrder = entry.Order;
+                                result.TaxonFamily = entry.Family;
+                                result.TaxonGenus = entry.Genus;
                             }
                         }
 
