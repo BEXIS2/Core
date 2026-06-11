@@ -1,10 +1,16 @@
 import { persisted } from "./persist";
 
 /**
- * Currently selected dataset and datastructure to progress the mapping process on.
- * -1 means selected none.
+ * These values distinctly identify the data the user is currently working on.
+ * [datasetId, versionId]       ...     distinct identifier for the actual scientificNames and matching results
+ * [versionNr]                  ...     only for user readability
+ * [stepId]                     ...     identifies a matching step (matching file-based against multiple APIs results in multiple such steps)
+ * [datastructureId]            ...     only used as helper variable for backend functionalities
+ * -1                           ...     not selected
+ * 
+ * They are used everywhere and guide the flow - and selection of data during the whole matching process.
  */
-export const mappingSelection = persisted('mappingSelection', {
+export const matchingSelection = persisted('matchingSelection', {
     // unique const datasetId of the selected dataset
     datasetId: -1,
     // unique const datastructureId belonging to selected datasetId + versionId pair

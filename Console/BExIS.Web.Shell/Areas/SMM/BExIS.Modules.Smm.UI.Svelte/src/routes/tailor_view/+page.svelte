@@ -9,7 +9,7 @@
     import { SlideToggle } from "@skeletonlabs/skeleton";
     import EditResult from "./EditResult.svelte";
     import { faPen, faMousePointer } from "@fortawesome/free-solid-svg-icons";
-    import { mappingSelection } from '../../lib/stores/selectionStore';
+    import { matchingSelection } from '../../lib/stores/selectionStore';
     import { get } from "svelte/store";
     import Fa from 'svelte-fa';
     import CleanedName from "./cleanedName.svelte";
@@ -24,7 +24,7 @@
 
 
     async function load() {
-        var responseData = await loadResult($mappingSelection.datasetId, $mappingSelection.versionId);
+        var responseData = await loadResult($matchingSelection.datasetId, $matchingSelection.versionId);
 
             // filter out redundant data and determine column order
             let filteredData: SpeciesMatchingRow[] = responseData.message.map((row: any): SpeciesMatchingRow => 

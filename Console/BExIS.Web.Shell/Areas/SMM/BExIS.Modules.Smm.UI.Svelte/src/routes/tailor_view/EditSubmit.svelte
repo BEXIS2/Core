@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getModalStore } from "@skeletonlabs/skeleton";
 	import { submitTailorEdits } from "./services";
-    import { mappingSelection } from '../../lib/stores/selectionStore';
+    import { matchingSelection } from '../../lib/stores/selectionStore';
     import { type TailorEdit, type TailorEditsRequest } from "./types";
 	import { goto } from "$app/navigation";
     import { type SpeciesMatchingRow } from "$lib/types/types";
@@ -23,7 +23,7 @@
     async function handleSubmit() {
         var payload = createEditsPayload();
 
-        const response = await submitTailorEdits($mappingSelection.datasetId, $mappingSelection.versionId, payload);
+        const response = await submitTailorEdits($matchingSelection.datasetId, $matchingSelection.versionId, payload);
 
 		if (!response.success) {
             // TODO: - handling

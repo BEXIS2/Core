@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ErrorMessage, Page, pageContentLayoutType, positionType, Spinner, type TableConfig } from "@bexis2/bexis2-core-ui";
-    import { mappingSelection } from '../../lib/stores/selectionStore';
+    import { matchingSelection } from '../../lib/stores/selectionStore';
     import { loadDatasetProgress, tailorDataset, genNewMatchFile, matchNextFile } from "./services";
     import type { ProgressOverview } from "./types";
     import type { StepEntry } from "$lib/types/types";
@@ -40,13 +40,13 @@
 	};
 
     async function load(): Promise<ProgressOverview> {
-        var response = await loadDatasetProgress($mappingSelection.datasetId, $mappingSelection.versionId);
+        var response = await loadDatasetProgress($matchingSelection.datasetId, $matchingSelection.versionId);
         if (!response.success) {
             throw new Error(response.error);
         } else {
             console.log(response.data);
             matchingJobStore.update(() => {
-                return response.data?.mappingProgress?.steps;
+                return response.data?.matchingProgress?.steps;
             });
             return response.data;
         }
@@ -56,7 +56,7 @@
 		const { type, row } = action.detail;
 		switch (type) {
 			case 'READ':
-                mappingSelection.update(s => ({ ...s, stepId: row.id }));
+                matchingSelection.update(s => ({ ...s, stepId: row.id }));
                 goto("/matchingresult");
 				break;
 
@@ -67,7 +67,7 @@
 
     async function handleTailor() {
         tailorLoading = true;
-        const response = await tailorDataset($mappingSelection.datasetId, $mappingSelection.versionId);
+        const response = await tailorDataset($matchingSelection.datasetId, $matchingSelection.versionId);
 
         if (response.success) {
             console.log(response);
@@ -82,7 +82,7 @@
 
     async function requestFileAndMatching() {
         // TODO: apiIdentifier handling
-        const responseCreate = await genNewMatchFile($mappingSelection.datasetId, $mappingSelection.versionId, "CLB");
+        const responseCreate = await genNewMatchFile($matchingSelection.datasetId, $matchingSelection.versionId, "CLB");
         if (!responseCreate.success) {
            console.error("Error generating new Matching input file.");
            console.log(responseCreate);
@@ -90,7 +90,7 @@
         }
         console.log(responseCreate);
 
-        const responseMatch = await matchNextFile($mappingSelection.datasetId, $mappingSelection.versionId, "CLB");
+        const responseMatch = await matchNextFile($matchingSelection.datasetId, $matchingSelection.versionId, "CLB");
         
         if (!responseMatch.success) {
             console.error("Error generating new Matching input file.");
@@ -98,7 +98,7 @@
             return;
         }
         console.log(responseMatch);
-        mappingSelection.update(s => ({ ...s, stepId: responseMatch.data.data?.stepId }));
+        matchingSelection.update(s => ({ ...s, stepId: responseMatch.data.data?.stepId }));
     }
 
 </script>
@@ -110,7 +110,7 @@
 >
     <h2 class="h2">Progress Overview</h2>
 
-    <p>This page shows your current mapping progress for the selected Dataset with <b>ID:</b> {$mappingSelection.datasetId} <b>VerionNr:</b> {$mappingSelection.versionNr} <b>VersionID:</b> {$mappingSelection.versionId} <b>StepID:</b> {$mappingSelection.stepId}</p>
+    <p>This page shows your current mapping progress for the selected Dataset with <b>ID:</b> {$matchingSelection.datasetId} <b>VerionNr:</b> {$matchingSelection.versionNr} <b>VersionID:</b> {$matchingSelection.versionId} <b>StepID:</b> {$matchingSelection.stepId}</p>
 
     {#if tailorError}
         <Alert cssClass="variant-filled-error">
@@ -134,10 +134,10 @@
                     <button class="btn variant-filled-secondary" on:click|preventDefault={handleTailor}>Tailor Dataset</button>
                 </div>
             {:else}
-                {#if !data.hasMappingProgress}
-                    <p>No mapping progress data available. Something went wrong.</p>
+                {#if !data.hasMatchingProgress}
+                    <p>No matching progress data available. Something went wrong.</p>
                 {:else}
-                    {#if data.mappingProgress.steps.length == 0}
+                    {#if data.matchingProgress.steps.length == 0}
                         <p>For this dataset, no matching request have been done to external APIs. Feel free to check/edit the current state or begin matching.</p>
                         <div class="flex items-center justify-center gap-x-2">
                             <button class="btn variant-filled-secondary" on:click|preventDefault={() => goto("/tailor_view")}>View State</button>

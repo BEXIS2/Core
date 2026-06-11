@@ -1,11 +1,11 @@
-import type { HeaderMappings, MappingProgress } from "$lib/types/types"
+import type { HeaderMappings, MatchingProgress } from "$lib/types/types"
 
 export interface ProgressOverview {
     success: boolean,
     hasHeaderMappings: boolean,
-    hasMappingProgress: boolean,
+    hasMatchingProgress: boolean,
     isTailored: boolean,
     headerMappings: HeaderMappings,
-    mappingProgress: MappingProgress
+    matchingProgress: MatchingProgress
 }
 

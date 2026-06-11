@@ -10,7 +10,7 @@
 	import { Modal, filter, getModalStore } from '@skeletonlabs/skeleton';
     import { get } from "svelte/store";
 	import { faEye, faPlus } from "@fortawesome/free-solid-svg-icons";
-    import { mappingSelection } from '../../lib/stores/selectionStore';
+    import { matchingSelection } from '../../lib/stores/selectionStore';
 	import { goto } from '$app/navigation';
 
 	const modalStore = getModalStore()
@@ -52,15 +52,17 @@
 	const tableActions = (action: CustomEvent<{ row: DisplayDatasetVersion; type: string }>) => {
 		const { type, row } = action.detail;
 		switch (type) {
-            // action to begin new mapping process on selected dataset
+            // select (datasetId + versionId) as an identifier of which data to match
+            // redirect user to assign header mappings
 			case 'BEGIN':
-                mappingSelection.update(s => ({ datasetId: row.id, datastructureId: row.dataStructureId, versionId: row.versionId, versionNr: row.versionNr }));
+                matchingSelection.update(s => ({ datasetId: row.id, datastructureId: row.dataStructureId, versionId: row.versionId, versionNr: row.versionNr }));
                 goto("/headermapping");
 				break;
 
-            // action to continue mapping process on selected dataset 
+            // select (datasetId + versionId) as an identifier of which data to match
+            // redirect user to progress overview
             case 'CONTINUE':
-                mappingSelection.update(s => ({ datasetId: row.id, datastructureId: row.dataStructureId, versionId: row.versionId, versionNr: row.versionNr }));
+                matchingSelection.update(s => ({ datasetId: row.id, datastructureId: row.dataStructureId, versionId: row.versionId, versionNr: row.versionNr }));
                 goto("/progress_overview");
                 break;
 

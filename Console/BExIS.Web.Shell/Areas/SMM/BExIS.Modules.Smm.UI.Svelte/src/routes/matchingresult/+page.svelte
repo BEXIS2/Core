@@ -2,7 +2,7 @@
 	import { ErrorMessage, Page, pageContentLayoutType, positionType, Spinner } from "@bexis2/bexis2-core-ui";
 	import { Table } from '@bexis2/bexis2-core-ui';
     import { loadMatchingFileStatus, loadMatchingResult, requestResultFileDownload, submitAcceptedIds } from "./services";
-    import { mappingSelection } from "$lib/stores/selectionStore";
+    import { matchingSelection } from "$lib/stores/selectionStore";
     import type { AcceptMatchesRequest, GenericMatchingResult, MatchingFileStatus, SpeciesMatchingRow } from "$lib/types/types";
     import type { Columns, TableConfig } from "@bexis2/bexis2-core-ui";
     import AcceptedTableOptions from "./AcceptedTableOptions.svelte";
@@ -80,7 +80,7 @@
 	 * Once succesfully loaded, the user can continue the result confirmation.
 	 */
     async function load(): Promise<GenericMatchingResult[]> {
-        var response = await loadMatchingResult($mappingSelection.datasetId, $mappingSelection.versionId, $mappingSelection.stepId);
+        var response = await loadMatchingResult($matchingSelection.datasetId, $matchingSelection.versionId, $matchingSelection.stepId);
         if (!response.success) {
             throw new Error(response.error);
         } else {
@@ -203,7 +203,7 @@
 	 * Requests file status for the currently selected result file.
 	 */
 	async function loadFileStatus(): Promise<MatchingFileStatus> {
-		var response = await loadMatchingFileStatus($mappingSelection.datasetId, $mappingSelection.versionId, $mappingSelection.stepId);
+		var response = await loadMatchingFileStatus($matchingSelection.datasetId, $matchingSelection.versionId, $matchingSelection.stepId);
 		if (!response.success) {
 			throw new Error(response.error);
 		} else {
@@ -270,7 +270,7 @@
 				// file can in theory be downloaded or is still downloading
 				if (!status.markerExists) {
 					// request file download and poll for file
-					const response = await requestResultFileDownload($mappingSelection.datasetId, $mappingSelection.versionId, $mappingSelection.stepId);
+					const response = await requestResultFileDownload($matchingSelection.datasetId, $matchingSelection.versionId, $matchingSelection.stepId);
 					if (response.success) {
 						startPollingFile();
 					} else {
@@ -316,9 +316,9 @@
 	 */
 	function getAcceptedMatchIdsPayload(): AcceptMatchesRequest {
 		return {
-			datasetId: $mappingSelection.datasetId,
-			versionId: $mappingSelection.versionId,
-			stepId: $mappingSelection.stepId,
+			datasetId: $matchingSelection.datasetId,
+			versionId: $matchingSelection.versionId,
+			stepId: $matchingSelection.stepId,
 			matchIds: getMatchIds()
 		}
 	}
@@ -495,7 +495,7 @@
 	contentLayoutType={pageContentLayoutType.center}
 >
 
-    <p>Dataset with <b>ID:</b> {$mappingSelection.datasetId} <b>VerionNr:</b> {$mappingSelection.versionNr} <b>VersionID:</b> {$mappingSelection.versionId} <b>StepID:</b> {$mappingSelection.stepId}</p>
+    <p>Dataset with <b>ID:</b> {$matchingSelection.datasetId} <b>VerionNr:</b> {$matchingSelection.versionNr} <b>VersionID:</b> {$matchingSelection.versionId} <b>StepID:</b> {$matchingSelection.stepId}</p>
 
 	{#if statusLoaded && resultFileExists}
 		{#await load()}

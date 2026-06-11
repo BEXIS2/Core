@@ -22,7 +22,7 @@ export interface StepEntry {
     done: boolean
 }
 
-export interface MappingProgress {
+export interface MatchingProgress {
     datasetId: number,
     numRowsGlobal: number,
     steps: StepEntry[],
@@ -40,7 +40,7 @@ export interface MatchingFileStatus {
     markerExists: boolean,
     markerStale: boolean,
     markerStart: string,
-    mappingProgressExists: boolean,
+    matchingProgressExists: boolean,
     stepExists: boolean,
     stepDone: boolean,
     downloadLinkPresent: boolean,

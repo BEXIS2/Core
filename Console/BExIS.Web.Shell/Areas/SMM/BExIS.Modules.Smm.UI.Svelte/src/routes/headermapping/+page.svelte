@@ -6,7 +6,7 @@
 	import { onMount } from "svelte";
 	import { MultiSelect } from "@bexis2/bexis2-core-ui";
     import { submitHeaderMappings } from "./services";
-    import { mappingSelection } from '../../lib/stores/selectionStore';
+    import { matchingSelection } from '../../lib/stores/selectionStore';
 	import { goto } from "$app/navigation";
 
     let dataStructure: DataStructureEditModel;
@@ -29,7 +29,7 @@
 
     onMount(() => {
         async function test() {
-            const response = await loadDataStructure($mappingSelection.datastructureId);
+            const response = await loadDataStructure($matchingSelection.datastructureId);
             if (!response.success) {
                 console.log(response.error);
                 return;
@@ -73,8 +73,8 @@
             }
 
             dataStructure = dataStructureHelper;
-            headerMappings.datasetId = $mappingSelection.datasetId;
-            headerMappings.datastructureId = $mappingSelection.datastructureId;
+            headerMappings.datasetId = $matchingSelection.datasetId;
+            headerMappings.datastructureId = $matchingSelection.datastructureId;
 
             validateHeaderMappings();
         }
@@ -128,7 +128,7 @@
     async function handleSubmit() {
         handlingSubmit = true;
         console.log(headerMappings);
-        const response = await submitHeaderMappings(headerMappings, $mappingSelection.datasetId, $mappingSelection.versionId);
+        const response = await submitHeaderMappings(headerMappings, $matchingSelection.datasetId, $matchingSelection.versionId);
         if (!response.success) {
             console.log(response);
         } else {
@@ -147,7 +147,7 @@
 <h2 class="h2">Select header mapping</h2>
 
 <p>
-    You are working on <b>Dataset: {$mappingSelection.datasetId}</b>, <b>Datastructure: {$mappingSelection.datastructureId}</b> and <b>VersionID: {$mappingSelection.versionId}</b>. 
+    You are working on <b>Dataset: {$matchingSelection.datasetId}</b>, <b>Datastructure: {$matchingSelection.datastructureId}</b> and <b>VersionID: {$matchingSelection.versionId}</b>. 
 </p>
 <p>
     The <b>original column headers</b> are shown on the <b>left</b>. <b>Selectable mappings</b> are shown on the <b>right</b>. Some mappings might already be pre-assigned based on your datasets metadata. Please try to select as many matching mappings as possible, but at the very least select a scientificName mapping.

@@ -188,7 +188,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                         MarkerExists = markerExists,
                         MarkerStale = markerStale,
                         MarkerStart = markerStart,
-                        MappingProgressExists = mappingProgressExists,
+                        MatchingProgressExists = mappingProgressExists,
                         StepExists = stepExists,
                         StepDone = step?.Done ?? false,
                         DownloadLinkPresent = !string.IsNullOrWhiteSpace(step?.DownloadLink),
@@ -609,8 +609,8 @@ namespace BExIS.Modules.Smm.UI.Controllers
                     hasHeaderMappings = hasHeaderMappings,
                     headerMappings = headerMappings,
                     isTailored = isTailored,
-                    hasMappingProgress = hasMappingProgress,
-                    mappingProgress = mappingProgress
+                    hasMatchingProgress = hasMappingProgress,
+                    matchingProgress = mappingProgress
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
