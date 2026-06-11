@@ -10,10 +10,6 @@ patchedDependencies:
 importers:
 
   .:
-    dependencies:
-      pnpm:
-        specifier: ^10.34.1
-        version: 10.34.1
     devDependencies:
       '@fortawesome/free-regular-svg-icons':
         specifier: ^7.2.0
@@ -2048,11 +2044,6 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  pnpm@10.34.1:
-    resolution: {integrity: sha512-tY+95tymapKVOAIVgfZItFcLbKGbGOfL1/LAenskRUFVOI2s3wjyrzZ46IptH+BPnWCd8kv1FzWgYOoEGzdKtw==}
-    engines: {node: '>=18.12'}
-    hasBin: true
-
   postcss-import@15.1.0:
     resolution: {integrity: sha512-hpr+J05B2FVYUAXHeK1YyI267J/dDDhMU6B6civm8hSY1jYJnBXxzKDKDswzJmtLHryrjhnDjqqp/49t8FALew==}
     engines: {node: '>=14.0.0'}
@@ -2659,7 +2650,7 @@ snapshots:
       '@fortawesome/fontawesome-svg-core': 6.7.2
       '@fortawesome/free-regular-svg-icons': 6.7.2
       '@fortawesome/free-solid-svg-icons': 6.7.2
-      '@sveltejs/kit': 2.63.0(patch_hash=edb8ea411824a5d15205994760d3951f038e693b887197c1a3e99879640e2ca6)(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@22.0.2)))(svelte@4.2.20)(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+      '@sveltejs/kit': 2.63.0(patch_hash=edb8ea411824a5d15205994760d3951f038e693b887197c1a3e99879640e2ca6)(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@25.9.1)))(svelte@4.2.20)(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@sveltejs/vite-plugin-svelte': 3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@25.9.1))
       axios: 1.17.0
       codemirror: 6.0.2
@@ -3173,26 +3164,6 @@ snapshots:
       sirv: 3.0.2
       svelte: 4.2.20
       vite: 5.4.21(@types/node@22.0.2)
-    optionalDependencies:
-      typescript: 5.5.4
-
-  '@sveltejs/kit@2.63.0(patch_hash=edb8ea411824a5d15205994760d3951f038e693b887197c1a3e99879640e2ca6)(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@22.0.2)))(svelte@4.2.20)(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))':
-    dependencies:
-      '@standard-schema/spec': 1.1.0
-      '@sveltejs/acorn-typescript': 1.0.10(acorn@8.16.0)
-      '@sveltejs/vite-plugin-svelte': 3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@22.0.2))
-      '@types/cookie': 0.6.0
-      acorn: 8.16.0
-      cookie: 0.6.0
-      devalue: 5.8.1
-      esm-env: 1.2.2
-      kleur: 4.1.5
-      magic-string: 0.30.21
-      mrmime: 2.0.1
-      set-cookie-parser: 3.1.0
-      sirv: 3.0.2
-      svelte: 4.2.20
-      vite: 5.4.21(@types/node@25.9.1)
     optionalDependencies:
       typescript: 5.5.4
 
@@ -4483,8 +4454,6 @@ snapshots:
       playwright-core: 1.60.0
     optionalDependencies:
       fsevents: 2.3.2
-
-  pnpm@10.34.1: {}
 
   postcss-import@15.1.0(postcss@8.5.15):
     dependencies:
