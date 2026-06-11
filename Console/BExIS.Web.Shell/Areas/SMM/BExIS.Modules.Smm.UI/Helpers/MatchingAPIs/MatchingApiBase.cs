@@ -28,7 +28,7 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
 
         public abstract string BaseUrl { get; }
 
-        public abstract HashSet<string> SupportedMatchTypes { get; }
+        public abstract HashSet<string> AcceptableMatchTypes { get; }
 
         // Method to perform the matching based on the provided file path
         // (this actually makes the post request to the API and returns the result as a JsonResult)
@@ -51,5 +51,9 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
 
         public abstract string GenMatchingUrl();
 
+        public HashSet<string> GetAcceptableMatchTypes()
+        {
+            return AcceptableMatchTypes;
+        }
     }
 }

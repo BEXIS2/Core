@@ -32,11 +32,12 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
         
         public override string BaseUrl => "https://api.checklistbank.org/dataset/3LR/match/nameusage/job";
 
-        public override HashSet<string> SupportedMatchTypes => new HashSet<string>
+        public override HashSet<string> AcceptableMatchTypes => new HashSet<string>
         {
             "ambiguous",
             "exact",
-            "none"
+            "variant",
+            "canonical"
         };
 
         public override string GenMatchingUrl()

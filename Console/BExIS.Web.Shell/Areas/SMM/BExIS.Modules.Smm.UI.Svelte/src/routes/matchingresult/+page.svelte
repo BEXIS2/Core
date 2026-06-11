@@ -22,9 +22,8 @@
 	let hideMismatches: boolean = true;
 	let hideDone: boolean = true;
 
-	// TODO: - adapt this to handle different APIs
-	// - right now hardcoded for CLB bulk matching API
-	let acceptableMatchTypes: Set<string> = new Set(["exact", "variant", "canonical", "ambiguous"])
+	// API specific acceptable match types (everything else is assumed to be a mismatch)
+	let acceptableMatchTypes: Set<string> = new Set(["exact"])
 
 	// TODO: - use for error handling and display
 	let criticalError: boolean = false;
@@ -86,6 +85,8 @@
             throw new Error(response.error);
         } else {
             console.log(response.data);
+			acceptableMatchTypes = new Set(response.data.acceptableMatchTypes);
+
 			var responseData: GenericMatchingResult[] = response.data.matchingResults;
 
 			const doneMap: Map<number, SpeciesMatchingRow> = new Map(response.data.speciesMatchingResults.map((row: SpeciesMatchingRow) => [row.id, row]));

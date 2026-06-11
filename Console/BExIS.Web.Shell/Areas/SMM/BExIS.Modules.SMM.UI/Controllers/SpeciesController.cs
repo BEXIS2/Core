@@ -769,6 +769,8 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 MatchingApiBase apiBase = matchingApiProvider.GetApi(apiIdentifier);
                 var matchingResults = apiBase.ReadResultFile(filepath);
 
+                var acceptableMatchTypes = apiBase.GetAcceptableMatchTypes();
+
                 // If matching results were read, build a set of IDs from the file and then
                 // query the SpeciesMatchingResult table for the subset of rows that belong
                 // to this dataset/version and whose IDs are present in the matching result file.
@@ -806,7 +808,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                     }
                 }
 
-                return Json(new { success = true, matchingResults = matchingResults, speciesMatchingResults = dbResults }, JsonRequestBehavior.AllowGet);
+                return Json(new { success = true, matchingResults, acceptableMatchTypes, speciesMatchingResults = dbResults }, JsonRequestBehavior.AllowGet);
             }
             catch (ArgumentException ex)
             {
