@@ -2508,7 +2508,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         List<string> complexUsages = new List<string>();
                         complexUsages.Add("Metadata/creator/agentType/individualName");
                         complexUsages.Add("Metadata/metadataProvider/agentType/individualName");
-                        complexUsages.Add("Metadata/associatedParty/agentTypeWithRoleType/individualName");
+                        complexUsages.Add("Metadata/associatedParty/agentWithRoleType");
                         complexUsages.Add("Metadata/contact/contactType/individualName");
                         complexUsages.Add("Metadata/project/projectType/personnel/agentWithRoleType/individualName");
 
