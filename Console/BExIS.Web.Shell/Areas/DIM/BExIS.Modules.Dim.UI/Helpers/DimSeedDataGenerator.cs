@@ -2509,8 +2509,8 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         complexUsages.Add("Metadata/creator/agentType/individualName");
                         complexUsages.Add("Metadata/metadataProvider/agentType/individualName");
                         complexUsages.Add("Metadata/associatedParty/agentWithRoleType/individualName");
-                        complexUsages.Add("Metadata/contact/contactType/individualName");
-                        complexUsages.Add("Metadata/project/projectType/personnel/agentWithRoleType/individualName");
+                        complexUsages.Add("Metadata/contact/agentType/individualName");
+                        //complexUsages.Add("Metadata/project/projectXmlSchemaComplexType/personnel/agentWithRoleType/individualName");
 
                         foreach (var complexUsage in complexUsages)
                         {
