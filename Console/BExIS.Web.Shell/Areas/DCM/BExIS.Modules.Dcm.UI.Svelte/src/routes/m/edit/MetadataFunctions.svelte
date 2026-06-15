@@ -1,18 +1,19 @@
 
 <script lang="ts">
 	import Fa from 'svelte-fa';
-  import { faCheck, faSave } from '@fortawesome/free-solid-svg-icons';
+  import { faCheck, faFileUpload, faSave } from '@fortawesome/free-solid-svg-icons';
 	import { onMount } from 'svelte';
   import * as apiCalls from '../services/apiCalls';
 	import { activateShow, getValidationStore, setMetadataStore, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import type { validationStoretype } from '$lib/components/utils/metadata/models';
   import {metadataStore, validationStore} from '$lib/components/utils/metadata/stores';
 
-	import { FileUploader, notificationStore, notificationType, TextInput, type fileUploaderType } from '@bexis2/bexis2-core-ui';
+	import { Api, FileUploader, notificationStore, notificationType, TextInput, type fileUploaderType } from '@bexis2/bexis2-core-ui';
   import {convertDisplayName} from '../metadataShared';
 	import { goTo } from '$services/BaseCaller';
   import { createEventDispatcher } from 'svelte';
 	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import { FileButton } from '@skeletonlabs/skeleton';
 
   const dispatch = createEventDispatcher();
 
@@ -123,6 +124,41 @@
       }
   }
 
+  let files: FileList;
+
+  async function fileUploadSelectionFn(e){
+    console.log("🚀 ~ fileUploadSelectionFn ~ e:", e)
+    const file = e.target.files[0];
+    if(file){
+      fileUploadType.existingFiles = [file.name];
+      console.log("🚀 ~ fileUploadSelectionFn ~ fileUploadType:", fileUploadType)
+
+      const formData = new FormData();
+      formData.append('id', datasetId.toString());
+      formData.append(file.name, file);
+
+      const res = await  Api.post('/dcm/m/import', formData);
+
+      console.log("🚀 ~ fileUploadSelectionFn ~ res:", res)
+
+      if(res.status === 200){
+      notificationStore.showNotification({
+        notificationType: notificationType.success,
+        message: 'Metadata successfully imported.',
+      });
+
+      //console.log("🚀 ~ successHandler ~ metadata:", metadata)
+      metadata = JSON.parse(String(res.data));
+      //console.log("🚀 ~ successHandler ~ metadata:", metadata)
+      setMetadataStore(metadata);
+      dispatch('metadataUpdated');
+
+      }
+
+    }
+  }
+
+
 </script>
 
 
@@ -162,13 +198,22 @@
           <Fa icon={faSave}/>
         </button>
   </div>
-  <div>
-      <FileUploader
+  <div class="flex py-5">
+      <!-- <FileUploader
         id={datasetId}
         submit = "/dcm/m/import"
         data = {fileUploadType}
         on:submited={successHandler}
-      />
+      /> -->
+       <div class="flex-auto text-xs text-gray-500 italic h-"> 
+        Upload new metadata to update the form. This will override all unsaved changes. Current supported formats are .json and .xml.
+      </div>
+
+      <div>
+      <FileButton name="files" button="btn variant-filled-secondary" title="Upload Metadata" on:change={fileUploadSelectionFn} bind:files={files} accept=".json,.xml">
+        <Fa icon={faFileUpload} />
+      </FileButton>
+      </div>
   </div>
 </div>
 

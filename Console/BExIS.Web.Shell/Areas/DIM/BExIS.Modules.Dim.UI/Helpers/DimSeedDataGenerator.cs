@@ -1428,7 +1428,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
             LinkElementComplexity complexity,
             string xpath)
         {
-            LinkElement element = mappingManager.GetLinkElement(id, name, type);
+            LinkElement element = mappingManager.GetLinkElement(id, name, type, xpath);
 
             if(xpath.StartsWith("/")) xpath = xpath.Substring(1);
 
@@ -2508,9 +2508,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
                         List<string> complexUsages = new List<string>();
                         complexUsages.Add("Metadata/creator/agentType/individualName");
                         complexUsages.Add("Metadata/metadataProvider/agentType/individualName");
-                        complexUsages.Add("Metadata/associatedParty/agentTypeWithRoleType/individualName");
-                        complexUsages.Add("Metadata/contact/contactType/individualName");
-                        complexUsages.Add("Metadata/project/projectType/personnel/agentWithRoleType/individualName");
+                        complexUsages.Add("Metadata/associatedParty/agentWithRoleType/individualName");
+                        complexUsages.Add("Metadata/contact/agentType/individualName");
+                        //complexUsages.Add("Metadata/project/projectXmlSchemaComplexType/personnel/agentWithRoleType/individualName");
 
                         foreach (var complexUsage in complexUsages)
                         {

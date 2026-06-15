@@ -7,7 +7,9 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO.Transform.Output;
+using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Helpers;
+using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Helpers;
 using BExIS.Utils.Route;
@@ -120,18 +122,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     // get party mappings 
                     var partymappings = mappings.Where(m => m.Target.Type == LinkElementType.PartyCustomType).ToList();
+                    //partymappings = partymappings.GroupBy(obj => obj.Target).Select(g => g.First()).ToList();
                     var keymappings = mappings.Where(m => m.Target.Type == LinkElementType.Key && ints.Contains(m.Target.ElementId)).ToList();
 
-                    var presult = partymappings.Select(m => new
-                    {
-                        Path = cleanPath(m.Source.XPath),
-                        ParentPath = getParentPath(cleanPath(m.Source.XPath)),   // use tha path from the source and create tha parent path because parent is allways one level up.
-                        LinkElementId = m.Source.Id,    
-                        Selector = MappingUtils.PartyAttrIsMain(m.Source.ElementId, m.Source.Type),
-                        Complexity = m.Source.ElementId != m.Parent.Source.ElementId,
-                        List = getList(m.Source.ElementId, m.Source.Type)
+                    List<PartyMappingResultModel> presult = new List<PartyMappingResultModel>();
 
-                    }).ToList();
+                    foreach (var m in partymappings)
+                    {
+                        PartyMappingResultModel x = new PartyMappingResultModel();
+                        x.Path = cleanPath(m.Source.XPath);
+                        x.ParentPath = getParentPath(cleanPath(m.Source.XPath));   // use tha path from the source and create tha parent path because parent is allways one level up.
+                        x.LinkElementId = m.Source.Id;
+                        x.Selector = MappingUtils.PartyAttrIsMain(m.Source.ElementId, m.Source.Type);
+                        x.Complexity = m.Source.ElementId != m.Parent.Source.ElementId;
+                        x.List = getList(m.Source.ElementId, m.Source.Type);
+
+                        presult.Add(x);
+                    }
+
+
 
                     var kresult = keymappings.Select(m => new
                     {
@@ -164,7 +173,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (MappingUtils.PartyAttrIsMain(id, type))
             {
                 x = MappingUtils.GetAllMatchesInSystem(id, type, "");
-                //x = x.Distinct(e => e.Id);   
+                x = x.GroupBy(e => e.PartyId).Select(g => g.First()).ToList();   
             }
 
             return x;
@@ -246,7 +255,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     JSchema schema;
                     XmlMetadataConverter converter = new XmlMetadataConverter();
                     MetadataStructureConverter metadataStructureConverter = new MetadataStructureConverter();
-
+                    long mdid = 0;
 
                     if (contentType.Contains("xml"))
                     {
@@ -255,30 +264,45 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         XmlDocument metadataForImport = new XmlDocument();
                         metadataForImport.Load(requestStream);
 
-                        // metadataStructure ID
+                        if (metadataForImport.DocumentElement.HasAttribute("id"))
+                        {
+                            mdid = Convert.ToInt64(metadataForImport.DocumentElement.GetAttribute("id"));
+                        }
 
-                        var metadataStructrueName = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(metadataStructureId).Name;
+                        if (mdid == metadataStructureId)
+                        {
 
-                        // loadMapping file
-                        var path_mappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), XmlMetadataImportHelper.GetMappingFileName(metadataStructureId, TransmissionType.mappingFileImport, metadataStructrueName));
+                            // metadataStructure ID
 
-                        // XML mapper + mapping file
-                        var xmlMapperManager = new XmlMapperManager(TransactionDirection.ExternToIntern);
-                        xmlMapperManager.Load(path_mappingFile, "IDIV");
+                            var metadataStructrueName = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(metadataStructureId).Name;
 
-                        // generate intern metadata without internal attributes
-                        var metadataResult = xmlMapperManager.Generate(metadataForImport, 1, true);
+                            // loadMapping file
+                            var path_mappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), XmlMetadataImportHelper.GetMappingFileName(metadataStructureId, TransmissionType.mappingFileImport, metadataStructrueName));
 
-                        // generate intern template metadata xml with needed attribtes
-                        var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
-                        var metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStructureId,
-                            XmlUtility.ToXDocument(metadataResult));
+                            // XML mapper + mapping file
+                            var xmlMapperManager = new XmlMapperManager(TransactionDirection.ExternToIntern);
+                            xmlMapperManager.Load(path_mappingFile, "IDIV");
 
-                        var metadataXmlTemplate = XmlMetadataWriter.ToXmlDocument(metadataXml);
+                            // generate intern metadata without internal attributes
+                            var metadataResult = xmlMapperManager.Generate(metadataForImport, 1, true);
 
-                        // set attributes FROM metadataXmlTemplate TO metadataResult
-                        completeMetadata = XmlMetadataImportHelper.FillInXmlValues(metadataResult,
-                            metadataXmlTemplate);
+                            // generate intern template metadata xml with needed attribtes
+                            var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
+                            var metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStructureId,
+                                XmlUtility.ToXDocument(metadataResult));
+
+                            var metadataXmlTemplate = XmlMetadataWriter.ToXmlDocument(metadataXml);
+
+                            // set attributes FROM metadataXmlTemplate TO metadataResult
+                            completeMetadata = XmlMetadataImportHelper.FillInXmlValues(metadataResult,
+                                metadataXmlTemplate);
+
+                        }
+                        else
+                        {
+                            Response.StatusCode = (int)HttpStatusCode.ExpectationFailed;
+                            errorMessage = "The metadata ID is either invalid or does not match the expected structure ID ({metadataStructureId}).";
+                        }
 
                         #endregion application/xml
                     }
@@ -296,10 +320,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             {
                                 JObject metadataJson = serializer.Deserialize<JObject>(jsonReader);
 
-                                long mdid = 0;
+                               
                                 if (metadataJson.ContainsKey("@id"))
                                 {
-                                    if (Int64.TryParse(metadataJson.Property("@id").Value.ToString(), out mdid))
+                                    if (Int64.TryParse(metadataJson.Property("@id").Value.ToString(), out mdid) && mdid == metadataStructureId)
                                     {
                                         schema = metadataStructureConverter.ConvertToJsonSchema(mdid);
 
@@ -307,24 +331,24 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         if (converter.HasValidStructure(metadataJson, mdid, out notAllowedElements))
                                         {
                                             completeMetadata = converter.ConvertTo(metadataJson);
-                                            ;
+                                            
                                         }
                                         else
                                         {
-                                            HttpStatusCode statusCode = HttpStatusCode.ExpectationFailed;
+                                            Response.StatusCode = (int)HttpStatusCode.ExpectationFailed;
                                             errorMessage = "the json does not have the expected structure";
                                         }
                                     }
                                     else
                                     {
-                                        HttpStatusCode statusCode = HttpStatusCode.ExpectationFailed;
-                                        errorMessage = "the json does not have the expected structure";
+                                        Response.StatusCode = (int)HttpStatusCode.ExpectationFailed;
+                                        errorMessage = string.Format("The metadata ID is either invalid or does not match the expected structure ID ({0}).",metadataStructureId);
                                     }
 
                                 }
                                 else
                                 {
-                                    HttpStatusCode statusCode = HttpStatusCode.ExpectationFailed;
+                                    Response.StatusCode = (int)HttpStatusCode.ExpectationFailed;
                                     errorMessage = "the json does not contain any information about the metadata structure";
                                 }
                             }
@@ -352,7 +376,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
             #endregion 
 
-            return Json(errorMessage);
+            // 2. Return the JSON error payload
+            return Json(new
+            {
+                success = false,
+                message = errorMessage, // Optional: Remove this in production for security reasons
+                error = errorMessage // Optional: Remove this in production for security reasons
+            }, JsonRequestBehavior.AllowGet);
+
         }
 
         #region download

@@ -21,11 +21,13 @@ export function getMappingComponentConfig(path:string, value: any): MappingCompo
          "partyId": 0,
          "value": value
         }
-						}
+							}		
+				}
 
-				
+				if(systemMappings.keyMappings.some((mapping: any) => mapping.path == pathWithoutIndices)){
+						mappingConfig.isMappedToKey = true;
 				}
  }
-
+	
  return mappingConfig;
 }
