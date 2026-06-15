@@ -1428,7 +1428,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
             LinkElementComplexity complexity,
             string xpath)
         {
-            LinkElement element = mappingManager.GetLinkElement(id, name, type);
+            LinkElement element = mappingManager.GetLinkElement(id, name, type, xpath);
 
             if(xpath.StartsWith("/")) xpath = xpath.Substring(1);
 
