@@ -34,9 +34,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// entry for hook
         /// </summary>
         /// <returns></returns>
-        public ActionResult Start(long id, int version)
+        [JsonNetFilter]
+        public JsonResult Start(long id, int version)
         {
-            return RedirectToAction("load", new { id, version });
+            // return RedirectToAction("load", new { id, version });
+            var jsonResult = Load(id, version);
+            return jsonResult;
         }
 
         // GET: FileUpload

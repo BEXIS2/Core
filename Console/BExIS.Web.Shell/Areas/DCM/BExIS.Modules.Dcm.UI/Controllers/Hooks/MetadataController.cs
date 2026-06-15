@@ -12,9 +12,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     {
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
-        public ActionResult Start(long id, int version)
+        [JsonNetFilter]
+        public JsonResult Start(long id, int version)
         {
-            return RedirectToAction("load", new { id, version });
+            // return RedirectToAction("load", new { id, version });
+            var jsonResult = Load(id, version);
+            return jsonResult;
         }
 
         [JsonNetFilter]

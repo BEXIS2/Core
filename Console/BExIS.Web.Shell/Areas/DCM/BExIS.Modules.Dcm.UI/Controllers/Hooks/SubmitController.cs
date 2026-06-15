@@ -46,9 +46,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
         [JsonNetFilter]
-        public ActionResult Start(long id, int version = 0)
+        public JsonResult Start(long id, int version)
         {
-            return RedirectToAction("Load", new { id, version });
+            // return RedirectToAction("load", new { id, version });
+            var jsonResult = Load(id, version);
+            return jsonResult;
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
