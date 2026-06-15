@@ -35,6 +35,9 @@
 	// boolean to control if submit is in progress to disable button and show loading state
 	let isSubmitting: boolean = false;
 
+	// boolean to prevent the "Done..." message from showing a second time after the store reload runs
+	let hasSubmitted: boolean = false;
+
 	// text for submit button and confirm modal, will be set based on the content of the submit model in the activateSubmit function
 	let submitText = '';
 	let confirmText = 'Please confirm if you wish to proceed.';
@@ -95,6 +98,9 @@
 		//console.log(' before activateSubmit', canSubmit);
 
 		canSubmit = await activateSubmit();
+		if (canSubmit) {
+			hasSubmitted = false;
+		}
 		//console.log(' after activateSubmit', canSubmit);
 
 		loading = false;
@@ -122,6 +128,7 @@
 	async function submitBt() {
 		isSubmitting = true;
 		canSubmit = false;
+		hasSubmitted = false; // reset in case of retry
 		const res: submitResponceType = await submit(id);
 
 		//console.log("submit",res);
@@ -134,6 +141,7 @@
 			}
 			isSubmitting = false;
 			setTimeout(() => {
+				hasSubmitted = true;
 				// update store
 				latestSubmitDate.set(Date.now());
 				// reload to update view after submit
@@ -144,7 +152,7 @@
 	// function to determine if submit button should be enabled and set the submit button text based on the content of the submit model, this is a simplified example and should be adapted to the actual use cases and model content
 	async function activateSubmit() {
 		var returnValue = false;
-		// File Upload without structure 
+		// File Upload without structure
 		console.log('🚀 ~ activateSubmit ~ model:', model);
 		if (model.hasStructrue == false && model.files.length > 0) {
 			submitText = 'Import File(s)';
@@ -161,7 +169,7 @@
 			}
 		}
 
-		// Delete Files 
+		// Delete Files
 		if (model.hasStructrue == false && model.deleteFiles?.length > 0) {
 			if (submitText.includes('Import File(s)') || submitText.includes('Update Description')) {
 				submitText += ' and Delete File(s)';
@@ -171,7 +179,7 @@
 			return true;
 		}
 
-		// File Upload with structure 
+		// File Upload with structure
 		if (
 			model.hasStructrue == true &&
 			model.files.length > 0 &&
@@ -203,12 +211,14 @@
 		<div class="mb-2">
 			{#if canSubmit && model.modifiedFiles?.length > 0}
 				<div
-					class="flex items-center gap-1 variant-ghost-success success border-l-4 border-green-500 p-2"
-					role="alert"
+					class="flex items-center gap-1 variant-ghost-warning warning border-l-4 border-warning-500 p-2 text-warning-800 dark:text-warning-200"
+					role="status"
 				>
+					<span class="sr-only">Info:</span>
 					Description of
-					{#each model.modifiedFiles as file}
-						<b>{file.name}</b>
+					{#each model.modifiedFiles as file, index}
+						<b>{file.name}</b>{#if index < model.modifiedFiles.length - 1},
+						{/if}
 					{/each}
 					has been modified.
 				</div>
@@ -217,12 +227,14 @@
 		<div class="mb-2">
 			{#if model.hasStructrue == false && model.files.length > 0}
 				<div
-					class="flex items-center gap-1 variant-ghost-success success border-l-4 border-green-500 p-2"
-					role="alert"
+					class="flex items-center gap-1 variant-ghost-warning warning border-l-4 border-warning-500 p-2 text-warning-800 dark:text-warning-200"
+					role="status"
 				>
+					<span class="sr-only">Info:</span>
 					The following file(s) are ready for import:
-					{#each model.files as file}
-						<b>{file.name}</b>
+					{#each model.files as file, index}
+						<b>{file.name}</b>{#if index < model.files.length - 1},
+						{/if}
 					{/each}
 				</div>
 			{/if}
@@ -230,12 +242,14 @@
 		<div class="mb-2">
 			{#if model.hasStructrue == false && model.deleteFiles?.length > 0}
 				<div
-					class="flex items-center gap-1 variant-ghost-success success border-l-4 border-green-500 p-2"
-					role="alert"
+					class="flex items-center gap-1 variant-ghost-warning warning border-l-4 border-warning-500 p-2 text-warning-800 dark:text-warning-200"
+					role="status"
 				>
+					<span class="sr-only">Warning:</span>
 					The following file(s) will be deleted:
-					{#each model.deleteFiles as file}
-						<b>{file.name}</b>
+					{#each model.deleteFiles as file, index}
+						<b>{file.name}</b>{#if index < model.deleteFiles.length - 1},
+						{/if}
 					{/each}
 				</div>
 			{/if}
@@ -243,25 +257,31 @@
 		<div class="mb-2">
 			{#if model.hasStructrue == true && model.files.length > 0 && model.allFilesReadable && model.isDataValid}
 				<div
-					class="flex items-center gap-1 variant-ghost-success success border-l-4 border-green-500 p-2"
-					role="alert"
+					class="flex items-center gap-1 variant-ghost-warning warning border-l-4 border-warning-500 p-2 text-warning-800 dark:text-warning-200"
+					role="status"
 				>
-					Data from the following file(s) will be added or updated based on the primary key defined
-					in the data structure:
+					<span class="sr-only">Info:</span>
+					Data from the following file(s) will be added or updated based on the primary key defined in
+					the data structure:
 
-					{#each model.files as file}
-						<b>{file.name}</b>
+					{#each model.files as file, index}
+						<b>{file.name}</b>{#if index < model.files.length - 1},
+						{/if}
 					{/each}
 				</div>
 			{/if}
 		</div>
 	{/if}
 	<div class="flex gap-3 items-center">
-		{#if !isSubmitting && !canSubmit}
-			<div class="pt-2 variant-ghost-success success border-l-4 border-green-500 p-2" role="alert">
+		{#if !isSubmitting && !canSubmit && !hasSubmitted}
+			<div
+				class="pt-2 variant-ghost-warning warning border-l-4 border-warning-500 p-2 text-warning-800 dark:text-warning-200"
+				role="status"
+			>
+				<span class="sr-only">Info:</span>
 				<b>Info:</b> Done. Please wait for the view to update.
 			</div>
-		{:else}
+		{:else if !hasSubmitted}
 			<button
 				type="button"
 				class="btn variant-filled-primary"
