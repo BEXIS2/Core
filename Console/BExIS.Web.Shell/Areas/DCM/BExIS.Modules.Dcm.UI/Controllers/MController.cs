@@ -8,6 +8,7 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dcm.UI.Helpers;
+using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Helpers;
 using BExIS.Utils.Route;
@@ -120,18 +121,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     // get party mappings 
                     var partymappings = mappings.Where(m => m.Target.Type == LinkElementType.PartyCustomType).ToList();
+                    //partymappings = partymappings.GroupBy(obj => obj.Target).Select(g => g.First()).ToList();
                     var keymappings = mappings.Where(m => m.Target.Type == LinkElementType.Key && ints.Contains(m.Target.ElementId)).ToList();
 
-                    var presult = partymappings.Select(m => new
-                    {
-                        Path = cleanPath(m.Source.XPath),
-                        ParentPath = getParentPath(cleanPath(m.Source.XPath)),   // use tha path from the source and create tha parent path because parent is allways one level up.
-                        LinkElementId = m.Source.Id,    
-                        Selector = MappingUtils.PartyAttrIsMain(m.Source.ElementId, m.Source.Type),
-                        Complexity = m.Source.ElementId != m.Parent.Source.ElementId,
-                        List = getList(m.Source.ElementId, m.Source.Type)
+                    List<PartyMappingResultModel> presult = new List<PartyMappingResultModel>();
 
-                    }).ToList();
+                    foreach (var m in partymappings)
+                    {
+                        PartyMappingResultModel x = new PartyMappingResultModel();
+                        x.Path = cleanPath(m.Source.XPath);
+                        x.ParentPath = getParentPath(cleanPath(m.Source.XPath));   // use tha path from the source and create tha parent path because parent is allways one level up.
+                        x.LinkElementId = m.Source.Id;
+                        x.Selector = MappingUtils.PartyAttrIsMain(m.Source.ElementId, m.Source.Type);
+                        x.Complexity = m.Source.ElementId != m.Parent.Source.ElementId;
+                        x.List = getList(m.Source.ElementId, m.Source.Type);
+
+                        presult.Add(x);
+                    }
+
+
 
                     var kresult = keymappings.Select(m => new
                     {
@@ -164,7 +172,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (MappingUtils.PartyAttrIsMain(id, type))
             {
                 x = MappingUtils.GetAllMatchesInSystem(id, type, "");
-                //x = x.Distinct(e => e.Id);   
+                x = x.GroupBy(e => e.PartyId).Select(g => g.First()).ToList();   
             }
 
             return x;

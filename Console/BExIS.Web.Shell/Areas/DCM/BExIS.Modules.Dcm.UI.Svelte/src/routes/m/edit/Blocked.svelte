@@ -12,10 +12,10 @@ export let path: string = "";
 let message: string = '';
 
 if(isKeyMapped){
- message = 'This field is mapped to a system key and cannot be edited here.';
+ message = 'This field will be filled automatically when saving the metadata and cannot be edited here.';
 }
 else if(isPartyMapped){
- message = 'This field is mapped to a party and cannot be edited here.';
+ message = 'This field will be filled by a party selection above and cannot be edited here.';
 }
 
 </script>

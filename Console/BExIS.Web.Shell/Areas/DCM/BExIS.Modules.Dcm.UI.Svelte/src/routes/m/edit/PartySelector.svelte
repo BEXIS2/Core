@@ -17,7 +17,7 @@ const dispatch = createEventDispatcher();
 
  export let path: string;
  export let value:any;
-	export let partyId:number;
+	let partyId:number;
  export let label: string;
  export let required: boolean = false;
  export let isMulti: boolean = false;
@@ -56,10 +56,10 @@ const dispatch = createEventDispatcher();
 				 if(mappingComponentConfig.partyMappingObject.complexity){
 
 						// get party id from parent
-						//console.log("🚀 ~ onMount ~ path:", path)
+						console.log("🚀 ~ onMount ~ path:", path)
 						const parentPath = getParentPath(path);
 						partyId = getPartyIdByPath(parentPath);
-									//alert(partyId);
+						//alert(partyId);
   
 				 }
 				 else {
@@ -113,6 +113,10 @@ const dispatch = createEventDispatcher();
 							console.log("🚀 ~ onUpdateParty ~ parentPath:", parentPath)
 							const parentPathWithoutIndices = removeJsonPathIndices(parentPath);
 							
+								// update parent with pary	id if not already set
+								console.log("🚀 ~ onUpdateParty ~ parentPath:", parentPath)
+								updateMetadataStore(parentPath, null, false, undefined, partyid);
+
 						// if mapping is complex
 						// get all partymappings where parent path is the same as the changed one
 							$systemMappingsStore.partyMappings.filter((mapping: any) => mapping.parentPath == parentPathWithoutIndices && mapping.path !== pathWithoutIndices).forEach(async (mapping: any) => {
@@ -124,10 +128,6 @@ const dispatch = createEventDispatcher();
 
 								// update child value with new party value
 								updateMetadataStore(childPathWithIndex, childvalue, isMulti, undefined, undefined);
-
-								// update parent with pary	id if not already set
-								console.log("🚀 ~ onUpdateParty ~ parentPath:", parentPath)
-								updateMetadataStore(parentPath, null, false, undefined, partyid);
 
 								// update because of validation
 								updateValue(childvalue, childPathWithIndex)

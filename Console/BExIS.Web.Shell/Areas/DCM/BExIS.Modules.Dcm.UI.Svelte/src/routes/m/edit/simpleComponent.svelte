@@ -87,6 +87,10 @@ let mappingComponentConfig: MappingComponentConfig;
 				});
 			}
 
+			mappingComponentConfig = getMappingComponentConfig(path, value);
+
+
+   
 			//#### VALIDATION	 ####
 			// create validation item and add to store
 			let simpleComponentValidationItem: SimpleComponentData = createSimpleComponentValidationItem(path, label, required, simpleComponent); 
@@ -94,8 +98,6 @@ let mappingComponentConfig: MappingComponentConfig;
 			// add to validation store
 			ValidationStoreAddSimpleComponent(simpleComponentValidationItem);
 
-
-			
 
 			//#### CONFIGURATION	 ####
 			config = getConfigStore();
@@ -114,9 +116,7 @@ let mappingComponentConfig: MappingComponentConfig;
 				}
 			}
 
-			mappingComponentConfig = getMappingComponentConfig(path, value);
-			//console.log("🚀 ~ mappingComponentConfig:", mappingComponentConfig)
-
+		
 			// initial check
 			setTimeout(async () => {
 
@@ -163,13 +163,13 @@ let mappingComponentConfig: MappingComponentConfig;
 {#if isVisible && !isAnchor}
 		<div class="pr-2" id={path + '.item'}>
 
+		
   <!--	if the field is mapped to a party or key, show blocked component with info, otherwise show the normal input component based on the type and format of the field -->
 	{#if (mappingComponentConfig && ((mappingComponentConfig.isMappedToParty && !mappingComponentConfig.isSelector)  || mappingComponentConfig.isMappedToKey))}
 		<Blocked	isKeyMapped={mappingComponentConfig.isMappedToKey} isPartyMapped={mappingComponentConfig.isMappedToParty} label={label} bind:value={value} path={path}/>
 	{:else if mappingComponentConfig && mappingComponentConfig.isMappedToParty && mappingComponentConfig.isSelector}
 
 			<PartySelector
-			 id={path}
 
 				path={path}
 				value={value}
