@@ -3,9 +3,8 @@
 	import { getHookStart } from '$services/HookCaller';
 	import { submit } from '../../routes/edit/services';
 	import type { SubmitModel, submitResponceType } from '$models/SubmitModels';
-	import GoToView from '$lib/components/submit/GoTo.svelte';
 
-	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
+	import { getModalStore } from '@skeletonlabs/skeleton';
 	const modalStore = getModalStore();
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 
@@ -19,97 +18,107 @@
 	} from '../../routes/edit/stores';
 
 	import { onMount, createEventDispatcher } from 'svelte';
-	import { goto } from '$app/navigation';
-	import PlaceHolderHookContent from './placeholder/PlaceHolderHookContent.svelte';
 
 	export let id = 0;
 	export let version = 1;
-	export let status = 0;
-	export let displayName = '';
 	export let start = '';
-	export let description = '';
 
 	const dispatch = createEventDispatcher();
 
 	let model: SubmitModel;
 	$: model;
 
+	// boolean to control if submit button should be enabled based on the content of the submit model
 	let canSubmit: boolean = false;
 	$: canSubmit;
 
+	// boolean to control if submit is in progress to disable button and show loading state
 	let isSubmitting: boolean = false;
 
-	onMount(async () => {
-		latestFileUploadDate.subscribe((s) => {
-			if (s > 0) {
-				reload();
-			}
-		});
-		latestDataDescriptionDate.subscribe((s) => {
-			if (s > 0) {
-				reload();
-			}
-		});
-		latestFileReaderDate.subscribe((s) => {
-			if (s > 0) {
-				reload();
-			}
-		});
-		latestValidationDate.subscribe((s) => {
-			if (s > 0) {
-				reload();
-			}
-		});
+	// text for submit button and confirm modal, will be set based on the content of the submit model in the activateSubmit function
+	let submitText = '';
+	let confirmText = 'Please confirm if you wish to proceed.';
 
-		latestDataDate.subscribe((s) => {
-			console.log('🚀 ~ latestDataDate.subscribe ~ s:', s);
+	// only run reactive reloads after initial load has completed
+	let mounted = false;
 
-			if (s > 0) {
-				reload();
-			}
-		});
-	});
+	// loading state for initial load and reloads, to show spinner and avoid showing stale data while loading
+	let loading = true;
 
-	async function reload() {
-		console.log('reload submit', start, id, version);
-		console.log('latestDataDate', latestDataDate);
+	// timeout reference for debounced reloads to avoid multiple reloads in quick succession when multiple stores are updated
+	let reloadTimeout: NodeJS.Timeout;
 
-		canSubmit = false;
-		console.log(' before hook');
-
-		model = await getHookStart(start, id, version);
-		console.log(' before activateSubmit', canSubmit);
-
-		canSubmit = activateSubmit();
-		console.log(' after activateSubmit', canSubmit);
-
-		console.log('reload submit', model);
-
-		return model;
+	// array of store values to trigger reactive reload when any of them changes, used in combination with the mounted flag to only trigger reloads after initial load is done
+	$: storeTriggers = [
+		$latestFileUploadDate,
+		$latestDataDescriptionDate,
+		$latestFileReaderDate,
+		$latestValidationDate,
+		$latestDataDate
+	];
+	$: if (mounted && storeTriggers.some((date) => date > 0)) {
+		debouncedReload();
 	}
 
-	const confirm: ModalSettings = {
-		type: 'confirm',
-		title: 'Submit',
-		body: 'Are you sure you wish to submit the data? <br ><br>Editing will be disabled until the import is complete. If you are importing a large amount of tabular data it may take a while. You will be notified by email when it is complete. <br><br> Once the import is complete, please check the imported data. ',
-		// TRUE if confirm pressed, FALSE if cancel pressed
-		response: (r: boolean) => {
-			if (r === true) {
-				submitBt();
-				// modalStore.trigger(next);
-				// dispatch('success', { text: 'The import of your data has been started.' });
+	// function to debounce reloads when multiple store values are updated in quick succession, to avoid multiple reloads and only reload once after all updates are done
+	function debouncedReload() {
+		// Clear any previous scheduled reload
+		clearTimeout(reloadTimeout);
+
+		// Schedule a new reload 50ms from now
+		reloadTimeout = setTimeout(() => {
+			console.log('Debounced reload triggered');
+			reload();
+		}, 50);
+	}
+
+	onMount(async () => {
+		mounted = true;
+	});
+
+	// function to load the submit model from the server based on the hook start action and update the canSubmit state based on the content of the model
+	async function reload() {
+		//console.trace('reload submit', start, id, version);
+
+		loading = true;
+		//console.log('reload submit', start, id, version);
+		//console.log('latestDataDate', latestDataDate);
+
+		// Clear the model to show loading state (null is not working)
+		model = {} as SubmitModel;
+
+		canSubmit = false;
+		// isSubmitting = false;
+		//console.log(' before hook');
+
+		model = await getHookStart(start, id, version);
+		//console.log(' before activateSubmit', canSubmit);
+
+		canSubmit = await activateSubmit();
+		//console.log(' after activateSubmit', canSubmit);
+
+		loading = false;
+		// return model;
+	}
+
+	// function to open a confirm modal before submitting, the modal will call the submitBt function if the user confirms
+	function openConfirmModal() {
+		const confirm: ModalSettings = {
+			type: 'confirm',
+			title: submitText,
+			body: confirmText,
+
+			// TRUE if confirm pressed, FALSE if cancel pressed
+			response: (r: boolean) => {
+				if (r === true) {
+					submitBt();
+				}
 			}
-		}
-	};
+		};
+		modalStore.trigger(confirm);
+	}
 
-	const next: ModalSettings = {
-		type: 'alert',
-		title: 'Import started',
-		body: 'Editing will be disabled until the import is complete. If you are importing a large amount of tabular data it may take a while. You will be notified by email when it is complete. <br><br> Once the import is complete, please check the imported data you have uploaded. ',
-		buttonTextCancel: 'Ok'
-		// TRUE if confirm pressed, FALSE if cancel pressed
-	};
-
+	// function to call the submit API and handle the response, showing success or error messages based on the result and updating the stores to trigger reloads of the data after submit
 	async function submitBt() {
 		isSubmitting = true;
 		canSubmit = false;
@@ -125,80 +134,145 @@
 			}
 			isSubmitting = false;
 			setTimeout(() => {
-					
 				// update store
-			latestSubmitDate.set(Date.now());
-			
-			console.log('goto view');
-			}, 500);
-			
+				latestSubmitDate.set(Date.now());
+				// reload to update view after submit
+			}, 1000);
 		}
 	}
 
-	// return a boolean value for 2 different cases for submit
-	//1. upload files only
-	//2. updload data with data structure
-	function activateSubmit() {
-		//check use case 1
+	// function to determine if submit button should be enabled and set the submit button text based on the content of the submit model, this is a simplified example and should be adapted to the actual use cases and model content
+	async function activateSubmit() {
+		var returnValue = false;
+		// File Upload without structure 
 		console.log('🚀 ~ activateSubmit ~ model:', model);
 		if (model.hasStructrue == false && model.files.length > 0) {
-			return true;
+			submitText = 'Import File(s)';
+			returnValue = true;
 		}
 
-		//check use case 2
+		// Update Description of a file
 		if (model.hasStructrue == false && model.modifiedFiles?.length > 0) {
-			return true;
+			if (submitText.includes('Import File(s)')) {
+				submitText = 'Import and Update Description';
+			} else {
+				submitText = 'Update Description';
+				returnValue = true;
+			}
 		}
 
-		//check use case 3
-		console.log(
-			'🚀 ~ activateSubmit ~ model.hasStructrue:',
-			model.hasStructrue,
-			model.deletedFiles
-		);
+		// Delete Files 
 		if (model.hasStructrue == false && model.deleteFiles?.length > 0) {
+			if (submitText.includes('Import File(s)') || submitText.includes('Update Description')) {
+				submitText += ' and Delete File(s)';
+			} else {
+				submitText = 'Delete File(s)';
+			}
 			return true;
 		}
 
-		//check use case 4
+		// File Upload with structure 
 		if (
 			model.hasStructrue == true &&
 			model.files.length > 0 &&
 			model.allFilesReadable &&
 			model.isDataValid
 		) {
-			return true;
+			if (
+				submitText.includes('Import File(s)') ||
+				submitText.includes('Update Description') ||
+				submitText.includes('Delete File(s)')
+			) {
+				submitText += ' and Start import/update of tabular data';
+			} else {
+				submitText = 'Start adding/update of tabular data';
+			}
+			((confirmText =
+				'Editing will be disabled until the import is complete. If you are importing a large amount of tabular data it may take a while. You will be notified by email when it is complete. <br><br> Once the import is complete, please check the imported data. '),
+				(returnValue = true));
 		}
 
-		return false;
+		return returnValue;
 	}
 </script>
 
-{#await reload()}
+{#if loading}
 	<!-- <PlaceHolderHookContent /> remove to avoid to much layout shift-->
-{:then m}
-	<div class="flex gap-3 items-center">
-	{#if !isSubmitting && !canSubmit}
+{:else}
+	{#if !isSubmitting && canSubmit}
+		<div class="mb-2">
+			{#if canSubmit && model.modifiedFiles?.length > 0}
+				<div
+					class="flex items-center gap-1 variant-ghost-success success border-l-4 border-green-500 p-2"
+					role="alert"
+				>
+					Description of
+					{#each model.modifiedFiles as file}
+						<b>{file.name}</b>
+					{/each}
+					has been modified.
+				</div>
+			{/if}
+		</div>
+		<div class="mb-2">
+			{#if model.hasStructrue == false && model.files.length > 0}
+				<div
+					class="flex items-center gap-1 variant-ghost-success success border-l-4 border-green-500 p-2"
+					role="alert"
+				>
+					The following file(s) are ready for import:
+					{#each model.files as file}
+						<b>{file.name}</b>
+					{/each}
+				</div>
+			{/if}
+		</div>
+		<div class="mb-2">
+			{#if model.hasStructrue == false && model.deleteFiles?.length > 0}
+				<div
+					class="flex items-center gap-1 variant-ghost-success success border-l-4 border-green-500 p-2"
+					role="alert"
+				>
+					The following file(s) will be deleted:
+					{#each model.deleteFiles as file}
+						<b>{file.name}</b>
+					{/each}
+				</div>
+			{/if}
+		</div>
+		<div class="mb-2">
+			{#if model.hasStructrue == true && model.files.length > 0 && model.allFilesReadable && model.isDataValid}
+				<div
+					class="flex items-center gap-1 variant-ghost-success success border-l-4 border-green-500 p-2"
+					role="alert"
+				>
+					Data from the following file(s) will be added or updated based on the primary key defined
+					in the data structure:
 
-			<div class="pt-2 variant-ghost-success success border-l-4 border-green-500  p-2" role="alert">
-				<b>Info:</b> Submission completed. Please wait for the view to update.
+					{#each model.files as file}
+						<b>{file.name}</b>
+					{/each}
+				</div>
+			{/if}
+		</div>
+	{/if}
+	<div class="flex gap-3 items-center">
+		{#if !isSubmitting && !canSubmit}
+			<div class="pt-2 variant-ghost-success success border-l-4 border-green-500 p-2" role="alert">
+				<b>Info:</b> Done. Please wait for the view to update.
 			</div>
 		{:else}
-		<button
-			type="button"
-			class="btn variant-filled-primary"
-			disabled={!canSubmit || isSubmitting}
-			on:click={() => modalStore.trigger(confirm)}>Submit</button
-		>
+			<button
+				type="button"
+				class="btn variant-filled-primary"
+				disabled={!canSubmit || isSubmitting}
+				on:click={openConfirmModal}>{submitText}</button
+			>
 		{/if}
-		{#if isSubmitting}
+		{#if isSubmitting && !canSubmit}
 			<div class="flex-none">
 				<Spinner />
 			</div>
-		{:else if canSubmit}
-			<div class="flex-none text-sm">Please click submit to start import.</div>
 		{/if}
 	</div>
-{:catch error}
-	<ErrorMessage {error} />
-{/await}
+{/if}

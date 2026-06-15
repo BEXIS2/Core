@@ -21,9 +21,9 @@
 	let model: FileUploadModel;
 	$: model;
 
-	onMount(async () => {
-		load();
-	});
+	let mounted = false;
+
+
 
 	$: loading = false;
 	$: existError = false;
@@ -31,6 +31,7 @@
 	const dispatch = createEventDispatcher();
 
 	async function load() {
+
 		model = await getHookStart(hook.start, id, version);
 		start = hook.start;
 
@@ -39,7 +40,9 @@
 
 	async function reload(e) {
 		/* load data*/
-		load();
+
+			await load();
+			
 	}
 
 	function success(e) {
