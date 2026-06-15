@@ -25,7 +25,9 @@
 	function handleSave(e) {
 		console.log('handleSave', e);
 		latestDataDate.set(Date.now());
-		dispatch('success', { text: e.detail.text });
+		if (e.detail.text != "noAltertText") {
+			dispatch('success', { text: e.detail.text });
+		}
 	}
 	function handleRemove(e) {
 		console.log('handleRemove', e.detail.file);
@@ -85,6 +87,7 @@
 			{id}
 			bind:files
 			{descriptionType}
+			descriptionSave={false}
 			{remove}
 			{save}
 			on:success={handleSave}
@@ -95,9 +98,6 @@
 
 {#if deletedFiles && deletedFiles.length > 0}
 	<div>
-		<div class="pt-2 variant-ghost-warning warning border-l-4 border-yellow-500  p-2" role="alert">
-			<b>Info:</b> Please click submit to finally delete the files.
-		</div>
 		<div class="pt-4">
 			<b>File(s) to delete</b>
 		</div>
@@ -110,6 +110,7 @@
 					{...file}
 					remove={revert}
 					{descriptionType}
+					descriptionSave={false}
 					faIcon={faUndo}
 					on:removed={handleRevert}
 				/>
