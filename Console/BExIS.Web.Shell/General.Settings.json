@@ -11,24 +11,45 @@
       "description": "(Short) name of the BEXIS2 instance. The name is e.g., used in the breadcrumb or as prefix in emails sent via the system. Avoid special characters or to long names."
     },
     {
+      "key": "security",
+      "title": "Security",
+      "value": {
+        "userValidatorConfiguration": {
+          "allowOnlyAlphanumericUserNames": true,
+          "requireUniqueEmail": true
+        },
+        "passwordValidatorConfiguration": {
+          "requiredLength": 8,
+          "requireDigit": true,
+          "requireLowercase": true,
+          "requireUppercase": true,
+          "requireNonAlphanumeric": false
+        }
+      },
+      "type": "JSON",
+      "description": "Security Settings."
+    },
+    {
       "key": "jwt",
       "title": "JWT",
       "value": {
-        "validateAudience": false,
-        "validateIssuer": false,
+        "isActive": false,
+        "validateAudience": true,
+        "validateIssuer": true,
         "validAudience": "http://localhost:3000",
         "validIssuer": "https://localhost:7041",
-        "issuerSigningKey": "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7Xzyr",
-        "validateLifetime": false,
+        "issuerSigningKey": "abcdefghijklmnopqrstuvwxyz",
+        "validateLifetime": true,
         "validLifetime": 1
       },
       "type": "JSON",
-      "description": "JWT settings. <br><b>Do not change any keys!</b>"
+      "description": "JWT settings. You need to set/change all necessary properties - e.g. \"issuerSigningKey\", \"validAudience\" and \"validIssuer\"."
     },
     {
       "key": "smtp",
       "title": "SMTP Configurations",
       "value": {
+        "isActive": true,
         "hostName": "smtp.uni-jena.de",
         "hostPort": 587,
         "hostAnonymous": false,
@@ -101,6 +122,21 @@
       },
       "type": "JSON",
       "description": "send or excluded exception sending via email."
+    },
+    {
+      "description": "...",
+      "key": "help",
+      "title": "Addition Help Links",
+      "type": "EntryList",
+      "value": [
+        {
+          "description": "FAQ",
+          "key": "helpLink",
+          "title": "Url",
+          "type": "String",
+          "value": "https://github.com/BEXIS2/Core/wiki/FAQ"
+        }
+      ]
     },
     {
       "key": "landingPage",

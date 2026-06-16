@@ -61,7 +61,7 @@ namespace BExIS.Dlm.Entities.Data
         {
             get
             {
-                if (this.Tuple.DatasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                if (this.Tuple.DatasetVersion.Dataset.DataStructure != null)
                 {
                     VariableInstance u = (this.Tuple.DatasetVersion.Dataset.DataStructure.Self as StructuredDataStructure).Variables
                         .Where(p => p.Id.Equals(this.VariableId))

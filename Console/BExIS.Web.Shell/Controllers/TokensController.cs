@@ -18,6 +18,13 @@ namespace BExIS.Web.Shell.Controllers
 {
     public class TokensController : Controller
     {
+        private readonly UserManager _userManager;
+
+        public TokensController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         public async Task<ActionResult> Create()
         {
             return View();
@@ -28,43 +35,42 @@ namespace BExIS.Web.Shell.Controllers
         {
             try
             {
-                using (var userManager = new UserManager())
-                using (var identityUserService = new IdentityUserService(userManager))
+                var jwtConfiguration = GeneralSettings.JwtConfiguration;
+
+                if (!jwtConfiguration.IsActive)
+                    return View("NotAuthorized");
+
+                long userId = 0;
+                long.TryParse(this.User.Identity.GetUserId(), out userId);
+
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user != null)
                 {
-                    var jwtConfiguration = GeneralSettings.JwtConfiguration;
+                    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey));
+                    var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-                    long userId = 0;
-                    long.TryParse(this.User.Identity.GetUserId(), out userId);
-
-                    var user = await userManager.FindByIdAsync(userId);
-                    if (user != null)
-                    {
-                        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey));
-                        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-                        //Create a List of Claims, Keep claims name short
-                        var permClaims = new List<Claim>
+                    //Create a List of Claims, Keep claims name short
+                    var permClaims = new List<Claim>
                         {
                             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                             new Claim(ClaimTypes.Name, user.UserName)
                         };
 
-                        //Create Security Token object by giving required parameters
-                        var token = new JwtSecurityToken(jwtConfiguration.ValidIssuer,
-                        jwtConfiguration.ValidAudience,
-                        permClaims,
-                        notBefore: DateTime.Now,
-                            expires: model.Validity > 0 ? DateTime.Now.AddHours(model.Validity) : DateTime.Now.AddHours(jwtConfiguration.ValidLifetime),
-                            signingCredentials: credentials);
+                    //Create Security Token object by giving required parameters
+                    var token = new JwtSecurityToken(jwtConfiguration.ValidIssuer,
+                    jwtConfiguration.ValidAudience,
+                    permClaims,
+                    notBefore: DateTime.Now,
+                        expires: model.Validity > 0 ? DateTime.Now.AddHours(model.Validity) : DateTime.Now.AddHours(jwtConfiguration.ValidLifetime),
+                        signingCredentials: credentials);
 
-                        var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
+                    var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
 
-                        return View("Read", model: new ReadJwtModel() { Jwt = jwt_token });
-                    }
-
-                    return View("Create");
+                    return View("Read", model: new ReadJwtModel() { Jwt = jwt_token });
                 }
+
+                return View("Create");
             }
             catch
             {
@@ -79,40 +85,40 @@ namespace BExIS.Web.Shell.Controllers
             {
                 var jwtConfiguration = GeneralSettings.JwtConfiguration;
 
-                using (var userManager = new UserManager())
+                if (!jwtConfiguration.IsActive)
+                    return View("NotAuthorized");
+
+                var user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(HttpContext).Result;
+
+                if (user != null)
                 {
-                    var user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(HttpContext).Result;
+                    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey));
+                    var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-                    if (user != null)
-                    {
-                        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey));
-                        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-                        //Create a List of Claims, Keep claims name short
-                        var permClaims = new List<Claim>
+                    //Create a List of Claims, Keep claims name short
+                    var permClaims = new List<Claim>
                         {
                             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                             new Claim(ClaimTypes.Name, user.UserName)
                         };
 
-                        //Create Security Token object by giving required parameters
-                        var token = new JwtSecurityToken(jwtConfiguration.ValidIssuer,
-                            jwtConfiguration.ValidAudience,
-                            permClaims,
-                            notBefore: DateTime.Now,
-                            expires: jwtConfiguration.ValidLifetime > 0 ? DateTime.Now.AddHours(jwtConfiguration.ValidLifetime) : DateTime.MaxValue,
-                            signingCredentials: credentials);
+                    //Create Security Token object by giving required parameters
+                    var token = new JwtSecurityToken(jwtConfiguration.ValidIssuer,
+                        jwtConfiguration.ValidAudience,
+                        permClaims,
+                        notBefore: DateTime.Now,
+                        expires: jwtConfiguration.ValidLifetime > 0 ? DateTime.Now.AddHours(jwtConfiguration.ValidLifetime) : DateTime.MaxValue,
+                        signingCredentials: credentials);
 
-                        var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
+                    var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
 
-                        ExceptionlessClient.Default.SubmitLog("Get Token", $"{user.Name} requested a JWT.", Exceptionless.Logging.LogLevel.Info);
+                    ExceptionlessClient.Default.SubmitLog("Get Token", $"{user.Name} requested a JWT.", Exceptionless.Logging.LogLevel.Info);
 
-                        return View("GetToken", model: new ReadJwtModel() { Jwt = jwt_token });
-                    }
-
-                    return View("NotAuthorized");
+                    return View("GetToken", model: new ReadJwtModel() { Jwt = jwt_token });
                 }
+
+                return View("NotAuthorized");
             }
             catch (Exception ex)
             {
@@ -142,39 +148,39 @@ namespace BExIS.Web.Shell.Controllers
             {
                 var jwtConfiguration = GeneralSettings.JwtConfiguration;
 
-                using (var userManager = new UserManager())
-                {
-                    var user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(HttpContext).Result;
-                    if (user != null)
-                    {
-                        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey));
-                        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+                if (!jwtConfiguration.IsActive)
+                    return Json("NotAuthorized", JsonRequestBehavior.AllowGet);
 
-                        //Create a List of Claims, Keep claims name short
-                        var permClaims = new List<Claim>
+                var user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(HttpContext).Result;
+                if (user != null)
+                {
+                    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey));
+                    var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+                    //Create a List of Claims, Keep claims name short
+                    var permClaims = new List<Claim>
                         {
                             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                             new Claim(ClaimTypes.Name, user.UserName)
                         };
 
-                        //Create Security Token object by giving required parameters
-                        var token = new JwtSecurityToken(jwtConfiguration.ValidIssuer,
-                            jwtConfiguration.ValidAudience,
-                            permClaims,
-                            notBefore: DateTime.Now,
-                            expires: jwtConfiguration.ValidLifetime > 0 ? DateTime.Now.AddHours(jwtConfiguration.ValidLifetime) : DateTime.MaxValue,
-                            signingCredentials: credentials);
+                    //Create Security Token object by giving required parameters
+                    var token = new JwtSecurityToken(jwtConfiguration.ValidIssuer,
+                        jwtConfiguration.ValidAudience,
+                        permClaims,
+                        notBefore: DateTime.Now,
+                        expires: jwtConfiguration.ValidLifetime > 0 ? DateTime.Now.AddHours(jwtConfiguration.ValidLifetime) : DateTime.MaxValue,
+                        signingCredentials: credentials);
 
-                        var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
+                    var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
 
-                        ExceptionlessClient.Default.SubmitLog("Get Token", $"{user.Name} requested a JWT.", Exceptionless.Logging.LogLevel.Info);
+                    ExceptionlessClient.Default.SubmitLog("Get Token", $"{user.Name} requested a JWT.", Exceptionless.Logging.LogLevel.Info);
 
-                        return Json(jwt_token, JsonRequestBehavior.AllowGet);
-                    }
-
-                    return Json("NotAuthorized", JsonRequestBehavior.AllowGet);
+                    return Json(jwt_token, JsonRequestBehavior.AllowGet);
                 }
+
+                return Json("NotAuthorized", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {

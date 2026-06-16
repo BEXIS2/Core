@@ -28,6 +28,10 @@
 		<column name="Description"  sql-type="text" />
 	</property>
 
+	<property name="Order" type="Int32">
+		<column name="OrderNr"/>
+	</property>
+	  
 	<property name="MetadataInvalidSaveMode" type="Boolean">
 		<column name="MetadataInvalidSaveMode" />
 	</property>

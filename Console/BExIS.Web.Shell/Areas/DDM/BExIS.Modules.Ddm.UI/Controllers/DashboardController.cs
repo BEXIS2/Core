@@ -5,11 +5,13 @@ using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Ddm.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -25,7 +27,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 {
     public class DashboardController : Controller
     {
+        private readonly UserManager<User, long> _userManager;
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+        public DashboardController(UserManager<User, long> userManager)
+        {
+            _userManager = userManager;
+        }
 
         public ActionResult Index()
         {
@@ -174,13 +182,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             DatasetManager datasetManager = new DatasetManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            UserManager userManager = new UserManager();
             EntityManager entityManager = new EntityManager();
 
             try
             {
                 var entity = entityManager.FindByName("Dataset");
-                var user = userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
+                var user = _userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
 
                 List<long> gridCommands = datasetManager.GetDatasetLatestIds();
                 gridCommands.Skip(Convert.ToInt16(ViewData["CurrentPage"])).Take(Convert.ToInt16(ViewData["PageSize"]));
@@ -242,9 +249,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             finally
             {
                 datasetManager.Dispose();
-                entityPermissionManager.Dispose();
                 entityManager.Dispose();
-                userManager.Dispose();
             }
         }
 
@@ -269,12 +274,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             ViewData["use_minor"] = moduleSettings.GetValueByKey("use_minor");
 
             using (DatasetManager datasetManager = new DatasetManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
-            using (UserManager userManager = new UserManager())
             using (EntityManager entityManager = new EntityManager())
             using (PartyTypeManager partyTypeManager = new PartyTypeManager())
             using (PartyManager partyManager = new PartyManager())
             {
+                EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                 // Entity, Entity Party Type and Entity Party
                 var entity = entityManager.FindByName(entityname);
                 var entityPartyType = partyTypeManager.PartyTypeRepository.Get(p => p.Title == entity.Name).FirstOrDefault();
@@ -283,7 +287,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 List<long> datasetIds = new List<long>();
 
                 // get user
-                var user = userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
+                var user = _userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
 
                 if (user != null)
                 {
@@ -329,7 +333,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     bool isOwn = rightType == RightType.Grant || rightType == RightType.Write ? true : false ;
 
                     string type = "file";
-                    if (dsv.Dataset.DataStructure?.Self is StructuredDataStructure)
+                    if (dsv.Dataset.DataStructure!=null)
                     {
                         type = "tabular";
                     }

@@ -2,11 +2,13 @@
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using Vaiona.IoC;
 
 namespace BExIS.App.Bootstrap.Helpers
 {
@@ -33,8 +35,9 @@ namespace BExIS.App.Bootstrap.Helpers
         {
             using (var featurePermissionManager = new FeaturePermissionManager())
             using (var operationManager = new OperationManager())
-            using (var userManager = new UserManager())
             {
+                var userManager = IoCFactory.Container.Resolve<UserManager>();
+
                 if (string.IsNullOrEmpty(authorisation))
                 {
                     user = null;
@@ -63,24 +66,21 @@ namespace BExIS.App.Bootstrap.Helpers
                     var basic = code;
                     if (basic != null)
                     {
-                        using (var identityUserService = new IdentityUserService(userManager))
+                        user = userManager.FindByNameAsync(System.Text.Encoding.UTF8.GetString(
+                                                    Convert.FromBase64String(basic)).Split(':')[0]).Result;
+
+                        if (user != null)
                         {
-                            user = userManager.FindByNameAsync(System.Text.Encoding.UTF8.GetString(
-                            Convert.FromBase64String(basic)).Split(':')[0]).Result;
+                            var result = userManager.CheckPasswordAsync(user, System.Text.Encoding.UTF8.GetString(
+                        Convert.FromBase64String(basic)).Split(':')[1]).Result;
 
-                            if (user != null)
+                            if (!result)
                             {
-                                var result = identityUserService.CheckPasswordAsync(user, System.Text.Encoding.UTF8.GetString(
-                            Convert.FromBase64String(basic)).Split(':')[1]).Result;
-
-                                if (!result)
-                                {
-                                    return null;
-                                }
+                                return null;
                             }
-
-                            return user;
                         }
+
+                        return user;
                     }
                 }
 
@@ -91,43 +91,41 @@ namespace BExIS.App.Bootstrap.Helpers
 
         public static User GetUserFromAuthorization(HttpContextBase context)
         {
-            using (UserManager userManager = new UserManager())
-            {
-                User user = null;
-                string userName = "";
-                if (context.User.Identity.IsAuthenticated)
-                {
-                    var userTask = userManager.FindByNameAsync(context.User.Identity.Name);
-                    userTask.Wait();
-                    user = userTask.Result;
-                }
-                else
-                {
-                    var authorization = context.Request.Headers.Get("Authorization");
-                    GetUserFromAuthorization(authorization, out user);
-                }
+            var userManager = IoCFactory.Container.Resolve<UserManager>();
 
-                return user;
+            User user = null;
+            string userName = "";
+            if (context.User.Identity.IsAuthenticated)
+            {
+                var userTask = userManager.FindByNameAsync(context.User.Identity.Name);
+                userTask.Wait();
+                user = userTask.Result;
             }
+            else
+            {
+                var authorization = context.Request.Headers.Get("Authorization");
+                GetUserFromAuthorization(authorization, out user);
+            }
+
+            return user;
         }
 
         public static async Task<User> GetUserFromAuthorizationAsync(HttpContextBase context)
         {
             try
             {
-                using (var userManager = new UserManager())
-                {
-                    var identity = context.User?.Identity;
+                var userManager = IoCFactory.Container.Resolve<UserManager>();
 
-                    if (identity != null && identity.IsAuthenticated)
-                    {
-                        return await userManager.FindByNameAsync(identity.Name);
-                    }
-                    else
-                    {
-                        var authorization = context.Request.Headers.Get("Authorization");
-                        return await GetUserFromAuthorizationAsync(authorization);
-                    }
+                var identity = context.User?.Identity;
+
+                if (identity != null && identity.IsAuthenticated)
+                {
+                    return await userManager.FindByNameAsync(identity.Name);
+                }
+                else
+                {
+                    var authorization = context.Request.Headers.Get("Authorization");
+                    return await GetUserFromAuthorizationAsync(authorization);
                 }
             }
             catch (Exception ex)
@@ -140,39 +138,37 @@ namespace BExIS.App.Bootstrap.Helpers
         {
             try
             {
-                using (var userManager = new UserManager())
-                using (var identityUserService = new IdentityUserService(userManager))
+                var userManager = IoCFactory.Container.Resolve<UserManager>();
+
+                if (string.IsNullOrEmpty(authorization))
                 {
-                    if (string.IsNullOrEmpty(authorization))
-                    {
+                    return null;
+                }
+
+                var authorizationArray = authorization.Split(' ');
+                var type = authorizationArray[0];
+                var value = authorizationArray[1];
+
+                switch (type.ToLower())
+                {
+                    case "bearer":
                         return null;
-                    }
 
-                    var authorizationArray = authorization.Split(' ');
-                    var type = authorizationArray[0];
-                    var value = authorizationArray[1];
+                    case "basic":
+                        var basicArray = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(value)).Split(':');
 
-                    switch (type.ToLower())
-                    {
-                        case "bearer":
-                            return null;
+                        if (basicArray.Length == 2)
+                        {
+                            var user = await userManager.FindByNameAsync(basicArray[0]);
 
-                        case "basic":
-                            var basicArray = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(value)).Split(':');
+                            if (user != null && await userManager.CheckPasswordAsync(user, basicArray[1]))
+                                return user;
+                        }
 
-                            if (basicArray.Length == 2)
-                            {
-                                var user = await userManager.FindByNameAsync(basicArray[0]);
+                        return null;
 
-                                if (user != null && await identityUserService.CheckPasswordAsync(user, basicArray[1]))
-                                    return user;
-                            }
-
-                            return null;
-
-                        default:
-                            return null;
-                    }
+                    default:
+                        return null;
                 }
             }
             catch (Exception ex)
@@ -196,8 +192,10 @@ namespace BExIS.App.Bootstrap.Helpers
 
             using (var featurePermissionManager = new FeaturePermissionManager())
             using (var operationManager = new OperationManager())
-            using (var userManager = new UserManager())
             {
+                var userManager = IoCFactory.Container.Resolve<UserManager>();
+
+
                 if (string.IsNullOrEmpty(authorisation))
                 {
                     response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
@@ -240,31 +238,28 @@ namespace BExIS.App.Bootstrap.Helpers
                     var basic = code;
                     if (basic != null)
                     {
-                        using (var identityUserService = new IdentityUserService(userManager))
+                        user = userManager.FindByNameAsync(System.Text.Encoding.UTF8.GetString(
+                                                    Convert.FromBase64String(basic)).Split(':')[0]).Result;
+
+                        if (user != null)
                         {
-                            user = userManager.FindByNameAsync(System.Text.Encoding.UTF8.GetString(
-                            Convert.FromBase64String(basic)).Split(':')[0]).Result;
+                            var result = userManager.CheckPasswordAsync(user, System.Text.Encoding.UTF8.GetString(
+                        Convert.FromBase64String(basic)).Split(':')[1]).Result;
 
-                            if (user != null)
+                            if (!result)
                             {
-                                var result = identityUserService.CheckPasswordAsync(user, System.Text.Encoding.UTF8.GetString(
-                            Convert.FromBase64String(basic)).Split(':')[1]).Result;
-
-                                if (!result)
-                                {
-                                    response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-                                    response.Content = new StringContent("UserName and/or Password are incorrect.");
-                                }
-
-                                if (!featurePermissionManager.HasAccessAsync(user.Id, featureId).Result)
-                                {
-                                    response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-                                    response.Content = new StringContent("User is not valid.");
-                                }
+                                response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                                response.Content = new StringContent("UserName and/or Password are incorrect.");
                             }
 
-                            return response;
+                            if (!featurePermissionManager.HasAccessAsync(user.Id, featureId).Result)
+                            {
+                                response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                                response.Content = new StringContent("User is not valid.");
+                            }
                         }
+
+                        return response;
                     }
                 }
 

@@ -1,4 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Security.Services.Subjects;
 using BExIS.UI.Helpers;
 using BExIS.Utils.Config;
 using BExIS.Web.Shell.Models;
@@ -15,6 +16,13 @@ namespace BExIS.Web.Shell.Controllers
 {
     public class SettingsController : Controller
     {
+        private readonly UserManager _userManager;
+
+        public SettingsController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         [JsonNetFilter]
         [HttpGet]
         public JsonResult GetSettings()

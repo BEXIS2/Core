@@ -26,6 +26,14 @@ namespace BExIS.Web.Shell.Controllers
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
     public class TestController : BaseController
     {
+        private readonly GroupManager _groupManager;
+        private readonly UserManager _userManager;
+        public TestController(GroupManager groupManager, UserManager userManager) 
+        {
+            _groupManager = groupManager;
+            _userManager = userManager;
+        }
+
         public ActionResult About()
         {
             return View();
@@ -271,13 +279,11 @@ namespace BExIS.Web.Shell.Controllers
                 UserName = "test"
             };
 
-            var userManager = new UserManager();
-            userManager.CreateAsync(user);
+            _userManager.CreateAsync(user);
 
-            var groupManager = new GroupManager();
-            groupManager.CreateAsync(group);
+            _groupManager.CreateAsync(group);
 
-            userManager.AddToRoleAsync(user, group.Name);
+            _userManager.AddToRoleAsync(user.Id, group.Name);
 
             return View("Index");
         }
@@ -802,9 +808,9 @@ namespace BExIS.Web.Shell.Controllers
 
         {
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            var entityPermissions = entityPermissionManager.EntityPermissionRepository.Get();
+            var entityPermissions = entityPermissionManager.Get();
 
-            var x = entityPermissionManager.EntityPermissions.Where(m => m.Entity.Id == 1);
+            var x = entityPermissionManager.Find(m => m.Entity.Id == 1);
             for (int i = 0; i < 500; i++)
             {
                 var ep = entityPermissionManager.CreateAsync<User>("javad", "Dataset", typeof(Dataset), 1,

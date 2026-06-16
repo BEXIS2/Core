@@ -4,12 +4,13 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using BExIS.Utils.Config;
 using System;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using BExIS.Utils.Config;
+using Vaiona.IoC;
 
 namespace BExIS.App.Bootstrap.Attributes
 {
@@ -21,9 +22,8 @@ namespace BExIS.App.Bootstrap.Attributes
             {
                 using (var featurePermissionManager = new FeaturePermissionManager())
                 using (var operationManager = new OperationManager())
-                using (var userManager = new UserManager())
-                using (var identityUserService = new IdentityUserService(userManager))
                 {
+                    var userManager = IoCFactory.Container.Resolve<UserManager>();
                     var areaName = filterContext.RouteData.DataTokens.Keys.Contains("area") ? filterContext.RouteData.DataTokens["area"].ToString() : "Shell";
                     var controllerName = filterContext.ActionDescriptor.ControllerDescriptor.ControllerName;
                     var actionName = filterContext.ActionDescriptor.ActionName;

@@ -15,6 +15,13 @@ namespace BExIS.Modules.Bam.UI.Controllers
 {
     public class PartyServiceController : Controller
     {
+        private readonly UserManager _userManager;
+
+        public PartyServiceController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         [HttpGet]
         public Boolean CheckUniqeness(int partyTypeId, int partyId, string hash)
         {
@@ -41,11 +48,10 @@ namespace BExIS.Modules.Bam.UI.Controllers
             using (PartyTypeManager partyTypeManager = new PartyTypeManager())
             using (PartyManager partyManager = new PartyManager())
             using (PartyRelationshipTypeManager partyRelationshipManager = new PartyRelationshipTypeManager())
-            using (UserManager userManager = new UserManager())
             using (PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager())
             {
                 // check if
-                var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                var userTask = _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
                 userTask.Wait();
                 var user = userTask.Result;
 
@@ -79,7 +85,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         Select(ca => ca.Value).ToArray());
 
                     user.DisplayName = displayName;
-                    userManager.UpdateAsync(user);
+                    _userManager.UpdateAsync(user);
                 }
 
                 return RedirectToAction("Index");
@@ -90,13 +96,11 @@ namespace BExIS.Modules.Bam.UI.Controllers
         {
             PartyManager partyManager = null;
             PartyTypeManager partyTypeManager = null;
-            UserManager userManager = null;
             try
             {
                 partyManager = new PartyManager();
                 partyTypeManager = new PartyTypeManager();
-                userManager = new UserManager();
-                var user = userManager.FindByNameAsync(HttpContext.User?.Identity?.Name).Result;
+                var user = _userManager.FindByNameAsync(HttpContext.User?.Identity?.Name).Result;
                 if (user == null)
                     return RedirectToAction("Index", "Home", new { area = "" });
                 ViewBag.Title = PresentationModel.GetGenericViewTitle("Edit Party");
@@ -128,7 +132,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
             {
                 partyManager?.Dispose();
                 partyTypeManager?.Dispose();
-                userManager?.Dispose();
             }
         }
 
@@ -138,12 +141,11 @@ namespace BExIS.Modules.Bam.UI.Controllers
             var party = new Party();
             using (PartyManager partyManager = new PartyManager())
             using (PartyTypeManager partyTypeManager = new PartyTypeManager())
-            using (UserManager userManager = new UserManager())
             {
                 if (!HttpContext.User.Identity.IsAuthenticated)
                     return RedirectToAction("Index", "Home");
 
-                var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                var userTask = _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
                 userTask.Wait();
                 var user = userTask.Result;
                 var userParty = partyManager.GetPartyByUser(user.Id);
@@ -185,7 +187,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         }
                     }
 
-                    userManager.UpdateAsync(user);
+                    _userManager.UpdateAsync(user);
                 }
                 return RedirectToAction("Index", "Home", new { area = "" });
             }
@@ -205,7 +207,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
         public ActionResult LoadPartyCustomAttr(int id)
         {
             using (PartyManager partyManager = new PartyManager())
-            using (UserManager userManager = new UserManager())
             using (PartyTypeManager partyTypeManager = new PartyTypeManager())
             {
                 long partyId = 0;
@@ -218,7 +219,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     ViewBag.customAttrValues = partyManager.PartyRepository.Get(partyId).CustomAttributeValues.ToList();
 
                     var userId = partyManager.GetUserIdByParty(partyId);
-                    var userTask = userManager.FindByIdAsync(userId);
+                    var userTask = _userManager.FindByIdAsync(userId);
                     userTask.Wait();
                     var user = userTask.Result;
                     if (user != null)
@@ -230,7 +231,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 else
                 {
                     var userName = HttpContext.User.Identity.Name;
-                    var userTask = userManager.FindByNameAsync(userName);
+                    var userTask = _userManager.FindByNameAsync(userName);
                     userTask.Wait();
                     var user = userTask.Result;
 
@@ -257,7 +258,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
             PartyManager partyManager = null;
             PartyTypeManager partyTypeManager = null;
             PartyRelationshipTypeManager partyRelationshipTypeManager = null;
-            UserManager userManager = null;
             try
             {
                 if (!HttpContext.User.Identity.IsAuthenticated)
@@ -268,7 +268,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 partyManager = new PartyManager();
                 partyTypeManager = new PartyTypeManager();
                 partyRelationshipTypeManager = new PartyRelationshipTypeManager();
-                userManager = new UserManager();
                 var allowedAccountPartyTypes = getPartyTypesForAccount();
                 if (allowedAccountPartyTypes == null)
                     throw new Exception("Allowed party types for registration in setting.xml are not exist!");
@@ -304,7 +303,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     partyTypeAccountModel.PartyRelationshipsTypes.Add(partyType, allowedPartyTypePairs);
                 }
                 //Bind party if there is already a user associated to this party
-                var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                var userTask = _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
                 userTask.Wait();
                 var user = userTask.Result;
                 partyTypeAccountModel.Party = partyManager.GetPartyByUser(user.Id);
@@ -318,7 +317,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 partyManager?.Dispose();
                 partyTypeManager?.Dispose();
                 partyRelationshipTypeManager?.Dispose();
-                userManager?.Dispose();
             }
         }
 

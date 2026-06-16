@@ -62,7 +62,7 @@
 		<div id={entry.key} on:mouseover={() => helpStore.show(entry.key)}>
 			<MultiSelect
 				id={entry.key}
-				title={entry.key}
+				title={entry.title + ' (key: ' + entry.key + ')'}
 				source={entry.options}
 				bind:target={entry.value}
 				isMulti={false}

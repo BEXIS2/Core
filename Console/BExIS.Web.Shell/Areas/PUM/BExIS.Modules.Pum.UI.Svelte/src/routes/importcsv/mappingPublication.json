@@ -1,0 +1,80 @@
+{
+	"Mappings": [
+		{
+			"Source": "Title",
+			"Target": "$.publication.Title"
+		},
+		{
+			"Source": "Abstract Note",
+			"Target": "$.publication.Abstract"
+		},
+		{
+			"Source": "Journal Abbreviation",
+			"Target": "$.publication.Journal"
+		},
+		{
+			"Source": "Author",
+			"Target": "$.publication.Authors"
+		},
+		{
+			"Source": "Item Type",
+			"Target": "$.publication.Type"
+		},
+		{
+			"Source": "Pages",
+			"Target": "$.publication.pages"
+		},
+		{
+			"Source": "Issue",
+			"Target": "$.publication.issue"
+		},
+		{
+			"Source": "Volume",
+			"Target": "$.publication.volume"
+		},
+		{
+			"Source": "Comment",
+			"Target": "$.publication.comment"
+		},
+		{
+			"Source": "Manual Tags",
+			"Target": "$.publication.keywords"
+		},
+		{
+			"Source": "Rated by",
+			"Target": "$.publication.Curation.rated_by"
+		},
+		{
+			"Source": "Access Date",
+			"Target": "$.publication.Curation.access_date"
+		},
+		{
+			"Source": "Date Added",
+			"Target": "$.publication.Curation.date_added"
+		},
+		{
+			"Source": "Date Modified",
+			"Target": "$.publication.Curation.date_modified"
+		},
+		{
+			"Source": "ISBN",
+			"Target": "$.publication.Identifiers.isbn"
+		},
+		{
+			"Source": "ISSN",
+			"Target": "$.publication.Identifiers.issn"
+		},
+		{
+			"Source": "DOI",
+			"Target": "$.publication.Identifiers.doi"
+		},
+		{
+			"Source": "URL",
+			"Target": "$.publication.Identifiers.uri"
+		},
+		{
+			"Source": "Other URL",
+			"Target": "$.publication.Identifiers.alt_uri"
+		}
+	]
+}

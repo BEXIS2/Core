@@ -93,14 +93,22 @@
 					{#if title && title.length > 0}
 						{title}
 					{/if}
+					
 				</h1>
-				<span class="chip"></span>
+				<div>
+				<p class="shrink">
+					
+					 	<span class="font-semibold">ID: </span>
+						<span class="text-sm italic text-neutral-600">{id}</span>
+					
+				</p>
 				<p class="shrink">
 					{#if date && date.length > 0}
-					 <span class="font-semibold">{dateLabel}: </span>
+					 	<span class="font-semibold">{dateLabel}: </span>
 						<span class="text-sm italic text-neutral-600">{date}</span>
 					{/if}
 				</p>
+				</div>
 			</div>
 
 			<p class="text-sm line-clamp-3">

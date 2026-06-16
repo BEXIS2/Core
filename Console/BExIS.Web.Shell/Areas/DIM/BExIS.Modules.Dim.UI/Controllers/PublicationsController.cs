@@ -70,9 +70,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         [HttpPost]
         public async Task<ActionResult> Update(UpdatePublicationModel model)
-        {
-            var groupManager = new GroupManager();
-
+        { 
             try
             {
                 using(var publicationManager = new PublicationManager())
@@ -90,9 +88,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 return null;
             }
-            finally
+            catch(Exception ex)
             {
-                groupManager.Dispose();
+                throw ex;
             }
         }
 

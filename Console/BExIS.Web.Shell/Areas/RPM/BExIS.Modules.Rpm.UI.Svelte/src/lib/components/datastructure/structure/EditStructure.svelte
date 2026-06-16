@@ -118,7 +118,7 @@
 			>
 		</div>
 		<div class="flex-none text-end">
-			{#if pksHasChanged && !pksValid}
+			{#if pksHasChanged && !pksValid && dataExist}
 				<button
 					id="check"
 					title="Check changed primary key against datasets that belong to the data structure."
@@ -137,7 +137,7 @@
 				disabled={!areVariablesValid ||
 					!areAttributesValid ||
 					!((enforcePrimaryKey && isPKSet) || !enforcePrimaryKey) ||
-					(pksHasChanged && !pksValid)}><Fa icon={faSave} /><span class="pl-1">Save</span></button
+					(pksHasChanged && !pksValid && dataExist)}><Fa icon={faSave} /><span class="pl-1">Save</span></button
 			>
 		</div>
 	</div>
@@ -145,11 +145,11 @@
 	<Attributes {model} bind:valid={areAttributesValid} />
 	<div class="px-2">
 		{#if enforcePrimaryKey && model.variables.length > 0 && currentPks.length == 0}
-			<Alert message="Please select a (combined) primary key." cssClass="variant-filled-warning"
+			<Alert message="Please select a (combined) primary key." cssClass="variant-soft-error p-1"
 			></Alert>
 		{/if}
 		{#if model.variables.length == currentPks.length}
-			<Alert cssClass="variant-filled-warning">
+			<Alert cssClass="variant-soft-warning p-1" >
 				By selecting all variables as part of the primary key, it is impossible to update the data.
 				At least one column must remain as a value.
 			</Alert>
@@ -163,3 +163,9 @@
 		data={[]}
 	/>
 </div>
+
+<style>
+	.alert {
+		padding: 0.5rem;
+	}
+</style>

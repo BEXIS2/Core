@@ -26,8 +26,11 @@
 	import TableMeaning from './table/tableMeaning.svelte';
 	import TableOptions from './table/tableOptions.svelte';
 	import Meaning from './Meaning.svelte';
-	import type { SvelteComponent } from 'svelte';
+	import { onMount, type SvelteComponent } from 'svelte';
 	import type { linkType } from '@bexis2/bexis2-core-ui';
+
+	let isLoading = true;
+	let loadingError: any = null;
 
 	//stores
 	let meanings: MeaningModel[];
@@ -38,21 +41,47 @@
 	// modal
 	const modalStore = getModalStore();
 
-	async function reload() {
-		// get meanings
-		meanings = await getMeanings();
-		meaningsStore.set(meanings);
+	async function reload(isBackground = false) {
+		// Only trigger the full page loading layout if it's not a background update
+        if (!isBackground) {
+            isLoading = true; 
+        }
 
-		// get constraints
-		const constraints = await getConstraints();
-		constraintsStore.set(constraints);
+		try {
+			const [meanings, constraints, externalLinks] = await Promise.all([
+				getMeanings(),
+				getConstraints(),
+				getLinks()
+			]);
+			// get meanings
+			// meanings = await getMeanings();
+			meaningsStore.set(meanings);
 
-		// get external links
-		const externalLinks = await getLinks();
-		externalLinksStore.set(externalLinks);
+			// get constraints
+			// const constraints = await getConstraints();
+			constraintsStore.set(constraints);
 
-		console.log('store', $meaningsStore);
+			// get external links
+			// const externalLinks = await getLinks();
+			externalLinksStore.set(externalLinks);
+		} catch (error) {
+			loadingError = error;
+		} finally {
+			if (!isBackground) {
+                isLoading = false;
+            }
+		}
 	}
+
+	onMount(async () => {
+		try {
+			await reload(false);
+		} catch (err) {
+			// error handled via loadingError
+		} finally {
+			isLoading = false;
+		}
+	});
 
 	const m: TableConfig<MeaningModel> = {
 		id: 'Meaning',
@@ -125,6 +154,8 @@
 
 	function edit(type: any) {
 		if (type.action == 'edit') {
+			meaning = new MeaningModel(null);
+			
 			showForm = false;
 			meaning = $meaningsStore.find((u) => u.id === type.id)!;
 			showForm = true;
@@ -138,9 +169,9 @@
 				// TRUE if confirm pressed, FALSE if cancel pressed
 				response: async (r: boolean) => {
 					if (r === true) {
-						let success :boolean = await deleteFn(m);
+						let success: boolean = await deleteFn(m);
 						if (success) {
-							reload();
+							await reload(true);
 							if (m.id === meaning.id) {
 								toggleForm();
 							}
@@ -171,7 +202,7 @@
 		}
 	}
 
-	function onSuccessFn(id: number) {
+	async function onSuccessFn(id: number) {
 		const message = id > 0 ? 'Meaning updated.' : 'Meaning created.';
 
 		notificationStore.showNotification({
@@ -179,11 +210,15 @@
 			message: message
 		});
 
-		showForm = false;
-		setTimeout(async () => {
-			reload();
-			clear();
-		}, 10);
+		// First: instigate background data fetching right away so the table refreshes
+        await reload(true);
+
+        // Second: Close the form structure smoothly.
+        showForm = false;
+        
+        // Third: Completely eliminate setTimeout. Svelte can safely clear data 
+        // objects when they aren't bound to active components.
+        clear();
 	}
 
 	function onFailFn() {
@@ -193,16 +228,16 @@
 		});
 	}
 
-	let links:linkType[] = [
+	let links: linkType[] = [
 		{
 			label: 'Manual',
-			url: '/home/docs/Data%20Description#meanings',
+			url: '/home/docs/Data%20Description#meanings'
 		}
 	];
 </script>
 
 <Page help={true} title="Manage Meanings" {links}>
-	{#await reload()}
+	{#if isLoading}
 		<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h-9 w-96 placeholder animate-pulse" />
 			<div class="flex justify-end">
@@ -214,7 +249,9 @@
 		<div class="table-container w-full">
 			<TablePlaceholder cols={5} />
 		</div>
-	{:then}
+	{:else if loadingError}
+		<ErrorMessage error={loadingError} />
+	{:else}
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
 			<div class="h3 h-9">
@@ -255,9 +292,7 @@
 		<div class="table table-compact w-full">
 			<Table on:action={(obj) => edit(obj.detail.type)} config={m} />
 		</div>
-	{:catch error}
-		<ErrorMessage {error} />
-	{/await}
+	{/if}
 </Page>
 
 <Modal />

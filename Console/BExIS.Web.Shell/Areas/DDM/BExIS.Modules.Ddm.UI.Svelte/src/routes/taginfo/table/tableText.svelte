@@ -8,6 +8,7 @@
 	let currentRow = row.original;
 
 	const eventDispatchFn = (type: string) => {
+
 		return dispatchFn({ type, row: currentRow });
 	};
 </script>

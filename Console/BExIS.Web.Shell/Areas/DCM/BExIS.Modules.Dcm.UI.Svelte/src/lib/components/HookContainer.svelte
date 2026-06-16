@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 
 	import { Alert, Spinner } from '@bexis2/bexis2-core-ui';
+	import { fade } from 'svelte/transition';
 
 	import { hooksStatus } from '../../routes/edit/stores';
 
@@ -25,6 +26,17 @@
 
 	$: active = false;
 	$: wait = false;
+	
+	let timer;
+	$: if (success) {
+		// Clear any existing active timer to reset the 3-second clock if a new message arrives
+		clearTimeout(timer);
+		
+		timer = setTimeout(() => {
+			success = null;
+		}, 3000); // 3000 milliseconds = 3 seconds
+	}
+
 
 	onMount(async () => {
 		//active = setActive(status);
@@ -40,7 +52,8 @@
 
 	function errorHandler(e) {
 		resetInformations();
-		error = e.detail.messages;
+		error = e.detail.messages.filter((item) => item != null &&	item != undefined &&	item != '');
+
 	}
 
 	function successHandler(e) {
@@ -108,7 +121,9 @@
 				{/each}
 			{/if}
 			{#if success}
+			<div transition:fade={{ duration: 500 }}>
 				<Alert cssClass="variant-filled-success" message={success} />
+			</div>
 			{/if}
 			<div class="h-full w-full">
 				{#if !wait}

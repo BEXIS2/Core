@@ -5,7 +5,10 @@
     bool value = false;//(bool?)Model.Value ?? false;
     try
     {
-        value = Convert.ToBoolean(Model.Value);
+        if(!string.IsNullOrEmpty(Model.Value.ToString()))
+        {
+            value = Convert.ToBoolean(Model.Value);
+        }
     }
     catch
     {

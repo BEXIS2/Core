@@ -36,6 +36,8 @@ namespace BExIS.Modules.Rpm.UI.Models.DataStructure
         public List<ListItem> TextMarkers { get; set; }
         public List<ListItem> Encodings { get; set; }
 
+        public List<VariableTemplateItem> Templates { get; set; }
+
         public List<string> Preview { get; set; }
 
         /// <summary>

@@ -44,14 +44,12 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
         private AsciiReader reader = null;
         private FileStream Stream = null;
         private UploadHelper uploadHelper = new UploadHelper();
-        private UserManager userManager = new UserManager();
         private List<long> variableIds = new List<long>();
         //private UploadMethod _uploadMethod;
 
         public DataApiHelper(Dataset dataset, User user, DataApiModel data, string title, UploadMethod uploadMethod)
         {
             datasetManager = new DatasetManager();
-            userManager = new UserManager();
             entityPermissionManager = new EntityPermissionManager();
             dataStructureManager = new DataStructureManager();
             uploadHelper = new UploadHelper();
@@ -103,7 +101,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 using (var emailService = new EmailService())
                 {
                     emailService.Send(MessageHelper.GetPushApiPKCheckHeader(_dataset.Id, _title),
-                                            MessageHelper.GetPushApiPKCheckMessage(_dataset.Id, _user.UserName, errors.ToArray()),
+                                            MessageHelper.GetPushApiPKCheckMessage(_dataset.Id, _user.DisplayName, errors.ToArray()),
                                             new List<string>() { _user.Email },
                                             new List<string>() { GeneralSettings.SystemEmail }
                                             );
@@ -140,7 +138,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 using (var emailService = new EmailService())
                 {
                     emailService.Send(MessageHelper.GetPushApiStoreHeader(_dataset.Id, _title),
-                        MessageHelper.GetPushApiStoreMessage(_dataset.Id, _user.UserName),
+                        MessageHelper.GetPushApiStoreMessage(_dataset.Id, _user.DisplayName),
                         new List<string>() { _user.Email },
                         new List<string>() { GeneralSettings.SystemEmail }
                         );
@@ -152,7 +150,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 using (var emailService = new EmailService())
                 {
                     emailService.Send(MessageHelper.GetPushApiStoreHeader(_data.DatasetId, _title),
-                                            MessageHelper.GetPushApiStoreMessage(_dataset.Id, _user.UserName, new string[] { ex.Message }),
+                                            MessageHelper.GetPushApiStoreMessage(_dataset.Id, _user.DisplayName, new string[] { ex.Message }),
                                             new List<string>() { _user.Email },
                                             new List<string>() { GeneralSettings.SystemEmail }
                                             );
@@ -226,7 +224,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                             {
                                 //send error messages
                                 emailService.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id, _title),
-                                        MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.UserName, errorArray.ToArray()),
+                                        MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.DisplayName, errorArray.ToArray()),
                                         new List<string>() { _user.Email },
                                         new List<string>() { GeneralSettings.SystemEmail }
                                         );
@@ -264,7 +262,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                     {
                         //ToDo send email to user
                         emailService.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id, _title),
-                                   MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.UserName, new string[] { "The temporarily stored data could not be read or the dataset is already in checkout status." }),
+                                   MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.DisplayName, new string[] { "The temporarily stored data could not be read or the dataset is already in checkout status." }),
                                    new List<string>() { _user.Email },
                                    new List<string>() { GeneralSettings.SystemEmail }
                                    );
@@ -282,7 +280,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 {
                     //ToDo send email to user
                     emailService.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id, _title),
-                                    MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.UserName, new string[] { ex.Message }),
+                                    MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.DisplayName, new string[] { ex.Message }),
                                     new List<string>() { _user.Email },
                                     new List<string>() { GeneralSettings.SystemEmail }
                                     );
@@ -328,7 +326,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                     using (var emailService = new EmailService())
                     {
                         emailService.Send(MessageHelper.GetPushApiValidateHeader(_dataset.Id, _title),
-                            MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.UserName, errorArray.ToArray()),
+                            MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.DisplayName, errorArray.ToArray()),
                             new List<string>() { _user.Email },
                             new List<string>() { GeneralSettings.SystemEmail }
                             );
@@ -341,7 +339,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                     using (var emailService = new EmailService())
                     {
                         emailService.Send(MessageHelper.GetPushApiValidateHeader(_dataset.Id, _title),
-                            MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.UserName),
+                            MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.DisplayName),
                             new List<string>() { _user.Email },
                             new List<string>() { GeneralSettings.SystemEmail }
                             );

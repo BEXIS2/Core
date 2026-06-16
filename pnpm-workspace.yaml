@@ -1,0 +1,19 @@
+# This file is used to configure the pnpm workspace for the BExIS2 project. It specifies which packages are included in the workspace, which packages are allowed to be built, and some other settings.
+packages:
+  - 'Console/BExIS.Web.Shell.Svelte'
+  - 'Console/BExIS.Web.Shell/Areas/**/BExIS.Modules.*.UI.Svelte'
+# specify which packages are allowed to be built
+allowBuilds:
+  '@bexis2/bexis2-rpm-ui': true
+  '@bexis2/bexis2-dim-ui': true
+  '@sveltejs/kit': true
+  esbuild: true
+  svelte-preprocess: true
+# only use versions that are at least 1 day old, to avoid issues with broken or dangerous releases
+minimumReleaseAge: 1440
+minimumReleaseAgeExclude:
+  - '@bexis2/*'
+patchedDependencies:
+  '@sveltejs/kit@2.63.0': patches/@sveltejs__kit@2.63.0.patch
+# hoist all dependencies to the workspace root, to avoid issues with multiple versions of the same dependency
+shamefullyHoist: true

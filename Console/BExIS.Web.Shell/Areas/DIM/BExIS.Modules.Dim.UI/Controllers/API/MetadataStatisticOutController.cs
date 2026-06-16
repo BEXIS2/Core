@@ -31,57 +31,54 @@ namespace BExIS.Modules.Dim.UI.Controllers
             bool publicOnly = true;
             User user = null;
 
-            using (UserManager userManager = new UserManager())
+            user = ControllerContext.RouteData.Values["user"] as User;
+
+            // If user is registered, include also non-public datasets
+            if (user != null)
             {
-                user = ControllerContext.RouteData.Values["user"] as User;
-
-                // If user is registered, include also non-public datasets
-                if (user != null)
-                {
-                    publicOnly = false;
-                }
-                // Return error, if token is provided, but not valid
-                else
-                {
-                    return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "Token is not valid.");
-                }
-
-                // Check input values to prevent SQL injection
-                string errorMessage = "";
-                if (data.Xpath.Length == 0) errorMessage = "Xpath is empty, but required.";
-                if (!data.Xpath.EndsWith("/")) errorMessage = "Xpath does not end with /.";
-                if (data.DatasetIdsInclude != null && data.DatasetIdsInclude.Any(x => !Regex.IsMatch(x, @"^\d+$"))) errorMessage = "DatasetIdsInclude contains non numeric values.";
-                if (data.DatasetIdsExclude != null && data.DatasetIdsExclude.Any(x => !Regex.IsMatch(x, @"^\d+$"))) errorMessage = "DatasetIdsExclude contains non numeric values.";
-                if (data.MetadatastructureIdsInclude != null && data.MetadatastructureIdsInclude.Any(x => !Regex.IsMatch(x, @"^\d+$"))) errorMessage = "MetadatastructureIdsInclude contains non numeric values.";
-                if (data.MetadatastructureIdsExclude != null && data.MetadatastructureIdsExclude.Any(x => !Regex.IsMatch(x, @"^\d+$"))) errorMessage = "MetadatastructureIdsExclude contains non numeric values.";
-                if (data.RegexInclude != null && (data.RegexInclude.Contains("Drop") == true || data.RegexInclude.Contains("Delete") || data.RegexInclude.Contains("Update"))) errorMessage = "RegexInclude contains not allowed keyword (drop, update or delete).";
-                if (data.RegexExclude != null && (data.RegexExclude.Contains("Drop") == true || data.RegexExclude.Contains("Delete") || data.RegexExclude.Contains("Update"))) errorMessage = "RegexExclude contains not allowed keyword (drop, update or delete).";
-
-                if (errorMessage != "")
-                {
-                    return Request.CreateResponse(HttpStatusCode.PreconditionFailed, errorMessage);
-                }
-
-                // Create and execute SQL
-                var result = UniqueValuesByXPATH(data, publicOnly);
-
-                // Return empty result (204)
-                if (result == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.NoContent, "no result");
-                }
-
-                // JSON is returned, but not correctly detected within the repsonse function.
-                // Workaround: Deserialized and Serialize from and to JSON before
-                var resultObject = JsonConvert.DeserializeObject(result.ToString());
-                string resp = JsonConvert.SerializeObject(resultObject);
-
-                var response = Request.CreateResponse(HttpStatusCode.OK);
-                response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
-                response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-                return response;
+                publicOnly = false;
             }
+            // Return error, if token is provided, but not valid
+            else
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.Forbidden, "Token is not valid.");
+            }
+
+            // Check input values to prevent SQL injection
+            string errorMessage = "";
+            if (data.Xpath.Length == 0) errorMessage = "Xpath is empty, but required.";
+            if (!data.Xpath.EndsWith("/")) errorMessage = "Xpath does not end with /.";
+            if (data.DatasetIdsInclude != null && data.DatasetIdsInclude.Any(x => !Regex.IsMatch(x, @"^\d+$"))) errorMessage = "DatasetIdsInclude contains non numeric values.";
+            if (data.DatasetIdsExclude != null && data.DatasetIdsExclude.Any(x => !Regex.IsMatch(x, @"^\d+$"))) errorMessage = "DatasetIdsExclude contains non numeric values.";
+            if (data.MetadatastructureIdsInclude != null && data.MetadatastructureIdsInclude.Any(x => !Regex.IsMatch(x, @"^\d+$"))) errorMessage = "MetadatastructureIdsInclude contains non numeric values.";
+            if (data.MetadatastructureIdsExclude != null && data.MetadatastructureIdsExclude.Any(x => !Regex.IsMatch(x, @"^\d+$"))) errorMessage = "MetadatastructureIdsExclude contains non numeric values.";
+            if (data.RegexInclude != null && (data.RegexInclude.Contains("Drop") == true || data.RegexInclude.Contains("Delete") || data.RegexInclude.Contains("Update"))) errorMessage = "RegexInclude contains not allowed keyword (drop, update or delete).";
+            if (data.RegexExclude != null && (data.RegexExclude.Contains("Drop") == true || data.RegexExclude.Contains("Delete") || data.RegexExclude.Contains("Update"))) errorMessage = "RegexExclude contains not allowed keyword (drop, update or delete).";
+
+            if (errorMessage != "")
+            {
+                return Request.CreateResponse(HttpStatusCode.PreconditionFailed, errorMessage);
+            }
+
+            // Create and execute SQL
+            var result = UniqueValuesByXPATH(data, publicOnly);
+
+            // Return empty result (204)
+            if (result == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.NoContent, "no result");
+            }
+
+            // JSON is returned, but not correctly detected within the repsonse function.
+            // Workaround: Deserialized and Serialize from and to JSON before
+            var resultObject = JsonConvert.DeserializeObject(result.ToString());
+            string resp = JsonConvert.SerializeObject(resultObject);
+
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            return response;
         }
 
         private object UniqueValuesByXPATH(PostApiMetadataStatisticModel data, bool publicOnly = true)

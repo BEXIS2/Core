@@ -317,7 +317,7 @@ $.fn.extend({
         $(div).css("height", h);
         $(div).css("padding", 2);
 
-        console.log(div);
+        //console.log(div);
 
         $(this).children().hide();
 

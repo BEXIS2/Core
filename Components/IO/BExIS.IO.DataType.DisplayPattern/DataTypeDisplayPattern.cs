@@ -41,7 +41,9 @@ namespace BExIS.IO.DataType.DisplayPattern
             new DataTypeDisplayPattern() {Id=27,Systemtype = DataTypeCode.DateTime,   Name = "Minute",            ExcelPattern=@"mm",          DisplayPattern="mm",                StringPattern = "mm",              RegexPattern = null},
             new DataTypeDisplayPattern() {Id=28,Systemtype = DataTypeCode.DateTime,   Name = "Secound",            ExcelPattern=@"ss",          DisplayPattern="ss",                StringPattern = "ss",              RegexPattern = null},
             new DataTypeDisplayPattern() {Id=29,Systemtype = DataTypeCode.DateTime,   Name = "DateEu with time24",            ExcelPattern=@"dd\.MM\.yyyy HH:mm:ss",          DisplayPattern="dd.MM.yyyy HH:mm:ss",                StringPattern = "dd.MM.yyyy HH:mm:ss",              RegexPattern = null},
-            new DataTypeDisplayPattern() {Id=30,Systemtype = DataTypeCode.DateTime,   Name = "DateTimeIso without sec",            ExcelPattern=@"yyyy-MM-dd\Thh:mm",          DisplayPattern="yyyy-MM-ddThh:mm",                StringPattern = "yyyy-MM-ddTHH:mm",              RegexPattern = null}
+            new DataTypeDisplayPattern() {Id=30,Systemtype = DataTypeCode.DateTime,   Name = "DateTimeIso without sec",            ExcelPattern=@"yyyy-MM-dd\Thh:mm",          DisplayPattern="yyyy-MM-ddThh:mm",                StringPattern = "yyyy-MM-ddTHH:mm",              RegexPattern = null},
+            new DataTypeDisplayPattern() {Id=31,Systemtype = DataTypeCode.DateTime,   Name = "DateTimeIso withou T",            ExcelPattern=@"yyyy-MM-dd hh:mm:ss",          DisplayPattern="yyyyy-MM-dd hh:mm:ss",                StringPattern = "yyyy-MM-dd hh:mm:ss",              RegexPattern = null},
+            new DataTypeDisplayPattern() {Id=32,Systemtype = DataTypeCode.DateTime,   Name = "DateTimeIso withou T and 24h",            ExcelPattern=@"yyyy-MM-dd HH:mm:ss",          DisplayPattern="yyyyy-MM-dd HH:mm:ss",                StringPattern = "yyyy-MM-dd HH:mm:ss",              RegexPattern = null}
 
         };
 

@@ -17,9 +17,9 @@ namespace BExIS.Utils.Data
             bool isVerionReady = false;
 
 
-            using (var permissionManager = new EntityPermissionManager())
             using (var datasetManager = new DatasetManager())
             {
+                var permissionManager = new EntityPermissionManager();
                 var dataset = datasetManager.GetDataset(datasetId);
 
 

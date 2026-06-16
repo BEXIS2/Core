@@ -13,6 +13,7 @@
 	export let linkedSubjects = [];
 	export let allowedFileTypes = [];
 	export let activated = false;
+	export let order = 0;
 
 	let hidden = true;
 

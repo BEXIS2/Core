@@ -1,0 +1,1 @@
+This folder needs to contain a metadataschema JSON file for metadatatree creation.

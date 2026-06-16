@@ -4,6 +4,7 @@ using BExIS.Security.Services.FormerMember;
 using BExIS.Security.Services.Subjects;
 using System.Collections.Generic;
 using System.Linq;
+using Vaiona.IoC;
 
 namespace BExIS.Modules.SAM.UI.Helpers
 {
@@ -20,13 +21,15 @@ namespace BExIS.Modules.SAM.UI.Helpers
             bool isAlumni = false;
             try
             {
-                using (GroupManager groupManager = new GroupManager())
-                {
-                    var alumniGroup = groupManager.Groups.Where(g => g.Name.ToLower() == formerMemberRole.ToLower()).FirstOrDefault();
-                    isAlumni = alumniGroup.Users.Any(u => u.Id == userId);
-                }
+                var groupManager = IoCFactory.Container.Resolve<GroupManager>();
+                var alumniGroup = groupManager.Roles.Where(g => g.Name.ToLower() == formerMemberRole.ToLower()).FirstOrDefault();
+                isAlumni = alumniGroup.Users.Any(u => u.Id == userId);
             }
             catch
+            {
+                // do nothing
+            }
+            finally
             {
                 // do nothing
             }
@@ -47,10 +50,10 @@ namespace BExIS.Modules.SAM.UI.Helpers
             using (var alumniEntityPermissionManager = new FormerMemberEntityPermissionManager())
             using (var alumniFeaturePermissionManager = new FormerMemberFeaturePermissionManager())
             using (var featurePermissionManager = new FeaturePermissionManager())
-            using (var groupManager = new GroupManager())
             using (var alumniUsersGroupsRelationManager = new FormerMemberUsersGroupsRelationManager())
             {
                 //get former member group
+                var groupManager = IoCFactory.Container.Resolve<GroupManager>();
                 var group = groupManager.FindByNameAsync(formerMemberRole).Result;
                 if (!group.Users.Contains(user))
                 {
@@ -74,20 +77,18 @@ namespace BExIS.Modules.SAM.UI.Helpers
 
                     List<Group> tempList = user.Groups.ToList();
 
-                    using (var userManager = new UserManager())
-                    using (var identityUserService = new IdentityUserService(userManager))
+                    var userManager = IoCFactory.Container.Resolve<UserManager>();
+
+                    for (int i = 0; i < tempList.Count; i++)
                     {
-                        for (int i = 0; i < tempList.Count; i++)
-                        {
-                            alumniUsersGroupsRelationManager.Create(user.Id, tempList[i].Id);
-                            var remove = identityUserService.RemoveFromRoleAsync(user.Id, tempList[i].Name).Result;
-                        }
-
-                        //add alumni
-                        var result = identityUserService.AddToRoleAsync(user.Id, formerMemberRole).Result;
-
-                        statuschanged = true;
+                        alumniUsersGroupsRelationManager.Create(user.Id, tempList[i].Id);
+                        var remove = userManager.RemoveFromRoleAsync(user.Id, tempList[i].Name).Result;
                     }
+
+                    //add alumni
+                    var result = userManager.AddToRoleAsync(user.Id, formerMemberRole).Result;
+
+                    statuschanged = true;
                 }
             }
 
@@ -107,9 +108,9 @@ namespace BExIS.Modules.SAM.UI.Helpers
             using (var alumniEntityPermissionManager = new FormerMemberEntityPermissionManager())
             using (var alumniFeaturePermissionManager = new FormerMemberFeaturePermissionManager())
             using (var featurePermissionManager = new FeaturePermissionManager())
-            using (var groupManager = new GroupManager())
             using (var alumniUsersGroupsRelationManager = new FormerMemberUsersGroupsRelationManager())
             {
+                var groupManager = IoCFactory.Container.Resolve<GroupManager>();
                 var group = groupManager.FindByNameAsync(formerMemberRole).Result;
                 if (group.Users.Any(u => u.Id == user.Id))
                 {
@@ -132,22 +133,20 @@ namespace BExIS.Modules.SAM.UI.Helpers
                     //add all groups to user again
                     var relations = alumniUsersGroupsRelationManager.FormerMemberFeaturePermissions.Where(r => r.UserRef == user.Id).ToList();
 
-                    using (var userManager = new UserManager())
-                    using (var identityUserService = new IdentityUserService(userManager))
+                    var userManager = IoCFactory.Container.Resolve<UserManager>();
+
+                    foreach (var r in relations)
                     {
-                        foreach (var r in relations)
-                        {
-                            //add all group to user again
-                            var g = groupManager.FindByIdAsync(r.GroupRef).Result;
-                            var add = identityUserService.AddToRoleAsync(user.Id, g.Name).Result;
+                        //add all group to user again
+                        var g = groupManager.FindByIdAsync(r.GroupRef).Result;
+                        var add = userManager.AddToRoleAsync(user.Id, g.Name).Result;
 
-                            //delete relation
-                            alumniUsersGroupsRelationManager.Delete(r);
-                        }
-
-                        //remove alumni group
-                        var result = identityUserService.RemoveFromRoleAsync(user.Id, formerMemberRole).Result;
+                        //delete relation
+                        alumniUsersGroupsRelationManager.Delete(r);
                     }
+
+                    //remove alumni group
+                    var result = userManager.RemoveFromRoleAsync(user.Id, formerMemberRole).Result;
 
                     statuschanged = true;
                 }

@@ -31,9 +31,12 @@
 	let context = 'fileupload';
 	let error = '';
 
-	$: $latestFileReaderDate, load();
-	$: $latestSubmitDate, load();
-	$: $latestDataDescriptionDate, load();
+	// only run reactive reloads after initial load has completed
+	let mounted = false;
+	$: $latestFileReaderDate, reload();
+	$: $latestSubmitDate, reload();
+	$: $latestDataDescriptionDate, reload();
+
 
 	let model: FileUploadModel;
 	$: model;
@@ -41,15 +44,18 @@
 	let fileReaderSelectedFile = '';
 
 	onMount(async () => {
-		load();
+		await load();
+		mounted = true;
 	});
 
-	$: loading = false;
+	$: loading = true;
 
 	const dispatch = createEventDispatcher();
 
 	async function load() {
+		loading = true;
 		model = await getHookStart(hook.start, id, version);
+		console.log('🚀 ~ load ~ model .aaaa:', model);
 		start = hook.start;
 
 		loading = false;
@@ -58,11 +64,14 @@
 	}
 
 	async function reload() {
-		/*update store*/
-		latestFileUploadDate.set(Date.now());
+		if(mounted) {
+	
+			/*update store*/
+			latestFileUploadDate.set(Date.now());
 
-		/* load data*/
-		load();
+			/* load data*/
+			load();
+		}
 	}
 
 	function success(e) {
@@ -80,9 +89,9 @@
 </script>
 
 <div class="space-y-2">
-	{#await load()}
+	{#if loading}
 		<PlaceHolderHookContent />
-	{:then result}
+	{:else}
 		<FileUploader
 			{id}
 			{version}
@@ -95,14 +104,16 @@
 			on:error
 			on:success
 		/>
-		{#if model.fileUploader.existingFiles.length}
+		{#if model.fileUploader.existingFiles.length > 0}
+
 			<div class="pt-2">
-				<b>Uploaded File(s)</b>
+				<b>File(s) ready for tabular data / file import</b>
 			</div>
 			<FileOverview
 				{id}
 				files={model.fileUploader.existingFiles}
 				descriptionType={model.fileUploader.descriptionType}
+				descriptionSave={false}
 				{save}
 				{remove}
 				on:success={success}
@@ -117,7 +128,8 @@
 				/>
 			{/if}
 		{/if}
-	{:catch error}
-		<ErrorMessage {error} />
-	{/await}
+	{#if error}
+			<ErrorMessage {error} />
+		{/if}
+	{/if}
 </div>

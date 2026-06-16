@@ -662,6 +662,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 }
 
                 indexWriter.AddDocument(dataset);
+            }
 
             
         }

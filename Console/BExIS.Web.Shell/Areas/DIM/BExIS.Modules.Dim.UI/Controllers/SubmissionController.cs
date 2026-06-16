@@ -521,7 +521,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             {
                 publicationManager.Dispose();
                 datasetManager.Dispose();
-                entityPermissionManager.Dispose();
             }
         }
 

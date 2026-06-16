@@ -5,7 +5,7 @@
 
 	// ui Components
 	import Fa from 'svelte-fa';
-	import { DropdownKVP, MultiSelect, TextArea, TextInput, Spinner } from '@bexis2/bexis2-core-ui';
+	import { DropdownKVP, MultiSelect, TextArea, TextInput, Spinner, NumberInput } from '@bexis2/bexis2-core-ui';
 	import { faSave, faXmark } from '@fortawesome/free-solid-svg-icons/index';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import ContentContainer from '../../lib/components/ContentContainer.svelte';
@@ -205,6 +205,7 @@ function	updateIsExtensions(entityTypeText:string){
 					placeholder="Define a unique content-related name for your template."
 					help={true}
 				/>
+				
 
 				<DropdownKVP
 					id="entityType"
@@ -232,6 +233,12 @@ function	updateIsExtensions(entityTypeText:string){
 					placeholder="Briefly describe in which cases this template should be used. Based on an entity or use case."
 					help={true}
 				/>
+				
+				<NumberInput
+					id="order"
+					label="Order"
+					bind:value={entityTemplate.order}
+					/>
 			</div>
 
 			<h3 class="h3">Metadata</h3>

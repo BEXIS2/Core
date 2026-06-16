@@ -4,11 +4,14 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.IO.Transform.Output
@@ -102,6 +105,91 @@ namespace BExIS.IO.Transform.Output
                 return newXml;
             }
         }
+
+        public static string GetFlattenMetadata(XmlDocument metadata)
+        {
+            using (DatasetManager datasetManager = new DatasetManager())
+            {
+               StringBuilder sb = new StringBuilder();
+
+               sb = flatten(sb, XElement.Parse(metadata.OuterXml));
+
+               return sb.ToString();
+            }
+        }
+
+        public static StringBuilder flatten(StringBuilder sb, XElement element, string currentPath = "")
+        {
+            // Construct the path: Parent/Child
+            string newPath = string.IsNullOrEmpty(currentPath)
+                ? element.Name.LocalName
+                : $"{currentPath}/{element.Name.LocalName}";
+
+            // If the element has no child elements, it's a leaf node—print the value
+            if (!element.Elements().Any())
+            {
+               sb.AppendLine($"{newPath}:\t{element.Value.Trim()}");
+                                                
+            }
+
+            // Recurse through all child elements
+            foreach (var child in element.Elements())
+            {
+                flatten(sb,child, newPath);
+            }
+
+            return sb;
+        }
+
+        /// <summary>
+        /// returns metadata as json string. simplifiedJson: 0,1,2 (0: all metadata, 1: metadata with value and empty, 2: only metadata with value and reference)
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <param name="simplifiedJson">0,1,2</param>
+        /// <returns></returns>
+        public static string GetMetadataAsJson(XmlDocument metadata, int simplifiedJson)
+        {
+            using (DatasetManager datasetManager = new DatasetManager())
+            {
+                string json = "";
+
+                switch (simplifiedJson)
+                {
+                    case 0:
+                        {
+                            json = JsonConvert.SerializeObject(metadata.DocumentElement);
+                            break;
+                        }
+                    case 1:
+                        {
+                            XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
+                            json = xmlMetadataConverter.ConvertTo(metadata, true).ToString();
+
+                            break;
+                        }
+                    case 2:
+                        {
+                            XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
+                            json = xmlMetadataConverter.ConvertTo(metadata).ToString();
+
+                            break;
+                        }
+                }
+
+
+                return json;
+            }
+        }
+        public static string GetMetadataAsJson(long id , int versionNr, int simplifiedJson)
+        {
+            using (DatasetManager datasetManager = new DatasetManager())
+            {
+                var datasetVersion = datasetManager.GetDatasetVersion(id, versionNr);
+                
+                return GetMetadataAsJson(datasetVersion.Metadata, simplifiedJson);
+            }
+        }
+
 
         public static string GetSchemaDirectoryPath(long datasetId)
         {

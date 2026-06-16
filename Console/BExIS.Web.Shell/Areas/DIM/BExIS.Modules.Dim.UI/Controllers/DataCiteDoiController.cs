@@ -102,9 +102,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             using (DatasetManager datasetManager = new DatasetManager())
             using (PublicationManager publicationManager = new PublicationManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (EntityManager entityManager = new EntityManager())
             {
+                var entityPermissionManager = new EntityPermissionManager();
                 // dataset - version
                 DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 

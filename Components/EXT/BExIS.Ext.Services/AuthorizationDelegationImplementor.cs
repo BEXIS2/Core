@@ -2,6 +2,7 @@
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using System;
+using Vaiona.IoC;
 
 namespace BExIS.Ext.Services
 {
@@ -17,8 +18,9 @@ namespace BExIS.Ext.Services
 
             using (var operationManager = new OperationManager())
             using (var featurePermissionManager = new FeaturePermissionManager())
-            using (var userManager = new UserManager())
             {
+                var userManager = IoCFactory.Container.Resolve<UserManager>();
+
                 var operation = operationManager.Find(areaName, controllerName, "*");
                 if (operation == null)
                 {

@@ -34,6 +34,8 @@ namespace BExIS.IO.Tests
         {
         }
 
+        [TestCase("2024-05-17 16:00:54", "yyyy-MM-dd HH:mm:ss", "5/17/2024 4:00:54 PM", true, "en-US")]
+        [TestCase("2024-05-17 04:00:54", "yyyy-MM-dd hh:mm:ss", "5/17/2024 4:00:54 AM", true, "en-US")]
         [TestCase("12:00 pm", "hh:mm tt", "1/1/0001 12:00:00 PM", true, "en-US")]
         [TestCase("12:00:00 pm", "hh:mm:ss tt", "1/1/0001 12:00:00 PM", true, "en-US")]
         [TestCase("2023-29-12", "yyyy-d-M", "12/29/2023 12:00:00 AM", true)]
@@ -118,6 +120,9 @@ namespace BExIS.IO.Tests
                 else result.ToString( new CultureInfo("en-US", false)).Should().BeNullOrEmpty();
             }
         }
+
+
+        [TestCase("2026-12-24 05:05:50", "yyyy-MM-dd hh:mm:ss", "12/24/2026 5:05:50 AM", true, "en-US")]
         [TestCase("12:00 pm", "hh:mm tt", "1/1/0001 12:00:00 PM", true, "en-US")]
         [TestCase("12:00:00 pm", "hh:mm:ss tt", "1/1/0001 12:00:00 PM", true, "en-US")]
         [TestCase("2023-29-12", "yyyy-d-M", "12/29/2023 12:00:00 AM", true)]

@@ -34,6 +34,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class CreateController : Controller
     {
+        private readonly UserManager _userManager;
+        private readonly GroupManager _groupManager;
+        
+        public CreateController(UserManager userManager, GroupManager groupManager)
+        {
+            _userManager = userManager;
+            _groupManager = groupManager;
+        }
+
         // GET: Create
         public ActionResult Index()
         {
@@ -52,13 +61,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (DatasetManager dm = new DatasetManager())
             using (ResearchPlanManager rpm = new ResearchPlanManager())
             using (EntityTemplateManager entityTemplateManager = new EntityTemplateManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (MetadataStructureManager msm = new MetadataStructureManager())
             using (DataStructureManager dsm = new DataStructureManager())
-            using (GroupManager gm = new GroupManager())
             {
+                EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                 // create Entity based on entity template
-
                 var datasetToCopy = dm.GetDataset(id);
                 var datasetVersionToCopy = dm.GetDatasetLatestVersion(datasetToCopy.Id);
                 var entityTemplate = datasetToCopy.EntityTemplate;
@@ -75,8 +82,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 {
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
 
-                    workingCopy.Metadata = datasetVersionToCopy.Metadata;
-
+                    // set metadata
+                    workingCopy = setMetadata(datasetVersionToCopy,workingCopy);
+                
                     // set title if exist
                     workingCopy.Title = datasetVersionToCopy.Title + "_copy";
                     workingCopy.Description = datasetVersionToCopy.Description;
@@ -86,6 +94,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     //set modification - create
                     workingCopy = setModificationInfo(workingCopy, true, GetUsernameOrDefault(), "Metadata");
+
+                    //setSystemVariables
+                    setAllSystemValuesToMetadata(workingCopy.Dataset.Id, 1, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
 
                     // save version in database
                     dm.EditDatasetVersion(workingCopy, null, null, null);
@@ -104,14 +115,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // full
                     foreach (var groupId in entityTemplate.PermissionGroups.Full)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                     }
 
                     // ViewEditGrant
                     foreach (var groupId in entityTemplate.PermissionGroups.ViewEditGrant)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         var l = new List<RightType>() { RightType.Read, RightType.Write, RightType.Grant };
 
                         entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
@@ -120,7 +131,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // ViewEdit
                     foreach (var groupId in entityTemplate.PermissionGroups.ViewEdit)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         var l = new List<RightType>() { RightType.Read, RightType.Write };
                         entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
                     }
@@ -128,7 +139,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // View
                     foreach (var groupId in entityTemplate.PermissionGroups.View)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         var l = new List<RightType>() { RightType.Read };
                         entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
                     }
@@ -152,7 +163,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // add emails from groups
                     foreach (var groupId in entityTemplate.NotificationGroups)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         destinations.AddRange(group.Users.Select(u => u.Email));
                     }
                 }
@@ -162,7 +173,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 using (var emailService = new EmailService())
                 {
                     emailService.Send(MessageHelper.GetCreateDatasetHeader(ds.Id, entityTemplate.Name),
-                        MessageHelper.GetCreateDatasetMessage(ds.Id, datasetVersionToCopy.Title + "_copy", GetUsernameOrDefault(), entityTemplate.Name),
+                        MessageHelper.GetCreateDatasetMessage(ds.Id, datasetVersionToCopy.Title + "_copy", GetDisplayName(), entityTemplate.Name),
                         destinations
                         );
                 }
@@ -257,12 +268,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (DatasetManager dm = new DatasetManager())
             using (DataStructureManager dsm = new DataStructureManager())
             using (ResearchPlanManager rpm = new ResearchPlanManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (MetadataStructureManager msm = new MetadataStructureManager())
-            using (GroupManager gm = new GroupManager())
             using (EntityTemplateManager entityTemplateManager = new EntityTemplateManager())
             using (TagManager tagManager = new TagManager())
             {
+                EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                 // create Entity based on entity template
                 // load entitytemplate
                 var entityTemplate = entityTemplateManager.Repo.Get(data.Id);
@@ -382,14 +392,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // full
                     foreach (var groupId in entityTemplate.PermissionGroups.Full)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                     }
 
                     // ViewEditGrant
                     foreach (var groupId in entityTemplate.PermissionGroups.ViewEditGrant)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         var l = new List<RightType>() { RightType.Read, RightType.Write, RightType.Grant };
 
                         entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
@@ -398,7 +408,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // ViewEdit
                     foreach (var groupId in entityTemplate.PermissionGroups.ViewEdit)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         var l = new List<RightType>() { RightType.Read, RightType.Write };
                         entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
                     }
@@ -406,7 +416,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // View
                     foreach (var groupId in entityTemplate.PermissionGroups.View)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         var l = new List<RightType>() { RightType.Read };
                         entityPermissionManager.CreateAsync<Group>(group.Name, entityTemplate.EntityType.Name, typeof(Dataset), ds.Id, l);
                     }
@@ -430,7 +440,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // add emails from groups
                     foreach (var groupId in entityTemplate.NotificationGroups)
                     {
-                        var group = gm.Groups.Where(g => g.Id.Equals(groupId)).FirstOrDefault();
+                        var group = _groupManager.Get(groupId);
                         destinations.AddRange(group.Users.Select(u => u.Email));
                     }
                 }
@@ -440,9 +450,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 using (var emailService = new EmailService())
                 {
                     emailService.Send(MessageHelper.GetCreateDatasetHeader(datasetId, entityTemplate.Name),
-                                            MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityTemplate.Name),
-                                            destinations
-                                            );
+                    MessageHelper.GetCreateDatasetMessage(datasetId, title, GetDisplayName(), entityTemplate.Name),
+                    destinations);
                 }   
 
                 #endregion send notifications
@@ -481,6 +490,31 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             catch { }
 
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+        }
+
+        public string GetDisplayName()
+        {
+            string username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+                User user = _userManager.FindByNameAsync(username).Result;
+
+                return user.DisplayName;
+            }
+            catch
+            {
+                return "DEFAULT";
+            }
+        }
+
+        public DatasetVersion setMetadata(DatasetVersion datasetVersionToCopy, DatasetVersion datasetVersion)
+        {
+            XmlDocument copyMetadata = new XmlDocument();
+            copyMetadata.LoadXml(datasetVersionToCopy.Metadata.OuterXml);
+            datasetVersion.Metadata =  copyMetadata;
+
+            return datasetVersion;
         }
 
         private DatasetVersion setStateInfo(DatasetVersion workingCopy, bool valid)
@@ -524,6 +558,27 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             Key[] myObjArray = { };
 
             myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied };
+
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+
+            return XmlUtility.ToXDocument(metadata);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datasetid"></param>
+        /// <param name="version"></param>
+        /// <param name="metadataStructureId"></param>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        private XDocument setAllSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata)
+        {
+            SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
+
+            Key[] myObjArray = { };
+
+            myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied, Key.DataCreationDate, Key.DataLastModified };
 
             metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
 

@@ -95,7 +95,7 @@ namespace BExIS.Web.Shell.Models
         public string Authenticator { get; set; }
 
         [Required]
-        [Display(Name = "Email or UserName")]
+        [Display(Name = "Email or Username")]
         public string UserName { get; set; }
 
         [Required]
@@ -112,7 +112,7 @@ namespace BExIS.Web.Shell.Models
         public string Name { get; set; }
 
         [Required]
-        [Display(Name = "Email or UserName")]
+        [Display(Name = "Email or Username")]
         public string UserName { get; set; }
 
         [Required]
@@ -127,32 +127,32 @@ namespace BExIS.Web.Shell.Models
     public class ManageUserViewModel
     {
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm new password")]
+        [Display(Name = "Confirm New Password")]
         [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = "New password")]
+        [Display(Name = "New Password")]
         public string NewPassword { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "Current password")]
+        [Display(Name = "Current Password")]
         public string OldPassword { get; set; }
     }
 
     public class RegisterViewModel
     {
         [Required]
-        [Display(Name = "UserName")]
+        [Display(Name = "Username")]
         [RegularExpression(@"^\S+(?:\s+\S+)*$", ErrorMessage = "Sorry, not a valid username. Please check there are no trailing spaces.")]
         public string UserName { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
+        [Display(Name = "Confirm Password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 

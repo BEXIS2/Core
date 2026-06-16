@@ -1,0 +1,93 @@
+{
+  "meta": {
+    "title": "Terminology Widget",
+    "component_name": "terminology_v2.2.26",
+    "author": "Franziska Zander",
+    "version": "1.0.0",
+    "description": "Component for Terminology selection based on the Terminology Services for NFDI"
+  },
+  "globalSettings": {
+    "globalsetting": [
+      {
+        "name": "Parameter",
+        "description": "String to configure the terminology widget",
+        "type": "string",
+        "target_variable": "",
+        "default_value": {
+          "type": "string",
+          "value": ""
+        }
+      }
+    ]
+  },
+  "modes": {
+    "edit": [
+      {
+        "mode_name": "simple",
+        "description": "Basic Configuration of the terminology widget",
+        "settings": {
+          "setting": [
+            {
+              "name": "Initial View Extent",
+              "description": "Initial map view extent",
+              "type": "string",
+              "target_variable": "initViewExtent",
+              "default_value": {
+                "type": "string",
+                "value": "[10,10,35,40]"
+              }
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Term",
+              "description": "Term with reference to the terminology service",
+              "type": "string",
+              "format": "",
+              "target_variable": "term_field",
+              "allowregex_input": true,
+              "allowregex_output": true,
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "string",
+                "value": "Rainforest"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "view": [
+      {
+        "mode_name": "Linked Terminology Display",
+        "description": "Mode for displaying linked terminology",
+        "settings": {
+          "setting": [
+          
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Display Term",
+              "description": "Term to display",
+              "type": "string",
+              "target_variable": "displayTerm",
+              "allowregex_input": true,
+              "allowregex_output": false,
+              "is_input": true,
+              "is_output": false,
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

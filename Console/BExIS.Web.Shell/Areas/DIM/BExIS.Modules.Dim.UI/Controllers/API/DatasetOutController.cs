@@ -74,6 +74,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                             Number = i + 1
                         };
                         if(dsv.Tag != null) datasetVersionModel.Tag = dsv.Tag.Nr;
+                        if(dsv.ChangeDescription != null) datasetVersionModel.ChangeDescription = dsv.ChangeDescription;
 
 
                         datasetModel.Versions.Add(datasetVersionModel);
@@ -119,7 +120,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
                 ApiDatasetHelper apiDatasetHelper = new ApiDatasetHelper();
                 // get content
-                ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, versionNumber, dataset.MetadataStructure.Id, dataStructureId);
+                ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, versionNumber, dataset.MetadataStructure.Id, dataStructureId, dataset.EntityTemplate.Id);
                 var datastructureId = dataset.DataStructure==null?0: dataset.DataStructure.Id;
 
                 // get links
@@ -282,7 +283,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
                     ApiDatasetHelper apiDatasetHelper = new ApiDatasetHelper();
                     // get content
-                    ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, version, metadataStructureId, dataset.DataStructure.Id);
+                    ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, version, metadataStructureId, dataset.DataStructure.Id, dataset.EntityTemplate.Id);
 
 
                     EntityReferenceHelper entityReferenceHelper = new EntityReferenceHelper();

@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -122,7 +123,8 @@ namespace BExIS.Xml.Helpers
                         // complex stuff
                         // add all children nodes
                         JObject complex = new JObject();
-                        setReference(complex, (XmlElement)tCHild, includeEmpty);
+                        //setReference(complex, (XmlElement)tCHild, includeEmpty);
+                        //setParameters(complex, (XmlElement)tCHild, includeEmpty);
 
                         for (int i = 0; i < tCHild.ChildNodes.Count; i++)
                         {
@@ -142,6 +144,13 @@ namespace BExIS.Xml.Helpers
                         }
 
                         if (!complex.Children().Any()) return null;
+                        else
+                        {
+                            setReference(complex, (XmlElement)tCHild, includeEmpty);
+                            setParameters(complex, (XmlElement)tCHild, includeEmpty);
+
+                        }
+
 
                         if (getMaxCardinality(usage) <= 1) return complex;
                         else
@@ -216,8 +225,7 @@ namespace BExIS.Xml.Helpers
                             // complex stuff
                             // add all children nodes
                             JObject complex = new JObject();
-                            setReference(complex, (XmlElement)tCHild, includeEmpty);
-
+                     
                             for (int i = 0; i < tCHild.ChildNodes.Count; i++)
                             {
                                 XmlNode child = tCHild.ChildNodes[i];
@@ -239,6 +247,13 @@ namespace BExIS.Xml.Helpers
                             }
 
                             if (!complex.Children().Any()) return null;
+                            else
+                            {
+                                setReference(complex, (XmlElement)tCHild, includeEmpty);
+                                setParameters(complex, (XmlElement)tCHild, includeEmpty);
+
+                            }
+
 
                             if (getMaxCardinality(usage) <= 1) return complex;
                             else
@@ -324,6 +339,7 @@ namespace BExIS.Xml.Helpers
             }
 
             setReference(simple, reference, includeEmpty);
+            setParameters(simple, reference, includeEmpty);
 
             simple.Add(new JProperty("#text", value));
 
@@ -348,6 +364,22 @@ namespace BExIS.Xml.Helpers
             else if (includeEmpty)
             {
                 target.Add("@partyid", "");
+            }
+        }
+
+        private void setParameters(JObject target, XmlElement element, bool includeEmpty)
+        { 
+            if(element.HasAttributes)
+            {
+                List<String> ignore = new List<String>() { "type", "ref", "id", "roleId", "number", "name","partyid"  }; // system attributes
+
+                foreach (XmlAttribute attr in element.Attributes)
+                {
+                    if (!ignore.Contains(attr.Name))
+                    {
+                        target.Add("@" + attr.Name, attr.Value);
+                    }
+                }
             }
         }
 
@@ -623,7 +655,7 @@ namespace BExIS.Xml.Helpers
 
             // load example xml based on metadata structure
             var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
-            var metadataExample = xmlMetadatWriter.CreateMetadataXml(metadataStructureId);
+            var metadataExample = xmlMetadatWriter.CreateTempMetadataXmlWithChoiceChildrens(metadataStructureId);
 
             // get all elements from xml documents to compare
             var listOfElementsInput = XmlUtility.GetAllChildren(XmlUtility.ToXDocument(metadataInput).Root).Select(e => e.Name.LocalName);

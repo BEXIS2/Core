@@ -291,7 +291,6 @@ namespace BExIS.Dim.Helpers.Mappings
             finally
             {
                 entityManager.Dispose();
-                entityPermissionManager.Dispose();
             }
 
             return tmp.OrderBy(i => i.Value).ToList();
@@ -629,6 +628,63 @@ namespace BExIS.Dim.Helpers.Mappings
                 }
 
                 return tmp;
+            }
+        }
+
+        public static string GetValueFromSystem(long partyid, long targetId)
+        {
+            MappingManager _mappingManager = new MappingManager();
+            PartyTypeManager partyTypeManager = new PartyTypeManager();
+            PartyManager partyManager = new PartyManager();
+            try
+            {
+                using (IUnitOfWork uow = (new object()).GetUnitOfWork())
+                {
+                    string value = "";
+
+                    IList<Mapping> mapping = CachedMappings();
+                    var mapping_result = mapping.Where(m =>
+                                m.Target.Id.Equals(targetId) &&
+                                m.Source.Type.Equals(LinkElementType.PartyCustomType)
+                            ).ToList();
+
+                    if (mapping_result.Any())
+                    {
+                        string mask = "";
+                        if (!String.IsNullOrEmpty(mapping_result.FirstOrDefault().TransformationRule.Mask))
+                            mask = mapping_result.FirstOrDefault().TransformationRule.Mask;
+
+                        foreach (var mapping_element in mapping_result)
+                        {
+                            long attributeId = mapping_element.Source.ElementId;
+
+                            PartyCustomAttributeValue attrValue =
+                                partyManager.PartyCustomAttributeValueRepository.Query()
+                                    .Where(v => v.CustomAttribute.Id.Equals(attributeId) && v.Party.Id.Equals(partyid))
+                                    .FirstOrDefault();
+
+                            if (attrValue != null)
+                            {
+                                List<string> regExResultList = transform(attrValue.Value, mapping_element.TransformationRule);
+                                string placeHolderName = attrValue.CustomAttribute.Name;
+
+                                mask = setOrReplace(mask, regExResultList, placeHolderName, mapping_element.TransformationRule.DefaultValue);
+                            }
+                        }
+
+                        if (mask.ToLower().Contains(value.ToLower()))
+
+                            return mask;
+                    }
+                }
+
+                return "";
+            }
+            finally
+            {
+                _mappingManager.Dispose();
+                partyTypeManager.Dispose();
+                partyManager.Dispose();
             }
         }
 

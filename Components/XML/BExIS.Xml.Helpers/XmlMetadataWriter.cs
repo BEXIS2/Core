@@ -160,7 +160,7 @@ namespace BExIS.Xml.Helpers
                     package.SetAttributeValue("number", "1");
                     role.Add(package);
 
-                    setChildren(package, mpu);
+                    setChildren(package, mpu, null, true);
                 }
 
                 return doc;
@@ -177,7 +177,7 @@ namespace BExIS.Xml.Helpers
             return false;
         }
 
-        private XElement setChildren(XElement element, BaseUsage usage, XDocument importDocument = null)
+        private XElement setChildren(XElement element, BaseUsage usage, XDocument importDocument = null, bool withChoiceChildren = false )
         {
             MetadataAttribute metadataAttribute = null;
             MetadataPackage metadataPackage = null;
@@ -235,7 +235,7 @@ namespace BExIS.Xml.Helpers
 
                         foreach (var type in typeList)
                         {
-                            setChildren(type, nestedUsage, importDocument);
+                            setChildren(type, nestedUsage, importDocument, withChoiceChildren);
                         }
                     }
                     else
@@ -245,7 +245,7 @@ namespace BExIS.Xml.Helpers
                         typeList = addAndReturnAttribute(element, nestedUsage, 1, 1);
 
                         if (nestedUsage.Extra == null || !IsChoice(nestedUsage.Extra))
-                            setChildren(typeList.FirstOrDefault(), nestedUsage, importDocument);
+                            setChildren(typeList.FirstOrDefault(), nestedUsage, importDocument, withChoiceChildren);
                     }
                 }
             }
@@ -286,7 +286,7 @@ namespace BExIS.Xml.Helpers
 
                             foreach (var type in typeList)
                             {
-                                setChildren(type, attrUsage, importDocument);
+                                setChildren(type, attrUsage, importDocument, withChoiceChildren);
                             }
                         }
                         else
@@ -295,8 +295,8 @@ namespace BExIS.Xml.Helpers
 
                             typeList = addAndReturnAttribute(element, attrUsage, 1, 1);
 
-                            if (attrUsage.Extra == null || !IsChoice(attrUsage.Extra))
-                                setChildren(typeList.FirstOrDefault(), attrUsage, importDocument);
+                            if (attrUsage.Extra == null || (!IsChoice(attrUsage.Extra)|| withChoiceChildren))
+                                setChildren(typeList.FirstOrDefault(), attrUsage, importDocument, withChoiceChildren);
                         }
                     }
                 }

@@ -266,7 +266,7 @@ namespace BExIS.Security.Services.Authorization
             if (operation == null) return false;
 
             var feature = operation?.Feature;
-            var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
+            var subject = !string.IsNullOrEmpty(subjectName) ? SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault() : null;
 
             //both exits
             if (feature != null)

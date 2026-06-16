@@ -18,6 +18,11 @@ namespace BExIS.Dlm.Entities.Data
         public virtual string Description { get; set; }
 
         /// <summary>
+        /// Description of the Entity Template
+        /// </summary>
+        public virtual int Order { get; set; }
+
+        /// <summary>
         /// Entity
         /// </summary>
         public virtual Entity EntityType { get; set; }
@@ -190,6 +195,7 @@ namespace BExIS.Dlm.Entities.Data
             MetadataInvalidSaveMode = true;
             ExtensionList = new List<ExtensionType>();
 
+            Order = 0;
             JsonAllowedFileTypes = "";
             JsonDatastructureList = "";
             JsonDisabledHooks = "";

@@ -1254,7 +1254,7 @@ namespace BExIS.Dlm.Services.Data
                 // should use the fallback method, but DatasetConvertor class must be merged with OutputDataManager and SearchUIHelper claases first.
                 var version = this.GetDatasetLatestVersion(datasetId);
                 var tuples = getDatasetVersionEffectiveTuples(version, pageNumber, pageSize, false); // the false, causes the method to use a scoped sesssion and keep it alive further processings that aredone later on the tuples
-                if (version.Dataset.DataStructure.Self is StructuredDataStructure)
+                if (version.Dataset.DataStructure!=null)
                 {
                     DataTable table = convertDataTuplesToDataTable(tuples, version, (StructuredDataStructure)version.Dataset.DataStructure.Self);
                     return table;
@@ -1268,7 +1268,7 @@ namespace BExIS.Dlm.Services.Data
             // should use the fallback method, but DatasetConvertor class must be merged with OutputDataManager and SearchUIHelper claases first.
             var version = this.GetDatasetVersion(versionId);
             var tuples = getDatasetVersionEffectiveTuples(version, pageNumber, pageSize, false); // the false, causes the method to use a scoped sesssion and keep it alive further processings that aredone later on the tuples
-            if (version.Dataset.DataStructure.Self is StructuredDataStructure)
+            if (version.Dataset.DataStructure != null)
             {
                 DataTable table = convertDataTuplesToDataTable(tuples, version, (StructuredDataStructure)version.Dataset.DataStructure.Self);
                 return table;
@@ -3361,7 +3361,7 @@ namespace BExIS.Dlm.Services.Data
             {
                 var datasetRepo = uow.GetReadOnlyRepository<Dataset>();
                 Dataset ds = datasetRepo.Get(datasetId);
-                if (ds.DataStructure != null && ds.DataStructure.Self is StructuredDataStructure)
+                if (ds.DataStructure != null && ds.DataStructure!= null)
                 {
                     StructuredDataStructure sds = (StructuredDataStructure)ds.DataStructure.Self;
                     if (sds.Variables != null && sds.Variables.Count() > 0)
