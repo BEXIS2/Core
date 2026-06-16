@@ -121,7 +121,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     var mappings = mappingManager.GetChildMappingFromRoot(rootMapping.Id, 2);
 
                     // get party mappings 
-                    var partymappings = mappings.Where(m => m.Target.Type == LinkElementType.PartyCustomType).ToList();
+                    var partymappings = mappings.Where(m => m.Target.Type == LinkElementType.PartyCustomType).GroupBy(m => m.Source.XPath).Select(group => group.First()).ToList();
                     //partymappings = partymappings.GroupBy(obj => obj.Target).Select(g => g.First()).ToList();
                     var keymappings = mappings.Where(m => m.Target.Type == LinkElementType.Key && ints.Contains(m.Target.ElementId)).ToList();
 

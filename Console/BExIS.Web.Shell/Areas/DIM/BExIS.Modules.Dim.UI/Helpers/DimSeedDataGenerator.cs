@@ -1428,7 +1428,6 @@ namespace BExIS.Modules.Dim.UI.Helpers
             LinkElementComplexity complexity,
             string xpath)
         {
-            LinkElement element = mappingManager.GetLinkElement(id, name, type, xpath);
 
             if(xpath.StartsWith("/")) xpath = xpath.Substring(1);
 
@@ -1440,6 +1439,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 string typeName = getTypeName(id, type, metadataAttributeManager);
                 xpath = xpath + "/"+ typeName;
             }
+
+            LinkElement element = mappingManager.GetLinkElement(id, name, type, xpath);
+
 
             if (element == null)
             {
