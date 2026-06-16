@@ -40,6 +40,14 @@
 		<column name="JsonDatastructureList" />
 	</property>
 
+	<property name="HasExtension" type="Boolean">
+		<column name="HasExtension" />
+	</property>
+
+	<property name="JsonExtensionList" type="string">
+		<column name="JsonExtensionList" />
+	</property>
+
 	<property name="JsonAllowedFileTypes" type="string">
 		<column name="JsonAllowedFileTypes" />
 	</property>

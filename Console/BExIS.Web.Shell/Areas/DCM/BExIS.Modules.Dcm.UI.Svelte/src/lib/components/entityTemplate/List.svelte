@@ -1,5 +1,5 @@
 <script>
-	import ListItem from '../create/ListItem.svelte';
+	import ListItem from './ListItem.svelte';
 
 	export let items;
 

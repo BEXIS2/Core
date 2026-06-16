@@ -22,6 +22,19 @@ namespace BExIS.Modules.Dim.UI.Controllers
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public ActionResult Start(long id, int version = 0)
         {
+            // not implemented yet
+            return RedirectToAction("getPublishDataView", "Submission", new { datasetId = id, versionId = version });
+        }
+
+        /// <summary>
+        /// Entrypoint for Publish Hook
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
+        public ActionResult StartView(long id, int version = 0)
+        {
             return RedirectToAction("getPublishDataPartialView", "Submission", new { datasetId = id, versionId = version });
         }
     }

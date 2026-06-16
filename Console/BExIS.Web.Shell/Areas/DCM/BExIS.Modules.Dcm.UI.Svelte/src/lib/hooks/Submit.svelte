@@ -39,8 +39,7 @@
 
 	let isSubmitting: boolean = false;
 
-	onMount(async () => {
-		latestFileUploadDate.subscribe((s) => {
+	latestFileUploadDate.subscribe((s) => {
 			if (s > 0) {
 				reload();
 			}
@@ -68,22 +67,25 @@
 				reload();
 			}
 		});
+
+	onMount(async () => {
+		
 	});
 
 	async function reload() {
-		console.log('reload submit', start, id, version);
-		console.log('latestDataDate', latestDataDate);
+		//console.log('reload submit', start, id, version);
+		//console.log('latestDataDate', latestDataDate);
 
 		canSubmit = false;
-		console.log(' before hook');
+		//console.log(' before hook');
 
 		model = await getHookStart(start, id, version);
-		console.log(' before activateSubmit', canSubmit);
+		//console.log(' before activateSubmit', canSubmit);
 
 		canSubmit = activateSubmit();
-		console.log(' after activateSubmit', canSubmit);
+		//console.log(' after activateSubmit', canSubmit);
 
-		console.log('reload submit', model);
+		//console.log('reload submit', model);
 
 		return model;
 	}
@@ -134,7 +136,7 @@
 	//2. updload data with data structure
 	function activateSubmit() {
 		//check use case 1
-		console.log('🚀 ~ activateSubmit ~ model:', model);
+		//console.log('🚀 ~ activateSubmit ~ model:', model);
 		if (model.hasStructrue == false && model.files.length > 0) {
 			return true;
 		}

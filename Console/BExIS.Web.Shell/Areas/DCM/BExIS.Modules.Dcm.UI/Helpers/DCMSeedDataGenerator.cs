@@ -155,6 +155,45 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     entityManager.Update(publication);
                 }
 
+                // publication
+                var extension = entityManager.Entities.Where(e => e.Name.ToUpperInvariant() == "Extension".ToUpperInvariant()).FirstOrDefault();
+
+                if (extension == null)
+                {
+                    extension = new Entity();
+                    extension.Name = "Extension";
+                    extension.EntityType = typeof(Dataset);
+                    extension.EntityStoreType = typeof(Xml.Helpers.ExtensionStore);
+                    extension.UseMetadata = true;
+                    extension.Securable = true;
+
+                    //add to Extra
+
+                    XmlDocument xmlDoc = new XmlDocument();
+                    XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                    xmlDatasetHelper.AddReferenceToXml(xmlDoc, AttributeNames.name.ToString(), "ddm", AttributeType.parameter.ToString(), "extra/modules/module");
+
+                    extension.Extra = xmlDoc;
+
+                    entityManager.Create(extension);
+                }
+                else
+                {
+                    XmlDocument xmlDoc = new XmlDocument();
+
+                    if (extension.Extra != null)
+                        if (extension.Extra is XmlDocument) xmlDoc = extension.Extra as XmlDocument;
+                        else xmlDoc.AppendChild(extension.Extra);
+
+                    //update to Extra
+                    XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                    xmlDatasetHelper.AddReferenceToXml(xmlDoc, AttributeNames.name.ToString(), "ddm", AttributeType.parameter.ToString(), "extra/modules/module");
+
+                    extension.Extra = xmlDoc;
+
+                    entityManager.Update(extension);
+                }
+
                 #endregion create entities
 
                 #region SECURITY
@@ -311,6 +350,14 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     string descriptionXpath = "Metadata/publication/publication/Abstract/AbstractDatatype_string";
 
                     ImportSchema("Publication", "BEXIS2-Publication-Schema-draft.xsd", "Metadata", publication.Name, publication.EntityType.FullName, titleXPath, descriptionXpath);
+                }
+
+                if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Extension")))
+                {
+                    string titleXPath = "Metadata/metadata/metadata/title/titleXmlSchemaComplexType";
+                    string descriptionXpath = "Metadata/metadata/metadata/description/descriptionXmlSchemaComplexType\r\n ";
+
+                    ImportSchema("Extension", "BEXIS2-Extension.xsd", "", extension.Name, extension.EntityType.FullName, titleXPath, descriptionXpath);
                 }
 
                 #endregion Add Metadata
