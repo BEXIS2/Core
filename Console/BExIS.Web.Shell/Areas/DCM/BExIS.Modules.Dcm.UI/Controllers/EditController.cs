@@ -9,12 +9,15 @@ using BExIS.UI.Hooks;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using System.Web.SessionState;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
-{
+{   
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class EditController : Controller
     {
         // GET: Edit
+        
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
         public ActionResult Index(long id, int version = 0)
         {
