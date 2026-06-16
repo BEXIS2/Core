@@ -431,7 +431,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 {
                     // doi
                     entityTemplate = version.Dataset.EntityTemplate.Name;
-                entityName = version.Dataset.EntityTemplate.EntityType.Name;
+                    entityName = version.Dataset.EntityTemplate.EntityType.Name;
                     date = version.ModificationInfo?.Timestamp?.ToString("yyyy-MM-dd");
                     if(date == null) version.CreationInfo?.Timestamp?.ToString("yyyy-MM-dd");
                     if (date == null) date = "";
@@ -662,7 +662,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 }
 
                 indexWriter.AddDocument(dataset);
-            }
+            
 
             
         }

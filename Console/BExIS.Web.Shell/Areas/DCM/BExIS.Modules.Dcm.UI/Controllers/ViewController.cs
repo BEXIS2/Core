@@ -327,8 +327,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             #region security permissions and authorizations check
 
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
-                return entityPermissionManager.HasEffectiveRightsAsync(GetUsernameOrDefault(), typeof(Dataset), entityId, rightType).Result;
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            
+            return entityPermissionManager.HasEffectiveRightsAsync(GetUsernameOrDefault(), typeof(Dataset), entityId, rightType).Result;
+            
 
             #endregion security permissions and authorizations check
         }
