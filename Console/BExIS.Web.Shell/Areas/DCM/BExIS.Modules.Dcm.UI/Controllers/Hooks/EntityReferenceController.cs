@@ -1,4 +1,4 @@
-﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Entities.Authorization;
@@ -14,10 +14,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class EntityReferenceController : Controller
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();

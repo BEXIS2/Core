@@ -1,4 +1,4 @@
-﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
@@ -23,6 +23,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Vaiona.Entities.Common;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
@@ -32,6 +33,7 @@ using Cache = BExIS.UI.Hooks.Caches;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class AttachmentUploadController : Controller
     {
         private readonly UserManager _userManager;
