@@ -504,15 +504,15 @@
 			<div class="w-full max-w-xl mx-auto my-6 space-y-3">
 				<div class="grid grid-cols-2 gap-2 sm:flex sm:justify-between text-sm font-medium text-gray-700">
 					<div class="flex items-center space-x-2">
-						<span class="w-3 h-3 bg-emerald-500 rounded-full"></span>
+						<span class="w-3 h-3 bg-success-500 rounded-full"></span>
 						<span>Done ({doneCount})</span>
 					</div>
 					<div class="flex items-center space-x-2">
-						<span class="w-3 h-3 bg-yellow-300 rounded-full"></span>
+						<span class="w-3 h-3 bg-warning-500 rounded-full"></span>
 						<span>WIP ({wipCount})</span>
 					</div>
 					<div class="flex items-center space-x-2">
-						<span class="w-3 h-3 bg-red-400 rounded-full"></span>
+						<span class="w-3 h-3 bg-error-500 rounded-full"></span>
 						<span>Mismatch ({mismatchCount})</span>
 					</div>
 					
@@ -521,23 +521,23 @@
 					</div>
 					</div>
 
-					<div class="w-full h-5 bg-gray-100 rounded-full overflow-hidden flex shadow-inner">
+					<div class="w-full h-5 bg-gray-200 rounded-full overflow-hidden flex shadow-inner">
 
 
 					<div 
-						class="h-full bg-emerald-500 transition-all duration-300 ease-out"
+						class="h-full bg-success-500 transition-all duration-300 ease-out"
 						style="width: {donePercent}%"
 						title="Mismatch"
 					></div>
 
 					<div 
-						class="h-full bg-yellow-300 transition-all duration-300 ease-out"
+						class="h-full bg-warning-500 transition-all duration-300 ease-out"
 						style="width: {wipPercent}%"
 						title="Accepted"
 					></div>
 
 					<div 
-						class="h-full bg-red-400 transition-all duration-300 ease-out"
+						class="h-full bg-error-500 transition-all duration-300 ease-out"
 						style="width: {mismatchPercent}%"
 						title="Done"
 					></div>

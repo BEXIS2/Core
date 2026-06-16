@@ -13,18 +13,19 @@
 		{
 			icon: faCheck,
 			color: 'variant-filled-primary',
-			type: 'ACCEPT'
+			type: 'ACCEPT',
+			title: 'ACCEPT'
 		},
-		{
-			icon: faEye,
-			color: 'variant-filled-secondary',
-			type: 'READ'
-		},
-		{
-			icon: faPen,
-			color: 'variant-filled-warning',
-			type: 'UPDATE'
-		}
+		// {
+		// 	icon: faEye,
+		// 	color: 'variant-filled-secondary',
+		// 	type: 'READ'
+		// },
+		// {
+		// 	icon: faPen,
+		// 	color: 'variant-filled-warning',
+		// 	type: 'UPDATE'
+		// }
 	];
 </script>
 
@@ -32,6 +33,7 @@
 	{#each buttons as button}
 		<button
 			class={`btn btn-sm btn-icon rounded-md ${button.color}`}
+			title={button.title}
 			on:click|preventDefault={() => eventDispatchFn(button.type)}
 		>
 			<Fa icon={button.icon} />

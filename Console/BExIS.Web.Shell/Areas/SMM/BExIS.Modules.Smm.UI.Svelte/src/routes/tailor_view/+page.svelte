@@ -233,13 +233,13 @@
 
         <div class="w-full max-w-md mx-auto my-4 space-y-2">
             <div class="flex justify-between text-sm font-medium text-gray-700">
-                <span>Confirmed Progress ({confirmedCount}/{totalCount})</span>
+                <span>Matched ({confirmedCount}/{totalCount})</span>
                 <span>{Math.round(percentage)}%</span>
             </div>
 
             <div class="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
                 <div 
-                class="h-full bg-blue-600 transition-all duration-300 ease-out"
+                class="h-full bg-success-500 transition-all duration-300 ease-out"
                 style="width: {percentage}%"
                 ></div>
             </div>
