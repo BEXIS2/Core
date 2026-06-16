@@ -12,6 +12,7 @@ using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.UI.Helpers;
+using BExIS.Utils.Data;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
@@ -27,6 +28,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http.Results;
 using System.Web.Mvc;
@@ -432,8 +434,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
-        public ActionResult View(long id, int version = 0)
+        public ActionResult View(long id, int version = 0, double tag = 0)
         {
+
+            // if version is 0 , get latest version, otherwise get the specified version
+            long versionId = getVersionId(id, version, "", tag).Result;
+
+            // get version based on version id
+            using (var datasetManager = new DatasetManager())
+            {
+                version = datasetManager.GetDatasetVersionNr(versionId);
+            }
 
             string module = "DCM";
 
@@ -443,6 +454,29 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["start"] = SvelteHelper.GetStart(module);
 
             return View();
+        }
+
+        private async Task<long> getVersionId(long datasetId, int versionNr = 0, string versionName = "", double tagNr = 0)
+        {
+
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            bool useTags = false;
+            bool.TryParse(moduleSettings.GetValueByKey("use_tags").ToString(), out useTags);
+
+            return await DatasetVersionHelper.GetVersionId(datasetId, GetUsernameOrDefault(), versionNr, useTags, tagNr);
+
+        }
+
+        public string GetUsernameOrDefault()
+        {
+            var username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+            }
+            catch { }
+
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
     }
 }

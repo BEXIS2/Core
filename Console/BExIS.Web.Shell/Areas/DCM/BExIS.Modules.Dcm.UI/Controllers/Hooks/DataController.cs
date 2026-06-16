@@ -1,4 +1,4 @@
-﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Hooks;
@@ -12,12 +12,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Telerik.Web.Mvc.Infrastructure.Implementation;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class DataController : Controller
     {
         // GET: Data

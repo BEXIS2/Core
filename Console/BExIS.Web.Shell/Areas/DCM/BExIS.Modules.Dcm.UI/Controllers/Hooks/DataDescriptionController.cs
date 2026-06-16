@@ -1,4 +1,4 @@
-﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -24,6 +25,7 @@ using Cache = BExIS.UI.Hooks.Caches;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class DataDescriptionController : Controller
     {
         /// <summary>
