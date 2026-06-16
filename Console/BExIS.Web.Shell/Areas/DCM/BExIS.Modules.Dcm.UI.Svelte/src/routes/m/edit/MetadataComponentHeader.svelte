@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { empty, getNodeByPath, getPartyIdByPath, hasValue, isActive, setActive, setInactive, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { convertDisplayName } from '../metadataShared';
-	import { faPlus, faChevronUp, faChevronDown, faQuestion } from '@fortawesome/free-solid-svg-icons';
+	import { faPlus, faChevronUp, faChevronDown, faQuestion, faTrash } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
   import { activeStore, hideStore, metadataStore, validationStore } from '$lib/components/utils/metadata/stores';
   import { onMount } from 'svelte';
-	import { get } from 'svelte/store';
+
 	
 
  export let required: boolean = false;
@@ -23,7 +23,7 @@
  const togglePath = p!=='' ? p : path; 
 
 export let active: boolean = false;
- $:active;
+$:active;
 
 
  onMount(() => { 
@@ -49,8 +49,11 @@ function initActivity() {
   } 
 }
 
-function changeFn(active: boolean) {
+function changeFn(a: boolean) {
   
+
+  active = !a;
+
   if(active) {
     setActive(path)
   }
@@ -81,14 +84,23 @@ function removeFromValidationStore(path: string) {
 <div class="card flex min-h-10 bg-primary-300 dark:bg-primary-800 pl-2 items-center gap-2">
 <div>
     {#if !required}
-      <input class="checkbox" type="checkbox" bind:checked={active} on:change={()=>changeFn(active)}/>
+
+      {#if !active}
+         <button class="badge" on:click={()=>changeFn(active)}><Fa icon={faPlus} /></button>
+      {:else}
+         <button class="badge" on:click={()=>changeFn(active)}><Fa icon={faTrash}/></button>
+      {/if}
+
+      <!-- <Fa icon={faPlus} class="text-green-500" />
+
+      <input class="checkbox" type="checkbox" bind:checked={active} on:change={()=>changeFn(active)}/> -->
     {:else}
       <h4 class="h4 text-red-500">
         *
       </h4>
     {/if}
 </div>
- <div class="text-left grow pl-2">
+ <div class="text-left grow ">
 	   <h4 id="{path}" class="h4">
     {convertDisplayName(label, true)} 
    </h4>
