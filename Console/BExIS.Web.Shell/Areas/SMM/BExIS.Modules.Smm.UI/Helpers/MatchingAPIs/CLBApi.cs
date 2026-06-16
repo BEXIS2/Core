@@ -170,10 +170,10 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
             }
         }
 
-        public override bool AcceptMatches(long datasetId, long versionId, int stepId, HashSet<long> acceptedIds)
+        public override bool AcceptMatches(long datasetId, long versionId, StepEntry step, HashSet<long> acceptedIds)
         {
 
-            var filepath = ProgressHelper.GetMatchedFilepath(datasetId, versionId, stepId);
+            var filepath = ProgressHelper.GetMatchedFilepath(datasetId, versionId, step.Id);
             if (filepath == null) return false;
 
             using (var speciesMatchingResultManager = new SpeciesMatchingResultManager())
@@ -270,6 +270,8 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
                                 result.TaxonOrder = entry.Order;
                                 result.TaxonFamily = entry.Family;
                                 result.TaxonGenus = entry.Genus;
+                                result.MatchSource = step.MatchSource;
+                                result.TimestampMatch = step.TimeStamp;
                             }
                         }
 
@@ -351,10 +353,14 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
                                 {
                                     var download = resultToken["download"]?.ToString();
                                     var key = resultToken["key"]?.ToString();
+                                    var matchSource = resultToken["dataset"]?["sourceKey"]?.ToString();
 
                                     if (!string.IsNullOrEmpty(download)) step.DownloadLink = download;
                                     if (!string.IsNullOrEmpty(key)) step.JobKey = key;
+                                    if (!string.IsNullOrEmpty(matchSource)) step.MatchSource = matchSource;
+
                                     step.ApiIdentifier = this.Identifier;
+                                    step.TimeStamp = DateTime.UtcNow;
 
                                     // persist the updated step back to the matching progress
                                     matchingProgress.UpdateStep(step);

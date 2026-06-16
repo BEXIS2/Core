@@ -117,6 +117,7 @@ namespace BExIS.Modules.Smm.UI.Models
             existing.ResultFileName = updatedStep.ResultFileName;
             existing.ApiIdentifier = updatedStep.ApiIdentifier;
             existing.DownloadLink = updatedStep.DownloadLink;
+            existing.MatchSource = updatedStep.MatchSource;
             existing.JobKey = updatedStep.JobKey;
             existing.Done = updatedStep.Done;
 
@@ -138,6 +139,10 @@ namespace BExIS.Modules.Smm.UI.Models
         public string ApiIdentifier { get; set; }
 
         public string DownloadLink { get; set; }
+
+        public string MatchSource { get; set; }
+
+        public DateTime TimeStamp { get; set; }
 
         public string JobKey { get; set; }
 

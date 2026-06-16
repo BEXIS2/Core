@@ -834,6 +834,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
             
             var datasetId = request.DatasetId;
             var versionId = request.VersionId;
+            var stepId = request.StepId;
 
             var user = ResolveUserAndRights(datasetId, out ActionResult errorResult);
             if (user == null)
@@ -841,13 +842,27 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Authentification error." }, HttpStatusCode.Unauthorized);
             }
 
+            var matchingProgress = ProgressHelper.LoadMatchingProgress(datasetId, versionId);
+            if (matchingProgress == null)
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = "No matching progress found under the given datasetId." }, HttpStatusCode.Conflict);
+            }
+
+            if (!matchingProgress.IsIdValidAndMatched(stepId))
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = "No valid matching job found in the matching progress data for the given stepId." }, HttpStatusCode.Conflict);
+            }
+
             try
             {
+                var step = matchingProgress.GetStepById(stepId);
+                var apiIdentifier = step.ApiIdentifier;
+                MatchingApiBase apiBase = matchingApiProvider.GetApi(apiIdentifier);
+
                 // Convert incoming List<string> MatchIds into a HashSet<long> for fast lookups
                 var matchIdsSet = ConversionHelper.ConvertStringListToLongHashSet(request.MatchIds);
 
-                // TODO: - adapt to use ApiProvider
-                MatchingResultHelper.AcceptClbMatches(datasetId, versionId, request.StepId, matchIdsSet);
+                apiBase.AcceptMatches(datasetId, versionId, step, matchIdsSet);
             } catch (Exception ex)
             {
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Error: " + ex.Message }, HttpStatusCode.BadRequest);

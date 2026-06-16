@@ -47,7 +47,7 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
 
         // Method to iterate result file and accept a subset of results
         // NOTE: to 'accept' means updating the respective SpeciesMatchingResult object in the database
-        public abstract bool AcceptMatches(long datasetId, long versionId, int stepId, HashSet<long> acceptedIds);
+        public abstract bool AcceptMatches(long datasetId, long versionId, StepEntry step, HashSet<long> acceptedIds);
 
         public abstract string GenMatchingUrl();
 
