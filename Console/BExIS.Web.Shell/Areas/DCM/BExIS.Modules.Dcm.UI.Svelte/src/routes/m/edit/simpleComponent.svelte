@@ -198,6 +198,7 @@ let mappingComponentConfig: MappingComponentConfig;
 							initialDate={date}
 							bind:value
 							inputClasses="input variant-form-material dark:bg-zinc-700 bg-zinc-50 placeholder:text-gray-400 w-32"			
+							on:change = {onChangeHandler}
 							/>
 					</span>
 				<!-- Handle datetime format -->
@@ -207,12 +208,13 @@ let mappingComponentConfig: MappingComponentConfig;
 						{convertDisplayName(label)}	
 						</span>
 						<SveltyPicker
-							mode="datetime"
+							mode="date"
 							name={label}
-							format="yyyy-mm-dd hh:ii"
+							format="yyyy-mm-dd"
 							initialDate={date}
 							bind:value
 							inputClasses="input variant-form-material dark:bg-zinc-700 bg-zinc-50 placeholder:text-gray-400 w-32"
+							on:change = {onChangeHandler}
 							/>
 					</span>
 				<!-- Handle time format -->
@@ -229,7 +231,7 @@ let mappingComponentConfig: MappingComponentConfig;
 							initialDate={date}
 							bind:value
 							inputClasses="input variant-form-material dark:bg-zinc-700 bg-zinc-50 placeholder:text-gray-400 w-32"
-						
+						 on:change = {onChangeHandler}
 							/>
 					</span>
 				<!-- Handle textarea format -->
