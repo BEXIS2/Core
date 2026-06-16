@@ -19,6 +19,8 @@ export interface StepEntry {
     resultFileName: string,
     jobKey: string,
     downloadLink: string,
+    matchSource: string,
+    timeStamp: string,
     done: boolean
 }
 

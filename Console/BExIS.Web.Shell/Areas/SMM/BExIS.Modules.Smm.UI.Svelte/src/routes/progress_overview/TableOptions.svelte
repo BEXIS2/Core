@@ -15,6 +15,7 @@
 <div class="flex gap-2 w-min">
 	{#if row.done}
         <button
+			title="VIEW FINISHED RESULT"
 			class={`btn btn-sm btn-icon rounded-md variant-filled-primary`}
 			on:click|preventDefault={() => eventDispatchFn('READ')}
 		>
@@ -22,6 +23,7 @@
 		</button>
     {:else}
         <button
+			title="VIEW RESULT"
 			class={`btn btn-sm btn-icon rounded-md variant-filled-secondary`}
 			on:click|preventDefault={() => eventDispatchFn('READ')}
 		>

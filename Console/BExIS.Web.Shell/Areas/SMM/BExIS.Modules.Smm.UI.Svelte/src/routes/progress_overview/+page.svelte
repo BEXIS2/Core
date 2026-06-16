@@ -10,6 +10,8 @@
     import TableOptions from "./TableOptions.svelte";
     import { Table } from '@bexis2/bexis2-core-ui';
 	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
+	import DownloadLinkCell from "./downloadLinkCell.svelte";
+	import JobKeyCell from "./jobKeyCell.svelte";
 
     let tailorLoading: boolean = false;
     let tailorError: boolean = false;
@@ -26,14 +28,39 @@
 		pageSizes: [20, 50, 100],
 		showColumnsMenu: true,
         columns: {
+            id: {
+                exclude: true
+            },
             done: {
-                disableFiltering: true
+                disableFiltering: true,
+                header: "Done"
             },
             inputFileName: {
                 exclude: true
             },
             resultFileName: {
                 exclude: true
+            },
+            numRows: {
+                header: "#Rows"
+            },
+            // matchSource: {
+            //     header: "Match source"
+            // },
+            timeStamp: {
+                header: "Timestamp"
+            },
+            jobKey: {
+                header: "Job key",
+                instructions: {
+                    renderComponent: JobKeyCell
+                },
+            },
+            downloadLink: {
+                header: "Download link",
+                instructions: {
+                    renderComponent: DownloadLinkCell
+                },
             }
         },
 		optionsComponent: TableOptions
