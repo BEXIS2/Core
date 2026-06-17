@@ -15,7 +15,6 @@ using ModuleSettings = Vaiona.Web.Mvc.Modularity.ModuleSettings;
 
 namespace BExIS.Web.Shell.Controllers
 {
-    [SessionState(SessionStateBehavior.ReadOnly)]
     public class SettingsController : Controller
     {
         private readonly UserManager _userManager;
