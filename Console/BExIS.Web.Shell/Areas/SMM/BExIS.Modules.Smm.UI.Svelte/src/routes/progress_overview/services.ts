@@ -1,5 +1,5 @@
 import { Api } from '@bexis2/bexis2-core-ui';
-import type { ServiceResult } from '$lib/types/types';
+import type { IApiOptions, ServiceResult } from '$lib/types/types';
 
 export const loadDatasetProgress = async (datasetId: number, versionId: number): Promise<ServiceResult<any>> => {
     try {
@@ -32,9 +32,9 @@ export const genNewMatchFile = async (datasetId: number, versionId: number, apiI
     }
 }
 
-export const matchNextFile = async (datasetId: number, versionId: number, apiIdentifier: string): Promise<ServiceResult<any>> => {
+export const matchNextFile = async (datasetId: number, versionId: number, apiOptions: IApiOptions): Promise<ServiceResult<any>> => {
     try {
-        const response = await Api.post('/smm/species/MatchNextFile', { datasetId, versionId, apiIdentifier });
+        const response = await Api.post(`/smm/species/MatchNextFile?datasetId=${datasetId}&versionId=${versionId}`, apiOptions);
 
         return { success: true, data: response.data };
     } catch (error: any) {

@@ -29,6 +29,8 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
         public CLBApi(HttpClient http) : base(http) { }
 
         public override string Identifier => "CLB";
+
+        public override Type OptionsType => typeof(ClbOptions);
         
         public override string BaseUrl => "https://api.checklistbank.org/dataset/3LR/match/nameusage/job";
 
@@ -291,7 +293,7 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
             }
         }
 
-        public override async Task<MatchingApiResponse> MatchAsync(long datasetId, long versionId, string filepath, MatchingProgressModel matchingProgress)
+        public override async Task<MatchingApiResponse> MatchAsync(long datasetId, long versionId, string filepath, MatchingProgressModel matchingProgress, IApiOptions apiOptions)
         {
             if (string.IsNullOrWhiteSpace(filepath) || !System.IO.File.Exists(filepath))
             {
@@ -309,6 +311,38 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
             Debug.WriteLine("{====================FILEPATH:====================}");
             Debug.WriteLine(filepath);
             byte[] fileBytes = System.IO.File.ReadAllBytes(filepath);
+
+            // Debug: inspect apiOptions concrete type and values
+            try
+            {
+                if (apiOptions == null)
+                {
+                    Debug.WriteLine("apiOptions == null");
+                }
+                else if (apiOptions is ClbOptions clb)
+                {
+                    Debug.WriteLine($"ClbOptions: SourceKey={clb.SourceKey}, Synonyms={clb.Synonyms}");
+                }
+                else if (apiOptions is GenericOptions gen)
+                {
+                    Debug.WriteLine("GenericOptions.Raw: " + (gen.Raw != null ? gen.Raw.ToString(Formatting.Indented) : "<null>"));
+                }
+                else
+                {
+                    try
+                    {
+                        Debug.WriteLine("apiOptions: " + JsonConvert.SerializeObject(apiOptions));
+                    }
+                    catch
+                    {
+                        Debug.WriteLine("apiOptions type: " + apiOptions.GetType().FullName);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Failed to debug-print apiOptions: " + ex.Message);
+            }
 
 
             GBFICrendentials credentials = ModuleManager.GetModuleSettings("DIM").GetValueByKey<GBFICrendentials>("gbifapicredentials");

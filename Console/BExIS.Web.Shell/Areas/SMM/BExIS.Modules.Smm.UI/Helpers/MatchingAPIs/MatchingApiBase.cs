@@ -32,7 +32,7 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
 
         // Method to perform the matching based on the provided file path
         // (this actually makes the post request to the API and returns the result as a JsonResult)
-        public abstract Task<MatchingApiResponse> MatchAsync(long datasetId, long versionId, string filepath, MatchingProgressModel matchingProgress);
+        public abstract Task<MatchingApiResponse> MatchAsync(long datasetId, long versionId, string filepath, MatchingProgressModel matchingProgress, IApiOptions apiOptions);
 
         // Method to generate the unmatched input file (source file for matching)
         // NOTE: different APIs need different file structure and input format
@@ -55,5 +55,8 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
         {
             return AcceptableMatchTypes;
         }
+
+        // options type for the API, used for deserialization of options from JSON
+        public virtual Type OptionsType => null;
     }
 }

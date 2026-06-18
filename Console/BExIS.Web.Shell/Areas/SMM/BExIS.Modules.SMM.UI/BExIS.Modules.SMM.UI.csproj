@@ -126,6 +126,7 @@
     <Compile Include="Helpers\ConversionHelper.cs" />
     <Compile Include="Helpers\MatchingAPIs\CLBApi.cs" />
     <Compile Include="Helpers\MatchingAPIs\HttpClientRegistry.cs" />
+    <Compile Include="Helpers\MatchingAPIs\IApiOptions.cs" />
     <Compile Include="Helpers\MatchingAPIs\MatchingApiBase.cs" />
     <Compile Include="Helpers\MatchingAPIs\MatchingApiProvider.cs" />
     <Compile Include="Helpers\MatchingResultHelper.cs" />
@@ -135,6 +136,7 @@
     <Compile Include="Helpers\TabularFileHelper.cs" />
     <Compile Include="Models\AcceptMatchesRequestModel.cs" />
     <Compile Include="Models\CLBMatchingResultFile.cs" />
+    <Compile Include="Models\ExternalApiMetadata.cs" />
     <Compile Include="Models\HeaderMappingsModel.cs" />
     <Compile Include="Models\MatchingProgressModel.cs" />
     <Compile Include="Models\MatchingApiResponse.cs" />

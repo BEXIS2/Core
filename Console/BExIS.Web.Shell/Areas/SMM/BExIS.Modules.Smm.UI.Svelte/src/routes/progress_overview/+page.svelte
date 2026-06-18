@@ -3,7 +3,7 @@
     import { matchingSelection } from '../../lib/stores/selectionStore';
     import { loadDatasetProgress, tailorDataset, genNewMatchFile, matchNextFile } from "./services";
     import type { ProgressOverview } from "./types";
-    import type { StepEntry } from "$lib/types/types";
+    import type { ExternalApiMetadata, IApiOptions, StepEntry } from "$lib/types/types";
 	import { goto } from "$app/navigation";
     import { Alert } from "@bexis2/bexis2-core-ui";
     import { matchingJobStore } from "./data";
@@ -12,19 +12,22 @@
 	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
 	import DownloadLinkCell from "./downloadLinkCell.svelte";
 	import JobKeyCell from "./jobKeyCell.svelte";
+	import ApiMatchingSelector from "./ApiMatchingSelector.svelte";
 
     let tailorLoading: boolean = false;
     let tailorError: boolean = false;
     let tailorErrorMessage: string = "";
+    let externalApiMetadata: ExternalApiMetadata
+    let selectedApiOptions: IApiOptions
 	const modalStore = getModalStore();
 
     const tableConfig: TableConfig<StepEntry> = {						
 		id: 'matchingJobRows',
 		data: matchingJobStore,
 		resizable: "columns",
-		height: 700,
+		height: 300,
 		fitToScreen: true,
-		defaultPageSize: 50,
+		defaultPageSize: 20,
 		pageSizes: [20, 50, 100],
 		showColumnsMenu: true,
         columns: {
@@ -117,7 +120,10 @@
         }
         console.log(responseCreate);
 
-        const responseMatch = await matchNextFile($matchingSelection.datasetId, $matchingSelection.versionId, "CLB");
+        console.log("Selected Api Options: ");
+        console.log(selectedApiOptions)
+
+        const responseMatch = await matchNextFile($matchingSelection.datasetId, $matchingSelection.versionId, selectedApiOptions);
         
         if (!responseMatch.success) {
             console.error("Error generating new Matching input file.");
@@ -178,6 +184,8 @@
                             <Modal />
                         </div>
                     {/if}
+
+                    <ApiMatchingSelector externalApiMetadata={data.externalApiMetadata} bind:selectedOptions={selectedApiOptions}></ApiMatchingSelector>
                 {/if}
             {/if}
         {/if}

@@ -149,3 +149,35 @@ export type AcceptMatchesRequest = {
     stepId: number,
     matchIds: (string | undefined)[]
 }
+
+
+// Selectable api metadata/options provided by the backend
+export interface SourceKeyInfoItem {
+  sourceKey: string;
+  title: string;
+  alias: string;
+}
+
+export interface ExternalApiSource {
+  sourceKeyInfo: SourceKeyInfoItem[];
+}
+
+export interface ExternalApiMetadata {
+  clb: ExternalApiSource;
+}
+
+// apiOptions types that are actually send as a payload together with a file Matching request
+export interface ClbOptions {
+    type: 'clb'; // Discriminator (optional, but highly recommended)
+    sourceKey: string;
+    synonyms: boolean;
+}
+
+export interface GbifOptions {
+    type: 'gbif';
+    parameter1: string;
+    parameter2: string;
+}
+
+// Representing the IApiOptions interface as a Union type
+export type IApiOptions = ClbOptions | GbifOptions

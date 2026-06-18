@@ -22,6 +22,7 @@ using BExIS.UI.Models;
 using BExIS.Utils.Config;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -602,6 +603,8 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 // matching progress
                 bool hasMatchingProgress = ProgressHelper.HasMatchingProgress(datasetId, versionId);
                 var matchingProgress = hasMatchingProgress ? ProgressHelper.LoadMatchingProgress(datasetId, versionId) : null;
+                ExternalApiMetadata externalApiMetadata = ModuleManager.GetModuleSettings("SMM").GetValueByKey<ExternalApiMetadata>("externalApiMetadata");
+
 
                 return Json(new
                 {
@@ -610,7 +613,8 @@ namespace BExIS.Modules.Smm.UI.Controllers
                     headerMappings,
                     isTailored,
                     hasMatchingProgress,
-                    matchingProgress
+                    matchingProgress,
+                    externalApiMetadata
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -678,8 +682,9 @@ namespace BExIS.Modules.Smm.UI.Controllers
 
         [JsonNetFilter]
         [HttpPost]
-        public async Task<JsonResult> MatchNextFile(long datasetId, long versionId, string apiIdentifier)
+        public async Task<JsonResult> MatchNextFile(long datasetId, long versionId)
         {
+            Debug.WriteLine("EXECUTING MatchNextFile");
             var user = ResolveUserAndRights(datasetId, out ActionResult errorResult);
             if (user == null)
             {
@@ -699,6 +704,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
             }
 
             string nextFileName = step.InputFileName;
+            string apiIdentifier = step.ApiIdentifier;
 
             // TODO: - pfad logik vereinfachen
             string directory = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), ProgressHelper.MatchingFolderName, versionId.ToString());
@@ -713,8 +719,44 @@ namespace BExIS.Modules.Smm.UI.Controllers
 
             try
             {
+                // Read raw request body and try to parse options as JSON object
+                JObject options = null;
+                try
+                {
+                    Request.InputStream.Position = 0;
+                    using (var sr = new StreamReader(Request.InputStream, Encoding.UTF8))
+                    {
+                        var body = sr.ReadToEnd();
+                        if (!string.IsNullOrWhiteSpace(body))
+                        {
+                            try
+                            {
+                                options = JObject.Parse(body);
+                            }
+                            catch (JsonException)
+                            {
+                                // try to extract nested property named "options"
+                                try
+                                {
+                                    var parsed = JObject.Parse(body);
+                                    if (parsed["options"] != null && parsed["options"].Type == JTokenType.Object)
+                                    {
+                                        options = (JObject)parsed["options"];
+                                    }
+                                }
+                                catch { }
+                            }
+                        }
+                    }
+                }
+                catch { /* ignore read errors and keep options null */ }
+
+                IApiOptions apiOptions = matchingApiProvider.ResolveOptions(apiIdentifier, options);
+
+                Debug.WriteLine(apiOptions);
+
                 MatchingApiBase apiBase = matchingApiProvider.GetApi(apiIdentifier);
-                MatchingApiResponse response = await apiBase.MatchAsync(datasetId, versionId, filepath, matchingProgress);
+                MatchingApiResponse response = await apiBase.MatchAsync(datasetId, versionId, filepath, matchingProgress, apiOptions);
                 response.StepId = step.Id;
 
                 return Json(new { success = true, data = response.Message });
