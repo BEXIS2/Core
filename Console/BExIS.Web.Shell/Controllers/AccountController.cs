@@ -331,6 +331,13 @@ namespace BExIS.Web.Shell.Controllers
                         authManager.SignIn(new AuthenticationProperties { IsPersistent = model.RememberMe }, new ClaimsIdentity(identity)
                         );
 
+                        // Forcefully remove the old cache if it exists
+                        string cacheKey = "Menu_" + user.UserName;
+                        if (HttpContext.Cache[cacheKey] != null)
+                        {
+                            HttpContext.Cache.Remove(cacheKey);
+                        }
+
                         return RedirectToLocal(returnUrl);
 
                     case SignInStatus.LockedOut:

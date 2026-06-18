@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Web.SessionState;
 using Telerik.Web.Mvc.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Modularity;
@@ -22,6 +23,7 @@ using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class TagInfoController : BaseController
     {
         private readonly UserManager _userManager;

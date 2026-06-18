@@ -1,4 +1,4 @@
-﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Services.Mappings;
@@ -29,9 +29,11 @@ using System.Xml;
 using System.Xml.XPath;
 using Vaiona.Entities.Common;
 using BExIS.Utils.Config;
+using System.Web.SessionState;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class CreateController : Controller
     {
         private readonly UserManager _userManager;
