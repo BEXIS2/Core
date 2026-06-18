@@ -87,8 +87,8 @@ const dispatch = createEventDispatcher();
 	// we need to update the value with the new selected party and also trigger the validation for this field because maybe there are some validation rules on the party id
 	async function onUpdateParty(e: any){
 			
-				console.log("onUpdateParty",value, e.detail);
-				const partyid = e.detail.partyId;
+				//console.log("onUpdateParty",value, e.detail);
+				const partyid = e.detail.partyId? e.detail.partyId : 0;
 				const newValue	= e.detail.value;
 
     // selectorValue.value = newValue;
@@ -110,12 +110,10 @@ const dispatch = createEventDispatcher();
 							updateMetadataStore(path, newValue, isMulti, undefined, undefined);
 
 							const parentPath = getParentPath(path);
-							console.log("🚀 ~ onUpdateParty ~ parentPath:", parentPath)
 							const parentPathWithoutIndices = removeJsonPathIndices(parentPath);
 							
-								// update parent with pary	id if not already set
-								console.log("🚀 ~ onUpdateParty ~ parentPath:", parentPath)
-								updateMetadataStore(parentPath, null, false, undefined, partyid);
+							// update parent with pary	id if not already set
+							updateMetadataStore(parentPath, null, false, undefined, partyid);
 
 						// if mapping is complex
 						// get all partymappings where parent path is the same as the changed one
@@ -123,7 +121,6 @@ const dispatch = createEventDispatcher();
 								// updateMetadataStore(mapping.path, value,	isMulti, undefined, e.detail.partyId);
 								const childvalue = await GetPartyValue(partyid, mapping.linkElementId);
 							
-
 								const childPathWithIndex = parentPath+"."+mapping.path.split('.').slice(-1)[0];
 
 								// update child value with new party value
@@ -132,12 +129,12 @@ const dispatch = createEventDispatcher();
 								// update because of validation
 								updateValue(childvalue, childPathWithIndex)
 								
-        console.log("🚀 ~ onUpdateParty ~ dispatch reload for path:", selectorValue)
+        //console.log("🚀 ~ onUpdateParty ~ dispatch reload for path:", selectorValue)
 						}	)					
 					}
 
 						// trigger reload parent	component to update all child components with new values
-						dispatch("reload");
+						//dispatch("reload");
 
 				}, 100)
 	}
@@ -174,8 +171,9 @@ function updateValue(value: any, _path:string){
 						itemLabel="value"
 						bind:target={selectorValue}
 						isMulti={false}
-						clearable={required	? false : true} 
+						clearable={true} 
 						on:change={onUpdateParty}
+						on:clear={onUpdateParty}
 						invalid={res.hasErrors(path)}
 						feedback={res.getErrors(path)}	 
 						description={description}
