@@ -32,6 +32,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http.Results;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using System.Web.UI.WebControls;
 using System.Xml;
 using Vaiona.Persistence.Api;
@@ -40,8 +41,8 @@ using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-   
 
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class MController : Controller
     {
 

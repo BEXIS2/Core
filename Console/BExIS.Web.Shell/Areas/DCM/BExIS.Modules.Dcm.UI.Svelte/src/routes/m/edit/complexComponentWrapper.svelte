@@ -21,19 +21,8 @@
 			? complexComponent.required
 			: [];
 
-let reloading = false;
-
-
-
-function reloadFn(){
-	setTimeout(() => {
-		reloading = !reloading;
-	}, 500);
-}
-
-
 </script>
-{#key reloading}
+<!-- {#key reloading} -->
 {#if complexComponent && complexComponent.type === 'object' && complexComponent.properties}
 	{#each Object.entries(complexComponent.properties) as [key, value]}
 		{@const p = path = path ? path + '.' + key : key}
@@ -62,7 +51,7 @@ function reloadFn(){
 			<div class="mb-2">
 				<div class="flex flex-col md:flex-row md:items-center gap-2">
 					<div class="flex-1 min-w-[100px]">
-						<SimpleComponent simpleComponent={value} {path} required={requiredList.includes(key)} on:reload={() => reloadFn()} />
+						<SimpleComponent simpleComponent={value} {path} required={requiredList.includes(key)} />
 					</div>
 				</div>
 			
@@ -74,4 +63,3 @@ function reloadFn(){
 	
 {/if}
 
-{/key}

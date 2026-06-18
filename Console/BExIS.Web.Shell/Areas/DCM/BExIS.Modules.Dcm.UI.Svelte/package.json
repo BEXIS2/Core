@@ -24,7 +24,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@bexis2/bexis2-core-ui": "0.4.82",
+		"@bexis2/bexis2-core-ui": "0.4.83",
 		"@bexis2/bexis2-rpm-ui": "0.3.0",
 		"@floating-ui/dom": "1.7.6",
 		"@ts4nfdi/terminology-service-suite-js": "^6.12.4",

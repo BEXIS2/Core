@@ -13,6 +13,7 @@
 	import { getValueByPath, setValueByPath, updateMetadataStore } from '$lib/components/utils/metadata/metadataComponentUtils';
 
 	import SimpleComponent from './simpleComponent.svelte';
+	import { metadataStore } from '$lib/components/utils/metadata/stores';
 
 	export let simpleComponent: any;
 	export let path: string;
@@ -25,6 +26,12 @@
 			: path;
 
 	let value = getValueByPath(path);
+
+	metadataStore.subscribe(() => {
+		value = getValueByPath(path);
+		//console.log('value updated', value);
+	});
+
 	
 </script>
 

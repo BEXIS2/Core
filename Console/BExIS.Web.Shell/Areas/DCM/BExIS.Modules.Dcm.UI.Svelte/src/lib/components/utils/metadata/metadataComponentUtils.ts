@@ -86,11 +86,11 @@ export function updateMetadataStore(path: string, value: any, isMulti?: boolean,
 					}
 				}
 			}
-			else if((value === undefined || value === null) && partyid	!== undefined && partyid !== null &&partyid>0)
+			else if((value === undefined || value === null) && partyid	!== undefined && partyid !== null)
 			{
 				const parent = getByPath(path);
-			 console.log("🚀 ~ updateMetadataStore ~ parent:", parent)
 				parent["@partyid"] = partyid;
+			 //console.log("🚀 ~ updateMetadataStore ~ parent:", parent)
 			}
 
 		}
