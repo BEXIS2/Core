@@ -10,10 +10,13 @@ namespace BExIS.Modules.Smm.UI.Models
 
         public List<StepEntry> Steps { get; set; } = new List<StepEntry>();
 
+        // total number of rows in the original data, should be set at the beginning of the matching process
         public int NumRowsGlobal { get; set; }
 
+        // identifier for the dataset being matched, should be set at the beginning of the matching process
         public long DatasetId { get; set; }
 
+        // identifier for the specific version of the dataset being matched, should be set at the beginning of the matching process
         public long VersionId { get; set; }
 
         public int GetNewId()
@@ -40,6 +43,8 @@ namespace BExIS.Modules.Smm.UI.Models
                 ApiIdentifier = apiIdentifier,
                 DownloadLink = string.Empty,
                 JobKey = string.Empty,
+                MatchSource = string.Empty,
+                TimeStamp = DateTime.MinValue,
                 Done = false
             };
 
@@ -125,27 +130,39 @@ namespace BExIS.Modules.Smm.UI.Models
         }
     }
 
-
+    // Represents a single step in the matching process
+    // Each step corresponds to a matching operation, which involves an input file, result file and an API call
+    // to a file based matching service (e.g. CheckListBank). The step is considered completed when the result file is available and the API call is done.
     public class StepEntry
     {
+        // identifier for this step, should be unique within the context of a MatchingProgressModel
         public int Id { get; set; }
-
+        
+        // number of rows in the input file
         public int NumRows { get; set; }
 
+        // name of the input file for this step
         public string InputFileName { get; set; }
 
+        // name of the result file for this step, should be non-empty when the step is completed
         public string ResultFileName { get; set; }
 
+        // identifier for the API call associated with this step, should be non-empty when the step is completed
         public string ApiIdentifier { get; set; }
 
+        // download link for the result file
         public string DownloadLink { get; set; }
 
+        // source of the matching results (e.g. string of dataset sourceKey in CheckListBank)
         public string MatchSource { get; set; }
 
+        // timestamp when the match request is sent
         public DateTime TimeStamp { get; set; }
 
+        // job key for tracking the matching job (if asynchronous)
         public string JobKey { get; set; }
 
+        // indicates whether the matching step is completed (completed when the result file is available and the API call is done)
         public bool Done { get; set; }
     }
 }
