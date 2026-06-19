@@ -109,8 +109,8 @@ importers:
   Console/BExIS.Web.Shell.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.83
-        version: 0.4.83(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.84
+        version: 0.4.84(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       buffer:
         specifier: 6.0.3
         version: 6.0.3
@@ -149,8 +149,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/DCM/BExIS.Modules.Dcm.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.83
-        version: 0.4.83(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.84
+        version: 0.4.84(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@bexis2/bexis2-rpm-ui':
         specifier: 0.3.0
         version: 0.3.0(@sveltejs/kit@2.63.0(patch_hash=edb8ea411824a5d15205994760d3951f038e693b887197c1a3e99879640e2ca6)(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@25.9.1)))(svelte@4.2.20)(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1)))(svelte@4.2.20)(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
@@ -191,8 +191,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/DDM/BExIS.Modules.Ddm.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.83
-        version: 0.4.83(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.84
+        version: 0.4.84(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -215,8 +215,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/DIM/BExIS.Modules.Dim.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.83
-        version: 0.4.83(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.84
+        version: 0.4.84(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -239,8 +239,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/PUM/BExIS.Modules.Pum.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.83
-        version: 0.4.83(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.84
+        version: 0.4.84(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -264,8 +264,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/RPM/BExIS.Modules.Rpm.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.83
-        version: 0.4.83(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.84
+        version: 0.4.84(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -334,8 +334,8 @@ packages:
   '@bexis2/bexis2-core-ui@0.4.81':
     resolution: {integrity: sha512-agct1DRoTBvmeuXWGd9jmmSgoqrgxPDKYnQNs2dq9pnWUIEtrcLUg342/+KUiijKEmuImUkA8+C6CVSBsUJHrQ==}
 
-  '@bexis2/bexis2-core-ui@0.4.83':
-    resolution: {integrity: sha512-1INdivkBsOLWaDMCw+PLYh3WynfnSGufJ8FtOntNSIkfzgTMQHCH12d8rDXSd9lWLB1d9pHJnpL0XmspMH9EBA==}
+  '@bexis2/bexis2-core-ui@0.4.84':
+    resolution: {integrity: sha512-twxaqA7H9zXUuLfuI9ArJrRN5uKH4JdmCTF+/SCsllchH4dDupFKrOGMuYMvJm+Pnh4pxVZVG4uFrR1ItoZuRw==}
 
   '@bexis2/bexis2-rpm-ui@0.3.0':
     resolution: {integrity: sha512-WU3C7GB5OIj3KgqvQj65Bbi5Zmak+omxpJLg0ElyP9ubM2eEKFZj3CIT5GPNGoUmwYe949sKJbUrYhn+aKyTUg==}
@@ -2639,7 +2639,7 @@ snapshots:
       svelte-file-dropzone: 2.0.9(svelte@4.2.20)
       svelte-headless-table: 0.18.3(svelte@4.2.20)
       svelte-select: 5.8.3
-      vest: 5.4.6
+      vest: 5.4.0
     transitivePeerDependencies:
       - '@opentelemetry/api'
       - debug
@@ -2683,7 +2683,7 @@ snapshots:
       - typescript
       - vite
 
-  '@bexis2/bexis2-core-ui@0.4.83(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))':
+  '@bexis2/bexis2-core-ui@0.4.84(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))':
     dependencies:
       '@codemirror/lang-html': 6.4.11
       '@codemirror/lang-javascript': 6.2.5
