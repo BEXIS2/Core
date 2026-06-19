@@ -682,7 +682,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
 
         [JsonNetFilter]
         [HttpPost]
-        public async Task<JsonResult> MatchNextFile(long datasetId, long versionId)
+        public async Task<JsonResult> MatchFileByStepId(long datasetId, long versionId, int stepId)
         {
             Debug.WriteLine("EXECUTING MatchNextFile");
             var user = ResolveUserAndRights(datasetId, out ActionResult errorResult);
@@ -697,10 +697,15 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "No matching progress found." }, HttpStatusCode.Unauthorized);
             }
 
-            StepEntry step = matchingProgress.GetNextPendingStepEntry();
+            StepEntry step = matchingProgress.GetStepById(stepId);
             if (step == null)
             {
-                return JsonWithStatus(new { success = false, id = datasetId, message = "No pending StepEntry found." }, HttpStatusCode.Conflict);
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Step not found." }, HttpStatusCode.Conflict);
+            }
+
+            if (!step.IsReadyToMatch())
+            {
+                return JsonWithStatus(new { success = false, id = datasetId, message = "Step is not ready to match. Either no input file available or step is already completed." }, HttpStatusCode.Conflict);
             }
 
             string nextFileName = step.InputFileName;

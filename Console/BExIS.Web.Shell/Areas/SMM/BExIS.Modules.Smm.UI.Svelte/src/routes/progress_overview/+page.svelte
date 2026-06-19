@@ -130,7 +130,7 @@
         console.log("Selected Api Options: ");
         console.log(selectedApiOptions)
 
-        const responseMatch = await matchNextFile($matchingSelection.datasetId, $matchingSelection.versionId, selectedApiOptions);
+        const responseMatch = await matchNextFile($matchingSelection.datasetId, $matchingSelection.versionId, stepId, selectedApiOptions);
         
         if (!responseMatch.success) {
             console.error("Error generating new Matching input file.");

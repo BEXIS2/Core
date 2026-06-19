@@ -164,5 +164,11 @@ namespace BExIS.Modules.Smm.UI.Models
 
         // indicates whether the matching step is completed (completed when the result file is available and the API call is done)
         public bool Done { get; set; }
+
+        public bool IsReadyToMatch()
+        {
+            // Ready to match when there is a non-empty InputFileName, and is not done yet
+            return !string.IsNullOrEmpty(InputFileName) && !Done;
+        }
     }
 }

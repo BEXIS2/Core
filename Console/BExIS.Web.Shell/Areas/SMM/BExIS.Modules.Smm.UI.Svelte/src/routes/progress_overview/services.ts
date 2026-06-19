@@ -32,9 +32,9 @@ export const genNewMatchFile = async (datasetId: number, versionId: number, apiI
     }
 }
 
-export const matchNextFile = async (datasetId: number, versionId: number, apiOptions: IApiOptions): Promise<ServiceResult<any>> => {
+export const matchNextFile = async (datasetId: number, versionId: number, stepId: number, apiOptions: IApiOptions): Promise<ServiceResult<any>> => {
     try {
-        const response = await Api.post(`/smm/species/MatchNextFile?datasetId=${datasetId}&versionId=${versionId}`, apiOptions);
+        const response = await Api.post(`/smm/species/MatchFileByStepId?datasetId=${datasetId}&versionId=${versionId}&stepId=${stepId}`, apiOptions);
 
         return { success: true, data: response.data };
     } catch (error: any) {
