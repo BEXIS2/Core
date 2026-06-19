@@ -677,7 +677,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Unexpected error while generating matching input file: " + ex.Message  }, HttpStatusCode.InternalServerError);
             }
 
-            return Json(new { success = true, id = datasetId, message = "Matching input file generated." });
+            return Json(new { success = true, data = new { id = datasetId, stepId = newStepId }, message = "Matching input file generated." });
         }
 
         [JsonNetFilter]

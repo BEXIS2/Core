@@ -119,6 +119,13 @@
            return;
         }
         console.log(responseCreate);
+        var stepId: number = responseCreate.data.data.stepId;
+
+        if (stepId == undefined || stepId == null || stepId < 0) {
+            console.error("Variable stepId could not be read from genNewMatchFile response: ", stepId);
+            return;
+        }
+
 
         console.log("Selected Api Options: ");
         console.log(selectedApiOptions)
