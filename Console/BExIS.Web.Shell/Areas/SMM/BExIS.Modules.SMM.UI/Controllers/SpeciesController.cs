@@ -97,7 +97,6 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 if (stepLocal != null)
                 {
                     stepLocal.ResultFileName = Path.GetFileName(downloadedFilepath);
-                    stepLocal.Done = true;
                     matchingProgressLocal.UpdateStep(stepLocal);
                     ProgressHelper.SaveMatchingProgress(matchingProgressLocal, datasetId, versionId);
                 }
@@ -191,7 +190,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                         MarkerStart = markerStart,
                         MatchingProgressExists = matchingProgressExists,
                         StepExists = stepExists,
-                        StepDone = step?.Done ?? false,
+                        StepCompleted = step?.IsCompleted() ?? false,
                         DownloadLinkPresent = !string.IsNullOrWhiteSpace(step?.DownloadLink),
                         JobKeyPresent = !string.IsNullOrWhiteSpace(step?.JobKey)
                     }
@@ -641,7 +640,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "No matching progress found." }, HttpStatusCode.Unauthorized);
             }
 
-            if (!matchingProgress.AreAllStepsDone())
+            if (!matchingProgress.AllStepsCompleted())
             {
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Not all matching steps are completed yet. Please complete existing steps before generating a new matching input file." }, HttpStatusCode.Conflict);
             }
@@ -796,7 +795,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "No matching progress found under the given datasetId." }, HttpStatusCode.Conflict, JsonRequestBehavior.AllowGet);
             }
 
-            if (!matchingProgress.IsIdValidAndMatched(stepId))
+            if (!matchingProgress.IsCompletedById(stepId))
             {
                 return JsonWithStatus(new { success = false, id = datasetId, message = "No valid matching job found in the matching progress data for the given stepId." }, HttpStatusCode.Conflict, JsonRequestBehavior.AllowGet);
             }
@@ -810,7 +809,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
 
             try
             {
-                var apiIdentifier = matchingProgress.GetApiIdentifier(stepId);
+                var apiIdentifier = matchingProgress.GetApiIdentifierById(stepId);
                 Debug.WriteLine("SEARCHING MATCHING PROGRESS FOR: " + datasetId.ToString() + " " + versionId.ToString());
                 Debug.WriteLine("API IDENTIFIER: " + apiIdentifier);
                 MatchingApiBase apiBase = matchingApiProvider.GetApi(apiIdentifier);
@@ -895,7 +894,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "No matching progress found under the given datasetId." }, HttpStatusCode.Conflict);
             }
 
-            if (!matchingProgress.IsIdValidAndMatched(stepId))
+            if (!matchingProgress.IsCompletedById(stepId))
             {
                 return JsonWithStatus(new { success = false, id = datasetId, message = "No valid matching job found in the matching progress data for the given stepId." }, HttpStatusCode.Conflict);
             }

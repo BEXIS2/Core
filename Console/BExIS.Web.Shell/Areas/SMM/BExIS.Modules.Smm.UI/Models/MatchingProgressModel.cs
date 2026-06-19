@@ -45,30 +45,30 @@ namespace BExIS.Modules.Smm.UI.Models
                 JobKey = string.Empty,
                 MatchSource = string.Empty,
                 TimeStamp = DateTime.MinValue,
-                Done = false
             };
 
             Steps.Add(entry);
         }
 
-        public bool AreAllStepsDone()
+        public bool AllStepsCompleted()
         {
             // Return true when there are no unfinished steps (i.e. no step with Done == false)
-            return Steps == null || Steps.All(s => s.Done);
+            return Steps == null || Steps.All(s => s.IsCompleted());
         }
 
-        public bool IsIdValidAndMatched(int stepId)
+        public bool IsCompletedById(int stepId)
         {
             // Return false when there are no steps
             if (Steps == null || Steps.Count == 0) return false;
 
             var entry = Steps.FirstOrDefault(s => s.Id == stepId);
 
-            // Valid and matched when the step exists and has a non-empty ResultFileName
-            return entry != null && !string.IsNullOrEmpty(entry.ResultFileName);
+            if (entry == null) return false;
+
+            return entry.IsCompleted();
         }
 
-        public string GetApiIdentifier(int stepId)
+        public string GetApiIdentifierById(int stepId)
         {
             // Return null when there are no steps
             if (Steps == null || Steps.Count == 0) return null;
@@ -102,7 +102,6 @@ namespace BExIS.Modules.Smm.UI.Models
             existing.DownloadLink = updatedStep.DownloadLink;
             existing.MatchSource = updatedStep.MatchSource;
             existing.JobKey = updatedStep.JobKey;
-            existing.Done = updatedStep.Done;
 
             return true;
         }
@@ -140,13 +139,17 @@ namespace BExIS.Modules.Smm.UI.Models
         // job key for tracking the matching job (if asynchronous)
         public string JobKey { get; set; }
 
-        // indicates whether the matching step is completed (completed when the result file is available and the API call is done)
-        public bool Done { get; set; }
-
         public bool IsReadyToMatch()
         {
-            // Ready to match when there is a non-empty InputFileName, and is not done yet
-            return !string.IsNullOrEmpty(InputFileName) && !Done;
+            // input file exists
+            // matching process has not started for this step
+            return !string.IsNullOrEmpty(InputFileName) && string.IsNullOrEmpty(JobKey) && string.IsNullOrEmpty(ResultFileName) && string.IsNullOrEmpty(DownloadLink);
+        }
+
+        public bool IsCompleted()
+        {
+            // step is completed when the result file is available and the API call is done
+            return !string.IsNullOrEmpty(ResultFileName);
         }
     }
 }

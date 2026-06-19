@@ -44,7 +44,7 @@ export interface MatchingFileStatus {
     markerStart: string,
     matchingProgressExists: boolean,
     stepExists: boolean,
-    stepDone: boolean,
+    stepCompleted: boolean,
     downloadLinkPresent: boolean,
     jobKeyPresent: boolean,
 }
