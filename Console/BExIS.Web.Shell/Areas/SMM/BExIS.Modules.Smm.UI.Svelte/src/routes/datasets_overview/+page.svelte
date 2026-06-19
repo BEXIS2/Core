@@ -82,14 +82,23 @@
 		pageSizes: [20, 50, 100],
 		showColumnsMenu: true,
         columns: {
+            id: {
+                header: "Dataset ID"
+            },
             metadataComplete: {
-                disableFiltering: true
+                disableFiltering: true,
+                exclude: true
             },
             isTabular: {
-                disableFiltering: true
+                disableFiltering: true,
+                exclude: true
             },
             hasMatchingProgress: {
-                disableFiltering: true
+                disableFiltering: true,
+                exclude: true
+            },
+            dataStructureId: {
+                exclude: true
             },
             versionId: {
                 exclude: true

@@ -27,6 +27,7 @@
 <div class="flex gap-2 w-min">
 	{#if row.hasMatchingProgress}
 		<button
+			title="VIEW PROGRESS"
 			class={`btn btn-sm btn-icon rounded-md variant-filled-secondary`}
 			on:click|preventDefault={() => eventDispatchFn('CONTINUE')}
 		>
@@ -34,6 +35,7 @@
 		</button>
 	{:else}
 		<button
+			title="START NEW MATCHING"
 			class={`btn btn-sm btn-icon rounded-md variant-filled-primary`}
 			on:click|preventDefault={() => eventDispatchFn('BEGIN')}
 		>
