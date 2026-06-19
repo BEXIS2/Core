@@ -57,28 +57,6 @@ namespace BExIS.Modules.Smm.UI.Models
             return Steps == null || Steps.All(s => s.Done);
         }
 
-        public string GetNextPendingInputFileName()
-        {
-            if (Steps == null || Steps.Count == 0) return null;
-
-            var entry = Steps.FirstOrDefault(s => s.Done == false
-                                                 && string.IsNullOrEmpty(s.DownloadLink)
-                                                 && string.IsNullOrEmpty(s.JobKey));
-
-            return entry?.InputFileName;
-        }
-
-        public StepEntry GetNextPendingStepEntry()
-        {
-            if (Steps == null || Steps.Count == 0) return null;
-
-            var entry = Steps.FirstOrDefault(s => s.Done == false
-                                                 && string.IsNullOrEmpty(s.DownloadLink)
-                                                 && string.IsNullOrEmpty(s.JobKey));
-
-            return entry;
-        }
-
         public bool IsIdValidAndMatched(int stepId)
         {
             // Return false when there are no steps
