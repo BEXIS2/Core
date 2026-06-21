@@ -75,11 +75,11 @@
 	});
 </script>
 <!-- Simple Component Rendering -->
-{#if isVisible && !isAnchor}
- <div class="flex">
-				<div class="w-1/4">{convertDisplayName(label)}</div>
-				<div>{value}</div>
-</div>
+{#if isVisible && !isAnchor }
+<div class="grid grid-cols-[180px_1fr] gap-4">
+                <span class="text-sm font-medium text-gray-500">{convertDisplayName(label)}</span>
+                <span class="text-sm text-gray-900 font-semibold">{value}</span>
+            </div>
 	
 {:else if isAnchor}
 	<div class="" id={path + '.item'}>
