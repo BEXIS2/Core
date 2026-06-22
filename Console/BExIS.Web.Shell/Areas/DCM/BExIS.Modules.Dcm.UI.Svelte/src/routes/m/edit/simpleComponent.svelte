@@ -31,6 +31,7 @@
 	import Blocked from './Blocked.svelte';
 	import PartySelector from './PartySelector.svelte';
 	import { getMappingComponentConfig } from '$lib/components/utils/metadata/mappingHelper';
+	import { showAllDescriptionsStore, descriptionStore } from '$lib/components/utils/metadata/stores';
 
 	//import { en, de } from 'svelty-picker/dist/i18n';
 
@@ -50,6 +51,7 @@
 	let customComponent: any;
 	let min: number | undefined = -10000000;
 	let max: number | undefined = 1000000;
+	$:showDescription = $showAllDescriptionsStore !== null && $showAllDescriptionsStore !== undefined ? $showAllDescriptionsStore : false;
 
 	// if mulitselect for array of simple types, create items array for multiselect component
 	// we need to convert the enum of the schema to a list entry of the jsons because we more informations on each value then only the value
@@ -168,7 +170,7 @@
 
 <!-- Simple Component Rendering -->
 {#if isVisible && !isAnchor}
-	<div class="pr-2" id={path + '.item'}>
+	<div class="pr-2" id={path + '.item'} on:mouseover={() => descriptionStore.set({ type: 'simple', content: simpleComponent.description, path })} on:mouseleave={() => helpStore.set(null)}>
 		<!--	if the field is mapped to a party or key, show blocked component with info, otherwise show the normal input component based on the type and format of the field -->
 		{#if mappingComponentConfig && ((mappingComponentConfig.isMappedToParty && !mappingComponentConfig.isSelector) || mappingComponentConfig.isMappedToKey)}
 			<Blocked
@@ -253,6 +255,7 @@
 						invalid={res.hasErrors(path)}
 						feedback={res.getErrors(path)}
 						description={simpleComponent.description}
+						showDescription={showDescription}
 					/>
 				{/if}
 				<!-- Handle different types without specific format -->
@@ -268,6 +271,7 @@
 					invalid={res.hasErrors(path)}
 					feedback={res.getErrors(path)}
 					description={simpleComponent.description}
+					showDescription={showDescription}
 				/>
 				<!-- Handle string type with enum  -->
 			{:else if simpleComponent.properties['#text'].type === 'string' && simpleComponent.properties['#text'].enum}
@@ -284,6 +288,7 @@
 							feedback={res.getErrors(path)}
 							description={simpleComponent.description}
 							{required}
+							showDescription={showDescription}
 						/>
 					{:else}
 						<!-- Handle string type with enum with many entries -->
@@ -299,6 +304,7 @@
 							invalid={res.hasErrors(path)}
 							feedback={res.getErrors(path)}
 							description={simpleComponent.description}
+							showDescription={showDescription}
 						/>
 					{/if}
 				{:else}
@@ -319,6 +325,7 @@
 							invalid={res.hasErrors(path)}
 							feedback={res.getErrors(path)}
 							description={simpleComponent.description}
+							showDescription={showDescription}
 						/>
 					{/if}
 				{/if}
@@ -337,6 +344,7 @@
 					invalid={res.hasErrors(path)}
 					feedback={res.getErrors(path)}
 					description={simpleComponent.description}
+					showDescription={showDescription}
 				/>
 
 				<!-- Handle boolean type -->
@@ -349,6 +357,7 @@
 					bind:checked={value}
 					on:input={onChangeHandler}
 					description={simpleComponent.description}
+					showDescription={showDescription}
 					size="sm">{label}</SlideToggle
 				>
 			{/if}

@@ -298,7 +298,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         using(var emailService = new EmailService())
                         {
                             emailService.Send(MessageHelper.GetPushApiUploadFailHeader(dataset.Id, title),
-                                   MessageHelper.GetPushApiUploadFailMessage(dataset.Id, user.UserName, new string[] { "Upload failed: " + ex.Message }),
+                                   MessageHelper.GetPushApiUploadFailMessage(dataset.Id, user.DisplayName, new string[] { "Upload failed: " + ex.Message }),
                                    new List<string>() { user.Email },
                                    new List<string>() { GeneralSettings.SystemEmail }
                                    );

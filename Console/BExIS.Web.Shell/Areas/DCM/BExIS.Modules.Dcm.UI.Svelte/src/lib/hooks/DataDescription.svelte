@@ -17,47 +17,52 @@
 	let model: DataDescriptionModel;
 	$: model;
 	$: loading = false;
+	let isMounted = false; // Flag to track if the component has been mounted
 
+	// Reactive statement: Only runs if isMounted is true AND the store changes
+    $: if (isMounted && $latestFileUploadDate > 0) {
+        reloadByFileUpdate();
+    }
+
+    $: if (isMounted && $latestDataDescriptionDate > 0) {
+        load();
+    }
+
+	let errorMessage: any = null;
 	const dispatch = createEventDispatcher();
 
 	onMount(async () => {
-		load();
-		latestFileUploadDate.subscribe((s) => {
-			if (s > 0) {
-				reloadByFileUpdate();
-			}
-		});
-		latestDataDescriptionDate.subscribe((s) => {
-			if (s > 0) {
-				reload();
-			}
-		});
+		await load();
+		isMounted = true;
 	});
 
 	async function load() {
-		model = await getHookStart(hook.start, id, version);
+		loading = true;
+		try {
+            model = await getHookStart(hook.start, id, version);
+            dispatch('dateChanged', { lastModification: model.lastModification });
+        } catch (error) {
+            console.error("Failed to fetch data description:", error);
+			errorMessage = error;
+        } finally {
+            loading = false;
+        }
+    }
 
-		dispatch('dateChanged', { lastModification: model.lastModification });
+    async function reloadByFileUpdate() {
+        if (model && model.structureId === 0) {
+            await load();
+        }
 	}
 
-	async function reload() {
-		load();
-	}
-
-	async function reloadByFileUpdate() {
-		// only when strutcure is not set update model
-		if (model && model.structureId == 0) {
-			load();
-		}
-	}
 </script>
 
-{#await getHookStart(hook.start, id, version)}
+{#if loading}
 	<!-- <div class="w-full h-full text-surface-600">
 		<Spinner label="loading data description" position={positionType.start} />
 	</div> -->
 	<PlaceHolderHookContent />
-{:then a}
+{:else if model}
 	<!--if structure not exist go to generate view otherwise show structure-->
 	{#if model && model.structureId > 0}
 		<!--show-->
@@ -75,6 +80,6 @@
 	{:else}
 		<span>not available</span>
 	{/if}
-{:catch error}
-	<ErrorMessage {error} />
-{/await}
+{:else if errorMessage}
+	<ErrorMessage error={errorMessage} />
+{/if}

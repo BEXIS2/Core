@@ -142,22 +142,20 @@
 	onMount(async () => {
 		helpStore.setHelpItemList(helpItems);
 
-		const datatypes = await getDataTypes();
+		const[datatypes, units, meanings, constraints, displayPattern] = await Promise.all([
+			getDataTypes(),
+			getUnitsWithDataTypes(),
+			getMeanings(),
+			getConstraints(),
+			getDisplayPattern()
+		]);
+
 		dataTypeStore.set(datatypes);
-
-		const units = await getUnitsWithDataTypes();
 		unitStore.set(units);
-
-		const meanings = await getMeanings();
 		meaningsStore.set(meanings);
-
-		const constraints = await getConstraints();
 		constraintsStore.set(constraints);
-
-		// load display pattern onces for all edit types
-		const displayPattern = await getDisplayPattern();
 		displayPatternStore.set(displayPattern);
-		clear();
+		// clear();
 		showForm = false;
 	});
 
@@ -255,14 +253,7 @@
 
 <Page help={true} title="Manage Variable Template" {links}>
 	{#await reload()}
-		<div class="grid w-full grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
-			<div class="h-9 w-96 placeholder animate-pulse" />
-			<div class="flex justify-end">
-				<button class="btn placeholder animate-pulse shadow-md h-9 w-16"
-					><Fa icon={faPlus} /></button
-				>
-			</div>
-		</div>
+		
 		<div class="table-container w-full">
 			<TablePlaceholder cols={5} />
 		</div>

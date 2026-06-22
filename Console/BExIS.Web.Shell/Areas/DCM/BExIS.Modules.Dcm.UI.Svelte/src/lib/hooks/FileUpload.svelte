@@ -48,12 +48,14 @@
 		mounted = true;
 	});
 
-	$: loading = false;
+	$: loading = true;
 
 	const dispatch = createEventDispatcher();
 
 	async function load() {
+		loading = true;
 		model = await getHookStart(hook.start, id, version);
+		console.log('🚀 ~ load ~ model .aaaa:', model);
 		start = hook.start;
 
 		loading = false;
@@ -87,9 +89,9 @@
 </script>
 
 <div class="space-y-2">
-	{#await load()}
+	{#if loading}
 		<PlaceHolderHookContent />
-	{:then result}
+	{:else}
 		<FileUploader
 			{id}
 			{version}
@@ -102,14 +104,16 @@
 			on:error
 			on:success
 		/>
-		{#if model.fileUploader.existingFiles.length}
+		{#if model.fileUploader.existingFiles.length > 0}
+
 			<div class="pt-2">
-				<b>Uploaded File(s)</b>
+				<b>File(s) ready for tabular data / file import</b>
 			</div>
 			<FileOverview
 				{id}
 				files={model.fileUploader.existingFiles}
 				descriptionType={model.fileUploader.descriptionType}
+				descriptionSave={false}
 				{save}
 				{remove}
 				on:success={success}
@@ -124,7 +128,8 @@
 				/>
 			{/if}
 		{/if}
-	{:catch error}
-		<ErrorMessage {error} />
-	{/await}
+	{#if error}
+			<ErrorMessage {error} />
+		{/if}
+	{/if}
 </div>

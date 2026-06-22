@@ -1,4 +1,4 @@
-﻿using BExIS.App.Bootstrap.Extensions;
+using BExIS.App.Bootstrap.Extensions;
 using BExIS.App.Bootstrap.Helpers;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
@@ -9,10 +9,12 @@ using System;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class MenuController : Controller
     {
         private readonly UserManager _userManager;
@@ -53,9 +55,10 @@ namespace BExIS.Web.Shell.Controllers
             }
 
 
-            if (Session["Menu"] != null)
+            string cacheKey = $"Menu_{userName}";
+            if (isAuthenticated && HttpContext.Cache[cacheKey] != null)
             {
-                return Json((Menu)Session["Menu"], JsonRequestBehavior.AllowGet);
+                return Json((Menu)HttpContext.Cache[cacheKey], JsonRequestBehavior.AllowGet);
             }
 
 
@@ -82,8 +85,18 @@ namespace BExIS.Web.Shell.Controllers
             if (Session.GetTenant().ExtendedMenus != null)
                 menu.Extended = MenuHelper.ExtendedMenu(Session.GetTenant().ExtendedMenus.Element("ExtendedMenu"));
 
-            // set menu to session if user is authenticated
-            if(!string.IsNullOrEmpty(userName) && isAuthenticated) Session["Menu"] = menu;
+            // set menu to cache if user is authenticated
+            if (!string.IsNullOrEmpty(userName) && isAuthenticated)
+            {
+                // This expires exactly 20 minutes from now, no matter what
+                HttpContext.Cache.Insert(
+                    cacheKey,
+                    menu,
+                    null,
+                    DateTime.Now.AddMinutes(20), // Absolute expiration set to 20 mins
+                    System.Web.Caching.Cache.NoSlidingExpiration // Disable sliding expiration
+);
+            }
 
             return Json(menu, JsonRequestBehavior.AllowGet);
         }

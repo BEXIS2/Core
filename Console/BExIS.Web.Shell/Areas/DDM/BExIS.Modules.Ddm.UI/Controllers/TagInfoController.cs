@@ -3,6 +3,7 @@ using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.Curation;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Helpers;
@@ -14,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Web.SessionState;
 using Telerik.Web.Mvc.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Modularity;
@@ -21,6 +23,7 @@ using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class TagInfoController : BaseController
     {
         private readonly UserManager _userManager;
@@ -102,7 +105,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     // var dataset = dm.GetDataset(datasetIdLong);
                     var latestVersion = dm.GetDatasetLatestVersion(datasetIdLong);
 
-                    emailService.Send(MessageHelper.GetReleaseTagHeader(datasetIdLong, typeof(Dataset).Name), MessageHelper.GetReleaseTagMessage(userName, datasetIdLong, typeof(Dataset).Name, latestVersion.Title, message),
+                    emailService.Send(MessageHelper.GetReleaseTagHeader(datasetIdLong, typeof(Dataset).Name), MessageHelper.GetReleaseTagMessage(GetDisplayName(), datasetIdLong, typeof(Dataset).Name, latestVersion.Title, message),
                         new List<string>() { GeneralSettings.SystemEmail }
                     );
                 }
@@ -130,7 +133,23 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             return null;
         }
-      
+
+        public string GetDisplayName()
+        {
+            string username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+                User user = _userManager.FindByNameAsync(username).Result;
+
+                return user.DisplayName;
+            }
+            catch
+            {
+                return "DEFAULT";
+            }
+        }
+
     }
 
     public class Data
@@ -144,4 +163,5 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             Message = "";
         }
     }
+
 }

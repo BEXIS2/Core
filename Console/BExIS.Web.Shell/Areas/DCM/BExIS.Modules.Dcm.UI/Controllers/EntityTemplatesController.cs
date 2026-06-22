@@ -18,11 +18,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Telerik.Web.Mvc.Extensions;
 using Vaiona.Web.Extensions;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class EntityTemplatesController : Controller
     {
         private readonly GroupManager _groupManager;

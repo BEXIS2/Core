@@ -92,7 +92,7 @@ function getChoices(cComponent: any): {key:string, value:string}[] {
 							</div>
 
 							{:else if choiceComponent.items.properties[item].type === 'object' && choiceComponent.items.properties[item].properties['#text']}
-								<div class="px-5 py-2">
+								<div class="px-5 py-1">
 									<SimpleComponent
 										simpleComponent={choiceComponent.items.properties[item].properties['#text']}
 										path={path + '.' + item}

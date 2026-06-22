@@ -1064,7 +1064,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             using (var emailService = new EmailService())
                             {
                                 emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
-                                                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
+                                                            MessageHelper.GetDownloadDatasetMessage(id, title, GetDisplayName(), ext, versionNr),
                                                                 GeneralSettings.SystemEmail
                                                                 );
                             }
@@ -1223,7 +1223,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         using (var emailService = new EmailService())
                         {
                             emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
-                                MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
+                                MessageHelper.GetDownloadDatasetMessage(id, title, GetDisplayName(), ext, versionNr),
                                 GeneralSettings.SystemEmail
                                 );
                         }
@@ -1386,7 +1386,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         using (var emailService = new EmailService())
                         {
                             emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
-                                MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), ext, versionNr),
+                                MessageHelper.GetDownloadDatasetMessage(id, title, GetDisplayName(), ext, versionNr),
                                 GeneralSettings.SystemEmail
                                 );
                         }
@@ -1584,7 +1584,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     using (var emailService = new EmailService())
                     {
                         emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
-                            MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), "zip", versionNr),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, GetDisplayName(), "zip", versionNr),
                             GeneralSettings.SystemEmail
                             );
                     }
@@ -1627,7 +1627,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     using (var emailService = new EmailService())
                     {
                         emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
-                        MessageHelper.GetDownloadDatasetMessage(id, title, getPartyNameOrDefault(), mimeType, versionNr),
+                        MessageHelper.GetDownloadDatasetMessage(id, title, GetDisplayName(), mimeType, versionNr),
                             GeneralSettings.SystemEmail
                             );
                     }
@@ -2050,34 +2050,20 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
-        private string getPartyNameOrDefault()
+        public string GetDisplayName()
         {
-            var userName = string.Empty;
+            string username = string.Empty;
             try
             {
-                userName = HttpContext.User.Identity.Name;
-            }
-            catch { }
+                username = HttpContext.User.Identity.Name;
+                User user = _userManager.FindByNameAsync(username).Result;
 
-            if (userName != null)
+                return user.DisplayName;
+            }
+            catch
             {
-                using (var uow = this.GetUnitOfWork())
-                using (var partyManager = new PartyManager())
-                {
-                    var userRepository = uow.GetReadOnlyRepository<User>();
-                    var user = userRepository.Query(s => s.Name.ToUpperInvariant() == userName.ToUpperInvariant()).FirstOrDefault();
-
-                    if (user != null)
-                    {
-                        Party party = partyManager.GetPartyByUser(user.Id);
-                        if (party != null)
-                        {
-                            return party.Name;
-                        }
-                    }
-                }
+                return "DEFAULT";
             }
-            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
         }
 
 

@@ -1,9 +1,11 @@
 ﻿using BExIS.UI.Helpers;
 using BExIS.Utils.Config;
 using System.Web.Mvc;
+using System.Web.SessionState;
 
 namespace BExIS.Web.Shell.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class HelpController : Controller
     {
         // GET: Help
