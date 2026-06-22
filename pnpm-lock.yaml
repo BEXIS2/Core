@@ -278,8 +278,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/SAM/BExIS.Modules.Sam.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: ^0.4.81
-        version: 0.4.81(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.88
+        version: 0.4.88(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -326,9 +326,6 @@ packages:
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
-
-  '@bexis2/bexis2-core-ui@0.4.81':
-    resolution: {integrity: sha512-agct1DRoTBvmeuXWGd9jmmSgoqrgxPDKYnQNs2dq9pnWUIEtrcLUg342/+KUiijKEmuImUkA8+C6CVSBsUJHrQ==}
 
   '@bexis2/bexis2-core-ui@0.4.88':
     resolution: {integrity: sha512-kdHwyWQ967XSRe6HyTTmFLUrW6BQDV3NC9K/J1vJdkND0rDhUUpbfXpR0ZPwlpsGnqOPnMIiZBdajHcDuJYmhA==}
@@ -2272,11 +2269,6 @@ packages:
   svelte-collapsible@0.3.1:
     resolution: {integrity: sha512-jwV9pAlv5JvBthoN1hxXA2KH3rFgoQGIpyXO3mIgMOoke4xId0S8LcaxlMuwGT3vtv6rAAF5EGYMMKHeqHlyYA==}
 
-  svelte-fa@4.0.2:
-    resolution: {integrity: sha512-lza8Jfii6jcpMQB73mBStONxaLfZsUS+rKJ/hH6WxsHUd+g68+oHIL9yQTk4a0uY9HQk78T/CPvQnED0msqJfg==}
-    peerDependencies:
-      svelte: ^4.0.0
-
   svelte-fa@4.0.4:
     resolution: {integrity: sha512-85BomCGkTrH8kPDGvb8JrVwq9CqR9foprbKjxemP4Dtg3zPR7OXj5hD0xVYK0C+UCzFI1zooLoK/ndIX6aYXAw==}
     peerDependencies:
@@ -2474,9 +2466,6 @@ packages:
   vest@5.4.0:
     resolution: {integrity: sha512-5TPlBTbzDNhpsDL/gPcKyJbrcd1P7Fc2ODk3Ju0srb5UvkaDFQjMr1Ia8pK3JwzFTiPz/LAWW6YCrhe6UthT3g==}
 
-  vest@5.4.6:
-    resolution: {integrity: sha512-Q3KQYluxdjnz5/HmR8coHNlXbJPLWMfrwz4wlcqMX4SaJ8qcmy5Ix9NTiQt3hTMrETdj+q+513J/kt+ahdJlLg==}
-
   vestjs-runtime@1.7.0:
     resolution: {integrity: sha512-b9CLKaNJopi7zXfJYZY9WYw4EOCIp1lsjheeq9ckNh9Qh7Dze1+yXQ1stwFw+oe22H7zJy/+vjn4/yJSoaDbpw==}
 
@@ -2586,42 +2575,6 @@ snapshots:
     dependencies:
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
-
-  '@bexis2/bexis2-core-ui@0.4.81(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))':
-    dependencies:
-      '@codemirror/lang-html': 6.4.11
-      '@codemirror/lang-javascript': 6.2.5
-      '@codemirror/lang-json': 6.0.2
-      '@codemirror/lint': 6.9.6
-      '@codemirror/theme-one-dark': 6.1.3
-      '@floating-ui/dom': 1.7.6
-      '@fortawesome/fontawesome-free': 6.7.2
-      '@fortawesome/fontawesome-svg-core': 6.7.2
-      '@fortawesome/free-regular-svg-icons': 6.7.2
-      '@fortawesome/free-solid-svg-icons': 6.7.2
-      '@sveltejs/kit': 2.63.0(patch_hash=edb8ea411824a5d15205994760d3951f038e693b887197c1a3e99879640e2ca6)(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@25.9.1)))(svelte@4.2.20)(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
-      '@sveltejs/vite-plugin-svelte': 3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@25.9.1))
-      axios: 1.17.0
-      codemirror: 6.0.2
-      dateformat: 5.0.3
-      delay: 6.0.0
-      dotenv: 16.6.1
-      eslint4b-prebuilt: 6.7.2
-      highlight.js: 11.11.1
-      highlightjs-svelte: 1.0.6
-      svelte: 4.2.20
-      svelte-codemirror-editor: 1.4.2(codemirror@6.0.2)(svelte@4.2.20)
-      svelte-fa: 4.0.2(svelte@4.2.20)
-      svelte-file-dropzone: 2.0.9(svelte@4.2.20)
-      svelte-headless-table: 0.18.3(svelte@4.2.20)
-      svelte-select: 5.8.3
-      vest: 5.4.6
-    transitivePeerDependencies:
-      - '@opentelemetry/api'
-      - debug
-      - supports-color
-      - typescript
-      - vite
 
   '@bexis2/bexis2-core-ui@0.4.88(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))':
     dependencies:
@@ -4629,10 +4582,6 @@ snapshots:
     dependencies:
       svelte-collapse: 0.1.4
 
-  svelte-fa@4.0.2(svelte@4.2.20):
-    dependencies:
-      svelte: 4.2.20
-
   svelte-fa@4.0.4(svelte@4.2.20):
     dependencies:
       svelte: 4.2.20
@@ -4819,14 +4768,6 @@ snapshots:
   vest-utils@1.5.0: {}
 
   vest@5.4.0:
-    dependencies:
-      context: 3.1.0
-      n4s: 5.0.28
-      vast: 1.1.0
-      vest-utils: 1.5.0
-      vestjs-runtime: 1.7.0
-
-  vest@5.4.6:
     dependencies:
       context: 3.1.0
       n4s: 5.0.28
