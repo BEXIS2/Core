@@ -47,11 +47,11 @@ function initActivity() {
 
 
 
-<div class="flex h-10 dark:bg-primary-800 pl-2 items-center">
+<div class="flex h-10 dark:bg-primary-500 items-center">
  <div class="text-left grow pl-2">
-	  <h4 id="{path}" class="h4" >
+	   <h3 id ={path} class="text-md font-bold">
       {convertDisplayName(label, true)} 
-    </h4>
+    </h3>
  </div>
 
  {#if description && showDescription}

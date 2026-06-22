@@ -1,6 +1,6 @@
 {
   "name": "@bexis2/bexis2-rpm-ui",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": false,
   "description": "Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).",
   "keywords": [
@@ -52,15 +52,16 @@
     "check outdated": "pnpm outdated",
     "upgrade all": "pnpm ncu --upgrade",
     "0.npm login": "pnpm login",
-    "1.npm - init": "pnpm init --scope bexis2",
+    "1.npm - init": "npm init --scope bexis2",
     "2.npm - package": "svelte-package",
-    "3.npm - publish": "pnpm publish --access public"
+    "3.npm - publish": "npm publish --access public"
   },
   "dependencies": {
-    "@bexis2/bexis2-core-ui": "0.4.84",
+    "@bexis2/bexis2-core-ui": "0.4.88",
     "@floating-ui/dom": "1.7.6",
     "papaparse": "5.5.2",
     "svelte-fa": "4.0.4"
   },
-  "module": "./src/lib/index.ts"
+  "module": "./src/lib/index.ts",
+  "devDependencies": {}
 }

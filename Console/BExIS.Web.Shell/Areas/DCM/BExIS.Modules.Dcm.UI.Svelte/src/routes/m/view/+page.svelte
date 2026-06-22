@@ -14,6 +14,7 @@
 	// import { Page } from '@bexis2/bexis2-core-ui';
 	import { schemaToJson, setConfigStore, setMetadataStore } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { da } from 'svelty-picker/i18n';
+	import { convertDisplayName } from '../metadataShared';
 
 	// import configJson from './customComponents/config.json';
 
@@ -154,28 +155,70 @@
 
 <div	class="container flex">
 
-		<div class="flex-col">
-				<div class="flex flex-col	gap-2">
-					<button class="chip variant-filled-primary" on:click={() => DownloadMetadata(id, version,"json")}>
-					 	<div class="flex gap-2"><Fa icon={faDownload} />JSON </div>
-					</button>
-							<button class="chip variant-filled-primary" on:click={() => DownloadMetadata(id, version,"xml")}>
-									<div class="flex gap-2"><Fa icon={faDownload} />XML</div>
-							</button>
-							<button class="chip variant-filled-primary" on:click={() => DownloadMetadata(id, version,"flatten")}>
-									<div class="flex gap-2"><Fa icon={faDownload} />Text</div>
-							</button>
-							<button class="chip variant-filled-primary" on:click={() => downloadSectionWithCSS('metadata-content', `metadata_${id}_v${version}.html`)}>
-									<div class="flex gap-2"><Fa icon={faDownload} />HTML</div>
-							</button>
-			</div>
-		</div>
+	
 			<div id="metadata-content" class="content scrollable">
 				<div class="px-2">
 					<ComplexComponent complexComponent={schema} path={''} />
 				</div>
 			</div>
+
+
+<div class="w-full lg:w-[45%] xl:w-[35%] flex flex-col gap-3 ml-4">
+    
+<h3 class="h3 font-semibold text-gray-700 dark:text-gray-300  whitespace-nowrap">Metadata Overview</h3>
+
+<p>Current version: Add version here</p>
+<p>Dataset ID: {id}</p>
+<p>Last modified: xx.xx.xxxx</p>
+<p>Modified by: Max Mustermann</p>
+
+    <h2 class="h3 font-semibold text-gray-700 dark:text-gray-300  whitespace-nowrap">Download Metadata</h2>
+    
+    <div class="grid grid-cols-2 gap-3 w-full">
+        
+        <button class="btn variant-filled-primary flex items-center justify-center gap-2 whitespace-nowrap w-full" 
+                on:click={() => DownloadMetadata(id, version, "json")}>
+            <Fa icon={faDownload} /><span>JSON</span>
+        </button>
+        
+        <button class="btn variant-filled-primary flex items-center justify-center gap-2 whitespace-nowrap w-full" 
+                on:click={() => DownloadMetadata(id, version, "xml")}>
+            <Fa icon={faDownload} /><span>XML</span>
+        </button>
+        
+        <button class="btn variant-filled-primary flex items-center justify-center gap-2 whitespace-nowrap w-full" 
+                on:click={() => DownloadMetadata(id, version, "flatten")}>
+            <Fa icon={faDownload} /><span>Text</span>
+        </button>
+        
+        <button class="btn variant-filled-primary flex items-center justify-center gap-2 whitespace-nowrap w-full" 
+                on:click={() => downloadSectionWithCSS('metadata-content', `metadata_${id}_v${version}.html`)}>
+            <Fa icon={faDownload} /><span>HTML</span>
+        </button>
+        
+    </div>
+     <h2 class="h3 font-semibold text-gray-700 dark:text-gray-300  whitespace-nowrap">Content</h2>
+ <nav class="list-nav">
+			<ul class="list-disc space-y-2">
+				{#each Object.entries(m) as [key, value]}
+					{#if typeof value === 'object' && value !== null}
+						<a href="#{key}" class="w-full" on:click={() => activateShow(key)}>
+							<li class="flex items-center gap-1">
+								<span class="h-1.5 w-1.5 rounded-full bg-gray-500 mr-2"></span>
+                <span class="">{convertDisplayName(key)}</span>
+							</li>
+						</a>
+						
+					{/if}
+				{/each}
+			</ul>
+		</nav>
+	 
+
+    
+</div>
 		</div>
+		
 
 		{/await}
 </Page>
