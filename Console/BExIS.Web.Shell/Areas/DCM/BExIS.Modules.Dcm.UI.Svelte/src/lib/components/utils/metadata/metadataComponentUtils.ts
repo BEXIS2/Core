@@ -16,6 +16,7 @@ export function getNodeByPath(path: string) {
 }
 
 export function getByPath(path: string) {
+	console.log("🚀 ~ getByPath ~ path:", path)
 	let obj: any;
 		metadataStore.subscribe((v) => {
 			obj = v;
