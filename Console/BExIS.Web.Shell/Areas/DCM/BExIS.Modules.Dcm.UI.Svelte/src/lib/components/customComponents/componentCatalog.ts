@@ -3,7 +3,7 @@ import terminologyService from './TerminologyService_0.1/component.svelte';
 import TextField from './TextField_0.1/component.svelte';
 
 export const customComponentsCatalog: any = {
-    'DateRangePicker_0.1': {
+    'date_range_picker_v1.0.0': {
         component: dateRangepicker},
     'terminology_v2.2.26': {
         component: terminologyService},  

@@ -9,8 +9,17 @@
 
     if (ViewData["version"] != null) { version = Convert.ToInt64(ViewData["version"]); }
 
+    string bioSchemaInfos = "";
+    if (ViewData["bioSchema"] != null)
+    {
+        bioSchemaInfos = ViewData["bioSchema"].ToString();
+    }
+
 }
 
+<script type="application/ld+json">
+    @Html.Raw(bioSchemaInfos)
+</script>
 
 <div id="view" dataset="@id" version="@version">
 

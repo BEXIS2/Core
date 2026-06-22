@@ -2,7 +2,7 @@
 	export let id;
 	export let version;
 	export let title = '';
-	export let labels:any[]	= [];
+	export let labels:{ [key: string]: string; }	= {};
 	console.log('header labels', labels);
 	console.log('header labels 2', );
 	console.log('header labels 2',labels[Object.keys(labels)[0]] );

@@ -14,7 +14,7 @@
    <h2 class="h3">{type.toUpperCase()}</h2>
    <div class="flex mt-2 gap-2">
    {#each links.filter(link => link.linkType === type) as link}
-     <span>{link.referenceType}</span><a class="chip variant-outline-tertiary mb-2" href="/dcm/view?id={link.target.id}&version={link.target.version}" target="_blank">{link.target.title} </a>
+     <div><span>{link.referenceType}</span><a class="chip variant-outline-tertiary mb-2" href="/dcm/view?id={link.target.id}&version={link.target.version}" target="_blank">{link.target.title} </a></div>
    {/each}
   </div>
  </div>

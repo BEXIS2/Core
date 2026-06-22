@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 
 	import { getApiDataset, getView } from './services';
-		import { ErrorMessage, type linkType, Page, pageContentLayoutType, positionType, setApiConfig, Spinner } from '@bexis2/bexis2-core-ui';
+	import { ErrorMessage, type linkType, Page, pageContentLayoutType, positionType, setApiConfig, Spinner } from '@bexis2/bexis2-core-ui';
 
 	import Header from './Header.svelte';
 
@@ -19,7 +18,7 @@
 	let id: number;
 	let version: number = 0;
 	let model: ViewModel;
-	let datamodel: ApiDatasetModel
+
 
 
 
@@ -45,23 +44,17 @@
 
 		// load data from server
 		model = await getView(id);
-		datamodel = await getApiDataset(id, version);
-		
-		console.log('onmount', model);
 
-		hooks = model.hooks;
+		hooks = model.settings.hooks;
 		title = model.title;
 		version = model.version;
 		id = model.id;
 
 		console.log('model',model);
 		console.log('hooks', hooks);
-		console.log('datamodel', datamodel);
 
-		//test ui as html
-		// const resTestPage = await fetch('dcm/view/test');
-		// testPage = await resTestPage.text();
-	};
+
+	}
 
 </script>
 <Page title="Edit: ({id} | {title})" contentLayoutType={pageContentLayoutType.center} {links}>
@@ -76,16 +69,34 @@
 
 		<Header	{id} {version} {title} labels = {model.labels}/>
 
+		<div class="flex-col mb-2">
+						<div class="font-bold mr-2">Author : {model.additionalInformations['author'] ? model.additionalInformations['author'] : 'n/a'} </div>
+						<div class="font-bold mr-2">License : {model.additionalInformations['license'] ? model.additionalInformations['license'] : 'n/a'} </div>
+			</div>
+
+
 		<div class="flex">
 				<div class="flex-grow card	mb-5 p-5">
-						{datamodel.description}
+						{model.description}
 				</div>
 				<div class="ml-5 card	mb-5 p-5 w-auto">
 						test
 				</div>
 		</div>
 
-		<Links	links={datamodel.links.to} />
+<div class="flex-col w-1/2	mb-5 p-5 card">
+	<div class="h3 mb-5">Additional Information Overview</div>
+			
+		<div class="flex-col mb-2">
+			{#if model.additionalInformations}
+				{#each  Object.entries(model.additionalInformations)	as info}
+								<div class="font-bold mr-2">{info[0]}:{info[1]}</div>
+				{/each}
+				{/if}
+		</div>
+		</div>
+
+		<Links	links={model.links.to} />
 
 	 <Hooks	{id} {version} hooks={hooks} />
 		

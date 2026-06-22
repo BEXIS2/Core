@@ -9,7 +9,6 @@ using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Meanings;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dim.UI.Helper;
-using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;

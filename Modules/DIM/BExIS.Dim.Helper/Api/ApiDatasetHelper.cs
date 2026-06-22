@@ -18,7 +18,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace BExIS.Modules.Dim.UI.Helpers
+namespace BExIS.Dim.Helpers
 {
     public class ApiDatasetHelper
     {
