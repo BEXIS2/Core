@@ -23,7 +23,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@bexis2/bexis2-core-ui": "^0.4.81",
+		"@bexis2/bexis2-core-ui": "0.4.88",
 		"@floating-ui/dom": "1.7.6",
 		"svelte-fa": "4.0.4",
 		"svelte-headless-table": "0.18.3",
