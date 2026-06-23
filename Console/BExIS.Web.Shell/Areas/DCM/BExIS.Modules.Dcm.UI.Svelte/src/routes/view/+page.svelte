@@ -11,6 +11,10 @@
 	import { fade } from 'svelte/transition';
 	import Hooks from './Hooks.svelte';
 	import Links from './Links.svelte';
+	import Authors from './Authors.svelte';
+	import Versions from './Versions.svelte';
+	import Keywords from './Keywords.svelte';
+	import Funding from './Funding.svelte';
 
 	let title = '';
 
@@ -59,7 +63,7 @@
 </script>
 <Page title="Edit: ({id} | {title})" contentLayoutType={pageContentLayoutType.center} {links}>
 
-<div in:fade={{ delay: 500 }} out:fade={{ delay: 500 }}>
+<div class="flex flex-col gap-2" in:fade={{ delay: 500 }} out:fade={{ delay: 500 }}>
 
 	{#await load()}
 			<div class="text-surface-800">
@@ -69,25 +73,26 @@
 
 		<Header	{id} {version} {title} labels = {model.labels}/>
 
-		<div class="flex-col mb-2">
-						<div class="font-bold mr-2">Author : {model.additionalInformations['author'] ? model.additionalInformations['author'] : 'n/a'} </div>
-						<div class="font-bold mr-2">License : {model.additionalInformations['license'] ? model.additionalInformations['license'] : 'n/a'} </div>
-			</div>
-
-
+		<Authors	author={model.additionalInformations['author']} />	
+		
 		<div class="flex">
-				<div class="flex-grow card	mb-5 p-5">
+				<div class="flex-grow card	p-5">
 						{model.description}
 				</div>
-				<div class="ml-5 card	mb-5 p-5 w-auto">
-						test
+				<div class="flex flex-col ml-5 px-5 w-auto gap-3">
+						<Versions/>
+						<Funding/>
+						<Keywords/>
 				</div>
 		</div>
 
-<div class="flex-col w-1/2	mb-5 p-5 card">
-	<div class="h3 mb-5">Additional Information Overview</div>
+		<div class="h3">Additional Information Overview</div>
+		<div class="flex-col w-1/2	 p-5 card">
 			
 		<div class="flex-col mb-2">
+		<div class="font-bold mr-2">License : {model.additionalInformations['license'] ? model.additionalInformations['license'] : 'n/a'} </div>
+
+
 			{#if model.additionalInformations}
 				{#each  Object.entries(model.additionalInformations)	as info}
 								<div class="font-bold mr-2">{info[0]}:{info[1]}</div>
@@ -99,8 +104,7 @@
 		<Links	links={model.links.to} />
 
 	 <Hooks	{id} {version} hooks={hooks} />
-		
-
+	
 		{:catch error}
 			<ErrorMessage {error} />
 		{/await}

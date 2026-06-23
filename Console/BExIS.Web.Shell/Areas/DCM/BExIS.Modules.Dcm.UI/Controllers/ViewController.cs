@@ -1,13 +1,18 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dim.Entities.Export;
+using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Helpers.BIOSCHEMA;
+using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Helpers.Models;
 using BExIS.Dim.Services;
+using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Dcm.UI.Helpers;
+using BExIS.Modules.Dcm.UI.Helpers.View;
 using BExIS.Modules.Dcm.UI.Models.View;
 using BExIS.Modules.Dim.UI.Helpers;
 using BExIS.Security.Entities.Authorization;
@@ -30,12 +35,14 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class ViewController : Controller
     {
 
@@ -261,8 +268,120 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 }
 
+                if (version > 0)
+                {
+                    // load BioSchema Description if exist
+                    string bioschemadescription = getBioSchema(id, version);
+                    if (!string.IsNullOrEmpty(bioschemadescription))
+                        ViewData["bioSchema"] = bioschemadescription;
+                }
+
+
                 return Json(model, JsonRequestBehavior.AllowGet);
             }
+        }
+
+        // load bioschema
+        public JsonResult GetBioSchema(long id, int version)
+        {
+            string bioschema = getBioSchema(id, version);
+            return Json(bioschema, JsonRequestBehavior.AllowGet);
+        }
+
+        [JsonNetFilter]
+        private string getBioSchema(long id, int version)
+        {
+            if (id <= 0) throw new ArgumentException("id is not valid");
+            ViewData["Id"] = id;
+
+            var helper = new BioSchemaHelper();
+            string json = helper.GetBioSchemaForDataset(id, version, HttpContext.Request.Url.ToString());
+
+            return json; // Replace "_PartialViewName" with your actual name
+
+        }
+
+        [JsonNetFilter]
+        public JsonResult GetCitation(long id, int version)
+        {
+            // default setup for citation model if something goes wrong
+            CitaionModelJson model = new CitaionModelJson()
+            {
+                Format = ReadCitationFormat.Default,
+                Data = new CitationDataModel()
+                {
+                    Title = "Title is not available."
+                }
+            };
+
+            try
+            {
+                using (var datasetManager = new DatasetManager())
+                using (var conceptManager = new ConceptManager())
+                {
+                    var dataset = datasetManager.GetDataset(id);
+                    DatasetVersion datasetVersion = null;
+
+                    long datasetVersionId = 0;
+                    if(version>0)
+                        datasetVersionId = datasetManager.GetDatasetVersionId(id, version);
+                    else
+                        datasetVersionId = datasetManager.GetDatasetLatestVersionId(id); 
+
+                    if (dataset.Status == DatasetStatus.Deleted)
+                    {
+                        datasetVersion = datasetManager.GetDeletedDatasetLatestVersion(id);
+                    }
+                    else
+                    {
+                        datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+                    }
+
+                    if (datasetVersion == null)
+                    {
+                        return Json(model, JsonRequestBehavior.AllowGet);
+                    }
+
+                    var settingsHelper = new DDMSettingsHelper();
+                    var citationSettings = settingsHelper.GetCitationSettings();
+
+                    var errors = new List<string>();
+                    string conceptName = "Citation_" + citationSettings.ReadCitationFormat;
+                    var concept = conceptManager.FindByName(conceptName);
+
+                    model.Data = CitationsHelper.CreateCitationDataModel(datasetVersion);
+
+                    if (model.Data == null)
+                    { 
+                        model.Data = new CitationDataModel()
+                        {
+                            Title = datasetVersion.Title
+                        };
+                    }
+
+                    if (citationSettings == null || !citationSettings.ShowCitation || concept == null || !MappingUtils.IsMapped(datasetVersion.Dataset.MetadataStructure.Id, LinkElementType.MetadataStructure, concept.Id, LinkElementType.MappingConcept, out errors))
+                    {
+                        return Json(model, JsonRequestBehavior.AllowGet);
+                    }
+
+                    if (!CitationsHelper.IsCitationDataModelValid(model.Data))
+                    {
+
+                        return Json(model, JsonRequestBehavior.AllowGet);
+                    }
+
+
+                    model.Format = citationSettings.ReadCitationFormat;
+                    
+                    return Json(model, JsonRequestBehavior.AllowGet);
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(model, JsonRequestBehavior.AllowGet);
+            }
+
         }
 
         public PartialViewResult Tags(long id, int version)
@@ -292,18 +411,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
             return PartialView("_tagsView", tags); // Replace "_PartialViewName" with your actual name
-
-        }
-
-        private string getBioSchema(long id, int version)
-        {
-            if (id <= 0) throw new ArgumentException("id is not valid");
-            ViewData["Id"] = id;
-
-            var helper = new BioSchemaHelper();
-            string json = helper.GetBioSchemaForDataset(id, version, HttpContext.Request.Url.ToString());
-
-            return json; // Replace "_PartialViewName" with your actual name
 
         }
 

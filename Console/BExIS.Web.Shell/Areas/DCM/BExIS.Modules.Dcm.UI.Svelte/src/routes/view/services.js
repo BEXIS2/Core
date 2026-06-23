@@ -25,3 +25,12 @@ export const getApiDataset = async (id, version ) => {
 		console.error(error);
 	}
 };
+
+export const getCitation = async (id, version) => {
+	try {
+		const response = await Api.get('/dcm/view/getcitation?id=' + id+'&version=' + version);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};

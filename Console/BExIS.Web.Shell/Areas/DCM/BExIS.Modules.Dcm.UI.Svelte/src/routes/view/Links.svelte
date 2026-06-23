@@ -8,15 +8,20 @@
 
 </script>
 
+
 {#if types}
+<h3 class="h3">Related Work</h3>
+<div class="card p-5 mb-5">
  {#each types as type}
+
  <div class="mb-4">
-   <h2 class="h3">{type.toUpperCase()}</h2>
-   <div class="flex mt-2 gap-2">
+   <h4 class="h4">{type.toUpperCase()}</h4>
+   <div class="flex flex-col mt-2 gap-2">
    {#each links.filter(link => link.linkType === type) as link}
-     <div><span>{link.referenceType}</span><a class="chip variant-outline-tertiary mb-2" href="/dcm/view?id={link.target.id}&version={link.target.version}" target="_blank">{link.target.title} </a></div>
+     <div class="flex gap-4"><span>{link.referenceType}</span><a class="chip variant-outline-tertiary mb-2" href="/dcm/view?id={link.target.id}&version={link.target.version}" target="_blank">{link.target.title} </a></div>
    {/each}
   </div>
  </div>
  {/each}
+ </div>
 {/if} 

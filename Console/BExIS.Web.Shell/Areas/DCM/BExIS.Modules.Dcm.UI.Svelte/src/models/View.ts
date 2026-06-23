@@ -120,3 +120,38 @@ export interface ReferenceElementModel {
 	title: string;
 	latestVersion: boolean;
 }
+
+
+export enum ReadCitationFormat {
+    APA,
+    Text,
+				Default
+}
+
+export interface CitationModel {
+				format: ReadCitationFormat;
+				data: CitationDataModel;
+}
+
+export enum CitationFormat {
+    APA,
+    RIS,
+    Text,
+    Bibtex
+}
+
+export interface CitationDataModel {
+    title: string;
+    version: string;
+    tag: string;
+    projects: string[];
+    year: string;
+    dOI: string;
+    uRL: string;
+    authors: string[];
+    entryType: string;
+    entityName: string;
+    publisher: string;
+    keyword: string;
+    note: string;
+}

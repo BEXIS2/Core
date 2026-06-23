@@ -1,20 +1,19 @@
 <script lang="ts">
+
+	import Citation from "./Citation.svelte";
+
 	export let id;
 	export let version;
 	export let title = '';
 	export let labels:{ [key: string]: string; }	= {};
-	console.log('header labels', labels);
-	console.log('header labels 2', );
-	console.log('header labels 2',labels[Object.keys(labels)[0]] );
 
 	const labelKeys = Object.keys(labels);
-
 
 </script>
 
 <div class="flex pb-5">	
 	<div class="flex-grow">
-		<h2 class="h2">{title}</h2>
+		<Citation	{id} {version} />
 	</div>
 	<div>
 
