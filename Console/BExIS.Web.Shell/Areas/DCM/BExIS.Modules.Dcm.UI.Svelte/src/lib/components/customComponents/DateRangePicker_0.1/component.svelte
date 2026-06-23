@@ -5,7 +5,7 @@
 	import SveltyPicker, {  } from 'svelty-picker';
 	//import { en, de } from 'svelty-picker/dist/i18n';
 
-	let componentName: string = 'DateRangePicker_0.1';
+	let componentName: string = 'date_range_picker_v1.0.0';
 
 	export let label: string;
 	export let anchor: string;

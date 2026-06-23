@@ -9,7 +9,6 @@ using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Meanings;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dim.UI.Helper;
-using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
@@ -1769,6 +1768,44 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 }
 
                 #endregion mapping GBIF to System Keys
+
+                #region extension to system keys
+
+                if (metadataStructures.Any(m => m.Name.ToLower().Equals("extension")))
+                {
+                    MetadataStructure metadataStructure =
+                        metadataStructures.FirstOrDefault(m => m.Name.ToLower().Equals("extension"));
+
+                    XDocument metadataRef = xmlMetadataWriter.CreateMetadataXml(metadataStructure.Id);
+
+                    //create root mapping
+                    LinkElement extensionRoot = createLinkELementIfNotExist(mappingManager, metadataAttributeManager, metadataStructure.Id, metadataStructure.Name, LinkElementType.MetadataStructure, LinkElementComplexity.None, "");
+
+                    //create system mapping
+                    LinkElement system = createLinkELementIfNotExist(mappingManager, metadataAttributeManager, 0, "System", LinkElementType.System, LinkElementComplexity.None, "");
+
+                    #region mapping GBIF to System Keys
+
+                    Mapping rootTo = mappingManager.CreateMapping(extensionRoot, system, 0, null, null);
+                    Mapping rootFrom = mappingManager.CreateMapping(system, extensionRoot, 0, null, null);
+
+                    if (Exist("title", LinkElementType.MetadataAttributeUsage, uow))
+                    {
+                        createToKeyMapping("title", LinkElementType.MetadataAttributeUsage, "title", LinkElementType.MetadataAttributeUsage, Key.Title, rootTo, metadataRef, mappingManager, metadataAttributeManager);
+                        createFromKeyMapping("title", LinkElementType.MetadataAttributeUsage, "title", LinkElementType.MetadataAttributeUsage, Key.Title, rootFrom, metadataRef, mappingManager, metadataAttributeManager);
+                    }
+
+                    if (Exist("description", LinkElementType.MetadataAttributeUsage, uow))
+                    {
+                        createToKeyMapping("description", LinkElementType.MetadataAttributeUsage, "description", LinkElementType.MetadataAttributeUsage, Key.Description, rootTo, metadataRef, mappingManager, metadataAttributeManager);
+                        createFromKeyMapping("description", LinkElementType.MetadataAttributeUsage, "description", LinkElementType.MetadataAttributeUsage, Key.Description, rootFrom, metadataRef, mappingManager, metadataAttributeManager);
+                    }
+
+
+                    #endregion mapping GBIF to System Keys
+                }
+
+                #endregion
             }
         }
 

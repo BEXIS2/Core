@@ -4,6 +4,7 @@
 @model BExIS.Modules.Dim.UI.Models.ShowPublishDataModel
 
 @{
+    ViewBag.Title = "Preparation for "+Model.Title;
     List<BExIS.UI.Models.ListItem> datarepolist = Model.Brokers;
     List<int> versionNrs = new List<int>();
     List<double> tags = new List<double>();
@@ -60,7 +61,7 @@
 
                         $("#preloader").preloader(14, "Please wait...");
 
-                    
+
                         jQuery.ajax({
                             type: "POST",
                             url: "@Url.Action("CheckExportPossibility", "Submission")",
@@ -268,9 +269,25 @@
                     });
             });
     }
+
+    function backFn() {
+       
+        window.location.href = '/dcm/edit/?id=@Model.DatasetId';
+    }
+
 </script>
 
+
+
 <div id="publishContentContainer" style="min-height: 200px">
+
+    <div class="publishContentContainer-header">
+        <div>
+            <button class="bx bx-button bt-small function" onclick="backFn()" style="font-family:Arial">back</button>
+        </div>
+
+    </div>
+
     <div id="publishingOptionsContainer" style="text-align: -webkit-left;">
         <span id="selectedBrokerId" style="display:none"></span>
 
@@ -416,6 +433,12 @@
 
         .t-state-active {
             line-height: 14pt
+        }
+
+        .publishContentContainer-header {
+            display: flex;
+            gap: 3px;
+            align-items: center;
         }
     </style>
 </div>

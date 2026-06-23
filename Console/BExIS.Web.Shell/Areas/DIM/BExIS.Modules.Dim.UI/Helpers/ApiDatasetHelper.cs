@@ -1,9 +1,9 @@
 ﻿using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Helpers.Mappings;
+using BExIS.Dim.Helpers.Models;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
-using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Utils.Data.Helpers;

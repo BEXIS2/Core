@@ -83,6 +83,7 @@
     <Compile Include="DcmModule.cs" />
     <Compile Include="FileReaderInfoController.cs" />
     <Compile Include="Helpers\API\DataApiHelper.cs" />
+    <Compile Include="Helpers\View\CitationsHelper.cs" />
     <Compile Include="Helpers\EditHelper.cs" />
     <Compile Include="Helpers\EntityTemplateHelper.cs" />
     <Compile Include="Helpers\DataASyncUploadHelper.cs" />
@@ -91,7 +92,9 @@
     <Compile Include="Helpers\FormHelper.cs" />
     <Compile Include="Helpers\SubmitHelper.cs" />
     <Compile Include="Helpers\SystemMetadataHelper.cs" />
+    <Compile Include="Helpers\TagInfoHelper.cs" />
     <Compile Include="Helpers\UploadUIHelper.cs" />
+    <Compile Include="Helpers\View\DDMSettingsHelper.cs" />
     <Compile Include="Hooks\AttachmentViewHook.cs" />
     <Compile Include="Hooks\DataEditHook.cs" />
     <Compile Include="Hooks\DataStructurePreviewHook.cs" />
@@ -152,6 +155,7 @@
     <Compile Include="Models\UploadWizardParameters.cs" />
     <Compile Include="Models\ValidationModel.cs" />
     <Compile Include="Models\Edit\ValidationModel.cs" />
+    <Compile Include="Models\View\CitationModels.cs" />
     <Compile Include="Models\View\ViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -367,6 +371,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="Dcm.Settings.xml" />
+    <Content Include="LICENSE.txt" />
     <Content Include="Scripts\2013.2.611\jquery-1.7.1.min.js" />
     <Content Include="Scripts\2013.2.611\jquery.validate.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.all.min.js" />
@@ -525,6 +530,9 @@
       <HintPath>..\..\..\..\..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
       <Private>True</Private>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="NameParser, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\NameParserSharp.1.5.0\lib\net45\NameParser.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -795,6 +803,10 @@
       <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
       <Name>BExIS.Utils.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Utils\BExIS.Utils.NH\BExIS.Utils.NH.csproj">
+      <Project>{0F1EC13E-D685-4F4D-A438-52797B0E53A0}</Project>
+      <Name>BExIS.Utils.NH</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
       <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
       <Name>BExIS.Utils</Name>
@@ -874,6 +886,10 @@
     <ProjectReference Include="..\..\..\..\..\Modules\DIM\BExIS.Dim.Services\BExIS.Dim.Services.csproj">
       <Project>{cac933a2-6849-4c61-82b4-cbf4052210cc}</Project>
       <Name>BExIS.Dim.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DIM\BExIS.Modules.Dim.UI\BExIS.Modules.Dim.UI.csproj">
+      <Project>{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}</Project>
+      <Name>BExIS.Modules.Dim.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

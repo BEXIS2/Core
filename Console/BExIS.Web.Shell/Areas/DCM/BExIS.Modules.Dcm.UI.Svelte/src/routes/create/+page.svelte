@@ -1,6 +1,6 @@
 <script lang="ts">
-	import List from './List.svelte';
-	import Form from './Form.svelte';
+	import List from '../../lib/components/entityTemplate/List.svelte';
+	import Form from '../../lib/components/entityTemplate/Form.svelte';
 	import { Api, ErrorMessage, Page, host, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
 	import type { linkType } from '@bexis2/bexis2-core-ui';

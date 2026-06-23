@@ -469,7 +469,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<EntityTemplateModel> entityTemplateModels = new List<EntityTemplateModel>();
             using (var entityTemplateManager = new EntityTemplateManager())
             {
-                foreach (var e in entityTemplateManager.Repo.Query(e=>e.Activated).OrderBy(e=>e.Order).ToList())
+                // get entity templates without extension
+                string extensionName = Convert.ToString(EntityType.Extension);
+                foreach (var e in entityTemplateManager.Repo.Query(e=>e.Activated && !e.EntityType.Name.ToLower().Equals(extensionName.ToLower())).ToList())
                 {
                     entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e, false));
                 }

@@ -158,6 +158,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\ApiDatasetHelper.cs" />
     <Compile Include="Api\ApiHelper.cs" />
     <Compile Include="BasicWebService.cs" />
     <Compile Include="BIOSCHEMA\BioschemaHelper.cs" />
@@ -172,6 +173,7 @@
     <Compile Include="GFBIO\GFBIOSubmissionHelper.cs" />
     <Compile Include="GFBIO\GFBIOWebserviceManager.cs" />
     <Compile Include="Mappings\MappingUtils.cs" />
+    <Compile Include="Models\ApiModels.cs" />
     <Compile Include="Models\PangeaModels.cs" />
     <Compile Include="Models\VaelastraszModels.cs" />
     <Compile Include="SubmissionManager.cs" />
@@ -209,6 +211,14 @@
     <ProjectReference Include="..\..\..\Components\JSON\BEXIS.JSON.Helpers\BEXIS.JSON.Helpers.csproj">
       <Project>{C4D68AC5-84FA-4A97-9E64-9F11623DADC9}</Project>
       <Name>BEXIS.JSON.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\UI\BExIS.UI\BExIS.UI.csproj">
+      <Project>{de0ad99c-c559-422f-8132-cc4d7c46ff83}</Project>
+      <Name>BExIS.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
+      <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
+      <Name>BExIS.Utils.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
       <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>

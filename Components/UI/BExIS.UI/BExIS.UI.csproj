@@ -119,6 +119,7 @@
     <Compile Include="Hooks\View.cs" />
     <Compile Include="Models\DataTable.cs" />
     <Compile Include="Models\EntitySelectorModel.cs" />
+    <Compile Include="Models\ExtensionItem.cs" />
     <Compile Include="Models\FileUploader.cs" />
     <Compile Include="Models\ListItem.cs" />
     <Compile Include="Models\Menu.cs" />

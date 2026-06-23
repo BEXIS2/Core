@@ -28,5 +28,12 @@
 			<span><Fa icon={faEye} /></span>
 			<span>View</span>
 		</button>
+		<button
+			class="btn btn-sm variant-filled-secondary text-center"
+			on:click={() => window.open('/dcm/view?id=' + id, '_self')}
+		>
+			<span><Fa icon={faEye} /></span>
+			<span>View (new)</span>
+		</button>
 	</div>
 </div>

@@ -11,6 +11,8 @@ export interface EntityTemplateModel {
 	metadataInvalidSaveMode: boolean;
 	hasDatastructure: boolean;
 	datastructureList: number[];
+	hasExtension: boolean;
+	extensionList: extensionType[];
 	allowedFileTypes: string[];
 	disabledHooks: string[];
 	notificationGroups: number[];
@@ -26,3 +28,19 @@ export interface permissionsType {
 	viewEdit: number[];
 	view: number[];
 }
+
+export class extensionType {
+	templateId: number;
+	referenceType: string;
+	unique: boolean;
+
+	public constructor() {
+		this.templateId = -1;
+		this.referenceType = '';
+		this.unique = false;
+	}
+}
+
+
+
+

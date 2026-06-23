@@ -1,9 +1,5 @@
-﻿using BExIS.Modules.Dim.UI.Models.Api;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using BExIS.Dim.Helpers.Models;
 using System.Reflection;
-using System.Web;
 
 namespace BExIS.Modules.Dim.UI.Models.Download
 {

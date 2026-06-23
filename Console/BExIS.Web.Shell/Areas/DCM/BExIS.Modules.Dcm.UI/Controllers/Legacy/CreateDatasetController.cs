@@ -823,7 +823,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         xVersion,
                                         xpath,
                                         DefaultEntitiyReferenceType.MetadataLink.GetDisplayName(),
-                                        DateTime.Now
+                                        DateTime.Now,
+                                        "",
+                                        ""
                                     ));
                             }
                         }
