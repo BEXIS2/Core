@@ -77,7 +77,7 @@
 		model = null;
 		model = await getHookStart(start, id, version);
 		console.log('validation end', model);
-		//latestValidationDate.set(Date.now());
+		latestValidationDate.set(Date.now());
 	}
 </script>
 

@@ -59,12 +59,17 @@
 		$latestValidationDate,
 		$latestDataDate
 	];
+
+
 	$: if (mounted && storeTriggers.some((date) => date > 0)) {
 		debouncedReload();
 	}
 
 	// function to debounce reloads when multiple store values are updated in quick succession, to avoid multiple reloads and only reload once after all updates are done
 	function debouncedReload() {
+
+		console.log('Sumbit debouncedReload..');
+
 		// Clear any previous scheduled reload
 		clearTimeout(reloadTimeout);
 
@@ -77,6 +82,8 @@
 
 	onMount(async () => {
 		mounted = true;
+		console.log("Sumbit 🚀 ~ onMount ~ mounted:", mounted)
+		
 	});
 
 	// function to load the submit model from the server based on the hook start action and update the canSubmit state based on the content of the model

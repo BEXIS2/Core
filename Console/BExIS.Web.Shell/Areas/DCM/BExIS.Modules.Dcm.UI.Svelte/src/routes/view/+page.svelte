@@ -73,8 +73,6 @@
 
 		<Header	{id} {version} {title} labels = {model.labels}/>
 
-		<Authors	author={model.additionalInformations['author']} />	
-		
 		<div class="flex">
 				<div class="flex-grow card	p-5">
 						{model.description}
