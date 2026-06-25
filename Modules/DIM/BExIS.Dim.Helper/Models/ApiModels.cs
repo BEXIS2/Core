@@ -32,6 +32,8 @@ namespace BExIS.Dim.Helpers.Models
         public long Id { get; set; }
         public long Version { get; set; }
         public long VersionId { get; set; }
+
+        public double Tag { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public long DataStructureId { get; set; }

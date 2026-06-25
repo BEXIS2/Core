@@ -11,10 +11,13 @@
 	import { fade } from 'svelte/transition';
 	import Hooks from './Hooks.svelte';
 	import Links from './Links.svelte';
-	import Authors from './Authors.svelte';
-	import Versions from './Versions.svelte';
+
+	import Versions from './version/Versions.svelte';
 	import Keywords from './Keywords.svelte';
 	import Funding from './Funding.svelte';
+	import Tags from './version/Tags.svelte';
+	import Download from './Download.svelte';
+
 
 	let title = '';
 
@@ -23,6 +26,7 @@
 	let version: number = 0;
 	let model: ViewModel;
 
+	let isPartOfCollection: boolean = false;
 
 
 
@@ -57,8 +61,17 @@
 		console.log('model',model);
 		console.log('hooks', hooks);
 
+		// check if dataset is part of a collection
+		isPartOfCollectionFunc();
 
 	}
+
+	function isPartOfCollectionFunc() {
+		if(model.links.to.filter(link => link.referenceType === 'Collection').length > 0){
+			isPartOfCollection = true;
+		}
+	}
+
 
 </script>
 <Page title="Edit: ({id} | {title})" contentLayoutType={pageContentLayoutType.center} {links}>
@@ -71,33 +84,33 @@
 			</div>
 		{:then result}
 
-		<Header	{id} {version} {title} labels = {model.labels}/>
+		<Header	{id} {version} {title} labels = {model.labels} license = {model.additionalInformations['license']} {isPartOfCollection} hasEditRight={model.hasEditRight}/>
 
 		<div class="flex">
-				<div class="flex-grow card	p-5">
+				<div class="flex-grow card	p-5 w-3/4">
 						{model.description}
 				</div>
-				<div class="flex flex-col ml-5 px-5 w-auto gap-3">
-						<Versions/>
-						<Funding/>
-						<Keywords/>
+				<div class="flex flex-col ml-5 gap-3 w-1/4">
+						<Download {id} {version}
+						 versionId={model.versionId}
+							downloadAccess= {model.downloadAccess}
+							hasDatastructure= {model.dataStructureId	!== undefined && model.dataStructureId > 0}
+							hasData= {model.hasData}
+							isPublic= {model.isPublic}
+							data_aggrement = {model.settings.dataAggrement}
+							total = {model.count}
+						/> 
+						{#if model.settings.useTags}
+						 <Tags  {id} {version}  tag={model.tag}/>
+							{:else}
+							<Versions	{id} {version} />	
+						{/if}
+
+						<Funding f={model.additionalInformations['funder']}  />
+						<Keywords k={model.additionalInformations['keyword']} />
 				</div>
 		</div>
 
-		<div class="h3">Additional Information Overview</div>
-		<div class="flex-col w-1/2	 p-5 card">
-			
-		<div class="flex-col mb-2">
-		<div class="font-bold mr-2">License : {model.additionalInformations['license'] ? model.additionalInformations['license'] : 'n/a'} </div>
-
-
-			{#if model.additionalInformations}
-				{#each  Object.entries(model.additionalInformations)	as info}
-								<div class="font-bold mr-2">{info[0]}:{info[1]}</div>
-				{/each}
-				{/if}
-		</div>
-		</div>
 
 		<Links	links={model.links.to} />
 

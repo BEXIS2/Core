@@ -1,6 +1,7 @@
 ﻿using BExIS.Dim.Helpers.Models;
 using BExIS.Modules.Dim.UI.Models.Download;
 using BExIS.UI.Hooks;
+using BExIS.UI.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace BExIS.Modules.Dcm.UI.Models.View
         public bool RequestExist { get; set; }
         public bool RequestAble { get; set; }
         public bool HasRequestRight { get; set; }
+        public bool HasEditRight { get; set; }
 
 
         public Dictionary<string, string> Labels { get; set; }
@@ -27,8 +29,10 @@ namespace BExIS.Modules.Dcm.UI.Models.View
             Id = 0;
             Version = 0;
             VersionId = 0;
+            Tag = 0;
             Title = "";
             HasData = false;
+            HasEditRight = false;
             Labels = new Dictionary<string, string>();
             Settings = new ViewSettings();
         }
@@ -157,5 +161,10 @@ namespace BExIS.Modules.Dcm.UI.Models.View
             SystemDate = systemDate;
             Link = link;
         }
+    }
+
+    public class VersionListeItem : ListItem
+    {
+        public string Date { get; set; }
     }
 }

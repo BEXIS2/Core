@@ -1,4 +1,6 @@
+import type { listItemType } from "@bexis2/bexis2-core-ui";
 import type { HookModel } from "../edit/types";
+import type { date } from "vest/enforce/date";
 
 export interface ViewModel extends ApiDatasetModel {
     settings: ViewSettings;
@@ -75,4 +77,14 @@ export interface ReferenceElementModel {
     type: string;
     title: string;
     latestVersion: boolean;
+}
+
+export interface versionListItemType extends listItemType {
+	date: string;
+}
+
+export interface TagInfoViewModel {
+	version: number;
+	releaseNotes: string[];
+	releaseDate: Date;
 }

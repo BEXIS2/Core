@@ -1,4 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dim.Entities.Export;
 using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Helpers.BIOSCHEMA;
@@ -11,6 +12,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.Party;
+using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Helpers.View;
 using BExIS.Modules.Dcm.UI.Models.View;
@@ -29,12 +31,15 @@ using BExIS.Utils.Data.Upload;
 using DocumentFormat.OpenXml.Office2013.Excel;
 using Microsoft.AspNet.Identity;
 using NHibernate.Engine;
+using NHibernate.Mapping.ByCode.Impl;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.Routing;
 using System.Web.SessionState;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
@@ -187,7 +192,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         {
                             datasetVersion = datasetManager.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
                             var dataset = datasetVersion.Dataset;
-                            ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, version, dataset.MetadataStructure.Id, dataset.DataStructure.Id, dataset.EntityTemplate.Id);
+                            long datastructureId = dataset.DataStructure != null ? dataset.DataStructure.Id : -1;
+                            ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, version, dataset.MetadataStructure.Id, datastructureId, dataset.EntityTemplate.Id);
 
                             model = ViewModel.Map(datasetModel);
                         
@@ -207,10 +213,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             if (datasetVersion.Dataset.DataStructure != null)
                                 model.DataStructureId = datasetVersion.Dataset.DataStructure.Id;
 
-     
-                            // check if the user has download rights
-                            model.DownloadAccess = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Read).Result;
 
+                            // check if the user has download rights
+
+                            model.DownloadAccess = entityPermissionManager.HasEffectiveRightsAsync(BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext), typeof(Dataset), id, RightType.Read).Result;
+
+                            model.HasEditRight = entityPermissionManager.HasEffectiveRightsAsync(BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext), typeof(Dataset), id, RightType.Write).Result;
                             model.IsPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
                             // if the dataset is public, user or even no user has download rights
                             if (model.IsPublic) model.DownloadAccess = model.IsPublic;
@@ -282,7 +290,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         // load bioschema
-        public JsonResult GetBioSchema(long id, int version)
+        public JsonResult BioSchema(long id, int version)
         {
             string bioschema = getBioSchema(id, version);
             return Json(bioschema, JsonRequestBehavior.AllowGet);
@@ -302,7 +310,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [JsonNetFilter]
-        public JsonResult GetCitation(long id, int version)
+        public JsonResult Citation(long id, int version)
         {
             // default setup for citation model if something goes wrong
             CitaionModelJson model = new CitaionModelJson()
@@ -361,6 +369,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     if (citationSettings == null || !citationSettings.ShowCitation || concept == null || !MappingUtils.IsMapped(datasetVersion.Dataset.MetadataStructure.Id, LinkElementType.MetadataStructure, concept.Id, LinkElementType.MappingConcept, out errors))
                     {
+                        //get data not from a
+                        ApiDatasetHelper apiDatasetHelper = new ApiDatasetHelper();
+                        ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, version, dataset.MetadataStructure.Id, dataset.DataStructure?.Id ?? 0, dataset.EntityTemplate.Id);
+
+                        // authors
+                        if (datasetModel.AdditionalInformations.ContainsKey(Key.Author.ToString()))
+                        {
+                            model.Data.Authors = datasetModel.AdditionalInformations[Key.Author.ToString()].Split(',').ToList();
+                        }
+
+
                         return Json(model, JsonRequestBehavior.AllowGet);
                     }
 
@@ -384,15 +403,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         }
 
-        public PartialViewResult Tags(long id, int version)
+        #region version
+
+        [JsonNetFilter]
+        public JsonResult Tags(long id, int version)
         {
             if (id <= 0) throw new ArgumentException("id is not valid");
 
-            ViewData["Id"] = id;
             List<TagInfoViewModel> tags = new List<TagInfoViewModel>();
             bool hasEditRights = hasUserRights(id, RightType.Write);
 
-            if (version == 0) return PartialView("_tagsView", tags); // return empty list
+            if (version == 0) return Json(tags, JsonRequestBehavior.AllowGet); // return empty list
 
 
 
@@ -402,7 +423,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var versions = datasetmanager.GetDatasetVersions(id);
 
                 var currentVersion = datasetmanager.GetDatasetVersion(id, version);
-                ViewData["Tag"] = currentVersion.Tag?.Nr;
 
                 if (versions != null)
                 {
@@ -410,8 +430,188 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
-            return PartialView("_tagsView", tags); // Replace "_PartialViewName" with your actual name
+            return Json(tags, JsonRequestBehavior.AllowGet); // Replace "_PartialViewName" with your actual name
 
+        }
+
+        [JsonNetFilter]
+        public JsonResult Versions(long id)
+        {
+            using (DatasetManager datasetManager = new DatasetManager())
+            {
+
+                List<VersionListeItem> tmp = new List<VersionListeItem>();
+                List<DatasetVersion> datasetVersionsAllowed = new List<DatasetVersion>();
+                List<DatasetVersion> datasetVersions = datasetManager.GetDatasetVersions(id).OrderByDescending(d => d.Id).ToList();
+
+                SettingsHelper helper = new SettingsHelper();
+
+                EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+                bool hasEditPermission = false;
+
+                if (GetUsernameOrDefault() != "DEFAULT")
+                {
+                    hasEditPermission = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Write).Result;
+                }
+
+                // user has edit permission and can see all versions -> show full list
+                var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+                if (hasEditPermission || !Convert.ToBoolean(moduleSettings.GetValueByKey("reduce_versions_select_logged_in")))
+                {
+                    datasetVersionsAllowed = datasetVersions;
+                }
+                // user is not logged in or has no edit permission -> show reduced list
+                else
+                {
+                    datasetVersionsAllowed = datasetManager.GetDatasetVersionsAllowed(id, true, false, datasetVersions).OrderByDescending(d => d.Id).ToList();
+                }
+
+                // use reduced/ or full list, but allways create version number from full list.
+                datasetVersionsAllowed.ForEach(d => tmp.Add(
+                    new VersionListeItem()
+                    {
+                        Description = CreateVersionNumber(d, datasetVersions) + " " + getVersionInfo(d),
+                        Id = (datasetVersions.Count - datasetVersions.IndexOf(d)),
+                        Text = d.Title,
+                        Date = d.Timestamp.ToString("dd.MM.yyyy")
+                    }
+                    ));
+
+                return Json(tmp, JsonRequestBehavior.AllowGet);
+            }
+
+        }
+
+        private static string CreateVersionNumber(DatasetVersion d, List<DatasetVersion> dsvs)
+        {
+            if (d.VersionType != null) // add version name, if version type is given and show version nummer in ()
+            {
+                return d.VersionName.ToString() + " (" + (dsvs.Count - dsvs.IndexOf(d)).ToString() + ")";
+            }
+            else
+            {
+                return (dsvs.Count - dsvs.IndexOf(d)).ToString();
+            }
+        }
+
+        private string createEditedBy(string performer)
+        {
+            using (var partyManager = new PartyManager())
+            {
+                var user_performer = _userManager.FindByNameAsync(performer);
+
+                // Replace account name by party name if exists
+                if (user_performer.Result != null)
+                {
+                    Party party = partyManager.GetPartyByUser(user_performer.Result.Id);
+
+                    if (party != null)
+                    {
+                        performer = party.Name;
+                    }
+                }
+
+                // check if a user is logged in, if not do not show performer
+                var user = GetUsernameOrDefault();
+                if (user != "DEFAULT")
+                {
+                    return "by " + performer + ", ";
+                }
+                else
+                {
+                    return "";
+                }
+            }
+        }
+
+        private string getVersionInfo(DatasetVersion d)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            // modification, Performer and Comment exists (as indication for new version type tracking)
+            if (d.ModificationInfo != null &&
+                !string.IsNullOrEmpty(d.ModificationInfo.Performer) &&
+                !string.IsNullOrEmpty(d.ModificationInfo.Comment))
+            {
+                // Metadata cration & edit
+                if (d.ModificationInfo.Comment.Equals("Metadata") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
+                {
+                    sb.Append(String.Format("Metadata creation ({0}{1})", createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
+                }
+                else if (d.ModificationInfo.Comment.Equals("Metadata") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Edit)
+                {
+                    sb.Append(String.Format("Metadata edited ({0}{1})", createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
+                }
+
+                //unstructured file upload & delete
+                else if (d.ModificationInfo.Comment.Equals("File") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
+                {
+                    sb.Append(String.Format("File uploaded: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
+                }
+                else if (d.ModificationInfo.Comment.Equals("File") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Delete)
+                {
+                    sb.Append(String.Format("File deleted: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
+                }
+
+                // structured data import & update & delete
+                else if (d.ModificationInfo.Comment.Equals("Data") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
+                {
+                    sb.Append(String.Format("Data imported: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
+                }
+                else if (d.ModificationInfo.Comment.Equals("Data") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Edit)
+                {
+                    sb.Append(String.Format("Data added: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
+                }
+                else if (d.ModificationInfo.Comment.Equals("Data") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Delete)
+                {
+                    sb.Append(String.Format("Data deleted ({0}{1})", createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
+                }
+
+                // attachment
+                else if (d.ModificationInfo.Comment.Equals("Attachment") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
+                {
+                    sb.Append(String.Format("Attachment uploaded: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
+                }
+                else if (d.ModificationInfo.Comment.Equals("Attachment") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Delete)
+                {
+                    sb.Append(String.Format("Attachment deleted: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
+                }
+                else
+                {
+                    sb.Append(d.ModificationInfo.Comment);
+                    sb.Append(" - ");
+                    sb.Append(d.ModificationInfo.ActionType);
+                    sb.Append(" - ");
+                    sb.Append(createEditedBy(d.ModificationInfo.Performer));
+
+                    // both exits - needs separator
+                    if (d.ModificationInfo != null &&
+                        string.IsNullOrEmpty(d.ModificationInfo.Performer) &&
+                        !string.IsNullOrEmpty(d.ModificationInfo.Comment) &&
+                        !string.IsNullOrEmpty(d.ChangeDescription))
+                    {
+                        sb.Append(" : ");
+                    }
+
+                    //change description is not null or empty
+                    if (!string.IsNullOrEmpty(d.ChangeDescription))
+                    {
+                        sb.Append(Truncate(d.ChangeDescription, 30));
+                    }
+                }
+            }
+            else
+            {
+                sb.Append(String.Format("{0} ({1})", Truncate(d.ChangeDescription, 30), d.Timestamp.ToString("dd.MM.yyyy")));
+            }
+
+            return sb.ToString();
+        }
+
+        public string Truncate(string value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value)) return value;
+            return value.Length <= maxLength ? value : value.Substring(0, maxLength) + "...";
         }
 
         private async Task<long> getVersionId(long datasetId, int versionNr = 0, string versionName = "", double tagNr = 0)
@@ -425,7 +625,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         }
 
-        // requests
+
+        #endregion
+
+        #region request
         private bool hasOpenRequest(long datasetId)
         {
             using (RequestManager requestManager = new RequestManager())
@@ -505,6 +708,30 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return false;
         }
+
+        #endregion
+
+        #region download
+
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
+        public ActionResult DownloadZip(long id, string format, long version = -1, bool withFilter = false, bool withUnits = false)
+        {
+            if (this.IsAccessible("DIM", "Export", "GenerateZip"))
+            {
+                var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+                bool useTags = (Boolean)moduleSettings.GetValueByKey("use_tags");
+                bool useMinorTag = (Boolean)moduleSettings.GetValueByKey("use_minor");
+
+                var actionresult = this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", version }, { "format", format }, { "withFilter", withFilter }, { "withUnits", withUnits }, { "useTags", useTags }, { "useMinor", useMinorTag } });
+
+                return actionresult;
+            }
+
+            return Json(false);
+        }
+
+        #endregion
+
 
         #endregion about view
 

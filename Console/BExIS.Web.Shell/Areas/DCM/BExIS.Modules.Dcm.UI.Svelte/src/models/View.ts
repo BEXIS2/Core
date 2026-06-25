@@ -10,6 +10,7 @@ export interface ViewModel extends ApiDatasetModel {
 				requestExist: boolean;
 				requestAble: boolean;
 				hasRequestRight: boolean;
+				hasEditRight: boolean;
 				labels: { [key: string]: string; };
 }
 
@@ -24,6 +25,7 @@ export interface ApiDatasetModel {
 				id: number;
 				version: number;
 				versionId: number;
+				tag:number;
 				title: string;
 				description: string;
 				dataStructureId: number;

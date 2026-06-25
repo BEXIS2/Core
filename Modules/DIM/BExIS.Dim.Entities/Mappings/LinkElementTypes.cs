@@ -11,6 +11,7 @@
         Title = 4,
         Email = 5,
         DOI = 6,
+        Funder = 7,
 
         //Automatic System Keys starts at 100
         Id = 100,

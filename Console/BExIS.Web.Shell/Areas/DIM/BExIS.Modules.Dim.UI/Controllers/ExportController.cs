@@ -238,7 +238,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
 
                     // check the data sturcture type ...
-                    if (format != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure && dm.GetDataTuplesCount(datasetVersion.Id) > 0)
+                    if (!string.IsNullOrEmpty(format) && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure && dm.GetDataTuplesCount(datasetVersion.Id) > 0)
                     {
                         OutputDataManager odm = new OutputDataManager();
 
@@ -455,6 +455,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 publicationManager.Dispose();
             }
         }
+
+
 
         private string getCDTypeName(string mimeType)
         {
