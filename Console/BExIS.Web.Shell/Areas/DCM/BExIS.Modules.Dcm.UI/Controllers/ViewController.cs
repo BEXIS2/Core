@@ -724,6 +724,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 var actionresult = this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", version }, { "format", format }, { "withFilter", withFilter }, { "withUnits", withUnits }, { "useTags", useTags }, { "useMinor", useMinorTag } });
 
+                Response.AppendHeader("Access-Control-Expose-Headers", "Content-Disposition");
+
                 return actionresult;
             }
 

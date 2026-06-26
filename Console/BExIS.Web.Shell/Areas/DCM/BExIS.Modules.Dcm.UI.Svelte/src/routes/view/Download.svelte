@@ -63,8 +63,23 @@ async function downloadDatasetWithFormatFn(event)
     return;
   }
 
-  const res = await downloadZip(id, selectedFormat, versionId, withUnits, withFilters);
-  sendDataTo(res, `dataset_test_name`, "application/zip");
+  const res = await downloadZip(id, format, versionId, withUnits, withFilters);
+  
+  if(res)
+  {
+    const file = res.data;
+
+    // get name
+    const cd = res.headers['content-disposition'];
+    let fileName = 'download';
+    
+    if (cd) {
+      const match = cd.match(/filename\*?=(?:UTF-8'')?"?([^\";]+)"?/i);
+      if (match?.[1]) fileName = decodeURIComponent(match[1]);
+    }
+
+    sendDataTo(file, fileName, "application/zip");
+  }
  
 }
 
