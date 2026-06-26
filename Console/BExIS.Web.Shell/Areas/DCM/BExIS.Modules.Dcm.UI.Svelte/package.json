@@ -27,6 +27,7 @@
 		"@bexis2/bexis2-core-ui": "0.4.88",
 		"@bexis2/bexis2-rpm-ui": "0.4.0",
 		"@floating-ui/dom": "1.7.6",
+		"@fortawesome/free-brands-svg-icons": "^7.3.0",
 		"@ts4nfdi/terminology-service-suite-js": "^6.12.4",
 		"@xyflow/svelte": "^0.1.39",
 		"ajv": "^8.20.0",

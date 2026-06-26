@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
 	import { getTags } from "../services";
 	import type { TagInfoViewModel } from "../types";
-
+import {fade} from "svelte/transition";
 
 export let id: number;
 export let version: number;
@@ -45,7 +45,7 @@ onMount(async () => {
    <button class="chip p-0" on:click={() => showTags = !showTags}>Show other tags</button>
  </div>
 {#if showTags}
- 	<div class="flex flex-col gap-2">
+ 	<div class="flex flex-col gap-2" transition:fade>
  		{#each tags.filter(v => v.version !== currentTag?.version) as v, i}
  			<div class="flex justify-between">
  				<div title={v.releaseNotes.join(', ')}>

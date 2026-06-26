@@ -2,6 +2,7 @@
  import Fa from "svelte-fa";
 	import { faPen } from "@fortawesome/free-solid-svg-icons";
 import Citation from "./Citation.svelte";
+	import License from "./License.svelte";
 
 	export let id;
 	export let version;
@@ -43,7 +44,7 @@ import Citation from "./Citation.svelte";
 		{/if}
 
 		{#if license}
-			<span class="badge variant-filled-secondary">{license}</span>
+			<License {license} />
 		{/if}
 	</div>
 </div>

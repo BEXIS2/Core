@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import { getVersions } from "../services";
-	import type { versionListItemType } from "../types";
 
+	import type { versionListItemType } from "../types";
+import {fade} from "svelte/transition";
 
 export let id: number;
 export let version: number;
@@ -46,7 +47,7 @@ onMount(async () => {
  </div>
 
 {#if showVersions}
- 	<div class="flex flex-col gap-2">
+ 	<div class="flex flex-col gap-2" transition:fade >
  		{#each versions.filter(v => v.id !== currentVersion?.id) as v, i}
  			<div class="flex justify-between">
  				<div title={v.description}>

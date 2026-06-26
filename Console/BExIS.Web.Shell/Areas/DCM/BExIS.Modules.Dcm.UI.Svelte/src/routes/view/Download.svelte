@@ -3,7 +3,8 @@
 	import { MultiSelect } from "@bexis2/bexis2-core-ui";
 	import { downloadZip } from "./services";
 	import Fa from "svelte-fa";
- import { faSave } from "@fortawesome/free-solid-svg-icons";
+ import { faDownload, faSave } from "@fortawesome/free-solid-svg-icons";
+	import InputEntry from "$lib/components/entityTemplate/InputEntry.svelte";
 
 
  export let id;
@@ -19,7 +20,6 @@
  export let total: number; // number of rows in dataset
 
  let withUnits = false;
- let withFilters = false;
  let exceptAgreement = false;
  let excelMaxRows = 1048576;
  let selectedFormat = "";
@@ -56,14 +56,14 @@ async function downloadDatasetFn()
 
 async function downloadDatasetWithFormatFn(event)
 {
-  console.log('downloadDatasetWithFormatFn', event.detail);
-  const format = event.detail.value;
+  alert(selectedFormat)
+  const format = selectedFormat;
   if(format === 'application/xlsx' && total > excelMaxRows){
     alert(`The dataset has ${total} rows, which exceeds the maximum number of rows for Excel (${excelMaxRows}). Please choose another format.`);
     return;
   }
 
-  const res = await downloadZip(id, format, versionId, withUnits, withFilters);
+  const res = await downloadZip(id, format, versionId, withUnits);
   
   if(res)
   {
@@ -132,29 +132,28 @@ function sendDataTo(data, name, type)
  {/if}
 
  {#if hasDatastructure} 
-  <div class="padding-top-5 position-releative ">
-    <span>
-        <input type="checkbox" id="withFilter" bind:checked="{withFilters}" />
-        use filter
-    </span>
+ <div class="">
+ <div class="flex ">
+  <h4 class="h4 grow">Download</h4> 
+  
+</div>
 
-    <span>
-        <input class="form-check-input" type="checkbox" id="withUnits" bind:checked="{withUnits}" />
-        add units
-    </span>
+  <div class="input-group input-group-divider grid-cols-[1fr_auto]">
+    <select class="select" bind:value={selectedFormat} >
+      {#each downloadFormats as d}
+        <option value={d.value}>{d.label}</option>
+      {/each}
+    </select>
+    <button class="variant-filled-secondary" on:click={downloadDatasetWithFormatFn}><Fa icon={faDownload} /></button>
   </div>
+</div>
+<div class="padding-top-5 position-releative ">
+    <span>
+        <input class="checkbox"  type="checkbox" id="withUnits" bind:checked="{withUnits}" />
+        <span>with units</span>
+    </span>
+</div>
 
-  <MultiSelect
-    id="download-format"
-    title="Download dataset with"
-    source={downloadFormats}
-    target={selectedFormat}
-    itemId="value"
-    itemLabel="label"
-    isMulti={false}
-    clearable={false}
-    on:change={downloadDatasetWithFormatFn}
-   />
 
   {:else} <!-- // download package with files -->
 
