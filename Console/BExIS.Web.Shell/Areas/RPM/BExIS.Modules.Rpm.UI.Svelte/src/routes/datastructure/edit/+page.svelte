@@ -137,7 +137,7 @@
 	note="This page allows you to create and edit data structures."
 	contentLayoutType={pageContentLayoutType.full}
 	help={true}
-	footer={false}
+	footer={true}
 	{links}
 >
 	{#await start()}
