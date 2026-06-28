@@ -22,7 +22,9 @@
 		faAnglesDown,
 		faAnglesUp,
 		faChevronUp,
-		faChevronDown
+		faChevronDown,
+		faArrowUp
+
 	} from '@fortawesome/free-solid-svg-icons';
 
 	// services
@@ -65,20 +67,20 @@
 
 	onMount(async () => {
 		// Fire all requests simultaneously
-const [datatypes, units, variableTemplates, meanings, constraints] = await Promise.all([
-    getDataTypes(),
-    getUnits(),
-    getVariableTemplates(),
-    getMeanings(),
-    getConstraints()
-]);
+		const [datatypes, units, variableTemplates, meanings, constraints] = await Promise.all([
+			getDataTypes(),
+			getUnits(),
+			getVariableTemplates(),
+			getMeanings(),
+			getConstraints()
+		]);
 
-// Once they ALL resolve, update your stores
-dataTypeStore.set(datatypes);
-unitStore.set(units);
-templateStore.set(variableTemplates);
-meaningsStore.set(meanings);
-constraintsStore.set(constraints);
+		// Once they ALL resolve, update your stores
+		dataTypeStore.set(datatypes);
+		unitStore.set(units);
+		templateStore.set(variableTemplates);
+		meaningsStore.set(meanings);
+		constraintsStore.set(constraints);
 
 		fillVariableValdationStates(variables);
 
@@ -261,7 +263,7 @@ constraintsStore.set(constraints);
 	<div><DwcRequirements bind:variables /></div>
 
 	{#if !valid}
-		<div class="pr-32 w-auto mt-4 mb-2 p-2 rounded-md border border-gray-200 bg-gray-50">
+		<div class="pr-32 w-auto mb-2 p-1 rounded-md border border-gray-200 bg-gray-50">
 			<span class="">Variables with errors:</span>
 			{#each variableValidationStates as v, i}
 				{#if v == false && variables[i] != undefined}
@@ -277,7 +279,7 @@ constraintsStore.set(constraints);
 		</div>
 	{/if}
 	{#if !isUnique}
-		<div class="pr-32 w-auto mt-4 mb-2 p-2 rounded-md border border-gray-200 bg-gray-50">
+		<div class="pr-32 w-auto mb-2 p-1 rounded-md border border-gray-200 bg-gray-50">
 			<span class="">Variable names must be unique. Non-unique names:</span>
 			{#each uniqueNames as name}
 				<div class="chip variant-soft-error m-1">
@@ -287,27 +289,35 @@ constraintsStore.set(constraints);
 		</div>
 	{/if}
 {/if}
-<div class="p-2">
+<div class="">
 	{#if ready}
-		<div class="flex gap-2 items-end">
-			<button
-				id="variables-expander"
-				class="btn variant-filled-secondary flex gap-1 items-center"
-				title={expandAll ? 'collapse all' : 'expand all'}
-				on:mouseover={() => helpStore.show('variables-expander')}
-				on:focus={() => helpStore.show('variables-expander')}
-				on:click={() => (expandAll = !expandAll)}
-			>
-				{#if expandAll}
-					<Fa icon={faChevronUp} />
-				{:else}
-					<Fa icon={faChevronDown} />
-				{/if}
-				<span>{expandAll ? 'Collapse All' : 'Expand All'}</span>
-			</button>
+		<div class="flex gap-2 justify-end">
+			<a href="#top" class="badge text-sm">
+				<Fa icon={faArrowUp} />&nbsp;Scroll to top
+			</a>
+			{#if expandAll}
+				<button
+					class="badge text-sm"
+					title={expandAll ? 'collapse all' : 'expand all'}
+					on:click={() => (expandAll = !expandAll)}
+				>
+					<Fa icon={faChevronDown} />&nbsp;Collapse all variables
+				</button>
+			{:else}
+				<!--Expand all sections button-->
+
+				<button
+					class="badge text-sm"
+					title={expandAll ? 'collapse all' : 'expand all'}
+					on:click={() => (expandAll = !expandAll)}
+				>
+					<Fa icon={faChevronUp} />&nbsp;Expand all variables
+				</button>
+			{/if}
 		</div>
 	{/if}
-	<div class="flex-col space-y-2 mt-1">
+	<div class="flex flex-col space-y-2 mt-1 scrollable min-h-0 max-h-[70vh]">
+	<div id="top"></div>
 		{#if variables && missingValues && ready}
 			<!-- else content here -->
 			{#each variables as variable, i (i)}
@@ -323,33 +333,12 @@ constraintsStore.set(constraints);
 					expand={expandAll}
 					blockDataRelevant={dataExist}
 				>
-					<svelte:fragment slot="options">
-						{#if variables.length > 0 && i < variables.length - 1}
-							<button
-								id="copy-next-{i}"
-								type="button"
-								title="copy content (not name) to the next variable "
-								class="chip variant-filled-warning"
-								on:mouseover={() => helpStore.show('copy-next')}
-								on:focus={() => helpStore.show('copy-next')}
-								on:click={() => copyNext(i)}><Fa icon={faShare} /></button
-							>
-							<button
-								id="copy-all-{i}"
-								type="button"
-								title="copy content (not name) to all after this"
-								class="chip variant-filled-warning"
-								on:mouseover={() => helpStore.show('copy-all')}
-								on:click={() => copyAll(i)}><Fa icon={faShareFromSquare} /></button
-							>
-						{/if}
-					</svelte:fragment>
 					<svelte:fragment slot="list-options">
 						{#if !dataExist}
 							<button
 								id="delete-{i}"
-								title="delete variable"
-								class="chip variant-filled-error"
+								title="Delete variable"
+								class="chip variant-filled w-9 h-6 inline-flex items-center justify-center px-0"
 								on:mouseover={() => helpStore.show('delete-var')}
 								on:focus={() => helpStore.show('delete-var')}
 								on:click={() => deleteFn(i)}><Fa icon={faTrash}></Fa></button
@@ -359,7 +348,7 @@ constraintsStore.set(constraints);
 								<button
 									id="up-{i}"
 									title="move up"
-									class="chip variant-filled-surface"
+									class="chip variant-filled-surface w-9 h-6 inline-flex items-center justify-center px-0"
 									on:mouseover={() => helpStore.show('up-var')}
 									on:focus={() => helpStore.show('up-var')}
 									on:click={() => upFn(i)}><Fa icon={faAngleUp}></Fa></button
@@ -368,7 +357,7 @@ constraintsStore.set(constraints);
 								<button
 									id="up-{i}"
 									title="move up"
-									class="chip variant-filled-surface disabled"
+									class="chip variant-filled-surface w-9 h-6 inline-flex items-center justify-center px-0 disabled"
 									disabled
 									on:mouseover={() => helpStore.show('up-var')}
 									on:focus={() => helpStore.show('up-var')}
@@ -379,7 +368,7 @@ constraintsStore.set(constraints);
 							<button
 								id="copy-{i}"
 								title="copy"
-								class="chip variant-filled-primary"
+								class="chip variant-filled-primary w-9 h-6 inline-flex items-center justify-center px-0"
 								on:mouseover={() => helpStore.show('copy-var')}
 								on:focus={() => helpStore.show('copy-var')}
 								on:click={() => copyFn(i)}><Fa icon={faCopy}></Fa></button
@@ -389,22 +378,36 @@ constraintsStore.set(constraints);
 								<button
 									id="down-{i}"
 									title="move down"
-									class="chip variant-filled-surface"
-									on:mouseover={() => helpStore.show('down-var')}
-									on:focus={() => helpStore.show('down-var')}
+									class="chip variant-filled-surface w-9 h-6 inline-flex items-center justify-center px-0"
 									on:click={() => downFn(i)}><Fa icon={faAngleDown}></Fa></button
 								>
 							{:else}
 								<button
 									id="down-{i}"
 									title="move down"
-									class="chip variant-filled-surface"
+									class="chip variant-filled-surface w-9 h-6 inline-flex items-center justify-center px-0 disabled"
 									disabled
-									on:mouseover={() => helpStore.show('down-var')}
-									on:focus={() => helpStore.show('down-var')}
 									on:click={() => downFn(i)}><Fa icon={faAngleDown}></Fa></button
 								>
 							{/if}
+						{/if}
+					</svelte:fragment>
+					<svelte:fragment slot="options">
+						{#if variables.length > 0 && i < variables.length - 1}
+							<button
+								id="copy-next-{i}"
+								type="button"
+								title="copy content (not name) to the next variable "
+								class="chip variant-filled-warning w-9 h-6 inline-flex items-center justify-center px-0"
+								on:click={() => copyNext(i)}><Fa icon={faShare} /></button
+							>
+							<button
+								id="copy-all-{i}"
+								type="button"
+								title="copy content (not name) to all after this"
+								class="chip variant-filled-warning w-9 h-6 inline-flex items-center justify-center px-0"
+								on:click={() => copyAll(i)}><Fa icon={faShareFromSquare} /></button
+							>
 						{/if}
 					</svelte:fragment>
 				</Variable>
@@ -426,3 +429,11 @@ constraintsStore.set(constraints);
 </div>
 
 <Modal />
+
+<style>
+	.scrollable {
+		overflow-y: auto;
+		scrollbar-width: thin; /* Makes scrollbar smaller in Firefox */
+		scrollbar-color: rgba(0, 0, 0, 0.3) transparent; /* Colors scrollbar */
+	}
+</style>

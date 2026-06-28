@@ -102,7 +102,7 @@
 					class="btn variant-filled-warning"
 					on:mouseover={() => helpStore.show('back')}
 					on:focus={() => helpStore.show('back')}
-					on:click={() => back()}><Fa icon={faArrowLeft} /></button
+					on:click={() => back()}><Fa icon={faArrowLeft} /><span class="ml-2">Back</span></button
 				>
 			{/if}
 		</div>
@@ -111,22 +111,22 @@
 			<button
 				id="cancel"
 				title="cancel"
-				class="btn variant-filled-warning text-xl"
+				class="btn variant-filled-warning"
 				on:mouseover={() => helpStore.show('cancel')}
 				on:focus={() => helpStore.show('cancel')}
-				on:click={() => cancelFn()}><Fa icon={faXmark} /></button
+				on:click={() => cancelFn()}><Fa icon={faXmark} /><span class="ml-2">Cancel</span></button
 			>
 			<button
 				id="save"
 				title="save"
-				class="btn variant-filled-primary text-xl"
+				class="btn variant-filled-primary"
 				on:mouseover={() => helpStore.show('save')}
 				on:focus={() => helpStore.show('save')}
 				on:click={onSaveHandler}
 				on:keypress={onSaveHandler}
 				disabled={!areVariablesValid ||
 					!areAttributesValid ||
-					!((enforcePrimaryKey && isPKSet) || !enforcePrimaryKey)}><Fa icon={faSave} /></button
+					!((enforcePrimaryKey && isPKSet) || !enforcePrimaryKey)}><Fa icon={faSave} /><span class="ml-2">Save</span></button
 			>
 
 		</div>

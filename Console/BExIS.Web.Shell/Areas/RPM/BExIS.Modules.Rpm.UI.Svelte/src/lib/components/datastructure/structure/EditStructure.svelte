@@ -111,10 +111,10 @@
 </script>
 
 <div>
-	<div transition:fade class="flex px-2">
+	<div transition:fade class="flex px-1">
 		<div class="grow">
 			<button title="back" class="btn variant-filled-warning" on:click={() => back()}
-				><Fa icon={faArrowLeft} /></button
+				><Fa icon={faArrowLeft} /><span class="pl-1">Back</span></button
 			>
 		</div>
 		<div class="flex-none text-end">
@@ -122,7 +122,7 @@
 				<button
 					id="check"
 					title="Check changed primary key against datasets that belong to the data structure."
-					class="btn variant-filled-error text-xl"
+					class="btn variant-filled-error"
 					on:mouseover={() => helpStore.show('check')}
 					on:focus={() => helpStore.show('check')}
 					on:click={onCheckPKHandler}
@@ -131,7 +131,7 @@
 			{/if}
 			<button
 				title="save"
-				class="btn variant-filled-primary text-xl"
+				class="btn variant-filled-primary"
 				on:click={onSaveHandler}
 				on:keypress={onSaveHandler}
 				disabled={!areVariablesValid ||
