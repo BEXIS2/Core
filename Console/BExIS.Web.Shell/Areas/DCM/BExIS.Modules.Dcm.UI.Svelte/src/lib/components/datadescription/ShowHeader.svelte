@@ -99,7 +99,7 @@
 			{#if hasData === false}
 				<button
 					title="Remove data structure"
-					class="chip variant-filled-error"
+					class="chip variant-filled"
 					on:click={() => modalStore.trigger(modal)}><Fa icon={faTrash} /><span class="pl-1">Remove</span></button
 				>
 			{/if}

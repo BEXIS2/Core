@@ -94,33 +94,35 @@
 			<span class="text-success-500 px-1"><Fa icon={faCheck} /></span>
 		{/if}
 	</div>
-	<div class="flex space-x-2">
-		<ol class="breadcrumb grid grid-flow-col auto-cols-fr gap-2 items-center">
-			{#each checks as check, i}
-				<li class="crumb">
-					<button class="btn variant-ghost-{check.style} p-2 flex justify-center space-x-2">
-						<span>{checkDisplayName[check.name]}</span>
-						<span class="pt-1">
-							{#if check.style == 'error'}
-								<Fa icon={faXmark} />
-							{/if}
-							{#if check.style == 'success'}
-								<Fa icon={faCheck} />
-							{/if}
-							{#if check.style == 'surface'}
-								<Fa icon={faBan} />
-							{/if}
-							{#if check.style == 'warning'}
-								<Fa icon={faXmark} />
-							{/if}
-						</span>
-					</button>
-				</li>
-				{#if i < checks.length - 1}
-					<li class="crumb-separator" aria-hidden>&rsaquo;</li>
-				{/if}
-			{/each}
-		</ol>
+	<div class="">
+		<ol class="flex flex-row items-center gap-1 w-full max-w-full overflow-hidden">
+    {#each checks as check, i}
+        <li class="crumb flex-1 min-w-0 flex items-center">
+            <button class="btn variant-ghost-{check.style} py-2 px-1 w-full max-w-[11rem] flex justify-center items-center space-x-1 sm:space-x-2"
+				title="{checkDisplayName[check.name]}: {check.errors.length} errors, {check.warnings.length} warnings">
+                <span class="truncate text-xs sm:text-sm">{checkDisplayName[check.name]}</span>
+                <span class="inline-flex items-center flex-shrink-0">
+                    {#if check.style == 'error'}
+                        <Fa icon={faXmark} />
+                    {/if}
+                    {#if check.style == 'success'}
+                        <Fa icon={faCheck} />
+                    {/if}
+                    {#if check.style == 'surface'}
+                        <Fa icon={faBan} />
+                    {/if}
+                    {#if check.style == 'warning'}
+                        <Fa icon={faXmark} />
+                    {/if}
+                </span>
+            </button>
+        </li>
+        
+        {#if i < checks.length - 1}
+            <li class="crumb-separator flex items-center flex-shrink-0" aria-hidden>&rsaquo;</li>
+        {/if}
+    {/each}
+</ol>
 	</div>
 
 	{#if selected}
