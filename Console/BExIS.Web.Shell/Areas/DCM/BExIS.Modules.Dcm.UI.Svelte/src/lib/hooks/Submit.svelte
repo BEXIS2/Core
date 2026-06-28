@@ -208,9 +208,9 @@
 				submitText.includes('Update Description') ||
 				submitText.includes('Delete File(s)')
 			) {
-				submitText += ' and Start import/update of tabular data';
+				submitText += ' and Start add/update rows of tabular data';
 			} else {
-				submitText = 'Start adding/update of tabular data';
+				submitText = 'Start add/update rows of tabular data';
 			}
 			((confirmText =
 				'Editing will be disabled until the import is complete. If you are importing a large amount of tabular data it may take a while. You will be notified by email when it is complete. <br><br> Once the import is complete, please check the imported data. '),

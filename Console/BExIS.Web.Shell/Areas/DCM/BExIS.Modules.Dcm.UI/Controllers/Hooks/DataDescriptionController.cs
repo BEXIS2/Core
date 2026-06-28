@@ -304,7 +304,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 // if data exist do not reset the structure
                 if (datasetManager.RowAny(dataset.Id))
-                    throw new Exception("can not change the structure of this dataset, because data allready exist.");
+                    throw new Exception("Deleting the data structure of this dataset is not possible, because data already exist.");
 
                 dataset.DataStructure = null;
                 datasetManager.UpdateDataset(dataset);
