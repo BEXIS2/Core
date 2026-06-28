@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
@@ -159,31 +160,48 @@ namespace BExIS.UI.Hooks
 
         public bool SaveCache<T>(T _cache, string _entity, string _place, HookMode _mode, long id)
         {
-            //check incoming values
+            // check incoming values
             if (_cache == null) throw new ArgumentNullException(nameof(_cache));
             if (string.IsNullOrEmpty(_entity)) throw new ArgumentNullException(nameof(_entity));
             if (string.IsNullOrEmpty(_place)) throw new ArgumentNullException(nameof(_place));
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
 
-            // load json if exist
-            // generate filename based on mode,entity and place
-            string filename = _mode.ToString().ToLower() + _entity.ToLower() + _place.ToLower() + "cache.json";
-
+            // generate filename based on mode, entity and place
+            string filename = $"{_mode.ToString().ToLower()}{_entity.ToLower()}{_place.ToLower()}cache.json";
             string directory = Path.Combine(AppConfiguration.DataPath, _entity + "s", id.ToString());
-            // combine datapath + path + filename
             string filepath = Path.Combine(directory, filename);
 
-            if (File.Exists(filepath))
+            // Create directory if it doesn't exist 
+            if (!Directory.Exists(directory))
             {
-                FileHelper.WaitForFile(filepath); // wait if the file is still open
-                File.Delete(filepath); // check if file exist, delete maybe? }
+                Directory.CreateDirectory(directory);
             }
 
-            if (!Directory.Exists(directory)) Directory.CreateDirectory(directory); // create directory if not exist
+            // Serialize before entering file I/O to minimize time holding potential handles
+            string jsonContent = JsonConvert.SerializeObject(_cache);
 
-            File.WriteAllText(filepath, JsonConvert.SerializeObject(_cache));
+            // Retry loop to handle transient OS locks cleanly
+            const int maxRetries = 5;
+            const int delayMs = 100;
 
-            return true;
+            for (int i = 0; i < maxRetries; i++)
+            {
+                try
+                {
+                    // WriteAllText handles creating OR overwriting automatically.
+                    // No need to run separate Exist -> Delete passes.
+                    File.WriteAllText(filepath, jsonContent);
+                    return true;
+                }
+                catch (IOException ex) when (i < maxRetries - 1)
+                {
+                    // This catches "File is being used by another process" exceptions (HRESULT 0x80070020)
+                    // Wait briefly and try again
+                    Thread.Sleep(delayMs);
+                }
+            }
+
+            return false;
         }
 
         #endregion cache
