@@ -26,7 +26,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@bexis2/bexis2-core-ui": "0.4.88",
+		"@bexis2/bexis2-core-ui": "0.4.89",
 		"@floating-ui/dom": "1.7.6",
 		"svelte-adapter-github": "1.0.0-next.0",
 		"svelte-fa": "4.0.4",

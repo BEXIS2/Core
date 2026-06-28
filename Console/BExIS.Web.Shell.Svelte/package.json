@@ -30,7 +30,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@bexis2/bexis2-core-ui": "0.4.88",
+		"@bexis2/bexis2-core-ui": "0.4.89",
 		"buffer": "6.0.3",
 		"gray-matter": "4.0.3",
 		"marked": "^15.0.12",

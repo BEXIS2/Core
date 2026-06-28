@@ -108,8 +108,8 @@ importers:
   Console/BExIS.Web.Shell.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.88
-        version: 0.4.88(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.89
+        version: 0.4.89(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       buffer:
         specifier: 6.0.3
         version: 6.0.3
@@ -148,8 +148,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/DCM/BExIS.Modules.Dcm.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.88
-        version: 0.4.88(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.89
+        version: 0.4.89(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@bexis2/bexis2-rpm-ui':
         specifier: 0.4.0
         version: 0.4.0(svelte@4.2.20)(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
@@ -193,8 +193,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/DDM/BExIS.Modules.Ddm.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.88
-        version: 0.4.88(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.89
+        version: 0.4.89(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -217,8 +217,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/DIM/BExIS.Modules.Dim.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.88
-        version: 0.4.88(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.89
+        version: 0.4.89(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -241,8 +241,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/PUM/BExIS.Modules.Pum.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.88
-        version: 0.4.88(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.89
+        version: 0.4.89(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -266,8 +266,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/RPM/BExIS.Modules.Rpm.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.88
-        version: 0.4.88(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.89
+        version: 0.4.89(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -281,8 +281,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/SAM/BExIS.Modules.Sam.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.88
-        version: 0.4.88(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.89
+        version: 0.4.89(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -332,6 +332,9 @@ packages:
 
   '@bexis2/bexis2-core-ui@0.4.88':
     resolution: {integrity: sha512-kdHwyWQ967XSRe6HyTTmFLUrW6BQDV3NC9K/J1vJdkND0rDhUUpbfXpR0ZPwlpsGnqOPnMIiZBdajHcDuJYmhA==}
+
+  '@bexis2/bexis2-core-ui@0.4.89':
+    resolution: {integrity: sha512-zi6H7Yu0GKpAD3fDs3VJpSiCgnHJ/LeOac+QKc4r60J225KM9CbzLHT0PoVLdIQ0mCLbeJodTOP2WkHeeFY35A==}
 
   '@bexis2/bexis2-rpm-ui@0.4.0':
     resolution: {integrity: sha512-GbK7UYdBfBjFr0DspcXNuxEu4f/pWYTBaNXbDK7pt6t3fkhpHawHk1CrCZpKbxg/Sq09NjxZTiGx1uze90Uu5w==}
@@ -2599,6 +2602,42 @@ snapshots:
       '@fortawesome/fontawesome-svg-core': 6.7.2
       '@fortawesome/free-regular-svg-icons': 6.7.2
       '@fortawesome/free-solid-svg-icons': 6.7.2
+      '@sveltejs/kit': 2.63.0(patch_hash=edb8ea411824a5d15205994760d3951f038e693b887197c1a3e99879640e2ca6)(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@22.0.2)))(svelte@4.2.20)(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+      '@sveltejs/vite-plugin-svelte': 3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@25.9.1))
+      axios: 1.17.0
+      codemirror: 6.0.2
+      dateformat: 5.0.3
+      delay: 6.0.0
+      dotenv: 16.6.1
+      eslint4b-prebuilt: 6.7.2
+      highlight.js: 11.11.1
+      highlightjs-svelte: 1.0.6
+      svelte: 4.2.20
+      svelte-codemirror-editor: 1.4.2(codemirror@6.0.2)(svelte@4.2.20)
+      svelte-fa: 4.0.4(svelte@4.2.20)
+      svelte-file-dropzone: 2.0.9(svelte@4.2.20)
+      svelte-headless-table: 0.18.3(svelte@4.2.20)
+      svelte-select: 5.8.3
+      vest: 5.4.0
+    transitivePeerDependencies:
+      - '@opentelemetry/api'
+      - debug
+      - supports-color
+      - typescript
+      - vite
+
+  '@bexis2/bexis2-core-ui@0.4.89(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))':
+    dependencies:
+      '@codemirror/lang-html': 6.4.11
+      '@codemirror/lang-javascript': 6.2.5
+      '@codemirror/lang-json': 6.0.2
+      '@codemirror/lint': 6.9.6
+      '@codemirror/theme-one-dark': 6.1.3
+      '@floating-ui/dom': 1.7.6
+      '@fortawesome/fontawesome-free': 6.7.2
+      '@fortawesome/fontawesome-svg-core': 6.7.2
+      '@fortawesome/free-regular-svg-icons': 6.7.2
+      '@fortawesome/free-solid-svg-icons': 6.7.2
       '@sveltejs/kit': 2.63.0(patch_hash=edb8ea411824a5d15205994760d3951f038e693b887197c1a3e99879640e2ca6)(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@25.9.1)))(svelte@4.2.20)(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@sveltejs/vite-plugin-svelte': 3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@25.9.1))
       axios: 1.17.0
@@ -2615,6 +2654,7 @@ snapshots:
       svelte-file-dropzone: 2.0.9(svelte@4.2.20)
       svelte-headless-table: 0.18.3(svelte@4.2.20)
       svelte-select: 5.8.3
+      svelty-picker: 5.2.12(svelte@4.2.20)
       vest: 5.4.0
     transitivePeerDependencies:
       - '@opentelemetry/api'
@@ -3070,6 +3110,26 @@ snapshots:
       sirv: 3.0.2
       svelte: 4.2.20
       vite: 5.4.21(@types/node@22.0.2)
+    optionalDependencies:
+      typescript: 5.5.4
+
+  '@sveltejs/kit@2.63.0(patch_hash=edb8ea411824a5d15205994760d3951f038e693b887197c1a3e99879640e2ca6)(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@22.0.2)))(svelte@4.2.20)(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))':
+    dependencies:
+      '@standard-schema/spec': 1.1.0
+      '@sveltejs/acorn-typescript': 1.0.10(acorn@8.16.0)
+      '@sveltejs/vite-plugin-svelte': 3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@22.0.2))
+      '@types/cookie': 0.6.0
+      acorn: 8.16.0
+      cookie: 0.6.0
+      devalue: 5.8.1
+      esm-env: 1.2.2
+      kleur: 4.1.5
+      magic-string: 0.30.21
+      mrmime: 2.0.1
+      set-cookie-parser: 3.1.0
+      sirv: 3.0.2
+      svelte: 4.2.20
+      vite: 5.4.21(@types/node@25.9.1)
     optionalDependencies:
       typescript: 5.5.4
 
