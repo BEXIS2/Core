@@ -193,26 +193,54 @@ namespace BExIS.UI.Hooks
         // load cache
         public T LoadLog<T>(string _entity, string _place, HookMode _mode, long id) where T : new()
         {
-            //check incoming values
+            // Check incoming values
             if (string.IsNullOrEmpty(_entity)) throw new ArgumentNullException(nameof(_entity));
             if (string.IsNullOrEmpty(_place)) throw new ArgumentNullException(nameof(_place));
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
 
             T cache = new T();
 
-            // load json if exist
-            // generate filename based on mode,entity and place
+            // Generate filename and combined path
             string filename = _mode.ToString().ToLower() + _entity.ToLower() + _place.ToLower() + "log.json";
-
-            // combine datapath + path + filename
             string filepath = Path.Combine(AppConfiguration.DataPath, _entity + "s", id.ToString(), filename);
 
-            if (File.Exists(filepath)) // check if file exist
+            if (File.Exists(filepath))
             {
-                FileHelper.WaitForFile(filepath, FileAccess.Read); // wait if the file is still open
+                // 1. REMOVED FileHelper.WaitForFile completely. It is no longer needed.
 
-                // convert json to object
-                cache = JsonConvert.DeserializeObject<T>(File.ReadAllText(filepath));
+                try
+                {
+                    // 2. Open with FileShare.ReadWrite to allow simultaneous parallel reading/writing
+                    using (var fs = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    using (var reader = new StreamReader(fs))
+                    {
+                        // 3. Stream directly into the JSON deserializer to save RAM and avoid large string allocations
+                        using (var jsonReader = new Newtonsoft.Json.JsonTextReader(reader))
+                        {
+                            // Ersetze diese Zeile:
+                            // cache = serializer.Deserialize<T>(jsonReader) ?? new T();
+                            var serializer = new Newtonsoft.Json.JsonSerializer();
+                            // Durch folgenden Code, um C# 7.3 Kompatibilität zu gewährleisten:
+                            var deserialized = serializer.Deserialize<T>(jsonReader);
+                            if (deserialized != null)
+                            {
+                                cache = deserialized;
+                            }
+                            else
+                            {
+                                cache = new T();
+                            }
+                        
+                            // cache = serializer.Deserialize<T>(jsonReader) ?? new T();
+                        }
+                    }
+                }
+                catch (IOException)
+                {
+                    // Fallback: If the file is undergoing a catastrophic OS lock write, 
+                    // return an empty object rather than blocking the entire IIS web server thread.
+                    return new T();
+                }
             }
 
             return cache;
