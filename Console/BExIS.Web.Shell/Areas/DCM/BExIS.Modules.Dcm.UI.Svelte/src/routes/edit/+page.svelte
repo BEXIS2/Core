@@ -46,7 +46,7 @@
  
 
 </script>
-<Page title="Edit: ({id} | {title})" contentLayoutType={pageContentLayoutType.full} {links}>
+<Page title="Edit: ({id} | {title})" contentLayoutType={pageContentLayoutType.center} {links}>
 
  {#if entityTemplate}
   <Header {id} {version} {title} />

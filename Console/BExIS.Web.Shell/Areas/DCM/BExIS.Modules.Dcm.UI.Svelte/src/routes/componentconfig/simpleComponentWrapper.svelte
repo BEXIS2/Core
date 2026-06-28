@@ -24,7 +24,7 @@
 </script>
 
 {#if path && simpleComponent.properties}
-<div class="px-5 py-2">
+<div class="px-5 py-1">
 				<div class="flex flex-col md:flex-row md:items-center gap-2">
   <div class="flex-1 min-w-[100px]">
     <SimpleComponent {simpleComponent} {path} {required} {label} />

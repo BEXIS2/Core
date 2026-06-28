@@ -85,40 +85,14 @@ function removeFromValidationStore(path: string) {
 
 </script>
 
-<div class="card flex min-h-8 bg-primary-300 dark:bg-primary-800 pl-2 items-center gap-2">
+<div class="card flex min-h-8 bg-primary-300 dark:bg-primary-800  items-center gap-2">
 <div>
     {#if !required}
 
       {#if !active}
-         <button class="badge mt-1" on:click={()=>changeFn(active)} title="Add {convertDisplayName(label, true)} node"><Fa icon={faPlus} /></button>
+         <button class="badge mt-1 ml-1 mr-1"  on:click={()=>changeFn(active)} title="Add {convertDisplayName(label, true)} node"><Fa icon={faPlus} /></button>
       {:else}
-         <button class="badge mt-1" on:click={()=>changeFn(active)} title="Remove {convertDisplayName(label, true)} node. Content will be lost." ><Fa icon={faTrash}/></button>
-      {/if}
-
-      <!-- <Fa icon={faPlus} class="text-green-500" />
-
-      <input class="checkbox" type="checkbox" bind:checked={active} on:change={()=>changeFn(active)}/> -->     
-    {/if}
-</div>
- <button class="text-left grow" on:click={() => toggleShow(togglePath)} type="button">
-	   <h4 id="{path}" class="h4">
-    {convertDisplayName(label, true)}  
-    {#if required}
-      <span class="text-red-500">*</span>
-    {/if}
-     {#if description}
-				<button class="badge h-full mt-1" on:click|stopPropagation={()=>showDescription = !showDescription} title="Show Description"><Fa icon={faCircleQuestionRegular} size="lg"/></button>
-		{/if}
-   </h4>
- </button>
-
-
- <div class="text-left flex justify-end w-2 px-6 ">
- 
- </div>
- <div class="text-left flex justify-end w-2 px-2">
-
-  {#if $activeStore.includes(path)}
+       {#if $activeStore.includes(path)}
     {#if !$hideStore.includes(path) }
       <button
         class="btn-sm text-right"
@@ -133,6 +107,36 @@ function removeFromValidationStore(path: string) {
       >
       {/if}
     {/if}
+       
+      {/if}
+
+      <!-- <Fa icon={faPlus} class="text-green-500" />
+
+      <input class="checkbox" type="checkbox" bind:checked={active} on:change={()=>changeFn(active)}/> -->     
+    {/if}
+</div>
+ <button class="text-left grow" on:click={() => toggleShow(togglePath)} type="button">
+	   <h4 id="{path}" class="text-md font-bold" >
+    {convertDisplayName(label, true)}  
+    {#if required}
+      <span class="text-red-500">*</span>
+    {/if}
+     <!--{#if description}
+				<button class="badge h-full mt-1" on:click|stopPropagation={()=>showDescription = !showDescription} title="Show Description"><Fa icon={faCircleQuestionRegular} size="lg"/></button>
+		{/if}-->
+   </h4>
+ </button>
+
+
+ <div class="text-left flex justify-end w-2">
+   
+  {#if active}
+  <button class="badge mt-1" on:click={()=>changeFn(active)} title="Remove {convertDisplayName(label, true)} node. Content will be lost." ><Fa icon={faTrash}/></button>
+  {/if}
+ </div>
+ <div class="text-left flex justify-end w-2 px-2">
+
+ 
  </div>
 </div>
  {#if description && showDescription}

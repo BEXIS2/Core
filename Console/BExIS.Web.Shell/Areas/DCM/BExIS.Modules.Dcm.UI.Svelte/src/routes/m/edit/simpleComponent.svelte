@@ -109,7 +109,7 @@
 		// create validation item and add to store
 		let simpleComponentValidationItem: SimpleComponentData = createSimpleComponentValidationItem(
 			path,
-			label,
+			convertDisplayName(label),
 			required,
 			simpleComponent
 		);
@@ -170,7 +170,8 @@
 
 <!-- Simple Component Rendering -->
 {#if isVisible && !isAnchor}
-	<div class="pr-2" id={path + '.item'} on:mouseover={() => descriptionStore.set({ type: 'simple', content: simpleComponent.description, path })} on:mouseleave={() => helpStore.set(null)}>
+<!--on:mouseover={() => descriptionStore.set({ type: 'simple', content: simpleComponent.description, path })} -->
+	<div class="pr-2" id={path + '.item'}>
 		<!--	if the field is mapped to a party or key, show blocked component with info, otherwise show the normal input component based on the type and format of the field -->
 		{#if mappingComponentConfig && ((mappingComponentConfig.isMappedToParty && !mappingComponentConfig.isSelector) || mappingComponentConfig.isMappedToKey)}
 			<Blocked
@@ -197,10 +198,9 @@
 				<!-- Handle date format -->
 				{#if simpleComponent.properties['#text'].format.toLowerCase() === 'date'}
 					<span id={path}>
-						<span class="mr-2">
-							{convertDisplayName(label)}
-						</span>
+						
 						<SveltyPicker
+							label={convertDisplayName(label)}
 							mode="date"
 							name={label}
 							format="yyyy-mm-dd"
@@ -213,10 +213,8 @@
 					<!-- Handle datetime format -->
 				{:else if simpleComponent.properties['#text'].format.toLowerCase() === 'datetime' || simpleComponent.properties['#text'].format.toLowerCase() === 'date and time'}
 					<span id={path}>
-						<span class="mr-2">
-							{convertDisplayName(label)}
-						</span>
 						<SveltyPicker
+							label={convertDisplayName(label)}
 							mode="date"
 							name={label}
 							format="yyyy-mm-dd"
@@ -229,10 +227,8 @@
 					<!-- Handle time format -->
 				{:else if simpleComponent.properties['#text'].format.toLowerCase() === 'time'}
 					<span id={path}>
-						<span class="mr-2">
-							{convertDisplayName(label)}
-						</span>
 						<SveltyPicker
+							label={convertDisplayName(label)}
 							mode="time"
 							name={label}
 							format="hh:ii"

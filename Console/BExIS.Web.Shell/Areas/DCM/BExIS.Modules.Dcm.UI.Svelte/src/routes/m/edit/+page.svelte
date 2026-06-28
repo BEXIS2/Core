@@ -125,13 +125,13 @@
 					<!-- Show all descriptions -->
 					<div class="flex flex-col gap-4">
 						<div class="w-full flex items-center justify-end gap-3 pr-5 text-sm">
-							<button class="badge" on:click={() => showAllDescriptionsStore.update((v) => !v)}>
+							<!--<button class="badge" on:click={() => showAllDescriptionsStore.update((v) => !v)}>
 								{#if $showAllDescriptionsStore}
 									<Fa icon={faEyeSlash} />&nbsp;Hide descriptions
 								{:else}
 									<Fa icon={faEye} />&nbsp;Show descriptions
 								{/if}
-							</button>
+							</button>-->
 
 							<a href="#top" class="badge">
 								<Fa icon={faArrowUp} />&nbsp;Scroll to top
@@ -158,15 +158,10 @@
 						</div>
 					</div>
 				</div>
-				<div class="justify-end gap-3 pr-5 text-sm w-[40%]">
+				<div class="justify-end gap-3 pr-5 text-sm w-[40%] ml-2">
 					{#if $descriptionStore && $descriptionStore.path && typeof $descriptionStore.content === 'string'}
 						<div class="card dark:bg-secondary-800 p-3">
-							<h4 class="h4 mb-2">Description</h4>
-							<b
-								>We need to decide if we want this, If the description must come via a dispatch
-								trigger from each component on mouseover. Also the total width of the page ends to
-								be adjusted.
-							</b>
+							<h4 class="h4 mb-2">Field Description</h4>
 							<p>{@html $descriptionStore.content}</p>
 						</div>
 					{/if}

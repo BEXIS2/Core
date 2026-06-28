@@ -223,15 +223,21 @@
 										<div class="ml-4 flex flex-col">
 											<button
 												type="button"
-												class="text-sm text-gray-500 text-left p-0 m-0"
+												class="text-sm text-gray-500 text-left p-0 m-0 border border-gray-300 rounded-md hover:bg-gray-100"
 												on:click={() => toggleAll(item.path)}
 												aria-label={`Open ${item.path}`}
 											>
 												<div>
-													-&nbsp;{item.path
+													{item.path
 														.split('.')
 														.slice(1)
-														.map((segment) => convertDisplayName(segment))
+														.map((segment) => {
+															// Check if the segment is a non-empty string that represents an integer
+															const isInteger = segment.trim() !== '' && !isNaN(Number(segment));
+															const processedSegment = isInteger ? String(Number(segment) + 1) : segment;
+
+															return convertDisplayName(processedSegment);
+														})
 														.join('/')}
 													<br /><span class="text-xs italic bold pl-2">{item.errorMessage}</span>
 												</div>

@@ -50,8 +50,8 @@
 			{/if}
 		{:else if value.type === 'object' && value.properties['#text']}
 			<div class="mb-1">
-				<div class="flex flex-col md:flex-row md:items-center gap-2">
-					<div class="flex-1 min-w-[100px]">
+				<div class="flex flex-col md:flex-row md:items-center gap-2 mb">
+					<div class="flex-1 min-w-[100px] pt-1">
 						<SimpleComponent simpleComponent={value} {path} required={requiredList.includes(key)} />
 					</div>
 				</div>

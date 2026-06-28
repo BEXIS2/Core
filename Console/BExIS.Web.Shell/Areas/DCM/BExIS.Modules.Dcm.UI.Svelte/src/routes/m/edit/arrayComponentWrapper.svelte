@@ -6,7 +6,7 @@
 	import { faPlus, faChevronUp, faChevronDown, faTrash } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { slide, fade } from 'svelte/transition';
-	import { activeStore, hideStore } from '$lib/components/utils/metadata/stores';
+	import { activeStore, hideStore, validationStore } from '$lib/components/utils/metadata/stores';
 	import { convertDisplayName } from '../metadataShared';
 	import Header from './MetadataComponentHeader.svelte';
 	import { onMount } from 'svelte';
@@ -33,10 +33,25 @@
 		render = !render;
 	}
 
+function removeFromValidationStore(path: string) {
+  validationStore.update(store => {
+    return {
+      ...store,
+      simpleTypeValidationItems: store.simpleTypeValidationItems.filter(item => !item.path.startsWith(path)),
+      complexTypeValidationItems: store.complexTypeValidationItems.filter(item => !item.path.startsWith(path))
+    };
+  });
+}
+
 	function removeItem(idx: number) {
 		value.splice(idx, 1);
 		render = !render;
-	}
+		// delete from validationStore
+		if (getByPath(path + '.' + idx) != undefined) {
+			removeFromValidationStore(path);
+			}
+		}
+	
 
 	function itemUp(idx: number) {
 		if (idx > 0) {

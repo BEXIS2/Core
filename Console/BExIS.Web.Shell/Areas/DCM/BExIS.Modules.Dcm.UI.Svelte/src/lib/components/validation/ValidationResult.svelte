@@ -95,7 +95,7 @@
 		{/if}
 	</div>
 	<div class="flex space-x-2">
-		<ol class="breadcrumb">
+		<ol class="breadcrumb grid grid-flow-col auto-cols-fr gap-2 items-center">
 			{#each checks as check, i}
 				<li class="crumb">
 					<button class="btn variant-ghost-{check.style} p-2 flex justify-center space-x-2">

@@ -8,22 +8,20 @@
 -->
 
 <script lang="ts">
+	import Fa from 'svelte-fa';
+	import { faPen, faCopy } from '@fortawesome/free-solid-svg-icons';
 
-  import Fa from 'svelte-fa';
-  import { faPen, faCopy } from '@fortawesome/free-solid-svg-icons';
+	//prepare drawer
+	import { Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
+	const drawerStore = getDrawerStore();
+	import type { DrawerSettings } from '@skeletonlabs/skeleton';
 
-		//prepare drawer
-		import { Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
-		const drawerStore = getDrawerStore();
-		import type { DrawerSettings } from '@skeletonlabs/skeleton';
-
-		export let id = 0;
-		export let version = 1;
-		export let start='';
-
+	export let id = 0;
+	export let version = 1;
+	export let start = '';
 
 	export let status = 0;
-  export let description = '';
+	export let description = '';
 
 	const isEnabled = setEnable(status);
 	const active = setActive(status);
@@ -50,20 +48,21 @@
 		return true; // every other status enable the hook
 	}
 
-  function editFn() {
+	function editFn() {
 		let url = start;
 		let defaultFormUrl = url + '?id=' + id + '&version=' + version;
-			window.open(defaultFormUrl, '_blank')?.focus();
-
+		window.open(defaultFormUrl, '_blank')?.focus();
 	}
-
 </script>
 
 {#if isEnabled}
-	<div class="mb-3 hook-status-{status} hook" class:inactive={!active} title={description} on:click>
-    <button class="chip variant-filled-secondary flex-none" on:click={editFn}><Fa icon={faPen} /></button>
+	<div class="mb-3 hook-status-{status} hook" class:inactive={!active} title={description}>
+		<button
+			class="chip variant-filled-secondary flex-none"
+			on:click={editFn}
+			title="Edit"
+			
+		><Fa icon={faPen} /><span class="ml-2">Edit</span></button
+		>
 	</div>
-
-
-
 {/if}
