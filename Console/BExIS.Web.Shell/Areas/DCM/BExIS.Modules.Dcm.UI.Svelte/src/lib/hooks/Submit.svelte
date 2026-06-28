@@ -17,7 +17,7 @@
 		latestDataDate
 	} from '../../routes/edit/stores';
 
-	import { onMount, createEventDispatcher } from 'svelte';
+	import { onMount, createEventDispatcher, onDestroy } from 'svelte';
 
 	export let id = 0;
 	export let version = 1;
@@ -37,6 +37,9 @@
 
 	// boolean to prevent the "Done..." message from showing a second time after the store reload runs
 	let hasSubmitted: boolean = false;
+
+	// timeout reference for submit completion delay
+	let submitTimeout: NodeJS.Timeout;
 
 	// text for submit button and confirm modal, will be set based on the content of the submit model in the activateSubmit function
 	let submitText = '';
@@ -84,6 +87,10 @@
 		mounted = true;
 		console.log("Sumbit 🚀 ~ onMount ~ mounted:", mounted)
 		
+	});
+
+	onDestroy(() => {
+		clearTimeout(submitTimeout);
 	});
 
 	// function to load the submit model from the server based on the hook start action and update the canSubmit state based on the content of the model
@@ -136,8 +143,12 @@
 		isSubmitting = true;
 		canSubmit = false;
 		hasSubmitted = false; // reset in case of retry
+		latestSubmitDate.set(Date.now());
 		const res: submitResponceType = await submit(id);
-
+		// update store
+	
+		
+		
 		//console.log("submit",res);
 
 		if (!res.success) {
@@ -147,9 +158,8 @@
 				dispatch('success', { text: res.asyncUploadMessage });
 			}
 			isSubmitting = false;
-			setTimeout(() => {
+			submitTimeout = setTimeout(() => {
 				hasSubmitted = true;
-				// update store
 				latestSubmitDate.set(Date.now());
 				// reload to update view after submit
 			}, 1000);
