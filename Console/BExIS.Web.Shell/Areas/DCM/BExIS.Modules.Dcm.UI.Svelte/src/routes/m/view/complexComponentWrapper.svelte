@@ -7,7 +7,7 @@
 	import { slide, fade } from 'svelte/transition';
 	import { activeStore, hideStore, metadataStore } from '$lib/components/utils/metadata/stores';
 	import Header from './MetadataComponentHeader.svelte';
-	import { getValueByPath } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { getValueByPath, hasValue } from '$lib/components/utils/metadata/metadataComponentUtils';
 
 	export let complexComponent: any;
 	export let path: string;
@@ -21,34 +21,6 @@
 			? complexComponent.required
 			: [];
 
-	// Function to recursively check if any child node has a value, retun true if at least one value is found, otherwise false
-	function findChildWithValue(currentPath: string): boolean {
-		const value = getValueByPath(currentPath);
-		console.log('Checking path:', currentPath, 'Value:', value);
-		if (value !== undefined && value !== null && value !== '') {
-			return true;
-		}
-
-		// path = currentPath.split('.').slice(0, -1).join('.');
-		// iterate over all paths in metadata store and check if they start with current path
-		let found = false;
-		metadataStore.subscribe((metadata) => {
-			//	console.log('Metadata store updated, checking for child values. Current path:', metadata);
-			console.log('Metadata store updated, checking for child values. Current path:', currentPath);
-			for (const key in metadata) {
-				console.log('Checking metadata key:', key);
-				if (key.startsWith(currentPath + '.')) {
-					const childValue = getValueByPath(key);
-					console.log('Checking child path:', key, 'Value:', childValue);
-					if (childValue !== undefined && childValue !== null && childValue !== '') {
-						return true;
-					}
-				}
-			}
-		})();
-
-		return false;
-	}
 </script>
 
 <!--<section class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm flex flex-col gap-4">
@@ -122,7 +94,7 @@
 					{#if !$hideStore.includes(path) && $activeStore.includes(path)}
 						<Header {required} {path} {p} description={value.description} />
 
-						<div in:slide out:slide class="card" id={path}>
+						<div in:slide out:slide class="" id={path}>
 							<ComplexComponent
 								complexComponent={value}
 								{path}
@@ -132,7 +104,7 @@
 					{:else}
 						<Header {required} {path} {p} description={value.description} />
 
-						<div in:slide out:slide class="card" id={path}>
+						<div in:slide out:slide class="" id={path}>
 							<ComplexComponent
 								complexComponent={value}
 								{path}
@@ -143,7 +115,7 @@
 				{/if}
 			</div>
 		{:else if value.type === 'object' && value.properties['#text']}
-			{#if findChildWithValue(path)}
+			{#if hasValue(path)}
 				<div class="mb-2">
 					<div class="flex flex-col pl-5 md:flex-row md:items-center gap-2">
 						<div class="flex-1 min-w-[100px]">
