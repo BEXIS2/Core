@@ -1,10 +1,7 @@
 <script lang="ts">
-	import type { ViewSettings } from "$models/View";
-	import { MultiSelect } from "@bexis2/bexis2-core-ui";
 	import { downloadZip } from "./services";
 	import Fa from "svelte-fa";
  import { faDownload, faSave } from "@fortawesome/free-solid-svg-icons";
-	import InputEntry from "$lib/components/entityTemplate/InputEntry.svelte";
 
 
  export let id;
@@ -21,9 +18,9 @@
 
  let withUnits = false;
  let exceptAgreement = false;
+ $:exceptAgreement = !isPublic || (isPublic && data_aggrement === "none") ? true : exceptAgreement;
  let excelMaxRows = 1048576;
  let selectedFormat = "";
-
 
  const downloadFormats = [
   {
@@ -43,9 +40,6 @@
    'value': 'text/plain',
   }
 ];
-// with units
-// with filter
-
 
 async function downloadDatasetFn()
 {
@@ -104,60 +98,60 @@ function sendDataTo(data, name, type)
 }
 
 
+
 </script>
 
 {#if downloadAccess}
- 
- {#if data_aggrement === "data policy"}
- 
-     <div class="data-aggreement">
-         <input type="checkbox" id="data-policy" bind:checked="{exceptAgreement}"/>
-
-         <b>
-             I accept the public regulations from the
-             <a href="/footer/policy" target="_blank">privacy policy</a>.
-         </b>
-     </div>
- 
- {:else if data_aggrement === "terms and conditions"}
- 
-     <div class="data-aggreement">
-         <input type="checkbox" id="terms-and-conditions" bind:checked="{exceptAgreement}"/>
-         <b>
-             I accept the public regulations from the
-             <a href="/footer/termsandconditions" target="_blank">terms and conditions</a>.
-         </b>
-     </div>
- 
- {/if}
-
  {#if hasDatastructure} 
  <div class="">
  <div class="flex ">
   <h4 class="h4 grow">Download</h4> 
-  
 </div>
 
   <div class="input-group input-group-divider grid-cols-[1fr_auto]">
     <select class="select" bind:value={selectedFormat} >
+      <option value="" disabled selected hidden>- Select a format -</option>
       {#each downloadFormats as d}
         <option value={d.value}>{d.label}</option>
       {/each}
     </select>
-    <button class="variant-filled-secondary" on:click={downloadDatasetWithFormatFn}><Fa icon={faDownload} /></button>
+    <button class="variant-filled-secondary" disabled={!exceptAgreement || selectedFormat == ''} on:click={downloadDatasetWithFormatFn}><Fa icon={faDownload} /></button>
   </div>
 </div>
-<div class="padding-top-5 position-releative ">
+<div class="padding-top-5 position-releative flex flex-col gap-2">
     <span>
         <input class="checkbox"  type="checkbox" id="withUnits" bind:checked="{withUnits}" />
         <span>with units</span>
+
     </span>
+
+    {#if data_aggrement === "data policy"}
+ 
+     <div class="data-aggreement">
+         <input type="checkbox" class="checkbox" id="data-policy" bind:checked="{exceptAgreement}"/>
+         <b>
+             I accept the public regulations from the
+             <a class="a" href="/footer/policy" target="_blank">privacy policy</a>.
+         </b>
+     </div>
+ 
+    {:else if data_aggrement === "terms and conditions"}
+    
+        <div class="data-aggreement">
+            <input type="checkbox" class="checkbox" id="terms-and-conditions" bind:checked="{exceptAgreement}"/>
+            <b>
+                I accept the public regulations from the
+                <a class="a" href="/footer/termsandconditions" target="_blank">terms and conditions</a>.
+            </b>
+        </div>
+    
+    {/if}
 </div>
 
 
   {:else} <!-- // download package with files -->
 
-  <button class="btn variant-filled-primary" on:click={() => downloadDatasetFn()}>
+  <button class="btn variant-filled-primary" disabled={!exceptAgreement} on:click={() => downloadDatasetFn()}>
    <!-- svelte-ignore missing-declaration -->
    <Fa icon={faSave} />
    <span class="padding-left-5">Download</span>

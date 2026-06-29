@@ -31,8 +31,6 @@ import Citation from "./Citation.svelte";
 	</div>
 	
 	<div>
-
-
 		{#if labelKeys	&& labelKeys.length > 0}
 				{#each labelKeys as key}
 					<span class="badge variant-filled-primary">{key}</span>

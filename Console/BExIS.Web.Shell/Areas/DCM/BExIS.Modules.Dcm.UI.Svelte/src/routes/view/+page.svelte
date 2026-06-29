@@ -83,7 +83,7 @@
 				<Spinner position={positionType.center} label="loading entity templates" />
 			</div>
 		{:then result}
-
+		
 		<Header	{id} {version} {title} labels = {model.labels} license = {model.additionalInformations['license']} {isPartOfCollection} hasEditRight={model.hasEditRight}/>
 
 		<div class="flex">
