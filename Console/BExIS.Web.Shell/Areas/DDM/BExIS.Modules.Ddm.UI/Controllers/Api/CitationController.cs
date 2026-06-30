@@ -250,53 +250,11 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                 bool isPublic = false;
                 if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Dataset id should be greater then 0.");
 
-                if(useTags && version_number == 0)
-                {
-                    if (tag_number <= 0)
-                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Tag not exist");
-                    try
-                    {
-                        var versionId = dm.GetLatestVersionByTagNr(id, tag_number).Id;
-                        datasetVersion = dm.GetDatasetVersion(versionId);
-                    }
-                    catch
-                    {
-                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This tag does not exist for this dataset");
-                    }
-                }
-                else 
-                {
+                //try to get dataset version by version number or tag number
+                HttpResponseMessage error = TryGetDatasetVersion(dm,id,version_number,tag_number,useTags,out datasetVersion);
 
-                    // try to get latest dataset version 
-                    if (version_number <= 0)
-                    {
-                        datasetVersion = dm.GetDatasetLatestVersion(id);
-                    }
-                    // try to get dataset version by version number
-                    else
-                    {
-                        if (version_number <= 0)
-                            return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This version number does not exist for this dataset");
-
-                        try
-                        {
-                            int index = version_number - 1;
-                            Dataset dataset = dm.GetDataset(id);
-
-                            int versions = dataset.Versions.Count;
-
-                            if (versions < version_number)
-                                return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This version number does not exist for this dataset");
-
-                            datasetVersion = dataset.Versions.OrderBy(d => d.Timestamp).ElementAt(index);
-
-                        }
-
-                        catch (Exception ex)
-                        {
-                        }
-                    }
-                }
+                if (error != null)
+                    return error;
 
                 // Check if a dataset version was set
                 if (datasetVersion == null) 
@@ -326,6 +284,72 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                 HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(citationString, Encoding.UTF8, "application/text") };
                 return response;
             }
+        }
+
+        private HttpResponseMessage TryGetDatasetVersion(DatasetManager dm, long datasetId,int versionNumber,double tagNumber,bool useTags,out DatasetVersion datasetVersion)
+        {
+            datasetVersion = null;
+
+            // latest Version
+            if (versionNumber <= 0 && tagNumber <= 0)
+            {
+                datasetVersion = dm.GetDatasetLatestVersion(datasetId);
+                return null;
+            }
+
+            // Tag
+            if (useTags && tagNumber > 0)
+            {
+                try
+                {
+                    var taggedVersion = dm.GetLatestVersionByTagNr(datasetId, tagNumber);
+
+                    if (taggedVersion == null)
+                    {
+                        return Request.CreateErrorResponse(
+                            HttpStatusCode.PreconditionFailed,
+                            "This tag does not exist for this dataset");
+                    }
+
+                    datasetVersion = dm.GetDatasetVersion(taggedVersion.Id);
+                    return null;
+                }
+                catch
+                {
+                    return Request.CreateErrorResponse(
+                        HttpStatusCode.PreconditionFailed,
+                        "This tag does not exist for this dataset");
+                }
+            }
+
+            // Version
+            if (versionNumber > 0)
+            {
+                var dataset = dm.GetDataset(datasetId);
+
+                if (dataset == null)
+                {
+                    return Request.CreateErrorResponse(
+                        HttpStatusCode.PreconditionFailed,
+                        "Dataset does not exist");
+                }
+
+                var versions = dataset.Versions.OrderBy(v => v.Timestamp).ToList();
+
+                if (versionNumber > versions.Count)
+                {
+                    return Request.CreateErrorResponse(
+                        HttpStatusCode.PreconditionFailed,
+                        "This version number does not exist for this dataset");
+                }
+
+                datasetVersion = versions[versionNumber - 1];
+                return null;
+            }
+
+            return Request.CreateErrorResponse(
+                HttpStatusCode.PreconditionFailed,
+                "Invalid version or tag parameter");
         }
 
         private DatasetCitationEntry CreateCitationEntry(long datasetId, CitationDataModel model, bool isPublic, bool useTags)
