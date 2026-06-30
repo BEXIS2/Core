@@ -131,7 +131,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <param name="id">identifier of the dataset</param>
         /// <param name="version">version number of the dataset</param>
         /// <returns></returns>
-        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         [JsonNetFilter]
         public JsonResult Load(long id, int version = 0, double tag = 0)
         {
@@ -713,9 +712,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (SubjectManager subjectManager = new SubjectManager())
             using (EntityManager entityManager = new EntityManager())
             {
-                if (HttpContext.User != null && HttpContext.User.Identity != null && !string.IsNullOrEmpty(HttpContext.User.Identity.Name))
+                User user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(HttpContext).Result;
+                if (user!=null)
                 {
-                    long userId = subjectManager.Subjects.Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).Select(s => s.Id).First();
+                    long userId = user.Id;
                     long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).First().Id;
 
                     var request = requestManager.Requests.Where(r =>
@@ -1108,21 +1108,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public bool UserExist()
         {
-            if (HttpContext.User != null && HttpContext.User.Identity != null && !string.IsNullOrEmpty(HttpContext.User.Identity.Name)) return true;
+            User user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(HttpContext).Result;
+
+            if(user != null) return true;
 
             return false;
         }
 
         public string GetUsernameOrDefault()
         {
-            var username = string.Empty;
-            try
-            {
-                username = HttpContext.User.Identity.Name;
-            }
-            catch { }
-
-            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+            User user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(HttpContext).Result;
+            string username = user?.Name?? "DEFAULT";
+            return username;
         }
 
         private string getPartyNameOrDefault()

@@ -16,11 +16,12 @@
 	import Keywords from './Keywords.svelte';
 	import Funding from './Funding.svelte';
 	import Tags from './version/Tags.svelte';
-	import Download from './Download.svelte';
+	import Download from './download/Download.svelte';
 	import Forbidden from './error/Forbidden.svelte';
 	import Deleted from './error/Deleted.svelte';
 	import InProcess from './error/InProcess.svelte';
 	import NotExist from './error/NotExist.svelte';
+	import InternalServer from './error/InternalServer.svelte';
 
 
 
@@ -109,6 +110,9 @@
 							isPublic= {model.isPublic}
 							data_aggrement = {model.settings.dataAggrement}
 							total = {model.count}
+							requestAble = {model.requestAble}
+							hasRequestRight = {model.hasRequestRight}
+							requestExist = {model.requestExist}
 						/> 
 						{#if model.settings.useTags}
 						 <Tags  {id} {version}  tag={model.tag}/>
@@ -127,8 +131,6 @@
 	 <Hooks	{id} {version} hooks={hooks} />
 	
 		{:catch error}
-
-		{error.status}
 			{#if error.status === 403	}
 				<Forbidden/>
 				{:else if error.status === 404}
@@ -137,6 +139,8 @@
 				<Deleted {id}/>
 			{:else if error.status === 423}
 				<InProcess />
+			{:else if error.status === 500}
+				<InternalServer />
 			{:else}
 				<ErrorMessage {error} />
 			{/if}

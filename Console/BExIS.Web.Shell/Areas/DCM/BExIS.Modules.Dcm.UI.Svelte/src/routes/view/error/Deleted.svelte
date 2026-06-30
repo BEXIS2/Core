@@ -33,10 +33,8 @@
  </div>
   
  <div>
- <Alert title="" message="The dataset has been withdrawn. Reason: Delete. Please check the 'Related Work' if a new version is available." cssClass="variant-filled-error">
-		<b> </b>
-	</Alert>
-  
+ <p class="variant-ghost-error p-5">The dataset has been withdrawn. Reason: Delete. Please check the 'Related Work' if a new version is available."</p>
+
  </div>
 
  <div class="flex">

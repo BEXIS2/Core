@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { downloadZip } from "./services";
+	import { downloadZip } from "../services";
 	import Fa from "svelte-fa";
  import { faDownload, faSave } from "@fortawesome/free-solid-svg-icons";
+	import Request from "./Request.svelte";
 
 
  export let id;
@@ -11,6 +12,11 @@
  export let downloadAccess = false; // user has access to download the dataset
  export let hasDatastructure = false; // dataset has a datastructure
  export let hasData = false; // dataset has data
+
+// for requests
+export let requestAble: boolean = false; // user can request the dataset
+export let hasRequestRight: boolean = false; // user has rights to request the dataset
+export let requestExist: boolean = false; // user has already requested the dataset
 
  export let isPublic = false; // dataset is public
  export let data_aggrement = ""; //"data policy" or "terms_and_conditions"
@@ -159,6 +165,13 @@ function sendDataTo(data, name, type)
  
  {/if}
 
+{:else if   requestAble && hasRequestRight}
+  <Request {id} exist={requestExist}/>
+{:else}
 
-
+  <button class="btn variant-filled-primary" disabled on:click={() => downloadDatasetFn()}>
+   <!-- svelte-ignore missing-declaration -->
+   <Fa icon={faSave} />
+   <span class="padding-left-5">Download</span>
+  </button>
 {/if}

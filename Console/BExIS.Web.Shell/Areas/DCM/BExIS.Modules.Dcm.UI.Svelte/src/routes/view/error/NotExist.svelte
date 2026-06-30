@@ -4,4 +4,4 @@
 
  </script>
 
-<h1>404 - Forbidden</h1>
+<h1>404 - NotExist</h1>

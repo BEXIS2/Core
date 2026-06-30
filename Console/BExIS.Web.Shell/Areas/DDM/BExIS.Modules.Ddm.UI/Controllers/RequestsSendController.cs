@@ -1,4 +1,5 @@
-﻿using BExIS.Dlm.Services.Data;
+﻿using BExIS.App.Bootstrap.Helpers;
+using BExIS.Dlm.Services.Data;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Requests;
@@ -8,6 +9,7 @@ using BExIS.Utils.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using Vaiona.Persistence.Api;
 
@@ -25,7 +27,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             try
             {
-                long userId = subjectManager.Subjects.Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).Select(s => s.Id).First();
+                var user = BExISAuthorizeHelper.GetUserFromAuthorization(HttpContext);
+
+                if(user == null) throw new HttpException(401, "Unauthorized");
+
+                long userId = user.Id;
                 long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).First().Id;
 
                 if (!requestManager.Exists(userId, entityId, id) ||
@@ -68,6 +74,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     MessageHelper.GetSendRequestMessage(id, "unknown", "unkown", e.Message + intention, "unknown"), new List<string> { GeneralSettings.SystemEmail }
                     );
                 }
+
+                throw e;
             }
             finally
             {
