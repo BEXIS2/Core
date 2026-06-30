@@ -14,8 +14,8 @@
 		<div class="grow">
 			<slot name="property" />
 		</div>
-		<div class="grow">
-			<slot name="displaypattern" />
+		<div class="grow [&:has(>div:empty)]:hidden">
+			<slot name="displaypattern" class="empty:hidden"/>
 		</div>
 		<div class="grow">
 			<slot name="unit" />

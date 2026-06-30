@@ -368,7 +368,7 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 									<div class="grow">
 										<TextInput
 											id="name-{index}"
-											label="{index + 1}. Variable name in dataset"
+											label="{index + 1}. Variable name as in file"
 											bind:value={variable.name}
 											on:input={onChangeHandler}
 											valid={res.isValid('name')}

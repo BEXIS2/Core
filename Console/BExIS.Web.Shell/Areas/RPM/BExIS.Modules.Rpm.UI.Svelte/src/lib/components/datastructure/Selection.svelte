@@ -466,7 +466,7 @@
 		<div class="h-full w-full text-surface-700">
 			<Spinner
 				position={positionType.center}
-				label="Loading Structure Suggestion based on: {model.file}"
+				label="Loading data structure suggestion based on: {model.file}"
 			/>
 
 			<div class="mt-10">
@@ -475,7 +475,7 @@
 		</div>
 	{:else}
 		<div class="h-full w-full text-surface-700">
-			<Spinner position={positionType.center} label="Generate Structure..." />
+			<Spinner position={positionType.center} label="Generating data structure ..." />
 		</div>
 	{/if}
 {:else}
