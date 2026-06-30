@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { empty, getNodeByPath, hasValue, isActive, setActive, setInactive, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
-	import { convertDisplayName } from '../metadataShared';
+	import { convertDisplayName } from '$lib/components/utils/metadata/metadataShared';
 	import { faPlus, faChevronUp, faChevronDown, faQuestion } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
   import { activeStore, hideStore, validationStore } from '$lib/components/utils/metadata/stores';

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { TextInput } from "@bexis2/bexis2-core-ui";
- import {convertDisplayName} from '../metadataShared';
+ import {convertDisplayName} from '../../../lib/components/utils/metadata/metadataShared';
 
 
 export let isKeyMapped: any;

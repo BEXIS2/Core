@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BExIS.App.Bootstrap.Exceptions
+{
+    public class EntityLockedException : Exception
+    {
+        public EntityLockedException(string message) : base(message) { }
+    }
+
+}

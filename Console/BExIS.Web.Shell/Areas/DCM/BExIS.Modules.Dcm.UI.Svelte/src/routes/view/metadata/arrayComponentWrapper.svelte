@@ -7,7 +7,7 @@
 	import Fa from 'svelte-fa';
 	import { slide, fade } from 'svelte/transition';
 	import { activeStore, hideStore } from '$lib/components/utils/metadata/stores';
-	import { convertDisplayName } from '../metadataShared';
+	import { convertDisplayName } from '$lib/components/utils/metadata/metadataShared';
 	import Header from './MetadataComponentHeader.svelte';
 
 	export let arrayComponent: any;

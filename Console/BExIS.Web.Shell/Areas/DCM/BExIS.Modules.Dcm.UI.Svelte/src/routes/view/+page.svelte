@@ -17,6 +17,10 @@
 	import Funding from './Funding.svelte';
 	import Tags from './version/Tags.svelte';
 	import Download from './Download.svelte';
+	import Forbidden from './error/Forbidden.svelte';
+	import Deleted from './error/Deleted.svelte';
+	import InProcess from './error/InProcess.svelte';
+
 
 
 	let title = '';
@@ -51,18 +55,23 @@
 		// setApiConfig('https://localhost:44345', 'davidschoene', '123456');
 
 		// load data from server
-		model = await getView(id);
+		const res = await getView(id);
 
-		hooks = model.settings.hooks;
-		title = model.title;
-		version = model.version;
-		id = model.id;
+		if(res?.status==200)
+		{
+			model = res?.data;
+			hooks = model.settings.hooks;
+			title = model.title;
+			version = model.version;
+			id = model.id;
 
-		console.log('model',model);
-		console.log('hooks', hooks);
+			console.log('model',model);
+			console.log('hooks', hooks);
 
-		// check if dataset is part of a collection
-		isPartOfCollectionFunc();
+			// check if dataset is part of a collection
+			isPartOfCollectionFunc();
+		}
+		
 
 	}
 
@@ -80,7 +89,7 @@
 
 	{#await load()}
 			<div class="text-surface-800">
-				<Spinner position={positionType.center} label="loading entity templates" />
+				<Spinner position={positionType.center} label="loading entity" />
 			</div>
 		{:then result}
 		
@@ -117,7 +126,17 @@
 	 <Hooks	{id} {version} hooks={hooks} />
 	
 		{:catch error}
-			<ErrorMessage {error} />
+	
+			{#if error.status === 403	}
+				<Forbidden/>
+			{:else if error.status === 410}
+				<Deleted/>
+			{:else if error.status === 423}
+				<InProcess />
+			{:else}
+				<ErrorMessage {error} />
+			{/if}
+		
 		{/await}
 
 </div>

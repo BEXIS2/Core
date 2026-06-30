@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web;
+using BExIS.App.Bootstrap.Exceptions;
 
 namespace BExIS.App.Bootstrap.Attributes
 {
@@ -23,6 +24,18 @@ namespace BExIS.App.Bootstrap.Attributes
                 if (exception is HttpException httpException)
                 {
                     statusCode = httpException.GetHttpCode();
+                }
+
+                if(exception is EntityLockedException)
+                {
+                    statusCode = 423;
+                    statusText = "Entity is locked";
+                }
+
+                if (exception is EntityDeletedException)
+                {
+                    statusCode = 410;
+                    statusText = "Entity is deleted";
                 }
 
                 var result = new JsonResult

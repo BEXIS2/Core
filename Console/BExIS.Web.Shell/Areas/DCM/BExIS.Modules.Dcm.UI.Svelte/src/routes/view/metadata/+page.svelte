@@ -5,16 +5,16 @@
 <script lang="ts">
 	import ComplexComponent from './complexComponentWrapper.svelte';
 
-	import * as apiCalls from '../services/apiCalls';
-	import { helpStore, notificationType, Page, pageContentLayoutType, Spinner } from '@bexis2/bexis2-core-ui';
+	import * as apiCalls from '$services/MetadataCaller';
+	import { ErrorMessage, helpStore, notificationType, Page, pageContentLayoutType, Spinner } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa';
 	import	{ faDownload } from '@fortawesome/free-solid-svg-icons';
 
 
 	// import { Page } from '@bexis2/bexis2-core-ui';
 	import { schemaToJson, setConfigStore, setMetadataStore } from '$lib/components/utils/metadata/metadataComponentUtils';
-	import { da } from 'svelty-picker/i18n';
-	import { convertDisplayName } from '../metadataShared';
+	import { convertDisplayName } from '$lib/components/utils/metadata/metadataShared';
+	import Forbidden from '../error/Forbidden.svelte';
 
 	// import configJson from './customComponents/config.json';
 
@@ -36,24 +36,25 @@
 			
 			id = Number(container?.getAttribute('dataset'));
 			version = Number(container?.getAttribute('version'));
-		
 
-
-		// read id from url
-		//datasetId = Number(new URLSearchParams(window.location.search).get('id'));
-		console.log('Loading metadata for datasetId:', id, version);
 		if (id > 0) {
-			const datasetInfos = await apiCalls.GetDatasetInfoById(id);
-			s = await apiCalls.GetMetadataSchema(datasetInfos.metadataStructureId);
-			console.log('Schema loaded', s);
+			const res = await apiCalls.GetDatasetInfoById(id);
 
-			if (id > 0) m = await apiCalls.GetMetadata(id);
-			else m = schemaToJson(s);
-			console.log('Metadata loaded', m);
-			setMetadataStore(m);
-			const configJson = await apiCalls.GetComponentConfig(datasetInfos.entityTemplateId, "view");
-			setConfigStore(configJson);
+			if(res.status === 200)
+		 {
+					const datasetInfos = res.data;
+					console.log("🚀 ~ load ~ datasetInfos:", datasetInfos)
 
+					s = await apiCalls.GetMetadataSchema(datasetInfos.metadataStructureId);
+					console.log('Schema loaded', s);
+
+					if (id > 0) m = await apiCalls.GetMetadata(id);
+					else m = schemaToJson(s);
+					console.log('Metadata loaded', m);
+					setMetadataStore(m);
+					const configJson = await apiCalls.GetComponentConfig(datasetInfos.entityTemplateId, "view");
+					setConfigStore(configJson);
+			}
 		}
 	}
 
@@ -219,6 +220,14 @@
 </div>
 		</div>
 		
+		{:catch error}
+
+		 {error.name}
+		 {error.message} -
+		 {error.cause.status} -
+		 {error.cause.data} -
+		 {error.cause.statusText}
+			<Forbidden/>
 
 		{/await}
 </Page>

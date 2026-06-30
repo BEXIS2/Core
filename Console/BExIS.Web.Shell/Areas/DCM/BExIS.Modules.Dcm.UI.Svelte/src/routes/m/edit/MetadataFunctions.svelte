@@ -10,7 +10,7 @@
 	} from '@fortawesome/free-solid-svg-icons';
  
 	import { onMount } from 'svelte';
-	import * as apiCalls from '../services/apiCalls';
+	import * as apiCalls from '../../../services/MetadataCaller';
 	import {
 		activateShow,
 		getValidationStore,
@@ -28,7 +28,7 @@
 		TextInput,
 		type fileUploaderType
 	} from '@bexis2/bexis2-core-ui';
-	import { convertDisplayName } from '../metadataShared';
+	import { convertDisplayName } from '../../../lib/components/utils/metadata/metadataShared';
 	import { goTo } from '$services/BaseCaller';
 	import { createEventDispatcher } from 'svelte';
 	import suite from '$lib/components/utils/metadata/simpleComponentSuite';

@@ -7,7 +7,7 @@
 	import { getByPath, getParentPath, getPartyIdByPath, removeJsonPathIndices, updateMetadataStore, ValidationStoreSetSimpleTypeValid } from "$lib/components/utils/metadata/metadataComponentUtils";
 
 	import { getMappingComponentConfig } from "$lib/components/utils/metadata/mappingHelper";
-	import { GetPartyValue } from "../services/apiCalls";
+	import { GetPartyValue } from "../../../services/MetadataCaller";
 	import { systemMappingsStore } from "$lib/components/utils/metadata/stores";
 
 	import Fa from "svelte-fa";
