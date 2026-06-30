@@ -88,3 +88,9 @@ export interface TagInfoViewModel {
 	releaseNotes: string[];
 	releaseDate: Date;
 }
+
+export interface DeletedModel{
+   id: number;
+   title: string;
+   links: LinksOverview;
+}

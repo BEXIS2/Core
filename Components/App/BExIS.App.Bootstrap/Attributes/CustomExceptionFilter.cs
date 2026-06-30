@@ -38,6 +38,12 @@ namespace BExIS.App.Bootstrap.Attributes
                     statusText = "Entity is deleted";
                 }
 
+                if (exception is EntityForbiddenException)
+                {
+                    statusCode = 403;
+                    statusText = "Entity is forbidden";
+                }
+
                 var result = new JsonResult
                 {
                     Data = new

@@ -136,6 +136,7 @@
     <Compile Include="Attributes\ThrottlingFilterAttribute.cs" />
     <Compile Include="Attributes\CustomValidateAntiForgeryToken.cs" />
     <Compile Include="Exceptions\EntityDeletedException.cs" />
+    <Compile Include="Exceptions\EntityForbiddenException.cs" />
     <Compile Include="Exceptions\EntityLockedException.cs" />
     <Compile Include="Extensions\AuthorizationContextExtensions.cs" />
     <Compile Include="Extensions\IdentityExtensions.cs" />

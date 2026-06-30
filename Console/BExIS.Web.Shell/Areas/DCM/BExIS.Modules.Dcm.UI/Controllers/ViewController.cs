@@ -19,6 +19,7 @@ using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Helpers.View;
 using BExIS.Modules.Dcm.UI.Models.View;
 using BExIS.Modules.Dim.UI.Helpers;
+using BExIS.Modules.Dim.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
@@ -29,6 +30,7 @@ using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
 using BExIS.UI.Models;
 using BExIS.Utils.Data;
+using BExIS.Utils.Data.Helpers;
 using BExIS.Utils.Data.Upload;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
@@ -54,6 +56,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.SessionState;
+using System.Web.UI.WebControls;
 using System.Xml;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
@@ -315,6 +318,46 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     if (datasetManager.IsDatasetCheckedIn(id)) // in process
                     {
                         throw new EntityLockedException("Entity is currently in Process");
+                    }
+                }
+
+
+                return Json(model, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [JsonNetFilter]
+        public JsonResult LoadDeleted(long id, int version = 0, double tag = 0)
+        {
+            if (id == 0) throw new ArgumentException("id is not valid");
+
+            DeletedModel model = new DeletedModel();
+            // Load deleted dataset details here
+            using (var datasetManager = new DatasetManager())
+            using (EntityManager entityManager = new EntityManager())
+            {
+                // Retrieve data for active and hidden (marked as deleted) datasets
+                if (datasetManager.IsDatasetDeleted(id))
+                {
+
+                    List<DatasetVersion> datasetVersions = datasetManager.GetDatasetVersions(id);
+                    List<DatasetVersion> datasetVersionsAllowed = new List<DatasetVersion>();
+
+                    if (datasetManager.IsDatasetDeleted(id))
+                    {
+                        var deletedVersion = datasetManager.GetDeletedDatasetLatestVersion(id);
+                        string title = deletedVersion != null ? deletedVersion.Title : "n.a.";
+                        model.Id = id;
+                        model.Title = title;
+
+                        long entityTypeId = deletedVersion.Dataset.EntityTemplate.EntityType.Id;
+
+                        // get links
+                        EntityReferenceHelper entityReferenceHelper = new EntityReferenceHelper();
+                        model.Links.From = entityReferenceHelper.GetSourceReferences(id, entityTypeId);
+                        model.Links.To = entityReferenceHelper.GetTargetReferences(id, entityTypeId);
+
+
                     }
                 }
 

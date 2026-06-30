@@ -167,4 +167,20 @@ namespace BExIS.Modules.Dcm.UI.Models.View
     {
         public string Date { get; set; }
     }
+
+    public class DeletedModel
+    {
+        public long Id { get; set; }
+        public string Title { get; set; }
+
+        public LinksOverview Links { get; set; }
+        
+        public DeletedModel()
+        {
+            Id = 0;
+            Title = "";
+            Links = new LinksOverview();
+        }
+    }
+
 }

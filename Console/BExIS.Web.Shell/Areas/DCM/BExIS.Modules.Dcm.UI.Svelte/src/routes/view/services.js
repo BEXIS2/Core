@@ -3,6 +3,7 @@ import { Api } from '@bexis2/bexis2-core-ui'; // get model for View page
 export const getView = async (id) => {
 	try {
 		const response = await Api.get('/dcm/view/load?id=' + id);
+		console.log("🚀 ~ getView ~ response:", response)
 		return response;
 	} catch (error) {
 		console.error(error);
@@ -48,6 +49,15 @@ export const getTags = async (id, version) => {
 export const getVersions = async (id, version) => {
 	try {
 		const response = await Api.get('/dcm/view/versions?id=' + id);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+export const getDeleted = async (id) => {
+	try {
+		const response = await Api.get('/dcm/view/loaddeleted?id=' + id);
 		return response.data;
 	} catch (error) {
 		console.error(error);

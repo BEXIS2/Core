@@ -20,6 +20,7 @@
 	import Forbidden from './error/Forbidden.svelte';
 	import Deleted from './error/Deleted.svelte';
 	import InProcess from './error/InProcess.svelte';
+	import NotExist from './error/NotExist.svelte';
 
 
 
@@ -126,11 +127,14 @@
 	 <Hooks	{id} {version} hooks={hooks} />
 	
 		{:catch error}
-	
+
+		{error.status}
 			{#if error.status === 403	}
 				<Forbidden/>
+				{:else if error.status === 404}
+				<NotExist />
 			{:else if error.status === 410}
-				<Deleted/>
+				<Deleted {id}/>
 			{:else if error.status === 423}
 				<InProcess />
 			{:else}
