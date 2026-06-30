@@ -145,7 +145,7 @@
 	<Attributes {model} bind:valid={areAttributesValid} />
 	<div class="px-2">
 		{#if enforcePrimaryKey && model.variables.length > 0 && currentPks.length == 0}
-			<Alert message="Please select a (combined) primary key." cssClass="variant-soft-error p-1"
+			<Alert message="Please select a (combined) primary key to allow identification for each row." cssClass="variant-soft-error p-1"
 			></Alert>
 		{/if}
 		{#if model.variables.length == currentPks.length}
