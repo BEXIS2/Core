@@ -121,7 +121,7 @@ function sendDataTo(data, name, type)
         <option value={d.value}>{d.label}</option>
       {/each}
     </select>
-    <button class="variant-filled-secondary" disabled={!exceptAgreement || selectedFormat == ''} on:click={downloadDatasetWithFormatFn}><Fa icon={faDownload} /></button>
+    <button class:variant-filled-primary={exceptAgreement} disabled={!exceptAgreement || selectedFormat == ''} on:click={downloadDatasetWithFormatFn}><Fa icon={faDownload} /></button>
   </div>
 </div>
 <div class="padding-top-5 position-releative flex flex-col gap-2">
@@ -130,40 +130,41 @@ function sendDataTo(data, name, type)
         <span>with units</span>
 
     </span>
-
-    {#if data_aggrement === "data policy"}
- 
-     <div class="data-aggreement">
-         <input type="checkbox" class="checkbox" id="data-policy" bind:checked="{exceptAgreement}"/>
-         <b>
-             I accept the public regulations from the
-             <a class="a" href="/footer/policy" target="_blank">privacy policy</a>.
-         </b>
-     </div>
- 
-    {:else if data_aggrement === "terms and conditions"}
-    
-        <div class="data-aggreement">
-            <input type="checkbox" class="checkbox" id="terms-and-conditions" bind:checked="{exceptAgreement}"/>
-            <b>
-                I accept the public regulations from the
-                <a class="a" href="/footer/termsandconditions" target="_blank">terms and conditions</a>.
-            </b>
-        </div>
-    
-    {/if}
 </div>
 
 
   {:else} <!-- // download package with files -->
 
-  <button class="btn variant-filled-primary" disabled={!exceptAgreement} on:click={() => downloadDatasetFn()}>
+  <button class="btn" class:variant-filled-primary={!exceptAgreement}  disabled={!exceptAgreement} on:click={() => downloadDatasetFn()}>
    <!-- svelte-ignore missing-declaration -->
    <Fa icon={faSave} />
    <span class="padding-left-5">Download</span>
   </button>
  
  {/if}
+
+{#if isPublic &&  data_aggrement === "data policy"}
+
+<div class="data-aggreement">
+    <input type="checkbox" class="checkbox" id="data-policy" bind:checked="{exceptAgreement}"/>
+    <b>
+        I accept the public regulations from the
+        <a class="a" href="/footer/policy" target="_blank">privacy policy</a>.
+    </b>
+</div>
+
+{:else if isPublic &&  data_aggrement === "terms and conditions"}
+
+  <div class="data-aggreement">
+      <input type="checkbox" class="checkbox" id="terms-and-conditions" bind:checked="{exceptAgreement}"/>
+      <b>
+          I accept the public regulations from the
+          <a class="a" href="/footer/termsandconditions" target="_blank">terms and conditions</a>.
+      </b>
+  </div>
+
+{/if}
+
 
 {:else if   requestAble && hasRequestRight}
   <Request {id} exist={requestExist}/>

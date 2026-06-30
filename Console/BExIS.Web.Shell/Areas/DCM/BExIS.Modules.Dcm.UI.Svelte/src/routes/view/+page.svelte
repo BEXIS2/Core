@@ -23,8 +23,6 @@
 	import NotExist from './error/NotExist.svelte';
 	import InternalServer from './error/InternalServer.svelte';
 
-
-
 	let title = '';
 
 	let container;
@@ -128,8 +126,10 @@
 
 		<Links	links={model.links.to} />
 
-	 <Hooks	{id} {version} hooks={hooks} />
-	
+  {#if model.downloadAccess}
+			<Hooks	{id} {version} hooks={hooks} />
+		{/if}
+
 		{:catch error}
 			{#if error.status === 403	}
 				<Forbidden/>
