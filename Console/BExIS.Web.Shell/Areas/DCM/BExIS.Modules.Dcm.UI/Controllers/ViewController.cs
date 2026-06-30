@@ -1,4 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Exceptions;
 using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dim.Entities.Export;
 using BExIS.Dim.Entities.Mappings;
@@ -9,6 +10,7 @@ using BExIS.Dim.Services;
 using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.Party;
@@ -17,6 +19,7 @@ using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Helpers.View;
 using BExIS.Modules.Dcm.UI.Models.View;
 using BExIS.Modules.Dim.UI.Helpers;
+using BExIS.Modules.Dim.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
@@ -27,22 +30,37 @@ using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
 using BExIS.UI.Models;
 using BExIS.Utils.Data;
+using BExIS.Utils.Data.Helpers;
 using BExIS.Utils.Data.Upload;
+using BExIS.Xml.Helpers;
+using BExIS.Xml.Helpers.Mapping;
+using BEXIS.JSON.Helpers;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
 using DocumentFormat.OpenXml.Office2013.Excel;
+using DocumentFormat.OpenXml.Vml.Spreadsheet;
 using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 using NHibernate.Engine;
 using NHibernate.Mapping.ByCode.Impl;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.SessionState;
+using System.Web.UI.WebControls;
+using System.Xml;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
+using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -59,7 +77,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
 
-        #region about View
+        #region View
 
         // GET: View
         /// <summary>
@@ -71,8 +89,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
         public ActionResult Index(long id, int version = 0, double tag = 0)
         {
-            string module = "DCM";
 
+            if(id==0) throw new ArgumentException("id is not valid");
+
+            string module = "DCM";
+            
             ViewData["id"] = id;
             ViewData["version"] = version;
             ViewData["app"] = SvelteHelper.GetApp(module);
@@ -110,11 +131,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <param name="id">identifier of the dataset</param>
         /// <param name="version">version number of the dataset</param>
         /// <returns></returns>
-        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         [JsonNetFilter]
         public JsonResult Load(long id, int version = 0, double tag = 0)
         {
- 
+
+            if (id == 0) throw new ArgumentException("id is not valid");
+
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             ApiDatasetHelper apiDatasetHelper = new ApiDatasetHelper();
 
@@ -144,6 +166,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     List<DatasetVersion> datasetVersions = datasetManager.GetDatasetVersions(id);
                     List<DatasetVersion> datasetVersionsAllowed = new List<DatasetVersion>();
+
+                    if (datasetManager.IsDatasetDeleted(id))
+                    {
+                        
+                        throw new EntityDeletedException("Entity is deleted.");
+                    }
 
                     if (!datasetManager.IsDatasetDeleted(id)) // dataset should not be in delete state
                     {
@@ -185,7 +213,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         // Throw error if no version id was found.
                         if (versionId <= 0)
                         {
-              
+
                             ModelState.AddModelError("", string.Format("The requested version (release tag or version ID: {0}{1}) could not be found or you don’t have permission to access it.", version, ""));
                         }
                         else
@@ -196,10 +224,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, version, dataset.MetadataStructure.Id, datastructureId, dataset.EntityTemplate.Id);
 
                             model = ViewModel.Map(datasetModel);
-                        
+
                             if (datasetVersion != null && datasetVersion.StateInfo != null)
                             {
-                                model.IsValid = DatasetStateInfo.Valid.ToString().Equals(datasetVersion.StateInfo.State) ;
+                                model.IsValid = DatasetStateInfo.Valid.ToString().Equals(datasetVersion.StateInfo.State);
                             }
 
                             model.MetadataStructureId = datasetVersion.Dataset.MetadataStructure.Id;
@@ -274,14 +302,62 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         #endregion
                     }
 
+
+
+                    if (version > 0)
+                    {
+                        // load BioSchema Description if exist
+                        string bioschemadescription = getBioSchema(id, version);
+                        if (!string.IsNullOrEmpty(bioschemadescription))
+                            ViewData["bioSchema"] = bioschemadescription;
+                    }
+                }
+                else
+                {
+                    if (datasetManager.IsDatasetCheckedIn(id)) // in process
+                    {
+                        throw new EntityLockedException("Entity is currently in Process");
+                    }
                 }
 
-                if (version > 0)
+
+                return Json(model, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [JsonNetFilter]
+        public JsonResult LoadDeleted(long id, int version = 0, double tag = 0)
+        {
+            if (id == 0) throw new ArgumentException("id is not valid");
+
+            DeletedModel model = new DeletedModel();
+            // Load deleted dataset details here
+            using (var datasetManager = new DatasetManager())
+            using (EntityManager entityManager = new EntityManager())
+            {
+                // Retrieve data for active and hidden (marked as deleted) datasets
+                if (datasetManager.IsDatasetDeleted(id))
                 {
-                    // load BioSchema Description if exist
-                    string bioschemadescription = getBioSchema(id, version);
-                    if (!string.IsNullOrEmpty(bioschemadescription))
-                        ViewData["bioSchema"] = bioschemadescription;
+
+                    List<DatasetVersion> datasetVersions = datasetManager.GetDatasetVersions(id);
+                    List<DatasetVersion> datasetVersionsAllowed = new List<DatasetVersion>();
+
+                    if (datasetManager.IsDatasetDeleted(id))
+                    {
+                        var deletedVersion = datasetManager.GetDeletedDatasetLatestVersion(id);
+                        string title = deletedVersion != null ? deletedVersion.Title : "n.a.";
+                        model.Id = id;
+                        model.Title = title;
+
+                        long entityTypeId = deletedVersion.Dataset.EntityTemplate.EntityType.Id;
+
+                        // get links
+                        EntityReferenceHelper entityReferenceHelper = new EntityReferenceHelper();
+                        model.Links.From = entityReferenceHelper.GetSourceReferences(id, entityTypeId);
+                        model.Links.To = entityReferenceHelper.GetTargetReferences(id, entityTypeId);
+
+
+                    }
                 }
 
 
@@ -636,9 +712,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (SubjectManager subjectManager = new SubjectManager())
             using (EntityManager entityManager = new EntityManager())
             {
-                if (HttpContext.User != null && HttpContext.User.Identity != null && !string.IsNullOrEmpty(HttpContext.User.Identity.Name))
+                User user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(HttpContext).Result;
+                if (user!=null)
                 {
-                    long userId = subjectManager.Subjects.Where(s => s.Name.Equals(HttpContext.User.Identity.Name)).Select(s => s.Id).First();
+                    long userId = user.Id;
                     long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).First().Id;
 
                     var request = requestManager.Requests.Where(r =>
@@ -737,6 +814,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         #endregion about view
 
+        #region metadata
         /// <summary>
         /// Start from Metadata Hook - view
         /// </summary>
@@ -750,6 +828,232 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             return RedirectToAction("LoadMetadataByVersion", "Form", new { area = "DCM", entityId = id, version, locked = true, created = false, fromEditMode = false });
         }
+
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
+        public ActionResult Metadata(long id, int version = 0, double tag = 0)
+        {
+
+            // if version is 0 , get latest version, otherwise get the specified version
+            long versionId = getVersionId(id, version, "", tag).Result;
+
+            // get version based on version id
+            using (var datasetManager = new DatasetManager())
+            {
+                version = datasetManager.GetDatasetVersionNr(versionId);
+            }
+
+            string module = "DCM";
+
+            ViewData["id"] = id;
+            ViewData["version"] = version;
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
+
+            return View();
+        }
+
+        #region download
+
+        //html
+
+        public ActionResult DownloadAsHtml(long id, int version)
+        {
+
+
+            return Content("not implemented.");
+        }
+
+        //flatten
+
+
+        //json
+        public ActionResult DownloadAsJson(long id, int version)
+        {
+            try
+            {
+                string metadata = OutputMetadataManager.GetMetadataAsJson(id, version, 2);
+
+                byte[] bytes = Encoding.ASCII.GetBytes(metadata);
+
+                return File(bytes, "application/json");
+
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message);
+            }
+        }
+
+
+        //xml
+        public ActionResult DownloadAsXml(long id, int version)
+        {
+
+
+            return Content("no metadata xml file is loaded.");
+        }
+
+
+        #endregion
+
+        #region import
+
+        [HttpPost]
+        public JsonResult Import(long id)
+        {
+            #region check incomming metadata
+            string errorMessage = "";
+
+            if (Request.Files.Count > 0)
+            {
+                using (var datasetManager = new DatasetManager())
+                {
+                    Dataset dataset = datasetManager.GetDataset(id);
+                    long metadataStructureId = dataset.MetadataStructure.Id;
+
+                    Stream requestStream;
+                    HttpFileCollectionBase files = Request.Files;
+                    var file = files[0]; // one file only
+                    requestStream = file.InputStream;
+                    #endregion check incomming metadata
+                    string contentType = file.ContentType;
+                    XmlDocument completeMetadata = null;
+                    JSchema schema;
+                    XmlMetadataConverter converter = new XmlMetadataConverter();
+                    MetadataStructureConverter metadataStructureConverter = new MetadataStructureConverter();
+                    long mdid = 0;
+
+                    if (contentType.Contains("xml"))
+                    {
+                        #region application/xml
+
+                        XmlDocument metadataForImport = new XmlDocument();
+                        metadataForImport.Load(requestStream);
+
+                        if (metadataForImport.DocumentElement.HasAttribute("id"))
+                        {
+                            mdid = Convert.ToInt64(metadataForImport.DocumentElement.GetAttribute("id"));
+                        }
+
+                        if (mdid == metadataStructureId)
+                        {
+
+                            // metadataStructure ID
+
+                            var metadataStructrueName = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(metadataStructureId).Name;
+
+                            // loadMapping file
+                            var path_mappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), XmlMetadataImportHelper.GetMappingFileName(metadataStructureId, TransmissionType.mappingFileImport, metadataStructrueName));
+
+                            // XML mapper + mapping file
+                            var xmlMapperManager = new XmlMapperManager(TransactionDirection.ExternToIntern);
+                            xmlMapperManager.Load(path_mappingFile, "IDIV");
+
+                            // generate intern metadata without internal attributes
+                            var metadataResult = xmlMapperManager.Generate(metadataForImport, 1, true);
+
+                            // generate intern template metadata xml with needed attribtes
+                            var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
+                            var metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStructureId,
+                                XmlUtility.ToXDocument(metadataResult));
+
+                            var metadataXmlTemplate = XmlMetadataWriter.ToXmlDocument(metadataXml);
+
+                            // set attributes FROM metadataXmlTemplate TO metadataResult
+                            completeMetadata = XmlMetadataImportHelper.FillInXmlValues(metadataResult,
+                                metadataXmlTemplate);
+
+                        }
+                        else
+                        {
+                            Response.StatusCode = (int)HttpStatusCode.ExpectationFailed;
+                            errorMessage = "The metadata ID is either invalid or does not match the expected structure ID ({metadataStructureId}).";
+                        }
+
+                        #endregion application/xml
+                    }
+                    else
+                    if (contentType.Contains("json"))
+                    {
+                        #region application/json
+
+                        using (var streamReader = new StreamReader(requestStream))
+                        using (var jsonReader = new JsonTextReader(streamReader))
+                        {
+                            JsonSerializer serializer = new JsonSerializer();
+
+                            try
+                            {
+                                JObject metadataJson = serializer.Deserialize<JObject>(jsonReader);
+
+
+                                if (metadataJson.ContainsKey("@id"))
+                                {
+                                    if (Int64.TryParse(metadataJson.Property("@id").Value.ToString(), out mdid) && mdid == metadataStructureId)
+                                    {
+                                        schema = metadataStructureConverter.ConvertToJsonSchema(mdid);
+
+                                        List<string> notAllowedElements = new List<string>();
+                                        if (converter.HasValidStructure(metadataJson, mdid, out notAllowedElements))
+                                        {
+                                            completeMetadata = converter.ConvertTo(metadataJson);
+
+                                        }
+                                        else
+                                        {
+                                            Response.StatusCode = (int)HttpStatusCode.ExpectationFailed;
+                                            errorMessage = "the json does not have the expected structure";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Response.StatusCode = (int)HttpStatusCode.ExpectationFailed;
+                                        errorMessage = string.Format("The metadata ID is either invalid or does not match the expected structure ID ({0}).", metadataStructureId);
+                                    }
+
+                                }
+                                else
+                                {
+                                    Response.StatusCode = (int)HttpStatusCode.ExpectationFailed;
+                                    errorMessage = "the json does not contain any information about the metadata structure";
+                                }
+                            }
+                            catch (JsonReaderException)
+                            {
+                                Console.WriteLine("Invalid JSON.");
+                            }
+                        }
+
+                        #endregion application/json
+                    }
+
+                    if (completeMetadata != null)
+                    {
+                        HttpStatusCode statusCode = HttpStatusCode.OK;
+
+                        string json = "";
+
+                        json = OutputMetadataManager.GetMetadataAsJson(completeMetadata, 1);
+                        return Json(json);
+
+                    }
+
+                }
+            }
+      
+
+            // 2. Return the JSON error payload
+            return Json(new
+            {
+                success = false,
+                message = errorMessage, // Optional: Remove this in production for security reasons
+                error = errorMessage // Optional: Remove this in production for security reasons
+            }, JsonRequestBehavior.AllowGet);
+
+        }
+        #endregion
+
+        #endregion
 
         /// <summary>
         /// Start from Data Hook - view
@@ -804,21 +1108,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public bool UserExist()
         {
-            if (HttpContext.User != null && HttpContext.User.Identity != null && !string.IsNullOrEmpty(HttpContext.User.Identity.Name)) return true;
+            User user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(HttpContext).Result;
+
+            if(user != null) return true;
 
             return false;
         }
 
         public string GetUsernameOrDefault()
         {
-            var username = string.Empty;
-            try
-            {
-                username = HttpContext.User.Identity.Name;
-            }
-            catch { }
-
-            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+            User user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(HttpContext).Result;
+            string username = user?.Name?? "DEFAULT";
+            return username;
         }
 
         private string getPartyNameOrDefault()

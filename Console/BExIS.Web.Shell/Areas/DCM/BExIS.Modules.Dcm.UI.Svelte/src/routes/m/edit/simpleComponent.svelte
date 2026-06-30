@@ -26,7 +26,7 @@
 		SimpleComponentData
 	} from '$lib/components/utils/metadata/models';
 	import SveltyPicker from 'svelty-picker';
-	import { convertDisplayName } from '../metadataShared';
+	import { convertDisplayName } from '../../../lib/components/utils/metadata/metadataShared';
 	import type { JsonListItem } from '../components/types';
 	import Blocked from './Blocked.svelte';
 	import PartySelector from './PartySelector.svelte';

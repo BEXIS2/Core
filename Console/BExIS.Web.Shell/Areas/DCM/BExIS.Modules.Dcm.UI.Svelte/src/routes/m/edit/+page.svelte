@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ComplexComponent from './complexComponentWrapper.svelte';
 
-	import * as apiCalls from '../services/apiCalls';
+	import * as apiCalls from '$services/MetadataCaller';
 	import {
 		helpStore,
 		notificationType,

@@ -286,7 +286,7 @@ namespace BExIS.Utils.Data.Helpers
             return tmp;
         }
 
-        public List<ReferenceModel> GetSourceReferences(long id, long typeid, int version)
+        public List<ReferenceModel> GetSourceReferences(long id, long typeid, int version = 0)
         {
             List<ReferenceModel> tmp = new List<ReferenceModel>();
             EntityReferenceManager entityReferenceManager = new EntityReferenceManager();
@@ -298,7 +298,7 @@ namespace BExIS.Utils.Data.Helpers
                 var list = entityReferenceManager.References.Where(r =>
                         r.TargetId.Equals(id) &&
                         r.TargetEntityId.Equals(typeid) &&
-                        r.TargetVersion <= version
+                        (version == 0 || r.TargetVersion <= version)
                         ).ToList();
 
                 list.ForEach(r => tmp.Add(helper.Convert(r)));
@@ -316,7 +316,7 @@ namespace BExIS.Utils.Data.Helpers
             return tmp;
         }
 
-        public List<ReferenceModel> GetTargetReferences(long id, long typeid, int version)
+        public List<ReferenceModel> GetTargetReferences(long id, long typeid, int version=0)
         {
             List<ReferenceModel> tmp = new List<ReferenceModel>();
             EntityReferenceManager entityReferenceManager = new EntityReferenceManager();
@@ -328,7 +328,7 @@ namespace BExIS.Utils.Data.Helpers
                 var list = entityReferenceManager.References.Where(r =>
                             r.SourceId.Equals(id) &&
                             r.SourceEntityId.Equals(typeid) &&
-                            r.SourceVersion <= version).ToList();
+                            (version==0|| r.SourceVersion <= version)).ToList();
 
                 list.ForEach(r => tmp.Add(helper.Convert(r)));
                 tmp.RemoveAll(item => item == null);

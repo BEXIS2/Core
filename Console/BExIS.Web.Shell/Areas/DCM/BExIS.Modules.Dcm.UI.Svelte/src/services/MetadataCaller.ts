@@ -37,11 +37,11 @@ export const GetComponentConfig = async (id: any, type: string) => {
 export const GetDatasetInfoById = async (datasetId: number) => {
 	try {
 		const response = await Api.get('/api/dataset/' + datasetId);
-		// console.log(" response.data.MetadataStructureId:", response);
-		return response.data;
+
+		return response;
 	} catch (error) {
-		console.error(error);
-		throw error;
+		console.error("error",error);
+		throw new Error("Forbidden", { cause: error });
 	}
 };
 

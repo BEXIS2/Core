@@ -3,13 +3,13 @@
 	import Fa from 'svelte-fa';
   import { faCancel, faCheck, faFileUpload, faSave, faTriangleExclamation, faXmark } from '@fortawesome/free-solid-svg-icons';
 	import { onMount } from 'svelte';
-  import * as apiCalls from '../services/apiCalls';
+  import * as apiCalls from '../../../services/MetadataCaller';
 	import { activateShow, getValidationStore, setMetadataStore, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import type { validationStoretype } from '$lib/components/utils/metadata/models';
   import {metadataStore, validationStore} from '$lib/components/utils/metadata/stores';
 
 	import { Api, FileUploader, notificationStore, notificationType, TextInput, type fileUploaderType } from '@bexis2/bexis2-core-ui';
-  import {convertDisplayName} from '../metadataShared';
+  import {convertDisplayName} from '../../../lib/components/utils/metadata/metadataShared';
 	import { goTo } from '$services/BaseCaller';
   import { createEventDispatcher } from 'svelte';
 	import suite from '$lib/components/utils/metadata/simpleComponentSuite';

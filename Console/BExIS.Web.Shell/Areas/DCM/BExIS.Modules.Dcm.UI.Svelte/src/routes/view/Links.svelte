@@ -12,6 +12,10 @@
 {#if types}
 <h3 class="h3">Related Work</h3>
 <div class="card p-5 mb-5">
+ {#if types.length === 0}
+  <p>No related work found.</p>
+ {/if}
+ 
  {#each types as type}
 
  <div class="mb-4">

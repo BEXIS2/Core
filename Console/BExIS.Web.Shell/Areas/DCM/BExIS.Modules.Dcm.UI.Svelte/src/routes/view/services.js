@@ -3,9 +3,11 @@ import { Api } from '@bexis2/bexis2-core-ui'; // get model for View page
 export const getView = async (id) => {
 	try {
 		const response = await Api.get('/dcm/view/load?id=' + id);
-		return response.data;
+		console.log("🚀 ~ getView ~ response:", response)
+		return response;
 	} catch (error) {
 		console.error(error);
+		throw error;
 	}
 };
 
@@ -53,6 +55,15 @@ export const getVersions = async (id, version) => {
 	}
 };
 
+export const getDeleted = async (id) => {
+	try {
+		const response = await Api.get('/dcm/view/loaddeleted?id=' + id);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 export const downloadZip = async (id, format, version = -1, withFilter = false, withUnits = false) => {
 	try {
 			const config = { responseType: 'blob' }
@@ -60,8 +71,6 @@ export const downloadZip = async (id, format, version = -1, withFilter = false, 
 
 		if(format	=== undefined || format === null || format === ''){
 				const response = await Api.get('/dcm/view/downloadZip?id=' + id+'&version=' + version,'',header,config);
-			
-				
 			
 				return response;
 		}
@@ -71,6 +80,15 @@ export const downloadZip = async (id, format, version = -1, withFilter = false, 
 				const response = await Api.get('/dcm/view/downloadZip?id=' + id+'&version=' + version+'&format=' + format+'&withFilter=' + withFilter+'&withUnits=' + withUnits, '', header, config);
 				return response;
 		}
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+export const sendRequest = async (id, intension) => {
+	try {
+		const response = await Api.get('/ddm/RequestsSend/send?id=' + id + '&intension=' + intension);
+		return response.data;
 	} catch (error) {
 		console.error(error);
 	}

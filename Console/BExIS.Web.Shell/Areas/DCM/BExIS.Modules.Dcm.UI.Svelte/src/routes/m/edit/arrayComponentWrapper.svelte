@@ -7,9 +7,9 @@
 	import Fa from 'svelte-fa';
 	import { slide, fade } from 'svelte/transition';
 	import { activeStore, hideStore, validationStore } from '$lib/components/utils/metadata/stores';
-	import { convertDisplayName } from '../metadataShared';
+	import { convertDisplayName } from '../../../lib/components/utils/metadata/metadataShared';
 	import Header from './MetadataComponentHeader.svelte';
-	import { onMount } from 'svelte';
+
 
 	export let arrayComponent: any;
 	export let path: string;

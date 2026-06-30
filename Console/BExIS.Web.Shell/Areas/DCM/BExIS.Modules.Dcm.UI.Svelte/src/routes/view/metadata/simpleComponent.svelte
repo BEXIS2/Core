@@ -17,7 +17,7 @@
 	import { customComponentsCatalog } from '$lib/components/customComponents/componentCatalog';
 	import type { SimpleComponentData } from '$lib/components/utils/metadata/models';
 	import SveltyPicker from 'svelty-picker';
-	import {convertDisplayName} from '../metadataShared';
+	import {convertDisplayName} from '$lib/components/utils/metadata/metadataShared';
 
 	//import { en, de } from 'svelty-picker/dist/i18n';
 
