@@ -1,5 +1,5 @@
 import type { SimpleComponentData, validationStoretype } from './models';
-import { metadataStore,systemMappingsStore, hideStore, validationStore, configStore, activeStore } from './stores';
+import { metadataStore,systemMappingsStore, hideStore, validationStore, configStore, activeStore, descriptionStore } from './stores';
 import { get } from 'svelte/store';
 // Utility functions for metadata handling
 // Get and set values in the metadata store based on a dot-separated path
@@ -534,3 +534,12 @@ export function getPartyIdFromParent(path) {
   // get party id from parent path, which is the last number in the path
 
 }
+
+export function showDescriptionHandler(e: any, type: 'simple' | 'complex') {
+		descriptionStore.set({ type, content: e.detail.description, path: e.detail.id });
+		console.log('🚀 ~ showDescriptionHandler ~ e.detail.description:', e.detail);
+	}
+
+export function hideDescriptionHandler(e: any, type: 'simple' | 'complex') {
+		descriptionStore.set({ type, content: '', path: '' });
+	}

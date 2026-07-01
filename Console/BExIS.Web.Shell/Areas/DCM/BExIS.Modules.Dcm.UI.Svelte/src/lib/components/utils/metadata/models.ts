@@ -29,6 +29,7 @@ export interface SimpleComponentData {
 }
 
 export interface ComplexComponentData {
+	path: any;
 	complexComponent: any;
 	label: string;
 	required: boolean;

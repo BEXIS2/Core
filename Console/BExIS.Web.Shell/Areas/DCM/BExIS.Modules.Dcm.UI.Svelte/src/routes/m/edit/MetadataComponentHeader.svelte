@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { empty, getNodeByPath, getPartyIdByPath, hasValue, isActive, setActive, setInactive, toggleShow, activateShow } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { empty, getNodeByPath, getPartyIdByPath, hasValue, isActive, setActive, setInactive, toggleShow, activateShow, showDescriptionHandler, hideDescriptionHandler } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { convertDisplayName } from '../../../lib/components/utils/metadata/metadataShared';
 	import { faPlus, faChevronUp, faChevronDown, faQuestion, faTrash, faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
-  import {faCircleQuestion as faCircleQuestionRegular} from '@fortawesome/free-regular-svg-icons';
   import Fa from 'svelte-fa';
   import { activeStore, hideStore, metadataStore, validationStore, showAllDescriptionsStore } from '$lib/components/utils/metadata/stores';
   import { onMount } from 'svelte';
@@ -83,9 +82,20 @@ function removeFromValidationStore(path: string) {
   });
 }
 
+  function handleShowDescription(e: MouseEvent | FocusEvent) {
+    if (description) {
+      const desc = { detail: { description: description ? description : '', id: path } };
+      showDescriptionHandler(desc, 'complex');  
+    }
+	}
+
+  function handleHideDescription(e: MouseEvent | FocusEvent) {
+		hideDescriptionHandler(e, 'complex');
+	}
+
 </script>
 
-<div class="card flex min-h-8 bg-primary-300 dark:bg-primary-800  items-center gap-2">
+<div class="card flex min-h-8 bg-primary-300 dark:bg-primary-800  items-center gap-2" role="button" tabindex="0" on:mouseover={handleShowDescription} on:mouseleave={handleHideDescription} on:focus={handleShowDescription} on:blur={handleHideDescription}>
 <div>
     {#if !required}
 
