@@ -68,14 +68,18 @@
 
  {#each extensions as ext (ext.id)}
   <Tab bind:group={tabSet} name={ext.title} value={ext.id}>
+  {#if ext.title.length > 0}
    {ext.title} 
+  {:else}
+    {entity} (Ext.)
+    {/if}
    
 
   </Tab>
  {/each}
  <!--add extentions -->
- <Tab bind:group={tabSet}  name="add" value={100}>
-  +
+ <Tab bind:group={tabSet}  name="add" value={100} title="Add additional dataset as extension to the current dataset">
+  + Add Data as Extension
  </Tab>
 
   <svelte:fragment slot="panel">
