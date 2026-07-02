@@ -98,6 +98,38 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             }
         }
 
+        public ActionResult multimediaDataView(long datasetID, long versionId = 0, string entityType = "Dataset")
+        {
+            ViewData["Id"] = datasetID;
+
+            using (DatasetManager datasetManager = new DatasetManager())
+            {
+                try
+                {
+                    EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+                    bool isLatestVersion = false;
+                    if (versionId == datasetManager.GetDatasetLatestVersion(datasetID).Id)
+                        isLatestVersion = true;
+
+                    ViewData["edit"] = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Write).Result;
+
+                    bool access = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read).Result;
+                    Session["DatasetInfo"] = new DatasetInfo(datasetID, versionId, isLatestVersion, access, entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Delete).Result);
+                    if (access)
+                        return View("_multimediaData", getFilesByDatasetId(datasetID, entityType, versionId));
+                    else
+                        return null;
+                }
+                catch
+                {
+                    return null;
+                }
+                finally
+                {
+                }
+            }
+        }
+
         public ActionResult getFilePreview(string path, string type)
         {
             switch (type)

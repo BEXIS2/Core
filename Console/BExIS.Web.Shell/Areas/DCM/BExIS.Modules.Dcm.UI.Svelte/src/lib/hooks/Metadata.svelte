@@ -71,12 +71,13 @@
 
 <div class="flex-col space-y-1">
 	<div class="flex gap-3 justify-left">
-		<button class="btn btn-sm variant-filled-secondary flex-none" on:click={editOldFn}
+			<button class="btn btn-sm variant-filled-secondary flex-none" on:click={editFn} title="Edit metadata"
 			><Fa icon={faPen} /><span class="pl-1">Edit</span></button
 		>
-		<button class="btn btn-sm variant-filled-secondary flex-none" on:click={editFn} title="Edit metadata"
-			><Fa icon={faPen} /><span class="pl-1">Edit (new)</span></button
-		>
+		<!-- <button class="btn btn-sm variant-filled-secondary flex-none" on:click={editOldFn}
+			><Fa icon={faPen} /><span class="pl-1">Edit</span></button
+		> -->
+
 	</div>
 </div>
 {#if open}

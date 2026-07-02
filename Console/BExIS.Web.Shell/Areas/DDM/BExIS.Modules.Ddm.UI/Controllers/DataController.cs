@@ -875,6 +875,113 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
         }
 
+        [BExISEntityAuthorize(typeof(Dataset), "datasetID", RightType.Read)]
+        public ActionResult ShowData(long datasetID, int versionId)
+        {
+            Session["Filter"] = null;
+            Session["Columns"] = null;
+            Session["DownloadFullDataset"] = false;
+            ViewData["DownloadOptions"] = null;
+            IOUtility iOUtility = new IOUtility();
+            DatasetManager dm = new DatasetManager();
+            DataStructureManager dsm = new DataStructureManager();
+            //permission download
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+
+            try
+            {
+                var dataset = dm.GetDataset(datasetID);
+                Boolean latest = true;
+                string title = "";
+
+                if (dataset.Status != DatasetStatus.CheckedOut)
+                {
+                    DataTable table = null;
+                    DatasetVersion dsv = null;
+                    StructuredDataStructure sds = null;
+
+                    if (dataset.Status == DatasetStatus.CheckedIn) // checi if version is latest
+                    {
+                        dsv = dm.GetDatasetVersion(versionId);
+                        latest = versionId == dm.GetDatasetLatestVersionId(datasetID);
+                        title = dsv.Title;
+                    }
+
+                    bool downloadAccess = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read).Result;
+
+                    if (dataset.DataStructure != null)
+                    {
+                        sds = dsm.StructuredDataStructureRepo.Get(dataset.DataStructure.Id);
+
+                        // if deleted or latest show latest data,
+                        if (dataset.Status == DatasetStatus.Deleted || (dataset.Status == DatasetStatus.CheckedIn && latest))
+                        {
+                            try
+                            {
+                                long count = dm.RowCount(datasetID, null);
+                                ViewData["gridTotal"] = count;
+                                if (count > 0) table = dm.GetLatestDatasetVersionTuples(datasetID, null, null, null, "", 0, 10);
+                                else ModelState.AddModelError(string.Empty, "<span style=\"color: black;\"> There is no primary data available/uploaded. </span><br/><br/> <span style=\"font-weight: normal;color: black;\">Please note that the data may have been uploaded to another repository and is referenced here in the metadata.</span>");
+                            }
+                            catch
+                            {
+                                ModelState.AddModelError(string.Empty, "The data is not available, please ask the administrator for a synchronization.");
+                            }
+                        }
+                        else
+                        {
+                            table = dm.GetDatasetVersionTuples(versionId, 0, 10);
+                            ViewData["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
+                        }
+
+                        ViewData["isPublic"] = entityPermissionManager.ExistsAsync(dataset.EntityTemplate.EntityType.Id, dataset.Id).Result;
+
+                        sds.Variables = sds.Variables.OrderBy(v => v.OrderNo).ToList();
+
+                        return View(ShowPrimaryDataModel.Convert(
+                            datasetID,
+                            versionId,
+                            title,
+                            sds,
+                            table,
+                            downloadAccess,
+                            iOUtility.GetSupportedAsciiFiles(),
+                            latest,
+                            hasUserRights(datasetID, RightType.Write)
+                            ));
+                    }
+                    else
+                    {
+                        if (this.IsAccessible("MMM", "ShowMultimediaData", "multimediaData") && GeneralSettings.UseMultiMediaModule)
+                            return RedirectToAction("multimediaDataView", "ShowMultimediaData", new RouteValueDictionary { { "area", "MMM" }, { "datasetID", datasetID }, { "versionId", versionId } });
+                        else
+                            return
+                                View(ShowPrimaryDataModel.Convert(datasetID,
+                                versionId,
+                                title,
+                                null,
+                                SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"),
+                                downloadAccess,
+                                iOUtility.GetSupportedAsciiFiles(),
+                                latest,
+                                hasUserRights(datasetID, RightType.Write)
+                                ));
+                    }
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                dm.Dispose();
+                dsm.Dispose();
+            }
+        }
+
         #region server side
 
         [GridAction(EnableCustomBinding = true)]
@@ -1733,7 +1840,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         DSlink
                         );
 
-                    return PartialView("_previewDatastructure", m);
+                    return View("_previewDatastructure", m);
                 }
             }
         }
