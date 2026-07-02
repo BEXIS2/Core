@@ -136,13 +136,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
 
             if (id == 0) throw new ArgumentException("id is not valid");
+            var user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(HttpContext).Result;
 
+          
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             ApiDatasetHelper apiDatasetHelper = new ApiDatasetHelper();
 
             ViewModel model = new ViewModel();
             model.Id = id;
 
+            // set User 
+         
             long versionId = 0;
             bool latestVersion = false;
             long latestVersionId = 0;
@@ -169,7 +173,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     if (datasetManager.IsDatasetDeleted(id))
                     {
-                        
                         throw new EntityDeletedException("Entity is deleted.");
                     }
 
@@ -218,6 +221,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         }
                         else
                         {
+                            // check if its public or not
+                            model.IsPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
+
+                            // stop loading data if the dataset is not public and no user is logged in
+                            if (model.IsPublic == false && user == null)
+                            {
+                                throw new EntityForbiddenException("You do not have permission to access this Entity.");
+                            }
+
+
                             datasetVersion = datasetManager.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
                             var dataset = datasetVersion.Dataset;
                             long datastructureId = dataset.DataStructure != null ? dataset.DataStructure.Id : -1;
@@ -247,7 +260,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             model.DownloadAccess = entityPermissionManager.HasEffectiveRightsAsync(BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext), typeof(Dataset), id, RightType.Read).Result;
 
                             model.HasEditRight = entityPermissionManager.HasEffectiveRightsAsync(BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext), typeof(Dataset), id, RightType.Write).Result;
-                            model.IsPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
+               
+
                             // if the dataset is public, user or even no user has download rights
                             if (model.IsPublic) model.DownloadAccess = model.IsPublic;
 
@@ -826,7 +840,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             //throw new NotImplementedException();
 
-            return RedirectToAction("LoadMetadataByVersion", "Form", new { area = "DCM", entityId = id, version, locked = true, created = false, fromEditMode = false });
+            return RedirectToAction("metadata", "view", new { area = "DCM", id, version});
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]

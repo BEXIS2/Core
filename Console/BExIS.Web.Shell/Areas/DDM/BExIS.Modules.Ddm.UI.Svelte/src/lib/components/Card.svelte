@@ -81,8 +81,8 @@
 <div class="flex grow">
 	<div
 		class="p-4 px-5 border rounded-md bg-neutral-50 border-neutral-200 grow cursor-pointer hover:border-primary-500"
-		on:click={() => window.open(`/ddm/data/Showdata/${id}`)}
-		on:keydown={() => window.open(`/ddm/data/Showdata/${id}`)}
+		on:click={() => window.open(`/dcm/view?id=${id}`)}
+		on:keydown={() => window.open(`/dcm/view?id=${id}`)}
 		role="link"
 		tabindex="0"
 		title="View dataset details in a new tab"
