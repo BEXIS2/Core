@@ -105,6 +105,7 @@ function removeFromValidationStore(path: string) {
 													class:disabled={value.length >= maxItems}
 													disabled={value.length >= maxItems}
 													on:click={() => insertItemAt(index + 1)}
+													title="Add a new {convertDisplayName(label, true)} entry after this entry"
 												>
 													<Fa icon={faPlus} />
 												</button>
@@ -113,6 +114,7 @@ function removeFromValidationStore(path: string) {
 													class:disabled={index <= 0}
 													disabled={index <= 0}
 													on:click={() => itemUp(index)}
+													title="Move {convertDisplayName(label, true)} entry up"
 												>
 													<Fa icon={faChevronUp} />
 												</button>
@@ -121,6 +123,7 @@ function removeFromValidationStore(path: string) {
 													class:disabled={index >= value.length - 1}
 													disabled={index >= value.length - 1}
 													on:click={() => itemDown(index)}
+													title="Move {convertDisplayName(label, true)} entry down"
 												>
 													<Fa icon={faChevronDown} />
 												</button>
@@ -129,6 +132,7 @@ function removeFromValidationStore(path: string) {
 													class:disabled={value.length <= minItems}
 													disabled={value.length <= minItems}
 													on:click={() => removeItem(index)}
+													title="Remove {convertDisplayName(label, true)} entry"
 												>
 													<Fa icon={faTrash} />
 												</button>
@@ -186,6 +190,7 @@ function removeFromValidationStore(path: string) {
 									class:disabled={value.length >= maxItems}
 									disabled={value.length >= maxItems}
 									on:click={() => insertItemAt(index + 1)}
+									title="Add a new {convertDisplayName(label, true)} entry after this entry"
 								>
 									<Fa icon={faPlus} />
 								</button>
@@ -194,6 +199,7 @@ function removeFromValidationStore(path: string) {
 									class:disabled={index <= 0}
 									disabled={index <= 0}
 									on:click={() => itemUp(index)}
+									title="Move {convertDisplayName(label, true)} entry up"
 								>
 									<Fa icon={faChevronUp} />
 								</button>
@@ -202,6 +208,7 @@ function removeFromValidationStore(path: string) {
 									class:disabled={index >= value.length - 1}
 									disabled={index >= value.length - 1}
 									on:click={() => itemDown(index)}
+									title="Move {convertDisplayName(label, true)} entry down"
 								>
 									<Fa icon={faChevronDown} />
 								</button>
@@ -210,6 +217,7 @@ function removeFromValidationStore(path: string) {
 									class:disabled={value.length <= minItems}
 									disabled={value.length <= minItems}
 									on:click={() => removeItem(index)}
+									title="Remove {convertDisplayName(label, true)} entry"
 								>
 									<Fa icon={faTrash} />
 								</button>

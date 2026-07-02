@@ -113,7 +113,7 @@
 <div>
 	<div transition:fade class="flex px-1">
 		<div class="grow">
-			<button title="back" class="btn variant-filled-warning" on:click={() => back()}
+			<button title="Back" class="btn variant-filled-warning" on:click={() => back()}
 				><Fa icon={faArrowLeft} /><span class="pl-1">Back</span></button
 			>
 		</div>
@@ -130,7 +130,7 @@
 				>
 			{/if}
 			<button
-				title="save"
+				title="Save data structure"
 				class="btn variant-filled-primary"
 				on:click={onSaveHandler}
 				on:keypress={onSaveHandler}
@@ -145,7 +145,7 @@
 	<Attributes {model} bind:valid={areAttributesValid} />
 	<div class="px-2">
 		{#if enforcePrimaryKey && model.variables.length > 0 && currentPks.length == 0}
-			<Alert message="Please select a (combined) primary key." cssClass="variant-soft-error p-1"
+			<Alert message="Please select a (combined) primary key to allow identification for each row." cssClass="variant-soft-error p-1"
 			></Alert>
 		{/if}
 		{#if model.variables.length == currentPks.length}

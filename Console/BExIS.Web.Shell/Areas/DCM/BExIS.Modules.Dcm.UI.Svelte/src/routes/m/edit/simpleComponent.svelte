@@ -7,7 +7,8 @@
 		Dropdown,
 		helpStore,
 		CodeEditor,
-		MultiSelect
+		MultiSelect,
+		DatePickerInput
 	} from '@bexis2/bexis2-core-ui';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
@@ -17,7 +18,9 @@
 		updateMetadataStore,
 		createSimpleComponentValidationItem,
 		getConfigStore,
-		getValidationStore
+		getValidationStore,
+		showDescriptionHandler,
+		hideDescriptionHandler
 	} from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { customComponentsCatalog } from '$lib/components/customComponents/componentCatalog';
 	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
@@ -69,6 +72,8 @@
 
 	// System mapping
 	let mappingComponentConfig: MappingComponentConfig;
+
+
 
 	onMount(async () => {
 		//console.log('🚀 ~ onMount ~ simpleComponent:', value)
@@ -150,6 +155,14 @@
 		}, 10);
 	}
 
+	function handleShowDescription(e: CustomEvent<any>) {
+		showDescriptionHandler(e, 'simple');
+	}
+
+	function handleHideDescription(e: CustomEvent<any>) {
+		hideDescriptionHandler(e, 'simple');
+	}
+
 	function updateValue(value: any, _path: string) {
 		// check changed field only
 		res = suite(_path);
@@ -166,6 +179,7 @@
 			ValidationStoreSetSimpleTypeValid(_path, res.isValid(_path), errorMessage);
 		}, 10);
 	}
+
 </script>
 
 <!-- Simple Component Rendering -->
@@ -198,8 +212,7 @@
 				<!-- Handle date format -->
 				{#if simpleComponent.properties['#text'].format.toLowerCase() === 'date'}
 					<span id={path}>
-						
-						<SveltyPicker
+						<DatePickerInput
 							label={convertDisplayName(label)}
 							mode="date"
 							name={label}
@@ -208,26 +221,33 @@
 							bind:value
 							inputClasses="input variant-form-material dark:bg-zinc-700 bg-zinc-50 placeholder:text-gray-400 w-32"
 							on:change={onChangeHandler}
+							on:showDescription={handleShowDescription}
+							on:hideDescription={handleHideDescription}
 						/>
 					</span>
+
 					<!-- Handle datetime format -->
 				{:else if simpleComponent.properties['#text'].format.toLowerCase() === 'datetime' || simpleComponent.properties['#text'].format.toLowerCase() === 'date and time'}
 					<span id={path}>
-						<SveltyPicker
+						<DatePickerInput
 							label={convertDisplayName(label)}
-							mode="date"
+							mode="datetime"
 							name={label}
-							format="yyyy-mm-dd"
+							format="yyyy-mm-dd hh:ii"
+							displayFormat="yyyy-mm-dd hh:mm"
 							initialDate={date}
 							bind:value
 							inputClasses="input variant-form-material dark:bg-zinc-700 bg-zinc-50 placeholder:text-gray-400 w-32"
 							on:change={onChangeHandler}
+							on:showDescription={handleShowDescription}
+							on:hideDescription={handleHideDescription	}	
 						/>
 					</span>
+						
 					<!-- Handle time format -->
 				{:else if simpleComponent.properties['#text'].format.toLowerCase() === 'time'}
 					<span id={path}>
-						<SveltyPicker
+					<DatePickerInput
 							label={convertDisplayName(label)}
 							mode="time"
 							name={label}
@@ -237,6 +257,8 @@
 							bind:value
 							inputClasses="input variant-form-material dark:bg-zinc-700 bg-zinc-50 placeholder:text-gray-400 w-32"
 							on:change={onChangeHandler}
+							on:showDescription={handleShowDescription}
+							on:hideDescription={handleHideDescription}
 						/>
 					</span>
 					<!-- Handle textarea format -->
@@ -252,6 +274,8 @@
 						feedback={res.getErrors(path)}
 						description={simpleComponent.description}
 						showDescription={showDescription}
+						on:showDescription={handleShowDescription}
+						on:hideDescription={handleHideDescription}
 					/>
 				{/if}
 				<!-- Handle different types without specific format -->
@@ -267,7 +291,8 @@
 					invalid={res.hasErrors(path)}
 					feedback={res.getErrors(path)}
 					description={simpleComponent.description}
-					showDescription={showDescription}
+					on:showDescription={handleShowDescription}
+					on:hideDescription={handleHideDescription}
 				/>
 				<!-- Handle string type with enum  -->
 			{:else if simpleComponent.properties['#text'].type === 'string' && simpleComponent.properties['#text'].enum}
@@ -284,7 +309,8 @@
 							feedback={res.getErrors(path)}
 							description={simpleComponent.description}
 							{required}
-							showDescription={showDescription}
+							on:showDescription={handleShowDescription}
+							on:hideDescription={handleHideDescription}
 						/>
 					{:else}
 						<!-- Handle string type with enum with many entries -->
@@ -300,7 +326,8 @@
 							invalid={res.hasErrors(path)}
 							feedback={res.getErrors(path)}
 							description={simpleComponent.description}
-							showDescription={showDescription}
+							on:showDescription={handleShowDescription}
+							on:hideDescription={handleHideDescription}
 						/>
 					{/if}
 				{:else}
@@ -321,7 +348,8 @@
 							invalid={res.hasErrors(path)}
 							feedback={res.getErrors(path)}
 							description={simpleComponent.description}
-							showDescription={showDescription}
+							on:showDescription={handleShowDescription}
+							on:hideDescription={handleHideDescription}
 						/>
 					{/if}
 				{/if}
@@ -340,7 +368,8 @@
 					invalid={res.hasErrors(path)}
 					feedback={res.getErrors(path)}
 					description={simpleComponent.description}
-					showDescription={showDescription}
+					on:showDescription={handleShowDescription}
+					on:hideDescription={handleHideDescription}
 				/>
 
 				<!-- Handle boolean type -->
@@ -353,7 +382,8 @@
 					bind:checked={value}
 					on:input={onChangeHandler}
 					description={simpleComponent.description}
-					showDescription={showDescription}
+					on:showDescription={handleShowDescription}
+					on:hideDescription={handleHideDescription}
 					size="sm">{label}</SlideToggle
 				>
 			{/if}

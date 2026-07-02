@@ -65,7 +65,9 @@
 		//datasetId = Number(new URLSearchParams(window.location.search).get('id'));
 		console.log('Loading metadata for datasetId:', id);
 		if (id > 0) {
-			const datasetInfos = await apiCalls.GetDatasetInfoById(id);
+			let result = await apiCalls.GetDatasetInfoById(id);
+			const datasetInfos = result.data;
+			// console.log('Dataset infos loaded', datasetInfos);
 			s = await apiCalls.GetMetadataSchema(datasetInfos.metadataStructureId);
 			console.log('Schema loaded', s);
 
@@ -161,8 +163,13 @@
 				<div class="justify-end gap-3 pr-5 text-sm w-[40%] ml-2">
 					{#if $descriptionStore && $descriptionStore.path && typeof $descriptionStore.content === 'string'}
 						<div class="card dark:bg-secondary-800 p-3">
-							<h4 class="h4 mb-2">Field Description</h4>
-							<p>{@html $descriptionStore.content}</p>
+							{#if $descriptionStore.type === 'simple'}
+								<h4 class="h4 mb-2">Field Description</h4>
+								<p>{@html $descriptionStore.content}</p>
+							{:else if $descriptionStore.type === 'complex'}
+								<h4 class="h4 mb-2">Section Description</h4>
+								<p>{@html $descriptionStore.content}</p>
+							{/if}
 						</div>
 					{/if}
 				</div>

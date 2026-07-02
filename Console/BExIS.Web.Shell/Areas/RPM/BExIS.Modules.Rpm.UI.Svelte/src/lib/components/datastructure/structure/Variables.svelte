@@ -298,7 +298,7 @@
 			{#if expandAll}
 				<button
 					class="badge text-sm"
-					title={expandAll ? 'collapse all' : 'expand all'}
+					title={expandAll ? 'Collapse all' : 'Expand all'}
 					on:click={() => (expandAll = !expandAll)}
 				>
 					<Fa icon={faChevronDown} />&nbsp;Collapse all variables
@@ -308,7 +308,7 @@
 
 				<button
 					class="badge text-sm"
-					title={expandAll ? 'collapse all' : 'expand all'}
+					title={expandAll ? 'Collapse all' : 'Expand all'}
 					on:click={() => (expandAll = !expandAll)}
 				>
 					<Fa icon={faChevronUp} />&nbsp;Expand all variables
@@ -347,7 +347,7 @@
 							{#if i > 0}
 								<button
 									id="up-{i}"
-									title="move up"
+									title="Move variable up"
 									class="chip variant-filled-surface w-9 h-6 inline-flex items-center justify-center px-0"
 									on:mouseover={() => helpStore.show('up-var')}
 									on:focus={() => helpStore.show('up-var')}
@@ -356,7 +356,7 @@
 							{:else}
 								<button
 									id="up-{i}"
-									title="move up"
+									title="Move variable up"
 									class="chip variant-filled-surface w-9 h-6 inline-flex items-center justify-center px-0 disabled"
 									disabled
 									on:mouseover={() => helpStore.show('up-var')}
@@ -367,7 +367,7 @@
 
 							<button
 								id="copy-{i}"
-								title="copy"
+								title="Copy variable"
 								class="chip variant-filled-primary w-9 h-6 inline-flex items-center justify-center px-0"
 								on:mouseover={() => helpStore.show('copy-var')}
 								on:focus={() => helpStore.show('copy-var')}
@@ -377,14 +377,14 @@
 							{#if variables.length > 0 && i < variables.length - 1}
 								<button
 									id="down-{i}"
-									title="move down"
+									title="Move variable down"
 									class="chip variant-filled-surface w-9 h-6 inline-flex items-center justify-center px-0"
 									on:click={() => downFn(i)}><Fa icon={faAngleDown}></Fa></button
 								>
 							{:else}
 								<button
 									id="down-{i}"
-									title="move down"
+									title="Move variable down"
 									class="chip variant-filled-surface w-9 h-6 inline-flex items-center justify-center px-0 disabled"
 									disabled
 									on:click={() => downFn(i)}><Fa icon={faAngleDown}></Fa></button
@@ -397,14 +397,14 @@
 							<button
 								id="copy-next-{i}"
 								type="button"
-								title="copy content (not name) to the next variable "
+								title="Copy content (not name) to the next variable"
 								class="chip variant-filled-warning w-9 h-6 inline-flex items-center justify-center px-0"
 								on:click={() => copyNext(i)}><Fa icon={faShare} /></button
 							>
 							<button
 								id="copy-all-{i}"
 								type="button"
-								title="copy content (not name) to all after this"
+								title="Copy content (not name) to all after this"
 								class="chip variant-filled-warning w-9 h-6 inline-flex items-center justify-center px-0"
 								on:click={() => copyAll(i)}><Fa icon={faShareFromSquare} /></button
 							>
@@ -415,7 +415,7 @@
 			<div class="flex content-end px-6">
 				<div class="grow"></div>
 				{#if !dataExist}
-					<button title="add" class="chip variant-filled-primary flex-none" on:click={addFn}
+					<button title="Add variable" class="chip variant-filled-primary flex-none" on:click={addFn}
 						><Fa icon={faAdd}></Fa>
 					</button>
 				{/if}

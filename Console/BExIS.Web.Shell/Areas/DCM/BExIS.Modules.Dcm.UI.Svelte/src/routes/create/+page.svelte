@@ -60,7 +60,7 @@
 	title="Create a Dataset"
 	note="On this page you can create a dataset based on a template. Please select one template and fill out the form."
 	{links}
-	contentLayoutType={pageContentLayoutType.full}
+	contentLayoutType={pageContentLayoutType.center}
 >
 	<div in:fade={{ delay: 500 }} out:fade={{ delay: 500 }}>
 		{#await load()}

@@ -4,6 +4,7 @@
 # BExIS-specific files
 [Ww]orkspace/
 [Pp]ackages/
+[dD]ata/
 
 # User-specific files
 *.suo

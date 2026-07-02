@@ -74,9 +74,9 @@
 		<button class="btn btn-sm variant-filled-secondary flex-none" on:click={editOldFn}
 			><Fa icon={faPen} /><span class="pl-1">Edit</span></button
 		>
-		<!-- <button class="btn btn-sm variant-filled-secondary flex-none" on:click={editFn}
-			><Fa icon={faPen} /><span class="pl-1">Edit (beta)</span></button
-		> -->
+		<button class="btn btn-sm variant-filled-secondary flex-none" on:click={editFn} title="Edit metadata"
+			><Fa icon={faPen} /><span class="pl-1">Edit (new)</span></button
+		>
 	</div>
 </div>
 {#if open}

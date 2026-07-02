@@ -368,7 +368,7 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 									<div class="grow">
 										<TextInput
 											id="name-{index}"
-											label="{index + 1}. Variable name in dataset"
+											label="{index + 1}. Variable name as in file"
 											bind:value={variable.name}
 											on:input={onChangeHandler}
 											valid={res.isValid('name')}
@@ -417,8 +417,7 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 											/>
 										</div>
 										<div class="">
-										<button class="chip variant-filled-primary flex-none" on:click={() => (openTemplateModel = true)}>
-											<Fa icon={faTable} />
+										<button class="chip variant-filled-primary flex-none" on:click={() => (openTemplateModel = true)} title="Select template from list"><Fa icon={faTable} />
 										</button>
 									</div>
 									</div>
@@ -429,7 +428,7 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 						</Header>
 					</header>
 
-					<section class="px-10">
+					<section class="pl-8 pr-4">
 						<!--Description-->
 						<Container>
 							<div slot="property">

@@ -470,12 +470,12 @@ function	updateIsExtensions(entityTypeText:string){
 				</div>
 				<div class="grow text-right gap-2">
 					<button
-						title="cancel"
+						title="Cancel"
 						type="button"
 						class="btn variant-filled-warning"
 						on:click={onCancel}><Fa icon={faXmark} /></button
 					>
-					<button title="save" type="submit" class="btn variant-filled-primary" {disabled}
+					<button title="Save Template" type="submit" class="btn variant-filled-primary" {disabled}
 						><Fa icon={faSave} /></button
 					>
 				</div>

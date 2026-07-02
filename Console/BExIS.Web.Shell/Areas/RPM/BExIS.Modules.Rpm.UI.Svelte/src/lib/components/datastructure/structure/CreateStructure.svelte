@@ -110,7 +110,7 @@
 		<div class="flex-none text-end">
 			<button
 				id="cancel"
-				title="cancel"
+				title="Cancel data structure generation"
 				class="btn variant-filled-warning"
 				on:mouseover={() => helpStore.show('cancel')}
 				on:focus={() => helpStore.show('cancel')}
@@ -118,7 +118,7 @@
 			>
 			<button
 				id="save"
-				title="save"
+				title="Save data structure"
 				class="btn variant-filled-primary"
 				on:mouseover={() => helpStore.show('save')}
 				on:focus={() => helpStore.show('save')}

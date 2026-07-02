@@ -14,8 +14,6 @@ export const activeStore = writable<string[]>([]);
 
 export const validationStore = writable<validationStoretype>();
 
-export const descriptionStore = writable<string[]>([]);
+export const descriptionStore = writable<{ type: 'simple' | 'complex', content: string, path: string } | null>(null);
 
 export const showAllDescriptionsStore = writable<boolean>(false);
-
-// export const descriptionStore = writable<{ type: 'simple' | 'complex', content: string, path: string } | null>(null);

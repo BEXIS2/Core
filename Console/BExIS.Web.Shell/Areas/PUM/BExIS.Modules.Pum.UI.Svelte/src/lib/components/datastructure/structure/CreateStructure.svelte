@@ -78,7 +78,7 @@
 		<div class="grow">
 			<button
 				id="back"
-				title="back"
+				title="Back"
 				class="btn variant-filled-warning"
 				on:mouseover={() => helpStore.show('back')}
 				on:focus={() => helpStore.show('back')}
@@ -88,7 +88,7 @@
 		<div class="flex-none text-end">
 			<button
 				id="save"
-				title="save"
+				title="Save data structure"
 				class="btn variant-filled-primary text-xl"
 				on:mouseover={() => helpStore.show('save')}
 				on:focus={() => helpStore.show('save')}
