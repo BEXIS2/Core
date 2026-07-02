@@ -50,13 +50,24 @@ export let requestExist: boolean = false; // user has already requested the data
 async function downloadDatasetFn()
 {
   const res = await downloadZip(id, null, versionId);
-  console.log("🚀 ~ downloadDatasetFn ~ res:", res)
-  sendDataTo(res,"dataset_test_name.zip", "application/zip");
+  if(res)
+  {
+    // get name
+    const cd = res.headers['content-disposition'];
+    let fileName = 'download';
+    
+    if (cd) {
+      const match = cd.match(/filename\*?=(?:UTF-8'')?"?([^\";]+)"?/i);
+      if (match?.[1]) fileName = decodeURIComponent(match[1]);
+    }
+
+    sendDataTo(res,fileName, "application/zip");
+  }
 }
 
 async function downloadDatasetWithFormatFn(event)
 {
-  alert(selectedFormat)
+  
   const format = selectedFormat;
   if(format === 'application/xlsx' && total > excelMaxRows){
     alert(`The dataset has ${total} rows, which exceeds the maximum number of rows for Excel (${excelMaxRows}). Please choose another format.`);
