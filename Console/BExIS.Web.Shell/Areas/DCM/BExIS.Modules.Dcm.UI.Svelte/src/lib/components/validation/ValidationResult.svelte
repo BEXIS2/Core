@@ -94,38 +94,48 @@
 			<span class="text-success-500 px-1"><Fa icon={faCheck} /></span>
 		{/if}
 	</div>
-	<div class="">
+	<div class="pb-2">
 		<ol class="flex flex-row items-center gap-1 w-full max-w-full overflow-hidden">
-    {#each checks as check, i}
-        <li class="crumb flex-1 min-w-0 flex items-center">
-            <button class="btn variant-ghost-{check.style} py-2 px-1 w-full max-w-[11rem] flex justify-center items-center space-x-1 sm:space-x-2"
-				title="{checkDisplayName[check.name]}: {check.errors.length} errors, {check.warnings.length} warnings">
-                <span class="truncate text-xs sm:text-sm">{checkDisplayName[check.name]}</span>
-                <span class="inline-flex items-center flex-shrink-0">
-                    {#if check.style == 'error'}
-                        <Fa icon={faXmark} />
-                    {/if}
-                    {#if check.style == 'success'}
-                        <Fa icon={faCheck} />
-                    {/if}
-                    {#if check.style == 'surface'}
-                        <Fa icon={faBan} />
-                    {/if}
-                    {#if check.style == 'warning'}
-                        <Fa icon={faXmark} />
-                    {/if}
-                </span>
-            </button>
-        </li>
-        
-        {#if i < checks.length - 1}
-            <li class="crumb-separator flex items-center flex-shrink-0" aria-hidden>&rsaquo;</li>
-        {/if}
-    {/each}
-</ol>
+			{#each checks as check, i}
+				<li class="crumb flex-1 min-w-0 flex items-center">
+					<button
+						class="btn variant-ghost-{check.style} py-2 px-1 w-full max-w-[11rem] flex justify-center items-center space-x-1 sm:space-x-2"
+						title="{checkDisplayName[check.name]}: {check.errors.length} errors, {check.warnings
+							.length} warnings"
+					>
+						<span class="truncate text-xs sm:text-sm">{checkDisplayName[check.name]}</span>
+						<span class="inline-flex items-center flex-shrink-0">
+							{#if check.style == 'error'}
+								<Fa icon={faXmark} />
+							{/if}
+							{#if check.style == 'success'}
+								<Fa icon={faCheck} />
+							{/if}
+							{#if check.style == 'surface'}
+								<Fa icon={faBan} />
+							{/if}
+							{#if check.style == 'warning'}
+								<Fa icon={faXmark} />
+							{/if}
+						</span>
+					</button>
+				</li>
+
+				{#if i < checks.length - 1}
+					<li class="crumb-separator flex items-center flex-shrink-0" aria-hidden>&rsaquo;</li>
+				{/if}
+			{/each}
+		</ol>
 	</div>
 
 	{#if selected}
+		<div
+			class="flex items-center gap-1 variant-ghost-warning warning border-l-4 border-warning-500 p-2 text-warning-800 dark:text-warning-200"
+			role="status"
+		>
+			Please correct your data and upload again or edit the data structure accordingly. Validation
+			will be performed again based on the changes.
+		</div>
 		<div class="card shadow-sm border-error-300 border-solid border">
 			{#each selected.errors as error}
 				<Message title={error.issue} count={error.count} messages={error.errors} />

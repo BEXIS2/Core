@@ -97,7 +97,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                             }
                             else
                             {
-                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                                return new Error(ErrorType.Value, "Can not convert to " + dataType + ". Check the current data type of the variable.", new object[] { name, value, row, dataType });
                             }
                         }
 
@@ -133,7 +133,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                         }
                                     }
 
-                                    return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
+                                    return new Error(ErrorType.Value, "Can not convert to " + dataType + ".", new object[] { name, value, row, dataType });
                                 }
 
                                 if (decimalCharacter.Equals(DecimalCharacter.comma))
@@ -159,14 +159,14 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                         }
                                     }
 
-                                    return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
+                                    return new Error(ErrorType.Value, "Can not convert to " + dataType + ".", new object[] { name, value, row, dataType });
                                 }
 
                                 return Convert.ToDouble(value);
                             }
                             catch (Exception ex)
                             {
-                                return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
+                                return new Error(ErrorType.Value, "Can not convert to " + dataType + ".", new object[] { name, value, row, dataType });
                             }
                         }
 
@@ -190,9 +190,9 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                 }
                             }
                             if (!string.IsNullOrEmpty(pattern))
-                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType, pattern });
+                                return new Error(ErrorType.Value, "Can not convert to " + dataType + ".", new object[] { name, value, row, dataType, pattern });
                             else
-                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                                return new Error(ErrorType.Value, "Can not convert to " + dataType + ".", new object[] { name, value, row, dataType });
                         }
 
                     case "Char":
@@ -223,7 +223,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                 }
                                 else
                                 {
-                                    return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                                    return new Error(ErrorType.Value, "Can not convert to " + dataType + ".", new object[] { name, value, row, dataType });
                                 }
                             }
                         }

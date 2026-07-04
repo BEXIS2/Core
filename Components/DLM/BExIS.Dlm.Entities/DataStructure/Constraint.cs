@@ -180,8 +180,8 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <param>NA</param>
         public DomainConstraint()
         {
-            defaultMessageTemplate = "Provided value is not a domain item. The value should be one of these items: {0}.";
-            defaultNegatedMessageTemplate = "Provided value is a domain item, but the constraint is negated. The value should not be one of these items: {0}.";
+            defaultMessageTemplate = "Value(s) not within the allowed list: {0}.";
+            defaultNegatedMessageTemplate = "Value(s) within the allowed list, but the constraint is negated. The value should not be one of these items: {0}.";
             Items = new List<DomainItem>();
         }
 
@@ -318,8 +318,8 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <param>NA</param>
         public PatternConstraint()
         {
-            defaultMessageTemplate = "Provided value does not match the pattern. The value should match {0} {1}.";
-            defaultNegatedMessageTemplate = "Provided value matches the pattern, but the constraint is negated. The value should not match {0} {1}.";
+            defaultMessageTemplate = "Value(s) does not match the pattern. The value should match {0} {1}.";
+            defaultNegatedMessageTemplate = "Value(s) matches the pattern, but the constraint is negated. The value should not match {0} {1}.";
             CaseSensitive = true;
         }
 
@@ -451,8 +451,8 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <param></param>
         public RangeConstraint()
         {
-            defaultMessageTemplate = "Provided value is out of range. The value should be between {0} {1} and {2} {3}.";
-            defaultNegatedMessageTemplate = "Provided value is in range, but the constraint is negated. The value should be {1} {0} or {3} {2}.";
+            defaultMessageTemplate = "Value(s) out of allowed range. The value should be between {0} {1} and {2} {3}.";
+            defaultNegatedMessageTemplate = "Value(s) within range, but the constraint is negated. The value should be {1} {0} or {3} {2}.";
         }
 
         public RangeConstraint(ConstraintProviderSource provider, string constraintSelectionPredicate, string cultureId
