@@ -134,7 +134,7 @@
 			role="status"
 		>
 			Please correct your data and upload again or edit the data structure accordingly. Validation
-			will be performed again based on the changes.
+			will be performed again based on the changes. {#if selected.errors.length > 990} Only the first ~1000 errors are shown. {/if}
 		</div>
 		<div class="card shadow-sm border-error-300 border-solid border">
 			{#each selected.errors as error}
