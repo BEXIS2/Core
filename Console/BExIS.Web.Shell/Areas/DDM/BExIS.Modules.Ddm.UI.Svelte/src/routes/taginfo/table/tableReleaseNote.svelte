@@ -36,7 +36,7 @@
 
 <span title="Release Note; Click save to apply changes.">
 	<TextArea
-		id="releaseNote"
+		id="releaseNote-{currentRow.versionId}"
 		bind:value={currentRow.releaseNote}
 		on:input={() => inputChangeFn(currentRow.releaseNote)}
 	></TextArea>
