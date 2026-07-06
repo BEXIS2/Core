@@ -5,7 +5,7 @@
 
 	export let value: boolean;
 	export let row: any;
-	let currentRow: TagInfoEditModel;
+	let currentRow: TagInfoEditModel | undefined;
 
 	$: currentRow = $tagInfoModelStore.find((x) => x.versionId == row.original.versionId);
 
@@ -19,9 +19,10 @@
 
 <div class="flex h-full items-center justify-center">
 	<div title="Make this release tag visible; Click save to apply changes.">
-		{#if currentRow.tagId > 0}
+		{#if currentRow && currentRow.tagId > 0}
 			<SlideToggle
-				name={currentRow.versionId}
+				id="publish-{currentRow.versionId}"
+				name={currentRow.versionId.toString()}
 				class=""
 				checked={currentRow.publish}
 				size="sm"

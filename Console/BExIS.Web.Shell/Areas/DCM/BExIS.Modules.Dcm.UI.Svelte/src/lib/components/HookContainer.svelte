@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 
 	import { Alert, Spinner } from '@bexis2/bexis2-core-ui';
 	import { fade } from 'svelte/transition';
@@ -38,9 +38,11 @@
 	}
 
 
+	let unsubHooksStatus;
+
 	onMount(async () => {
 		//active = setActive(status);
-		hooksStatus.subscribe((h) => {
+		unsubHooksStatus = hooksStatus.subscribe((h) => {
 			if (h[name] != undefined) {
 				setStatus(h[name]);
 			}
@@ -48,6 +50,12 @@
 		error = [];
 		success = null;
 		warnings = [];
+	});
+
+	onDestroy(() => {
+		if (unsubHooksStatus) {
+			unsubHooksStatus();
+		}
 	});
 
 	function errorHandler(e) {

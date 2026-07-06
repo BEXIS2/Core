@@ -13,7 +13,7 @@
 	} from '../../routes/edit/stores';
 
 	import { hooksStatus } from '../../routes/edit/stores';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 
 	import type { ValidationModel } from '$models/ValidationModels';
 	import PlaceHolderHookContent from './placeholder/PlaceHolderHookContent.svelte';
@@ -29,48 +29,46 @@
 	let model: ValidationModel | null;
 	$: model;
 
-	latestFileUploadDate.subscribe((s) => {
+	let validationPromise: Promise<any>;
+
+	const unsubFileUpload = latestFileUploadDate.subscribe((s) => {
 			if (s > 0) {
 				console.log(
 					'🚀 ~ file: Validation.svelte:37 ~ onMount ~ latestFileUploadDate:',
 					$latestFileUploadDate
 				);
-				reload('latestFileUploadDate');
+				validationPromise = reload('latestFileUploadDate');
 			}
 		});
 
-		latestDataDescriptionDate.subscribe((s) => {
+	const unsubDataDescription = latestDataDescriptionDate.subscribe((s) => {
 			if (s > 0) {
 				console.log(
 					'🚀 ~ file: Validation.svelte:41 ~ onMount ~ latestDataDescriptionDate:',
 					$latestDataDescriptionDate
 				);
-				reload('latestDataDescriptionDate');
+				validationPromise = reload('latestDataDescriptionDate');
 			}
 		});
 
-		latestFileReaderDate.subscribe((s) => {
+	const unsubFileReader = latestFileReaderDate.subscribe((s) => {
 			if (s > 0) {
 				console.log(
 					'🚀 ~ file: Validation.svelte:45 ~ onMount ~ latestFileReaderDate:',
 					$latestFileReaderDate
 				);
-				reload('latestFileReaderDate');
-			}
-		});
-
-		latestSubmitDate.subscribe((s) => {
-			if (s > 0) {
-				// console.log(
-				// 	'🚀 ~ file: Validation.svelte:49 ~ onMount ~ latestSubmitDate:',
-				// 	$latestSubmitDate
-				// );
-				//reload('latestSubmitDate');
+				validationPromise = reload('latestFileReaderDate');
 			}
 		});
 
 	onMount(async () => {
-		
+		validationPromise = reload('await');
+	});
+
+	onDestroy(() => {
+		unsubFileUpload();
+		unsubDataDescription();
+		unsubFileReader();
 	});
 
 	async function reload(type) {
@@ -81,18 +79,20 @@
 	}
 </script>
 
-{#await reload('await')}
-	<PlaceHolderHookContent />
-{:then a}
-	{#if model && model.fileResults}
-		{#each model.fileResults as fileResult}
-			<ValidationResult
-				bind:sortedErrors={fileResult.sortedErrors}
-				bind:sortedWarnings={fileResult.sortedWarnings}
-				bind:file={fileResult.file}
-			/>
-		{/each}
-	{/if}
-{:catch error}
-	<ErrorMessage {error} />
-{/await}
+{#if validationPromise}
+	{#await validationPromise}
+		<PlaceHolderHookContent />
+	{:then a}
+		{#if model && model.fileResults}
+			{#each model.fileResults as fileResult}
+				<ValidationResult
+					bind:sortedErrors={fileResult.sortedErrors}
+					bind:sortedWarnings={fileResult.sortedWarnings}
+					bind:file={fileResult.file}
+				/>
+			{/each}
+		{/if}
+	{:catch error}
+		<ErrorMessage {error} />
+	{/await}
+{/if}

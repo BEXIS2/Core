@@ -61,30 +61,30 @@
 	let messageView: ViewModel;
 	$: messageView;
 
-	latestFileUploadDate.subscribe((e) => {
-		updateHookStatus();
+	const unsubFileUpload = latestFileUploadDate.subscribe((e) => {
+		if (e > 0) updateHookStatus();
 	});
 
-	latestDataDescriptionDate.subscribe((e) => {
-		updateHookStatus();
+	const unsubDataDescription = latestDataDescriptionDate.subscribe((e) => {
+		if (e > 0) updateHookStatus();
 	});
 
-	latestFileReaderDate.subscribe((e) => {
-		updateHookStatus();
+	const unsubFileReader = latestFileReaderDate.subscribe((e) => {
+		if (e > 0) updateHookStatus();
 	});
 
-	latestValidationDate.subscribe((e) => {
+	const unsubValidation = latestValidationDate.subscribe((e) => {
 		 console.log('latestValidationDate in edit entity', id);
-		 updateHookStatus();
+		 if (e > 0) updateHookStatus();
 	});
 
-	latestSubmitDate.subscribe((e) => {
-		updateHookStatus();
+	const unsubSubmit = latestSubmitDate.subscribe((e) => {
+		if (e > 0) updateHookStatus();
 	});
 
-	latestDataDate.subscribe((e) => {
+	const unsubData = latestDataDate.subscribe((e) => {
 		console.log('latestDataDate in edit entity', id);
-		updateHookStatus();
+		if (e > 0) updateHookStatus();
 	});
 
 
@@ -111,6 +111,12 @@
 	
 	onDestroy(() => {
 		console.log('DESTROY EDIT ENTITY');
+		unsubFileUpload();
+		unsubDataDescription();
+		unsubFileReader();
+		unsubValidation();
+		unsubSubmit();
+		unsubData();
 		unsubscribe();
 	});
 
