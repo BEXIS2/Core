@@ -73,6 +73,9 @@ namespace BExIS.IO
                 case FileType.Attachments:
                     downloadName = string.Format("{0}_{1}_{2}_attachment_{3}", appName, datasetId, versionOrTagLabel, title);
                     break;
+                case FileType.Citation:
+                    downloadName = string.Format("{0}_{1}_{2}_citation", appName, datasetId, versionOrTagLabel, title);
+                    break;
                 case FileType.Bundle:
                     downloadName = string.Format("{0}_{1}_{2}_{3}_{4}", appName, datasetId, versionOrTagLabel, downloadTitle, downloadDate);
                     break;
@@ -100,6 +103,7 @@ namespace BExIS.IO
         Attachments,
         Bundle,
         Manifest,
+        Citation,
         None
     }
 

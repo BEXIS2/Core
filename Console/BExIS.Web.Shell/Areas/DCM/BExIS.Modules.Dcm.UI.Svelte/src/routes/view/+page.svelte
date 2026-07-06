@@ -22,6 +22,7 @@
 	import InProcess from './error/InProcess.svelte';
 	import NotExist from './error/NotExist.svelte';
 	import InternalServer from './error/InternalServer.svelte';
+	import CitationDownload from './citation/CitationDownload.svelte';
 
 	let title = '';
 
@@ -100,6 +101,9 @@
 						{model.description}
 				</div>
 				<div class="flex flex-col ml-5 gap-3 w-1/4">
+
+					 <CitationDownload	{id} {version}/>
+
 						<Download {id} {version}
 						 versionId={model.versionId}
 							downloadAccess= {model.downloadAccess}
