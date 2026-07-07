@@ -1,13 +1,16 @@
 <script lang="ts">
  import type { CitationDataModel } from "$models/View";
+ import Fa from "svelte-fa";
+ import {faCopy} from "@fortawesome/free-solid-svg-icons";
 
  export let model:CitationDataModel
 
 
  function copyDivContentToClipboard(divId) {
+
       const div = document.getElementById(divId);
       // You can copy text or HTML content, change as needed
-      const content = div.innerText; // Use innerHTML if you want to copy HTML formatting
+      const content = div?.innerText || ""; // Use innerHTML if you want to copy HTML formatting
 
       navigator.clipboard.writeText(content)
           .then(() => {
@@ -22,17 +25,20 @@
  </script>
 
 
-<div id="citation-container"><b>Citation:</b>
- <div id="citation-title">
+<div id="citation-container" class="h4"><b>Citation:</b>
+ <div id="citation-title" class="flex flex-wrap gap-1">
   {model.authors} 
   ({model.year}): 
   <b>{model.title}</b>. 
   Version {model.version}. 
   {model.publisher}. 
   {model.entityName}. 
-  {model.uRL}  
-  <span id="citation-copy" class="bx bx-copy" on:click="{() => copyDivContentToClipboard('citation-title')}"></span>
+  {model.url}  
  </div>
+ <div on:click={()=>  copyDivContentToClipboard('citation-title')} on:keydown={()=>  copyDivContentToClipboard('citation-title')}
+    id="citation-copy" title="Copy citation to clipboard" role="button" tabindex="0">
+    <Fa icon={faCopy} />
+</div>
    
 </div>
 

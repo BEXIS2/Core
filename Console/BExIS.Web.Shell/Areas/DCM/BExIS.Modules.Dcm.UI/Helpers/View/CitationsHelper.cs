@@ -6,6 +6,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Models.View;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using DocumentFormat.OpenXml.Spreadsheet;
 using NameParser;
 using System;
 using System.Collections.Generic;
@@ -126,6 +127,19 @@ namespace BExIS.Modules.Dcm.UI.Helpers.View
                 } 
             }
             catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public static CitationDataModel CreateReadCitationDataModel(DatasetVersion datasetVersion, ReadCitationFormat readformat)
+        {
+            if (Enum.TryParse(readformat.ToString(), out CitationFormat format))
+            {
+
+                return CreateCitationDataModel(datasetVersion, format);
+            }
+            else
             {
                 return null;
             }

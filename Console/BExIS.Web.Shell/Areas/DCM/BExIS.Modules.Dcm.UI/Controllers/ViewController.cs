@@ -449,6 +449,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     string conceptName = "Citation_" + citationSettings.ReadCitationFormat;
                     var concept = conceptManager.FindByName(conceptName);
 
+
                     model.Data = CitationsHelper.CreateCitationDataModel(datasetVersion);
 
                     if (model.Data == null)
@@ -474,15 +475,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         return Json(model, JsonRequestBehavior.AllowGet);
                     }
-
-                    if (!CitationsHelper.IsCitationDataModelValid(model.Data))
+                    else // call citation with format
                     {
+                        model.Data = CitationsHelper.CreateReadCitationDataModel(datasetVersion, citationSettings.ReadCitationFormat);
+                    }
 
+                    if (CitationsHelper.IsCitationDataModelValid(model.Data))
+                    {
+                        model.Format = citationSettings.ReadCitationFormat;
                         return Json(model, JsonRequestBehavior.AllowGet);
                     }
 
 
-                    model.Format = citationSettings.ReadCitationFormat;
+                    
                     
                     return Json(model, JsonRequestBehavior.AllowGet);
                     

@@ -148,8 +148,8 @@ export interface CitationDataModel {
     tag: string;
     projects: string[];
     year: string;
-    dOI: string;
-    uRL: string;
+    doi: string;
+    url: string;
     authors: string[];
     entryType: string;
     entityName: string;
