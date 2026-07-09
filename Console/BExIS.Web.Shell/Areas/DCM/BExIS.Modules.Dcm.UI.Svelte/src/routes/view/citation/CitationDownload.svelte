@@ -11,7 +11,7 @@ export let version = 0;;
 export let tag = 0;
 
  let selectedFormat:number = -1;
- $:selectedFormat, console.log("🚀 ~ selectedFormat:", selectedFormat, downloadAccess), downloadAccess = selectedFormat !== ''?true:false;
+ $:selectedFormat, console.log("🚀 ~ selectedFormat:", selectedFormat, downloadAccess), downloadAccess = selectedFormat !== -1?true:false;
 
  let filename = `entity_${id}_${version}.txt`;
 
@@ -87,7 +87,7 @@ async function downloadCitationFn()
         <option value={d.value}>{d.label}</option>
       {/each}
     </select>
-    <button class:variant-filled-primary={downloadAccess} disabled={!downloadAccess} on:click={downloadCitationFn}><Fa icon={faDownload} /></button>
+    <button class:variant-filled-primary={downloadAccess} class:variant-ghost-primary={!downloadAccess} disabled={!downloadAccess} on:click={downloadCitationFn}><Fa icon={faDownload} /></button>
     
   </div>
 </div>

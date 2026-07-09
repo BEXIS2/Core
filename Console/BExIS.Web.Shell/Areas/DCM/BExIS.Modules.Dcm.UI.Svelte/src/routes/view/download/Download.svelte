@@ -132,7 +132,7 @@ function sendDataTo(data, name, type)
         <option value={d.value}>{d.label}</option>
       {/each}
     </select>
-    <button class:variant-filled-primary={exceptAgreement} disabled={!exceptAgreement || selectedFormat == ''} on:click={downloadDatasetWithFormatFn}><Fa icon={faDownload} /></button>
+    <button class:variant-filled-primary={selectedFormat !== ''} class:variant-ghost-primary={selectedFormat === ''} disabled={!exceptAgreement || selectedFormat == ''} on:click={downloadDatasetWithFormatFn}><Fa icon={faDownload} /></button>
   </div>
 </div>
 <div class="padding-top-5 position-releative flex flex-col gap-2">

@@ -24,9 +24,8 @@
 
  </script>
 
-
-<div id="citation-container" class="h4"><b>Citation:</b>
- <div id="citation-title" class="flex flex-wrap gap-1">
+<div id="citation-container">
+ <div id="citation-title" class="flex h4 flex-wrap gap-1">
   {model.authors} 
   ({model.year}): 
   <b>{model.title}</b>. 
@@ -39,6 +38,7 @@
     id="citation-copy" title="Copy citation to clipboard" role="button" tabindex="0">
     <Fa icon={faCopy} />
 </div>
+
    
 </div>
 

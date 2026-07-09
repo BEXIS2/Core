@@ -102,14 +102,14 @@
 
 	<!-- fill out alle the hook aatributes otherwise there will not be loaded -->
 	<Hooks>
-		<Hook
+		<!--<Hook
 			name="permissions"
 			displayName="Permissions"
 			mode="view"
 			entity="dataset"
 			place="details"
 			module="sam"
-			type="BExIS.Modules.Sam.UI.Hooks.UserPermissionsViewHook, BExIS.Modules.SAM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+			type="BExIS.Modules.Sam.UI.Hooks.UserPermissionsViewHook, BExIS.Modules.SAM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />-->
 
 		<Hook
 			name="permissions"

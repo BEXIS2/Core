@@ -2,12 +2,12 @@
 	import Hook from '$lib/components/Hook.svelte';
 
 	import HookContainer from '$lib/components/HookContainer.svelte';
-	import Validation from '$lib/hooks/Validation.svelte';
-	import FileUpload from '$lib/hooks/FileUpload.svelte';
-	import DataDescription from '$lib/hooks/DataDescription.svelte';
-	import Submit from '$lib/hooks/Submit.svelte';
-	import Metadata from '$lib/hooks/Metadata.svelte';
-	import Data from '$lib/hooks/Data.svelte';
+	import Validation from '$lib/hooks/edit/Validation.svelte';
+	import FileUpload from '$lib/hooks/edit/FileUpload.svelte';
+	import DataDescription from '$lib/hooks/edit/DataDescription.svelte';
+	import Submit from '$lib/hooks/edit/Submit.svelte';
+	import Metadata from '$lib/hooks/edit/Metadata.svelte';
+	import Data from '$lib/hooks/edit/Data.svelte';
 	import { Spinner } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa';
 	import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
