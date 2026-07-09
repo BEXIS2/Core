@@ -6,7 +6,7 @@
 	import PrimaryData from '$lib/components/data/PrimaryData.svelte';
 	import PlaceHolderHookContent from './placeholder/PlaceHolderHookContent.svelte';
 	import { ErrorMessage } from '@bexis2/bexis2-core-ui';
-	import { latestSubmitDate, latestDataDate } from '../../routes/edit/stores';
+	import { latestSubmitDate, latestDataDate } from '../../../routes/edit/stores';
 
 
 	export let id = 0;

@@ -14,6 +14,7 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.Party;
+using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Helpers.View;
@@ -36,6 +37,7 @@ using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
 using BEXIS.JSON.Helpers;
 using DocumentFormat.OpenXml.Drawing.Diagrams;
+using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Office2013.Excel;
 using DocumentFormat.OpenXml.Vml.Spreadsheet;
 using Microsoft.AspNet.Identity;
@@ -447,6 +449,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     string conceptName = "Citation_" + citationSettings.ReadCitationFormat;
                     var concept = conceptManager.FindByName(conceptName);
 
+
                     model.Data = CitationsHelper.CreateCitationDataModel(datasetVersion);
 
                     if (model.Data == null)
@@ -472,15 +475,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         return Json(model, JsonRequestBehavior.AllowGet);
                     }
-
-                    if (!CitationsHelper.IsCitationDataModelValid(model.Data))
+                    else // call citation with format
                     {
+                        model.Data = CitationsHelper.CreateReadCitationDataModel(datasetVersion, citationSettings.ReadCitationFormat);
+                    }
 
+                    if (CitationsHelper.IsCitationDataModelValid(model.Data))
+                    {
+                        model.Format = citationSettings.ReadCitationFormat;
                         return Json(model, JsonRequestBehavior.AllowGet);
                     }
 
 
-                    model.Format = citationSettings.ReadCitationFormat;
+                    
                     
                     return Json(model, JsonRequestBehavior.AllowGet);
                     
@@ -492,6 +499,68 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
         }
+
+        [JsonNetFilter]
+        public JsonResult GetCitationOptions(long id, int version, double tag)
+        {
+            if(id<=0)throw new ArgumentException("id is not valid");
+            CitationFormatOptions model  = new CitationFormatOptions();
+
+            using (var datasetManager = new DatasetManager())
+            {
+                var datasetVersion = datasetManager.GetDatasetVersion(id, version);
+
+                if (datasetVersion == null) throw new ArgumentException("Version noi");
+
+                long datastructureId = datasetVersion.Dataset.DataStructure != null ? datasetVersion.Dataset.DataStructure.Id : -1;
+                var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+                var useTags = Convert.ToBoolean(moduleSettings.GetValueByKey("use_tags"));
+               var useMinor = Convert.ToBoolean(moduleSettings.GetValueByKey("use_minor"));
+
+                string filename = IOHelper.GetFileName(FileType.Citation, id, version, datastructureId, "", tag, useTags, useMinor);
+                model.FileName = filename;
+
+                foreach (CitationFormat format in Enum.GetValues(typeof(CitationFormat)))
+                {
+
+                    CitationDataModel m = CitationsHelper.CreateCitationDataModel(datasetVersion, format);
+                    if (CitationsHelper.IsCitationDataModelValid(m))
+                    {
+                        string f = "";
+
+                        switch (format.ToString())
+                        {
+                            case "APA":
+                                f = "apa";
+                                break;
+                            case "RIS":
+                                f = "ris";
+                                break;
+                            case "Text":
+                                f = "txt";
+                                break;
+                            case "Bibtex":
+                                f = "bib";
+                                break;
+                            //default: f = "txt";
+                            default: f = "txt";
+                                break;
+                        };
+
+                        model.Formats.Add(new CitationListItem()
+                        {
+                            Label = format.ToString(),
+                            Format = f,
+                            Value = format
+                        });
+
+                    }
+                }
+            }
+
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
 
         #region version
 

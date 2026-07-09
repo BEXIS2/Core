@@ -1,12 +1,12 @@
 <script>
 	import HookContainer from '$lib/components/HookContainer.svelte';
 	import DefaultViewHook from '$lib/components/DefaultViewHook.svelte';
-	import Attachments from '$lib/hooks/Attachment.svelte';
+	import Attachments from '$lib/hooks/edit/Attachment.svelte';
 
 	import { Spinner } from '@bexis2/bexis2-core-ui';
-	import Link from '../../lib/hooks/Link.svelte';
-	import Permission from '../../lib/hooks/Permission.svelte';
-	import Publish from '../../lib/hooks/Publish.svelte';
+	import Link from '../../lib/hooks/edit/Link.svelte';
+	import Permission from '../../lib/hooks/edit/Permission.svelte';
+	import Publish from '../../lib/hooks/edit/Publish.svelte';
 
 	export let id;
 	export let version;

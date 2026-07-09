@@ -84,7 +84,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             ViewBag.maxFileNameLength = 260 - storepath.Length - 2;
 
-            return PartialView("_datasetAttachements", LoadDatasetModel(versionId));
+            return View("_datasetAttachements", LoadDatasetModel(versionId));
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Read)]

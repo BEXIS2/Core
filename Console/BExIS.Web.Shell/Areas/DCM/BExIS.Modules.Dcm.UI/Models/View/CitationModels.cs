@@ -38,6 +38,26 @@ namespace BExIS.Modules.Dcm.UI.Models.View
         public CitationDataModel Data { get; set; }
     }
 
+    public class  CitationFormatOptions
+    {
+        public string FileName { get; set; }
+        public List<CitationListItem> Formats { get; set; }
+
+        public CitationFormatOptions()
+        {
+            Formats = new List<CitationListItem>();
+        }
+
+    }
+
+    public class CitationListItem
+    {
+        public string Label { get; set; }
+        public string Format { get; set; }
+        public CitationFormat Value { get; set; }
+    }
+
+
 
     [XmlRoot("data")]
     public class CitationDataModel

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ReferenceModel } from '../../models/View';
+	import type { ReferenceModel } from '../../../models/View';
 
 
  export let links:ReferenceModel[] = [];

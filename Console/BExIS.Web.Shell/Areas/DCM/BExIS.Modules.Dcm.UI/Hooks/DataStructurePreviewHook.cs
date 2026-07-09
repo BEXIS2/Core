@@ -8,7 +8,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
     {
         public DataStructurePreviewHook()
         {
-            Start = "/dcm/view/StartDataStructure";
+            Start = "/dcm/datadescription/start";
         }
 
         public override void Check(long id, string username)

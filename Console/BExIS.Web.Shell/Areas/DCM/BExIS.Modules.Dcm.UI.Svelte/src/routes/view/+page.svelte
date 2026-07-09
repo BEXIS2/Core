@@ -1,7 +1,7 @@
 <script lang="ts">
 
-	import { getApiDataset, getView } from './services';
-	import { ErrorMessage, type linkType, Page, pageContentLayoutType, positionType, setApiConfig, Spinner } from '@bexis2/bexis2-core-ui';
+	import { getView } from './services';
+	import { ErrorMessage, type linkType, Page, pageContentLayoutType, positionType,  Spinner } from '@bexis2/bexis2-core-ui';
 
 	import Header from './Header.svelte';
 
@@ -10,7 +10,7 @@
 	import type { ViewModel, Hook, ApiDatasetModel } from '../../models/View';
 	import { fade } from 'svelte/transition';
 	import Hooks from './Hooks.svelte';
-	import Links from './Links.svelte';
+
 
 	import Versions from './version/Versions.svelte';
 	import Keywords from './Keywords.svelte';
@@ -22,6 +22,12 @@
 	import InProcess from './error/InProcess.svelte';
 	import NotExist from './error/NotExist.svelte';
 	import InternalServer from './error/InternalServer.svelte';
+	import CitationDownload from './citation/CitationDownload.svelte';
+	import type { HookModel } from '$models/Hook';
+	import Metadata from '$lib/hooks/view/Metadata.svelte';
+	import DataDescription from '$lib/hooks/view/DataDescription.svelte';
+	import Data from '$lib/hooks/view/Data.svelte';
+	import Link from '$lib/hooks/view/Link.svelte';
 
 	let title = '';
 
@@ -32,10 +38,17 @@
 
 	let isPartOfCollection: boolean = false;
 
+	let metadataHook;
+	let dataDescriptionHook;
+	let linkHook;
+	let dataHook;
+	let attachmentsHook;
 
+	let addtionalhooks: HookModel[];
+	$: addtionalhooks = [];
 
-	let hookList: Hook[];
-	$: hooks = hookList;
+	let hooks: Hook[];
+
 
  const links: linkType[] = [
 		{
@@ -70,6 +83,13 @@
 
 			// check if dataset is part of a collection
 			isPartOfCollectionFunc();
+
+			if(model.settings.hooks	&& model.settings.hooks.length > 0)
+			{
+				 seperateHooks(model.settings.hooks);
+				
+			}
+
 		}
 		
 
@@ -79,6 +99,35 @@
 		if(model.links.to.filter(link => link.referenceType === 'Collection').length > 0){
 			isPartOfCollection = true;
 		}
+	}
+
+ // seperate dcm hooks from other hooks
+	// known hooks - metadata, data, datadescription
+	function seperateHooks(hooks: HookModel[]) {
+		addtionalhooks = [];
+
+		hooks.forEach((element) => {
+			if (element.name == 'metadata')
+				{
+					metadataHook = element;
+				}
+				else	if (element.name == 'datadescription') {
+					dataDescriptionHook = element;
+				}
+				else if (element.name == 'data') {
+					dataHook = element;
+				}
+				else if (element.name == 'link') {
+					linkHook = element;
+				}
+				else if (element.name == 'attachments') {
+					attachmentsHook = element;
+				}
+				else {
+					addtionalhooks.push(element);
+				}
+				
+		});
 	}
 
 
@@ -93,13 +142,30 @@
 			</div>
 		{:then result}
 		
-		<Header	{id} {version} {title} labels = {model.labels} license = {model.additionalInformations['license']} {isPartOfCollection} hasEditRight={model.hasEditRight}/>
+		<Header	
+			{id} 
+			{version} 
+			{title} 
+			labels = {model.labels} 
+			license = {model.additionalInformations['license']} 
+			{isPartOfCollection} 
+			hasEditRight={model.hasEditRight}
+			isPublic={model.isPublic}
+			publicationDate={model.publicationDate}
+			/>
 
 		<div class="flex">
-				<div class="flex-grow card	p-5 w-3/4">
-						{model.description}
-				</div>
+
+				{#if metadataHook}
+						<div class="flex-grow card p-5 w-3/4 flex flex-col gap-3">
+										<Metadata {id} {version} hook={metadataHook} description={model.description} />
+						</div>
+					{/if}
+
 				<div class="flex flex-col ml-5 gap-3 w-1/4">
+
+					 <CitationDownload	{id} {version}/>
+
 						<Download {id} {version}
 						 versionId={model.versionId}
 							downloadAccess= {model.downloadAccess}
@@ -124,10 +190,24 @@
 		</div>
 
 
-		<Links	links={model.links.to} />
+		{#if linkHook }
+			<Link	links={model.links.to} />
+		{/if}
 
-  {#if model.downloadAccess}
-			<Hooks	{id} {version} hooks={hooks} />
+	
+
+		{#if dataDescriptionHook && model.dataStructureId	!== undefined && model.dataStructureId > 0}
+			 <DataDescription	{id} {version} hook={dataDescriptionHook}/>
+		{/if}
+
+		{#if dataHook	&& model.hasData}
+
+			<Data {id} {version} hook={dataHook}/>
+		{/if}
+
+	
+  {#if model.downloadAccess && addtionalhooks	&& addtionalhooks.length > 0	}
+			<Hooks	{id} {version} hooks={addtionalhooks} />
 		{/if}
 
 		{:catch error}

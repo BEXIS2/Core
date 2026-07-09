@@ -2,10 +2,9 @@
 
  import { onMount } from 'svelte';
  import {getDeleted} from '../services.js';
-	import Links from '../Links.svelte';
+
 	import type { DeletedModel } from '../types.js';
-	import PlaceHolderHookContent from '$lib/hooks/placeholder/PlaceHolderHookContent.svelte';
-	import { Alert, TablePlaceholder } from '@bexis2/bexis2-core-ui';
+	import Link from '$lib/hooks/view/Link.svelte';
 
  export let id: number;
 
@@ -77,7 +76,7 @@
  
   </div>
 
-  <Links links={model.links.to} />
+  <Link links={model.links.to} />
 
  {/if}
 

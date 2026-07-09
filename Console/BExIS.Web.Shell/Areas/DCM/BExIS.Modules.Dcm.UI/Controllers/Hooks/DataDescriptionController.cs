@@ -79,9 +79,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             {
                                 Id = variable.Id,
                                 Name = variable.Label,
+                                Description = variable.Description,
                                 DataType = variable.DataType.Name,
-                                Unit = variable.Unit.Name,
-                                IsKeys = variable.IsKey
+                                Unit = variable.Unit != null ? variable.Unit.Abbreviation:"n/a",
+                                IsKeys = variable.IsKey,
+                                IsOptional = variable.IsValueOptional,
+                                Category = variable.VariableTemplate != null ? variable.VariableTemplate.Label : "n/a",
+                                MissingValues = variable.MissingValues != null ? String.Join(", ", variable.MissingValues.Select(m => m.DisplayName)) : "n/a",
+                                Meanings = variable.Meanings != null ? String.Join(", ", variable.Meanings.Select(m => m.Name)) : "n/a"
                             });
                         }
 

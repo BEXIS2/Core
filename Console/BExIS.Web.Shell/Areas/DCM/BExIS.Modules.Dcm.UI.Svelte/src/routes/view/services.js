@@ -64,6 +64,24 @@ export const getDeleted = async (id) => {
 	}
 };
 
+export const getCitationText = async (id, version, tag, format) => {
+	try {
+		const response = await Api.get(`api/datasets/${id}/version_number/${version}/citations?format=${format}`);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+export const getCitationOptions = async (id, version, tag ) => {
+	try {
+		const response = await Api.get(`/dcm/view/getcitationoptions?id=${id}&version=${version}&tag=${tag}`);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 export const downloadZip = async (id, format, version = -1, withFilter = false, withUnits = false) => {
 	try {
 			const config = { responseType: 'blob' }
@@ -93,3 +111,4 @@ export const sendRequest = async (id, intension) => {
 		console.error(error);
 	}
 };
+
