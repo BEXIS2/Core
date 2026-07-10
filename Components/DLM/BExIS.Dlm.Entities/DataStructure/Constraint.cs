@@ -318,8 +318,8 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <param>NA</param>
         public PatternConstraint()
         {
-            defaultMessageTemplate = "Value(s) does not match the pattern. The value should match {0} {1}.";
-            defaultNegatedMessageTemplate = "Value(s) matches the pattern, but the constraint is negated. The value should not match {0} {1}.";
+            defaultMessageTemplate = "Value does not match the pattern. The value should match {0} {1}.";
+            defaultNegatedMessageTemplate = "Value matches the pattern, but the constraint is negated. The value should not match {0} {1}.";
             CaseSensitive = true;
         }
 
@@ -426,7 +426,7 @@ namespace BExIS.Dlm.Entities.DataStructure
             {
                 if (Negated)
                 {
-                    return (string.Format("The value must be {0} {1} or {2} {3}.", (!LowerboundIncluded ? "less than or equal to" : "less than"), Lowerbound // if boundaries are not included in the constarint, they are part of the negated
+                    return (string.Format("The value must be {0} ({1}) or {2} ({3}).", (!LowerboundIncluded ? "less than or equal to" : "less than"), Lowerbound // if boundaries are not included in the constarint, they are part of the negated
                                                                                  , (!UpperboundIncluded ? "greater than or equal to" : "greater than"), Upperbound
                            ));
                 }
@@ -451,8 +451,8 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <param></param>
         public RangeConstraint()
         {
-            defaultMessageTemplate = "Value(s) out of allowed range. The value should be between {0} {1} and {2} {3}.";
-            defaultNegatedMessageTemplate = "Value(s) within range, but the constraint is negated. The value should be {1} {0} or {3} {2}.";
+            defaultMessageTemplate = "Value out of allowed range. The value should be between {0} ({1}) and {2} ({3}).";
+            defaultNegatedMessageTemplate = "Value within range, but the constraint is negated. The value should be {1} ({0}) or {3} ({2}).";
         }
 
         public RangeConstraint(ConstraintProviderSource provider, string constraintSelectionPredicate, string cultureId
