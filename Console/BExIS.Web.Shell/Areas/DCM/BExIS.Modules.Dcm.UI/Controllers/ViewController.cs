@@ -88,6 +88,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="version"></param>
+        /// <param name="tag"></param>
         /// <returns></returns>
         public ActionResult Index(long id, int version = 0, double tag = 0)
         {
@@ -98,6 +99,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             
             ViewData["id"] = id;
             ViewData["version"] = version;
+            ViewData["tag"] = tag;
             ViewData["app"] = SvelteHelper.GetApp(module);
             ViewData["start"] = SvelteHelper.GetStart(module);
 
@@ -1138,6 +1140,29 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         #endregion
 
+        #region Data
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
+
+        // load in seperate page
+        public ActionResult Data(long id, int version = 0)
+        {
+
+            if (id == 0) throw new ArgumentException("id is not valid");
+
+            string module = "DCM";
+
+            ViewData["id"] = id;
+            ViewData["version"] = version;
+
+            using (var datasetManager = new DatasetManager())
+            {
+                ViewData["versionId"] = datasetManager.GetDatasetVersionId(id, version);
+            }
+
+
+
+            return View();
+        }
         /// <summary>
         /// Start from Data Hook - view
         /// </summary>
@@ -1172,6 +1197,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
+        #endregion
+
+        #region data description
+        // load in seperate page
+        public ActionResult DataDescription(long id, int version = 0)
+        {
+
+            if (id == 0) throw new ArgumentException("id is not valid");
+
+            string module = "DCM";
+
+            ViewData["id"] = id;
+            ViewData["version"] = version;
+
+
+            return View();
+        }
 
         public ActionResult StartDataStructure(long id, int version)
         {
@@ -1180,7 +1222,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return RedirectToAction("ShowPreviewDataStructure", "Data", new { area = "DDM", datasetID = id });
         }
 
-
+        #endregion 
 
         public ActionResult Test()
         {

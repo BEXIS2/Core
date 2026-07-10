@@ -1,8 +1,8 @@
 import { Api } from '@bexis2/bexis2-core-ui'; // get model for View page
 
-export const getView = async (id) => {
+export const getView = async (id, version, tag) => {
 	try {
-		const response = await Api.get('/dcm/view/load?id=' + id);
+		const response = await Api.get('/dcm/view/load?id=' + id + '&version=' + version + '&tag=' + tag);
 		console.log("🚀 ~ getView ~ response:", response)
 		return response;
 	} catch (error) {
@@ -11,26 +11,28 @@ export const getView = async (id) => {
 	}
 };
 
-export const getApiDataset = async (id, version ) => {
+export const getApiDataset = async (id, version, tag ) => {
 	try {
-  if(version === undefined || version <= 0){
-			const response = await Api.get('/api/dataset/'+id);
-			return response.data;
-		}
-		else{
-			const response = await Api.get('/api/dataset/'+id+'/version_number/'+version);
-			return response.data;
-		}
+ 
+ let url =	'/api/dataset/'+id;
+	if(version >= 0 && (tag === undefined || tag <= 0)){ //load	by version
+		url = '/api/dataset/'+id+'/version_number/'+version
+	}
+	else if(tag >= 0){ //load by tag
+		url = '/api/dataset/'+id+'/tag/'+tag
+	}
 
+	const response = await Api.get(url);
+	return response.data;
 		
 	} catch (error) {
 		console.error(error);
 	}
 };
 
-export const getCitation = async (id, version) => {
+export const getCitation = async (id, version, tag) => {
 	try {
-		const response = await Api.get('/dcm/view/citation?id=' + id+'&version=' + version);
+		const response = await Api.get('/dcm/view/citation?id=' + id+'&version=' + version+'&tag=' + tag);
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -66,7 +68,16 @@ export const getDeleted = async (id) => {
 
 export const getCitationText = async (id, version, tag, format) => {
 	try {
-		const response = await Api.get(`api/datasets/${id}/version_number/${version}/citations?format=${format}`);
+
+		let url =	'/api/dataset/'+id;
+		if(version >= 0 && (tag === undefined || tag <= 0)){ //load	by version
+			url = '/api/dataset/'+id+'/version_number/'+version
+		}
+		else if(tag >= 0){ //load by tag
+			url = '/api/dataset/'+id+'/tag/'+tag
+		}
+
+		const response = await Api.get(`${url}/citations?format=${format}`);
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -81,6 +92,16 @@ export const getCitationOptions = async (id, version, tag ) => {
 		console.error(error);
 	}
 };
+
+export const getDataDescription = async (id, version) => {
+	try {
+		const response = await Api.get(`/dcm/datadescription/Load?id=${id}&version=${version}`);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 
 export const downloadZip = async (id, format, version = -1, withFilter = false, withUnits = false) => {
 	try {
@@ -111,4 +132,6 @@ export const sendRequest = async (id, intension) => {
 		console.error(error);
 	}
 };
+
+
 

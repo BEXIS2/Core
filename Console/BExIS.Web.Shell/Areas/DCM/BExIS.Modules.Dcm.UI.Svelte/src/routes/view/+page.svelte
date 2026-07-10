@@ -34,6 +34,7 @@
 	let container;
 	let id: number;
 	let version: number = 0;
+	let tag: number = 0;
 	let model: ViewModel;
 
 	let isPartOfCollection: boolean = false;
@@ -62,13 +63,14 @@
 		container = document.getElementById('view');
 		id = container?.getAttribute('dataset');
 		version = container?.getAttribute('version');
+		tag = container?.getAttribute('tag');
 
-		console.log('start view', id, version);
+		console.log('start view', id, version, tag);
 		//setup api
 		// setApiConfig('https://localhost:44345', 'davidschoene', '123456');
 
 		// load data from server
-		const res = await getView(id);
+		const res = await getView(id,	version, tag);
 
 		if(res?.status==200)
 		{
@@ -77,6 +79,7 @@
 			title = model.title;
 			version = model.version;
 			id = model.id;
+			tag = model.tag;
 
 			console.log('model',model);
 			console.log('hooks', hooks);
@@ -145,6 +148,7 @@
 		<Header	
 			{id} 
 			{version} 
+			{tag}
 			{title} 
 			labels = {model.labels} 
 			license = {model.additionalInformations['license']} 
@@ -164,7 +168,7 @@
 
 				<div class="flex flex-col ml-5 gap-3 w-1/4">
 
-					 <CitationDownload	{id} {version}/>
+					 <CitationDownload	{id} {version} {tag} />
 
 						<Download {id} {version}
 						 versionId={model.versionId}
@@ -191,13 +195,15 @@
 
 
 		{#if linkHook }
-			<Link	links={model.links.to} />
+
+				<Link	links={model.links.to} />
+
 		{/if}
 
 	
 
 		{#if dataDescriptionHook && model.dataStructureId	!== undefined && model.dataStructureId > 0}
-			 <DataDescription	{id} {version} hook={dataDescriptionHook}/>
+			 <DataDescription	{id} {version} {tag} hook={dataDescriptionHook}/>
 		{/if}
 
 		{#if dataHook	&& model.hasData}

@@ -5,6 +5,8 @@
 	import { createEventDispatcher } from 'svelte';
 
 	export let id: number | undefined = undefined;
+	export let version: number | undefined = undefined;
+	
 	type ServerTableType = {
 		id: number;
 		name: string;

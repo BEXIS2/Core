@@ -87,22 +87,24 @@
 	</div>
 	<div>
 		<div class="flex gap-2 text-end flex-auto">
+		{#if enableEdit}
 			<button title="Download data structure template as excel file" class="chip variant-filled-secondary" on:click={downloadFn}
 				><Fa icon={faDownload} /><span class="pl-1">Download</span></button
 			>
-			{#if enableEdit}
+			
 				<button title="Edit data structure" class="chip variant-filled-secondary" on:click={goToEditFn}
 					><Fa icon={faPencil} /><span class="pl-1">Edit</span></button
 				>
-			{/if}
 
-			{#if hasData === false}
-				<button
-					title="Remove data structure"
-					class="chip variant-filled"
-					on:click={() => modalStore.trigger(modal)}><Fa icon={faTrash} /><span class="pl-1">Remove</span></button
-				>
-			{/if}
+
+				{#if hasData === false}
+					<button
+						title="Remove data structure"
+						class="chip variant-filled"
+						on:click={() => modalStore.trigger(modal)}><Fa icon={faTrash} /><span class="pl-1">Remove</span></button
+					>
+				{/if}
+				{/if}
 		</div>
 	</div>
 </div>

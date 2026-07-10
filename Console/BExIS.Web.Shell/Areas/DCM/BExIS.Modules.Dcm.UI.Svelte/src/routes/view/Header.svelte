@@ -8,6 +8,7 @@ import Citation from "./Citation.svelte";
 
 	export let id;
 	export let version;
+	export	let tag;
 	export let title = '';
 	export let labels:{ [key: string]: string; }	= {};
 	export	let license = "";
@@ -43,7 +44,7 @@ import Citation from "./Citation.svelte";
 			{#if labelKeys	&& labelKeys.length > 0}
 					{#each labelKeys as key}
 					 {#if labels[key] === 'DOI'}
-							<a href={key} class="badge variant-filled-surface" target="_blank">{key}</a>
+							<a href={key} class="badge variant-ghost-primary" target="_blank">{key}</a>
 						{:else}
 							<span class="badge variant-filled-primary">{key}</span>
 							{/if}
@@ -64,8 +65,7 @@ import Citation from "./Citation.svelte";
 
 
 	<div class="flex flex-col gap-2">
-		 <Citation	{id} {version} />
-
+		 <Citation	{id} {version} {tag} />
 	</div>
 
 	

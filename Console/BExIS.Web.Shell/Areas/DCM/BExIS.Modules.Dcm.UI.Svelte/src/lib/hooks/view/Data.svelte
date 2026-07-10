@@ -4,7 +4,9 @@
 	import { onMount } from "svelte";
 	import PlaceHolderHookContent from "../edit/placeholder/PlaceHolderHookContent.svelte";
 	import PrimaryData from "$lib/components/data/PrimaryData.svelte";
-	import Files from "$lib/components/data/Files.svelte";
+	import FilesView from "$lib/components/data/FilesView.svelte";
+	import Fa from "svelte-fa";
+	import { faMaximize } from "@fortawesome/free-solid-svg-icons";
 
 
  export let id = 0;
@@ -23,19 +25,26 @@
 
 </script>
 
-<h3 class="h3">Data</h3> 
+ <div class="flex justify-between items-center">
+ <h3 class="h3">Data</h3> 
 
+ <div class="flex justify-end">
+			<a href="data?id={id}&version={version}" title="Open data in new window" class="badge text-lg"><Fa	icon="{faMaximize}"/></a>
+	</div>
+
+</div>
 <div class="card p-5 mb-5">
  {#await load()}
 		<PlaceHolderHookContent />
 	{:then result}
 		{#if model.hasStructure}
+
+		
 			<PrimaryData id={model.id} />
 		{:else}
-			<Files
+			<FilesView
 				id={model.id}
 				bind:files={model.existingFiles}
-				bind:deletedFiles={model.deleteFiles}
 				bind:descriptionType={model.descriptionType}
 			/>
 		{/if}
