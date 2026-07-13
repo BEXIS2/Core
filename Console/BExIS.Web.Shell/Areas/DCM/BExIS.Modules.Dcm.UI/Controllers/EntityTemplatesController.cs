@@ -78,6 +78,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult GetSimple(long id)
+        {
+            if (id == 0) return Json(new EntityTemplateModelSimple(), JsonRequestBehavior.AllowGet);
+
+            using (var entityTemplateManager = new EntityTemplateManager())
+            {
+                var entityTemplate = entityTemplateManager.Repo.Get(id);
+                return Json(EntityTemplateHelper.ConvertToSimple(entityTemplate), JsonRequestBehavior.AllowGet);
+            }
+        }
+
 
         [JsonNetFilter]
         [HttpGet]
