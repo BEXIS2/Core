@@ -536,10 +536,29 @@ export function getPartyIdFromParent(path) {
 }
 
 export function showDescriptionHandler(e: any, type: 'simple' | 'complex') {
+	let descriptionTimeout: any;
+	
+	// unset current timeout if any
+	if (descriptionTimeout) {
+		clearTimeout(descriptionTimeout);
+	}
+
+	// add a small delay
+	descriptionTimeout = setTimeout(() => {
 		descriptionStore.set({ type, content: e.detail.description, path: e.detail.id });
 		console.log('🚀 ~ showDescriptionHandler ~ e.detail.description:', e.detail);
+	}, 500);
 	}
 
 export function hideDescriptionHandler(e: any, type: 'simple' | 'complex') {
+	let descriptionTimeout: any;
+	// unset current timeout if any
+	if (descriptionTimeout) {
+		clearTimeout(descriptionTimeout);
+	}
+	
+	// add a small delay
+	descriptionTimeout = setTimeout(() => {
 		descriptionStore.set({ type, content: '', path: '' });
+	}, 500);
 	}
