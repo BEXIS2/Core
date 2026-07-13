@@ -13,7 +13,7 @@
 		latestFileReaderDate,
 		latestSubmitDate,
 		latestDataDescriptionDate
-	} from '../../routes/edit/stores';
+	} from '../../../routes/edit/stores';
 
 	import type { FileUploadModel } from '$models/FileUpload';
 	import PlaceholderHook from './placeholder/PlaceholderHook.svelte';

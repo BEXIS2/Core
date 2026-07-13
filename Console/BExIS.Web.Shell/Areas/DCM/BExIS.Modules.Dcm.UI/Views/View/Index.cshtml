@@ -4,10 +4,14 @@
 
     long id = 0;
     long version = -1;
+    long tag = 0;
 
     if (ViewData["id"] != null) { id = Convert.ToInt64(ViewData["id"]); }
 
     if (ViewData["version"] != null) { version = Convert.ToInt64(ViewData["version"]); }
+
+    if (ViewData["tag"] != null) { version = Convert.ToInt64(ViewData["tag"]); }
+
 
     string bioSchemaInfos = "";
     if (ViewData["bioSchema"] != null)
@@ -21,7 +25,7 @@
     @Html.Raw(bioSchemaInfos)
 </script>
 
-<div id="view" dataset="@id" version="@version">
+<div id="view" dataset="@id" version="@version" tag="@tag">
 
     @Html.Partial("_sveltePage")
 </div>

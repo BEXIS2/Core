@@ -41,24 +41,21 @@ const l = license.toUpperCase();
 
 
 
-<span title={license} class="badge text-lg">
+<div title={license} class="badge variant-filled-secondary"> 
+<span>{l}</span> 
 {#if l === 'CC BY'}
-	<Fa icon={faCreativeCommonsBy} class="mr-2" />
+	 <Fa icon={faCreativeCommonsBy} />
 {:else if l === 'CC BY-SA'}
- <Fa icon={faCreativeCommonsSa} class="mr-2" />
+ <Fa icon={faCreativeCommonsSa} />
 {:else if l === 'CC BY-ND'}
- <Fa icon={faCreativeCommonsNd} class="mr-2" />
+ <Fa icon={faCreativeCommonsNd} />
   {:else if l === 'CC BY-NC'}
- <Fa icon={faCreativeCommonsNc} class="mr-2" />
+ <Fa icon={faCreativeCommonsNc} />
   {:else if l === 'CC BY-NC-SA'}
- <Fa icon={faCreativeCommons} class="mr-2" />
+ <Fa icon={faCreativeCommons}  />
   {:else if l === 'CC BY-NC-ND'}
- <Fa icon={faCreativeCommons} class="mr-2" />
+ <Fa icon={faCreativeCommons}  />
   {:else if l === 'CC'}
- <Fa icon={faCreativeCommons} class="mr-2" />
-
-{:else }
-<span class="badge variant-filled-secondary mr-2">{l}</span>
-
+ <Fa icon={faCreativeCommons} />
 {/if}
-</span>
+</div>

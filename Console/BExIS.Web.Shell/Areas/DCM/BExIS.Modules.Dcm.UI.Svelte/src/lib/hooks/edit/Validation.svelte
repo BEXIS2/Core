@@ -10,9 +10,9 @@
 		latestFileReaderDate,
 		latestSubmitDate,
 		latestValidationDate
-	} from '../../routes/edit/stores';
+	} from '../../../routes/edit/stores';
 
-	import { hooksStatus } from '../../routes/edit/stores';
+	import { hooksStatus } from '../../../routes/edit/stores';
 	import { onMount, onDestroy } from 'svelte';
 
 	import type { ValidationModel } from '$models/ValidationModels';

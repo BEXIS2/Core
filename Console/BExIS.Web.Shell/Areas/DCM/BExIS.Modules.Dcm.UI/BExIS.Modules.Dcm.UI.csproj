@@ -480,6 +480,8 @@
     <Content Include="Views\M\Index.cshtml" />
     <Content Include="Views\M\Edit.cshtml" />
     <Content Include="Views\View\Metadata.cshtml" />
+    <Content Include="Views\View\DataDescription.cshtml" />
+    <Content Include="Views\View\Data.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -91,6 +91,31 @@ namespace BExIS.IO
             return downloadName;
         }
 
+        public static string GetExtensionFileName(FileType type, long datasetId, 
+            int versionNr, 
+            long datastructureId, string extType, long extId, int extVersionNr, double tagNr = 0, bool useTags = false)
+        {
+            string appName = GeneralSettings.ApplicationName;
+            if (string.IsNullOrEmpty(appName)) appName = "BEXIS2";
+
+            string downloadName = "no title available";
+            string versionOrTagLabel = useTags ? "t" + tagNr : "v" + versionNr;
+
+            switch (type)
+            {
+                case FileType.DataStructure:
+                    downloadName = string.Format("{0}_{1}_{2}_{3}_{4}_datastructure", appName, datasetId, versionOrTagLabel, extType, extId);
+                    break;
+                case FileType.PrimaryData:
+                    // filename should contain: application name, dataset ID, and version ID
+                    downloadName = string.Format("{0}_{1}_{2}_{3}_{4}_data", appName, datasetId, versionOrTagLabel, extType, extId);
+                    break;
+
+            }
+
+            return downloadName;
+        }
+
     }
 
     public enum FileType

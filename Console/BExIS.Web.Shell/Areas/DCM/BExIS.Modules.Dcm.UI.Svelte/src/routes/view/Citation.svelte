@@ -8,6 +8,7 @@
 
 	export let id;
 	export let version;
+	export	let tag;
 
  let data:CitationDataModel;
  let citationComponent;
@@ -15,7 +16,7 @@
 
 	onMount(async () => {
 		
-		const res:CitationModel = await getCitation(id, version);
+		const res:CitationModel = await getCitation(id, version, tag);
 		console.log('citation', res);
 		console.log('format', res.format, ReadCitationFormat.Default);
 

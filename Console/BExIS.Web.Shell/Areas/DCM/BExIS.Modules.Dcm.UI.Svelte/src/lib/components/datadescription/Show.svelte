@@ -4,7 +4,8 @@
 	import { Table } from '@bexis2/bexis2-core-ui';
 	import type { TableConfig } from '@bexis2/bexis2-core-ui';
 	import { writable } from 'svelte/store';
-	import NameTableCol from './NameTableCol.svelte';
+	import NameTableCol from './table/NameTableCol.svelte';
+	import TableBool from './table/TableBool.svelte';
 
 	export let id; //enityid
 	export let title;
@@ -21,6 +22,11 @@
 
 	variableStore.set(variables);
 	console.log('🚀 ~ variables:', variables);
+
+	// if this component is called in context of edit and the user has the permission to edit, then enable edit
+	// otherwise, disable edit
+	const path = window.location.pathname;
+	enableEdit = (path.includes('edit')) && enableEdit;
 
 	const variableConfig: TableConfig<VariableModel> = {
 		id: 'variables',
@@ -42,7 +48,14 @@
 			},
 			dataType: {
 				header: 'Data Type'
-			}
+			},
+			isOptional: {
+				header: 'Optional',
+				disableFiltering: true,
+				instructions: {
+					renderComponent: TableBool
+				}
+			},
 		}
 	};
 </script>

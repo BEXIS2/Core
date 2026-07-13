@@ -831,7 +831,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                         sds.Variables = sds.Variables.OrderBy(v => v.OrderNo).ToList();
 
-                        return PartialView(ShowPrimaryDataModel.Convert(
+                        return View(ShowPrimaryDataModel.Convert(
                             datasetID,
                             versionId,
                             title,
@@ -849,7 +849,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             return RedirectToAction("multimediaData", "ShowMultimediaData", new RouteValueDictionary { { "area", "MMM" }, { "datasetID", datasetID }, { "versionId", versionId } });
                         else
                             return
-                                PartialView(ShowPrimaryDataModel.Convert(datasetID,
+                                View(ShowPrimaryDataModel.Convert(datasetID,
                                 versionId,
                                 title,
                                 null,

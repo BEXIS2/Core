@@ -134,14 +134,14 @@
 			role="status"
 		>
 			Please correct your data and upload again or edit the data structure accordingly. Validation
-			will be performed again based on the changes.
+			will be performed again based on the changes. {#if selected.errors.length > 990} Only the first ~1000 errors are shown. {/if} {#if selected.warnings.length > 990} Only the first ~1000 warnings are shown. {/if}
 		</div>
 		<div class="card shadow-sm border-error-300 border-solid border">
 			{#each selected.errors as error}
-				<Message title={error.issue} count={error.count} messages={error.errors} />
+				<Message title={error.issue} count={error.count} messages={error.errors} type="error" />
 			{/each}
 			{#each selected.warnings as warning}
-				<Message title={warning.issue} count={warning.count} messages={warning.warnings} />
+				<Message title={warning.issue} count={warning.count} messages={warning.warnings} type="warning" />
 			{/each}
 		</div>
 	{/if}

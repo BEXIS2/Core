@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Spinner, ErrorMessage, positionType } from '@bexis2/bexis2-core-ui';
 	import { getHookStart } from '$services/HookCaller';
-	import { submit } from '../../routes/edit/services';
+	import { submit } from '../../../routes/edit/services';
 	import type { SubmitModel, submitResponceType } from '$models/SubmitModels';
 
 	import { getModalStore } from '@skeletonlabs/skeleton';
@@ -15,7 +15,7 @@
 		latestSubmitDate,
 		latestValidationDate,
 		latestDataDate
-	} from '../../routes/edit/stores';
+	} from '../../../routes/edit/stores';
 
 	import { onMount, createEventDispatcher, onDestroy } from 'svelte';
 
