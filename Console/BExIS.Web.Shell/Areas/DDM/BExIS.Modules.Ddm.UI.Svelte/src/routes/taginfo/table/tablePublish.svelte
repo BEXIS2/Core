@@ -8,6 +8,9 @@
 	let currentRow: TagInfoEditModel | undefined;
 
 	$: currentRow = $tagInfoModelStore.find((x) => x.versionId == row.original.versionId);
+	// next row is the row with the next version number, if it exists
+	// It is used to determine if the current row is the last version of a tag, in which case the publish toggle should be shown
+	$: nextRow = $tagInfoModelStore.find((x) => x.versionNr == row.original.versionNr + 1);
 
 	// Update the store when the toggle is changed
 	function togglePublish(versionId: number, value: boolean) {
@@ -19,7 +22,7 @@
 
 <div class="flex h-full items-center justify-center">
 	<div title="Make this release tag visible; Click save to apply changes.">
-		{#if currentRow && currentRow.tagId > 0}
+		{#if currentRow && currentRow.tagId > 0 && ((nextRow && nextRow.tagId != currentRow.tagId) || !nextRow)}
 			<SlideToggle
 				id="publish-{currentRow.versionId}"
 				name={currentRow.versionId.toString()}
