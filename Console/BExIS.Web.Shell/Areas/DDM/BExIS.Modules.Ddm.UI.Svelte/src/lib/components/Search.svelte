@@ -590,7 +590,7 @@
 					<TablePlaceholder cols={6} rows={10}/>
 				{/if}
 				{#if currentView === 'cards'}
-    		<CardsPlaceHolder />
+    				<CardsPlaceHolder />
 				{/if}
 
 				{/if}
