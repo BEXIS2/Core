@@ -18,6 +18,7 @@ using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Web.Mvc;
 using System.Web.SessionState;
 using Telerik.Web.Mvc.Extensions;
@@ -82,7 +83,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpGet]
         public JsonResult GetSimple(long id)
         {
-            if (id == 0) return Json(new EntityTemplateModelSimple(), JsonRequestBehavior.AllowGet);
+            // return error if id is 0, because this method is used to get the entity template for a dataset and the dataset must have an entity template
+            if (id == 0) return Json(new EntityTemplateModel(), JsonRequestBehavior.AllowGet);
 
             using (var entityTemplateManager = new EntityTemplateManager())
             {
