@@ -27,7 +27,7 @@ import Citation from "./Citation.svelte";
 	<div class="flex justify-items-center">
 			{#if hasEditRight}
 			<div>
-			<button	class="badge variant-filled-secondary mr-5" on:click={() => window.location.href = `/dcm/edit?id=${id}`}>
+			<button	class="badge variant-filled-secondary mr-5" on:click={() => window.location.href = `/edit?id=${id}`}>
 				<Fa icon={faPen} /> 
 				<span>edit</span>
 			</button>
