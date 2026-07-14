@@ -1,14 +1,19 @@
 <script lang="ts">
 	export let value: string;
+
+    let title: string = "";
+    if (value.length > 180) {
+        title = value.slice(0, 180) + '...';
+    }
 </script>
 
 <div>
-	<span title="{value}">
-        {#if value.length > 200}
-            {value.slice(0, 200) + '...'}
-        {:else}
-            {value}
-        {/if}
-		
-	</span>
+	{#if value.length > 180}<span {title}>
+			{value.slice(0, 180) + '...'}
+		</span>
+	{:else}
+		<span>
+			{value}
+		</span>
+	{/if}
 </div>
