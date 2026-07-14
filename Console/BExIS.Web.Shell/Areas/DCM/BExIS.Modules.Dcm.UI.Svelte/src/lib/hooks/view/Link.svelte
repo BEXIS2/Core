@@ -27,11 +27,11 @@
         <span>{link.referenceType}</span>
         <span>{link.target.type}</span>
         {#if link.target.type.toLocaleLowerCase() =='extension'}
-        <a class="chip variant-outline-tertiary mb-2" href="/view/data?id={link.target.id}&version={link.target.version}" >
+        <a class="chip variant-outline-tertiary mb-2" href="/dcm/view/data?id={link.target.id}&version={link.target.version}" >
           {link.target?.title? link.target.title: "No title available"}
         </a>
         {:else}
-         <a class="chip variant-outline-tertiary mb-2" href="/view?id={link.target.id}&version={link.target.version}" target="_blank">
+         <a class="chip variant-outline-tertiary mb-2" href="/dcm/view?id={link.target.id}&version={link.target.version}" target="_blank">
           {link.target?.title? link.target.title: "No title available"}
         </a>
         {/if}
