@@ -214,6 +214,7 @@
 					<span id={path}>
 						<DatePickerInput
 							label={convertDisplayName(label)}
+							{required}
 							mode="date"
 							name={label}
 							format="yyyy-mm-dd"
@@ -224,6 +225,9 @@
 							on:input={onChangeHandler}
 							on:showDescription={handleShowDescription}
 							on:hideDescription={handleHideDescription}
+							description={simpleComponent.description}
+							valid={res.isValid(path)}
+							invalid={res.hasErrors(path)}
 						/>
 					</span>
 
@@ -232,6 +236,7 @@
 					<span id={path}>
 						<DatePickerInput
 							label={convertDisplayName(label)}
+							{required}
 							mode="datetime"
 							name={label}
 							format="yyyy-mm-dd hh:ii"
@@ -243,6 +248,9 @@
 							on:showDescription={handleShowDescription}
 							on:hideDescription={handleHideDescription}
 							on:input={onChangeHandler}	
+							description={simpleComponent.description}
+							valid={res.isValid(path)}
+							invalid={res.hasErrors(path)}
 						/>
 					</span>
 						
@@ -251,6 +259,7 @@
 					<span id={path}>
 					<DatePickerInput
 							label={convertDisplayName(label)}
+							{required}
 							mode="time"
 							name={label}
 							format="hh:ii"
@@ -262,6 +271,9 @@
 							on:showDescription={handleShowDescription}
 							on:hideDescription={handleHideDescription}
 							on:input={onChangeHandler}
+							description={simpleComponent.description}
+							valid={res.isValid(path)}
+							invalid={res.hasErrors(path)}
 						/>
 					</span>
 					<!-- Handle textarea format -->
@@ -339,6 +351,7 @@
 						<MultiSelect
 							id={path}
 							title={convertDisplayName(label)}
+							{required}
 							complexSource={true}
 							complexTarget={true}
 							source={jsonItems}
