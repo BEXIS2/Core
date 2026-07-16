@@ -78,9 +78,9 @@
 
 
 	function disableSaveFn():boolean {
-    //console.log("🚀 ~ disableSaveFn ~ hasChanged:", hasChanged, saveWithError)
+    // console.log("🚀 ~ disableSaveFn ~ hasChanged:", hasChanged, saveWithError)
     if (hasChanged == false) return true; // when there are changes, the save button is enabled, so return false for disabled
-		if (saveWithError) return false; // when save with error is allowd, the save button is always enabled
+		if (saveWithError) return false; // when save with error is allowed, the save button is always enabled
 		if (!validationStoreValues) return true; // if there is no validation result, we consider the form as not valid, so the save button is disabled
 	
 		return !validationStoreValues.allSimpleRequiredValid; //	disable save button when the metadata is not valid

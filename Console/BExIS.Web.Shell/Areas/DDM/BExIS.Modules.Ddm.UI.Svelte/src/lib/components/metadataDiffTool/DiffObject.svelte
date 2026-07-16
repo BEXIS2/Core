@@ -6,6 +6,7 @@
 	export let levelNames: string[] = [];
 	export let value1: any;
 	export let value2: any;
+	export let useSimpleFormat: boolean = false;
 
 	let name = levelNames.at(-1);
 
@@ -29,7 +30,7 @@
 					{#each attributes as k}
 						<div>
 							<strong>{k}:</strong>
-							<DiffPrimitive value1={value1[k]} value2={value2[k]} />
+							<DiffPrimitive value1={value1[k]} value2={value2[k]} useSimpleFormat={useSimpleFormat} />
 						</div>
 					{/each}
 				</div>
@@ -40,7 +41,7 @@
 		</div>
 
 		{#if textKey}
-			<DiffPrimitive value1={value1[textKey]} value2={value2[textKey]} />
+			<DiffPrimitive value1={value1[textKey]} value2={value2[textKey]} useSimpleFormat={useSimpleFormat} />
 		{/if}
 	</div>
 
@@ -50,6 +51,7 @@
 			levelNames={[...levelNames, k]}
 			value1={value1[k]}
 			value2={value2[k]}
+			useSimpleFormat={useSimpleFormat}	
 		/>
 	{/each}
 </div>
