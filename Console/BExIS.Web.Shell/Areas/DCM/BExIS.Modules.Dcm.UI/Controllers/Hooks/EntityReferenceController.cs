@@ -132,6 +132,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     EntityReference entityReference = helper.Convert(model);
                     entityReferenceManager.Create(entityReference);
 
+                    EntityReference entityReferenceObosite = helper.Switch(entityReference);
+                    entityReferenceManager.Create(entityReferenceObosite);
+
+
                     // if successfuly created a entity link return a json true
                     return Json(true);
                 }

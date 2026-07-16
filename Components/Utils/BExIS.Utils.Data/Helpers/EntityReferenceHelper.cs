@@ -208,6 +208,39 @@ namespace BExIS.Utils.Data.Helpers
             return tmp;
         }
 
+        public EntityReference Switch(EntityReference model)
+        {
+            EntityReference tmp = new EntityReference();
+
+            tmp.SourceId = model.TargetId;
+            tmp.SourceEntityId = model.TargetEntityId;
+            tmp.SourceVersion = model.TargetVersion;
+
+            tmp.TargetId = model.SourceId;
+            tmp.TargetEntityId = model.SourceEntityId;
+            tmp.TargetVersion = model.SourceVersion;
+
+            tmp.Context = model.Context;
+
+            tmp.ReferenceType = model.ReferenceType;
+
+            tmp.CreationDate = DateTime.Now;
+
+            // get additional informations
+            ReferenceConfigElement config = GetObositeReferenceConfig(model.Category, model.ReferenceType);
+
+            if (config != null)
+            {
+                tmp.ReferenceType = config.ReferenceType;
+                tmp.LinkType = config.LinkType;
+                tmp.Category = config.Category;
+            }
+
+            return tmp;
+        }
+
+
+
         public SimpleSourceReferenceModel GetSimpleReferenceModel(long id, long typeId, int version)
         {
             SimpleSourceReferenceModel tmp = new SimpleSourceReferenceModel();
@@ -375,6 +408,16 @@ namespace BExIS.Utils.Data.Helpers
             return null;
         }
 
+        public ReferenceConfigElement GetObositeReferenceConfig(string category, string type)
+        {
+            if (_config != null)
+            {
+                return _config.ReferenceTypes.Where(e => e.Category.Equals(category) && !e.ReferenceType.Equals(type)).FirstOrDefault();
+            }
+
+            return null;
+        }
+
 
         /// <summary>
         /// this function return a list of all reference types. This types are listed in the entity reference config.xml in the workspace
@@ -385,7 +428,7 @@ namespace BExIS.Utils.Data.Helpers
             
             if (_config != null)
             {
-                var types = _config.ReferenceTypes.Select(e => new SelectListItem()
+                var types = _config.ReferenceTypes.Where(e => !e.LinkType.Equals("extension")).Select(e => new SelectListItem()
                 {
                     Text = String.IsNullOrEmpty(e.Description) ? e.ReferenceType : e.Description,
                     Value = e.ReferenceType

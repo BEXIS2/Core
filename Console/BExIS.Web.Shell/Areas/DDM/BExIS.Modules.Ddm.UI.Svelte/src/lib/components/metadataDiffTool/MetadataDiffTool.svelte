@@ -12,6 +12,8 @@
 	let datasetResponse1: { maxVersion?: number; error?: any } = {};
 	let datasetResponse2: { maxVersion?: number; error?: any } = {};
 
+	let useSimpleFormat: boolean = false;
+
 	onMount(async () => {
 		// read id from URL if not provided (id is provided in route)
 		const urlSearchParams = new URLSearchParams(window.location.search);
@@ -108,7 +110,7 @@
 			}
 			else {	
 			datasetResponse1 = response;
-			console.log('Dataset Response 1:', datasetResponse1);
+			console.log('Dataset Response 1:', datasetResponse1);	
 			versions1 = Array.from({ length: datasetResponse1.maxVersion ?? 0 }, (_, i) => i + 1);
 			selectedVersion1 = datasetResponse1.maxVersion ?? null;
 			onChangeSelectedVersion1(new Event('init'));
@@ -133,8 +135,11 @@
 			
 			
 			datasetResponse2 = response;
-			versions2 = Array.from({ length: datasetResponse2.maxVersion ?? 0 }, (_, i) => i + 1);
-			selectedVersion2 = datasetResponse2.maxVersion ?? null;
+			const maxVer = datasetResponse2.maxVersion ?? 0;
+			versions2 = Array.from({ length: maxVer ?? 0 }, (_, i) => i + 1);
+			selectedVersion2 = maxVer > 1 
+            ? maxVer - 1 
+            : (maxVer === 1 ? 1 : null);
 			onChangeSelectedVersion2(new Event('init'));
 			}
 		});
@@ -183,8 +188,8 @@
 	let syncSelections: boolean = true;
 </script>
 
-<Page help={true} title="Metadata Diff Tool">
-<h2 class="m-4 text-2xl font-bold">Metadata Diff Tool</h2>
+<Page help={true} title="Metadata Change Viewer">
+<h2 class="m-4 text-2xl font-bold">Metadata Change Viewer</h2>
 <p class="mx-4 mb-2 text-sm ">Select datasets and versions to compare their metadata.</p>
 
 {#if datasetResponse1.error || datasetResponse2.error}
@@ -205,7 +210,7 @@
 					selectedDataset2 = selectedDataset1;
 					onChangeSelectedDataset2(new Event('init'));
 			  }}
-		>Sync selection</SlideToggle
+		>{#if syncSelections}Compare version within one dataset{:else}Compare versions in different datasets{/if}	</SlideToggle
 	>
 </div>
 	<div class="mx-4 mb-4 flex justify-around gap-x-8 gap-y-4">
@@ -213,7 +218,7 @@
 			<div class="w-full mb-2">
 				<MultiSelect
 					id="dataset1"
-					title="Select Dataset 1"
+					title="Dataset"
 					bind:source={datasets}
 					itemId="id"
 					itemLabel="text"
@@ -227,10 +232,10 @@
 					on:change={onChangeSelectedDataset1}
 				/>
 			</div>
-			<div class="w-full font-bold">{selectedDataset1 ? selectedDataset1.text : 'None'}</div>
+			<div class="w-full font-bold">ID: {selectedDataset1 ? selectedDataset1.text : 'None'}</div>
 			<div class="w-full">
 				<label>
-					<span>Version 1:</span>
+					<span>More recent version</span>
 					<select
 						class="select min-w-40"
 						id="version1"
@@ -248,26 +253,44 @@
 		</div>
 		<div class="flex flex-wrap gap-2 w-1/2">
 			<div class="w-full mb-2">
-				<MultiSelect
-					id="dataset2"
-					title="Select Dataset 2"
-					bind:source={datasets}
-					itemId="id"
-					itemLabel="text"
-					itemGroup="group"
-					complexSource={true}
-					complexTarget={true}
-					bind:target={selectedDataset2}
-					isMulti={false}
-					placeholder="-- Please select --"
-					clearable={false}
-					on:change={onChangeSelectedDataset2}
-				/>
+				{#if syncSelections}
+					<MultiSelect
+						id="dataset2"
+						title="Comparison Dataset"
+						bind:source={datasets}
+						itemId="id"
+						itemLabel="text"
+						itemGroup="group"
+						complexSource={true}
+						complexTarget={true}
+						bind:target={selectedDataset2}
+						isMulti={false}
+						placeholder="-- Please select --"
+						clearable={false}
+						disabled
+					/>
+				{:else}
+					<MultiSelect
+						id="dataset2"
+						title="Comparison Dataset"
+						bind:source={datasets}
+						itemId="id"
+						itemLabel="text"
+						itemGroup="group"
+						complexSource={true}
+						complexTarget={true}
+						bind:target={selectedDataset2}
+						isMulti={false}
+						placeholder="-- Please select --"
+						clearable={false}
+						on:change={onChangeSelectedDataset2}
+					/>
+				{/if}
 			</div>
-			<div class="w-full font-bold">{selectedDataset2 ? selectedDataset2.text : 'None'}</div>
+			<div class="w-full font-bold">ID: {#if !syncSelections}{selectedDataset2 ? selectedDataset2.text : 'None'}{/if}&nbsp;</div>
 			<div class="w-full">
 				<label>
-					<span>Version 2:</span>
+					<span>... compared to</span>
 					<select
 						class="select min-w-40"
 						id="version2"
@@ -284,6 +307,16 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="flex items-center gap-2 mx-4 mb-4 text-sm">
+		<input
+			type="checkbox"
+			id="useSimpleFormat"
+			bind:checked={useSimpleFormat}
+		/>
+		<label for="useSimpleFormat">Switch Diff Mode</label>
+		</div>
+
 	{#if selectedVersion1 && selectedVersion2}
 		{#if loading1 || loading2}
 			<div class="wrap mx-4 flex gap-4">
@@ -302,7 +335,7 @@
 			</div>
 		{:else if metadata1 && metadata2}
 			{#key `${selectedVersion1}\n\n---\n\n${selectedVersion2}`}
-				<DiffNode value1={metadata1} value2={metadata2} />
+				<DiffNode value1={metadata2} value2={metadata1} useSimpleFormat={useSimpleFormat} />
 			{/key}
 		{/if}
 	{/if}

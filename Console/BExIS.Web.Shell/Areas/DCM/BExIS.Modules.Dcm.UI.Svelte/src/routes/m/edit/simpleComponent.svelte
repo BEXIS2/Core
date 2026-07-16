@@ -191,7 +191,7 @@
 			<Blocked
 				isKeyMapped={mappingComponentConfig.isMappedToKey}
 				isPartyMapped={mappingComponentConfig.isMappedToParty}
-				{label}
+				label={convertDisplayName(label)}
 				bind:value
 				{path}
 			/>
@@ -199,7 +199,7 @@
 			<PartySelector
 				{path}
 				{value}
-				{label}
+				label= {convertDisplayName(label)}
 				{mappingComponentConfig}
 				{required}
 				{isMulti}
@@ -214,6 +214,7 @@
 					<span id={path}>
 						<DatePickerInput
 							label={convertDisplayName(label)}
+							{required}
 							mode="date"
 							name={label}
 							format="yyyy-mm-dd"
@@ -221,8 +222,12 @@
 							bind:value
 							inputClasses="input variant-form-material dark:bg-zinc-700 bg-zinc-50 placeholder:text-gray-400 w-32"
 							on:change={onChangeHandler}
+							on:input={onChangeHandler}
 							on:showDescription={handleShowDescription}
 							on:hideDescription={handleHideDescription}
+							description={simpleComponent.description}
+							valid={res.isValid(path)}
+							invalid={res.hasErrors(path)}
 						/>
 					</span>
 
@@ -231,6 +236,7 @@
 					<span id={path}>
 						<DatePickerInput
 							label={convertDisplayName(label)}
+							{required}
 							mode="datetime"
 							name={label}
 							format="yyyy-mm-dd hh:ii"
@@ -240,7 +246,11 @@
 							inputClasses="input variant-form-material dark:bg-zinc-700 bg-zinc-50 placeholder:text-gray-400 w-32"
 							on:change={onChangeHandler}
 							on:showDescription={handleShowDescription}
-							on:hideDescription={handleHideDescription	}	
+							on:hideDescription={handleHideDescription}
+							on:input={onChangeHandler}	
+							description={simpleComponent.description}
+							valid={res.isValid(path)}
+							invalid={res.hasErrors(path)}
 						/>
 					</span>
 						
@@ -249,6 +259,7 @@
 					<span id={path}>
 					<DatePickerInput
 							label={convertDisplayName(label)}
+							{required}
 							mode="time"
 							name={label}
 							format="hh:ii"
@@ -259,6 +270,10 @@
 							on:change={onChangeHandler}
 							on:showDescription={handleShowDescription}
 							on:hideDescription={handleHideDescription}
+							on:input={onChangeHandler}
+							description={simpleComponent.description}
+							valid={res.isValid(path)}
+							invalid={res.hasErrors(path)}
 						/>
 					</span>
 					<!-- Handle textarea format -->
@@ -301,7 +316,7 @@
 					{#if simpleComponent.properties['#text'].enum.length <= 10}<!-- Handle string type with enum with short numer of  entries -->
 						<Dropdown
 							id={path}
-							title={label}
+							title={convertDisplayName(label)}
 							bind:target={value}
 							source={simpleComponent.properties['#text'].enum}
 							on:change={onChangeHandler}
@@ -316,7 +331,7 @@
 						<!-- Handle string type with enum with many entries -->
 						<MultiSelect
 							id={path}
-							title={label}
+							title={convertDisplayName(label)}
 							{required}
 							source={simpleComponent.properties['#text'].enum}
 							bind:target={value}
@@ -335,7 +350,8 @@
 					{#if isMulti}
 						<MultiSelect
 							id={path}
-							title={label}
+							title={convertDisplayName(label)}
+							{required}
 							complexSource={true}
 							complexTarget={true}
 							source={jsonItems}
@@ -384,7 +400,7 @@
 					description={simpleComponent.description}
 					on:showDescription={handleShowDescription}
 					on:hideDescription={handleHideDescription}
-					size="sm">{label}</SlideToggle
+					size="sm">{convertDisplayName(label)}</SlideToggle
 				>
 			{/if}
 		{/if}

@@ -139,14 +139,13 @@ function sendDataTo(data, name, type)
     <span>
         <input class="checkbox"  type="checkbox" id="withUnits" bind:checked="{withUnits}" />
         <span>with units</span>
-
     </span>
 </div>
 
 
   {:else} <!-- // download package with files -->
 
-  <button class="btn" class:variant-filled-primary={!exceptAgreement}  disabled={!exceptAgreement} on:click={() => downloadDatasetFn()}>
+  <button class="btn" class:variant-filled-primary={exceptAgreement} class:variant-ghost-primary={!exceptAgreement}  disabled={!exceptAgreement} on:click={() => downloadDatasetFn()}>
    <!-- svelte-ignore missing-declaration -->
    <Fa icon={faSave} />
    <span class="padding-left-5">Download</span>

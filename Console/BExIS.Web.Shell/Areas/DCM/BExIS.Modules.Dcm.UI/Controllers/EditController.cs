@@ -183,16 +183,38 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             using (var datasetManager = new DatasetManager())
             using (var entityTemplateManager = new EntityTemplateManager())
+            using (var entityReferenceManager = new EntityReferenceManager())
             {
-                
                 var dataset = datasetManager.GetDataset(id);
                 var template = dataset.EntityTemplate;
-                var extensions = template.ExtensionList.Select(e=>e.TemplateId);
+                var entity = template.EntityType;
 
-                foreach (var e in entityTemplateManager.Repo.Query(e => e.Activated && extensions.Contains(e.Id)).ToList())
+
+                var existingEntityReferences = entityReferenceManager.ReferenceRepository.Query(e =>
+                        e.LinkType.Equals("extension") &&
+                        e.SourceId.Equals(id) &&
+                        e.SourceEntityId.Equals(entity.Id)).ToList();
+
+                var usedEntityTemplateIds = new List<long>();
+
+                // get used Tempalates
+                foreach (var e in existingEntityReferences)
                 {
-                    entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e, false));
+                    var d = datasetManager.GetDataset(e.TargetId);
+                    var t = d.EntityTemplate;
+                    usedEntityTemplateIds.Add(t.Id);
                 }
+
+
+        
+
+                var extensions = template.ExtensionList.Where(e=> e.Unique == false || (e.Unique && !usedEntityTemplateIds.Contains(e.TemplateId))).Select(e=>e.TemplateId);
+
+                    foreach (var e in entityTemplateManager.Repo.Query(e => e.Activated && extensions.Contains(e.Id)).ToList())
+                    {
+                        
+                        entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e, false));
+                    }
 
                 }
             
@@ -213,7 +235,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     if (id == 0) throw new Exception("id is missing");
                     if (extensionId == 0) throw new Exception("extensionId is missing");
 
-
+                    var usedEntityTemplateIds = new List<long>();
                     // get object
                     var dataset = datasetmanager.GetDataset(id);
                     var extension = datasetmanager.GetDataset(extensionId);
@@ -231,13 +253,27 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // check if extension is unique and allready exists
                     if (datasetTemplate.ExtensionList.Any(e => e.TemplateId.Equals(extensionTemplate.Id) && e.Unique))
                     {
-                        var existingLinks = entityReferenceManager.ReferenceRepository.Query(e =>
+
+                        var existing = entityReferenceManager.ReferenceRepository.Query(e =>
                             e.LinkType.Equals("extension") &&
+                            e.TargetId.Equals(extension.Id) &&
                             e.SourceId.Equals(id) &&
                             e.SourceEntityId.Equals(dataset.EntityTemplate.EntityType.Id) &&
-                            e.TargetEntityId.Equals(extension.EntityTemplate.EntityType.Id)).ToList();
+                            e.TargetEntityId.Equals(extension.EntityTemplate.EntityType.Id)).Any();
 
-                        if (existingLinks.Count > 0)
+
+
+                        //foreach (var e in existingLinks)
+                        //{
+                        //    var d = datasetmanager.GetDataset(e.TargetId);
+                        //    var t = d.EntityTemplate;
+                        //    usedEntityTemplateIds.Add(t.Id);
+                        //}
+
+
+                        //var extensions = datasetTemplate.ExtensionList.Where(e => e.Unique == false || (e.Unique && !usedEntityTemplateIds.Contains(e.TemplateId))).Select(e => e.TemplateId);
+
+                        if (existing)
                             throw new Exception("This extension is unique and allready exists.");
                     }
 

@@ -45,6 +45,19 @@ export const GetDatasetInfoById = async (datasetId: number) => {
 	}
 };
 
+export const GetTemplateConfig = async (id: number) => {
+	try {
+
+		// dcm/entitytemplates/Get?id=5
+		const response = await Api.get('/dcm/entitytemplates/GetSimple?id=' + id, '');
+		// console.log(" response.data.MetadataStructureId:", response);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
 export const SaveMetadata = async (id: number, value: any, comment: string) => {
 	try {
 		console.log(" value:", value);
@@ -131,6 +144,5 @@ export const GetMetadataAsFlattened = async (id: number, version) => {
 		throw error;
 	}
 };
-
 
 

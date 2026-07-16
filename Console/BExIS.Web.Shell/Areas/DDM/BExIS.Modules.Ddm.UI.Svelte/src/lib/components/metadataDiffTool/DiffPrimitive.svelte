@@ -2,12 +2,13 @@
 	export let value1: string | number | boolean | undefined | null;
 	export let value2: string | number | boolean | undefined | null;
 	export let byChar: boolean = false;
+	export let useSimpleFormat: boolean = false;
 
 	$: value1String = String(value1);
 	$: value2String = String(value2);
 
-	$: useSimpleFormat =
-		typeof value1 !== typeof value2 || value1String.length < 40 || value2String.length < 40;
+	// $: useSimpleFormat = false;
+		// typeof value1 !== typeof value2 || value1String.length < 40 || value2String.length < 40;
 	$: isDiff = value1 !== value2;
 
 	interface DiffPart {
@@ -118,7 +119,7 @@
 				<span class="empty">empty</span>
 			{/if}
 		</span>
-		<span class="text-surface-500">→</span>
+		<span class="text-surface-900 bold text-lg">→</span>
 		<span class="h-full rounded bg-success-100 px-2 py-0.5 text-success-800">
 			{#if !isEmpty(value2String)}
 				{#each splitLines(value2String) as line, index}
@@ -149,12 +150,6 @@
 				</span>
 			{/each}
 		</p>
-	{/if}
-	{#if !useSimpleFormat}
-		<label class="my-2 flex cursor-pointer items-center justify-center gap-1">
-			<input type="checkbox" bind:checked={showCustomDiff} class="checkbox mr-1" />
-			<span class="text-sm text-surface-600">Show detailed diff</span>
-		</label>
 	{/if}
 {/if}
 
