@@ -11,7 +11,7 @@
 		DatePickerInput
 	} from '@bexis2/bexis2-core-ui';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import {
 		ValidationStoreAddSimpleComponent,
 		ValidationStoreSetSimpleTypeValid,
@@ -145,6 +145,12 @@
 		}, 100);
 	});
 
+	onDestroy(() => {
+		//console.log("🚀 ~ onDestroy ~ path:", path)
+		// remove validation item from store
+		ValidationStoreSetSimpleTypeValid(path, true, '');
+	});
+
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
 	function onChangeHandler(e: any) {
@@ -161,6 +167,22 @@
 
 	function handleHideDescription(e: CustomEvent<any>) {
 		hideDescriptionHandler(e, 'simple');
+	}
+
+	function handleShowDescriptionFallback() {
+		showDescriptionHandler(
+			{
+				detail: {
+					description: simpleComponent?.description ?? '',
+					id: path
+				}
+			},
+			'simple'
+		);
+	}
+
+	function handleHideDescriptionFallback() {
+		hideDescriptionHandler({}, 'simple');
 	}
 
 	function updateValue(value: any, _path: string) {
@@ -211,7 +233,14 @@
 			{#if simpleComponent.properties['#text'].format !== undefined && simpleComponent.properties['#text'].format !== null}
 				<!-- Handle date format -->
 				{#if simpleComponent.properties['#text'].format.toLowerCase() === 'date'}
-					<span id={path}>
+					<div
+						id={path}
+						role="group"
+						on:mouseover={handleShowDescriptionFallback}
+						on:focus={handleShowDescriptionFallback}
+						on:mouseleave={handleHideDescriptionFallback}
+						on:blur={handleHideDescriptionFallback}
+					>
 						<DatePickerInput
 							label={convertDisplayName(label)}
 							{required}
@@ -229,11 +258,18 @@
 							valid={res.isValid(path)}
 							invalid={res.hasErrors(path)}
 						/>
-					</span>
+					</div>
 
 					<!-- Handle datetime format -->
 				{:else if simpleComponent.properties['#text'].format.toLowerCase() === 'datetime' || simpleComponent.properties['#text'].format.toLowerCase() === 'date and time'}
-					<span id={path}>
+					<div
+						id={path}
+						role="group"
+						on:mouseover={handleShowDescriptionFallback}
+						on:focus={handleShowDescriptionFallback}
+						on:mouseleave={handleHideDescriptionFallback}
+						on:blur={handleHideDescriptionFallback}
+					>
 						<DatePickerInput
 							label={convertDisplayName(label)}
 							{required}
@@ -252,11 +288,18 @@
 							valid={res.isValid(path)}
 							invalid={res.hasErrors(path)}
 						/>
-					</span>
+					</div>
 						
 					<!-- Handle time format -->
 				{:else if simpleComponent.properties['#text'].format.toLowerCase() === 'time'}
-					<span id={path}>
+					<div
+						id={path}
+						role="group"
+						on:mouseover={handleShowDescriptionFallback}
+						on:focus={handleShowDescriptionFallback}
+						on:mouseleave={handleHideDescriptionFallback}
+						on:blur={handleHideDescriptionFallback}
+					>
 					<DatePickerInput
 							label={convertDisplayName(label)}
 							{required}
@@ -275,7 +318,7 @@
 							valid={res.isValid(path)}
 							invalid={res.hasErrors(path)}
 						/>
-					</span>
+					</div>
 					<!-- Handle textarea format -->
 				{:else if (simpleComponent.properties['#text'].type === 'string' && simpleComponent.properties['#text'].format.toLowerCase() === 'textarea') || simpleComponent.properties['#text'].format.toLowerCase() === 'text' || (simpleComponent.properties['#text'].type === 'string' && value.length >= 25)}
 					<TextArea
@@ -391,17 +434,25 @@
 				<!-- Handle boolean type -->
 			{:else if simpleComponent.properties['#text'].type === 'boolean'}
 				<!-- {@const v = value = true} -->
-				<SlideToggle
-					id={path}
-					label={convertDisplayName(label)}
-					name={convertDisplayName(label)}
-					bind:checked={value}
-					on:input={onChangeHandler}
-					description={simpleComponent.description}
-					on:showDescription={handleShowDescription}
-					on:hideDescription={handleHideDescription}
-					size="sm">{convertDisplayName(label)}</SlideToggle
+				<div
+					role="group"
+					on:mouseover={handleShowDescriptionFallback}
+					on:focus={handleShowDescriptionFallback}
+					on:mouseleave={handleHideDescriptionFallback}
+					on:blur={handleHideDescriptionFallback}
 				>
+					<SlideToggle
+						id={path}
+						label={convertDisplayName(label)}
+						name={convertDisplayName(label)}
+						bind:checked={value}
+						on:input={onChangeHandler}
+						description={simpleComponent.description}
+						on:showDescription={handleShowDescription}
+						on:hideDescription={handleHideDescription}
+						size="sm">{convertDisplayName(label)}</SlideToggle
+					>
+				</div>
 			{/if}
 		{/if}
 	</div>
