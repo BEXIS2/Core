@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Api, Spinner, DropdownKVP, MultiSelect, Page } from '@bexis2/bexis2-core-ui';
+	import { Api, Spinner, MultiSelect, Page } from '@bexis2/bexis2-core-ui';
 	import { onMount } from 'svelte';
 	import DiffNode from './DiffNode.svelte';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
@@ -7,12 +7,13 @@
 	export let datasetIdStart: number | null = null;
 	let datasetId: number | null = null;
 	// TODO: Fetch available datasets from API if needed
-	let datasets = []; // datasetId ? [{ id: datasetId, name: 'Current Dataset' }] : [];
+	let datasets: any[] = []; // datasetId ? [{ id: datasetId, name: 'Current Dataset' }] : [];
 
 	let datasetResponse1: { maxVersion?: number; error?: any } = {};
 	let datasetResponse2: { maxVersion?: number; error?: any } = {};
 
 	let useSimpleFormat: boolean = false;
+	let lastUpdated = 'No local data available';
 
 	onMount(async () => {
 		// read id from URL if not provided (id is provided in route)
@@ -22,8 +23,28 @@
 			datasetIdStart = parseInt(urlDatasetId);
 			console.log('Dataset ID from URL:', datasetIdStart);
 		}
-
-		datasets = datasets.length > 0 ? datasets : await fetchAllDatasets();
+		// fetch datasets from API if not already provided and in the local storage
+		const storedDatasets = localStorage.getItem('datasets');
+		const storedDatasetsDate = localStorage.getItem('datasetsDate');
+		if (storedDatasets && storedDatasetsDate) {
+			// Check if the stored datasets are still valid (e.g., not expired)
+			const datasetsDate = new Date(storedDatasetsDate);
+			const now = new Date();
+			const timeDiff = Math.abs(now.getTime() - datasetsDate.getTime());
+			const hoursDiff = timeDiff / (1000 * 60 * 60);
+			if (hoursDiff < 24 * 7) { // Adjust the time limit as needed
+				datasets = JSON.parse(storedDatasets);
+			}
+		}
+		else {
+			datasets = await fetchAllDatasets();
+			localStorage.setItem('datasets', JSON.stringify(datasets));
+		// add date as reference to the datasets in local storage
+		localStorage.setItem('datasetsDate', new Date().toISOString());
+		const datasetsDateString = localStorage.getItem('datasetsDate');
+		lastUpdated = datasetsDateString ? new Date(datasetsDateString).toLocaleString() : 'No local data available';
+		}
+		
 		console.log(datasets);
 		if (datasetIdStart !== null) {
 			datasetId = datasetIdStart;
@@ -110,9 +131,12 @@
 			}
 			else {	
 			datasetResponse1 = response;
-			console.log('Dataset Response 1:', datasetResponse1);	
+			console.log('Dataset Response 1:', datasetResponse1);
+			const maxVer = datasetResponse1.maxVersion ?? 0;	
 			versions1 = Array.from({ length: datasetResponse1.maxVersion ?? 0 }, (_, i) => i + 1);
-			selectedVersion1 = datasetResponse1.maxVersion ?? null;
+			// max minus 1 because we want to compare the previous version with the current version
+			selectedVersion1 = maxVer > 1 ? maxVer - 1 : (maxVer === 1 ? 1 : null);
+			
 			onChangeSelectedVersion1(new Event('init'));
 			}
 		});
@@ -137,9 +161,7 @@
 			datasetResponse2 = response;
 			const maxVer = datasetResponse2.maxVersion ?? 0;
 			versions2 = Array.from({ length: maxVer ?? 0 }, (_, i) => i + 1);
-			selectedVersion2 = maxVer > 1 
-            ? maxVer - 1 
-            : (maxVer === 1 ? 1 : null);
+			selectedVersion2 = datasetResponse2.maxVersion ?? null;
 			onChangeSelectedVersion2(new Event('init'));
 			}
 		});
@@ -175,7 +197,7 @@
 		}
 		metadata2 = null;
 		loading2 = true;
-		if (selectedVersion2 === null) {
+		if (selectedVersion2 === null || selectedDataset2 === null) {
 			return;
 		}
 		console.log('Fetching metadata for version 2:', selectedVersion2);
@@ -185,11 +207,34 @@
 		});
 	}
 
+	$: lastUpdated = localStorage.getItem('datasetsDate')
+		? new Date(localStorage.getItem('datasetsDate') as string).toLocaleString()
+		: 'No local data available';
+	function updateLocalData() {
+		localStorage.removeItem('datasets');
+		localStorage.removeItem('datasetsDate');
+		fetchAllDatasets().then((fetchedDatasets) => {
+			datasets = fetchedDatasets;
+			localStorage.setItem('datasets', JSON.stringify(datasets));
+			localStorage.setItem('datasetsDate', new Date().toISOString());
+			const datasetsDate = localStorage.getItem('datasetsDate');
+			lastUpdated = datasetsDate ? new Date(datasetsDate).toLocaleString() : 'No local data available';
+		});
+	}
+	
 	let syncSelections: boolean = true;
 </script>
 
 <Page help={true} title="Metadata Change Viewer">
 <h2 class="m-4 text-2xl font-bold">Metadata Change Viewer</h2>
+<!--show datasets and versions and add button to update local data-->
+<div class="flex items-center gap-2 mx-4 mb-2 text-sm">
+	<button class="btn btn-primary variant-ghost-primary" on:click={updateLocalData} title="Update the cached dataset list from the server. This may take a while if there are many datasets.">
+		Update cached dataset list
+	</button>
+	<div>(Last updated: {lastUpdated})</div>
+
+</div>
 <p class="mx-4 mb-2 text-sm ">Select datasets and versions to compare their metadata.</p>
 
 {#if datasetResponse1.error || datasetResponse2.error}
@@ -232,10 +277,10 @@
 					on:change={onChangeSelectedDataset1}
 				/>
 			</div>
-			<div class="w-full font-bold">ID: {selectedDataset1 ? selectedDataset1.text : 'None'}</div>
+			<div class="w-full font-bold"> {selectedDataset1 ? 'ID: ' + selectedDataset1.text : 'None'}</div>
 			<div class="w-full">
 				<label>
-					<span>More recent version</span>
+					<span>Previous version</span>
 					<select
 						class="select min-w-40"
 						id="version1"
@@ -287,10 +332,10 @@
 					/>
 				{/if}
 			</div>
-			<div class="w-full font-bold">ID: {#if !syncSelections}{selectedDataset2 ? selectedDataset2.text : 'None'}{/if}&nbsp;</div>
+			<div class="w-full font-bold">{#if !syncSelections}ID: {selectedDataset2 ? selectedDataset2.text : 'None'}{/if}&nbsp;</div>
 			<div class="w-full">
 				<label>
-					<span>... compared to</span>
+					<span>... compared to more recent version</span>
 					<select
 						class="select min-w-40"
 						id="version2"
@@ -335,7 +380,7 @@
 			</div>
 		{:else if metadata1 && metadata2}
 			{#key `${selectedVersion1}\n\n---\n\n${selectedVersion2}`}
-				<DiffNode value1={metadata2} value2={metadata1} useSimpleFormat={useSimpleFormat} />
+				<DiffNode value1={metadata1} value2={metadata2} useSimpleFormat={useSimpleFormat} />
 			{/key}
 		{/if}
 	{/if}
