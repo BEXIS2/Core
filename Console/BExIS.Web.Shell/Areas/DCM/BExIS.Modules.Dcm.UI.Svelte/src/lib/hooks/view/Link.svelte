@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goTo } from '$services/BaseCaller';
 	import type { ReferenceModel } from '../../../models/View';
 
 
@@ -27,7 +28,9 @@
         <span>{link.referenceType}</span>
         <span>{link.target.type}</span>
         {#if link.target.type.toLocaleLowerCase() =='extension'}
-        <a class="chip variant-outline-tertiary mb-2" href="/dcm/view/?id={link.target.id}&version={link.target.version}"  target="_blank">
+        <a class="chip variant-outline-tertiary mb-2" 
+        on:click={()=>	goTo('/dcm/view/?id='+link.target.id+'&version='+link.target.version, true)}
+        target="self">
           {link.target?.title? link.target.title: "No title available"}
         </a>
         {:else}

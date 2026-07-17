@@ -93,10 +93,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult Index(long id, int version = 0, double tag = 0)
         {
 
-            if(id==0) throw new ArgumentException("id is not valid");
+            if (id == 0) throw new ArgumentException("id is not valid");
 
             string module = "DCM";
-            
+
             ViewData["id"] = id;
             ViewData["version"] = version;
             ViewData["tag"] = tag;
@@ -119,13 +119,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     ViewData["bioSchema"] = bioschemadescription;
             }
 
-            //ToDo
-            // add bioschema to view data
-            // has data
-            // data_aggreement
-            // check_public_metadata
+            using (var datasetmanager = new DatasetManager())
+            {
+                var dataset = datasetmanager.GetDataset(id);
+                ViewData["entity"] = dataset.EntityTemplate.EntityType.Name;
+            }
 
-            return View();
+                //ToDo
+                // add bioschema to view data
+                // has data
+                // data_aggreement
+                // check_public_metadata
+
+                return View();
         }
 
         /// <summary>

@@ -4,8 +4,7 @@
 	import { onMount } from "svelte";
 	import { getDataDescription } from "../services";
 	import { Page } from "@bexis2/bexis2-core-ui";
-	import Fa from "svelte-fa";
-	import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+
 	import Back from "$lib/components/utils/Back.svelte";
 
 
@@ -23,7 +22,6 @@
 	 let container;
   container = document.getElementById('datadescription');
 		id = container?.getAttribute('dataset');
-		alert(id +	" " + version)
 		model = await getDataDescription(id, version);
 		console.log("🚀 ~ model:", model)
 	});

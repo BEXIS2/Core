@@ -3,7 +3,8 @@
 	import Fa from "svelte-fa";
  import { faDownload, faSave } from "@fortawesome/free-solid-svg-icons";
 	import Request from "./Request.svelte";
-	import { Spinner } from "@bexis2/bexis2-core-ui";
+	import { positionType, Spinner } from "@bexis2/bexis2-core-ui";
+	import { ProgressRadial } from "@skeletonlabs/skeleton";
 
 
  export let id;
@@ -133,17 +134,25 @@ function sendDataTo(data, name, type)
  <div class="flex ">
   <h4 class="h4 grow">Download</h4> 
 </div>
-
-  <div class="input-group input-group-divider grid-cols-[1fr_auto]">
+   
+  <div class="input-group input-group-divider grid-cols-[1fr_auto]" >
+    
     <select class="select" bind:value={selectedFormat} >
       <option value="" disabled selected hidden>- Select a format -</option>
       {#each downloadFormats as d}
         <option value={d.value}>{d.label}</option>
       {/each}
     </select>
+    
     <button class:variant-filled-primary={selectedFormat !== ''} class:variant-ghost-primary={selectedFormat === ''} disabled={!exceptAgreement || selectedFormat == ''} on:click={downloadDatasetWithFormatFn}>
-      {#if isDownloading}<Spinner />{:else}<Fa icon={faDownload} />{/if}
+    {#if isDownloading}
+      <!-- <Spinner position="{positionType.center}" label="Downloading..." /> -->
+       <ProgressRadial width="w-6"  stroke={60}  meter="stroke-tertiary-500" track="stroke-primary-500/30" strokeLinecap="round"/>
+    {:else}
+      <Fa icon={faDownload} />    
+    {/if}    
     </button>
+  
   </div>
 </div>
 <div class="padding-top-5 position-releative flex flex-col gap-2">
@@ -161,7 +170,7 @@ function sendDataTo(data, name, type)
    {#if isDownloading}<Spinner />{:else}<Fa icon={faDownload} />{/if}
    <span class="padding-left-5">Download</span>
   </button>
- 
+
  {/if}
 
 {#if isPublic &&  data_aggrement === "data policy"}

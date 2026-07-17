@@ -182,6 +182,7 @@
 function	updateIsExtensions(entityTypeText:string){
 		if(entityTypeText === "Extension"){
 			isExtensions = true;
+			entityTemplate.hasDatastructure = true;
 		}else{
 			isExtensions = false;
 		}
@@ -298,13 +299,16 @@ function	updateIsExtensions(entityTypeText:string){
 							on:mouseover={() => helpStore.show('hasDatastructure')}
 							on:focus={() => helpStore.show('hasDatastructure')}
 						>
-							<SlideToggle
-								active="bg-primary-500"
-								name="use_data_structure"
-								bind:checked={entityTemplate.hasDatastructure}
-							>
-								Allow to use data structures
-							</SlideToggle>
+
+						{#if !isExtensions}
+								<SlideToggle
+									active="bg-primary-500"
+									name="use_data_structure"
+									bind:checked={entityTemplate.hasDatastructure}
+								>
+									Allow to use data structures
+								</SlideToggle>
+							{/if}
 
 							{#if entityTemplate.hasDatastructure}
 								<MultiSelect

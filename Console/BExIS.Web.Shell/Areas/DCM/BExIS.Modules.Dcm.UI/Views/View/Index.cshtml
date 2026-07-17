@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "View";
+
     Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
 
     long id = 0;
@@ -13,7 +13,9 @@
 
     if (ViewData["tag"] != null) { version = Convert.ToInt64(ViewData["tag"]); }
 
+    if (ViewData["entity"] != null) { entity = ViewData["entity"].ToString(); }
 
+    ViewBag.Title = String.Format("View {0} ({1})",entity.Capitalize(),id);
 
     string bioSchemaInfos = "";
     if (ViewData["bioSchema"] != null)
