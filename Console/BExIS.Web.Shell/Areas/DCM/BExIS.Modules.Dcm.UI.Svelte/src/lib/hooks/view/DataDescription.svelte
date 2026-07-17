@@ -29,6 +29,7 @@
 
 <div class="flex justify-between items-center">
 	<h3 class="h3">Data Description</h3>
+	
 	<div class="flex justify-end">
 		<a on:click={()=>	goTo('/dcm/view/datadescription?id='+id+'&version='+version, true)} class="badge text-lg"><Fa	icon="{faMaximize}"/></a>
 	</div>

@@ -4,12 +4,14 @@
 import Citation from "./Citation.svelte";
 	import License from "./License.svelte";
 	import { goTo } from "$services/BaseCaller";
+	import Back from "$lib/components/utils/Back.svelte";
 
 
 	export let id;
 	export let version;
 	export	let tag;
 	export let title = '';
+	export let entityName
 	export let labels:{ [key: string]: string; }	= {};
 	export	let license = "";
 	export let isPartOfCollection:boolean = false;
@@ -24,7 +26,12 @@ import Citation from "./Citation.svelte";
 
 <div class="flex flex-col gap-2">	
 
-	<div class="flex justify-items-center">
+	<div class="flex justify-items-center gap-1">
+
+   {#if entityName?.toLowerCase() == 'extension'}
+					<Back/>
+			{/if}
+
 			{#if hasEditRight}
 			<div>
 			<button	class="badge variant-filled-secondary mr-5" on:click={() => window.location.href = `/dcm/edit?id=${id}`}>

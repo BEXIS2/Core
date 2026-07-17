@@ -168,8 +168,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // Retrieve data for active and hidden (marked as deleted) datasets
                 if (datasetManager.IsDatasetCheckedIn(id) || datasetManager.IsDatasetDeleted(id))
                 {
+                    var dataset = datasetManager.GetDataset(id);
+                    var entity = dataset.EntityTemplate.EntityType;
+
                     // check is public
-                    long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
+                    long? entityTypeId = entity.Id;
                     entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
 
                     List<DatasetVersion> datasetVersions = datasetManager.GetDatasetVersions(id);
@@ -236,7 +239,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
 
                             datasetVersion = datasetManager.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
-                            var dataset = datasetVersion.Dataset;
                             long datastructureId = dataset.DataStructure != null ? dataset.DataStructure.Id : -1;
                             ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, version, dataset.MetadataStructure.Id, datastructureId, dataset.EntityTemplate.Id);
 
@@ -248,7 +250,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             }
 
                             model.MetadataStructureId = datasetVersion.Dataset.MetadataStructure.Id;
-
+                            model.EntityName = datasetVersion.Dataset.EntityTemplate.EntityType.Name;
                             //MetadataStructureManager msm = new MetadataStructureManager();
                             //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
@@ -305,6 +307,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         model.Settings.UseTags = Convert.ToBoolean(moduleSettings.GetValueByKey("use_tags"));
                         model.Settings.UseMinor = Convert.ToBoolean(moduleSettings.GetValueByKey("use_minor"));
                         model.Settings.DataAggrement = moduleSettings.GetValueByKey("data_aggreement").ToString();
+              
 
                         // load all hooks for the edit view
                         HookManager hooksManager = new HookManager();

@@ -22,6 +22,7 @@
 
  async function load() {
 		model = await getHookStart(hook.start, id, version);
+		console.log("🚀 ~ load ~ model:", model)
  }
 
 
@@ -31,9 +32,12 @@
  <div class="flex justify-between items-center">
  <h3 class="h3">Data</h3> 
 
+
+	{#if model?.hasStructure}
  <div class="flex justify-end">
 			<a on:click={()=>	goTo('/dcm/view/data?id='+id+'&version='+version, true)} title="Open data in new window" class="badge text-lg"><Fa	icon="{faMaximize}"/></a>
 	</div>
+	{/if}
 
 </div>
 <div class="card p-5 mb-5">

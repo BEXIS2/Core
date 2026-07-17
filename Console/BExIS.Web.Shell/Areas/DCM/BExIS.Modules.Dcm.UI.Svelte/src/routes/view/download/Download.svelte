@@ -3,6 +3,7 @@
 	import Fa from "svelte-fa";
  import { faDownload, faSave } from "@fortawesome/free-solid-svg-icons";
 	import Request from "./Request.svelte";
+	import { Spinner } from "@bexis2/bexis2-core-ui";
 
 
  export let id;
@@ -23,8 +24,9 @@ export let requestExist: boolean = false; // user has already requested the data
  export let total: number; // number of rows in dataset
 
  let withUnits = false;
- let exceptAgreement = false;
+ $:isDownloading = false;
  $:exceptAgreement = !isPublic || (isPublic && data_aggrement === "none") ? true : exceptAgreement;
+
  let excelMaxRows = 1048576;
  let selectedFormat = "";
 
@@ -49,6 +51,7 @@ export let requestExist: boolean = false; // user has already requested the data
 
 async function downloadDatasetFn()
 {
+  isDownloading = true;
   const res = await downloadZip(id, null, versionId);
   if(res)
   {
@@ -65,14 +68,18 @@ async function downloadDatasetFn()
   }
 }
 
+
+
 async function downloadDatasetWithFormatFn(event)
 {
-  
+
   const format = selectedFormat;
   if(format === 'application/xlsx' && total > excelMaxRows){
     alert(`The dataset has ${total} rows, which exceeds the maximum number of rows for Excel (${excelMaxRows}). Please choose another format.`);
     return;
   }
+
+  isDownloading = true;
 
   const res = await downloadZip(id, format, versionId, withUnits);
   
@@ -112,6 +119,8 @@ function sendDataTo(data, name, type)
 					window.URL.revokeObjectURL(url);
 			}
 
+      isDownloading = false;
+
 }
 
 
@@ -132,7 +141,9 @@ function sendDataTo(data, name, type)
         <option value={d.value}>{d.label}</option>
       {/each}
     </select>
-    <button class:variant-filled-primary={selectedFormat !== ''} class:variant-ghost-primary={selectedFormat === ''} disabled={!exceptAgreement || selectedFormat == ''} on:click={downloadDatasetWithFormatFn}><Fa icon={faDownload} /></button>
+    <button class:variant-filled-primary={selectedFormat !== ''} class:variant-ghost-primary={selectedFormat === ''} disabled={!exceptAgreement || selectedFormat == ''} on:click={downloadDatasetWithFormatFn}>
+      {#if isDownloading}<Spinner />{:else}<Fa icon={faDownload} />{/if}
+    </button>
   </div>
 </div>
 <div class="padding-top-5 position-releative flex flex-col gap-2">
@@ -147,7 +158,7 @@ function sendDataTo(data, name, type)
 
   <button class="btn" class:variant-filled-primary={exceptAgreement} class:variant-ghost-primary={!exceptAgreement}  disabled={!exceptAgreement} on:click={() => downloadDatasetFn()}>
    <!-- svelte-ignore missing-declaration -->
-   <Fa icon={faSave} />
+   {#if isDownloading}<Spinner />{:else}<Fa icon={faDownload} />{/if}
    <span class="padding-left-5">Download</span>
   </button>
  

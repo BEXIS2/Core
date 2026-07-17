@@ -3,6 +3,7 @@ import type { HookModel } from "./Hook";
 
 export interface ViewModel extends ApiDatasetModel {
 				settings: ViewSettings;
+				entityName: string;
 				hasData: boolean;
 				count: number;
 				isValid: boolean;
