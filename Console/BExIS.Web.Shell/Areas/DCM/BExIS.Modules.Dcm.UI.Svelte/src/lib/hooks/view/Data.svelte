@@ -45,8 +45,6 @@
 		<PlaceHolderHookContent />
 	{:then result}
 		{#if model.hasStructure}
-
-		
 			<PrimaryData id={model.id} />
 		{:else}
 			<FilesView

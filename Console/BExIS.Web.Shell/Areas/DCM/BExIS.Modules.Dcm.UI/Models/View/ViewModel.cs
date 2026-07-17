@@ -1,6 +1,7 @@
 ﻿using BExIS.Dim.Helpers.Models;
 using BExIS.Modules.Dim.UI.Models.Download;
 using BExIS.UI.Hooks;
+using BExIS.UI.Hooks.Caches;
 using BExIS.UI.Models;
 using Newtonsoft.Json;
 using System;
@@ -185,6 +186,13 @@ namespace BExIS.Modules.Dcm.UI.Models.View
             Title = "";
             Links = new LinksOverview();
         }
+    }
+
+    public class AttachtmentsViewModel
+    {
+        public long Id { get; set; }
+        
+        public List<FileInfo> Files { get; set; }
     }
 
 }

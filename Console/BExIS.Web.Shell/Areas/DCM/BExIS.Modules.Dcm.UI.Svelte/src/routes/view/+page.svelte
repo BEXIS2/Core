@@ -29,6 +29,7 @@
 	import Data from '$lib/hooks/view/Data.svelte';
 	import Link from '$lib/hooks/view/Link.svelte';
 	import Back from '$lib/components/utils/Back.svelte';
+	import Attachment from '$lib/hooks/view/Attachment.svelte';
 
 	let title = '';
 
@@ -218,7 +219,10 @@
 			<Data {id} {version} hook={dataHook}/>
 		{/if}
 
-	
+		{#if attachmentsHook}
+			<Attachment {id} {version} hook={attachmentsHook}/>
+		{/if}
+
   {#if model.downloadAccess && addtionalhooks	&& addtionalhooks.length > 0	}
 			<Hooks	{id} {version} hooks={addtionalhooks} />
 		{/if}

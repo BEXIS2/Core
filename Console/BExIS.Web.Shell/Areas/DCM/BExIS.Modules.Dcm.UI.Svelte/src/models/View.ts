@@ -1,4 +1,5 @@
 
+import type { FileInfo, fileInfoType } from "@bexis2/bexis2-core-ui";
 import type { HookModel } from "./Hook";
 
 export interface ViewModel extends ApiDatasetModel {
@@ -158,3 +159,9 @@ export interface CitationDataModel {
     keyword: string;
     note: string;
 }
+
+
+export interface AttachmentsViewModel {
+		id:number;
+		files: fileInfoType[]
+	}
