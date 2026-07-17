@@ -18,12 +18,14 @@
 
  onMount(async () => {
 
+
+		 
 	 let container;
   container = document.getElementById('datadescription');
 		id = container?.getAttribute('dataset');
+		alert(id +	" " + version)
 		model = await getDataDescription(id, version);
 		console.log("🚀 ~ model:", model)
-
 	});
 
 </script>

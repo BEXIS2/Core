@@ -1159,7 +1159,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 ViewData["versionId"] = datasetManager.GetDatasetVersionId(id, version);
             }
 
-
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
 
             return View();
         }
@@ -1210,7 +1211,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             ViewData["id"] = id;
             ViewData["version"] = version;
-
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
 
             return View();
         }

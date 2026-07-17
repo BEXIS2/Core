@@ -144,7 +144,7 @@
 				<Spinner position={positionType.center} label="loading entity" />
 			</div>
 		{:then result}
-		
+	
 		<Header	
 			{id} 
 			{version} 
@@ -203,6 +203,7 @@
 	
 
 		{#if dataDescriptionHook && model.dataStructureId	!== undefined && model.dataStructureId > 0}
+		
 			 <DataDescription	{id} {version} {tag} hook={dataDescriptionHook}/>
 		{/if}
 

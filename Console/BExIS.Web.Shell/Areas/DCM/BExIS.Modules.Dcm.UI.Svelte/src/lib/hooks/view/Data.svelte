@@ -7,6 +7,7 @@
 	import FilesView from "$lib/components/data/FilesView.svelte";
 	import Fa from "svelte-fa";
 	import { faMaximize } from "@fortawesome/free-solid-svg-icons";
+	import { goTo } from "$services/BaseCaller";
 
 
  export let id = 0;
@@ -23,13 +24,15 @@
 		model = await getHookStart(hook.start, id, version);
  }
 
+
+
 </script>
 
  <div class="flex justify-between items-center">
  <h3 class="h3">Data</h3> 
 
  <div class="flex justify-end">
-			<a href="data?id={id}&version={version}" title="Open data in new window" class="badge text-lg"><Fa	icon="{faMaximize}"/></a>
+			<a on:click={()=>	goTo('/dcm/view/data?id='+id+'&version='+version, true)} title="Open data in new window" class="badge text-lg"><Fa	icon="{faMaximize}"/></a>
 	</div>
 
 </div>

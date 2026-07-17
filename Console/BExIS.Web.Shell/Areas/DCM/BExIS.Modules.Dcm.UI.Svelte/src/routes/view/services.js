@@ -71,10 +71,10 @@ export const getCitationText = async (id, version, tag, format) => {
 
 		let url =	'/api/dataset/'+id;
 		if(version >= 0 && (tag === undefined || tag <= 0)){ //load	by version
-			url = '/api/dataset/'+id+'/version_number/'+version
+			url = '/api/datasets/'+id+'/version_number/'+version
 		}
 		else if(tag >= 0){ //load by tag
-			url = '/api/dataset/'+id+'/tag/'+tag
+			url = '/api/datasets/'+id+'/tag/'+tag
 		}
 
 		const response = await Api.get(`${url}/citations?format=${format}`);
