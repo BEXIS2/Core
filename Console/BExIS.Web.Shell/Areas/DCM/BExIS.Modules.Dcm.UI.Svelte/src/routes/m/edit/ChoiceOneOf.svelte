@@ -5,8 +5,8 @@
 	import { onMount } from 'svelte';
 	import { activateShow, getNodeByPath, setActive } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { activeStore, hideStore, validationStore } from '$lib/components/utils/metadata/stores';
-	import { isActive, removeFromMetadataStore, toggleShow, updateMetadataStore } from '$lib/components/utils/metadata/metadataComponentUtils';
-	import { activeStore, hideStore } from '$lib/components/utils/metadata/stores';
+	import { isActive} from '$lib/components/utils/metadata/metadataComponentUtils';
+
 
 	import { slide } from 'svelte/transition';
 	import Header from './MetadataComponentHeader.svelte';
@@ -14,8 +14,8 @@
 	export let choiceComponent: any;
 	export let path: string;
 
+	let target = "";
 	let choices: {key:string, value:string, display:string}[] = getChoices(choiceComponent);
-	let target;
 	let targetKey = '';
 	let selectedChoice: any = null;
 	let radioName = '';
@@ -70,21 +70,22 @@
 				for (let key in e.properties)
 				{
 
-			for (let key in e.properties)
-			{
 
-				if(isActive(path+"."+key,false)){ 
-					target = key;
-				}
 
-				let item = e.properties[key];
-				const refTail = item['$ref'].split('/')[item['$ref'].split('/').length - 1];
+							if(isActive(path+"."+key,false)){ 
+								target = key;
+							}
 
-				c.push({
-					key,
-					value: key,
-					display: refTail
-				});
+							let item = e.properties[key];
+							const refTail = item['$ref'].split('/')[item['$ref'].split('/').length - 1];
+
+							c.push({
+								key,
+								value: key,
+								display: refTail
+							});
+
+
 				}
 			});
 		}

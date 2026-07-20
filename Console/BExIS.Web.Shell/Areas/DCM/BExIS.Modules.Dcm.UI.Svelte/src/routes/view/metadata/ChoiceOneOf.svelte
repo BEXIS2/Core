@@ -11,7 +11,7 @@
 	export let choiceComponent: any;
 	export let path: string;
 
-	let target;
+	let target="";
 
 	let label = path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path;
 	let choices: {key:string, value:string}[] = getChoices(choiceComponent);
