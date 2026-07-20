@@ -66,9 +66,11 @@
 		//datasetId = Number(new URLSearchParams(window.location.search).get('id'));
 		console.log('Loading metadata for datasetId:', id);
 		if (id > 0) {
+
 			let result = await apiCalls.GetDatasetInfoById(id);
 			const datasetInfos = result.data;
-			 console.log('Dataset infos loaded', datasetInfos);
+		 console.log('Dataset infos loaded', datasetInfos);
+
 			s = await apiCalls.GetMetadataSchema(datasetInfos.metadataStructureId);
 			console.log('Schema loaded', s);
 
@@ -76,6 +78,7 @@
 			else m = schemaToJson(s);
 			console.log('Metadata loaded', m);
 			setMetadataStore(m);
+
 			const configJson = await apiCalls.GetComponentConfig(datasetInfos.entityTemplateId, 'edit');
 			setConfigStore(configJson);
 			console.log('🚀 ~ load ~ configJson:', configJson);

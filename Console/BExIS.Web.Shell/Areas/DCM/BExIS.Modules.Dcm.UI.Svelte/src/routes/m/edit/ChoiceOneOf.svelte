@@ -2,7 +2,7 @@
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from './simpleComponent.svelte';
-	import { removeFromMetadataStore, toggleShow, updateMetadataStore } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { isActive, removeFromMetadataStore, toggleShow, updateMetadataStore } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { activeStore, hideStore } from '$lib/components/utils/metadata/stores';
 
 	import { slide } from 'svelte/transition';
@@ -13,8 +13,9 @@
 
 
 	let label = path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path;
+	let target = "";
 	let choices: {key:string, value:string}[] = getChoices(choiceComponent);
-	let target;
+
 
 	$:{
 		console.log("target", target);
@@ -36,6 +37,11 @@
 
 			for (let key in e.properties)
 			{
+
+				if(isActive(path+"."+key,false)){ 
+					target = key;
+				}
+
 				let item = e.properties[key];
 
 				c.push({
@@ -50,7 +56,7 @@
 
 	function changeFn(t) {
 		console.log("changeFn",t, target);
-		if (choiceComponent.oneOf != null && choiceComponent.oneOf != undefined && choiceComponent.oneOf.length > 0) {
+		if (choiceComponent.oneOf != null && choiceComponent.oneOf != undefined && choiceComponent.oneOf.length <= 0) {
 			removeFromMetadataStore(path);
 		}
 	}

@@ -31,7 +31,8 @@
 				<div class="grid card grid-cols-1 pl-5 gap-0">
 				 <!-- <b>array : {$activeStore.includes(path)}</b> -->
 					{#if arrayComponent.items.anyOf || arrayComponent.items.allOf}
-					 <ChoiceComponent choiceComponent={arrayComponent} {path} />
+
+						<ChoiceComponent choiceComponent={arrayComponent} {path} />
 					{:else}
 
 					{#if !$hideStore.includes(path) }

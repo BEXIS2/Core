@@ -299,11 +299,8 @@ export function activateShow(path: string) {
 }
 
 export function hasValue(node) {
-  if (node == null) return false;
 
-  // if (Array.isArray(node)) {
-  //   return node.some(hasValue);
-  // }
+  if (node == null) return false;
 
   if (typeof node === 'object') {
     return Object.entries(node).some(([key, value]) => {

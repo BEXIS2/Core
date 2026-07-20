@@ -2,7 +2,7 @@
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from './simpleComponent.svelte';
 	import ChoiceComponent from './choiceComponentWrapper.svelte';
-	import { setValueByPath, updateMetadataStore, schemaToJson, toggleShow, getNodeByPath, getByPath, isActive, setActive, setInactive, getPartyIdByPath } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { schemaToJson, getNodeByPath, getByPath} from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { faPlus, faChevronUp, faChevronDown, faTrash } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { slide, fade } from 'svelte/transition';
