@@ -154,8 +154,9 @@
 		init?: boolean;
 	}) => {
 		const mapping = convertTableData(columns, rows, header, visibleHeaders);
-		tableStore.set(mapping.data);
-
+		// tableStore.set(mapping.data);
+		// set initial data to first 10 rows for client-side pagination
+		tableStore.set(mapping.data.slice(0, 100));
 		if (init) {
 			columns = mapping.columns;
 
@@ -164,7 +165,10 @@
 				data: tableStore,
 				search: false,
 				optionsComponent: ShowData as any,
-				columns
+				columns,
+				clientDb: true,
+        		clientDbSeedData: mapping.data,
+				__initialServerCount: mapping.data.length,
 			};
 		}
 	};

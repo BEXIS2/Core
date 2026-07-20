@@ -84,7 +84,11 @@
 	function hasErrors(key) {
 		if (validationStoreValues) {
 			const invalidParts = validationStoreValues.simpleTypeValidationItems.filter(
-				(item) => item.path.startsWith(key) && item.isValid === false
+				(item) =>
+					item.path.startsWith(key) &&
+					item.isValid === false &&
+					item.errorMessage &&
+					item.errorMessage.trim() !== ''
 			);
 			return invalidParts && invalidParts.length > 0;
 		}
@@ -178,7 +182,7 @@
 	<div class="flex flex-col gap-2 items-end w-full pr-5">
 		{#if validationStoreValues}
 			{#key validationStoreValues}
-				{#if validationStoreValues.simpleTypeValidationItems.filter((item) => item.isValid === false).length > 0}
+				{#if validationStoreValues.simpleTypeValidationItems.filter((item) => item.isValid === false && item.errorMessage && item.errorMessage.trim() !== '').length > 0}
 					<button
 						class="badge" title="There are validation errors in the metadata."
 						on:click={() => (showErrorOverview = !showErrorOverview)}
@@ -189,7 +193,7 @@
               <Fa icon={faEye} />
             {/if}
             &nbsp;Warnings: {validationStoreValues.simpleTypeValidationItems.filter(
-							(item) => item.isValid === false
+							(item) => item.isValid === false && item.errorMessage && item.errorMessage.trim() !== ''
 						).length}
 					</button>
 				{/if}
@@ -218,7 +222,7 @@
 						</a>
 						{#if validationStoreValues && showErrorOverview}
 							{#key validationStoreValues}
-								{#each validationStoreValues.simpleTypeValidationItems.filter((item) => item.isValid === false) as item}
+								{#each validationStoreValues.simpleTypeValidationItems.filter((item) => item.isValid === false && item.errorMessage && item.errorMessage.trim() !== '') as item}
 									{#if item.path.startsWith(key)}
 										<div class="ml-4 flex flex-col">
 											<button

@@ -16,10 +16,6 @@
 	export let required: boolean = false;
 
 	let label = path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path;
-	let requiredList =
-		arrayComponent.items && arrayComponent.items.type === 'object' && arrayComponent.items.required
-			? arrayComponent.items.required
-			: [];
 
 	let value = getNodeByPath(path) == undefined ? [] : getNodeByPath(path);
 	let render: boolean = false;
@@ -34,22 +30,24 @@
 	}
 
 function removeFromValidationStore(path: string) {
-  validationStore.update(store => {
-    return {
-      ...store,
-      simpleTypeValidationItems: store.simpleTypeValidationItems.filter(item => !item.path.startsWith(path)),
-      complexTypeValidationItems: store.complexTypeValidationItems.filter(item => !item.path.startsWith(path))
-    };
-  });
+	validationStore.update(store => {
+		if (!store) {
+			return store;
+		}
+
+		return {
+			...store,
+			simpleTypeValidationItems: store.simpleTypeValidationItems.filter(item => !item.path.startsWith(path)),
+			complexTypeValidationItems: store.complexTypeValidationItems.filter(item => !item.path.startsWith(path))
+		};
+	});
 }
 
 	function removeItem(idx: number) {
 		value.splice(idx, 1);
 		render = !render;
-		// delete from validationStore
-		if (getByPath(path + '.' + idx) != undefined) {
-			removeFromValidationStore(path);
-			}
+		// Remove stale validation entries for this array branch.
+		removeFromValidationStore(path);
 		}
 	
 
@@ -87,7 +85,7 @@ function removeFromValidationStore(path: string) {
 					 <ChoiceComponent choiceComponent={arrayComponent} {path} />
 					{:else}
 					
-					 <Header	path={path} required={requiredList.includes(label)} />
+					 <Header	path={path} {required} />
 
 						{#if !$hideStore.includes(path) && $activeStore.includes(path)}
 								<div in:slide out:slide class="card pl-5 py-1" id={path}>						
@@ -143,7 +141,7 @@ function removeFromValidationStore(path: string) {
 												<ComplexComponent
 													complexComponent={arrayComponent.items}
 													path={path + '.' + index}
-													required={requiredList.includes(label)}
+													required={required}
 												/>
 											</div>
 										</div>
@@ -166,7 +164,7 @@ function removeFromValidationStore(path: string) {
 										path={path}
 										value={getNodeByPath(path)}
 										{label}
-										required={requiredList.includes(label)}
+										required={required}
 										isMulti={true}							
 									/>
 				{:else}
@@ -181,7 +179,7 @@ function removeFromValidationStore(path: string) {
 										path={path + '.' + index}
 										value={getNodeByPath(path + '.' + index + '.#text')}
 										{label}
-										required={requiredList.includes(label)}
+										required={required}
 									/>
 								</div>
 								<div class="flex shrink-0 gap-1 justify-end pr-4">

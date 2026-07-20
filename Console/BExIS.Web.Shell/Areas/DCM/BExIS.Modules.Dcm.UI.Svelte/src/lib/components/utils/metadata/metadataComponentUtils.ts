@@ -63,12 +63,18 @@ export function updateMetadataStore(path: string, value: any, isMulti?: boolean,
 			obj = v;
 		});
 		{
-			if (value !== undefined && value !== null && value !== getValueByPath(path)) {
+			if (value !== getValueByPath(path)) {
 
 				if (isMulti) {
 						obj = setValueByPath(obj, path, value);
 				} else {
-					obj = setValueByPath(obj, path + '.#text', value);
+					// Keep party-id-only updates untouched for complex parent nodes.
+					if ((value === undefined || value === null) && partyid !== undefined && partyid !== null) {
+						const parent = getByPath(path);
+						parent["@partyid"] = partyid;
+					} else {
+						obj = setValueByPath(obj, path + '.#text', value ?? '');
+					}
 					if (ref !== undefined && ref !== null) {
 						obj = setValueByPath(obj, path + '.@ref', ref);
 					}

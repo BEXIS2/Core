@@ -5,25 +5,26 @@ import { hideStore, metadataStore } from '$lib/components/utils/metadata/stores'
 import { get } from 'svelte/store';
 
 // Get current values from the validation store
-let validationStoreValues: validationStoretype = getValidationStore();
+// let validationStoreValues: validationStoretype = getValidationStore();
 
 // if the elements hidden by hideStore are not validated, we need to get the current values of the hideStore to check in the validation if the field is hidden or not
-let hideStoreValues: any = get(hideStore);
+// let hideStoreValues: any = get(hideStore);
 
 
 // Define a Vest test suite for validating simple component data
 // based on the validation rules defined in the validation store
-const suite = create((fieldName: string='') => {
+const suite = create((fieldName: string = '') => {
+    // Bei JEDEM Aufruf frisch lesen statt beim Modul-Import zu cachen
+    const validationStoreValues: validationStoretype = getValidationStore();
+    const hideStoreValues: any = get(hideStore);
 
     if (fieldName!='') {
       only(fieldName);
     }
 
-    if (validationStoreValues.simpleTypeValidationItems.length > 0) {
-        // Iterate over each validation item in the store
+   if (validationStoreValues.simpleTypeValidationItems.length > 0) {
         each(validationStoreValues.simpleTypeValidationItems, (item) => {
-            if((fieldName && fieldName == item.path) || fieldName === ''){
-
+            if ((fieldName && fieldName == item.path) || fieldName === '') {
                 const data = getValueByPath(item.path);
                 //console.log("🚀 ~ data:", data)
 
