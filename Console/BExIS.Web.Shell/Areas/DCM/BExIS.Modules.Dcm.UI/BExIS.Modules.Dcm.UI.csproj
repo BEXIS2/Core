@@ -877,6 +877,10 @@
       <Project>{8519EAC6-FBF8-48B3-813F-E0B9D3CC4A52}</Project>
       <Name>BExIS.Ddm.Api</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
+      <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
+      <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Modules\DIM\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
       <Project>{34cad2a2-6928-458b-b8dc-af71d55f20cc}</Project>
       <Name>BExIS.Dim.Entities</Name>

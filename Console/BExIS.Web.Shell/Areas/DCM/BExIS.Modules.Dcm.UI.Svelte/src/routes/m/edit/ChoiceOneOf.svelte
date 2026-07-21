@@ -70,8 +70,6 @@
 				for (let key in e.properties)
 				{
 
-
-
 							if(isActive(path+"."+key,false)){ 
 								target = key;
 							}
