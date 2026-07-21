@@ -19,6 +19,7 @@ import Citation from "./Citation.svelte";
 	export let isPublic:boolean = false;
 	export let publicationDate:string	= '';
 
+
 	const labelKeys = Object.keys(labels);
 	console.log("🚀 ~ labels:", labels)
 
@@ -72,7 +73,7 @@ import Citation from "./Citation.svelte";
 
 
 	<div class="flex flex-col gap-2">
-		 <Citation	{id} {version} {tag} />
+		 <Citation	{id} {version} {tag}/>
 	</div>
 
 	

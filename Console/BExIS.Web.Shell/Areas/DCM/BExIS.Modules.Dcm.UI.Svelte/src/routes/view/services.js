@@ -66,15 +66,16 @@ export const getDeleted = async (id) => {
 	}
 };
 
-export const getCitationText = async (id, version, tag, format) => {
+export const getCitationText = async (id, version, tag, format, useTags) => {
 	try {
-
+  
 		let url =	'/api/datasets/'+id;
-		if(version >= 0 && (tag === undefined || tag <= 0)){ //load	by version
-			url = '/api/datasets/'+id+'/version_number/'+version
-		}
-		else if(tag >= 0){ //load by tag
+		
+		if(tag >= 0 && (useTags)){ //load by tag
 			url = '/api/datasets/'+id+'/tag/'+tag
+		}else
+			if(version >= 0){ //load	by version
+			url = '/api/datasets/'+id+'/version_number/'+version
 		}
 
 		const response = await Api.get(`${url}/citations?format=${format}`);

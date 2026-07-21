@@ -48,6 +48,8 @@
 	let attachmentsHook;
 	let entityName;
 
+	let useTags: boolean = false;
+
 	let addtionalhooks: HookModel[];
 	$: addtionalhooks = [];
 
@@ -161,6 +163,7 @@
 			hasEditRight={model.hasEditRight}
 			isPublic={model.isPublic}
 			publicationDate={model.publicationDate}
+
 			/>
 
 		<div class="flex">
@@ -175,7 +178,7 @@
 
 						<div class="flex flex-col ml-5 gap-3 w-1/4">
 
-								<CitationDownload	{id} {version} {tag} />
+								<CitationDownload	{id} {version} {tag} {useTags} />
 
 								<Download {id} {version}
 									versionId={model.versionId}
