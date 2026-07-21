@@ -69,7 +69,7 @@ export const getDeleted = async (id) => {
 export const getCitationText = async (id, version, tag, format) => {
 	try {
 
-		let url =	'/api/dataset/'+id;
+		let url =	'/api/datasets/'+id;
 		if(version >= 0 && (tag === undefined || tag <= 0)){ //load	by version
 			url = '/api/datasets/'+id+'/version_number/'+version
 		}
