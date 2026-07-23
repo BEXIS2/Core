@@ -1,5 +1,8 @@
 // converted display name
 export function convertDisplayName(name: string, header: boolean = false): string {
+    if (!name || name.trim() === '') {
+        return '';
+    }
     let displayName = name.replace(/([a-z])([A-Z])/g, '$1 $2');
     let wordList = displayName.split(' ');
 
