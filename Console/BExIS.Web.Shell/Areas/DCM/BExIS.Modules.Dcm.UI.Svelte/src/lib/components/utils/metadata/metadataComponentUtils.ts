@@ -1,10 +1,23 @@
+import { convertDisplayName } from './metadataShared';
 import type { SimpleComponentData, validationStoretype } from './models';
-import { metadataStore,systemMappingsStore, hideStore, validationStore, configStore, activeStore, descriptionStore } from './stores';
+import { metadataStore, schemaStore, systemMappingsStore, hideStore, validationStore, configStore, activeStore, descriptionStore } from './stores';
 import { get } from 'svelte/store';
 // Utility functions for metadata handling
 // Get and set values in the metadata store based on a dot-separated path
 export function setMetadataStore(metadata: any) {
 	metadataStore.set(metadata);
+}
+
+export function setSchemaStore(schema: any) {
+	schemaStore.set(schema);
+}
+
+export function getSchemaStore(): any {
+	let schema: any;
+	schemaStore.subscribe((v) => {
+		schema = v;
+	});
+	return schema;
 }
 // returns a node, that can be complex	or simple, based on the given path in the metadata store
 export function getNodeByPath(path: string) {
@@ -18,10 +31,10 @@ export function getNodeByPath(path: string) {
 export function getByPath(path: string) {
 	console.log("🚀 ~ getByPath ~ path:", path)
 	let obj: any;
-		metadataStore.subscribe((v) => {
-			obj = v;
-		});
-  return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+	metadataStore.subscribe((v) => {
+		obj = v;
+	});
+	return path.split('.').reduce((acc, part) => acc && acc[part], obj);
 };
 
 export function getValueByPath(path: string) {
@@ -36,8 +49,8 @@ export function getRefByPath(path: string) {
 
 export function getPartyIdByPath(path: string) {
 
-	const obj	= getNodeByPath(path);
-	const	partyId = obj ? obj['@partyid'] : null;
+	const obj = getNodeByPath(path);
+	const partyId = obj ? obj['@partyid'] : null;
 	return partyId;
 }
 
@@ -55,18 +68,18 @@ export function setValueByPath(obj: any, path: string, value: any) {
 	return obj;
 }
 // Update metadata store with a new value at the specified path
-export function updateMetadataStore(path: string, value: any, isMulti?: boolean, ref?: any, partyid?:number): any {
- 
+export function updateMetadataStore(path: string, value: any, isMulti?: boolean, ref?: any, partyid?: number): any {
+	console.log('Updating metadata store at path:', path, 'with value:', value, 'isMulti:', isMulti, 'ref:', ref, 'partyid:', partyid);
 	let obj: any = {};
 	if (path !== undefined && path !== null && path !== '') {
 		metadataStore.subscribe((v) => {
 			obj = v;
 		});
 		{
-			if (value !== getValueByPath(path)) {
+			if (value !== getValueByPath(path) || ref !== getRefByPath(path)) {
 
 				if (isMulti) {
-						obj = setValueByPath(obj, path, value);
+					obj = setValueByPath(obj, path, value);
 				} else {
 					// Keep party-id-only updates untouched for complex parent nodes.
 					if ((value === undefined || value === null) && partyid !== undefined && partyid !== null) {
@@ -81,33 +94,28 @@ export function updateMetadataStore(path: string, value: any, isMulti?: boolean,
 					if (partyid !== undefined && partyid !== null) {
 						obj = setValueByPath(obj, path + '.@partyid', partyid);
 					}
-					if (
-						obj !== undefined &&
-						obj !== null &&
-						obj !==
-						metadataStore.subscribe((value) => {
-							obj = value;
-						})
-					) {
-						metadataStore.set(obj);
-					}
+				}
+				if (obj !== undefined && obj !== null) {
+					metadataStore.set(obj);
 				}
 			}
-			else if((value === undefined || value === null) && partyid	!== undefined && partyid !== null)
-			{
+			else if ((value === undefined || value === null) && partyid !== undefined && partyid !== null) {
 				const parent = getByPath(path);
 				parent["@partyid"] = partyid;
-			 //console.log("🚀 ~ updateMetadataStore ~ parent:", parent)
+				if (obj !== undefined && obj !== null) {
+					metadataStore.set(obj);
+				}
+				//console.log("🚀 ~ updateMetadataStore ~ parent:", parent)
 			}
 
 		}
 	}
-	//console.log('Updated metadata store:', obj);
+	console.log('Updated metadata store:', obj);
 	return obj;
 }
 
 export function removeFromMetadataStore(path: string): any {
- 
+
 	let obj: any = {};
 	if (path !== undefined && path !== null && path !== '') {
 		metadataStore.subscribe((v) => {
@@ -115,24 +123,25 @@ export function removeFromMetadataStore(path: string): any {
 		});
 		{
 			removeByPath(obj, path);
+			metadataStore.set(obj);
+		}
 	}
 	console.log('remove metadata store:', obj);
 	return obj;
-}
 }
 
 function removeByPath(obj, path) {
 	const parts = path.split('.');
 	const lastKey = parts.pop(); // The property to delete
-	
+
 	// Reach the parent of the last key
 	const parent = parts.reduce((current, part) => {
-					return (current && current[part] !== undefined) ? current[part] : undefined;
+		return (current && current[part] !== undefined) ? current[part] : undefined;
 	}, obj);
 
 	if (parent && parent.hasOwnProperty(lastKey)) {
-					delete parent[lastKey];
-					return true; // Success
+		delete parent[lastKey];
+		return true; // Success
 	}
 	return false; // Path not found
 }
@@ -184,8 +193,10 @@ export function getVariablesFromConfig(componentName: string, anchor: string): a
 	let variables: any[] = [];
 	if (componentName != null && componentName != undefined && componentName != '') {
 		let config: any = getConfigStore();
+		let cleanAnchor = removeJsonPathIndices(anchor);
 		for (const component of config.components) {
-			if (component.meta.component_name.toLowerCase() === componentName.toLowerCase() && component.globalSettings.anchorpoint === anchor) {
+			let cleanAnchorPoint = removeJsonPathIndices(component.globalSettings.anchorpoint);
+			if (component.meta.component_name.toLowerCase() === componentName.toLowerCase() && cleanAnchorPoint === cleanAnchor) {
 				variables = component.mode.variables.variable;
 			}
 		}
@@ -197,8 +208,12 @@ export function getFullConfig(componentName: string, anchor: string): any[] {
 	let fullConfig: any[] = [];
 	if (componentName != null && componentName != undefined && componentName != '') {
 		let config: any = getConfigStore();
+		// console.log(config, 'config');
+		let cleanAnchor = removeJsonPathIndices(anchor);
+		// console.log('Searching for component:', componentName, 'with anchor:', cleanAnchor);
 		for (const component of config.components) {
-			if (component.meta.component_name.toLowerCase() === componentName.toLowerCase() && component.globalSettings.anchorpoint === anchor) {
+			let cleanAnchorPoint = removeJsonPathIndices(component.globalSettings.anchorpoint);
+			if (component.meta.component_name.toLowerCase() === componentName.toLowerCase() && cleanAnchorPoint === cleanAnchor) {
 				fullConfig = component;
 			}
 		}
@@ -235,11 +250,16 @@ export function getTargetVariablesWithValues(config: any): TargetVar[] {
 export function getVariableSoursePathFromConfig(componentName: string, anchor: string, targetVariableName: string): string {
 	if (componentName != null && componentName != undefined && componentName != '') {
 		let variables = getVariablesFromConfig(componentName, anchor);
+		console.log('Searching for target variable:', targetVariableName, 'in variables:', variables);
 		for (const variable of variables) {
 			if (variable.target_variable === targetVariableName) {
 				console.log('Found variable:', variable.JSONPath);
 				return variable.JSONPath;
 			}
+		}
+		if (targetVariableName === 'value' && variables.length > 0) {
+			console.log('Found variable (fallback):', variables[0].JSONPath);
+			return variables[0].JSONPath;
 		}
 	}
 	return '';
@@ -300,45 +320,45 @@ export function activateShow(path: string) {
 	if (hideStoreValue.includes(path)) {
 		let idx = hideStoreValue.findIndex((x) => x == path);
 		if (idx > -1) hideStoreValue.splice(idx, 1);
-	} 
+	}
 	hideStore.set(hideStoreValue);
 }
 
 export function hasValue(node) {
 
-  if (node == null) return false;
+	if (node == null) return false;
 
-  if (typeof node === 'object') {
-    return Object.entries(node).some(([key, value]) => {
-      if (key === '@ref' || key === '@partyid' || key.charAt(0) === '@') return false;
-      return hasValue(value);
-    });
-  }
+	if (typeof node === 'object') {
+		return Object.entries(node).some(([key, value]) => {
+			if (key === '@ref' || key === '@partyid' || key.charAt(0) === '@') return false;
+			return hasValue(value);
+		});
+	}
 
-  if (typeof node === 'string') {
-  	//console.log("🚀 ~ hasValue ~ node:", node, node.trim().length)
-		 return node.trim().length > 0;
-  }
+	if (typeof node === 'string') {
+		//console.log("🚀 ~ hasValue ~ node:", node, node.trim().length)
+		return node.trim().length > 0;
+	}
 
-  //return Boolean(node);
+	//return Boolean(node);
 
-		return false;
+	return false;
 }
 
 // p = path:string & r = required: boolean
-export function isActive(p:string, r:boolean):boolean {
-  // logic to determine if the component is active
+export function isActive(p: string, r: boolean): boolean {
+	// logic to determine if the component is active
 
-  const node = getNodeByPath(p);
-  const hasData = hasValue(node); // replace with actual check for data presence
-  if(r) {
-    return true; // if required, it's always active
-  } else if (hasData)
-  {    return true; // if it has data, it's active
-  } else {
-    return false; // otherwise, it's not active
-  }
-} 
+	const node = getNodeByPath(p);
+	const hasData = hasValue(node); // replace with actual check for data presence
+	if (r) {
+		return true; // if required, it's always active
+	} else if (hasData) {
+		return true; // if it has data, it's active
+	} else {
+		return false; // otherwise, it's not active
+	}
+}
 
 export function setActive(path: string): void {
 	let activeStoreValue: string[] = get(activeStore);
@@ -348,7 +368,7 @@ export function setActive(path: string): void {
 	}
 }
 
-export function setInactive(path: string): void {			
+export function setInactive(path: string): void {
 	let activeStoreValue: string[] = get(activeStore);
 	if (activeStoreValue.includes(path)) {
 		let idx = activeStoreValue.findIndex((x) => x == path);
@@ -361,37 +381,37 @@ export function setInactive(path: string): void {
 // #t should be ''
 // arrays should have one empty element	to preserve structure
 export function empty(node) {
-	 console.log('emptying node:', node);
-  if (node === null || node === undefined) return node;
+	console.log('emptying node:', node);
+	if (node === null || node === undefined) return node;
 
-		if (Array.isArray(node)) {
-			console.log('array node:', node);
+	if (Array.isArray(node)) {
+		console.log('array node:', node);
 
-			if(node.length >	0){ 
-					empty(node[0]); // clear the first element to preserve structure
-			}
-
-			// remove all	elements but only first one  stay to preserve structure
-			return node.length = 1;
+		if (node.length > 0) {
+			empty(node[0]); // clear the first element to preserve structure
 		}
 
-		if(node.hasOwnProperty('#text')) {
-				return node['#text'] = '';
-		}
-  
-		if (typeof node === 'object') {
-		
-				Object.keys(node).forEach(key => {
-					const value = node[key];
-					return empty(value);
-				});
-		}
+		// remove all	elements but only first one  stay to preserve structure
+		return node.length = 1;
+	}
 
-  if(node.hasOwnProperty('#text')) {
-				return node['#text'] = '';
-		}
+	if (node.hasOwnProperty('#text')) {
+		return node['#text'] = '';
+	}
 
-		return node;
+	if (typeof node === 'object') {
+
+		Object.keys(node).forEach(key => {
+			const value = node[key];
+			return empty(value);
+		});
+	}
+
+	if (node.hasOwnProperty('#text')) {
+		return node['#text'] = '';
+	}
+
+	return node;
 
 }
 
@@ -400,7 +420,7 @@ export function empty(node) {
 // If undefined, initialize with default values
 // and return the validation store values
 export function getValidationStore(): validationStoretype {
-	let validationStoreValues: validationStoretype = { allSimpleRequiredValid: false, simpleTypeValidationItems: [], complexTypeValidationItems: []	};
+	let validationStoreValues: validationStoretype = { allSimpleRequiredValid: false, simpleTypeValidationItems: [], complexTypeValidationItems: [] };
 	validationStore.subscribe(n => {
 		validationStoreValues = n;
 	});
@@ -411,7 +431,7 @@ export function getValidationStore(): validationStoretype {
 }
 
 export function clearValidationStore(): void {
-	validationStore.set({ allSimpleRequiredValid: false, simpleTypeValidationItems: [],complexTypeValidationItems : [] });
+	validationStore.set({ allSimpleRequiredValid: false, simpleTypeValidationItems: [], complexTypeValidationItems: [] });
 }
 // Add a simple component's validation data to the validation store
 // if it doesn't already exist
@@ -428,38 +448,37 @@ export function ValidationStoreAddSimpleComponent(item: SimpleComponentData): va
 // Set overall validity for all simple required components in the validation store
 // based on the validity of an individual component identified by its path
 // Returns the updated validity of the specified component
-export function ValidationStoreSetSimpleTypeValid(path: string, isValid: boolean, errorMessage:string = ''): boolean {
+export function ValidationStoreSetSimpleTypeValid(path: string, isValid: boolean, errorMessage: string = ''): boolean {
 	let valid: boolean = false;
-	let validationStoreValues: validationStoretype = getValidationStore(); 
+	let validationStoreValues: validationStoretype = getValidationStore();
 
 
 	if (isValid != null && isValid != undefined) {
-		const	item = validationStoreValues.simpleTypeValidationItems.find(item => {
+		const item = validationStoreValues.simpleTypeValidationItems.find(item => {
 			return item.path === path;
 		});
-		if(item)
-		{
-				item!.isValid = isValid;
+		if (item) {
+			item!.isValid = isValid;
 
-				valid = item!.isValid;
+			valid = item!.isValid;
 
-				if(item && errorMessage){
-					item.errorMessage = errorMessage;
-				}
-
-				if(valid == true && item) // reset errors if item is valid
-				{	
-						item.errorMessage	= '';
-				}
-
-
+			if (item && errorMessage) {
+				item.errorMessage = errorMessage;
 			}
-			validationStoreValues.allSimpleRequiredValid = true;
-			for (const item of validationStoreValues.simpleTypeValidationItems) {
-				if (!item.isValid && item.required) {
-					validationStoreValues.allSimpleRequiredValid = false;
-					break;
-				}
+
+			if (valid == true && item) // reset errors if item is valid
+			{
+				item.errorMessage = '';
+			}
+
+
+		}
+		validationStoreValues.allSimpleRequiredValid = true;
+		for (const item of validationStoreValues.simpleTypeValidationItems) {
+			if (!item.isValid && item.required) {
+				validationStoreValues.allSimpleRequiredValid = false;
+				break;
+			}
 		}
 	}
 	validationStore.set(validationStoreValues);
@@ -470,9 +489,9 @@ export function ValidationStoreSetSimpleTypeValid(path: string, isValid: boolean
 // based on the provided parameters and simple component properties
 export function createSimpleComponentValidationItem(path: string, label: string, required: boolean, simpleComponent: any): SimpleComponentData {
 
-	let simpleComponentValidationItem: SimpleComponentData = { label: label, path: path, required: required, isValid: false,	errorMessage: '' };
+	let simpleComponentValidationItem: SimpleComponentData = { label: label, path: path, required: required, isValid: false, errorMessage: '' };
 
- let item = simpleComponent.properties['#text'];
+	let item = simpleComponent.properties['#text'];
 
 	// set regex if defined
 	if (item.pattern && item.pattern != undefined && item.pattern != null && item.pattern != '') {
@@ -499,15 +518,15 @@ export function createSimpleComponentValidationItem(path: string, label: string,
 		simpleComponentValidationItem.upperBound = item.upperBound;
 	}
 
-// type secific	validation criteria
-// set minium if if defined
-if ((item.minimum && item.minimum != undefined && item.minimum != null && item.minimum != '') || item.minimum == 0) {
-	simpleComponentValidationItem.minimum = item.minimum;
-}
+	// type secific	validation criteria
+	// set minium if if defined
+	if ((item.minimum && item.minimum != undefined && item.minimum != null && item.minimum != '') || item.minimum == 0) {
+		simpleComponentValidationItem.minimum = item.minimum;
+	}
 
-if (item.maximum && item.maximum != undefined && item.maximum != null && item.maximum != '') {
-	simpleComponentValidationItem.maximum = item.maximum;
-}
+	if (item.maximum && item.maximum != undefined && item.maximum != null && item.maximum != '') {
+		simpleComponentValidationItem.maximum = item.maximum;
+	}
 
 
 	return simpleComponentValidationItem;
@@ -515,32 +534,34 @@ if (item.maximum && item.maximum != undefined && item.maximum != null && item.ma
 
 
 export function removeJsonPathIndices(path) {
-			// Matches a dot followed by one or more digits
-			// The '\b' ensures we only match whole numbers, not numbers embedded in words
-			return path.replace(/\.\d+\b/g, '');
+	// Matches a dot followed by one or more digits
+	// The '\b' ensures we only match whole numbers, not numbers embedded in words
+	return path.replace(/\.\d+\b/g, '');
 }
 
 export function getParentPath(path) {
-			if (typeof path !== 'string' || !path.includes('.')) {
-        return ''; // Return empty if there's no dot to remove
-    }
+	if (typeof path !== 'string' || !path.includes('.')) {
+		return ''; // Return empty if there's no dot to remove
+	}
 
-    // Find the position of the very last dot
-    const lastDotIndex = path.lastIndexOf('.');
+	// Find the position of the very last dot
+	const lastDotIndex = path.lastIndexOf('.');
 
-    // Slice the string from the start up to that last dot
-    return path.substring(0, lastDotIndex);
+	// Slice the string from the start up to that last dot
+	return path.substring(0, lastDotIndex);
 }
 
 export function getPartyIdFromParent(path) {
-			
-  // get party id from parent path, which is the last number in the path
+
+	// get party id from parent path, which is the last number in the path
 
 }
 
+
+
 export function showDescriptionHandler(e: any, type: 'simple' | 'complex') {
 	let descriptionTimeout: any;
-	
+
 	// unset current timeout if any
 	if (descriptionTimeout) {
 		clearTimeout(descriptionTimeout);
@@ -551,7 +572,7 @@ export function showDescriptionHandler(e: any, type: 'simple' | 'complex') {
 		descriptionStore.set({ type, content: e.detail.description, path: e.detail.id });
 		console.log('🚀 ~ showDescriptionHandler ~ e.detail.description:', e.detail);
 	}, 500);
-	}
+}
 
 export function hideDescriptionHandler(e: any, type: 'simple' | 'complex') {
 	let descriptionTimeout: any;
@@ -559,9 +580,129 @@ export function hideDescriptionHandler(e: any, type: 'simple' | 'complex') {
 	if (descriptionTimeout) {
 		clearTimeout(descriptionTimeout);
 	}
-	
+
 	// add a small delay
 	descriptionTimeout = setTimeout(() => {
 		descriptionStore.set({ type, content: '', path: '' });
 	}, 500);
+}
+
+
+function isArrayIndex(segment) {
+	return /^\d+$/.test(segment);
+}
+
+export function resolveNode(path) {
+  const schema = getSchemaStore();
+  const parts = path.split('.').filter(Boolean);
+  let node = schema;
+  let parentNode = null; // tracks the object whose "required" array we'd check
+  let lastKey = null;
+
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    if (!node) return { node: undefined, parentNode: undefined, lastKey: undefined };
+
+    if (isArrayIndex(part)) {
+      // Numeric index: just descend into items, don't treat as a property name
+      if (node.type === 'array' && node.items) {
+        node = node.items;
+      }
+      continue;
+    }
+
+    // Auto-unwrap array wrapper before checking properties
+    if (node.type === 'array' && node.items) {
+      node = node.items;
+    }
+
+    if (!node.properties || !Object.prototype.hasOwnProperty.call(node.properties, part)) {
+      return { node: undefined, parentNode: undefined, lastKey: undefined };
+    }
+
+    parentNode = node;      // remember parent for "required" check
+    lastKey = part;
+    node = node.properties[part];
+  }
+
+  return { node, parentNode, lastKey };
+}
+/* @param {object} schema - the root JSON schema object
+ * @param {string} path   - dot-separated path, e.g. "Basic.alternateIdentifier"
+ * @returns {string|undefined} the description text, or undefined if not found
+ */
+export function getDescriptionBySchemaAndPath( path) {
+	let { node } = resolveNode(path);
+  if (!node) return undefined;
+
+  if (node.type === 'array' && node.items) {
+    return node.items.description ?? node.description;
+  }
+  // console.log('🚀 ~ getDescriptionBySchemaAndPath ~ node.description:', node.description, 'node:', node);
+  return node.description;
+
+}
+
+/**
+ * Check whether a dot-separated path points to a field that is "required"
+ * in its immediate parent object.
+ *
+ * @param {object} schema - the root JSON schema object
+ * @param {string} path   - dot-separated path, e.g. "Basic.title" or "creator.individualName.surName"
+ * @returns {boolean|undefined} true/false if resolvable, undefined if the path doesn't exist
+ */
+export function getIsRequiredBySchemaAndPath(path) {
+	const { parentNode, lastKey } = resolveNode(path);
+  if (!parentNode || !lastKey) return undefined;
+
+  const requiredList = parentNode.required || [];
+  return requiredList.includes(lastKey);
+}
+
+export function getLabelByPath(path: string): string {
+	// check if path is array and extract position
+	let index = -1;
+	let label = '';
+	if (path.split('.').length > 1 && !isNaN(Number(path.split('.')[path.split('.').length - 1]))) {
+		//path = path.split('.').slice(0, -1).join('.');
+
+		index = Number(path.split('.')[path.split('.').length - 1]);
+		label = `${index + 1}. ${convertDisplayName(path.split('.')[path.split('.').length - 2])}`;
 	}
+	else {
+		label = convertDisplayName(path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path);
+		console.log('Path is not an array:', path);
+	}
+	return label;
+}
+
+export function getMetadata(path: string): { value: any, ref: any, label: string, description: string, required: boolean } {
+	let value: any = getValueByPath(path);
+	let ref: any = getRefByPath(path);
+	let label: string = getLabelByPath(path);
+	let description = getDescriptionBySchemaAndPath(path);
+	let required = getIsRequiredBySchemaAndPath(path);
+	return { value, ref, label, description, required };
+}
+
+export function updateValidationState(path: string, res: any): void {
+	let errorMessage = '';
+	if (res && res.hasErrors(path)) {
+		errorMessage = res.getErrors(path).join('.  ');
+	}
+	ValidationStoreSetSimpleTypeValid(path, res ? res.isValid(path) : true, errorMessage);
+}
+
+export function registerValidationItem(path: string, label: string, required: boolean, schemaNode: any): void {
+	if (schemaNode) {
+		let validationItem = createSimpleComponentValidationItem(
+			path,
+			label,
+			required,
+			schemaNode
+		);
+		ValidationStoreAddSimpleComponent(validationItem);
+	}
+}
+
+

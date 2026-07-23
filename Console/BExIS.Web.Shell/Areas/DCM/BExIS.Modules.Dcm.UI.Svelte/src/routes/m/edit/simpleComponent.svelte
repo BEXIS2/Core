@@ -13,14 +13,14 @@
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import { onDestroy, onMount } from 'svelte';
 	import {
-		ValidationStoreAddSimpleComponent,
 		ValidationStoreSetSimpleTypeValid,
 		updateMetadataStore,
-		createSimpleComponentValidationItem,
 		getConfigStore,
 		getValidationStore,
 		showDescriptionHandler,
-		hideDescriptionHandler
+		hideDescriptionHandler,
+		updateValidationState,
+		registerValidationItem
 	} from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { customComponentsCatalog } from '$lib/components/customComponents/componentCatalog';
 	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
@@ -61,12 +61,7 @@
 	// like ref and partyid
 	let jsonItems: JsonListItem[] = [];
 
-	// set overall validity
-	$: ValidationStoreSetSimpleTypeValid(
-		path,
-		res.isValid(path),
-		res.hasErrors(path) ? res.getErrors(path).join('.  ') : ''
-	);
+	$: updateValidationState(path, res);
 	// update metadata store on value change
 	$: updateMetadataStore(path, value, isMulti);
 
@@ -111,27 +106,21 @@
 		mappingComponentConfig = getMappingComponentConfig(path, value);
 
 		//#### VALIDATION	 ####
-		// create validation item and add to store
-		let simpleComponentValidationItem: SimpleComponentData = createSimpleComponentValidationItem(
-			path,
-			convertDisplayName(label),
-			required,
-			simpleComponent
-		);
-		//console.log("🚀 ~ onMount ~ simpleComponentValidationItem:", simpleComponentValidationItem	)
-		// add to validation store
-		ValidationStoreAddSimpleComponent(simpleComponentValidationItem);
+		registerValidationItem(path, convertDisplayName(label), required, simpleComponent);
 
 		//#### CONFIGURATION	 ####
 		config = getConfigStore();
 		// check if this component is an anchor point
 		//console.log("check for anchorpoin", config)
 		for (const component of config.components) {
-			//console.log("ghjgJ", component.globalSettings.anchorpoint, path)
-			if (component.globalSettings.anchorpoint == path) {
+			console.log("ghjgJ", component.globalSettings.anchorpoint, path)
+			// check if path is array which is indicated if the last part after the point is a number
+			let isPathArray = path.includes('.') && !isNaN(Number(path.split('.').pop()));
+
+			if (component.globalSettings.anchorpoint == path || (isPathArray && component.globalSettings.anchorpoint == path.split('.').slice(0, -1).join('.'))) {
 				isAnchor = true;
 				customComponent = customComponentsCatalog[component.meta.component_name].component;
-			}
+			} 
 			for (const variable of component.mode.variables.variable) {
 				if (variable.JSONPath == path && variable.is_visible == false) {
 					isVisible = false;
@@ -190,17 +179,21 @@
 		res = suite(_path);
 
 		setTimeout(async () => {
-			//console.log("🚀 ~ updateValue ~ res:",res, res.isValid(_path), path, value)
-
-			let errorMessage = '';
-			if (res.hasErrors(_path)) {
-				errorMessage = res.getErrors(_path).join('.  ');
-			}
-
-			// update validationstore
-			ValidationStoreSetSimpleTypeValid(_path, res.isValid(_path), errorMessage);
+			updateValidationState(_path, res);
 		}, 10);
 	}
+
+ $: commonProps = {
+    id: path,
+	label: convertDisplayName(label),
+    required,
+    invalid: res.hasErrors(path),
+	valid: res.isValid(path),
+    feedback: res.getErrors(path),
+    description: simpleComponent.description,
+	showDescription: showDescription,
+//	disabled: mappingComponentConfig?.isDisabled ?? false
+  };
 
 </script>
 
@@ -322,16 +315,9 @@
 					<!-- Handle textarea format -->
 				{:else if (simpleComponent.properties['#text'].type === 'string' && simpleComponent.properties['#text'].format.toLowerCase() === 'textarea') || simpleComponent.properties['#text'].format.toLowerCase() === 'text' || (simpleComponent.properties['#text'].type === 'string' && value.length >= 25)}
 					<TextArea
-						id={path}
-						label={convertDisplayName(label)}
-						{required}
+						{... commonProps}
 						bind:value
 						on:input={onChangeHandler}
-						valid={res.isValid(path)}
-						invalid={res.hasErrors(path)}
-						feedback={res.getErrors(path)}
-						description={simpleComponent.description}
-						showDescription={showDescription}
 						on:showDescription={handleShowDescription}
 						on:hideDescription={handleHideDescription}
 					/>
@@ -340,15 +326,9 @@
 				<!-- Handle string type -->
 			{:else if simpleComponent.properties['#text'].type === 'string' && simpleComponent.properties['#text'].enum === undefined}
 				<TextInput
-					id={path}
-					label={convertDisplayName(label)}
-					{required}
+					{... commonProps}
 					bind:value
 					on:input={onChangeHandler}
-					valid={res.isValid(path)}
-					invalid={res.hasErrors(path)}
-					feedback={res.getErrors(path)}
-					description={simpleComponent.description}
 					on:showDescription={handleShowDescription}
 					on:hideDescription={handleHideDescription}
 				/>
@@ -358,32 +338,24 @@
 					<!-- Handle single select -->
 					{#if simpleComponent.properties['#text'].enum.length <= 10}<!-- Handle string type with enum with short numer of  entries -->
 						<Dropdown
-							id={path}
+							{... commonProps}
 							title={convertDisplayName(label)}
 							bind:target={value}
 							source={simpleComponent.properties['#text'].enum}
 							on:change={onChangeHandler}
-							invalid={res.hasErrors(path)}
-							feedback={res.getErrors(path)}
-							description={simpleComponent.description}
-							{required}
 							on:showDescription={handleShowDescription}
 							on:hideDescription={handleHideDescription}
 						/>
 					{:else}
 						<!-- Handle string type with enum with many entries -->
 						<MultiSelect
-							id={path}
+							{... commonProps}
 							title={convertDisplayName(label)}
-							{required}
 							source={simpleComponent.properties['#text'].enum}
 							bind:target={value}
 							isMulti={false}
 							clearable={required ? false : true}
 							on:change={onChangeHandler}
-							invalid={res.hasErrors(path)}
-							feedback={res.getErrors(path)}
-							description={simpleComponent.description}
 							on:showDescription={handleShowDescription}
 							on:hideDescription={handleHideDescription}
 						/>
@@ -392,11 +364,8 @@
 					<!-- Handle multi select for array of simple types -->
 					{#if isMulti}
 						<MultiSelect
-							id={path}
+							{... commonProps}
 							title={convertDisplayName(label)}
-							{required}
-							complexSource={true}
-							complexTarget={true}
 							source={jsonItems}
 							itemId="#text"
 							itemLabel="#text"
@@ -404,9 +373,6 @@
 							isMulti={true}
 							clearable={required ? false : true}
 							on:change={onChangeHandler}
-							invalid={res.hasErrors(path)}
-							feedback={res.getErrors(path)}
-							description={simpleComponent.description}
 							on:showDescription={handleShowDescription}
 							on:hideDescription={handleHideDescription}
 						/>
@@ -416,17 +382,11 @@
 				<!-- Handle number and integer types -->
 			{:else if simpleComponent.properties['#text'].type === 'number' || simpleComponent.properties['#text'].type === 'integer'}
 				<NumberInput
-					id={path}
-					label={convertDisplayName(label)}
-					{required}
+					{... commonProps}
 					bind:value
 					on:input={onChangeHandler}
 					{min}
 					{max}
-					valid={res.isValid(path)}
-					invalid={res.hasErrors(path)}
-					feedback={res.getErrors(path)}
-					description={simpleComponent.description}
 					on:showDescription={handleShowDescription}
 					on:hideDescription={handleHideDescription}
 				/>
@@ -442,12 +402,11 @@
 					on:blur={handleHideDescriptionFallback}
 				>
 					<SlideToggle
+						{... commonProps}
 						id={path}
-						label={convertDisplayName(label)}
 						name={convertDisplayName(label)}
 						bind:checked={value}
 						on:input={onChangeHandler}
-						description={simpleComponent.description}
 						on:showDescription={handleShowDescription}
 						on:hideDescription={handleHideDescription}
 						size="sm">{convertDisplayName(label)}</SlideToggle
@@ -458,6 +417,10 @@
 	</div>
 {:else if isAnchor}
 	<div class="" id={path + '.item'}>
-		<svelte:component this={customComponent} anchor={path} label={convertDisplayName(label)} />
+		<svelte:component this={customComponent} anchor={path}
+						on:showDescription={handleShowDescription}
+						on:hideDescription={handleHideDescription}
+						path={path + '.item'}
+					/>
 	</div>
 {/if}

@@ -19,6 +19,7 @@
 		schemaToJson,
 		setConfigStore,
 		setMetadataStore,
+		setSchemaStore,
 		setSystemMappingsStore
 	} from '$lib/components/utils/metadata/metadataComponentUtils';
 	import type { SystemMappingEditModel } from '$lib/components/utils/metadata/models';
@@ -73,6 +74,7 @@
 
 			s = await apiCalls.GetMetadataSchema(datasetInfos.metadataStructureId);
 			console.log('Schema loaded', s);
+			setSchemaStore(s);
 
 			if (id > 0) m = await apiCalls.GetMetadata(id);
 			else m = schemaToJson(s);
