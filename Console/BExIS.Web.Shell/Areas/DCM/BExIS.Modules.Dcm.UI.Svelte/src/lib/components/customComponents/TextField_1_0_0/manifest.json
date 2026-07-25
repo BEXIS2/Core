@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Text Field Widget",
-    "component_name": "textField_v4.2.26",
+    "component_name": "textField_v1.0.0",
     "author": "Franziska Zander",
     "version": "1.0.0",
     "description": "Component for Text Field input"
@@ -13,6 +13,16 @@
         "description": "String to configure the text field widget",
         "type": "string",
         "target_variable": "defaultValue",
+        "default_value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "name": "Description",
+        "description": "Overwrite default description of the field.",
+        "type": "string",
+        "target_variable": "description",
         "default_value": {
           "type": "string",
           "value": ""
@@ -35,6 +45,26 @@
               "default_value": {
                 "type": "boolean",
                 "value": false
+              }
+            },
+            {
+              "name": "Max Length",
+              "description": "Set the maximum length for the text field. Please keep in mind this can only narrow original validation rules, but not expand them.",
+              "type": "integer",
+              "target_variable": "maxLength",
+              "default_value": {
+                "type": "integer",
+                "value": ""
+              }
+            },
+            {
+              "name": "Min Length",
+              "description": "Set the minimum length for the text field. Please keep in mind this can only narrow original validation rules, but not expand them. ",
+              "type": "integer",
+              "target_variable": "minLength",
+              "default_value": {
+                "type": "integer",
+                "value": ""
               }
             }
           ]
