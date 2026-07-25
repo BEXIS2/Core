@@ -200,7 +200,8 @@
 <!-- Simple Component Rendering -->
 {#if isVisible && !isAnchor}
 <!--on:mouseover={() => descriptionStore.set({ type: 'simple', content: simpleComponent.description, path })} -->
-	<div class="pr-2" id={path + '.item'}>
+
+<div class="pr-2" id={path}>
 		<!--	if the field is mapped to a party or key, show blocked component with info, otherwise show the normal input component based on the type and format of the field -->
 		{#if mappingComponentConfig && ((mappingComponentConfig.isMappedToParty && !mappingComponentConfig.isSelector) || mappingComponentConfig.isMappedToKey)}
 			<Blocked
@@ -209,6 +210,8 @@
 				label={convertDisplayName(label)}
 				bind:value
 				{path}
+				{required}
+				description={simpleComponent.description}
 			/>
 		{:else if mappingComponentConfig && mappingComponentConfig.isMappedToParty && mappingComponentConfig.isSelector}
 			<PartySelector
@@ -219,7 +222,8 @@
 				{required}
 				{isMulti}
 				description={simpleComponent.description}
-				on:reload
+				{handleShowDescription}
+				{handleHideDescription}
 			/>
 		{:else if path && simpleComponent.properties}
 			<!-- Handle different formats and types -->
@@ -416,11 +420,11 @@
 		{/if}
 	</div>
 {:else if isAnchor}
-	<div class="" id={path + '.item'}>
+	<div class="pr-2" id={path}>
 		<svelte:component this={customComponent} anchor={path}
 						on:showDescription={handleShowDescription}
 						on:hideDescription={handleHideDescription}
-						path={path + '.item'}
+						path={path}
 					/>
 	</div>
 {/if}
