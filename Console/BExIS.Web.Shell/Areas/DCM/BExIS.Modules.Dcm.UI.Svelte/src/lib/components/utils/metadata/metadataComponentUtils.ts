@@ -437,9 +437,12 @@ export function clearValidationStore(): void {
 // if it doesn't already exist
 // and has relevant validation criteria
 // Returns the updated validation store values
-export function ValidationStoreAddSimpleComponent(item: SimpleComponentData): validationStoretype {
+export function ValidationStoreAddSimpleComponent(
+	item: SimpleComponentData,
+	forceRegistration: boolean = false
+): validationStoretype {
 	let validationStoreValues: validationStoretype = getValidationStore();
-	if (validationStoreValues.simpleTypeValidationItems.find(i => i.path === item.path) === undefined && (item.required || item.regex !== undefined || item.lowerBound !== undefined || item.upperBound !== undefined || (item.domainList && item.domainList.length > 0))) {
+	if (validationStoreValues.simpleTypeValidationItems.find(i => i.path === item.path) === undefined && (forceRegistration || item.required || item.regex !== undefined || item.lowerBound !== undefined || item.upperBound !== undefined || (item.domainList && item.domainList.length > 0))) {
 		validationStoreValues.simpleTypeValidationItems.push(item);
 		validationStore.set(validationStoreValues);
 	}
@@ -448,10 +451,14 @@ export function ValidationStoreAddSimpleComponent(item: SimpleComponentData): va
 // Set overall validity for all simple required components in the validation store
 // based on the validity of an individual component identified by its path
 // Returns the updated validity of the specified component
-export function ValidationStoreSetSimpleTypeValid(path: string, isValid: boolean, errorMessage: string = ''): boolean {
+export function ValidationStoreSetSimpleTypeValid(
+	path: string,
+	isValid: boolean,
+	errorMessage: string = '',
+	overwriteErrorMessage: boolean = true
+): boolean {
 	let valid: boolean = false;
 	let validationStoreValues: validationStoretype = getValidationStore();
-
 
 	if (isValid != null && isValid != undefined) {
 		const item = validationStoreValues.simpleTypeValidationItems.find(item => {
@@ -459,19 +466,19 @@ export function ValidationStoreSetSimpleTypeValid(path: string, isValid: boolean
 		});
 		if (item) {
 			item!.isValid = isValid;
-
 			valid = item!.isValid;
 
 			if (item && errorMessage) {
-				item.errorMessage = errorMessage;
+				if (overwriteErrorMessage || !item.errorMessage) {
+					item.errorMessage = errorMessage;
+				} else {
+					item.errorMessage = `${item.errorMessage}\n${errorMessage}`;
+				}
 			}
 
-			if (valid == true && item) // reset errors if item is valid
-			{
+			if (valid == true && item) {
 				item.errorMessage = '';
 			}
-
-
 		}
 		validationStoreValues.allSimpleRequiredValid = true;
 		for (const item of validationStoreValues.simpleTypeValidationItems) {
@@ -481,9 +488,68 @@ export function ValidationStoreSetSimpleTypeValid(path: string, isValid: boolean
 			}
 		}
 	}
-	validationStore.set(validationStoreValues);
+	validationStore.set({
+		...validationStoreValues,
+		simpleTypeValidationItems: [...validationStoreValues.simpleTypeValidationItems]
+	});
 	//console.log("🚀 ~ ValidationStoreSetSimpleTypeValid ~ validationStore:", get(validationStore))
 	return valid;
+}
+
+export function setValidationErrorMessage(
+	path: string,
+	errorMessage: string,
+	overwriteErrorMessage: boolean = true
+): string {
+	const validationStoreValues = getValidationStore();
+	const item = validationStoreValues.simpleTypeValidationItems.find((entry) => entry.path === path);
+
+	if (!item) {
+		return errorMessage;
+	}
+
+	if (overwriteErrorMessage || !item.errorMessage) {
+		item.errorMessage = errorMessage;
+	} else {
+		item.errorMessage = `${item.errorMessage}\n${errorMessage}`;
+	}
+
+	validationStore.set(validationStoreValues);
+	return item.errorMessage;
+}
+
+export function setValidationLengthConstraints(
+	path: string,
+	minLength?: number,
+	maxLength?: number
+): void {
+	const store = getValidationStore();
+	const item = store.simpleTypeValidationItems.find((item) => item.path === path);
+
+	if (!item) return;
+
+	if (minLength != null) {
+		item.minLength = Math.max(item.minLength ?? 0, minLength);
+	}
+
+	if (maxLength != null) {
+		item.maxLength = Math.min(item.maxLength ?? Number.POSITIVE_INFINITY, maxLength);
+	}
+
+	validationStore.set({
+		...store,
+		simpleTypeValidationItems: [...store.simpleTypeValidationItems]
+	});
+}
+
+export function validateCustomCondition(
+	path: string,
+	isValid: boolean,
+	errorMessage: string,
+	overwriteErrorMessage: boolean = true
+): boolean {
+	ValidationStoreSetSimpleTypeValid(path, isValid, errorMessage, overwriteErrorMessage);
+	return isValid;
 }
 // Create a SimpleComponentData validation item
 // based on the provided parameters and simple component properties
@@ -553,7 +619,16 @@ export function getParentPath(path) {
 
 export function getPartyIdFromParent(path) {
 
-	// get party id from parent path, which is the last number in the path
+	if (typeof path !== 'string' || path.trim() === '') {
+		return null;
+	}
+
+	const parentPath = getParentPath(path);
+	if (!parentPath) {
+		return null;
+	}
+
+	return getPartyIdByPath(parentPath);
 
 }
 
@@ -570,7 +645,7 @@ export function showDescriptionHandler(e: any, type: 'simple' | 'complex') {
 	// add a small delay
 	descriptionTimeout = setTimeout(() => {
 		descriptionStore.set({ type, content: e.detail.description, path: e.detail.id });
-		console.log('🚀 ~ showDescriptionHandler ~ e.detail.description:', e.detail);
+		// console.log('🚀 ~ showDescriptionHandler ~ e.detail.description:', e.detail);
 	}, 500);
 }
 
@@ -593,53 +668,53 @@ function isArrayIndex(segment) {
 }
 
 export function resolveNode(path) {
-  const schema = getSchemaStore();
-  const parts = path.split('.').filter(Boolean);
-  let node = schema;
-  let parentNode = null; // tracks the object whose "required" array we'd check
-  let lastKey = null;
+	const schema = getSchemaStore();
+	const parts = path.split('.').filter(Boolean);
+	let node = schema;
+	let parentNode = null; // tracks the object whose "required" array we'd check
+	let lastKey = null;
 
-  for (let i = 0; i < parts.length; i++) {
-    const part = parts[i];
-    if (!node) return { node: undefined, parentNode: undefined, lastKey: undefined };
+	for (let i = 0; i < parts.length; i++) {
+		const part = parts[i];
+		if (!node) return { node: undefined, parentNode: undefined, lastKey: undefined };
 
-    if (isArrayIndex(part)) {
-      // Numeric index: just descend into items, don't treat as a property name
-      if (node.type === 'array' && node.items) {
-        node = node.items;
-      }
-      continue;
-    }
+		if (isArrayIndex(part)) {
+			// Numeric index: just descend into items, don't treat as a property name
+			if (node.type === 'array' && node.items) {
+				node = node.items;
+			}
+			continue;
+		}
 
-    // Auto-unwrap array wrapper before checking properties
-    if (node.type === 'array' && node.items) {
-      node = node.items;
-    }
+		// Auto-unwrap array wrapper before checking properties
+		if (node.type === 'array' && node.items) {
+			node = node.items;
+		}
 
-    if (!node.properties || !Object.prototype.hasOwnProperty.call(node.properties, part)) {
-      return { node: undefined, parentNode: undefined, lastKey: undefined };
-    }
+		if (!node.properties || !Object.prototype.hasOwnProperty.call(node.properties, part)) {
+			return { node: undefined, parentNode: undefined, lastKey: undefined };
+		}
 
-    parentNode = node;      // remember parent for "required" check
-    lastKey = part;
-    node = node.properties[part];
-  }
+		parentNode = node;      // remember parent for "required" check
+		lastKey = part;
+		node = node.properties[part];
+	}
 
-  return { node, parentNode, lastKey };
+	return { node, parentNode, lastKey };
 }
 /* @param {object} schema - the root JSON schema object
  * @param {string} path   - dot-separated path, e.g. "Basic.alternateIdentifier"
  * @returns {string|undefined} the description text, or undefined if not found
  */
-export function getDescriptionBySchemaAndPath( path) {
+export function getDescriptionBySchemaAndPath(path) {
 	let { node } = resolveNode(path);
-  if (!node) return undefined;
+	if (!node) return undefined;
 
-  if (node.type === 'array' && node.items) {
-    return node.items.description ?? node.description;
-  }
-  // console.log('🚀 ~ getDescriptionBySchemaAndPath ~ node.description:', node.description, 'node:', node);
-  return node.description;
+	if (node.type === 'array' && node.items) {
+		return node.items.description ?? node.description;
+	}
+	// console.log('🚀 ~ getDescriptionBySchemaAndPath ~ node.description:', node.description, 'node:', node);
+	return node.description;
 
 }
 
@@ -652,11 +727,12 @@ export function getDescriptionBySchemaAndPath( path) {
  * @returns {boolean|undefined} true/false if resolvable, undefined if the path doesn't exist
  */
 export function getIsRequiredBySchemaAndPath(path) {
-	const { parentNode, lastKey } = resolveNode(path);
-  if (!parentNode || !lastKey) return undefined;
+	const resolved: any = resolveNode(path);
+	const { parentNode, lastKey } = resolved;
+	if (!parentNode || !lastKey) return undefined;
 
-  const requiredList = parentNode.required || [];
-  return requiredList.includes(lastKey);
+	const requiredList: string[] = parentNode.required || [];
+	return requiredList.includes(lastKey);
 }
 
 export function getLabelByPath(path: string): string {
@@ -671,17 +747,19 @@ export function getLabelByPath(path: string): string {
 	}
 	else {
 		label = convertDisplayName(path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path);
-		console.log('Path is not an array:', path);
+		console.log('Path is not an array:', path, label);
 	}
 	return label;
 }
 
 export function getMetadata(path: string): { value: any, ref: any, label: string, description: string, required: boolean } {
+	console.log('🚀 ~ getMetadata ~ path:', path);
 	let value: any = getValueByPath(path);
 	let ref: any = getRefByPath(path);
+	console.log('🚀 ~ getMetadata ~ path: label', path);
 	let label: string = getLabelByPath(path);
 	let description = getDescriptionBySchemaAndPath(path);
-	let required = getIsRequiredBySchemaAndPath(path);
+	let required = !!getIsRequiredBySchemaAndPath(path);
 	return { value, ref, label, description, required };
 }
 
@@ -690,10 +768,17 @@ export function updateValidationState(path: string, res: any): void {
 	if (res && res.hasErrors(path)) {
 		errorMessage = res.getErrors(path).join('.  ');
 	}
+	console.log('🚀 ~ updateValidationState ~ path:', path, 'isValid:', res ? res.isValid(path) : true, 'errorMessage:', errorMessage);
 	ValidationStoreSetSimpleTypeValid(path, res ? res.isValid(path) : true, errorMessage);
 }
 
-export function registerValidationItem(path: string, label: string, required: boolean, schemaNode: any): void {
+export function registerValidationItem(
+	path: string,
+	label: string,
+	required: boolean,
+	schemaNode: any,
+	forceRegistration: boolean = false
+): void {
 	if (schemaNode) {
 		let validationItem = createSimpleComponentValidationItem(
 			path,
@@ -701,7 +786,7 @@ export function registerValidationItem(path: string, label: string, required: bo
 			required,
 			schemaNode
 		);
-		ValidationStoreAddSimpleComponent(validationItem);
+		ValidationStoreAddSimpleComponent(validationItem, forceRegistration);
 	}
 }
 
