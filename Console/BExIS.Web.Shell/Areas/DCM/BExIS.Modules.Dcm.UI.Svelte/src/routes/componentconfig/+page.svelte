@@ -116,6 +116,11 @@
   let showDeleteWarning = false;
   let nodeToDelete: Node | null = null;
 
+  // anchorpoint warning dialog state
+  let showAnchorpointWarning = false;
+  let anchorpointWarningItems: string[] = [];
+  let anchorpointWarningExtraCount = 0;
+
   // init counter for forcing node updates
   let nodeVersion = 0;
 
@@ -570,6 +575,39 @@
 
   // save all component configurations and positions from both modes and download files
 
+  $: missingAnchorInEditPreview = getConfigComponentsMissingAnchorpoint(componentConfig_edit, 'edit');
+  $: missingAnchorInViewPreview = getConfigComponentsMissingAnchorpoint(componentConfig_view, 'view');
+  $: missingAnchorBadgeCount = [...missingAnchorInEditPreview, ...missingAnchorInViewPreview].length;
+
+  function openAnchorpointWarning(items: string[]) {
+    anchorpointWarningItems = items.slice(0, 10);
+    anchorpointWarningExtraCount = Math.max(0, items.length - 10);
+    showAnchorpointWarning = true;
+  }
+
+  function closeAnchorpointWarning() {
+    showAnchorpointWarning = false;
+    anchorpointWarningItems = [];
+    anchorpointWarningExtraCount = 0;
+  }
+
+  function hasMappedVariable(component: any): boolean {
+    const vars = component?.mode?.variables?.variable || [];
+    return vars.some((v: any) => String(v?.JSONPath || '').replace(/^\$\.?/, '').trim() !== '');
+  }
+
+  function getConfigComponentsMissingAnchorpoint(config: ConfigFile, modeLabel: 'edit' | 'view'): string[] {
+    const components = config?.components || [];
+
+    return components
+      .filter((component: any) => {
+        if (!hasMappedVariable(component)) return false;
+        const anchorpoint = String(component?.globalSettings?.anchorpoint || '').replace(/^\$\.?/, '').trim();
+        return anchorpoint === '';
+      })
+      .map((component: any) => `${component?.meta?.component_name || component?.meta?.component_ui_id || 'unknown'} (${modeLabel})`);
+  }
+
   function handleSaveEdit() {
     const currentNodes = get(nodes);
     
@@ -671,6 +709,15 @@
     // force config reactivity
     componentConfig_edit = { ...componentConfig_edit };
     componentConfig_view = { ...componentConfig_view };
+
+    const missingAnchorInEdit = getConfigComponentsMissingAnchorpoint(componentConfig_edit, 'edit');
+    const missingAnchorInView = getConfigComponentsMissingAnchorpoint(componentConfig_view, 'view');
+    const allMissingAnchors = [...missingAnchorInEdit, ...missingAnchorInView];
+
+    if (allMissingAnchors.length > 0) {
+      openAnchorpointWarning(allMissingAnchors);
+      return;
+    }
     
     SaveConfig(componentConfig_edit, Number(selectedEntityTemplateId), 'edit');
     SaveConfig(componentConfig_view, Number(selectedEntityTemplateId), 'view');
@@ -777,6 +824,15 @@
         }
       }
     });
+
+    const missingAnchorInEdit = getConfigComponentsMissingAnchorpoint(componentConfig_edit, 'edit');
+    const missingAnchorInView = getConfigComponentsMissingAnchorpoint(componentConfig_view, 'view');
+    const allMissingAnchors = [...missingAnchorInEdit, ...missingAnchorInView];
+
+    if (allMissingAnchors.length > 0) {
+      openAnchorpointWarning(allMissingAnchors);
+      return;
+    }
       
     
     SaveConfig(componentConfig_edit, 1, 'edit');
@@ -2415,6 +2471,20 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
           onDelete={handleDeleteComponent}
         />
       {:else if sidebarMode === 'edit'}
+      <!-- save/cancel buttons -->
+        <div class="edit-actions">
+          <button class="cancel-edit-button" on:click={handleCancelEdit}>
+            Cancel
+          </button>
+          <button class="save-edit-button" on:click={handleSaveEdit}>
+            Save
+          </button>
+        </div>
+        {#if missingAnchorBadgeCount > 0}
+          <div class="anchorpoint-warning-badge" role="status" aria-live="polite">
+            Missing anchorpoint for {missingAnchorBadgeCount} mapped component{missingAnchorBadgeCount === 1 ? '' : 's'}
+          </div>
+        {/if}
         <div class="tabs">
           <button class="tab" class:active={activeTab === 0} on:click={() => activeTab = 0}>
             Modes
@@ -2457,17 +2527,7 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
               componentConfig={getCurrentConfig()}
             />
           {/if}
-        </div>
-        
-        <!-- save/cancel buttons -->
-        <div class="edit-actions">
-          <button class="cancel-edit-button" on:click={handleCancelEdit}>
-            Cancel
-          </button>
-          <button class="save-edit-button" on:click={handleSaveEdit}>
-            Save
-          </button>
-        </div>
+        </div>       
       {/if}
     </div>
   </div>
@@ -2512,6 +2572,26 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
       <div class="modal-buttons">
         <button class="cancel-button" on:click={rejectDelete}>Cancel</button>
         <button class="confirm-button" on:click={confirmDelete}>Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+{/if}
+
+{#if showAnchorpointWarning}
+  <div class="modal-overlay">
+    <div class="modal">
+      <h3>Missing Anchorpoint</h3>
+      <p>Please select an anchorpoint for the following mapped components before saving:</p>
+      <ul class="anchorpoint-warning-list">
+        {#each anchorpointWarningItems as item}
+          <li>{item}</li>
+        {/each}
+      </ul>
+      {#if anchorpointWarningExtraCount > 0}
+        <p class="anchorpoint-warning-more">...and {anchorpointWarningExtraCount} more.</p>
+      {/if}
+      <div class="modal-buttons">
+        <button class="confirm-button" on:click={closeAnchorpointWarning}>OK</button>
       </div>
     </div>
   </div>
@@ -2643,6 +2723,17 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
     background: #f8f9fa;
     margin-top: auto;
   }
+
+  .anchorpoint-warning-badge {
+    margin: 0 1rem 0.75rem 1rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #f5c2c7;
+    background: #f8d7da;
+    color: #842029;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
   
   .save-edit-button,
   .cancel-edit-button {
@@ -2749,6 +2840,25 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
     margin: 0 0 1.5rem 0;
     color: #666;
     line-height: 1.5;
+  }
+
+  .anchorpoint-warning-list {
+    margin: 0 0 1rem 1.25rem;
+    padding: 0;
+    max-height: 220px;
+    overflow-y: auto;
+    color: #333;
+  }
+
+  .anchorpoint-warning-list li {
+    margin-bottom: 0.35rem;
+    word-break: break-word;
+  }
+
+  .anchorpoint-warning-more {
+    margin: 0 0 1rem 0;
+    color: #666;
+    font-size: 0.9rem;
   }
   
   .modal-buttons {
