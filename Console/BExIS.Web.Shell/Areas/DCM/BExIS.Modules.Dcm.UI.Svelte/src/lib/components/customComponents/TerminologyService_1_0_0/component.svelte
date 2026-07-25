@@ -9,7 +9,7 @@
 		updateValidationState,
 		registerValidationItem,
 		getMetadata,
-		validateCustomCondition,
+		validateCustomCondition
 	} from '../../utils/metadata/metadataComponentUtils';
 	import * as ts4nfdiWidgets from '@ts4nfdi/terminology-service-suite-js';
 	import { InputContainer } from '@bexis2/bexis2-core-ui';
@@ -65,16 +65,9 @@
 	onMount(async () => {
 		const { node: schemaNode } = resolveNode(term_field_path);
 		// The terminology component has custom validation rules, including for optional fields.
-		registerValidationItem(text_field_path, label, required, schemaNode, true);
-
-setValidationLengthConstraints(
-	text_field_path,
-	minLength === '' ? undefined : Number(minLength),
-	maxLength === '' ? undefined : Number(maxLength)
-);
-
-validationRegistered = true;
-syncTermValue();
+		registerValidationItem(term_field_path, label, required, schemaNode, true);
+		validationRegistered = true;
+		syncTermValue();
 
 		// check if terminology service is running
 		isRunningService = await checkService(TerminologyServiceUrl);
@@ -160,7 +153,13 @@ syncTermValue();
 		res = suite(_path);
 		updateValidationState(_path, res);
 
-
+		const isNotEmpty = value != null && String(value).trim() !== '';
+		// console.log('🚀 ~ updateValue ~ path:', _path, 'value:', value, 'isNotEmpty:', isNotEmpty);
+		if (required && !isNotEmpty) {
+			validateCustomCondition(_path, false, 'Please select a term from the terminology service.');
+		} else if (isNotEmpty && String(value).length < 15) {
+			validateCustomCondition(_path, false, 'Please select a term with at least 15 characters.');
+		}
 	}
 
 	function syncTermValue() {
@@ -209,7 +208,6 @@ syncTermValue();
 		showIcon: false,
 		disabled: false
 	};
-
 </script>
 
 <InputContainer {...commonProps} on:showDescription on:hideDescription>
