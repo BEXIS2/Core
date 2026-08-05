@@ -3,7 +3,7 @@
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from './simpleComponent.svelte';
 	import { onMount } from 'svelte';
-	import { activateShow, getNodeByPath, setActive } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { activateShow, getNodeByPath, setActive, ValidationStoreSetSimpleTypeValid } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { activeStore, hideStore, validationStore } from '$lib/components/utils/metadata/stores';
 	import { isActive} from '$lib/components/utils/metadata/metadataComponentUtils';
 
@@ -128,39 +128,25 @@
 	}
 
 	function clearValidationErrorsForPrefix(prefix: string) {
-		validationStore.update((store) => {
+		
+
+  // console.log('active',active,path, $activeStore);
+
+		// get all prefied paths items from validation store and remove them
+		validationStore.update(store => {
 			if (!store) {
 				return store;
 			}
 
-			const simpleTypeValidationItems = store.simpleTypeValidationItems.map((item) => {
-				if (item.path.startsWith(prefix)) {
-					return {
-						...item,
-						isValid: true,
-						errorMessage: ''
-					};
-				}
-				return item;
-			});
-
 			return {
 				...store,
-				simpleTypeValidationItems,
-				complexTypeValidationItems: store.complexTypeValidationItems.map((item) => {
-					if (item.path?.startsWith && item.path.startsWith(prefix)) {
-						return {
-							...item,
-							errorMessage: ''
-						};
-					}
-					return item;
-				}),
-				allSimpleRequiredValid: simpleTypeValidationItems.every(
-					(item) => !item.required || item.isValid
-				)
+				simpleTypeValidationItems: store.simpleTypeValidationItems.filter(item => !item.path.startsWith(prefix)),
+				complexTypeValidationItems: store.complexTypeValidationItems.filter(item => !item.path.startsWith(prefix))
 			};
 		});
+		
+		
+		
 	}
 
 	function cleanupBranch(branchKey: string) {

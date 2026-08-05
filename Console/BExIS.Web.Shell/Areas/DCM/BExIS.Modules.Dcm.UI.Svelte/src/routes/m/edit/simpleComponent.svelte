@@ -8,10 +8,12 @@
 		helpStore,
 		CodeEditor,
 		MultiSelect,
-		DatePickerInput
+		DatePickerInput,
+		Checkbox
+
 	} from '@bexis2/bexis2-core-ui';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import {
 		ValidationStoreSetSimpleTypeValid,
 		updateMetadataStore,
@@ -134,11 +136,8 @@
 		}, 100);
 	});
 
-	onDestroy(() => {
-		//console.log("🚀 ~ onDestroy ~ path:", path)
-		// remove validation item from store
-		ValidationStoreSetSimpleTypeValid(path, true, '');
-	});
+	// Do not mutate validation state on unmount.
+	// Collapsing sections via toggleShow unmounts child fields temporarily.
 
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
@@ -399,24 +398,26 @@
 			{:else if simpleComponent.properties['#text'].type === 'boolean'}
 				<!-- {@const v = value = true} -->
 				<div
+					class="inline-flex items-center gap-2 py-1"
 					role="group"
 					on:mouseover={handleShowDescriptionFallback}
 					on:focus={handleShowDescriptionFallback}
 					on:mouseleave={handleHideDescriptionFallback}
 					on:blur={handleHideDescriptionFallback}
 				>
-					<SlideToggle
-						{... commonProps}
-						id={path}
-						name={convertDisplayName(label)}
-						bind:checked={value}
-						on:input={onChangeHandler}
-						on:showDescription={handleShowDescription}
-						on:hideDescription={handleHideDescription}
-						size="sm">{convertDisplayName(label)}</SlideToggle
-					>
+				<Checkbox
+					{... commonProps}
+					id={path}
+					bind:checked={value}
+					on:showDescription={handleShowDescription}
+					on:hideDescription={handleHideDescription}
+					
+					on:change={onChangeHandler}
+					/>
 				</div>
-			{/if}
+				{/if}
+
+				
 		{/if}
 	</div>
 {:else if isAnchor}

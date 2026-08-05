@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import {
 		updateMetadataStore,
 		getFullConfig,
@@ -93,10 +93,7 @@
 		);
 	});
 
-	onDestroy(() => {
-		// cleanup validation item when component is destroyed
-		ValidationStoreSetSimpleTypeValid(text_field_path, true, '');
-	});
+	// Keep validation state when component is temporarily unmounted (e.g., collapsed section).
 
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component

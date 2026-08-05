@@ -196,7 +196,7 @@
         
       <input
         type="text"
-        placeholder="Add a comment about the changes you made"
+        placeholder="What changed? Add a comment..."
         class="input variant-form-material dark:bg-zinc-700 bg-zinc-50 placeholder:text-gray-400"
         bind:value={comment}
       />
