@@ -80,7 +80,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             }
         }
 
-        [BExISApiAuthorize, HttpPost, PostRoute("api/users")]
+        [BExISApiAuthorize, HttpPost, PostRoute("api/users"), JsonNetFilter]
         public async Task<HttpResponseMessage> PostAsync(CreateUserModel model)
         {
             try
@@ -91,7 +91,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
                     Email = model.Email
                 };
 
-                await _userManager.CreateAsync(user);
+                var response = await _userManager.CreateAsync(user);
 
                 return Request.CreateResponse(HttpStatusCode.Created);
             }
@@ -106,7 +106,18 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
         {
             var user = await _userManager.FindByIdAsync(userId) ?? throw new ArgumentNullException();
 
-            return Request.CreateResponse(HttpStatusCode.OK);
+            if(user.Id == model.Id)
+            {
+                user.UserName = model.UserName;
+                user.Email = model.Email;
+                var response = await _userManager.UpdateAsync(user);
+                return Request.CreateResponse(HttpStatusCode.OK);
+
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, $"error");
+            }
         }
 
         [BExISApiAuthorize, HttpPut, PutRoute("api/users/{userId}/groups")]
