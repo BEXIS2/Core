@@ -17,11 +17,6 @@
 			type: 'UPDATE'
 		},
 		{
-			icon: faPeopleGroup,
-			color: 'variant-filled-primary shadow-md',
-			type: 'MEMBERSHIP'
-		},
-		{
 			icon: faTrash,
 			color: 'variant-filled-primary shadow-md',
 			type: 'DELETE'
