@@ -41,11 +41,20 @@ namespace BExIS.Modules.Sam.UI.Models
     {
         [Remote("ValidateEmail", "Users")]
         [Required]
+        [JsonProperty("email")]
         public string Email { get; set; }
 
         [Remote("ValidateUsername", "Users")]
         [Required]
+        [JsonProperty("userName")]
         public string UserName { get; set; }
+
+        public CreateUserModel()
+        {
+            Email = "";
+            UserName = "";
+        }
+
     }
 
     public class DeleteUserModel
