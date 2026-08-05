@@ -4,6 +4,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Orm.NH.Utils;
 using BExIS.Dlm.Services.Helpers;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Versions;
 using BExIS.Utils.NH.Querying;
 using System;
@@ -794,6 +795,8 @@ namespace BExIS.Dlm.Services.Data
                 IRepository<DatasetVersion> versionRepo = buow.GetRepository<DatasetVersion>();
                 IRepository<DataTuple> tuplesRepo = buow.GetRepository<DataTuple>();
                 IRepository<ContentDescriptor> contentDescriptorRepo = buow.GetRepository<ContentDescriptor>();
+                IRepository<EntityReference> entityReferenceRepo = buow.GetRepository<EntityReference>();
+
 
                 #region Delete tupleVersionIds
 
@@ -878,6 +881,26 @@ namespace BExIS.Dlm.Services.Data
                 }
 
                 #endregion Delete content descriptors
+
+                #region delete entity reference
+
+                // delete all entity references that are related to the dataset and the entitytype versions
+
+                var entityId = entity.EntityTemplate.EntityType.Id;
+
+                var refs = entityReferenceRepo.Query(r => 
+                    (r.TargetId.Equals(datasetId) && r.TargetEntityId.Equals(entityId)) || 
+                    (r.SourceId.Equals(datasetId) && r.SourceEntityId.Equals(entityId)));
+                if (refs != null)
+
+                {
+                    foreach (var entityReference in refs)
+                    {
+                        entityReferenceRepo.Delete(entityReference.Id);
+                    }
+                }
+
+                #endregion
 
                 #region Delete versions
 

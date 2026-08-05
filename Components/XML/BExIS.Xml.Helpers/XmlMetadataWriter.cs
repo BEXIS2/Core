@@ -56,7 +56,7 @@ namespace BExIS.Xml.Helpers
         /// <seealso cref=""/>
         /// <param name="metadataStructureId"></param>
         /// <returns></returns>
-        public XDocument CreateMetadataXml(long metadataStructureId, XDocument importXml = null)
+        public XDocument CreateMetadataXml(long metadataStructureId, XDocument importXml = null, bool withChoiceChildrens = false)
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
@@ -108,8 +108,8 @@ namespace BExIS.Xml.Helpers
                         package.SetAttributeValue("number", i);
                         role.Add(package);
 
-                        if (mpu.Extra == null || !IsChoice(mpu.Extra))
-                            setChildren(package, mpu, importXml);
+                        if (mpu.Extra == null || (!IsChoice(mpu.Extra) || withChoiceChildrens))
+                            setChildren(package, mpu, importXml, withChoiceChildrens);
 
                     }
                 }

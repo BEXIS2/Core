@@ -1,6 +1,7 @@
 ﻿using BExIS.Dim.Helpers.Models;
 using BExIS.Modules.Dim.UI.Models.Download;
 using BExIS.UI.Hooks;
+using BExIS.UI.Hooks.Caches;
 using BExIS.UI.Models;
 using Newtonsoft.Json;
 using System;
@@ -12,6 +13,7 @@ namespace BExIS.Modules.Dcm.UI.Models.View
     public class ViewModel:ApiDatasetModel
     {
         public ViewSettings Settings { get; set; }
+        public string EntityName { get; set; }
         public bool HasData { get; set; }
         public int Count { get; set; }
         public bool IsValid { get; set; }
@@ -75,6 +77,8 @@ namespace BExIS.Modules.Dcm.UI.Models.View
         public bool UseMinor { get; set; } // use minor tags, e.g., 1.1, 1.2, 1.3
         public string DataAggrement { get; set; }
 
+        public string Entity { get; set; }
+
         public List<Hook> Hooks { get; set; }
 
         public ViewSettings()
@@ -82,6 +86,7 @@ namespace BExIS.Modules.Dcm.UI.Models.View
             UseTags = false;
             UseMinor = false;
             Hooks = new List<Hook>();
+            Entity = "";
         }
     }
 
@@ -181,6 +186,13 @@ namespace BExIS.Modules.Dcm.UI.Models.View
             Title = "";
             Links = new LinksOverview();
         }
+    }
+
+    public class AttachtmentsViewModel
+    {
+        public long Id { get; set; }
+        
+        public List<FileInfo> Files { get; set; }
     }
 
 }

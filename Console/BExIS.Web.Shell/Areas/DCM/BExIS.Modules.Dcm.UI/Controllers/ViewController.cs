@@ -29,23 +29,19 @@ using BExIS.Security.Services.Requests;
 using BExIS.Security.Services.Subjects;
 using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
-using BExIS.UI.Models;
+using BExIS.UI.Hooks.Caches;
+
 using BExIS.Utils.Data;
 using BExIS.Utils.Data.Helpers;
 using BExIS.Utils.Data.Upload;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
 using BEXIS.JSON.Helpers;
-using DocumentFormat.OpenXml.Drawing.Diagrams;
-using DocumentFormat.OpenXml.EMMA;
-using DocumentFormat.OpenXml.Office2013.Excel;
-using DocumentFormat.OpenXml.Vml.Spreadsheet;
-using Microsoft.AspNet.Identity;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
-using NHibernate.Engine;
-using NHibernate.Mapping.ByCode.Impl;
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -55,6 +51,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Caching;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.SessionState;
@@ -64,6 +61,8 @@ using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
+
+using Caches = BExIS.UI.Hooks.Caches;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -93,10 +92,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult Index(long id, int version = 0, double tag = 0)
         {
 
-            if(id==0) throw new ArgumentException("id is not valid");
+            if (id == 0) throw new ArgumentException("id is not valid");
 
             string module = "DCM";
-            
+
             ViewData["id"] = id;
             ViewData["version"] = version;
             ViewData["tag"] = tag;
@@ -119,13 +118,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     ViewData["bioSchema"] = bioschemadescription;
             }
 
-            //ToDo
-            // add bioschema to view data
-            // has data
-            // data_aggreement
-            // check_public_metadata
+            using (var datasetmanager = new DatasetManager())
+            {
+                var dataset = datasetmanager.GetDataset(id);
+                ViewData["entity"] = dataset.EntityTemplate.EntityType.Name;
+            }
 
-            return View();
+                //ToDo
+                // add bioschema to view data
+                // has data
+                // data_aggreement
+                // check_public_metadata
+
+                return View();
         }
 
         /// <summary>
@@ -168,8 +173,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // Retrieve data for active and hidden (marked as deleted) datasets
                 if (datasetManager.IsDatasetCheckedIn(id) || datasetManager.IsDatasetDeleted(id))
                 {
+                    var dataset = datasetManager.GetDataset(id);
+                    var entity = dataset.EntityTemplate.EntityType;
+
                     // check is public
-                    long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
+                    long? entityTypeId = entity.Id;
                     entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
 
                     List<DatasetVersion> datasetVersions = datasetManager.GetDatasetVersions(id);
@@ -236,7 +244,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
 
                             datasetVersion = datasetManager.DatasetVersionRepo.Get(versionId); // this is needed to allow dsv to access to an open session that is available via the repo
-                            var dataset = datasetVersion.Dataset;
                             long datastructureId = dataset.DataStructure != null ? dataset.DataStructure.Id : -1;
                             ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, version, dataset.MetadataStructure.Id, datastructureId, dataset.EntityTemplate.Id);
 
@@ -248,7 +255,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             }
 
                             model.MetadataStructureId = datasetVersion.Dataset.MetadataStructure.Id;
-
+                            model.EntityName = datasetVersion.Dataset.EntityTemplate.EntityType.Name;
                             //MetadataStructureManager msm = new MetadataStructureManager();
                             //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
@@ -305,6 +312,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         model.Settings.UseTags = Convert.ToBoolean(moduleSettings.GetValueByKey("use_tags"));
                         model.Settings.UseMinor = Convert.ToBoolean(moduleSettings.GetValueByKey("use_minor"));
                         model.Settings.DataAggrement = moduleSettings.GetValueByKey("data_aggreement").ToString();
+              
 
                         // load all hooks for the edit view
                         HookManager hooksManager = new HookManager();
@@ -1159,7 +1167,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 ViewData["versionId"] = datasetManager.GetDatasetVersionId(id, version);
             }
 
-
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
 
             return View();
         }
@@ -1210,7 +1219,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             ViewData["id"] = id;
             ViewData["version"] = version;
-
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
 
             return View();
         }
@@ -1222,7 +1232,52 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return RedirectToAction("ShowPreviewDataStructure", "Data", new { area = "DDM", datasetID = id });
         }
 
-        #endregion 
+        #endregion
+
+        #region  Attachments
+
+        [JsonNetFilter]
+        public JsonResult StartAttachments(long id, int version)
+        {
+            if (id == 0) throw new ArgumentException("id is not valid");
+
+            AttachtmentsViewModel attachmentsViewModel = new AttachtmentsViewModel();
+            attachmentsViewModel.Id = id;
+
+            //throw new NotImplementedException();
+            using (var datasetManager = new DatasetManager())
+            {
+                var datasetversion = datasetManager.GetDatasetVersion(id, version);
+
+                if (datasetversion!=null)
+                {
+                    attachmentsViewModel.Files = getDatasetFileList(datasetversion);
+                }
+
+            }
+
+            return Json(attachmentsViewModel, JsonRequestBehavior.AllowGet);
+        }
+
+        private List< Caches.FileInfo > getDatasetFileList(DatasetVersion datasetVersion)
+        {
+            var fileList = new List<Caches.FileInfo>();
+            foreach (var contentDescriptor in datasetVersion.ContentDescriptors.OrderBy(c => c.OrderNo))
+            {
+                var contentDescriptorName = contentDescriptor.Name;
+                String filepath = Path.Combine(AppConfiguration.DataPath, "Datasets", contentDescriptor.DatasetVersion.Dataset.Id.ToString(), "Attachments", contentDescriptor.Name);
+
+                if (System.IO.File.Exists(filepath))
+                {
+                    fileList.Add(new Caches.FileInfo(contentDescriptor.Name, contentDescriptor.MimeType, contentDescriptor.FileSize, contentDescriptor.Description));
+                }
+            }
+            return fileList;
+        }
+
+
+        #endregion
+
 
         public ActionResult Test()
         {

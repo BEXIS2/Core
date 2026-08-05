@@ -22,6 +22,17 @@
 			? complexComponent.required
 			: [];
 
+	function normalizeRequiredKey(value: string): string {
+		return String(value ?? '')
+			.toLowerCase()
+			.replace(/[^a-z0-9]/g, '');
+	}
+
+	function isRequiredKey(key: string): boolean {
+		const normalizedKey = normalizeRequiredKey(key);
+		return requiredList.some((requiredKey: string) => normalizeRequiredKey(requiredKey) === normalizedKey);
+	}
+
 </script>
 <!-- {#key reloading} -->
 {#if complexComponent && complexComponent.type === 'object' && complexComponent.properties}
@@ -41,7 +52,7 @@
 						 <ComplexComponent
 								complexComponent={value}
 								{path}
-								required={requiredList.includes(key)}
+								required={isRequiredKey(key)}
 							/>
 
 						</div>
@@ -52,7 +63,7 @@
 			<div class="mb-1">
 				<div class="flex flex-col md:flex-row md:items-center gap-2 mb">
 					<div class="flex-1 min-w-[100px] pt-1">
-						<SimpleComponent simpleComponent={value} {path} required={requiredList.includes(key)} />
+						<SimpleComponent simpleComponent={value} {path} required={isRequiredKey(key)} />
 					</div>
 				</div>
 			

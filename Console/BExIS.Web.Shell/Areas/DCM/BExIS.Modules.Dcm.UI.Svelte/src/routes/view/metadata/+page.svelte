@@ -52,6 +52,7 @@
 					else m = schemaToJson(s);
 					console.log('Metadata loaded', m);
 					setMetadataStore(m);
+
 					const configJson = await apiCalls.GetComponentConfig(datasetInfos.entityTemplateId, "view");
 					setConfigStore(configJson);
 			}

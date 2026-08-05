@@ -2,8 +2,11 @@
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from './simpleComponent.svelte';
-	import { removeFromMetadataStore, toggleShow, updateMetadataStore } from '$lib/components/utils/metadata/metadataComponentUtils';
-	import { activeStore, hideStore } from '$lib/components/utils/metadata/stores';
+	import { onMount } from 'svelte';
+	import { activateShow, getNodeByPath, setActive } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { activeStore, hideStore, validationStore } from '$lib/components/utils/metadata/stores';
+	import { isActive} from '$lib/components/utils/metadata/metadataComponentUtils';
+
 
 	import { slide } from 'svelte/transition';
 	import Header from './MetadataComponentHeader.svelte';
@@ -11,48 +14,166 @@
 	export let choiceComponent: any;
 	export let path: string;
 
+	let target = "";
+	let choices: {key:string, value:string, display:string}[] = getChoices(choiceComponent);
+	let targetKey = '';
+	let selectedChoice: any = null;
+	let radioName = '';
+	let previousTarget = '';
+	let initializedTarget = false;
 
-	let label = path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path;
-	let choices: {key:string, value:string}[] = getChoices(choiceComponent);
-	let target;
+	onMount(() => {
+		// If metadata already contains one branch, use it as initial target.
+		const existingChoice = choices.find((item) => getNodeByPath(path + '.' + item.key) !== undefined);
+		if (existingChoice) {
+			target = existingChoice.key;
+			targetKey = existingChoice.key;
+			selectedChoice = choiceComponent?.properties?.[existingChoice.key] ?? null;
+			previousTarget = existingChoice.key;
+			initializedTarget = true;
+		}
+	});
+
 
 	$:{
-		console.log("target", target);
-		changeFn(target);
+		radioName = 'oneof-' + normalizeKey(path || 'choice');
+		if (target) {
+			targetKey = resolveTargetKey(target);
+			selectedChoice = targetKey && choiceComponent?.properties ? choiceComponent.properties[targetKey] : null;
+			if (targetKey) {
+				const selectedPath = path + '.' + targetKey;
+				setActive(selectedPath);
+				activateShow(selectedPath);
+
+				if (!initializedTarget) {
+					initializedTarget = true;
+					previousTarget = targetKey;
+				} else if (targetKey !== previousTarget) {
+					cleanupBranch(previousTarget);
+					previousTarget = targetKey;
+				}
+			}
+		}
 	}
 	
-	function getChoices(cComponent: any): {key:string, value:string}[] {
-		console.log("🚀 ~ getChoices ~ cComponent:", cComponent)
-		let c: {key:string, value:string}[] = [];
+	function getChoices(cComponent: any): {key:string, value:string, display:string}[] {
+		let c: {key:string, value:string, display:string}[] = [];
 
 		if (cComponent != undefined || cComponent != null)
 		{
 			let items: any[] = [];
-   if (cComponent.oneOf !=null && cComponent.oneOf != undefined && cComponent.oneOf.length > 0) {
+			if (cComponent.oneOf !=null && cComponent.oneOf != undefined && cComponent.oneOf.length > 0) {
 				items = cComponent.oneOf;
 			}
 
 			items.forEach((e) => {
+				for (let key in e.properties)
+				{
 
-			for (let key in e.properties)
-			{
-				let item = e.properties[key];
+							if(isActive(path+"."+key,false)){ 
+								target = key;
+							}
 
-				c.push({
-					key: item['$ref'].split('/')[item['$ref'].split('/').length - 1],
-					value: item['$ref'].split('/')[item['$ref'].split('/').length - 1]
-				});
-			}
+							let item = e.properties[key];
+							const refTail = item['$ref'].split('/')[item['$ref'].split('/').length - 1];
+
+							c.push({
+								key,
+								value: key,
+								display: refTail
+							});
+
+
+				}
 			});
 		}
 		return c;
 	}	
 
-	function changeFn(t) {
-		console.log("changeFn",t, target);
-		if (choiceComponent.oneOf != null && choiceComponent.oneOf != undefined && choiceComponent.oneOf.length > 0) {
-			removeFromMetadataStore(path);
+	function resolveTargetKey(rawTarget: string): string {
+		if (!rawTarget) {
+			return '';
 		}
+
+		const properties = choiceComponent?.properties ?? {};
+		const propertyKeys = Object.keys(properties);
+
+		if (properties[rawTarget]) {
+			return rawTarget;
+		}
+
+		const normalizedRawTarget = normalizeKey(rawTarget);
+		const normalizedPropertyKey = propertyKeys.find((key) => normalizeKey(key) === normalizedRawTarget);
+		if (normalizedPropertyKey) {
+			return normalizedPropertyKey;
+		}
+
+		const byDisplay = choices.find((item) => normalizeKey(item.display) === normalizedRawTarget);
+		if (byDisplay && properties[byDisplay.key]) {
+			return byDisplay.key;
+		}
+
+		const byChoiceKey = choices.find((item) => normalizeKey(item.key) === normalizedRawTarget);
+		if (byChoiceKey && properties[byChoiceKey.key]) {
+			return byChoiceKey.key;
+		}
+
+		return '';
+	}
+
+	function normalizeKey(value: string): string {
+		return String(value ?? '')
+			.toLowerCase()
+			.replace(/[^a-z0-9]/g, '');
+	}
+
+	function clearValidationErrorsForPrefix(prefix: string) {
+		validationStore.update((store) => {
+			if (!store) {
+				return store;
+			}
+
+			const simpleTypeValidationItems = store.simpleTypeValidationItems.map((item) => {
+				if (item.path.startsWith(prefix)) {
+					return {
+						...item,
+						isValid: true,
+						errorMessage: ''
+					};
+				}
+				return item;
+			});
+
+			return {
+				...store,
+				simpleTypeValidationItems,
+				complexTypeValidationItems: store.complexTypeValidationItems.map((item) => {
+					if (item.path?.startsWith && item.path.startsWith(prefix)) {
+						return {
+							...item,
+							errorMessage: ''
+						};
+					}
+					return item;
+				}),
+				allSimpleRequiredValid: simpleTypeValidationItems.every(
+					(item) => !item.required || item.isValid
+				)
+			};
+		});
+	}
+
+	function cleanupBranch(branchKey: string) {
+		if (!branchKey) {
+			return;
+		}
+
+		const branchPath = path + '.' + branchKey;
+		clearValidationErrorsForPrefix(branchPath);
+	}
+
+	function changeFn() {
+		// Selection changes are handled by the reactive target block above.
 	}
 
 </script>
@@ -62,41 +183,43 @@
 	{#if !$hideStore.includes(path) && $activeStore.includes(path)}
 	<div in:slide out:slide class="card px-5 py-4" id={path}>
 		{#if choiceComponent.oneOf}
-			<RadioGroup bind:value={target} on:change={changeFn}>
+			<RadioGroup on:change={changeFn}>
 			{#each choices as item}
-				<RadioItem bind:group={target} name="justify" title={item.key} label={item.key} value={item.value}> {item.key}</RadioItem>
+				<RadioItem bind:group={target} name={radioName} title={item.display} label={item.display} value={item.value}> {item.display}</RadioItem>
 			{/each}
 			</RadioGroup>
 		{/if}
 
-		{#if target && target.length > 0} 
+		{#if targetKey && targetKey.length > 0 && selectedChoice} 
 			{#if choiceComponent.oneOf}
-				{#if choiceComponent.properties[target].type === 'object' && choiceComponent.properties[target].properties && !choiceComponent.properties[target].properties['#text']}
+				{#if selectedChoice.type === 'object' && selectedChoice.properties && !selectedChoice.properties['#text']}
 	
 				<div class="grid grid-cols-1 gap-0 m-2">
-					<Header path = {path + '.' + target} />
+					<Header path = {path + '.' + targetKey} />
 					
-					{#if !$hideStore.includes(path + '.' + target) && $activeStore.includes(path)}
-					<div in:slide out:slide class="card px-5 py-4" id={path + '.' + target}>
-					{#key target}
+					{#if !$hideStore.includes(path + '.' + targetKey) && $activeStore.includes(path)}
+					<div in:slide out:slide class="card px-5 py-4" id={path + '.' + targetKey}>
+					{#key targetKey}
 					<ComplexComponent
-						complexComponent={choiceComponent.properties[target]}
-						path={path + '.' + target}
-						required={choiceComponent.required && choiceComponent.required.includes(target)}
+						complexComponent={selectedChoice}
+						path={path + '.' + targetKey}
+						required={true}
 					/>
 					{/key}
 					</div> 
 					{/if}
 				</div>
-				{:else if choiceComponent.properties[path + '.' + target].type === 'object' && choiceComponent.properties[path + '.' + target].properties['#text']}
+				{:else if selectedChoice.type === 'object' && selectedChoice.properties && selectedChoice.properties['#text']}
 					<div class="px-5 py-2">
+						{#key targetKey}
 						<SimpleComponent
-							simpleComponent={choiceComponent.properties[target].properties['#text']}
-							path={path + '.' + target}
-							required={choiceComponent.required && choiceComponent.required.includes(target)}
+							simpleComponent={selectedChoice.properties['#text']}
+							path={path + '.' + targetKey}
+							required={true}
 							value={null}
-							label={target}
+							label={targetKey}
 						/>
+						{/key}
 					</div>
 				{/if}
 			{/if}
@@ -104,6 +227,4 @@
 </div>
 {/if}
 </div>
-
-
 

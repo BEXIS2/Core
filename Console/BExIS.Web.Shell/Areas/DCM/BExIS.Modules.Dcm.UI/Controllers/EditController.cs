@@ -38,6 +38,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["app"] = SvelteHelper.GetApp(module);
             ViewData["start"] = SvelteHelper.GetStart(module);
 
+            using (var datasetmanager = new DatasetManager())
+            {
+                var dataset = datasetmanager.GetDataset(id);
+                ViewData["entity"] = dataset.EntityTemplate.EntityType.Name;
+            }
+
             return View();
         }
 

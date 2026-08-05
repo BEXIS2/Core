@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Terminology Widget",
-    "component_name": "terminology_v2.2.26",
+    "component_name": "terminology_v1.0.0",
     "author": "Franziska Zander",
     "version": "1.0.0",
     "description": "Component for Terminology selection based on the Terminology Services for NFDI"
@@ -9,10 +9,24 @@
   "globalSettings": {
     "globalsetting": [
       {
-        "name": "Parameter",
-        "description": "String to configure the terminology widget",
+        "target_variable": "TerminologyServiceUrl",
+        "name": "Terminology Service URL",
+        "description": "URL of the terminology service to use",
         "type": "string",
-        "target_variable": "",
+        "enum": [
+          "https://terminology.services.base4nfdi.de/api-gateway/",
+          "https://api.terminology.tib.eu/api/",
+          "https://ols3-semanticlookup.zbmed.de/ols/api/",
+          "https://semanticlookup.zbmed.de/ols/api/",
+          "https://www.ebi.ac.uk/ols4/api/"
+        ],
+        "default_value": "https://semanticlookup.zbmed.de/ols/api/"
+      },
+      {
+        "name": "Description",
+        "description": "Overwrite default description of the field.",
+        "type": "string",
+        "target_variable": "description",
         "default_value": {
           "type": "string",
           "value": ""
@@ -28,13 +42,23 @@
         "settings": {
           "setting": [
             {
-              "name": "Initial View Extent",
-              "description": "Initial map view extent",
+              "name": "Parameter",
+              "description": "String to configure the terminology widget. PLease check the documentation of the terminology service for the correct parameter format.(https://terminology.services.base4nfdi.de/tss/comp/latest/?path=/docs/html_search-autocompletewidget--docs)",
               "type": "string",
-              "target_variable": "initViewExtent",
+              "target_variable": "parameter",
               "default_value": {
                 "type": "string",
-                "value": "[10,10,35,40]"
+                "value": ""
+              }
+            },
+            {
+              "name": "allowCustomTerms",
+              "description": "Allow users to enter custom terms that are not in the terminology service",
+              "type": "boolean",
+              "target_variable": "allowCustomTerms",
+              "default_value": {
+                "type": "boolean",
+                "value": false
               }
             }
           ]
@@ -65,9 +89,7 @@
         "mode_name": "Linked Terminology Display",
         "description": "Mode for displaying linked terminology",
         "settings": {
-          "setting": [
-          
-          ]
+          "setting": []
         },
         "variables": {
           "variable": [

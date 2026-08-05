@@ -3,6 +3,8 @@
 	import Fa from "svelte-fa";
  import { faDownload, faSave } from "@fortawesome/free-solid-svg-icons";
 	import Request from "./Request.svelte";
+	import { positionType, Spinner } from "@bexis2/bexis2-core-ui";
+	import { ProgressRadial } from "@skeletonlabs/skeleton";
 
 
  export let id;
@@ -23,8 +25,9 @@ export let requestExist: boolean = false; // user has already requested the data
  export let total: number; // number of rows in dataset
 
  let withUnits = false;
- let exceptAgreement = false;
+ $:isDownloading = false;
  $:exceptAgreement = !isPublic || (isPublic && data_aggrement === "none") ? true : exceptAgreement;
+
  let excelMaxRows = 1048576;
  let selectedFormat = "";
 
@@ -49,6 +52,7 @@ export let requestExist: boolean = false; // user has already requested the data
 
 async function downloadDatasetFn()
 {
+  isDownloading = true;
   const res = await downloadZip(id, null, versionId);
   if(res)
   {
@@ -65,14 +69,18 @@ async function downloadDatasetFn()
   }
 }
 
+
+
 async function downloadDatasetWithFormatFn(event)
 {
-  
+
   const format = selectedFormat;
   if(format === 'application/xlsx' && total > excelMaxRows){
     alert(`The dataset has ${total} rows, which exceeds the maximum number of rows for Excel (${excelMaxRows}). Please choose another format.`);
     return;
   }
+
+  isDownloading = true;
 
   const res = await downloadZip(id, format, versionId, withUnits);
   
@@ -112,6 +120,8 @@ function sendDataTo(data, name, type)
 					window.URL.revokeObjectURL(url);
 			}
 
+      isDownloading = false;
+
 }
 
 
@@ -124,15 +134,25 @@ function sendDataTo(data, name, type)
  <div class="flex ">
   <h4 class="h4 grow">Download</h4> 
 </div>
-
-  <div class="input-group input-group-divider grid-cols-[1fr_auto]">
+   
+  <div class="input-group input-group-divider grid-cols-[1fr_auto]" >
+    
     <select class="select" bind:value={selectedFormat} >
       <option value="" disabled selected hidden>- Select a format -</option>
       {#each downloadFormats as d}
         <option value={d.value}>{d.label}</option>
       {/each}
     </select>
-    <button class:variant-filled-primary={selectedFormat !== ''} class:variant-ghost-primary={selectedFormat === ''} disabled={!exceptAgreement || selectedFormat == ''} on:click={downloadDatasetWithFormatFn}><Fa icon={faDownload} /></button>
+    
+    <button class:variant-filled-primary={selectedFormat !== ''} class:variant-ghost-primary={selectedFormat === ''} disabled={!exceptAgreement || selectedFormat == ''} on:click={downloadDatasetWithFormatFn}>
+    {#if isDownloading}
+      <!-- <Spinner position="{positionType.center}" label="Downloading..." /> -->
+       <ProgressRadial width="w-6"  stroke={60}  meter="stroke-tertiary-500" track="stroke-primary-500/30" strokeLinecap="round"/>
+    {:else}
+      <Fa icon={faDownload} />    
+    {/if}    
+    </button>
+  
   </div>
 </div>
 <div class="padding-top-5 position-releative flex flex-col gap-2">
@@ -147,10 +167,10 @@ function sendDataTo(data, name, type)
 
   <button class="btn" class:variant-filled-primary={exceptAgreement} class:variant-ghost-primary={!exceptAgreement}  disabled={!exceptAgreement} on:click={() => downloadDatasetFn()}>
    <!-- svelte-ignore missing-declaration -->
-   <Fa icon={faSave} />
+   {#if isDownloading}<Spinner />{:else}<Fa icon={faDownload} />{/if}
    <span class="padding-left-5">Download</span>
   </button>
- 
+
  {/if}
 
 {#if isPublic &&  data_aggrement === "data policy"}

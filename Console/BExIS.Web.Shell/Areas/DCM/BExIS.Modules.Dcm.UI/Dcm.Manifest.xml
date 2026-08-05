@@ -40,6 +40,10 @@
             controller="entitytemplates" action="" argument=""
             extends="./settingsRoot" />
 
+		<Export tag="settings" id="manageCustomUI" order="1"
+            title="Manage Custom UI" description="..." icon=""
+            controller="componentconfig" action="" argument=""
+            extends="./settingsRoot" />
 		<!-- INTERNAL-->
 
 		<Export tag="internalApi" id="loadFromFromExternal"

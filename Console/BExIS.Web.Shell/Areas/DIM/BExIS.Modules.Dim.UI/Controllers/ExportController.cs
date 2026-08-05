@@ -415,17 +415,24 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                                 }
 
-                                var refVersion = datasetManager.GetDatasetVersion(r.TargetId, versionNr);
-
-                                string rPath = outputDataManager.GenerateAsciiFile(ext.Id, refVersion.Id, format, false, false);
-
-                                if (System.IO.File.Exists(rPath))
+                                if (structureId > 0) // add data if structure exist
                                 {
-                                    // reigister it maybe in the general metadata json
-                                    string extensionName = IOHelper.GetExtensionFileName(FileType.PrimaryData, id, datasetVersionNumber, dataStructureId, r.ReferenceType, r.TargetId, versionNr, tagNr, useTags);
-                                    string extPath = "Extension/"+extensionName;
-                                    archive.AddFileToArchive(rPath, extPath);
-                                    files.Add(extPath);
+                                    var refVersion = datasetManager.GetDatasetVersion(r.TargetId, versionNr);
+
+                                    string rPath = outputDataManager.GenerateAsciiFile(ext.Id, refVersion.Id, format, false, false);
+
+                                    if (System.IO.File.Exists(rPath))
+                                    {
+                                        // reigister it maybe in the general metadata json
+                                        string extensionName = IOHelper.GetExtensionFileName(FileType.PrimaryData, id, datasetVersionNumber, dataStructureId, r.ReferenceType, r.TargetId, versionNr, tagNr, useTags);
+                                        string extPath = "Extension/" + extensionName;
+                                        archive.AddFileToArchive(rPath, extPath);
+                                        files.Add(extPath);
+                                    }
+                                }
+                                else
+                                { 
+                                    
                                 }
                             }
                         }

@@ -3,7 +3,7 @@
 
     let title: string = "";
     if (value.length > 180) {
-        title = value.slice(0, 180) + '...';
+        title = value;
     }
 </script>
 

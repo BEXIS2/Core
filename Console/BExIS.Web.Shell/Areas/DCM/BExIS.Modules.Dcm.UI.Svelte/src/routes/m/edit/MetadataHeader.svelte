@@ -71,7 +71,13 @@
   function hasErrors(key) {
 
    if(validationStoreValues){
-    const invalidParts = validationStoreValues.simpleTypeValidationItems.filter(item => item.path.startsWith(key) && item.isValid === false);
+    const invalidParts = validationStoreValues.simpleTypeValidationItems.filter(
+      item =>
+        item.path.startsWith(key) &&
+        item.isValid === false &&
+        item.errorMessage &&
+        item.errorMessage.trim() !== ''
+    );
      return (invalidParts && invalidParts.length > 0);
    };
   }

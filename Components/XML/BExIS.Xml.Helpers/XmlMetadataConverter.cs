@@ -398,12 +398,15 @@ namespace BExIS.Xml.Helpers
                 if (Int64.TryParse(metadataJson.Property("@id").Value.ToString(), out id))
                 {
                     XmlMetadataWriter writer = new XmlMetadataWriter(XmlNodeMode.xPath);
+                    // we need all xpaths, choices should also be created weven its not valid.
+                    // only to have all xptahs
+                    XmlDocument targetAllChildrens = XmlUtility.ToXmlDocument(writer.CreateMetadataXml(id, null, true));
                     XmlDocument target = XmlUtility.ToXmlDocument(writer.CreateMetadataXml(id));
 
                     var source = JsonConvert.DeserializeXmlNode(metadataJson.ToString(), "Metadata");
 
                     // generate dictionary with source path as key and target path as value
-                    mappings = getXPathMapping(target);
+                    mappings = getXPathMapping(targetAllChildrens);
 
                     /// put the incoming xml to the internal structure
                     /// BUT if there are elements with index >1 then the attributes like id,roleid are not set
@@ -499,6 +502,9 @@ namespace BExIS.Xml.Helpers
                 // if a xml element has text, then there is a child of type xmltext
                 if (!string.IsNullOrEmpty(sourceNode.InnerText) == sourceNode.LastChild is XmlText)
                     destinationNode.InnerText = sourceNode.InnerText;
+
+                // if the element is a choice, its not created in the metadata, so it must be filled 
+
 
                 // add dynamic att
                 if (sourceNode.Attributes.Count > 0) // may not add if attr is empty

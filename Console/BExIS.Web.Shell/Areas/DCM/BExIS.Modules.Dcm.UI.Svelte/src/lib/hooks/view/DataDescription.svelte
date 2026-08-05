@@ -5,7 +5,7 @@
 	import { onMount } from "svelte";
 	import Fa from "svelte-fa";
 	import { faMaximize } from "@fortawesome/free-solid-svg-icons";
-	import { goTo, goToEntity } from "$services/BaseCaller";
+	import { goTo } from "$services/BaseCaller";
 
 
 	export let id = 0;
@@ -23,13 +23,15 @@
 	});
 
 
+
 </script>
 
 
 <div class="flex justify-between items-center">
 	<h3 class="h3">Data Description</h3>
+	
 	<div class="flex justify-end">
-		<a href="datadescription?id={id}" class="badge text-lg"><Fa	icon="{faMaximize}"/></a>
+		<a on:click={()=>	goTo('/dcm/view/datadescription?id='+id+'&version='+version, true)} class="badge text-lg"><Fa	icon="{faMaximize}"/></a>
 	</div>
 </div>
 

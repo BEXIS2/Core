@@ -22,14 +22,13 @@
  const togglePath = p!=='' ? p : path; 
  
  onMount(() => {
-  // console.log('MetadataComponentHeader mounted with path: ', path);   
     if(!$activeStore.includes(path)) {
       initActivity();
     }
     else {
       active = true;
     }
-    console.log('init-active', $activeStore);
+    console.log('init-active',path, $activeStore);
  });
 
 function initActivity() {

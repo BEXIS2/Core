@@ -95,6 +95,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         //if data structure is there,  check also if data is there
                         model.HasData = datasetManager.RowAny(model.Id);
+                        
                     }
 
                     // set enable edit rights for strtucture

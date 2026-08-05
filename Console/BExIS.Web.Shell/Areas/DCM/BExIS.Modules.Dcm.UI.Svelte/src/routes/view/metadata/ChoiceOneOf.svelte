@@ -2,7 +2,7 @@
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from './simpleComponent.svelte';
-	import { removeFromMetadataStore, toggleShow, updateMetadataStore } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { isActive, removeFromMetadataStore, toggleShow, updateMetadataStore } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { activeStore, hideStore } from '$lib/components/utils/metadata/stores';
 
 	import { slide } from 'svelte/transition';
@@ -11,10 +11,11 @@
 	export let choiceComponent: any;
 	export let path: string;
 
+	let target="";
 
 	let label = path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path;
 	let choices: {key:string, value:string}[] = getChoices(choiceComponent);
-	let target;
+
 
 	$:{
 		console.log("target", target);
@@ -36,12 +37,16 @@
 
 			for (let key in e.properties)
 			{
-				let item = e.properties[key];
 
-				c.push({
-					key: item['$ref'].split('/')[item['$ref'].split('/').length - 1],
-					value: item['$ref'].split('/')[item['$ref'].split('/').length - 1]
-				});
+				if(isActive(path+"."+key,false)){ 
+						target =	key; 
+						let item = e.properties[key];
+
+						c.push({
+							key: item['$ref'].split('/')[item['$ref'].split('/').length - 1],
+							value: item['$ref'].split('/')[item['$ref'].split('/').length - 1]
+						});
+				}
 			}
 			});
 		}
@@ -49,8 +54,8 @@
 	}	
 
 	function changeFn(t) {
-		console.log("changeFn",t, target);
-		if (choiceComponent.oneOf != null && choiceComponent.oneOf != undefined && choiceComponent.oneOf.length > 0) {
+		console.log("changeFn",t, target, choiceComponent);
+		if (choiceComponent.oneOf != null && choiceComponent.oneOf != undefined && choiceComponent.oneOf.length <= 0) {
 			removeFromMetadataStore(path);
 		}
 	}
@@ -58,24 +63,25 @@
 </script>
 
 <div class="grid grid-cols-1 gap-0 m-2">
-		<Header {path} />
+		<Header {path} p={path}/>
+	
 	{#if !$hideStore.includes(path) && $activeStore.includes(path)}
 	<div in:slide out:slide class="px-5 " id={path}>
 		{#if choiceComponent.oneOf}
 			<RadioGroup bind:value={target} on:change={changeFn}>
 			{#each choices as item}
+
 				<RadioItem bind:group={target} name="justify" title={item.key} label={item.key} value={item.value}> {item.key}</RadioItem>
 			{/each}
 			</RadioGroup>
 		{/if}
-
+			
 		{#if target && target.length > 0} 
 			{#if choiceComponent.oneOf}
 				{#if choiceComponent.properties[target].type === 'object' && choiceComponent.properties[target].properties && !choiceComponent.properties[target].properties['#text']}
 	
 				<div class="grid grid-cols-1 gap-0 m-2">
 					<!-- <Header path = {path + '.' + target} /> -->
-					
 					{#if !$hideStore.includes(path + '.' + target) && $activeStore.includes(path)}
 					<div in:slide out:slide class="card px-5 " id={path + '.' + target}>
 					{#key target}

@@ -4,6 +4,8 @@ import type { SystemMappingEditModel } from '../../../../routes/m/edit/types';
 
 export const metadataStore = writable<any>();
 
+export const schemaStore = writable<any>();
+
 export const configStore = writable<any>();
 
 export const systemMappingsStore = writable<SystemMappingEditModel>();

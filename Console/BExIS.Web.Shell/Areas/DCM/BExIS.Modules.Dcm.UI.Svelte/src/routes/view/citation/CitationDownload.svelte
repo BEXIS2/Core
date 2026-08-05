@@ -9,6 +9,7 @@ import {CitationFormat} from "$models/View";
 export let id = 0;
 export let version = 0;;
 export let tag = 0;
+export let useTags:boolean = false;
 
  let selectedFormat:number = -1;
  $:selectedFormat, console.log("🚀 ~ selectedFormat:", selectedFormat, downloadAccess), downloadAccess = selectedFormat !== -1?true:false;
@@ -55,20 +56,24 @@ onMount(async() => {
 
 async function downloadCitationFn()
 {
-  const res = await getCitationText(id, version, tag, selectedFormat);
 
-  navigator.clipboard.writeText(res)
-    .then(() => {
-      console.log('Text copied successfully!');
+  const res = await getCitationText(id, version, tag, selectedFormat, useTags);
+  console.log("🚀 ~ downloadCitationFn ~ res:", res)
 
-      const format = downloadFormats.find(f => f.value === selectedFormat)?.format || 'txt';
+  const format = downloadFormats.find(f => f.value === selectedFormat)?.format || 'txt';
+  fileDownload(res, `${filename}.${format}`);
 
-      fileDownload(res, `${filename}.${format}`);
+  const canUseClipboard = !!navigator.clipboard?.writeText && document.hasFocus();
 
-    })
-    .catch(err => {
-      console.error('Failed to copy text: ', err);
-    });
+  if (!canUseClipboard) {
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(res);
+  } catch (err) {
+    console.warn('Clipboard copy skipped: ', err);
+  }
 }
 
 

@@ -3,8 +3,6 @@
 	import { Page, pageContentLayoutType } from "@bexis2/bexis2-core-ui";
 	import PrimaryData from "$lib/components/data/PrimaryData.svelte";
 	import { onMount } from "svelte";
-	import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-	import Fa from "svelte-fa";
 	import Back from "$lib/components/utils/Back.svelte";
  
 
@@ -13,14 +11,16 @@ export let id = 0;
 export let version = 1;
 export let	versionId	= -1;
 
-	onMount(async () => {
+$:id;
+
+onMount(async () => {
 
 	 let container;
   container = document.getElementById('data');
 		id = container?.getAttribute('dataset');
 		version = container?.getAttribute('version');
 		versionId = container?.getAttribute('versionId');
-
+  
 
 	});
 
@@ -32,7 +32,7 @@ export let	versionId	= -1;
 	<Back	/>
  
 	{#if id	> 0}
-		<PrimaryData {id} {version} />
+		<PrimaryData {id} {version} {versionId}/>
 	{:else}
 		<p class="text-center text-lg">No data available</p>
 	{/if}

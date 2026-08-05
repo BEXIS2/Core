@@ -28,6 +28,8 @@
 	import DataDescription from '$lib/hooks/view/DataDescription.svelte';
 	import Data from '$lib/hooks/view/Data.svelte';
 	import Link from '$lib/hooks/view/Link.svelte';
+	import Back from '$lib/components/utils/Back.svelte';
+	import Attachment from '$lib/hooks/view/Attachment.svelte';
 
 	let title = '';
 
@@ -44,6 +46,9 @@
 	let linkHook;
 	let dataHook;
 	let attachmentsHook;
+	let entityName;
+
+	let useTags: boolean = false;
 
 	let addtionalhooks: HookModel[];
 	$: addtionalhooks = [];
@@ -80,6 +85,7 @@
 			version = model.version;
 			id = model.id;
 			tag = model.tag;
+			entityName = model.entityName;
 
 			console.log('model',model);
 			console.log('hooks', hooks);
@@ -144,18 +150,20 @@
 				<Spinner position={positionType.center} label="loading entity" />
 			</div>
 		{:then result}
-		
-		<Header	
+
+	 <Header	
 			{id} 
 			{version} 
 			{tag}
 			{title} 
+			{entityName}
 			labels = {model.labels} 
 			license = {model.additionalInformations['license']} 
 			{isPartOfCollection} 
 			hasEditRight={model.hasEditRight}
 			isPublic={model.isPublic}
 			publicationDate={model.publicationDate}
+
 			/>
 
 		<div class="flex">
@@ -166,35 +174,38 @@
 						</div>
 					{/if}
 
-				<div class="flex flex-col ml-5 gap-3 w-1/4">
+					{#if entityName?.toLowerCase()!='extension'}
 
-					 <CitationDownload	{id} {version} {tag} />
+						<div class="flex flex-col ml-5 gap-3 w-1/4">
 
-						<Download {id} {version}
-						 versionId={model.versionId}
-							downloadAccess= {model.downloadAccess}
-							hasDatastructure= {model.dataStructureId	!== undefined && model.dataStructureId > 0}
-							hasData= {model.hasData}
-							isPublic= {model.isPublic}
-							data_aggrement = {model.settings.dataAggrement}
-							total = {model.count}
-							requestAble = {model.requestAble}
-							hasRequestRight = {model.hasRequestRight}
-							requestExist = {model.requestExist}
-						/> 
-						{#if model.settings.useTags}
-						 <Tags  {id} {version}  tag={model.tag}/>
-							{:else}
-							<Versions	{id} {version} />	
+								<CitationDownload	{id} {version} {tag} {useTags} />
+
+								<Download {id} {version}
+									versionId={model.versionId}
+									downloadAccess= {model.downloadAccess}
+									hasDatastructure= {model.dataStructureId	!== undefined && model.dataStructureId > 0}
+									hasData= {model.hasData}
+									isPublic= {model.isPublic}
+									data_aggrement = {model.settings.dataAggrement}
+									total = {model.count}
+									requestAble = {model.requestAble}
+									hasRequestRight = {model.hasRequestRight}
+									requestExist = {model.requestExist}
+								/> 
+								{#if model.settings.useTags}
+									<Tags  {id} {version}  tag={model.tag}/>
+									{:else}
+									<Versions	{id} {version} />	
+								{/if}
+
+								<Funding f={model.additionalInformations['funder']}  />
+								<Keywords k={model.additionalInformations['keyword']} />
+						</div>
 						{/if}
-
-						<Funding f={model.additionalInformations['funder']}  />
-						<Keywords k={model.additionalInformations['keyword']} />
-				</div>
 		</div>
 
 
-		{#if linkHook }
+		{#if linkHook && entityName?.toLowerCase()!='extension' }
 
 				<Link	links={model.links.to} />
 
@@ -211,7 +222,10 @@
 			<Data {id} {version} hook={dataHook}/>
 		{/if}
 
-	
+		{#if attachmentsHook}
+			<Attachment {id} {version} hook={attachmentsHook}/>
+		{/if}
+
   {#if model.downloadAccess && addtionalhooks	&& addtionalhooks.length > 0	}
 			<Hooks	{id} {version} hooks={addtionalhooks} />
 		{/if}

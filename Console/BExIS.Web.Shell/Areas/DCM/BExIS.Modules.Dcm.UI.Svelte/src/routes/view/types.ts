@@ -4,6 +4,7 @@ import type { date } from "vest/enforce/date";
 
 export interface ViewModel extends ApiDatasetModel {
     settings: ViewSettings;
+    entityName: string;
     hasData: boolean;
     count: number;
     isValid: boolean;
