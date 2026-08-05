@@ -7,11 +7,12 @@
 	import { slide, fade } from 'svelte/transition';
 	import { activeStore, hideStore, metadataStore } from '$lib/components/utils/metadata/stores';
 	import Header from './MetadataComponentHeader.svelte';
-	import { getValueByPath, hasValue } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { getValueByPath, hasValue, hasValueAtPath } from '$lib/components/utils/metadata/metadataComponentUtils';
 
 	export let complexComponent: any;
 	export let path: string;
 	export let required: boolean = false;
+	export let backgroundClass: string = '';
 
 	let label: string =
 		path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path;
@@ -81,9 +82,10 @@
 	{#each Object.entries(complexComponent.properties) as [key, value]}
 		{@const p = path = path ? path + '.' + key : key}
 		{@const l = label = key}
-		{#if value.type === 'object' && value.properties && !value.properties['#text']}
+		{#if value.type === 'object' && value.properties && !value.properties['#text'] } 
+		<!--&& hasValueAtPath(p)-->
 			<div
-				class="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 p-2 rounded-xl flex flex-col ml-2"
+		
 			>
 				{#if value.oneOf || value.anyOf || value.allOf}
 					<ChoiceComponent choiceComponent={value} {path} />
@@ -94,7 +96,7 @@
 					{#if !$hideStore.includes(path) && $activeStore.includes(path)}
 						<Header {required} {path} {p} description={value.description} />
 
-						<div in:slide out:slide class="" id={path}>
+						 <div class="bg-gray-50 dark:bg-gray-900/50 rounded-xl flex flex-col {path.includes('.') ? '' : 'border border-gray-300'} pr-2" id={path}>
 							<ComplexComponent
 								complexComponent={value}
 								{path}
@@ -104,7 +106,7 @@
 					{:else}
 						<Header {required} {path} {p} description={value.description} />
 
-						<div in:slide out:slide class="" id={path}>
+						<div class="" id={path}>
 							<ComplexComponent
 								complexComponent={value}
 								{path}
@@ -115,14 +117,15 @@
 				{/if}
 			</div>
 		{:else if value.type === 'object' && value.properties['#text']}
-			{#if hasValue(path)}
-				<div class="mb-2">
-					<div class="flex flex-col pl-5 md:flex-row md:items-center gap-2">
+			{#if 1==1 || hasValueAtPath(p)}
+				<div class="">
+					<div class="flex flex-col md:flex-row md:items-center gap-2">
 						<div class="flex-1 min-w-[100px]">
 							<SimpleComponent
 								simpleComponent={value}
 								{path}
 								required={requiredList.includes(key)}
+								backgroundClass={backgroundClass}
 							/>
 						</div>
 					</div>
@@ -130,9 +133,9 @@
 			{/if}
 		{:else if value.type === 'array' && value.items}
 			<div
-				class="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 p-2 rounded-xl flex flex-col ml-2"
+				class=" dark:bg-gray-900/50  rounded-xl flex flex-col "
 			>
-				<ArrayComponent arrayComponent={value} {path} />
+				<ArrayComponent arrayComponent={value} {path} backgroundClass={backgroundClass} />
 			</div>
 		{/if}
 	{/each}

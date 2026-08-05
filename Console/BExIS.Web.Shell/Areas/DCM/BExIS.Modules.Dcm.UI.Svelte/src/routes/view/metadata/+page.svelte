@@ -145,6 +145,13 @@
     URL.revokeObjectURL(link.href);
 }
 
+function activateShow(key: string) {
+	const element = document.getElementById(key);
+	if (element) {
+		element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+	}
+}
+
 </script>
 
 
@@ -165,7 +172,7 @@
 			</div>
 
 
-<div class="w-full lg:w-[45%] xl:w-[35%] flex flex-col gap-3 ml-4">
+<div class="w-full lg:w-[35%] xl:w-[25%] flex flex-col gap-3 ml-4">
     
 <h3 class="h3 font-semibold text-gray-700 dark:text-gray-300  whitespace-nowrap">Metadata Overview</h3>
 
@@ -176,24 +183,24 @@
 
     <h2 class="h3 font-semibold text-gray-700 dark:text-gray-300  whitespace-nowrap">Download Metadata</h2>
     
-    <div class="grid grid-cols-2 gap-3 w-full">
+	<div class="flex flex-wrap gap-2">
         
-        <button class="btn variant-filled-primary flex items-center justify-center gap-2 whitespace-nowrap w-full" 
+		<button class="btn variant-filled-primary inline-flex items-center justify-center gap-2 whitespace-nowrap px-3 py-2 text-sm min-w-[120px]" 
                 on:click={() => DownloadMetadata(id, version, "json")}>
             <Fa icon={faDownload} /><span>JSON</span>
         </button>
         
-        <button class="btn variant-filled-primary flex items-center justify-center gap-2 whitespace-nowrap w-full" 
+		<button class="btn variant-filled-primary inline-flex items-center justify-center gap-2 whitespace-nowrap px-3 py-2 text-sm min-w-[120px]" 
                 on:click={() => DownloadMetadata(id, version, "xml")}>
             <Fa icon={faDownload} /><span>XML</span>
         </button>
         
-        <button class="btn variant-filled-primary flex items-center justify-center gap-2 whitespace-nowrap w-full" 
+		<button class="btn variant-filled-primary inline-flex items-center justify-center gap-2 whitespace-nowrap px-3 py-2 text-sm min-w-[120px]" 
                 on:click={() => DownloadMetadata(id, version, "flatten")}>
             <Fa icon={faDownload} /><span>Text</span>
         </button>
         
-        <button class="btn variant-filled-primary flex items-center justify-center gap-2 whitespace-nowrap w-full" 
+		<button class="btn variant-filled-primary inline-flex items-center justify-center gap-2 whitespace-nowrap px-3 py-2 text-sm min-w-[120px]" 
                 on:click={() => downloadSectionWithCSS('metadata-content', `metadata_${id}_v${version}.html`)}>
             <Fa icon={faDownload} /><span>HTML</span>
         </button>

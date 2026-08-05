@@ -16,6 +16,10 @@
  let active: boolean = false;
  $:active;
 
+ $: depth = Math.max(0, path.split('.').length - 1);
+ $: leftIndentPx = depth * 12;
+
+
  let label: string = path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path;
  let showDescription: boolean = false;
 
@@ -47,11 +51,21 @@ function initActivity() {
 
 
 <div class="flex h-10 dark:bg-primary-500 items-center">
- <div class="text-left grow pl-2">
-	   <h3 id ={path} class="text-md font-bold">
+<!--if depth is greater than 0, add a left border to indicate hierarchy-->
+
+ {#if depth == 0}
+   <div class="text-left grow pl-2 pt-2" >
+   <h4 id ={path} class="text-md font-bold h4">
       {convertDisplayName(label, true)} 
-    </h3>
+    </h4>
+    </div>
+ {:else}
+ <div class="text-left grow" style={`padding-left: ${leftIndentPx }px`}>
+	   <h5 id ={path} class="text-md font-bold h5">
+      {convertDisplayName(label, true)} 
+    </h5>
  </div>
+ {/if}
 
  {#if description && showDescription}
   <div	class="text-sm text-gray-500 py-1">{@html description}</div>
