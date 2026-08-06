@@ -2,16 +2,15 @@
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from './simpleComponent.svelte';
 	import ChoiceComponent from './choiceComponentWrapper.svelte';
-	import { setValueByPath, updateMetadataStore, schemaToJson, toggleShow, getNodeByPath } from '$lib/components/utils/metadata/metadataComponentUtils';
-	import { faPlus, faChevronUp, faChevronDown, faTrash } from '@fortawesome/free-solid-svg-icons';
-	import Fa from 'svelte-fa';
-	import { slide, fade } from 'svelte/transition';
-	import { activeStore, hideStore } from '$lib/components/utils/metadata/stores';
+	import { getNodeByPath } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { slide } from 'svelte/transition';
+	import { hideStore, metadataStore } from '$lib/components/utils/metadata/stores';
 	import { convertDisplayName } from '$lib/components/utils/metadata/metadataShared';
 	import Header from './MetadataComponentHeader.svelte';
 
 	export let arrayComponent: any;
 	export let path: string;
+	export let backgroundClass: string = '';
 
 	let label = path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path;
 	let requiredList =
@@ -20,15 +19,18 @@
 			: [];
 
 	let value = getNodeByPath(path) == undefined ? [] : getNodeByPath(path);
+	// $: value = ($metadataStore, getNodeByPath(path) == undefined ? [] : getNodeByPath(path));
 	let render: boolean = false;
 
+	$: depth = Math.max(0, path.split('.').length - 1);
+ 	$: leftIndentPx = depth * 12;
 </script>
 
 {#if arrayComponent.items}
 	<div class="" id={path}>
 		{#key render}
 			{#if arrayComponent.items.type === 'object' && arrayComponent.items.properties && !arrayComponent.items.properties['#text']}
-				<div class="grid card grid-cols-1 pl-5 gap-0">
+				<div class="grid  grid-cols-1 gap-0">
 				 <!-- <b>array : {$activeStore.includes(path)}</b> -->
 					{#if arrayComponent.items.anyOf || arrayComponent.items.allOf}
 
@@ -46,16 +48,22 @@
 								<div in:slide out:slide>
 									<!-- <div class="grid pt-2 grid-cols-2 gap-2"> -->
 									<div class="grid pt-2 grid-cols-2 gap-2">
-									<div>
-										<b> {convertDisplayName(label, true)} {index+1}</b>
+									{#if index == 0}
+									<Header
+										path={path }
+										required={requiredList.includes(label)}
+										p={path}
+										description={arrayComponent.items.description}
+									/>
+									{/if}		
 									</div>
 									
-									</div>
-									<div>					
+									 <div in:slide out:slide class="bg-gray-50 dark:bg-gray-900/50 rounded-xl flex flex-col border border-gray-200 pr-2	" style={`margin-left: ${leftIndentPx}px`}>
 										<ComplexComponent
 											complexComponent={arrayComponent.items}
 											path={path + '.' + index}
 											required={requiredList.includes(label)}
+											backgroundClass={"bg-gray-50 dark:bg-gray-900/50"}
 										/>
 									</div>
 								</div>
@@ -70,7 +78,7 @@
 				{#if value && value.length > 0}
 						<div in:slide out:slide >
 							<div class="flex flex-col md:flex-row md:items-center gap-2">
-								<div class="flex-1 pl-5 min-w-[100px]">
+								<div class="flex-1  min-w-[100px]">
 									<SimpleComponent
 										simpleComponent={arrayComponent.items}
 										path={path}

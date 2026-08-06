@@ -32,7 +32,6 @@
 
 
 </script>
-					<b>asdf</b>
 	{#if type }
 		{#if type == 'oneOf'}
 			<ChoiceOneOf	choiceComponent={choiceComponent} {path} />

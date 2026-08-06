@@ -7,6 +7,7 @@
 	export let simpleComponent: any;
 	export let path: string;
 	export let required: boolean = false;
+	export let backgroundClass: string = '';
 
 	let label: string = !path
 		? ''
@@ -18,6 +19,6 @@
 </script>
 
 {#if path && simpleComponent.properties}
-	<SimpleComponent {simpleComponent} {path} {required} {label} {value} />
+	<SimpleComponent {simpleComponent} {path} {required} {label} {value} {backgroundClass} />
 {/if}
 

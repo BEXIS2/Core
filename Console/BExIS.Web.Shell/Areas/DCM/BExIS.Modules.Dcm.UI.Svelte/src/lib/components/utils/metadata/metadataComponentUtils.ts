@@ -584,7 +584,7 @@ export function createSimpleComponentValidationItem(path: string, label: string,
 		simpleComponentValidationItem.upperBound = item.upperBound;
 	}
 
-	// type secific	validation criteria
+	// type specific	validation criteria
 	// set minium if if defined
 	if ((item.minimum && item.minimum != undefined && item.minimum != null && item.minimum != '') || item.minimum == 0) {
 		simpleComponentValidationItem.minimum = item.minimum;
@@ -790,4 +790,44 @@ export function registerValidationItem(
 	}
 }
 
+export function getAtPath(path) {
+  const segments = path.split('.');
 
+  let current = metadataStore ? get(metadataStore) : null; // Start with the metadata store if available
+  for (const segment of segments) {
+    if (current == null) return undefined;
+    current = Array.isArray(current)
+      ? current[Number(segment)]
+      : current[segment];
+  }
+  return current;
+}
+
+/** Recursively checks for any non-empty "#text" under a node, ignoring @-attributes */
+export function hasAnyValue(node) {
+  if (node == null) return false;
+
+  if (Array.isArray(node)) {
+    return node.some(hasAnyValue);
+  }
+
+  if (typeof node === 'object') {
+    for (const [key, value] of Object.entries(node)) {
+      if (key.startsWith('@')) continue;       // skip @ref, @partyid, @function...
+      if (key === '#text') {
+        if (typeof value === 'string' && value.trim() !== '') return true;
+        continue;
+      }
+      if (hasAnyValue(value)) return true;
+    }
+    return false;
+  }
+
+  // bare primitive (rare in this schema, but handle it)
+  return typeof node === 'string' ? node.trim() !== '' : Boolean(node);
+}
+
+/** Public helper: does the given dot-path contain any real value? */
+export function hasValueAtPath( path) {
+  return hasAnyValue(getAtPath( path));
+}

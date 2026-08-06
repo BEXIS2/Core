@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import {
 		updateMetadataStore,
 		getFullConfig,
@@ -112,10 +112,7 @@
 		}
 	});
 
-	onDestroy(() => {
-		// cleanup validation item when component is destroyed
-		ValidationStoreSetSimpleTypeValid(term_field_path, true, '');
-	});
+	// Keep validation state when component is temporarily unmounted (e.g., collapsed section).
 
 	async function validatePreselectedTerm(refValue: string): Promise<boolean> {
 		try {
