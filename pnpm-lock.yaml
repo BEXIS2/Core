@@ -108,8 +108,8 @@ importers:
   Console/BExIS.Web.Shell.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.98
-        version: 0.4.98(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.99
+        version: 0.4.99(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       buffer:
         specifier: 6.0.3
         version: 6.0.3
@@ -148,8 +148,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/DCM/BExIS.Modules.Dcm.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.98
-        version: 0.4.98(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.99
+        version: 0.4.99(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@bexis2/bexis2-rpm-ui':
         specifier: 0.4.0
         version: 0.4.0(svelte@4.2.20)(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
@@ -196,8 +196,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/DDM/BExIS.Modules.Ddm.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.98
-        version: 0.4.98(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.99
+        version: 0.4.99(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -220,8 +220,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/DIM/BExIS.Modules.Dim.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.98
-        version: 0.4.98(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.99
+        version: 0.4.99(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -244,8 +244,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/PUM/BExIS.Modules.Pum.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.98
-        version: 0.4.98(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.99
+        version: 0.4.99(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -269,8 +269,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/RPM/BExIS.Modules.Rpm.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.98
-        version: 0.4.98(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.99
+        version: 0.4.99(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -284,8 +284,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/SAM/BExIS.Modules.Sam.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.98
-        version: 0.4.98(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.99
+        version: 0.4.99(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -305,8 +305,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/SMM/BExIS.Modules.SMM.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.98
-        version: 0.4.98(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.99
+        version: 0.4.99(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -336,8 +336,8 @@ packages:
   '@bexis2/bexis2-core-ui@0.4.88':
     resolution: {integrity: sha512-kdHwyWQ967XSRe6HyTTmFLUrW6BQDV3NC9K/J1vJdkND0rDhUUpbfXpR0ZPwlpsGnqOPnMIiZBdajHcDuJYmhA==}
 
-  '@bexis2/bexis2-core-ui@0.4.98':
-    resolution: {integrity: sha512-P+VElZy9qjUKqebYFoS24YKYC28Kl2NFLLqtd8lg7woEacXRtPZKAdnr+Qn90l/OvpQGIWYTG2rEr30NRGXl/g==}
+  '@bexis2/bexis2-core-ui@0.4.99':
+    resolution: {integrity: sha512-m5JLic5X5W4dcvPgqEVou1nlz32Pkb0sY3prVlnSfZaPDoxwKPqqZnHy0Sxjn4WDQuIOPa9vYq41pk+6u02jog==}
 
   '@bexis2/bexis2-rpm-ui@0.4.0':
     resolution: {integrity: sha512-GbK7UYdBfBjFr0DspcXNuxEu4f/pWYTBaNXbDK7pt6t3fkhpHawHk1CrCZpKbxg/Sq09NjxZTiGx1uze90Uu5w==}
@@ -2632,7 +2632,7 @@ snapshots:
       - typescript
       - vite
 
-  '@bexis2/bexis2-core-ui@0.4.98(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))':
+  '@bexis2/bexis2-core-ui@0.4.99(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))':
     dependencies:
       '@codemirror/lang-html': 6.4.11
       '@codemirror/lang-javascript': 6.2.5

@@ -3,42 +3,32 @@
 		TextInput,
 		NumberInput,
 		TextArea,
-		DropdownKVP,
 		Dropdown,
-		helpStore,
-		CodeEditor,
 		MultiSelect,
 		DatePickerInput,
 		Checkbox
 
 	} from '@bexis2/bexis2-core-ui';
-	import { SlideToggle } from '@skeletonlabs/skeleton';
+
 	import { onMount } from 'svelte';
 	import {
-		ValidationStoreSetSimpleTypeValid,
 		updateMetadataStore,
-		getConfigStore,
-		getValidationStore,
 		showDescriptionHandler,
 		hideDescriptionHandler,
 		updateValidationState,
 		registerValidationItem
 	} from '$lib/components/utils/metadata/metadataComponentUtils';
-	import { customComponentsCatalog } from '$lib/components/customComponents/componentCatalog';
+
 	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
 	import type {
 		MappingComponentConfig,
-		SimpleComponentData
 	} from '$lib/components/utils/metadata/models';
-	import SveltyPicker from 'svelty-picker';
 	import { convertDisplayName } from '../../../lib/components/utils/metadata/metadataShared';
 	import type { JsonListItem } from '../components/types';
 	import Blocked from './Blocked.svelte';
 	import PartySelector from './PartySelector.svelte';
 	import { getMappingComponentConfig } from '$lib/components/utils/metadata/mappingHelper';
-	import { showAllDescriptionsStore, descriptionStore } from '$lib/components/utils/metadata/stores';
-
-	//import { en, de } from 'svelty-picker/dist/i18n';
+	import { showAllDescriptionsStore } from '$lib/components/utils/metadata/stores';
 
 	export let simpleComponent: any;
 	export let path: string;
@@ -50,10 +40,6 @@
 	let date: Date = undefined as unknown as Date;
 	// load form result object
 	let res = suite.get();
-	let config: any;
-	let isAnchor: boolean = false;
-	let isVisible: boolean = true;
-	let customComponent: any;
 	let min: number | undefined = -10000000;
 	let max: number | undefined = 1000000;
 	$:showDescription = $showAllDescriptionsStore !== null && $showAllDescriptionsStore !== undefined ? $showAllDescriptionsStore : false;
@@ -105,31 +91,13 @@
 			});
 		}
 
-		mappingComponentConfig = getMappingComponentConfig(path, value);
 
 		//#### VALIDATION	 ####
 		registerValidationItem(path, convertDisplayName(label), required, simpleComponent);
 
-		//#### CONFIGURATION	 ####
-		config = getConfigStore();
-		// check if this component is an anchor point
-		//console.log("check for anchorpoin", config)
-		for (const component of config.components) {
-			console.log("ghjgJ", component.globalSettings.anchorpoint, path)
-			// check if path is array which is indicated if the last part after the point is a number
-			let isPathArray = path.includes('.') && !isNaN(Number(path.split('.').pop()));
-
-			if (component.globalSettings.anchorpoint == path || (isPathArray && component.globalSettings.anchorpoint == path.split('.').slice(0, -1).join('.'))) {
-				isAnchor = true;
-				customComponent = customComponentsCatalog[component.meta.component_name].component;
-			} 
-			for (const variable of component.mode.variables.variable) {
-				if (variable.JSONPath == path && variable.is_visible == false) {
-					isVisible = false;
-				}
-			}
-		}
-
+		// System	mapping
+		mappingComponentConfig = getMappingComponentConfig(path, value);
+	
 		// initial check
 		setTimeout(async () => {
 			updateValue(value, path);
@@ -184,36 +152,31 @@
 
  $: commonProps = {
     id: path,
-	label: convertDisplayName(label),
+				label: convertDisplayName(label),
     required,
     invalid: res.hasErrors(path),
-	valid: res.isValid(path),
+				valid: res.isValid(path),
     feedback: res.getErrors(path),
     description: simpleComponent.description,
-	showDescription: showDescription,
+				showDescription: showDescription,
 //	disabled: mappingComponentConfig?.isDisabled ?? false
   };
 
 </script>
 
-<!-- Simple Component Rendering -->
-{#if isVisible && !isAnchor}
-<!--on:mouseover={() => descriptionStore.set({ type: 'simple', content: simpleComponent.description, path })} -->
-
 <div class="pr-2" id={path}>
 		<!--	if the field is mapped to a party or key, show blocked component with info, otherwise show the normal input component based on the type and format of the field -->
 		{#if mappingComponentConfig && ((mappingComponentConfig.isMappedToParty && !mappingComponentConfig.isSelector) || mappingComponentConfig.isMappedToKey)}
 			<Blocked
+				{...commonProps}
 				isKeyMapped={mappingComponentConfig.isMappedToKey}
 				isPartyMapped={mappingComponentConfig.isMappedToParty}
-				label={convertDisplayName(label)}
 				bind:value
 				{path}
-				{required}
-				description={simpleComponent.description}
 			/>
 		{:else if mappingComponentConfig && mappingComponentConfig.isMappedToParty && mappingComponentConfig.isSelector}
 			<PartySelector
+				{...commonProps}
 				{path}
 				{value}
 				label= {convertDisplayName(label)}
@@ -238,8 +201,7 @@
 						on:blur={handleHideDescriptionFallback}
 					>
 						<DatePickerInput
-							label={convertDisplayName(label)}
-							{required}
+							{...commonProps}
 							mode="date"
 							name={label}
 							format="yyyy-mm-dd"
@@ -250,9 +212,6 @@
 							on:input={onChangeHandler}
 							on:showDescription={handleShowDescription}
 							on:hideDescription={handleHideDescription}
-							description={simpleComponent.description}
-							valid={res.isValid(path)}
-							invalid={res.hasErrors(path)}
 						/>
 					</div>
 
@@ -267,8 +226,7 @@
 						on:blur={handleHideDescriptionFallback}
 					>
 						<DatePickerInput
-							label={convertDisplayName(label)}
-							{required}
+							{...commonProps}
 							mode="datetime"
 							name={label}
 							format="yyyy-mm-dd hh:ii"
@@ -280,9 +238,6 @@
 							on:showDescription={handleShowDescription}
 							on:hideDescription={handleHideDescription}
 							on:input={onChangeHandler}	
-							description={simpleComponent.description}
-							valid={res.isValid(path)}
-							invalid={res.hasErrors(path)}
 						/>
 					</div>
 						
@@ -297,8 +252,7 @@
 						on:blur={handleHideDescriptionFallback}
 					>
 					<DatePickerInput
-							label={convertDisplayName(label)}
-							{required}
+							{...commonProps}
 							mode="time"
 							name={label}
 							format="hh:ii"
@@ -310,9 +264,6 @@
 							on:showDescription={handleShowDescription}
 							on:hideDescription={handleHideDescription}
 							on:input={onChangeHandler}
-							description={simpleComponent.description}
-							valid={res.isValid(path)}
-							invalid={res.hasErrors(path)}
 						/>
 					</div>
 					<!-- Handle textarea format -->
@@ -407,25 +358,15 @@
 				>
 				<Checkbox
 					{... commonProps}
+
 					id={path}
 					bind:checked={value}
 					on:showDescription={handleShowDescription}
 					on:hideDescription={handleHideDescription}
-					
 					on:change={onChangeHandler}
 					/>
 				</div>
-				{/if}
-
-				
+				{/if}	
 		{/if}
 	</div>
-{:else if isAnchor}
-	<div class="pr-2" id={path}>
-		<svelte:component this={customComponent} anchor={path}
-						on:showDescription={handleShowDescription}
-						on:hideDescription={handleHideDescription}
-						path={path}
-					/>
-	</div>
-{/if}
+

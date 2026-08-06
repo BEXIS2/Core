@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ComplexComponent from './complexComponentWrapper.svelte';
-	import SimpleComponent from './simpleComponent.svelte';
+	import SimpleComponentWrapper from './simpleComponentWrapper.svelte';
 	import ChoiceComponent from './choiceComponentWrapper.svelte';
 	import { schemaToJson, getNodeByPath, getByPath} from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { faPlus, faChevronUp, faChevronDown, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -159,11 +159,9 @@ function removeFromValidationStore(path: string) {
 				{#if value && value.length > 0}
 				{#if arrayComponent.items.properties['#text'].enum	!= undefined}
 
-				<SimpleComponent
+				<SimpleComponentWrapper
 										simpleComponent={arrayComponent.items}
 										path={path}
-										value={getNodeByPath(path)}
-										{label}
 										required={required}
 										isMulti={true}							
 									/>
@@ -174,11 +172,9 @@ function removeFromValidationStore(path: string) {
 						<div in:slide out:slide class="py-1">
 							<div class="flex flex-col md:flex-row md:items-center gap-2">
 								<div class="flex-1 min-w-[100px]">
-									<SimpleComponent
+									<SimpleComponentWrapper
 										simpleComponent={arrayComponent.items}
 										path={path + '.' + index}
-										value={getNodeByPath(path + '.' + index + '.#text')}
-										{label}
 										required={required}
 									/>
 								</div>
