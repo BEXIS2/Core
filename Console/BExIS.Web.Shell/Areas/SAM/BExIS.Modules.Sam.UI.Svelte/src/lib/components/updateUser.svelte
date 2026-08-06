@@ -26,7 +26,7 @@
 		isSubmitting = true;
 
 		try {
-			await updateUser(model.id, model); // Signatur ggf. anpassen
+			await updateUser(user.id, model); // Signatur ggf. anpassen
 			dispatch('success');
 		} catch (error) {
 			console.error(error);
