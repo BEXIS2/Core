@@ -9,13 +9,21 @@ namespace BExIS.Modules.Sam.UI.Models
 {
     public class CreateGroupModel
     {
+        [JsonProperty("description")]
         public string Description { get; set; }
 
         [Required]
         [Remote("ValidateGroupname", "Groups")]
+        [JsonProperty("name")]
         public string Name { get; set; }
 
         public int Type { get; set; }
+
+        public CreateGroupModel()
+        {
+            Name = "";
+            Description = "";
+        }
     }
 
     public class DeleteGroupModel
