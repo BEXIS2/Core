@@ -9,6 +9,7 @@
 	import { activeStore, hideStore, validationStore } from '$lib/components/utils/metadata/stores';
 	import { convertDisplayName } from '../../../lib/components/utils/metadata/metadataShared';
 	import Header from './MetadataComponentHeader.svelte';
+	import Back from '$lib/components/utils/Back.svelte';
 
 
 	export let arrayComponent: any;
@@ -156,18 +157,17 @@ function removeFromValidationStore(path: string) {
 
 				</div>
 			{:else if arrayComponent.items.type === 'object' && arrayComponent.items.properties['#text']}
+
 				{#if value && value.length > 0}
 				{#if arrayComponent.items.properties['#text'].enum	!= undefined}
-
-				<SimpleComponentWrapper
-										simpleComponent={arrayComponent.items}
-										path={path}
-										required={required}
-										isMulti={true}							
-									/>
+   
+					<SimpleComponentWrapper
+											simpleComponent={arrayComponent.items}
+											path={path}
+											required={required}
+											isMulti={true}							
+										/>
 				{:else}
-
-				
 					{#each value as item, index}
 	
 						<div in:slide out:slide class="py-1">
@@ -178,7 +178,7 @@ function removeFromValidationStore(path: string) {
 										simpleComponent={arrayComponent.items}
 										path={path + '.' + index}
 										required={required}
-									 label={label + ' ' + (index + 1)}
+
 									/>
 								</div>
 								<div class="flex shrink-0 gap-1 justify-end pr-4">
