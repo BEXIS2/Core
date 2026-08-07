@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 	import ComplexComponent from './complexComponentWrapper.svelte';
-	import SimpleComponent from './simpleComponent.svelte';
+	import SimpleComponent from '$lib/components/metadata/simpleComponent.svelte';
 	import { onMount } from 'svelte';
 	import { activateShow, getNodeByPath, setActive, ValidationStoreSetSimpleTypeValid } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { activeStore, hideStore, validationStore } from '$lib/components/utils/metadata/stores';

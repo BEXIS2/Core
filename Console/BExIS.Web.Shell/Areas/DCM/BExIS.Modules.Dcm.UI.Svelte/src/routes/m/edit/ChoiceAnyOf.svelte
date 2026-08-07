@@ -3,7 +3,7 @@
 import { removeFromMetadataStore, toggleShow} from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { activeStore, hideStore } from '$lib/components/utils/metadata/stores';
  import Header from './MetadataComponentHeader.svelte';
-	import SimpleComponent from './simpleComponent.svelte';
+	import SimpleComponent from '$lib/components/metadata/simpleComponent.svelte';
  import ComplexComponent from './complexComponentWrapper.svelte';
 	import { slide } from 'svelte/transition';
 	import Fa from 'svelte-fa';

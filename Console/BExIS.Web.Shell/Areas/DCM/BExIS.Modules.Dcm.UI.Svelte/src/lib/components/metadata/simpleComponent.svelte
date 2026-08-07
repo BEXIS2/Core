@@ -23,8 +23,8 @@
 	import type {
 		MappingComponentConfig,
 	} from '$lib/components/utils/metadata/models';
-	import { convertDisplayName } from '../../../lib/components/utils/metadata/metadataShared';
-	import type { JsonListItem } from '../components/types';
+	import { convertDisplayName } from '../utils/metadata/metadataShared';
+	import type { JsonListItem } from '../../../routes/m/components/types';
 	import Blocked from './Blocked.svelte';
 	import PartySelector from './PartySelector.svelte';
 	import { getMappingComponentConfig } from '$lib/components/utils/metadata/mappingHelper';
@@ -55,9 +55,7 @@
 
 	// System mapping
 	let mappingComponentConfig: MappingComponentConfig;
-
-
-
+	
 	onMount(async () => {
 		//console.log('🚀 ~ onMount ~ simpleComponent:', value)
 

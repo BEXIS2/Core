@@ -19,6 +19,7 @@ export function getSchemaStore(): any {
 	});
 	return schema;
 }
+
 // returns a node, that can be complex	or simple, based on the given path in the metadata store
 export function getNodeByPath(path: string) {
 	let obj: any;
@@ -768,7 +769,7 @@ export function updateValidationState(path: string, res: any): void {
 	if (res && res.hasErrors(path)) {
 		errorMessage = res.getErrors(path).join('.  ');
 	}
-	console.log('🚀 ~ updateValidationState ~ path:', path, 'isValid:', res ? res.isValid(path) : true, 'errorMessage:', errorMessage);
+	//console.log('🚀 ~ updateValidationState ~ path:', path, 'isValid:', res ? res.isValid(path) : true, 'errorMessage:', errorMessage);
 	ValidationStoreSetSimpleTypeValid(path, res ? res.isValid(path) : true, errorMessage);
 }
 

@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { getConfigStore, getValueByPath, hideDescriptionHandler, showDescriptionHandler} from '$lib/components/utils/metadata/metadataComponentUtils';
 
-	import SimpleComponent from './simpleComponent.svelte';
+	import SimpleComponent from '$lib/components/metadata/simpleComponent.svelte';
 	import { metadataStore } from '$lib/components/utils/metadata/stores';
-	import type { MappingComponentConfig } from '$lib/components/utils/metadata/models';
+
 	import { onMount } from 'svelte';
-	import { getMappingComponentConfig } from '$lib/components/utils/metadata/mappingHelper';
 	import { customComponentsCatalog } from '$lib/components/customComponents/componentCatalog';
 
 	export let simpleComponent: any;
@@ -33,6 +32,7 @@
 	let isVisible: boolean = true;
 	let customComponent: any;
 
+
 	onMount(async () => {
 
 		config = getConfigStore();
@@ -41,6 +41,7 @@
 		//console.log("check for anchorpoin", config)
 		for (const component of config.components) {
 			console.log("ghjgJ", component.globalSettings.anchorpoint, path)
+			console.log("component.mode.variables", component.mode.variables)
 			// check if path is array which is indicated if the last part after the point is a number
 			let isPathArray = path.includes('.') && !isNaN(Number(path.split('.').pop()));
 
@@ -49,11 +50,13 @@
 				customComponent = customComponentsCatalog[component.meta.component_name].component;
 			} 
 			for (const variable of component.mode.variables.variable) {
+
 				if (variable.JSONPath == path && variable.is_visible == false) {
 					isVisible = false;
-				}
+				}	
 			}
 		}
+
 
 	})
 
@@ -70,7 +73,6 @@
 </script>
 
 {#if path && simpleComponent.properties}
-
  {#if isVisible && !isAnchor}
 			<SimpleComponent {simpleComponent} {path} {required} {label} {value} on:reload {isMulti} />
 	{:else if isAnchor}
