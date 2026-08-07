@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getConfigStore, getValueByPath, hideDescriptionHandler, showDescriptionHandler} from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { getConfigStore, getLabelByPath, getValueByPath, hideDescriptionHandler, showDescriptionHandler} from '$lib/components/utils/metadata/metadataComponentUtils';
 
 	import SimpleComponent from '$lib/components/metadata/simpleComponent.svelte';
 	import { metadataStore } from '$lib/components/utils/metadata/stores';
@@ -12,13 +12,8 @@
 	export let required: boolean = false;
 	export	let isMulti: boolean = false;
 
-	let label: string = !path
-		? ''
-		: path.split('.').length > 1
-			? path.split('.')[path.split('.').length - 1]
-			: path;
-
 	let value = getValueByPath(path);
+	let label = getLabelByPath(path);
 
 	metadataStore.subscribe(() => {
 		value = getValueByPath(path);

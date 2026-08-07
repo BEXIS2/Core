@@ -95,7 +95,7 @@ function removeFromValidationStore(path: string) {
 										<div in:slide out:slide class="pl-5 py-5 card mb-2">
 											<div class="grid grid-cols-2 gap-2">
 											<div>
-												<h4 class="h4 text-primary-500">{index+1}.&nbsp;{convertDisplayName(label, true)}</h4>
+												<h4 class="h4 text-primary-500">{index+1}&nbsp;{convertDisplayName(label, true)}</h4>
 											</div>
 											<div class="text-right w-full pr-2">
 												<button
@@ -169,13 +169,16 @@ function removeFromValidationStore(path: string) {
 
 				
 					{#each value as item, index}
+	
 						<div in:slide out:slide class="py-1">
 							<div class="flex flex-col md:flex-row md:items-center gap-2">
 								<div class="flex-1 min-w-[100px]">
+			
 									<SimpleComponentWrapper
 										simpleComponent={arrayComponent.items}
 										path={path + '.' + index}
 										required={required}
+									 label={label + ' ' + (index + 1)}
 									/>
 								</div>
 								<div class="flex shrink-0 gap-1 justify-end pr-4">
