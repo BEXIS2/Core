@@ -367,7 +367,11 @@
       const sourceHandle = `${node.id}-${variableId}-handle`;
 
       const connectedEdges = allEdges.filter(
-        (edge: Edge) => edge.sourceHandle === sourceHandle || edge.targetHandle === sourceHandle
+        (edge: Edge) => {
+          const isHandleMatch = edge.sourceHandle === sourceHandle || edge.targetHandle === sourceHandle;
+          const isSameMode = !edge.data?.sourceMode || edge.data.sourceMode === modeKey;
+          return isHandleMatch && isSameMode;
+        }
       );
 
       // case 1: has edges > create from edge data
@@ -526,11 +530,14 @@
     
     currentInteractionMode = newMode; // switch mode
     updateInteractionModeInConfig(newMode);
-    
-    if (sidebarMode === 'edit') {
-      sidebarMode = 'empty';
-      selectedNode.set(null);
-    }
+
+    // Reset selection/sidebar to avoid stale node data (e.g. anchorpoint) leaking between modes.
+    sidebarMode = 'empty';
+    activeTab = 0;
+    selectedNode.set(null);
+    selectedEdge.set(null);
+    // Rebuild edges for the target mode only.
+    edges.set([]);
     
     // get manifest submodes for new interaction mode
     const newModes = selectedComponentManifest?.modes?.[newMode];
@@ -610,6 +617,8 @@
 
   function handleSaveEdit() {
     const currentNodes = get(nodes);
+    const shouldUpdateEditMode = currentInteractionMode === 'edit';
+    const shouldUpdateViewMode = currentInteractionMode === 'view';
     
     // collect all nodes from both modes
     const allEditNodes = [
@@ -644,8 +653,9 @@
       };
     });
     
-    // update or add edit components to config
-    editModeNodes.forEach(node => {
+    // update or add edit components to config (only when edit mode is active)
+    if (shouldUpdateEditMode) {
+      editModeNodes.forEach(node => {
       const compIdx = componentConfig_edit?.components.findIndex(
         (c: any) => c.meta.component_ui_id === node.id
       );
@@ -684,10 +694,12 @@
           componentConfig_edit?.components.push(componentData);
         }
       }
-    });
+      });
+    }
     
-    // update or add view components
-    viewModeNodes.forEach(node => {
+    // update or add view components (only when view mode is active)
+    if (shouldUpdateViewMode) {
+      viewModeNodes.forEach(node => {
       const compIdx = componentConfig_view?.components.findIndex(
         (c: any) => c.meta.component_ui_id === node.id
       );
@@ -704,7 +716,8 @@
           componentConfig_view.components.push(componentData);
         }
       }
-    });
+      });
+    }
 
     // force config reactivity
     componentConfig_edit = { ...componentConfig_edit };
@@ -925,7 +938,7 @@
 
           const sourceHandle = `${componentNode.id}-${variable.target_variable}-handle`;
           const targetHandle = `${schemaNode.id}-handle`;
-          const edgeId = `${sourceHandle}-${schemaNode.id}`;
+          const edgeId = `${mode}::${sourceHandle}=>${targetHandle}`;
 
           // add new edge if it doesn't exist
           if (!existingIds.has(edgeId)) {
@@ -1325,7 +1338,8 @@ $: {
         position: existingNode.position,
         data: {
           ...configNode.data,
-          anchorpoint: existingNode.data.anchorpoint || configNode.data.anchorpoint || '',
+          // Prefer config anchorpoint for the active mode, fallback to existing UI value.
+          anchorpoint: configNode.data.anchorpoint || existingNode.data.anchorpoint || '',
           edges,
           version: nodeVersion,
           isGrayedOut: isEditingComponent && existingNode.id !== $selectedNode?.id && existingNode.data?.interactionMode === currentInteractionMode,
@@ -2088,8 +2102,11 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
     }
 
     // create new edge
+    const sourceNodeModeForId = sourceNode?.data?.interactionMode || currentInteractionMode;
+    const generatedEdgeId = `${sourceNodeModeForId}::${params.sourceHandle ?? params.source}=>${params.targetHandle ?? params.target}`;
+
     const newEdge = {
-      id: `${params.source}-${params.target}`,
+      id: generatedEdgeId,
       source: params.source,
       target: params.target,
       sourceHandle: params.sourceHandle,
