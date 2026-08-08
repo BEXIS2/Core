@@ -36,6 +36,8 @@
 	export let value: any;
 	export let label: string;
 	export let isMulti: boolean = false; // for array	of simple types, that should use multiselect ui component
+	export let description: string = '';
+	export let disabled: string = "false";
 
 	let date: Date = undefined as unknown as Date;
 	// load form result object
@@ -148,6 +150,10 @@
 		}, 10);
 	}
 
+  // set description if not set from parent component, use the description from the simpleComponent
+  if (description === undefined || description === null) {
+	description = simpleComponent?.description ?? '';
+  }
  $: commonProps = {
     id: path,
 				label: convertDisplayName(label),
@@ -155,9 +161,9 @@
     invalid: res.hasErrors(path),
 				valid: res.isValid(path),
     feedback: res.getErrors(path),
-    description: simpleComponent.description,
+    description: description,
 				showDescription: showDescription,
-//	disabled: mappingComponentConfig?.isDisabled ?? false
+	disabled: disabled === "true" ? true : false
   };
 
 </script>
@@ -181,7 +187,6 @@
 				{mappingComponentConfig}
 				{required}
 				{isMulti}
-				description={simpleComponent.description}
 				{handleShowDescription}
 				{handleHideDescription}
 			/>
