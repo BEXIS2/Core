@@ -136,6 +136,7 @@
 		}
 	}
 
+	// Check if the terminology service is running by making a simple request to the base URL.
 	async function checkService(url: string): Promise<boolean> {
 		try {
 			const response = await fetch(url);
@@ -146,6 +147,7 @@
 		}
 	}
 
+	// Update the value in the metadata store and validate it.
 	function updateValue(value: any, _path: string) {
 		res = suite(_path);
 		updateValidationState(_path, res);
@@ -154,11 +156,10 @@
 		// console.log('🚀 ~ updateValue ~ path:', _path, 'value:', value, 'isNotEmpty:', isNotEmpty);
 		if (required && !isNotEmpty) {
 			validateCustomCondition(_path, false, 'Please select a term from the terminology service.');
-		} else if (isNotEmpty && String(value).length < 15) {
-			validateCustomCondition(_path, false, 'Please select a term with at least 15 characters.');
-		}
+		} 
 	}
 
+	// Sync the term value and reference to the metadata store and update validation state.
 	function syncTermValue() {
 		if (!validationRegistered) return;
 
@@ -172,9 +173,9 @@
 		validationReady = true;
 	}
 
+	// Fetch the description of a term from the terminology service API using its IRI.
 	async function getDescriptionFromAPI(ref: string): Promise<string> {
-		// Implement your logic to fetch the description from the API using the ref
-		// For example, you can use fetch or any other method to get the description
+		
 		// Return the description as a string
 		// https://semanticlookup.zbmed.de/ols/api/terms?iri=http:%2F%2Fpurl.obolibrary.org%2Fobo%2FNCBITaxon_146500
 		const response = await fetch(TerminologyServiceUrl + `terms?iri=${encodeURIComponent(ref)}`);
@@ -253,23 +254,19 @@
 		width: 100%;
 		min-height: 2.625rem;
 	}
-
 	:global(.tswidget-host .tswidget-input) {
 		width: 100%;
 	}
-
 	:global(.tswidget-host .tswidget-input:focus-within) {
 		outline: none !important;
 		box-shadow: none !important;
 		border-color: inherit !important;
 	}
-
 	:global(.tswidget-host:focus-within) {
 		box-shadow: none !important;
 		outline: none !important;
 		border-color: inherit !important;
 	}
-
 	:global(.tswidget-host .tswidget-input input) {
 		width: 100%;
 		height: 100%;
@@ -280,14 +277,12 @@
 		font: inherit;
 		color: inherit;
 	}
-
 	:global(.tswidget-host .tswidget-input input:focus),
 	:global(.tswidget-host .tswidget-input input:focus-visible) {
 		outline: none !important;
 		box-shadow: none !important;
 		border-color: transparent !important;
 	}
-
 	:global(.tswidget-host .tswidget-input *:focus),
 	:global(.tswidget-host .tswidget-input *:focus-visible) {
 		outline: none !important;
