@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { empty, getNodeByPath, hasValue, isActive, setActive, setInactive, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { isActive, setActive, setInactive, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { convertDisplayName } from '$lib/components/utils/metadata/metadataShared';
-	import { faPlus, faChevronUp, faChevronDown, faQuestion } from '@fortawesome/free-solid-svg-icons';
+	import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
-  import { activeStore, hideStore, validationStore } from '$lib/components/utils/metadata/stores';
+  import { activeStore, hideStore } from '$lib/components/utils/metadata/stores';
   import { onMount } from 'svelte';
 	
 
@@ -17,13 +17,12 @@
  $:active;
 
  $: depth = Math.max(0, path.split('.').length - 1);
- $: leftIndentPx = depth * 12;
+ $: leftIndentPx = depth * 8;
 
 
  let label: string = path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path;
- let showDescription: boolean = false;
-
- const togglePath = p!=='' ? p : path; 
+ let togglePath: string = path;
+ $: togglePath = p !== '' ? p : path;
  
  onMount(() => {
     if(!$activeStore.includes(path)) {
@@ -45,35 +44,63 @@ function initActivity() {
     setInactive(path);
   } 
 }
+	function handleToggleShow() {
+		if (!active || !$activeStore.includes(path)) {
+			return;
+		}
+		toggleShow(togglePath);
+	}
 
 </script>
 
 
 
-<div class="flex h-10 dark:bg-primary-500 items-center">
+<div class=" dark:bg-primary-500 items-center" class:first-level-sticky={depth === 0}>
 <!--if depth is greater than 0, add a left border to indicate hierarchy-->
+	
+			
+		
+	
 
- {#if depth == 0}
-   <div class="text-left grow pl-2 pt-2" >
-   <h4 id ={path} class="text-md font-bold h4">
-      {convertDisplayName(label, true)} 
-    </h4>
-    </div>
- {:else}
- <div class="text-left grow" style={`padding-left: ${leftIndentPx }px`}>
-	   <h5 id ={path} class="text-md font-bold h5">
+ <div class="pl-2 card flex  bg-primary-300 dark:bg-primary-800 rounded-sm border-l border-gray-300">
+	  <div>
+  
+  	{#if !$hideStore.includes(path)}
+				<button
+					class="btn-sm text-right"
+					title="Open or close {convertDisplayName(label, true)}"
+					on:click={handleToggleShow}><Fa icon={faChevronUp} /></button
+				>
+			{:else}
+				<button
+					class="btn-sm text-right"
+					title="Open or close {convertDisplayName(label, true)}"
+					on:click={handleToggleShow}><Fa icon={faChevronDown} /></button
+				>
+			{/if}
+   </div>
+  <button class="text-left grow" on:click={handleToggleShow} type="button">
+	<h5 id ={path} class="text-md font-bold" title={description || convertDisplayName(label, true)}>
       {convertDisplayName(label, true)} 
     </h5>
+    </button>
  </div>
- {/if}
 
- {#if description && showDescription}
+ <!-- {#if description && showDescription}
   <div	class="text-sm text-gray-500 py-1">{@html description}</div>
  {/if}
  <div class="text-left flex justify-end w-2 px-6 ">
-  {#if description}
+ {#if description}
 			<button class="badge" on:click={()=>showDescription = !showDescription}><Fa icon={faQuestion} /></button>
 	{/if}
- </div>
+ </div>-->
 
 </div>
+
+<style>
+.first-level-sticky {
+	position: sticky;
+	top: 0;
+	z-index: 30;
+}
+</style>

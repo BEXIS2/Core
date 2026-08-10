@@ -27,7 +27,7 @@
 	export let backgroundClass: string = '';
 
 	$: depth = Math.max(0, path.split('.').length - 1);
-	$: leftIndentPx = depth * 12;
+	$: leftIndentPx = depth * 8;
 	$: lastPathPart = path.split('.').pop() ?? '';
 
 	let date: Date = undefined as unknown as Date;
@@ -65,7 +65,7 @@
 		// check if this component is an anchor point
 		//console.log("check for anchorpoin", config)
 		for (const component of config.components) {
-			//console.log("ghjgJ", component.globalSettings.anchorpoint, path)
+			console.log("ghjgJ", component.globalSettings.anchorpoint, path)
 			if (component.globalSettings.anchorpoint == path) {
 				isAnchor = true;
 				customComponent = customComponentsCatalog[component.meta.component_name].component;
@@ -82,27 +82,52 @@
 <!-- Simple Component Rendering [200px_1fr] [188px_1fr] -->
 {#if isVisible && !isAnchor}
 	<div 
-  class="grid grid-cols-[var(--indent-width)_1fr] gap-4 py-1" 
-  style="--indent-width: calc(200px - {leftIndentPx}px);"
+  class="entry"
 >
 		{#if path.split('.').length > 1 && !isNaN(parseInt(lastPathPart))}
 			{#if lastPathPart === '0'}
-				<span class="text-sm font-medium text-gray-500" style={`padding-left: ${leftIndentPx -8 }px`}
+				<span class="key text-sm font-medium text-gray-500" 
 					>{convertDisplayName(label)}</span
 				>
 			{:else}
-				<span class="text-sm font-medium text-gray-500" style={`padding-left: ${leftIndentPx - 8}px`}
+				<span class="key text-sm font-medium text-gray-500" 
 				></span>
 			{/if}
 		{:else}
-			<span class="text-sm font-medium text-gray-500" style={`padding-left: ${leftIndentPx}px`}
+			<span class="key text-sm font-medium text-gray-500" 
 				>{convertDisplayName(label)}</span
 			>
 		{/if}
-		<span class="text-sm text-gray-900 font-semibold">{value}</span>
+		<span class="val text-sm text-gray-900 font-semibold">{value}</span>
 	</div>
 {:else if isAnchor}
 	<div class="" id={path}>
 		<svelte:component this={customComponent} anchor={path} label={convertDisplayName(label)} />
 	</div>
 {/if}
+
+<style>
+.cont {
+  margin-left: 1em;
+}
+
+.arr:not(:last-child) {
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid black;
+}
+
+.entry {
+  display: flex;
+  flex-direction: row;
+}
+
+.val  {
+  display: inline-block;
+  width: 30vw;
+  font-weight: bold;
+}
+.key {
+  display: inline-block;
+  flex-grow: 1;
+}
+</style>

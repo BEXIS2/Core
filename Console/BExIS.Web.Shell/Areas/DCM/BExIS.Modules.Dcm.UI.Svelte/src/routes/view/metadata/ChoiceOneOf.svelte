@@ -1,114 +1,75 @@
 <script lang="ts">
-	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from './simpleComponent.svelte';
-	import { isActive, removeFromMetadataStore, toggleShow, updateMetadataStore } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { getValueByPath, hasValueAtPath } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { activeStore, hideStore } from '$lib/components/utils/metadata/stores';
-
 	import { slide } from 'svelte/transition';
 	import Header from './MetadataComponentHeader.svelte';
+	import { getViewChoiceOptions, resolveViewModeSelection } from './choiceOneOfUtils';
 
 	export let choiceComponent: any;
 	export let path: string;
 
-	let target="";
-
 	let label = path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path;
-	let choices: {key:string, value:string}[] = getChoices(choiceComponent);
+	let choices = getViewChoiceOptions(choiceComponent, path);
+	$: resolvedSelection = resolveViewModeSelection(choiceComponent, path, hasValueAtPath);
+	$: selectedChoice = resolvedSelection ? choiceComponent?.properties?.[resolvedSelection] : null;
+	$: selectedPath = resolvedSelection ? `${path}.${resolvedSelection}` : '';
 
-
-	$:{
-		console.log("target", target);
-		changeFn(target);
+	function getBranchValue(branchPath: string) {
+		return getValueByPath(branchPath);
 	}
-	
-	function getChoices(cComponent: any): {key:string, value:string}[] {
-		console.log("🚀 ~ getChoices ~ cComponent:", cComponent)
-		let c: {key:string, value:string}[] = [];
 
-		if (cComponent != undefined || cComponent != null)
-		{
-			let items: any[] = [];
-   if (cComponent.oneOf !=null && cComponent.oneOf != undefined && cComponent.oneOf.length > 0) {
-				items = cComponent.oneOf;
-			}
 
-			items.forEach((e) => {
-
-			for (let key in e.properties)
-			{
-
-				if(isActive(path+"."+key,false)){ 
-						target =	key; 
-						let item = e.properties[key];
-
-						c.push({
-							key: item['$ref'].split('/')[item['$ref'].split('/').length - 1],
-							value: item['$ref'].split('/')[item['$ref'].split('/').length - 1]
-						});
-				}
-			}
-			});
-		}
-		return c;
-	}	
-
-	function changeFn(t) {
-		console.log("changeFn",t, target, choiceComponent);
-		if (choiceComponent.oneOf != null && choiceComponent.oneOf != undefined && choiceComponent.oneOf.length <= 0) {
-			removeFromMetadataStore(path);
-		}
-	}
 
 </script>
 
 <div class="grid grid-cols-1 gap-0 m-2">
-		<Header {path} p={path}/>
-	
-	{#if !$hideStore.includes(path) && $activeStore.includes(path)}
-	<div in:slide out:slide class="px-5 " id={path}>
-		{#if choiceComponent.oneOf}
-			<RadioGroup bind:value={target} on:change={changeFn}>
-			{#each choices as item}
+	<Header {path} p={path} />
 
-				<RadioItem bind:group={target} name="justify" title={item.key} label={item.key} value={item.value}> {item.key}</RadioItem>
-			{/each}
-			</RadioGroup>
-		{/if}
-			
-		{#if target && target.length > 0} 
-			{#if choiceComponent.oneOf}
-				{#if choiceComponent.properties[target].type === 'object' && choiceComponent.properties[target].properties && !choiceComponent.properties[target].properties['#text']}
-	
-				<div class="grid grid-cols-1 gap-0 m-2">
-					<!-- <Header path = {path + '.' + target} /> -->
-					{#if !$hideStore.includes(path + '.' + target) && $activeStore.includes(path)}
-					<div in:slide out:slide class="card px-5 " id={path + '.' + target}>
-					{#key target}
-					<ComplexComponent
-						complexComponent={choiceComponent.properties[target]}
-						path={path + '.' + target}
-						required={choiceComponent.required && choiceComponent.required.includes(target)}
-					/>
-					{/key}
-					</div> 
-					{/if}
+	{#if !$hideStore.includes(path) && $activeStore.includes(path)}
+		<div in:slide out:slide class="px-5" id={path}>
+			{#if choiceComponent.oneOf && choices.length > 0}
+				<div class="mb-3 text-sm font-semibold text-gray-700">
+					{label}: {resolvedSelection || 'No selection'}
 				</div>
-				{:else if choiceComponent.properties[path + '.' + target].type === 'object' && choiceComponent.properties[path + '.' + target].properties['#text']}
+				{#each choices as item}
+					<div class="flex items-center gap-2 py-1">
+						<span class="text-sm text-gray-600">{item.display}</span>
+						{#if item.key === resolvedSelection}
+							<span class="badge variant-filled-primary">Selected</span>
+						{/if}
+					</div>
+				{/each}
+			{/if}
+
+			{#if selectedChoice && selectedPath}
+				{#if selectedChoice.type === 'object' && selectedChoice.properties && !selectedChoice.properties['#text']}
+					<div class="grid grid-cols-1 gap-0 m-2">
+						{#if !$hideStore.includes(selectedPath) && $activeStore.includes(path)}
+							<div in:slide out:slide class="card px-5" id={selectedPath}>
+								<ComplexComponent
+									complexComponent={selectedChoice}
+									path={selectedPath}
+									required={choiceComponent.required && choiceComponent.required.includes(resolvedSelection)}
+								/>
+							</div>
+						{/if}
+					</div>
+				{:else if selectedChoice.type === 'object' && selectedChoice.properties && selectedChoice.properties['#text']}
 					<div class="px-5">
 						<SimpleComponent
-							simpleComponent={choiceComponent.properties[target].properties['#text']}
-							path={path + '.' + target}
-							required={choiceComponent.required && choiceComponent.required.includes(target)}
-							value={null}
-							label={target}
+							simpleComponent={selectedChoice.properties['#text']}
+							path={selectedPath}
+							required={choiceComponent.required && choiceComponent.required.includes(resolvedSelection)}
+							value={getBranchValue(selectedPath)}
+							label={resolvedSelection}
 						/>
 					</div>
 				{/if}
 			{/if}
-{/if}
-</div>
-{/if}
+		</div>
+	{/if}
 </div>
 
 

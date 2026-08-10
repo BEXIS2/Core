@@ -16,6 +16,13 @@
 	import { convertDisplayName } from '$lib/components/utils/metadata/metadataShared';
 	import Forbidden from '../error/Forbidden.svelte';
 
+	import {
+		activeStore,
+		showAllDescriptionsStore,
+		hideStore,
+		descriptionStore
+	} from '$lib/components/utils/metadata/stores';
+	import { faEye, faEyeSlash, faChevronUp, faChevronDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 	// import configJson from './customComponents/config.json';
 
 	export let id: number = 3;
@@ -152,6 +159,18 @@ function activateShow(key: string) {
 	}
 }
 
+// collapse all sections in the metadata form
+	function collapseAll() {
+		activeStore.subscribe((active) => {
+			hideStore.update((s) => [...s, ...active]);
+		})();
+	}
+
+	// Expand all sections in the metadata form
+	function expandAll() {
+		hideStore.set([]);
+	}
+
 </script>
 
 
@@ -160,18 +179,52 @@ function activateShow(key: string) {
 	{#await load()}
 		<Spinner />
 	{:then}
+	<div class="container">
 
+<div class="w-full flex flex-col gap-4">
+			<div>	
+					<!-- Show all descriptions -->
+					<div class="flex flex-col gap-2">
+						<!--<button class="badge" on:click={() => showAllDescriptionsStore.update((v) => !v)}>
+								{#if $showAllDescriptionsStore}
+									<Fa icon={faEyeSlash} />&nbsp;Hide descriptions
+								{:else}
+									<Fa icon={faEye} />&nbsp;Show descriptions
+								{/if}
+							</button>-->
 
-<div	class="container flex">
+						<div class="w-full flex items-center gap-1 pr-2 text-sm">
+							<!-- First block stays on the left naturally -->
+							<div class="pl-2">
+								<!--Collapse all sections button-->
+								{#if $hideStore.length === 0}
+									<button class="badge" on:click={collapseAll}>
+										<Fa icon={faChevronDown} />&nbsp;Collapse all sections
+									</button>
+								{:else}
+									<!--Expand all sections button-->
+									<button class="badge" on:click={expandAll}>
+										<Fa icon={faChevronUp} />&nbsp;Expand all sections
+									</button>
+								{/if}
+							</div>
 
-	
-			<div id="metadata-content" class="content scrollable">
-				<div class="px-2">
-					<ComplexComponent complexComponent={schema} path={''} />
-				</div>
-			</div>
+							<!-- 1. Added ml-auto to push this block all the way to the right -->
+							<div class="ml-auto pr-4">
+								<a href="#top" class="badge">
+									Scroll to top &nbsp;<Fa icon={faArrowUp} />
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="content scrollable">
+						<div class="px-2" id="top">
+							<ComplexComponent complexComponent={schema} path={''} />
+						</div>
+					</div>
+				</div>	
 
-
+</div>
 <div class="w-full lg:w-[35%] xl:w-[25%] flex flex-col gap-3 ml-4">
     
 <h3 class="h3 font-semibold text-gray-700 dark:text-gray-300  whitespace-nowrap">Metadata Overview</h3>
@@ -226,18 +279,13 @@ function activateShow(key: string) {
 
     
 </div>
-		</div>
-		
-		{:catch error}
+	</div>
 
-		 {error.name}
-		 {error.message} -
-		 {error.cause.status} -
-		 {error.cause.data} -
-		 {error.cause.statusText}
-			<Forbidden/>
+	{:catch error}
+		<ErrorMessage message={error.message} />
+	{/await}	
 
-		{/await}
+
 </Page>
 
 <style>
