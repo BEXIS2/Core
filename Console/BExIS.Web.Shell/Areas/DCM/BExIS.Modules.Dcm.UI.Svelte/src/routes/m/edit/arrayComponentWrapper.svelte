@@ -2,29 +2,52 @@
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponentWrapper from './simpleComponentWrapper.svelte';
 	import ChoiceComponent from './choiceComponentWrapper.svelte';
-	import { schemaToJson, getNodeByPath, getByPath} from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { schemaToJson, getNodeByPath, getByPath, registerValidationItem, updateValidationState} from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { faPlus, faChevronUp, faChevronDown, faTrash } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { slide, fade } from 'svelte/transition';
 	import { activeStore, hideStore, validationStore } from '$lib/components/utils/metadata/stores';
 	import { convertDisplayName } from '../../../lib/components/utils/metadata/metadataShared';
 	import Header from './MetadataComponentHeader.svelte';
-	import Back from '$lib/components/utils/Back.svelte';
+	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import { onMount } from 'svelte';
 
 
 	export let arrayComponent: any;
 	export let path: string;
 	export let required: boolean = false;
-
 	let label = path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path;
-
+	
 	let value = getNodeByPath(path) == undefined ? [] : getNodeByPath(path);
 	let render: boolean = false;
 
 	let maxItems: number = arrayComponent.maxItems ? arrayComponent.maxItems : 2147483647;
 	let minItems: number = arrayComponent.minItems ? arrayComponent.minItems : 1;
+	
 
- 
+	//#### VALIDATION	 ####
+	registerValidationItem(path, convertDisplayName(label), required, arrayComponent);
+
+	let res = suite.get();
+	onMount(() => {
+			res = suite.get(path);
+			updateValidationState(path, res);
+	});
+
+	
+function	onChangeHandler() {
+  console.log("🚀 ~ array child onChangeHandler:", path, res.isValid(path))
+		res = suite(path);
+
+		setTimeout(async () => {
+			console.log("array child ~ path:", path, res.isValid(path), res.getError(path))
+			updateValidationState(path, res);
+		}, 10);
+}
+
+	
+
+
 	function addItem(idx: number) {
 		value.push(schemaToJson(arrayComponent.items));
 		render = !render;
@@ -71,10 +94,15 @@ function removeFromValidationStore(path: string) {
 	}
 
 	function insertItemAt(index: number) {
+		alert("test"+index)
 		value.splice(index, 0, schemaToJson(arrayComponent.items));
 		console.log('insertItemAt', value);
 		render = !render;
+		onChangeHandler();
 	}
+
+
+
 </script>
 
 {#if arrayComponent.items}
@@ -143,6 +171,7 @@ function removeFromValidationStore(path: string) {
 													complexComponent={arrayComponent.items}
 													path={path + '.' + index}
 													required={required}
+													on:updated = {onChangeHandler}
 												/>
 											</div>
 										</div>
@@ -165,7 +194,8 @@ function removeFromValidationStore(path: string) {
 											simpleComponent={arrayComponent.items}
 											path={path}
 											required={required}
-											isMulti={true}							
+											isMulti={true}				
+											on:updated	
 										/>
 				{:else}
 					{#each value as item, index}
@@ -178,7 +208,7 @@ function removeFromValidationStore(path: string) {
 										simpleComponent={arrayComponent.items}
 										path={path + '.' + index}
 										required={required}
-
+										on:updated
 									/>
 								</div>
 								<div class="flex shrink-0 gap-1 justify-end pr-4">

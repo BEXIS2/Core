@@ -4,7 +4,7 @@
 	import SimpleComponent from '$lib/components/metadata/simpleComponent.svelte';
 	import { metadataStore } from '$lib/components/utils/metadata/stores';
 
-	import { onMount } from 'svelte';
+	import { onMount, createEventDispatcher } from 'svelte';
 	import { customComponentsCatalog } from '$lib/components/customComponents/componentCatalog';
 
 	export let simpleComponent: any;
@@ -26,6 +26,9 @@
 	let isAnchor: boolean = false;
 	let isVisible: boolean = true;
 	let customComponent: any;
+// dispatcher to forward events to parent components
+const dispatch = createEventDispatcher();
+
 
 
 	onMount(async () => {
@@ -69,13 +72,23 @@
 
 {#if path && simpleComponent.properties}
  {#if isVisible && !isAnchor}
-			<SimpleComponent {simpleComponent} {path} {required} {label} {value} on:reload {isMulti} />
+			<SimpleComponent 
+			{simpleComponent} 
+			{path} 
+			{required} 
+			{label} 
+			bind:value={value} 
+			on:updated
+			{isMulti} 
+			/>
+
 	{:else if isAnchor}
 		<div class="pr-2" id={path}>
 			<svelte:component this={customComponent} anchor={path}
 							on:showDescription={handleShowDescription}
 							on:hideDescription={handleHideDescription}
 							path={path}
+							on:updated
 						/>
 		</div>
 	{/if}

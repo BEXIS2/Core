@@ -7,6 +7,7 @@ export interface schemaNode {
 
 export interface validationStoretype {
 	allSimpleRequiredValid: boolean;
+	allComplexTypesValid: boolean;
 	simpleTypeValidationItems: SimpleComponentData[];
 	complexTypeValidationItems: ComplexComponentData[];
 }
@@ -30,10 +31,12 @@ export interface SimpleComponentData {
 
 export interface ComplexComponentData {
 	path: any;
-	complexComponent: any;
 	label: string;
 	required: boolean;
 	errorMessage: string
+	maxItems?: number;
+	minItems?: number;
+	isValid: boolean;
 }
 
 /* PARTIES */

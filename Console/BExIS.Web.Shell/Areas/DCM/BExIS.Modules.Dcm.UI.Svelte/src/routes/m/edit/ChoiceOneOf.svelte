@@ -190,6 +190,7 @@
 						complexComponent={selectedChoice}
 						path={path + '.' + targetKey}
 						required={true}
+						on:updated
 					/>
 					{/key}
 					</div> 
@@ -204,6 +205,7 @@
 							required={true}
 							value={null}
 							label={targetKey}
+							on:updated
 						/>
 						{/key}
 					</div>

@@ -1,22 +1,21 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, createEventDispatcher } from 'svelte';
 	import {
 		updateMetadataStore,
 		getFullConfig,
 		getTargetVariablesWithValues,
-		ValidationStoreSetSimpleTypeValid,
 		resolveNode,
 		updateValidationState,
 		registerValidationItem,
 		getMetadata,
-		validateCustomCondition,
 		setValidationLengthConstraints
 	} from '../../utils/metadata/metadataComponentUtils';
-	import * as ts4nfdiWidgets from '@ts4nfdi/terminology-service-suite-js';
-	import { InputContainer, TextInput } from '@bexis2/bexis2-core-ui';
+
+	import {TextArea} from '@bexis2/bexis2-core-ui';
 	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
 	import { validationStore } from '$lib/components/utils/metadata/stores';
 
+	const dispatch = createEventDispatcher();
 	let res = suite.get();
 	let componentName: string = 'textField_v1.0.0';
 
@@ -36,18 +35,7 @@
 	}
 	// console.log('🚀 ~ text_field_path after check:', text_field_path, 'anchor:', anchor, 'path:', path);
 	let { value, ref, label, description, required } = getMetadata(text_field_path);
-	console.log(
-		'🚀 ~ value:',
-		value,
-		'ref:',
-		ref,
-		'label:',
-		label,
-		'description:',
-		description,
-		'required:',
-		required
-	);
+
 	let validationRegistered = false;
 	let validationReady = false;
 
@@ -104,6 +92,8 @@
 		updateMetadataStore(text_field_path, nextValue, false, ref != null ? String(ref) : '');
 
 		updateValue(text_field_path);
+  dispatch('change');
+
 	}
 	function updateValue(_path: string) {
 		res = suite(_path);
@@ -152,6 +142,6 @@
 
 {#key validationReady}
 	<span id={text_field_path}>
-		<TextInput {...commonProps} bind:value on:input={onChangeHandler} />
+		<TextArea {...commonProps} bind:value on:input={onChangeHandler} />
 	</span>
 {/key}

@@ -1,5 +1,5 @@
 import { convertDisplayName } from './metadataShared';
-import type { SimpleComponentData, validationStoretype } from './models';
+import type { ComplexComponentData, SimpleComponentData, validationStoretype } from './models';
 import { metadataStore, schemaStore, systemMappingsStore, hideStore, validationStore, configStore, activeStore, descriptionStore } from './stores';
 import { get } from 'svelte/store';
 // Utility functions for metadata handling
@@ -111,7 +111,7 @@ export function updateMetadataStore(path: string, value: any, isMulti?: boolean,
 
 		}
 	}
-	console.log('Updated metadata store:', obj);
+	//console.log('Updated metadata store:', obj);
 	return obj;
 }
 
@@ -421,7 +421,7 @@ export function empty(node) {
 // If undefined, initialize with default values
 // and return the validation store values
 export function getValidationStore(): validationStoretype {
-	let validationStoreValues: validationStoretype = { allSimpleRequiredValid: false, simpleTypeValidationItems: [], complexTypeValidationItems: [] };
+	let validationStoreValues: validationStoretype = { allSimpleRequiredValid: false, allComplexTypesValid: false, simpleTypeValidationItems: [], complexTypeValidationItems: [] };
 	validationStore.subscribe(n => {
 		validationStoreValues = n;
 	});
@@ -432,7 +432,7 @@ export function getValidationStore(): validationStoretype {
 }
 
 export function clearValidationStore(): void {
-	validationStore.set({ allSimpleRequiredValid: false, simpleTypeValidationItems: [], complexTypeValidationItems: [] });
+	validationStore.set({ allSimpleRequiredValid: false, allComplexTypesValid: false, simpleTypeValidationItems: [], complexTypeValidationItems: [] });
 }
 // Add a simple component's validation data to the validation store
 // if it doesn't already exist
@@ -449,6 +449,23 @@ export function ValidationStoreAddSimpleComponent(
 	}
 	return validationStoreValues;
 }
+
+// Add a complex component's validation data to the validation store
+// if it doesn't already exist
+// and has relevant validation criteria
+// Returns the updated validation store values
+export function ValidationStoreAddComplexComponent(
+	item: ComplexComponentData,
+	forceRegistration: boolean = false
+): validationStoretype {
+	let validationStoreValues: validationStoretype = getValidationStore();
+	if (validationStoreValues.complexTypeValidationItems.find(i => i.path === item.path) === undefined && (forceRegistration || item.required || item.maxItems !== undefined || item.minItems !== undefined)) {
+		validationStoreValues.complexTypeValidationItems.push(item);
+		validationStore.set(validationStoreValues);
+	}
+	return validationStoreValues;
+}
+
 // Set overall validity for all simple required components in the validation store
 // based on the validity of an individual component identified by its path
 // Returns the updated validity of the specified component
@@ -492,6 +509,54 @@ export function ValidationStoreSetSimpleTypeValid(
 	validationStore.set({
 		...validationStoreValues,
 		simpleTypeValidationItems: [...validationStoreValues.simpleTypeValidationItems]
+	});
+	//console.log("🚀 ~ ValidationStoreSetSimpleTypeValid ~ validationStore:", get(validationStore))
+	return valid;
+}
+
+// Set overall validity for all simple required components in the validation store
+// based on the validity of an individual component identified by its path
+// Returns the updated validity of the specified component
+export function ValidationStoreSetComplexTypeValid(
+	path: string,
+	isValid: boolean,
+	errorMessage: string = '',
+	overwriteErrorMessage: boolean = true
+): boolean {
+	let valid: boolean = false;
+	let validationStoreValues: validationStoretype = getValidationStore();
+
+	if (isValid != null && isValid != undefined) {
+		const item = validationStoreValues.complexTypeValidationItems.find(item => {
+			return item.path === path;
+		});
+		if (item) {
+			item!.isValid = isValid;
+			valid = item!.isValid;
+
+			if (item && errorMessage) {
+				if (overwriteErrorMessage || !item.errorMessage) {
+					item.errorMessage = errorMessage;
+				} else {
+					item.errorMessage = `${item.errorMessage}\n${errorMessage}`;
+				}
+			}
+
+			if (valid == true && item) {
+				item.errorMessage = '';
+			}
+		}
+		validationStoreValues.allComplexTypesValid = true;
+		for (const item of validationStoreValues.complexTypeValidationItems) {
+			if (!item.isValid && item.required) {
+				validationStoreValues.allComplexTypesValid = false;
+				break;
+			}
+		}
+	}
+	validationStore.set({
+		...validationStoreValues,
+		complexTypeValidationItems: [...validationStoreValues.complexTypeValidationItems]
 	});
 	//console.log("🚀 ~ ValidationStoreSetSimpleTypeValid ~ validationStore:", get(validationStore))
 	return valid;
@@ -560,6 +625,9 @@ export function createSimpleComponentValidationItem(path: string, label: string,
 
 	let item = simpleComponent.properties['#text'];
 
+	 console.log('simpleComponentValidationItem',label,item, simpleComponent	);
+
+
 	// set regex if defined
 	if (item.pattern && item.pattern != undefined && item.pattern != null && item.pattern != '') {
 		simpleComponentValidationItem.regex = item.pattern;
@@ -597,6 +665,66 @@ export function createSimpleComponentValidationItem(path: string, label: string,
 
 
 	return simpleComponentValidationItem;
+}
+
+
+export function createComplexComponentValidationItem(path: string, label: string, required: boolean, complexComponent: any): ComplexComponentData {
+
+	let complexComponentValidationItem: ComplexComponentData = { 
+		label: label, 
+		path: path, 
+		required: required, 
+		isValid: false, 
+		errorMessage: '' };
+
+	let item = complexComponent;
+
+ console.log('complexComponentValidationItem',label,item, complexComponent	);
+
+
+	// set max items in array if defined
+	if (item.maxItems && item.maxItems != undefined && item.maxItems != null && item.maxItems != '') {
+		complexComponentValidationItem.maxItems = item.maxItems;
+	}
+
+ // set min items in array if defined
+	if (item.minItems && item.minItems != undefined && item.minItems != null && item.minItems != '') {
+		complexComponentValidationItem.minItems = item.minItems;
+	}
+
+	// // set minLength if defined
+	// if (item.minLength && item.minLength != undefined && item.minLength != null && item.minLength != '') {
+	// 	simpleComponentValidationItem.minLength = item.minLength;
+	// }
+	// // set maxLength if defined
+	// if (item.maxLength && item.maxLength != undefined && item.maxLength != null && item.maxLength != '') {
+	// 	simpleComponentValidationItem.maxLength = item.maxLength;
+	// }
+	// // set domainList if defined
+	// if (item.enum && item.enum != undefined && item.enum != null && item.enum.length > 0) {
+	// 	simpleComponentValidationItem.enum = item.enum;
+	// }
+	// // set lowerBound if defined
+	// if (item.lowerBound && item.lowerBound != undefined && item.lowerBound != null && item.lowerBound.length != '') {
+	// 	simpleComponentValidationItem.lowerBound = item.lowerBound;
+	// }
+	// // set upperBound if defined
+	// if (item.upperBound && item.upperBound != undefined && item.upperBound != null && item.upperBound.length != '') {
+	// 	simpleComponentValidationItem.upperBound = item.upperBound;
+	// }
+
+	// // type specific	validation criteria
+	// // set minium if if defined
+	// if ((item.minimum && item.minimum != undefined && item.minimum != null && item.minimum != '') || item.minimum == 0) {
+	// 	simpleComponentValidationItem.minimum = item.minimum;
+	// }
+
+	// if (item.maximum && item.maximum != undefined && item.maximum != null && item.maximum != '') {
+	// 	simpleComponentValidationItem.maximum = item.maximum;
+	// }
+
+
+	return complexComponentValidationItem;
 }
 
 
@@ -769,8 +897,18 @@ export function updateValidationState(path: string, res: any): void {
 	if (res && res.hasErrors(path)) {
 		errorMessage = res.getErrors(path).join('.  ');
 	}
-	//console.log('🚀 ~ updateValidationState ~ path:', path, 'isValid:', res ? res.isValid(path) : true, 'errorMessage:', errorMessage);
-	ValidationStoreSetSimpleTypeValid(path, res ? res.isValid(path) : true, errorMessage);
+
+	console.log('🚀 ~ updateValidationState ~ path:', path, 'res:', res, 'errorMessage:', errorMessage, get(validationStore));
+
+	if(isSimpleComponent(getNodeByPath(path), path)){
+		ValidationStoreSetSimpleTypeValid(path, res ? res.isValid(path) : true, errorMessage);
+	}
+	else
+	{
+		ValidationStoreSetComplexTypeValid(path, res ? res.isValid(path) : true, errorMessage);
+	}
+
+	
 }
 
 export function registerValidationItem(
@@ -780,14 +918,35 @@ export function registerValidationItem(
 	schemaNode: any,
 	forceRegistration: boolean = false
 ): void {
+
 	if (schemaNode) {
-		let validationItem = createSimpleComponentValidationItem(
-			path,
-			label,
-			required,
-			schemaNode
-		);
-		ValidationStoreAddSimpleComponent(validationItem, forceRegistration);
+
+			console.log('🚀 ~ registerValidationItem ~ path:', path);
+
+			//	check if the schemaNode is a complex component and add the specific validation item to the validation store
+			if(isSimpleComponent(schemaNode, path)){
+					console.log('🚀 ~ registerValidationItem ~ simple:', path);
+				let validationItem = createSimpleComponentValidationItem(
+					path,
+					label,
+					required,
+					schemaNode
+				);
+				ValidationStoreAddSimpleComponent(validationItem, forceRegistration);
+		}else{
+
+			console.log('🚀 ~ registerValidationItem ~ complex:', path);
+
+
+			let validationItem = createComplexComponentValidationItem(
+				path,
+				label,
+				required,
+				schemaNode
+			);
+			ValidationStoreAddComplexComponent(validationItem, forceRegistration);
+		}
+
 	}
 }
 
@@ -831,4 +990,17 @@ export function hasAnyValue(node) {
 /** Public helper: does the given dot-path contain any real value? */
 export function hasValueAtPath( path) {
   return hasAnyValue(getAtPath( path));
+}
+
+// checks if a component is "simple" by looking for a "#text" property in its properties
+export function isSimpleComponent(component: any, path:string): boolean {
+
+		if(component	&& component.properties && component.properties['#text'] !== undefined){
+			return true;
+		}else	if(component && component['#text'] !== undefined){
+			return true;
+		}
+		else{
+			return false;
+		}
 }

@@ -120,7 +120,7 @@
 				<SimpleComponent
 					simpleComponent={simpleComponent.component.node}
 					{...simpleComponent}
-					on:reload
+					on:updated
 				/>
 			{/if}
 		</div>

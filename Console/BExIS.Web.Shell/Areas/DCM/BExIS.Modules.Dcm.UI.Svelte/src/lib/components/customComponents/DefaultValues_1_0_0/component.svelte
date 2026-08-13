@@ -59,7 +59,7 @@ import { getFullConfig, getIsRequiredBySchemaAndPath, getLabelByPath, getTargetV
   {#each simpleComponents as simpleComponent, index (simpleComponent.path)}
     <div class="flex-1">
       {#if simpleComponent}
-			    <SimpleComponent simpleComponent = {simpleComponent.component.node}  {...simpleComponent} on:reload />
+			    <SimpleComponent simpleComponent = {simpleComponent.component.node}  {...simpleComponent} />
       {/if}
     </div>
   {/each}

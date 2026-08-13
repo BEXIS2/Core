@@ -127,7 +127,7 @@
 	}
 
 	function updateValue(value: any, _path: string) {
-		console.log('🚀 ~ updateValue ~ value:', value);
+		//console.log('🚀 ~ updateValue ~ value:', value);
 
 		// check changed field
 		res = suite(_path);

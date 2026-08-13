@@ -71,6 +71,7 @@
 	}
 
 	onMount(() => {
+
 		metadataStore.subscribe((s) => {
 			metadata = s;
 		});
@@ -95,7 +96,7 @@
 	}
 
 	function disableSaveFn(): boolean {
-		//console.log("🚀 ~ disableSaveFn ~ hasChanged:", hasChanged, saveWithError)
+		console.log("🚀 ~ disableSaveFn ~ hasChanged:", hasChanged, saveWithError)
 		if (hasChanged == false) return true; // when there are changes, the save button is enabled, so return false for disabled
 		if (saveWithError) return false; // when save with error is allowd, the save button is always enabled
 		if (!validationStoreValues) return true; // if there is no validation result, we consider the form as not valid, so the save button is disabled
@@ -119,55 +120,55 @@
 		}, 500);
 	}
 
-	function successHandler(e) {
-		console.log('🚀 ~ successHandler ~ e:', e);
+	// function successHandler(e) {
+	// 	console.log('🚀 ~ successHandler ~ e:', e);
 
-		const status = e.detail.status;
-		if (status === 200) {
-			notificationStore.showNotification({
-				notificationType: notificationType.success,
-				message: 'Metadata successfully imported.'
-			});
+	// 	const status = e.detail.status;
+	// 	if (status === 200) {
+	// 		notificationStore.showNotification({
+	// 			notificationType: notificationType.success,
+	// 			message: 'Metadata successfully imported.'
+	// 		});
 
-			//console.log("🚀 ~ successHandler ~ metadata:", metadata)
-			metadata = JSON.parse(String(e.detail.data));
-			//console.log("🚀 ~ successHandler ~ metadata:", metadata)
-			setMetadataStore(metadata);
-			dispatch('metadataUpdated');
-		}
-	}
+	// 		//console.log("🚀 ~ successHandler ~ metadata:", metadata)
+	// 		metadata = JSON.parse(String(e.detail.data));
+	// 		//console.log("🚀 ~ successHandler ~ metadata:", metadata)
+	// 		setMetadataStore(metadata);
+	// 		dispatch('metadataUpdated');
+	// 	}
+	// }
 
-	let files: FileList;
+	// let files: FileList;
 
-	async function fileUploadSelectionFn(e) {
-		console.log('🚀 ~ fileUploadSelectionFn ~ e:', e);
-		const file = e.target.files[0];
-		if (file) {
-			fileUploadType.existingFiles = [file.name];
-			console.log('🚀 ~ fileUploadSelectionFn ~ fileUploadType:', fileUploadType);
+	// async function fileUploadSelectionFn(e) {
+	// 	console.log('🚀 ~ fileUploadSelectionFn ~ e:', e);
+	// 	const file = e.target.files[0];
+	// 	if (file) {
+	// 		fileUploadType.existingFiles = [file.name];
+	// 		console.log('🚀 ~ fileUploadSelectionFn ~ fileUploadType:', fileUploadType);
 
-			const formData = new FormData();
-			formData.append('id', datasetId.toString());
-			formData.append(file.name, file);
+	// 		const formData = new FormData();
+	// 		formData.append('id', datasetId.toString());
+	// 		formData.append(file.name, file);
 
-			const res = await Api.post('/dcm/m/import', formData);
+	// 		const res = await Api.post('/dcm/m/import', formData);
 
-			console.log('🚀 ~ fileUploadSelectionFn ~ res:', res);
+	// 		console.log('🚀 ~ fileUploadSelectionFn ~ res:', res);
 
-			if (res.status === 200) {
-				notificationStore.showNotification({
-					notificationType: notificationType.success,
-					message: 'Metadata successfully imported.'
-				});
+	// 		if (res.status === 200) {
+	// 			notificationStore.showNotification({
+	// 				notificationType: notificationType.success,
+	// 				message: 'Metadata successfully imported.'
+	// 			});
 
-				//console.log("🚀 ~ successHandler ~ metadata:", metadata)
-				metadata = JSON.parse(String(res.data));
-				//console.log("🚀 ~ successHandler ~ metadata:", metadata)
-				setMetadataStore(metadata);
-				dispatch('metadataUpdated');
-			}
-		}
-	}
+	// 			//console.log("🚀 ~ successHandler ~ metadata:", metadata)
+	// 			metadata = JSON.parse(String(res.data));
+	// 			//console.log("🚀 ~ successHandler ~ metadata:", metadata)
+	// 			setMetadataStore(metadata);
+	// 			dispatch('metadataUpdated');
+	// 		}
+	// 	}
+	// }
 </script>
 
 

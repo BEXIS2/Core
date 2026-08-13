@@ -1,6 +1,6 @@
 import { create, test, enforce, only, each, optional } from 'vest';
 import type { validationStoretype } from '$lib/components/utils/metadata/models';
-import { getValidationStore, getValueByPath } from '$lib/components/utils/metadata/metadataComponentUtils';
+import { getNodeByPath, getValidationStore, getValueByPath } from '$lib/components/utils/metadata/metadataComponentUtils';
 import { hideStore, metadataStore } from '$lib/components/utils/metadata/stores';
 import { get } from 'svelte/store';
 
@@ -22,6 +22,7 @@ const suite = create((fieldName: string = '') => {
       only(fieldName);
     }
 
+   //console.log("🚀 ~ validationStoreValues:", validationStoreValues)
    if (validationStoreValues.simpleTypeValidationItems.length > 0) {
         each(validationStoreValues.simpleTypeValidationItems, (item) => {
             if ((fieldName && fieldName == item.path) || fieldName === '') {
@@ -49,7 +50,7 @@ const suite = create((fieldName: string = '') => {
 
                 // Validate maximum length if defined
                 if(item.maxLength != null && item.maxLength != undefined && !isEmpty(data)){
-                    console.log('Validating maxLength for field:', item.path);
+                    //console.log('Validating maxLength for field:', item.path);
                     test( item.path, `${item.label} must have a maximum length of ${item.maxLength}`, () => {
                         enforce(data).shorterThanOrEquals(item.maxLength);
                         
@@ -58,7 +59,7 @@ const suite = create((fieldName: string = '') => {
 
                 // Validate minimum if defined 
                 if(item.minimum != null && item.minimum != undefined && !isEmpty(data)){
-                    console.log('Validating minimum for field:', item.path);
+                    //console.log('Validating minimum for field:', item.path);
                     test( item.path, `${item.label} must have a minimum of ${item.minimum}`, () => {
                         enforce(data).greaterThanOrEquals(item.minimum);
                     });
@@ -71,6 +72,7 @@ const suite = create((fieldName: string = '') => {
                         enforce(data).lessThanOrEquals(item.maximum);
                     });
                 }
+
                 // Validate regex pattern if defined
                 if(item.regex != '' && item.regex != null && item.regex != undefined && !isEmpty(data)){
                     //console.log('Validating regex pattern for field:', item.path);
@@ -98,6 +100,54 @@ const suite = create((fieldName: string = '') => {
                 
             }
         });
+    } 
+    
+   if (validationStoreValues.complexTypeValidationItems.length > 0) {
+        each(validationStoreValues.complexTypeValidationItems, (item) => {
+            if ((fieldName && fieldName == item.path) || fieldName === '') {
+              
+                const node = getNodeByPath(item.path);
+                console.log("array child ~ node:", item.path,node, node?.length, item.maxItems, item.minItems)
+
+                //Validate required field
+                if(item.required){
+                    test( item.path, `${item.label} is required`, () => {      
+                        enforce(node).isNotBlank();
+                    });
+                }
+                else
+                {
+                    optional(item.path);
+                }       
+
+                //maxItems validation
+                // Validate minimum if defined 
+                if(item.maxItems != null && item.maxItems != undefined ){
+      
+                    test( item.path, `${item.label} must have a maximum of ${item.maxItems} items`, () => { 
+                       //enforce(node).isArray();
+                        enforce(node.length).lessThanOrEquals(item.maxItems);
+                    });
+                }
+
+                if(item.minItems != null && item.minItems != undefined ){
+
+                    test( item.path, `${item.label} must have a minimum of ${item.minItems} items`, () => { 
+                       //enforce(node).isArray();
+                        enforce(node.length).greaterThanOrEquals(item.minItems);
+                    });
+                }
+
+
+                test(item.path, 'Valide', () => {
+
+                    //console.log("🚀 ~ updateValue Validation for field:", item.path, "with value:", data);
+
+                    // Ein leeres return signalisiert Vest: "Dieser Test ist erfolgreich bestanden!a" //
+                    return; 
+                });
+            }
+        })
     }
 });
 

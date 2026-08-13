@@ -7,10 +7,9 @@
 		MultiSelect,
 		DatePickerInput,
 		Checkbox
-
 	} from '@bexis2/bexis2-core-ui';
 
-	import { onMount } from 'svelte';
+	import { onMount, createEventDispatcher } from 'svelte';
 	import {
 		updateMetadataStore,
 		showDescriptionHandler,
@@ -28,7 +27,7 @@
 	import Blocked from './Blocked.svelte';
 	import PartySelector from './PartySelector.svelte';
 	import { getMappingComponentConfig } from '$lib/components/utils/metadata/mappingHelper';
-	import { showAllDescriptionsStore } from '$lib/components/utils/metadata/stores';
+	import { showAllDescriptionsStore, validationStore } from '$lib/components/utils/metadata/stores';
 
 	export let simpleComponent: any;
 	export let path: string;
@@ -46,6 +45,9 @@
 	let max: number | undefined = 1000000;
 	$:showDescription = $showAllDescriptionsStore !== null && $showAllDescriptionsStore !== undefined ? $showAllDescriptionsStore : false;
 
+// dispatch event to parent component to reload the metadata form, so the validation state is updated
+	const dispatch = createEventDispatcher();
+
 	// if mulitselect for array of simple types, create items array for multiselect component
 	// we need to convert the enum of the schema to a list entry of the jsons because we more informations on each value then only the value
 	// like ref and partyid
@@ -54,6 +56,7 @@
 	$: updateValidationState(path, res);
 	// update metadata store on value change
 	$: updateMetadataStore(path, value, isMulti);
+ $: value, dispatch('x', { path, value });
 
 	// System mapping
 	let mappingComponentConfig: MappingComponentConfig;
@@ -89,6 +92,7 @@
 					'#text': item
 				};
 			});
+				
 		}
 
 
@@ -110,11 +114,18 @@
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
 	function onChangeHandler(e: any) {
+
 		// add some delay so the entityTemplate is updated
 		// otherwise the values are old
+		console.log('🚀 ~ onChangeHandler ~ path:', path, 'value:', value);
+		dispatch('updated');
+		
+
 		setTimeout(async () => {
 			updateValue(value, path);
+			//dispatch('reload');
 		}, 10);
+	
 	}
 
 	function handleShowDescription(e: CustomEvent<any>) {
@@ -142,10 +153,12 @@
 	}
 
 	function updateValue(value: any, _path: string) {
+		// console.log("🚀 ~ updateValue ~ value:", value)
 		// check changed field only
 		res = suite(_path);
 
 		setTimeout(async () => {
+					//console.log("🚀 ~ path:", path, res.isValid(path))
 			updateValidationState(_path, res);
 		}, 10);
 	}
@@ -163,7 +176,7 @@
     feedback: res.getErrors(path),
     description: description,
 				showDescription: showDescription,
-	disabled: disabled === "true" ? true : false
+	   disabled: disabled === "true" ? true : false
   };
 
 </script>
@@ -282,6 +295,8 @@
 				<!-- Handle different types without specific format -->
 				<!-- Handle string type -->
 			{:else if simpleComponent.properties['#text'].type === 'string' && simpleComponent.properties['#text'].enum === undefined}
+
+
 				<TextInput
 					{... commonProps}
 					bind:value
@@ -289,6 +304,8 @@
 					on:showDescription={handleShowDescription}
 					on:hideDescription={handleHideDescription}
 				/>
+	
+
 				<!-- Handle string type with enum  -->
 			{:else if simpleComponent.properties['#text'].type === 'string' && simpleComponent.properties['#text'].enum}
 				{#if !isMulti}
@@ -326,6 +343,8 @@
 							source={jsonItems}
 							itemId="#text"
 							itemLabel="#text"
+							complexSource={true}
+							complexTarget={true}
 							bind:target={value}
 							isMulti={true}
 							clearable={required ? false : true}
@@ -361,7 +380,6 @@
 				>
 				<Checkbox
 					{... commonProps}
-
 					id={path}
 					bind:checked={value}
 					on:showDescription={handleShowDescription}

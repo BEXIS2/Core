@@ -85,6 +85,7 @@ function getChoices(cComponent: any): {key:string, value:string}[] {
 									complexComponent={choiceComponent.items.properties[item]}
 									path={path + '.' + item}
 									required={choiceComponent.required && choiceComponent.required.includes(item)}
+									on:updated
 								/>
 								</div>
 
@@ -99,6 +100,7 @@ function getChoices(cComponent: any): {key:string, value:string}[] {
 										required={choiceComponent.items.required && choiceComponent.items.required.includes(item)}
 										value={null}
 										label={item}
+										on:updated
 									/>
 								</div>
 						
