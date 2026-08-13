@@ -181,8 +181,9 @@
 				{#if selectedChoice.type === 'object' && selectedChoice.properties && !selectedChoice.properties['#text']}
 	
 				<div class="grid grid-cols-1 gap-0 m-2">
-					<Header path = {path + '.' + targetKey} />
-					
+					{#key targetKey}
+						<Header path = {path + '.' + targetKey} />
+					{/key}
 					{#if !$hideStore.includes(path + '.' + targetKey) && $activeStore.includes(path)}
 					<div in:slide out:slide class="card px-5 py-4" id={path + '.' + targetKey}>
 					{#key targetKey}
