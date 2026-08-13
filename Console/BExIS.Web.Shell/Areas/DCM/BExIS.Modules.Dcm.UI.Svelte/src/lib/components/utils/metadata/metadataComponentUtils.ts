@@ -287,9 +287,9 @@ export function schemaToJson(schema: any): any {
 		case 'boolean':
 			return false;
 		case 'number':
-			return 0;
+			return undefined;
 		case 'int':
-			return 0;
+			return undefined;
 		case 'date':
 			return new Date().toISOString().split('T')[0];
 		default:

@@ -94,7 +94,6 @@ function removeFromValidationStore(path: string) {
 	}
 
 	function insertItemAt(index: number) {
-		alert("test"+index)
 		value.splice(index, 0, schemaToJson(arrayComponent.items));
 		console.log('insertItemAt', value);
 		render = !render;
