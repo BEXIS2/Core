@@ -57,7 +57,7 @@
     "3.npm - publish": "npm publish --access public"
   },
   "dependencies": {
-    "@bexis2/bexis2-core-ui": "0.4.101",
+    "@bexis2/bexis2-core-ui": "0.4.102",
     "@floating-ui/dom": "1.7.6",
     "papaparse": "5.5.2",
     "svelte-fa": "4.0.4"
