@@ -36,11 +36,11 @@
 
 	
 function	onChangeHandler() {
-  console.log("🚀 ~ array child onChangeHandler:", path, res.isValid(path))
+  //console.log("🚀 ~ array child onChangeHandler:", path, res.isValid(path))
 		res = suite(path);
 
 		setTimeout(async () => {
-			console.log("array child ~ path:", path, res.isValid(path), res.getError(path))
+			//console.log("array child ~ path:", path, res.isValid(path), res.getError(path))
 			updateValidationState(path, res);
 		}, 10);
 }

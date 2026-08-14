@@ -70,7 +70,7 @@ export function setValueByPath(obj: any, path: string, value: any) {
 }
 // Update metadata store with a new value at the specified path
 export function updateMetadataStore(path: string, value: any, isMulti?: boolean, ref?: any, partyid?: number): any {
-	console.log('Updating metadata store at path:', path, 'with value:', value, 'isMulti:', isMulti, 'ref:', ref, 'partyid:', partyid);
+	//console.log('Updating metadata store at path:', path, 'with value:', value, 'isMulti:', isMulti, 'ref:', ref, 'partyid:', partyid);
 	let obj: any = {};
 	if (path !== undefined && path !== null && path !== '') {
 		metadataStore.subscribe((v) => {
@@ -625,7 +625,7 @@ export function createSimpleComponentValidationItem(path: string, label: string,
 
 	let item = simpleComponent.properties['#text'];
 
-	 console.log('simpleComponentValidationItem',label,item, simpleComponent	);
+	 //console.log('simpleComponentValidationItem',label,item, simpleComponent	);
 
 
 	// set regex if defined
@@ -679,7 +679,7 @@ export function createComplexComponentValidationItem(path: string, label: string
 
 	let item = complexComponent;
 
- console.log('complexComponentValidationItem',label,item, complexComponent	);
+ //console.log('complexComponentValidationItem',label,item, complexComponent	);
 
 
 	// set max items in array if defined
@@ -870,13 +870,12 @@ export function getLabelByPath(path: string): string {
 	let label = '';
 	if (path.split('.').length > 1 && !isNaN(Number(path.split('.')[path.split('.').length - 1]))) {
 		//path = path.split('.').slice(0, -1).join('.');
-
 		index = Number(path.split('.')[path.split('.').length - 1]);
 		label = `${index + 1}. ${convertDisplayName(path.split('.')[path.split('.').length - 2])}`;
 	}
 	else {
 		label = convertDisplayName(path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path);
-		console.log('Path is not an array:', path, label);
+		//console.log('Path is not an array:', path, label);
 	}
 	return label;
 }
@@ -898,7 +897,7 @@ export function updateValidationState(path: string, res: any): void {
 		errorMessage = res.getErrors(path).join('.  ');
 	}
 
-	console.log('🚀 ~ updateValidationState ~ path:', path, 'res:', res, 'errorMessage:', errorMessage, get(validationStore));
+	//console.log('🚀 ~ updateValidationState ~ path:', path, 'res:', res, 'errorMessage:', errorMessage, get(validationStore));
 
 	if(isSimpleComponent(getNodeByPath(path), path)){
 		ValidationStoreSetSimpleTypeValid(path, res ? res.isValid(path) : true, errorMessage);
@@ -921,11 +920,11 @@ export function registerValidationItem(
 
 	if (schemaNode) {
 
-			console.log('🚀 ~ registerValidationItem ~ path:', path);
+			//console.log('🚀 ~ registerValidationItem ~ path:', path);
 
 			//	check if the schemaNode is a complex component and add the specific validation item to the validation store
 			if(isSimpleComponent(schemaNode, path)){
-					console.log('🚀 ~ registerValidationItem ~ simple:', path);
+					//console.log('🚀 ~ registerValidationItem ~ simple:', path);
 				let validationItem = createSimpleComponentValidationItem(
 					path,
 					label,
@@ -935,8 +934,7 @@ export function registerValidationItem(
 				ValidationStoreAddSimpleComponent(validationItem, forceRegistration);
 		}else{
 
-			console.log('🚀 ~ registerValidationItem ~ complex:', path);
-
+			//console.log('🚀 ~ registerValidationItem ~ complex:', path);
 
 			let validationItem = createComplexComponentValidationItem(
 				path,

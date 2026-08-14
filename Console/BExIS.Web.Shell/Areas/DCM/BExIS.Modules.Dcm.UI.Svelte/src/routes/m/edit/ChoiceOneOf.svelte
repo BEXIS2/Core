@@ -3,7 +3,7 @@
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from '$lib/components/metadata/simpleComponent.svelte';
 	import { onMount } from 'svelte';
-	import { activateShow, getNodeByPath, setActive, ValidationStoreSetSimpleTypeValid } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { activateShow, getNodeByPath, removeFromMetadataStore, setActive, ValidationStoreSetSimpleTypeValid } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { activeStore, hideStore, validationStore } from '$lib/components/utils/metadata/stores';
 	import { isActive} from '$lib/components/utils/metadata/metadataComponentUtils';
 
@@ -156,10 +156,12 @@
 
 		const branchPath = path + '.' + branchKey;
 		clearValidationErrorsForPrefix(branchPath);
+		removeFromMetadataStore(path);
 	}
 
 	function changeFn() {
 		// Selection changes are handled by the reactive target block above.
+		removeFromMetadataStore(path);
 	}
 
 </script>

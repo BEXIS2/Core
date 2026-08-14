@@ -125,6 +125,7 @@
       metadata = JSON.parse(String(e.detail.data));
       //console.log("🚀 ~ successHandler ~ metadata:", metadata)
       setMetadataStore(metadata);
+
       dispatch('metadataUpdated');
 
       }
@@ -157,7 +158,11 @@
       metadata = JSON.parse(String(res.data));
       //console.log("🚀 ~ successHandler ~ metadata:", metadata)
       setMetadataStore(metadata);
-      dispatch('metadataUpdated');
+
+      setTimeout(() => {
+        dispatch('metadataUpdated');
+      }, 500);  
+      
 
       }
 
@@ -184,8 +189,8 @@
           button="btn variant-ghost"
           on:change={fileUploadSelectionFn}
           bind:files
-        accept=".json,.xml"
-      >
+          accept=".json,.xml"
+        >
         <Fa icon={faFileUpload} />&nbsp;Upload
       </FileButton>
     </span>

@@ -229,8 +229,10 @@ namespace BExIS.Xml.Helpers
                         else
                         {
                             Debug.WriteLine("NULL OR EMPTY:------> " + usagePath);
-
-                            typeList = addAndReturnAttribute(element, nestedUsage, 1, 1);
+                            // if the element is null, in xml as default the value should exist, but in case of the parent is a choice
+                            // there should only be a part if it exist otherwhise the xml document is not valid
+                            if (usage.Extra == null || !IsChoice(usage.Extra))
+                                typeList = addAndReturnAttribute(element, nestedUsage, 1, 1);                           
                         }
 
                         foreach (var type in typeList)
@@ -244,7 +246,7 @@ namespace BExIS.Xml.Helpers
 
                         typeList = addAndReturnAttribute(element, nestedUsage, 1, 1);
 
-                        if (nestedUsage.Extra == null || !IsChoice(nestedUsage.Extra))
+                        if (nestedUsage.Extra == null || (!IsChoice(nestedUsage.Extra) || withChoiceChildren))
                             setChildren(typeList.FirstOrDefault(), nestedUsage, importDocument, withChoiceChildren);
                     }
                 }
@@ -280,8 +282,8 @@ namespace BExIS.Xml.Helpers
                             else
                             {
                                 Debug.WriteLine("NULL OR EMPTY:------> " + usagePath);
-
-                                typeList = addAndReturnAttribute(element, attrUsage, 1, 1);
+                                if (usage.Extra == null || !IsChoice(usage.Extra))
+                                    typeList = addAndReturnAttribute(element, attrUsage, 1, 1);
                             }
 
                             foreach (var type in typeList)

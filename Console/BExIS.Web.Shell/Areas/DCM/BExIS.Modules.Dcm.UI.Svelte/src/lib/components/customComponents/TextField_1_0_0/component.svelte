@@ -75,10 +75,10 @@
 			maxLength === '' ? undefined : Number(maxLength)
 		);
 		syncTermValue();
-		console.log(
-			'AFTER syncTermValue, validationItem:',
-			$validationStore?.simpleTypeValidationItems?.find((i) => i.path === text_field_path)
-		);
+		// console.log(
+		// 	'AFTER syncTermValue, validationItem:',
+		// 	$validationStore?.simpleTypeValidationItems?.find((i) => i.path === text_field_path)
+		// );
 	});
 
 	// Keep validation state when component is temporarily unmounted (e.g., collapsed section).
@@ -101,15 +101,15 @@
 	}
 
 	function syncTermValue() {
-		console.log(
-			'🚀 ~ syncTermValue ~ text_field_path:',
-			text_field_path,
-			'value:',
-			value,
-			'ref:',
-			ref,
-			validationRegistered
-		);
+		// console.log(
+		// 	'🚀 ~ syncTermValue ~ text_field_path:',
+		// 	text_field_path,
+		// 	'value:',
+		// 	value,
+		// 	'ref:',
+		// 	ref,
+		// 	validationRegistered
+		// );
 		if (!validationRegistered) return;
 
 		updateMetadataStore(
@@ -136,8 +136,8 @@
 		showIcon: false,
 		disabled: disabled
 	};
-	$: console.log('commonProps:', commonProps);
-	$: console.log('RAW STORE:', $validationStore);
+	// $: console.log('commonProps:', commonProps);
+	// $: console.log('RAW STORE:', $validationStore);
 </script>
 
 {#key validationReady}

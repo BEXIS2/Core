@@ -31,7 +31,10 @@
 		activeStore,
 		showAllDescriptionsStore,
 		hideStore,
-		descriptionStore
+		descriptionStore,
+
+		validationStore
+
 	} from '$lib/components/utils/metadata/stores';
 	import {
 		faEye,
@@ -115,6 +118,12 @@
 	function expandAll() {
 		hideStore.set([]);
 	}
+
+	function reloadMetadata() {
+		reload = !reload;
+		alert('Metadata updated successfully!');
+	}
+
 </script>
 
 <Page contentLayoutType={pageContentLayoutType.center} footer={false}>
@@ -129,23 +138,14 @@
 							bind:metadata={m}
 							{saveWithError}
 							bind:datasetId={id}
-							on:metadataUpdated={() => (reload = !reload)}
 						/>
 					{/if}
 				</div>
 
 				<div class="w-full flex flex-col gap-4">
-					<MetadataHeader bind:metadata={m} {saveWithError} bind:datasetId={id} />
+					<MetadataHeader bind:metadata={m} {saveWithError} bind:datasetId={id} on:metadataUpdated={reloadMetadata}/>
 					<!-- Show all descriptions -->
 					<div class="flex flex-col gap-2">
-						
-							<!--<button class="badge" on:click={() => showAllDescriptionsStore.update((v) => !v)}>
-								{#if $showAllDescriptionsStore}
-									<Fa icon={faEyeSlash} />&nbsp;Hide descriptions
-								{:else}
-									<Fa icon={faEye} />&nbsp;Show descriptions
-								{/if}
-							</button>-->
 
 <div class="w-full flex items-center gap-1 pr-2 text-sm">
     <!-- First block stays on the left naturally -->

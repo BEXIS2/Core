@@ -107,8 +107,7 @@ const suite = create((fieldName: string = '') => {
             if ((fieldName && fieldName == item.path) || fieldName === '') {
               
                 const node = getNodeByPath(item.path);
-                console.log("array child ~ node:", item.path,node, node?.length, item.maxItems, item.minItems)
-
+  
                 //Validate required field
                 if(item.required){
                     test( item.path, `${item.label} is required`, () => {      

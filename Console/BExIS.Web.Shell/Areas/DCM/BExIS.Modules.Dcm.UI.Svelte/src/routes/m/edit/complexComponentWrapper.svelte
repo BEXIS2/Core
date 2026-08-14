@@ -5,13 +5,11 @@
 	import ChoiceComponent from './choiceComponentWrapper.svelte';
 
 	import { slide } from 'svelte/transition';
-	import { activeStore, hideStore, validationStore } from '$lib/components/utils/metadata/stores';
+	import { activeStore, hideStore, metadataStore, validationStore } from '$lib/components/utils/metadata/stores';
 	import Header from './MetadataComponentHeader.svelte';
 	import { convertDisplayName } from '$lib/components/utils/metadata/metadataShared';
 	import { registerValidationItem, updateValidationState } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
-	import { createEventDispatcher } from 'svelte';
-
 
 	export let complexComponent: any;
 	export let path: string;
@@ -46,29 +44,23 @@
 
 	// init
 	setTimeout(async () => {
-			//console.log("🚀 ~ path:", path, res.isValid(path))
-			//console.log("🚀 ~ path:", path, res.isValid(path), res.getError(path))
-			console.log("end of complex item scipt - validation state update", $validationStore)
 		updateValidationState(path, res);
 	}, 100);
  
-	const dispatch = createEventDispatcher();
-	
+
 function	onChangeHandler(e: CustomEvent<any>) {
   //console.log("🚀 ~ complex child onChangeHandler:", path, res.isValid(path))
 		res = suite(path);
 		setTimeout(async () => {
-			//console.log("🚀 ~ path:", path, res.isValid(path))
-			//console.log("🚀 ~ path:", path, res.isValid(path), res.getError(path))
 			updateValidationState(path, res);
-			dispatch('updated');
 		}, 10);
+
 }
 
-console.log("end of complex item scipt")
+//console.log("end of complex item scipt")
+
 
 </script>
-<!-- {#key reloading} -->
 {#if complexComponent && complexComponent.type === 'object' && complexComponent.properties}
 	{#each Object.entries(complexComponent.properties) as [key, value]}
 		{@const p = path = path ? path + '.' + key : key}
@@ -110,4 +102,5 @@ console.log("end of complex item scipt")
 	{/each}
 	
 {/if}
+
 

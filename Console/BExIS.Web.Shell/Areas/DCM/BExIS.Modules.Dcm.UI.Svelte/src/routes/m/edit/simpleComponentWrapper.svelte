@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { getConfigStore, getLabelByPath, getValueByPath, hideDescriptionHandler, showDescriptionHandler} from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { getConfigStore, getLabelByPath, getValueByPath, hideDescriptionHandler, showDescriptionHandler, updateValidationState} from '$lib/components/utils/metadata/metadataComponentUtils';
 
 	import SimpleComponent from '$lib/components/metadata/simpleComponent.svelte';
 	import { metadataStore } from '$lib/components/utils/metadata/stores';
 
 	import { onMount, createEventDispatcher } from 'svelte';
 	import { customComponentsCatalog } from '$lib/components/customComponents/componentCatalog';
+	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
 
 	export let simpleComponent: any;
 	export let path: string;
@@ -16,8 +17,13 @@
 	let label = getLabelByPath(path);
 
 	metadataStore.subscribe(() => {
+		//console.log("metadataStore subscribe in simpleComponentWrapper.svelte:", path, value)
 		value = getValueByPath(path);
-		//console.log('value updated', value);
+		//const res = suite(path);
+		// setTimeout(async () => {
+		// 	updateValidationState(path, res);
+		// 	dispatch('updated');
+		// }, 2000);
 	});
 
 
@@ -29,8 +35,6 @@
 // dispatcher to forward events to parent components
 const dispatch = createEventDispatcher();
 
-
-
 	onMount(async () => {
 
 		config = getConfigStore();
@@ -38,8 +42,7 @@ const dispatch = createEventDispatcher();
 				// check if this component is an anchor point
 		//console.log("check for anchorpoin", config)
 		for (const component of config.components) {
-			console.log("ghjgJ", component.globalSettings.anchorpoint, path)
-			console.log("component.mode.variables", component.mode.variables)
+
 			// check if path is array which is indicated if the last part after the point is a number
 			let isPathArray = path.includes('.') && !isNaN(Number(path.split('.').pop()));
 

@@ -27,7 +27,7 @@
 	import Blocked from './Blocked.svelte';
 	import PartySelector from './PartySelector.svelte';
 	import { getMappingComponentConfig } from '$lib/components/utils/metadata/mappingHelper';
-	import { showAllDescriptionsStore, validationStore } from '$lib/components/utils/metadata/stores';
+	import { metadataStore, showAllDescriptionsStore, validationStore } from '$lib/components/utils/metadata/stores';
 
 	export let simpleComponent: any;
 	export let path: string;
@@ -117,7 +117,7 @@
 
 		// add some delay so the entityTemplate is updated
 		// otherwise the values are old
-		console.log('🚀 ~ onChangeHandler ~ path:', path, 'value:', value);
+		console.log("metadata store:", $metadataStore);
 		dispatch('updated');
 		
 
