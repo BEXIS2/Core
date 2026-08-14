@@ -188,7 +188,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                     if (datatupleFromDatabaseIds.Count > 0) isUpdatingData = true;
 
                     // update metadata based on system keys mappings
-                    workingCopy.Metadata = setSystemValuesToMetadata(workingCopy.Id, datasetManager.GetDatasetVersionCount(workingCopy.Id) + 1, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, isUpdatingData);
+                    workingCopy.Metadata = setSystemValuesToMetadata(workingCopy.Id, datasetManager.GetDatasetVersionCount(workingCopy.Id) + 1,0, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, isUpdatingData);
 
                     ////set modification
                     workingCopy.ModificationInfo = new EntityAuditInfo()
@@ -351,16 +351,16 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
             return await Upload();
         }
 
-        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool updateData = false)
+        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId,double tag, XmlDocument metadata, bool updateData = false)
         {
             SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
 
             Key[] myObjArray = { };
 
-            if (updateData) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
-            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DataCreationDate, Key.DataLastModified };
+            if (updateData) myObjArray = new Key[] { Key.Id, Key.Version,Key.Tag, Key.DateOfVersion, Key.DataLastModified };
+            else myObjArray = new Key[] { Key.Id, Key.Version, Key.Tag, Key.DataCreationDate, Key.DataLastModified };
 
-            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version,tag, metadataStructureId, metadata, myObjArray);
 
             return metadata;
         }

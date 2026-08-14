@@ -110,27 +110,7 @@
     
   }
 
-  function successHandler(e){
-
-    console.log("🚀 ~ successHandler ~ e:", e)
-
-    const status = e.detail.status;
-    if(status === 200){
-      notificationStore.showNotification({
-        notificationType: notificationType.success,
-        message: 'Metadata successfully imported.',
-      });
-
-      //console.log("🚀 ~ successHandler ~ metadata:", metadata)
-      metadata = JSON.parse(String(e.detail.data));
-      //console.log("🚀 ~ successHandler ~ metadata:", metadata)
-      setMetadataStore(metadata);
-
-      dispatch('metadataUpdated');
-
-      }
-  }
-
+ 
   let files: FileList;
 
   async function fileUploadSelectionFn(e){

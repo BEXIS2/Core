@@ -1,4 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dim.Entities.Mappings;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Ddm.UI.Helpers;
@@ -111,10 +112,13 @@ namespace BExIS.Modules.Ddm.UI.Controllers.API
                     // update all versions before without tag
                     var vIDs = datasetManager.GetAllVersionAfterLastTag(version.Dataset.Id, latestTag, version.Id);
 
+                    Dcm.UI.Helpers.SystemMetadataHelper systemMetadataHelper = new Dcm.UI.Helpers.SystemMetadataHelper();
+
                     foreach (var vID in vIDs)
                     {
                         var v = datasetManager.GetDatasetVersion(vID);
                         v.Tag = newTag;
+                        v.Metadata = systemMetadataHelper.SetSystemValuesToMetadata(v.Dataset.Id, v.VersionNo, newTag.Nr, v.Dataset.MetadataStructure.Id, v.Metadata, Key.Tag);
                         datasetManager.UpdateDatasetVersion(v);
                     }
 

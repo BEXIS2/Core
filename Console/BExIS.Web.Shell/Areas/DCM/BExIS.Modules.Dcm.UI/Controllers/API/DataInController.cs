@@ -263,8 +263,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                             }
 
+                            double tag = workingCopy.Tag!=null? workingCopy.Tag.Nr : 0;
+
                             // update metadata based on system keys mappings
-                            workingCopy.Metadata = setSystemValuesToMetadata(workingCopy.Id, datasetManager.GetDatasetVersionCount(workingCopy.Id) + 1, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, true);
+                            workingCopy.Metadata = setSystemValuesToMetadata(workingCopy.Id, datasetManager.GetDatasetVersionCount(workingCopy.Id) + 1, tag, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, true);
 
                             ////set modification
                             workingCopy.ModificationInfo = new EntityAuditInfo()
@@ -331,16 +333,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             throw new HttpResponseException(HttpStatusCode.NotFound);
         }
 
-        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool updateData = false)
+        private XmlDocument setSystemValuesToMetadata(long datasetid, long version,double tag, long metadataStructureId, XmlDocument metadata, bool updateData = false)
         {
             SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
 
             Key[] myObjArray = { };
 
-            if (updateData) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
-            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DataCreationDate, Key.DataLastModified };
+            if (updateData) myObjArray = new Key[] { Key.Id, Key.Version, Key.Tag, Key.DateOfVersion, Key.DataLastModified };
+            else myObjArray = new Key[] { Key.Id, Key.Version, Key.Tag, Key.DataCreationDate, Key.DataLastModified };
 
-            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, tag, metadataStructureId, metadata, myObjArray);
 
             return metadata;
         }

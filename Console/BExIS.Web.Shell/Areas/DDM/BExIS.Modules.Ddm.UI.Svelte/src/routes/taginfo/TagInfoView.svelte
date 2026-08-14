@@ -43,7 +43,7 @@
 				{#each model as tagInfo}
 					<tr>
 						<td>
-							<a href="{host}/ddm/data/showdata?id={id}&tag={tagInfo.version}">{tagInfo.version}</a>
+							<a href="{host}/dcm/view?id={id}&tag={tagInfo.version}">{tagInfo.version}</a>
 						</td>
 						<td>
 							<div class="flex flex-col">

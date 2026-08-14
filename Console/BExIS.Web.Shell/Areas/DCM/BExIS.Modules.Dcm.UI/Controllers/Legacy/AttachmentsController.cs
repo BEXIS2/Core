@@ -141,7 +141,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // update metadata
                     int v = 1;
                     if (datasetVersion.Dataset.Versions != null && datasetVersion.Dataset.Versions.Count > 1) v = datasetVersion.Dataset.Versions.Count();
-                    datasetVersion.Metadata = setSystemValuesToMetadata(datasetId, v, datasetVersion.Dataset.MetadataStructure.Id, datasetVersion.Metadata, false);
+                    double tag = datasetVersion.Tag != null ? datasetVersion.Tag.Nr : 0;
+
+                    datasetVersion.Metadata = setSystemValuesToMetadata(datasetId, v, tag, datasetVersion.Dataset.MetadataStructure.Id, datasetVersion.Metadata, false);
 
                     dm.EditDatasetVersion(datasetVersion, null, null, null);
                     dm.CheckInDataset(dataset.Id, fileName, GetUsernameOrDefault(), ViewCreationBehavior.None);
@@ -312,7 +314,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // update metadata
                     int v = 1;
                     if (datasetVersion.Dataset.Versions != null && datasetVersion.Dataset.Versions.Count > 1) v = datasetVersion.Dataset.Versions.Count();
-                    datasetVersion.Metadata = setSystemValuesToMetadata(datasetId, v, datasetVersion.Dataset.MetadataStructure.Id, datasetVersion.Metadata, false);
+                    double tag = datasetVersion.Tag != null ? datasetVersion.Tag.Nr : 0;
+                    datasetVersion.Metadata = setSystemValuesToMetadata(datasetId, v, tag, datasetVersion.Dataset.MetadataStructure.Id, datasetVersion.Metadata, false);
 
                     dm.EditDatasetVersion(datasetVersion, null, null, null);
                     dm.CheckInDataset(dataset.Id, filenameList, GetUsernameOrDefault(), ViewCreationBehavior.None);
@@ -362,16 +365,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return storePath;
         }
 
-        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)
+        private XmlDocument setSystemValuesToMetadata(long datasetid, long version,double tag, long metadataStructureId, XmlDocument metadata, bool newDataset)
         {
             SystemMetadataHelper systemMetadataHelper = new SystemMetadataHelper();
 
             Key[] myObjArray = { };
 
-            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataCreationDate, Key.DataLastModified };
-            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
+            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version,Key.Tag, Key.DateOfVersion, Key.DataCreationDate, Key.DataLastModified };
+            else myObjArray = new Key[] { Key.Id, Key.Version,Key.Tag, Key.DateOfVersion, Key.DataLastModified };
 
-            var metadata_new = systemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+            var metadata_new = systemMetadataHelper.SetSystemValuesToMetadata(datasetid, version,tag, metadataStructureId, metadata, myObjArray);
 
             return metadata_new;
         }

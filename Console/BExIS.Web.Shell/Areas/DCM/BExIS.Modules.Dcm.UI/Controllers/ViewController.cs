@@ -917,7 +917,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         //[BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public ActionResult Start(long id, int version)
         {
-            //throw new NotImplementedException();
 
             return RedirectToAction("metadata", "view", new { area = "DCM", id, version});
         }

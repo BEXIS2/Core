@@ -44,6 +44,7 @@ using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
+using BExIS.Modules.Dcm.UI.Helpers;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -285,6 +286,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             Comment = "Metadata",
                             ActionType = AuditActionType.Create,
                         };
+                        double tag = workingCopy.Tag != null ? workingCopy.Tag.Nr : 0;
+
+                        // set system values
+                        setSystemValuesToMetadata(workingCopy.Id, datasetManager.GetDatasetVersionCount(workingCopy.Id) + 1, tag, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
 
                         datasetManager.EditDatasetVersion(workingCopy, null, null, null);
                         datasetManager.CheckInDataset(id, comment, user.Name, ViewCreationBehavior.None);
@@ -633,6 +638,21 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             return true;
 
+        }
+
+
+        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, double tag, long metadataStructureId, XmlDocument metadata)
+        {
+            SystemMetadataHelper systemMetadataHelper = new SystemMetadataHelper();
+
+            Key[] myObjArray = { };
+
+            myObjArray = new Key[] { Key.Id, Key.Version, Key.Tag, Key.DateOfVersion, Key.DataLastModified };
+
+
+            metadata = systemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, tag, metadataStructureId, metadata, myObjArray);
+
+            return metadata;
         }
 
         // DELETE: api/Metadata/5

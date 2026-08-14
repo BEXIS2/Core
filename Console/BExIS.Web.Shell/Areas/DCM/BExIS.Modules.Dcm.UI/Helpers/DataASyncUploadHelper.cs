@@ -361,7 +361,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                 Timestamp = DateTime.Now
                             };
 
-                            workingCopy.Metadata = setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
+                            workingCopy.Metadata = setSystemValuesToMetadata(id, v, 0, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
                             dm.EditDatasetVersion(workingCopy, null, null, null);
 
                             #endregion set System value into metadata
@@ -509,7 +509,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                 Timestamp = DateTime.Now
                             };
 
-                            workingCopy.Metadata = setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
+                            workingCopy.Metadata = setSystemValuesToMetadata(id, v, 0, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
 
                             dm.EditDatasetVersion(workingCopy, null, null, null);
 
@@ -743,16 +743,16 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
         
 
-        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)
+        private XmlDocument setSystemValuesToMetadata(long datasetid, long version,double tag, long metadataStructureId, XmlDocument metadata, bool newDataset)
         {
             SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
 
             Key[] myObjArray = { };
 
-            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataCreationDate, Key.DataLastModified };
-            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
+            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version,Key.Tag, Key.DateOfVersion, Key.DataCreationDate, Key.DataLastModified };
+            else myObjArray = new Key[] { Key.Id, Key.Version,Key.Tag, Key.DateOfVersion, Key.DataLastModified };
 
-            var metadata_new = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+            var metadata_new = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version,tag, metadataStructureId, metadata, myObjArray);
 
             return metadata_new;
         }

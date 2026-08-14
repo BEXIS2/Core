@@ -22,6 +22,7 @@
         MetadataLastModfied = 104,
         DataCreationDate = 105,
         DataLastModified = 106, // also for Dubline Core date
+        Tag = 107,
 
         //Additional Dublin Core nodes starts at 200
         Subject = 200,

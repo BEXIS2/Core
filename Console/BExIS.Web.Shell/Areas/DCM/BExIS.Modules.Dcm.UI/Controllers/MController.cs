@@ -101,9 +101,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             MetadataLastModfied = 104,
             DataCreationDate = 105,
             DataLastModified = 106, // also for Dubline Core date
+            Tag = 107
              */
 
-            List<long> ints = new List<long>() { 100, 101, 102, 103, 104, 105, 106 };
+            List<long> ints = new List<long>() { 100, 101, 102, 103, 104, 105, 106,107 };
 
             // not implemented
             using (var mappingManager = new MappingManager())
