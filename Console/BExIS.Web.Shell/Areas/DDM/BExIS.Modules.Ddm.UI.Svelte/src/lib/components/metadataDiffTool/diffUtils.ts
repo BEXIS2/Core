@@ -17,18 +17,18 @@ export function isObject(val: unknown): val is Record<string, any> {
 }
 
 export function hasDiff(value1: unknown, value2: unknown): boolean {
-	if (isPrimitive(value1) || isPrimitive(value2)) {
-		return value1 !== value2;
-	}
-
 	if (isArray(value1) || isArray(value2)) {
-		const arr1 = isArray(value1) ? value1 : [];
-		const arr2 = isArray(value2) ? value2 : [];
+		const arr1 = isArray(value1) ? value1 : value1 != null ? [value1] : [];
+		const arr2 = isArray(value2) ? value2 : value2 != null ? [value2] : [];
 		if (arr1.length !== arr2.length) return true;
 		for (let i = 0; i < arr1.length; i++) {
 			if (hasDiff(arr1[i], arr2[i])) return true;
 		}
 		return false;
+	}
+
+	if (isPrimitive(value1) && isPrimitive(value2)) {
+		return value1 !== value2;
 	}
 
 	const o1 = isObject(value1) ? value1 : {};
