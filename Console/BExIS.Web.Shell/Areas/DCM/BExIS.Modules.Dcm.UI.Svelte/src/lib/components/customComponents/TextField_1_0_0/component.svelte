@@ -21,8 +21,9 @@
 
 	export let anchor: string;
 	export let path: string = '';
+	export let mode: 'edit' | 'view' = 'edit';
 
-	let config = getFullConfig(componentName, anchor);
+	let config = getFullConfig(componentName, anchor, mode);
 	if (!config) {
 		console.error('No configuration found for component:', componentName, 'with anchor:', anchor);
 	}
@@ -142,6 +143,6 @@
 
 {#key validationReady}
 	<span id={text_field_path}>
-		<TextArea {...commonProps} bind:value on:input={onChangeHandler} />
+		<TextArea {...commonProps} bind:value on:input={onChangeHandler} on:showDescription on:hideDescription />
 	</span>
 {/key}

@@ -12,7 +12,7 @@
 
 
 	// import { Page } from '@bexis2/bexis2-core-ui';
-	import { schemaToJson, setConfigStore, setMetadataStore } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { schemaToJson, setConfigStore, setMetadataStore, setSchemaStore } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { convertDisplayName } from '$lib/components/utils/metadata/metadataShared';
 	import Forbidden from '../error/Forbidden.svelte';
 
@@ -58,6 +58,7 @@
 
 					s = await apiCalls.GetMetadataSchema(datasetInfos.metadataStructureId);
 					console.log('Schema loaded', s);
+					setSchemaStore(s);
 
 					if (id > 0) m = await apiCalls.GetMetadata(id, version, tag);
 					else m = schemaToJson(s);

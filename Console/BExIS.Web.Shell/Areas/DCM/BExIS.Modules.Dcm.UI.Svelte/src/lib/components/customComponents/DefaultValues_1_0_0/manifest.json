@@ -73,36 +73,7 @@
             }
           ]
         }
-      }],
-      "view": [
-      {
-        "mode_name": "Text Field Display",
-        "description": "Mode for displaying simple text field",
-        "settings": {
-          "setting": [
-          
-          ]
-        },
-        "variables": {
-          "variable": [
-            {
-              "name": "Display Text",
-              "description": "Text to display",
-              "type": "string",
-              "target_variable": "displayText",
-              "allowregex_input": true,
-              "allowregex_output": false,
-              "is_input": true,
-              "is_output": false,
-              "default_value": {
-                "type": "string",
-                "value": ""
-              }
-            }
-          ]
-        }
-      }
-    ]
+      }]
   }
 }
    

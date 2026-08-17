@@ -45,7 +45,7 @@ const dispatch = createEventDispatcher();
 
 			// check if path is array which is indicated if the last part after the point is a number
 			let isPathArray = path.includes('.') && !isNaN(Number(path.split('.').pop()));
-
+			console.log(component.globalSettings.anchorpoint, path, isPathArray)
 			if (component.globalSettings.anchorpoint == path || (isPathArray && component.globalSettings.anchorpoint == path.split('.').slice(0, -1).join('.'))) {
 				isAnchor = true;
 				customComponent = customComponentsCatalog[component.meta.component_name].component;
@@ -69,6 +69,13 @@ const dispatch = createEventDispatcher();
 	function handleHideDescription(e: CustomEvent<any>) {
 		hideDescriptionHandler(e, 'simple');
 	}
+	
+
+	// in case the custom component fails to load, we can use a fallback component
+	let useFallback = false;
+	function handleFallback(e) {
+		useFallback = true;
+	}
 
 	
 </script>
@@ -85,14 +92,16 @@ const dispatch = createEventDispatcher();
 			{isMulti} 
 			/>
 
-	{:else if isAnchor}
+	{:else if isAnchor && !useFallback}
 		<div class="pr-2" id={path}>
-			<svelte:component this={customComponent} anchor={path}
-							on:showDescription={handleShowDescription}
-							on:hideDescription={handleHideDescription}
-							path={path}
-							on:updated
-						/>
+		<svelte:component this={customComponent} anchor={path}
+						on:showDescription={handleShowDescription}
+						on:hideDescription={handleHideDescription}
+						path={path}
+						mode="edit"
+						on:updated
+						on:fallback={handleFallback}
+					/>
 		</div>
 	{/if}
 {/if}

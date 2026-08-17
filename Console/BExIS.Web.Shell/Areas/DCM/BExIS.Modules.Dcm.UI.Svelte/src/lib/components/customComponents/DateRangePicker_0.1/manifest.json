@@ -9,10 +9,10 @@
   "globalSettings": {
     "globalsetting": [
       {
-        "name": "Parameter",
-        "description": "String to configure the terminology widget",
+        "name": "Description",
+        "description": "Overwrite default description of the field.",
         "type": "string",
-        "target_variable": "",
+        "target_variable": "description",
         "default_value": {
           "type": "string",
           "value": ""
@@ -28,13 +28,13 @@
         "settings": {
           "setting": [
             {
-              "name": "Range Limit",
-              "description": "Limit the selectable date range",
-              "type": "string",
-              "target_variable": "rangeLimit",
+              "name": "Disable",
+              "description": "Disable the date range picker",
+              "type": "boolean",
+              "target_variable": "disable",
               "default_value": {
-                "type": "string",
-                "value": ""
+                "type": "boolean",
+                "value": false
               }
             }
           ]
@@ -53,7 +53,7 @@
               "is_output": true,
               "default_value": {
                 "type": "string",
-                "value": "2024-01-01"
+                "value": ""
               }
             },
             {
@@ -68,7 +68,7 @@
               "is_output": true,
               "default_value": {
                 "type": "string",
-                "value": "2024-12-31"
+                "value": ""
               }
             }
           ]
@@ -80,9 +80,7 @@
         "mode_name": "Range Display",
         "description": "Mode for displaying selected date range",
         "settings": {
-          "setting": [
-          
-          ]
+          "setting": []
         },
         "variables": {
           "variable": [

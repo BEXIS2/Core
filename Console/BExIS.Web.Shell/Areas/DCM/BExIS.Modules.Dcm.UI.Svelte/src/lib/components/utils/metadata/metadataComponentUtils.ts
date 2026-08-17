@@ -205,7 +205,7 @@ export function getVariablesFromConfig(componentName: string, anchor: string): a
 	return variables;
 }
 
-export function getFullConfig(componentName: string, anchor: string): any[] {
+export function getFullConfig(componentName: string, anchor: string, mode?: 'edit' | 'view'): any[] {
 	let fullConfig: any[] = [];
 	if (componentName != null && componentName != undefined && componentName != '') {
 		let config: any = getConfigStore();
@@ -215,6 +215,9 @@ export function getFullConfig(componentName: string, anchor: string): any[] {
 		for (const component of config.components) {
 			let cleanAnchorPoint = removeJsonPathIndices(component.globalSettings.anchorpoint);
 			if (component.meta.component_name.toLowerCase() === componentName.toLowerCase() && cleanAnchorPoint === cleanAnchor) {
+				if (mode && component.globalSettings?.interaction_mode && component.globalSettings.interaction_mode !== mode) {
+					continue;
+				}
 				fullConfig = component;
 			}
 		}

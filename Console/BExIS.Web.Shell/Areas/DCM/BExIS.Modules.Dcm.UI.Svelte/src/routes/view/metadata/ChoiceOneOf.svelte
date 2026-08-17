@@ -33,14 +33,14 @@
 				<div class="mb-3 text-sm font-semibold text-gray-700">
 					{label}: {resolvedSelection || 'No selection'}
 				</div>
-				{#each choices as item}
+				<!--{#each choices as item}
 					<div class="flex items-center gap-2 py-1">
 						<span class="text-sm text-gray-600">{item.display}</span>
 						{#if item.key === resolvedSelection}
 							<span class="badge variant-filled-primary">Selected</span>
 						{/if}
 					</div>
-				{/each}
+				{/each}-->
 			{/if}
 
 			{#if selectedChoice && selectedPath}

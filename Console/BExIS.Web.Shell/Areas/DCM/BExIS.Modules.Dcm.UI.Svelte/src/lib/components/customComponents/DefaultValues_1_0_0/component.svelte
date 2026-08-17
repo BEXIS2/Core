@@ -3,15 +3,16 @@
  import SimpleComponent from "$lib/components/metadata/simpleComponent.svelte";
 import { getFullConfig, getIsRequiredBySchemaAndPath, getLabelByPath, getTargetVariablesWithValues, getValueByPath, resolveNode } from "$lib/components/utils/metadata/metadataComponentUtils";
 
- export let anchor: string;
+  export let anchor: string;
 	export let path: string = '';
+	export let mode: 'edit' | 'view' = 'edit';
 
 	let componentName: string = 'defaultValues_v1.0.0';
 
- // get config
-	let config = getFullConfig(componentName, anchor);
+  // get config
+	let config = getFullConfig(componentName, anchor, mode);
 
- if (!config) {
+  if (!config) {
 		console.error('No configuration found for component:', componentName, 'with anchor:', anchor);
 	}
 
