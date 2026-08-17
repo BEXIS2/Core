@@ -90,11 +90,14 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 	const dispatch = createEventDispatcher();
 	const setByTemplate = get(setByTemplateStore);
 	const	updateDescriptionByTemplate = get(updateDescriptionByTemplateStore);
-
+ 
 	let x: listItemType = { id: 0, text: '', group: '', description: '' };
 
 	onMount(() => {
 		console.log("datatypes", $dataTypeStore);
+
+		 
+
 		// set suggestions
 		setList();
 		suggestedDataType = variable.dataType;
@@ -591,13 +594,15 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 						</Container>
 						<Container>
 							<div slot="property">
-								
+								{#if variable.dataType && variable.dataType.text.toLowerCase() != 'boolean' }						
+
 								<MissingValues
 									bind:list={variable.missingValues}
 									showTitle={false}
 									disabled={blockDataRelevant}
 									globalIndex={index}
 								></MissingValues>
+								{/if}
 							</div>
 							<div slot="description"></div>
 						</Container>

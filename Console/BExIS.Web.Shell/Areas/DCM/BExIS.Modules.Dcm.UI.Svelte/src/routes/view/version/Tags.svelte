@@ -35,33 +35,40 @@ onMount(async () => {
 <div class="card p-5 flex flex-col gap-2">
  <h4 class="h4">Tags</h4>
 
- <div class="flex">
-  <b class="grow" title="{currentTag?.releaseNotes.join(', ')}">Tag {currentTag?.version}</b>
-  {currentTag?.releaseDate ? new Date(currentTag.releaseDate).toLocaleDateString() : 'N/A'}
- </div>
 
-  <div class="flex text-right">
-   <div class="grow"></div>
-   <button class="chip p-0" on:click={() => showTags = !showTags}>Show other tags</button>
- </div>
-{#if showTags}
- 	<div class="flex flex-col gap-2" transition:fade>
- 		{#each tags.filter(v => v.version !== currentTag?.version) as v, i}
- 			<div class="flex justify-between">
- 				<div title={v.releaseNotes.join(', ')}>
-      <a href="/dcm/view?id={id}&tag={v.version}" target="_blank">
- 					Tag {v.version}
-      </a>
- 				</div>
- 				<div>
- 					{new Date(v.releaseDate).toLocaleDateString()}
- 				</div>
- 			</div>
- 		{/each}
- 	</div>
+	{#if tags.length === 0}
+		<div class="flex justify-start">
+			<span class=""><b>No tags available.</b></span>	
+		</div>
+		{:else}
 
- {/if}
+		<div class="flex">
+			{#if currentTag}
+				<b class="grow" title="{currentTag?.releaseNotes.join(', ')}">Tag {currentTag?.version}</b>
+				{currentTag?.releaseDate ? new Date(currentTag.releaseDate).toLocaleDateString() : 'N/A'}
+			{/if}
+		</div>
 
+			<div class="flex text-right">
+				<div class="grow"></div>
+				<button class="chip p-0" on:click={() => showTags = !showTags}>Show other tags</button>
+		</div>
 
-
+	 {#if showTags}
+			<div class="flex flex-col gap-2" transition:fade>
+				{#each tags.filter(v => v.version !== currentTag?.version) as v, i}
+					<div class="flex justify-between">
+						<div title={v.releaseNotes.join(', ')}>
+							<a href="/dcm/view?id={id}&tag={v.version}" target="_blank">
+							Tag {v.version}
+							</a>
+						</div>
+						<div>
+							{new Date(v.releaseDate).toLocaleDateString()}
+						</div>
+					</div>
+				{/each}
+			</div>
+		{/if}
+	{/if}
 </div>

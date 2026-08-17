@@ -247,7 +247,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 // missing values
                 if (variable.MissingValues.Any())
                 {
-                    variable.MissingValues.ToList().ForEach(x => column.Instructions.MissingValues.Add(x.Placeholder, x.DisplayName));
+                    foreach (var m in variable.MissingValues)
+                    {
+                        if (m.Placeholder != null)
+                            column.Instructions.MissingValues.Add(m.Placeholder, m.DisplayName);
+                    }
                 }
 
                 tmp.Add(column);

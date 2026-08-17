@@ -230,10 +230,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     // get orderNo
                     int orderNo = model.Variables.IndexOf(variable) + 1;
 
-                    // list missing values
                     List<MissingValue> missingValues = new List<MissingValue>();
-                    if(variable.MissingValues.Any()) missingValues = variableHelper.ConvertTo(variable.MissingValues);
-                    else missingValues = variableHelper.ConvertTo(model.MissingValues);
+                    // if atatype is not boolean add missing values otherwhise there is no way to create a missing value
+                    if (dataType.SystemType.ToLower() != "boolean")
+                    {
+                        // list missing values
+                        if (variable.MissingValues.Any()) missingValues = variableHelper.ConvertTo(variable.MissingValues);
+                        else missingValues = variableHelper.ConvertTo(model.MissingValues);
+                    }
 
                     long varTempId = variable.Template != null ? variable.Template.Id : 0;
 

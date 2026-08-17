@@ -28,4 +28,8 @@
 			{/each}
 		</div>
 	</div>
+	{:else}
+	<div class="flex justify-start">
+		<span class="">No files available.</span>	
+	</div>
 {/if}
