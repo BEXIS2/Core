@@ -113,7 +113,7 @@ export const GetMetadataAsJson = async (id: number, version) => {
 	}
 };
 
-export const GetMetadataOverview = async (id: number, version:number, tag:number) => {
+export const GetMetadataOverview = async (id: number, version:number=0, tag:number=0) => {
 	try {
 		const response = await Api.get('/dcm/view/metadataoverview/' + id + "?version=" + version + "&tag=" + tag);
 		// console.log(" response.data.MetadataStructureId:", response);
