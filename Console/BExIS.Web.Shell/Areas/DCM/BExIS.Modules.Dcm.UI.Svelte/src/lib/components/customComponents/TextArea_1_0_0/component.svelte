@@ -1,0 +1,116 @@
+<script lang="ts">
+	import { onMount, createEventDispatcher } from 'svelte';
+	import {
+		updateMetadataStore,
+		getFullConfig,
+		getTargetVariablesWithValues,
+		resolveNode,
+		updateValidationState,
+		registerValidationItem,
+		getMetadata,
+		setValidationLengthConstraints
+	} from '../../utils/metadata/metadataComponentUtils';
+
+	import { TextArea } from '@bexis2/bexis2-core-ui';
+	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import { validationStore } from '$lib/components/utils/metadata/stores';
+
+	const dispatch = createEventDispatcher();
+	let res = suite.get();
+	let componentName: string = 'textArea_v1.0.0';
+
+	export let anchor: string;
+	export let path: string = '';
+	export let mode: 'edit' | 'view' = 'edit';
+
+	let config = getFullConfig(componentName, anchor, mode);
+	if (!config) {
+		console.error('No configuration found for component:', componentName, 'with anchor:', anchor);
+	}
+	let targetVars = getTargetVariablesWithValues(config);
+
+	let text_field_path = targetVars?.find((v) => v.target_variable === 'text_field')?.value ?? '';
+	if (text_field_path && text_field_path == anchor.split('.').slice(0, -1).join('.')) {
+		text_field_path = anchor;
+	}
+	let { value, ref, label, description, required } = getMetadata(text_field_path);
+
+	let validationRegistered = false;
+	let validationReady = false;
+
+	let disabled =
+		(targetVars?.find((v) => v.target_variable == 'disable')?.value ?? false) === 'true';
+	let defaultValue = targetVars?.find((v) => v.target_variable === 'defaultValue')?.value ?? '';
+	let rowsStr = targetVars?.find((v) => v.target_variable === 'rows')?.value ?? '4';
+	let rows = parseInt(rowsStr) || 4;
+
+	let descriptionCustom = targetVars?.find((v) => v.target_variable === 'description')?.value ?? '';
+	if (descriptionCustom && descriptionCustom.trim() !== '') {
+		description = descriptionCustom;
+	}
+
+	if (
+		(value == undefined || value == null || value == '') &&
+		defaultValue != undefined &&
+		defaultValue != null &&
+		defaultValue != ''
+	) {
+		value = defaultValue;
+	}
+
+	$: validationItem = $validationStore?.simpleTypeValidationItems?.find(
+		(i) => i.path === text_field_path
+	);
+
+	onMount(async () => {
+		const { node: schemaNode } = resolveNode(text_field_path);
+		registerValidationItem(text_field_path, label, required, schemaNode, true);
+		validationRegistered = true;
+		syncValue();
+	});
+
+	function onChangeHandler(e: Event) {
+		const nextValue = (e.currentTarget as HTMLInputElement).value;
+		value = nextValue;
+		updateMetadataStore(text_field_path, nextValue, false, ref != null ? String(ref) : '');
+		updateValue(text_field_path);
+		dispatch('change');
+	}
+
+	function updateValue(_path: string) {
+		res = suite(_path);
+		updateValidationState(_path, res);
+	}
+
+	function syncValue() {
+		if (!validationRegistered) return;
+		updateMetadataStore(
+			text_field_path,
+			value != undefined && value != null ? value.toString() : '',
+			false,
+			ref != undefined && ref != null ? ref.toString() : ''
+		);
+		updateValue(text_field_path);
+		validationReady = true;
+	}
+
+	$: commonProps = {
+		id: path,
+		label: label,
+		required,
+		invalid: validationReady && validationItem ? !validationItem.isValid : false,
+		valid: validationReady && validationItem ? validationItem.isValid : false,
+		feedback:
+			validationItem && validationItem.errorMessage ? validationItem.errorMessage.split('\n') : [],
+		description: description,
+		showDescription: false,
+		showIcon: false,
+		disabled: disabled
+	};
+</script>
+
+{#key validationReady}
+	<span id={text_field_path}>
+		<TextArea {...commonProps} bind:value rows={rows} on:input={onChangeHandler} on:showDescription on:hideDescription />
+	</span>
+{/key}

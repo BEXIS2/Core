@@ -1,0 +1,84 @@
+{
+  "meta": {
+    "title": "Text Area Widget",
+    "component_name": "textArea_v1.0.0",
+    "author": "BEXIS2",
+    "version": "1.0.0",
+    "description": "Multi-line text area for longer content"
+  },
+  "globalSettings": {
+    "globalsetting": [
+      {
+        "name": "Default Value",
+        "description": "Default value pre-filled in the text area",
+        "type": "string",
+        "target_variable": "defaultValue",
+        "default_value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "name": "Description",
+        "description": "Overwrite default description of the field.",
+        "type": "string",
+        "target_variable": "description",
+        "default_value": {
+          "type": "string",
+          "value": ""
+        }
+      }
+    ]
+  },
+  "modes": {
+    "edit": [
+      {
+        "mode_name": "simple",
+        "description": "Basic Configuration of the text area widget",
+        "settings": {
+          "setting": [
+            {
+              "name": "Disable",
+              "description": "Disable the text area",
+              "type": "boolean",
+              "target_variable": "disable",
+              "default_value": {
+                "type": "boolean",
+                "value": false
+              }
+            },
+            {
+              "name": "Rows",
+              "description": "Number of visible rows in the text area",
+              "type": "integer",
+              "target_variable": "rows",
+              "default_value": {
+                "type": "integer",
+                "value": 4
+              }
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Text Area",
+              "description": "Text area input",
+              "type": "string",
+              "format": "",
+              "target_variable": "text_field",
+              "allowregex_input": true,
+              "allowregex_output": true,
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
