@@ -247,7 +247,27 @@
         "description": "Mode for displaying 2 fields horizontal alignment widget",
         "settings": {
           "setting": [
-          
+            {
+              "name": "Label",
+              "description": "Optional label/key name displayed before the values. Leave empty to use the anchorpoint field name.",
+              "type": "string",
+              "target_variable": "label",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "Separator",
+              "description": "Separator between values (space or comma)",
+              "type": "string",
+              "enum": [" ", ", ", " - "],
+              "target_variable": "separator",
+              "default_value": {
+                "type": "string",
+                "value": " "
+              }
+            }
           ]
         },
         "variables": {
@@ -274,7 +294,27 @@
         "description": "Mode for displaying 3 fields horizontal alignment widget",
         "settings": {
           "setting": [
-          
+            {
+              "name": "Label",
+              "description": "Optional label/key name displayed before the values. Leave empty to use the anchorpoint field name.",
+              "type": "string",
+              "target_variable": "label",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "Separator",
+              "description": "Separator between values (space or comma)",
+              "type": "string",
+              "enum": [" ", ", ", " - "],
+              "target_variable": "separator",
+              "default_value": {
+                "type": "string",
+                "value": " "
+              }
+            }
           ]
         },
         "variables": {

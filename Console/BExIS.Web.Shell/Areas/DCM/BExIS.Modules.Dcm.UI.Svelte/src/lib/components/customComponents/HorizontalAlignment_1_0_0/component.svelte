@@ -11,17 +11,21 @@
 
 	export let anchor: string;
 	export let path: string = '';
+	export let mode: 'edit' | 'view' = 'edit';
 
 	let componentName: string = 'horizontalAlignment_v1.0.0';
 
 	// get config
-	let config = getFullConfig(componentName, anchor);
+	let config = getFullConfig(componentName, anchor, mode);
 
 	if (!config) {
 		console.error('No configuration found for component:', componentName, 'with anchor:', anchor);
 	}
 
 	let targetVars = getTargetVariablesWithValues(config);
+	let isViewMode = mode === 'view';
+	let separator = targetVars?.find((v) => v.target_variable === 'separator')?.value ?? ' ';
+	let customLabel = targetVars?.find((v) => v.target_variable === 'label')?.value ?? '';
 
 	let simpleComponents: {
 		path: string;
@@ -113,16 +117,45 @@
 	console.log('🚀 ~ simpleComponents:', simpleComponents);
 </script>
 
-<div id="horizontal-alignment" class="flex flex-row justify-between w-full">
-	{#each simpleComponents as simpleComponent, index (simpleComponent.path)}
-		<div class="flex-1">
-			{#if simpleComponent}
-				<SimpleComponent
-					simpleComponent={simpleComponent.component.node}
-					{...simpleComponent}
-					on:updated
-				/>
-			{/if}
-		</div>
-	{/each}
-</div>
+{#if isViewMode}
+	<div class="entry">
+		<span class="key text-sm font-medium text-gray-500">
+			{customLabel || getLabelByPath(anchor)}
+		</span>
+		<span class="val text-sm text-gray-900 font-semibold">
+			{simpleComponents.map((sc) => sc.value || '').filter((v) => v !== '').join(separator) || '—'}
+		</span>
+	</div>
+{:else}
+	<div id="horizontal-alignment" class="flex flex-row justify-between w-full">
+		{#each simpleComponents as simpleComponent, index (simpleComponent.path)}
+			<div class="flex-1">
+				{#if simpleComponent}
+					<SimpleComponent
+						simpleComponent={simpleComponent.component.node}
+						{...simpleComponent}
+						on:updated
+					/>
+				{/if}
+			</div>
+		{/each}
+	</div>
+{/if}
+
+<style>
+	.entry {
+		display: flex;
+		flex-direction: row;
+	}
+
+	.key {
+		display: inline-block;
+		flex-grow: 1;
+	}
+
+	.val {
+		display: inline-block;
+		width: 30vw;
+		font-weight: bold;
+	}
+</style>
