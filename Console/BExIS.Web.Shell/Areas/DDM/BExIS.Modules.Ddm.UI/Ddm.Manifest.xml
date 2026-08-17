@@ -32,6 +32,10 @@
         controller="dashboard" action="index"
         extends="./menubarRoot" />
 
+	  <Export tag="settings" id="metadataDIff" order="3"
+			 title="Curation Metadata Compare" description="Compare Metadata" icon=""
+			 controller="metadiff" action="" argument=""
+			 extends="./settingsRoot" />
     <!--<Export tag="api" id="tntList"
             title="No thing" description="Change me!" icon=""
             controller="publicsearch" action="public"
