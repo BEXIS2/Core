@@ -70,16 +70,15 @@
 		//datasetId = Number(new URLSearchParams(window.location.search).get('id'));
 		console.log('Loading metadata for datasetId:', id);
 		if (id > 0) {
-
 			let result = await apiCalls.GetDatasetInfoById(id);
 			const datasetInfos = result.data;
-		 console.log('Dataset infos loaded', datasetInfos);
+			console.log('Dataset infos loaded', datasetInfos);
 
 			s = await apiCalls.GetMetadataSchema(datasetInfos.metadataStructureId);
 			console.log('Schema loaded', s);
 			setSchemaStore(s);
 
-			if (id > 0) m = await apiCalls.GetMetadata(id);
+			if (id > 0) m = await apiCalls.GetMetadata(id, datasetInfos.version, 0);
 			else m = schemaToJson(s);
 			console.log('Metadata loaded', m);
 			setMetadataStore(m);
@@ -146,31 +145,39 @@
 					<MetadataHeader bind:metadata={m} {saveWithError} bind:datasetId={id} on:metadataUpdated={reloadMetadata}/>
 					<!-- Show all descriptions -->
 					<div class="flex flex-col gap-2">
+						
+							<!--<button class="badge" on:click={() => showAllDescriptionsStore.update((v) => !v)}>
+								{#if $showAllDescriptionsStore}
+									<Fa icon={faEyeSlash} />&nbsp;Hide descriptions
+								{:else}
+									<Fa icon={faEye} />&nbsp;Show descriptions
+								{/if}
+							</button>-->
 
-<div class="w-full flex items-center gap-1 pr-2 text-sm">
-    <!-- First block stays on the left naturally -->
-    <div class="pl-2">
-        <!--Collapse all sections button-->
-        {#if $hideStore.length === 0}
-            <button class="badge" on:click={collapseAll}>
-                <Fa icon={faChevronDown} />&nbsp;Collapse all sections
-            </button>
-        {:else}
-            <!--Expand all sections button-->
-            <button class="badge" on:click={expandAll}>
-                <Fa icon={faChevronUp} />&nbsp;Expand all sections
-            </button>
-        {/if}
-    </div>
+						<div class="w-full flex items-center gap-1 pr-2 text-sm">
+							<!-- First block stays on the left naturally -->
+							<div class="pl-2">
+								<!--Collapse all sections button-->
+								{#if $hideStore.length === 0}
+									<button class="badge" on:click={collapseAll}>
+										<Fa icon={faChevronDown} />&nbsp;Collapse all sections
+									</button>
+								{:else}
+									<!--Expand all sections button-->
+									<button class="badge" on:click={expandAll}>
+										<Fa icon={faChevronUp} />&nbsp;Expand all sections
+									</button>
+								{/if}
+							</div>
 
-    <!-- 1. Added ml-auto to push this block all the way to the right -->
-    <div class="ml-auto pr-4">
-        <a href="#top" class="badge">
-            Scroll to top &nbsp;<Fa icon={faArrowUp} />
-        </a>
-    </div>
-</div>
-</div>
+							<!-- 1. Added ml-auto to push this block all the way to the right -->
+							<div class="ml-auto pr-4">
+								<a href="#top" class="badge">
+									Scroll to top &nbsp;<Fa icon={faArrowUp} />
+								</a>
+							</div>
+						</div>
+					</div>
 					<div class="content scrollable">
 						<div class="px-2" id="top">
 							<ComplexComponent complexComponent={schema} path={''} />
@@ -193,18 +200,19 @@
 
 						<!-- 2. Pick the target item based on the numeric check -->
 						{@const targetItem = isNumeric ? (parts[parts.length - 2] ?? '') : lastItem}
+						{@const descContent = $descriptionStore.content || 'No description available.'}
 
 						<div class="pt-2">
 							{#if $descriptionStore.type === 'simple'}
 								<h4 class="h4 mb-2">
 									Field Description for <em><b>{convertDisplayName(targetItem, false)}</b></em>
 								</h4>
-								<p class="">{@html $descriptionStore.content}</p>
+								<p class="">{@html descContent}</p>
 							{:else if $descriptionStore.type === 'complex'}
 								<h4 class="h4 mb-2">
 									Section Description for <em><b>{convertDisplayName(targetItem, true)}</b></em>
 								</h4>
-								<p class="">{@html $descriptionStore.content}</p>
+								<p class="">{@html descContent}</p>
 							{/if}
 						</div>
 					{/if}
