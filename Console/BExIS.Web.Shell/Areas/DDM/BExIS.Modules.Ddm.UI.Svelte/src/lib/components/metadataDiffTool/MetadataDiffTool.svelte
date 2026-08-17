@@ -13,6 +13,7 @@
 	let datasetResponse2: { maxVersion?: number; error?: any } = {};
 
 	let useSimpleFormat: boolean = false;
+	let hideUnchanged: boolean = true;
 	let lastUpdated = 'No local data available';
 
 	onMount(async () => {
@@ -360,6 +361,13 @@
 			bind:checked={useSimpleFormat}
 		/>
 		<label for="useSimpleFormat">Switch Diff Mode</label>
+
+		<input
+			type="checkbox"
+			id="hideUnchanged"
+			bind:checked={hideUnchanged}
+		/>
+		<label for="hideUnchanged">Hide unchanged rows</label>
 		</div>
 
 	{#if selectedVersion1 && selectedVersion2}
@@ -380,7 +388,7 @@
 			</div>
 		{:else if metadata1 && metadata2}
 			{#key `${selectedVersion1}\n\n---\n\n${selectedVersion2}`}
-				<DiffNode value1={metadata1} value2={metadata2} useSimpleFormat={useSimpleFormat} />
+				<DiffNode value1={metadata1} value2={metadata2} useSimpleFormat={useSimpleFormat} hideUnchanged={hideUnchanged} />
 			{/key}
 		{/if}
 	{/if}

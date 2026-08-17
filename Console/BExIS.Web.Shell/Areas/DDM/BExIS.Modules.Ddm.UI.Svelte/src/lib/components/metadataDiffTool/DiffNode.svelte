@@ -8,6 +8,7 @@
 	export let value1: any;
 	export let value2: any;
 	export let useSimpleFormat: boolean = false;
+	export let hideUnchanged: boolean = true;
 
 	function isObject(val: unknown) {
 		return val && typeof val === 'object' && !Array.isArray(val);
@@ -33,6 +34,7 @@
 		value1={isPrimitive(value1) ? value1 : undefined}
 		value2={isPrimitive(value2) ? value2 : undefined}
 		useSimpleFormat={useSimpleFormat}
+		{hideUnchanged}
 	/>
 {:else if isArray(value1) || isArray(value2)}
 	<DiffArray
@@ -41,6 +43,7 @@
 		value2={isArray(value2) ? value2 : []}
 		level={level + 1}
 		useSimpleFormat={useSimpleFormat}
+		{hideUnchanged}
 	/>
 {:else if isObject(value1) || isObject(value2)}
 	<DiffObject
@@ -49,6 +52,7 @@
 		value2={isObject(value2) ? value2 : {}}
 		level={level + 1}
 		useSimpleFormat={useSimpleFormat}
+		{hideUnchanged}
 	/>
 {:else}
 	<span class="rounded bg-warning-200 p-1 text-warning-800">

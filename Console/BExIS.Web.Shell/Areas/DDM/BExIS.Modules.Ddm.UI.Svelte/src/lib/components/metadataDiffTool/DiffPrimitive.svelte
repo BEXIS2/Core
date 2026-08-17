@@ -3,6 +3,7 @@
 	export let value2: string | number | boolean | undefined | null;
 	export let byChar: boolean = false;
 	export let useSimpleFormat: boolean = false;
+	export let hideUnchanged: boolean = true;
 
 	$: value1String = String(value1);
 	$: value2String = String(value2);
@@ -91,20 +92,7 @@
 	let showCustomDiff = true;
 </script>
 
-{#if !isDiff}
-	{#if !isEmpty(value1String)}
-		<span class="rounded bg-surface-100 px-1">
-			{#each splitLines(value1String) as line, index}
-				{renderValue(line)}
-				{#if index < splitLines(value1String).length - 1}
-					<br />
-				{/if}
-			{/each}
-		</span>
-	{:else}
-		<span class="empty">empty</span>
-	{/if}
-{:else}
+{#if isDiff}
 	<!-- Simple Format -->
 	<div class:flex={!showCustomDiff || useSimpleFormat} class="my-2 hidden items-center gap-2">
 		<span class="h-full rounded bg-error-50 px-2 py-0.5 text-error-800">
@@ -150,6 +138,19 @@
 				</span>
 			{/each}
 		</p>
+	{/if}
+{:else if !hideUnchanged}
+	{#if !isEmpty(value1String)}
+		<span class="rounded bg-surface-100 px-1">
+			{#each splitLines(value1String) as line, index}
+				{renderValue(line)}
+				{#if index < splitLines(value1String).length - 1}
+					<br />
+				{/if}
+			{/each}
+		</span>
+	{:else}
+		<span class="empty">empty</span>
 	{/if}
 {/if}
 
