@@ -109,6 +109,31 @@
             }
           ]
         }
+      },
+      {
+        "mode_name": "Linked Terminology Display with Description",
+        "description": "Mode for displaying linked terminology with description",
+        "settings": {
+          "setting": []
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Display Term",
+              "description": "Term to display with description",
+              "type": "string",
+              "target_variable": "displayTerm",
+              "allowregex_input": true,
+              "allowregex_output": false,
+              "is_input": true,
+              "is_output": false,
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            }
+          ]
+        }
       }
     ]
   }

@@ -13,6 +13,8 @@
 	} from '../../utils/metadata/metadataComponentUtils';
 	import * as ts4nfdiWidgets from '@ts4nfdi/terminology-service-suite-js';
 	import { InputContainer } from '@bexis2/bexis2-core-ui';
+	import Fa from 'svelte-fa';
+	import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
 	import { validationStore } from '$lib/components/utils/metadata/stores';
 
@@ -21,19 +23,27 @@
 
 	export let anchor: string;
 	export let path: string = '';
+	export let mode: 'edit' | 'view' = 'edit';
 	console.log('🚀 ~ anchor:', anchor, 'path:', path);
 
-	let config = getFullConfig(componentName, anchor);
+	let config = getFullConfig(componentName, anchor, mode);
 	let targetVars = getTargetVariablesWithValues(config);
-	// console.log('Target Variables with Values:', targetVars, config);
+	console.log('Target Variables with Values:', targetVars, config);
 
-	let term_field_path = targetVars?.find((v) => v.target_variable === 'term_field')?.value ?? '';
+	let modeName = config?.mode?.mode_name ?? '';
+	let isViewMode = mode === 'view';
+	let showDescriptionInView = isViewMode && modeName === 'Linked Terminology Display with Description';
+	console.log(showDescriptionInView, isViewMode, mode, "mode");
+	let term_field_path = targetVars?.find((v) => v.target_variable === 'term_field')?.value
+		?? targetVars?.find((v) => v.target_variable === 'displayTerm')?.value
+		?? '';
 	if (term_field_path && term_field_path == anchor.split('.').slice(0, -1).join('.')) {
 		term_field_path = anchor;
 	}
 	let { value, ref, label, description, required } = getMetadata(term_field_path);
 	let validationRegistered = false;
 	let validationReady = false;
+	let viewDescription: string | null = null;
 
 	$: validationItem = $validationStore?.simpleTypeValidationItems?.find(
 		(i) => i.path === term_field_path
@@ -63,6 +73,18 @@
 	let isValidTerm: boolean = true;
 	let isRunningService: boolean = true;
 	onMount(async () => {
+		if (isViewMode) {
+			if (showDescriptionInView && ref) {
+				try {
+					viewDescription = await getDescriptionFromAPI(ref.toString());
+				} catch (e) {
+					console.error('Error fetching description for view mode:', e);
+					viewDescription = 'No description available';
+				}
+			}
+			return;
+		}
+
 		const { node: schemaNode } = resolveNode(term_field_path);
 		// The terminology component has custom validation rules, including for optional fields.
 		registerValidationItem(term_field_path, label, required, schemaNode, true);
@@ -180,7 +202,7 @@
 		// https://semanticlookup.zbmed.de/ols/api/terms?iri=http:%2F%2Fpurl.obolibrary.org%2Fobo%2FNCBITaxon_146500
 		const response = await fetch(TerminologyServiceUrl + `terms?iri=${encodeURIComponent(ref)}`);
 		const data = await response.json();
-		// console.log('🚀 ~ getDescriptionFromAPI ~ data:', data._embedded.terms[0].description[0]);
+		console.log('🚀 ~ getDescriptionFromAPI ~ data:', data._embedded.terms[0].description[0]);
 		if (!data?._embedded?.terms?.length) {
 			console.warn('Term not found in terminology service.');
 			return 'No description available';
@@ -208,46 +230,109 @@
 	};
 </script>
 
-<InputContainer {...commonProps} on:showDescription on:hideDescription>
-	{#if !isRunningService}
-		<div class="text-error-500 text-sm mt-1">
-			The terminology service is currently unavailable. Please try again later or report the issue
-			to the data manager.
-		</div>
-		<div>Service URL: {TerminologyServiceUrl}</div>
-	{/if}
-	{#if isRunningService && !isValidTerm}
-		<div class="text-error-500 text-sm mt-1">
-			The previously selected term is no longer available in the terminology service.
-		</div>
-		<div>Term: {value} (IRI: {ref})</div>
-		<div>Service URL: {TerminologyServiceUrl}</div>
-	{:else if isRunningService}
-		<div
-			bind:this={containerElement}
-			class="tswidget-host input variant-form-material {commonProps.valid
-				? 'input-success'
-				: ''} {commonProps.invalid ? 'input-error' : ''} {commonProps.disabled
-				? 'opacity-60 pointer-events-none'
-				: ''}"
-		></div>
-	{/if}
-	{#if data}
-		<ul>
-			{#each data as item}
-				{#await getDescriptionFromAPI(item.iri) then description}
-					<li title={description.toString()} class="text-xs text-gray-500 mt-1">
-						(<a href={item.iri} target="_blank" rel="noopener noreferrer">
-							{item.iri}
-						</a>)
-					</li>
-				{/await}
-			{/each}
-		</ul>
-	{/if}
-</InputContainer>
+{#if isViewMode}
+	<div class="entry">
+		<span class="key text-sm font-medium text-gray-500">{label}</span>
+		<span class="val text-sm text-gray-900 font-semibold">
+			{#if value}
+				{#if ref}
+					<a href={ref} target="_blank" rel="noopener noreferrer" class="term-link">
+						<span>{value}</span>
+						<Fa icon={faExternalLinkAlt} class="term-link-icon" />
+					</a>
+				{:else}
+					{value}
+				{/if}
+				{#if showDescriptionInView && viewDescription !== null}
+					<span class="term-desc">{viewDescription}</span>
+				{/if}
+			{:else}
+				<span class="text-gray-400">—</span>
+			{/if}
+		</span>
+	</div>
+{:else}
+	<InputContainer {...commonProps} on:showDescription on:hideDescription>
+		{#if !isRunningService}
+			<div class="text-error-500 text-sm mt-1">
+				The terminology service is currently unavailable. Please try again later or report the issue
+				to the data manager.
+			</div>
+			<div>Service URL: {TerminologyServiceUrl}</div>
+		{/if}
+		{#if isRunningService && !isValidTerm}
+			<div class="text-error-500 text-sm mt-1">
+				The previously selected term is no longer available in the terminology service.
+			</div>
+			<div>Term: {value} (IRI: {ref})</div>
+			<div>Service URL: {TerminologyServiceUrl}</div>
+		{:else if isRunningService}
+			<div
+				bind:this={containerElement}
+				class="tswidget-host input variant-form-material {commonProps.valid
+					? 'input-success'
+					: ''} {commonProps.invalid ? 'input-error' : ''} {commonProps.disabled
+					? 'opacity-60 pointer-events-none'
+					: ''}"
+			></div>
+		{/if}
+		{#if data}
+			<ul>
+				{#each data as item}
+					{#await getDescriptionFromAPI(item.iri) then description}
+						<li title={description.toString()} class="text-xs text-gray-500 mt-1">
+							(<a href={item.iri} target="_blank" rel="noopener noreferrer">
+								{item.iri}
+							</a>)
+						</li>
+					{/await}
+				{/each}
+			</ul>
+		{/if}
+	</InputContainer>
+{/if}
 
 <style>
+	.entry {
+		display: flex;
+		flex-direction: row;
+	}
+
+	.key {
+		display: inline-block;
+		flex-grow: 1;
+	}
+
+	.val {
+		display: inline-block;
+		width: 30vw;
+		font-weight: bold;
+	}
+
+	.term-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		color: rgb(37 99 235);
+	}
+
+	.term-link:hover {
+		text-decoration: underline;
+	}
+
+	.term-link-icon {
+		font-size: 0.7rem;
+		opacity: 0.6;
+	}
+
+	.term-desc {
+		display: block;
+		font-size: 0.75rem;
+		font-weight: normal;
+		color: rgb(107 114 128);
+		margin-top: 0.25rem;
+	}
+
 	:global(.tswidget-host) {
 		display: flex;
 		align-items: center;
