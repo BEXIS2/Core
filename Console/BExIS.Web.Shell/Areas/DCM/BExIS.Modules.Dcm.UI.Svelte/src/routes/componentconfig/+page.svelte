@@ -298,10 +298,15 @@
   function buildComponentData(node: Node): any {
     if (!node || !node.data) return null;
 
+    // find the correct manifest for this node's component type
+    const nodeManifest = componentManifestList.find(
+      (m: any) => m.meta?.component_name === node.data.componentName
+    ) || selectedComponentManifest;
+
     // structure as in config files
     const componentData: any = {
       meta: {
-        component_name: node.data.componentName || selectedComponentManifest?.meta?.component_name,
+        component_name: node.data.componentName || nodeManifest?.meta?.component_name,
         component_ui_id: node.id
       },
       globalSettings: {
@@ -321,7 +326,7 @@
     };
 
     const modeKey = node.data.interactionMode || currentInteractionMode;
-    const manifestModes = selectedComponentManifest?.modes?.[modeKey as string] || [];
+    const manifestModes = nodeManifest?.modes?.[modeKey as string] || [];
     const manifestMode = manifestModes.find((m: any) => m.mode_name === node.data.modeName);
     const currentConfigRef = modeKey === 'edit' ? componentConfig_edit : componentConfig_view;
     
@@ -330,7 +335,7 @@
     );
     
     // global settings
-    const manifestGlobalSettings = selectedComponentManifest?.globalSettings?.globalsetting || [];
+    const manifestGlobalSettings = nodeManifest?.globalSettings?.globalsetting || [];
     const configGlobalSettings = existingComponent?.globalSettings?.globalsetting || [];
     
     // cycle through manifest global settings and fill from config or default
@@ -621,17 +626,23 @@
     const shouldUpdateViewMode = currentInteractionMode === 'view';
     
     // collect all nodes from both modes
+    // start with current canvas nodes (which have the latest data, e.g. mode changes),
+    // then add cached nodes from the other mode that are not on the canvas right now
     const allEditNodes = [
-      ...editModeNodes,
       ...currentNodes.filter(n => 
-        n.type === 'nodeWithItems' &&  n.data?.interactionMode === 'edit' && !editModeNodes.find(existing => existing.id === n.id)
+        n.type === 'nodeWithItems' &&  n.data?.interactionMode === 'edit'
+      ),
+      ...editModeNodes.filter(existing => 
+        !currentNodes.find(n => n.id === existing.id)
       )
     ];
     
     const allViewNodes = [
-      ...viewModeNodes,
       ...currentNodes.filter(n => 
-        n.type === 'nodeWithItems' && n.data?.interactionMode === 'view' && !viewModeNodes.find(existing => existing.id === n.id)
+        n.type === 'nodeWithItems' && n.data?.interactionMode === 'view'
+      ),
+      ...viewModeNodes.filter(existing => 
+        !currentNodes.find(n => n.id === existing.id)
       )
     ];
 
@@ -686,6 +697,11 @@
           });
           
           componentConfig_edit.components[compIdx].mode.variables.variable = mergedVariables;
+          // update mode_name, settings and globalSettings to reflect mode changes
+          componentConfig_edit.components[compIdx].mode.mode_name = componentData.mode.mode_name;
+          componentConfig_edit.components[compIdx].mode.settings = componentData.mode.settings;
+          componentConfig_edit.components[compIdx].globalSettings.globalsetting = componentData.globalSettings.globalsetting;
+          componentConfig_edit.components[compIdx].globalSettings.anchorpoint = componentData.globalSettings.anchorpoint;
         }
       } else {
         // add new component if missing
@@ -708,6 +724,11 @@
         const componentData = buildComponentData(node);
         if (componentData) {
           componentConfig_view.components[compIdx].mode.variables = componentData.mode.variables;
+          // update mode_name, settings and globalSettings to reflect mode changes
+          componentConfig_view.components[compIdx].mode.mode_name = componentData.mode.mode_name;
+          componentConfig_view.components[compIdx].mode.settings = componentData.mode.settings;
+          componentConfig_view.components[compIdx].globalSettings.globalsetting = componentData.globalSettings.globalsetting;
+          componentConfig_view.components[compIdx].globalSettings.anchorpoint = componentData.globalSettings.anchorpoint;
         }
       } else {
         // add new component if missing
@@ -1333,11 +1354,16 @@ $: {
     
     if (configNode) {
       // node exists in config: update with config data
+      // but preserve canvas-only changes (modeName, componentVariables, childItems)
+      // that may have been changed by handleModeChange but not yet saved to config
       allNodes.push({
         ...configNode,
         position: existingNode.position,
         data: {
           ...configNode.data,
+          modeName: existingNode.data?.modeName ?? configNode.data.modeName,
+          componentVariables: existingNode.data?.componentVariables ?? configNode.data.componentVariables,
+          childItems: existingNode.data?.childItems ?? configNode.data.childItems,
           // Prefer config anchorpoint for the active mode, fallback to existing UI value.
           anchorpoint: configNode.data.anchorpoint || existingNode.data.anchorpoint || '',
           edges,
@@ -1720,6 +1746,11 @@ function handleAddComponent(component: any) {
 // find initial edge direction on connection based on component variable settings
 function determineInitialDirection(sourceHandleId: string, targetHandleId: string) {
 
+  // normalize handle ids: strip -target suffix so both source and target handles match -handle pattern
+  const normalizeHandle = (h: string) => h ? h.replace(/-target$/, '') : h;
+  const normSource = normalizeHandle(sourceHandleId);
+  const normTarget = normalizeHandle(targetHandleId);
+
   let componentVariablesToCheck: any[] = []; // variables array to check
   let componentHandleId = '';
   
@@ -1729,13 +1760,13 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
   for (const node of allNodes) {
     if (node.type === 'nodeWithItems') {
       // check if source or target handle belongs to this component
-      if (sourceHandleId && sourceHandleId.startsWith(`${node.id}-`) && sourceHandleId.endsWith('-handle')) {
+      if (normSource && normSource.startsWith(`${node.id}-`) && normSource.endsWith('-handle')) {
         componentVariablesToCheck = Array.isArray(node.data?.componentVariables) ? node.data.componentVariables : [];
-        componentHandleId = sourceHandleId;
+        componentHandleId = normSource;
         break;
-      } else if (targetHandleId && targetHandleId.startsWith(`${node.id}-`) && targetHandleId.endsWith('-handle')) {
+      } else if (normTarget && normTarget.startsWith(`${node.id}-`) && normTarget.endsWith('-handle')) {
         componentVariablesToCheck = Array.isArray(node.data?.componentVariables) ? node.data.componentVariables : [];
-        componentHandleId = targetHandleId;
+        componentHandleId = normTarget;
         break;
       }
     }
@@ -2102,15 +2133,18 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
     }
 
     // create new edge
+    // normalize handle ids: strip -target suffix from target handles so all code matches -handle pattern
+    const normSourceHandle = params.sourceHandle ? params.sourceHandle.replace(/-target$/, '') : params.sourceHandle;
+    const normTargetHandle = params.targetHandle ? params.targetHandle.replace(/-target$/, '') : params.targetHandle;
     const sourceNodeModeForId = sourceNode?.data?.interactionMode || currentInteractionMode;
-    const generatedEdgeId = `${sourceNodeModeForId}::${params.sourceHandle ?? params.source}=>${params.targetHandle ?? params.target}`;
+    const generatedEdgeId = `${sourceNodeModeForId}::${normSourceHandle ?? params.source}=>${normTargetHandle ?? params.target}`;
 
     const newEdge = {
       id: generatedEdgeId,
       source: params.source,
       target: params.target,
-      sourceHandle: params.sourceHandle,
-      targetHandle: params.targetHandle,
+      sourceHandle: normSourceHandle,
+      targetHandle: normTargetHandle,
       type: 'button',
       animated: false,
       style: 'stroke: #007acc; stroke-width: 2px;',
@@ -2120,8 +2154,8 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
       data: {
         leftDirection: initialDirection.leftDirection,
         rightDirection: initialDirection.rightDirection,
-        sourceHandleId: params.sourceHandle,
-        targetHandleId: params.targetHandle,
+        sourceHandleId: normSourceHandle,
+        targetHandleId: normTargetHandle,
         sourceMode: sourceNodeMode
       }
     };
@@ -2129,6 +2163,7 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
     edges.update(all => [...all, newEdge]);
 
     // update component variable with JSONPath & directions
+    // case 1: component -> leaf (source is component)
     if (sourceNode?.type === 'nodeWithItems' && targetNode?.type === 'leafNode') {
       const cfg = getCurrentConfig();
       const compIdx = cfg.components.findIndex((c: any) =>
@@ -2138,7 +2173,7 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
       // update variable entry
       if (compIdx >= 0) {
         const varsArr = cfg.components[compIdx].mode?.variables?.variable || [];
-        const parts = (params.sourceHandle || '').split('-');
+        const parts = (normSourceHandle || '').split('-');
         const varName = parts.length >= 3 ? parts[parts.length - 2] : '';
         const vIdx = varsArr.findIndex((v: any) => v.target_variable === varName);
         const jsonPath = targetNode.data?.path || '';
@@ -2150,6 +2185,38 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
           varsArr[vIdx].is_output = newEdge.data.leftDirection;
           if (typeof targetNode.data?.is_visible === 'boolean') {
             varsArr[vIdx].is_visible = targetNode.data.is_visible;
+          } else if (varsArr[vIdx].is_visible === undefined) {
+            varsArr[vIdx].is_visible = true;
+          }
+        }
+        if (currentInteractionMode === 'edit') {
+          componentConfig_edit = { ...componentConfig_edit };
+        } else {
+          componentConfig_view = { ...componentConfig_view };
+        }
+      }
+    }
+
+    // case 2: leaf -> component (target is component, for IN-only variables)
+    if (sourceNode?.type === 'leafNode' && targetNode?.type === 'nodeWithItems') {
+      const cfg = getCurrentConfig();
+      const compIdx = cfg.components.findIndex((c: any) =>
+        c.meta.component_ui_id === targetNode.id
+      );
+
+      if (compIdx >= 0) {
+        const varsArr = cfg.components[compIdx].mode?.variables?.variable || [];
+        const parts = (normTargetHandle || '').split('-');
+        const varName = parts.length >= 3 ? parts[parts.length - 2] : '';
+        const vIdx = varsArr.findIndex((v: any) => v.target_variable === varName);
+        const jsonPath = sourceNode.data?.path || '';
+        
+        if (vIdx >= 0 && jsonPath) {
+          varsArr[vIdx].JSONPath = jsonPath;
+          varsArr[vIdx].is_input = newEdge.data.rightDirection;
+          varsArr[vIdx].is_output = newEdge.data.leftDirection;
+          if (typeof sourceNode.data?.is_visible === 'boolean') {
+            varsArr[vIdx].is_visible = sourceNode.data.is_visible;
           } else if (varsArr[vIdx].is_visible === undefined) {
             varsArr[vIdx].is_visible = true;
           }
