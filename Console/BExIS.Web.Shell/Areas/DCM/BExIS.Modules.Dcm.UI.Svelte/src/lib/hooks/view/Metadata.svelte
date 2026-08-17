@@ -5,13 +5,17 @@
 
 export let id = 0;
 export let version = 1;
+export let tag = 0;
 export let hook;
 export let description = '';
+
+
+const url = `/dcm/view/metadata?id=${id}&version=${version}&tag=${tag}`;
 
 </script>
 
   <div class="flex justify-end gap-1">
-   <a href="metadata?id={id}&version={version}" target="_blank" class="badge variant-filled-primary">
+   <a href={url} target="_blank" class="badge variant-filled-primary">
     <Fa icon={faFileLines} />
     <span class="ml-2">Metadata</span>
    </a>

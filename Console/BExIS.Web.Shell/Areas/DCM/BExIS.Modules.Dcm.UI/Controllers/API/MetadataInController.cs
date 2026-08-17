@@ -279,12 +279,17 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         title = workingCopy.Title;
                         if (string.IsNullOrEmpty(title)) title = "No Title available.";
 
+
+                        int vNr = datasetManager.GetDatasetVersionCount(workingCopy.Id) + 1;
+                        AuditActionType t = vNr == 1 ? AuditActionType.Create : AuditActionType.Edit;
+
                         ////set modification
                         workingCopy.ModificationInfo = new EntityAuditInfo()
                         {
                             Performer = user.UserName,
                             Comment = "Metadata",
-                            ActionType = AuditActionType.Create,
+                            ActionType = t,
+                            Timestamp = DateTime.Now
                         };
                         double tag = workingCopy.Tag != null ? workingCopy.Tag.Nr : 0;
 
@@ -313,10 +318,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         //update search
                         var useTags = (bool)ModuleManager.GetModuleSettings("DDM").GetValueByKey("use_tags");
                         await reindex(id, useTags);
-
-
-
-
                     }
 
                     LoggerFactory.LogData(id.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);

@@ -23,10 +23,13 @@
 		descriptionStore
 	} from '$lib/components/utils/metadata/stores';
 	import { faEye, faEyeSlash, faChevronUp, faChevronDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
+	import Overview from './Overview.svelte';
 	// import configJson from './customComponents/config.json';
 
 	export let id: number = 3;
 	export	let version: number = 0;
+	export	let tag: number = 0;
+
 
 
 	let container;
@@ -43,6 +46,7 @@
 			
 			id = Number(container?.getAttribute('dataset'));
 			version = Number(container?.getAttribute('version'));
+			tag = Number(container?.getAttribute('tag'));
 
 		if (id > 0) {
 			const res = await apiCalls.GetDatasetInfoById(id);
@@ -55,7 +59,7 @@
 					s = await apiCalls.GetMetadataSchema(datasetInfos.metadataStructureId);
 					console.log('Schema loaded', s);
 
-					if (id > 0) m = await apiCalls.GetMetadata(id);
+					if (id > 0) m = await apiCalls.GetMetadata(id, version, tag);
 					else m = schemaToJson(s);
 					console.log('Metadata loaded', m);
 					setMetadataStore(m);
@@ -229,10 +233,8 @@ function activateShow(key: string) {
     
 <h3 class="h3 font-semibold text-gray-700 dark:text-gray-300  whitespace-nowrap">Metadata Overview</h3>
 
-<p>Current version: Add version here</p>
-<p>Dataset ID: {id}</p>
-<p>Last modified: xx.xx.xxxx</p>
-<p>Modified by: Max Mustermann</p>
+
+<Overview	{id} {version} {tag} />
 
     <h2 class="h3 font-semibold text-gray-700 dark:text-gray-300  whitespace-nowrap">Download Metadata</h2>
     

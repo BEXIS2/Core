@@ -10,9 +10,12 @@ export const GetMetadataSchema = async (id: number) => {
 	}
 };
 
-export const GetMetadata = async (id: number) => {
+export const GetMetadata = async (id: number, version: number, tag: number) => {
 	try {
-		const response = await Api.get('/api/Metadata/' + id + '?simplifiedJson=1');
+		
+		//{id}/version_number/{version_number}
+
+		const response = await Api.get('/api/Metadata/' + id + '/version_number/' + version + '?simplifiedJson=1')
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -101,6 +104,18 @@ export const GetMetadataAsJson = async (id: number, version) => {
 		const config = { responseType: 'blob' }
 
 		const response = await Api.get('/api/metadata/' + id + "?version=" + version + "&simplifiedJson=2", '', header, config);
+		// console.log(" response.data.MetadataStructureId:", response);
+
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
+export const GetMetadataOverview = async (id: number, version:number, tag:number) => {
+	try {
+		const response = await Api.get('/dcm/view/metadataoverview/' + id + "?version=" + version + "&tag=" + tag);
 		// console.log(" response.data.MetadataStructureId:", response);
 
 		return response.data;

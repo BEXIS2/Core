@@ -2,10 +2,8 @@
 	import { TablePlaceholder, ErrorMessage, host } from '@bexis2/bexis2-core-ui';
 	import { getView } from './services';
 
-	import TableDate from './table/tableDate.svelte';
 	import type { TagInfoViewModel } from './types';
 	import { onMount } from 'svelte';
-	import { numberRangeFilter } from 'svelte-headless-table/plugins';
 
 	export let id: number = 0;
 	export let date: number;

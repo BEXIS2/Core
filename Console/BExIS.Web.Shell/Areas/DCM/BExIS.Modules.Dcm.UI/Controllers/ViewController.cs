@@ -938,11 +938,64 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             ViewData["id"] = id;
             ViewData["version"] = version;
+            ViewData["tag"] = tag;
+            ViewData["useTags"] = (bool)ModuleManager.GetModuleSettings("DDM").GetValueByKey("use_tags");
             ViewData["app"] = SvelteHelper.GetApp(module);
             ViewData["start"] = SvelteHelper.GetStart(module);
 
             return View();
         }
+
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
+        [JsonNetFilter]
+        public JsonResult MetadataOverview(long id, int version = 0, double tag = 0)
+        {
+            string lastChanger = "";
+            string lastModified = "";
+
+            // if version is 0 , get latest version, otherwise get the specified version
+            long versionId = getVersionId(id, version, "", tag).Result;
+
+            // get version based on version id
+            using (var datasetManager = new DatasetManager())
+            {
+                version = datasetManager.GetDatasetVersionNr(versionId);
+                var v = datasetManager.GetDatasetVersion(id, version);
+
+                // get user name ird display name
+                lastChanger = "";
+                if (!string.IsNullOrEmpty(v.ModificationInfo?.Performer))
+                {
+                    var n = v.ModificationInfo?.Performer;
+                    var user = _userManager.FindByNameAsync(n).Result;
+
+                    if (user != null)
+                    {
+                        lastChanger = user.DisplayName ?? user.UserName;
+                    }
+                }
+
+                lastModified = v.ModificationInfo?.Timestamp?.ToString("dd.MM.yyyy") ?? "";
+            }
+
+            bool useTags = (bool)ModuleManager.GetModuleSettings("DDM").GetValueByKey("use_tags");
+
+
+            string module = "DCM";
+
+            return Json(
+                new { 
+                    id, 
+                    version, 
+                    tag,
+                    useTags,
+                    lastModified,
+                    lastChanger
+                    },
+                JsonRequestBehavior.AllowGet
+                );
+        }
+
 
         #region download
 
