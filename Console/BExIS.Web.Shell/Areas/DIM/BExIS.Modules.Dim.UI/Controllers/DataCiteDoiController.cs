@@ -497,7 +497,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (var brokerManager = new BrokerManager())
             {
                 List<long> brokerIds = brokerManager.FindByName("datacite").Select(b => b.Id).ToList();
-                List<Publication> publications = publicationManager.Publications.Where(p => brokerIds.Contains(p.Broker.Id)).ToList();
+                List<Publication> publications = publicationManager.Publications.Where(p => brokerIds.Contains(p.Broker.Id)).OrderByDescending(p => p.Timestamp).ToList();
 
                 foreach (Publication p in publications)
                 {
