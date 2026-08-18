@@ -41,7 +41,8 @@
 		faEyeSlash,
 		faChevronUp,
 		faChevronDown,
-		faArrowUp
+		faArrowUp,
+		faBars
 	} from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { convertDisplayName } from '$lib/components/utils/metadata/metadataShared';
@@ -58,6 +59,7 @@
 	$: schema = s;
 
 	let description: string = '';
+	let showNav = false;
 
 	async function load() {
 		container = document.getElementById('metadata');
@@ -130,13 +132,17 @@
 		<Spinner />
 	{:then}
 		{#key reload}
-			<div class="container">
-				<div class="nav-left scrollable">
+			<div class="flex overflow-hidden relative h-[calc(100dvh-180px)]">
+				{#if showNav}
+					<div class="lg:hidden absolute inset-0 z-40 bg-black/30" on:click={() => (showNav = false)}></div>
+				{/if}
+				<div class="nav-left scrollable bg-white dark:bg-surface-900 w-[280px] shrink-0 overflow-y-auto" class:nav-open={showNav}>
 					{#if m}
 						<Functions
 							bind:metadata={m}
 							{saveWithError}
 							bind:datasetId={id}
+							on:navigate={() => (showNav = false)}
 						/>
 					{/if}
 				</div>
@@ -154,10 +160,17 @@
 								{/if}
 							</button>-->
 
-						<div class="w-full flex items-center gap-1 pr-2 text-sm">
-							<!-- First block stays on the left naturally -->
-							<div class="pl-2">
-								<!--Collapse all sections button-->
+					<div class="w-full flex flex-wrap items-center gap-1 pr-2 text-sm">
+						<!-- First block stays on the left naturally -->
+						<div class="pl-2 flex items-center gap-1">
+							<button
+								class="badge lg:hidden"
+								on:click={() => (showNav = !showNav)}
+								title="Toggle navigation"
+							>
+								<Fa icon={faBars} />
+							</button>
+							<!--Collapse all sections button-->
 								{#if $hideStore.length === 0}
 									<button class="badge" on:click={collapseAll}>
 										<Fa icon={faChevronDown} />&nbsp;Collapse all sections
@@ -178,14 +191,14 @@
 							</div>
 						</div>
 					</div>
-					<div class="content scrollable">
+					<div class="flex-1 scrollable overflow-y-auto">
 						<div class="px-2" id="top">
 							<ComplexComponent complexComponent={schema} path={''} />
 						</div>
 					</div>
 				</div>
 				<div
-					class="justify-end gap-3 pr-5 text-sm w-[40%] ml-2 min-h-[100px] card dark:bg-secondary-800 p-3 min-w-0 break-words"
+					class="hidden lg:flex justify-end gap-3 pr-5 text-sm w-[40%] ml-2 min-h-[100px] card dark:bg-secondary-800 p-3 min-w-0 break-words"
 				>
 					<p class="text-sm text-gray-900 dark:text-gray-400 pb-2">
 						Move your cursor over a field or section header to see its description (if available).
@@ -223,25 +236,27 @@
 </Page>
 
 <style>
-	.container {
-		display: flex;
-		overflow: hidden; /* Wichtig: Der Content-Bereich selbst scrollt nicht */
-		height: calc(100dvh - 180px); /* Höhe des Viewports minus Höhe des Headers */
-	}
-
-	.nav-left {
-		width: 400px; /* Feste Breite für die Navigation */
-		overflow-y: auto; /* Ermöglicht vertikales Scrollen in der Navigation */
-	}
-
-	.content {
-		flex-grow: 1;
-		overflow-y: auto; /* Aktiviert das unabhängige Scrollen */
-	}
-
 	.scrollable {
-		overflow-y: auto;
-		scrollbar-width: thin; /* Makes scrollbar smaller in Firefox */
-		scrollbar-color: rgba(0, 0, 0, 0.3) transparent; /* Colors scrollbar */
+		scrollbar-width: thin;
+		scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+	}
+
+	@media (max-width: 1023px) {
+		.nav-left {
+			position: absolute;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			width: 320px;
+			max-width: 85vw;
+			z-index: 50;
+			transform: translateX(-100%);
+			transition: transform 0.2s ease;
+			box-shadow: 4px 0 10px rgba(0, 0, 0, 0.15);
+		}
+
+		.nav-left.nav-open {
+			transform: translateX(0);
+		}
 	}
 </style>

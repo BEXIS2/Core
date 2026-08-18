@@ -114,6 +114,8 @@
 			activateShow(p);
 		}
 
+		dispatch('navigate');
+
 		setTimeout(() => {
 			const ziel = document.getElementById(path + '.item');
 			ziel?.scrollIntoView({ behavior: 'smooth' });
