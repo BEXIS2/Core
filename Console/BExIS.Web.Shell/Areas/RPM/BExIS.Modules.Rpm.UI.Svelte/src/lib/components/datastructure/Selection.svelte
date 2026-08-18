@@ -382,11 +382,15 @@
 		}
 	};
 
-	async function onChangeEncodingHandler(e) {
-		const encoding = e;
-		console.log('🚀 ~ e.detail:', e);
-		const m = await load(model.file, model.entityId, encoding, 0);
-		model.preview = m.preview;
+	async function onChangeEncodingHandler() {
+		// wait a little bit, because the value is not set yet in firefox
+		setTimeout(async () => {
+			console.log('onChangeEncoding', model.fileEncoding);
+			const m = await load(model.file, model.entityId, model.fileEncoding, 0);
+			model.preview = m.preview;
+			setTableInfos(model.preview);
+			prepareData(model.preview);
+		}, 10);
 	}
 
 	function textMarkerHandling(row: string): [] {
@@ -540,7 +544,7 @@
 							source={model.encodings}
 							complexTarget={false}
 							help={true}
-							on:change={onChangeEncodingHandler(model.fileEncoding)}
+							on:change={onChangeEncodingHandler}
 						/>
 					</div>
 
