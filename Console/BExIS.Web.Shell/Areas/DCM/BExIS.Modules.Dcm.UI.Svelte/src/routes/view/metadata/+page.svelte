@@ -22,7 +22,7 @@
 		hideStore,
 		descriptionStore
 	} from '$lib/components/utils/metadata/stores';
-	import { faEye, faEyeSlash, faChevronUp, faChevronDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
+	import { faEye, faEyeSlash, faChevronUp, faChevronDown, faArrowUp, faBars } from '@fortawesome/free-solid-svg-icons';
 	import Overview from './Overview.svelte';
 	// import configJson from './customComponents/config.json';
 
@@ -32,6 +32,7 @@
 
 
 
+	let showSidebar = false;
 	let container;
 	let s: any;
 	let m: any = null;
@@ -184,23 +185,16 @@ function activateShow(key: string) {
 	{#await load()}
 		<Spinner />
 	{:then}
-	<div class="container">
+	<div class="flex flex-col overflow-visible h-auto lg:flex-row lg:overflow-hidden lg:h-[calc(100dvh-180px)] relative">
 
-<div class="w-full flex flex-col gap-4">
-			<div>	
+<div class="w-full lg:flex-1 flex flex-col gap-4 min-w-0">
+			<div>
 					<!-- Show all descriptions -->
 					<div class="flex flex-col gap-2">
-						<!--<button class="badge" on:click={() => showAllDescriptionsStore.update((v) => !v)}>
-								{#if $showAllDescriptionsStore}
-									<Fa icon={faEyeSlash} />&nbsp;Hide descriptions
-								{:else}
-									<Fa icon={faEye} />&nbsp;Show descriptions
-								{/if}
-							</button>-->
 
-						<div class="w-full flex items-center gap-1 pr-2 text-sm">
+						<div class="w-full flex flex-wrap items-center gap-1 pr-2 text-sm">
 							<!-- First block stays on the left naturally -->
-							<div class="pl-2">
+							<div class="pl-2 flex items-center gap-1">
 								<!--Collapse all sections button-->
 								{#if $hideStore.length === 0}
 									<button class="badge" on:click={collapseAll}>
@@ -215,22 +209,32 @@ function activateShow(key: string) {
 							</div>
 
 							<!-- 1. Added ml-auto to push this block all the way to the right -->
-							<div class="ml-auto pr-4">
+							<div class="ml-auto pr-4 flex items-center gap-1">
+								<button
+									class="badge lg:hidden"
+									on:click={() => (showSidebar = !showSidebar)}
+									title="Toggle sidebar"
+								>
+									<Fa icon={faBars} />
+								</button>
 								<a href="#top" class="badge">
 									Scroll to top &nbsp;<Fa icon={faArrowUp} />
 								</a>
 							</div>
 						</div>
 					</div>
-					<div class="content scrollable">
+					<div class="flex-1 scrollable overflow-visible lg:overflow-y-auto">
 						<div class="px-2" id="top">
 							<ComplexComponent complexComponent={schema} path={''} />
 						</div>
 					</div>
-				</div>	
+				</div>
 
 </div>
-<div class="w-full lg:w-[35%] xl:w-[25%] flex flex-col gap-3 ml-4">
+{#if showSidebar}
+	<div class="lg:hidden fixed inset-0 z-40 bg-black/30" on:click={() => (showSidebar = false)}></div>
+{/if}
+<div class="sidebar scrollable w-full lg:w-[35%] xl:w-[25%] flex flex-col gap-3 ml-4 bg-white dark:bg-surface-900 shrink-0 overflow-y-auto" class:sidebar-open={showSidebar}>
     
 <h3 class="h3 font-semibold text-gray-700 dark:text-gray-300  whitespace-nowrap">Metadata Overview</h3>
 
@@ -292,29 +296,31 @@ function activateShow(key: string) {
 </Page>
 
 <style>
+	.scrollable {
+		scrollbar-width: thin;
+		scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+	}
 
-.container {
-  display: flex;
-  overflow: hidden; /* Wichtig: Der Content-Bereich selbst scrollt nicht */
-		height: calc(100dvh - 180px); /* Höhe des Viewports minus Höhe des Headers */
-}
+	@media (max-width: 1023px) {
+		.sidebar {
+			position: fixed;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			width: 320px;
+			max-width: 85vw;
+			z-index: 50;
+			transform: translateX(100%);
+			transition: transform 0.2s ease;
+			box-shadow: -4px 0 10px rgba(0, 0, 0, 0.15);
+			padding: 1rem;
+			margin-left: 0;
+		}
 
-.nav-left {
-		width: 400px; /* Feste Breite für die Navigation */
-		overflow-y: auto; /* Ermöglicht vertikales Scrollen in der Navigation */
-
-}
-	
-.content {
-		flex-grow: 1;
-		overflow-y: auto; /* Aktiviert das unabhängige Scrollen */
-}
-
-.scrollable {
-		overflow-y: auto;
-		scrollbar-width: thin; /* Makes scrollbar smaller in Firefox */
-		scrollbar-color: rgba(0, 0, 0, 0.3) transparent; /* Colors scrollbar */
-}
+		.sidebar.sidebar-open {
+			transform: translateX(0);
+		}
+	}
 </style>
 
 
