@@ -228,7 +228,7 @@
 										<div class="ml-4 flex flex-col">
 											<button
 												type="button"
-												class="text-sm text-gray-500 text-left p-0 m-0 border border-gray-300 rounded-md hover:bg-gray-100"
+												class="text-sm text-gray-500 text-left p-0 m-0 border border-solid border-gray-300 rounded-md hover:bg-gray-100"
 												on:click={() => toggleAll(item.path)}
 												aria-label={`Open ${item.path}`}
 											>
