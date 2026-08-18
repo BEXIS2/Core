@@ -338,8 +338,11 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 else
                     text += url + ". ";
 
-                if(String.IsNullOrEmpty(model.Note))
-                    text += model.EntityName + " ID= " + entityId;
+                if (String.IsNullOrEmpty(model.Note))
+                {
+                    if(isPublic)
+                        text += model.EntityName + " ID= " + entityId;
+                }
                 else
                     text += model.Note;
             }
