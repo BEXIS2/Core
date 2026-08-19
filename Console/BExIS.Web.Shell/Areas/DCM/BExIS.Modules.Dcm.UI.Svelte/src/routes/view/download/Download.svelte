@@ -61,7 +61,7 @@ async function downloadDatasetFn()
       if (match?.[1]) fileName = decodeURIComponent(match[1]);
     }
 
-    sendDataTo(res,fileName, "application/zip");
+    sendDataTo(res.data,fileName, "application/zip");
   }
 }
 
