@@ -244,7 +244,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
 
                     // check the data sturcture type ...
-                    if (!string.IsNullOrEmpty(format) && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure && datasetManager.GetDataTuplesCount(datasetVersion.Id) > 0)
+                    if (!string.IsNullOrEmpty(format) && datasetVersion.Dataset.DataStructure != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure && datasetManager.GetDataTuplesCount(datasetVersion.Id) > 0)
                     {
                         OutputDataManager odm = new OutputDataManager();
 
@@ -323,8 +323,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     using (var archive = new ZipOutputStream(zipFileStream))
 
                     {
+                        archive.IsStreamOwner = false;
                         // stored contentdescriptior key name in db for the format and the dataname
                         string dataName = getCDTypeName(format);
+                        if (withUnits) dataName += "_withunits";
 
                         // content descriptors
                         foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)

@@ -24,31 +24,27 @@ export let requestExist: boolean = false; // user has already requested the data
  export let data_aggrement = ""; //"data policy" or "terms_and_conditions"
  export let total: number; // number of rows in dataset
 
- let withUnits = false;
  $:isDownloading = false;
  $:exceptAgreement = !isPublic || (isPublic && data_aggrement === "none") ? true : exceptAgreement;
 
  let excelMaxRows = 1048576;
  let selectedFormat = "";
 
- const downloadFormats = [
-  {
-   'label': 'application/xlsx',
-   'value': 'application/xlsx',
-  },
-  {
-   'label': 'text/csv',
-   'value': 'text/csv',
-  },
-  {
-   'label': 'text/tsv',
-   'value': 'text/tsv',
-  },
-  {
-   'label': 'text/plain',
-   'value': 'text/plain',
-  }
-];
+ const baseFormats = [
+  'application/xlsx',
+  'text/csv',
+  'text/tsv',
+  'text/plain'
+ ];
+
+ $: downloadFormats = baseFormats.flatMap(f => [
+  { label: f, value: f + '|false', format: f, withUnits: false },
+  { label: f + ' (with units)', value: f + '|true', format: f, withUnits: true }
+ ]);
+
+ $: selected = downloadFormats.find(d => d.value === selectedFormat);
+ $: withUnits = selected?.withUnits ?? false;
+ $: selectedMimeType = selected?.format ?? '';
 
 async function downloadDatasetFn()
 {
@@ -74,7 +70,7 @@ async function downloadDatasetFn()
 async function downloadDatasetWithFormatFn(event)
 {
 
-  const format = selectedFormat;
+  const format = selectedMimeType;
   if(format === 'application/xlsx' && total > excelMaxRows){
     alert(`The dataset has ${total} rows, which exceeds the maximum number of rows for Excel (${excelMaxRows}). Please choose another format.`);
     return;
@@ -82,7 +78,7 @@ async function downloadDatasetWithFormatFn(event)
 
   isDownloading = true;
 
-  const res = await downloadZip(id, format, versionId, withUnits);
+  const res = await downloadZip(id, format, versionId, false, withUnits);
   
   if(res)
   {
@@ -135,9 +131,9 @@ function sendDataTo(data, name, type)
   <h4 class="h4 grow">Download</h4> 
 </div>
    
-  <div class="input-group input-group-divider grid-cols-[1fr_auto]" >
+   <div class="input-group input-group-divider grid-cols-[1fr_auto]" >
     
-    <select class="select" bind:value={selectedFormat} >
+    <select class="select" bind:value={selectedFormat}>
       <option value="" disabled selected hidden>- Select a format -</option>
       {#each downloadFormats as d}
         <option value={d.value}>{d.label}</option>
@@ -152,24 +148,17 @@ function sendDataTo(data, name, type)
       <Fa icon={faDownload} />    
     {/if}    
     </button>
-  
+   
   </div>
-</div>
-<div class="padding-top-5 position-releative flex flex-col gap-2">
-    <span>
-        <input class="checkbox"  type="checkbox" id="withUnits" bind:checked="{withUnits}" />
-        <span>with units</span>
-    </span>
-</div>
+ </div>
 
 
   {:else} <!-- // download package with files -->
 
-  <button class="btn" class:variant-filled-primary={exceptAgreement} class:variant-ghost-primary={!exceptAgreement}  disabled={!exceptAgreement} on:click={() => downloadDatasetFn()}>
-   <!-- svelte-ignore missing-declaration -->
-   {#if isDownloading}<Spinner />{:else}<Fa icon={faDownload} />{/if}
-   <span class="padding-left-5">Download</span>
-  </button>
+   <button class="btn" class:variant-filled-primary={exceptAgreement} class:variant-ghost-primary={!exceptAgreement}  disabled={!exceptAgreement} on:click={() => downloadDatasetFn()}>
+    {#if isDownloading}<ProgressRadial width="w-6"  stroke={60}  meter="stroke-tertiary-500" track="stroke-primary-500/30" strokeLinecap="round"/>{:else}<Fa icon={faDownload} />{/if}
+    <span class="padding-left-5">Download</span>
+   </button>
 
  {/if}
 
@@ -198,6 +187,18 @@ function sendDataTo(data, name, type)
 
 {:else if   requestAble && hasRequestRight}
   <Request {id} exist={requestExist}/>
+{:else if !requestAble && hasRequestRight}
+
+  <button class="btn variant-filled-primary" disabled title="This dataset is currently not requestable.">
+   <Fa icon={faSave} />
+   <span class="padding-left-5">Currently not available</span>
+  </button>
+{:else if requestAble && !hasRequestRight}
+
+  <button class="btn variant-filled-primary" disabled title="You do not have the right to request this dataset.">
+   <Fa icon={faSave} />
+   <span class="padding-left-5">Currently not available</span>
+  </button>
 {:else}
 
   <button class="btn variant-filled-primary" disabled on:click={() => downloadDatasetFn()}>
