@@ -43,7 +43,7 @@
                 {
                     <a class="bx bx-grid-function bx-edit" href="/dcm/edit/?id=@m.Id" target="_blank" title="Edit " style="text-decoration: none;"> </a>
 
-                    <a class="bx bx-grid-function bx-copy" href="/dcm/create/copy?id=@m.Id" target="_blank" title="Copy " style="text-decoration: none;"> </a>
+                    <a class="bx bx-grid-function bx-copy" href="/dcm/create/copy?id=@m.Id" target="_blank" title="Copy dataset" style="text-decoration: none;" onclick="return confirm('Do you really want to create a copy of dataset @m.Id? This will create a new dataset.')"> </a>
 
                     if (use_tags)
                     {
