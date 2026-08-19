@@ -30,6 +30,7 @@ using System.Xml.XPath;
 using Vaiona.Entities.Common;
 using BExIS.Utils.Config;
 using System.Web.SessionState;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -172,12 +173,40 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // remove dubplicates
                 destinations = destinations.Distinct().ToList();
 
+                // get settings for email message
+                var settings = ModuleManager.GetModuleSettings("dcm");
+                var message = settings.GetValueByKey("createDatasetMessage").ToString();//
+                // fill placeholders in message supports: {displayName}
+                var displayName = GetDisplayName();
+                var newDatasetId = ds.Id;
+                var appName = GeneralSettings.ApplicationName;
+
+                message = message
+                    .Replace("{displayName}", displayName)
+                    .Replace("{datasetId}", newDatasetId.ToString())
+                    .Replace("{appName}", appName);
+
+                List<string> destinationsUser = new List<string>();
+                
+                // email current user
+                var currentUser = _userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
+                if (currentUser != null)
+                {
+                    destinationsUser.Add(currentUser.Email);
+                }
+
                 using (var emailService = new EmailService())
                 {
                     emailService.Send(MessageHelper.GetCreateDatasetHeader(ds.Id, entityTemplate.Name),
                         MessageHelper.GetCreateDatasetMessage(ds.Id, datasetVersionToCopy.Title + "_copy", GetDisplayName(), entityTemplate.Name),
                         destinations
                         );
+
+                    // send email to current user wit next steps
+                    if (message != null && destinationsUser.Count > 0)
+                    {
+                        emailService.Send(MessageHelper.GetCreateDatasetHeader(ds.Id, entityTemplate.Name), message, destinationsUser, null, destinations);
+                    }
                 }
                     
 
@@ -449,11 +478,38 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // remove dubplicates
                 destinations = destinations.Distinct().ToList();
 
+
+                // get settings for email and message
+                var settings = ModuleManager.GetModuleSettings("dcm");
+                var message = settings.GetValueByKey("createDatasetMessage").ToString();//
+                var displayName = GetDisplayName();
+                var newDatasetId = ds.Id;
+                var appName = GeneralSettings.ApplicationName;
+                message = message
+                    .Replace("{displayName}", displayName)
+                    .Replace("{datasetId}", newDatasetId.ToString())
+                    .Replace("{appName}", appName);
+                    
+                List<string> destinationsUser = new List<string>();
+
+                // email current user
+                var currentUser = _userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
+                if (currentUser != null)
+                {
+                    destinationsUser.Add(currentUser.Email);
+                }
+
                 using (var emailService = new EmailService())
                 {
                     emailService.Send(MessageHelper.GetCreateDatasetHeader(datasetId, entityTemplate.Name),
                     MessageHelper.GetCreateDatasetMessage(datasetId, title, GetDisplayName(), entityTemplate.Name),
                     destinations);
+
+                    // send email to current user with next steps
+                    if (message != null && destinationsUser.Count > 0)
+                    {
+                        emailService.Send(MessageHelper.GetCreateDatasetHeader(ds.Id, entityTemplate.Name), message, destinationsUser, null, destinations);
+                    }
                 }   
 
                 #endregion send notifications
