@@ -19,8 +19,8 @@
 	import { systemMappingsStore } from '$lib/components/utils/metadata/stores';
 
 	import Fa from 'svelte-fa';
-	import { faLink } from '@fortawesome/free-solid-svg-icons';
-	import { validationStore } from '$lib/components/utils/metadata/stores';
+	import { faCircleCheck, faCircleQuestion, faLink } from '@fortawesome/free-solid-svg-icons';
+	import { validationStore, metadataStore } from '$lib/components/utils/metadata/stores';
 
 	const dispatch = createEventDispatcher();
 
@@ -163,6 +163,9 @@
 		disabled: false
 	};
 	// $: console.log('🚀 ~ PartySelector.svelte ~ commonProps:', commonProps);
+
+	// Party link indicator
+	$: hasPartyId = selectorValue != null && Number(selectorValue?.partyId) > 0;
 </script>
 
 <div class="flex items-center gap-2">
@@ -185,10 +188,11 @@
 			on:hideDescription={handleHideDescription}
 		/>
 	</div>
-	<div
-		class="pt-7"
-		title="This field is linked to a party. Changing the value here will update all other fields linked to the same party."
-	>
-		<Fa icon={faLink} class="text-gray-500" />
+	<div class="pt-7 shrink-0" title={hasPartyId ? 'This field is linked to a party.' : 'This field can be linked to a party but has no party assigned yet.'}>
+		{#if hasPartyId}
+			<Fa icon={faCircleCheck} class="text-success-500" />
+		{:else}
+			<Fa icon={faCircleQuestion} class="text-warning-500" />
+		{/if}
 	</div>
 </div>
