@@ -94,6 +94,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (var _meaningManager = new MeaningManager())
                 {
+                    if (_meaningManager.IsMeaningInUse(id))
+                        return Json(false, JsonRequestBehavior.AllowGet);
+
                     _meaningManager.DeleteMeaning(id);
                     return Json(true, JsonRequestBehavior.AllowGet);
                 }

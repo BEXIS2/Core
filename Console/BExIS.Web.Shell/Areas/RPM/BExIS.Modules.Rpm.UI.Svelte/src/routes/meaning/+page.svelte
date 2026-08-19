@@ -195,7 +195,7 @@
 		} else {
 			notificationStore.showNotification({
 				notificationType: notificationType.error,
-				message: 'Can\'t delete Meaning "' + m.name + '".'
+				message: 'Can\'t delete Meaning "' + m.name + '" because it is still linked to one or more variable templates or variables.'
 			});
 
 			return false;
