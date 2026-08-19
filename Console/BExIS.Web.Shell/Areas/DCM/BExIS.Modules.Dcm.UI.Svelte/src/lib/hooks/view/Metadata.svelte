@@ -17,7 +17,7 @@ const url = `/dcm/view/metadata?id=${id}&version=${version}&tag=${tag}`;
   <div class="flex justify-end gap-1">
    <a href={url} target="_blank" class="badge variant-filled-primary">
     <Fa icon={faFileLines} />
-    <span class="ml-2">Metadata</span>
+    <span class="ml-2">View full Metadata</span>
    </a>
   </div>
 

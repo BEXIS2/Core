@@ -33,12 +33,12 @@ onMount(async () => {
 
 </script>
 <div class="card p-5 flex flex-col gap-2">
- <h4 class="h4">Tags</h4>
+ <h4 class="h4">Release Tags</h4>
 
 
 	{#if tags.length === 0}
 		<div class="flex justify-start">
-			<span class=""><b>No tags available.</b></span>	
+			<span class=""><b>No release tags available.</b></span>	
 		</div>
 		{:else}
 

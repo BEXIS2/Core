@@ -15,6 +15,7 @@ export let useTags:boolean = false;
  $:selectedFormat, console.log("🚀 ~ selectedFormat:", selectedFormat, downloadAccess), downloadAccess = selectedFormat !== -1?true:false;
 
  let filename = `entity_${id}_${version}.txt`;
+ let isLoading = true;
 
  let downloadFormats = [
   {
@@ -50,7 +51,7 @@ onMount(async() => {
   
   downloadFormats = res.formats;
   filename = res.fileName;
-
+  isLoading = false;
 });
 
 
@@ -81,7 +82,7 @@ async function downloadCitationFn()
 
 </script>
 
-{#if downloadFormats.length > 0}
+{#if !isLoading && downloadFormats.length > 0}
 <div class="">
   <h4 class="h4">Citation</h4>
 

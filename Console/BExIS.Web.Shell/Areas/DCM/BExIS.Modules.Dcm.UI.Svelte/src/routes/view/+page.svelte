@@ -147,7 +147,7 @@
 
 	{#await load()}
 			<div class="text-surface-800">
-				<Spinner position={positionType.center} label="loading entity" />
+				<Spinner position={positionType.center} label="loading dataset" />
 			</div>
 		{:then result}
 
