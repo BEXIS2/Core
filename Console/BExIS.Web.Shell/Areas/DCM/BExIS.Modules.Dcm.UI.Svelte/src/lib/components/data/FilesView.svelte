@@ -137,9 +137,9 @@
 						</audio>
 					</div>
 				{:else if getPreviewType(previewFile.type) === 'pdf'}
-					<iframe src={getFileUrl(previewFile, true)} class="w-full" style="height: 80vh;" title={previewFile.name}></iframe>
+					<iframe src={getFileUrl(previewFile, true)} class="w-full" style="height: 90vh;" title={previewFile.name}></iframe>
 				{:else if getPreviewType(previewFile.type) === 'text'}
-					<iframe src={getFileUrl(previewFile, true)} class="w-full" style="height: 80vh;" title={previewFile.name}></iframe>
+					<iframe src={getFileUrl(previewFile, true)} class="w-full" style="height: 90vh;" title={previewFile.name}></iframe>
 				{/if}
 			</div>
 		</div>
