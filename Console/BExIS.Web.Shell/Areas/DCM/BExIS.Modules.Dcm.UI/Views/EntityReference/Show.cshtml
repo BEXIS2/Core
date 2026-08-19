@@ -106,10 +106,12 @@
 
                 @foreach (var srm in Model.SourceReferences)
                 {
+
+                    string targetName = string.IsNullOrEmpty(srm.Target.Title) ? "No Title available" : srm.Target.Title;
                     <tr>
                         <td>@srm.Source.Id</td>
                         <td>@srm.Source.Version</td>
-                        <td>@Html.ActionLink(@srm.Source.Title, "Show", "Data", new { Area = "DDM", id = srm.Source.Id, version = srm.Source.Version }, null)</td>
+                        <td>@Html.ActionLink(targetName, "Show", "Data", new { Area = "DDM", id = srm.Source.Id, version = srm.Source.Version }, null)</td>
                         <td>@srm.Context</td>
                         <td>@srm.Source.Type</td>
                         <td>@srm.Target.Version</td>
