@@ -118,7 +118,7 @@
 			>
 		</div>
 		<div class="flex-none text-end">
-			{#if pksHasChanged && !pksValid && dataExist}
+			{#if pksHasChanged && !pksValid && dataExist && isPKSet}
 				<button
 					id="check"
 					title="Check changed primary key against datasets that belong to the data structure."

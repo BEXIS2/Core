@@ -660,7 +660,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public JsonResult CheckPrimaryKeySet(long id, long[] primaryKeys)
         {
             if (id <= 0) throw new ArgumentNullException("id");
-            if (primaryKeys == null) primaryKeys = new long[0];
+            if (primaryKeys == null || primaryKeys.Length == 0)
+                return Json(false, JsonRequestBehavior.AllowGet);
 
             UploadHelper helper = new UploadHelper();
 
