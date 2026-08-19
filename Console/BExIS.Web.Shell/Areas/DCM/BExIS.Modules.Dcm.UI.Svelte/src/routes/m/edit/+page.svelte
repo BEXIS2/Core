@@ -198,7 +198,7 @@
 					</div>
 				</div>
 				<div
-					class="hidden lg:flex justify-end gap-3 pr-5 text-sm w-[40%] ml-2 min-h-[100px] card dark:bg-secondary-800 p-3 min-w-0 break-words"
+					class="hidden lg:flex flex-col justify-start gap-3 pr-5 text-sm w-[40%] ml-2 min-h-[100px] card dark:bg-secondary-800 p-3 min-w-0 break-words"
 				>
 					<p class="text-sm text-gray-900 dark:text-gray-400 pb-2">
 						Move your cursor over a field or section header to see its description (if available).
