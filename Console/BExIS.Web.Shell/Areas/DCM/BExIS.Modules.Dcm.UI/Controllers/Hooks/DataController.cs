@@ -58,6 +58,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     if (datasetversion != null) // if dataset version  
                     {
+                        model.VersionId = datasetversion.Id;
+
                         // check if dataset has structure
                         if (datasetversion.Dataset.DataStructure != null)
                         {
@@ -89,7 +91,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                     Name = name,
                                                     Description = content.Description,
                                                     Type = content.MimeType,
-                                                    Lenght = content.FileSize
+                                                    Lenght = content.FileSize,
+                                                    Path = content.URI
                                                 });
                                             }
                                             else // exist allready modified

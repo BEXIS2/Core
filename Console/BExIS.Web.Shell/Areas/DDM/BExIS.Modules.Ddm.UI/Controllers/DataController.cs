@@ -1660,28 +1660,37 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     title = datasetVersion.Title;
                     title = String.IsNullOrEmpty(title) ? "unknown" : title;
 
-                    string zipPath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), title + ".zip");
-
-                    if (FileHelper.FileExist(zipPath))
-                    {
-                        if (FileHelper.WaitForFile(zipPath))
-                        {
-                            FileHelper.Delete(zipPath);
-                        }
-                    }
-
                     var memoryStream = new MemoryStream();
 
                     using (var archive = new ZipOutputStream(memoryStream))
                     {
+                        archive.IsStreamOwner = false;
+                        archive.SetLevel(9);
                         foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                         {
                             string filePath = Path.Combine(AppConfiguration.DataPath, cd.URI);
                             string fileName = cd.URI.Split('\\').Last();
 
-                            archive.AddFile(filePath);
+                            if (System.IO.File.Exists(filePath))
+                            {
+                                var fileInfo = new System.IO.FileInfo(filePath);
+                                ZipEntry entry = new ZipEntry(fileName);
+                                entry.DateTime = fileInfo.LastWriteTime;
+                                entry.Size = fileInfo.Length;
+                                archive.PutNextEntry(entry);
+
+                                using (var fs = System.IO.File.OpenRead(filePath))
+                                {
+                                    fs.CopyTo(archive);
+                                }
+
+                                archive.CloseEntry();
+                            }
                         }
+                        archive.Finish();
                     }
+
+                    memoryStream.Position = 0;
 
                     long versionNr = datasetManager.GetDatasetVersionNr(datasetVersion);
                     string message = string.Format("all files from dataset {0} version {1} was downloaded as zip.", datasetVersion.Dataset.Id,
@@ -1696,7 +1705,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             );
                     }
 
-                    return File(zipPath, "application/zip", title + ".zip");
+                    return File(memoryStream, "application/zip", title + ".zip");
                 }
                 catch (Exception ex)
                 {
@@ -1720,7 +1729,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
-        public ActionResult DownloadFile(long id, long version, string path, string mimeType)
+        public ActionResult DownloadFile(long id, long version, string path, string mimeType, bool preview = false)
         {
             using (DatasetManager datasetManager = new DatasetManager())
             {
@@ -1728,17 +1737,26 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 {
                     string title = id + "_" + version + "_" + path.Split('\\').Last();
                     long versionNr = datasetManager.GetDatasetVersionNr(version);
-                    string message = string.Format("dataset {0} version {1} was downloaded as excel.", id, versionNr);
-                    LoggerFactory.LogCustom(message);
 
-                    using (var emailService = new EmailService())
+                    if (!preview)
                     {
-                        emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
-                        MessageHelper.GetDownloadDatasetMessage(id, title, GetDisplayName(), mimeType, versionNr),
-                            GeneralSettings.SystemEmail
-                            );
+                        string message = string.Format("dataset {0} version {1} was downloaded as excel.", id, versionNr);
+                        LoggerFactory.LogCustom(message);
+
+                        using (var emailService = new EmailService())
+                        {
+                            emailService.Send(MessageHelper.GetDownloadDatasetHeader(id, versionNr),
+                            MessageHelper.GetDownloadDatasetMessage(id, title, GetDisplayName(), mimeType, versionNr),
+                                GeneralSettings.SystemEmail
+                                );
+                        }
                     }
 
+                    if (preview)
+                    {
+                        // return inline (no Content-Disposition: attachment) so browsers display it
+                        return File(Path.Combine(AppConfiguration.DataPath, path), mimeType);
+                    }
 
                     return File(Path.Combine(AppConfiguration.DataPath, path), mimeType, title);
                 }

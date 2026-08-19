@@ -24,20 +24,21 @@
 
 
 </script>
-<div class="flex justify-between items-center">
- <h3 class="h3">Attachments</h3> 
-</div>
-<div class="card p-5 mb-5">
 {#await load()}
 			<PlaceHolderHookContent />
-{:then result}
-		<FilesView
-			{id}
-			files={model.files}
-		/>
+	{:then result}
+		{#if model.files && model.files.length > 0}
+			<div class="flex justify-between items-center">
+				<h3 class="h3">Attachments</h3>
+			</div>
+			<FilesView
+				{id}
+				files={model.files}
+				downloadMode="attachments"
+			/>
+		{/if}
 
-{:catch error}
-	<ErrorMessage {error} />
+	{:catch error}
+		<ErrorMessage {error} />
 {/await}
-</div>
 
