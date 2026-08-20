@@ -526,6 +526,7 @@
 							source={model.decimals}
 							complexTarget={false}
 							help={true}
+							on:change={changeDelimiter}
 						/>
 
 						<DropdownKVP
@@ -535,6 +536,7 @@
 							source={model.textMarkers}
 							complexTarget={false}
 							help={true}
+							on:change={changeDelimiter}
 						/>
 
 						<DropdownKVP
