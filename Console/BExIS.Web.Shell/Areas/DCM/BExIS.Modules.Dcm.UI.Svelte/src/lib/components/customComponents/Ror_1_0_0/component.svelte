@@ -25,7 +25,6 @@
 	let targetVars = getTargetVariablesWithValues(config);
 
 	let modeName = config?.mode?.mode_name ?? '';
-	let isViewMode = mode === 'view';
 
 	let ror_field_path = targetVars?.find((v) => v.target_variable === 'ror_field')?.value
 		?? targetVars?.find((v) => v.target_variable === 'displayRor')?.value
@@ -68,10 +67,6 @@
 	let searchTimer: ReturnType<typeof setTimeout> | null = null;
 
 	onMount(async () => {
-		if (isViewMode) {
-			return;
-		}
-
 		const { node: schemaNode } = resolveNode(ror_field_path);
 		registerValidationItem(ror_field_path, label, required, schemaNode, true);
 		validationRegistered = true;
@@ -217,25 +212,7 @@
 	};
 </script>
 
-{#if isViewMode}
-	<div class="entry">
-		<span class="key text-sm font-medium text-gray-500">{label}</span>
-		<span class="val text-sm text-gray-900 font-semibold">
-			{#if value}
-				{#if ref}
-					<a href={ref} target="_blank" rel="noopener noreferrer" class="ror-link">
-						<span>{value}</span>
-					</a>
-				{:else}
-					{value}
-				{/if}
-			{:else}
-				<span class="text-gray-400">—</span>
-			{/if}
-		</span>
-	</div>
-{:else}
-	<InputContainer {...commonProps} on:showDescription on:hideDescription>
+<InputContainer {...commonProps} on:showDescription on:hideDescription>
 		<div class="ror-search-container">
 			<input
 				type="text"
@@ -290,35 +267,10 @@
 					Selected ROR ID: <a href={ref} target="_blank" rel="noopener noreferrer">{ref}</a>
 				</div>
 			{/if}
-		</div>
-	</InputContainer>
-{/if}
+	</div>
+</InputContainer>
 
 <style>
-	.entry {
-		display: flex;
-		flex-direction: row;
-	}
-
-	.key {
-		display: inline-block;
-		flex-grow: 1;
-	}
-
-	.val {
-		display: inline-block;
-		width: 30vw;
-		font-weight: bold;
-	}
-
-	.ror-link {
-		color: rgb(37 99 235);
-	}
-
-	.ror-link:hover {
-		text-decoration: underline;
-	}
-
 	.ror-search-container {
 		position: relative;
 		width: 100%;

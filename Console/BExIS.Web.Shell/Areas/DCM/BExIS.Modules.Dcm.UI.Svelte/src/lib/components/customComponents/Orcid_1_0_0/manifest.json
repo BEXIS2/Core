@@ -115,33 +115,6 @@
           ]
         }
       }
-    ],
-    "view": [
-      {
-        "mode_name": "Linked ORCID Display",
-        "description": "Mode for displaying linked ORCID entry",
-        "settings": {
-          "setting": []
-        },
-        "variables": {
-          "variable": [
-            {
-              "name": "Display ORCID",
-              "description": "ORCID entry to display",
-              "type": "string",
-              "target_variable": "displayOrcid",
-              "allowregex_input": true,
-              "allowregex_output": false,
-              "is_input": true,
-              "is_output": false,
-              "default_value": {
-                "type": "string",
-                "value": ""
-              }
-            }
-          ]
-        }
-      }
     ]
   }
 }

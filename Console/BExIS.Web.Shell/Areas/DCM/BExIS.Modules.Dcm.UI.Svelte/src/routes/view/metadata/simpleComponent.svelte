@@ -86,19 +86,19 @@
 >
 		{#if path.split('.').length > 1 && !isNaN(parseInt(lastPathPart))}
 			{#if lastPathPart === '0'}
-				<span class="key text-sm font-medium text-gray-500" 
-					>{convertDisplayName(label)}</span
-				>
-			{:else}
-				<span class="key text-sm font-medium text-gray-500" 
-				></span>
-			{/if}
-		{:else}
 			<span class="key text-sm font-medium text-gray-500" 
 				>{convertDisplayName(label)}</span
 			>
+		{:else}
+			<span class="key text-sm font-medium text-gray-500" 
+			></span>
 		{/if}
-		<span class="val text-sm text-gray-900 font-semibold">{value}</span>
+	{:else}
+		<span class="key text-sm font-medium text-gray-500" 
+			>{convertDisplayName(label)}</span
+		>
+	{/if}
+		<span class="val text-sm text-gray-900">{value}</span>
 	</div>
 {:else if isAnchor}
 	<div class="" id={path}>
@@ -119,15 +119,16 @@
 .entry {
   display: flex;
   flex-direction: row;
+  padding-bottom: 0.35rem;
 }
 
 .val  {
   display: inline-block;
-  width: 30vw;
-  font-weight: bold;
+  flex-grow: 1;
 }
 .key {
   display: inline-block;
-  flex-grow: 1;
+  min-width: 180px;
+  max-width: 30%;
 }
 </style>

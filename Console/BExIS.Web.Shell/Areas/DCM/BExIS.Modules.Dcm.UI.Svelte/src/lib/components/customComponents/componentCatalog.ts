@@ -6,6 +6,7 @@ import HorizontalAlignment_1_0_0 from './HorizontalAlignment_1_0_0/component.sve
 import DefaultValues_1_0_0 from './DefaultValues_1_0_0/component.svelte';
 import Ror_1_0_0 from './Ror_1_0_0/component.svelte';
 import Orcid_1_0_0 from './Orcid_1_0_0/component.svelte';
+import LinkView_1_0_0 from './LinkView_1_0_0/component.svelte';
 
 
 export const customComponentsCatalog: any = {
@@ -24,5 +25,7 @@ export const customComponentsCatalog: any = {
     'ror_v1.0.0': {
         component: Ror_1_0_0 },
     'orcid_v1.0.0': {
-        component: Orcid_1_0_0 }
+        component: Orcid_1_0_0 },
+    'linkView_v1.0.0': {
+        component: LinkView_1_0_0 }
 };

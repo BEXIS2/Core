@@ -150,7 +150,7 @@
 {#if isViewMode}
 	<div class="entry">
 		<span class="key text-sm font-medium text-gray-500">{label}</span>
-		<span class="val text-sm text-gray-900 font-semibold">
+		<span class="val text-sm text-gray-900">
 			{#if startValue || endValue}
 				{startValue}{#if startValue && endValue} – {endValue}{/if}
 			{:else}
@@ -209,6 +209,7 @@
 	.entry {
 		display: flex;
 		flex-direction: row;
+		padding-bottom: 0.35rem;
 	}
 	.key {
 		display: inline-block;
@@ -216,8 +217,12 @@
 	}
 	.val {
 		display: inline-block;
-		width: 30vw;
-		font-weight: bold;
+		flex-grow: 1;
+	}
+	.key {
+		display: inline-block;
+		min-width: 180px;
+		max-width: 30%;
 	}
 	.drp-row {
 		display: flex;
