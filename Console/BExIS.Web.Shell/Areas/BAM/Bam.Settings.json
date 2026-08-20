@@ -23,6 +23,13 @@
       "title": "Party Relationship Type for Owner",
       "type": "String",
       "value": "Owner"
+    },
+    {
+      "description": "Define a party relationship type for users who should be informed (CC) when a data request is submitted (e.g. data creators). All parties with this relationship to the dataset will be notified.",
+      "key": "DataRequestNotificationRelationshipType",
+      "title": "Party Relationship Type for Data Request Notifications",
+      "type": "String",
+      "value": "DataCreator"
     }
   ],
   "id": "bam",

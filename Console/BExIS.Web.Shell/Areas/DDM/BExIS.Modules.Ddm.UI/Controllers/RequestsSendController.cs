@@ -1,5 +1,7 @@
 ﻿using BExIS.App.Bootstrap.Helpers;
+using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.Party;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Requests;
@@ -12,6 +14,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Vaiona.Persistence.Api;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
@@ -52,12 +55,54 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         string emailDescionMaker = request.Decisions.FirstOrDefault().DecisionMaker.Email;
                         string applicant = getPartyNameOrDefault();
 
-                        //ToDo send emails to owner & requester
+                        // collect all users with the configured party relationship to the dataset (e.g. data creators) to inform them
+                        List<string> ccEmails = new List<string> { GeneralSettings.SystemEmail, request.Applicant.Email };
+                        var bamSettings = ModuleManager.GetModuleSettings("bam");
+                        string notificationRelationshipType = bamSettings.GetValueByKey("DataRequestNotificationRelationshipType")?.ToString();
+
+                        if (!string.IsNullOrEmpty(notificationRelationshipType))
+                        {
+                            using (var partyManager = new PartyManager())
+                            using (var uow = this.GetUnitOfWork())
+                            {
+                                var partyTypeRepository = uow.GetReadOnlyRepository<PartyType>();
+                                var partyRelationshipRepository = uow.GetReadOnlyRepository<PartyRelationship>();
+                                var partyUserRepository = uow.GetReadOnlyRepository<PartyUser>();
+
+                                var datasetPartyType = partyTypeRepository.Query(m => m.Title == "Dataset").FirstOrDefault();
+                                if (datasetPartyType != null)
+                                {
+                                    var datasetParty = partyManager.Parties.FirstOrDefault(m => m.Name == id.ToString() && m.PartyType.Id == datasetPartyType.Id);
+                                    if (datasetParty != null)
+                                    {
+                                        var relationships = partyRelationshipRepository.Query(
+                                            m => m.PartyRelationshipType.Title == notificationRelationshipType &&
+                                            m.TargetParty.Id == datasetParty.Id).ToList();
+
+                                        foreach (var rel in relationships)
+                                        {
+                                            var partyUser = partyUserRepository.Query(m => m.Party.Id == rel.SourceParty.Id).FirstOrDefault();
+                                            if (partyUser != null)
+                                            {
+                                                var user2 = uow.GetReadOnlyRepository<User>().Get(partyUser.UserId);
+                                                if (user2 != null && !string.IsNullOrEmpty(user2.Email) &&
+                                                    !ccEmails.Contains(user2.Email) &&
+                                                    !user2.Email.Equals(emailDescionMaker, StringComparison.OrdinalIgnoreCase))
+                                                {
+                                                    ccEmails.Add(user2.Email);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         using (var emailService = new EmailService())
                         {
                             emailService.Send(MessageHelper.GetSendRequestHeader(id, applicant),
                                 MessageHelper.GetSendRequestMessage(id, title, applicant, intention, request.Applicant.Email),
-                                new List<string> { emailDescionMaker }, new List<string> { GeneralSettings.SystemEmail, request.Applicant.Email }, null, new List<string> { request.Applicant.Email }
+                                new List<string> { emailDescionMaker }, ccEmails, null, new List<string> { request.Applicant.Email }
                                 );
                         }
                             
