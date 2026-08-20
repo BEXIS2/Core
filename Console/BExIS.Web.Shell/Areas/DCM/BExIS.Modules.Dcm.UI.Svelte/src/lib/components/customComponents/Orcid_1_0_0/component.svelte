@@ -10,13 +10,18 @@
 		getMetadata,
 		validateCustomCondition,
 		getValueByPath,
-		getRefByPath
+		getRefByPath,
+		getParentPath,
+		removeJsonPathIndices,
+		getPartyIdByPath
 	} from '../../utils/metadata/metadataComponentUtils';
 	import { InputContainer } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa';
-	import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
+	import { faCircleCheck, faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
-	import { validationStore, metadataStore } from '$lib/components/utils/metadata/stores';
+	import { validationStore, metadataStore, systemMappingsStore } from '$lib/components/utils/metadata/stores';
+	import { getMappingComponentConfig } from '$lib/components/utils/metadata/mappingHelper';
+	import { GetPartyValue } from '../../../../services/MetadataCaller';
 
 	let res = suite.get();
 	let componentName: string = 'orcid_v1.0.0';
@@ -29,9 +34,8 @@
 	let targetVars = getTargetVariablesWithValues(config);
 
 	let modeName = config?.mode?.mode_name ?? '';
-	let isViewMode = mode === 'view';
-	let isSearchMode = !isViewMode && modeName === 'Search';
-	let isValidateMode = !isViewMode && modeName === 'Validate and Fill';
+	let isSearchMode = modeName === 'Search';
+	let isValidateMode = modeName === 'Validate and Fill';
 
 	let OrcidApiUrl =
 		targetVars?.find((v) => v.target_variable === 'OrcidApiUrl')?.value || 'https://pub.orcid.org/v3.0/';
@@ -53,6 +57,17 @@
 	if (descriptionCustom && descriptionCustom.trim() !== '') {
 		description = descriptionCustom;
 	}
+
+	// Party mapping support
+	let mappingComponentConfig = getMappingComponentConfig(orcid_field_path, value);
+	$: canLinkToParty = mappingComponentConfig?.isMappedToParty ?? false;
+	$: partyMappingObject = mappingComponentConfig?.partyMappingObject ?? null;
+	$: isComplexMapping = canLinkToParty && partyMappingObject?.complexity === true;
+	$: partyCheckPath = isComplexMapping ? getParentPath(orcid_field_path) : orcid_field_path;
+	$: storeData = $metadataStore;
+	$: partyNode = storeData && canLinkToParty ? partyCheckPath.split('.').reduce((acc: any, part: string) => acc && acc[part], storeData) : null;
+	$: currentPartyId = canLinkToParty ? (partyNode ? partyNode['@partyid'] : null) : null;
+	$: hasPartyId = canLinkToParty && currentPartyId != null && Number(currentPartyId) > 0;
 
 	let validationRegistered = false;
 	let validationReady = false;
@@ -105,8 +120,6 @@
 	}
 
 	onMount(async () => {
-		if (isViewMode) return;
-
 		if (isSearchMode) {
 			const { node: schemaNode } = resolveNode(orcid_field_path);
 			registerValidationItem(orcid_field_path, label, required, schemaNode, true);
@@ -290,6 +303,32 @@
 			showResults = false;
 			searchResults = [];
 			syncOrcidValue();
+
+			// If this field is mapped to a party, update the party id
+			if (canLinkToParty && partyMappingObject) {
+				const partyid = partyMappingObject.list?.find((item: any) =>
+					item.value === displayName || item.value === result.orcidId
+				)?.partyId ?? 0;
+
+				if (!isComplexMapping) {
+					updateMetadataStore(orcid_field_path, displayName, false, result.orcidUri, partyid);
+				} else {
+					const parentPath = getParentPath(orcid_field_path);
+					const parentPathWithoutIndices = removeJsonPathIndices(parentPath);
+					updateMetadataStore(parentPath, null, false, undefined, partyid);
+
+					// update sibling fields linked to the same party
+					$systemMappingsStore.partyMappings
+						.filter((mapping: any) =>
+							mapping.parentPath == parentPathWithoutIndices && mapping.path !== removeJsonPathIndices(orcid_field_path)
+						)
+						.forEach(async (mapping: any) => {
+							const childvalue = await GetPartyValue(partyid, mapping.linkElementId);
+							const childPathWithIndex = parentPath + '.' + mapping.path.split('.').slice(-1)[0];
+							updateMetadataStore(childPathWithIndex, childvalue, false, undefined, undefined);
+						});
+				}
+			}
 		}
 	}
 
@@ -302,6 +341,21 @@
 			updateMetadataStore(orcid_id_path, result.orcidId, false, result.orcidUri);
 		} else {
 			console.warn('ORCID: orcid_id_path is empty — output variable not connected');
+		}
+
+		// If the orcid field is mapped to a party, update the party id
+		if (canLinkToParty && partyMappingObject) {
+			const displayName = result.creditName || `${result.givenNames} ${result.familyName}`.trim();
+			const partyid = partyMappingObject.list?.find((item: any) =>
+				item.value === displayName || item.value === result.orcidId
+			)?.partyId ?? 0;
+
+			if (!isComplexMapping) {
+				updateMetadataStore(orcid_field_path, displayName, false, result.orcidUri, partyid);
+			} else {
+				const parentPath = getParentPath(orcid_field_path);
+				updateMetadataStore(parentPath, null, false, undefined, partyid);
+			}
 		}
 
 		selectedCreditName = result.creditName || `${result.givenNames} ${result.familyName}`.trim();
@@ -413,37 +467,20 @@
 	})();
 </script>
 
-{#if isViewMode}
-	<div class="entry">
-		<span class="key text-sm font-medium text-gray-500">{label}</span>
-		<span class="val text-sm text-gray-900 font-semibold">
-			{#if value}
-				{#if ref}
-					<a href={ref} target="_blank" rel="noopener noreferrer" class="orcid-link">
-						<span>{value}</span>
-						<Fa icon={faExternalLinkAlt} class="orcid-link-icon" />
-					</a>
-				{:else}
-					{value}
-				{/if}
-			{:else}
-				<span class="text-gray-400">—</span>
-			{/if}
-		</span>
-	</div>
-{:else if isSearchMode}
+{#if isSearchMode}
 	<InputContainer {...commonProps} on:showDescription on:hideDescription>
-		<div class="orcid-search-container">
-			<input
-				type="text"
-				class="orcid-input input variant-form-material {commonProps.valid ? 'input-success' : ''} {commonProps.invalid ? 'input-error' : ''}"
-				placeholder="Search for a person by name..."
-				bind:value={searchQuery}
-				on:input={onSearchInput}
-				on:keydown={(e) => onKeydown(e, searchResults, false)}
-				on:blur={() => onBlur(false)}
-				on:focus={() => onFocus(false)}
-			/>
+		<div class="flex items-start gap-2">
+			<div class="orcid-search-container grow">
+				<input
+					type="text"
+					class="orcid-input input variant-form-material {commonProps.valid ? 'input-success' : ''} {commonProps.invalid ? 'input-error' : ''}"
+					placeholder="Search for a person by name..."
+					bind:value={searchQuery}
+					on:input={onSearchInput}
+					on:keydown={(e) => onKeydown(e, searchResults, false)}
+					on:blur={() => onBlur(false)}
+					on:focus={() => onFocus(false)}
+				/>
 			{#if isLoading}
 				<div class="orcid-loading">
 					<span class="orcid-spinner"></span>
@@ -485,13 +522,23 @@
 				</div>
 			{/if}
 		</div>
+		{#if canLinkToParty}
+			<div class="pt-7 shrink-0" title={hasPartyId ? 'This field is linked to a party.' : 'This field can be linked to a party but has no party assigned yet.'}>
+				{#if hasPartyId}
+					<Fa icon={faCircleCheck} class="text-success-500" />
+				{:else}
+					<Fa icon={faCircleQuestion} class="text-warning-500" />
+				{/if}
+			</div>
+		{/if}
+	</div>
 	</InputContainer>
 {:else if isValidateMode}
 	<InputContainer {...commonProps} on:showDescription on:hideDescription>
 		<div class="orcid-validate-container">
 			<div class="orcid-validate-row">
 				<div class="orcid-validate-field">
-					<label class="orcid-validate-label">Given Name (Input)</label>
+					<label class="orcid-validate-label">Given Name</label>
 					<input
 						type="text"
 						class="orcid-input input variant-form-material"
@@ -501,7 +548,7 @@
 					/>
 				</div>
 				<div class="orcid-validate-field">
-					<label class="orcid-validate-label">Family Name (Input)</label>
+					<label class="orcid-validate-label">Family Name</label>
 					<input
 						type="text"
 						class="orcid-input input variant-form-material"
@@ -574,33 +621,6 @@
 {/if}
 
 <style>
-	.entry {
-		display: flex;
-		flex-direction: row;
-	}
-	.key {
-		display: inline-block;
-		flex-grow: 1;
-	}
-	.val {
-		display: inline-block;
-		width: 30vw;
-		font-weight: bold;
-	}
-	.orcid-link {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.25rem;
-		color: rgb(37 99 235);
-	}
-	.orcid-link:hover {
-		text-decoration: underline;
-	}
-	.orcid-link-icon {
-		font-size: 0.7rem;
-		opacity: 0.6;
-	}
-
 	.orcid-search-container,
 	.orcid-validate-container {
 		position: relative;
