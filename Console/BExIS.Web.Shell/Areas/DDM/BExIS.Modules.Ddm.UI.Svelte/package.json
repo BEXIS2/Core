@@ -23,7 +23,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@bexis2/bexis2-core-ui": "0.4.104",
+		"@bexis2/bexis2-core-ui": "0.4.105",
 		"@floating-ui/dom": "1.7.6",
 		"paneforge": "^0.0.6",
 		"svelte-fa": "4.0.4",
