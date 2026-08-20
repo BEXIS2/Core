@@ -141,7 +141,7 @@
 
       setTimeout(() => {
         dispatch('metadataUpdated');
-      }, 500);  
+      },1000);  
       
 
       }

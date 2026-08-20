@@ -727,7 +727,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     MimeType = mimeType,
                     URI = dynamicStorePath,
                     DatasetVersion = datasetVersion,
-                    Description = file.Description
+                    Description = file.Description,
+                    FileSize = file.Lenght
                 };
 
                 // add current content desciptor to list
