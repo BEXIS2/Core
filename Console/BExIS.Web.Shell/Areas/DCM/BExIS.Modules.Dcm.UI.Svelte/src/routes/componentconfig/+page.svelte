@@ -759,7 +759,7 @@
     
     
     
-    alert(`Configuration saved!
+    /*alert(`Configuration saved!
 
     EDIT Mode: ${componentConfig_edit?.components.length} component(s)
     VIEW Mode: ${componentConfig_view?.components.length} component(s)
@@ -768,7 +768,7 @@
     Files downloaded:
     - componentConfig_edit.json
     - componentConfig_view.json
-    - componentPositions.json`);
+    - componentPositions.json`);*/
   }
 
   function handleCancelEdit() {

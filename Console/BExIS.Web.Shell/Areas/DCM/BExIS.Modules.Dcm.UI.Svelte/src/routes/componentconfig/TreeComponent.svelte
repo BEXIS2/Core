@@ -103,7 +103,18 @@
                         style: 'width: 200px; height: 40px;'
                     };
                     nodes.push(choiceSectionNode);
-                    position.y += 50; // space between sections
+                    position.y += 50;
+
+                    // recurse into each variant's properties
+                    const variants = value.oneOf || value.anyOf || value.allOf;
+                    variants.forEach((variant: any, idx: number) => {
+                        const variantPath = `${currentPath}[${idx}]`;
+                        if (variant.type === 'object' && variant.properties) {
+                            position = traverseSchema(variant, variantPath, nodes, position, spacing);
+                        } else if (variant.$ref || variant.properties) {
+                            position = traverseSchema(variant, variantPath, nodes, position, spacing);
+                        }
+                    });
                 } else {
                     position.y += 20; // space between section and first leaf
                     position = traverseSchema(value, currentPath, nodes, position, spacing);
@@ -162,13 +173,9 @@
                         console.log('processing array items for key:', key);
         
                         // object items with properties -> recurse
-                       // if (value.items.type === 'array' && value.items.properties) {
-                       //     console.log('array items properties:', value.items.properties);
-                       //     position = traverseSchema(value.items, currentPath, nodes, position, spacing);
-        
-                        // primitive item types -> create a leaf node for the array item
-                       // } else 
-                         if (value.items.type === 'object' && value.items.properties && value.items.properties['#text'])  {
+                         if (value.items.type === 'object' && value.items.properties && !value.items.properties['#text']) {
+                             position = traverseSchema(value.items, currentPath, nodes, position, spacing);
+                         } else if (value.items.type === 'object' && value.items.properties && value.items.properties['#text'])  {
                             const arrLeaf = {
                                 id: `schema-array-item-${currentPath}`,
                                 type: 'leafNode',
@@ -232,6 +239,32 @@
                         } else {
                             console.log('unhandled array.items type for key:', key, value.items);
                         }
+                    } else if (value.type === 'string' || value.type === 'number' || value.type === 'boolean' || value.type === 'integer') {
+                        // primitive field directly in properties -> create a leaf node
+                        const primLeaf = {
+                            id: `schema-leaf-${currentPath}`,
+                            type: 'leafNode',
+                            data: {
+                                label: key,
+                                description: value.description || `metadata field: ${key}`,
+                                type: value.type || 'string',
+                                format: value.format || 'text',
+                                required: false,
+                                path: currentPath,
+                                isLeaf: true,
+                                is_input: false,
+                                is_output: true,
+                                target_variable: key,
+                                is_visible: true
+                            },
+                            position: { x: position.x + 30, y: position.y },
+                            draggable: true,
+                            selectable: true,
+                            deletable: false,
+                            style: 'width: 220px; height: 60px;'
+                        };
+                        nodes.push(primLeaf);
+                        position.y += spacing;
                     } else {
                         console.log('unhandled schema node type for key:', key, 'type:', value.type);
                     }
