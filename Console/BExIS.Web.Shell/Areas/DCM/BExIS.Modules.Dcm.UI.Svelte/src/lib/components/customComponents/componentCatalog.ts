@@ -1,7 +1,6 @@
 import dateRangepicker from './DateRangePicker_0.1/component.svelte';
 import terminologyService_1_0_0 from './TerminologyService_1_0_0/component.svelte';
 import TextField_1_0_0 from './TextField_1_0_0/component.svelte';
-import TextArea_1_0_0 from './TextArea_1_0_0/component.svelte';
 import HorizontalAlignment_1_0_0 from './HorizontalAlignment_1_0_0/component.svelte';
 import DefaultValues_1_0_0 from './DefaultValues_1_0_0/component.svelte';
 import Ror_1_0_0 from './Ror_1_0_0/component.svelte';
@@ -16,8 +15,6 @@ export const customComponentsCatalog: any = {
         component: terminologyService_1_0_0},  
     'textField_v1.0.0': {
         component: TextField_1_0_0},
-    'textArea_v1.0.0': {
-        component: TextArea_1_0_0},
     'horizontalAlignment_v1.0.0': {
         component: HorizontalAlignment_1_0_0},
     'defaultValues_v1.0.0': {
