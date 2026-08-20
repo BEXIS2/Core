@@ -402,43 +402,43 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// <return></return>
         private void writeBexisIndex(long id, bool onlyReleasedTags, DatasetManager dm)
         {
-           
+
 
             string docId = id.ToString();//metadata.GetElementsByTagName("bgc:id")[0].InnerText;
-            string doi  = "";
+            string doi = "";
             string date = "";
             string entityTemplate = "";
             string entityName = "";
-            DatasetVersion version = null; 
+            DatasetVersion version = null;
             XmlDocument metadata = null;
 
-                if (onlyReleasedTags)
+            if (onlyReleasedTags)
+            {
+                var latestTag = dm.GetLatestTag(id, true);
+                if (latestTag != null)
                 {
-                    var latestTag = dm.GetLatestTag(id, true);
-                    if (latestTag != null)
-                    {
-                        version = dm.GetLatestVersionByTagNr(id, latestTag.Nr);
-                        metadata = version.Metadata;
-                    }
+                    version = dm.GetLatestVersionByTagNr(id, latestTag.Nr);
+                    metadata = version.Metadata;
                 }
-                else
-                {
-                    version = dm.GetDatasetLatestVersion(id);
-                    metadata = dm.GetDatasetLatestMetadataVersion(id);
-                }
+            }
+            else
+            {
+                version = dm.GetDatasetLatestVersion(id);
+                metadata = dm.GetDatasetLatestMetadataVersion(id);
+            }
 
-                if (version != null)
-                {
-                    // doi
-                    entityTemplate = version.Dataset.EntityTemplate.Name;
-                    entityName = version.Dataset.EntityTemplate.EntityType.Name;
-                    date = version.ModificationInfo?.Timestamp?.ToString("yyyy-MM-dd");
-                    if(date == null) version.CreationInfo?.Timestamp?.ToString("yyyy-MM-dd");
-                    if (date == null) date = "";
-                }
+            if (version != null)
+            {
+                // doi
+                entityTemplate = version.Dataset.EntityTemplate.Name;
+                entityName = version.Dataset.EntityTemplate.EntityType.Name;
+                date = version.ModificationInfo?.Timestamp?.ToString("yyyy-MM-dd");
+                if (date == null) version.CreationInfo?.Timestamp?.ToString("yyyy-MM-dd");
+                if (date == null) date = "";
+            
 
                 // stop indexing if entity is an extension
-                if(entityName.ToLowerInvariant().Equals(Convert.ToString(EntityType.Extension).ToLowerInvariant())) return;
+                if (entityName.ToLowerInvariant().Equals(Convert.ToString(EntityType.Extension).ToLowerInvariant())) return;
 
                 var dataset = new Document();
                 List<XmlNode> facetNodes = facetXmlNodeList;
@@ -662,8 +662,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 }
 
                 indexWriter.AddDocument(dataset);
-            
 
+            }
             
         }
 
