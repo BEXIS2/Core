@@ -360,9 +360,9 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
             if (isPublic)
             {
                 if (useTags && !String.IsNullOrEmpty(model.Tag))
-                    url += "/ddm/data/Showdata/" + datasetId + "?tag=" + model.Tag + "";
+                    url += "/dcm/view/?id=" + datasetId + "&tag=" + model.Tag + "";
                 else
-                    url += "/ddm/data/Showdata/" + datasetId + "?version=" + model.Version + "";
+                    url += "/dcm/view/?id=" + datasetId + "&version=" + model.Version + "";
             }
             datasetCitationEntry.URL = url;
 

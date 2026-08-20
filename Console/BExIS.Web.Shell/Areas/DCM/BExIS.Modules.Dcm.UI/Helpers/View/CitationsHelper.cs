@@ -1,4 +1,4 @@
-﻿using BExIS.Dim.Helpers.Mappings;
+using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Services;
 using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
@@ -235,9 +235,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers.View
             if (isPublic)
             {
                 if (useTags && !String.IsNullOrEmpty(model.Tag))
-                    url += "/ddm/data/Showdata/" + entityId + "?tag=" + model.Tag + "";
+                    url += "/dcm/view/?id=" + entityId + "&tag=" + model.Tag + "";
                 else
-                    url += "/ddm/data/Showdata/" + entityId + "?version=" + model.Version + "";
+                    url += "/dcm/view/?id=" + entityId + "&version=" + model.Version + "";
 
                 bibtex += "url ={" + url + "},\n";
             }
@@ -293,9 +293,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers.View
             if (isPublic)
             {
                 if (useTags && !String.IsNullOrEmpty(model.Tag))
-                    url += "/ddm/data/Showdata/" + entityId + "?tag=" + model.Tag + "";
+                    url += "/dcm/view/?id=" + entityId + "&tag=" + model.Tag + "";
                 else
-                    url += "/ddm/data/Showdata/" + entityId + "?version=" + model.Version + "";
+                    url += "/dcm/view/?id=" + entityId + "&version=" + model.Version + "";
 
                 ris += "UR - " + url + "\n";
             }
@@ -343,9 +343,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers.View
                 if (isPublic)
                 {
                     if (useTags && !String.IsNullOrEmpty(model.Tag))
-                        url += "/ddm/data/Showdata/" + entityId + "?tag=" + model.Tag + "";
+                        url += "/dcm/view/?id=" + entityId + "&tag=" + model.Tag + "";
                     else
-                        url += "/ddm/data/Showdata/" + entityId + "?version=" + model.Version + "";
+                        url += "/dcm/view/?id=" + entityId + "&version=" + model.Version + "";
 
                     text += url + ". ";
                 }
