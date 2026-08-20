@@ -37,7 +37,7 @@
 		{#if type == 'oneOf'}
 			<ChoiceOneOf	choiceComponent={choiceComponent} {path} on:updated/>
 		{:else	if type == 'anyOf'}
-			<ChoiceAnyOf	choiceComponent={choiceComponent} {path} />
+			<ChoiceAnyOf	choiceComponent={choiceComponent} {path} on:updated/>
 		{:else if type == 'allOf'}
 			<ChoiceAllOf	choiceComponent={choiceComponent} {path} on:updated/>
 		{/if}

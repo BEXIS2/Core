@@ -67,7 +67,7 @@ function	onChangeHandler(e: CustomEvent<any>) {
 		{@const l = label = key}
 		{#if (value.type === 'object' && value.properties && !value.properties['#text']) }
 			{#if value.oneOf || value.anyOf || value.allOf}
-				<ChoiceComponent choiceComponent={value} {path} />
+				<ChoiceComponent choiceComponent={value} {path} on:updated={onChangeHandler}/>
 			{:else}
 				<div class="grid grid-cols-1 gap-0 ">
 
