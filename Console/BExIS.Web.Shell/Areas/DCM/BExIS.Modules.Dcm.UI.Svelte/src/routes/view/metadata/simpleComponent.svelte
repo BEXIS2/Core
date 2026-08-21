@@ -11,7 +11,7 @@
 	} from '@bexis2/bexis2-core-ui';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
-	import { getConfigStore } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { getConfigStore, getSchemaAttributes, getAttributeValue } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { customComponentsCatalog } from '$lib/components/customComponents/componentCatalog';
 	import type { SimpleComponentData } from '$lib/components/utils/metadata/models';
 	import SveltyPicker from 'svelty-picker';
@@ -29,6 +29,13 @@
 	$: depth = Math.max(0, path.split('.').length - 1);
 	$: leftIndentPx = depth * 8;
 	$: lastPathPart = path.split('.').pop() ?? '';
+
+	// Schema-driven attributes (excluding @ref and @partyid which are handled separately)
+	$: schemaAttrs = getSchemaAttributes(simpleComponent).filter(a => a !== '@partyid');
+	$: attrValues = schemaAttrs.reduce((acc: Record<string, any>, attr: string) => {
+		acc[attr] = getAttributeValue(path, attr);
+		return acc;
+	}, {});
 
 	let date: Date = undefined as unknown as Date;
 	// load form result object
@@ -100,6 +107,16 @@
 	{/if}
 		<span class="val text-sm text-gray-900">{value}</span>
 	</div>
+	{#if schemaAttrs.length > 0}
+		{#each schemaAttrs as attr}
+			{#if attrValues[attr]}
+				<div class="entry">
+					<span class="key text-sm italic text-gray-400">{attr.replace('@', '')}</span>
+					<span class="val text-sm text-gray-900">{attrValues[attr]}</span>
+				</div>
+			{/if}
+		{/each}
+	{/if}
 {:else if isAnchor}
 	<div class="" id={path}>
 		<svelte:component this={customComponent} anchor={path} label={convertDisplayName(label)} />
@@ -118,17 +135,21 @@
 
 .entry {
   display: flex;
-  flex-direction: row;
-  padding-bottom: 0.35rem;
-}
-
+  flex-direction: row; 
+  padding-bottom: 0.35rem;}
+  
 .val  {
   display: inline-block;
-  flex-grow: 1;
+  width: 30vw;
 }
 .key {
   display: inline-block;
-  min-width: 180px;
-  max-width: 30%;
+  flex-grow: 1;
+}
+
+@media (max-width: 768px) {
+  .val {
+    width: 50vw;
+  }
 }
 </style>

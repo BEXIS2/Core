@@ -7,7 +7,8 @@
 	import { slide, fade } from 'svelte/transition';
 	import { activeStore, hideStore, metadataStore } from '$lib/components/utils/metadata/stores';
 	import Header from './MetadataComponentHeader.svelte';
-	import { getValueByPath, hasValue, hasValueAtPath } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { getValueByPath, hasValue, hasValueAtPath, getSchemaAttributes, getAttributeValue } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { convertDisplayName } from '$lib/components/utils/metadata/metadataShared';
 
 	export let complexComponent: any;
 	export let path: string;
@@ -22,7 +23,15 @@
 			? complexComponent.required
 			: [];
 
-	$: propertyEntries = Object.entries(complexComponent?.properties ?? {}) as [string, any][];
+	// Schema-driven attributes on this compound node (excluding @ref and @partyid)
+	$: schemaAttrs = getSchemaAttributes(complexComponent).filter(a => a !== '@partyid');
+	$: storeData = $metadataStore;
+	$: attrValues = schemaAttrs.reduce((acc: Record<string, any>, attr: string) => {
+		acc[attr] = getAttributeValue(path, attr);
+		return acc;
+	}, {});
+
+	$: propertyEntries = Object.entries(complexComponent?.properties ?? {}).filter(([key]: [string, any]) => !key.startsWith('@')) as [string, any][];
 
 </script>
 
@@ -77,10 +86,41 @@
 			</div>
 		{/if}
 	{/each}
+
+	{#if schemaAttrs.length > 0}
+		<div class="mt-1 pl-4">
+			{#each schemaAttrs as attr}
+				{#if attrValues[attr]}
+					<div class="entry">
+						<span class="key text-sm italic">{attr.replace('@', '')}</span>
+						<span class="val text-sm text-gray-900">{attrValues[attr]}</span>
+					</div>
+				{/if}
+			{/each}
+		</div>
+	{/if}
 {/if}
 
 <style>
 .cont {
   margin-left: 1em;
+}
+.entry {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 0.35rem;
+}
+.val {
+  display: inline-block;
+  width: 30vw;
+}
+.key {
+  display: inline-block;
+  flex-grow: 1;
+}
+@media (max-width: 768px) {
+  .val {
+    width: 50vw;
+  }
 }
 </style>

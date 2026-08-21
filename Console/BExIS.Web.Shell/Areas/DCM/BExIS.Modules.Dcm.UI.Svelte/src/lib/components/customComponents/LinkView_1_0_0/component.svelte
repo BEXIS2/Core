@@ -33,18 +33,15 @@
 
 <style>
 	.entry {
-		display: flex;
-		flex-direction: row;
 		padding-bottom: 0.35rem;
 	}
 	.key {
 		display: inline-block;
-		min-width: 180px;
-		max-width: 30%;
+		flex-grow: 1;
 	}
 	.val {
 		display: inline-block;
-		flex-grow: 1;
+		width: 35vw;
 	}
 	.link-ref {
 		display: inline-flex;
@@ -58,5 +55,11 @@
 	.link-ref-icon {
 		font-size: 0.7rem;
 		opacity: 0.6;
+	}
+
+	@media (max-width: 768px) {
+		.val {
+			width: 50vw;
+		}
 	}
 </style>

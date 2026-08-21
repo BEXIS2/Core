@@ -55,6 +55,34 @@ export function getPartyIdByPath(path: string) {
 	return partyId;
 }
 
+/**
+ * Discover all @-prefixed attributes declared in a schema node's properties.
+ * Returns an array of attribute keys (e.g. ["@ref", "@partyid"]).
+ * @ref is excluded as it is handled separately by the ref system.
+ */
+export function getSchemaAttributes(schemaNode: any): string[] {
+	if (!schemaNode?.properties) return [];
+	return Object.keys(schemaNode.properties).filter(k => k.startsWith('@') && k !== '@ref');
+}
+
+/**
+ * Get the value of an attribute from the metadata store by path and attribute key.
+ */
+export function getAttributeValue(path: string, attrKey: string): any {
+	const node = getNodeByPath(path);
+	return node ? node[attrKey] : null;
+}
+
+/**
+ * Update an attribute value in the metadata store.
+ */
+export function updateAttribute(path: string, attrKey: string, attrValue: any): void {
+	let obj: any = {};
+	metadataStore.subscribe((v) => { obj = v; })();
+	obj = setValueByPath(obj, path + '.' + attrKey, attrValue);
+	metadataStore.set(JSON.parse(JSON.stringify(obj)));
+}
+
 // Set value in an object based on a dot-separated path
 export function setValueByPath(obj: any, path: string, value: any) {
 	const parts = path.split('.');
@@ -976,7 +1004,9 @@ export function hasAnyValue(node) {
     for (const [key, value] of Object.entries(node)) {
       if (key.startsWith('@')) continue;       // skip @ref, @partyid, @function...
       if (key === '#text') {
-        if (typeof value === 'string' && value.trim() !== '') return true;
+        if (typeof value === 'string') { if (value.trim() !== '') return true; }
+        else if (typeof value === 'number') return value !== 0 || true; // 0 is a valid value
+        else if (typeof value === 'boolean') return true;
         continue;
       }
       if (hasAnyValue(value)) return true;

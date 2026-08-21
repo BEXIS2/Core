@@ -15,7 +15,11 @@
 		showDescriptionHandler,
 		hideDescriptionHandler,
 		updateValidationState,
-		registerValidationItem
+		registerValidationItem,
+		getSchemaAttributes,
+		getAttributeValue,
+		updateAttribute,
+		getParentPath
 	} from '$lib/components/utils/metadata/metadataComponentUtils';
 
 	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
@@ -60,6 +64,19 @@
 
 	// System mapping
 	let mappingComponentConfig: MappingComponentConfig;
+
+	// Schema-driven attributes (excluding @ref which is handled separately)
+	// @partyid is also excluded here as it's handled by the PartySelector/Blocked system
+	$: schemaAttrs = getSchemaAttributes(simpleComponent).filter(a => a !== '@partyid');
+	$: storeData = $metadataStore;
+	$: attrValues = schemaAttrs.reduce((acc: Record<string, any>, attr: string) => {
+		acc[attr] = getAttributeValue(path, attr);
+		return acc;
+	}, {});
+
+	function onAttrChange(attr: string, e: any) {
+		updateAttribute(path, attr, e.detail ?? e.target?.value ?? '');
+	}
 	
 	onMount(async () => {
 		//console.log('🚀 ~ onMount ~ simpleComponent:', value)
@@ -387,7 +404,23 @@
 					on:change={onChangeHandler}
 					/>
 				</div>
-				{/if}	
-		{/if}
+			{/if}
+	{/if}
+	{#if schemaAttrs.length > 0}
+		<div class="flex flex-col gap-1 mt-1 pl-2 border-l-2 border-surface-200 dark:border-surface-700">
+			{#each schemaAttrs as attr}
+				<div class="flex items-center gap-2">
+					<span class="text-xs text-surface-600 dark:text-surface-300 w-20 shrink-0 font-medium">{attr.replace('@', '')}</span>
+					<input
+						type="text"
+						class="input variant-form-material text-xs py-1 flex-1"
+						value={attrValues[attr] ?? ''}
+						on:input={(e) => onAttrChange(attr, e)}
+					/>
+				</div>
+			{/each}
+		</div>
+	{/if}
 	</div>
+
 
