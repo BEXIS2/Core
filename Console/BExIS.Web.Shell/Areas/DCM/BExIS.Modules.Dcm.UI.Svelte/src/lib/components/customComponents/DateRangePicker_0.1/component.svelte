@@ -207,8 +207,6 @@
 
 <style>
 	.entry {
-		display: flex;
-		flex-direction: row;
 		padding-bottom: 0.35rem;
 	}
 	.key {
@@ -217,12 +215,7 @@
 	}
 	.val {
 		display: inline-block;
-		flex-grow: 1;
-	}
-	.key {
-		display: inline-block;
-		min-width: 180px;
-		max-width: 30%;
+		width: 30vw;
 	}
 	.drp-row {
 		display: flex;
@@ -231,5 +224,11 @@
 	}
 	.drp-field {
 		flex: 1;
+	}
+
+	@media (max-width: 768px) {
+		.val {
+			width: 50vw;
+		}
 	}
 </style>

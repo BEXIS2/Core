@@ -144,8 +144,6 @@
 
 <style>
 	.entry {
-		display: flex;
-		flex-direction: row;
 		padding-bottom: 0.35rem;
 	}
 
@@ -156,11 +154,12 @@
 
 	.val {
 		display: inline-block;
-		flex-grow: 1;
+		width: 30vw;
 	}
-	.key {
-		display: inline-block;
-		min-width: 180px;
-		max-width: 30%;
+
+	@media (max-width: 768px) {
+		.val {
+			width: 50vw;
+		}
 	}
 </style>

@@ -294,8 +294,6 @@
 
 <style>
 	.entry {
-		display: flex;
-		flex-direction: row;
 		padding-bottom: 0.35rem;
 	}
 
@@ -306,12 +304,7 @@
 
 	.val {
 		display: inline-block;
-		flex-grow: 1;
-	}
-	.key {
-		display: inline-block;
-		min-width: 180px;
-		max-width: 30%;
+		width: 30vw;
 	}
 
 	.term-link {
@@ -410,5 +403,11 @@
 	:global([class*='euiComboBox__inputWrap']:focus-within) {
 		outline: none !important;
 		box-shadow: none !important;
+	}
+
+	@media (max-width: 768px) {
+		.val {
+			width: 50vw;
+		}
 	}
 </style>
