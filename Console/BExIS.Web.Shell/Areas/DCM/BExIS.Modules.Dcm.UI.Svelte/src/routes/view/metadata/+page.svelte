@@ -42,8 +42,8 @@
 
 	async function load() {
 
-			container = document.getElementById('metadata');
-			console.log("🚀 ~ load ~ container:", container)
+		container = document.getElementById('view');
+		console.log("🚀 ~ load ~ container:", container)
 			
 			id = Number(container?.getAttribute('dataset'));
 			version = Number(container?.getAttribute('version'));
