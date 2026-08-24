@@ -42,12 +42,12 @@
 								{#if value && value.length > 0}
 									{#each value as item, index}
 										<div in:slide out:slide>
-											<div in:slide out:slide class="arr bg-gray-50 dark:bg-gray-900/50 rounded-sm flex flex-col border border-gray-200 mb-2">
+											<div in:slide out:slide class="arr bg-surface-50 dark:bg-surface-800/50 rounded-sm flex flex-col border border-surface-400 dark:border-surface-500 mb-2">
 												<ComplexComponent
 													complexComponent={arrayComponent.items}
 													path={path + '.' + index}
 													required={requiredList.includes(label)}
-													backgroundClass={backgroundClass || "bg-gray-50 dark:bg-gray-900/50"}
+													backgroundClass={backgroundClass || "bg-surface-50 dark:bg-surface-800/50"}
 												/>
 											</div>
 										</div>
@@ -85,6 +85,6 @@
 }
 .arr:not(:last-child) {
   padding-bottom: 0.5em;
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid rgb(148 163 184);
 }
 </style>

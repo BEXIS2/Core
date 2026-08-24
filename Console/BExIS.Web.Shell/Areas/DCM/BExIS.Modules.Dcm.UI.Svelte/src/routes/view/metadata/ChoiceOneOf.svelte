@@ -30,12 +30,12 @@
 	{#if !$hideStore.includes(path) && $activeStore.includes(path)}
 		<div in:slide out:slide class="pl-2" id={path}>
 			{#if choiceComponent.oneOf && choices.length > 0}
-				<div class="mb-3 text-sm font-semibold text-gray-700">
+				<div class="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-200">
 					{label}: {resolvedSelection || 'No selection'}
 				</div>
 				<!--{#each choices as item}
 					<div class="flex items-center gap-2 py-1">
-						<span class="text-sm text-gray-600">{item.display}</span>
+						<span class="text-sm text-gray-600 dark:text-gray-300">{item.display}</span>
 						{#if item.key === resolvedSelection}
 							<span class="badge variant-filled-primary">Selected</span>
 						{/if}

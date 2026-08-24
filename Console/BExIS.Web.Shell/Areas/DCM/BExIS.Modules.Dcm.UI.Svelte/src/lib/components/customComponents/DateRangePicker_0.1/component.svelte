@@ -149,12 +149,12 @@
 
 {#if isViewMode}
 	<div class="entry">
-		<span class="key text-sm font-medium text-gray-500">{label}</span>
+		<span class="key text-sm font-medium text-gray-600 dark:text-gray-300">{label}</span>
 		<span class="val text-sm text-gray-900">
 			{#if startValue || endValue}
 				{startValue}{#if startValue && endValue} – {endValue}{/if}
 			{:else}
-				<span class="text-gray-400">—</span>
+				<span class="text-gray-500 dark:text-gray-400">—</span>
 			{/if}
 		</span>
 	</div>

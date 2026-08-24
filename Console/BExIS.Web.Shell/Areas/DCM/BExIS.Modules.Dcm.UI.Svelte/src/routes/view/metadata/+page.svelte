@@ -273,7 +273,7 @@ function activateShow(key: string) {
 					{#if typeof value === 'object' && value !== null}
 						<a href="#{key}" class="w-full" on:click={() => activateShow(key)}>
 							<li class="flex items-center gap-1">
-								<span class="h-1.5 w-1.5 rounded-full bg-gray-500 mr-2"></span>
+								<span class="h-1.5 w-1.5 rounded-full bg-gray-600 mr-2"></span>
                 <span class="">{convertDisplayName(key)}</span>
 							</li>
 						</a>

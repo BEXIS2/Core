@@ -169,7 +169,7 @@
 		<div class="flex">
 
 				{#if metadataHook}
-						<div class="flex-grow card p-5 w-3/4 flex flex-col gap-3">
+						<div class="flex-grow flex flex-col gap-3">
 										<Metadata {id} {version} {tag} hook={metadataHook} description={model.description} />
 						</div>
 					{/if}

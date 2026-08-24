@@ -15,9 +15,9 @@
 		removeJsonPathIndices,
 		getPartyIdByPath
 	} from '../../utils/metadata/metadataComponentUtils';
-	import { InputContainer } from '@bexis2/bexis2-core-ui';
+	import { InputContainer, MultiSelect } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa';
-	import { faCircleCheck, faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
+	import { faCircleCheck, faCircleQuestion, faXmark } from '@fortawesome/free-solid-svg-icons';
 	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
 	import { validationStore, metadataStore, systemMappingsStore } from '$lib/components/utils/metadata/stores';
 	import { getMappingComponentConfig } from '$lib/components/utils/metadata/mappingHelper';
@@ -68,6 +68,108 @@
 	$: partyNode = storeData && canLinkToParty ? partyCheckPath.split('.').reduce((acc: any, part: string) => acc && acc[part], storeData) : null;
 	$: currentPartyId = canLinkToParty ? (partyNode ? partyNode['@partyid'] : null) : null;
 	$: hasPartyId = canLinkToParty && currentPartyId != null && Number(currentPartyId) > 0;
+
+	// Party autocomplete state (used when canLinkToParty is true)
+	let selectorValue: any = null;
+	let partyList: any[] = [];
+	let showOrcidSearch = false;
+
+	$: partyList = partyMappingObject?.list ?? [];
+
+	// Party autocomplete handler (same logic as PartySelector, plus ORCID validation)
+	async function onUpdateParty(e: any) {
+		const detail = e?.detail ?? {};
+		const partyid = detail.partyId ?? 0;
+		const newValue = detail.value ?? '';
+
+		// close ORCID search if open
+		showOrcidSearch = false;
+
+		setTimeout(async () => {
+			if (!isComplexMapping) {
+				updateMetadataStore(orcid_field_path, newValue, false, undefined, partyid);
+				value = newValue;
+				ref = '';
+				syncOrcidValue();
+			} else {
+				updateMetadataStore(orcid_field_path, newValue, false, undefined, undefined);
+				value = newValue;
+				syncOrcidValue();
+
+				const parentPath = getParentPath(orcid_field_path);
+				const parentPathWithoutIndices = removeJsonPathIndices(parentPath);
+				updateMetadataStore(parentPath, null, false, undefined, partyid);
+
+				$systemMappingsStore.partyMappings
+					.filter((mapping: any) =>
+						mapping.parentPath == parentPathWithoutIndices && mapping.path !== removeJsonPathIndices(orcid_field_path)
+					)
+					.forEach(async (mapping: any) => {
+						const childvalue = await GetPartyValue(partyid, mapping.linkElementId);
+						const childPathWithIndex = parentPath + '.' + mapping.path.split('.').slice(-1)[0];
+						updateMetadataStore(childPathWithIndex, childvalue, false, undefined, undefined);
+					});
+			}
+
+			// After party is set, automatically search ORCID to validate/find the ORCID ID
+			if (newValue && newValue.trim().length >= 2) {
+				await searchOrcidForParty(newValue.trim());
+			}
+		}, 100);
+	}
+
+	// Search ORCID for the selected party name and auto-select if exactly one match is found
+	async function searchOrcidForParty(name: string) {
+		isLoading = true;
+		showResults = true;
+		searchQuery = name;
+		try {
+			const words = name.split(/\s+/).filter(Boolean);
+			const given = words[0] || '';
+			const family = words.length > 1 ? words[words.length - 1] : '';
+			let orcidQuery: string;
+			if (given && family) {
+				orcidQuery = `given-names:${encodeURIComponent(given)}+AND+family-name:${encodeURIComponent(family)}`;
+			} else {
+				orcidQuery = words.map(w => `given-names:${encodeURIComponent(w)}+OR+family-name:${encodeURIComponent(w)}`).join('+OR+');
+			}
+			const searchUrl = `${OrcidApiUrl}search/?q=${orcidQuery}&rows=10`;
+
+			const orcidIds = await fetchOrcidSearch(searchUrl);
+			searchResults = [];
+			for (const orcidId of orcidIds) {
+				const person = await fetchOrcidPerson(orcidId);
+				searchResults.push({
+					orcidId,
+					orcidUri: `https://orcid.org/${orcidId}`,
+					givenNames: person.givenNames,
+					familyName: person.familyName,
+					creditName: person.creditName
+				});
+			}
+
+			// Auto-select if there's an exact name match
+			const exactMatch = searchResults.find(r => {
+				const fullName = `${r.givenNames} ${r.familyName}`.trim().toLowerCase();
+				const creditLower = r.creditName?.toLowerCase() ?? '';
+				return fullName === name.toLowerCase() || creditLower === name.toLowerCase();
+			});
+
+			if (exactMatch) {
+				// Auto-select the matching ORCID record
+				ref = exactMatch.orcidUri;
+				syncOrcidValue();
+				showResults = false;
+				searchResults = [];
+			}
+			// If no exact match but results exist, keep them visible for manual selection
+		} catch (error) {
+			console.error('Error searching ORCID for party:', error);
+			searchResults = [];
+		} finally {
+			isLoading = false;
+		}
+	}
 
 	let validationRegistered = false;
 	let validationReady = false;
@@ -125,6 +227,22 @@
 			registerValidationItem(orcid_field_path, label, required, schemaNode, true);
 			validationRegistered = true;
 			syncOrcidValue();
+		}
+
+		// Initialize party selector value from current party (like PartySelector does)
+		if (canLinkToParty && partyMappingObject) {
+			if (value) {
+				if (partyMappingObject.complexity) {
+					const parentPath = getParentPath(orcid_field_path);
+					currentPartyId = getPartyIdByPath(parentPath);
+				} else {
+					currentPartyId = getPartyIdByPath(orcid_field_path);
+				}
+				const pid = currentPartyId ? Number(currentPartyId) : 0;
+				if (pid > 0 && partyList.length > 0) {
+					selectorValue = partyList.find((item: any) => Number(item.partyId) === pid) ?? null;
+				}
+			}
 		}
 
 		if (isValidateMode) {
@@ -469,69 +587,157 @@
 
 {#if isSearchMode}
 	<InputContainer {...commonProps} on:showDescription on:hideDescription>
-		<div class="flex items-start gap-2">
-			<div class="orcid-search-container grow">
-				<input
-					type="text"
-					class="orcid-input input variant-form-material {commonProps.valid ? 'input-success' : ''} {commonProps.invalid ? 'input-error' : ''}"
-					placeholder="Search for a person by name..."
-					bind:value={searchQuery}
-					on:input={onSearchInput}
-					on:keydown={(e) => onKeydown(e, searchResults, false)}
-					on:blur={() => onBlur(false)}
-					on:focus={() => onFocus(false)}
-				/>
-			{#if isLoading}
-				<div class="orcid-loading">
-					<span class="orcid-spinner"></span>
-					<span>Searching...</span>
-				</div>
-			{/if}
-			{#if showResults && searchResults.length > 0}
-				<ul class="orcid-results">
-					{#each searchResults as result, i}
-						<li
-							class="orcid-result-item"
-							class:selected={i === selectedIndex}
-							on:mousedown={() => selectOrcid(result)}
-							on:mouseenter={() => (selectedIndex = i)}
-							role="option"
-							tabindex="-1"
-						>
-							<div class="orcid-result-name">
-								{result.creditName || `${result.givenNames} ${result.familyName}`.trim() || result.orcidId}
-							</div>
-							<div class="orcid-result-meta">
-								{#if result.givenNames || result.familyName}
-									{#if result.creditName}
-										<span>{result.givenNames} {result.familyName}</span>
-									{/if}
-								{/if}
-								<span class="orcid-id">{result.orcidId}</span>
-							</div>
-						</li>
-					{/each}
-				</ul>
-			{/if}
-			{#if showResults && !isLoading && searchResults.length === 0 && searchQuery.trim().length >= 2}
-				<div class="orcid-no-results">No ORCID records found for "{searchQuery}"</div>
-			{/if}
-			{#if ref}
-				<div class="orcid-selected-id">
-					Selected ORCID: <a href={ref} target="_blank" rel="noopener noreferrer">{ref}</a>
-				</div>
-			{/if}
-		</div>
 		{#if canLinkToParty}
-			<div class="pt-7 shrink-0" title={hasPartyId ? 'This field is linked to a party.' : 'This field can be linked to a party but has no party assigned yet.'}>
-				{#if hasPartyId}
-					<Fa icon={faCircleCheck} class="text-success-500" />
-				{:else}
-					<Fa icon={faCircleQuestion} class="text-warning-500" />
-				{/if}
+			<!-- Party-linked mode: show party autocomplete as primary, ORCID search as secondary -->
+			<div class="flex items-start gap-2">
+				<div class="grow">
+					<MultiSelect
+						{...commonProps}
+						title={label}
+						source={partyList}
+						complexSource={true}
+						complexTarget={true}
+						itemId="partyId"
+						itemLabel="value"
+						bind:target={selectorValue}
+						isMulti={false}
+						clearable={true}
+						searchable={false}
+						on:change={onUpdateParty}
+						on:clear={onUpdateParty}
+					/>
+				</div>
+				<div class="pt-7 shrink-0 flex items-center gap-1">
+					<button
+						class="orcid-search-btn {showOrcidSearch ? 'orcid-search-btn-active' : ''}"
+						title="Search at ORCID"
+						on:click={() => (showOrcidSearch = !showOrcidSearch)}>
+						{#if showOrcidSearch}
+							<Fa icon={faXmark} class="text-xs" />
+						{:else}
+							<svg class="orcid-icon" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+								<rect width="256" height="256" rx="32" fill="#A6CE39"/>
+								<path d="M78.8 78.8h21.4v107.5H78.8V78.8z" fill="#fff"/>
+								<circle cx="89.5" cy="53.5" r="13.5" fill="#fff"/>
+								<path d="M139.5 78.8v8.6c6.7-6.7 16.4-10.7 28.1-10.7 28.5 0 49.6 21.1 49.6 49.6s-21.1 49.6-49.6 49.6c-11.7 0-21.4-4-28.1-10.7v55.1h-21.4V78.8h21.4zm23.9 79.4c15.7 0 27.2-12.3 27.2-28.9s-11.5-28.9-27.2-28.9-27.2 12.3-27.2 28.9 11.5 28.9 27.2 28.9z" fill="#fff"/>
+							</svg>
+						{/if}
+					</button>
+					{#if hasPartyId}
+						<Fa icon={faCircleCheck} class="text-success-500" title="This field is linked to a party." />
+					{:else}
+						<Fa icon={faCircleQuestion} class="text-warning-500" title="This field can be linked to a party but has no party assigned yet." />
+					{/if}
+				</div>
+			</div>
+
+			{#if showOrcidSearch}
+				<div class="orcid-search-container mt-2">
+					<input
+						type="text"
+						class="orcid-input input variant-form-material"
+						placeholder="Search for a person by name at ORCID..."
+						bind:value={searchQuery}
+						on:input={onSearchInput}
+						on:keydown={(e) => onKeydown(e, searchResults, false)}
+						on:blur={() => onBlur(false)}
+						on:focus={() => onFocus(false)}
+					/>
+					{#if isLoading}
+						<div class="orcid-loading">
+							<span class="orcid-spinner"></span>
+							<span>Searching...</span>
+						</div>
+					{/if}
+					{#if showResults && searchResults.length > 0}
+						<ul class="orcid-results">
+							{#each searchResults as result, i}
+								<li
+									class="orcid-result-item"
+									class:selected={i === selectedIndex}
+									on:mousedown={() => selectOrcid(result)}
+									on:mouseenter={() => (selectedIndex = i)}
+									role="option"
+									tabindex="-1"
+								>
+									<div class="orcid-result-name">
+										{result.creditName || `${result.givenNames} ${result.familyName}`.trim() || result.orcidId}
+									</div>
+									<div class="orcid-result-meta">
+										<span class="orcid-id">{result.orcidId}</span>
+									</div>
+								</li>
+							{/each}
+						</ul>
+					{/if}
+					{#if showResults && !isLoading && searchResults.length === 0 && searchQuery.trim().length >= 2}
+						<div class="orcid-no-results">No ORCID records found for "{searchQuery}"</div>
+					{/if}
+				</div>
+			{/if}
+
+			{#if ref && !showOrcidSearch}
+				<div class="orcid-selected-id">
+					ORCID: <a href={ref} target="_blank" rel="noopener noreferrer">{ref}</a>
+				</div>
+			{/if}
+		{:else}
+			<!-- Non-party mode: original ORCID search -->
+			<div class="flex items-start gap-2">
+				<div class="orcid-search-container grow">
+					<input
+						type="text"
+						class="orcid-input input variant-form-material {commonProps.valid ? 'input-success' : ''} {commonProps.invalid ? 'input-error' : ''}"
+						placeholder="Search for a person by name..."
+						bind:value={searchQuery}
+						on:input={onSearchInput}
+						on:keydown={(e) => onKeydown(e, searchResults, false)}
+						on:blur={() => onBlur(false)}
+						on:focus={() => onFocus(false)}
+					/>
+					{#if isLoading}
+						<div class="orcid-loading">
+							<span class="orcid-spinner"></span>
+							<span>Searching...</span>
+						</div>
+					{/if}
+					{#if showResults && searchResults.length > 0}
+						<ul class="orcid-results">
+							{#each searchResults as result, i}
+								<li
+									class="orcid-result-item"
+									class:selected={i === selectedIndex}
+									on:mousedown={() => selectOrcid(result)}
+									on:mouseenter={() => (selectedIndex = i)}
+									role="option"
+									tabindex="-1"
+								>
+									<div class="orcid-result-name">
+										{result.creditName || `${result.givenNames} ${result.familyName}`.trim() || result.orcidId}
+									</div>
+									<div class="orcid-result-meta">
+										{#if result.givenNames || result.familyName}
+											{#if result.creditName}
+												<span>{result.givenNames} {result.familyName}</span>
+											{/if}
+										{/if}
+										<span class="orcid-id">{result.orcidId}</span>
+									</div>
+								</li>
+							{/each}
+						</ul>
+					{/if}
+					{#if showResults && !isLoading && searchResults.length === 0 && searchQuery.trim().length >= 2}
+						<div class="orcid-no-results">No ORCID records found for "{searchQuery}"</div>
+					{/if}
+					{#if ref}
+						<div class="orcid-selected-id">
+							Selected ORCID: <a href={ref} target="_blank" rel="noopener noreferrer">{ref}</a>
+						</div>
+					{/if}
+				</div>
 			</div>
 		{/if}
-	</div>
 	</InputContainer>
 {:else if isValidateMode}
 	<InputContainer {...commonProps} on:showDescription on:hideDescription>
@@ -557,17 +763,23 @@
 						on:input={onValidateInput}
 					/>
 				</div>
-				<button
-					class="orcid-search-button"
-					on:click={onValidateSearchClick}
-					disabled={!givenNameValue.trim() || !familyNameValue.trim() || isValidateLoading}
-				>
-					{#if isValidateLoading}
-						<span class="orcid-spinner orcid-spinner-sm"></span>
-					{:else}
-						Search
-					{/if}
-				</button>
+			<button
+				class="orcid-search-button"
+				on:click={onValidateSearchClick}
+				disabled={!givenNameValue.trim() || !familyNameValue.trim() || isValidateLoading}
+			>
+				{#if isValidateLoading}
+					<span class="orcid-spinner orcid-spinner-sm"></span>
+				{:else}
+					<svg class="orcid-icon-sm" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+						<rect width="256" height="256" rx="32" fill="#A6CE39"/>
+						<path d="M78.8 78.8h21.4v107.5H78.8V78.8z" fill="#fff"/>
+						<circle cx="89.5" cy="53.5" r="13.5" fill="#fff"/>
+						<path d="M139.5 78.8v8.6c6.7-6.7 16.4-10.7 28.1-10.7 28.5 0 49.6 21.1 49.6 49.6s-21.1 49.6-49.6 49.6c-11.7 0-21.4-4-28.1-10.7v55.1h-21.4V78.8h21.4zm23.9 79.4c15.7 0 27.2-12.3 27.2-28.9s-11.5-28.9-27.2-28.9-27.2 12.3-27.2 28.9 11.5 28.9 27.2 28.9z" fill="#fff"/>
+					</svg>
+					Search
+				{/if}
+			</button>
 			</div>
 
 			{#if showValidateResults && validateResults.length > 0}
@@ -621,6 +833,33 @@
 {/if}
 
 <style>
+	.orcid-search-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 1.5rem;
+		height: 1.5rem;
+		border: 1px solid #d4d4d4;
+		border-radius: 4px;
+		background: #fff;
+		cursor: pointer;
+		padding: 2px;
+		transition: all 0.15s;
+		flex-shrink: 0;
+	}
+	.orcid-search-btn:hover {
+		border-color: #a6ce39;
+		box-shadow: 0 0 4px rgba(166, 206, 57, 0.4);
+	}
+	.orcid-search-btn-active {
+		border-color: #ef4444;
+		background: #fef2f2;
+	}
+	.orcid-icon {
+		width: 100%;
+		height: 100%;
+	}
+
 	.orcid-search-container,
 	.orcid-validate-container {
 		position: relative;
@@ -750,6 +989,9 @@
 		margin-bottom: 0.25rem;
 	}
 	.orcid-search-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
 		padding: 0.5rem 1rem;
 		background: #a6ce39;
 		color: white;
@@ -760,6 +1002,11 @@
 		font-weight: 500;
 		white-space: nowrap;
 		transition: background-color 0.2s;
+	}
+	.orcid-icon-sm {
+		width: 1rem;
+		height: 1rem;
+		flex-shrink: 0;
 	}
 	.orcid-search-button:hover:not(:disabled) {
 		background: #94b833;

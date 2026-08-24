@@ -87,7 +87,7 @@ function initActivity() {
  </div>
 
  <!-- {#if description && showDescription}
-  <div	class="text-sm text-gray-500 py-1">{@html description}</div>
+  <div	class="text-sm text-gray-600 dark:text-gray-300 py-1">{@html description}</div>
  {/if}
  <div class="text-left flex justify-end w-2 px-6 ">
  {#if description}

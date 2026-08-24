@@ -93,26 +93,26 @@
 >
 		{#if path.split('.').length > 1 && !isNaN(parseInt(lastPathPart))}
 			{#if lastPathPart === '0'}
-			<span class="key text-sm font-medium text-gray-500" 
+			<span class="key text-sm font-medium text-gray-600 dark:text-gray-300" 
 				>{convertDisplayName(label)}</span
 			>
 		{:else}
-			<span class="key text-sm font-medium text-gray-500" 
+			<span class="key text-sm font-medium text-gray-600 dark:text-gray-300" 
 			></span>
 		{/if}
 	{:else}
-		<span class="key text-sm font-medium text-gray-500" 
+		<span class="key text-sm font-medium text-gray-600 dark:text-gray-300" 
 			>{convertDisplayName(label)}</span
 		>
 	{/if}
-		<span class="val text-sm text-gray-900">{value}</span>
+		<span class="val text-sm text-gray-900 dark:text-gray-100">{value}</span>
 	</div>
 	{#if schemaAttrs.length > 0}
 		{#each schemaAttrs as attr}
 			{#if attrValues[attr]}
 				<div class="entry">
-					<span class="key text-sm italic text-gray-400">{attr.replace('@', '')}</span>
-					<span class="val text-sm text-gray-900">{attrValues[attr]}</span>
+					<span class="key text-sm italic text-gray-600 dark:text-gray-300">{attr.replace('@', '')}</span>
+					<span class="val text-sm text-gray-900 dark:text-gray-100">{attrValues[attr]}</span>
 				</div>
 			{/if}
 		{/each}

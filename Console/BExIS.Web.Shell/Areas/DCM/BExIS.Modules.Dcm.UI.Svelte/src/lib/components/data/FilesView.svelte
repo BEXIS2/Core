@@ -33,17 +33,17 @@
 		if (downloadMode === 'data') {
 			return `/ddm/Data/DownloadFile?id=${id}&version=${versionId}&path=${encodeURIComponent(file.path || file.name)}&mimeType=${encodeURIComponent(file.type || '')}&preview=${preview}`;
 		}
-		return `/dcm/attachments/download?datasetId=${id}&fileName=${encodeURIComponent(file.name)}`;
+		return `/dcm/attachments/download?datasetId=${id}&fileName=${encodeURIComponent(file.name)}&preview=${preview}`;
 	}
 
-	function getPreviewType(type: string): 'image' | 'video' | 'audio' | 'pdf' | 'text' | 'other' {
+	function getPreviewType(type: string): 'image' | 'video' | 'audio' | 'pdf' | 'other' {
 		if (!type) return 'other';
 		const t = type.toLowerCase();
 		if (t.startsWith('image/')) return 'image';
 		if (t.startsWith('video/')) return 'video';
 		if (t.startsWith('audio/')) return 'audio';
 		if (t === 'application/pdf') return 'pdf';
-		if (t.startsWith('text/')) return 'text';
+		// text, xml, xsd, etc. are not reliably previewable in iframe — hide preview button
 		return 'other';
 	}
 
@@ -63,33 +63,33 @@
 {#if files.length > 0}
 	<div class="flex flex-col gap-2">
 		{#each files as file, index}
-			<div class="flex items-center gap-3 rounded-lg border border-surface-200 dark:border-surface-700 px-3 py-2.5 hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors">
+			<div class="flex items-center gap-3 rounded-lg border border-surface-300 dark:border-surface-600 px-3 py-2.5 hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors">
 				<div class="shrink-0"><FileInfo type={file.type} size="x-large" /></div>
 				<div class="flex-1 min-w-0 flex flex-col gap-0.5">
 					<div class="flex items-center gap-2 flex-wrap">
 						<span class="text-sm font-medium text-surface-900 dark:text-surface-100 truncate" title={file.name}>{file.name}</span>
 						{#if file.type}
-							<span class="badge variant-soft-surface text-xs whitespace-nowrap">{file.type}</span>
+							<span class="badge variant-soft-surface text-xs whitespace-nowrap text-surface-700 dark:text-surface-200">{file.type}</span>
 						{/if}
 						{#if file.length}
-							<span class="text-xs text-surface-400 whitespace-nowrap">{formatSize(file.length)}</span>
+							<span class="text-xs text-surface-700 dark:text-surface-200 whitespace-nowrap">{formatSize(file.length)}</span>
 						{/if}
 					</div>
 					{#if file.description}
-						<span class="text-xs text-surface-500 dark:text-surface-400 truncate" title={file.description}>{file.description}</span>
+						<span class="text-xs text-surface-700 dark:text-surface-200 truncate" title={file.description}>{file.description}</span>
 					{/if}
 				</div>
 				<div class="shrink-0 flex items-center gap-1">
 					{#if canPreview(file.type)}
 						<button
-							class="btn-icon variant-ghost-surface text-surface-500 hover:text-primary-600"
+							class="btn-icon variant-ghost-surface text-surface-700 dark:text-surface-200 hover:text-primary-600"
 							title="Preview {file.name}"
 							on:click={() => openPreview(file)}>
 							<Fa icon={faEye} />
 						</button>
 					{/if}
 					<a href={getFileUrl(file)} download
-						class="btn-icon variant-ghost-surface text-surface-500 hover:text-primary-600"
+						class="btn-icon variant-ghost-surface text-surface-700 dark:text-surface-200 hover:text-primary-600"
 						title="Download {file.name}">
 						<Fa icon={faDownload} />
 					</a>
@@ -99,7 +99,7 @@
 	</div>
 {:else}
 	<div class="flex justify-start">
-		<span class="text-sm text-surface-400">No files available.</span>
+		<span class="text-sm text-surface-700 dark:text-surface-200">No files available.</span>
 	</div>
 {/if}
 
@@ -112,22 +112,22 @@
 		transition:fade={{ duration: 150 }}>
 		<div
 			class="relative rounded-lg bg-white dark:bg-surface-900 shadow-xl flex flex-col"
-			style="max-height: 70vh; max-width: 600px;"
+			style="max-height: 90vh; width: 90vw; max-width: 90vw;"
 			on:click|stopPropagation>
-			<div class="flex items-center justify-between gap-4 border-b border-surface-200 dark:border-surface-700 px-4 py-2">
+			<div class="flex items-center justify-between gap-4 border-b border-surface-300 dark:border-surface-600 px-4 py-2">
 				<span class="text-sm font-medium truncate" title={previewFile.name}>{previewFile.name}</span>
 				<button
-					class="btn-icon variant-ghost-surface shrink-0"
+					class="btn-icon variant-ghost-surface shrink-0 text-surface-700 dark:text-surface-200"
 					title="Close preview"
 					on:click={closePreview}>
 					<Fa icon={faXmark} />
 				</button>
 			</div>
-			<div class="overflow-auto p-4 flex items-center justify-center" style="max-height: calc(70vh - 3rem);">
+			<div class="overflow-auto p-4 flex items-center justify-center" style="max-height: calc(90vh - 3rem);">
 				{#if getPreviewType(previewFile.type) === 'image'}
-					<img src={getFileUrl(previewFile, true)} alt={previewFile.name} class="max-h-[60vh] max-w-full object-contain rounded" />
+					<img src={getFileUrl(previewFile, true)} alt={previewFile.name} class="max-h-[80vh] max-w-full object-contain rounded" />
 				{:else if getPreviewType(previewFile.type) === 'video'}
-					<video controls class="max-h-full max-w-full">
+					<video controls class="max-h-[80vh] max-w-full">
 						<source src={getFileUrl(previewFile, true)} type={previewFile.type} />
 					</video>
 				{:else if getPreviewType(previewFile.type) === 'audio'}
@@ -137,9 +137,9 @@
 						</audio>
 					</div>
 				{:else if getPreviewType(previewFile.type) === 'pdf'}
-					<iframe src={getFileUrl(previewFile, true)} class="w-full" style="height: 90vh;" title={previewFile.name}></iframe>
-				{:else if getPreviewType(previewFile.type) === 'text'}
-					<iframe src={getFileUrl(previewFile, true)} class="w-full" style="height: 90vh;" title={previewFile.name}></iframe>
+					<div class="w-full" style="height: 85vh;">
+						<iframe src={getFileUrl(previewFile, true)} class="w-full h-full" title={previewFile.name}></iframe>
+					</div>
 				{/if}
 			</div>
 		</div>

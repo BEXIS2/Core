@@ -53,7 +53,7 @@
 
 					<Header {required} path={p} {p} description={value.description} />
 					{#if !$hideStore.includes(p) && $activeStore.includes(p)}
-						<div class="pl-2  dark:bg-gray-900/50 rounded-sm flex flex-col" id={p}>
+						<div class="pl-2  dark:bg-surface-800/50 rounded-sm flex flex-col" id={p}>
 							<ComplexComponent
 								complexComponent={value}
 								path={p}
@@ -80,7 +80,7 @@
 			{/if}
 		{:else if value.type === 'array' && value.items}
 			<div
-				class="pl-2 dark:bg-gray-900/50  "
+				class="pl-2 dark:bg-surface-800/50  "
 			>
 				<ArrayComponent arrayComponent={value} path={p} backgroundClass={backgroundClass} />
 			</div>
@@ -93,7 +93,7 @@
 				{#if attrValues[attr]}
 					<div class="entry">
 						<span class="key text-sm italic">{attr.replace('@', '')}</span>
-						<span class="val text-sm text-gray-900">{attrValues[attr]}</span>
+						<span class="val text-sm text-gray-900 dark:text-gray-100">{attrValues[attr]}</span>
 					</div>
 				{/if}
 			{/each}

@@ -232,7 +232,7 @@
 
 {#if isViewMode}
 	<div class="entry">
-		<span class="key text-sm font-medium text-gray-500">{label}</span>
+		<span class="key text-sm font-medium text-gray-600 dark:text-gray-300">{label}</span>
 		<span class="val text-sm text-gray-900">
 			{#if value}
 				{#if ref}
@@ -247,7 +247,7 @@
 					<span class="term-desc">{viewDescription}</span>
 				{/if}
 			{:else}
-				<span class="text-gray-400">—</span>
+				<span class="text-gray-500 dark:text-gray-400">—</span>
 			{/if}
 		</span>
 	</div>
@@ -280,7 +280,7 @@
 			<ul>
 				{#each data as item}
 					{#await getDescriptionFromAPI(item.iri) then description}
-						<li title={description.toString()} class="text-xs text-gray-500 mt-1">
+						<li title={description.toString()} class="text-xs text-gray-600 dark:text-gray-300 mt-1">
 							(<a href={item.iri} target="_blank" rel="noopener noreferrer">
 								{item.iri}
 							</a>)

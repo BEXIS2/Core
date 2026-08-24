@@ -14,8 +14,8 @@
 </script>
 
 <div class="entry">
-	<span class="key text-sm font-medium text-gray-500">{convertDisplayName(label)}</span>
-	<span class="val text-sm text-gray-900">
+	<span class="key text-sm font-medium text-gray-600 dark:text-gray-300">{convertDisplayName(label)}</span>
+	<span class="val text-sm text-gray-900 dark:text-gray-100">
 		{#if value}
 			{#if ref}
 				<a href={ref} target="_blank" rel="noopener noreferrer" class="link-ref">
@@ -26,7 +26,7 @@
 				{value}
 			{/if}
 		{:else}
-			<span class="text-gray-400">—</span>
+			<span class="text-gray-500 dark:text-gray-400">—</span>
 		{/if}
 	</span>
 </div>
@@ -54,7 +54,7 @@
 	}
 	.link-ref-icon {
 		font-size: 0.7rem;
-		opacity: 0.6;
+		opacity: 0.8;
 	}
 
 	@media (max-width: 768px) {

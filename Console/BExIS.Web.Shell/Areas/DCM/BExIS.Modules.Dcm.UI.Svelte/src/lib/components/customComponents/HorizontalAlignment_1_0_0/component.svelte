@@ -119,7 +119,7 @@
 
 {#if isViewMode}
 	<div class="entry">
-		<span class="key text-sm font-medium text-gray-500">
+		<span class="key text-sm font-medium text-gray-600 dark:text-gray-300">
 			{customLabel || getLabelByPath(anchor)}
 		</span>
 		<span class="val text-sm text-gray-900">
