@@ -4299,6 +4299,75 @@ namespace BExIS.Dlm.Services.Data
         }
 
         /// <summary>
+        /// Get a dictionary of dataset IDs to their latest released tag number (single DB query).
+        /// Only returns datasets that have a Final tag on a CheckedIn version.
+        /// </summary>
+        public Dictionary<long, double> GetDatasetIdsWithLatestTagNr(bool onlyReady = true)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var query = DatasetVersionRepo.Query()
+                    .Where(v => v.Tag != null && v.Dataset.Status == DatasetStatus.CheckedIn);
+
+                if (onlyReady)
+                    query = query.Where(v => v.Tag.Final == true);
+
+                // group by dataset, pick highest tag Nr per dataset
+                var result = query
+                    .GroupBy(v => v.Dataset.Id)
+                    .Select(g => new { DatasetId = g.Key, TagNr = g.Max(v => v.Tag.Nr) })
+                    .ToList();
+
+                return result.ToDictionary(x => x.DatasetId, x => x.TagNr);
+            }
+        }
+
+        /// <summary>
+        /// Get a set of dataset IDs that have data (either structured rows or unstructured content descriptors).
+        /// Single batch query — checks ContentDescriptors on the latest checked-in versions.
+        /// </summary>
+        public HashSet<long> GetDatasetIdsWithData(List<long> datasetIds)
+        {
+            HashSet<long> result = new HashSet<long>();
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var versionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
+
+                // datasets with unstructured data (content descriptors)
+                var unstructuredWith = versionRepo.Query()
+                    .Where(v => datasetIds.Contains(v.Dataset.Id)
+                        && v.Dataset.Status == DatasetStatus.CheckedIn
+                        && v.ContentDescriptors.Any(c => c.Name == "unstructuredData"))
+                    .Select(v => v.Dataset.Id)
+                    .Distinct()
+                    .ToList();
+
+                foreach (var id in unstructuredWith)
+                    result.Add(id);
+
+                // datasets with structured data (check row count via materialized view)
+                // only check datasets that have a data structure and are not already found via unstructured
+                var structuredCandidates = versionRepo.Query()
+                    .Where(v => datasetIds.Contains(v.Dataset.Id)
+                        && v.Dataset.Status == DatasetStatus.CheckedIn
+                        && v.Dataset.DataStructure != null)
+                    .Select(v => v.Dataset.Id)
+                    .Distinct()
+                    .ToList();
+
+                foreach (var id in structuredCandidates)
+                {
+                    if (result.Contains(id)) continue;
+                    if (RowAny(id))
+                        result.Add(id);
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Get latest version with Tag Nr for a dataset
         /// </summary>
         /// <param name="id"> id of the dataset</param>

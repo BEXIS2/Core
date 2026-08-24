@@ -9,6 +9,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using BExIS.UI.Helpers;
 using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
 using Microsoft.AspNet.Identity;
@@ -37,56 +38,17 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
+            string module = "DDM";
 
-            DashboardModel model = GetDefaultDashboardModel();
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
 
             // load settings
             var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
             ViewData["use_tags"] = moduleSettings.GetValueByKey("use_tags");
-            ViewData["use_minor"] = moduleSettings.GetValueByKey("use_minor");
 
-
-            #region mydatasetmodel
-
-            ViewData["PageSize"] = 10;
-            ViewData["CurrentPage"] = 1;
-
-            #region header
-
-            List<HeaderItem> headerItems = new List<HeaderItem>();
-
-            HeaderItem headerItem = new HeaderItem()
-            {
-                Name = "ID",
-                DisplayName = "ID",
-                DataType = "Int64"
-            };
-            headerItems.Add(headerItem);
-
-            ViewData["Id"] = headerItem;
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Title",
-                DisplayName = "Title",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Description",
-                DisplayName = "Description",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Read",
-                DisplayName = "Read",
-                DataType = "String"
+            return View();
+        }
             };
             headerItems.Add(headerItem);
 
