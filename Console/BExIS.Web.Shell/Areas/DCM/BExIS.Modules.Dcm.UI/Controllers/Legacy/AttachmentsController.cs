@@ -88,9 +88,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Read)]
-        public ActionResult Download(long datasetId, String fileName)
+        public ActionResult Download(long datasetId, String fileName, bool preview = false)
         {
             var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
+            if (preview)
+            {
+                return File(filePath, MimeMapping.GetMimeMapping(fileName));
+            }
             return File(filePath, MimeMapping.GetMimeMapping(fileName), Path.GetFileName(filePath));
         }
 
