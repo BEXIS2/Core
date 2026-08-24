@@ -518,9 +518,24 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             using (var datasetManager = new DatasetManager())
             {
-                var datasetVersion = datasetManager.GetDatasetVersion(id, version);
+                DatasetVersion datasetVersion;
 
-                if (datasetVersion == null) throw new ArgumentException("Version noi");
+                if (version <= 0 && tag <= 0)
+                {
+                    // no version or tag specified — use latest version
+                    datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                }
+                else if (tag > 0)
+                {
+                    // tag specified — get latest version by tag
+                    datasetVersion = datasetManager.GetLatestDatasetVersionByTag(id, tag, false);
+                }
+                else
+                {
+                    datasetVersion = datasetManager.GetDatasetVersion(id, version);
+                }
+
+                if (datasetVersion == null) throw new ArgumentException("Version not found");
 
                 long datastructureId = datasetVersion.Dataset.DataStructure != null ? datasetVersion.Dataset.DataStructure.Id : -1;
                 var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
