@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { FileInfo, type fileInfoType } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa';
-	import { faDownload, faEye, faXmark } from '@fortawesome/free-solid-svg-icons';
+	import { faDownload, faEye, faFileZipper, faXmark } from '@fortawesome/free-solid-svg-icons';
 	import { fade } from 'svelte/transition';
+	import { Api } from '@bexis2/bexis2-core-ui';
 
 	export let id = 0;
 	export let files: fileInfoType[] = [];
@@ -16,6 +17,15 @@
 	export let versionId: number = 0;
 
 	let previewFile: any = null;
+	let zipContents: any[] = [];
+	let zipLoading = false;
+
+	function getZipContentsUrl(file: any): string {
+		if (downloadMode === 'data') {
+			return `/ddm/Data/GetZipContents?id=${id}&path=${encodeURIComponent(file.path || file.name)}`;
+		}
+		return `/dcm/attachments/GetZipContents?datasetId=${id}&fileName=${encodeURIComponent(file.name)}`;
+	}
 
 	function formatSize(bytes: number): string {
 		if (!bytes || bytes <= 0) return '';
@@ -36,13 +46,14 @@
 		return `/dcm/attachments/download?datasetId=${id}&fileName=${encodeURIComponent(file.name)}&preview=${preview}`;
 	}
 
-	function getPreviewType(type: string): 'image' | 'video' | 'audio' | 'pdf' | 'other' {
+	function getPreviewType(type: string): 'image' | 'video' | 'audio' | 'pdf' | 'zip' | 'other' {
 		if (!type) return 'other';
 		const t = type.toLowerCase();
 		if (t.startsWith('image/')) return 'image';
 		if (t.startsWith('video/')) return 'video';
 		if (t.startsWith('audio/')) return 'audio';
 		if (t === 'application/pdf') return 'pdf';
+		if (t === 'application/zip' || t === 'application/x-zip-compressed' || t === 'application/x-compressed') return 'zip';
 		// text, xml, xsd, etc. are not reliably previewable in iframe — hide preview button
 		return 'other';
 	}
@@ -51,8 +62,22 @@
 		return getPreviewType(type) !== 'other';
 	}
 
-	function openPreview(file: any) {
+	async function openPreview(file: any) {
 		previewFile = file;
+		zipContents = [];
+		zipLoading = false;
+
+		if (getPreviewType(file.type) === 'zip') {
+			zipLoading = true;
+			try {
+				const response = await Api.get(getZipContentsUrl(file));
+				zipContents = response.data || [];
+			} catch (e) {
+				console.error('Failed to load zip contents:', e);
+			} finally {
+				zipLoading = false;
+			}
+		}
 	}
 
 	function closePreview() {
@@ -123,13 +148,17 @@
 					<Fa icon={faXmark} />
 				</button>
 			</div>
-			<div class="overflow-auto p-4 flex items-center justify-center" style="max-height: calc(90vh - 3rem);">
+			<div class="overflow-auto p-4" style="max-height: calc(90vh - 3rem);">
 				{#if getPreviewType(previewFile.type) === 'image'}
-					<img src={getFileUrl(previewFile, true)} alt={previewFile.name} class="max-h-[80vh] max-w-full object-contain rounded" />
+					<div class="flex items-center justify-center">
+						<img src={getFileUrl(previewFile, true)} alt={previewFile.name} class="max-h-[80vh] max-w-full object-contain rounded" />
+					</div>
 				{:else if getPreviewType(previewFile.type) === 'video'}
-					<video controls class="max-h-[80vh] max-w-full">
-						<source src={getFileUrl(previewFile, true)} type={previewFile.type} />
-					</video>
+					<div class="flex items-center justify-center">
+						<video controls class="max-h-[80vh] max-w-full">
+							<source src={getFileUrl(previewFile, true)} type={previewFile.type} />
+						</video>
+					</div>
 				{:else if getPreviewType(previewFile.type) === 'audio'}
 					<div class="flex flex-col items-center gap-4 p-8">
 						<audio controls>
@@ -139,6 +168,27 @@
 				{:else if getPreviewType(previewFile.type) === 'pdf'}
 					<div class="w-full" style="height: 85vh;">
 						<iframe src={getFileUrl(previewFile, true)} class="w-full h-full" title={previewFile.name}></iframe>
+					</div>
+				{:else if getPreviewType(previewFile.type) === 'zip'}
+					<div class="w-full">
+						<div class="flex items-center gap-2 mb-3">
+							<Fa icon={faFileZipper} class="text-xl text-warning-600" />
+							<span class="text-sm text-surface-700 dark:text-surface-200">Archive contents ({zipContents.length} files)</span>
+						</div>
+						{#if zipLoading}
+							<div class="text-center py-8 text-sm text-surface-500">Loading archive contents...</div>
+						{:else if zipContents.length > 0}
+							<div class="flex flex-col gap-1">
+								{#each zipContents as entry}
+									<div class="flex items-center gap-3 rounded border border-surface-200 dark:border-surface-700 px-3 py-1.5 text-sm">
+										<span class="flex-1 truncate text-surface-800 dark:text-surface-100" title={entry.name}>{entry.name}</span>
+										<span class="text-xs text-surface-500 whitespace-nowrap">{formatSize(entry.size)}</span>
+									</div>
+								{/each}
+							</div>
+						{:else}
+							<div class="text-center py-8 text-sm text-surface-500">Could not read archive contents.</div>
+						{/if}
 					</div>
 				{/if}
 			</div>

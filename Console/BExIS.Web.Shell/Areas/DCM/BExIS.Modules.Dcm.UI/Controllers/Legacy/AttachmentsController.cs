@@ -13,6 +13,7 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
 using Microsoft.AspNet.Identity;
+using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -96,6 +97,41 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 return File(filePath, MimeMapping.GetMimeMapping(fileName));
             }
             return File(filePath, MimeMapping.GetMimeMapping(fileName), Path.GetFileName(filePath));
+        }
+
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Read)]
+        public JsonResult GetZipContents(long datasetId, string fileName)
+        {
+            var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
+            var result = new List<object>();
+
+            if (!System.IO.File.Exists(filePath))
+                return Json(result, JsonRequestBehavior.AllowGet);
+
+            try
+            {
+                using (var fileStream = System.IO.File.OpenRead(filePath))
+                using (var zipFile = new ZipFile(fileStream))
+                {
+                    foreach (ZipEntry entry in zipFile)
+                    {
+                        if (!entry.IsFile) continue;
+                        result.Add(new
+                        {
+                            name = entry.Name,
+                            size = entry.Size,
+                            compressedSize = entry.CompressedSize,
+                            date = entry.DateTime
+                        });
+                    }
+                }
+            }
+            catch
+            {
+                // not a valid zip file
+            }
+
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
