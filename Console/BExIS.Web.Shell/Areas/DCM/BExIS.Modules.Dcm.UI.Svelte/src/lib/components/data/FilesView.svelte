@@ -19,6 +19,8 @@
 	let previewFile: any = null;
 	let zipContents: any[] = [];
 	let zipLoading = false;
+	let textContent: string = '';
+	let textLoading = false;
 
 	function getZipContentsUrl(file: any): string {
 		if (downloadMode === 'data') {
@@ -46,7 +48,7 @@
 		return `/dcm/attachments/download?datasetId=${id}&fileName=${encodeURIComponent(file.name)}&preview=${preview}`;
 	}
 
-	function getPreviewType(type: string): 'image' | 'video' | 'audio' | 'pdf' | 'zip' | 'other' {
+	function getPreviewType(type: string): 'image' | 'video' | 'audio' | 'pdf' | 'zip' | 'text' | 'other' {
 		if (!type) return 'other';
 		const t = type.toLowerCase();
 		if (t.startsWith('image/')) return 'image';
@@ -54,7 +56,7 @@
 		if (t.startsWith('audio/')) return 'audio';
 		if (t === 'application/pdf') return 'pdf';
 		if (t === 'application/zip' || t === 'application/x-zip-compressed' || t === 'application/x-compressed') return 'zip';
-		// text, xml, xsd, etc. are not reliably previewable in iframe — hide preview button
+		if (t.startsWith('text/') || t === 'application/xml' || t === 'application/xsd') return 'text';
 		return 'other';
 	}
 
@@ -66,8 +68,12 @@
 		previewFile = file;
 		zipContents = [];
 		zipLoading = false;
+		textContent = '';
+		textLoading = false;
 
-		if (getPreviewType(file.type) === 'zip') {
+		const previewType = getPreviewType(file.type);
+
+		if (previewType === 'zip') {
 			zipLoading = true;
 			try {
 				const response = await Api.get(getZipContentsUrl(file));
@@ -76,6 +82,18 @@
 				console.error('Failed to load zip contents:', e);
 			} finally {
 				zipLoading = false;
+			}
+		} else if (previewType === 'text') {
+			textLoading = true;
+			try {
+				const url = getFileUrl(file, true);
+				const response = await Api.get(url, '', {}, { responseType: 'text' });
+				textContent = response.data || '';
+			} catch (e) {
+				console.error('Failed to load text content:', e);
+				textContent = 'Failed to load file content.';
+			} finally {
+				textLoading = false;
 			}
 		}
 	}
@@ -188,6 +206,14 @@
 							</div>
 						{:else}
 							<div class="text-center py-8 text-sm text-surface-500">Could not read archive contents.</div>
+						{/if}
+					</div>
+				{:else if getPreviewType(previewFile.type) === 'text'}
+					<div class="w-full">
+						{#if textLoading}
+							<div class="text-center py-8 text-sm text-surface-500">Loading file content...</div>
+						{:else}
+							<pre class="text-sm text-surface-800 dark:text-surface-100 whitespace-pre-wrap break-words font-mono bg-surface-50 dark:bg-surface-800 rounded p-4" style="max-height: 75vh; overflow-y: auto;">{textContent}</pre>
 						{/if}
 					</div>
 				{/if}
