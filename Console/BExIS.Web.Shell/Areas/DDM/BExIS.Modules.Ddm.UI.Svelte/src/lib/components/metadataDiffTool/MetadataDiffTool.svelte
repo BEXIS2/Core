@@ -25,26 +25,46 @@
 			console.log('Dataset ID from URL:', datasetIdStart);
 		}
 		// fetch datasets from API if not already provided and in the local storage
-		const storedDatasets = localStorage.getItem('datasets');
-		const storedDatasetsDate = localStorage.getItem('datasetsDate');
+		let storedDatasets: string | null = null;
+		let storedDatasetsDate: string | null = null;
+		try {
+			storedDatasets = localStorage.getItem('datasets');
+			storedDatasetsDate = localStorage.getItem('datasetsDate');
+		} catch (e) {
+			console.warn('localStorage access failed, fetching from API:', e);
+		}
+
+		let loadedFromCache = false;
 		if (storedDatasets && storedDatasetsDate) {
-			// Check if the stored datasets are still valid (e.g., not expired)
-			const datasetsDate = new Date(storedDatasetsDate);
-			const now = new Date();
-			const timeDiff = Math.abs(now.getTime() - datasetsDate.getTime());
-			const hoursDiff = timeDiff / (1000 * 60 * 60);
-			if (hoursDiff < 24 * 7) { // Adjust the time limit as needed
-				datasets = JSON.parse(storedDatasets);
+			try {
+				const parsed = JSON.parse(storedDatasets);
+				if (Array.isArray(parsed)) {
+					const datasetsDate = new Date(storedDatasetsDate);
+					const now = new Date();
+					const timeDiff = Math.abs(now.getTime() - datasetsDate.getTime());
+					const hoursDiff = timeDiff / (1000 * 60 * 60);
+					if (hoursDiff < 24 * 7) {
+						datasets = parsed;
+						loadedFromCache = true;
+					}
+				}
+			} catch (e) {
+				console.warn('Corrupted datasets in localStorage, refetching:', e);
 			}
 		}
-		else {
+
+		if (!loadedFromCache) {
 			datasets = await fetchAllDatasets();
-			localStorage.setItem('datasets', JSON.stringify(datasets));
-		// add date as reference to the datasets in local storage
-		localStorage.setItem('datasetsDate', new Date().toISOString());
-		const datasetsDateString = localStorage.getItem('datasetsDate');
-		lastUpdated = datasetsDateString ? new Date(datasetsDateString).toLocaleString() : 'No local data available';
+			if (Array.isArray(datasets)) {
+				try {
+					localStorage.setItem('datasets', JSON.stringify(datasets));
+					localStorage.setItem('datasetsDate', new Date().toISOString());
+				} catch (e) {
+					console.warn('Failed to cache datasets in localStorage:', e);
+				}
+			}
 		}
+		lastUpdated = getStoredDate();
 		
 		console.log(datasets);
 		if (datasetIdStart !== null) {
@@ -71,7 +91,8 @@
 				.map((ds: any) => ({ id: ds.Id, text: ds.Id + ' ' + ds.Title }))
 				.sort((a: any, b: any) => b.id - a.id);
 		} catch (error) {
-			return { error };
+			console.error('Error fetching datasets:', error);
+			return [];
 		}
 	}
 
@@ -99,7 +120,6 @@
 		}
 	}
 
-	onMount(async () => {});
 
 	let versions1: number[] = [];
 	let versions2: number[] = [];
@@ -208,18 +228,36 @@
 		});
 	}
 
-	$: lastUpdated = localStorage.getItem('datasetsDate')
-		? new Date(localStorage.getItem('datasetsDate') as string).toLocaleString()
-		: 'No local data available';
+	function getStoredDate(): string {
+		try {
+			const dateStr = localStorage.getItem('datasetsDate');
+			return dateStr ? new Date(dateStr).toLocaleString() : 'No local data available';
+		} catch {
+			return 'No local data available';
+		}
+	}
+
+	$: lastUpdated = getStoredDate();
 	function updateLocalData() {
-		localStorage.removeItem('datasets');
-		localStorage.removeItem('datasetsDate');
+		try {
+			localStorage.removeItem('datasets');
+			localStorage.removeItem('datasetsDate');
+		} catch (e) {
+			console.warn('Failed to clear localStorage:', e);
+		}
 		fetchAllDatasets().then((fetchedDatasets) => {
+			if (!Array.isArray(fetchedDatasets)) {
+				console.error('Failed to fetch datasets:', fetchedDatasets);
+				return;
+			}
 			datasets = fetchedDatasets;
-			localStorage.setItem('datasets', JSON.stringify(datasets));
-			localStorage.setItem('datasetsDate', new Date().toISOString());
-			const datasetsDate = localStorage.getItem('datasetsDate');
-			lastUpdated = datasetsDate ? new Date(datasetsDate).toLocaleString() : 'No local data available';
+			try {
+				localStorage.setItem('datasets', JSON.stringify(datasets));
+				localStorage.setItem('datasetsDate', new Date().toISOString());
+			} catch (e) {
+				console.warn('Failed to cache datasets in localStorage:', e);
+			}
+			lastUpdated = getStoredDate();
 		});
 	}
 	
