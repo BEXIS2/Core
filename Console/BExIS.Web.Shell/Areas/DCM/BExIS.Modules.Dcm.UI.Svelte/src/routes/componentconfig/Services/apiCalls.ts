@@ -99,5 +99,35 @@ export const getEntityTemplateList = async () => {
     }
 };
 
+export interface PartyMapping {
+    path: string;
+    parentPath: string;
+    linkElementId: number;
+    selector: boolean;
+    complexity: boolean;
+    list: any[];
+}
+
+export interface KeyMapping {
+    path: string;
+    systemKeyName: string;
+}
+
+export interface SystemMappings {
+    partyMappings: PartyMapping[];
+    keyMappings: KeyMapping[];
+}
+
+export const GetSystemMappings = async (metadataStructureId: number): Promise<SystemMappings | null> => {
+    try {
+        const response = await Api.get('/dcm/m/LoadSystemMappings?id=' + metadataStructureId);
+        if (!response.data) return null;
+        return response.data as SystemMappings;
+    } catch (error) {
+        console.error('Error loading system mappings:', error);
+        return null;
+    }
+};
+
 
 

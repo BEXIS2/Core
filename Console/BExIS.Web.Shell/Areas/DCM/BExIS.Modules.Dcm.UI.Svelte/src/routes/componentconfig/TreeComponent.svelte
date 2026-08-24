@@ -10,6 +10,7 @@
     let s: any;
     let currentSchema: number = 2;
     let generatedNodes: any[] = [];
+    let systemMappings: ApiCalls.SystemMappings | null = null;
     
     $: schema = s;
 
@@ -25,6 +26,9 @@
         try {
             schema = await ApiCalls.GetMetadataSchema(entity.metadataStructure.id);
             s = schema;
+
+            // load system mappings for this metadata structure
+            systemMappings = await ApiCalls.GetSystemMappings(entity.metadataStructure.id);
             
             // generate nodes after schema is loaded
             if (schema) {
@@ -47,6 +51,22 @@
         }
 
         return nodes;
+    }
+
+    function getMappingInfo(path: string): { isPartyMapped: boolean; isKeyMapped: boolean; keyName?: string; partySelector?: boolean; partyComplex?: boolean } {
+        if (!systemMappings) return { isPartyMapped: false, isKeyMapped: false };
+        
+        // check party mappings — match by path or parentPath
+        const partyMatch = systemMappings.partyMappings?.find(m => m.path === path || m.parentPath === path);
+        const keyMatch = systemMappings.keyMappings?.find(m => m.path === path);
+        
+        return {
+            isPartyMapped: !!partyMatch,
+            isKeyMapped: !!keyMatch,
+            keyName: keyMatch?.systemKeyName,
+            partySelector: partyMatch?.selector ?? false,
+            partyComplex: partyMatch?.complexity ?? false
+        };
     }
 
     function traverseSchema(
@@ -137,7 +157,8 @@
                         is_input: false,
                         is_output: true,
                         target_variable: key,
-                        is_visible: true
+                        is_visible: true,
+                        ...getMappingInfo(currentPath)
                     },
                     position: { x: position.x + 30, y: position.y }, // indentation
                     draggable: true,
@@ -190,7 +211,8 @@
                                     is_input: false,
                                     is_output: true,
                                     target_variable: key,
-                                    is_visible: true
+                                    is_visible: true,
+                                    ...getMappingInfo(currentPath)
                                 },
                                 position: { x: position.x + 30, y: position.y },
                                 draggable: true,
@@ -223,7 +245,8 @@
                                             is_input: false,
                                             is_output: true,
                                             target_variable: key,
-                                            is_visible: true
+                                            is_visible: true,
+                                            ...getMappingInfo(variantPath)
                                         },
                                         position: { x: position.x + 30, y: position.y },
                                         draggable: true,
@@ -255,7 +278,8 @@
                                 is_input: false,
                                 is_output: true,
                                 target_variable: key,
-                                is_visible: true
+                                is_visible: true,
+                                ...getMappingInfo(currentPath)
                             },
                             position: { x: position.x + 30, y: position.y },
                             draggable: true,

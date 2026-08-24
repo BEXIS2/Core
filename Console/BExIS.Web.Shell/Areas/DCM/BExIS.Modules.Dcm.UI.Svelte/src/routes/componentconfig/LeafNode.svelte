@@ -158,6 +158,13 @@
   }
 
   $: showControls = isConnected;
+  $: isPartyMapped = data?.isPartyMapped ?? false;
+  $: isKeyMapped = data?.isKeyMapped ?? false;
+  $: keyName = data?.keyName;
+  $: partySelector = data?.partySelector ?? false;
+  $: partyComplex = data?.partyComplex ?? false;
+  $: keyTitle = 'System key mapping' + (keyName ? ': ' + keyName : '');
+  $: partyTitle = 'Party mapping' + (partySelector ? ' (selector)' : '') + (partyComplex ? ' (complex)' : '');
 </script>
 
 <div class="leaf-node-content" class:selected>
@@ -204,6 +211,20 @@
     {/if}
     {#if data?.path}
       <div class="leaf-path">{data.path}</div>
+    {/if}
+    {#if isPartyMapped || isKeyMapped}
+      <div class="leaf-mappings">
+        {#if isKeyMapped}
+          <span class="mapping-badge key-mapping" title={keyTitle}>
+            🔑 {#if keyName}{keyName}{:else}Key{/if}
+          </span>
+        {/if}
+        {#if isPartyMapped}
+          <span class="mapping-badge party-mapping" title={partyTitle}>
+            👥 Party{#if partySelector} *{/if}{#if partyComplex} †{/if}
+          </span>
+        {/if}
+      </div>
     {/if}
   </div>
 </div>
@@ -327,6 +348,33 @@
     color: #888;
     font-style: italic;
     word-break: break-all;
+  }
+
+  .leaf-mappings {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+  }
+
+  .mapping-badge {
+    font-size: 0.6rem;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .key-mapping {
+    background: #e3f2fd;
+    color: #1565c0;
+    border: 1px solid #90caf9;
+  }
+
+  .party-mapping {
+    background: #f3e5f5;
+    color: #7b1fa2;
+    border: 1px solid #ce93d8;
   }
 
   .leaf-node-content:not(.selected) .leaf-controls {
