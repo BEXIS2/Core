@@ -166,17 +166,17 @@
 
 			/>
 
-		<div class="flex">
+	<div class="flex gap-4">
 
-				{#if metadataHook}
-						<div class="flex-grow flex flex-col gap-3">
-										<Metadata {id} {version} {tag} hook={metadataHook} description={model.description} />
-						</div>
-					{/if}
+			{#if metadataHook}
+					<div class="flex-1 min-w-0 flex flex-col gap-3">
+									<Metadata {id} {version} {tag} hook={metadataHook} description={model.description} />
+					</div>
+				{/if}
 
-					{#if entityName?.toLowerCase()!='extension'}
+				{#if entityName?.toLowerCase()!='extension'}
 
-						<div class="flex flex-col ml-5 gap-3 w-1/4">
+					<div class="flex flex-col gap-3 w-1/4 shrink-0">
 
 								<CitationDownload	{id} {version} {tag} {useTags} />
 
