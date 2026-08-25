@@ -14,8 +14,8 @@
 	let showInline = false;
 </script>
 
-<div class="flex justify-between items-center mb-2">
-	<h3 class="h3">Metadata</h3>
+<div class="flex justify-between items-center mb-2 mt-0">
+	<h3 class="h3 mt-0">Metadata</h3>
 	<div class="flex gap-2">
 		{#if !showInline}
 			<button class="btn btn-sm variant-soft-primary" on:click={() => (showInline = true)} title="Show metadata inline">
@@ -35,7 +35,7 @@
 	</div>
 </div>
 
-{#if description}
+{#if description && !showInline}
 	<p class="text-sm text-surface-600 dark:text-surface-300 dark:text-surface-500 dark:text-surface-400 mb-2">{description}</p>
 {/if}
 
