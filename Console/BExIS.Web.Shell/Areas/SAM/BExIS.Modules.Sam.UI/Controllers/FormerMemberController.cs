@@ -6,7 +6,7 @@ using BExIS.Security.Services.Utilities;
 using BEXIS.Modules.SAM.UI.Model;
 using Microsoft.AspNet.Identity;
 using System.Collections.Generic;
-using System.Configuration;
+using BExIS.Utils.Config;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Services;
@@ -62,7 +62,7 @@ namespace BEXIS.Modules.SAM.UI.Controllers
                         emailService.Send(subject,
                             mailTextBody,
                             new List<string>() { user.Email },
-                            new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
+                            new List<string>() { GeneralSettings.SystemEmail }
                             );
                     }
                 }
@@ -101,7 +101,7 @@ namespace BEXIS.Modules.SAM.UI.Controllers
                         emailService.Send(subject,
                             mailTextBody,
                             new List<string>() { user.Email },
-                            new List<string>() { ConfigurationManager.AppSettings["SystemEmail"] }
+                            new List<string>() { GeneralSettings.SystemEmail }
                             );
                     }
                 }

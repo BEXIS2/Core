@@ -21,7 +21,6 @@ using BExIS.Utils.Upload;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -396,7 +395,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             {
                                 emailService.Send(MessageHelper.GetErrorHeader(),
                                     "Dataset: " + title + "(ID: " + id + ", User: " + User.DisplayName + " )" + " Can not upload. : " + e.Message,
-                                    ConfigurationManager.AppSettings["SystemEmail"]
+                                    GeneralSettings.SystemEmail
                                     );
                             }
                         }

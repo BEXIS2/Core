@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Configuration;
+using BExIS.Utils.Config;
 using System.Text;
 
 namespace BExIS.Security.Services.Utilities
@@ -153,7 +153,7 @@ namespace BExIS.Security.Services.Utilities
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendLine($"User \"{requester}\" (\"{email}\") sent a data request for dataset <b>\"{title}\"</b> with ID <b>{datasetid}</b> <br/>");
             stringBuilder.AppendLine($"<b>Intention:</b> \"{reason}\" <br/><br/>");
-            stringBuilder.AppendLine("To decide on this request login to  " + ConfigurationManager.AppSettings["ApplicationName"] + ". You will find all pending requests under My Data/Dashboard -> Datasets -> Decisions.");
+            stringBuilder.AppendLine("To decide on this request login to  " + GeneralSettings.ApplicationName + ". You will find all pending requests under My Data/Dashboard -> Datasets -> Decisions.");
 
             return stringBuilder.ToString();
         }

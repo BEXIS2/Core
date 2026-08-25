@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
+using BExIS.Utils.Config;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -355,7 +355,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     using(var emailService = new EmailService())
                     {
                         emailService.Send(subject, body, emails);
-                        emailService.Send(subject, body, ConfigurationManager.AppSettings["SystemEmail"]);
+                        emailService.Send(subject, body, GeneralSettings.SystemEmail);
                     }
 
                     return PartialView("_requestRow", new PublicationModel()
