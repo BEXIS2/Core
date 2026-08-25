@@ -68,7 +68,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 {
                     foreach (var entity in entityManager.Entities)
                     {
-                        entities.Add(new { id = entity.Id, name = entity.Name });
+                        if(!entity.Name.ToLower().Contains("extension"))
+                            entities.Add(new { id = entity.Id, name = entity.Name });
                     }
                 }
                 return Json(entities, JsonRequestBehavior.AllowGet);
