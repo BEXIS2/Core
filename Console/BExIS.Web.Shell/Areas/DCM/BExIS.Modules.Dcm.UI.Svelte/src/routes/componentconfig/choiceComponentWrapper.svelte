@@ -66,7 +66,7 @@
             draggable: true,
             selectable: true,
             deletable: false,
-            style: 'width: 220px; height: 60px; background: #f3e5f5; border: 2px solid #7b1fa2;'
+            style: 'width: 280px; height: 80px; background: #f3e5f5; border: 2px solid #7b1fa2;'
         };
         nodes.push(headerNode);
         currentPosition.y += nodeSpacing;
@@ -90,7 +90,7 @@
                 draggable: true,
                 selectable: true,
                 deletable: false,
-                style: 'width: 200px; height: 60px; background: #fce4ec;'
+                style: 'width: 280px; height: 80px; background: #fce4ec;'
             };
             nodes.push(optionNode);
             currentPosition.y += nodeSpacing;
@@ -153,7 +153,7 @@
                         draggable: true,
                         selectable: true,
                         deletable: false,
-                        style: 'width: 200px; height: 60px; background: #f8bbd9;'
+                        style: 'width: 280px; height: 80px; background: #f8bbd9;'
                     };
                     nodes.push(simpleNode);
                     currentPos.y += nodeSpacing;
@@ -187,7 +187,7 @@
             draggable: true,
             selectable: true,
             deletable: false,
-            style: 'width: 200px; height: 60px; background: #f8bbd9;'
+            style: 'width: 280px; height: 80px; background: #f8bbd9;'
         };
     }
 

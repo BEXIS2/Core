@@ -165,9 +165,11 @@
   $: partyComplex = data?.partyComplex ?? false;
   $: keyTitle = 'System key mapping' + (keyName ? ': ' + keyName : '');
   $: partyTitle = 'Party mapping' + (partySelector ? ' (selector)' : '') + (partyComplex ? ' (complex)' : '');
+  $: searchMatch = data?._searchMatch ?? false;
+  $: searchCurrent = data?._searchCurrent ?? false;
 </script>
 
-<div class="leaf-node-content" class:selected>
+<div class="leaf-node-content" class:selected class:search-match={searchMatch} class:search-current={searchCurrent}>
   <Handle 
     type="target" 
     position={Position.Right} 
@@ -243,6 +245,18 @@
   .leaf-node-content.selected {
     border-color: #ff6b35;
     box-shadow: 0 0 8px rgba(255, 107, 53, 0.3);
+  }
+
+  .leaf-node-content.search-match {
+    border-color: #ffeb3b;
+    background: #fffde7;
+  }
+
+  .leaf-node-content.search-current {
+    border-color: #f44336;
+    border-width: 3px;
+    box-shadow: 0 0 12px rgba(244, 67, 54, 0.5);
+    z-index: 10;
   }
   
   .leaf-content {
