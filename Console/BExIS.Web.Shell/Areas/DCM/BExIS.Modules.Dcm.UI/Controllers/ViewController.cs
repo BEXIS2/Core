@@ -110,10 +110,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["has_data"] = false;
             ViewData["data_aggreement"] = moduleSettings.GetValueByKey("data_aggreement");
 
-            if (version > 0)
+            // load BioSchema Description if exist
+            int bioSchemaVersion = version;
+            if (bioSchemaVersion <= 0)
             {
-                // load BioSchema Description if exist
-                string bioschemadescription = getBioSchema(id, version);
+                // version 0 means latest — get the latest version number for BioSchema
+                using (var datasetManagerForVersion = new DatasetManager())
+                {
+                    bioSchemaVersion = (int)datasetManagerForVersion.GetDatasetLatestVersion(id).VersionNo;
+                }
+            }
+            if (bioSchemaVersion > 0)
+            {
+                string bioschemadescription = getBioSchema(id, bioSchemaVersion);
                 if (!string.IsNullOrEmpty(bioschemadescription))
                     ViewData["bioSchema"] = bioschemadescription;
             }
