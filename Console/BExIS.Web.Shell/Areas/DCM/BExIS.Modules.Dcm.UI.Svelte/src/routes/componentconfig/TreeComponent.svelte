@@ -99,7 +99,7 @@
                     draggable: false,
                     selectable: false,
                     deletable: false,
-                    style: 'width: 200px; height: 40px;'
+                    style: 'width: 280px; height: 40px;'
                 };
                 nodes.push(sectionNode);
                 position.y += 40; // space between sections
@@ -120,7 +120,7 @@
                         draggable: false,
                         selectable: false,
                         deletable: false,
-                        style: 'width: 200px; height: 40px;'
+                        style: 'width: 280px; height: 40px;'
                     };
                     nodes.push(choiceSectionNode);
                     position.y += 50;
@@ -164,7 +164,7 @@
                     draggable: true,
                     selectable: true,
                     deletable: false,
-                    style: 'width: 220px; height: 60px;' //previously = 180
+                    style: 'width: 280px; height: 80px;' //previously = 180
                 };
                 nodes.push(leafNode);
                 position.y += spacing;
@@ -184,7 +184,7 @@
                             draggable: false,
                             selectable: false,
                             deletable: false,
-                            style: 'width: 200px; height: 40px;'
+                            style: 'width: 280px; height: 40px;'
                         };
                         nodes.push(arraySectionNode);
                         position.y += 50;  // space between sections
@@ -218,7 +218,7 @@
                                 draggable: true,
                                 selectable: true,
                                 deletable: false,
-                                style: 'width: 220px; height: 60px;'
+                                style: 'width: 280px; height: 80px;'
                             };
                             nodes.push(arrLeaf);
                             position.y += spacing;
@@ -252,7 +252,7 @@
                                         draggable: true,
                                         selectable: true,
                                         deletable: false,
-                                        style: 'width: 220px; height: 60px;'
+                                        style: 'width: 280px; height: 80px;'
                                     };
                                     nodes.push(vLeaf);
                                     position.y += spacing;
@@ -285,7 +285,7 @@
                             draggable: true,
                             selectable: true,
                             deletable: false,
-                            style: 'width: 220px; height: 60px;'
+                            style: 'width: 280px; height: 80px;'
                         };
                         nodes.push(primLeaf);
                         position.y += spacing;

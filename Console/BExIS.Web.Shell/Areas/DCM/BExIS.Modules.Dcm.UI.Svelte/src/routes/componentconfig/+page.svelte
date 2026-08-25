@@ -15,6 +15,8 @@
   } from '@xyflow/svelte';
   import { writable, type Writable, get } from 'svelte/store';
   import '@xyflow/svelte/dist/style.css';
+  import Fa from 'svelte-fa';
+  import { faMagnifyingGlass, faXmark } from '@fortawesome/free-solid-svg-icons';
   import { onMount, tick } from 'svelte';
 
   // import custom components
@@ -30,6 +32,9 @@
   import SectionNode from './SectionNode.svelte';
   import LeafNode from './LeafNode.svelte';
   import ResetViewButton from './ResetViewButton.svelte';
+  import FlowHelper from './FlowHelper.svelte';
+
+  let setCenterFn: (x: number, y: number, zoom?: number) => void = () => {};
 
   // import file helpers for config management
   import { 
@@ -43,7 +48,7 @@
   } from './Services/fileHelpers';
   
   // import componentManifestJson from './componentManifest.json';
-	import { Page, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
+	import { Page, pageContentLayoutType, notificationStore, notificationType } from '@bexis2/bexis2-core-ui';
 	import { SaveConfig, LoadConfig } from './Services/apiCalls';
 	import { getEntityTemplateList } from '$services/EntityTemplateCaller';
 
@@ -77,6 +82,73 @@
   let configLoaded = false;
   // store for node specific modes
   let nodeSpecificModes = new Map<string, any>();
+  let searchTerm = '';
+  let searchResults: any[] = [];
+  let currentSearchIndex = -1;
+
+  // search nodes by label or path
+  function performSearch() {
+    if (!searchTerm.trim()) {
+      searchResults = [];
+      currentSearchIndex = -1;
+      // clear highlights
+      nodes.update(ns => ns.map(n => ({ ...n, data: { ...n.data, _searchMatch: false } })));
+      return;
+    }
+
+    const term = searchTerm.toLowerCase().trim();
+    searchResults = get(nodes).filter(n => {
+      const label = (n.data?.label || '').toString().toLowerCase();
+      const path = (n.data?.path || '').toString().toLowerCase();
+      return label.includes(term) || path.includes(term);
+    });
+
+    // highlight matches
+    nodes.update(ns => ns.map(n => {
+      const label = (n.data?.label || '').toString().toLowerCase();
+      const path = (n.data?.path || '').toString().toLowerCase();
+      const isMatch = label.includes(term) || path.includes(term);
+      return { ...n, data: { ...n.data, _searchMatch: isMatch } };
+    }));
+
+    if (searchResults.length > 0) {
+      currentSearchIndex = 0;
+      focusNode(searchResults[0]);
+    }
+  }
+
+  function focusNextResult() {
+    if (searchResults.length === 0) return;
+    currentSearchIndex = (currentSearchIndex + 1) % searchResults.length;
+    focusNode(searchResults[currentSearchIndex]);
+  }
+
+  function focusPrevResult() {
+    if (searchResults.length === 0) return;
+    currentSearchIndex = currentSearchIndex <= 0 ? searchResults.length - 1 : currentSearchIndex - 1;
+    focusNode(searchResults[currentSearchIndex]);
+  }
+
+  function focusNode(node: any) {
+    if (!node?.position) return;
+    // highlight node
+    nodes.update(ns => ns.map(n => ({
+      ...n,
+      selected: n.id === node.id,
+      data: { ...n.data, _searchCurrent: n.id === node.id }
+    })));
+    // move viewport to center on the node
+    const x = node.position.x + 140; // half node width
+    const y = node.position.y + 40;  // half node height
+    setCenterFn(x, y, 1.2);
+  }
+
+  function clearSearch() {
+    searchTerm = '';
+    searchResults = [];
+    currentSearchIndex = -1;
+    nodes.update(ns => ns.map(n => ({ ...n, data: { ...n.data, _searchMatch: false, _searchCurrent: false } })));
+  }
 
   // reactive: convert template ID to full object
   $: if (selectedEntityTemplateId && entityTemplateList.length > 0) {
@@ -753,9 +825,22 @@
       return;
     }
     
-    SaveConfig(componentConfig_edit, Number(selectedEntityTemplateId), 'edit');
-    SaveConfig(componentConfig_view, Number(selectedEntityTemplateId), 'view');
-    SaveConfig(componentPositions, Number(selectedEntityTemplateId), 'positions');
+    SaveConfig(componentConfig_edit, Number(selectedEntityTemplateId), 'edit')
+      .then(() => SaveConfig(componentConfig_view, Number(selectedEntityTemplateId), 'view'))
+      .then(() => SaveConfig(componentPositions, Number(selectedEntityTemplateId), 'positions'))
+      .then(() => {
+        notificationStore.showNotification({
+          notificationType: notificationType.success,
+          message: 'Configuration saved successfully.'
+        });
+      })
+      .catch((error) => {
+        console.error('Error saving configuration:', error);
+        notificationStore.showNotification({
+          notificationType: notificationType.error,
+          message: 'Failed to save configuration. Please try again.'
+        });
+      });
     
     
     
@@ -869,14 +954,23 @@
     }
       
     
-    SaveConfig(componentConfig_edit, 1, 'edit');
-    SaveConfig(componentConfig_view, 1, 'view');
-    SaveConfig(componentPositions, 1, 'positions');
-    
-    // download all configs
-    downloadAllConfigs(componentConfig_edit, componentConfig_view, componentPositions);
-  
-    // alert('Mappings saved!');
+    SaveConfig(componentConfig_edit, 1, 'edit')
+      .then(() => SaveConfig(componentConfig_view, 1, 'view'))
+      .then(() => SaveConfig(componentPositions, 1, 'positions'))
+      .then(() => {
+        notificationStore.showNotification({
+          notificationType: notificationType.success,
+          message: 'Mappings saved successfully.'
+        });
+        downloadAllConfigs(componentConfig_edit, componentConfig_view, componentPositions);
+      })
+      .catch((error) => {
+        console.error('Error saving mappings:', error);
+        notificationStore.showNotification({
+          notificationType: notificationType.error,
+          message: 'Failed to save mappings. Please try again.'
+        });
+      });
   }
 
   // apply loaded positions to nodes via ID
@@ -2494,6 +2588,26 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
         <option value={template.id}>{template.name}</option>
       {/each}
     </select>
+
+    <!-- Search nodes -->
+    <div class="search-box">
+      <Fa icon={faMagnifyingGlass} class="search-icon" />
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search fields..."
+        bind:value={searchTerm}
+        on:input={performSearch}
+        on:keydown={(e) => {
+          if (e.key === 'Enter') { e.preventDefault(); focusNextResult(); }
+          if (e.key === 'Escape') clearSearch();
+        }}
+      />
+      {#if searchTerm}
+        <span class="search-count">{#if searchResults.length > 0}{currentSearchIndex + 1}/{searchResults.length}{:else}0{/if}</span>
+        <button class="search-clear" on:click={clearSearch} title="Clear search"><Fa icon={faXmark} /></button>
+      {/if}
+    </div>
     <div class="mode-controls">
       <button 
         class="mode-button" 
@@ -2515,6 +2629,7 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
   <div class="layout_treeflow-sidebar">
     <div class="flow-wrapper">
       <SvelteFlowProvider>
+        <FlowHelper onReady={(fn) => (setCenterFn = fn)} />
         <SvelteFlow
           {nodes}
           {edges}
@@ -2695,7 +2810,7 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
   }
   
   .top-bar_treeflow {
-    height: 60px;
+    height: 80px;
     background: #ffffff;
     border-bottom: 2px solid #007acc;
     display: flex;
@@ -2710,6 +2825,52 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
     font-size: 1.2rem;
     font-weight: bold;
     color: #333;
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 0.3rem 0.5rem;
+    min-width: 220px;
+  }
+  .search-box:focus-within {
+    border-color: #007acc;
+    box-shadow: 0 0 3px rgba(0, 122, 204, 0.3);
+  }
+  .search-icon {
+    color: #888;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .search-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 0.85rem;
+    flex: 1;
+    min-width: 0;
+  }
+  .search-count {
+    font-size: 0.7rem;
+    color: #888;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .search-clear {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #888;
+    padding: 0;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .search-clear:hover {
+    color: #d32f2f;
   }
   
   .mode-controls {

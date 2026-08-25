@@ -355,9 +355,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 }
                                 else // all other files from unstructured and attachments
                                      // get filename from path
-                                     // the files stay with there original file names
+                                     // place files in a "data" subfolder inside the zip
                                 {
-                                    name = Path.GetFileName(cd.URI);
+                                    name = "data/" + Path.GetFileName(cd.URI);
                                 }
 
 

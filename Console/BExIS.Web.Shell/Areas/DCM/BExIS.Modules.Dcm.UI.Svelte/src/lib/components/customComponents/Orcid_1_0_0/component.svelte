@@ -36,6 +36,7 @@
 	let modeName = config?.mode?.mode_name ?? '';
 	let isSearchMode = modeName === 'Search';
 	let isValidateMode = modeName === 'Validate and Fill';
+	let isManualMode = modeName === 'Manual Entry';
 
 	let OrcidApiUrl =
 		targetVars?.find((v) => v.target_variable === 'OrcidApiUrl')?.value || 'https://pub.orcid.org/v3.0/';
@@ -204,6 +205,15 @@
 	family_name_path = cleanPath(family_name_path);
 	orcid_id_path = cleanPath(orcid_id_path);
 
+	// --- Manual mode ---
+	// reuses orcid_id_path from validate mode vars, and orcid_field_path for the name
+	let manualOrcidIdValue = '';
+	let manualSearchResults: OrcidResult[] = [];
+	let manualIsLoading = false;
+	let manualShowResults = false;
+	let manualSelectedIndex = -1;
+	let manualTimer: ReturnType<typeof setTimeout> | null = null;
+
 	console.log('ORCID validate paths:', { given_name_path, family_name_path, orcid_id_path });
 
 	let givenNameValue = given_name_path ? getValueByPath(given_name_path) ?? '' : '';
@@ -251,7 +261,114 @@
 				setTimeout(() => searchOrcidByName(givenNameValue, familyNameValue, true), 500);
 			}
 		}
+
+		if (isManualMode) {
+			const { node: schemaNode } = resolveNode(orcid_field_path);
+			registerValidationItem(orcid_field_path, label, required, schemaNode, true);
+			validationRegistered = true;
+			syncOrcidValue();
+
+			// load existing ORCID ID from the orcid_id_path if available
+			if (orcid_id_path) {
+				manualOrcidIdValue = getValueByPath(orcid_id_path) ?? '';
+			}
+		}
 	});
+
+	// --- Manual mode functions ---
+	function onManualOrcidIdInput(e: Event) {
+		const input = e.target as HTMLInputElement;
+		manualOrcidIdValue = input.value;
+		// store the ORCID ID to the orcid_id_path if available
+		if (orcid_id_path && manualOrcidIdValue) {
+			updateMetadataStore(orcid_id_path, manualOrcidIdValue, false);
+		}
+		// also set as ref for the display name field
+		if (manualOrcidIdValue.startsWith('https://orcid.org/')) {
+			ref = manualOrcidIdValue;
+		} else if (manualOrcidIdValue.match(/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/)) {
+			ref = `https://orcid.org/${manualOrcidIdValue}`;
+		}
+		syncOrcidValue();
+	}
+
+	function onManualNameInput(e: Event) {
+		const input = e.target as HTMLInputElement;
+		value = input.value;
+		searchQuery = input.value;
+		syncOrcidValue();
+
+		if (manualTimer) clearTimeout(manualTimer);
+		if (searchQuery.trim().length < 2) {
+			manualSearchResults = [];
+			manualShowResults = false;
+			return;
+		}
+
+		manualTimer = setTimeout(() => {
+			searchOrcidForManual(searchQuery.trim());
+		}, debounceMs);
+	}
+
+	async function searchOrcidForManual(query: string) {
+		manualIsLoading = true;
+		manualShowResults = true;
+		try {
+			const words = query.split(/\s+/).filter(Boolean);
+			const queryParts = words.map(w =>
+				`given-names:${encodeURIComponent(w)}+OR+family-name:${encodeURIComponent(w)}`
+			);
+			const orcidQuery = queryParts.length > 1 ? `(${queryParts.join('+OR+')})` : queryParts[0];
+			const searchUrl = `${OrcidApiUrl}search/?q=${orcidQuery}&rows=10`;
+
+			const orcidIds = await fetchOrcidSearch(searchUrl);
+			manualSearchResults = [];
+			for (const orcidId of orcidIds) {
+				const person = await fetchOrcidPerson(orcidId);
+				manualSearchResults.push({
+					orcidId,
+					orcidUri: `https://orcid.org/${orcidId}`,
+					givenNames: person.givenNames,
+					familyName: person.familyName,
+					creditName: person.creditName
+				});
+			}
+			manualSelectedIndex = -1;
+		} catch (error) {
+			console.error('Error searching ORCID (manual):', error);
+			manualSearchResults = [];
+		} finally {
+			manualIsLoading = false;
+		}
+	}
+
+	function selectManualOrcid(result: OrcidResult) {
+		const displayName = result.creditName || `${result.givenNames} ${result.familyName}`.trim();
+		value = displayName;
+		manualOrcidIdValue = result.orcidId;
+		ref = result.orcidUri;
+		syncOrcidValue();
+		if (orcid_id_path) {
+			updateMetadataStore(orcid_id_path, result.orcidId, false);
+		}
+		manualShowResults = false;
+		manualSearchResults = [];
+	}
+
+	function onManualKeydown(e: KeyboardEvent, results: OrcidResult[], isOrcidId: boolean) {
+		if (e.key === 'ArrowDown') {
+			e.preventDefault();
+			manualSelectedIndex = Math.min(manualSelectedIndex + 1, results.length - 1);
+		} else if (e.key === 'ArrowUp') {
+			e.preventDefault();
+			manualSelectedIndex = Math.max(manualSelectedIndex - 1, -1);
+		} else if (e.key === 'Enter' && manualSelectedIndex >= 0 && manualSelectedIndex < results.length) {
+			e.preventDefault();
+			selectManualOrcid(results[manualSelectedIndex]);
+		} else if (e.key === 'Escape') {
+			manualShowResults = false;
+		}
+	}
 
 	// --- Search functions ---
 	function onSearchInput(e: Event) {
@@ -741,75 +858,104 @@
 	</InputContainer>
 {:else if isValidateMode}
 	<InputContainer {...commonProps} on:showDescription on:hideDescription>
-		<div class="orcid-validate-container">
-			<div class="orcid-validate-row">
-				<div class="orcid-validate-field">
-					<label class="orcid-validate-label">Given Name</label>
-					<input
-						type="text"
-						class="orcid-input input variant-form-material"
-						placeholder="Given name"
-						bind:value={givenNameValue}
-						on:input={onValidateInput}
+		{#if canLinkToParty}
+			<!-- Party-linked validate mode: party autocomplete + ORCID search -->
+			<div class="flex items-start gap-2">
+				<div class="grow">
+					<MultiSelect
+						{...commonProps}
+						title={label}
+						source={partyList}
+						complexSource={true}
+						complexTarget={true}
+						itemId="partyId"
+						itemLabel="value"
+						bind:target={selectorValue}
+						isMulti={false}
+						clearable={true}
+						searchable={false}
+						on:change={onUpdateParty}
+						on:clear={onUpdateParty}
 					/>
 				</div>
-				<div class="orcid-validate-field">
-					<label class="orcid-validate-label">Family Name</label>
-					<input
-						type="text"
-						class="orcid-input input variant-form-material"
-						placeholder="Family name"
-						bind:value={familyNameValue}
-						on:input={onValidateInput}
-					/>
+				<div class="pt-7 shrink-0 flex items-center gap-1">
+					{#if hasPartyId}
+						<Fa icon={faCircleCheck} class="text-success-500" title="This field is linked to a party." />
+					{:else}
+						<Fa icon={faCircleQuestion} class="text-warning-500" title="This field can be linked to a party but has no party assigned yet." />
+					{/if}
 				</div>
-			<button
-				class="orcid-search-button"
-				on:click={onValidateSearchClick}
-				disabled={!givenNameValue.trim() || !familyNameValue.trim() || isValidateLoading}
-			>
-				{#if isValidateLoading}
-					<span class="orcid-spinner orcid-spinner-sm"></span>
-				{:else}
-					<svg class="orcid-icon-sm" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-						<rect width="256" height="256" rx="32" fill="#A6CE39"/>
-						<path d="M78.8 78.8h21.4v107.5H78.8V78.8z" fill="#fff"/>
-						<circle cx="89.5" cy="53.5" r="13.5" fill="#fff"/>
-						<path d="M139.5 78.8v8.6c6.7-6.7 16.4-10.7 28.1-10.7 28.5 0 49.6 21.1 49.6 49.6s-21.1 49.6-49.6 49.6c-11.7 0-21.4-4-28.1-10.7v55.1h-21.4V78.8h21.4zm23.9 79.4c15.7 0 27.2-12.3 27.2-28.9s-11.5-28.9-27.2-28.9-27.2 12.3-27.2 28.9 11.5 28.9 27.2 28.9z" fill="#fff"/>
-					</svg>
-					Search
-				{/if}
-			</button>
 			</div>
 
-			{#if showValidateResults && validateResults.length > 0}
-				<ul class="orcid-results">
-					{#each validateResults as result, i}
-						<li
-							class="orcid-result-item"
-							class:selected={i === selectedValidateIndex}
-							on:mousedown={() => selectValidateOrcid(result)}
-							on:mouseenter={() => (selectedValidateIndex = i)}
-							role="option"
-							tabindex="-1"
+			{#if showOrcidSearch}
+				<div class="orcid-validate-container mt-2">
+					<div class="orcid-validate-row">
+						<div class="orcid-validate-field">
+							<label class="orcid-validate-label">Given Name</label>
+							<input
+								type="text"
+								class="orcid-input input variant-form-material"
+								placeholder="Given name"
+								bind:value={givenNameValue}
+							/>
+						</div>
+						<div class="orcid-validate-field">
+							<label class="orcid-validate-label">Family Name</label>
+							<input
+								type="text"
+								class="orcid-input input variant-form-material"
+								placeholder="Family name"
+								bind:value={familyNameValue}
+							/>
+						</div>
+						<button
+							class="orcid-search-button"
+							on:click={onValidateSearchClick}
+							disabled={!givenNameValue.trim() || !familyNameValue.trim() || isValidateLoading}
 						>
-							<div class="orcid-result-name">
-								{result.creditName || `${result.givenNames} ${result.familyName}`.trim() || result.orcidId}
-							</div>
-							<div class="orcid-result-meta">
-								{#if result.givenNames || result.familyName}
-									{#if result.creditName}
-										<span>{result.givenNames} {result.familyName}</span>
-									{/if}
-								{/if}
-								<span class="orcid-id">{result.orcidId}</span>
-							</div>
-						</li>
-					{/each}
-				</ul>
-			{/if}
-			{#if showValidateResults && !isValidateLoading && validateResults.length === 0 && givenNameValue.trim() && familyNameValue.trim()}
-				<div class="orcid-no-results">No ORCID records found for "{givenNameValue} {familyNameValue}"</div>
+							{#if isValidateLoading}
+								<span class="orcid-spinner orcid-spinner-sm"></span>
+							{:else}
+								<svg class="orcid-icon-sm" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+									<rect width="256" height="256" rx="32" fill="#A6CE39"/>
+									<path d="M78.8 78.8h21.4v107.5H78.8V78.8z" fill="#fff"/>
+									<circle cx="89.5" cy="53.5" r="13.5" fill="#fff"/>
+									<path d="M139.5 78.8v8.6c6.7-6.7 16.4-10.7 28.1-10.7 28.5 0 49.6 21.1 49.6 49.6s-21.1 49.6-49.6 49.6c-11.7 0-21.4-4-28.1-10.7v55.1h-21.4V78.8h21.4zm23.9 79.4c15.7 0 27.2-12.3 27.2-28.9s-11.5-28.9-27.2-28.9-27.2 12.3-27.2 28.9 11.5 28.9 27.2 28.9z" fill="#fff"/>
+								</svg>
+								Search
+							{/if}
+						</button>
+					</div>
+					{#if showValidateResults && validateResults.length > 0}
+						<ul class="orcid-results">
+							{#each validateResults as result, i}
+								<li
+									class="orcid-result-item"
+									class:selected={i === selectedValidateIndex}
+									on:mousedown={() => selectValidateOrcid(result)}
+									on:mouseenter={() => (selectedValidateIndex = i)}
+									role="option"
+									tabindex="-1"
+								>
+									<div class="orcid-result-name">
+										{result.creditName || `${result.givenNames} ${result.familyName}`.trim() || result.orcidId}
+									</div>
+									<div class="orcid-result-meta">
+										{#if result.givenNames || result.familyName}
+											{#if result.creditName}
+												<span>{result.givenNames} {result.familyName}</span>
+											{/if}
+										{/if}
+										<span class="orcid-id">{result.orcidId}</span>
+									</div>
+								</li>
+							{/each}
+						</ul>
+					{/if}
+					{#if showValidateResults && !isValidateLoading && validateResults.length === 0 && givenNameValue.trim() && familyNameValue.trim()}
+						<div class="orcid-no-results">No ORCID records found for "{givenNameValue} {familyNameValue}"</div>
+					{/if}
+				</div>
 			{/if}
 
 			{#if currentOrcidId || selectedCreditName}
@@ -828,11 +974,207 @@
 					{/if}
 				</div>
 			{/if}
+		{:else}
+			<!-- Non-party validate mode: manual name entry + ORCID search -->
+			<div class="orcid-validate-container">
+				<div class="orcid-validate-row">
+					<div class="orcid-validate-field">
+						<label class="orcid-validate-label">Given Name</label>
+						<input
+							type="text"
+							class="orcid-input input variant-form-material"
+							placeholder="Given name"
+							bind:value={givenNameValue}
+							on:input={onValidateInput}
+						/>
+					</div>
+					<div class="orcid-validate-field">
+						<label class="orcid-validate-label">Family Name</label>
+						<input
+							type="text"
+							class="orcid-input input variant-form-material"
+							placeholder="Family name"
+							bind:value={familyNameValue}
+							on:input={onValidateInput}
+						/>
+					</div>
+				<button
+					class="orcid-search-button"
+					on:click={onValidateSearchClick}
+					disabled={!givenNameValue.trim() || !familyNameValue.trim() || isValidateLoading}
+				>
+					{#if isValidateLoading}
+						<span class="orcid-spinner orcid-spinner-sm"></span>
+					{:else}
+						<svg class="orcid-icon-sm" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+							<rect width="256" height="256" rx="32" fill="#A6CE39"/>
+							<path d="M78.8 78.8h21.4v107.5H78.8V78.8z" fill="#fff"/>
+							<circle cx="89.5" cy="53.5" r="13.5" fill="#fff"/>
+							<path d="M139.5 78.8v8.6c6.7-6.7 16.4-10.7 28.1-10.7 28.5 0 49.6 21.1 49.6 49.6s-21.1 49.6-49.6 49.6c-11.7 0-21.4-4-28.1-10.7v55.1h-21.4V78.8h21.4zm23.9 79.4c15.7 0 27.2-12.3 27.2-28.9s-11.5-28.9-27.2-28.9-27.2 12.3-27.2 28.9 11.5 28.9 27.2 28.9z" fill="#fff"/>
+						</svg>
+						Search
+					{/if}
+				</button>
+				</div>
+
+				{#if showValidateResults && validateResults.length > 0}
+					<ul class="orcid-results">
+						{#each validateResults as result, i}
+							<li
+								class="orcid-result-item"
+								class:selected={i === selectedValidateIndex}
+								on:mousedown={() => selectValidateOrcid(result)}
+								on:mouseenter={() => (selectedValidateIndex = i)}
+								role="option"
+								tabindex="-1"
+							>
+								<div class="orcid-result-name">
+									{result.creditName || `${result.givenNames} ${result.familyName}`.trim() || result.orcidId}
+								</div>
+								<div class="orcid-result-meta">
+									{#if result.givenNames || result.familyName}
+										{#if result.creditName}
+											<span>{result.givenNames} {result.familyName}</span>
+										{/if}
+									{/if}
+									<span class="orcid-id">{result.orcidId}</span>
+								</div>
+							</li>
+						{/each}
+					</ul>
+				{/if}
+				{#if showValidateResults && !isValidateLoading && validateResults.length === 0 && givenNameValue.trim() && familyNameValue.trim()}
+					<div class="orcid-no-results">No ORCID records found for "{givenNameValue} {familyNameValue}"</div>
+				{/if}
+
+				{#if currentOrcidId || selectedCreditName}
+					<div class="orcid-filled">
+						{#if currentOrcidId}
+							<div class="orcid-filled-row">
+								<span class="orcid-filled-label">ORCID iD:</span>
+								<a href={currentOrcidRef || `https://orcid.org/${currentOrcidId}`} target="_blank" rel="noopener noreferrer">{currentOrcidId}</a>
+							</div>
+						{/if}
+						{#if selectedCreditName}
+							<div class="orcid-filled-row">
+								<span class="orcid-filled-label">Credit Name:</span>
+								<span>{selectedCreditName}</span>
+							</div>
+						{/if}
+					</div>
+				{/if}
+			</div>
+		{/if}
+	</InputContainer>
+{:else if isManualMode}
+	<InputContainer {...commonProps} on:showDescription on:hideDescription>
+		<div class="orcid-manual-container">
+			<!-- Name field with search -->
+			<div class="orcid-manual-field">
+				<label class="orcid-validate-label" for="manual-name-{orcid_field_path}">{label}</label>
+				<div class="orcid-search-container">
+					<input
+						id="manual-name-{orcid_field_path}"
+						type="text"
+						class="orcid-input input variant-form-material {commonProps.valid ? 'input-success' : ''} {commonProps.invalid ? 'input-error' : ''}"
+						placeholder="Enter name or search..."
+						value={value || ''}
+						on:input={onManualNameInput}
+						on:keydown={(e) => onManualKeydown(e, manualSearchResults, false)}
+						on:blur={() => setTimeout(() => (manualShowResults = false), 200)}
+						on:focus={() => { if (manualSearchResults.length > 0) manualShowResults = true; }}
+					/>
+					{#if manualIsLoading}
+						<div class="orcid-loading">
+							<span class="orcid-spinner orcid-spinner-sm"></span>
+						</div>
+					{/if}
+					{#if manualShowResults && manualSearchResults.length > 0}
+						<ul class="orcid-results">
+							{#each manualSearchResults as result, i}
+								<li
+									class="orcid-result-item"
+									class:selected={i === manualSelectedIndex}
+									on:mousedown={() => selectManualOrcid(result)}
+									on:mouseenter={() => (manualSelectedIndex = i)}
+									role="option"
+									tabindex="-1"
+									aria-selected={i === manualSelectedIndex}
+								>
+									<div class="orcid-result-name">
+										{result.creditName || `${result.givenNames} ${result.familyName}`.trim() || result.orcidId}
+									</div>
+									<div class="orcid-result-meta">
+										{#if result.givenNames || result.familyName}
+											{#if result.creditName}
+												<span>{result.givenNames} {result.familyName}</span>
+											{/if}
+										{/if}
+										<span class="orcid-id">{result.orcidId}</span>
+									</div>
+								</li>
+							{/each}
+						</ul>
+					{/if}
+				</div>
+			</div>
+
+			<!-- ORCID iD field — manually editable -->
+			<div class="orcid-manual-field mt-2">
+				<label class="orcid-validate-label" for="manual-orcid-{orcid_field_path}">ORCID iD</label>
+				<div class="flex items-center gap-2">
+					<input
+						id="manual-orcid-{orcid_field_path}"
+						type="text"
+						class="orcid-input input variant-form-material"
+						placeholder="0000-0000-0000-0000"
+						value={manualOrcidIdValue}
+						on:input={onManualOrcidIdInput}
+					/>
+					{#if manualOrcidIdValue}
+						<a href={manualOrcidIdValue.startsWith('http') ? manualOrcidIdValue : `https://orcid.org/${manualOrcidIdValue}`}
+							target="_blank" rel="noopener noreferrer" class="orcid-external-link" title="Open ORCID profile">
+							<svg class="orcid-icon-sm" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+								<rect width="256" height="256" rx="32" fill="#A6CE39"/>
+								<path d="M78.8 78.8h21.4v107.5H78.8V78.8z" fill="#fff"/>
+								<circle cx="89.5" cy="53.5" r="13.5" fill="#fff"/>
+								<path d="M139.5 78.8v8.6c6.7-6.7 16.4-10.7 28.1-10.7 28.5 0 49.6 21.1 49.6 49.6s-21.1 49.6-49.6 49.6c-11.7 0-21.4-4-28.1-10.7v55.1h-21.4V78.8h21.4zm23.9 79.4c15.7 0 27.2-12.3 27.2-28.9s-11.5-28.9-27.2-28.9-27.2 12.3-27.2 28.9 11.5 28.9 27.2 28.9z" fill="#fff"/>
+							</svg>
+						</a>
+					{/if}
+				</div>
+			</div>
+
+			{#if ref}
+				<div class="orcid-selected-id mt-1">
+					ORCID: <a href={ref} target="_blank" rel="noopener noreferrer">{ref}</a>
+				</div>
+			{/if}
 		</div>
 	</InputContainer>
 {/if}
-
 <style>
+	.orcid-manual-container {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+	.orcid-manual-field {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+	.orcid-external-link {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+	}
+	.orcid-external-link svg {
+		width: 1.5rem;
+		height: 1.5rem;
+	}
+
 	.orcid-search-btn {
 		display: inline-flex;
 		align-items: center;

@@ -114,8 +114,8 @@
 						{#if file.type}
 							<span class="badge variant-soft-surface text-xs whitespace-nowrap text-surface-700 dark:text-surface-200">{file.type}</span>
 						{/if}
-						{#if file.length}
-							<span class="text-xs text-surface-700 dark:text-surface-200 whitespace-nowrap">{formatSize(file.length)}</span>
+						{#if file.lenght}
+							<span class="text-xs text-surface-700 dark:text-surface-200 whitespace-nowrap">{formatSize(file.lenght)}</span>
 						{/if}
 					</div>
 					{#if file.description}
@@ -158,7 +158,14 @@
 			style="max-height: 90vh; width: 90vw; max-width: 90vw;"
 			on:click|stopPropagation>
 			<div class="flex items-center justify-between gap-4 border-b border-surface-300 dark:border-surface-600 px-4 py-2">
-				<span class="text-sm font-medium truncate" title={previewFile.name}>{previewFile.name}</span>
+				<div class="flex flex-col gap-0.5 min-w-0">
+					<span class="text-sm font-medium truncate" title={previewFile.name}>{previewFile.name}</span>
+					{#if previewFile.lenght}
+						<span class="text-xs text-surface-600 dark:text-surface-300">{formatSize(previewFile.lenght)} · {previewFile.type || 'unknown type'}</span>
+					{:else}
+						<span class="text-xs text-surface-600 dark:text-surface-300">{previewFile.type || 'unknown type'}</span>
+					{/if}
+				</div>
 				<button
 					class="btn-icon variant-ghost-surface shrink-0 text-surface-700 dark:text-surface-200"
 					title="Close preview"
