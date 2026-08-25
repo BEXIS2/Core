@@ -176,19 +176,20 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 //ToDo only enitities from type dataset should be indexed in this index
                 using (var publicationManager = new PublicationManager())
                 using(DatasetManager dm = new DatasetManager())
+                using(EntityReferenceManager erm = new EntityReferenceManager() )
                 {
                     // if the system is using tags, then only datasets that have a tag and its released should be indexeds
 
                     IList<long> ids = new List<long>();
-                if (!onlyReleasedTags) ids = dm.GetDatasetLatestIds(); // index all datasets
-                else // index only with tags
-                { 
-                    ids = dm.GetDatasetIdsWithTag();
-                }
-               
-                IList<long> ids_rev = ids.Reverse().ToList();
+                    if (!onlyReleasedTags) ids = dm.GetDatasetLatestIds(); // index all datasets
+                    else // index only with tags
+                    {
+                        ids = dm.GetDatasetIdsWithTag();
+                    }
 
-                
+                    IList<long> ids_rev = ids.Reverse().ToList();
+
+
                     foreach (var id in ids_rev)
                     {
                         try
@@ -198,7 +199,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                             string date = "";
                             XmlDocument metadata = null;
                             DatasetVersion version = null;
-                            
+
 
                             // set system fields
                             if (version != null)
@@ -207,7 +208,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                                 entityTemplate = version.Dataset.EntityTemplate.Name;
                             }
 
-                            writeBexisIndex(id, onlyReleasedTags, dm);
+                            writeBexisIndex(id, onlyReleasedTags, dm, erm);
                             //GC.Collect();
                         }
                         catch (Exception ex)
@@ -400,7 +401,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// <param name="id"></param>
         /// <param name="metadata"></param>
         /// <return></return>
-        private void writeBexisIndex(long id, bool onlyReleasedTags, DatasetManager dm)
+        private void writeBexisIndex(long id, bool onlyReleasedTags, DatasetManager dm, EntityReferenceManager erm)
         {
 
 
@@ -409,6 +410,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             string date = "";
             string entityTemplate = "";
             string entityName = "";
+            bool hasExtensions = false;
             DatasetVersion version = null;
             XmlDocument metadata = null;
 
@@ -435,7 +437,13 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 date = version.ModificationInfo?.Timestamp?.ToString("yyyy-MM-dd");
                 if (date == null) version.CreationInfo?.Timestamp?.ToString("yyyy-MM-dd");
                 if (date == null) date = "";
-            
+
+                // check if entity has extenstions
+                var extensions = erm.ReferenceRepository.Query(e =>
+                        e.SourceId.Equals(id) &&
+                        e.LinkType.Equals("extension")).Select(e=>e.TargetId).ToList();
+
+                hasExtensions = extensions.Any();
 
                 // stop indexing if entity is an extension
                 if (entityName.ToLowerInvariant().Equals(Convert.ToString(EntityType.Extension).ToLowerInvariant())) return;
@@ -455,8 +463,10 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 dataset.Add(new Field("gen_doi", doi, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
                 dataset.Add(new Field("gen_modifieddate", date, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
                 dataset.Add(new Field("gen_entitytemplate", entityTemplate, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
+                dataset.Add(new Field("gen_hasextension", hasExtensions.ToString(), Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.NOT_ANALYZED));
 
-                indexSystemInfos(id, doi, entityName, entityTemplate, ref dataset, docId);
+
+                indexSystemInfos(id, doi, entityName, entityTemplate, hasExtensions,  ref dataset, docId);
 
 
                 foreach (XmlNode facet in facetNodes)
@@ -617,6 +627,15 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
                 indexPrimaryData(id, categoryNodes, ref dataset, docId, metadata);
 
+                // add extensions data 
+                if (extensions.Any())
+                {
+                    foreach (var extension in extensions)
+                    {
+                        indexPrimaryData(extension, categoryNodes, ref dataset, docId, metadata);
+                    }
+                }
+
                 List<XmlNode> generalNodes = generalXmlNodeList;
 
                 foreach (XmlNode general in generalNodes)
@@ -674,6 +693,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             {
                 if (!dm.IsDatasetCheckedIn(id))
                     return;
+
 
                 DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
 
@@ -779,7 +799,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             }
         }
 
-        private void indexSystemInfos(long id, string doi, string entity, string template, ref Document dataset, string docId)
+        private void indexSystemInfos(long id, string doi, string entity, string template, bool hasExtensions,  ref Document dataset, string docId)
         {
    
             String primitiveType = "string";
@@ -840,6 +860,19 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             writeAutoCompleteIndex(docId, key, pDataValue);
             writeAutoCompleteIndex(docId, "ng_all", pDataValue);
 
+            // entity template
+            pDataValue = hasExtensions.ToString();
+            key = "hasextenion";
+            a = new Field("category_" + key, pDataValue, Lucene.Net.Documents.Field.Store.NO, toAnalyse);
+            a.Boost = boosting;
+            dataset.Add(a);
+            dataset.Add(new Field("ng_" + key, pDataValue,
+                Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+            dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES,
+                Lucene.Net.Documents.Field.Index.ANALYZED));
+            writeAutoCompleteIndex(docId, key, pDataValue);
+            writeAutoCompleteIndex(docId, "ng_all", pDataValue);
+
         }
 
         /// <summary>
@@ -850,6 +883,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         public void updateIndex(Dictionary<long, IndexingAction> datasetsToIndex, bool onlyReleasedTags)
         {
             using (DatasetManager dm = new DatasetManager())
+            using (EntityReferenceManager erm = new EntityReferenceManager())
+
             {
                 try
                 {
@@ -876,12 +911,12 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                             Query query = new TermQuery(new Term("doc_id", pair.Key.ToString()));
                             TopDocs tds = BexisIndexSearcher.getIndexSearcher().Search(query, 1);
 
-                            if (tds.TotalHits < 1) { writeBexisIndex(pair.Key, onlyReleasedTags, dm); }
+                            if (tds.TotalHits < 1) { writeBexisIndex(pair.Key, onlyReleasedTags, dm, erm); }
                             else
                             {
                                 indexWriter.DeleteDocuments(new Term("doc_id", pair.Key.ToString()));
                                 autoCompleteIndexWriter.DeleteDocuments(new Term("id", pair.Key.ToString()));
-                                writeBexisIndex(pair.Key, onlyReleasedTags, dm);
+                                writeBexisIndex(pair.Key, onlyReleasedTags, dm, erm);
                             }
                         }
                         else if (pair.Value == IndexingAction.DELETE)
@@ -893,7 +928,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                         {
                             indexWriter.DeleteDocuments(new Term("doc_id", pair.Key.ToString()));
                             autoCompleteIndexWriter.DeleteDocuments(new Term("id", pair.Key.ToString()));
-                            writeBexisIndex(pair.Key, onlyReleasedTags, dm);
+                            writeBexisIndex(pair.Key, onlyReleasedTags, dm, erm);
                         }
                     }
                     indexWriter.Commit();
@@ -920,6 +955,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         public void updateSingleDatasetIndex(long datasetId, IndexingAction indAction,bool onlyReleasedTags)
         {
             using (DatasetManager dm = new DatasetManager())
+            using (EntityReferenceManager erm = new EntityReferenceManager())
             {
                 try
                 {
@@ -936,12 +972,12 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
                         this.includePrimaryData = false;
 
-                        if (tds.TotalHits < 1) { writeBexisIndex(datasetId, onlyReleasedTags, dm); }
+                        if (tds.TotalHits < 1) { writeBexisIndex(datasetId, onlyReleasedTags, dm, erm); }
                         else
                         {
                             indexWriter.DeleteDocuments(new Term("doc_id", datasetId.ToString()));
                             autoCompleteIndexWriter.DeleteDocuments(new Term("id", datasetId.ToString()));
-                            writeBexisIndex(datasetId, onlyReleasedTags, dm);
+                            writeBexisIndex(datasetId, onlyReleasedTags, dm, erm);
                         }
                     }
                     else if (indAction == IndexingAction.DELETE)
@@ -953,7 +989,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     {
                         indexWriter.DeleteDocuments(new Term("doc_id", datasetId.ToString()));
                         autoCompleteIndexWriter.DeleteDocuments(new Term("id", datasetId.ToString()));
-                        writeBexisIndex(datasetId, onlyReleasedTags, dm);
+                        writeBexisIndex(datasetId, onlyReleasedTags, dm, erm);
                     }
 
                     indexWriter.Commit();
