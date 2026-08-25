@@ -114,6 +114,52 @@
             }
           ]
         }
+      },
+      {
+        "mode_name": "Manual Entry",
+        "description": "Single input field for name with a separate ORCID iD field that can be filled manually or via search",
+        "settings": {
+          "setting": [
+            {
+              "name": "Debounce",
+              "description": "Debounce time in ms for search requests",
+              "type": "string",
+              "target_variable": "debounce",
+              "default_value": {
+                "type": "string",
+                "value": "400"
+              }
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Name",
+              "description": "Display name of the person (stored as value)",
+              "type": "string",
+              "target_variable": "orcid_field",
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "ORCID iD",
+              "description": "The ORCID iD that can be typed manually or found via search",
+              "type": "string",
+              "target_variable": "orcid_id",
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            }
+          ]
+        }
       }
     ]
   }
