@@ -165,7 +165,6 @@
   <ItemGroup>
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\Api\CitationController.cs" />
-    <Compile Include="Controllers\Api\DashboardApiController.cs" />
     <Compile Include="Controllers\Api\DataTableController.cs" />
     <Compile Include="Controllers\Api\SearchApiController.cs" />
     <Compile Include="Controllers\Api\TagInfoController.cs" />

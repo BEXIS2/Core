@@ -42,7 +42,7 @@ export interface EntityModel {
 
 export const getEntities = async (): Promise<EntityModel[]> => {
 	try {
-		const response = await Api.get('/ddm/DashboardApi/GetEntities');
+		const response = await Api.get('/ddm/Dashboard/GetEntities');
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -52,7 +52,7 @@ export const getEntities = async (): Promise<EntityModel[]> => {
 
 export const getMyDatasets = async (rightType: string = 'grant', entityName: string = 'Dataset'): Promise<MyDatasetModel[]> => {
 	try {
-		const response = await Api.get(`/ddm/DashboardApi/GetMyDatasets?rightType=${rightType}&entityName=${entityName}`);
+		const response = await Api.get(`/ddm/Dashboard/GetMyDatasets?rightType=${rightType}&entityName=${entityName}`);
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -62,7 +62,7 @@ export const getMyDatasets = async (rightType: string = 'grant', entityName: str
 
 export const getMyRequests = async (): Promise<RequestModel[]> => {
 	try {
-		const response = await Api.get('/ddm/DashboardApi/GetMyRequests');
+		const response = await Api.get('/ddm/Dashboard/GetMyRequests');
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -72,7 +72,7 @@ export const getMyRequests = async (): Promise<RequestModel[]> => {
 
 export const getDecisions = async (): Promise<DecisionModel[]> => {
 	try {
-		const response = await Api.get('/ddm/DashboardApi/GetDecisions');
+		const response = await Api.get('/ddm/Dashboard/GetDecisions');
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -82,7 +82,7 @@ export const getDecisions = async (): Promise<DecisionModel[]> => {
 
 export const getUseTags = async (): Promise<boolean> => {
 	try {
-		const response = await Api.get('/ddm/DashboardApi/GetUseTags');
+		const response = await Api.get('/ddm/Dashboard/GetUseTags');
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -92,7 +92,7 @@ export const getUseTags = async (): Promise<boolean> => {
 
 export const withdrawRequest = async (requestId: number): Promise<boolean> => {
 	try {
-		const response = await Api.post('/ddm/DashboardApi/WithdrawRequest', { requestId });
+		const response = await Api.post('/ddm/Dashboard/WithdrawRequest', { requestId });
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -102,7 +102,7 @@ export const withdrawRequest = async (requestId: number): Promise<boolean> => {
 
 export const acceptDecision = async (decisionId: number): Promise<boolean> => {
 	try {
-		const response = await Api.post('/ddm/DashboardApi/AcceptDecision', { decisionId });
+		const response = await Api.post('/ddm/Dashboard/AcceptDecision', { decisionId });
 		return response.data;
 	} catch (error) {
 		console.error(error);
@@ -112,7 +112,7 @@ export const acceptDecision = async (decisionId: number): Promise<boolean> => {
 
 export const rejectDecision = async (requestId: number): Promise<boolean> => {
 	try {
-		const response = await Api.post('/ddm/DashboardApi/RejectDecision', { requestId });
+		const response = await Api.post('/ddm/Dashboard/RejectDecision', { requestId });
 		return response.data;
 	} catch (error) {
 		console.error(error);
