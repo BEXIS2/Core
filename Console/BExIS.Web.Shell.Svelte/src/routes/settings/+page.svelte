@@ -152,7 +152,7 @@
 	{:then data}
 		{@const _ = (currentData = data)}
 		<!-- Sticky save bar -->
-		<div class="sticky top-0 z-30 -mx-5 -mt-5 mb-4 flex items-center justify-between bg-surface-100 dark:bg-surface-800 px-5 py-2 border-b border-surface-200 dark:border-surface-700 shadow-sm">
+		<div class="sticky top-0 mb-4 flex items-center justify-between bg-surface-100 dark:bg-surface-800 px-4 py-2 border border-surface-200 dark:border-surface-700 rounded shadow-sm">
 			<div class="flex items-center gap-2">
 				<span class="text-sm font-medium">{data.name}</span>
 				{#if isDirty}
@@ -184,6 +184,7 @@
 			<div class="py-5 text-right col-span-2">
 				<button class="btn variant-filled-primary h-9 w-16 shadow-md" type="submit" disabled={!isDirty}>
 					<Fa icon={faSave} />
+					<span class="text-sm">Save</span>
 				</button>
 			</div>
 		</form>
