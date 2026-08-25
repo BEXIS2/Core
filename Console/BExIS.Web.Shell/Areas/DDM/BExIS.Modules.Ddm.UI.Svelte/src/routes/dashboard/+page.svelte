@@ -234,7 +234,7 @@
 								columns: {
 									id: { header: 'ID', disableFiltering: true, fixedWidth: 70 },
 									type: { header: 'Type', fixedWidth: 60, disableFiltering: true, instructions: { renderComponent: TableTypeIconCasted, toStringFn: (v) => v, toSortableValueFn: (v) => v } },
-									hasTag: { header: 'Tag', fixedWidth: 60, disableFiltering: true, instructions: { renderComponent: TableTagIconCasted, toStringFn: (v) => v ? 'yes' : 'no', toSortableValueFn: (v) => v } },
+									hasTag: { header: 'Tag', fixedWidth: 60, disableFiltering: true, exclude: !useTags, instructions: { renderComponent: TableTagIconCasted, toStringFn: (v) => v ? 'yes' : 'no', toSortableValueFn: (v) => v } },
 									hasData: { header: 'Data', fixedWidth: 50, disableFiltering: true, disableSorting: true, instructions: { renderComponent: TableDataIconCasted, toStringFn: (v) => v ? 'yes' : 'no' } },
 									title: { header: 'Title' },
 									description: { header: 'Description', disableFiltering: true },
