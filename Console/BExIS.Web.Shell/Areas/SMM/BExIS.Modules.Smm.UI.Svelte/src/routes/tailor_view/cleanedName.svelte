@@ -8,19 +8,19 @@
     export let dispatchFn;
     export let column;
 
-    $: diffs = getDifference(row.original.originalName, value);
+    $: diffs = value ? getDifference(row.original.originalName, value) : [];
 </script>
 
 
 <div class="cell">
     {#each diffs as part}
-    {#if part.removed}
-        <del class="removed">{part.value}</del>
-    {:else if part.added}
-        <ins class="added">{part.value}</ins>
-    {:else}
-        <span>{part.value}</span>
-    {/if}
+        {#if part.removed}
+            <del class="removed">{part.value}</del>
+        {:else if part.added}
+            <ins class="added">{part.value}</ins>
+        {:else}
+            <span>{part.value}</span>
+        {/if}
     {/each}
 </div>
 

@@ -21,14 +21,14 @@ namespace BExIS.Modules.Smm.UI.Helpers
     public class MatchingResultHelper
     {
         // returns all SpeciesMatchingResult entries for a given datasetId, or null if an error occurs
-        public static List<SpeciesMatchingResult> GetAll(long datasetId)
+        public static List<SpeciesMatchingResult> GetAll(long datasetId, long versionId)
         {
             try
             {
                 using (var smrm = new SpeciesMatchingResultManager())
                 {
                     var smrmRepo = smrm.GetBulkUnitOfWork().GetReadOnlyRepository<SpeciesMatchingResult>();
-                    List<SpeciesMatchingResult> result = smrmRepo.Query().Where(r => r.Dataset.Id == datasetId).ToList();
+                    List<SpeciesMatchingResult> result = smrmRepo.Query().Where(r => r.Dataset.Id == datasetId && r.DatasetVersionId == versionId).ToList();
 
                     return result;
                 }

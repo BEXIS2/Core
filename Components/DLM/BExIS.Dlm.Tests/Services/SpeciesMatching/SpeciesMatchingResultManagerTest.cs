@@ -55,6 +55,7 @@ namespace BExIS.Dlm.Tests.Services.SpeciesMatching
                 matchingResult.ConfirmedByUser = false;
                 matchingResult.Dataset = dataset;
                 matchingResult.DatasetVersionId = 1;
+                matchingResult.StepId = -1;
 
                 //Act
                 var created = speciesMatchingResultManager.Create(matchingResult);

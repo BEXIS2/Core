@@ -71,5 +71,8 @@ namespace BExIS.Dlm.Entities.SpeciesMatching
 
         // VersionId + Dataset make the unique key for the matching result
         public virtual long DatasetVersionId { get; set; }
+
+        // reference to the Matching step (or -1 if the result is not associated with a specific step)
+        public virtual long StepId { get; set; }
     }
 }
