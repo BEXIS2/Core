@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Vaiona.IoC;
 
 namespace BExIS.Dlm.Tests.Services.SpeciesMatching
 {
@@ -35,9 +36,9 @@ namespace BExIS.Dlm.Tests.Services.SpeciesMatching
         public void Create_Valid_EntityTemplate()
         {
             using (var speciesMatchingResultManager = new SpeciesMatchingResultManager())
-            using (var userManager = new UserManager())
             using (var datasetManager = new DatasetManager())
             {
+                var userManager = IoCFactory.Container.Resolve<UserManager>();
                 //Arrange
                 SpeciesMatchingResult matchingResult = new SpeciesMatchingResult();
 
