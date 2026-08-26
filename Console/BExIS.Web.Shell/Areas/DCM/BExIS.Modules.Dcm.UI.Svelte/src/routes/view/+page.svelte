@@ -49,6 +49,7 @@
 	let entityName;
 
 	let useTags: boolean = false;
+	let showTagsView: boolean = true;
 
 	let addtionalhooks: HookModel[];
 	$: addtionalhooks = [];
@@ -86,6 +87,7 @@
 			id = model.id;
 			tag = model.tag;
 			entityName = model.entityName;
+			showTagsView = model.settings.useTags;
 
 			console.log('model',model);
 			console.log('hooks', hooks);
@@ -192,11 +194,22 @@
 									hasRequestRight = {model.hasRequestRight}
 									requestExist = {model.requestExist}
 								/> 
-								{#if model.settings.useTags}
-									<Tags  {id} {version}  tag={model.tag}/>
+								<div class="card p-5 flex flex-col gap-3">
+									{#if model.hasEditRight && model.settings.useTags}
+										<div class="flex justify-end gap-2">
+											<button class="chip p-1 {showTagsView ? 'variant-filled-primary' : 'variant-ghost-surface'}"
+												on:click={() => showTagsView = true}>Releases</button>
+											<button class="chip p-1 {!showTagsView ? 'variant-filled-primary' : 'variant-ghost-surface'}"
+												on:click={() => showTagsView = false}>Versions</button>
+										</div>
+									{/if}
+
+									{#if showTagsView}
+										<Tags  {id} {version}  tag={model.tag}/>
 									{:else}
-									<Versions	{id} {version} />	
-								{/if}
+										<Versions	{id} {version} useTags={model.settings.useTags} />	
+									{/if}
+								</div>
 
 								<Funding f={model.additionalInformations['funder']}  />
 								<Keywords k={model.additionalInformations['keyword']} />

@@ -171,6 +171,7 @@ namespace BExIS.Modules.Dcm.UI.Models.View
     public class VersionListeItem : ListItem
     {
         public string Date { get; set; }
+        public double TagNr { get; set; }
     }
 
     public class DeletedModel

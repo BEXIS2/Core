@@ -666,7 +666,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         Description = CreateVersionNumber(d, datasetVersions) + " " + getVersionInfo(d),
                         Id = (datasetVersions.Count - datasetVersions.IndexOf(d)),
                         Text = d.Title,
-                        Date = d.Timestamp.ToString("dd.MM.yyyy")
+                        Date = d.Timestamp.ToString("dd.MM.yyyy"),
+                        TagNr = d.Tag != null ? d.Tag.Nr : 0
                     }
                     ));
 
