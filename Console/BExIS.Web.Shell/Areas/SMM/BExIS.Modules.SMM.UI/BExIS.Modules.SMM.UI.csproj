@@ -126,6 +126,11 @@
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SpeciesController.cs" />
+    <Compile Include="Controllers\DatasetsOverviewController.cs" />
+    <Compile Include="Controllers\HeadermappingController.cs" />
+    <Compile Include="Controllers\MatchingresultController.cs" />
+    <Compile Include="Controllers\ProgressOverviewController.cs" />
+    <Compile Include="Controllers\TailorViewController.cs" />
     <Compile Include="Helpers\ConversionHelper.cs" />
     <Compile Include="Helpers\MatchingAPIs\CLBApi.cs" />
     <Compile Include="Helpers\MatchingAPIs\HttpClientRegistry.cs" />
@@ -183,6 +188,11 @@
     <Content Include="SMM.Settings.json" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Species\Index.cshtml" />
+    <Content Include="Views\DatasetsOverview\Index.cshtml" />
+    <Content Include="Views\Headermapping\Index.cshtml" />
+    <Content Include="Views\Matchingresult\Index.cshtml" />
+    <Content Include="Views\ProgressOverview\Index.cshtml" />
+    <Content Include="Views\TailorView\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

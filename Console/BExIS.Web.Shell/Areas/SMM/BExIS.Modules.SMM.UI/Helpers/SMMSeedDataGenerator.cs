@@ -23,6 +23,11 @@ namespace BExIS.Modules.Smm.UI.Helpers
 
                 operationManager.Create("SMM", "Home", "*");
                 operationManager.Create("SMM", "Species", "*", speciesMatchingFeature);
+                operationManager.Create("SMM", "DatasetsOverview", "*", speciesMatchingFeature);
+                operationManager.Create("SMM", "Headermapping", "*", speciesMatchingFeature);
+                operationManager.Create("SMM", "Matchingresult", "*", speciesMatchingFeature);
+                operationManager.Create("SMM", "ProgressOverview", "*", speciesMatchingFeature);
+                operationManager.Create("SMM", "TailorView", "*", speciesMatchingFeature);
 
                 #endregion SECURITY
             }
