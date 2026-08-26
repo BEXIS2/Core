@@ -22,6 +22,7 @@
 	{#each buttons as button}
 		<button
 			class={`btn btn-sm btn-icon rounded-md ${button.color}`}
+			disabled={row.confirmedByUser}
 			on:click|preventDefault={() => eventDispatchFn(button.type)}
 		>
 			<Fa icon={button.icon} />

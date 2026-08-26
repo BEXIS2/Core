@@ -62,7 +62,7 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
             using (var smrm = new SpeciesMatchingResultManager())
             {
                 var smrmRepo = smrm.GetBulkUnitOfWork().GetReadOnlyRepository<SpeciesMatchingResult>();
-                List<SpeciesMatchingResult> result = smrmRepo.Query().Where(r => r.Dataset.Id == datasetId && r.ConfirmedByUser == false).ToList();
+                List<SpeciesMatchingResult> result = smrmRepo.Query().Where(r => r.Dataset.Id == datasetId && r.DatasetVersionId == versionId && r.ConfirmedByUser == false).ToList();
 
                 // TODO: - write all columns correctly
                 foreach (var item in result)
@@ -260,6 +260,7 @@ namespace BExIS.Modules.Smm.UI.Helpers.MatchingAPIs
                                 result.MatchedName = entry.ScientificName;
                                 result.MatchType = entry.MatchType;
                                 result.Status = entry.Status;
+                                result.StepId = step.Id;
                                 result.MatchId = entry.ID;
                                 result.MatchRank = entry.Rank;
                                 result.MatchAuthorship = entry.Authorship;

@@ -494,10 +494,21 @@ namespace BExIS.Modules.Smm.UI.Controllers
                     var dataset = datasetManager.DatasetRepo.Get(datasetId);
                     var placeHolderTimeStamp = DateTime.Now;
 
-                    // double check if there are already species matching results for this dataset
-                    bool hasSpeciesMatches = repo.Query().Any(r => r.Dataset.Id == datasetId);
-                    if (hasSpeciesMatches) {
-                        return JsonWithStatus(new { success = false, id = datasetId, message = "Species matching results already exist for this dataset. Please complete or reset existing matching progress before starting a new tailoring process." }, HttpStatusCode.BadRequest);
+                    // load existing species matching results for this dataset (if any)
+                    var existingMatchesQuery = repo.Query().Where(r => r.Dataset.Id == datasetId);
+                    bool hasMatchesForThisVersion = existingMatchesQuery.Any(r => r.DatasetVersionId == versionId);
+
+                    // If there are already matches for the same dataset version, do not allow re-tailoring the same version
+                    if (hasMatchesForThisVersion)
+                    {
+                        return JsonWithStatus(new { success = false, id = datasetId, message = "Species matching results already exist for this dataset version. Please complete or reset existing matching progress before starting a new tailoring process." }, HttpStatusCode.BadRequest);
+                    }
+
+                    // Build a set of already processed original names for the dataset (across all versions)
+                    var existingOriginalNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    foreach (var em in existingMatchesQuery.Select(r => r.OriginalName))
+                    {
+                        if (!string.IsNullOrWhiteSpace(em)) existingOriginalNames.Add(em);
                     }
 
                     int rowCount = 0;
@@ -508,7 +519,10 @@ namespace BExIS.Modules.Smm.UI.Controllers
                         if (row["var"] == DBNull.Value) continue;
                         string varValue = row["var"].ToString();
 
-                        // create row
+                        // skip names that were already processed for this dataset (from previous tailoring runs)
+                        if (existingOriginalNames.Contains(varValue)) continue;
+
+                        // create row for newly encountered original name
                         var matchingResult = new SpeciesMatchingResult
                         {
                             OriginalName = varValue,
@@ -526,6 +540,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
 
                         repo.Put(matchingResult);
                         rowCount++;
+                        existingOriginalNames.Add(varValue);
                     }
 
                     // TODO: check success (but in general should be built in a way that it never fails)
@@ -550,7 +565,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
         [HttpGet]
         // Get ALL SpeciesMatchingResults for a given dataset.
         // Used to display the overall state of the matching results in the frontend, and to allow users to filter and edit.
-        public JsonResult ViewTailored(long datasetId)
+        public JsonResult ViewTailored(long datasetId, long versionId)
         {
             var user = ResolveUserAndRights(datasetId, out ActionResult errorResult);
             if (user == null)
@@ -558,7 +573,7 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 return JsonWithStatus(new { success = false, id = datasetId, message = "Authentification error." }, HttpStatusCode.Unauthorized, JsonRequestBehavior.AllowGet);
             }
 
-            var result = MatchingResultHelper.GetAll(datasetId);
+            var result = MatchingResultHelper.GetAll(datasetId, versionId);
 
             if (result == null)
             {
@@ -591,12 +606,12 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 bool hasHeaderMappings = ProgressHelper.HasHeaderMappings(datasetId, versionId);
                 var headerMappings = hasHeaderMappings ? ProgressHelper.LoadHeaderMappings(datasetId, versionId) : null;
 
-                // tailored check: any SpeciesMatchingResult entries for this dataset?
+                // tailored check: any SpeciesMatchingResult entries for this dataset and version?
                 bool isTailored = false;
                 using (var smrm = new SpeciesMatchingResultManager())
                 {
                     var repo = smrm.GetBulkUnitOfWork().GetReadOnlyRepository<SpeciesMatchingResult>();
-                    isTailored = repo.Query().Any(r => r.Dataset.Id == datasetId);
+                    isTailored = repo.Query().Any(r => r.Dataset.Id == datasetId && r.DatasetVersionId == versionId);
                 }
 
                 // matching progress

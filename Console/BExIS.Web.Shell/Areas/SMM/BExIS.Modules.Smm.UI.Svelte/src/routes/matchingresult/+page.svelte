@@ -1,18 +1,22 @@
 <script lang="ts">
-	import { ErrorMessage, Page, pageContentLayoutType, positionType, Spinner } from "@bexis2/bexis2-core-ui";
-	import { Table } from '@bexis2/bexis2-core-ui';
+	import { Page, pageContentLayoutType, Spinner, ClientDB, Table } from "@bexis2/bexis2-core-ui";
+    import type { Columns, TableConfig } from "@bexis2/bexis2-core-ui";
     import { loadMatchingFileStatus, loadMatchingResult, requestResultFileDownload, submitAcceptedIds } from "./services";
     import { matchingSelection } from "$lib/stores/selectionStore";
     import type { AcceptMatchesRequest, GenericMatchingResult, MatchingFileStatus, SpeciesMatchingRow } from "$lib/types/types";
-    import type { Columns, TableConfig } from "@bexis2/bexis2-core-ui";
     import AcceptedTableOptions from "./AcceptedTableOptions.svelte";
     import { resultStore, acceptedStore, mismatchStore, doneStore } from "./data";
 	import ResultTableOptions from "./ResultTableOptions.svelte";
-	import { get } from "svelte/store";
+	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
 	import { onMount } from "svelte";
 	import Fa from 'svelte-fa';
+    import { writable } from "svelte/store";
 	import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
 	import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
+	import SubmitAcceptedModal from "./SubmitAcceptedModal.svelte";
+	import { goto } from "$app/navigation";
+
+	const modalStore = getModalStore();
 
 	let resultFileStatus: MatchingFileStatus;
 	let statusLoaded: boolean = false;
@@ -25,6 +29,11 @@
 	// API specific acceptable match types (everything else is assumed to be a mismatch)
 	let acceptableMatchTypes: Set<string> = new Set(["exact"])
 
+	// unique match types actually occuring in the response data
+	let uniqueMatchTypes: (string|undefined)[];
+
+	let submittingEntries: boolean = false;
+
 	// TODO: - use for error handling and display
 	let criticalError: boolean = false;
 
@@ -32,8 +41,14 @@
 		original_ID: {
 			exclude: true
 		},
+		__id: {
+			exclude: true
+		},
 		original_scientificName: {
 			header: "Original scientificname"
+		},
+		scientificName: {
+			header: "Scientific name"
 		},
 		original_rank: {
 			header: "Original rank"
@@ -48,7 +63,23 @@
 			header: "Match type"
 		},
 		matchIssues: {
-			header: "Match issues"
+			header: "Match issues",
+			exclude: true
+		},
+		acceptedScientificName: {
+			header: "Accepted scientificname"
+		},
+		rank: {
+			header: "Rank"
+		},
+		authorship: {
+			header: "Authorship"
+		},
+		acceptedAuthorship: {
+			header: "Accepted authorship"
+		},
+		status: {
+			header: "Status"
 		},
 		id: {
 			header: "Match ID"
@@ -56,17 +87,30 @@
 		acceptedID: {
 			header: "Accepted ID"
 		},
-		acceptedScientificName: {
-			header: "Accepted scientificname"
+		kingdom: {
+			header: "Kingdom"
 		},
-		acceptedAuthorship: {
-			header: "Accepted authorship"
+		phylum: {
+			header: "Phylum"
+		},
+		class: {
+			header: "Class"
+		},
+		order: {
+			header: "Order"
+		},
+		family: {
+			header: "Family"
+		},
+		genus: {
+			header: "Genus"
 		},
 		classification: {
 			exclude: true,
 		}
 	}
 
+	let PAGE_SIZE_DEFAULT: number = 50;
 	let totalCount = 1000;
 	let wipCount: number = 0;
 	let mismatchCount: number = 0;
@@ -74,6 +118,61 @@
 	let wipPercent: number = 0.0;
 	let mismatchPercent: number = 0.0;
 	let donePercent: number = 0.0;
+
+	const refreshTrigger = writable(0);
+    type BigTableConfig = TableConfig<GenericMatchingResult> & {
+		clientDb?: boolean;
+		clientDbSeedData?: GenericMatchingResult[];
+		__initialServerCount?: number;
+		clientDbRefresh?: typeof refreshTrigger;
+    };
+
+    type BigDoneTableConfig = TableConfig<SpeciesMatchingRow> & {
+		clientDb?: boolean;
+		clientDbSeedData?: SpeciesMatchingRow[];
+		__initialServerCount?: number;
+		clientDbRefresh?: typeof refreshTrigger;
+    };
+
+	const RESULT_TABLE_ID = 'resultRows';
+	let resultDbInstance: ClientDB | null = null;
+	function getResultDB(): ClientDB {
+		if (!resultDbInstance) {
+			resultDbInstance = new ClientDB(RESULT_TABLE_ID);
+		}
+
+		return resultDbInstance;
+	}
+
+	const ACCEPT_TABLE_ID = 'acceptedRows';
+	let acceptDbInstance: ClientDB | null = null;
+	function getAcceptDB(): ClientDB {
+		if (!acceptDbInstance) {
+			acceptDbInstance = new ClientDB(ACCEPT_TABLE_ID);
+		}
+
+		return acceptDbInstance;
+	}
+
+	const MISMATCH_TABLE_ID = 'mismatchRows';
+	let mismatchDbInstance: ClientDB | null = null;
+	function getMismatchDB(): ClientDB {
+		if (!mismatchDbInstance) {
+			mismatchDbInstance = new ClientDB(MISMATCH_TABLE_ID);
+		}
+
+		return mismatchDbInstance;
+	}
+
+	const DONE_TABLE_ID = 'doneRows';
+	let doneDbInstance: ClientDB | null = null;
+	function getDoneDB(): ClientDB {
+		if (!doneDbInstance) {
+			doneDbInstance = new ClientDB(DONE_TABLE_ID);
+		}
+
+		return doneDbInstance;
+	}
 
 	/**
 	 * Loads content of the currently selected result file for display.
@@ -89,13 +188,18 @@
 
 			var responseData: GenericMatchingResult[] = response.data.matchingResults;
 
-			const doneMap: Map<number, SpeciesMatchingRow> = new Map(response.data.speciesMatchingResults.map((row: SpeciesMatchingRow) => [row.id, row]));
+			const doneMap: Map<number, SpeciesMatchingRow> = new Map(response.data.speciesMatchingResults.map((row: any) => [row.id, row]));
 
 			const workInProgressData: GenericMatchingResult[] = [];
 			const mismatchData: GenericMatchingResult[] = [];
 			const doneData: SpeciesMatchingRow[] = [];
 
+			console.log("DONE AND RESP");
+			console.log(doneMap);
+			console.log(responseData);
+
 			for (const row of responseData) {
+				// @ts-expect-error (DO NOT touch __id field here, indexedDB will take care of it!)
 				const mappedRow: GenericMatchingResult = {
 					original_ID: row.original_ID,
 					original_scientificName: row.original_scientificName,
@@ -140,32 +244,16 @@
 				}
 			}
 
-			console.log(workInProgressData)
-			console.log(mismatchData)
-			console.log(doneData)
+			refreshProgressBarVariables(responseData.length, workInProgressData.length, mismatchData.length, doneData.length)
 
-			// updating progress bar values
-			totalCount = responseData.length;
-			wipCount = workInProgressData.length;
-			mismatchCount = mismatchData.length;
-			doneCount = doneData.length;
-
-			wipPercent = totalCount > 0 ? (wipCount / totalCount) * 100 : 0;
-			mismatchPercent = totalCount > 0 ? (mismatchCount / totalCount) * 100 : 0;
-			donePercent = totalCount > 0 ? (doneCount / totalCount) * 100 : 0;
-
-            resultStore.update(() => {
-                return workInProgressData;
-            });
-
-			mismatchStore.update(() => {
-				return mismatchData;
-			});
+			console.log("DONE DATA:");
+			console.log(doneData);
 
 			var doneDataOrdered: SpeciesMatchingRow[] = doneData.map((row: any): SpeciesMatchingRow => 
             {
+				// @ts-expect-error (DO NOT touch __id field here, indexedDB will take care of it!)
                 return { 
-                    id: row.id,
+                    postgres_id: row.id,
                     originalName: row.originalName,
                     editedName: row.editedName ?? "",
                     cleanedName: row.cleanedName ?? "",
@@ -191,13 +279,75 @@
                 }
             });
 
-			doneStore.update(() => {
-				return doneDataOrdered;
-			});
+			uniqueMatchTypes = [...new Set(workInProgressData.map(item => item.matchType))];
+			console.log(uniqueMatchTypes);
 
-            return response.data.data;
+			refreshResultTable(workInProgressData);
+			refreshMismatchTable(mismatchData);
+			refreshAcceptTable([]);
+			const acceptDb = getAcceptDB();
+			acceptDb.clear(ACCEPT_TABLE_ID);
+
+			console.log("DONE DATA ORDERED");
+			console.log(doneDataOrdered);
+			refreshDoneTable(doneDataOrdered);
+
+            return [];
         }
     }
+
+	function refreshResultTable(data: GenericMatchingResult[]) {
+		// console.log(data.slice(0, PAGE_SIZE_DEFAULT));
+        resultStore.set(data.slice(0, PAGE_SIZE_DEFAULT));
+
+		resultTableConfig = {
+			...resultTableConfig,
+			clientDbSeedData: data,
+			__initialServerCount: data.length
+		};
+    }
+
+	function refreshAcceptTable(data: GenericMatchingResult[]) {
+        acceptedStore.set(data.slice(0, PAGE_SIZE_DEFAULT));
+
+		acceptTableConfig = {
+			...acceptTableConfig,
+			clientDbSeedData: data,
+			__initialServerCount: data.length
+		};
+    }
+
+	function refreshMismatchTable(data: GenericMatchingResult[]) {
+        mismatchStore.set(data.slice(0, PAGE_SIZE_DEFAULT));
+
+		mismatchTableConfig = {
+			...mismatchTableConfig,
+			clientDbSeedData: data,
+			__initialServerCount: data.length
+		};
+    }
+
+	function refreshDoneTable(data: SpeciesMatchingRow[]) {
+        doneStore.set(data.slice(0, PAGE_SIZE_DEFAULT));
+
+		doneTableConfig = {
+			...doneTableConfig,
+			clientDbSeedData: data,
+			__initialServerCount: data.length
+		};
+    }
+
+	function refreshProgressBarVariables(p_totalCount: number, p_wipCount: number, p_mismatchCount: number, p_doneCount: number) {
+		// updating progress bar values
+		totalCount = p_totalCount;
+		wipCount = p_wipCount;
+		mismatchCount = p_mismatchCount;
+		doneCount = p_doneCount;
+
+		wipPercent = totalCount > 0 ? (wipCount / totalCount) * 100 : 0;
+		mismatchPercent = totalCount > 0 ? (mismatchCount / totalCount) * 100 : 0;
+		donePercent = totalCount > 0 ? (doneCount / totalCount) * 100 : 0;
+	}
 
 	/**
 	 * Requests file status for the currently selected result file.
@@ -297,92 +447,163 @@
 		statusLoaded = true;
 	});
 	
+	async function acceptAllOfMatchType(t: string|undefined) {
+		console.log("Accepting all of Match type: ", t);
+		const resultDb = getResultDB();
+		let records: Array<{ __r: GenericMatchingResult }> = await resultDb.getAll();
+		records = records.filter(item => item.__r.matchType == t);
+		const keys: number[] = records.map(item => item.__r.__id);
+
+		resultDb.bulkDelete(keys);
+		
+		records = records.map(({ __r: { __id, ...restR }, ...restRecord }) => ({
+			...restRecord,
+			__r: restR
+		}));
+
+		const acceptDb = getAcceptDB();
+		await acceptDb.bulkPut(records)
+		console.log(records);
+
+		refreshTrigger.update((n) => n + 1);
+	}
+
+	async function openSubmitAcceptedModal() {
+		const acceptDb = getAcceptDB();
+		const count: number = await acceptDb.count();
+
+        modalStore.trigger({
+            type: 'component',
+            title: `Reset all edits`,
+            component: {
+                ref: SubmitAcceptedModal,
+				props: { count: count }
+            },
+            // The response callback catches data passed back when saving
+            response: async (checkTruth: boolean) => {
+                if (checkTruth) {
+                    await submitAccepted();
+                } else {
+                    modalStore.close();
+                }
+            }
+        });
+	}
+
 	/**
 	 * Submits a list of user confirmed IDs which will then be marked as confirmed in the database.
 	 */
     async function submitAccepted() {
-		const payload = getAcceptedMatchIdsPayload();
+		submittingEntries = true;
+		const payload = await getAcceptedMatchIdsPayload();
+		console.log("Got IDs, sending request now...");
+
 		const response = await submitAcceptedIds(payload);
+
+		console.log("PAYLOAD");
+		console.log(payload);
 
 		if (!response.success) {
             console.log(response);
+			submittingEntries = false;
         } else {
 			console.log(response);
+			goto("/progress_overview");
         }
     }
 
 	/**
 	 * Gathers all accepted original_ID(s) and forms a payload for the submit request.
 	 */
-	function getAcceptedMatchIdsPayload(): AcceptMatchesRequest {
+	async function getAcceptedMatchIdsPayload(): Promise<AcceptMatchesRequest> {
 		return {
 			datasetId: $matchingSelection.datasetId,
 			versionId: $matchingSelection.versionId,
 			stepId: $matchingSelection.stepId,
-			matchIds: getMatchIds()
+			matchIds: await getMatchIds()
 		}
 	}
 
 	/**
 	 * Returns all accepted original_ID(s).
 	 */
-	function getMatchIds(): (string | undefined)[] {
-		const items = get(acceptedStore);
-
-		return items.map(item => item.original_ID);
+	async function getMatchIds(): Promise<(string | undefined)[]> {
+		const acceptDb = getAcceptDB();
+		const records: Array<{ __r: GenericMatchingResult }> = await acceptDb.getAll();
+		
+		return records.map(item => item.__r.original_ID);
 	}
 
-	const resultTableConfig: TableConfig<GenericMatchingResult> = {						
-		id: 'resultRows',						
+	let resultTableConfig: BigTableConfig = {
+		id: RESULT_TABLE_ID,						
 		data: resultStore,
+        clientDb: true,
+        clientDbSeedData: [],
+		clientDbRefresh: refreshTrigger,
+		__initialServerCount: 0,
 		resizable: "columns",
 		height: 700,
-		fitToScreen: false,
-		defaultPageSize: 50,
-		pageSizes: [20, 50, 100],
+		fitToScreen: true,
+		defaultPageSize: PAGE_SIZE_DEFAULT,
+		pageSizes: [20, PAGE_SIZE_DEFAULT, 100],
 		showColumnsMenu: true,					
 		columns: resultColumns,
 		optionsComponent: ResultTableOptions
 	};
 
-	const acceptedConfig: TableConfig<GenericMatchingResult> = {
-		id: 'acceptedRows',
+	let acceptTableConfig: BigTableConfig = {
+		id: ACCEPT_TABLE_ID,						
 		data: acceptedStore,
+        clientDb: true,
+        clientDbSeedData: [],
+		clientDbRefresh: refreshTrigger,
+		__initialServerCount: 0,
 		resizable: "columns",
 		height: 700,
-		fitToScreen: false,
-		defaultPageSize: 50,
-		pageSizes: [20, 50, 100],
-		showColumnsMenu: true,
+		fitToScreen: true,
+		defaultPageSize: PAGE_SIZE_DEFAULT,
+		pageSizes: [20, PAGE_SIZE_DEFAULT, 100],
+		showColumnsMenu: true,					
 		columns: resultColumns,
 		optionsComponent: AcceptedTableOptions
 	};
 
-	const mismatchConfig: TableConfig<GenericMatchingResult> = {
-		id: 'mismatchRows',
+	let mismatchTableConfig: BigTableConfig = {
+		id: MISMATCH_TABLE_ID,						
 		data: mismatchStore,
+        clientDb: true,
+        clientDbSeedData: [],
+		clientDbRefresh: refreshTrigger,
+		__initialServerCount: 0,
 		resizable: "columns",
 		height: 700,
-		fitToScreen: false,
-		defaultPageSize: 50,
-		pageSizes: [20, 50, 100],
-		showColumnsMenu: true,
+		fitToScreen: true,
+		defaultPageSize: PAGE_SIZE_DEFAULT,
+		pageSizes: [20, PAGE_SIZE_DEFAULT, 100],
+		showColumnsMenu: true,					
 		columns: resultColumns,
 	};
 
-	const doneConfig: TableConfig<SpeciesMatchingRow> = {
-		id: 'doneRows',
+	let doneTableConfig: BigDoneTableConfig = {
+		id: DONE_TABLE_ID,						
 		data: doneStore,
+        clientDb: true,
+        clientDbSeedData: [],
+		clientDbRefresh: refreshTrigger,
+		__initialServerCount: 0,
 		resizable: "columns",
 		height: 700,
-		fitToScreen: false,
-		defaultPageSize: 50,
-		pageSizes: [20, 50, 100],
+		fitToScreen: true,
+		defaultPageSize: PAGE_SIZE_DEFAULT,
+		pageSizes: [20, PAGE_SIZE_DEFAULT, 100],
 		showColumnsMenu: true,
 		columns: {
+			postgres_id: {
+				exclude: true
+			},
 			id: {
-                exclude: true
-            },
+				exclude: true
+			},
             originalName: {
                 header: "Original name"
             },
@@ -451,10 +672,6 @@
                 header: "Match source",
                 // exclude: true
             },
-            matchVersion: {
-                header: "Match version",
-                // exclude: true
-            },
             matchSourceVersion: {
                 header: "Match source version",
                 // exclude: true
@@ -462,12 +679,20 @@
 		}
 	}
 
-    const resultTableActions = (action: CustomEvent<{ row: GenericMatchingResult; type: string }>) => {
+    const resultTableActions = async (action: CustomEvent<{ row: GenericMatchingResult; type: string }>) => {
 		const { type, row } = action.detail;
 		switch (type) {
 			case 'ACCEPT':
-				resultStore.update(items => items.filter(i => i.original_ID !== row.original_ID));
-				acceptedStore.update(items => [...items, row]);
+				const resultDb = getResultDB();
+				const acceptDb = getAcceptDB();
+				const record: { __r: SpeciesMatchingRow } = await resultDb.get(row.__id);
+				
+				const { __id, ...toBeMovedRecord } = record.__r;
+
+				await acceptDb.put({ __r: toBeMovedRecord });
+				await resultDb.delete(row.__id);
+
+				refreshTrigger.update((n) => n + 1);
 				break;
 
 			default:
@@ -475,12 +700,20 @@
 		}
 	};
 
-	const acceptedTableActions = (action: CustomEvent<{ row: GenericMatchingResult; type: string }>) => {
+	const acceptedTableActions = async (action: CustomEvent<{ row: GenericMatchingResult; type: string }>) => {
 		const { type, row } = action.detail;
 		switch (type) {
 			case 'REMOVE':
-				acceptedStore.update(items => items.filter(i => i.original_ID !== row.original_ID));
-				resultStore.update(items => [...items, row]);
+				const acceptDb = getAcceptDB();
+				const resultDb = getResultDB();
+				const record: { __r: SpeciesMatchingRow } = await acceptDb.get(row.__id);
+				
+				const { __id, ...toBeMovedRecord } = record.__r;
+
+				await resultDb.put({ __r: toBeMovedRecord });
+				await acceptDb.delete(row.__id);
+
+				refreshTrigger.update((n) => n + 1);
 				break;
 
 			default:
@@ -495,12 +728,25 @@
 	contentLayoutType={pageContentLayoutType.center}
 >
 
-    <p>Dataset with <b>ID:</b> {$matchingSelection.datasetId} <b>VerionNr:</b> {$matchingSelection.versionNr} <b>VersionID:</b> {$matchingSelection.versionId} <b>StepID:</b> {$matchingSelection.stepId}</p>
+	<div class="flex items-center gap-x-1">
+		<button class="btn variant-filled-primary cursor-default p-2 py-1 text-sm"><b>Dataset ID {$matchingSelection.datasetId}</b></button>
+		<button class="btn variant-filled-success cursor-default p-2 py-1 text-sm"><b>Verion Nr {$matchingSelection.versionNr}</b></button>
+		<button class="btn variant-filled-primary cursor-default p-2 py-1 text-sm"><b>Version ID {$matchingSelection.versionId}</b></button>
+		<button class="btn variant-filled-success cursor-default p-2 py-1 text-sm"><b>StepID {$matchingSelection.stepId}</b></button>
+	</div>
 
 	{#if statusLoaded && resultFileExists}
 		{#await load()}
 			<Spinner textCss="text-surface-800" label="Loading content and preparing visualization"/>
 		{:then data}
+			<h2 class="h2">Global Actions</h2>
+			{#each Object.entries(uniqueMatchTypes) as [id, value] }
+				<button class="btn variant-filled-primary mr-2"
+            		on:click|preventDefault={() => acceptAllOfMatchType(value)}
+				>
+					Accept all {value}
+				</button>
+			{/each}
 			<div class="w-full max-w-xl mx-auto my-6 space-y-3">
 				<div class="grid grid-cols-2 gap-2 sm:flex sm:justify-between text-sm font-medium text-gray-700">
 					<div class="flex items-center space-x-2">
@@ -558,7 +804,7 @@
 			</div>
 			<h4 class="h4 !mt-0">(Will be stored on Submit)</h4>
 			<div class="flex items-center justify-center">
-				<Table config={acceptedConfig} on:action={acceptedTableActions}/>
+				<Table config={acceptTableConfig} on:action={acceptedTableActions}/>
 			</div>
 
 			<div class="h-10"></div>
@@ -582,7 +828,7 @@
 			<h4 class="h4 !mt-0">(Can not be accepted)</h4>
 			<div class="{hideMismatches ? 'hidden' : ''}">
 				<div class="flex items-center justify-center">
-					<Table config={mismatchConfig}/>
+					<Table config={mismatchTableConfig}/>
 				</div>
 	
 			</div>
@@ -608,14 +854,20 @@
 
 			<div class="{hideDone ? 'hidden' : ''}">
 				<div class="flex items-center justify-center">
-					<Table config={doneConfig}/>
+					<Table config={doneTableConfig}/>
 				</div>
 			</div>
 
 			<div class="h-4"></div>
 
 			<div class="flex items-center justify-center">
-				<button class="btn variant-filled-secondary" on:click|preventDefault={submitAccepted}>Submit</button>
+				{#if submittingEntries}
+					<Spinner textCss="text-surface-800" label="Submitting your selected entries"/>
+				{/if}
+			</div>
+			<div class="flex items-center justify-center">
+				<button class="btn variant-filled-secondary" disabled={submittingEntries} on:click|preventDefault={openSubmitAcceptedModal}>Submit</button>
+				<Modal />
 			</div>
 		{/await}
 	{:else}

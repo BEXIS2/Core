@@ -50,8 +50,10 @@ export interface MatchingFileStatus {
 }
 
 export type SpeciesMatchingRow = {
-    // database row id
-    id: number,
+    // database row id in postgres
+    postgres_id: number,
+    // indexedDB key
+    __id: number,
     // original unchanged name (used for matching if EditedName is empty, and for display purposes)
     originalName: string,
     // helper to apply data cleaning and better overview (field itself does not exist in db)
@@ -95,6 +97,7 @@ export type SpeciesMatchingRow = {
 
 export interface GenericMatchingResult {
     original_ID: string,
+    __id: number,
     original_scientificName: string,
     scientificName: string,
     original_rank?: string,

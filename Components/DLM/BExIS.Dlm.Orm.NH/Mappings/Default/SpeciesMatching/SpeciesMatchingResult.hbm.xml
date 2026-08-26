@@ -47,6 +47,8 @@
 		<property name="MatchSourceVersion" column="match_source_version" type="string" not-null="false" />
 
 		<property name="ConfirmedByUser" column="confirmed_by_user" type="bool" not-null="false" />
+		
+		<property name="StepId" column="step_id" type="Int64" not-null="false" />
 
 		<!-- Mapping entity associations -->
 		

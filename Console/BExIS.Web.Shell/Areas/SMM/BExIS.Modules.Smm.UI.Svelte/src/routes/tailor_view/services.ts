@@ -1,5 +1,5 @@
 import { Api } from '@bexis2/bexis2-core-ui';
-import type { TailorEdit, TailorEditsRequest } from './types';
+import type { TailorEdit } from './types';
 import type { ServiceResult } from '$lib/types/types';
 
 export const loadResult = async (datasetId: number, versionId: number) => {

@@ -96,6 +96,7 @@
 	};
 
     async function handleTailor() {
+        // TODO: redirecting variable, to hide original page when finishing tailor
         tailorLoading = true;
         const response = await tailorDataset($matchingSelection.datasetId, $matchingSelection.versionId);
 
@@ -148,9 +149,14 @@
 	note=""
 	contentLayoutType={pageContentLayoutType.center}
 >
-    <h2 class="h2">Progress Overview</h2>
 
-    <p>This page shows your current mapping progress for the selected Dataset with <b>ID:</b> {$matchingSelection.datasetId} <b>VerionNr:</b> {$matchingSelection.versionNr} <b>VersionID:</b> {$matchingSelection.versionId} <b>StepID:</b> {$matchingSelection.stepId}</p>
+    <div class="flex items-center gap-x-1">
+		<button class="btn variant-filled-primary cursor-default p-2 py-1 text-sm"><b>Dataset ID {$matchingSelection.datasetId}</b></button>
+		<button class="btn variant-filled-success cursor-default p-2 py-1 text-sm"><b>Verion Nr {$matchingSelection.versionNr}</b></button>
+		<button class="btn variant-filled-primary cursor-default p-2 py-1 text-sm"><b>Version ID {$matchingSelection.versionId}</b></button>
+	</div>
+
+    <h2 class="h2">Progress Overview</h2>
 
     {#if tailorError}
         <Alert cssClass="variant-filled-error">

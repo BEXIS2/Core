@@ -2,7 +2,7 @@
 	import { getModalStore } from "@skeletonlabs/skeleton";
 	import { submitTailorEdits } from "./services";
     import { matchingSelection } from '../../lib/stores/selectionStore';
-    import { type TailorEdit, type TailorEditsRequest } from "./types";
+    import { type TailorEdit } from "./types";
 	import { goto } from "$app/navigation";
     import { type SpeciesMatchingRow } from "$lib/types/types";
 
@@ -11,7 +11,7 @@
 
     function createEditsPayload(): TailorEdit[] {
         const edits: TailorEdit[] = changedRows.map(row => ({
-            id: row.id,
+            id: row.postgres_id,
             originalName: row.originalName,
             editedName: row.editedName,
             cleanedName: row.cleanedName
