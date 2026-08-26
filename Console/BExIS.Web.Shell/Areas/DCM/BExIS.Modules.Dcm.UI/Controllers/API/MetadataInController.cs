@@ -96,7 +96,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             var request = Request.CreateResponse();
             User user = null;
             string error = "";
-            string comment = "Update via API";
+            string comment = "Metadata updated";
 
             DatasetManager datasetManager = new DatasetManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();

@@ -253,13 +253,15 @@ namespace BExIS.Security.Services.Utilities
             return $"Data uploaded (ID {datasetid})";
         }
 
-        public static string GetUpdateDatasetMessage(long datasetid, string title, string userName, string entityname, int numberOfRows = 0, int numberOfSkippedRows = 0)
+        public static string GetUpdateDatasetMessage(long datasetid, string title, string userName, string entityname, int numberOfRows = 0, int numberOfSkippedRows = 0, int numberOfRowsAdded = 0, int numberOfRowsUpdated = 0)
         {
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendLine($"{entityname} <b>\"{title}\"</b> with ID <b>{datasetid}</b> was updated by {userName}");
             if(numberOfRows>0)
                 stringBuilder.AppendLine($"<b>\"{numberOfRows}\"</b> rows have been successfully added/edited.");
+            if(numberOfRowsAdded>0 || numberOfRowsUpdated>0)
+                stringBuilder.AppendLine($"<b>{numberOfRowsAdded}</b> rows added, <b>{numberOfRowsUpdated}</b> rows updated.");
             if(numberOfSkippedRows>0)
                 stringBuilder.AppendLine($"<b>\"{numberOfSkippedRows}\"</b> rows were be skipped.");
 

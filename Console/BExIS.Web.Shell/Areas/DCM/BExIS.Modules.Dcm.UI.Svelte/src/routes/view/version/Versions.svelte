@@ -66,9 +66,11 @@
 		<div class="text-sm text-warning-500 border-l-2 border-warning-500 pl-3">
 			The current version is beyond the latest release (Tag {latestTagNr}).
 		</div>
-	{:else if currentVersion?.description}
+	{/if}
+
+	{#if currentVersion?.changeDescription}
 		<div class="text-sm pl-3 border-l-2 border-surface-300">
-			{currentVersion.description}
+			{currentVersion.changeDescription}
 		</div>
 	{/if}
 
@@ -132,9 +134,9 @@
 							<span class="text-sm text-surface-800 semi-bold italic">{v.date}</span>
 						</div>
 					</div>
-					{#if v.description}
+					{#if v.changeDescription}
 						<div class="text-sm pl-3 border-l-2 border-surface-300">
-							{v.description}
+							{v.changeDescription}
 						</div>
 					{/if}
 				</div>

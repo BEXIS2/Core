@@ -83,6 +83,7 @@ export interface ReferenceElementModel {
 export interface versionListItemType extends listItemType {
 	date: string;
 	tagNr: number;
+	changeDescription: string;
 }
 
 export interface TagInfoViewModel {
