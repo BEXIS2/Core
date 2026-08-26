@@ -7,6 +7,7 @@ using BExIS.Dlm.Entities.SpeciesMatching;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.SpeciesMatching;
 using BExIS.IO.Transform.Output;
+using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Modules.Smm.UI.Helpers;
 using BExIS.Modules.Smm.UI.Helpers.MatchingAPIs;
 using BExIS.Modules.Smm.UI.Models;
@@ -232,10 +233,11 @@ namespace BExIS.Modules.Smm.UI.Controllers
             if (string.IsNullOrWhiteSpace(username)) username = "erik";
 
             using (var datasetManager = new DatasetManager())
-            using (var entityPermissionManager = new EntityPermissionManager())
             using (var entityManager = new EntityManager())
             using (var speciesMatchingResultManager = new SpeciesMatchingResultManager())
             {
+                var entityPermissionManager = new EntityPermissionManager();
+
                 // Find entity (defensive)
                 var entity = entityManager.FindByName(EntityName);
                 if (entity == null)
