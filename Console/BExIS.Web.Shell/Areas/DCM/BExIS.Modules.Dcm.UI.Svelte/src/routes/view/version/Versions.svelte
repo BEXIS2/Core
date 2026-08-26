@@ -58,7 +58,7 @@
 			{:else if useTags}
 				<span class="badge variant-soft-surface text-xs" title="No tag assigned">untagged</span>
 			{/if}
-			<span class="text-sm text-surface-800 semi-bold italic">{currentVersion?.date}</span>
+			<span class="text-sm text-surface-800 semi-bold italic">{currentVersion?.date ? new Date(currentVersion.date).toLocaleDateString('en-US') : 'N/A'}</span>
 		</div>
 	</div>
 
@@ -131,7 +131,7 @@
 							{:else if useTags}
 								<span class="badge variant-soft-surface text-xs" title="No tag assigned">untagged</span>
 							{/if}
-							<span class="text-sm text-surface-800 semi-bold italic">{v.date}</span>
+							<span class="text-sm text-surface-800 semi-bold italic">{v.date ? new Date(v.date).toLocaleDateString('en-US') : 'N/A'}</span>
 						</div>
 					</div>
 					{#if v.changeDescription}
