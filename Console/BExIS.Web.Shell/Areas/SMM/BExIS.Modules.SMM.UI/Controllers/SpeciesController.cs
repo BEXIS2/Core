@@ -7,7 +7,6 @@ using BExIS.Dlm.Entities.SpeciesMatching;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.SpeciesMatching;
 using BExIS.IO.Transform.Output;
-using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Modules.Smm.UI.Helpers;
 using BExIS.Modules.Smm.UI.Helpers.MatchingAPIs;
 using BExIS.Modules.Smm.UI.Models;
@@ -47,6 +46,13 @@ namespace BExIS.Modules.Smm.UI.Controllers
 {
     public class SpeciesController : Controller
     {
+        private readonly UserManager _userManager;
+
+        public SpeciesController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         // GET: Species
 
         // Provides access to file based matching Api functions (file creation, - reading, matching via request, ...)
@@ -1039,45 +1045,42 @@ namespace BExIS.Modules.Smm.UI.Controllers
             {
                 var jwtConfiguration = GeneralSettings.JwtConfiguration;
 
-                using (var userManager = new UserManager())
+                var user = ResolveRouteUser(out ActionResult userError);
+
+                Debug.WriteLine(user.DisplayName, " ", user.Email, " ", user.Id);
+
+                if (user != null)
                 {
-                    // var user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(HttpContext).Result;
-                    var user = ResolveRouteUser(out ActionResult userError);
 
-                    Debug.WriteLine(user.DisplayName, " ", user.Email, " ", user.Id);
-
-                    if (user != null)
-                    {
-
-                        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey));
-                        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+                    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.IssuerSigningKey));
+                    var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
 
-                        //Create a List of Claims, Keep claims name short
-                        var permClaims = new List<Claim>
-                    {
+                    //Create a List of Claims, Keep claims name short
+                    var permClaims = new List<Claim>
+                {
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                         new Claim(ClaimTypes.Name, user.UserName)
                     };
 
 
-                        //Create Security Token object by giving required parameters
-                        var token = new JwtSecurityToken(jwtConfiguration.ValidIssuer,
-                            jwtConfiguration.ValidAudience,
-                            permClaims,
-                            notBefore: DateTime.Now,
-                            expires: jwtConfiguration.ValidLifetime > 0 ? DateTime.Now.AddHours(jwtConfiguration.ValidLifetime) : DateTime.MaxValue,
-                            signingCredentials: credentials);
+                    //Create Security Token object by giving required parameters
+                    var token = new JwtSecurityToken(jwtConfiguration.ValidIssuer,
+                        jwtConfiguration.ValidAudience,
+                        permClaims,
+                        notBefore: DateTime.Now,
+                        expires: jwtConfiguration.ValidLifetime > 0 ? DateTime.Now.AddHours(jwtConfiguration.ValidLifetime) : DateTime.MaxValue,
+                        signingCredentials: credentials);
 
-                        var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
-                        return jwtToken;
-                    }
-                    else
-                    {
-                        return null;
-                    }
+                    var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
+                    return jwtToken;
                 }
+                else
+                {
+                    return null;
+                }
+            
             }
             catch (Exception ex)
             {
@@ -1109,36 +1112,33 @@ namespace BExIS.Modules.Smm.UI.Controllers
             errorResult = null;
             try
             {
-                using (var userManager = new UserManager())
+                // try token-based resolution first
+                var user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(HttpContext).Result;
+                if (user != null)
                 {
-                    // try token-based resolution first
-                    var user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(HttpContext).Result;
-                    if (user != null)
-                    {
-                        Debug.WriteLine("User resolved from token: " + user.Name);
-                        return user;
-                    }
-
-                    // fallback: try to find a user named 'erik'
-                    var fallback = userManager.Users.FirstOrDefault(u => u.Name == "erik");
-                    if (fallback != null)
-                    {
-                        Debug.WriteLine("User 'erik' found and used as fallback.");
-                        return fallback;
-                    }
-
-                    // final fallback: any available user (default)
-                    var any = userManager.Users.FirstOrDefault();
-                    if (any != null)
-                    {
-                        Debug.WriteLine("No specific user found; using any available user: " + any.Name);
-                        return any;
-                    }
-
-                    Debug.WriteLine("Resolving Route User failed.");
-                    errorResult = Json(new { success = false, message = "User not found in route data." });
-                    return null;
+                    Debug.WriteLine("User resolved from token: " + user.Name);
+                    return user;
                 }
+
+                // fallback: try to find a user named 'erik'
+                var fallback = _userManager.Users.FirstOrDefault(u => u.Name == "erik");
+                if (fallback != null)
+                {
+                    Debug.WriteLine("User 'erik' found and used as fallback.");
+                    return fallback;
+                }
+
+                // final fallback: any available user (default)
+                var any = _userManager.Users.FirstOrDefault();
+                if (any != null)
+                {
+                    Debug.WriteLine("No specific user found; using any available user: " + any.Name);
+                    return any;
+                }
+
+                Debug.WriteLine("Resolving Route User failed.");
+                errorResult = Json(new { success = false, message = "User not found in route data." });
+                return null;
             }
             catch (Exception ex)
             {
@@ -1176,10 +1176,6 @@ namespace BExIS.Modules.Smm.UI.Controllers
                 Debug.WriteLine("Error while checking permissions: " + ex.ToString());
                 errorResult = Json(new { success = false, id = datasetId, message = "Error while checking permissions." });
                 return false;
-            }
-            finally
-            {
-                entityPermissionManager.Dispose();
             }
         }
 
