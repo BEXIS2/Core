@@ -28,6 +28,10 @@
 		<column name="Description"  sql-type="text" />
 	</property>
 
+	<property name="Order" type="Int32">
+		<column name="OrderNr"/>
+	</property>
+	  
 	<property name="MetadataInvalidSaveMode" type="Boolean">
 		<column name="MetadataInvalidSaveMode" />
 	</property>
@@ -38,6 +42,14 @@
 
 	<property name="JsonDatastructureList" type="string">
 		<column name="JsonDatastructureList" />
+	</property>
+
+	<property name="HasExtension" type="Boolean">
+		<column name="HasExtension" />
+	</property>
+
+	<property name="JsonExtensionList" type="string">
+		<column name="JsonExtensionList" />
 	</property>
 
 	<property name="JsonAllowedFileTypes" type="string">

@@ -5,14 +5,15 @@
 
 	// ui Components
 	import Fa from 'svelte-fa';
-	import { DropdownKVP, MultiSelect, TextArea, TextInput, Spinner } from '@bexis2/bexis2-core-ui';
+	import { DropdownKVP, MultiSelect, TextArea, TextInput, Spinner, NumberInput } from '@bexis2/bexis2-core-ui';
 	import { faSave, faXmark } from '@fortawesome/free-solid-svg-icons/index';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import ContentContainer from '../../lib/components/ContentContainer.svelte';
 	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
 	const modalStore = getModalStore();
 
-	import EntryContainer from './EntryContainer.svelte';
+	import EntryContainer from '../../lib/components/EntryContainer.svelte';
+
 
 	// validation
 	import suite from './edit';
@@ -21,17 +22,22 @@
 	import {
 		getEntityTemplate,
 		saveEntityTemplate,
-		getSystemKeys
+		getSystemKeys,
+
+		getExtensions
+
 	} from '../../services/EntityTemplateCaller';
 
 	// types
-	import type { EntityTemplateModel } from '../../models/EntityTemplate';
-	import type { listItemType } from '@bexis2/bexis2-core-ui';
+	import type { EntityTemplateModel, extensionType } from '../../models/EntityTemplate';
+	import type { keyValuePairType, listItemType } from '@bexis2/bexis2-core-ui';
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 
 	// help
 	import { editHelp } from './help';
 	import { helpStore } from '@bexis2/bexis2-core-ui';
+	import ExtensionEntries from '../../lib/components/ExtensionEntries.svelte';
+
 
 	//Set list of help items and clear selection
 	helpStore.setHelpItemList(editHelp);
@@ -46,6 +52,11 @@
 	export let entities = [];
 	export let groups = [];
 	export let filetypes: string[];
+	export let extensions:listItemType[] =  [];
+	export let referenceTypes:any[] =  [];
+
+	let isExtensions = false;
+	$:	isExtensions;
 
 	const dispatch = createEventDispatcher();
 
@@ -54,7 +65,6 @@
 	$: entityTemplate;
 	$: systemKeys;
 	$: subsetMetadataStructures;
-
 	$: loaded = false;
 
 	let type = [];
@@ -73,7 +83,8 @@
 		console.log('load entity', entityTemplate);
 		console.log('load filetypes', filetypes);
 		updateSystemKeys('metadataStructure');
-
+		updateIsExtensions(entityTemplate.entityType.text);
+		updateExtensions();
 		// if id > 0 then run validation
 		if (id > 0) {
 			res = suite(entityTemplate);
@@ -98,7 +109,11 @@
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
 	async function onChangeHandler(e) {
-		//console.log("input changed", e)
+
+	
+		console.log("input changed", entityTemplate)
+
+		updateIsExtensions(entityTemplate.entityType.text);
 		// add some delay so the entityTemplate is updated
 		// otherwise the values are old
 		setTimeout(async () => {
@@ -138,6 +153,11 @@
 		}
 	}
 
+	async function updateExtensions(){
+		extensions = await getExtensions();
+		console.log("🚀 ~ updateExtensions ~ extensions:", extensions)
+	}
+
 	function onCancel() {
 		let x = 'create';
 		if (id > 0) {
@@ -158,6 +178,16 @@
 
 		modalStore.trigger(modal);
 	}
+
+function	updateIsExtensions(entityTypeText:string){
+		if(entityTypeText === "Extension"){
+			isExtensions = true;
+			entityTemplate.hasDatastructure = true;
+		}else{
+			isExtensions = false;
+		}
+	}
+
 </script>
 
 {#if entityTemplate}
@@ -176,6 +206,7 @@
 					placeholder="Define a unique content-related name for your template."
 					help={true}
 				/>
+				
 
 				<DropdownKVP
 					id="entityType"
@@ -203,6 +234,12 @@
 					placeholder="Briefly describe in which cases this template should be used. Based on an entity or use case."
 					help={true}
 				/>
+				
+				<NumberInput
+					id="order"
+					label="Order"
+					bind:value={entityTemplate.order}
+					/>
 			</div>
 
 			<h3 class="h3">Metadata</h3>
@@ -251,6 +288,7 @@
 				</div>
 			</div>
 
+
 			<div class="flex flex-col space-y-4">
 				<h3 class="h3">Data Structure</h3>
 				<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -261,13 +299,16 @@
 							on:mouseover={() => helpStore.show('hasDatastructure')}
 							on:focus={() => helpStore.show('hasDatastructure')}
 						>
-							<SlideToggle
-								active="bg-primary-500"
-								name="use_data_structure"
-								bind:checked={entityTemplate.hasDatastructure}
-							>
-								Allow to use data structures
-							</SlideToggle>
+
+						{#if !isExtensions}
+								<SlideToggle
+									active="bg-primary-500"
+									name="use_data_structure"
+									bind:checked={entityTemplate.hasDatastructure}
+								>
+									Allow to use data structures
+								</SlideToggle>
+							{/if}
 
 							{#if entityTemplate.hasDatastructure}
 								<MultiSelect
@@ -286,6 +327,40 @@
 				</div>
 			</div>
 
+			{#if !isExtensions}
+				<h3 class="h3">Extension</h3>
+				<div class="py-5 flex-col gap-4">
+					<!-- <EntryContainer>
+						<div
+							role="group"
+							class="flex flex-col gap-4"
+							on:mouseover={() => helpStore.show('hasExtension')}
+							on:focus={() => helpStore.show('hasExtension')}
+						> -->
+						<div>
+							<SlideToggle
+								active="bg-primary-500"
+								name="use_extension"
+								bind:checked={entityTemplate.hasExtension}
+							>
+								Allow to use extensions
+							</SlideToggle>
+				</div>
+				<div>
+							{#if entityTemplate.hasExtension}
+								<ExtensionEntries
+								 {extensions}
+									{referenceTypes} 
+									bind:selectedExtensions = {entityTemplate.extensionList}
+									/>
+	
+							{/if}
+						</div>
+					<!-- </EntryContainer> -->
+				</div>
+
+
+			
 			<h3 class="h3">Administration</h3>
 			<p class="p">Set permissions per default to the following groups</p>
 			<div class="py-5 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -357,9 +432,11 @@
 					/>
 				</EntryContainer>
 			</div>
-
+{/if	}
 			<h3 class="h3">Dataset Settings</h3>
+			
 			<div class="py-5 w-full grid xs:grid-cols-1 md:grid-cols-2 gap-4">
+				{#if !isExtensions}
 				<EntryContainer>
 					<MultiSelect
 						id="disabledHooks"
@@ -369,7 +446,7 @@
 						help={true}
 					/>
 				</EntryContainer>
-
+				{/if}
 				<EntryContainer>
 					<MultiSelect
 						id="allowedFileTypes"
@@ -397,12 +474,12 @@
 				</div>
 				<div class="grow text-right gap-2">
 					<button
-						title="cancel"
+						title="Cancel"
 						type="button"
 						class="btn variant-filled-warning"
 						on:click={onCancel}><Fa icon={faXmark} /></button
 					>
-					<button title="save" type="submit" class="btn variant-filled-primary" {disabled}
+					<button title="Save Template" type="submit" class="btn variant-filled-primary" {disabled}
 						><Fa icon={faSave} /></button
 					>
 				</div>

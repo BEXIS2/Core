@@ -20,53 +20,63 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             using (var entityManager = new EntityManager())
             {
-                return RedirectToAction("Subjects", "UserPermissions", new { EntityId = entityManager.FindByName("Dataset").Id, InstanceId = id });
+                return RedirectToAction("SubjectsView", "UserPermissions", new { EntityId = entityManager.FindByName("Dataset").Id, InstanceId = id });
+            }
+        }
+
+        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Grant)]
+        public ActionResult StartView(long id, int version = 0)
+        {
+            using (var entityManager = new EntityManager())
+            {
+                return RedirectToAction("SubjectsView", "UserPermissions", new { EntityId = entityManager.FindByName("Dataset").Id, InstanceId = id });
             }
         }
 
         public async Task AddRightToEntityPermission(long subjectId, long entityId, long instanceId, int rightType)
         {
-            using (var entityPermissionManager = new EntityPermissionManager())
-            {
-                var entityPermission = await entityPermissionManager.FindAsync(subjectId, entityId, instanceId);
+            var entityPermissionManager = new EntityPermissionManager();
+            var entityPermission = await entityPermissionManager.FindAsync(subjectId, entityId, instanceId);
 
-                if (entityPermission == null)
-                {
-                    await entityPermissionManager.CreateAsync(subjectId, entityId, instanceId, rightType);
-                }
-                else
-                {
-                    if ((entityPermission.Rights & rightType) != 0) return;
-                    entityPermission.Rights += rightType;
-                    await entityPermissionManager.UpdateAsync(entityPermission);
-                }
+            if (entityPermission == null)
+            {
+                await entityPermissionManager.CreateAsync(subjectId, entityId, instanceId, rightType);
+            }
+            else
+            {
+                if ((entityPermission.Rights & rightType) != 0) return;
+                entityPermission.Rights += rightType;
+                await entityPermissionManager.UpdateAsync(entityPermission);
             }
         }
 
         public async Task RemoveRightFromEntityPermission(long subjectId, long entityId, long instanceId, int rightType)
         {
-            using (var entityPermissionManager = new EntityPermissionManager())
+            var entityPermissionManager = new EntityPermissionManager();
+            var entityPermission = await entityPermissionManager.FindAsync(subjectId, entityId, instanceId);
+
+            if (entityPermission == null) return;
+
+            if (entityPermission.Rights == rightType)
             {
-                var entityPermission = await entityPermissionManager.FindAsync(subjectId, entityId, instanceId);
-
-                if (entityPermission == null) return;
-
-                if (entityPermission.Rights == rightType)
-                {
-                    await entityPermissionManager.DeleteAsync(entityPermission);
-                }
-                else
-                {
-                    if ((entityPermission.Rights & rightType) == 0) return;
-                    entityPermission.Rights -= rightType;
-                    await entityPermissionManager.UpdateAsync(entityPermission);
-                }
+                await entityPermissionManager.DeleteAsync(entityPermission);
+            }
+            else
+            {
+                if ((entityPermission.Rights & rightType) == 0) return;
+                entityPermission.Rights -= rightType;
+                await entityPermissionManager.UpdateAsync(entityPermission);
             }
         }
 
-        public ActionResult Subjects(long entityId, long instanceId)
+        //public ActionResult SubjectsPartialView(long entityId, long instanceId)
+        //{
+        //    return PartialView("_Subjects", new EntityInstanceModel() { EntityId = entityId, InstanceId = instanceId });
+        //}
+
+        public ActionResult SubjectsView(long entityId, long instanceId)
         {
-            return PartialView("_Subjects", new EntityInstanceModel() { EntityId = entityId, InstanceId = instanceId });
+            return View("_Subjects", new EntityInstanceModel() { EntityId = entityId, InstanceId = instanceId});
         }
 
         [GridAction]
@@ -93,7 +103,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             finally
             {
                 subjectManager.Dispose();
-                entityPermissionManager.Dispose();
             }
         }
     }

@@ -4,19 +4,13 @@
   "description": "",
   "entries": [
     {
-      "key": "help",
-      "title": "Help URL",
-      "value": "",
-      "type": "String",
-      "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
-    },
-    {
       "key": "formerMemberRole",
       "title": "Former Member Role/Group",
       "value": "alumni",
       "type": "String",
       "options": [],
-      "description": "The entry specifies the name of the group assigned to a user when they are no longer an active user of your instance. The user group needs to be created before."
+      "description": "The entry specifies the name of the group assigned to a user when they are no longer an active user of your instance. The user group needs to be created before.",
+      "apiSource": "groups"
     },
     {
       "key": "mailTextTitle",

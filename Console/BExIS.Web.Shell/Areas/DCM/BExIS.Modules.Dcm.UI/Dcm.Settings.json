@@ -4,11 +4,12 @@
   "description": "...",
   "entries": [
     {
-      "key": "help",
-      "title": "Help URL",
-      "value": "",
+      "key": "createDatasetMessage",
+      "title": "Create Dataset Email Message",
+      "value": "Hello {displayName},\n\nA new dataset with the dataset ID {datasetId} has been created.\n\nBy creating this dataset you confirm that:\n- The data (or a closely related version) is not stored in any other public or institutional repository.\n- All data owners, principal investigators/project managers have been informed about this submission and consent to the data upload.\n- You have the necessary rights to share and publish this data.\n- The metadata accurately reflects the uploaded files and relation to other datasets or publications (e.g. related DOIs).\n\nBest regards,\nYour {appName} Team",
+      "description": "Message for the create dataset email to the dataset creator. Supports placeholders: {displayName}, {datasetId}, {appName}.",
       "type": "String",
-      "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
+      "options": []
     },
     {
       "key": "celllimit",

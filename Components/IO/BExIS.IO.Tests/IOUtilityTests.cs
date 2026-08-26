@@ -34,6 +34,8 @@ namespace BExIS.IO.Tests
         {
         }
 
+        [TestCase("2024-05-17 16:00:54", "yyyy-MM-dd HH:mm:ss", "5/17/2024 4:00:54 PM", true, "en-US")]
+        [TestCase("2024-05-17 04:00:54", "yyyy-MM-dd hh:mm:ss", "5/17/2024 4:00:54 AM", true, "en-US")]
         [TestCase("12:00 pm", "hh:mm tt", "1/1/0001 12:00:00 PM", true, "en-US")]
         [TestCase("12:00:00 pm", "hh:mm:ss tt", "1/1/0001 12:00:00 PM", true, "en-US")]
         [TestCase("2023-29-12", "yyyy-d-M", "12/29/2023 12:00:00 AM", true)]
@@ -83,10 +85,10 @@ namespace BExIS.IO.Tests
         [TestCase("13:00 AM", "hh:mm tt", "1/1/0001 11:00:00 PM", false)]
         [TestCase("2017", "yyyy", "1/1/2017 12:00:00 AM", true)]
         [TestCase("1", "MM", "1/1/0001 12:00:00 AM", true)]
-        [TestCase("jan", "MMM", "1/1/2025 12:00:00 AM", true)]
+        [TestCase("jan", "MMM", "1/1/2026 12:00:00 AM", true)]
         [TestCase("01", "MM", "1/1/0001 12:00:00 AM", true)]
-        [TestCase("january", "MMMM", "1/1/2025 12:00:00 AM", true)]
-        [TestCase("Januar", "MMMM", "1/1/2025 12:00:00 AM", true, "de-de")]
+        [TestCase("january", "MMMM", "1/1/2026 12:00:00 AM", true)]
+        [TestCase("Januar", "MMMM", "1/1/2026 12:00:00 AM", true, "de-de")]
         [TestCase("24/10/2017", "MM/dd/yyyy", "10/24/2017 12:00:00 AM", false)]
         [TestCase("2006-2-2", "yyyy-M-d", "2/2/2006 12:00:00 AM", true)]
         [TestCase("2006-02-02", "yyyy-MM-dd", "2/2/2006 12:00:00 AM", true)]
@@ -118,6 +120,9 @@ namespace BExIS.IO.Tests
                 else result.ToString( new CultureInfo("en-US", false)).Should().BeNullOrEmpty();
             }
         }
+
+
+        [TestCase("2026-12-24 05:05:50", "yyyy-MM-dd hh:mm:ss", "12/24/2026 5:05:50 AM", true, "en-US")]
         [TestCase("12:00 pm", "hh:mm tt", "1/1/0001 12:00:00 PM", true, "en-US")]
         [TestCase("12:00:00 pm", "hh:mm:ss tt", "1/1/0001 12:00:00 PM", true, "en-US")]
         [TestCase("2023-29-12", "yyyy-d-M", "12/29/2023 12:00:00 AM", true)]
@@ -167,10 +172,10 @@ namespace BExIS.IO.Tests
         [TestCase("13:00 AM", "hh:mm tt", "1/1/0001 11:00:00 PM", false)]
         [TestCase("2017", "yyyy", "1/1/2017 12:00:00 AM", true)]
         [TestCase("1", "MM", "1/1/0001 12:00:00 AM", true)]
-        [TestCase("jan", "MMM", "1/1/2025 12:00:00 AM", true)]
+        [TestCase("jan", "MMM", "1/1/2026 12:00:00 AM", true)]
         [TestCase("01", "MM", "1/1/0001 12:00:00 AM", true)]
-        [TestCase("january", "MMMM", "1/1/2025 12:00:00 AM", true)]
-        [TestCase("Januar", "MMMM", "1/1/2025 12:00:00 AM", true, "de-de")]
+        [TestCase("january", "MMMM", "1/1/2026 12:00:00 AM", true)]
+        [TestCase("Januar", "MMMM", "1/1/2026 12:00:00 AM", true, "de-de")]
         [TestCase("24/10/2017", "MM/dd/yyyy", "10/24/2017 12:00:00 AM", false)]
         [TestCase("2006-2-2", "yyyy-M-d", "2/2/2006 12:00:00 AM", true)]
         [TestCase("2006-02-02", "yyyy-MM-dd", "2/2/2006 12:00:00 AM", true)]

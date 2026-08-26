@@ -1,6 +1,7 @@
 ﻿using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using BExIS.UI.Models.EntityReference;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,9 +16,11 @@ namespace BExIS.Utils.Data.Helpers
 {
     public class EntityReferenceHelper
     {
+        private ReferenceConfig _config = null;
+
         public EntityReferenceHelper()
         {
-
+            _config = getReferenceConfig();
         }
 
         public bool EntityExist(long id, long typeId)
@@ -193,21 +196,50 @@ namespace BExIS.Utils.Data.Helpers
             tmp.ReferenceType = model.ReferenceType;
             tmp.CreationDate = DateTime.Now;
 
+            // get additional informations
+            ReferenceConfigElement config = GetReferenceConfigByType(model.ReferenceType);
+
+            if (config != null)
+            {
+                tmp.LinkType = config.LinkType;
+                tmp.Category = config.Category;
+            }
+
             return tmp;
         }
 
-        //public EntityReference Convert(SimpleReferenceModel model, long sourceId, long sourceTypeId)
-        //{
-        //    EntityReference tmp = new EntityReference();
-        //    tmp.SourceId = sourceId;
-        //    tmp.SourceEntityId = sourceTypeId;
-        //    tmp.TargetId = model.Id;
-        //    tmp.TargetEntityId = model.TypeId;
-        //    tmp.Context = model.Context;
-        //    tmp.ReferenceType = model.ReferenceType;
+        public EntityReference Switch(EntityReference model)
+        {
+            EntityReference tmp = new EntityReference();
 
-        //    return tmp;
-        //}
+            tmp.SourceId = model.TargetId;
+            tmp.SourceEntityId = model.TargetEntityId;
+            tmp.SourceVersion = model.TargetVersion;
+
+            tmp.TargetId = model.SourceId;
+            tmp.TargetEntityId = model.SourceEntityId;
+            tmp.TargetVersion = model.SourceVersion;
+
+            tmp.Context = model.Context;
+
+            tmp.ReferenceType = model.ReferenceType;
+
+            tmp.CreationDate = DateTime.Now;
+
+            // get additional informations
+            ReferenceConfigElement config = GetObositeReferenceConfig(model.Category, model.ReferenceType);
+
+            if (config != null)
+            {
+                tmp.ReferenceType = config.ReferenceType;
+                tmp.LinkType = config.LinkType;
+                tmp.Category = config.Category;
+            }
+
+            return tmp;
+        }
+
+
 
         public SimpleSourceReferenceModel GetSimpleReferenceModel(long id, long typeId, int version)
         {
@@ -248,6 +280,8 @@ namespace BExIS.Utils.Data.Helpers
                 tmp.Context = entityReference.Context;
                 tmp.ReferenceType = entityReference.ReferenceType;
                 tmp.RefId = entityReference.Id;
+                tmp.LinkType = entityReference.LinkType;
+                tmp.Category = entityReference.Category;
 
                 return tmp;
             }
@@ -285,7 +319,7 @@ namespace BExIS.Utils.Data.Helpers
             return tmp;
         }
 
-        public List<ReferenceModel> GetSourceReferences(long id, long typeid, int version)
+        public List<ReferenceModel> GetSourceReferences(long id, long typeid, int version = 0)
         {
             List<ReferenceModel> tmp = new List<ReferenceModel>();
             EntityReferenceManager entityReferenceManager = new EntityReferenceManager();
@@ -297,7 +331,7 @@ namespace BExIS.Utils.Data.Helpers
                 var list = entityReferenceManager.References.Where(r =>
                         r.TargetId.Equals(id) &&
                         r.TargetEntityId.Equals(typeid) &&
-                        r.TargetVersion <= version
+                        (version == 0 || r.TargetVersion <= version)
                         ).ToList();
 
                 list.ForEach(r => tmp.Add(helper.Convert(r)));
@@ -315,7 +349,7 @@ namespace BExIS.Utils.Data.Helpers
             return tmp;
         }
 
-        public List<ReferenceModel> GetTargetReferences(long id, long typeid, int version)
+        public List<ReferenceModel> GetTargetReferences(long id, long typeid, int version=0)
         {
             List<ReferenceModel> tmp = new List<ReferenceModel>();
             EntityReferenceManager entityReferenceManager = new EntityReferenceManager();
@@ -327,7 +361,7 @@ namespace BExIS.Utils.Data.Helpers
                 var list = entityReferenceManager.References.Where(r =>
                             r.SourceId.Equals(id) &&
                             r.SourceEntityId.Equals(typeid) &&
-                            r.SourceVersion <= version).ToList();
+                            (version==0|| r.SourceVersion <= version)).ToList();
 
                 list.ForEach(r => tmp.Add(helper.Convert(r)));
                 tmp.RemoveAll(item => item == null);
@@ -346,54 +380,99 @@ namespace BExIS.Utils.Data.Helpers
 
         #region Entity Reference Config
 
+        private ReferenceConfig getReferenceConfig()
+        {
+            string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "EntityReferenceConfig.json");
+            string dir = Path.GetDirectoryName(filepath);
+
+            if (Directory.Exists(dir) && File.Exists(filepath))
+            {
+                ReferenceConfig referenceConfig = new ReferenceConfig();
+                referenceConfig = JsonConvert.DeserializeObject<ReferenceConfig>(File.ReadAllText(filepath));
+
+                return referenceConfig;
+            }
+            else
+            {
+                throw new FileNotFoundException("File EntityReferenceConfig.json not found in :" + dir, "EntityReferenceConfig.json");
+            }
+        }
+
+        public ReferenceConfigElement GetReferenceConfigByType(string type)
+        {
+            if (_config != null)
+            {
+                return _config.ReferenceTypes.Where(e => e.ReferenceType.Equals(type)).FirstOrDefault();
+            }
+
+            return null;
+        }
+
+        public ReferenceConfigElement GetObositeReferenceConfig(string category, string type)
+        {
+            if (_config != null)
+            {
+                return _config.ReferenceTypes.Where(e => e.Category.Equals(category) && !e.ReferenceType.Equals(type)).FirstOrDefault();
+            }
+
+            return null;
+        }
+
+
         /// <summary>
         /// this function return a list of all reference types. This types are listed in the entity reference config.xml in the workspace
         /// </summary>
         /// <returns></returns>
         public SelectList GetReferencesTypes()
         {
-            string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "EntityReferenceConfig.xml");
-            string dir = Path.GetDirectoryName(filepath);
-
-            if (Directory.Exists(dir) && File.Exists(filepath))
+            
+            if (_config != null)
             {
-                XDocument xdoc = XDocument.Load(filepath);
-
-                var types = xdoc.Root.Descendants("referenceType").Select(e => new SelectListItem()
+                var types = _config.ReferenceTypes.Where(e => !e.LinkType.Equals("extension")).Select(e => new SelectListItem()
                 {
-                    Text = String.IsNullOrEmpty(e.Attribute("description").Value) ? e.Value : e.Attribute("description").Value,
-                    Value = e.Value
+                    Text = String.IsNullOrEmpty(e.Description) ? e.ReferenceType : e.Description,
+                    Value = e.ReferenceType
                 }).ToList();
 
                 return new SelectList(types, "Value", "Text");
             }
-            else
+
+            return new SelectList(new List<SelectListItem>(), "Value", "Text");
+        }
+
+        public SelectList GetReferencesTypes(string type)
+        {
+
+            if (_config != null)
             {
-                throw new FileNotFoundException("File EntityReferenceConfig.xml not found in :" + dir, "EntityReferenceConfig.xml");
+                var types = _config.ReferenceTypes.Where(e => e.LinkType.Equals(type)).Select(e => new SelectListItem()
+                {
+                    Text = String.IsNullOrEmpty(e.Description) ? e.ReferenceType : e.Description,
+                    Value = e.ReferenceType
+                }).ToList();
+
+                return new SelectList(types, "Value", "Text");
             }
+
+            return new SelectList(new List<SelectListItem>(), "Value", "Text");
+        }
+
+        public List<KeyValuePair<string, string>> GetReferencesTypesAsKVP(string type)
+        {
+            List<KeyValuePair<string,string>> tmp = new List<KeyValuePair<string, string>>();
+            if (_config != null)
+            {
+                tmp = _config.ReferenceTypes.Where(e => e.LinkType.Equals(type)).Select(e => 
+                    new KeyValuePair<string,string>(e.ReferenceType, string.IsNullOrEmpty(e.Description) ? e.ReferenceType : e.Description)).ToList();
+
+            }
+
+            return tmp;
         }
 
         public SelectList GetReferencesHelpTypes()
         {
-            string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "EntityReferenceConfig.xml");
-            string dir = Path.GetDirectoryName(filepath);
-
-            if (Directory.Exists(dir) && File.Exists(filepath))
-            {
-                XDocument xdoc = XDocument.Load(filepath);
-
-                var types = xdoc.Root.Descendants("referenceType").Select(e => new SelectListItem()
-                {
-                    Text = String.IsNullOrEmpty(e.Attribute("description").Value) ? e.Value : e.Attribute("description").Value,
-                    Value = e.Value,
-                }).ToList();
-
-                return new SelectList(types, "Value", "Text");
-            }
-            else
-            {
-                throw new FileNotFoundException("File EntityReferenceConfig.xml not found in :" + dir, "EntityReferenceConfig.xml");
-            }
+            return GetReferencesTypes();
         }
 
         #endregion Entity Reference Config
@@ -406,21 +485,18 @@ namespace BExIS.Utils.Data.Helpers
         /// <returns></returns>
         public SelectList GetEntityTypesWhitlist()
         {
-            string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "EntityReferenceConfig.xml");
-            string dir = Path.GetDirectoryName(filepath);
-
-            if (Directory.Exists(dir) && File.Exists(filepath))
+            if (_config != null)
             {
-                XDocument xdoc = XDocument.Load(filepath);
+                var types = _config.EntityWhiteList.Select(e => new SelectListItem()
+                {
+                    Text = e,
+                    Value = e
+                }).ToList();
 
-                var types = xdoc.Root.Descendants("entityType").Select(e => new SelectListItem() { Text = e.Attribute("description").Value.ToString(), Value = e.Value }).ToList();
+                return new SelectList(types, "Value", "Text");
+            }
 
-                return new SelectList(types, "Text", "Value");
-            }
-            else
-            {
-                throw new FileNotFoundException("File EntityReferenceConfig.xml not found in :" + dir, "EntityReferenceConfig.xml");
-            }
+            return new SelectList(new List<SelectListItem>(), "Value", "Text");
         }
 
         #endregion Entity Config

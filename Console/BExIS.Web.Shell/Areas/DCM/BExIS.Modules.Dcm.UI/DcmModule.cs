@@ -22,6 +22,9 @@ namespace BExIS.Modules.Dcm.UI
                 {
                     generator.GenerateSeedData();
                 }
+
+                // set up the serach provider 
+                Vaiona.IoC.IoCFactory.Container.RegisterHeirarchical(typeof(BExIS.Ddm.Api.ISearchProvider), typeof(BExIS.Ddm.Providers.LuceneProvider.SearchProvider));
             }
             catch (Exception e)
             {

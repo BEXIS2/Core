@@ -3,12 +3,6 @@
   "name": "Visualization",
   "description": "stats about datasets",
   "entries": [
-    {
-      "key": "help",
-      "title": "Help URL",
-      "value": "",
-      "type": "String",
-      "description": "URL to the manual. If empty, it links to the latest manual from BEXIS2"
-    }
+
   ]
 }

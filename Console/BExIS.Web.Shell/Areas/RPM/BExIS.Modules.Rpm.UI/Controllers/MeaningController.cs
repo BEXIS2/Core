@@ -9,9 +9,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.SessionState;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
+    
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class MeaningController : Controller
     {
         // GET: Meanings
@@ -60,7 +63,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("Meaning was not generated.", ex);
+                throw new Exception("Meaning was not created.", ex);
             }
         }
 
@@ -78,7 +81,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("Meaning was not generated.", ex);
+                throw new Exception("Meaning was not changed.", ex);
             }
         }
 
@@ -91,13 +94,16 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (var _meaningManager = new MeaningManager())
                 {
+                    if (_meaningManager.IsMeaningInUse(id))
+                        return Json(false, JsonRequestBehavior.AllowGet);
+
                     _meaningManager.DeleteMeaning(id);
                     return Json(true, JsonRequestBehavior.AllowGet);
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("Meaning was not generated.", ex);
+                throw new Exception("Meaning was not deleted. Please check if the meaning is still linked to e.g. to a variable template.", ex);
             }
         }
 
@@ -159,7 +165,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("External link was not generated.", ex);
+                throw new Exception("External link was not created.", ex);
             }
         }
 
@@ -179,7 +185,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("External link was not generated.", ex);
+                throw new Exception("External link was not changed.", ex);
             }
         }
 
@@ -198,7 +204,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("External link was not generated.", ex);
+                throw new Exception("External link was not deleted.", ex);
             }
         }
 
@@ -233,7 +239,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("External link was not generated.", ex);
+                throw new Exception("Prefix Category was not created.", ex);
             }
         }
 
@@ -253,7 +259,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("External link was not generated.", ex);
+                throw new Exception("Prefix Category was not changed.", ex);
             }
         }
 
@@ -273,10 +279,11 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("External link was not generated.", ex);
+                throw new Exception("Prefix Category was not deleted.", ex);
             }
         }
 
         #endregion category prefix
     }
+
 }

@@ -54,6 +54,7 @@
     <Compile Include="Controllers\API\DataInController.cs" />
     <Compile Include="Controllers\API\DatasetInController.cs" />
     <Compile Include="Controllers\API\MetadataInController.cs" />
+    <Compile Include="Controllers\ComponentConfigController.cs" />
     <Compile Include="Controllers\CreateController.cs" />
     <Compile Include="Controllers\EditController.cs" />
     <Compile Include="Controllers\EntityTemplatesController.cs" />
@@ -66,7 +67,6 @@
     <Compile Include="Controllers\Hooks\EntityReferenceController.cs" />
     <Compile Include="Controllers\FormController.cs" />
     <Compile Include="Controllers\Legacy\CreateDatasetController.cs" />
-    <Compile Include="Controllers\Legacy\HelpController.cs" />
     <Compile Include="Controllers\Legacy\ImportMetadataStructureController.cs" />
     <Compile Include="Controllers\Legacy\ImportMetadataStructureReadSourceController.cs" />
     <Compile Include="Controllers\Legacy\ImportMetadataStructureSelectAFileController.cs" />
@@ -75,6 +75,7 @@
     <Compile Include="Controllers\Legacy\ManageMetadataStructureController.cs" />
     <Compile Include="Controllers\Hooks\MetadataController.cs" />
     <Compile Include="Controllers\API\LinkController.cs" />
+    <Compile Include="Controllers\MController.cs" />
     <Compile Include="Controllers\Views\MessagesController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\Hooks\ValidationController.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="DcmModule.cs" />
     <Compile Include="FileReaderInfoController.cs" />
     <Compile Include="Helpers\API\DataApiHelper.cs" />
+    <Compile Include="Helpers\View\CitationsHelper.cs" />
     <Compile Include="Helpers\EditHelper.cs" />
     <Compile Include="Helpers\EntityTemplateHelper.cs" />
     <Compile Include="Helpers\DataASyncUploadHelper.cs" />
@@ -90,7 +92,9 @@
     <Compile Include="Helpers\FormHelper.cs" />
     <Compile Include="Helpers\SubmitHelper.cs" />
     <Compile Include="Helpers\SystemMetadataHelper.cs" />
+    <Compile Include="Helpers\TagInfoHelper.cs" />
     <Compile Include="Helpers\UploadUIHelper.cs" />
+    <Compile Include="Helpers\View\DDMSettingsHelper.cs" />
     <Compile Include="Hooks\AttachmentViewHook.cs" />
     <Compile Include="Hooks\DataEditHook.cs" />
     <Compile Include="Hooks\DataStructurePreviewHook.cs" />
@@ -138,6 +142,7 @@
     <Compile Include="Models\Metadata\MetadataPackageModel.cs" />
     <Compile Include="Models\Metadata\MetadataParameterModel.cs" />
     <Compile Include="Models\Metadata\UIComponentModel.cs" />
+    <Compile Include="Models\MModel.cs" />
     <Compile Include="Models\PrimaryKeyViewModel.cs" />
     <Compile Include="Models\Push\SendBigFilesToServerModel.cs" />
     <Compile Include="Models\SelectAreasModel.cs" />
@@ -150,6 +155,7 @@
     <Compile Include="Models\UploadWizardParameters.cs" />
     <Compile Include="Models\ValidationModel.cs" />
     <Compile Include="Models\Edit\ValidationModel.cs" />
+    <Compile Include="Models\View\CitationModels.cs" />
     <Compile Include="Models\View\ViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -365,6 +371,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="Dcm.Settings.xml" />
+    <Content Include="LICENSE.txt" />
     <Content Include="Scripts\2013.2.611\jquery-1.7.1.min.js" />
     <Content Include="Scripts\2013.2.611\jquery.validate.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.all.min.js" />
@@ -408,7 +415,6 @@
     <Content Include="Scripts\minimap\minimap.min.css" />
     <Content Include="Scripts\minimap\minimap.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
-    <Content Include="Views\Help\Informations.xml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_errorMessages.cshtml" />
@@ -417,7 +423,6 @@
     <Content Include="Views\Form\_metadataAttributeView.cshtml" />
     <Content Include="Views\Form\_metadataCompoundAttributeUsageView.cshtml" />
     <Content Include="Views\Form\_metadataCompoundAttributeView.cshtml" />
-    <Content Include="Views\Help\Index.cshtml" />
     <Content Include="Views\ImportMetadataStructure\ImportMetadataStructureWizard.cshtml" />
     <Content Include="Views\ImportMetadataStructure\Index.cshtml" />
     <Content Include="Views\ImportMetadataStructure\_taskListView.cshtml" />
@@ -471,6 +476,12 @@
     <Content Include="Views\Form\_metadataParameterViewOffline.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Views\Form\_displayname.cshtml" />
+    <Content Include="Views\ComponentConfig\Index.cshtml" />
+    <Content Include="Views\M\Index.cshtml" />
+    <Content Include="Views\M\Edit.cshtml" />
+    <Content Include="Views\View\Metadata.cshtml" />
+    <Content Include="Views\View\DataDescription.cshtml" />
+    <Content Include="Views\View\Data.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -497,6 +508,9 @@
     <Reference Include="EPPlus, Version=5.0.3.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\EPPlus.5.0.3\lib\net45\EPPlus.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.4.2.13, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\SharpZipLib.1.4.2\lib\netstandard2.0\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.4.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Iesi.Collections.4.0.4\lib\net461\Iesi.Collections.dll</HintPath>
       <Private>True</Private>
@@ -519,8 +533,11 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NameParser, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\NameParserSharp.1.5.0\lib\net45\NameParser.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\..\..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json.Schema, Version=3.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Newtonsoft.Json.Schema.3.0.16\lib\net45\Newtonsoft.Json.Schema.dll</HintPath>
@@ -555,6 +572,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Diagnostics.Tracing, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\System.Diagnostics.Tracing.4.3.0\lib\net462\System.Diagnostics.Tracing.dll</HintPath>
       <Private>True</Private>
@@ -788,6 +806,10 @@
       <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
       <Name>BExIS.Utils.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Utils\BExIS.Utils.NH\BExIS.Utils.NH.csproj">
+      <Project>{0F1EC13E-D685-4F4D-A438-52797B0E53A0}</Project>
+      <Name>BExIS.Utils.NH</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
       <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
       <Name>BExIS.Utils</Name>
@@ -795,6 +817,10 @@
     <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Entities\Vaiona.Entities.csproj">
       <Project>{0815d220-3625-4e23-bbbc-8152345637fe}</Project>
       <Name>Vaiona.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.IoC\Vaiona.IoC.csproj">
+      <Project>{29A7BE0F-A17C-4AE8-8CA1-15FE4DD74129}</Project>
+      <Name>Vaiona.IoC</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
       <Project>{e8b37581-1cac-463d-903b-b4bee8b2b0e3}</Project>
@@ -848,6 +874,14 @@
       <Project>{d17cdd9d-b87b-441b-9248-5c54e92ffc81}</Project>
       <Name>BExIS.Dcm.Wizard</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
+      <Project>{8519EAC6-FBF8-48B3-813F-E0B9D3CC4A52}</Project>
+      <Name>BExIS.Ddm.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
+      <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
+      <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Modules\DIM\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
       <Project>{34cad2a2-6928-458b-b8dc-af71d55f20cc}</Project>
       <Name>BExIS.Dim.Entities</Name>
@@ -859,6 +893,10 @@
     <ProjectReference Include="..\..\..\..\..\Modules\DIM\BExIS.Dim.Services\BExIS.Dim.Services.csproj">
       <Project>{cac933a2-6849-4c61-82b4-cbf4052210cc}</Project>
       <Name>BExIS.Dim.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DIM\BExIS.Modules.Dim.UI\BExIS.Modules.Dim.UI.csproj">
+      <Project>{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}</Project>
+      <Name>BExIS.Modules.Dim.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

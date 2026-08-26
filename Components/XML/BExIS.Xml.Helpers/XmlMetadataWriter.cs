@@ -56,7 +56,7 @@ namespace BExIS.Xml.Helpers
         /// <seealso cref=""/>
         /// <param name="metadataStructureId"></param>
         /// <returns></returns>
-        public XDocument CreateMetadataXml(long metadataStructureId, XDocument importXml = null)
+        public XDocument CreateMetadataXml(long metadataStructureId, XDocument importXml = null, bool withChoiceChildrens = false)
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
@@ -108,8 +108,8 @@ namespace BExIS.Xml.Helpers
                         package.SetAttributeValue("number", i);
                         role.Add(package);
 
-                        if (mpu.Extra == null || !IsChoice(mpu.Extra))
-                            setChildren(package, mpu, importXml);
+                        if (mpu.Extra == null || (!IsChoice(mpu.Extra) || withChoiceChildrens))
+                            setChildren(package, mpu, importXml, withChoiceChildrens);
 
                     }
                 }
@@ -160,7 +160,7 @@ namespace BExIS.Xml.Helpers
                     package.SetAttributeValue("number", "1");
                     role.Add(package);
 
-                    setChildren(package, mpu);
+                    setChildren(package, mpu, null, true);
                 }
 
                 return doc;
@@ -177,7 +177,7 @@ namespace BExIS.Xml.Helpers
             return false;
         }
 
-        private XElement setChildren(XElement element, BaseUsage usage, XDocument importDocument = null)
+        private XElement setChildren(XElement element, BaseUsage usage, XDocument importDocument = null, bool withChoiceChildren = false )
         {
             MetadataAttribute metadataAttribute = null;
             MetadataPackage metadataPackage = null;
@@ -229,13 +229,15 @@ namespace BExIS.Xml.Helpers
                         else
                         {
                             Debug.WriteLine("NULL OR EMPTY:------> " + usagePath);
-
-                            typeList = addAndReturnAttribute(element, nestedUsage, 1, 1);
+                            // if the element is null, in xml as default the value should exist, but in case of the parent is a choice
+                            // there should only be a part if it exist otherwhise the xml document is not valid
+                            if (usage.Extra == null || !IsChoice(usage.Extra))
+                                typeList = addAndReturnAttribute(element, nestedUsage, 1, 1);                           
                         }
 
                         foreach (var type in typeList)
                         {
-                            setChildren(type, nestedUsage, importDocument);
+                            setChildren(type, nestedUsage, importDocument, withChoiceChildren);
                         }
                     }
                     else
@@ -244,8 +246,8 @@ namespace BExIS.Xml.Helpers
 
                         typeList = addAndReturnAttribute(element, nestedUsage, 1, 1);
 
-                        if (nestedUsage.Extra == null || !IsChoice(nestedUsage.Extra))
-                            setChildren(typeList.FirstOrDefault(), nestedUsage, importDocument);
+                        if (nestedUsage.Extra == null || (!IsChoice(nestedUsage.Extra) || withChoiceChildren))
+                            setChildren(typeList.FirstOrDefault(), nestedUsage, importDocument, withChoiceChildren);
                     }
                 }
             }
@@ -280,13 +282,13 @@ namespace BExIS.Xml.Helpers
                             else
                             {
                                 Debug.WriteLine("NULL OR EMPTY:------> " + usagePath);
-
-                                typeList = addAndReturnAttribute(element, attrUsage, 1, 1);
+                                if (usage.Extra == null || !IsChoice(usage.Extra))
+                                    typeList = addAndReturnAttribute(element, attrUsage, 1, 1);
                             }
 
                             foreach (var type in typeList)
                             {
-                                setChildren(type, attrUsage, importDocument);
+                                setChildren(type, attrUsage, importDocument, withChoiceChildren);
                             }
                         }
                         else
@@ -295,8 +297,8 @@ namespace BExIS.Xml.Helpers
 
                             typeList = addAndReturnAttribute(element, attrUsage, 1, 1);
 
-                            if (attrUsage.Extra == null || !IsChoice(attrUsage.Extra))
-                                setChildren(typeList.FirstOrDefault(), attrUsage, importDocument);
+                            if (attrUsage.Extra == null || (!IsChoice(attrUsage.Extra)|| withChoiceChildren))
+                                setChildren(typeList.FirstOrDefault(), attrUsage, importDocument, withChoiceChildren);
                         }
                     }
                 }
@@ -778,7 +780,7 @@ namespace BExIS.Xml.Helpers
         {
             _tempXDoc = metadataXml;
 
-            if (!!XmlUtility.IsSafeXPath(parentXPath))
+            if (!XmlUtility.IsSafeXPath(parentXPath))
             {
                 throw new ArgumentException("Potentially unsafe xpath expression.");
             }

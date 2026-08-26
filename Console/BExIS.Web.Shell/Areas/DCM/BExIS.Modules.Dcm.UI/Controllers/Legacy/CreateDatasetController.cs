@@ -1,5 +1,6 @@
 ﻿using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.Wizard;
+using BExIS.Ddm.Api;
 using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dlm.Entities.Administration;
@@ -24,46 +25,55 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Helpers;
 using BExIS.UI.Models;
+using BExIS.Utils.Config;
+using BExIS.Utils.Data.Helpers;
 using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Extensions;
 using BExIS.Xml.Helpers;
-using NHibernate.Cfg.MappingSchema;
 using BEXIS.JSON.Helpers;
+using Microsoft.AspNet.Identity;
 using Newtonsoft.Json.Schema;
+using NHibernate.Cfg.MappingSchema;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Entities.Common;
+using Vaiona.IoC;
 using Vaiona.Logging;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
-using BExIS.Utils.Data.Helpers;
-using BExIS.Utils.Config;
+
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class CreateDatasetController : BaseController
+    public class CreateDatasetController : Controller
     {
         private CreateTaskmanager TaskManager;
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+        private readonly UserManager _userManager;
 
+        public CreateDatasetController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
 
         #region Submit And Create And Finish And Cancel and Reset
 
-        public JsonResult Submit(bool valid, string commitMessage, long entityId)
+        public async Task<JsonResult> Submit(bool valid, string commitMessage, long entityId)
         {
             try
             {
                 // create and submit Dataset
 
-                long datasetId = SubmitDataset(entityId, valid, "Dataset", commitMessage);
+                long datasetId = await SubmitDataset(entityId, valid, "Dataset", commitMessage);
 
                 return Json(new { result = "redirect", url = Url.Action("Show", "Data", new { area = "DDM", id = datasetId }) }, JsonRequestBehavior.AllowGet);
             }
@@ -77,7 +87,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// Submit a Dataset based on the imformations
         /// in the CreateTaskManager
         /// </summary>
-        public long SubmitDataset(long entityId, bool valid, string entityname, string commitMessage = "")
+        public async Task<long> SubmitDataset(long entityId, bool valid, string entityname, string commitMessage = "")
         {
             #region create dataset
 
@@ -86,15 +96,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (DatasetManager dm = new DatasetManager())
             using (DataStructureManager dsm = new DataStructureManager())
             using (ResearchPlanManager rpm = new ResearchPlanManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (EntityTemplateManager entityTemplateManager = new EntityTemplateManager())
             using (MetadataStructureManager msm = new MetadataStructureManager())
             {
+                EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             
                 string title = "";
                 long datasetId = 0;
                 bool newDataset = true;
+
+                var useTags = (bool)ModuleManager.GetModuleSettings("DDM").GetValueByKey("use_tags");
 
                 try
                 {
@@ -160,7 +172,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 int v = 1;
                                 if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
 
-                                TaskManager.Bus[CreateTaskmanager.METADATA_XML] = setSystemValuesToMetadata(datasetId, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newDataset);
+                                double tag = workingCopy.Tag!=null? workingCopy.Tag.Nr : 0;
+
+                                TaskManager.Bus[CreateTaskmanager.METADATA_XML] = setSystemValuesToMetadata(datasetId, v, tag, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newDataset);
 
 
                                 // check if metadata is valid against the metadatastructure
@@ -205,26 +219,25 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             #endregion set references
 
-                            if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
-                            {
-                                var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", datasetId } });
-                            }
+                            //update search
+                            await reindex(datasetId, useTags);
+
 
                             LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
-
-                            using(var emailService = new EmailService())
+                            
+                            using (var emailService = new EmailService())
                             {
                                 if (newDataset)
                                 {
                                     emailService.Send(MessageHelper.GetCreateDatasetHeader(datasetId, entityname),
-                                        MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
+                                        MessageHelper.GetCreateDatasetMessage(datasetId, title, GetDisplayName(), entityname),
                                         GeneralSettings.SystemEmail
                                         );
                                 }
                                 else
                                 {
                                     emailService.Send(MessageHelper.GetMetadataUpdatHeader(datasetId, entityname),
-                                        MessageHelper.GetUpdateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
+                                        MessageHelper.GetUpdateDatasetMessage(datasetId, title, GetDisplayName(), entityname),
                                         GeneralSettings.SystemEmail
                                         );
                                 }
@@ -372,6 +385,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
+        public string GetDisplayName()
+        {
+            string username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+                User user = _userManager.FindByNameAsync(username).Result;
+
+                return user.DisplayName;
+            }
+            catch { 
+                return "DEFAULT";
+            } 
+        }
+
         public List<ListViewItem> LoadDatasetViewList()
         {
             List<ListViewItem> temp = new List<ListViewItem>();
@@ -379,7 +407,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             DatasetManager datasetManager = new DatasetManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             //get all datasetsid where the current userer has access to
-            UserManager userManager = new UserManager();
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
             try
@@ -401,8 +428,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             finally
             {
                 datasetManager.Dispose();
-                entityPermissionManager.Dispose();
-                userManager.Dispose();
             }
         }
 
@@ -702,7 +727,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return false;
         }
 
-        private XDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)
+        private XDocument setSystemValuesToMetadata(long datasetid, long version,double tag, long metadataStructureId, XmlDocument metadata, bool newDataset)
         {
             SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
 
@@ -711,7 +736,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied };
             else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataLastModfied };
 
-            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version,tag, metadataStructureId, metadata, myObjArray);
 
             return XmlUtility.ToXDocument(metadata);
         }
@@ -800,7 +825,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         xVersion,
                                         xpath,
                                         DefaultEntitiyReferenceType.MetadataLink.GetDisplayName(),
-                                        DateTime.Now
+                                        DateTime.Now,
+                                        "",
+                                        ""
                                     ));
                             }
                         }
@@ -843,6 +870,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             workingCopy.ModificationInfo.Timestamp = DateTime.Now;
 
             return workingCopy;
+        }
+
+        private async Task<bool> reindex(long datasetId, bool useTags)
+        {
+
+            // reindex
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
+            provider?.UpdateSingleDatasetIndex(datasetId, (IndexingAction)Enum.Parse(typeof(IndexingAction), "CREATE"), useTags);
+
+            return true;
+
         }
 
         #endregion Helper

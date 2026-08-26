@@ -205,8 +205,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                     DataType dataType = new DataType();
                     // get existing dataTypes
                     DataType existDT = dataTypeManager.Repo.Get().Where(d =>
-                        d.Name.Equals(dtName) &&
-                        d.SystemType.ToString().Equals(mappedDataType["SystemType"].ToString())
+                        d.Name.Equals(dtName)
                         ).FirstOrDefault();
                     // return ID of existing dataType or create dataType
                     if (existDT == null && dtSystemType != null)
@@ -226,7 +225,10 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                     }
                     else
                     {
+                        existDT.Description = dtDescription;
+                        existDT.SystemType = dtSystemType.ToString();
                         dataType = existDT;
+                        dataTypeManager.Update(dataType);
                     }
 
                     mappedDataType["DataTypesId"] = dataType.Id;

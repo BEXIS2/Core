@@ -1,4 +1,4 @@
-﻿using BExIS.Dim.Helpers.Mappings;
+using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Services;
 using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
@@ -27,9 +27,9 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             {
                 using (var datasetManager = new DatasetManager())
                 using (var conceptManager = new ConceptManager())
-                using (var entityPermissionManager = new EntityPermissionManager())
                 using (var entityManager = new EntityManager())
                 {
+                    var entityPermissionManager = new EntityPermissionManager();
                     var metadata = datasetVersion.Metadata;
 
                     var concept = conceptManager.MappingConceptRepository.Query(c => c.Name.ToLower() == "citation_" + format.ToString().ToLower()).FirstOrDefault();
@@ -77,10 +77,14 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     // Version 
                     if (model.Version == null || string.IsNullOrEmpty(model.Version))
                     {
-                        if (useTags && datasetVersion.Tag != null)
-                            model.Version = datasetVersion.Tag.ToString();
-
                         model.Version = datasetManager.GetDatasetVersionNr(datasetVersion.Id).ToString();
+                    }
+
+                    //Tag
+                    if (useTags)
+                    {
+                        if (datasetVersion.Tag != null)
+                            model.Tag = datasetVersion.Tag.Nr.ToString();
                     }
 
                     var isPublic = entityPermissionManager.IsPublicAsync(datasetVersion.Dataset.EntityTemplate.EntityType.Id, datasetVersion.Dataset.Id).Result;
@@ -94,10 +98,10 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     // Publication Year
                     if (model.Year == null || String.IsNullOrEmpty(model.Year))
                     {
-                        if (isPublic)
-                            model.Year = datasetVersion.PublicAccessDate.Date.ToString("yyyy");
-
-                        model.Year = datasetVersion.Timestamp.Date.ToString("yyyy");
+                       if(useTags)
+                            model.Year = datasetVersion.Tag != null ? datasetVersion.Tag.ReleaseDate.Date.ToString("yyyy") : datasetVersion.Timestamp.Date.ToString("yyyy");
+                        else
+                            model.Year = datasetVersion.Timestamp.Date.ToString("yyyy");
                     }
 
                     // URL
@@ -205,7 +209,10 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             }
             bibtex += "},\n";
 
-            bibtex += "version ={" + model.Version + "},\n";
+            if (useTags && !String.IsNullOrEmpty(model.Tag))
+                bibtex += "version ={" + model.Tag + "},\n";
+            else
+                bibtex += "version ={" + model.Version + "},\n";
 
             bibtex += "year ={" + model.Year + "},\n";
             bibtex += "publisher ={" + model.Publisher + "},\n";
@@ -213,10 +220,10 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             string url = model.URL;
             if (isPublic)
             {
-                if (useTags)
-                    url += "/ddm/data/Showdata/" + entityId + "?tag=" + model.Version + "";
+                if (useTags && !String.IsNullOrEmpty(model.Tag))
+                    url += "/dcm/view/?id=" + entityId + "&tag=" + model.Tag + "";
                 else
-                    url += "/ddm/data/Showdata/" + entityId + "?version=" + model.Version + "";
+                    url += "/dcm/view/?id=" + entityId + "&version=" + model.Version + "";
 
                 bibtex += "url ={" + url + "},\n";
             }
@@ -257,7 +264,12 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 ris += "AU - " + author + "\n";
             }
             ris += "PY - " + model.Year + " \n";
-            ris += "ET - " + model.Version + " \n";
+
+            if (useTags && !String.IsNullOrEmpty(model.Tag))
+                ris += "ET - " + model.Tag + " \n";
+            else
+                ris += "ET - " + model.Version + " \n";
+
             ris += "PB - " + model.Publisher + " \n";
 
             if (!String.IsNullOrEmpty(model.DOI))
@@ -266,10 +278,10 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             string url = model.URL;
             if (isPublic)
             {
-                if (useTags)
-                    url += "/ddm/data/Showdata/" + entityId + "?tag=" + model.Version + "";
+                if (useTags && !String.IsNullOrEmpty(model.Tag))
+                    url += "/dcm/view/?id=" + entityId + "&tag=" + model.Tag + "";
                 else
-                    url += "/ddm/data/Showdata/" + entityId + "?version=" + model.Version + "";
+                    url += "/dcm/view/?id=" + entityId + "&version=" + model.Version + "";
 
                 ris += "UR - " + url + "\n";
             }
@@ -298,7 +310,12 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             }
             text += " (" + model.Year + "): ";
             text += model.Title + ". ";
-            text += "Version " + model.Version + ". ";
+
+            if (useTags && !String.IsNullOrEmpty(model.Tag))
+                text += "Version " + model.Tag + ". ";
+            else
+                text += "Version " + model.Version + ". ";
+
             text += model.Publisher + ". ";
             text += model.EntityName + ". ";
 
@@ -311,18 +328,21 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 string url = model.URL;
                 if (isPublic)
                 {
-                    if (useTags)
-                        url += "/ddm/data/Showdata/" + entityId + "?tag=" + model.Version + "";
+                    if (useTags && !String.IsNullOrEmpty(model.Tag))
+                        url += "/dcm/view/?id=" + entityId + "&tag=" + model.Tag + "";
                     else
-                        url += "/ddm/data/Showdata/" + entityId + "?version=" + model.Version + "";
+                        url += "/dcm/view/?id=" + entityId + "&version=" + model.Version + "";
 
                     text += url + ". ";
                 }
                 else
                     text += url + ". ";
 
-                if(String.IsNullOrEmpty(model.Note))
-                    text += model.EntityName + " ID= " + entityId;
+                if (String.IsNullOrEmpty(model.Note))
+                {
+                    if(isPublic)
+                        text += model.EntityName + " ID= " + entityId;
+                }
                 else
                     text += model.Note;
             }

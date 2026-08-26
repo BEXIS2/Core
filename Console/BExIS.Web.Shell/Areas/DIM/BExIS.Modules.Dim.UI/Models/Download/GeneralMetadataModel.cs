@@ -1,9 +1,7 @@
-﻿using BExIS.Modules.Dim.UI.Models.Api;
-using System;
+﻿using BExIS.Dim.Helpers.Models;
+using BExIS.UI.Helpers;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Web;
 
 namespace BExIS.Modules.Dim.UI.Models.Download
 {
@@ -11,6 +9,7 @@ namespace BExIS.Modules.Dim.UI.Models.Download
     {
         //public ApiDatasetModel Dataset { get; set; }
         public DatasetDownloadInfoModel DownloadInformation { get; set; }
+        public List<string> Files { get; set; }
 
         public GeneralMetadataModel() : base()
         {

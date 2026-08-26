@@ -1,4 +1,4 @@
-﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Hooks;
@@ -12,18 +12,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Telerik.Web.Mvc.Infrastructure.Implementation;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class DataController : Controller
     {
         // GET: Data
-        public ActionResult Start(long id, int version)
+        [JsonNetFilter]
+        public JsonResult Start(long id, int version)
         {
-            return RedirectToAction("load", new { id, version });
+            // return RedirectToAction("load", new { id, version });
+            var jsonResult = Load(id, version );
+            return jsonResult;
         }
 
         [JsonNetFilter]
@@ -53,6 +58,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     if (datasetversion != null) // if dataset version  
                     {
+                        model.VersionId = datasetversion.Id;
+
                         // check if dataset has structure
                         if (datasetversion.Dataset.DataStructure != null)
                         {
@@ -84,7 +91,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                     Name = name,
                                                     Description = content.Description,
                                                     Type = content.MimeType,
-                                                    Lenght = content.FileSize
+                                                    Lenght = content.FileSize,
+                                                    Path = content.URI
                                                 });
                                             }
                                             else // exist allready modified

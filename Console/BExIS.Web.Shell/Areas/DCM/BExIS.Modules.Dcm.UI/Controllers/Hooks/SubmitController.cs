@@ -1,4 +1,4 @@
-﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Modules.Dcm.UI.Helpers;
@@ -19,12 +19,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Web.SessionState;
 using Vaiona.Entities.Common;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class SubmitController : BaseController
     {
         private User _user;
@@ -46,9 +48,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
         [JsonNetFilter]
-        public ActionResult Start(long id, int version = 0)
+        public JsonResult Start(long id, int version)
         {
-            return RedirectToAction("Load", new { id, version });
+            // return RedirectToAction("load", new { id, version });
+            var jsonResult = Load(id, version);
+            return jsonResult;
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]

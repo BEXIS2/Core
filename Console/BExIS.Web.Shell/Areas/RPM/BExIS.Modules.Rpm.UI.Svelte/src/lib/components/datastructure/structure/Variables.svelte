@@ -20,7 +20,11 @@
 		faAngleUp,
 		faAngleDown,
 		faAnglesDown,
-		faAnglesUp
+		faAnglesUp,
+		faChevronUp,
+		faChevronDown,
+		faArrowUp
+
 	} from '@fortawesome/free-solid-svg-icons';
 
 	// services
@@ -55,27 +59,27 @@
 	// validation array
 	let variableValidationStates: any = [];
 
-	export let valid = true;
+	export let valid: boolean | null = null;
 
 	let ready: boolean = false;
 
 	const modalStore = getModalStore();
 
 	onMount(async () => {
-		const datatypes = await getDataTypes();
+		// Fire all requests simultaneously
+		const [datatypes, units, variableTemplates, meanings, constraints] = await Promise.all([
+			getDataTypes(),
+			getUnits(),
+			getVariableTemplates(),
+			getMeanings(),
+			getConstraints()
+		]);
+
+		// Once they ALL resolve, update your stores
 		dataTypeStore.set(datatypes);
-
-		const units = await getUnits();
 		unitStore.set(units);
-
-		const variableTemplates = await getVariableTemplates();
 		templateStore.set(variableTemplates);
-
-		const meanings = await getMeanings();
 		meaningsStore.set(meanings);
-		console.log('🚀 ~ file: Variables.svelte:50 ~ onMount ~ meanings:', meanings);
-
-		const constraints = await getConstraints();
 		constraintsStore.set(constraints);
 
 		fillVariableValdationStates(variables);
@@ -95,16 +99,25 @@
 		}
 	}
 
-	function varChangeFn()
-	{
+	let isUnique: boolean;
+	let uniqueNames: string[] = [];
+	// triggered when a variable changed its validation state
+	function varChangeFn() {
+		uniqueNames = checkNamesUnique();
+		if (uniqueNames.length == 0) {
+			isUnique = true;
+		} else {
+			isUnique = false;
+		}
 		checkValidationState();
-		dispatch("changed")
+		dispatch('changed');
 	}
 	// every time when validation state of a variable is change,
 	// this function triggered an check whether save button can be active or not
 	function checkValidationState() {
 		valid = variableValidationStates.every((v: boolean) => v === true);
-		
+		valid = valid && isUnique;
+		// console.log('🚀 ~ file: Variables.svelte:87 ~ checkValidationState ~ valid:', valid);
 		//console.log("TCL ~ file: Variables.svelte:63 ~ checkValidationState ~ variableValidationStates:", variableValidationStates)
 	}
 
@@ -115,6 +128,23 @@
 			cValues.push(c);
 		}
 		return cValues;
+	}
+	// return non-unique names
+	function checkNamesUnique() {
+		let names: string[] = [];
+		let nonUniqueNames: string[] = [];
+
+		variables.forEach((v) => {
+			if (names.includes(v.name)) {
+				if (!nonUniqueNames.includes(v.name)) {
+					nonUniqueNames.push(v.name);
+				}
+			} else {
+				names.push(v.name);
+			}
+		});
+
+		return nonUniqueNames;
 	}
 
 	// copy data from variable on index i to the next one
@@ -229,32 +259,15 @@
 	}
 </script>
 
-<div class="p-2">
-	<div class="flex gap-2 items-end">
-		<button
-			id="variables-expander"
-			class="btn variant-filled-secondary"
-			title={expandAll ? 'collapse all' : 'expand all'}
-			on:mouseover={() => helpStore.show('variables-expander')}
-			on:click={() => (expandAll = !expandAll)}
-		>
-			{#if expandAll}
-				<Fa icon={faAnglesUp} />
-			{:else}
-				<Fa icon={faAnglesDown} />
-			{/if}
-		</button>
+{#if ready}
+	<div><DwcRequirements bind:variables /></div>
 
-		<DwcRequirements bind:variables={variables} />
-		
-		
-	</div>
-	<div class="pr-32 w-auto">
-		{#if !valid}
-			<span class="text-sm">Variables with errors:</span>
+	{#if !valid}
+		<div class="pr-32 w-auto mb-2 p-1 rounded-md border border-gray-200 bg-gray-50">
+			<span class="">Variables with errors:</span>
 			{#each variableValidationStates as v, i}
 				{#if v == false && variables[i] != undefined}
-					<a class="chip variant-filled-error m-1" href="#{i}">
+					<a class="chip variant-soft-error m-1" href="#{i}">
 						{#if variables[i].name != ''}
 							{variables[i].name}
 						{:else}
@@ -263,9 +276,48 @@
 					</a>
 				{/if}
 			{/each}
-		{/if}
-	</div>
-	<div class="flex-col space-y-2 mt-1">
+		</div>
+	{/if}
+	{#if !isUnique}
+		<div class="pr-32 w-auto mb-2 p-1 rounded-md border border-gray-200 bg-gray-50">
+			<span class="">Variable names must be unique. Non-unique names:</span>
+			{#each uniqueNames as name}
+				<div class="chip variant-soft-error m-1">
+					{name}
+				</div>
+			{/each}
+		</div>
+	{/if}
+{/if}
+<div class="">
+	{#if ready}
+		<div class="flex gap-2 justify-end">
+			<a href="#top" class="badge text-sm">
+				<Fa icon={faArrowUp} />&nbsp;Scroll to top
+			</a>
+			{#if expandAll}
+				<button
+					class="badge text-sm"
+					title={expandAll ? 'Collapse all' : 'Expand all'}
+					on:click={() => (expandAll = !expandAll)}
+				>
+					<Fa icon={faChevronDown} />&nbsp;Collapse all variables
+				</button>
+			{:else}
+				<!--Expand all sections button-->
+
+				<button
+					class="badge text-sm"
+					title={expandAll ? 'Collapse all' : 'Expand all'}
+					on:click={() => (expandAll = !expandAll)}
+				>
+					<Fa icon={faChevronUp} />&nbsp;Expand all variables
+				</button>
+			{/if}
+		</div>
+	{/if}
+	<div class="flex flex-col space-y-2 mt-1 scrollable min-h-0 max-h-[70vh]">
+	<div id="top"></div>
 		{#if variables && missingValues && ready}
 			<!-- else content here -->
 			{#each variables as variable, i (i)}
@@ -281,33 +333,12 @@
 					expand={expandAll}
 					blockDataRelevant={dataExist}
 				>
-					<svelte:fragment slot="options">
-						{#if variables.length > 0 && i < variables.length - 1}
-							<button
-								id="copy-next-{i}"
-								type="button"
-								title="copy content (not name) to the next variable "
-								class="chip variant-filled-warning"
-								on:mouseover={() => helpStore.show('copy-next')}
-								on:focus={() => helpStore.show('copy-next')}
-								on:click={() => copyNext(i)}><Fa icon={faShare} /></button
-							>
-							<button
-								id="copy-all-{i}"
-								type="button"
-								title="copy content (not name) to all after this"
-								class="chip variant-filled-warning"
-								on:mouseover={() => helpStore.show('copy-all')}
-								on:click={() => copyAll(i)}><Fa icon={faShareFromSquare} /></button
-							>
-						{/if}
-					</svelte:fragment>
 					<svelte:fragment slot="list-options">
 						{#if !dataExist}
 							<button
 								id="delete-{i}"
-								title="delete variable"
-								class="chip variant-filled-error"
+								title="Delete variable"
+								class="chip variant-filled w-9 h-6 inline-flex items-center justify-center px-0"
 								on:mouseover={() => helpStore.show('delete-var')}
 								on:focus={() => helpStore.show('delete-var')}
 								on:click={() => deleteFn(i)}><Fa icon={faTrash}></Fa></button
@@ -316,8 +347,8 @@
 							{#if i > 0}
 								<button
 									id="up-{i}"
-									title="move up"
-									class="chip variant-filled-surface"
+									title="Move variable up"
+									class="chip variant-filled-surface w-9 h-6 inline-flex items-center justify-center px-0"
 									on:mouseover={() => helpStore.show('up-var')}
 									on:focus={() => helpStore.show('up-var')}
 									on:click={() => upFn(i)}><Fa icon={faAngleUp}></Fa></button
@@ -325,8 +356,8 @@
 							{:else}
 								<button
 									id="up-{i}"
-									title="move up"
-									class="chip variant-filled-surface disbaled"
+									title="Move variable up"
+									class="chip variant-filled-surface w-9 h-6 inline-flex items-center justify-center px-0 disabled"
 									disabled
 									on:mouseover={() => helpStore.show('up-var')}
 									on:focus={() => helpStore.show('up-var')}
@@ -336,8 +367,8 @@
 
 							<button
 								id="copy-{i}"
-								title="copy"
-								class="chip variant-filled-primary"
+								title="Copy variable"
+								class="chip variant-filled-primary w-9 h-6 inline-flex items-center justify-center px-0"
 								on:mouseover={() => helpStore.show('copy-var')}
 								on:focus={() => helpStore.show('copy-var')}
 								on:click={() => copyFn(i)}><Fa icon={faCopy}></Fa></button
@@ -346,23 +377,37 @@
 							{#if variables.length > 0 && i < variables.length - 1}
 								<button
 									id="down-{i}"
-									title="move down"
-									class="chip variant-filled-surface"
-									on:mouseover={() => helpStore.show('down-var')}
-								 on:focus={() => helpStore.show('down-var')}
+									title="Move variable down"
+									class="chip variant-filled-surface w-9 h-6 inline-flex items-center justify-center px-0"
 									on:click={() => downFn(i)}><Fa icon={faAngleDown}></Fa></button
 								>
 							{:else}
 								<button
 									id="down-{i}"
-									title="move down"
-									class="chip variant-filled-surface"
+									title="Move variable down"
+									class="chip variant-filled-surface w-9 h-6 inline-flex items-center justify-center px-0 disabled"
 									disabled
-									on:mouseover={() => helpStore.show('down-var')}
-									on:focus={() => helpStore.show('down-var')}
 									on:click={() => downFn(i)}><Fa icon={faAngleDown}></Fa></button
 								>
 							{/if}
+						{/if}
+					</svelte:fragment>
+					<svelte:fragment slot="options">
+						{#if variables.length > 0 && i < variables.length - 1}
+							<button
+								id="copy-next-{i}"
+								type="button"
+								title="Copy content (not name) to the next variable"
+								class="chip variant-filled-warning w-9 h-6 inline-flex items-center justify-center px-0"
+								on:click={() => copyNext(i)}><Fa icon={faShare} /></button
+							>
+							<button
+								id="copy-all-{i}"
+								type="button"
+								title="Copy content (not name) to all after this"
+								class="chip variant-filled-warning w-9 h-6 inline-flex items-center justify-center px-0"
+								on:click={() => copyAll(i)}><Fa icon={faShareFromSquare} /></button
+							>
 						{/if}
 					</svelte:fragment>
 				</Variable>
@@ -370,19 +415,25 @@
 			<div class="flex content-end px-6">
 				<div class="grow"></div>
 				{#if !dataExist}
-					<button title="add" class="chip variant-filled-primary flex-none" on:click={addFn}
+					<button title="Add variable" class="chip variant-filled-primary flex-none" on:click={addFn}
 						><Fa icon={faAdd}></Fa>
 					</button>
 				{/if}
 			</div>
-		{:else}
-		 {#if dataExist}
+		{:else if dataExist}
 			<Spinner label="loading suggested structure based on your file." />
-			{:else}
+		{:else}
 			<Spinner label="loading structure." />
-		{/if}
 		{/if}
 	</div>
 </div>
 
 <Modal />
+
+<style>
+	.scrollable {
+		overflow-y: auto;
+		scrollbar-width: thin; /* Makes scrollbar smaller in Firefox */
+		scrollbar-color: rgba(0, 0, 0, 0.3) transparent; /* Colors scrollbar */
+	}
+</style>

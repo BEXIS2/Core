@@ -70,7 +70,7 @@ namespace BExIS.IO.Transform.Validation.ValueValidation
             if (value != null)
             {
                 if (CheckList.Contains(value.ToString())) return null;
-                else return new Error(ErrorType.Value, "Value is not in domain", new object[] { name, value, row, dataType });
+                else return new Error(ErrorType.Value, "Value is not in domain list.", new object[] { name, value, row, dataType });
             }
 
             return null;

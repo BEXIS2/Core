@@ -1,9 +1,9 @@
 ﻿using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Helpers.Mappings;
+using BExIS.Dim.Helpers.Models;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
-using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Utils.Data.Helpers;
@@ -22,7 +22,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 {
     public class ApiDatasetHelper
     {
-        public ApiDatasetModel GetContent(DatasetVersion datasetVersion, long id, int versionNumber, long metadataStructureId, long dataStructureId)
+        public ApiDatasetModel GetContent(DatasetVersion datasetVersion, long id, int versionNumber, long metadataStructureId, long dataStructureId, long entityTemplateId)
         {
             ApiDatasetModel datasetModel = new ApiDatasetModel()
             {
@@ -30,10 +30,12 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 Version = versionNumber,
                 VersionId = datasetVersion.Id,
                 VersionDate = datasetVersion.Timestamp.ToString(new CultureInfo("en-US")),
+                Tag = datasetVersion.Tag?.Nr ?? 0,
                 Title = datasetVersion.Title,
                 Description = datasetVersion.Description,
                 DataStructureId = dataStructureId,
-                MetadataStructureId = metadataStructureId
+                MetadataStructureId = metadataStructureId,
+                EntityTemplateId = entityTemplateId
             };
 
             Dictionary<string, List<XObject>> objects = new Dictionary<string, List<XObject>>();
@@ -46,7 +48,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 if (tmp != null)
                 {
-                    string value = string.Join(",", tmp.Distinct());
+                    string value = string.Join(", ", tmp.Distinct());
                     if (!string.IsNullOrEmpty(value))
                     {
                         datasetModel.AdditionalInformations.Add(k.ToString(), value);
@@ -193,9 +195,9 @@ namespace BExIS.Modules.Dim.UI.Helpers
         // @TODO: move to dataset manager?
         private static Tuple<bool, DateTime> getPublicAndDate(long id)
         {
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (EntityManager entityManager = new EntityManager())
             {
+                var entityPermissionManager = new EntityPermissionManager();
                 long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
                 entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
                 return entityPermissionManager.GetPublicAndDate(entityTypeId.Value, id);

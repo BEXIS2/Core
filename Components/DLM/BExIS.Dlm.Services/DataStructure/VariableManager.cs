@@ -400,8 +400,8 @@ namespace BExIS.Dlm.Services.DataStructure
                 merged.VariableTemplate = entity.VariableTemplate;
                 merged.VariableConstraints = entity.VariableConstraints;    
                 merged.Meanings = entity.Meanings;  
-                merged.MissingValues = entity.MissingValues;
-                merged.Description = entity.Description;  
+                merged.Description = entity.Description;
+
                 repo.Put(merged);
                 uow.Commit();
             }
@@ -617,15 +617,10 @@ namespace BExIS.Dlm.Services.DataStructure
                     case TypeCode.String:
                         try
                         {
-                            int temp = DateTime.Now.Ticks.GetHashCode();
-                            List<string> placeholders = missingValues.Select(mv => mv.Placeholder).ToList();
-
-                            while (placeholders.Contains(temp.ToString(format)))
-                            {
-                                temp += 1;
-                            }
-
-                            return temp.ToString(format);
+                            var x = missingValues.First(mv => mv.Placeholder == null);
+                            if (x != null) return x.DisplayName;
+                           
+                            return "";
                         }
                         catch
                         {

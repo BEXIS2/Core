@@ -46,7 +46,7 @@
 		/>
 
 		<div>
-			<TextArea
+			<TextInput
 				id="description"
 				label="Description"
 				bind:value={model.description}
@@ -55,11 +55,6 @@
 				invalid={res.hasErrors('description')}
 				feedback={res.getErrors('description')}
 			/>
-			{#if model.description != undefined}
-				<span class="text-right" class:text-error-500={model.description.length > 255}
-					>{255 - model.description.length}</span
-				>
-			{/if}
 		</div>
 	</div>
 {/if}

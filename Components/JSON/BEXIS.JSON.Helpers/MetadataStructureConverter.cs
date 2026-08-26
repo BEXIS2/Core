@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using Vaiona.Persistence.Api;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace BEXIS.JSON.Helpers
@@ -102,9 +103,37 @@ namespace BEXIS.JSON.Helpers
                     current = addMetadataAttrUsage(metadataAttrUsage, current, out _childRequired);
 
                     // if current is required add it to the parent
-                    if (_childRequired) current.Required.Add(metadataAttrUsage.Label);
-                    if (IsChoice(usage.Extra) && getMaxCardinality(usage) > 1) current.AnyOf.Add(current.Properties.Last().Value);
-                    else if (IsChoice(usage.Extra)) current.OneOf.Add(current.Properties.Last().Value);
+                    //if (_childRequired) current.Required.Add(metadataAttrUsage.Label);
+                    //if (IsChoice(usage.Extra) && getMaxCardinality(usage) > 1) current.AnyOf.Add(current.Properties.Last().Value);
+                    //else if (IsChoice(usage.Extra)) current.OneOf.Add(current.Properties.Last().Value);
+
+                    var lastPropName = metadataAttrUsage.Label; // z.B. "Kreditkarte"
+                    var lastPropSchema = current.Properties[lastPropName];
+
+                    // falls das Kind für sich Required-Kinder hat, hast du das schon in lastPropSchema gesetzt
+
+                    if (IsChoice(usage.Extra))
+                    {
+                        // Subschema für den Choice-Fall
+                        var choiceSchema = new JSchema
+                        {
+                            Type = JSchemaType.Object
+                        };
+
+                        // gleiche Properties wie im Parent (damit die Validierung Sinn ergibt)
+                        // minimal reicht i.d.R. das eine relevante Property:
+                        choiceSchema.Properties.Add(lastPropName, lastPropSchema);
+                        choiceSchema.Required.Add(lastPropName);
+
+                        if (getMaxCardinality(usage) > 1)
+                            current.AnyOf.Add(choiceSchema);
+                        else
+                            current.OneOf.Add(choiceSchema);
+                    }
+                    else if (_childRequired)
+                    {
+                        current.Required.Add(lastPropName);
+                    }
                 }
             }
 
@@ -201,6 +230,52 @@ namespace BEXIS.JSON.Helpers
 
                 //current.Properties.Add("@ref",currentRef);
                 current.Properties.Add("#text", currentText);
+
+                // add metadata parameters (XSD attributes) as @-prefixed properties
+                // load parameter usages directly from the database to avoid lazy-loading issues
+                using (var metadataAttributeManager = new MetadataAttributeManager())
+                {
+                    var uow = metadataAttributeManager.GetIsolatedUnitOfWork();
+                    var paramUsageRepo = uow.GetReadOnlyRepository<MetadataParameterUsage>();
+                    // query all parameter usages where Master == this metadata attribute
+                    var parameterUsages = paramUsageRepo.Query(p => p.Master.Id == type.Id).ToList();
+
+                    var paramRepo = uow.GetReadOnlyRepository<MetadataParameter>();
+
+                    foreach (var paramUsage in parameterUsages)
+                    {
+                        string attrKey = "@" + paramUsage.Label;
+                        if (!current.Properties.ContainsKey(attrKey))
+                        {
+                            JSchema attrSchema = new JSchema();
+
+                            // load the parameter member to get its datatype
+                            var freshMember = paramRepo.Get(paramUsage.Member.Id);
+                            if (freshMember != null && freshMember.DataType != null)
+                            {
+                                attrSchema.Type = convertToJSchemaType(freshMember.DataType);
+                            }
+                            else
+                            {
+                                attrSchema.Type = JSchemaType.String;
+                            }
+
+                            // set default value if available
+                            if (!string.IsNullOrEmpty(paramUsage.DefaultValue))
+                            {
+                                attrSchema.Default = JToken.FromObject(paramUsage.DefaultValue);
+                            }
+
+                            // set fixed value if available
+                            if (!string.IsNullOrEmpty(paramUsage.FixedValue))
+                            {
+                                attrSchema.Default = JToken.FromObject(paramUsage.FixedValue);
+                            }
+
+                            current.Properties.Add(attrKey, attrSchema);
+                        }
+                    }
+                }
             }
 
             if (type.Self is MetadataCompoundAttribute)
@@ -217,10 +292,79 @@ namespace BEXIS.JSON.Helpers
                     {
                         bool _childIsRequired = false;
                         current = addMetadataAttrUsage(mnau, current, out _childIsRequired);
-                        // if current is required add it to the parent
-                        if (_childIsRequired) current.Required.Add(mnau.Label);
-                        if (IsChoice(usage.Extra) && getMaxCardinality(usage) > 1) current.AnyOf.Add(current.Properties.Last().Value);
-                        else if (IsChoice(usage.Extra)) current.OneOf.Add(current.Properties.Last().Value);
+                        //// if current is required add it to the parent
+                        //if (_childIsRequired) current.Required.Add(mnau.Label);
+                        //if (IsChoice(usage.Extra) && getMaxCardinality(usage) > 1) current.AnyOf.Add(current.Properties.Last().Value);
+                        //else if (IsChoice(usage.Extra)) current.OneOf.Add(current.Properties.Last().Value);
+
+                        var lastPropName = mnau.Label; // z.B. "Kreditkarte"
+                        var lastPropSchema = current.Properties[lastPropName];
+
+                        // falls das Kind für sich Required-Kinder hat, hast du das schon in lastPropSchema gesetzt
+
+                        if (IsChoice(usage.Extra))
+                        {
+                            // Subschema für den Choice-Fall
+                            var choiceSchema = new JSchema
+                            {
+                                Type = JSchemaType.Object
+                            };
+
+                            // gleiche Properties wie im Parent (damit die Validierung Sinn ergibt)
+                            // minimal reicht i.d.R. das eine relevante Property:
+                            choiceSchema.Properties.Add(lastPropName, lastPropSchema);
+                            choiceSchema.Required.Add(lastPropName);
+
+                            if (getMaxCardinality(usage) > 1)
+                                current.AnyOf.Add(choiceSchema);
+                            else
+                                current.OneOf.Add(choiceSchema);
+                        }
+                        else if (_childIsRequired)
+                        {
+                            current.Required.Add(lastPropName);
+                        }
+                    }
+                }
+
+                // add metadata parameters (XSD attributes) as @-prefixed properties
+                // load parameter usages directly from the database to avoid lazy-loading issues
+                using (var metadataAttributeManager = new MetadataAttributeManager())
+                {
+                    var uow = metadataAttributeManager.GetIsolatedUnitOfWork();
+                    var paramUsageRepo = uow.GetReadOnlyRepository<MetadataParameterUsage>();
+                    var paramRepo = uow.GetReadOnlyRepository<MetadataParameter>();
+                    var parameterUsages = paramUsageRepo.Query(p => p.Master.Id == type.Id).ToList();
+
+                    foreach (var paramUsage in parameterUsages)
+                    {
+                        string attrKey = "@" + paramUsage.Label;
+                        if (!current.Properties.ContainsKey(attrKey))
+                        {
+                            JSchema attrSchema = new JSchema();
+
+                            var freshMember = paramRepo.Get(paramUsage.Member.Id);
+                            if (freshMember != null && freshMember.DataType != null)
+                            {
+                                attrSchema.Type = convertToJSchemaType(freshMember.DataType);
+                            }
+                            else
+                            {
+                                attrSchema.Type = JSchemaType.String;
+                            }
+
+                            if (!string.IsNullOrEmpty(paramUsage.DefaultValue))
+                            {
+                                attrSchema.Default = JToken.FromObject(paramUsage.DefaultValue);
+                            }
+
+                            if (!string.IsNullOrEmpty(paramUsage.FixedValue))
+                            {
+                                attrSchema.Default = JToken.FromObject(paramUsage.FixedValue);
+                            }
+
+                            current.Properties.Add(attrKey, attrSchema);
+                        }
                     }
                 }
             }
@@ -301,6 +445,11 @@ namespace BEXIS.JSON.Helpers
             refValue.Type = JSchemaType.String;
             current.Properties.Add("@ref", refValue);
 
+            // party id
+            JSchema partyIdValue = new JSchema();
+            partyIdValue.Type = JSchemaType.String;
+            current.Properties.Add("@partyid", partyIdValue);
+
             return current;
         }
 
@@ -343,6 +492,7 @@ namespace BEXIS.JSON.Helpers
                     if (constraint is DomainConstraint)
                     {
                         var d = (DomainConstraint)constraint;
+                        if (!d.Items.Any()) d.Materialize();
                         d.Items.ForEach(i => current.Enum.Add(new JValue(i.Value)));
                     }
 

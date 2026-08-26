@@ -90,16 +90,19 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 	const dispatch = createEventDispatcher();
 	const setByTemplate = get(setByTemplateStore);
 	const	updateDescriptionByTemplate = get(updateDescriptionByTemplateStore);
-
+ 
 	let x: listItemType = { id: 0, text: '', group: '', description: '' };
 
 	onMount(() => {
 		console.log("datatypes", $dataTypeStore);
+
+		 
+
 		// set suggestions
 		setList();
 		suggestedDataType = variable.dataType;
 		suggestedUnits = variable.possibleUnits;
-		suggestedTemplates = variable.possibleTemplates;
+		setTemplates()
 		console.log('🚀 ~ onMount ~ variable:', variable);
 
 		// reset & reload validation
@@ -136,6 +139,14 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 		res = suite(variable, '');
 		setValidationState(res);
 	});
+
+	function setTemplates() {
+		suggestedTemplates = $templateStore.filter((t) => variable.possibleTemplates.includes(t.id));
+		suggestedTemplates.forEach((t) => {
+			t.group = "detect"
+		});
+		console.log('🚀 ~ setTemplates ~ suggestedTemplates:', suggestedTemplates);
+	}
 
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
@@ -360,7 +371,7 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 									<div class="grow">
 										<TextInput
 											id="name-{index}"
-											label="Name"
+											label="{index + 1}. Variable name as in file"
 											bind:value={variable.name}
 											on:input={onChangeHandler}
 											valid={res.isValid('name')}
@@ -373,10 +384,11 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 								</div>
 
 								<div slot="template">
-									<div class="flex w-full gap-1 py-1">
+									<div class="flex w-full gap-1 py-1 -mt-4">
 										<div class="grow">Template (data is copied and changeable!)</div>
 										{#each suggestedTemplates.slice(0, 3) as t}
 											<button
+												id="variableTemplate-{index}-{t.id}"
 												title="Click to select"
 												class="badge"
 												class:variant-filled-primary={t.text == variable.template?.text}
@@ -408,8 +420,7 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 											/>
 										</div>
 										<div class="">
-										<button class="chip variant-filled-primary flex-none" on:click={() => (openTemplateModel = true)}>
-											<Fa icon={faTable} />
+										<button class="chip variant-filled-primary flex-none" on:click={() => (openTemplateModel = true)} title="Select template from list"><Fa icon={faTable} />
 										</button>
 									</div>
 									</div>
@@ -420,7 +431,7 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 						</Header>
 					</header>
 
-					<section class="py-2 px-10">
+					<section class="pl-8 pr-4">
 						<!--Description-->
 						<Container>
 							<div slot="property">
@@ -446,7 +457,7 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 							<div slot="property">
 								<MultiSelect
 									id="dataType-{index}"
-									title="Data Type"
+									title="Data type"
 									source={datatypes}
 									itemId="id"
 									itemLabel="text"
@@ -529,8 +540,8 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 							</div>
 						</Container>
 
-						<Container>
-							<div slot="property">
+						<Container name="MeaningsAndConstraints">
+							<div slot="meanings">
 								<div class="flex w-full gap-1 py-1">
 									<!--<div class="grow">Meanings</div>-->
 								</div>
@@ -552,13 +563,7 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 									on:change={(e) => onSelectHandler(e, `meanings-${index}`)}
 								/>
 							</div>
-							<div slot="description">
-								<MeaningsDescription bind:list={variable.meanings} />
-							</div>
-						</Container>
-
-						<Container>
-							<div slot="property">
+							<div slot="constraints">
 								<div class="flex w-full gap-1 py-1">
 									<div class="grow">Constraints</div>
 								</div>
@@ -582,32 +587,27 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 								/>
 							</div>
 							<div slot="description">
+								<MeaningsDescription bind:list={variable.meanings} />
 								<ConstraintsDescription bind:list={variable.constraints} />
 							</div>
+							
 						</Container>
 						<Container>
 							<div slot="property">
-								<div class="flex w-full gap-1 py-1">
-									<div class="grow">Missing Values</div>
-								</div>
+								{#if variable.dataType && variable.dataType.text.toLowerCase() != 'boolean' }						
+
 								<MissingValues
 									bind:list={variable.missingValues}
 									showTitle={false}
 									disabled={blockDataRelevant}
+									globalIndex={index}
 								></MissingValues>
+								{/if}
 							</div>
 							<div slot="description"></div>
 						</Container>
 					</section>
 
-					<footer class="card-footer">
-						<div class="flex">
-							<div class="grow" />
-							<div class=" flex-none text-right">
-								<slot name="options" />
-							</div>
-						</div>
-					</footer>
 				</div>
 			{:else}
 				<Overview
@@ -641,6 +641,9 @@ import { faTable } from '@fortawesome/free-solid-svg-icons';
 			class="flex-none w-24 space-y-2 content-center"
 		>
 			<slot name="list-options" />
+			{#if expand}
+				<slot name="options" />
+			{/if}
 		</div>
 	{/if}
 </div>

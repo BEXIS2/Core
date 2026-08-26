@@ -18,6 +18,11 @@ namespace BExIS.Dlm.Entities.Data
         public virtual string Description { get; set; }
 
         /// <summary>
+        /// Description of the Entity Template
+        /// </summary>
+        public virtual int Order { get; set; }
+
+        /// <summary>
         /// Entity
         /// </summary>
         public virtual Entity EntityType { get; set; }
@@ -57,9 +62,7 @@ namespace BExIS.Dlm.Entities.Data
         public virtual bool MetadataInvalidSaveMode { get; set; }
 
         /// <summary>
-        /// should the user be able to save the metadata if not alle mandatory are filled correct
-        /// if true - also not valid metadat will be stored
-        /// if false -  only valid metadata will be stored
+        /// should the user be able to select a datastructure
         /// </summary>
         public virtual bool HasDatastructure { get; set; }
 
@@ -77,6 +80,27 @@ namespace BExIS.Dlm.Entities.Data
             set
             {
                 JsonDatastructureList = JsonConvert.SerializeObject(value);
+            }
+        }
+        /// <summary>
+        /// should the user be able to select a extension
+        /// </summary>
+        public virtual bool HasExtension { get; set; }
+
+        /// <summary>
+        /// List of available Extensions
+        /// </summary>
+        public virtual string JsonExtensionList { get; set; }
+
+        public virtual List<ExtensionType> ExtensionList
+        {
+            get
+            {
+                return JsonConvert.DeserializeObject<List<ExtensionType>>(JsonExtensionList);
+            }
+            set
+            {
+                JsonExtensionList = JsonConvert.SerializeObject(value);
             }
         }
 
@@ -169,13 +193,16 @@ namespace BExIS.Dlm.Entities.Data
             PermissionGroups = new PermissionsType();
             NotificationGroups = new List<long>();
             MetadataInvalidSaveMode = true;
+            ExtensionList = new List<ExtensionType>();
 
+            Order = 0;
             JsonAllowedFileTypes = "";
             JsonDatastructureList = "";
             JsonDisabledHooks = "";
             JsonMetadataFields = "";
             JsonPermissionGroups = "";
             JsonNotificationGroups = "";
+            JsonExtensionList = "";
         }
 
         public EntityTemplate(string name, string description, Entity entityType, MetadataStructure.MetadataStructure metadataStructure)
@@ -187,6 +214,7 @@ namespace BExIS.Dlm.Entities.Data
             AllowedFileTypes = new List<string>();
             DisabledHooks = new List<string>();
             DatastructureList = new List<long>();
+            ExtensionList = new List<ExtensionType>();
             MetadataFields = new List<int>();
             PermissionGroups = new PermissionsType();
             NotificationGroups = new List<long>();
@@ -198,6 +226,7 @@ namespace BExIS.Dlm.Entities.Data
             JsonMetadataFields = "";
             JsonPermissionGroups = "";
             JsonNotificationGroups = "";
+            JsonExtensionList = "";
         }
     }
 
@@ -214,6 +243,21 @@ namespace BExIS.Dlm.Entities.Data
             ViewEditGrant = new List<long>();
             View = new List<long>();
             ViewEdit = new List<long>();
+        }
+    }
+
+    public class ExtensionType
+    {
+        public long TemplateId { get; set; }
+        public string ReferenceType { get; set; }
+        public bool Unique { get; set; }
+
+
+        public ExtensionType()
+        {
+            TemplateId = 0;
+            ReferenceType = "";
+            Unique = true;
         }
     }
 }

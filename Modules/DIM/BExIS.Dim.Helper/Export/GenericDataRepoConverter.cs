@@ -9,6 +9,7 @@ using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Utils.Extensions;
 using BExIS.Xml.Helpers;
+using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -58,7 +59,7 @@ namespace BExIS.Dim.Helpers.Export
                     if (broker != null)
                     {
                         OutputMetadataManager.GetConvertedMetadata(datasetId, TransmissionType.mappingFileExport,
-                            broker.MetadataFormat);
+                            metadataStructureName);
 
                         // get primary data
                         // check the data sturcture type ...
@@ -114,7 +115,7 @@ namespace BExIS.Dim.Helpers.Export
                         #endregion datatructure
 
                         using (var zipFileStream = new FileStream(zipFilePath, FileMode.Create))
-                        using (var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Update))
+                        using (var archive = new ZipOutputStream(zipFileStream))
                         {
                             datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
@@ -127,8 +128,8 @@ namespace BExIS.Dim.Helpers.Export
 
                                 if (FileHelper.FileExist(path))
                                 {
-                                    if (!archive.Entries.Any(entry => entry.Name.EndsWith(name)))
-                                        archive.AddFileToArchive(path, name);
+                                    //if (!archive.Entries.Any(entry => entry.Name.EndsWith(name)))
+                                     archive.AddFileToArchive(path, name);
                                 }
                             }
 

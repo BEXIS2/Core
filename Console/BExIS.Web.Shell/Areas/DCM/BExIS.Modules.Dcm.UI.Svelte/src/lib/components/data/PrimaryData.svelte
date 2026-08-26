@@ -5,6 +5,9 @@
 	import { createEventDispatcher } from 'svelte';
 
 	export let id: number | undefined = undefined;
+	export let version: number | undefined = undefined;
+	export let versionId: number | undefined = -1;
+	
 	type ServerTableType = {
 		id: number;
 		name: string;
@@ -28,7 +31,7 @@
 			search: false, // enable search
 			server: {
 				entityId: id, // dataset ID
-				versionId: -1, // vesion ID
+				versionId: versionId, // version ID
 				baseUrl: url,
 				defaultPageSize: 5,
 				pageSizes: [5, 10, 50, 100, 500, 1000]

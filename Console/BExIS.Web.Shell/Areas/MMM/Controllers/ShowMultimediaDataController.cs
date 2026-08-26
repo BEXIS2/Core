@@ -4,7 +4,9 @@ using BExIS.Dlm.Services.Data;
 using BExIS.IO;
 using BExIS.Modules.Mmm.UI.Helpers;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
 using IDIV.Modules.Mmm.UI.Models;
@@ -27,6 +29,14 @@ namespace IDIV.Modules.Mmm.UI.Controllers
 {
     public class ShowMultimediaDataController : Controller
     {
+
+        private readonly UserManager _userManager;
+
+        public ShowMultimediaDataController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         // GET: ShowMultimediaData
         public ActionResult Index(long datasetID, string entityType = "Dataset")
         {
@@ -54,21 +64,17 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             {
                 return null;
             }
-            finally
-            {
-                entityPermissionManager.Dispose();
-            }
         }
 
         public ActionResult multimediaData(long datasetID, long versionId = 0, string entityType = "Dataset")
         {
             ViewData["Id"] = datasetID;
 
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (DatasetManager datasetManager = new DatasetManager())
             {
                 try
                 {
+                    EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                     bool isLatestVersion = false;
                     if (versionId == datasetManager.GetDatasetLatestVersion(datasetID).Id)
                         isLatestVersion = true;
@@ -79,6 +85,38 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                     Session["DatasetInfo"] = new DatasetInfo(datasetID, versionId, isLatestVersion, access, entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Delete).Result);
                     if (access)
                         return PartialView("_multimediaData", getFilesByDatasetId(datasetID, entityType, versionId));
+                    else
+                        return null;
+                }
+                catch
+                {
+                    return null;
+                }
+                finally
+                {
+                }
+            }
+        }
+
+        public ActionResult multimediaDataView(long datasetID, long versionId = 0, string entityType = "Dataset")
+        {
+            ViewData["Id"] = datasetID;
+
+            using (DatasetManager datasetManager = new DatasetManager())
+            {
+                try
+                {
+                    EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+                    bool isLatestVersion = false;
+                    if (versionId == datasetManager.GetDatasetLatestVersion(datasetID).Id)
+                        isLatestVersion = true;
+
+                    ViewData["edit"] = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Write).Result;
+
+                    bool access = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read).Result;
+                    Session["DatasetInfo"] = new DatasetInfo(datasetID, versionId, isLatestVersion, access, entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Delete).Result);
+                    if (access)
+                        return View("_multimediaData", getFilesByDatasetId(datasetID, entityType, versionId));
                     else
                         return null;
                 }
@@ -148,7 +186,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                             using (var emailService = new EmailService())
                             {
                                 emailService.Send(MessageHelper.GetFileDownloadHeader(datasetID, versionNr),
-                                                                                        MessageHelper.GetFileDownloadMessage(GetUsernameOrDefault(), datasetID, fileInfo.Name),
+                                                                                        MessageHelper.GetFileDownloadMessage(GetDisplayName(), datasetID, fileInfo.Name),
                                                                                         GeneralSettings.SystemEmail
                                                                                         );
                             }
@@ -167,7 +205,6 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                 }
                 finally
                 {
-                    entityPermissionManager.Dispose();
                     datasetManager.Dispose();
                 }
             }
@@ -183,11 +220,11 @@ namespace IDIV.Modules.Mmm.UI.Controllers
         {
             path = Server.UrlDecode(path);
             {
-                using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
                 using (DatasetManager datasetManager = new DatasetManager())
                 {
                     try
                     {
+                        EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                         DatasetInfo datasetInfo = (DatasetInfo)Session["DatasetInfo"];
                         string entityType = (string)Session["EntityType"];
 
@@ -239,7 +276,10 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                                 // set system key values
                                 int v = 1;
                                 if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
-                                workingCopy.Metadata = setSystemValuesToMetadata(v, workingCopy.Dataset.Id, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
+                                
+                                double tag = workingCopy.Tag != null ? workingCopy.Tag.Nr : 0;
+
+                                workingCopy.Metadata = setSystemValuesToMetadata(v, workingCopy.Dataset.Id, tag, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
 
                                 datasetManager.EditDatasetVersion(workingCopy, null, null, null);
 
@@ -306,10 +346,6 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                 catch
                 {
                     return null;
-                }
-                finally
-                {
-                    entityPermissionManager.Dispose();
                 }
             }
             else
@@ -474,10 +510,6 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                 {
                     return null;
                 }
-                finally
-                {
-                    entityPermissionManager.Dispose();
-                }
             }
             else
             {
@@ -570,18 +602,16 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             }
             finally
             {
-                entityPermissionManager.Dispose();
                 datasetManager.Dispose();
             }
         }
 
         public List<FileInformation> getFilesByDataset(Dataset dataset, DatasetManager datasetManager, string entityType, long versionId = 0)
         {
-            EntityPermissionManager entityPermissionManager = null;
             try
             {
                 List<FileInformation> fileInfos = new List<FileInformation>();
-                entityPermissionManager = new EntityPermissionManager();
+                var entityPermissionManager = new EntityPermissionManager();
                 bool access = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), dataset.Id, RightType.Read).Result;
                 if (dataset != null && access)
                 {
@@ -607,9 +637,9 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                 }
                 return fileInfos;
             }
-            finally
+            catch
             {
-                entityPermissionManager.Dispose();
+                return null;
             }
         }
 
@@ -638,15 +668,15 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             return new Measurement();
         }
 
-        private XmlDocument setSystemValuesToMetadata(long version, long datasetId, long metadataStructureId, XmlDocument metadata)
+        private XmlDocument setSystemValuesToMetadata(long version, long datasetId,double tag, long metadataStructureId, XmlDocument metadata)
         {
             SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
 
             Key[] myObjArray = { };
 
-            myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
+            myObjArray = new Key[] { Key.Id, Key.Version,Key.Tag, Key.DateOfVersion, Key.DataLastModified };
 
-            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetId, version, metadataStructureId, metadata, myObjArray);
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetId, version,tag, metadataStructureId, metadata, myObjArray);
 
             return metadata;
         }
@@ -663,6 +693,22 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             catch { }
 
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+        }
+
+        public string GetDisplayName()
+        {
+            string username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+                User user = _userManager.FindByNameAsync(username).Result;
+
+                return user.DisplayName;
+            }
+            catch
+            {
+                return "DEFAULT";
+            }
         }
     }
 }

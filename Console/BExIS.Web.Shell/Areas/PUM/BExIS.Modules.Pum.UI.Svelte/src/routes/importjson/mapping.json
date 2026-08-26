@@ -1,0 +1,84 @@
+{
+    "Mappings": [
+        {
+            "Source": "container-title",
+            "Target": "$.publication.Journal"
+        },
+        {
+            "Source": "title",
+            "Target": "$.publication.Title"
+        },
+        {
+            "Source": "abstract",
+            "Target": "$.publication.Abstract"
+        },
+        {
+            "Source": "author",
+            "Target": "$.publication.Authors"
+        },
+        {
+            "Source": "affiliation",
+            "Target": "$.publication.Affiliations"
+        },
+        {
+            "Source": "type",
+            "Target": "$.publication.Type"
+        },
+        {
+            "Source": "license",
+            "Target": "$.publication.License"
+        },
+        {
+            "Source": "published-online",
+            "Target": "$.publication.Publication_date"
+        },
+        {
+            "Source": "issue",
+            "Target": "$.publication.issue"
+        },
+         {
+            "Source": "volume",
+            "Target": "$.publication.volume"
+        },
+        {
+            "Source": "",
+            "Target": "$.publication.Curation.Rated_by"
+        },
+        {
+            "Source": "",
+            "Target": "$.publication.Curation.Access_date"
+        },
+        {
+            "Source": "",
+            "Target": "$.publication.Curation.Date_added"
+        },
+        {
+            "Source": "",
+            "Target": "$.publication.Curation.Date_modified"
+        },
+        {
+            "Source": "",
+            "Target": "$.publication.Identifiers.Isbn"
+        },
+        {
+            "Source": "ISSN",
+            "Target": "$.publication.Identifiers.Issn"
+        },
+        {
+            "Source": "DOI",
+            "Target": "$.publication.Identifiers.Doi"
+        },
+        {
+            "Source": "URL",
+            "Target": "$.publication.Identifiers.Uri"
+        },
+        {
+            "Source": "",
+            "Target": "$.publication.Identifiers.Alt_uri"
+        },
+        {
+            "Source": "",
+            "Target": "$.publication.Identifiers.Alt_uri"
+        }
+    ]
+}

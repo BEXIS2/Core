@@ -44,7 +44,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\VisualizationController.cs" />
     <Compile Include="Helper\VIMSeedDataGenerator.cs" />
     <Compile Include="Models\VisualizationModel.cs" />
@@ -298,12 +297,10 @@
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Views\Help\Informations.xml" />
     <Content Include="Views\Web.config">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Help\Index.cshtml" />
     <Content Include="Vim.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>

@@ -4,6 +4,9 @@ namespace BExIS.Utils.Config.Configurations
 {
     public class SmtpConfiguration
     {
+        [JsonProperty("isActive")]
+        public bool IsActive { get; set; }
+
         [JsonProperty("hostName")]
         public string HostName { get; set; }
 

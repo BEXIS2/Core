@@ -1,4 +1,4 @@
-﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dim.Entities.Export.GBIF;
 using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers;
@@ -146,6 +146,15 @@ namespace BExIS.Modules.Dim.UI.Controllers
             ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
 
             return PartialView("_showPublishDataView", model);
+        }
+
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Read)]
+        public ActionResult getPublishDataView(long datasetId, long datasetVersionId = -1)
+        {
+            setViewData(datasetId);
+            ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
+
+            return View("_showPublishDataView", model);
         }
 
         public async Task<ActionResult> LoadRequirementView(long brokerId, long datasetId, int versionNr = 0, double tagNr = 0)
@@ -317,7 +326,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                             if (repository != null && repository.Name.ToLower() == "datacite")
                             {
-                                string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + datasetVersion.Dataset.Id).ToString()).ToString();
+                                string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/dcm/view/?id=" + datasetVersion.Dataset.Id).ToString()).ToString();
                                 //new DataCiteDOIHelper().sendRequest(datasetVersion, datasetUrl);
 
                                 string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
@@ -338,7 +347,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                             if (repository != null && repository.Name.ToLower() == "datacite")
                             {
-                                //string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + datasetVersion.Dataset.Id).ToString()).ToString();
+                                //string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/dcm/view/?id=" + datasetVersion.Dataset.Id).ToString()).ToString();
                                 //new DataCiteDOIHelper().sendRequest(datasetVersion, datasetUrl);
 
                                 string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
@@ -435,6 +444,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
             try
             {
                 Dataset dataset = datasetManager.GetDataset(datasetId);
+                var latestVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                model.Title = latestVersion != null ? latestVersion.Title : "No title available";
 
                 List<Broker> Brokers = GetBrokers(dataset.MetadataStructure.Id, publicationManager);
 
@@ -501,16 +512,15 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         Status = pub.Status,
                         DatasetVersionNr = versionNr,
                         Tag = pub.DatasetVersion.Tag != null ? pub.DatasetVersion.Tag.Nr : 0,
+                       
                     });
                 }
-
                 return model;
             }
             finally
             {
                 publicationManager.Dispose();
                 datasetManager.Dispose();
-                entityPermissionManager.Dispose();
             }
         }
 
@@ -587,7 +597,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <param name="brokerId"></param>
         /// <returns></returns>
         private Tuple<string, string> PrepareData(long datasetVersionId, long brokerId)
-        {
+         {
             Tuple<string, string> tmp = null;
             try
             {
@@ -722,7 +732,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             //    return Json(jsonresult);
             //}
-            ////user exist and api user has access to the api´s
+            ////user exist and api user has access to the api�s
             //else
             //{
             //    //load metadata from version
@@ -915,7 +925,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 ViewData["VersionNrs"] = versionNumbers;
                 ViewData["Tags"] = tags;
-                
+                ViewData["Title"] = tags;
+
             }
         }
     }

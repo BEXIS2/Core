@@ -64,7 +64,9 @@ namespace BExIS.Xml.Helpers.UnitTests
             JObject result = xmlMetadataHelper.ConvertTo(xmlDocument);
             JObject result2 = xmlMetadataHelper.ConvertTo(xmlDocument, true);
 
-            bool isvalid = result.IsValid(schema);
+            IList<string> errorMessages = new List<string>();
+
+            bool isvalid = result.IsValid(schema, out errorMessages);
 
             var json = JsonConvert.SerializeObject(result);
             var json2 = JsonConvert.SerializeObject(result2);

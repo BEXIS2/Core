@@ -9,9 +9,10 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Helpers;
 using BExIS.Utils.NH.Querying;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
+using BExIS.Utils.Config;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -28,6 +29,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class EntityPermissionsController : BaseController
     {
+        private readonly UserManager _userManager;
+
+        public EntityPermissionsController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
         public async Task AddInstanceToPublic(long entityId, long instanceId)
         {
             var entityPermissionManager = new EntityPermissionManager();
@@ -48,15 +55,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     using (var emailService = new EmailService())
                     {
                         emailService.Send(MessageHelper.GetSetPublicHeader(instanceId, typeof(Dataset).Name),
-                            MessageHelper.GetSetPublicMessage(getPartyNameOrDefault(), instanceId, typeof(Dataset).Name),
-                            ConfigurationManager.AppSettings["SystemEmail"]
+                            MessageHelper.GetSetPublicMessage(GetDisplayName(), instanceId, typeof(Dataset).Name),
+                            GeneralSettings.SystemEmail
                             );
                     }
                 }
             }
-            finally
-            {
-                entityPermissionManager.Dispose();
+            catch(Exception ex) {
+                throw;
             }
         }
 
@@ -79,9 +85,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     await entityPermissionManager.UpdateAsync(entityPermission);
                 }
             }
-            finally
-            {
-                entityPermissionManager.Dispose();
+            catch(Exception e) {
+                throw;
             }
         }
 
@@ -129,7 +134,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             finally
             {
                 entityManager.Dispose();
-                entityPermissionManager.Dispose();
             }
         }
 
@@ -141,11 +145,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [GridAction]
         public async Task<ActionResult> Permissions_Select(long subjectId, long entityId, long instanceId)
         {
-            using (var entityPermissionManager = new EntityPermissionManager())
             using (var subjectManager = new SubjectManager())
             using (var partyManager = new PartyManager())
             using (var entityManager = new EntityManager())
             {
+                var entityPermissionManager = new EntityPermissionManager();
                 var subject = subjectManager.SubjectRepository.Get(subjectId);
 
                 var entityPermissions = new List<ReferredEntityPermissionGridRowModel>();
@@ -193,46 +197,42 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         public async Task RemoveInstanceFromPublic(long entityId, long instanceId)
         {
-            using (var entityPermissionManager = new EntityPermissionManager())
+            var entityPermissionManager = new EntityPermissionManager();
+            var entityPermission = await entityPermissionManager.FindAsync(entityId, instanceId);
+
+            if (entityPermission == null) return;
+            await entityPermissionManager.DeleteAsync(entityPermission);
+
+            if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
             {
-                var entityPermission = await entityPermissionManager.FindAsync(entityId, instanceId);
+                var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", instanceId } });
+            }
 
-                if (entityPermission == null) return;
-                await entityPermissionManager.DeleteAsync(entityPermission);
-
-                if (this.IsAccessible("DDM", "SearchIndex", "ReIndexSingle"))
-                {
-                    var x = this.Run("DDM", "SearchIndex", "ReIndexSingle", new RouteValueDictionary() { { "id", instanceId } });
-                }
-
-                using (var emailService = new EmailService())
-                {
-                    emailService.Send(MessageHelper.GetUnsetPublicHeader(instanceId, typeof(Dataset).Name),
-                        MessageHelper.GetUnsetPublicMessage(getPartyNameOrDefault(), instanceId, typeof(Dataset).Name),
-                        ConfigurationManager.AppSettings["SystemEmail"]
-                        );
-                }
+            using (var emailService = new EmailService())
+            {
+                emailService.Send(MessageHelper.GetUnsetPublicHeader(instanceId, typeof(Dataset).Name),
+                    MessageHelper.GetUnsetPublicMessage(GetDisplayName(), instanceId, typeof(Dataset).Name),
+                    GeneralSettings.SystemEmail
+                    );
             }
         }
 
         public async Task RemoveRightFromEntityPermission(long subjectId, long entityId, long instanceId, int rightType)
         {
-            using (var entityPermissionManager = new EntityPermissionManager())
+            var entityPermissionManager = new EntityPermissionManager();
+            var entityPermission = await entityPermissionManager.FindAsync(subjectId, entityId, instanceId);
+
+            if (entityPermission == null) return;
+
+            if (entityPermission.Rights == rightType)
             {
-                var entityPermission = await entityPermissionManager.FindAsync(subjectId, entityId, instanceId);
-
-                if (entityPermission == null) return;
-
-                if (entityPermission.Rights == rightType)
-                {
-                    await entityPermissionManager.DeleteAsync(entityPermission);
-                }
-                else
-                {
-                    if ((entityPermission.Rights & rightType) == 0) return;
-                    entityPermission.Rights -= rightType;
-                    await entityPermissionManager.UpdateAsync(entityPermission);
-                }
+                await entityPermissionManager.DeleteAsync(entityPermission);
+            }
+            else
+            {
+                if ((entityPermission.Rights & rightType) == 0) return;
+                entityPermission.Rights -= rightType;
+                await entityPermissionManager.UpdateAsync(entityPermission);
             }
         }
 
@@ -292,33 +292,23 @@ namespace BExIS.Modules.Sam.UI.Controllers
             finally
             {
                 subjectManager.Dispose();
-                entityPermissionManager.Dispose();
             }
         }
 
-        private string getPartyNameOrDefault()
+        public string GetDisplayName()
         {
-            var userName = string.Empty;
+            string username = string.Empty;
             try
             {
-                userName = HttpContext.User.Identity.Name;
-            }
-            catch { }
+                username = HttpContext.User.Identity.Name;
+                User user = _userManager.FindByNameAsync(username).Result;
 
-            if (userName != null)
+                return user.DisplayName;
+            }
+            catch
             {
-                using (var uow = this.GetUnitOfWork())
-                {
-                    var userRepository = uow.GetReadOnlyRepository<User>();
-                    var user = userRepository.Query(s => s.Name.ToUpperInvariant() == userName.ToUpperInvariant()).FirstOrDefault();
-
-                    if (user != null)
-                    {
-                        return user.DisplayName;
-                    }
-                }
+                return "DEFAULT";
             }
-            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
         }
     }
 }

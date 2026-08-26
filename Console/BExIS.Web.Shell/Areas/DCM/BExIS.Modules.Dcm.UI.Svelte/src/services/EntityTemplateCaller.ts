@@ -11,6 +11,16 @@ export const getEntityTemplate = async (id: number) => {
 	}
 };
 
+export const getEntityTemplateByObject = async (id: number) => {
+	try {
+		const response = await Api.get('/dcm/entitytemplates/GetByObject?id=' + id);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
 export const getEntityTemplateList = async () => {
 	try {
 		const response = await Api.get('/dcm/entitytemplates/Load');
@@ -54,6 +64,27 @@ export const getSystemKeys = async (id) => {
 export const getDataStructures = async () => {
 	try {
 		const response = await Api.get('/dcm/entitytemplates/DataStructures');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
+export const getExtensions = async () => {
+	try {
+		const response = await Api.get('/dcm/entitytemplates/Extensions');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
+export const getReferenceTypes = async () => {
+	try {
+		const response = await Api.get('/dcm/entitytemplates/ReferenceTypes');
+		console.log("🚀 ~ getReferenceTypes ~ response:", response.data)
 		return response.data;
 	} catch (error) {
 		console.error(error);

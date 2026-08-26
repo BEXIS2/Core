@@ -4,6 +4,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Orm.NH.Utils;
 using BExIS.Dlm.Services.Helpers;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Versions;
 using BExIS.Utils.NH.Querying;
 using System;
@@ -794,6 +795,8 @@ namespace BExIS.Dlm.Services.Data
                 IRepository<DatasetVersion> versionRepo = buow.GetRepository<DatasetVersion>();
                 IRepository<DataTuple> tuplesRepo = buow.GetRepository<DataTuple>();
                 IRepository<ContentDescriptor> contentDescriptorRepo = buow.GetRepository<ContentDescriptor>();
+                IRepository<EntityReference> entityReferenceRepo = buow.GetRepository<EntityReference>();
+
 
                 #region Delete tupleVersionIds
 
@@ -878,6 +881,26 @@ namespace BExIS.Dlm.Services.Data
                 }
 
                 #endregion Delete content descriptors
+
+                #region delete entity reference
+
+                // delete all entity references that are related to the dataset and the entitytype versions
+
+                var entityId = entity.EntityTemplate.EntityType.Id;
+
+                var refs = entityReferenceRepo.Query(r => 
+                    (r.TargetId.Equals(datasetId) && r.TargetEntityId.Equals(entityId)) || 
+                    (r.SourceId.Equals(datasetId) && r.SourceEntityId.Equals(entityId)));
+                if (refs != null)
+
+                {
+                    foreach (var entityReference in refs)
+                    {
+                        entityReferenceRepo.Delete(entityReference.Id);
+                    }
+                }
+
+                #endregion
 
                 #region Delete versions
 
@@ -1254,7 +1277,7 @@ namespace BExIS.Dlm.Services.Data
                 // should use the fallback method, but DatasetConvertor class must be merged with OutputDataManager and SearchUIHelper claases first.
                 var version = this.GetDatasetLatestVersion(datasetId);
                 var tuples = getDatasetVersionEffectiveTuples(version, pageNumber, pageSize, false); // the false, causes the method to use a scoped sesssion and keep it alive further processings that aredone later on the tuples
-                if (version.Dataset.DataStructure.Self is StructuredDataStructure)
+                if (version.Dataset.DataStructure!=null)
                 {
                     DataTable table = convertDataTuplesToDataTable(tuples, version, (StructuredDataStructure)version.Dataset.DataStructure.Self);
                     return table;
@@ -1268,7 +1291,7 @@ namespace BExIS.Dlm.Services.Data
             // should use the fallback method, but DatasetConvertor class must be merged with OutputDataManager and SearchUIHelper claases first.
             var version = this.GetDatasetVersion(versionId);
             var tuples = getDatasetVersionEffectiveTuples(version, pageNumber, pageSize, false); // the false, causes the method to use a scoped sesssion and keep it alive further processings that aredone later on the tuples
-            if (version.Dataset.DataStructure.Self is StructuredDataStructure)
+            if (version.Dataset.DataStructure != null)
             {
                 DataTable table = convertDataTuplesToDataTable(tuples, version, (StructuredDataStructure)version.Dataset.DataStructure.Self);
                 return table;
@@ -3361,7 +3384,7 @@ namespace BExIS.Dlm.Services.Data
             {
                 var datasetRepo = uow.GetReadOnlyRepository<Dataset>();
                 Dataset ds = datasetRepo.Get(datasetId);
-                if (ds.DataStructure != null && ds.DataStructure.Self is StructuredDataStructure)
+                if (ds.DataStructure != null && ds.DataStructure!= null)
                 {
                     StructuredDataStructure sds = (StructuredDataStructure)ds.DataStructure.Self;
                     if (sds.Variables != null && sds.Variables.Count() > 0)
@@ -4273,6 +4296,75 @@ namespace BExIS.Dlm.Services.Data
                 v.Tag != null && v.Tag.Final && v.Dataset.Status == DatasetStatus.CheckedIn).Select(v => v.Dataset.Id).Distinct().ToList();
             }
 
+        }
+
+        /// <summary>
+        /// Get a dictionary of dataset IDs to their latest released tag number (single DB query).
+        /// Only returns datasets that have a Final tag on a CheckedIn version.
+        /// </summary>
+        public Dictionary<long, double> GetDatasetIdsWithLatestTagNr(bool onlyReady = true)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var query = DatasetVersionRepo.Query()
+                    .Where(v => v.Tag != null && v.Dataset.Status == DatasetStatus.CheckedIn);
+
+                if (onlyReady)
+                    query = query.Where(v => v.Tag.Final == true);
+
+                // group by dataset, pick highest tag Nr per dataset
+                var result = query
+                    .GroupBy(v => v.Dataset.Id)
+                    .Select(g => new { DatasetId = g.Key, TagNr = g.Max(v => v.Tag.Nr) })
+                    .ToList();
+
+                return result.ToDictionary(x => x.DatasetId, x => x.TagNr);
+            }
+        }
+
+        /// <summary>
+        /// Get a set of dataset IDs that have data (either structured rows or unstructured content descriptors).
+        /// Single batch query — checks ContentDescriptors on the latest checked-in versions.
+        /// </summary>
+        public HashSet<long> GetDatasetIdsWithData(List<long> datasetIds)
+        {
+            HashSet<long> result = new HashSet<long>();
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var versionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
+
+                // datasets with unstructured data (content descriptors)
+                var unstructuredWith = versionRepo.Query()
+                    .Where(v => datasetIds.Contains(v.Dataset.Id)
+                        && v.Dataset.Status == DatasetStatus.CheckedIn
+                        && v.ContentDescriptors.Any(c => c.Name == "unstructuredData"))
+                    .Select(v => v.Dataset.Id)
+                    .Distinct()
+                    .ToList();
+
+                foreach (var id in unstructuredWith)
+                    result.Add(id);
+
+                // datasets with structured data (check row count via materialized view)
+                // only check datasets that have a data structure and are not already found via unstructured
+                var structuredCandidates = versionRepo.Query()
+                    .Where(v => datasetIds.Contains(v.Dataset.Id)
+                        && v.Dataset.Status == DatasetStatus.CheckedIn
+                        && v.Dataset.DataStructure != null)
+                    .Select(v => v.Dataset.Id)
+                    .Distinct()
+                    .ToList();
+
+                foreach (var id in structuredCandidates)
+                {
+                    if (result.Contains(id)) continue;
+                    if (RowAny(id))
+                        result.Add(id);
+                }
+            }
+
+            return result;
         }
 
         /// <summary>

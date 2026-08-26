@@ -75,7 +75,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
 
             DatasetManager datasetManager = new DatasetManager();
-            UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             EntityManager entityManager = new EntityManager();
 
@@ -217,8 +216,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             finally
             {
                 datasetManager.Dispose();
-                userManager.Dispose();
-                entityPermissionManager.Dispose();
                 entityManager.Dispose();
             }
         }
@@ -250,7 +247,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 // missing values
                 if (variable.MissingValues.Any())
                 {
-                    variable.MissingValues.ToList().ForEach(x => column.Instructions.MissingValues.Add(x.Placeholder, x.DisplayName));
+                    foreach (var m in variable.MissingValues)
+                    {
+                        if (m.Placeholder != null)
+                            column.Instructions.MissingValues.Add(m.Placeholder, m.DisplayName);
+                    }
                 }
 
                 tmp.Add(column);

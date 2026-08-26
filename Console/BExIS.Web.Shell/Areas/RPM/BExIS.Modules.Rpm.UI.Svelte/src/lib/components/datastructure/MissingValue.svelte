@@ -10,6 +10,7 @@
 	export let last = true;
 	export let index = 0;
 	export let disabled: boolean = false;
+	export let globalIndex: number = 0;	
 
 	const dispatch = createEventDispatcher();
 
@@ -26,19 +27,22 @@
 	<!-- <Label>Name:</Label>  -->
 	<div class="grow">
 		<TextInput
-			id="missing-value-name-{index}"
+			id="missing-value-name-{globalIndex}-{index}"
+			label="Missing value"
 			bind:value={displayName}
 			on:change
 			placeholder="Missing Value"
 			help={true}
 			{disabled}
+
 		/>
 	</div>
 
 	<!-- <Label>Description:</Label>  -->
 	<div class="grow">
 		<TextInput
-			id="missing-value-description-{index}"
+			id="missing-value-description-{globalIndex}-{index}"
+			label="Missing value description"
 			bind:value={description}
 			on:change
 			placeholder="Description"
@@ -48,21 +52,27 @@
 	</div>
 
 	{#if !disabled}
-		<div class="self-center text-xl mt-5 w-11">
+		<div class="self-center text-xl -mt-1 w-11">
 			<button
-				id="delete-missing-value-{index}"
+				id="delete-missing-value-{globalIndex}-{index}"
 				title="delete"
 				type="button"
 				on:mouseover={() => helpStore.show('delete-missing-value')}
+				on:mouseout={() => helpStore.hide()}
+				on:focus={() => helpStore.show('delete-missing-value')}
+				on:blur={() => helpStore.hide()}
 				on:click={remove}><Fa icon={faTrashAlt} /></button
 			>
 			{#if last}
 				<button
-					id="add-missing-value-{index}"
+					id="add-missing-value-{globalIndex}-{index}"
 					title="add"
 					class="add"
 					type="button"
 					on:mouseover={() => helpStore.show('add-missing-value')}
+					on:mouseout={() => helpStore.hide()}
+					on:focus={() => helpStore.show('add-missing-value')}
+					on:blur={() => helpStore.hide()}
 					on:click={add}><Fa icon={faPlus} /></button
 				>
 			{/if}

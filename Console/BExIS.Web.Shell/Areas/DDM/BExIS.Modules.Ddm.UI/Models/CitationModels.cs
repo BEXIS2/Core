@@ -31,6 +31,7 @@ namespace BExIS.Modules.Ddm.UI.Models
         Bibtex
     }
 
+  
 
     [XmlRoot("data")]
     public class CitationDataModel
@@ -42,6 +43,7 @@ namespace BExIS.Modules.Ddm.UI.Models
 
         [XmlElement("version")]
         public string Version { get; set; }
+        public string Tag { get; set; }
 
         [XmlArray("projects")]
         [XmlArrayItem("project")]

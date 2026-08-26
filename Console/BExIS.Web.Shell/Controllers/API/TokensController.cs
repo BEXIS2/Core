@@ -1,10 +1,12 @@
 ﻿using BExIS.App.Bootstrap;
 using BExIS.App.Bootstrap.Attributes;
 using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authentication;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Config;
 using BExIS.Utils.Route;
 using BExIS.Web.Shell.Models;
+using Microsoft.AspNet.Identity.Owin;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -14,6 +16,7 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 
 namespace BExIS.Web.Shell.Controllers.API
@@ -23,19 +26,26 @@ namespace BExIS.Web.Shell.Controllers.API
     /// </summary>
     public class TokensController : ApiController
     {
+        private readonly UserManager _userManager;
+
+        public TokensController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         // GET api/Token/
         /// <summary>
         /// Get the token based on basic authentication
         /// </summary>
         /// <returns>Token</returns>
-        [HttpGet, GetRoute("api/tokens"), BExISApiAuthorize]
+        [BExISApiAuthorize, HttpGet, GetRoute("api/tokens")]
         public async Task<HttpResponseMessage> Get()
         {
             try
             {
                 var jwtConfiguration = GeneralSettings.JwtConfiguration;
 
-                using (var userManager = new UserManager())
+                using (var userManager = new UserStore())
                 {
                     var user = ControllerContext.RouteData.Values["user"] as User;
 
@@ -60,7 +70,7 @@ namespace BExIS.Web.Shell.Controllers.API
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
-        [HttpPost, PostRoute("api/tokens/verify"), BExISApiAuthorize]
+        [BExISApiAuthorize, HttpPost, PostRoute("api/tokens/verify")]
         public async Task<HttpResponseMessage> Verify(string token)
         {
             try

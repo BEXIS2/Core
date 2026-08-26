@@ -148,6 +148,7 @@ namespace BExIS.UI.Hooks.Caches
         public string Name { get; set; }
         public string Type { get; set; }
         public int Lenght { get; set; }
+        public string Path { get; set; }
 
         public string Description { get; set; }
 
@@ -170,6 +171,7 @@ namespace BExIS.UI.Hooks.Caches
             Name = string.Empty;
             Type = string.Empty; ;
             Lenght = 0;
+            Path = string.Empty;
             Description = string.Empty;
             Errors = new List<Error>();
             Warnings = new List<Warning>();
@@ -180,6 +182,7 @@ namespace BExIS.UI.Hooks.Caches
             Name = name;
             Type = type;
             Lenght = length;
+            Path = string.Empty;
             Description = description;
             Errors = new List<Error>();
             Warnings = new List<Warning>();

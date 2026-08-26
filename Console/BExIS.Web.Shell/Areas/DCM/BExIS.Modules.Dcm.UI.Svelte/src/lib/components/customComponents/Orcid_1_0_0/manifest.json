@@ -1,0 +1,166 @@
+{
+  "meta": {
+    "title": "ORCID Widget",
+    "component_name": "orcid_v1.0.0",
+    "author": "BEXIS2",
+    "version": "1.0.0",
+    "description": "Component for searching and validating ORCID iDs"
+  },
+  "globalSettings": {
+    "globalsetting": [
+      {
+        "target_variable": "OrcidApiUrl",
+        "name": "ORCID API URL",
+        "description": "Base URL of the ORCID public API",
+        "type": "string",
+        "enum": [
+          "https://pub.orcid.org/v3.0/"
+        ],
+        "default_value": "https://pub.orcid.org/v3.0/"
+      },
+      {
+        "name": "Description",
+        "description": "Overwrite default description of the field.",
+        "type": "string",
+        "target_variable": "description",
+        "default_value": {
+          "type": "string",
+          "value": ""
+        }
+      }
+    ]
+  },
+  "modes": {
+    "edit": [
+      {
+        "mode_name": "Search",
+        "description": "Search for an ORCID entry by name and select it",
+        "settings": {
+          "setting": [
+            {
+              "name": "Debounce",
+              "description": "Debounce time in ms for search requests",
+              "type": "string",
+              "target_variable": "debounce",
+              "default_value": {
+                "type": "string",
+                "value": "400"
+              }
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "ORCID iD",
+              "description": "The ORCID iD (ref) and display name of the selected person",
+              "type": "string",
+              "format": "",
+              "target_variable": "orcid_field",
+              "allowregex_input": true,
+              "allowregex_output": true,
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            }
+          ]
+        }
+      },
+      {
+        "mode_name": "Validate and Fill",
+        "description": "Validate based on name (in variables) and fill ORCID data into output variables",
+        "settings": {
+          "setting": [
+            {
+              "name": "Debounce",
+              "description": "Debounce time in ms for search requests",
+              "type": "string",
+              "target_variable": "debounce",
+              "default_value": {
+                "type": "string",
+                "value": "400"
+              }
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Given Name",
+              "description": "Given name from metadata, used to search ORCID",
+              "type": "string",
+              "target_variable": "given_name",
+              "is_input": true,
+              "is_output": true
+            },
+            {
+              "name": "Family Name",
+              "description": "Family name from metadata, used to search ORCID",
+              "type": "string",
+              "target_variable": "family_name",
+              "is_input": true,
+              "is_output": true
+            },
+            {
+              "name": "ORCID iD",
+              "description": "The ORCID iD filled from the selected ORCID record",
+              "type": "string",
+              "target_variable": "orcid_id",
+              "is_input": false,
+              "is_output": true
+            }
+          ]
+        }
+      },
+      {
+        "mode_name": "Manual Entry",
+        "description": "Single input field for name with a separate ORCID iD field that can be filled manually or via search",
+        "settings": {
+          "setting": [
+            {
+              "name": "Debounce",
+              "description": "Debounce time in ms for search requests",
+              "type": "string",
+              "target_variable": "debounce",
+              "default_value": {
+                "type": "string",
+                "value": "400"
+              }
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Name",
+              "description": "Display name of the person (stored as value)",
+              "type": "string",
+              "target_variable": "orcid_field",
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "ORCID iD",
+              "description": "The ORCID iD that can be typed manually or found via search",
+              "type": "string",
+              "target_variable": "orcid_id",
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

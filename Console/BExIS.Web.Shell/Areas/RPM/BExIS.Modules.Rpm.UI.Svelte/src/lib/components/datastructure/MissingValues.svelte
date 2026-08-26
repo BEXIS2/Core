@@ -5,6 +5,7 @@
 	export let list: missingValueType[] = [];
 	export let showTitle: boolean = true;
 	export let disabled: boolean = false;
+	export let globalIndex: number = 0;
 
 	import { onMount } from 'svelte';
 	import { helpStore } from '@bexis2/bexis2-core-ui';
@@ -39,7 +40,7 @@
 </script>
 
 {#if showTitle}
-	<label id="missingvalues" on:mouseover={() => helpStore.show('missingvalues')}
+	<label id="missingvalues-{globalIndex}" on:mouseover={() => helpStore.show('missingvalues')}
 		><b>Missing Values</b></label
 	>
 {/if}
@@ -56,13 +57,8 @@
 				last={list.length - 1 === i}
 				{disabled}
 				index={i}
+				globalIndex={globalIndex}
 			/>
 		{/each}
 	{/if}
 </div>
-
-<style>
-	.missing-values-container {
-		padding-bottom: 1em;
-	}
-</style>

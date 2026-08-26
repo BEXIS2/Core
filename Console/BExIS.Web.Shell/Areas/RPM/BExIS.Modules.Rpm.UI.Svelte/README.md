@@ -1,4 +1,10 @@
 # bexis2-rpm-ui
+## 0.4.0
+- change to pnpm
+
+## 0.3.0
+- change loading of possible templates by datastructure generation
+
 ## 0.2.13
 - change message when file is analyzed for a data structure
 

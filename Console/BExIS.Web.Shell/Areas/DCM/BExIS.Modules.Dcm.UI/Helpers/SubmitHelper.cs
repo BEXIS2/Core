@@ -15,7 +15,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         {
             using (var datasetManager = new DatasetManager())
             {
-                if (datasetManager.IsDatasetCheckedIn(id) == false) throw new Exception("Dataset is in process, try again later");
+                if (datasetManager.IsDatasetCheckedIn(id) == false) return new SubmitModel(); // throw new Exception("Dataset is in process, try again later");
 
                 var dataset = datasetManager.GetDataset(id);
                 if (dataset == null) new NullReferenceException("dataset with id " + id + " not exist");

@@ -1,9 +1,11 @@
 ﻿using System.Web.Mvc;
+using System.Web.SessionState;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class FooterController : Controller
     {
         // GET: footer

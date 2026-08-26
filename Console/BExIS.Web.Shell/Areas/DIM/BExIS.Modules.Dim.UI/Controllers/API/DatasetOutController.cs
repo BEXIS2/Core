@@ -1,11 +1,11 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Helpers.Mappings;
+using BExIS.Dim.Helpers.Models;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Dim.UI.Helpers;
-using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Utils.Data.Helpers;
@@ -74,6 +74,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                             Number = i + 1
                         };
                         if(dsv.Tag != null) datasetVersionModel.Tag = dsv.Tag.Nr;
+                        if(dsv.ChangeDescription != null) datasetVersionModel.ChangeDescription = dsv.ChangeDescription;
 
 
                         datasetModel.Versions.Add(datasetVersionModel);
@@ -119,7 +120,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
                 ApiDatasetHelper apiDatasetHelper = new ApiDatasetHelper();
                 // get content
-                ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, versionNumber, dataset.MetadataStructure.Id, dataStructureId);
+                ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, versionNumber, dataset.MetadataStructure.Id, dataStructureId, dataset.EntityTemplate.Id);
                 var datastructureId = dataset.DataStructure==null?0: dataset.DataStructure.Id;
 
                 // get links
@@ -282,7 +283,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
 
                     ApiDatasetHelper apiDatasetHelper = new ApiDatasetHelper();
                     // get content
-                    ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, version, metadataStructureId, dataset.DataStructure.Id);
+                    ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, version, metadataStructureId, dataset.DataStructure.Id, dataset.EntityTemplate.Id);
 
 
                     EntityReferenceHelper entityReferenceHelper = new EntityReferenceHelper();

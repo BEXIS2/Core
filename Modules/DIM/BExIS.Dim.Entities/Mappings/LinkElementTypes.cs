@@ -11,6 +11,7 @@
         Title = 4,
         Email = 5,
         DOI = 6,
+        Funder = 7,
 
         //Automatic System Keys starts at 100
         Id = 100,
@@ -21,6 +22,7 @@
         MetadataLastModfied = 104,
         DataCreationDate = 105,
         DataLastModified = 106, // also for Dubline Core date
+        Tag = 107,
 
         //Additional Dublin Core nodes starts at 200
         Subject = 200,
@@ -90,42 +92,4 @@
         MetadataParameterUsage = 18
     }
 
-    public class LinkElementMetadataStructure : LinkElement
-    { }
-
-    public class LinkElementXsd : LinkElement
-    { }
-
-    public class LinkElementSystem : LinkElement
-    { }
-
-    public class LinkElementSimpleMetadataAttribute : LinkElement
-    { }
-
-    public class LinkElementComplexMetadatAttribute : LinkElement
-    { }
-
-    public class LinkElementMetadatAttributeUsage : LinkElement
-    { }
-
-    public class LinkElementMetadataNestedAttributeUsage : LinkElement
-    { }
-
-    public class LinkElementMetadataPackage : LinkElement
-    { }
-
-    public class LinkElementMetadataPackageUsage : LinkElement
-    { }
-
-    public class LinkElementPartyType : LinkElement
-    { }
-
-    public class LinkElementParty : LinkElement
-    { }
-
-    public class LinkElementKey : LinkElement
-    { }
-
-    public class LinkElementRole : LinkElement
-    { }
 }

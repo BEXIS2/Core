@@ -6,11 +6,14 @@ using BExIS.IO;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.Attachments;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
+using Microsoft.AspNet.Identity;
+using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,6 +30,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class AttachmentsController : Controller
     {
+        private readonly UserManager _userManager;
+
+        public AttachmentsController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         // GET: Attachments
         public ActionResult Index()
         {
@@ -75,14 +85,132 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             ViewBag.maxFileNameLength = 260 - storepath.Length - 2;
 
-            return PartialView("_datasetAttachements", LoadDatasetModel(versionId));
+            return View("_datasetAttachements", LoadDatasetModel(versionId));
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Read)]
-        public ActionResult Download(long datasetId, String fileName)
+        public ActionResult Download(long datasetId, String fileName, bool preview = false)
         {
             var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
-            return File(filePath, MimeMapping.GetMimeMapping(fileName), Path.GetFileName(filePath));
+            var mimeType = MimeMapping.GetMimeMapping(fileName);
+
+            if (preview && mimeType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+            {
+                var resizedPath = GetResizedImagePreview(filePath, 1200);
+                if (!string.IsNullOrEmpty(resizedPath))
+                    return File(resizedPath, mimeType);
+            }
+
+            if (preview)
+            {
+                return File(filePath, mimeType);
+            }
+            return File(filePath, mimeType, Path.GetFileName(filePath));
+        }
+
+        /// <summary>
+        /// Creates a resized preview image (max dimension) and caches it on disk.
+        /// Returns the path to the cached resized image, or null if resizing failed.
+        /// </summary>
+        private string GetResizedImagePreview(string originalPath, int maxDimension)
+        {
+            try
+            {
+                if (!System.IO.File.Exists(originalPath))
+                    return null;
+
+                var previewDir = Path.Combine(Path.GetDirectoryName(originalPath), ".previews");
+                if (!Directory.Exists(previewDir))
+                    Directory.CreateDirectory(previewDir);
+
+                var resizedName = $"{Path.GetFileNameWithoutExtension(originalPath)}_{maxDimension}{Path.GetExtension(originalPath)}";
+                var resizedPath = Path.Combine(previewDir, resizedName);
+
+                // check cache — if resized file exists and is newer than original, use it
+                if (System.IO.File.Exists(resizedPath) &&
+                    System.IO.File.GetLastWriteTime(resizedPath) >= System.IO.File.GetLastWriteTime(originalPath))
+                {
+                    return resizedPath;
+                }
+
+                using (var originalImage = System.Drawing.Image.FromFile(originalPath))
+                {
+                    int width = originalImage.Width;
+                    int height = originalImage.Height;
+
+                    // skip resizing if already small enough
+                    if (width <= maxDimension && height <= maxDimension)
+                        return originalPath;
+
+                    // calculate new dimensions maintaining aspect ratio
+                    if (width > height)
+                    {
+                        height = (int)((float)maxDimension / width * height);
+                        width = maxDimension;
+                    }
+                    else
+                    {
+                        width = (int)((float)maxDimension / height * width);
+                        height = maxDimension;
+                    }
+
+                    using (var bitmap = new System.Drawing.Bitmap(width, height))
+                    using (var graphics = System.Drawing.Graphics.FromImage(bitmap))
+                    {
+                        graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                        graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                        graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                        graphics.DrawImage(originalImage, 0, 0, width, height);
+
+                        // determine format
+                        var format = originalImage.RawFormat;
+                        bitmap.Save(resizedPath, format);
+                    }
+                }
+
+                return resizedPath;
+            }
+            catch (Exception ex)
+            {
+                // if resizing fails, fall back to original
+                System.Diagnostics.Debug.WriteLine($"Image resize failed: {ex.Message}");
+                return null;
+            }
+        }
+
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Read)]
+        public JsonResult GetZipContents(long datasetId, string fileName)
+        {
+            var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
+            var result = new List<object>();
+
+            if (!System.IO.File.Exists(filePath))
+                return Json(result, JsonRequestBehavior.AllowGet);
+
+            try
+            {
+                using (var fileStream = System.IO.File.OpenRead(filePath))
+                using (var zipFile = new ZipFile(fileStream))
+                {
+                    foreach (ZipEntry entry in zipFile)
+                    {
+                        if (!entry.IsFile) continue;
+                        result.Add(new
+                        {
+                            name = entry.Name,
+                            size = entry.Size,
+                            compressedSize = entry.CompressedSize,
+                            date = entry.DateTime
+                        });
+                    }
+                }
+            }
+            catch
+            {
+                // not a valid zip file
+            }
+
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
@@ -132,7 +260,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // update metadata
                     int v = 1;
                     if (datasetVersion.Dataset.Versions != null && datasetVersion.Dataset.Versions.Count > 1) v = datasetVersion.Dataset.Versions.Count();
-                    datasetVersion.Metadata = setSystemValuesToMetadata(datasetId, v, datasetVersion.Dataset.MetadataStructure.Id, datasetVersion.Metadata, false);
+                    double tag = datasetVersion.Tag != null ? datasetVersion.Tag.Nr : 0;
+
+                    datasetVersion.Metadata = setSystemValuesToMetadata(datasetId, v, tag, datasetVersion.Dataset.MetadataStructure.Id, datasetVersion.Metadata, false);
 
                     dm.EditDatasetVersion(datasetVersion, null, null, null);
                     dm.CheckInDataset(dataset.Id, fileName, GetUsernameOrDefault(), ViewCreationBehavior.None);
@@ -140,7 +270,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     using (var emailService = new EmailService())
                     {
                         emailService.Send(MessageHelper.GetAttachmentDeleteHeader(datasetId, typeof(Dataset).Name),
-                        MessageHelper.GetAttachmentDeleteMessage(datasetId, fileName, GetUsernameOrDefault()),
+                        MessageHelper.GetAttachmentDeleteMessage(datasetId, fileName, GetDisplayName()),
                         GeneralSettings.SystemEmail
                         );
                     }
@@ -152,11 +282,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private DatasetFilesModel LoadDatasetModel(long versionId)
         {
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (EntityManager entityManager = new EntityManager())
-            using (UserManager userManager = new UserManager())
             using (DatasetManager dm = new DatasetManager())
             {
+                EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                 var datasetVersion = dm.GetDatasetVersion(versionId);
                 var model = new DatasetFilesModel
                 {
@@ -168,7 +297,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 var entity = entityManager.EntityRepository.Query(e => e.Name.ToUpperInvariant() == "Dataset".ToUpperInvariant() && e.EntityType == typeof(Dataset)).FirstOrDefault();
 
-                var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                var userTask = _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
                 userTask.Wait();
                 var user = userTask.Result;
                 int rights = 0;
@@ -214,41 +343,38 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
         public ActionResult ProcessSubmit(IEnumerable<HttpPostedFileBase> attachments, long datasetId, String description)
         {
-            using (UserManager userManager = new UserManager())
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Attach file to dataset", this.Session.GetTenant());
+            // The Name of the Upload component is "attachments"
+            if (attachments != null)
             {
-                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Attach file to dataset", this.Session.GetTenant());
-                // The Name of the Upload component is "attachments"
-                if (attachments != null)
+                Session["FileInfos"] = attachments;
+                uploadFiles(attachments, datasetId, description);
+
+
+                var filemNames = "";
+
+                var userTask = _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                userTask.Wait();
+                var user = userTask.Result;
+
+                foreach (var file in attachments)
                 {
-                    Session["FileInfos"] = attachments;
-                    uploadFiles(attachments, datasetId, description);
-
-                    
-                        var filemNames = "";
-
-                    var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
-                    userTask.Wait();
-                    var user = userTask.Result;
-
-                    foreach (var file in attachments)
-                    {
-                        var fileName = Path.GetFileName(file.FileName);
-                        filemNames += fileName.ToString() + ",";
-                    }
-
-                    using (var emailService = new EmailService())
-                    {
-                        emailService.Send(MessageHelper.GetAttachmentUploadHeader(datasetId, typeof(Dataset).Name),
-                    MessageHelper.GetAttachmentUploadMessage(datasetId, filemNames, user.DisplayName),
-                    GeneralSettings.SystemEmail
-                    );
-                    }
-                    
+                    var fileName = Path.GetFileName(file.FileName);
+                    filemNames += fileName.ToString() + ",";
                 }
 
-                // Redirect to a view showing the result of the form submission.
-                return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
+                using (var emailService = new EmailService())
+                {
+                    emailService.Send(MessageHelper.GetAttachmentUploadHeader(datasetId, typeof(Dataset).Name),
+                MessageHelper.GetAttachmentUploadMessage(datasetId, filemNames, user.DisplayName),
+                GeneralSettings.SystemEmail
+                );
+                }
+
             }
+
+            // Redirect to a view showing the result of the form submission.
+            return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
@@ -307,7 +433,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // update metadata
                     int v = 1;
                     if (datasetVersion.Dataset.Versions != null && datasetVersion.Dataset.Versions.Count > 1) v = datasetVersion.Dataset.Versions.Count();
-                    datasetVersion.Metadata = setSystemValuesToMetadata(datasetId, v, datasetVersion.Dataset.MetadataStructure.Id, datasetVersion.Metadata, false);
+                    double tag = datasetVersion.Tag != null ? datasetVersion.Tag.Nr : 0;
+                    datasetVersion.Metadata = setSystemValuesToMetadata(datasetId, v, tag, datasetVersion.Dataset.MetadataStructure.Id, datasetVersion.Metadata, false);
 
                     dm.EditDatasetVersion(datasetVersion, null, null, null);
                     dm.CheckInDataset(dataset.Id, filenameList, GetUsernameOrDefault(), ViewCreationBehavior.None);
@@ -357,16 +484,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return storePath;
         }
 
-        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)
+        private XmlDocument setSystemValuesToMetadata(long datasetid, long version,double tag, long metadataStructureId, XmlDocument metadata, bool newDataset)
         {
             SystemMetadataHelper systemMetadataHelper = new SystemMetadataHelper();
 
             Key[] myObjArray = { };
 
-            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataCreationDate, Key.DataLastModified };
-            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
+            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version,Key.Tag, Key.DateOfVersion, Key.DataCreationDate, Key.DataLastModified };
+            else myObjArray = new Key[] { Key.Id, Key.Version,Key.Tag, Key.DateOfVersion, Key.DataLastModified };
 
-            var metadata_new = systemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+            var metadata_new = systemMetadataHelper.SetSystemValuesToMetadata(datasetid, version,tag, metadataStructureId, metadata, myObjArray);
 
             return metadata_new;
         }
@@ -381,6 +508,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             catch { }
 
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+        }
+        public string GetDisplayName()
+        {
+            string username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+                User user = _userManager.FindByNameAsync(username).Result;
+
+                return user.DisplayName;
+            }
+            catch
+            {
+                return "DEFAULT";
+            }
         }
     }
 }

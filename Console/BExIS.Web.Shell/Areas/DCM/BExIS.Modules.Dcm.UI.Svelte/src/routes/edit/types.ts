@@ -1,3 +1,5 @@
+import type { HookModel } from "$models/Hook";
+
 export interface EditModel {
 	id: number;
 	versionId: number;
@@ -11,31 +13,10 @@ export function isEditModel(model: any): model is EditModel {
 	return model.id !== undefined;
 }
 
-export interface HookModel {
-	name: string;
-	displayName: string;
-	status: HookStatus;
-	mode: HookMode;
-	entity: string;
-	module: string;
-	place: string;
-	start: string;
-	description: string;
-}
-
 export type ViewModel = HookModel;
 
-export enum HookStatus {
-	Disabled = 0,
-	AccessDenied = 1,
-	Open = 2,
-	Ready = 3,
-	Exist = 4,
-	Inactive = 5,
-	Waiting = 6
-}
-
-export enum HookMode {
-	view = 0,
-	edit = 1
-}
+export interface ExtensionType{
+	id: number;
+	version: number;
+	title: string;
+};

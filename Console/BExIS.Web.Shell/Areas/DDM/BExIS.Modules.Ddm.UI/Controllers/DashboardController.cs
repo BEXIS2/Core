@@ -1,15 +1,23 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Helpers;
+using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Ddm.UI.Models;
+using BExIS.Modules.DDM.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
+using BExIS.Security.Entities.Requests;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Requests;
 using BExIS.Security.Services.Subjects;
+using BExIS.UI.Helpers;
 using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -25,181 +33,88 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 {
     public class DashboardController : Controller
     {
+        private readonly UserManager<User, long> _userManager;
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+        public DashboardController(UserManager<User, long> userManager)
+        {
+            _userManager = userManager;
+        }
 
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
+            string module = "DDM";
 
-            DashboardModel model = GetDefaultDashboardModel();
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
 
             // load settings
             var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
             ViewData["use_tags"] = moduleSettings.GetValueByKey("use_tags");
-            ViewData["use_minor"] = moduleSettings.GetValueByKey("use_minor");
 
-
-            #region mydatasetmodel
-
-            ViewData["PageSize"] = 10;
-            ViewData["CurrentPage"] = 1;
-
-            #region header
-
-            List<HeaderItem> headerItems = new List<HeaderItem>();
-
-            HeaderItem headerItem = new HeaderItem()
-            {
-                Name = "ID",
-                DisplayName = "ID",
-                DataType = "Int64"
-            };
-            headerItems.Add(headerItem);
-
-            ViewData["Id"] = headerItem;
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Title",
-                DisplayName = "Title",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Description",
-                DisplayName = "Description",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Read",
-                DisplayName = "Read",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Download",
-                DisplayName = "Download",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Write",
-                DisplayName = "Write",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Delete",
-                DisplayName = "Delete",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Grant",
-                DisplayName = "Grant",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Valid",
-                DisplayName = "is valid",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            ViewData["DefaultHeaderList"] = headerItems;
-
-            #endregion header
-
-            model.MyDatasets = CreateDataTable(headerItems);
-
-            #endregion mydatasetmodel
-
-            return View(model);
+            return View();
         }
 
-        private DashboardModel GetDefaultDashboardModel()
+        #region Dashboard API
+
+        [JsonNetFilter]
+        [System.Web.Mvc.HttpGet]
+        public JsonResult GetEntities()
         {
-            //load entites
-            DashboardModel model = new DashboardModel();
-
-            using (var uow = this.GetUnitOfWork())
-            {
-                // ToDo filter entites by metadata or security.
-                // maybe not all enitites in the table are requestable
-                var enitites = uow.GetReadOnlyRepository<Entity>().Get();
-
-                foreach (var entity in enitites)
-                {
-                    model.Entities.Add(entity.Id, entity.Name);
-                }
-            }
-
-            return model;
-        }
-
-        #region mydatasets
-
-        [GridAction]
-        public ActionResult _CustomMyDatasetBinding()
-        {
-            DataTable model = new DataTable();
-
-            ViewData["PageSize"] = 10;
-            ViewData["CurrentPage"] = 1;
-
-            #region header
-
-            List<HeaderItem> headerItems = CreateHeaderItems();
-            ViewData["DefaultHeaderList"] = headerItems;
-
-            #endregion header
-
-            model = CreateDataTable(headerItems);
-
-            DatasetManager datasetManager = new DatasetManager();
-            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            UserManager userManager = new UserManager();
-            EntityManager entityManager = new EntityManager();
-
             try
             {
-                var entity = entityManager.FindByName("Dataset");
-                var user = userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
-
-                List<long> gridCommands = datasetManager.GetDatasetLatestIds();
-                gridCommands.Skip(Convert.ToInt16(ViewData["CurrentPage"])).Take(Convert.ToInt16(ViewData["PageSize"]));
-
-                List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(gridCommands, false);
-                foreach (var dsv in datasetVersions)
+                var entities = new List<object>();
+                using (var entityManager = new EntityManager())
                 {
-                    var datasetId = dsv.Dataset.Id;
-
-                    //get permissions
-                    int rights = entityPermissionManager.GetEffectiveRightsAsync(user.Id, entity.Id, datasetId).Result;
-
-                    if (rights > 0)
+                    foreach (var entity in entityManager.Entities)
                     {
-                        DataRow dataRow = model.NewRow();
-                        Object[] rowArray = new Object[8];
-                        string isValid = "no";
+                        if(!entity.Name.ToLower().Contains("extension"))
+                            entities.Add(new { id = entity.Id, name = entity.Name });
+                    }
+                }
+                return Json(entities, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
 
-                        if (datasetManager.IsDatasetCheckedIn(datasetId))
+        [JsonNetFilter]
+        [System.Web.Mvc.HttpGet]
+        public JsonResult GetMyDatasets(string rightType = "grant", string entityName = "Dataset")
+        {
+            try
+            {
+                RightType rt = (RightType)Enum.Parse(typeof(RightType), rightType, true);
+                List<MyDatasetsModel> model = new List<MyDatasetsModel>();
+
+                using (var datasetManager = new DatasetManager())
+                using (var entityManager = new EntityManager())
+                {
+                    EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+                    var entity = entityManager.FindByName(entityName);
+
+                    List<long> datasetIds = entityPermissionManager.GetKeys(BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext), entityName, typeof(Dataset), rt).Result;
+
+                    List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(datasetIds, true);
+
+                    // batch query: get all dataset IDs with their latest released tag number (single DB query)
+                    var datasetTags = datasetManager.GetDatasetIdsWithLatestTagNr(true);
+
+                    // batch query: get all dataset IDs that have data
+                    var datasetIdsWithData = datasetManager.GetDatasetIdsWithData(datasetIds);
+
+                    foreach (var dsv in datasetVersions)
+                    {
+                        string isValid = "no";
+                        bool isOwn = rt == RightType.Grant || rt == RightType.Write;
+                        string type = dsv.Dataset.DataStructure != null ? "tabular" : "file";
+                        double tagNr = datasetTags.TryGetValue(dsv.Dataset.Id, out var tn) ? tn : 0;
+                        bool hasTag = tagNr > 0;
+                        bool hasData = datasetIdsWithData.Contains(dsv.Dataset.Id);
+
+                        if (dsv.Dataset.Status == DatasetStatus.CheckedIn)
                         {
                             string title = dsv.Title;
                             string description = dsv.Description;
@@ -209,446 +124,185 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
                             }
 
-                            rowArray[0] = Convert.ToInt64(datasetId);
-                            rowArray[1] = title;
-                            rowArray[2] = description;
+                            model.Add(new MyDatasetsModel(dsv.Dataset.Id, title, description, isOwn, isValid, type, hasTag, tagNr, hasData));
                         }
                         else
                         {
-                            rowArray[0] = Convert.ToInt64(datasetId);
-                            rowArray[1] = "";
-                            rowArray[2] = "Dataset is just in processing.";
+                            model.Add(new MyDatasetsModel(dsv.Dataset.Id, "", "Dataset is just in processing.", isOwn, "no", type, hasTag, tagNr, hasData));
                         }
-
-                        rowArray[3] = (rights & (int)RightType.Read) > 0 ? "✔" : "✘";
-                        rowArray[4] = (rights & (int)RightType.Write) > 0 ? "✔" : "✘";
-                        rowArray[5] = (rights & (int)RightType.Delete) > 0 ? "✔" : "✘";
-                        //rowArray[6] = (rights & (int)RightType.Download) > 0 ? "✔" : "✘";
-                        rowArray[6] = (rights & (int)RightType.Grant) > 0 ? "✔" : "✘";
-                        rowArray[7] = isValid;
-
-                        dataRow = model.NewRow();
-                        dataRow.ItemArray = rowArray;
-                        model.Rows.Add(dataRow);
                     }
                 }
 
-                return View(new GridModel(model));
+                return Json(model, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
-                throw ex;
-            }
-            finally
-            {
-                datasetManager.Dispose();
-                entityPermissionManager.Dispose();
-                entityManager.Dispose();
-                userManager.Dispose();
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
 
-        /// <summary>
-        /// create the model of My Dataset table
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref="_CustomMyDatasetBinding"/>
-        /// <param name="entityname">Name of entity</param>
-        /// <param name="rightType">Type of right (write, delete, grant, read)</param>
-        /// <param name="onlyTable">Return only table without header</param>
-        /// <returns>model</returns>
-        public ActionResult ShowMyDatasets(string entityname, RightType rightType, string onlyTable = "false")
+        [JsonNetFilter]
+        [System.Web.Mvc.HttpGet]
+        public JsonResult GetMyRequests()
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
-
-            List<MyDatasetsModel> model = new List<MyDatasetsModel>();
-
-            // load settings
-            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
-            ViewData["use_tags"] = moduleSettings.GetValueByKey("use_tags");
-            ViewData["use_minor"] = moduleSettings.GetValueByKey("use_minor");
-
-            using (DatasetManager datasetManager = new DatasetManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
-            using (UserManager userManager = new UserManager())
-            using (EntityManager entityManager = new EntityManager())
-            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
-            using (PartyManager partyManager = new PartyManager())
-            {
-                // Entity, Entity Party Type and Entity Party
-                var entity = entityManager.FindByName(entityname);
-                var entityPartyType = partyTypeManager.PartyTypeRepository.Get(p => p.Title == entity.Name).FirstOrDefault();
-                var entityPartyIds = entityPartyType != null ? partyManager.Parties.Where(p => p.PartyType.Id == entityPartyType.Id).Select(p => p.Id).ToList() : null ;
-
-                List<long> datasetIds = new List<long>();
-
-                // get user
-                var user = userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
-
-                if (user != null)
-                {
-                    ViewBag.userLoggedIn = true;
-
-                    // get datasets based on entity permissions
-                    datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), entityname, typeof(Dataset), rightType).Result;
-
-                    var userParty = partyManager.GetPartyByUser(user.Id);
-
-                    if (userParty != null && entityPartyIds!=null && entityPartyIds.Any())
-                    {
-                        // get datasets based on party relationships
-                        List<long> partyIds = partyManager.PartyRelationshipRepository.Get(p => p.SourceParty.Id == userParty.Id && p.Permission >= (int)rightType).Select(p => p.TargetParty.Id).ToList();
-
-                        foreach (var partyId in partyIds)
-                        {
-                            if (entityPartyIds.Contains(partyId))
-                            {
-                                long datasetId = 0;
-                                var success = long.TryParse(partyManager.Find(partyId).Name, out datasetId);
-                                if (success && !datasetIds.Contains(datasetId))
-                                {
-                                    datasetIds.Add(datasetId);
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    ViewBag.userLoggedIn = false;
-                    datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), entityname, typeof(Dataset), RightType.Read).Result;
-                }
-
-                List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(datasetIds, true);
-                foreach (var dsv in datasetVersions)
-                {
-                    Object[] rowArray = new Object[8];
-                    string isValid = "no";
-
-                    string type = "file";
-                    if (dsv.Dataset.DataStructure?.Self is StructuredDataStructure)
-                    {
-                        type = "tabular";
-                    }
-
-                    if (dsv.Dataset.Status == DatasetStatus.CheckedIn)
-                    {
-                        string title = dsv.Title;
-                        string description = dsv.Description;
-
-                        if (dsv.StateInfo != null)
-                        {
-                            isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
-                        }
-
-                        rowArray[0] = Convert.ToInt64(dsv.Dataset.Id);
-                        rowArray[1] = title;
-                        rowArray[2] = description;
-                        rowArray[3] = type;
-                    }
-                    else
-                    {
-                        rowArray[0] = Convert.ToInt64(dsv.Dataset.Id);
-                        rowArray[1] = "";
-                        rowArray[2] = "Dataset is just in processing.";
-                        rowArray[3] = type;
-                    }
-
-                    //
-                    rowArray[7] = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), dsv.Dataset.Id, RightType.Write).Result;
-
-                    model.Add(new MyDatasetsModel(
-                       (long)rowArray[0],
-                      (string)rowArray[1],
-                       (string)rowArray[2],
-                       (bool)rowArray[7],
-                       isValid, (string)rowArray[3]));
-                }
-            }
-            if (onlyTable == "true")
-            {
-                return PartialView("_myDatasetsView", model);
-            }
-            else
-            {
-                ViewBag.entityname = entityname;
-                return PartialView("_myDatasetsViewHeader", model);
-            }
-        }
-
-        /// <summary>
-        /// create the model of My Dataset table
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref="_CustomMyDatasetBinding"/>
-        /// <param>NA</param>
-        /// <returns>model</returns>
-        public ActionResult ShowMyDatasets_old()
-        {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
-
-            #region header
-
-            List<HeaderItem> headerItems = new List<HeaderItem>();
-
-            HeaderItem headerItem = new HeaderItem()
-            {
-                Name = "ID",
-                DisplayName = "ID",
-                DataType = "Int64"
-            };
-            headerItems.Add(headerItem);
-
-            ViewData["Id"] = headerItem;
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Title",
-                DisplayName = "Title",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Description",
-                DisplayName = "Description",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Read",
-                DisplayName = "Read",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Write",
-                DisplayName = "Write",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Delete",
-                DisplayName = "Delete",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Grant",
-                DisplayName = "Grant",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Valid",
-                DisplayName = "is valid",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            ViewData["DefaultHeaderList"] = headerItems;
-
-            #endregion header
-
-            using (DataTable model = CreateDataTable(headerItems))
-            {
-                ViewData["PageSize"] = 10;
-                ViewData["CurrentPage"] = 1;
-
-                return PartialView("_myDatasetGridView", model);
-            }
-        }
-
-        /// <summary>
-        /// create the model of My Dataset table
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref="_CustomMyDatasetBinding"/>
-        /// <param>NA</param>
-        /// <returns>model</returns>
-        public ActionResult ShowMyDatasetsInFullPage()
-        {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
-
-            DataTable model = new DataTable();
-
-            ViewData["PageSize"] = 10;
-            ViewData["CurrentPage"] = 1;
-
-            #region header
-
-            List<HeaderItem> headerItems = CreateHeaderItems();
-
-            ViewData["DefaultHeaderList"] = headerItems;
-
-            #endregion header
-
-            model = CreateDataTable(headerItems);
-
-            return View("_myDatasetGridView", model);
-        }
-
-        private List<HeaderItem> CreateHeaderItems()
-        {
-            List<HeaderItem> headerItems = new List<HeaderItem>();
-
-            HeaderItem headerItem = new HeaderItem()
-            {
-                Name = "ID",
-                DisplayName = "ID",
-                DataType = "Int64"
-            };
-            headerItems.Add(headerItem);
-
-            ViewData["Id"] = headerItem;
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Title",
-                DisplayName = "Title",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Description",
-                DisplayName = "Description",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Read",
-                DisplayName = "Read",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Write",
-                DisplayName = "Write",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Delete",
-                DisplayName = "Delete",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Grant",
-                DisplayName = "Grant",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            headerItem = new HeaderItem()
-            {
-                Name = "Valid",
-                DisplayName = "is valid",
-                DataType = "String"
-            };
-            headerItems.Add(headerItem);
-
-            return headerItems;
-        }
-
-        private DataTable CreateDataTable(List<HeaderItem> items)
-        {
-            DataTable table = new DataTable();
-
-            foreach (HeaderItem item in items)
-            {
-                table.Columns.Add(new DataColumn()
-                {
-                    ColumnName = item.Name,
-                    Caption = item.DisplayName,
-                    DataType = getDataType(item.DataType)
-                });
-            }
-
-            return table;
-        }
-
-        private Type getDataType(string dataType)
-        {
-            switch (dataType)
-            {
-                case "String":
-                    {
-                        return Type.GetType("System.String");
-                    }
-
-                case "Double":
-                    {
-                        return Type.GetType("System.Double");
-                    }
-
-                case "Int16":
-                    {
-                        return Type.GetType("System.Int16");
-                    }
-
-                case "Int32":
-                    {
-                        return Type.GetType("System.Int32");
-                    }
-
-                case "Int64":
-                    {
-                        return Type.GetType("System.Int64");
-                    }
-
-                case "Decimal":
-                    {
-                        return Type.GetType("System.Decimal");
-                    }
-
-                case "DateTime":
-                    {
-                        return Type.GetType("System.DateTime");
-                    }
-
-                default:
-                    {
-                        return Type.GetType("System.String");
-                    }
-            }
-        }
-
-        // chekc if user exist
-        // if true return usernamem otherwise "DEFAULT"
-        public string GetUsernameOrDefault()
-        {
-            string username = string.Empty;
             try
             {
-                username = HttpContext.User.Identity.Name;
-            }
-            catch { }
+                var model = new List<RequestGridRowModel>();
+                string username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
 
-            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+                using (var entityManager = new EntityManager())
+                using (var requestManager = new RequestManager())
+                {
+                    var entityPermissionManager = new EntityPermissionManager();
+                    var entity = entityManager.FindByName("Dataset");
+                    var entityStore = (IEntityStore)Activator.CreateInstance(entity.EntityStoreType);
+
+                    var requests = requestManager.Requests.Where(r => r.Entity.Id == entity.Id && r.Applicant.Name == username);
+
+                    foreach (var m in requests)
+                    {
+                        if (entityStore.Exist(m.Key))
+                        {
+                            model.Add(new RequestGridRowModel()
+                            {
+                                Id = m.Id,
+                                InstanceId = m.Key,
+                                Title = entityStore.GetTitleById(m.Key),
+                                Rights = string.Join(", ", entityPermissionManager.GetRightsAsync(m.Rights).Result),
+                                RequestStatus = Enum.GetName(typeof(RequestStatus), m.Status),
+                                Intention = m.Intention,
+                                RequestDate = m.RequestDate
+                            });
+                        }
+                    }
+                }
+
+                return Json(model, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
         }
 
-        #endregion mydatasets
+        [JsonNetFilter]
+        [System.Web.Mvc.HttpGet]
+        public JsonResult GetDecisions()
+        {
+            try
+            {
+                var model = new List<DecisionGridRowModel>();
+                string username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
+
+                using (var entityManager = new EntityManager())
+                using (var decisionManager = new DecisionManager())
+                {
+                    var entityPermissionManager = new EntityPermissionManager();
+                    var entity = entityManager.FindByName("Dataset");
+                    var entityStore = (IEntityStore)Activator.CreateInstance(entity.EntityStoreType);
+
+                    var decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entity.Id && d.DecisionMaker.Name == username);
+
+                    foreach (var m in decisions)
+                    {
+                        if (entityStore.Exist(m.Request.Key))
+                        {
+                            model.Add(new DecisionGridRowModel()
+                            {
+                                Id = m.Id,
+                                RequestId = m.Request.Id,
+                                Rights = string.Join(", ", entityPermissionManager.GetRightsAsync(m.Request.Rights).Result),
+                                Status = m.Status,
+                                StatusAsText = Enum.GetName(typeof(DecisionStatus), m.Status),
+                                InstanceId = m.Request.Key,
+                                Title = entityStore.GetTitleById(m.Request.Key),
+                                Applicant = m.Request.Applicant.DisplayName,
+                                Intention = m.Request.Intention,
+                                RequestDate = m.Request.RequestDate
+                            });
+                        }
+                    }
+                }
+
+                return Json(model.OrderBy(x => x.Status).ThenBy(n => n.Id), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [JsonNetFilter]
+        [System.Web.Mvc.HttpPost]
+        public JsonResult WithdrawRequest(long requestId)
+        {
+            try
+            {
+                using (var decisionManager = new DecisionManager())
+                {
+                    decisionManager.Withdraw(requestId);
+                }
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [JsonNetFilter]
+        [System.Web.Mvc.HttpPost]
+        public JsonResult AcceptDecision(long decisionId)
+        {
+            try
+            {
+                using (var decisionManager = new DecisionManager())
+                {
+                    decisionManager.Accept(decisionId, "");
+                }
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [JsonNetFilter]
+        [System.Web.Mvc.HttpPost]
+        public JsonResult RejectDecision(long requestId)
+        {
+            try
+            {
+                using (var decisionManager = new DecisionManager())
+                {
+                    decisionManager.Reject(requestId, "");
+                }
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [JsonNetFilter]
+        [System.Web.Mvc.HttpGet]
+        public JsonResult GetUseTags()
+        {
+            try
+            {
+                var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+                bool useTags = (Boolean)moduleSettings.GetValueByKey("use_tags");
+                return Json(useTags, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        #endregion Dashboard API
     }
+         
 }

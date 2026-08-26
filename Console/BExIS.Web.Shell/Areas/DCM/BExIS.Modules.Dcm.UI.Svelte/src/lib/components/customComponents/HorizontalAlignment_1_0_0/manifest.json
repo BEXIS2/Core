@@ -1,0 +1,348 @@
+{
+  "meta": {
+    "title": "Horizontal Alignment Widget",
+    "component_name": "horizontalAlignment_v1.0.0",
+    "author": "David Schöne",
+    "version": "1.0.0",
+    "description": "Component for Horizontal Alignment"
+  },
+  "globalSettings": {
+    "globalsetting": [
+      {
+        "name": "Description",
+        "description": "Overwrite default description of the field.",
+        "type": "string",
+        "target_variable": "description",
+        "default_value": {
+          "type": "string",
+          "value": ""
+        }
+      }
+    ]
+  },
+  "modes": {
+    "edit": [
+      {
+        "mode_name": "2 Columns",
+        "description": "Basic Configuration of the horizontal alignment widget",
+        "settings": {
+          "setting": [
+            {
+              "name": "Default Value Field Left",
+              "description": "Default value for the left field",
+              "type": "string",
+              "target_variable": "defaultValueLeft",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            }, 
+            {
+              "name": "Default Value Field Right",
+              "description": "Default value for the right field",
+              "type": "string",
+              "target_variable": "defaultValueRight",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "Description Field Left",
+              "description": "Overwrite default description of the left field.",
+              "type": "string",
+              "target_variable": "descriptionLeft",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "Description Field Right",
+              "description": "Overwrite default description of the right field.",
+              "type": "string",
+              "target_variable": "descriptionRight",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "Disabled Field Left",
+              "description": "Disable the left field",
+              "type": "boolean",
+              "target_variable": "disabledLeft",
+              "default_value": {
+                "type": "boolean",
+                "value": false
+              }
+            },
+            {
+              "name": "Disabled Field Right",
+              "description": "Disable the right field",
+              "type": "boolean",
+              "target_variable": "disabledRight",
+              "default_value": {
+                "type": "boolean",
+                "value": false
+              }
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Field Left",
+              "description": "field input",
+              "target_variable": "Field_left",
+              "type": "string",
+              "allowregex_input": true,
+              "allowregex_output": true,
+              "is_input": true,
+              "is_output": true
+            },
+            {
+              "name": "Field Right",
+              "description": "field input",
+              "target_variable": "Field_right",
+              "type": "string",
+              "allowregex_input": true,
+              "allowregex_output": true,
+              "is_input": true,
+              "is_output": true
+            }
+          ]
+        }
+      },
+      {
+        "mode_name": "3 Columns",
+        "description": "Configuration of the horizontal alignment widget for 3 elements",
+       "settings": {
+          "setting": [
+            {
+              "name": "Default Value Field Left",
+              "description": "Default value for the left field",
+              "type": "string",
+              "target_variable": "defaultValueLeft",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "Default Value Field Mid",
+              "description": "Default value for the middle field",
+              "type": "string",
+              "target_variable": "defaultValueMid",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "Default Value Field Right",
+              "description": "Default value for the right field",
+              "type": "string",
+              "target_variable": "defaultValueRight",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "Description Field Left",
+              "description": "Overwrite default description of the left field.",
+              "type": "string",
+              "target_variable": "descriptionLeft",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "Description Field Mid",
+              "description": "Overwrite default description of the middle field.",
+              "type": "string",
+              "target_variable": "descriptionMid",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "Description Field Right",
+              "description": "Overwrite default description of the right field.",
+              "type": "string",
+              "target_variable": "descriptionRight",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "Disabled Field Left",
+              "description": "Disable the left field",
+              "type": "boolean",
+              "target_variable": "disabledLeft",
+              "default_value": {
+                "type": "boolean",
+                "value": false
+              }
+            },
+            {
+              "name": "Disabled Field Mid",
+              "description": "Disable the middle field",
+              "type": "boolean",
+              "target_variable": "disabledMid",
+              "default_value": {
+                "type": "boolean",
+                "value": false
+              }
+            },
+            {
+              "name": "Disabled Field Right",
+              "description": "Disable the right field",
+              "type": "boolean",
+              "target_variable": "disabledRight",
+              "default_value": {
+                "type": "boolean",
+                "value": false
+              }
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Field Left",
+              "description": "field input",
+              "target_variable": "Field_left",
+              "type": "string",
+              "is_input": true,
+              "is_output": true
+            },
+            {
+              "name": "Field Mid",
+              "description": "field input",
+              "target_variable": "Field_mid",
+              "type": "string",
+              "is_input": true,
+              "is_output": true
+            },
+            {
+              "name": "Field Right",
+              "description": "field input",
+              "target_variable": "Field_right",
+              "type": "string",
+              "is_input": true,
+              "is_output": true
+            }
+          ]
+        }
+      }
+    ],
+    "view": [
+      {
+        "mode_name": "2 Columns View",
+        "description": "Mode for displaying 2 fields horizontal alignment widget",
+        "settings": {
+          "setting": [
+            {
+              "name": "Label",
+              "description": "Optional label/key name displayed before the values. Leave empty to use the anchorpoint field name.",
+              "type": "string",
+              "target_variable": "label",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "Separator",
+              "description": "Separator between values (space or comma)",
+              "type": "string",
+              "enum": [" ", ", ", " - "],
+              "target_variable": "separator",
+              "default_value": {
+                "type": "string",
+                "value": " "
+              }
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Field 1",
+              "description": "Field 1 left side",
+              "target_variable": "Field_left",
+              "is_input": true,
+              "is_output": true
+            },
+            {
+              "name": "Field 2",
+              "description": "Field 2 right side",
+              "target_variable": "Field_right",
+              "is_input": true,
+              "is_output": true
+            }
+          ]
+        }
+      },
+      {
+        "mode_name": "3 Columns View",
+        "description": "Mode for displaying 3 fields horizontal alignment widget",
+        "settings": {
+          "setting": [
+            {
+              "name": "Label",
+              "description": "Optional label/key name displayed before the values. Leave empty to use the anchorpoint field name.",
+              "type": "string",
+              "target_variable": "label",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "Separator",
+              "description": "Separator between values (space or comma)",
+              "type": "string",
+              "enum": [" ", ", ", " - "],
+              "target_variable": "separator",
+              "default_value": {
+                "type": "string",
+                "value": " "
+              }
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Field Left",
+              "description": "Field 1 left side",
+              "target_variable": "Field_left",
+              "is_input": true,
+              "is_output": true
+            },
+            {
+              "name": "Field Mid",
+              "description": "Field 2 middle side",
+              "target_variable": "Field_mid",
+              "is_input": true,
+              "is_output": true
+            },
+            {
+              "name": "Field Right",
+              "description": "Field right side",
+              "target_variable": "Field_right",
+              "is_input": true,
+              "is_output": true
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

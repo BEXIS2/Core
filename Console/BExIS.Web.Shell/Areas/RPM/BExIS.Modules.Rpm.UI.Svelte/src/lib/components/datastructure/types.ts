@@ -92,7 +92,7 @@ export class VariableInstanceModel extends VariableModel {
 	isOptional: boolean;
 	displayPattern: listItemType | undefined;
 	possibleUnits: unitListItemType[];
-	possibleTemplates: templateListItemType[];
+	possibleTemplates: number[];
 	possibleDisplayPattern: listItemType[];
 
 	public constructor() {

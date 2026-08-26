@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Vaiona.IoC;
 
 namespace BExIS.App.Bootstrap.Attributes
 {
@@ -29,7 +30,7 @@ namespace BExIS.App.Bootstrap.Attributes
         public async override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var entityPermissionManager = new EntityPermissionManager();
-            var userManager = new UserManager();
+            var userManager = IoCFactory.Container.Resolve<UserManager>();
 
             try
             {
@@ -50,10 +51,11 @@ namespace BExIS.App.Bootstrap.Attributes
                 {
                     var returnType = ((ReflectedActionDescriptor)filterContext.ActionDescriptor).MethodInfo.ReturnType;
                     if (returnType == typeof(JsonResult))  // if the action work with json result a json object should be returned
-                    {
+                    { 
+                        filterContext.HttpContext.Response.StatusCode = 403;
                         ContentResult content = new ContentResult();
                         content.ContentType = "application/json";
-                        content.Content = JsonConvert.SerializeObject(false);
+                        content.Content = JsonConvert.SerializeObject(new { error = "Access denied", status = 403 });
                         filterContext.Result = content;
                     }
                     else // redirect to access denied page
@@ -69,7 +71,7 @@ namespace BExIS.App.Bootstrap.Attributes
             }
             finally
             {
-                entityPermissionManager.Dispose();
+     
                 userManager.Dispose();
             }
         }

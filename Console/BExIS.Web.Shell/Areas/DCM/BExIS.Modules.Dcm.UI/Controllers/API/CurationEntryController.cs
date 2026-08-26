@@ -27,6 +27,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
+        private readonly UserManager _userManager;
+
+        public CurationEntryController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         private class AnonymizedCuration
         {
             public List<CurationEntryModel> AnonymizedCurationEntries { get; }
@@ -188,10 +195,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private static int userRights(long userId, long datasetId)
         {
             int rights = 0;
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
-            {
-                rights = entityPermissionManager.GetEffectiveRightsAsync(userId, datasetId).Result;
-            }
+
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            rights = entityPermissionManager.GetEffectiveRightsAsync(userId, datasetId).Result;
+
             return rights;
         }
 
@@ -214,12 +221,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             using (var curationManager = new CurationManager())
             using (var datasetManager = new DatasetManager())
-            using (var userManager = new UserManager())
             {
                 if (datasetManager.GetDataset(datasetid) == null)
                     return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Dataset not found");
 
-                var userWithGroups = userManager.Users
+                var userWithGroups = _userManager.Users
                     .Where(u => u.Id == user.Id)
                     .Fetch(u => u.Groups)
                     .SingleOrDefault();
@@ -344,12 +350,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 notes = curationEntryModel.Notes.Select(n => new CurationNote() { Id = n.Id, Comment = n.Comment }).ToList();
 
             using (var curationManager = new CurationManager())
-            using (var userManager = new UserManager())
             {
                 var c = curationManager.CurationEntries.FirstOrDefault(ce => ce.Id == curationEntryModel.Id);
                 if (c == null) return Request.CreateErrorResponse(HttpStatusCode.NotFound, "curationEntry not found");
 
-                var userWithGroups = userManager.Users
+                var userWithGroups = _userManager.Users
                     .Where(u => u.Id == user.Id)
                     .Fetch(u => u.Groups)
                     .SingleOrDefault();
@@ -401,9 +406,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             //    return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "User has no rights to access the dataset");
 
             using (var curationManager = new CurationManager())
-            using (var userManager = new UserManager())
             {
-                var userWithGroups = userManager.Users
+                var userWithGroups = _userManager.Users
                     .Where(u => u.Id == user.Id)
                     .Fetch(u => u.Groups)
                     .SingleOrDefault();

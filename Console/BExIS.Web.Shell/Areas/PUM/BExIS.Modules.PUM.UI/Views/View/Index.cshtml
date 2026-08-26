@@ -1,0 +1,18 @@
+﻿
+@{
+    ViewBag.Title = "View Publication";
+    Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
+
+    long id = 0;
+
+
+    if (ViewData["id"] != null)
+    {
+        id = (long)ViewData["id"];
+    }
+
+}
+
+<div id="view" dataset-id="@id">
+    @Html.Partial("_sveltePage")
+</div>

@@ -59,10 +59,6 @@
       controller="Files" action="FileList" argument="Files list"
       extends="./settingsRoot" />-->
 
-		<Export tag="lunchbar" id="helpSam" order="7"
-				title="Administration" description="Administration Help Manual" icon=""
-				controller="help" action="index"
-				extends="./lunchbarRoot/help" />
 
 	  <Export tag="settings" id="formerMember" order="15"
         title="Manage Former Member" description="" icon=""
@@ -106,22 +102,22 @@
 
 	<!-- fill out alle the hook aatributes otherwise there will not be loaded -->
 	<Hooks>
-		<Hook
-			name="permission"
+		<!--<Hook
+			name="permissions"
 			displayName="Permissions"
 			mode="view"
 			entity="dataset"
 			place="details"
 			module="sam"
-			type="BExIS.Modules.Sam.UI.Hooks.UserPermissionsHook, BExIS.Modules.SAM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+			type="BExIS.Modules.Sam.UI.Hooks.UserPermissionsViewHook, BExIS.Modules.SAM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />-->
 
-		<!--<Hook
-			name="permission"
+		<Hook
+			name="permissions"
 			displayName="Permissions"
 			mode="edit"
 			entity="dataset"
 			place="details"
 			module="sam"
-			type="BExIS.Modules.Sam.UI.Hooks.UserPermissionsHook, BExIS.Modules.SAM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />-->
+			type="BExIS.Modules.Sam.UI.Hooks.UserPermissionsEditHook, BExIS.Modules.SAM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 	</Hooks>
 </Manifest>

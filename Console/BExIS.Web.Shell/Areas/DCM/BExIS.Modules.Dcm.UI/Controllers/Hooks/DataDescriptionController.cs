@@ -1,4 +1,4 @@
-﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
@@ -7,6 +7,7 @@ using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
 using BExIS.UI.Hooks.Logs;
@@ -17,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
@@ -24,16 +26,21 @@ using Cache = BExIS.UI.Hooks.Caches;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class DataDescriptionController : Controller
     {
+
+
         /// <summary>
         /// entry for hook
         /// </summary>
         /// <returns></returns>
-        public ActionResult Start(long id, int version)
+        [JsonNetFilter]
+        public JsonResult Start(long id, int version)
         {
-            //return View();
-            return RedirectToAction("load", new { id, version });
+            // return RedirectToAction("load", new { id, version });
+            var jsonResult = Load(id, version);
+            return jsonResult;
         }
 
         // GET: FileUpload
@@ -75,14 +82,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             {
                                 Id = variable.Id,
                                 Name = variable.Label,
+                                Description = variable.Description,
                                 DataType = variable.DataType.Name,
-                                Unit = variable.Unit.Name,
-                                IsKeys = variable.IsKey
+                                Unit = variable.Unit != null ? variable.Unit.Abbreviation:"n/a",
+                                IsKeys = variable.IsKey,
+                                IsOptional = variable.IsValueOptional,
+                                Category = variable.VariableTemplate != null ? variable.VariableTemplate.Label : "n/a",
+                                MissingValues = variable.MissingValues != null ? String.Join(", ", variable.MissingValues.Select(m => m.DisplayName)) : "n/a",
+                                Meanings = variable.Meanings != null ? String.Join(", ", variable.Meanings.Select(m => m.Name)) : "n/a"
                             });
                         }
 
                         //if data structure is there,  check also if data is there
                         model.HasData = datasetManager.RowAny(model.Id);
+                        
                     }
 
                     // set enable edit rights for strtucture
@@ -300,7 +313,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 // if data exist do not reset the structure
                 if (datasetManager.RowAny(dataset.Id))
-                    throw new Exception("can not change the structure of this dataset, because data allready exist.");
+                    throw new Exception("Deleting the data structure of this dataset is not possible, because data already exist.");
 
                 dataset.DataStructure = null;
                 datasetManager.UpdateDataset(dataset);

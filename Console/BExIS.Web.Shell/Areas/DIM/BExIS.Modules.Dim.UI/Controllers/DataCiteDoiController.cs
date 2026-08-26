@@ -1,4 +1,4 @@
-﻿using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Services.Mappings;
@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
+using BExIS.Utils.Config;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -102,9 +102,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             using (DatasetManager datasetManager = new DatasetManager())
             using (PublicationManager publicationManager = new PublicationManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (EntityManager entityManager = new EntityManager())
             {
+                var entityPermissionManager = new EntityPermissionManager();
                 // dataset - version
                 DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
@@ -114,7 +114,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 DatasetVersion latestDatasetVersion = datasetManager.GetDatasetLatestVersion(datasetVersion.Dataset.Id);
 
-                string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + datasetVersion.Dataset.Id).ToString()).ToString();
+                string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/dcm/view/?id=" + datasetVersion.Dataset.Id).ToString()).ToString();
 
                 return PartialView("_requestRow", new PublicationModel()
                 {
@@ -280,7 +280,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 var host = Request.Url.Host;
                                 var port = Request.Url.IsDefaultPort ? "" : ":" + Request.Url.Port;
                                 var url = mapping.Value.Replace(placeholders);
-                                model.SetUrl($"{scheme}://{host}{port}/ddm/Data/ShowData/{url}");
+                                model.SetUrl($"{scheme}://{host}{port}/dcm/view/?id={url}");
                                 break;
 
                             case "Version":
@@ -331,7 +331,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     }
 
                     // E-Mail
-                    string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + publication.DatasetVersion.Dataset.Id).ToString()).ToString();
+                    string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/dcm/view/?id=" + publication.DatasetVersion.Dataset.Id).ToString()).ToString();
                     List<string> tmp = null;
                     string title = new XmlDatasetHelper().GetInformationFromVersion(publication.DatasetVersion.Id, NameAttributeValues.title);
                     string subject = "DOI Request for Dataset " + title + "(" + publication.DatasetVersion.Dataset.Id + ")";
@@ -355,7 +355,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     using(var emailService = new EmailService())
                     {
                         emailService.Send(subject, body, emails);
-                        emailService.Send(subject, body, ConfigurationManager.AppSettings["SystemEmail"]);
+                        emailService.Send(subject, body, GeneralSettings.SystemEmail);
                     }
 
                     return PartialView("_requestRow", new PublicationModel()
@@ -497,7 +497,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (var brokerManager = new BrokerManager())
             {
                 List<long> brokerIds = brokerManager.FindByName("datacite").Select(b => b.Id).ToList();
-                List<Publication> publications = publicationManager.Publications.Where(p => brokerIds.Contains(p.Broker.Id)).ToList();
+                List<Publication> publications = publicationManager.Publications.Where(p => brokerIds.Contains(p.Broker.Id)).OrderByDescending(p => p.Timestamp).ToList();
 
                 foreach (Publication p in publications)
                 {

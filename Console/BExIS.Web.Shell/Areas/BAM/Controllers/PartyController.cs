@@ -16,6 +16,13 @@ namespace BExIS.Modules.Bam.UI.Controllers
 {
     public class PartyController : Controller
     {
+        private readonly UserManager _userManager;
+
+        public PartyController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         public ActionResult Index()
         {
             using (var partyTypeManager = new PartyTypeManager())
@@ -152,7 +159,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
             using (PartyManager partyManager = new PartyManager())
             using (PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager())
             using (PartyTypeManager partyTypeManager = new PartyTypeManager())
-            using (UserManager userManager = new UserManager())
             {
                 var party = new Party();
                 // Create a new party
@@ -178,7 +184,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
                             // get user based on party
                             var userid = partyManager.GetUserIdByParty(party.Id);
-                            var userTask = userManager.FindByIdAsync(userid);
+                            var userTask = _userManager.FindByIdAsync(userid);
                             userTask.Wait();
                             var user = userTask.Result;
 
@@ -193,7 +199,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
                                 // Update user email
                                 user.Email = entity.Value;
-                                userManager.UpdateAsync(user);
+                                _userManager.UpdateAsync(user);
                             }
                         }
                     }

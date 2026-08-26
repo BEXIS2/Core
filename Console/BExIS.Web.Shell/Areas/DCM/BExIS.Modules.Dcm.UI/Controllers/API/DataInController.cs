@@ -68,7 +68,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             string error = "";
 
             DatasetManager datasetManager = new DatasetManager();
-            UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             DataStructureManager dataStructureManager = new DataStructureManager();
 
@@ -258,14 +257,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             //Update Method -- UPDATE
                             //splite datatuples into new and updated tuples
 
+                            int rowsAdded = 0;
+                            int rowsUpdated = 0;
+
                             if (datatuples.Count > 0)
                             {
                                 var splittedDatatuples = uploadHelper.GetSplitDatatuples(datatuples, pkVariables.Select(v => v.Id).ToList(), workingCopy, ref datatupleFromDatabaseIds);
+                                rowsAdded = splittedDatatuples["new"].Count;
+                                rowsUpdated = splittedDatatuples["edit"].Count;
                                 datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                             }
 
+                            double tag = workingCopy.Tag!=null? workingCopy.Tag.Nr : 0;
+
                             // update metadata based on system keys mappings
-                            workingCopy.Metadata = setSystemValuesToMetadata(workingCopy.Id, datasetManager.GetDatasetVersionCount(workingCopy.Id) + 1, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, true);
+                            workingCopy.Metadata = setSystemValuesToMetadata(workingCopy.Id, datasetManager.GetDatasetVersionCount(workingCopy.Id) + 1, tag, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, true);
 
                             ////set modification
                             workingCopy.ModificationInfo = new EntityAuditInfo()
@@ -276,14 +282,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             };
                             datasetManager.EditDatasetVersion(workingCopy, null, null, null);
 
-                            datasetManager.CheckInDataset(dataset.Id, data.Data.Length + " rows via api.", user.UserName);
+                            string checkInComment = $"{data.Data.Length} rows via api";
+                            if (rowsAdded > 0 || rowsUpdated > 0)
+                                checkInComment = $"{rowsAdded} rows added, {rowsUpdated} rows updated via api";
+
+                            datasetManager.CheckInDataset(dataset.Id, checkInComment, user.UserName);
 
                             //send email
 
                             using(var emailService = new EmailService())
                             {
                                 emailService.Send(MessageHelper.GetUpdateDatasetHeader(dataset.Id),
-                                MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.DisplayName, typeof(Dataset).Name),
+                                MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.DisplayName, typeof(Dataset).Name, data.Data.Length, 0, rowsAdded, rowsUpdated),
                                 new List<string>() { user.Email },
                                        new List<string>() { GeneralSettings.SystemEmail }
                                 );
@@ -299,7 +309,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         using(var emailService = new EmailService())
                         {
                             emailService.Send(MessageHelper.GetPushApiUploadFailHeader(dataset.Id, title),
-                                   MessageHelper.GetPushApiUploadFailMessage(dataset.Id, user.UserName, new string[] { "Upload failed: " + ex.Message }),
+                                   MessageHelper.GetPushApiUploadFailMessage(dataset.Id, user.DisplayName, new string[] { "Upload failed: " + ex.Message }),
                                    new List<string>() { user.Email },
                                    new List<string>() { GeneralSettings.SystemEmail }
                                    );
@@ -314,9 +324,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             finally
             {
                 datasetManager.Dispose();
-                entityPermissionManager.Dispose();
                 dataStructureManager.Dispose();
-                userManager.Dispose();
                 request.Dispose();
             }
         }
@@ -334,16 +342,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             throw new HttpResponseException(HttpStatusCode.NotFound);
         }
 
-        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool updateData = false)
+        private XmlDocument setSystemValuesToMetadata(long datasetid, long version,double tag, long metadataStructureId, XmlDocument metadata, bool updateData = false)
         {
             SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
 
             Key[] myObjArray = { };
 
-            if (updateData) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
-            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DataCreationDate, Key.DataLastModified };
+            if (updateData) myObjArray = new Key[] { Key.Id, Key.Version, Key.Tag, Key.DateOfVersion, Key.DataLastModified };
+            else myObjArray = new Key[] { Key.Id, Key.Version, Key.Tag, Key.DataCreationDate, Key.DataLastModified };
 
-            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, tag, metadataStructureId, metadata, myObjArray);
 
             return metadata;
         }

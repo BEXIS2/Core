@@ -87,10 +87,8 @@ namespace BExIS.UI.Hooks
         {
             #region security permissions and authorisations check
 
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
-            {
-                return entityPermissionManager.HasEffectiveRightsAsync(userName, typeof(Dataset), entityId, rightType).Result;
-            }
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            return entityPermissionManager.HasEffectiveRightsAsync(userName, typeof(Dataset), entityId, rightType).Result;
 
             #endregion security permissions and authorisations check
         }

@@ -29,14 +29,13 @@
 
     <Export tag="menubar" id="dashboard" order="1"
         title="My Data" description="Quick Access to User Area" icon=""
-        controller="dashboard" action="index"
+        controller="dashboard" action=""
         extends="./menubarRoot" />
 
-    <Export tag="lunchbar" id="helpDdm" order="1"
-            title="Search" description="Search Help Manual" icon=""
-            controller="help" action="index"
-            extends="./lunchbarRoot/help" />
-
+	  <Export tag="settings" id="metadataDIff" order="3"
+			 title="Curation Metadata Compare" description="Compare Metadata" icon=""
+			 controller="metadiff" action="" argument=""
+			 extends="./settingsRoot" />
     <!--<Export tag="api" id="tntList"
             title="No thing" description="Change me!" icon=""
             controller="publicsearch" action="public"

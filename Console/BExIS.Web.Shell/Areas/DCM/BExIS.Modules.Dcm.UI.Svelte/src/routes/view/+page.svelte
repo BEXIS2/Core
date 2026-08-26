@@ -1,99 +1,266 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 
 	import { getView } from './services';
-	import { getViewStart } from '../../services/HookCaller';
-	import { setApiConfig, Spinner } from '@bexis2/bexis2-core-ui';
+	import { ErrorMessage, type linkType, Page, pageContentLayoutType, positionType,  Spinner } from '@bexis2/bexis2-core-ui';
 
 	import Header from './Header.svelte';
-	import TabContent from './Tab.svelte';
-	import Debug from '../../lib/components/Debug.svelte';
-	import { TabGroup, Tab } from '@skeletonlabs/skeleton';
+
 
 	//types
-	import type { ViewModel, Hook } from '../../models/View';
+	import type { ViewModel, Hook, ApiDatasetModel } from '../../models/View';
+	import { fade } from 'svelte/transition';
+	import Hooks from './Hooks.svelte';
+
+
+	import Versions from './version/Versions.svelte';
+	import Keywords from './Keywords.svelte';
+	import Funding from './Funding.svelte';
+	import Tags from './version/Tags.svelte';
+	import Download from './download/Download.svelte';
+	import Forbidden from './error/Forbidden.svelte';
+	import Deleted from './error/Deleted.svelte';
+	import InProcess from './error/InProcess.svelte';
+	import NotExist from './error/NotExist.svelte';
+	import InternalServer from './error/InternalServer.svelte';
+	import CitationDownload from './citation/CitationDownload.svelte';
+	import type { HookModel } from '$models/Hook';
+	import Metadata from '$lib/hooks/view/Metadata.svelte';
+	import DataDescription from '$lib/hooks/view/DataDescription.svelte';
+	import Data from '$lib/hooks/view/Data.svelte';
+	import Link from '$lib/hooks/view/Link.svelte';
+	import Back from '$lib/components/utils/Back.svelte';
+	import Attachment from '$lib/hooks/view/Attachment.svelte';
 
 	let title = '';
 
 	let container;
 	let id: number;
 	let version: number = 0;
+	let tag: number = 0;
 	let model: ViewModel;
 
-	// tabs
-	let activeTab = 'metadata';
+	let isPartOfCollection: boolean = false;
 
-	let tabSet = 0;
+	let metadataHook;
+	let dataDescriptionHook;
+	let linkHook;
+	let dataHook;
+	let attachmentsHook;
+	let entityName;
 
-	let hookList: Hook[];
-	$: hooks = hookList;
+	let useTags: boolean = false;
+	let showTagsView: boolean = true;
 
-	// for test ui
-	$: testPage = '';
+	let addtionalhooks: HookModel[];
+	$: addtionalhooks = [];
 
-	onMount(async () => {
+	let hooks: Hook[];
+
+
+ const links: linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Datasets#dataset-view-page'
+		}
+	];
+
+	async function load () {
 		// get data from parent
 		container = document.getElementById('view');
 		id = container?.getAttribute('dataset');
 		version = container?.getAttribute('version');
+		tag = container?.getAttribute('tag');
 
-		console.log('start view', id, version);
+		console.log('start view', id, version, tag);
 		//setup api
 		// setApiConfig('https://localhost:44345', 'davidschoene', '123456');
 
 		// load data from server
-		model = await getView(id);
+		const res = await getView(id,	version, tag);
 
-		console.log('onmount', model);
+		if(res?.status==200)
+		{
+			model = res?.data;
+			hooks = model.settings.hooks;
+			title = model.title;
+			version = model.version;
+			id = model.id;
+			tag = model.tag;
+			entityName = model.entityName;
+			showTagsView = model.settings.useTags;
 
-		hooks = model.hooks;
-		title = model.title;
-		version = model.version;
-		id = model.id;
+			console.log('model',model);
+			console.log('hooks', hooks);
 
-		console.log(model);
-		console.log('hooks', hooks);
+			// check if dataset is part of a collection
+			isPartOfCollectionFunc();
 
-		//test ui as html
-		// const resTestPage = await fetch('dcm/view/test');
-		// testPage = await resTestPage.text();
-	});
+			if(model.settings.hooks	&& model.settings.hooks.length > 0)
+			{
+				 seperateHooks(model.settings.hooks);
+				
+			}
 
-	async function loadTab(action, id, version) {
-		let test = await getViewStart(action, id, version);
-		return test;
+		}
+		
+
 	}
+
+	function isPartOfCollectionFunc() {
+		if(model.links.to.filter(link => link.referenceType === 'Collection').length > 0){
+			isPartOfCollection = true;
+		}
+	}
+
+ // seperate dcm hooks from other hooks
+	// known hooks - metadata, data, datadescription
+	function seperateHooks(hooks: HookModel[]) {
+		addtionalhooks = [];
+
+		hooks.forEach((element) => {
+			if (element.name == 'metadata')
+				{
+					metadataHook = element;
+				}
+				else	if (element.name == 'datadescription') {
+					dataDescriptionHook = element;
+				}
+				else if (element.name == 'data') {
+					dataHook = element;
+				}
+				else if (element.name == 'link') {
+					linkHook = element;
+				}
+				else if (element.name == 'attachments') {
+					attachmentsHook = element;
+				}
+				else {
+					addtionalhooks.push(element);
+				}
+				
+		});
+	}
+
+
 </script>
+<Page title="Edit: ({id} | {title})" contentLayoutType={pageContentLayoutType.center} {links}>
 
-<div>
-	<!-- Header -->
-	<Header {id} {version} {title} />
+<div class="flex flex-col gap-2" in:fade={{ delay: 500 }} out:fade={{ delay: 500 }}>
 
-	{#if hooks}
-		<TabGroup>
-			<!-- nav -->
-			{#each hooks as hook, i}
-				{#if hook.status == 2}
-					<Tab bind:group={tabSet} name={hook.name} value={i}>{hook.name}</Tab>
+	{#await load()}
+			<div class="text-surface-800">
+				<Spinner position={positionType.center} label="loading" />
+			</div>
+		{:then result}
+
+	 <Header	
+			{id} 
+			{version} 
+			{tag}
+			{title} 
+			{entityName}
+			labels = {model.labels} 
+			license = {model.additionalInformations['license']} 
+			{isPartOfCollection} 
+			hasEditRight={model.hasEditRight}
+			isPublic={model.isPublic}
+			publicationDate={model.publicationDate}
+
+			/>
+
+	<div class="flex gap-4">
+
+			{#if metadataHook}
+					<div class="flex-1 min-w-0 flex flex-col gap-3">
+									<Metadata {id} {version} {tag} hook={metadataHook} description={model.description} />
+					</div>
 				{/if}
-			{/each}
 
-			<!-- content -->
+				{#if entityName?.toLowerCase()!='extension'}
 
-			<!-- Tab Panels --->
-			<svelte:fragment slot="panel">
-				{#each hooks as hook, i}
-					{#if hook.status == 2}
-						<TabContent {id} {version} {...hook} active={tabSet == i} />
-					{/if}
-				{/each}
-			</svelte:fragment>
-		</TabGroup>
-	{:else}
-		<div>
-			<Spinner label="loading dataset {title}" />
+					<div class="flex flex-col gap-3 w-1/4 shrink-0">
+
+								<CitationDownload	{id} {version} {tag} {useTags} />
+
+								<Download {id} {version}
+									versionId={model.versionId}
+									downloadAccess= {model.downloadAccess}
+									hasDatastructure= {model.dataStructureId	!== undefined && model.dataStructureId > 0}
+									hasData= {model.hasData}
+									isPublic= {model.isPublic}
+									data_aggrement = {model.settings.dataAggrement}
+									total = {model.count}
+									requestAble = {model.requestAble}
+									hasRequestRight = {model.hasRequestRight}
+									requestExist = {model.requestExist}
+								/> 
+								<div class="card p-5 flex flex-col gap-3">
+									{#if model.hasEditRight && model.settings.useTags}
+										<div class="flex justify-end gap-2">
+											<button class="chip p-1 {showTagsView ? 'variant-filled-primary' : 'variant-ghost-surface'}"
+												on:click={() => showTagsView = true}>Releases</button>
+											<button class="chip p-1 {!showTagsView ? 'variant-filled-primary' : 'variant-ghost-surface'}"
+												on:click={() => showTagsView = false}>Versions</button>
+										</div>
+									{/if}
+
+									{#if showTagsView}
+										<Tags  {id} {version}  tag={model.tag}/>
+									{:else}
+										<Versions	{id} {version} useTags={model.settings.useTags} />	
+									{/if}
+								</div>
+
+								<Funding f={model.additionalInformations['funder']}  />
+								<Keywords k={model.additionalInformations['keyword']} />
+						</div>
+						{/if}
 		</div>
-	{/if}
 
-	<Debug {hooks} />
+
+		{#if linkHook && entityName?.toLowerCase()!='extension' }
+
+				<Link	links={model.links.to} />
+
+		{/if}
+
+	
+
+		{#if dataDescriptionHook && model.dataStructureId	!== undefined && model.dataStructureId > 0}
+			 <DataDescription	{id} {version} {tag} hook={dataDescriptionHook}/>
+		{/if}
+
+		{#if dataHook	&& model.hasData}
+
+			<Data {id} {version} hook={dataHook}/>
+		{/if}
+
+		{#if attachmentsHook}
+			<Attachment {id} {version} hook={attachmentsHook}/>
+		{/if}
+
+  {#if model.downloadAccess && addtionalhooks	&& addtionalhooks.length > 0	}
+			<Hooks	{id} {version} hooks={addtionalhooks} />
+		{/if}
+
+		{:catch error}
+			{#if error.status === 403	}
+				<Forbidden/>
+				{:else if error.status === 404}
+				<NotExist />
+			{:else if error.status === 410}
+				<Deleted {id}/>
+			{:else if error.status === 423}
+				<InProcess />
+			{:else if error.status === 500}
+				<InternalServer />
+			{:else}
+				<ErrorMessage {error} />
+			{/if}
+		
+		{/await}
+
 </div>
+
+</Page>
+

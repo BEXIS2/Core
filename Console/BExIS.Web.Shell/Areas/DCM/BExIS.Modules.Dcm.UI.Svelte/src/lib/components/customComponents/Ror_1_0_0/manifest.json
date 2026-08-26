@@ -1,0 +1,74 @@
+{
+  "meta": {
+    "title": "ROR Widget",
+    "component_name": "ror_v1.0.0",
+    "author": "BEXIS2",
+    "version": "1.0.0",
+    "description": "Component for selecting a Research Organization Registry (ROR) entry by name search"
+  },
+  "globalSettings": {
+    "globalsetting": [
+      {
+        "target_variable": "RorApiUrl",
+        "name": "ROR API URL",
+        "description": "URL of the ROR API to use",
+        "type": "string",
+        "enum": [
+          "https://api.ror.org/"
+        ],
+        "default_value": "https://api.ror.org/"
+      },
+      {
+        "name": "Description",
+        "description": "Overwrite default description of the field.",
+        "type": "string",
+        "target_variable": "description",
+        "default_value": {
+          "type": "string",
+          "value": ""
+        }
+      }
+    ]
+  },
+  "modes": {
+    "edit": [
+      {
+        "mode_name": "simple",
+        "description": "Search for a ROR entry by organization name",
+        "settings": {
+          "setting": [
+            {
+              "name": "Debounce",
+              "description": "Debounce time in ms for search requests",
+              "type": "string",
+              "target_variable": "debounce",
+              "default_value": {
+                "type": "string",
+                "value": "400"
+              }
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "ROR ID",
+              "description": "The ROR ID (ref) of the selected organization",
+              "type": "string",
+              "format": "",
+              "target_variable": "ror_field",
+              "allowregex_input": true,
+              "allowregex_output": true,
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

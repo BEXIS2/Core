@@ -97,7 +97,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                             }
                             else
                             {
-                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                                return new Error(ErrorType.Value, "Invalid data type. Expected: Integer (e.g., 1, 2, 3).", new object[] { name, value, row, dataType });
                             }
                         }
 
@@ -129,11 +129,11 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                         }
                                         else
                                         {
-                                            return new Error(ErrorType.Value, "False decimal character.", new object[] { name, value, row, dataType });
+                                            return new Error(ErrorType.Value, "Invalid decimal separator. Currently expected: point.", new object[] { name, value, row, dataType });
                                         }
                                     }
 
-                                    return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
+                                    return new Error(ErrorType.Value, "Invalid data type. Expected: Number (e.g., 1.5, 2.0).", new object[] { name, value, row, dataType });
                                 }
 
                                 if (decimalCharacter.Equals(DecimalCharacter.comma))
@@ -155,18 +155,18 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                         }
                                         else
                                         {
-                                            return new Error(ErrorType.Value, "False decimal character.", new object[] { name, value, row, dataType });
+                                            return new Error(ErrorType.Value, "Invalid decimal separator. Currently expected: comma.", new object[] { name, value, row, dataType });
                                         }
                                     }
 
-                                    return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
+                                    return new Error(ErrorType.Value, "Invalid data type. Expected: Number (e.g., 1.5, 2.0).", new object[] { name, value, row, dataType });
                                 }
 
                                 return Convert.ToDouble(value);
                             }
                             catch (Exception ex)
                             {
-                                return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
+                                return new Error(ErrorType.Value, "Invalid data type. Expected: Number (e.g., 1.5, 2.0).", new object[] { name, value, row, dataType });
                             }
                         }
 
@@ -190,9 +190,9 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                 }
                             }
                             if (!string.IsNullOrEmpty(pattern))
-                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType, pattern });
+                                return new Error(ErrorType.Value, "Invalid date format. Expected: " + pattern, new object[] { name, value, row, dataType, pattern });
                             else
-                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                                return new Error(ErrorType.Value, "Invalid data type. Expected: DateTime.", new object[] { name, value, row, dataType });
                         }
 
                     case "Char":
@@ -223,7 +223,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
                                 }
                                 else
                                 {
-                                    return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
+                                    return new Error(ErrorType.Value, "Invalid data type. Expected: Boolean.", new object[] { name, value, row, dataType });
                                 }
                             }
                         }

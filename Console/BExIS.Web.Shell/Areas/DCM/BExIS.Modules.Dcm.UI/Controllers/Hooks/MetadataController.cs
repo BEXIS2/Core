@@ -1,25 +1,25 @@
-﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Entities.Authorization;
 using System;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class MetadataController : Controller
     {
-        // GET: Metadat
-        public ActionResult Index()
-        {
-            return View();
-        }
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
-        public ActionResult Start(long id, int version)
+        [JsonNetFilter]
+        public JsonResult Start(long id, int version)
         {
-            return RedirectToAction("load", new { id, version });
+            // return RedirectToAction("load", new { id, version });
+            var jsonResult = Load(id, version);
+            return jsonResult;
         }
 
         [JsonNetFilter]

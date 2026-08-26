@@ -56,6 +56,8 @@ namespace BExIS.Security.Services.Utilities
         {
             try
             {
+                if(!_smtpConfiguration.IsActive) return;
+
                 using (var client = new SmtpClient())
                 {
                     // 2021-03-16 by Sven
@@ -125,7 +127,7 @@ namespace BExIS.Security.Services.Utilities
                 mimeMessage.Subject = GeneralSettings.ApplicationName + " - " + subject;
 
                 var builder = new BodyBuilder();
-                builder.HtmlBody = body;
+                builder.HtmlBody = body?.Replace("\n", "<br/>");
 
                 if (attachments != null)
                 {

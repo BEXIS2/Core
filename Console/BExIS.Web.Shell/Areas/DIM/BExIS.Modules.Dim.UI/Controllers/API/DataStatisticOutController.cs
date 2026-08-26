@@ -1,4 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dim.Helpers.Models;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
@@ -6,7 +7,6 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models;
-using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
@@ -101,7 +101,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
         private HttpResponseMessage getData(long id, int variableId, string token)
         {
             DatasetManager datasetManager = new DatasetManager();
-            UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             EntityManager entityManager = new EntityManager();
             DataStructureManager dataStructureManager = null;
@@ -146,7 +145,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         string title = datasetVersion.Title;
 
                         // check the data sturcture type ...
-                        if (datasetVersion.Dataset.DataStructure != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                        if (datasetVersion.Dataset.DataStructure != null)
                         {
                             object stats = new object();
 
@@ -275,8 +274,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             finally
             {
                 datasetManager.Dispose();
-                userManager.Dispose();
-                entityPermissionManager.Dispose();
                 entityManager.Dispose();
                 dataStructureManager.Dispose();
             }

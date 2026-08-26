@@ -61,13 +61,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
             using (DatasetManager datasetManager = new DatasetManager())
             using (DataStructureManager dataStructureManager = new DataStructureManager())
             using (ResearchPlanManager researchPlanManager = new ResearchPlanManager())
-            using (UserManager userManager = new UserManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
             using (EntityTemplateManager entityTemplateManager = new EntityTemplateManager())
             {
                 try
                 {
+                    EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                     #region security
 
                     user = ControllerContext.RouteData.Values["user"] as User;
@@ -135,7 +134,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
                     datasetId = newDataset.Id;
 
                     // add security
-                    entityPermissionManager.CreateAsync<User>(user.UserName, "Dataset", typeof(Dataset), newDataset.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                    entityPermissionManager.CreateAsync<User>(user.UserName, entityTemplate.EntityType.Name, typeof(Dataset), newDataset.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
 
                     //add title and description to the metadata
 
@@ -153,7 +152,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
                         workingCopy.Description = dataset.Description;
 
                         // update metadata based on system mappings
-                        workingCopy.Metadata = setSystemValuesToMetadata(datasetId, 1, dataset.MetadataStructureId, workingCopy.Metadata, true);
+                        workingCopy.Metadata = setSystemValuesToMetadata(datasetId, 1,0, dataset.MetadataStructureId, workingCopy.Metadata, true);
 
                         ////set modification
                         workingCopy.ModificationInfo = new EntityAuditInfo()
@@ -202,16 +201,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers.API
         //{
         //}
 
-        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)
+        private XmlDocument setSystemValuesToMetadata(long datasetid, long version,double tag, long metadataStructureId, XmlDocument metadata, bool newDataset)
         {
             SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
 
             Key[] myObjArray = { };
 
-            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied };
-            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataLastModfied };
+            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version,Key.Tag, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied };
+            else myObjArray = new Key[] { Key.Id, Key.Version, Key.Tag, Key.DateOfVersion, Key.MetadataLastModfied };
 
-            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version,tag, metadataStructureId, metadata, myObjArray);
 
             return metadata;
         }

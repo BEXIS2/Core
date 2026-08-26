@@ -1,4 +1,4 @@
-﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -21,12 +21,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Telerik.Web.Mvc.Extensions;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class ValidationController : Controller
     {
         private FileStream Stream;
@@ -44,9 +46,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
         [JsonNetFilter]
-        public ActionResult Start(long id, int version = 0)
+        public JsonResult Start(long id, int version)
         {
-            return RedirectToAction("Validate", new { id, version });
+            // return RedirectToAction("load", new { id, version });
+            var jsonResult = Validate(id, version);
+            return jsonResult;
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
