@@ -381,6 +381,7 @@ export function hasValue(node) {
 export function isActive(p: string, r: boolean): boolean {
 	// logic to determine if the component is active
 
+	console.log("isActive", p , r)
 	const node = getNodeByPath(p);
 	const hasData = hasValue(node); // replace with actual check for data presence
 	if (r) {
