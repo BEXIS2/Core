@@ -48,7 +48,7 @@ export const getTags = async (id, version) => {
 	}
 };
 
-export const getVersions = async (id, version) => {
+export const getVersions = async (id) => {
 	try {
 		const response = await Api.get('/dcm/view/versions?id=' + id);
 		return response.data;

@@ -1712,11 +1712,9 @@ namespace BExIS.Dlm.Services.Data
 
             // Get list od dataset versions, if not provided
              var datasetVersions = GetDatasetVersions(datasetId, DatasetStatus.CheckedIn);
-      
+
             // 1. get versions with tag
-            List<DatasetVersion> versionsWithTag = isPublic
-                ? datasetVersions.Where(v => v.Tag != null && v.Tag.Nr.Equals(tag) && v.Tag.Final).ToList()
-                : datasetVersions.Where(v => v.Tag != null && v.Tag.Nr.Equals(tag)).ToList();
+            List<DatasetVersion> versionsWithTag = datasetVersions.Where(v => v.Tag != null && v.Tag.Nr.Equals(tag) && v.Tag.Final.Equals(isPublic)).ToList();
 
             var lastest = versionsWithTag.OrderByDescending(v => v.Timestamp).FirstOrDefault();
 

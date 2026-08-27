@@ -527,30 +527,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             using (var datasetManager = new DatasetManager())
             {
-                DatasetVersion datasetVersion;
 
-                if (version <= 0 && tag <= 0)
-                {
-                    // no version or tag specified — use latest version
-                    datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                }
-                else if (tag > 0)
-                {
-                    // tag specified — get latest version by tag
-                    datasetVersion = datasetManager.GetLatestDatasetVersionByTag(id, tag, false);
-                }
-                else
-                {
-                    datasetVersion = datasetManager.GetDatasetVersion(id, version);
-                }
+                var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+                var useTags = Convert.ToBoolean(moduleSettings.GetValueByKey("use_tags"));
+                var useMinor = Convert.ToBoolean(moduleSettings.GetValueByKey("use_minor"));
+
+                var user = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
+
+                var vId = DatasetVersionHelper.GetVersionId(id, user, version, useTags, tag).Result;
+                DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(vId);
 
                 if (datasetVersion == null) throw new ArgumentException("Version not found");
 
                 long datastructureId = datasetVersion.Dataset.DataStructure != null ? datasetVersion.Dataset.DataStructure.Id : -1;
-                var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
-                var useTags = Convert.ToBoolean(moduleSettings.GetValueByKey("use_tags"));
-               var useMinor = Convert.ToBoolean(moduleSettings.GetValueByKey("use_minor"));
-
+                
                 string filename = IOHelper.GetFileName(FileType.Citation, id, version, datastructureId, "", tag, useTags, useMinor);
                 model.FileName = filename;
 
