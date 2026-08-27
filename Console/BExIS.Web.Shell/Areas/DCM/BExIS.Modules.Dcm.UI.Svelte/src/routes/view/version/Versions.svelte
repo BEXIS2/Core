@@ -50,7 +50,7 @@
 		<b>Version {currentVersion?.id}</b>
 		<div class="flex items-center gap-2">
 			{#if useTags && currentVersion?.tagNr}
-				<a href="/dcm/view?id={id}&tag={currentVersion.tagNr}" target="_blank"
+				<a href="/dcm/view?id={id}&tag={currentVersion.tagNr}" 
 					class="badge variant-soft-primary text-xs hover:variant-filled-primary cursor-pointer"
 					title="Switch to Tag {currentVersion.tagNr}">
 					Tag {currentVersion.tagNr}
@@ -90,7 +90,7 @@
 			{#each tags as t}
 				<div class="flex flex-col gap-1">
 					<div class="flex justify-between items-center">
-						<a href="/dcm/view?id={id}&tag={t.version}" target="_blank"
+						<a href="/dcm/view?id={id}&tag={t.version}" 
 							class="font-bold underline hover:text-primary-500 cursor-pointer"
 							title="Switch to Tag {t.version}">
 							Tag {t.version}
@@ -116,14 +116,14 @@
 			{#each versions.filter(v => v.id !== currentVersion?.id) as v}
 				<div class="flex flex-col gap-1">
 					<div class="flex justify-between items-center">
-						<a href="/dcm/view?id={id}&version={v.id}" target="_blank"
+						<a href="/dcm/view?id={id}&version={v.id}" 
 							class="font-bold underline hover:text-primary-500 cursor-pointer"
 							title="Switch to Version {v.id}">
 							Version {v.id}
 						</a>
 						<div class="flex items-center gap-2">
 							{#if useTags && v.tagNr}
-								<a href="/dcm/view?id={id}&tag={v.tagNr}" target="_blank"
+								<a href="/dcm/view?id={id}&tag={v.tagNr}" 
 									class="badge variant-soft-primary text-xs hover:variant-filled-primary cursor-pointer"
 									title="Switch to Tag {v.tagNr}">
 									Tag {v.tagNr}

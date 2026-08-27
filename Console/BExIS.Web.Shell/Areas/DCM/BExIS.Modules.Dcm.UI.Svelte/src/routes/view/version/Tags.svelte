@@ -79,7 +79,7 @@
 				{#each otherTags as v}
 					<div class="flex flex-col gap-1">
 						<div class="flex justify-between items-center">
-							<a href="/dcm/view?id={id}&tag={v.version}" target="_blank"
+							<a href="/dcm/view?id={id}&tag={v.version}" 
 								class="font-bold underline hover:text-primary-500 cursor-pointer"
 								title="Switch to Tag {v.version}">
 								Tag {v.version}
