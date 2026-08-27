@@ -83,7 +83,7 @@
 			{:else}
 				<div class="grid grid-cols-1 gap-0 ">
 
-					<Header	{required} {path} {p} description={value.description}  />
+					<Header	required={isRequiredKey(key)} {path} {p} description={value.description}  />
 
 					{#if !$hideStore.includes(path) && $activeStore.includes(path)}
 						<div in:slide out:slide class="card pl-5 py-1" id={path}>
