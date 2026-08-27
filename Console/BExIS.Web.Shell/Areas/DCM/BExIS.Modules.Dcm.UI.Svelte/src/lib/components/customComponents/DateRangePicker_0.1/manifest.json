@@ -1,10 +1,10 @@
 {
   "meta": {
-    "title": "Date Range Picker Widget",
+    "title": "Date Range Checker",
     "component_name": "date_range_picker_v1.0.0",
     "author": "Franziska Zander",
     "version": "1.0.0",
-    "description": "Component for selecting a date range"
+    "description": "Component for validating a date range"
   },
   "globalSettings": {
     "globalsetting": [
@@ -24,12 +24,12 @@
     "edit": [
       {
         "mode_name": "range_selection",
-        "description": "Basic Configuration of the date range picker widget",
+        "description": "Basic Configuration of the date range checker",
         "settings": {
           "setting": [
             {
               "name": "Disable",
-              "description": "Disable the date range picker",
+              "description": "Disable the date range checker",
               "type": "boolean",
               "target_variable": "disable",
               "default_value": {
@@ -43,7 +43,7 @@
           "variable": [
             {
               "name": "Start Date",
-              "description": "Start date of the range",
+              "description": "Start date",
               "type": "string",
               "format": "",
               "target_variable": "startDate",
@@ -58,7 +58,7 @@
             },
             {
               "name": "End Date",
-              "description": "End date of the range",
+              "description": "End date",
               "type": "string",
               "format": "",
               "target_variable": "endDate",
@@ -86,7 +86,7 @@
           "variable": [
             {
               "name": "Start Date",
-              "description": "Start date of the range",
+              "description": "Start date",
               "type": "string",
               "target_variable": "startDate",
               "allowregex_input": true,
@@ -100,7 +100,7 @@
             },
             {
               "name": "End Date",
-              "description": "End date of the range",
+              "description": "End date",
               "type": "string",
               "target_variable": "endDate",
               "allowregex_input": true,
