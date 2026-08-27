@@ -30,13 +30,16 @@
 	export let path: string = '';
 	export let mode: 'edit' | 'view' = 'edit';
 
+	// console.log('[ORCID] init anchor:', anchor, 'path:', path);
+
 	let config = getFullConfig(componentName, anchor, mode);
+	// console.log('[ORCID] config found:', !!config, config?.meta?.component_name, config?.globalSettings?.anchorpoint, 'mode:', config?.mode?.mode_name);
 	let targetVars = getTargetVariablesWithValues(config);
 
 	let modeName = config?.mode?.mode_name ?? '';
 	let isSearchMode = modeName === 'Search';
 	let isValidateMode = modeName === 'Validate and Fill';
-	let isManualMode = modeName === 'Manual Entry';
+	let isManualMode = modeName === 'Manual Entry' || modeName === 'Search and fill 2nd field';
 
 	let OrcidApiUrl =
 		targetVars?.find((v) => v.target_variable === 'OrcidApiUrl')?.value || 'https://pub.orcid.org/v3.0/';
@@ -50,10 +53,54 @@
 	// --- Search mode ---
 	let orcid_field_path = targetVars?.find((v) => v.target_variable === 'orcid_field')?.value
 		?? targetVars?.find((v) => v.target_variable === 'displayOrcid')?.value
-		?? anchor;
-	if (orcid_field_path && orcid_field_path == anchor.split('.').slice(0, -1).join('.')) {
-		orcid_field_path = anchor;
+		?? path;
+
+	// --- Validate mode ---
+	let given_name_path = targetVars?.find((v) => v.target_variable === 'given_name')?.value ?? '';
+	let family_name_path = targetVars?.find((v) => v.target_variable === 'family_name')?.value ?? '';
+	let orcid_id_path = targetVars?.find((v) => v.target_variable === 'orcid_id')?.value ?? '';
+
+	// strip leading $ or $. from paths
+	const cleanPath = (p: string) => p ? p.replace(/^\$\.?/, '') : p;
+
+	// resolve a config path (without array indices) against the actual path (with indices)
+	function resolvePathWithIndices(actualPath: string, configPath: string): string {
+		if (!configPath) return '';
+		if (configPath === actualPath) return actualPath;
+
+		const actualParts = actualPath.split('.');
+		const configParts = configPath.split('.');
+
+		let result: string[] = [];
+		let actualIdx = 0;
+
+		for (let i = 0; i < configParts.length; i++) {
+			while (actualIdx < actualParts.length && !isNaN(Number(actualParts[actualIdx]))) {
+				result.push(actualParts[actualIdx]);
+				actualIdx++;
+			}
+
+			if (actualIdx < actualParts.length && actualParts[actualIdx] === configParts[i]) {
+				result.push(actualParts[actualIdx]);
+				actualIdx++;
+			} else {
+				result.push(configParts[i]);
+			}
+		}
+
+		return result.join('.');
 	}
+
+	given_name_path = cleanPath(given_name_path);
+	family_name_path = cleanPath(family_name_path);
+	orcid_id_path = cleanPath(orcid_id_path);
+
+	// resolve paths against the actual path (with indices) to inject array indices
+	orcid_field_path = resolvePathWithIndices(path, orcid_field_path);
+	given_name_path = resolvePathWithIndices(path, given_name_path);
+	family_name_path = resolvePathWithIndices(path, family_name_path);
+	orcid_id_path = resolvePathWithIndices(path, orcid_id_path);
+
 	let { value, ref, label, description, required } = getMetadata(orcid_field_path);
 	if (descriptionCustom && descriptionCustom.trim() !== '') {
 		description = descriptionCustom;
@@ -104,15 +151,16 @@
 				const parentPathWithoutIndices = removeJsonPathIndices(parentPath);
 				updateMetadataStore(parentPath, null, false, undefined, partyid);
 
-				$systemMappingsStore.partyMappings
+				await Promise.all($systemMappingsStore.partyMappings
 					.filter((mapping: any) =>
 						mapping.parentPath == parentPathWithoutIndices && mapping.path !== removeJsonPathIndices(orcid_field_path)
 					)
-					.forEach(async (mapping: any) => {
+					.map(async (mapping: any) => {
 						const childvalue = await GetPartyValue(partyid, mapping.linkElementId);
 						const childPathWithIndex = parentPath + '.' + mapping.path.split('.').slice(-1)[0];
 						updateMetadataStore(childPathWithIndex, childvalue, false, undefined, undefined);
-					});
+						updateValidationState(childPathWithIndex, suite(childPathWithIndex));
+					}));
 			}
 
 			// After party is set, automatically search ORCID to validate/find the ORCID ID
@@ -163,16 +211,8 @@
 			});
 
 		if (exactMatches.length === 1) {
-			// Exactly one match — auto-select
-			const match = exactMatches[0];
-			ref = match.orcidUri;
-			if (isManualMode) manualOrcidIdValue = match.orcidId;
-			if (orcid_id_path) {
-				updateMetadataStore(orcid_id_path, match.orcidId, false, match.orcidUri);
-			}
-			syncOrcidValue();
-			showResults = false;
-			searchResults = [];
+			// Exactly one match — auto-select via selectOrcid (handles party + metadata)
+			await selectOrcid(exactMatches[0]);
 		} else if (exactMatches.length > 1) {
 			// Multiple exact matches — show only those for manual selection
 			searchResults = exactMatches;
@@ -212,17 +252,6 @@
 	let selectedIndex = -1;
 	let searchTimer: ReturnType<typeof setTimeout> | null = null;
 
-	// --- Validate mode ---
-	let given_name_path = targetVars?.find((v) => v.target_variable === 'given_name')?.value ?? '';
-	let family_name_path = targetVars?.find((v) => v.target_variable === 'family_name')?.value ?? '';
-	let orcid_id_path = targetVars?.find((v) => v.target_variable === 'orcid_id')?.value ?? '';
-
-	// strip leading $ or $. from paths
-	const cleanPath = (p: string) => p ? p.replace(/^\$\.?/, '') : p;
-	given_name_path = cleanPath(given_name_path);
-	family_name_path = cleanPath(family_name_path);
-	orcid_id_path = cleanPath(orcid_id_path);
-
 	// --- Manual mode ---
 	// reuses orcid_id_path from validate mode vars, and orcid_field_path for the name
 	let manualOrcidIdValue = '';
@@ -233,7 +262,10 @@
 	let manualSelectedIndex = -1;
 	let manualTimer: ReturnType<typeof setTimeout> | null = null;
 
-	console.log('ORCID validate paths:', { given_name_path, family_name_path, orcid_id_path });
+	console.log('[ORCID] mode:', modeName, 'isManual:', isManualMode);
+	//console.log('[ORCID] anchor:', anchor, 'path:', path);
+	//console.log('[ORCID] resolved paths:', { orcid_field_path, orcid_id_path, given_name_path, family_name_path });
+	//console.log('[ORCID] targetVars:', targetVars?.map(v => ({ name: v.target_variable, value: v.value })));
 
 	let givenNameValue = given_name_path ? getValueByPath(given_name_path) ?? '' : '';
 	let familyNameValue = family_name_path ? getValueByPath(family_name_path) ?? '' : '';
@@ -255,6 +287,12 @@
 			const { node: schemaNode } = resolveNode(orcid_field_path);
 			registerValidationItem(orcid_field_path, label, required, schemaNode, true);
 			validationRegistered = true;
+
+			// load existing values from the metadata store
+			value = getValueByPath(orcid_field_path) ?? '';
+			ref = getRefByPath(orcid_field_path) ?? '';
+			searchQuery = value || '';
+
 			syncOrcidValue();
 		}
 
@@ -274,6 +312,17 @@
 			}
 		}
 
+		// re-check party selector after paths are resolved (delayed for reactivity)
+		setTimeout(() => {
+			if (canLinkToParty && partyMappingObject && !selectorValue) {
+				const checkPath = isComplexMapping ? getParentPath(orcid_field_path) : orcid_field_path;
+				const pid = getPartyIdByPath(checkPath);
+				if (pid && Number(pid) > 0 && partyList.length > 0) {
+					selectorValue = partyList.find((item: any) => Number(item.partyId) === Number(pid)) ?? null;
+				}
+			}
+		}, 200);
+
 		if (isValidateMode) {
 			// auto-search when both names are available
 			if (givenNameValue && familyNameValue) {
@@ -285,12 +334,18 @@
 			const { node: schemaNode } = resolveNode(orcid_field_path);
 			registerValidationItem(orcid_field_path, label, required, schemaNode, true);
 			validationRegistered = true;
-			syncOrcidValue();
 
-			// load existing ORCID ID from the orcid_id_path if available
+			// load existing values from the metadata store
+			value = getValueByPath(orcid_field_path) ?? '';
+			ref = getRefByPath(orcid_field_path) ?? '';
+
 			if (orcid_id_path) {
 				manualOrcidIdValue = getValueByPath(orcid_id_path) ?? '';
+				if (orcidIdInput) orcidIdInput.value = manualOrcidIdValue;
 			}
+
+			searchQuery = value || '';
+			syncOrcidValue();
 		}
 	});
 
@@ -302,12 +357,13 @@
 
 	function onManualOrcidIdChange() {
 		if (orcid_id_path && manualOrcidIdValue) {
-			updateMetadataStore(orcid_id_path, manualOrcidIdValue, false);
-		}
-		if (manualOrcidIdValue.startsWith('https://orcid.org/')) {
-			ref = manualOrcidIdValue;
-		} else if (manualOrcidIdValue.match(/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/)) {
-			ref = `https://orcid.org/${manualOrcidIdValue}`;
+			let orcidRef = '';
+			if (manualOrcidIdValue.startsWith('https://orcid.org/')) {
+				orcidRef = manualOrcidIdValue;
+			} else if (manualOrcidIdValue.match(/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/)) {
+				orcidRef = `https://orcid.org/${manualOrcidIdValue}`;
+			}
+			updateMetadataStore(orcid_id_path, manualOrcidIdValue, false, orcidRef || undefined);
 		}
 		syncOrcidValue();
 	}
@@ -363,15 +419,57 @@
 	}
 
 	function selectManualOrcid(result: OrcidResult) {
+		console.log('[ORCID] selectManualOrcid called', { result, orcid_field_path, orcid_id_path, canLinkToParty });
 		const displayName = result.creditName || `${result.givenNames} ${result.familyName}`.trim();
 		value = displayName;
+		ref = result.orcidUri;
 		manualOrcidIdValue = result.orcidId;
-		syncOrcidValue();
-		if (orcid_id_path) {
-			updateMetadataStore(orcid_id_path, result.orcidId, false, result.orcidUri);
-		}
+		if (orcidIdInput) orcidIdInput.value = result.orcidId;
+		searchQuery = displayName;
 		manualShowResults = false;
 		manualSearchResults = [];
+
+		// write name + ref to the display field
+		console.log('[ORCID] selectManualOrcid writing to store:', { orcid_field_path, displayName, ref: result.orcidUri });
+		syncOrcidValue();
+
+		// write ORCID ID to the orcid_id_path
+		if (orcid_id_path) {
+			console.log('[ORCID] selectManualOrcid writing orcid_id:', { orcid_id_path, orcidId: result.orcidId, orcidUri: result.orcidUri });
+			updateMetadataStore(orcid_id_path, result.orcidId, false, result.orcidUri);
+		} else {
+			console.warn('[ORCID] selectManualOrcid: orcid_id_path is empty — ORCID ID will not be saved!');
+		}
+
+		// If this field is mapped to a party, update the party id
+		if (canLinkToParty && partyMappingObject) {
+			const partyid = partyMappingObject.list?.find((item: any) =>
+				item.value === displayName || item.value === result.orcidId
+			)?.partyId ?? 0;
+
+			// update the MultiSelect UI to show the selected party
+			if (partyid > 0) {
+				selectorValue = partyList.find((item: any) => Number(item.partyId) === partyid) ?? null;
+			}
+
+			if (!isComplexMapping) {
+				updateMetadataStore(orcid_field_path, displayName, false, result.orcidUri, partyid);
+			} else {
+				const parentPath = getParentPath(orcid_field_path);
+				const parentPathWithoutIndices = removeJsonPathIndices(parentPath);
+				updateMetadataStore(parentPath, null, false, undefined, partyid);
+
+				$systemMappingsStore.partyMappings
+					.filter((mapping: any) =>
+						mapping.parentPath == parentPathWithoutIndices && mapping.path !== removeJsonPathIndices(orcid_field_path)
+					)
+					.forEach(async (mapping: any) => {
+						const childvalue = await GetPartyValue(partyid, mapping.linkElementId);
+						const childPathWithIndex = parentPath + '.' + mapping.path.split('.').slice(-1)[0];
+						updateMetadataStore(childPathWithIndex, childvalue, false, undefined, undefined);
+					});
+			}
+		}
 	}
 
 	function onManualKeydown(e: KeyboardEvent, results: OrcidResult[], isOrcidId: boolean) {
@@ -549,6 +647,7 @@
 	}
 
 	async function selectOrcid(result: OrcidResult) {
+		// console.log('[ORCID] selectOrcid called', { isSearchMode, isManualMode, orcid_field_path, canLinkToParty, validationRegistered });
 		if (isSearchMode || isManualMode) {
 			const displayName = result.creditName || `${result.givenNames} ${result.familyName}`.trim();
 			value = displayName;
@@ -562,14 +661,25 @@
 			syncOrcidValue();
 
 			if (isManualMode && orcid_id_path) {
+				// console.log('[ORCID] selectOrcid writing orcid_id:', { orcid_id_path, orcidId: result.orcidId, orcidUri: result.orcidUri });
 				updateMetadataStore(orcid_id_path, result.orcidId, false, result.orcidUri);
 			}
 
 			// If this field is mapped to a party, update the party id
 			if (canLinkToParty && partyMappingObject) {
+				console.log('[ORCID] party block:', { canLinkToParty, partyListLength: partyList?.length, isComplexMapping });
+				// console.log('[ORCID] looking for party match:', { displayName, orcidId: result.orcidId, partyListSample: partyList?.slice(0, 3) });
+
 				const partyid = partyMappingObject.list?.find((item: any) =>
 					item.value === displayName || item.value === result.orcidId
 				)?.partyId ?? 0;
+
+				// console.log('[ORCID] party match result:', { partyid });
+
+				// update the MultiSelect UI to show the selected party
+				if (partyid > 0) {
+					selectorValue = partyList.find((item: any) => Number(item.partyId) === partyid) ?? null;
+				}
 
 				if (!isComplexMapping) {
 					updateMetadataStore(orcid_field_path, displayName, false, result.orcidUri, partyid);
@@ -692,6 +802,7 @@
 
 	function syncOrcidValue() {
 		if (!validationRegistered) return;
+		// console.log('[ORCID] syncOrcidValue writing:', { orcid_field_path, value, ref });
 		updateMetadataStore(
 			orcid_field_path,
 			value != undefined && value != null ? value.toString() : '',
