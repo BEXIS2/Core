@@ -51,20 +51,30 @@ const dispatch = createEventDispatcher();
 			// strip array indices from path (e.g. "A.B.0.C" -> "A.B.C") for anchorpoint matching
 			let pathWithoutIndices = path.split('.').filter(p => isNaN(Number(p))).join('.');
 			console.log('[simpleComponentWrapper] checking anchor:', component.globalSettings.anchorpoint, 'vs path:', path, 'pathWithoutIndices:', pathWithoutIndices);
-			if (component.globalSettings.anchorpoint == path || component.globalSettings.anchorpoint == pathWithoutIndices) {
-				isAnchor = true;
-				let componentName = component.meta.component_name;
-				console.log('[simpleComponentWrapper] MATCH! anchor:', component.globalSettings.anchorpoint, 'component:', componentName, 'in catalog:', !!customComponentsCatalog[componentName]);
-				customComponent = customComponentsCatalog[componentName]?.component;
-				if (!customComponent) {
-					console.warn('[simpleComponentWrapper] component not found in catalog:', componentName);
-				}
-			} 
-			for (const variable of component.mode.variables.variable) {
 
-				if ((variable.JSONPath == path || variable.JSONPath == pathWithoutIndices) && variable.is_visible == false) {
-					isVisible = false;
-				}	
+			// check if this path is under this component's anchorpoint
+			let anchorpoint = component.globalSettings.anchorpoint;
+			let isUnderThisAnchor = anchorpoint == path
+				|| anchorpoint == pathWithoutIndices
+				|| pathWithoutIndices.startsWith(anchorpoint + '.');
+
+			if (isUnderThisAnchor) {
+				if (component.globalSettings.anchorpoint == path || component.globalSettings.anchorpoint == pathWithoutIndices) {
+					isAnchor = true;
+					let componentName = component.meta.component_name;
+					console.log('[simpleComponentWrapper] MATCH! anchor:', component.globalSettings.anchorpoint, 'component:', componentName, 'in catalog:', !!customComponentsCatalog[componentName]);
+					customComponent = customComponentsCatalog[componentName]?.component;
+					if (!customComponent) {
+						console.warn('[simpleComponentWrapper] component not found in catalog:', componentName);
+					}
+				}
+
+				// only check is_visible for variables belonging to this component's anchor
+				for (const variable of component.mode.variables.variable) {
+					if ((variable.JSONPath == path || variable.JSONPath == pathWithoutIndices) && variable.is_visible == false) {
+						isVisible = false;
+					}
+				}
 			}
 		}
 

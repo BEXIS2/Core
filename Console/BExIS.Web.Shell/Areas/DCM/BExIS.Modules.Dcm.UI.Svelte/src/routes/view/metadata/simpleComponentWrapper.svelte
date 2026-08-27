@@ -31,17 +31,19 @@
 
 		for (const component of config.components) {
 			let pathWithoutIndices = path.split('.').filter(p => isNaN(Number(p))).join('.');
-			if (
-				component.globalSettings.anchorpoint == path ||
-				component.globalSettings.anchorpoint == pathWithoutIndices
-			) {
-				isAnchor = true;
-				customComponent = customComponentsCatalog[component.meta.component_name].component;
-			}
+			let anchorpoint = component.globalSettings.anchorpoint;
 
-			for (const variable of component.mode.variables.variable) {
-				if ((variable.JSONPath == path || variable.JSONPath == pathWithoutIndices) && variable.is_visible == false) {
-					isVisible = false;
+			// only process variables/visibility for components whose anchorpoint matches this path
+			if (anchorpoint == path || anchorpoint == pathWithoutIndices || pathWithoutIndices.startsWith(anchorpoint + '.')) {
+				if (anchorpoint == path || anchorpoint == pathWithoutIndices) {
+					isAnchor = true;
+					customComponent = customComponentsCatalog[component.meta.component_name].component;
+				}
+
+				for (const variable of component.mode.variables.variable) {
+					if ((variable.JSONPath == path || variable.JSONPath == pathWithoutIndices) && variable.is_visible == false) {
+						isVisible = false;
+					}
 				}
 			}
 		}
