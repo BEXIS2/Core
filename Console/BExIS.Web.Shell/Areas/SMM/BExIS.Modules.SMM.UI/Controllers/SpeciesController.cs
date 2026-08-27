@@ -980,7 +980,9 @@ namespace BExIS.Modules.Smm.UI.Controllers
 
         public async Task<(bool IsSuccess, string Content)> TailorDataset(long datasetId, long variableId, string jwtToken)
         {
-            string url = "http://localhost:44345/api/DataStatistic/" + datasetId.ToString() + "/" + variableId.ToString();
+            string url = new Uri(
+                new Uri(Request.Url.GetLeftPart(UriPartial.Authority)),
+                Url.Content("~/api/DataStatistic/" + datasetId + "/" + variableId)).ToString();
 
             using (var request = new HttpRequestMessage(HttpMethod.Get, url))
             {

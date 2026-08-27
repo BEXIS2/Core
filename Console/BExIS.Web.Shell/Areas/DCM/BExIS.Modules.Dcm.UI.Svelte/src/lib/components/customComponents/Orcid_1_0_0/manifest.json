@@ -116,7 +116,7 @@
         }
       },
       {
-        "mode_name": "Manual Entry",
+        "mode_name": "Search and fill 2nd field",
         "description": "Single input field for name with a separate ORCID iD field that can be filled manually or via search",
         "settings": {
           "setting": [

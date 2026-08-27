@@ -39,25 +39,36 @@ const dispatch = createEventDispatcher();
 
 		config = getConfigStore();
 
-				// check if this component is an anchor point
-		//console.log("check for anchorpoin", config)
+		console.log('[simpleComponentWrapper] path:', path, 'config:', config);
+
+		if (!config?.components) {
+			console.log('[simpleComponentWrapper] no config.components, skipping');
+			return;
+		}
+
 		for (const component of config.components) {
 
-			// check if path is array which is indicated if the last part after the point is a number
-			let isPathArray = path.includes('.') && !isNaN(Number(path.split('.').pop()));
-			console.log(component.globalSettings.anchorpoint, path, isPathArray)
-			if (component.globalSettings.anchorpoint == path || (isPathArray && component.globalSettings.anchorpoint == path.split('.').slice(0, -1).join('.'))) {
+			// strip array indices from path (e.g. "A.B.0.C" -> "A.B.C") for anchorpoint matching
+			let pathWithoutIndices = path.split('.').filter(p => isNaN(Number(p))).join('.');
+			console.log('[simpleComponentWrapper] checking anchor:', component.globalSettings.anchorpoint, 'vs path:', path, 'pathWithoutIndices:', pathWithoutIndices);
+			if (component.globalSettings.anchorpoint == path || component.globalSettings.anchorpoint == pathWithoutIndices) {
 				isAnchor = true;
-				customComponent = customComponentsCatalog[component.meta.component_name].component;
+				let componentName = component.meta.component_name;
+				console.log('[simpleComponentWrapper] MATCH! anchor:', component.globalSettings.anchorpoint, 'component:', componentName, 'in catalog:', !!customComponentsCatalog[componentName]);
+				customComponent = customComponentsCatalog[componentName]?.component;
+				if (!customComponent) {
+					console.warn('[simpleComponentWrapper] component not found in catalog:', componentName);
+				}
 			} 
 			for (const variable of component.mode.variables.variable) {
 
-				if (variable.JSONPath == path && variable.is_visible == false) {
+				if ((variable.JSONPath == path || variable.JSONPath == pathWithoutIndices) && variable.is_visible == false) {
 					isVisible = false;
 				}	
 			}
 		}
 
+		console.log('[simpleComponentWrapper] result for path:', path, 'isAnchor:', isAnchor, 'isVisible:', isVisible, 'customComponent:', !!customComponent);
 
 	})
 

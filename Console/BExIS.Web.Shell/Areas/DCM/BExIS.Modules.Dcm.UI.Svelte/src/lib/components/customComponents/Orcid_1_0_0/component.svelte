@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import {
 		updateMetadataStore,
 		getFullConfig,
@@ -50,7 +50,7 @@
 	// --- Search mode ---
 	let orcid_field_path = targetVars?.find((v) => v.target_variable === 'orcid_field')?.value
 		?? targetVars?.find((v) => v.target_variable === 'displayOrcid')?.value
-		?? '';
+		?? anchor;
 	if (orcid_field_path && orcid_field_path == anchor.split('.').slice(0, -1).join('.')) {
 		orcid_field_path = anchor;
 	}
@@ -83,6 +83,10 @@
 		const partyid = detail.partyId ?? 0;
 		const newValue = detail.value ?? '';
 
+		// clear previous ORCID selection immediately
+		ref = '';
+		selectedCreditName = '';
+
 		// close ORCID search if open
 		showOrcidSearch = false;
 
@@ -90,7 +94,6 @@
 			if (!isComplexMapping) {
 				updateMetadataStore(orcid_field_path, newValue, false, undefined, partyid);
 				value = newValue;
-				ref = '';
 				syncOrcidValue();
 			} else {
 				updateMetadataStore(orcid_field_path, newValue, false, undefined, undefined);
@@ -121,6 +124,9 @@
 
 	// Search ORCID for the selected party name and auto-select if exactly one match is found
 	async function searchOrcidForParty(name: string) {
+		// clear previous ORCID before searching
+		ref = '';
+
 		isLoading = true;
 		showResults = true;
 		searchQuery = name;
@@ -149,21 +155,33 @@
 				});
 			}
 
-			// Auto-select if there's an exact name match
-			const exactMatch = searchResults.find(r => {
+			// Find all exact name matches
+			const exactMatches = searchResults.filter(r => {
 				const fullName = `${r.givenNames} ${r.familyName}`.trim().toLowerCase();
 				const creditLower = r.creditName?.toLowerCase() ?? '';
 				return fullName === name.toLowerCase() || creditLower === name.toLowerCase();
 			});
 
-			if (exactMatch) {
-				// Auto-select the matching ORCID record
-				ref = exactMatch.orcidUri;
-				syncOrcidValue();
-				showResults = false;
-				searchResults = [];
+		if (exactMatches.length === 1) {
+			// Exactly one match — auto-select
+			const match = exactMatches[0];
+			ref = match.orcidUri;
+			if (isManualMode) manualOrcidIdValue = match.orcidId;
+			if (orcid_id_path) {
+				updateMetadataStore(orcid_id_path, match.orcidId, false, match.orcidUri);
 			}
-			// If no exact match but results exist, keep them visible for manual selection
+			syncOrcidValue();
+			showResults = false;
+			searchResults = [];
+		} else if (exactMatches.length > 1) {
+			// Multiple exact matches — show only those for manual selection
+			searchResults = exactMatches;
+			showResults = true;
+			showOrcidSearch = true;
+		} else {
+			// No exact match — open the ORCID search panel for manual selection
+			showOrcidSearch = true;
+		}
 		} catch (error) {
 			console.error('Error searching ORCID for party:', error);
 			searchResults = [];
@@ -208,6 +226,7 @@
 	// --- Manual mode ---
 	// reuses orcid_id_path from validate mode vars, and orcid_field_path for the name
 	let manualOrcidIdValue = '';
+	let orcidIdInput: HTMLInputElement;
 	let manualSearchResults: OrcidResult[] = [];
 	let manualIsLoading = false;
 	let manualShowResults = false;
@@ -279,11 +298,12 @@
 	function onManualOrcidIdInput(e: Event) {
 		const input = e.target as HTMLInputElement;
 		manualOrcidIdValue = input.value;
-		// store the ORCID ID to the orcid_id_path if available
+	}
+
+	function onManualOrcidIdChange() {
 		if (orcid_id_path && manualOrcidIdValue) {
 			updateMetadataStore(orcid_id_path, manualOrcidIdValue, false);
 		}
-		// also set as ref for the display name field
 		if (manualOrcidIdValue.startsWith('https://orcid.org/')) {
 			ref = manualOrcidIdValue;
 		} else if (manualOrcidIdValue.match(/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/)) {
@@ -346,10 +366,9 @@
 		const displayName = result.creditName || `${result.givenNames} ${result.familyName}`.trim();
 		value = displayName;
 		manualOrcidIdValue = result.orcidId;
-		ref = result.orcidUri;
 		syncOrcidValue();
 		if (orcid_id_path) {
-			updateMetadataStore(orcid_id_path, result.orcidId, false);
+			updateMetadataStore(orcid_id_path, result.orcidId, false, result.orcidUri);
 		}
 		manualShowResults = false;
 		manualSearchResults = [];
@@ -529,15 +548,22 @@
 		}
 	}
 
-	function selectOrcid(result: OrcidResult) {
-		if (isSearchMode) {
+	async function selectOrcid(result: OrcidResult) {
+		if (isSearchMode || isManualMode) {
 			const displayName = result.creditName || `${result.givenNames} ${result.familyName}`.trim();
 			value = displayName;
 			ref = result.orcidUri;
+			manualOrcidIdValue = result.orcidId;
+			if (orcidIdInput) orcidIdInput.value = result.orcidId;
 			searchQuery = displayName;
 			showResults = false;
 			searchResults = [];
+			showOrcidSearch = false;
 			syncOrcidValue();
+
+			if (isManualMode && orcid_id_path) {
+				updateMetadataStore(orcid_id_path, result.orcidId, false, result.orcidUri);
+			}
 
 			// If this field is mapped to a party, update the party id
 			if (canLinkToParty && partyMappingObject) {
@@ -660,7 +686,7 @@
 		updateValidationState(_path, res);
 		const isNotEmpty = rorValue != null && String(rorValue).trim() !== '';
 		if (required && !isNotEmpty) {
-			validateCustomCondition(_path, false, 'Please select a person from ORCID.');
+			validateCustomCondition(_path, false, 'Please select a person and the corresponding ORCID identifier.');
 		}
 	}
 
@@ -682,8 +708,7 @@
 		required,
 		invalid: validationReady && validationItem ? !validationItem.isValid : false,
 		valid: validationReady && validationItem ? validationItem.isValid : false,
-		feedback:
-			validationItem && validationItem.errorMessage ? validationItem.errorMessage.split('\n') : [],
+		feedback: validationReady && validationItem && validationItem.errorMessage ? validationItem.errorMessage.split('\n') : [],
 		description: description,
 		showDescription: false,
 		showIcon: false,
@@ -691,6 +716,11 @@
 	};
 
 	let selectedCreditName: string = '';
+
+	$: multiSelectProps = {
+		id: path,
+		disabled: false
+	};
 
 	$: currentOrcidId = (() => {
 		$metadataStore;
@@ -709,8 +739,7 @@
 			<div class="flex items-start gap-2">
 				<div class="grow">
 					<MultiSelect
-						{...commonProps}
-						title={label}
+						{...multiSelectProps}
 						source={partyList}
 						complexSource={true}
 						complexTarget={true}
@@ -748,18 +777,25 @@
 				</div>
 			</div>
 
-			{#if showOrcidSearch}
-				<div class="orcid-search-container mt-2">
-					<input
-						type="text"
-						class="orcid-input input variant-form-material"
-						placeholder="Search for a person by name at ORCID..."
-						bind:value={searchQuery}
-						on:input={onSearchInput}
-						on:keydown={(e) => onKeydown(e, searchResults, false)}
-						on:blur={() => onBlur(false)}
-						on:focus={() => onFocus(false)}
-					/>
+		{#if showOrcidSearch}
+			<div class="orcid-search-container mt-2">
+				<div class="orcid-search-title">
+					{#if searchResults.length > 1}
+						Multiple exact matches were found. Please select the correct person below.
+					{:else}
+						No exact ORCID match was found automatically. Please search and select the correct person below.
+					{/if}
+				</div>
+				<input
+					type="text"
+					class="orcid-input input variant-form-material"
+					placeholder="Search for a person by name at ORCID..."
+					bind:value={searchQuery}
+					on:input={onSearchInput}
+					on:keydown={(e) => onKeydown(e, searchResults, false)}
+					on:blur={() => onBlur(false)}
+					on:focus={() => onFocus(false)}
+				/>
 					{#if isLoading}
 						<div class="orcid-loading">
 							<span class="orcid-spinner"></span>
@@ -863,8 +899,7 @@
 			<div class="flex items-start gap-2">
 				<div class="grow">
 					<MultiSelect
-						{...commonProps}
-						title={label}
+						{...multiSelectProps}
 						source={partyList}
 						complexSource={true}
 						complexTarget={true}
@@ -886,6 +921,13 @@
 					{/if}
 				</div>
 			</div>
+
+			{#if isLoading && !showOrcidSearch}
+				<div class="orcid-auto-loading">
+					<span class="orcid-spinner orcid-spinner-sm"></span>
+					<span>Searching ORCID...</span>
+				</div>
+			{/if}
 
 			{#if showOrcidSearch}
 				<div class="orcid-validate-container mt-2">
@@ -1069,21 +1111,115 @@
 {:else if isManualMode}
 	<InputContainer {...commonProps} on:showDescription on:hideDescription>
 		<div class="orcid-manual-container">
-			<!-- Name field with search -->
-			<div class="orcid-manual-field">
-				<label class="orcid-validate-label" for="manual-name-{orcid_field_path}">{label}</label>
-				<div class="orcid-search-container">
-					<input
-						id="manual-name-{orcid_field_path}"
-						type="text"
-						class="orcid-input input variant-form-material {commonProps.valid ? 'input-success' : ''} {commonProps.invalid ? 'input-error' : ''}"
-						placeholder="Enter name or search..."
-						value={value || ''}
-						on:input={onManualNameInput}
-						on:keydown={(e) => onManualKeydown(e, manualSearchResults, false)}
-						on:blur={() => setTimeout(() => (manualShowResults = false), 200)}
-						on:focus={() => { if (manualSearchResults.length > 0) manualShowResults = true; }}
-					/>
+			{#if canLinkToParty}
+				<!-- Party-linked manual mode: show party autocomplete as primary -->
+				<div class="orcid-manual-field">
+					<div class="flex items-start gap-2">
+						<div class="grow">
+							<MultiSelect
+								{...multiSelectProps}
+								source={partyList}
+								complexSource={true}
+								complexTarget={true}
+								itemId="partyId"
+								itemLabel="value"
+								bind:target={selectorValue}
+								isMulti={false}
+								clearable={true}
+								searchable={false}
+								on:change={onUpdateParty}
+								on:clear={onUpdateParty}
+							/>
+						</div>
+						<div class="pt-7 shrink-0 flex items-center gap-1">
+							{#if hasPartyId}
+								<Fa icon={faCircleCheck} class="text-success-500" title="This field is linked to a party." />
+							{:else}
+								<Fa icon={faCircleQuestion} class="text-warning-500" title="This field can be linked to a party but has no party assigned yet." />
+							{/if}
+						</div>
+					</div>
+
+					{#if isLoading && !showOrcidSearch}
+						<div class="orcid-auto-loading">
+							<span class="orcid-spinner orcid-spinner-sm"></span>
+							<span>Searching ORCID...</span>
+						</div>
+					{/if}
+
+					{#if showOrcidSearch}
+						<div class="orcid-search-container mt-2">
+							<div class="orcid-search-title">
+								{#if searchResults.length > 1}
+									Multiple exact matches were found. Please select the correct person below.
+								{:else}
+									No exact ORCID match was found automatically. Please search and select the correct person below.
+								{/if}
+							</div>
+							<input
+								type="text"
+								class="orcid-input input variant-form-material"
+								placeholder="Search for a person by name at ORCID..."
+								bind:value={searchQuery}
+								on:input={onSearchInput}
+								on:keydown={(e) => onKeydown(e, searchResults, false)}
+								on:blur={() => onBlur(false)}
+								on:focus={() => onFocus(false)}
+							/>
+							{#if isLoading}
+								<div class="orcid-loading">
+									<span class="orcid-spinner"></span>
+									<span>Searching...</span>
+								</div>
+							{/if}
+							{#if showResults && searchResults.length > 0}
+								<ul class="orcid-results">
+									{#each searchResults as result, i}
+										<li
+											class="orcid-result-item"
+											class:selected={i === selectedIndex}
+											on:mousedown={() => selectOrcid(result)}
+											on:mouseenter={() => (selectedIndex = i)}
+											role="option"
+											tabindex="-1"
+										>
+											<div class="orcid-result-name">
+												{result.creditName || `${result.givenNames} ${result.familyName}`.trim() || result.orcidId}
+											</div>
+											<div class="orcid-result-meta">
+												<span class="orcid-id">{result.orcidId}</span>
+											</div>
+										</li>
+									{/each}
+								</ul>
+							{/if}
+							{#if showResults && !isLoading && searchResults.length === 0 && searchQuery.trim().length >= 2}
+								<div class="orcid-no-results">No ORCID records found for "{searchQuery}"</div>
+							{/if}
+						</div>
+					{/if}
+
+					{#if ref && !showOrcidSearch}
+						<div class="orcid-selected-id">
+							ORCID: <a href={ref} target="_blank" rel="noopener noreferrer">{ref}</a>
+						</div>
+					{/if}
+				</div>
+			{:else}
+				<!-- Non-party manual mode: name field with search -->
+				<div class="orcid-manual-field">
+					<div class="orcid-search-container">
+						<input
+							id="manual-name-{orcid_field_path}"
+							type="text"
+							class="orcid-input input variant-form-material {commonProps.valid ? 'input-success' : ''} {commonProps.invalid ? 'input-error' : ''}"
+							placeholder="Enter name or search..."
+							value={value || ''}
+							on:input={onManualNameInput}
+							on:keydown={(e) => onManualKeydown(e, manualSearchResults, false)}
+							on:blur={() => setTimeout(() => (manualShowResults = false), 200)}
+							on:focus={() => { if (manualSearchResults.length > 0) manualShowResults = true; }}
+						/>
 					{#if manualIsLoading}
 						<div class="orcid-loading">
 							<span class="orcid-spinner orcid-spinner-sm"></span>
@@ -1118,18 +1254,20 @@
 					{/if}
 				</div>
 			</div>
+			{/if}
 
 			<!-- ORCID iD field — manually editable -->
 			<div class="orcid-manual-field mt-2">
 				<label class="orcid-validate-label" for="manual-orcid-{orcid_field_path}">ORCID iD</label>
 				<div class="flex items-center gap-2">
 					<input
+						bind:this={orcidIdInput}
 						id="manual-orcid-{orcid_field_path}"
 						type="text"
 						class="orcid-input input variant-form-material"
 						placeholder="0000-0000-0000-0000"
-						value={manualOrcidIdValue}
-						on:input={onManualOrcidIdInput}
+						bind:value={manualOrcidIdValue}
+						on:change={onManualOrcidIdChange}
 					/>
 					{#if manualOrcidIdValue}
 						<a href={manualOrcidIdValue.startsWith('http') ? manualOrcidIdValue : `https://orcid.org/${manualOrcidIdValue}`}
@@ -1144,16 +1282,9 @@
 					{/if}
 				</div>
 			</div>
-
-			{#if ref}
-				<div class="orcid-selected-id mt-1">
-					ORCID: <a href={ref} target="_blank" rel="noopener noreferrer">{ref}</a>
-				</div>
-			{/if}
 		</div>
 	</InputContainer>
-{/if}
-<style>
+{/if}<style>
 	.orcid-manual-container {
 		display: flex;
 		flex-direction: column;
@@ -1206,6 +1337,25 @@
 	.orcid-validate-container {
 		position: relative;
 		width: 100%;
+	}
+
+	.orcid-search-title {
+		font-size: 0.8rem;
+		color: #b45309;
+		background: #fef3c7;
+		border: 1px solid #fde68a;
+		border-radius: 4px;
+		padding: 0.4rem 0.6rem;
+		margin-bottom: 0.4rem;
+	}
+
+	.orcid-auto-loading {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: 0.75rem;
+		color: #888;
+		margin-top: 0.4rem;
 	}
 
 	.orcid-input {
