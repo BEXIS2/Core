@@ -2818,7 +2818,8 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
     justify-content: space-between;
     padding: 0 2rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    z-index: 1000;
+
+
   }
   
   .project-name {

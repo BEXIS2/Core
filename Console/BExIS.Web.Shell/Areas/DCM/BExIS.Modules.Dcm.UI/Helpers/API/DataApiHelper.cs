@@ -45,6 +45,9 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
         private FileStream Stream = null;
         private UploadHelper uploadHelper = new UploadHelper();
         private List<long> variableIds = new List<long>();
+        private int totalRowsUpdated;
+        private int totalRowsAdded;
+
         //private UploadMethod _uploadMethod;
 
         public DataApiHelper(Dataset dataset, User user, DataApiModel data, string title, UploadMethod uploadMethod)
@@ -233,28 +236,37 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                             return false;
                         }
 
-                        //Update Method -- append or update
-                        if (rows.Count() > 0)
-                        {
-                            var splittedDatatuples = uploadHelper.GetSplitDatatuples(rows, variableIds, workingCopy, ref datatupleFromDatabaseIds);
-                            datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
-                            inputWasAltered = true;
-                        }
-                    } while (rows.Count() > 0 || inputWasAltered == true);
+                    //Update Method -- append or update
+                    int totalRowsAdded = 0;
+                    int totalRowsUpdated = 0;
 
-                    datasetManager.CheckInDataset(id, "via API", userName);
-
-                    string title = workingCopy.Title;
-
-                    //send email
-                    using (var emailService = new EmailService())
+                    if (rows.Count() > 0)
                     {
-                        emailService.Send(MessageHelper.GetUpdateDatasetHeader(id),
-                            MessageHelper.GetUpdateDatasetMessage(id, title, _user.DisplayName, typeof(Dataset).Name),
-                            new List<string>() { _user.Email },
-                                   new List<string>() { GeneralSettings.SystemEmail }
-                            );
+                        var splittedDatatuples = uploadHelper.GetSplitDatatuples(rows, variableIds, workingCopy, ref datatupleFromDatabaseIds);
+                        totalRowsAdded += splittedDatatuples["new"].Count;
+                        totalRowsUpdated += splittedDatatuples["edit"].Count;
+                        datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
+                        inputWasAltered = true;
                     }
+                } while (rows.Count() > 0 || inputWasAltered == true);
+
+                string checkInComment = "via API";
+                if (totalRowsAdded > 0 || totalRowsUpdated > 0)
+                    checkInComment = $"{totalRowsAdded} rows added, {totalRowsUpdated} rows updated via API";
+
+                datasetManager.CheckInDataset(id, checkInComment, userName);
+
+                string title = workingCopy.Title;
+
+                //send email
+                using (var emailService = new EmailService())
+                {
+                    emailService.Send(MessageHelper.GetUpdateDatasetHeader(id),
+                        MessageHelper.GetUpdateDatasetMessage(id, title, _user.DisplayName, typeof(Dataset).Name, totalRowsAdded + totalRowsUpdated, 0, totalRowsAdded, totalRowsUpdated),
+                        new List<string>() { _user.Email },
+                               new List<string>() { GeneralSettings.SystemEmail }
+                        );
+                }
                 }
                 else
                 {

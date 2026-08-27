@@ -2,70 +2,99 @@
 	import { onMount } from "svelte";
 	import { getTags } from "../services";
 	import type { TagInfoViewModel } from "../types";
-import {fade} from "svelte/transition";
+	import { fade } from "svelte/transition";
 
-export let id: number;
-export let version: number;
-export let tag:number;
-export let tags: TagInfoViewModel[] = [];
+	export let id: number;
+	export let version: number;
+	export let tag: number;
+	export let tags: TagInfoViewModel[] = [];
 
-let currentTag:TagInfoViewModel|undefined = undefined;
-let showTags:boolean = false;
-$:showTags
-onMount(async () => {
- console.log('id', id);
- console.log('version', version);
+	let currentTag: TagInfoViewModel | undefined = undefined;
+	let isBeyondLatestTag: boolean = false;
+	let showTags: boolean = false;
 
- const res = await getTags(id, version);
- tags = res;
+	function sortTags(list: TagInfoViewModel[]): TagInfoViewModel[] {
+		return [...list].sort((a, b) => a.version - b.version);
+	}
 
- console.log("🚀 ~ tags:", tags)
+	$: sortedTags = sortTags(tags);
+	$: otherTags = isBeyondLatestTag ? sortedTags : sortedTags.filter(v => v.version !== currentTag?.version);
 
+	onMount(async () => {
+		console.log('id', id);
+		console.log('version', version);
 
- currentTag = tags.find(t => t.version === tag);
+		const res = await getTags(id, version);
+		tags = res;
 
- if(currentTag === undefined && tags.length > 0){
- 	currentTag = tags[0];
- }
+		console.log("🚀 ~ tags:", tags);
 
+		const sorted = sortTags(res);
+		currentTag = sorted.find(t => t.version === tag);
 
-});
-
+		if (currentTag === undefined && sorted.length > 0) {
+			currentTag = sorted[sorted.length - 1];
+			isBeyondLatestTag = true;
+		}
+	});
 </script>
-<div class="card p-5 flex flex-col gap-2">
- <h4 class="h4">Release Tags</h4>
 
+<div class="flex flex-col gap-3">
+	<h4 class="h4">Releases</h4>
 
 	{#if tags.length === 0}
-		<div class="flex justify-start">
-			<span class=""><b>No release tags available.</b></span>	
-		</div>
-		{:else}
-
-		<div class="flex">
-			{#if currentTag}
-				<b class="grow" title="{currentTag?.releaseNotes.join(', ')}">Tag {currentTag?.version}</b>
-				{currentTag?.releaseDate ? new Date(currentTag.releaseDate).toLocaleDateString() : 'N/A'}
+		<span><b>No releases available.</b></span>
+	{:else}
+		<div class="flex justify-between items-center">
+			{#if isBeyondLatestTag}
+				<span class="text-warning-500 font-bold">Working version (beyond latest Release: {currentTag?.version})</span>
+			{:else}
+				<span class="font-bold">Tag {currentTag?.version}</span>
 			{/if}
+			<span class="text-sm text-surface-800 semi-bold italic" title="Release Date">
+				{currentTag?.releaseDate ? new Date(currentTag.releaseDate).toLocaleDateString('en-US') : 'N/A'}
+			</span>
 		</div>
 
-			<div class="flex text-right">
-				<div class="grow"></div>
-				<button class="chip p-0" on:click={() => showTags = !showTags}>Show other tags</button>
+		{#if isBeyondLatestTag}
+			<div class="text-sm text-warning-500 border-l-2 border-warning-500 pl-3 bg-warning-50 dark:bg-warning-900/20 p-2 rounded font-bold">
+				The current version has not been tagged yet.
+			</div>
+		{:else if currentTag?.releaseNotes?.length > 0}
+			<div class="flex flex-col gap-1 pl-3 border-l-2 border-surface-300">
+				{#each currentTag.releaseNotes as note}
+					<div class="text-sm">{note}</div>
+				{/each}
+			</div>
+		{/if}
+
+		<div class="flex justify-end">
+			<button class="chip p-0 semi-bold" on:click={() => showTags = !showTags}>
+				{showTags ? 'Hide releases' : 'Show more releases'}
+			</button>
 		</div>
 
-	 {#if showTags}
-			<div class="flex flex-col gap-2" transition:fade>
-				{#each tags.filter(v => v.version !== currentTag?.version) as v, i}
-					<div class="flex justify-between">
-						<div title={v.releaseNotes.join(', ')}>
-							<a href="/dcm/view?id={id}&tag={v.version}" target="_blank">
-							Tag {v.version}
+		{#if showTags}
+			<div class="flex flex-col gap-3" transition:fade>
+				{#each otherTags as v}
+					<div class="flex flex-col gap-1">
+						<div class="flex justify-between items-center">
+							<a href="/dcm/view?id={id}&tag={v.version}" target="_blank"
+								class="font-bold underline hover:text-primary-500 cursor-pointer"
+								title="Switch to Tag {v.version}">
+								Tag {v.version}
 							</a>
+							<span class="text-sm text-surface-800 semi-bold italic" title="Release Date">
+								{v.releaseDate ? new Date(v.releaseDate).toLocaleDateString('en-US') : 'N/A'}
+							</span>
 						</div>
-						<div>
-							{new Date(v.releaseDate).toLocaleDateString()}
-						</div>
+						{#if v.releaseNotes?.length > 0}
+							<div class="flex flex-col gap-1 pl-3 border-l-2 border-surface-300">
+								{#each v.releaseNotes as note}
+									<div class="text-sm">{note}</div>
+								{/each}
+							</div>
+						{/if}
 					</div>
 				{/each}
 			</div>

@@ -125,9 +125,9 @@ export const downloadZip = async (id, format, version = -1, withFilter = false, 
 	}
 };
 
-export const sendRequest = async (id, intension) => {
+export const sendRequest = async (id, intention) => {
 	try {
-		const response = await Api.get('/ddm/RequestsSend/send?id=' + id + '&intension=' + intension);
+		const response = await Api.get('/ddm/RequestsSend/send?id=' + id + '&intention=' + intention);
 		return response.data;
 	} catch (error) {
 		console.error(error);

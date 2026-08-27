@@ -21,7 +21,6 @@ using BExIS.Utils.Upload;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -70,6 +69,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             string title = "";
             int numberOfRows = 0;
             int numberOfSkippedRows = 0;
+            int totalRowsAdded = 0;
+            int totalRowsUpdated = 0;
 
             try
             {
@@ -285,6 +286,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                         if (datasetStatus == AuditActionType.Create || Cache.UpdateSetup.UpdateMethod.Equals(UploadMethod.Append) || Cache.UpdateSetup.PrimaryKeys == null)
                                         {
                                             dm.EditDatasetVersion(workingCopy, rows, null, null); // add all data tuples to the dataset version
+                                            totalRowsAdded += rows.Count();
                                         }
                                         else
                                         if (datasetStatus == AuditActionType.Edit) // data tuples already exist
@@ -293,6 +295,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                             {
                                                 //split the incoming data tuples to (new|edit) based on the primary keys
                                                 var splittedDatatuples = uploadWizardHelper.GetSplitDatatuples(rows, Cache.UpdateSetup.PrimaryKeys, workingCopy, ref datatupleFromDatabaseIds);
+                                                totalRowsAdded += splittedDatatuples["new"].Count;
+                                                totalRowsUpdated += splittedDatatuples["edit"].Count;
                                                 dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                                                 inputWasAltered = true;
                                             }
@@ -376,7 +380,11 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             comment += ")";
 
                             // ToDo: Get Comment from ui and users
-                            dm.CheckInDataset(id, numberOfRows + " rows", User.Name, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, TagType.None);
+                            string checkInComment = numberOfRows + " rows";
+                            if (totalRowsAdded > 0 || totalRowsUpdated > 0)
+                                checkInComment = $"{totalRowsAdded} rows added, {totalRowsUpdated} rows updated";
+
+                            dm.CheckInDataset(id, checkInComment, User.Name, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, TagType.None);
 
                             Cache.UpdateSetup.UpdateMethod = UpdateMethod.Update;
 
@@ -384,7 +392,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             using (var emailService = new EmailService())
                             {
                                 emailService.Send(MessageHelper.GetUpdateDatasetHeader(id),
-                                MessageHelper.GetUpdateDatasetMessage(id, title, User.DisplayName, typeof(Dataset).Name, numberOfRows, numberOfSkippedRows),
+                                MessageHelper.GetUpdateDatasetMessage(id, title, User.DisplayName, typeof(Dataset).Name, numberOfRows, numberOfSkippedRows, totalRowsAdded, totalRowsUpdated),
                                 GeneralSettings.SystemEmail
                                 );
                             }
@@ -396,7 +404,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             {
                                 emailService.Send(MessageHelper.GetErrorHeader(),
                                     "Dataset: " + title + "(ID: " + id + ", User: " + User.DisplayName + " )" + " Can not upload. : " + e.Message,
-                                    ConfigurationManager.AppSettings["SystemEmail"]
+                                    GeneralSettings.SystemEmail
                                     );
                             }
                         }
