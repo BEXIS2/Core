@@ -102,7 +102,7 @@
 
         if (response.success) {
             console.log(response);
-            goto("/tailor_view");
+            goto("/tailorview");
         } else {
             console.log(response)
             tailorErrorMessage = response.error;
@@ -186,7 +186,7 @@
                     {#if data.matchingProgress.steps.length == 0}
                         <p>For this dataset, no matching request have been done to external APIs. Feel free to check/edit the current state or begin matching.</p>
                         <div class="flex items-center justify-center gap-x-2">
-                            <button class="btn variant-filled-secondary" on:click|preventDefault={() => goto("/tailor_view")}>View State</button>
+                            <button class="btn variant-filled-secondary" on:click|preventDefault={() => goto("/tailorview")}>View State</button>
                             <button class="btn variant-filled-secondary" on:click|preventDefault={requestFileAndMatching}>Request matching</button>
                         </div>
                     {:else}

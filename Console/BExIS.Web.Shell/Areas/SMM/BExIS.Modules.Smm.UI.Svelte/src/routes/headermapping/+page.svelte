@@ -132,7 +132,7 @@
         if (!response.success) {
             console.log(response);
         } else {
-            goto("/progress_overview");
+            goto("/progressoverview");
         }
     }
 

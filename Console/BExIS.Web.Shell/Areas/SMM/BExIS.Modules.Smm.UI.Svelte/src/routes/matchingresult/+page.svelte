@@ -508,7 +508,7 @@
 			submittingEntries = false;
         } else {
 			console.log(response);
-			goto("/progress_overview");
+			goto("/progressoverview");
         }
     }
 

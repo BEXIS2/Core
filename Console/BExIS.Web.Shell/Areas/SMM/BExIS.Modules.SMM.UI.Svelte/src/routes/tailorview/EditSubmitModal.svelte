@@ -28,7 +28,7 @@
 		if (!response.success) {
             // TODO: - handling
         } else {
-			goto('/progress_overview');
+			goto('/progressoverview');
         }
 
         modalStore.close();

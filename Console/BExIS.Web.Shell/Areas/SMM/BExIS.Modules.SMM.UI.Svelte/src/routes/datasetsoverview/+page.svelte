@@ -63,7 +63,7 @@
             // redirect user to progress overview
             case 'CONTINUE':
                 matchingSelection.update(s => ({ datasetId: row.id, datastructureId: row.dataStructureId, versionId: row.versionId, versionNr: row.versionNr }));
-                goto("/progress_overview");
+                goto("/progressoverview");
                 break;
 
 			default:
