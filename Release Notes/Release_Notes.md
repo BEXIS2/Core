@@ -1,5 +1,5 @@
 # BEXIS2 Release Notes - Version 5.0.0
-> Within this release we continued the refactoring of the UI to Svelte. The main focus was on the metadata edit and view, the dataset details, the primary data view, the dashboard / my data page, the users and groups management and the file display module. Further we added a new feature to support entity extensions. This is for example needed for DWC datasets. In addition we added a new tool to map species against an API (e.g. ChecklistBank) based on in BEXIS2 stored datasets. For data curators we added a new tool to compare metadata versions or metadata across different datasets. Further we added a new admin feature which allows configuring UI components for view and edit in a graphical interface. This is for example needed to configure the layout and form elements of the new metadata edit form and view. Finally we integrated and improved the citation API and the citation generation for datasets  as well as the download functionality for datasets. In addition we improved the performance of the system and fixed several bugs.
+> Within this release we continued the refactoring of the UI to Svelte. The main focus was on the metadata edit and view, the dataset details, the primary data view, the dashboard / my data page, the users and groups management and the file display module. Further we added a new feature to support entity extensions. This is for example needed for DWC datasets. In addition, we added a new tool as a prerelease to collect feedback on mapping species against an API (e.g., ChecklistBank) using the BEXIS2 stored datasets For data curators we added a new tool to compare metadata versions or metadata across different datasets. Further we added a new admin feature which allows configuring UI components for view and edit in a graphical interface. This is for example needed to configure the layout and form elements of the new metadata edit form and view. Finally we integrated and improved the citation API and the citation generation for datasets  as well as the download functionality for datasets. In addition we improved the performance of the system and fixed several bugs.
 
 ### Workspace changes:
 - Workspace changes: [4.3.1..5.0.0](https://github.com/BEXIS2/Workspace/compare/4.3.1..5.0.0)
@@ -20,7 +20,7 @@
 
 - **Metadata Compare Tool**: Tool to help data curators to compare metadata versions or metadata across different datasets. ([#2530](https://github.com/BEXIS2/Core/issues/2530))([#2517](https://github.com/BEXIS2/Core/issues/2517))
   
-- **Species Mapping Tool**: Species Mapping against an API (e.g. ChecklistBank) based on in BEXIS stored datasets. ([#980](https://github.com/BEXIS2/Core/issues/980))
+- **Species Mapping Tool**: Species Mapping against an API (e.g. ChecklistBank) based on in BEXIS stored datasets. This is a prerelease feature for testing purposes. ([#980](https://github.com/BEXIS2/Core/issues/980))
 
 - **Dashboard / My Data**: Refactoring of the dashboard / My Data page to Svelte. ([#2546](https://github.com/BEXIS2/Core/issues/2546))([#2546](https://github.com/BEXIS2/Core/issues/2546)) and view enhancements:
     - Show if a dataset has data. ([#540](https://github.com/BEXIS2/Core/issues/540))([#550](https://github.com/BEXIS2/Core/issues/550))
@@ -46,7 +46,7 @@
 
 - **Metadata Edit**: Refactoring of the metadata edit to Svelte ([#1013](https://github.com/BEXIS2/Core/issues/1013)) ([#2536](https://github.com/BEXIS2/Core/issues/2536)) ([#2009](https://github.com/BEXIS2/Core/issues/2009)) ([#2374](https://github.com/BEXIS2/Core/issues/2374)) ([#2385](https://github.com/BEXIS2/Core/issues/2385)) ([#2386](https://github.com/BEXIS2/Core/issues/2386)). The new edit form validates client and server side ([#2007](https://github.com/BEXIS2/Core/issues/2007)) ([#2008](https://github.com/BEXIS2/Core/issues/2008)) ([#2518](https://github.com/BEXIS2/Core/issues/2518)). In comparison to the old edit form, the new edit form is more flexible and allows to configure the layout of the form. Further it allows to configure default values, descriptions, disable options see [New Custom UI Components](#new-custom-ui-components). The new edit form also allows to use external terminology services to fill metadata fields ([#1741](https://github.com/BEXIS2/Core/issues/1741)). It is mobile friendly and works on tablets and smartphones ([#1102](https://github.com/BEXIS2/Core/issues/1102)). Few Metadata Edit related issues are also solved now  ([#2010](https://github.com/BEXIS2/Core/issues/2010)) ([#2102](https://github.com/BEXIS2/Core/issues/2102)) ([#2148](https://github.com/BEXIS2/Core/issues/2148)) ([#2187](https://github.com/BEXIS2/Core/issues/2187)) ([#2188](https://github.com/BEXIS2/Core/issues/2188)) ([#2226](https://github.com/BEXIS2/Core/issues/2226)) ([#2282](https://github.com/BEXIS2/Core/issues/2282)) ([#2377](https://github.com/BEXIS2/Core/issues/2377)) ([#393](https://github.com/BEXIS2/Core/issues/393)).
 
-- **Dataset Details / Landing page**: Refactoring of the dataset details to Svelte  ([#907](https://github.com/BEXIS2/Core/issues/907))([#2545](https://github.com/BEXIS2/Core/issues/2545))([#2436](https://github.com/BEXIS2/Core/issues/2436)). Further the download functionality has been improved ([#2554](https://github.com/BEXIS2/Core/issues/2554))([#2460](https://github.com/BEXIS2/Core/issues/2460)). Finally we made sure the old urls are redirected to the new ones  ([#2548](https://github.com/BEXIS2/Core/issues/2548))
+- **Dataset Details / Landing page**: Refactoring of the dataset details to Svelte  ([#907](https://github.com/BEXIS2/Core/issues/907))([#2545](https://github.com/BEXIS2/Core/issues/2545))([#2436](https://github.com/BEXIS2/Core/issues/2436)). Further the download functionality has been improved ([#2554](https://github.com/BEXIS2/Core/issues/2554))([#2460](https://github.com/BEXIS2/Core/issues/2460)). Versions and releases are shown now on the right side for easier navigation ([#2556](https://github.com/BEXIS2/Core/issues/2556)). Finally we made sure the old urls are redirected to the new ones  ([#2548](https://github.com/BEXIS2/Core/issues/2548))
 
 - **File Display**: Refactoring the module (MMM) responsible to show uploaded files in a Svelte-based interface. ([#948](https://github.com/BEXIS2/Core/issues/948))
 
@@ -56,6 +56,7 @@
 
 - **Terminology Service**: Terminology Service Suite (TSS) widgets from TS4NFDI (https://terminology.services.base4nfdi.de/) to enable filling metadata based on external terminology services. ([#1741](https://github.com/BEXIS2/Core/issues/1741))
 - **Default Values**: Allow to add default values, custom descriptions and disable options. ([#2541](https://github.com/BEXIS2/Core/issues/2541))([#686](https://github.com/BEXIS2/Core/issues/686))
+- **Date Range**: Allow to validate a date range (start and end).
 - **Horizontal**: Align fields horizontally (2 or 3 fields). Edit and view modes. ([#2539](https://github.com/BEXIS2/Core/issues/2539))
 - **ORCID**: Support validation and search for ORCIDs. ([#2535](https://github.com/BEXIS2/Core/issues/2535))
 - **ROR**: Support to search for a ROR based on text search. ([#2542](https://github.com/BEXIS2/Core/issues/2542))
@@ -81,7 +82,6 @@
     - Update seed data because of changing XSD import XPaths. ([#2289](https://github.com/BEXIS2/Core/issues/2289))
     - Update description of DWC links. ([#2521](https://github.com/BEXIS2/Core/issues/2521))
     - Upload causes an endless loop. ([#2522](https://github.com/BEXIS2/Core/issues/2522))
-    - GBIF DWC Export improvements. ([#1989](https://github.com/BEXIS2/Core/issues/1989))
 
 # Bugfixes and enhancements
 ### Bugfixes and Enhancements
