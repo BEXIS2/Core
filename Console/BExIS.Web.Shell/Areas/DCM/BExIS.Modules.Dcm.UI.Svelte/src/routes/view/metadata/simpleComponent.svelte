@@ -72,13 +72,13 @@
 		// check if this component is an anchor point
 		//console.log("check for anchorpoin", config)
 		for (const component of config.components) {
-			console.log("ghjgJ", component.globalSettings.anchorpoint, path)
-			if (component.globalSettings.anchorpoint == path) {
+			let pathWithoutIndices = path.split('.').filter(p => isNaN(Number(p))).join('.');
+			if (component.globalSettings.anchorpoint == path || component.globalSettings.anchorpoint == pathWithoutIndices) {
 				isAnchor = true;
 				customComponent = customComponentsCatalog[component.meta.component_name].component;
 			}
 			for (const variable of component.mode.variables.variable) {
-				if (variable.JSONPath == path && variable.is_visible == false) {
+				if ((variable.JSONPath == path || variable.JSONPath == pathWithoutIndices) && variable.is_visible == false) {
 					isVisible = false;
 				}
 			}

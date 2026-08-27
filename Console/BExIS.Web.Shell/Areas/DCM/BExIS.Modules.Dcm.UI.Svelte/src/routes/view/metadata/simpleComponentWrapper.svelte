@@ -30,17 +30,17 @@
 		if (!config?.components) return;
 
 		for (const component of config.components) {
-			let isPathArray = path.includes('.') && !isNaN(Number(path.split('.').pop()));
+			let pathWithoutIndices = path.split('.').filter(p => isNaN(Number(p))).join('.');
 			if (
 				component.globalSettings.anchorpoint == path ||
-				(isPathArray && component.globalSettings.anchorpoint == path.split('.').slice(0, -1).join('.'))
+				component.globalSettings.anchorpoint == pathWithoutIndices
 			) {
 				isAnchor = true;
 				customComponent = customComponentsCatalog[component.meta.component_name].component;
 			}
 
 			for (const variable of component.mode.variables.variable) {
-				if (variable.JSONPath == path && variable.is_visible == false) {
+				if ((variable.JSONPath == path || variable.JSONPath == pathWithoutIndices) && variable.is_visible == false) {
 					isVisible = false;
 				}
 			}
