@@ -4,6 +4,7 @@ using BExIS.Dlm.Entities.SpeciesMatching;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Services.SpeciesMatching;
+using BExIS.Dlm.Tests.Helpers;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Config;
@@ -20,16 +21,21 @@ namespace BExIS.Dlm.Tests.Services.SpeciesMatching
     internal class SpeciesMatchingResultManagerTest
     {
         private TestSetupHelper helper = null;
+        DatasetHelper datasetHelper = new DatasetHelper();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
+
+           
+            var dataset = datasetHelper.CreateDataset();
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
+            datasetHelper.PurgeAllDatasets();
         }
 
         [Test()]
