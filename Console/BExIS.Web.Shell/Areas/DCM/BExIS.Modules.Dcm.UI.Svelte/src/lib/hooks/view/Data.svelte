@@ -36,7 +36,7 @@
 			<!-- svelte-ignore a11y-missing-attribute -->
 			<a on:click={()=> goTo('/dcm/view/data?id='+id+'&version='+version, true)} title="Open data in new window" class="badge text-lg cursor-pointer"><Fa icon="{faMaximize}"/></a>
 		</div>
-		<PrimaryData id={model.id} />
+		<PrimaryData id={model.id} versionId={model.versionId} />
 	{:else if model.existingFiles && model.existingFiles.length > 0}
 		<div class="flex justify-between items-center">
 			<h3 class="h3">Data</h3>

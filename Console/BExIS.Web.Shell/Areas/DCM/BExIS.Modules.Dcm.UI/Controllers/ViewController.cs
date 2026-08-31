@@ -30,10 +30,11 @@ using BExIS.Security.Services.Subjects;
 using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
-
+using BExIS.UI.Models;
 using BExIS.Utils.Data;
 using BExIS.Utils.Data.Helpers;
 using BExIS.Utils.Data.Upload;
+using BExIS.Utils.NH.Querying;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
 using BEXIS.JSON.Helpers;
@@ -133,13 +134,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 ViewData["entity"] = dataset.EntityTemplate.EntityType.Name;
             }
 
-                //ToDo
-                // add bioschema to view data
-                // has data
-                // data_aggreement
-                // check_public_metadata
+            //ToDo
+            // add bioschema to view data
+            // has data
+            // data_aggreement
+            // check_public_metadata
 
-                return View();
+            Session["DataFilter"] = null;
+            Session["DataOrderBy"] = null;
+
+            return View();
         }
 
         /// <summary>
@@ -900,13 +904,32 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         #region download
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
-        public ActionResult DownloadZip(long id, string format, long version = -1, bool withFilter = false, bool withUnits = false)
+        [JsonNetFilter]
+        public ActionResult DownloadZip(long id, string format, long version = -1, bool withFilter = false, bool withUnits = false, DataTableSendModel command = null)
         {
             if (this.IsAccessible("DIM", "Export", "GenerateZip"))
             {
                 var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
                 bool useTags = (Boolean)moduleSettings.GetValueByKey("use_tags");
                 bool useMinorTag = (Boolean)moduleSettings.GetValueByKey("use_minor");
+
+                // set scopes like filter,sort,query
+                if (command != null)
+                {
+                    using (DatasetManager datasetManager = new DatasetManager())
+                    {
+                        var dataset = datasetManager.GetDataset(id);
+                        var structure = (StructuredDataStructure)dataset.DataStructure.Self;
+                        if (structure != null)
+                        {
+                            var varsAsKVP = DataTableHelper.variablesAsKVP(structure.Variables);
+                            FilterExpression filter = DataTableHelper.ConvertTo(command.Filter, varsAsKVP);
+                            OrderByExpression orderBy = DataTableHelper.ConvertTo(command.Order, varsAsKVP);
+                            Session["DataFilter"] = filter;
+                            Session["DataOrderBy"] = orderBy;
+                        }
+                    }
+                }
 
                 var actionresult = this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", version }, { "format", format }, { "withFilter", withFilter }, { "withUnits", withUnits }, { "useTags", useTags }, { "useMinor", useMinorTag } });
 
@@ -1279,6 +1302,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
+        
         #endregion
     }
 }

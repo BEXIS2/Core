@@ -30,7 +30,7 @@
 	import Link from '$lib/hooks/view/Link.svelte';
 	import Back from '$lib/components/utils/Back.svelte';
 	import Attachment from '$lib/hooks/view/Attachment.svelte';
-
+ import {scope} from './stores';
 	let title = '';
 
 	let container;
@@ -88,6 +88,8 @@
 			tag = model.tag;
 			entityName = model.entityName;
 			showTagsView = model.settings.useTags;
+
+			scope.set(null);
 
 			console.log('model',model);
 			console.log('hooks', hooks);

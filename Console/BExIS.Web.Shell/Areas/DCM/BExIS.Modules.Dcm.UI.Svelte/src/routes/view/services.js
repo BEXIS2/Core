@@ -104,20 +104,20 @@ export const getDataDescription = async (id, version) => {
 };
 
 
-export const downloadZip = async (id, format, version = -1, withFilter = false, withUnits = false) => {
+export const downloadZip = async (id, format, version = -1, withFilter = false, withUnits = false, command) => {
 	try {
 			const config = { responseType: 'blob' }
 		 const header = { 'Accept': 'application/json' }
 
 		if(format	=== undefined || format === null || format === ''){
-				const response = await Api.get('/dcm/view/downloadZip?id=' + id+'&version=' + version,'',header,config);
+				const response = await Api.post('/dcm/view/downloadZip?id=' + id+'&version=' + version,'',header,config);
 			
 				return response;
 		}
 		else
 		{
-
-				const response = await Api.get('/dcm/view/downloadZip?id=' + id+'&version=' + version+'&format=' + format+'&withFilter=' + withFilter+'&withUnits=' + withUnits, '', header, config);
+				//console.log("scope:", scope);
+				const response = await Api.post('/dcm/view/downloadZip?id=' + id+'&version=' + version+'&format=' + format+'&withFilter=' + withFilter+'&withUnits=' + withUnits, command , header, config);
 				return response;
 		}
 	} catch (error) {

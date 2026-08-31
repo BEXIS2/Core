@@ -1,6 +1,5 @@
 import type { listItemType } from "@bexis2/bexis2-core-ui";
 import type { HookModel } from "../edit/types";
-import type { date } from "vest/enforce/date";
 
 export interface ViewModel extends ApiDatasetModel {
     settings: ViewSettings;

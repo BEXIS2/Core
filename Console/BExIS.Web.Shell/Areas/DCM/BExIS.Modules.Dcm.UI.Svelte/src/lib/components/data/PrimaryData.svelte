@@ -3,6 +3,7 @@
 	import { host } from '@bexis2/bexis2-core-ui';
 	import { writable } from 'svelte/store';
 	import { createEventDispatcher } from 'svelte';
+	import { scope } from '../../../routes/view/stores';
 
 	export let id: number | undefined = undefined;
 	export let version: number | undefined = undefined;
@@ -38,8 +39,16 @@
 			}
 		};
 	}
+
+	function changeFn(e){
+
+		const send = e.detail;
+		console.log("changeFn",send);
+		scope.set(send);
+	}
+
 </script>
 
 {#if serverTableConfig}
-	<Table config={serverTableConfig} />
+	<Table config={serverTableConfig} on:change={(e)=>changeFn(e)} />
 {/if}

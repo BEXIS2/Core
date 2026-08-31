@@ -108,8 +108,8 @@ importers:
   Console/BExIS.Web.Shell.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.107
-        version: 0.4.107(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.108
+        version: 0.4.108(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       buffer:
         specifier: 6.0.3
         version: 6.0.3
@@ -148,8 +148,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/DCM/BExIS.Modules.Dcm.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.107
-        version: 0.4.107(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.108
+        version: 0.4.108(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@bexis2/bexis2-rpm-ui':
         specifier: 0.4.0
         version: 0.4.0(svelte@4.2.20)(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
@@ -196,8 +196,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/DDM/BExIS.Modules.Ddm.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.107
-        version: 0.4.107(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.108
+        version: 0.4.108(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -220,8 +220,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/DIM/BExIS.Modules.Dim.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.107
-        version: 0.4.107(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.108
+        version: 0.4.108(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -244,8 +244,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/PUM/BExIS.Modules.Pum.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.107
-        version: 0.4.107(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.108
+        version: 0.4.108(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -269,8 +269,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/RPM/BExIS.Modules.Rpm.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.107
-        version: 0.4.107(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.108
+        version: 0.4.108(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -284,8 +284,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/SAM/BExIS.Modules.Sam.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.107
-        version: 0.4.107(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.108
+        version: 0.4.108(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -305,8 +305,8 @@ importers:
   Console/BExIS.Web.Shell/Areas/SMM/BExIS.Modules.SMM.UI.Svelte:
     dependencies:
       '@bexis2/bexis2-core-ui':
-        specifier: 0.4.107
-        version: 0.4.107(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
+        specifier: 0.4.108
+        version: 0.4.108(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))
       '@floating-ui/dom':
         specifier: 1.7.6
         version: 1.7.6
@@ -333,8 +333,8 @@ packages:
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
 
-  '@bexis2/bexis2-core-ui@0.4.107':
-    resolution: {integrity: sha512-BMY7RVKllpDLAoZzEKkZmKxPJ5D4y7ii94nPMmvZYK98DybB2cMJM1M8ou+cqqIflVwWd41kmF1BVAPdcGko0g==}
+  '@bexis2/bexis2-core-ui@0.4.108':
+    resolution: {integrity: sha512-JyDcc2SSHIGFpvdlYY0INv7pPWGZOfbAvuMPI3LwRlc6/xPy4xtkD7LmCk8bhL7Dn48yZbNV7GQYOu6z2scyyA==}
 
   '@bexis2/bexis2-core-ui@0.4.88':
     resolution: {integrity: sha512-kdHwyWQ967XSRe6HyTTmFLUrW6BQDV3NC9K/J1vJdkND0rDhUUpbfXpR0ZPwlpsGnqOPnMIiZBdajHcDuJYmhA==}
@@ -1427,6 +1427,7 @@ packages:
   eslint@9.8.0:
     resolution: {integrity: sha512-K8qnZ/QJzT2dLKdZJVX6W4XOwBzutMYmt0lqUS+JdXgd+HTYFlonFgkJ8s44d/zMPPCnOOk0kMWCApCPhiOy9A==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
 
   esm-env@1.0.0:
@@ -2596,7 +2597,7 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
 
-  '@bexis2/bexis2-core-ui@0.4.107(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))':
+  '@bexis2/bexis2-core-ui@0.4.108(typescript@5.5.4)(vite@5.4.21(@types/node@25.9.1))':
     dependencies:
       '@codemirror/lang-html': 6.4.11
       '@codemirror/lang-javascript': 6.2.5
