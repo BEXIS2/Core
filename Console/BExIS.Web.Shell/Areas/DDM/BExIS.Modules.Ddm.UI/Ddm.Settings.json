@@ -84,7 +84,7 @@
     {
       "key": "curatorsGroupName",
       "title": "Group name for curators",
-      "value": "curator",
+      "value": "datamanagers",
       "type": "String",
       "description": "Group name all curators assigned to. This is needed for the curation tool to know who is curator.",
       "apiSource": "groups"
