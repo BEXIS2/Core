@@ -62,24 +62,24 @@ namespace BExIS.Xml.Helpers
                 {
                     readXmlSchemaElement(element, null);
                 }
-                Debug.WriteLine("-------------------------------------------------");
-                Debug.WriteLine("-------------metadataAttributeNames--------------");
-                Debug.WriteLine("-------------------------------------------------");
+                //Debug.WriteLine("-------------------------------------------------");
+                //Debug.WriteLine("-------------metadataAttributeNames--------------");
+                //Debug.WriteLine("-------------------------------------------------");
                 if (metadataAttributeNames.Count > 0)
                 {
                     metadataAttributeNames.ForEach(p => Debug.WriteLine(p));
                 }
 
-                Debug.WriteLine("-------------metadataPackageNames--------------");
-                Debug.WriteLine("-------------------------------------------------");
+                //Debug.WriteLine("-------------metadataPackageNames--------------");
+                //Debug.WriteLine("-------------------------------------------------");
                 if (metadataPackageNames.Count > 0)
                 {
                     metadataPackageNames.ForEach(p => Debug.WriteLine(p));
                 }
-                Debug.WriteLine("-------------------------------------------------");
-                Debug.WriteLine("Packages :" + packages);
-                Debug.WriteLine("PackagesAsParents :" + metadataPackageNames.Count);
-                Debug.WriteLine("Attributes :" + metadataAttributeNames.Count);
+                //    Debug.WriteLine("-------------------------------------------------");
+                //    Debug.WriteLine("Packages :" + packages);
+                //    Debug.WriteLine("PackagesAsParents :" + metadataPackageNames.Count);
+                //    Debug.WriteLine("Attributes :" + metadataAttributeNames.Count);
             }
         }
 

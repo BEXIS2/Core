@@ -324,8 +324,6 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public static XmlNode GenerateNodeFromXPath(XmlDocument doc, XmlNode parent, string xpath, List<XmlSchemaElement> XsdElements, XmlNamespaceManager nsManager)
         {
-            Debug.WriteLine("-------------------------------");
-            Debug.WriteLine(xpath);
 
             // grab the next node name in the xpath; or return parent if empty
             string[] partsOfXPath = xpath.Trim('/').Split('/');
@@ -362,13 +360,8 @@ namespace BExIS.Xml.Helpers
                 prefix = nsManager.LookupPrefix(nameSpace);
                 name = xsdelement.QualifiedName.Name;
 
-                Debug.WriteLine(nameSpace);
-                Debug.WriteLine(prefix);
-                Debug.WriteLine(name);
-
+    
                 string searchName = String.IsNullOrEmpty(prefix) ? name : prefix + ":" + name;
-
-                Debug.WriteLine(searchName);
 
                 if (!String.IsNullOrEmpty(nameSpace) && !String.IsNullOrEmpty(prefix))
                     nodes = parent.SelectNodes(searchName, nsManager);
