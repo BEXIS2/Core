@@ -746,16 +746,18 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 FilterExpression filter = null;
                 OrderByExpression orderBy = null;
                 ProjectionExpression projection = null;
+                string query = "";
                 string[] columns = null;
 
                 if (Session["DataFilter"] != null) filter  = (FilterExpression)Session["DataFilter"];
                 if (Session["DataOrderBy"] != null) orderBy = (OrderByExpression)Session["DataOrderBy"];
                 if (Session["DataProjection"] != null) projection = (ProjectionExpression)Session["DataProjection"];
+                if (Session["DataQuery"] != null) query = Session["DataQuery"].ToString();
 
 
                 long count = datasetManager.RowCount(datasetId, filter);
 
-                DataTable table = datasetManager.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, projection, "", 0, (int)count);
+                DataTable table = datasetManager.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, projection, query, 0, (int)count);
 
                 if (projection == null) table.Strip();
 
@@ -772,13 +774,18 @@ namespace BExIS.Modules.Dim.UI.Controllers
             FilterExpression filter = null;
             OrderByExpression orderBy = null;
             ProjectionExpression projection = null;
+            string q = "";
             string[] columns = null;
 
             if (Session["DataFilter"] != null) filter = (FilterExpression)Session["DataFilter"];
             if (Session["DataOrderBy"] != null) orderBy = (OrderByExpression)Session["DataOrderBy"];
             if (Session["DataProjection"] != null) projection = (ProjectionExpression)Session["DataProjection"];
+            if (Session["DataQuery"] != null) q = Session["DataQuery"].ToString();
 
-            string query = filter?.ToSQL() + orderBy?.ToSQL() + projection?.ToSQL();
+            string query = filter?.ToSQL() + orderBy?.ToSQL() + projection?.ToSQL() ;
+
+            if (!string.IsNullOrEmpty(q))
+                query = "q=" + q + " AND " + query;
 
             return query;
         }

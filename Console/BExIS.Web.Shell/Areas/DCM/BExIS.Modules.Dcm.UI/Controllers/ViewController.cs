@@ -927,6 +927,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             OrderByExpression orderBy = DataTableHelper.ConvertTo(command.Order, varsAsKVP);
                             Session["DataFilter"] = filter;
                             Session["DataOrderBy"] = orderBy;
+                            Session["DataQuery"] = command.Q;
                         }
                     }
                 }
