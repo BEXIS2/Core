@@ -11,6 +11,7 @@ import { removeFromMetadataStore, toggleShow} from '$lib/components/utils/metada
 
 export let choiceComponent: any;
 export let path: string;
+export let required: boolean = false;
 
 let choices: {key:string, value:string}[] = getChoices(choiceComponent);
 let target;
@@ -55,7 +56,8 @@ function getChoices(cComponent: any): {key:string, value:string}[] {
 
 
 <div class="card grid grid-cols-1 gap-0">
- 	<Header {path} />
+  {required}
+ 	<Header {path} {required}/>
 
   {#if !$hideStore.includes(path)  && $activeStore.includes(path)}
     <div in:slide out:slide class="card px-5 py-4" id={path}>

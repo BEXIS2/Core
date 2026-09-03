@@ -288,7 +288,7 @@
 							{...commonProps}
 							mode="time"
 							name={label}
-							format="hh:ii"
+							format="hh:ii:ss"
 							displayFormat="hh:mm"
 							initialDate={date}
 							bind:value

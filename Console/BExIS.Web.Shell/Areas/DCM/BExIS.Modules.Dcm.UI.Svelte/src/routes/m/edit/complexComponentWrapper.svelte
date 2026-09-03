@@ -33,9 +33,19 @@
 
 	function isRequiredKey(key: string): boolean {
 		const normalizedKey = normalizeRequiredKey(key);
-		return requiredList.some((requiredKey: string) => normalizeRequiredKey(requiredKey) === normalizedKey);
-	}
+		var isRequired = requiredList.some((requiredKey: string) => normalizeRequiredKey(requiredKey) === normalizedKey);
 
+		if(isRequired) {
+			return true;
+		}
+
+		// // may the component is an array or a choice and has a minItems attribute
+		if(complexComponent && (complexComponent.properties["type"] === 'array' || complexComponent.type === 'choice') && complexComponent.minItems) {
+			return complexComponent.minItems > 0;
+		}
+
+		return false;
+	}
 
 	//#### VALIDATION	 ####
 	registerValidationItem(path, convertDisplayName(label), required, complexComponent);
@@ -73,17 +83,20 @@
 
 
 </script>
+
+
+
 {#if complexComponent && complexComponent.type === 'object' && complexComponent.properties}
 	{#each Object.entries(complexComponent.properties) as [key, value]}
 		{@const p = path = path ? path + '.' + key : key}
 		{@const l = label = key}
 		{#if (value.type === 'object' && value.properties && !value.properties['#text']) }
 			{#if value.oneOf || value.anyOf || value.allOf}
-				<ChoiceComponent choiceComponent={value} {path} on:updated={onChangeHandler}/>
+				<ChoiceComponent choiceComponent={value} {path} on:updated={onChangeHandler} required={isRequiredKey(p)} />
 			{:else}
 				<div class="grid grid-cols-1 gap-0 ">
 
-					<Header	required={isRequiredKey(key)} {path} {p} description={value.description}  />
+					<Header	required={isRequiredKey(p)} {path} {p} description={value.description}  />
 
 					{#if !$hideStore.includes(path) && $activeStore.includes(path)}
 						<div in:slide out:slide class="card pl-5 py-1" id={path}>
@@ -109,7 +122,8 @@
 			
 			</div>
 		{:else if value.type === 'array' && value.items}
-			<ArrayComponent arrayComponent={value} {path} on:updated={onChangeHandler} />
+
+			<ArrayComponent arrayComponent={value} {path} on:updated={onChangeHandler} required={isRequiredKey(p)} />
 		{/if}
 	{/each}
 

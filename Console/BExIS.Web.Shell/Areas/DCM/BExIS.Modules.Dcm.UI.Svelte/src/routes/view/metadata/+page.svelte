@@ -42,7 +42,7 @@
 
 	async function load() {
 
-		container = document.getElementById('view');
+		container = document.getElementById('metadata');
 		console.log("🚀 ~ load ~ container:", container)
 			
 			id = Number(container?.getAttribute('dataset'));
