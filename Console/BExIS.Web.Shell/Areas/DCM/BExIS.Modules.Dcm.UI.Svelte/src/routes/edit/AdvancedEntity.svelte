@@ -103,7 +103,7 @@
 
    {#if tabSet === ext.id}
    <div class="flex justify-end">
-    <button class="chip variant-filled-error " type="button" on:click={() => removeExtensionFn(ext.id, ext.title)} ><Fa icon={faTrash} /> Delete Extension</button>   
+    <button class="chip variant-filled-error " type="button" on:click={() => removeExtensionFn(ext.id, ext.title)} ><Fa icon={faTrash} /> <span class="pl-1">Delete Extension</span></button>   
   </div>
   
   <Entity id={ext.id} version={0} title={ext.title} />

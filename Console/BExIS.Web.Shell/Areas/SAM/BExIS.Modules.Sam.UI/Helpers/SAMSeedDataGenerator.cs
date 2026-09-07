@@ -44,10 +44,12 @@ namespace BExIS.Modules.Sam.UI.Helpers
                 // users node
                 var userFeature = featureManager.FindByName("Users") ?? featureManager.Create("Users", "", administrationFeature);
                 var userOperation = operationManager.Find("SAM", "Users", "*") ?? operationManager.Create("SAM", "Users", "*", userFeature);
+                var userApi = operationManager.Find("API", "Users", "*") ?? operationManager.Create("API", "Users", "*", userFeature);
 
                 // groups node
                 var groupFeature = featureManager.FindByName("Groups") ?? featureManager.Create("Groups", "", administrationFeature);
                 var groupOperation = operationManager.Find("SAM", "Groups", "*") ?? operationManager.Create("SAM", "Groups", "*", groupFeature);
+                var groupApi = operationManager.Find("API", "Groups", "*") ?? operationManager.Create("API", "Groups", "*", groupFeature);
 
                 // feature permissions
                 var featurePermissionFeature = featureManager.FindByName("Feature Permissions") ?? featureManager.Create("Feature Permissions", "", administrationFeature);
