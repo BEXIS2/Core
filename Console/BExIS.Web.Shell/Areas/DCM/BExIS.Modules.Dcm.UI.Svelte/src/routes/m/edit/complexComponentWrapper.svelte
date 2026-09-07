@@ -11,6 +11,7 @@
 	import { registerValidationItem, updateValidationState, getSchemaAttributes, getAttributeValue, updateAttribute } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
 
+
 	export let complexComponent: any;
 	export let path: string;
 	export let required: boolean = false;
@@ -31,7 +32,10 @@
 			.replace(/[^a-z0-9]/g, '');
 	}
 
-	function isRequiredKey(key: string): boolean {
+	function isRequiredKey(key: string, v:any): boolean {
+	
+		console.log("🚀 ~ isRequiredKey ~ key:", key, v)
+
 		const normalizedKey = normalizeRequiredKey(key);
 		var isRequired = requiredList.some((requiredKey: string) => normalizeRequiredKey(requiredKey) === normalizedKey);
 
@@ -40,8 +44,8 @@
 		}
 
 		// // may the component is an array or a choice and has a minItems attribute
-		if(complexComponent && (complexComponent.properties["type"] === 'array' || complexComponent.type === 'choice') && complexComponent.minItems) {
-			return complexComponent.minItems > 0;
+		if(v && (v.type === 'array' || v.type === 'choice') && v.minItems) {
+			return v.minItems > 0;
 		}
 
 		return false;
@@ -92,11 +96,11 @@
 		{@const l = label = key}
 		{#if (value.type === 'object' && value.properties && !value.properties['#text']) }
 			{#if value.oneOf || value.anyOf || value.allOf}
-				<ChoiceComponent choiceComponent={value} {path} on:updated={onChangeHandler} required={isRequiredKey(p)} />
+				<ChoiceComponent choiceComponent={value} {path} on:updated={onChangeHandler} required={isRequiredKey(p, value)} />
 			{:else}
 				<div class="grid grid-cols-1 gap-0 ">
 
-					<Header	required={isRequiredKey(p)} {path} {p} description={value.description}  />
+					<Header	required={isRequiredKey(p, value)} {path} {p} description={value.description}  />
 
 					{#if !$hideStore.includes(path) && $activeStore.includes(path)}
 						<div in:slide out:slide class="card pl-5 py-1" id={path}>
@@ -104,7 +108,7 @@
 						 <ComplexComponent
 								complexComponent={value}
 								{path}
-								required={isRequiredKey(key)}
+								required={isRequiredKey(key, value)}
 								on:updated={onChangeHandler}
 							/>
 
@@ -116,14 +120,13 @@
 			<div class="mb-1">
 				<div class="flex flex-col md:flex-row md:items-center gap-2 mb">
 					<div class="flex-1 min-w-[100px] pt-1">
-						<SimpleComponent simpleComponent={value} {path} required={isRequiredKey(key)} on:updated={onChangeHandler} />
+						<SimpleComponent simpleComponent={value} {path} required={isRequiredKey(key,value)} on:updated={onChangeHandler} />
 					</div>
 				</div>
 			
 			</div>
 		{:else if value.type === 'array' && value.items}
-
-			<ArrayComponent arrayComponent={value} {path} on:updated={onChangeHandler} required={isRequiredKey(p)} />
+			<ArrayComponent arrayComponent={value} {path} on:updated={onChangeHandler} required={isRequiredKey(p,value)} />
 		{/if}
 	{/each}
 
