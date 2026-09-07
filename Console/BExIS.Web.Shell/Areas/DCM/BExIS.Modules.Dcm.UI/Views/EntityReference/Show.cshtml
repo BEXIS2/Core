@@ -63,17 +63,21 @@
                         <td>@srm.Source.Version</td>
                         <td>@srm.Target.Id</td>
                         <td>@srm.Target.Version</td>
-                        <td>@Html.ActionLink(targetName, "Show", "Data", new { Area = "DDM", id = srm.Target.Id, version = srm.Target.Version }, null)</td>
+                        <td>
+                            <a href="/dcm/view?id=@srm.Target.Id&version=@srm.Target.Version">@targetName</a>
+                        </td>
                         <td>@srm.Context</td>
                         <td>@srm.Target.Type</td>
                         <td>@srm.ReferenceType</td>
                         <td class="dt-body-center">
 
-                            @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Target.Id, version = srm.Target.Version }, new { title = "Go to this version.", @class = "bx bx-grid-function bx-show", @target = "_blank" })
+                            <a href="/dcm/view?id=@srm.Target.Id&version=@srm.Target.Version" class="bx bx-grid-function bx-show" title = "Go to this version." target="_blank"></a>
 
+               
                             @if (!srm.Target.LatestVersion)
                             {
-                                @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Target.Id }, new { title = "Go to latest version.", @class = "bx bx-grid-function bx-fast-forward", @target = "_blank" })
+                                <a href="/dcm/view?id=@srm.Target.Id" class="bx bx-grid-function bx-fast-forward" title = "Go to latest version." target="_blank"></a>
+
                             }
 
                             @if (!@srm.ReferenceType.ToLower().Equals("metadata link") && Model.HasEditRights)
@@ -111,18 +115,22 @@
                     <tr>
                         <td>@srm.Source.Id</td>
                         <td>@srm.Source.Version</td>
-                        <td>@Html.ActionLink(targetName, "Show", "Data", new { Area = "DDM", id = srm.Source.Id, version = srm.Source.Version }, null)</td>
+                        <td>
+                            <a href="/dcm/view?id=@srm.Source.Id&version=@srm.Source.Version">@targetName</a> 
+                        </td>
                         <td>@srm.Context</td>
                         <td>@srm.Source.Type</td>
                         <td>@srm.Target.Version</td>
                         <td>@srm.ReferenceType</td>
                         <td class="dt-body-center">
 
-                            @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Source.Id, version = srm.Source.Version }, new { title = "Go to this version.", @class = "bx bx-grid-function bx-show", @target = "_blank" })
+
+                            <a href="/dcm/view?id=@srm.Source.Id&version=@srm.Source.Version" class="bx bx-grid-function bx-show" title="Go to this version." target="_blank"></a>
 
                             @if (!srm.Source.LatestVersion)
                             {
-                                @Html.ActionLink(" ", "Show", "Data", new { Area = "DDM", id = srm.Source.Id }, new { title = "Go to latest version.", @class = "bx bx-grid-function bx-fast-forward", @target = "_blank" })
+                                <a href="/dcm/view?id=@srm.Source.Id" class="bx bx-grid-function bx-fast-forward" title="Go to latest version." target="_blank"></a>
+
                             }
                             @if (!@srm.ReferenceType.ToLower().Equals("metadata link") && Model.HasEditRights)
                             {
