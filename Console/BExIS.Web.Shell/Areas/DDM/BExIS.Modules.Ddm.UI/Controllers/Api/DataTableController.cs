@@ -154,7 +154,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 for (int i = 0; i < dt.Columns.Count; i++)
                                 {
                                     var c = dt.Columns[i];
-                                    c.ColumnName = c.Caption;
+                                    var caption = string.IsNullOrWhiteSpace(c.Caption) ? c.ColumnName : c.Caption;
+                                    c.ColumnName = caption.ToCamelCase();
                                 }
                             }
                             else
