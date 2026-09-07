@@ -188,10 +188,7 @@ function activateShow(key: string) {
 	<div class="flex flex-col overflow-visible h-auto lg:flex-row lg:overflow-hidden lg:h-[calc(100dvh-180px)] relative">
 
 <div class="w-full lg:flex-1 flex flex-col gap-4 min-w-0">
-			<div>
-					<!-- Show all descriptions -->
-					<div class="flex flex-col gap-2">
-
+					<div class="flex flex-col">
 						<div class="w-full flex flex-wrap items-center gap-1 pr-2 text-sm">
 							<!-- First block stays on the left naturally -->
 							<div class="pl-2 flex items-center gap-1">
@@ -223,12 +220,15 @@ function activateShow(key: string) {
 							</div>
 						</div>
 					</div>
-					<div class="flex-1 scrollable overflow-visible lg:overflow-y-auto">
+			<div class="scrollable overflow-y-auto">
+					<!-- Show all descriptions -->
+
+					<div class="flex-1  h-full">
 						<div class="px-2" id="top">
 							<ComplexComponent complexComponent={schema} path={''} />
 						</div>
 					</div>
-				</div>
+			</div>
 
 </div>
 {#if showSidebar}
