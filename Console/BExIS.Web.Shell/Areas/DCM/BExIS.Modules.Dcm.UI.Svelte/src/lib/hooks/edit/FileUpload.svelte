@@ -100,7 +100,7 @@
 			{start}
 			{submit}
 			on:submited={reload}
-			on:submit={() => (loading = true)}
+
 			on:error
 			on:success
 		/>
