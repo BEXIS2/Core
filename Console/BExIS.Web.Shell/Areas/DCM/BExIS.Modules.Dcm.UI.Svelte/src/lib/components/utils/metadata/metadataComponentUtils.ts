@@ -393,6 +393,8 @@ export function isActive(p: string, r: boolean): boolean {
 	}
 }
 
+
+
 export function setActive(path: string): void {
 	let activeStoreValue: string[] = get(activeStore);
 	if (!activeStoreValue.includes(path)) {

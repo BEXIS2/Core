@@ -74,6 +74,7 @@
 		updateAttribute(path, attr, e.target?.value ?? '');
 	}
 
+
 	function onChangeHandler(e: CustomEvent<any>) {
   //console.log("🚀 ~ complex child onChangeHandler:", path, res.isValid(path))
 		res = suite(path);
@@ -83,7 +84,23 @@
 
 }
 
-//console.log("end of complex item scipt")
+// Check if all children of a complex component are optional
+function allchildrensAreOptional(complexComponent: any): boolean {
+	if (!complexComponent || complexComponent.type !== 'object' || !complexComponent.properties) {
+		return true; // No properties means all are optional
+	}
+
+	for (const [key, value] of Object.entries(complexComponent.properties)) {
+		if (isRequiredKey(key, value)) {
+			return false; // Found a required property
+		}
+		if (value.type === 'object' && !allchildrensAreOptional(value)) {
+			return false; // Nested object has required properties
+		}
+	}
+
+	return true; // All properties are optional
+}
 
 
 </script>
@@ -100,7 +117,7 @@
 			{:else}
 				<div class="grid grid-cols-1 gap-0 ">
 
-					<Header	required={isRequiredKey(p, value)} {path} {p} description={value.description}  />
+					<Header	required={isRequiredKey(p, value)} {path} {p} description={value.description} allChildrenOptional={allchildrensAreOptional(value)}	  />
 
 					{#if !$hideStore.includes(path) && $activeStore.includes(path)}
 						<div in:slide out:slide class="card pl-5 py-1" id={path}>
@@ -123,7 +140,6 @@
 						<SimpleComponent simpleComponent={value} {path} required={isRequiredKey(key,value)} on:updated={onChangeHandler} />
 					</div>
 				</div>
-			
 			</div>
 		{:else if value.type === 'array' && value.items}
 			<ArrayComponent arrayComponent={value} {path} on:updated={onChangeHandler} required={isRequiredKey(p,value)} />
