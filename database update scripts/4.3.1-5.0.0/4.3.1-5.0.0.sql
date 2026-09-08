@@ -135,6 +135,131 @@ INSERT INTO public.metadataattributeusages(
 -- 	VALUES (1, null, 'description', 'Metadata/metadata/metadata/description/descriptionXmlSchemaComplexType', false, ((SELECT id FROM public.metadatapackages WHERE name='metadata'), 5, 1);
 
 
+-- ---------------------------
+-- LINKS
+-- ---------------------------
+
+
+WITH reference_type_mapping AS (
+    SELECT *
+    FROM (
+        VALUES
+            ('IsSupplementTo',      'IsSupplementedBy',   'hierachy',  'supplement'),
+            ('IsSupplementedBy',    'IsSupplementTo',     'hierachy',  'supplement'),
+
+            ('IsNewVersionOf',      'IsPreviousVersionOf','same',      'version'),
+            ('IsPreviousVersionOf', 'IsNewVersionOf',     'same',      'version'),
+
+            ('IsContinuedBy',       'Continues',          'same',      'continue'),
+            ('Continues',           'IsContinuedBy',      'same',      'continue'),
+
+            ('IsDerivedFrom',       'IsSourceOf',         'hierachy',  'derive'),
+            ('IsSourceOf',          'IsDerivedFrom',      'hierachy',  'derive'),
+
+            ('IsPartOf',            'HasPart',            'hierachy',  'collection'),
+            ('HasPart',             'IsPartOf',           'hierachy',  'collection'),
+
+            -- Falls die bestehenden Alt-Daten "Collection" verwenden:
+            ('Collection',          'HasPart',            'hierachy',  'collection'),
+
+            -- Nur Klassifikation, kein Gegenstück:
+            ('HasOccurrence',       NULL,                 'extension', 'extension'),
+            ('HasEvent',            NULL,                 'extension', 'extension'),
+            ('HasTaxon',            NULL,                 'extension', 'extension'),
+            ('HasHumboldt',         NULL,                 'extension', 'extension'),
+            ('HasEMof',             NULL,                 'extension', 'extension')
+    ) AS m(
+        referencetype,
+        inverse_referencetype,
+        linktype,
+        category
+    )
+)
+
+-- A) Alle bekannten Typen mit linktype/category anreichern bzw. korrigieren
+UPDATE public.entityreferences AS r
+SET
+    linktype = m.linktype,
+    category = m.category
+FROM reference_type_mapping AS m
+WHERE r.referencetype = m.referencetype
+  AND (
+      r.linktype IS DISTINCT FROM m.linktype
+      OR r.category IS DISTINCT FROM m.category
+  );
+
+
+-- B) Fehlende gespiegelte Relation einfügen
+WITH reference_type_mapping AS (
+    SELECT *
+    FROM (
+        VALUES
+            ('IsSupplementTo',      'IsSupplementedBy',   'hierachy',  'supplement'),
+            ('IsSupplementedBy',    'IsSupplementTo',     'hierachy',  'supplement'),
+
+            ('IsNewVersionOf',      'IsPreviousVersionOf','same',      'version'),
+            ('IsPreviousVersionOf', 'IsNewVersionOf',      'same',     'version'),
+
+            ('IsContinuedBy',       'Continues',          'same',      'continue'),
+            ('Continues',           'IsContinuedBy',      'same',      'continue'),
+
+            ('IsDerivedFrom',       'IsSourceOf',         'hierachy',  'derive'),
+            ('IsSourceOf',          'IsDerivedFrom',      'hierachy',  'derive'),
+
+            ('IsPartOf',            'HasPart',            'hierachy',  'collection'),
+            ('HasPart',             'IsPartOf',           'hierachy',  'collection'),
+
+            ('Collection',          'HasPart',            'hierachy',  'collection')
+    ) AS m(
+        referencetype,
+        inverse_referencetype,
+        linktype,
+        category
+    )
+)
+INSERT INTO public.entityreferences (
+	versionno,
+    sourceid,
+    sourceentityid,
+    sourceversion,
+    targetid,
+    targetentityid,
+    targetversion,
+    referencetype,
+    creationdate,
+    category,
+    linktype
+)
+SELECT
+	r.versionno,
+    -- Die Relation vollständig drehen
+    r.targetid,
+    r.targetentityid,
+    r.targetversion,
+    r.sourceid,
+    r.sourceentityid,
+    r.sourceversion,
+    m.inverse_referencetype,	
+    CURRENT_TIMESTAMP,
+    m.category,
+    m.linktype
+	
+FROM public.entityreferences AS r
+JOIN reference_type_mapping AS m
+    ON m.referencetype = r.referencetype
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM public.entityreferences AS inverse
+    WHERE inverse.sourceid = r.targetid
+      AND inverse.sourceentityid = r.targetentityid
+      AND inverse.sourceversion = r.targetversion
+      AND inverse.targetid = r.sourceid
+      AND inverse.targetentityid = r.sourceentityid
+      AND inverse.targetversion = r.sourceversion
+      AND inverse.referencetype = m.inverse_referencetype
+      AND inverse.versionno = 1
+);
+
 
 
 
