@@ -299,7 +299,7 @@
 />
 
 {#if selected}
-  <foreignObject x={labelX - 15} y={labelY - 15} width="30" height="30" style="overflow: visible; z-index: 999999; pointer-events: all;">
+  <foreignObject x={labelX - 15} y={labelY - 15} width="160" height="120" style="overflow: visible; z-index: 999999; pointer-events: all;">
     <div class="edge-label-container">
       <button class="edge-toggle-button" on:click={togglePopup}>
         {#if showPopup}×{:else}⚙️{/if}
