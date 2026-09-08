@@ -48,7 +48,7 @@
 		<column name="HasExtension" />
 	</property>
 
-	<property name="JsonExtensionList" type="string">
+	<property name="JsonExtensionList" type="StringClob">
 		<column name="JsonExtensionList" />
 	</property>
 
