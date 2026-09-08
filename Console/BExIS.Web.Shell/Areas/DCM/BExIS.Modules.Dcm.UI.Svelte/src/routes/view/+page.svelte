@@ -109,7 +109,7 @@
 	}
 
 	function isPartOfCollectionFunc() {
-		if(model.links.to.filter(link => link.referenceType === 'Collection').length > 0){
+		if(model.links.to.filter(link => link.referenceType === 'IsPartOf').length > 0){
 			isPartOfCollection = true;
 		}
 	}

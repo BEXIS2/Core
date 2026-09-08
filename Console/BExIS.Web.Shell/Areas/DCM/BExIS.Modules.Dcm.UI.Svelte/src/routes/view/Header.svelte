@@ -69,13 +69,8 @@ import Citation from "./Citation.svelte";
 		</div>	
 	</div>
 
-
-
-
 	<div class="flex flex-col gap-2">
 		 <Citation	{id} {version} {tag}/>
 	</div>
-
-	
 
 </div>
