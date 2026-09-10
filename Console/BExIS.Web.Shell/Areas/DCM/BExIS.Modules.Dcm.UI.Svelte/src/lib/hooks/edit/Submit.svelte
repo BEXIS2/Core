@@ -222,7 +222,7 @@
 </script>
 
 {#if loading}
-	<!-- <PlaceHolderHookContent /> remove to avoid to much layout shift-->>
+	<!-- <PlaceHolderHookContent /> remove to avoid to much layout shift-->
 {:else}
 	{#if !isSubmitting && canSubmit}
 		<div class="mb-2">
