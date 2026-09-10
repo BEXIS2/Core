@@ -56,7 +56,6 @@ function getChoices(cComponent: any): {key:string, value:string}[] {
 
 
 <div class="card grid grid-cols-1 gap-0">
-  {required}
  	<Header {path} {required}/>
 
   {#if !$hideStore.includes(path)  && $activeStore.includes(path)}
