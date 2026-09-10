@@ -232,7 +232,7 @@
 			 <DataDescription	{id} {version} {tag} hook={dataDescriptionHook}/>
 		{/if}
 
-		{#if dataHook	&& model.hasData}
+		{#if dataHook	&& model.hasData && model.downloadAccess}
 
 			<Data {id} {version} hook={dataHook}/>
 		{/if}
