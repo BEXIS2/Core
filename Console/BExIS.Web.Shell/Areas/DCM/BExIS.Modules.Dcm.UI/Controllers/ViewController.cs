@@ -3,6 +3,7 @@ using BExIS.App.Bootstrap.Exceptions;
 using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dim.Entities.Export;
 using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.BIOSCHEMA;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Helpers.Models;
@@ -173,7 +174,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             bool latestVersion = false;
             long latestVersionId = 0;
             long latestVersionNr = 0;
-            bool useTags = false;
+
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            bool useTags = (bool)moduleSettings.GetValueByKey("use_tags");
 
             // load dataset version
             // if version number = 0 load latest version
@@ -215,6 +218,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             {
                                 latestVersionId = datasetManager.GetLatestVersionIdByTagNr(id, x.Nr);
                                 latestVersion = (versionId >= latestVersionId);
+                                tag = x.Nr;
                             }
                             else
                             {
@@ -321,7 +325,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         #region settings
                         // load settings from ddm
-                        var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
                         model.Settings.UseTags = Convert.ToBoolean(moduleSettings.GetValueByKey("use_tags"));
                         model.Settings.UseMinor = Convert.ToBoolean(moduleSettings.GetValueByKey("use_minor"));
                         model.Settings.DataAggrement = moduleSettings.GetValueByKey("data_aggreement").ToString();
@@ -1287,7 +1290,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
 
-                var publications = publicationManager.PublicationRepo.Query(p => p.Dataset.Id == id && p.DatasetVersion.Id == versionId && p.ExternalLink != "");
+                var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+                var useTags = (bool)moduleSettings.GetValueByKey("use_tags");
+                
+                List<Publication> publications = new List<Publication>();
+
+                if (useTags)
+                {
+                    publications = publicationManager.PublicationRepo.Query(p => p.Dataset.Id == id && p.Tag.Nr == tag && p.ExternalLink != "").ToList();
+                }
+                else
+                {
+                    publications = publicationManager.PublicationRepo.Query(p => p.Dataset.Id == id && p.DatasetVersion.Id == versionId && p.ExternalLink != "").ToList();
+                }
+                
                 if (publications != null && publications.Any())
                 {
 
