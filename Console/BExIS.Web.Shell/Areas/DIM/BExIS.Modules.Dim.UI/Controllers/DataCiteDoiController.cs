@@ -321,6 +321,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                         // kritisch, dass hier der Manager weiter geleitet wird?!
                         setDoiInMetadataIfExist(publication.DatasetVersion, dataCiteResponse.Data.Data.Attributes.Doi, datasetManager);
+
+                        // set doi in tag if used
+                        setDoiInTagIfExist(publication, dataCiteResponse.Data.Data.Attributes.Doi);
                     }
                     else
                     {
@@ -378,6 +381,23 @@ namespace BExIS.Modules.Dim.UI.Controllers
             {
                 throw;
             }
+        }
+
+        private bool setDoiInTagIfExist(Publication p, string doi)
+        {
+            using (var tagManager = new TagManager())
+            {
+                if (p.Tag != null)
+                {
+                    var tag = tagManager.Repo.Get(p.Tag.Id);
+                    tag.Doi = doi;
+                    tagManager.Update(tag);
+
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public ActionResult Reject(long publicationId)

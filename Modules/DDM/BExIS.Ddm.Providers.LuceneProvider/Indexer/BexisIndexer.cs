@@ -421,6 +421,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 {
                     version = dm.GetLatestVersionByTagNr(id, latestTag.Nr);
                     metadata = version.Metadata;
+                    doi = latestTag.Doi;
                 }
             }
             else
