@@ -6,7 +6,7 @@
 	import ComplexComponent from './complexComponentWrapper.svelte';
 
 	import * as apiCalls from '$services/MetadataCaller';
-	import { ErrorMessage, helpStore, notificationType, Page, pageContentLayoutType, Spinner } from '@bexis2/bexis2-core-ui';
+	import { ErrorMessage, Page, pageContentLayoutType, Spinner } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa';
 	import	{ faDownload } from '@fortawesome/free-solid-svg-icons';
 
@@ -18,11 +18,9 @@
 
 	import {
 		activeStore,
-		showAllDescriptionsStore,
-		hideStore,
-		descriptionStore
+		hideStore
 	} from '$lib/components/utils/metadata/stores';
-	import { faEye, faEyeSlash, faChevronUp, faChevronDown, faArrowUp, faBars } from '@fortawesome/free-solid-svg-icons';
+	import {faChevronUp, faChevronDown, faArrowUp, faBars } from '@fortawesome/free-solid-svg-icons';
 	import Overview from './Overview.svelte';
 	// import configJson from './customComponents/config.json';
 
@@ -185,7 +183,7 @@ function activateShow(key: string) {
 	{#await load()}
 		<Spinner />
 	{:then}
-	<div class="flex flex-col overflow-visible h-auto lg:flex-row lg:overflow-hidden lg:h-[calc(100dvh-180px)] relative">
+	<div id="metadata-content" class="flex flex-col overflow-visible h-auto lg:flex-row lg:overflow-hidden lg:h-[calc(100dvh-180px)] relative">
 
 <div class="w-full lg:flex-1 flex flex-col gap-4 min-w-0">
 					<div class="flex flex-col">

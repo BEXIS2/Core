@@ -100,7 +100,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     long dsId = dm.GetDatasetLatestVersion(id).Id;
                     DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
 
-                    XmlDocument document = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport,
+                    XmlDocument document = OutputMetadataManager.GetConvertedMetadata(id,-1, TransmissionType.mappingFileExport,
                              ds.Dataset.MetadataStructure.Name);
 
                     string htmlPage = PartialView("SimpleMetadata", document).RenderToString();
@@ -229,7 +229,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     #region Metadata
 
                     //metadata as XML
-                    XmlDocument document = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport, datasetVersion.Dataset.MetadataStructure.Name);
+                    XmlDocument document = OutputMetadataManager.GetConvertedMetadata(id, versionid, TransmissionType.mappingFileExport, datasetVersion.Dataset.MetadataStructure.Name);
 
                     //generate data structure as html 
                     generateMetadataAsHtml(datasetVersion);

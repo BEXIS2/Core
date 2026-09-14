@@ -103,7 +103,7 @@ export const GetMetadataAsJson = async (id: number, version) => {
 		const header = { 'Accept': 'application/json' }
 		const config = { responseType: 'blob' }
 
-		const response = await Api.get('/api/metadata/' + id + "?version=" + version + "&simplifiedJson=2", '', header, config);
+		const response = await Api.get('/api/metadata/' + id + '/version_number/' + version + '?simplifiedJson=2', '', header, config);
 		// console.log(" response.data.MetadataStructureId:", response);
 
 		return response.data;
@@ -130,7 +130,6 @@ export const GetMetadataAsXml = async (id: number, version) => {
 
 		const header = { 'Accept': 'application/xml' }
 		const config = { responseType: 'blob' }
-		alert(id	+ " " + version)
 
 		const response = await Api.get('/api/metadata/' + id + '/version_number/' + version + '?format=1', '', header, config);
 		// console.log(" response.data.MetadataStructureId:", response);

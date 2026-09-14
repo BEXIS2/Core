@@ -31,11 +31,7 @@ onMount(async () => {
   useTags = res.useTags;
   version = res.version;
   id= res.id;
-  console.log("🚀 ~ onMount ~ useTags:", useTags)
-  console.log("🚀 ~ onMount ~ lastmodified:", lastmodified)
-  console.log("🚀 ~ onMount ~ lastchanger:", lastchanger)
-
-  
+ 
  }
 
 })
