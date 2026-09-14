@@ -178,7 +178,9 @@ namespace BExIS.Modules.Sam.UI.Helpers
                 datamanagerFeatures.Add("Species Matching");
                 datamanagerFeatures.Add("Dataset Management");
                 datamanagerFeatures.Add("Request Management");
-                datamanagerFeatures.Add("Former Member Management");
+                datamanagerFeatures.Add("Former Member Management"); 
+                datamanagerFeatures.Add("Metadiff");
+
 
                 var dfeatures = featureManager.Features.Where(f => datamanagerFeatures.Contains(f.Name));
                 foreach (var rf in dfeatures)

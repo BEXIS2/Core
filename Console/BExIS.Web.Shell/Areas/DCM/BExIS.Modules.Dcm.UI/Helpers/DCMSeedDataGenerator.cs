@@ -309,7 +309,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 #region New Metadata Edit, Config and View
                 // TODO add to feature
-                operationManager.Create("DCM", "ComponentConfig", "*");
+                operationManager.Create("DCM", "ComponentConfig","*", MetadataManagementFeature);
                 // operationManager.Create("DCM", "MetadateEdit", "*");
 
                 #endregion
