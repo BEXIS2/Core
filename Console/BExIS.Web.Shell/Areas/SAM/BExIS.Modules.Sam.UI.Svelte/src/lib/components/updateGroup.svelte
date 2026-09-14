@@ -1,93 +1,124 @@
+<!-- src/lib/components/createGroup.svelte -->
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	import { updateGroup } from '../../routes/groups/services';
+	import { createEventDispatcher, SvelteComponent, setContext, type ComponentType } from 'svelte';
+	import { updateGroupById } from '../../routes/groups/services';
 	import type { UpdateGroupModel } from '../../routes/groups/types';
 	import Fa from 'svelte-fa';
 	import { faXmark, faSave } from '@fortawesome/free-solid-svg-icons';
-
-	export let group: UpdateGroupModel; // ← kommt vom Parent
+	import { TextInput, TextArea, type TableConfig, Table } from '@bexis2/bexis2-core-ui';
+	import type { ReadUserModel } from '../../routes/users/types';
+	import { usersStore } from '../../routes/users/services';
+	import UpdateGroupOptions from './updateGroupOptions.svelte';
+	import { writable } from 'svelte/store';
+	import updateGroupValidation from './updateGroupValidation';
 
 	const dispatch = createEventDispatcher();
+
 	let isSubmitting = false;
+
+	export let group: UpdateGroupModel;
+
+	const groupStore = writable(group);
+	setContext('group', groupStore);
+
+	$: groupStore.set(group);
+	
 
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
 
-		const form = event.target as HTMLFormElement;
-		const formData = new FormData(form);
-
-		const model: UpdateGroupModel = {
-			id: group.id,
-			name: formData.get('name') as string,
-			description: formData.get('description') as string
-		};
-
 		isSubmitting = true;
 
 		try {
-			await updateGroup(group.id, model); // Signatur ggf. anpassen
+			await updateGroupById(group.id, group);
 			dispatch('success');
 		} catch (error) {
-			console.error(error);
+			console.error('Fehler:', error);
 		} finally {
 			isSubmitting = false;
 		}
 	}
+
+	const usersTableConfig: TableConfig<ReadUserModel> = {
+		id: 'usersTable',
+		data: usersStore,
+		optionsComponent: UpdateGroupOptions as ComponentType<SvelteComponent>,
+		columns: {
+			creationDate: { exclude: true },
+			modificationDate: { exclude: true },
+			groupIds: { exclude: true }
+		}
+	};
+
+			// validation
+	let res = updateGroupValidation.get();
+	// flag to enable submit button
+	$: disabled = !res.isValid();
+
+	//change event: if input change check also validation only on the field
+	// e.target.id is the id of the input component
+	async function onChangeHandler(e) {
+
+		setTimeout(async () => {
+			res = updateGroupValidation(group, e.target.id);
+		}, 10);
+	}
 </script>
 
-<form on:submit={handleSubmit} class="space-y-4">
-	<div>
-		<label class="block text-sm font-medium">Id</label>
-		<input
-			type="number"
-			name="id"
-			value={group.id}
-			required
-			class="input input-bordered w-full"
-			disabled={isSubmitting}
-		/>
-	</div>
+<div class="card p-4">
+	<form on:submit={handleSubmit} class="space-y-4">
+		<div class="flex grow gap-4">
+			<div class="grow">
+				<TextInput
+					id="name"
+					label="Name"
+					help={true}
+					required={true}
+					bind:value={group.name}
+					valid={res.isValid('name')}
+					invalid={res.hasErrors('name')}
+					feedback={res.getErrors('name')}
+					on:input={onChangeHandler}
+				/>
+			</div>
 
-	<div>
-		<label class="block text-sm font-medium">Name</label>
-		<input
-			type="text"
-			name="name"
-			value={group.name}
-			required
-			class="input input-bordered w-full"
-			disabled={isSubmitting}
-		/>
-	</div>
+			<div class="grow">
+				<TextArea
+					id="description"
+					label="Beschreibung"
+					help={true}
+					required={true}
+					bind:value={group.description}
+					valid={res.isValid('description')}
+					invalid={res.hasErrors('description')}
+					feedback={res.getErrors('description')}
+					on:input={onChangeHandler}
+				/>
+			</div>
+		</div>
 
-	<div>
-		<label class="block text-sm font-medium">Description</label>
-		<input
-			type="text"
-			name="description"
-			value={group.description}
-			required
-			class="input input-bordered w-full"
-			disabled={isSubmitting}
-		/>
-	</div>
+		<div class="w-full">
+			<label>Users</label>
+			<Table config={usersTableConfig} />
+		</div>
 
-<div class="flex gap-2 justify-end">
-		<button
-			type="button"
-			class="btn variant-filled-warning h-9 w-16 shadow-md"
-			disabled={isSubmitting}
-			on:click={() => dispatch('close')}
-		>
-			<Fa icon={faXmark} />
-		</button>
+		<div class="flex gap-2 justify-end">
+			<button
+				type="button"
+				class="btn variant-filled-warning h-9 w-16 shadow-md"
+				disabled={isSubmitting}
+				on:click={() => dispatch('close')}
+			>
+				<Fa icon={faXmark} />
+			</button>
 
-		<button
-			type="submit"
-			class="btn variant-filled-primary h-9 w-16 shadow-md"
-			disabled={isSubmitting}
-		>
-			<Fa icon={faSave} />
-		</button>
-	</div>
-</form>
+			<button
+				type="submit"
+				class="btn variant-filled-primary h-9 w-16 shadow-md"
+				disabled={isSubmitting || disabled}
+			>
+				<Fa icon={faSave} />
+			</button>
+		</div>
+	</form>
+</div>

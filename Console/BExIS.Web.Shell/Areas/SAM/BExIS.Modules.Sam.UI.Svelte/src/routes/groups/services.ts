@@ -1,9 +1,8 @@
 import { Api } from '@bexis2/bexis2-core-ui';
 import { writable } from 'svelte/store';
-import type { CreateGroupModel, UpdateGroupModel } from './types';
+import type { CreateGroupModel, ReadGroupModel, UpdateGroupModel } from './types';
 
-export const usersStore = writable([]);
-export const groupsStore = writable([]);
+export const groupsStore = writable<ReadGroupModel[]>([]);
 
 export async function getGroups() {
   try {
@@ -15,7 +14,7 @@ export async function getGroups() {
   }
 }
 
-export async function deleteGroup(id:number) {
+export async function deleteGroupById(id:number) {
   try {
     const response = await Api.delete('/api/groups/' + id, {  });
   } catch (err) {
@@ -23,7 +22,7 @@ export async function deleteGroup(id:number) {
   }
 }
 
-export async function updateGroup(id:number, model:UpdateGroupModel) {
+export async function updateGroupById(id:number, model:UpdateGroupModel) {
   try {
     console.log('Updating user with model:', model);
     console.log('User ID:', id);
