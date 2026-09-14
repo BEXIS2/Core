@@ -149,12 +149,12 @@
 
 {#if isViewMode}
 	<div class="entry">
-		<span class="key text-sm font-medium text-gray-500">{label}</span>
-		<span class="val text-sm text-gray-900 font-semibold">
+		<span class="key text-sm font-medium text-gray-600 dark:text-gray-300">{label}</span>
+		<span class="val text-sm text-gray-900">
 			{#if startValue || endValue}
 				{startValue}{#if startValue && endValue} – {endValue}{/if}
 			{:else}
-				<span class="text-gray-400">—</span>
+				<span class="text-gray-500 dark:text-gray-400">—</span>
 			{/if}
 		</span>
 	</div>
@@ -207,8 +207,7 @@
 
 <style>
 	.entry {
-		display: flex;
-		flex-direction: row;
+		padding-bottom: 0.35rem;
 	}
 	.key {
 		display: inline-block;
@@ -217,7 +216,6 @@
 	.val {
 		display: inline-block;
 		width: 30vw;
-		font-weight: bold;
 	}
 	.drp-row {
 		display: flex;
@@ -226,5 +224,11 @@
 	}
 	.drp-field {
 		flex: 1;
+	}
+
+	@media (max-width: 768px) {
+		.val {
+			width: 50vw;
+		}
 	}
 </style>

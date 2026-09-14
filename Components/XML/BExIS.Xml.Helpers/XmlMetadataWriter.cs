@@ -228,7 +228,7 @@ namespace BExIS.Xml.Helpers
                         }
                         else
                         {
-                            Debug.WriteLine("NULL OR EMPTY:------> " + usagePath);
+          
                             // if the element is null, in xml as default the value should exist, but in case of the parent is a choice
                             // there should only be a part if it exist otherwhise the xml document is not valid
                             if (usage.Extra == null || !IsChoice(usage.Extra))
@@ -281,7 +281,6 @@ namespace BExIS.Xml.Helpers
                             }
                             else
                             {
-                                Debug.WriteLine("NULL OR EMPTY:------> " + usagePath);
                                 if (usage.Extra == null || !IsChoice(usage.Extra))
                                     typeList = addAndReturnAttribute(element, attrUsage, 1, 1);
                             }

@@ -232,8 +232,8 @@
 
 {#if isViewMode}
 	<div class="entry">
-		<span class="key text-sm font-medium text-gray-500">{label}</span>
-		<span class="val text-sm text-gray-900 font-semibold">
+		<span class="key text-sm font-medium text-gray-600 dark:text-gray-300">{label}</span>
+		<span class="val text-sm text-gray-900">
 			{#if value}
 				{#if ref}
 					<a href={ref} target="_blank" rel="noopener noreferrer" class="term-link">
@@ -247,7 +247,7 @@
 					<span class="term-desc">{viewDescription}</span>
 				{/if}
 			{:else}
-				<span class="text-gray-400">—</span>
+				<span class="text-gray-500 dark:text-gray-400">—</span>
 			{/if}
 		</span>
 	</div>
@@ -280,7 +280,7 @@
 			<ul>
 				{#each data as item}
 					{#await getDescriptionFromAPI(item.iri) then description}
-						<li title={description.toString()} class="text-xs text-gray-500 mt-1">
+						<li title={description.toString()} class="text-xs text-gray-600 dark:text-gray-300 mt-1">
 							(<a href={item.iri} target="_blank" rel="noopener noreferrer">
 								{item.iri}
 							</a>)
@@ -294,8 +294,7 @@
 
 <style>
 	.entry {
-		display: flex;
-		flex-direction: row;
+		padding-bottom: 0.35rem;
 	}
 
 	.key {
@@ -306,7 +305,6 @@
 	.val {
 		display: inline-block;
 		width: 30vw;
-		font-weight: bold;
 	}
 
 	.term-link {
@@ -405,5 +403,11 @@
 	:global([class*='euiComboBox__inputWrap']:focus-within) {
 		outline: none !important;
 		box-shadow: none !important;
+	}
+
+	@media (max-width: 768px) {
+		.val {
+			width: 50vw;
+		}
 	}
 </style>

@@ -87,34 +87,34 @@
 				disableFiltering: true,
 				exclude: true
 			},
-			dataType: {
-				header: 'Data Type',
-				instructions: {
-					toStringFn: (value: listItemType) => value.text,
-					toFilterableValueFn: (value: listItemType) => value.text,
-					toSortableValueFn: (value: listItemType) => value.text
-				}
-			},
-			systemType: {
-				exclude: true
-			},
-			unit: {
-				header: 'Unit',
-				instructions: {
-					toStringFn: (value: listItemType) => value.text,
-					toFilterableValueFn: (value: listItemType) => value.text,
-					toSortableValueFn: (value: listItemType) => value.text
-				}
-			},
-			displayPattern: {
-				header: 'Display Pattern',
-				instructions: {
-					renderComponent: TableListItem as unknown as typeof SvelteComponent,
-					toStringFn: (value: listItemType) => value.text,
-					toFilterableValueFn: (value: listItemType) => value.text,
-					toSortableValueFn: (value: listItemType) => value.text
-				}
-			},
+		dataType: {
+			header: 'Data Type',
+			instructions: {
+				toStringFn: (value: listItemType) => value?.text ?? '',
+				toFilterableValueFn: (value: listItemType) => value?.text ?? '',
+				toSortableValueFn: (value: listItemType) => value?.text ?? ''
+			}
+		},
+		systemType: {
+			exclude: true
+		},
+		unit: {
+			header: 'Unit',
+			instructions: {
+				toStringFn: (value: listItemType) => value?.text ?? '',
+				toFilterableValueFn: (value: listItemType) => value?.text ?? '',
+				toSortableValueFn: (value: listItemType) => value?.text ?? ''
+			}
+		},
+		displayPattern: {
+			header: 'Display Pattern',
+			instructions: {
+				renderComponent: TableListItem as unknown as typeof SvelteComponent,
+				toStringFn: (value: listItemType) => value?.text ?? '',
+				toFilterableValueFn: (value: listItemType) => value?.text ?? '',
+				toSortableValueFn: (value: listItemType) => value?.text ?? ''
+			}
+		},
 			missingValues: {
 				instructions: {
 					renderComponent: TableListString as unknown as typeof SvelteComponent

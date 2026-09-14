@@ -3,6 +3,7 @@ using BExIS.App.Bootstrap.Exceptions;
 using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dim.Entities.Export;
 using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.BIOSCHEMA;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Helpers.Models;
@@ -30,10 +31,11 @@ using BExIS.Security.Services.Subjects;
 using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
-
+using BExIS.UI.Models;
 using BExIS.Utils.Data;
 using BExIS.Utils.Data.Helpers;
 using BExIS.Utils.Data.Upload;
+using BExIS.Utils.NH.Querying;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
 using BEXIS.JSON.Helpers;
@@ -110,10 +112,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["has_data"] = false;
             ViewData["data_aggreement"] = moduleSettings.GetValueByKey("data_aggreement");
 
-            if (version > 0)
+            // load BioSchema Description if exist
+            int bioSchemaVersion = version;
+            if (bioSchemaVersion <= 0)
             {
-                // load BioSchema Description if exist
-                string bioschemadescription = getBioSchema(id, version);
+                // version 0 means latest — get the latest version number for BioSchema
+                using (var datasetManagerForVersion = new DatasetManager())
+                {
+                    bioSchemaVersion = (int)datasetManagerForVersion.GetDatasetLatestVersion(id).VersionNo;
+                }
+            }
+            if (bioSchemaVersion > 0)
+            {
+                string bioschemadescription = getBioSchema(id, bioSchemaVersion);
                 if (!string.IsNullOrEmpty(bioschemadescription))
                     ViewData["bioSchema"] = bioschemadescription;
             }
@@ -124,13 +135,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 ViewData["entity"] = dataset.EntityTemplate.EntityType.Name;
             }
 
-                //ToDo
-                // add bioschema to view data
-                // has data
-                // data_aggreement
-                // check_public_metadata
+            //ToDo
+            // add bioschema to view data
+            // has data
+            // data_aggreement
+            // check_public_metadata
 
-                return View();
+            Session["DataFilter"] = null;
+            Session["DataOrderBy"] = null;
+
+            return View();
         }
 
         /// <summary>
@@ -160,7 +174,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             bool latestVersion = false;
             long latestVersionId = 0;
             long latestVersionNr = 0;
-            bool useTags = false;
+
+            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+            bool useTags = (bool)moduleSettings.GetValueByKey("use_tags");
 
             // load dataset version
             // if version number = 0 load latest version
@@ -202,6 +218,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             {
                                 latestVersionId = datasetManager.GetLatestVersionIdByTagNr(id, x.Nr);
                                 latestVersion = (versionId >= latestVersionId);
+                                tag = x.Nr;
                             }
                             else
                             {
@@ -292,7 +309,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             if (datasetVersion.Dataset.DataStructure != null && datasetVersion.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
                             {
                                 dataStructureType = DataStructureType.Structured.ToString();
-                                long c = datasetManager.RowCount(datasetVersion.Dataset.Id, null);
+                                long c = 0; 
+                                if(latestVersion)   
+                                    c = datasetManager.RowCount(datasetVersion.Dataset.Id, null);
+                                else
+                                    c = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion).Count;
+
                                 ViewData["gridTotal"] = c;
                                 if (c > 0) model.HasData = true;
                             }
@@ -308,7 +330,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         #region settings
                         // load settings from ddm
-                        var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
                         model.Settings.UseTags = Convert.ToBoolean(moduleSettings.GetValueByKey("use_tags"));
                         model.Settings.UseMinor = Convert.ToBoolean(moduleSettings.GetValueByKey("use_minor"));
                         model.Settings.DataAggrement = moduleSettings.GetValueByKey("data_aggreement").ToString();
@@ -518,15 +539,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             using (var datasetManager = new DatasetManager())
             {
-                var datasetVersion = datasetManager.GetDatasetVersion(id, version);
 
-                if (datasetVersion == null) throw new ArgumentException("Version noi");
-
-                long datastructureId = datasetVersion.Dataset.DataStructure != null ? datasetVersion.Dataset.DataStructure.Id : -1;
                 var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
                 var useTags = Convert.ToBoolean(moduleSettings.GetValueByKey("use_tags"));
-               var useMinor = Convert.ToBoolean(moduleSettings.GetValueByKey("use_minor"));
+                var useMinor = Convert.ToBoolean(moduleSettings.GetValueByKey("use_minor"));
 
+                var user = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
+
+                var vId = DatasetVersionHelper.GetVersionId(id, user, version, useTags, tag).Result;
+                DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(vId);
+
+                if (datasetVersion == null) throw new ArgumentException("Version not found");
+
+                long datastructureId = datasetVersion.Dataset.DataStructure != null ? datasetVersion.Dataset.DataStructure.Id : -1;
+                
                 string filename = IOHelper.GetFileName(FileType.Citation, id, version, datastructureId, "", tag, useTags, useMinor);
                 model.FileName = filename;
 
@@ -642,7 +668,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         Description = CreateVersionNumber(d, datasetVersions) + " " + getVersionInfo(d),
                         Id = (datasetVersions.Count - datasetVersions.IndexOf(d)),
                         Text = d.Title,
-                        Date = d.Timestamp.ToString("dd.MM.yyyy")
+                        Date = d.Timestamp.ToString("yyyy-MM-dd"),
+                        TagNr = d.Tag != null ? d.Tag.Nr : 0,
+                        ChangeDescription = d.ChangeDescription
                     }
                     ));
 
@@ -884,13 +912,33 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         #region download
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
-        public ActionResult DownloadZip(long id, string format, long version = -1, bool withFilter = false, bool withUnits = false)
+        [JsonNetFilter]
+        public ActionResult DownloadZip(long id, string format, long version = -1, bool withFilter = false, bool withUnits = false, DataTableSendModel command = null)
         {
             if (this.IsAccessible("DIM", "Export", "GenerateZip"))
             {
                 var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
                 bool useTags = (Boolean)moduleSettings.GetValueByKey("use_tags");
                 bool useMinorTag = (Boolean)moduleSettings.GetValueByKey("use_minor");
+
+                // set scopes like filter,sort,query
+                if (command != null)
+                {
+                    using (DatasetManager datasetManager = new DatasetManager())
+                    {
+                        var dataset = datasetManager.GetDataset(id);
+                        var structure = (StructuredDataStructure)dataset.DataStructure.Self;
+                        if (structure != null)
+                        {
+                            var varsAsKVP = DataTableHelper.variablesAsKVP(structure.Variables);
+                            FilterExpression filter = DataTableHelper.ConvertTo(command.Filter, varsAsKVP);
+                            OrderByExpression orderBy = DataTableHelper.ConvertTo(command.Order, varsAsKVP);
+                            Session["DataFilter"] = filter;
+                            Session["DataOrderBy"] = orderBy;
+                            Session["DataQuery"] = command.Q;
+                        }
+                    }
+                }
 
                 var actionresult = this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", version }, { "format", format }, { "withFilter", withFilter }, { "withUnits", withUnits }, { "useTags", useTags }, { "useMinor", useMinorTag } });
 
@@ -1247,7 +1295,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
 
-                var publications = publicationManager.PublicationRepo.Query(p => p.Dataset.Id == id && p.DatasetVersion.Id == versionId && p.ExternalLink != "");
+                var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+                var useTags = (bool)moduleSettings.GetValueByKey("use_tags");
+                
+                List<Publication> publications = new List<Publication>();
+
+                if (useTags)
+                {
+                    publications = publicationManager.PublicationRepo.Query(p => p.Dataset.Id == id && p.Tag.Nr == tag && p.ExternalLink != "").ToList();
+                }
+                else
+                {
+                    publications = publicationManager.PublicationRepo.Query(p => p.Dataset.Id == id && p.DatasetVersion.Id == versionId && p.ExternalLink != "").ToList();
+                }
+                
                 if (publications != null && publications.Any())
                 {
 
@@ -1263,6 +1324,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
+        
         #endregion
     }
 }

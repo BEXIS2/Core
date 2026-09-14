@@ -64,6 +64,9 @@ namespace Vaiona.Utils.Cfg
 
         [JsonProperty("value")]
         public dynamic Value { get; set; }
+
+        [JsonProperty("apiSource", NullValueHandling = NullValueHandling.Ignore)]
+        public string ApiSource { get; set; }
     }
 
     public class JsonSettings

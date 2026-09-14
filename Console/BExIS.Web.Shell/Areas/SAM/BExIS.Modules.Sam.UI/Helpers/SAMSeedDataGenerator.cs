@@ -1,7 +1,12 @@
 ﻿using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Subjects;
+using BExIS.UI.Helpers;
+using System.Collections.Generic;
 using System.Linq;
+using Vaiona.IoC;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Sam.UI.Helpers
@@ -39,10 +44,12 @@ namespace BExIS.Modules.Sam.UI.Helpers
                 // users node
                 var userFeature = featureManager.FindByName("Users") ?? featureManager.Create("Users", "", administrationFeature);
                 var userOperation = operationManager.Find("SAM", "Users", "*") ?? operationManager.Create("SAM", "Users", "*", userFeature);
+                var userApi = operationManager.Find("API", "Users", "*") ?? operationManager.Create("API", "Users", "*", userFeature);
 
                 // groups node
                 var groupFeature = featureManager.FindByName("Groups") ?? featureManager.Create("Groups", "", administrationFeature);
                 var groupOperation = operationManager.Find("SAM", "Groups", "*") ?? operationManager.Create("SAM", "Groups", "*", groupFeature);
+                var groupApi = operationManager.Find("API", "Groups", "*") ?? operationManager.Create("API", "Groups", "*", groupFeature);
 
                 // feature permissions
                 var featurePermissionFeature = featureManager.FindByName("Feature Permissions") ?? featureManager.Create("Feature Permissions", "", administrationFeature);
@@ -82,6 +89,105 @@ namespace BExIS.Modules.Sam.UI.Helpers
                 {
                     var result_create = featurePermissionManager.CreateAsync(null, featurePermissionFeature.Id, PermissionType.Grant).Result;
                 }
+
+
+                // create groups
+                var groupManager = IoCFactory.Container.Resolve<GroupManager>();
+
+                var scientiests = groupManager.Create(new Group()
+                {
+                    Name = "scientists",
+                    DisplayName = "scientists",
+                    Description = "access to all data features"
+                });
+
+               var datamanagers = groupManager.Create(new Group()
+                {
+                    Name = "datamanagers",
+                    DisplayName = "datamanagers",
+                    Description = "access to all data management features",
+                    
+                });
+
+                var admin = groupManager.Create(new Group()
+                {
+                    Name = "admins",
+                    DisplayName = "admins",
+                    Description = "access to all features"
+                });
+
+                // set admin group
+                var rootfeatures = featureManager.Features.Where(f => f.Parent == null);
+                foreach (var rf in rootfeatures)
+                {
+                   var r = featurePermissionManager.CreateAsync(admin,rf,PermissionType.Grant).Result;
+                }
+
+                // scientists features
+                // -------------------
+                // Search
+                // Dashboard
+                // Requests Send
+                // Data Creation
+                // Dataset Upload
+                // Datastructure Management
+                // Variables Template Management
+                // Unit Management
+                // Constraint Management
+                // Submission
+                // Visualization
+
+                List<string> scientistsFeatures = new List<string>();
+                scientistsFeatures.Add("Search");
+                scientistsFeatures.Add("Dashboard");
+                scientistsFeatures.Add("Requests Send");
+                scientistsFeatures.Add("Data Creation");
+                scientistsFeatures.Add("Dataset Upload");
+                scientistsFeatures.Add("Datastructure Management");
+                scientistsFeatures.Add("Variables Template Management");
+                scientistsFeatures.Add("Unit Management");
+                scientistsFeatures.Add("Constraint Management");
+                scientistsFeatures.Add("Submission");
+                scientistsFeatures.Add("Visualization");
+                scientistsFeatures.Add("Tag");
+
+                var sfeatures = featureManager.Features.Where(f => scientistsFeatures.Contains(f.Name));
+                foreach (var rf in sfeatures)
+                {
+                    var r = featurePermissionManager.CreateAsync(scientiests, rf, PermissionType.Grant).Result;
+                }
+
+                // datamanager features 
+                // --------------------
+                // Data Discovery
+                // Data Collection
+                // Data Planning
+                // Data Dissemination
+                // Visualization
+                // Species Matching
+                // Dataset Management
+                // Request Management
+                // Former Member Management
+
+                List<string> datamanagerFeatures = new List<string>();
+                datamanagerFeatures.Add("Data Discovery");
+                datamanagerFeatures.Add("Data Collection");
+                datamanagerFeatures.Add("Data Planning");
+                datamanagerFeatures.Add("Data Dissemination");
+                datamanagerFeatures.Add("Visualization");
+                datamanagerFeatures.Add("Species Matching");
+                datamanagerFeatures.Add("Dataset Management");
+                datamanagerFeatures.Add("Request Management");
+                datamanagerFeatures.Add("Former Member Management"); 
+                datamanagerFeatures.Add("Metadiff");
+
+
+                var dfeatures = featureManager.Features.Where(f => datamanagerFeatures.Contains(f.Name));
+                foreach (var rf in dfeatures)
+                {
+                    var r = featurePermissionManager.CreateAsync(datamanagers, rf, PermissionType.Grant).Result;
+                }
+
             }
         }
     }

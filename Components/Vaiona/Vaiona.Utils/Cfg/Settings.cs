@@ -105,10 +105,10 @@ namespace Vaiona.Utils.Cfg
                  * if (File.Exists(settingsFullPath))
                  * File.Delete(settingsFullPath);
                  */
-
                 using (StreamWriter file = File.CreateText(settingsFullPath))
                 {
                     JsonSerializer serializer = new JsonSerializer();
+                    serializer.Formatting = Formatting.Indented;
                     serializer.Serialize(file, _jsonSettings);
 
                     file.Flush();

@@ -11,7 +11,7 @@
 	} from '@bexis2/bexis2-core-ui';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
-	import { getConfigStore } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { getConfigStore, getSchemaAttributes, getAttributeValue } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { customComponentsCatalog } from '$lib/components/customComponents/componentCatalog';
 	import type { SimpleComponentData } from '$lib/components/utils/metadata/models';
 	import SveltyPicker from 'svelty-picker';
@@ -29,6 +29,13 @@
 	$: depth = Math.max(0, path.split('.').length - 1);
 	$: leftIndentPx = depth * 8;
 	$: lastPathPart = path.split('.').pop() ?? '';
+
+	// Schema-driven attributes (excluding @ref and @partyid which are handled separately)
+	$: schemaAttrs = getSchemaAttributes(simpleComponent).filter(a => a !== '@partyid');
+	$: attrValues = schemaAttrs.reduce((acc: Record<string, any>, attr: string) => {
+		acc[attr] = getAttributeValue(path, attr);
+		return acc;
+	}, {});
 
 	let date: Date = undefined as unknown as Date;
 	// load form result object
@@ -65,13 +72,13 @@
 		// check if this component is an anchor point
 		//console.log("check for anchorpoin", config)
 		for (const component of config.components) {
-			console.log("ghjgJ", component.globalSettings.anchorpoint, path)
-			if (component.globalSettings.anchorpoint == path) {
+			let pathWithoutIndices = path.split('.').filter(p => isNaN(Number(p))).join('.');
+			if (component.globalSettings.anchorpoint == path || component.globalSettings.anchorpoint == pathWithoutIndices) {
 				isAnchor = true;
 				customComponent = customComponentsCatalog[component.meta.component_name].component;
 			}
 			for (const variable of component.mode.variables.variable) {
-				if (variable.JSONPath == path && variable.is_visible == false) {
+				if ((variable.JSONPath == path || variable.JSONPath == pathWithoutIndices) && variable.is_visible == false) {
 					isVisible = false;
 				}
 			}
@@ -86,20 +93,30 @@
 >
 		{#if path.split('.').length > 1 && !isNaN(parseInt(lastPathPart))}
 			{#if lastPathPart === '0'}
-				<span class="key text-sm font-medium text-gray-500" 
-					>{convertDisplayName(label)}</span
-				>
-			{:else}
-				<span class="key text-sm font-medium text-gray-500" 
-				></span>
-			{/if}
-		{:else}
-			<span class="key text-sm font-medium text-gray-500" 
+			<span class="key text-sm font-medium text-gray-600 dark:text-gray-300" 
 				>{convertDisplayName(label)}</span
 			>
+		{:else}
+			<span class="key text-sm font-medium text-gray-600 dark:text-gray-300" 
+			></span>
 		{/if}
-		<span class="val text-sm text-gray-900 font-semibold">{value}</span>
+	{:else}
+		<span class="key text-sm font-medium text-gray-600 dark:text-gray-300" 
+			>{convertDisplayName(label)}</span
+		>
+	{/if}
+		<span class="val text-sm text-gray-900 dark:text-gray-100">{value}</span>
 	</div>
+	{#if schemaAttrs.length > 0}
+		{#each schemaAttrs as attr}
+			{#if attrValues[attr]}
+				<div class="entry">
+					<span class="key text-sm italic text-gray-600 dark:text-gray-300">{attr.replace('@', '')}</span>
+					<span class="val text-sm text-gray-900 dark:text-gray-100">{attrValues[attr]}</span>
+				</div>
+			{/if}
+		{/each}
+	{/if}
 {:else if isAnchor}
 	<div class="" id={path}>
 		<svelte:component this={customComponent} anchor={path} label={convertDisplayName(label)} />
@@ -118,16 +135,21 @@
 
 .entry {
   display: flex;
-  flex-direction: row;
-}
-
+  flex-direction: row; 
+  padding-bottom: 0.35rem;}
+  
 .val  {
   display: inline-block;
   width: 30vw;
-  font-weight: bold;
 }
 .key {
   display: inline-block;
   flex-grow: 1;
+}
+
+@media (max-width: 768px) {
+  .val {
+    width: 50vw;
+  }
 }
 </style>

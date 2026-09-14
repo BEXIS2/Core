@@ -24,14 +24,21 @@
 	let maxItems: number = arrayComponent.maxItems ? arrayComponent.maxItems : 2147483647;
 	let minItems: number = arrayComponent.minItems ? arrayComponent.minItems : 1;
 	
-
 	//#### VALIDATION	 ####
 	registerValidationItem(path, convertDisplayName(label), required, arrayComponent);
 
+ 
 	let res = suite.get();
 	onMount(() => {
 			res = suite.get(path);
 			updateValidationState(path, res);
+
+			// if(minItems	> 0 && value.length < minItems) {
+			// 	for (let i = value.length; i < minItems; i++) {
+			// 		value.push(schemaToJson(arrayComponent.items));
+			// 	}
+			// }
+
 	});
 
 	
@@ -99,9 +106,6 @@ function removeFromValidationStore(path: string) {
 		render = !render;
 		onChangeHandler();
 	}
-
-
-
 </script>
 
 {#if arrayComponent.items}

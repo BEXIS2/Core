@@ -58,7 +58,7 @@ namespace BExIS.Dim.Helpers.Export
 
                     if (broker != null)
                     {
-                        OutputMetadataManager.GetConvertedMetadata(datasetId, TransmissionType.mappingFileExport,
+                        OutputMetadataManager.GetConvertedMetadata(datasetId, datasetVersionId, TransmissionType.mappingFileExport,
                             metadataStructureName);
 
                         // get primary data

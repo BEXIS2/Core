@@ -12,7 +12,7 @@ using BExIS.Utils.NH.Querying;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
+using BExIS.Utils.Config;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -56,7 +56,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     {
                         emailService.Send(MessageHelper.GetSetPublicHeader(instanceId, typeof(Dataset).Name),
                             MessageHelper.GetSetPublicMessage(GetDisplayName(), instanceId, typeof(Dataset).Name),
-                            ConfigurationManager.AppSettings["SystemEmail"]
+                            GeneralSettings.SystemEmail
                             );
                     }
                 }
@@ -212,7 +212,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 emailService.Send(MessageHelper.GetUnsetPublicHeader(instanceId, typeof(Dataset).Name),
                     MessageHelper.GetUnsetPublicMessage(GetDisplayName(), instanceId, typeof(Dataset).Name),
-                    ConfigurationManager.AppSettings["SystemEmail"]
+                    GeneralSettings.SystemEmail
                     );
             }
         }

@@ -1,4 +1,4 @@
-﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dim.Entities.Export.GBIF;
 using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers;
@@ -326,7 +326,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                             if (repository != null && repository.Name.ToLower() == "datacite")
                             {
-                                string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + datasetVersion.Dataset.Id).ToString()).ToString();
+                                string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/dcm/view/?id=" + datasetVersion.Dataset.Id).ToString()).ToString();
                                 //new DataCiteDOIHelper().sendRequest(datasetVersion, datasetUrl);
 
                                 string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
@@ -347,7 +347,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                             if (repository != null && repository.Name.ToLower() == "datacite")
                             {
-                                //string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + datasetVersion.Dataset.Id).ToString()).ToString();
+                                //string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/dcm/view/?id=" + datasetVersion.Dataset.Id).ToString()).ToString();
                                 //new DataCiteDOIHelper().sendRequest(datasetVersion, datasetUrl);
 
                                 string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
@@ -732,7 +732,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             //    return Json(jsonresult);
             //}
-            ////user exist and api user has access to the api´s
+            ////user exist and api user has access to the api�s
             //else
             //{
             //    //load metadata from version

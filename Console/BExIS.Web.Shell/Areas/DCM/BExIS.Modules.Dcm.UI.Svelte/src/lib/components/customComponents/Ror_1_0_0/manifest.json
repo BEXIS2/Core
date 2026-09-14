@@ -69,33 +69,6 @@
           ]
         }
       }
-    ],
-    "view": [
-      {
-        "mode_name": "Linked ROR Display",
-        "description": "Mode for displaying linked ROR entry",
-        "settings": {
-          "setting": []
-        },
-        "variables": {
-          "variable": [
-            {
-              "name": "Display ROR",
-              "description": "ROR entry to display",
-              "type": "string",
-              "target_variable": "displayRor",
-              "allowregex_input": true,
-              "allowregex_output": false,
-              "is_input": true,
-              "is_output": false,
-              "default_value": {
-                "type": "string",
-                "value": ""
-              }
-            }
-          ]
-        }
-      }
     ]
   }
 }

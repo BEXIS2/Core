@@ -48,7 +48,7 @@ export const getTags = async (id, version) => {
 	}
 };
 
-export const getVersions = async (id, version) => {
+export const getVersions = async (id) => {
 	try {
 		const response = await Api.get('/dcm/view/versions?id=' + id);
 		return response.data;
@@ -104,20 +104,20 @@ export const getDataDescription = async (id, version) => {
 };
 
 
-export const downloadZip = async (id, format, version = -1, withFilter = false, withUnits = false) => {
+export const downloadZip = async (id, format, version = -1, withFilter = false, withUnits = false, command) => {
 	try {
 			const config = { responseType: 'blob' }
 		 const header = { 'Accept': 'application/json' }
 
 		if(format	=== undefined || format === null || format === ''){
-				const response = await Api.get('/dcm/view/downloadZip?id=' + id+'&version=' + version,'',header,config);
+				const response = await Api.post('/dcm/view/downloadZip?id=' + id+'&version=' + version,'',header,config);
 			
 				return response;
 		}
 		else
 		{
-
-				const response = await Api.get('/dcm/view/downloadZip?id=' + id+'&version=' + version+'&format=' + format+'&withFilter=' + withFilter+'&withUnits=' + withUnits, '', header, config);
+				//console.log("scope:", scope);
+				const response = await Api.post('/dcm/view/downloadZip?id=' + id+'&version=' + version+'&format=' + format+'&withFilter=' + withFilter+'&withUnits=' + withUnits, command , header, config);
 				return response;
 		}
 	} catch (error) {
@@ -125,9 +125,9 @@ export const downloadZip = async (id, format, version = -1, withFilter = false, 
 	}
 };
 
-export const sendRequest = async (id, intension) => {
+export const sendRequest = async (id, intention) => {
 	try {
-		const response = await Api.get('/ddm/RequestsSend/send?id=' + id + '&intension=' + intension);
+		const response = await Api.get('/ddm/RequestsSend/send?id=' + id + '&intention=' + intention);
 		return response.data;
 	} catch (error) {
 		console.error(error);

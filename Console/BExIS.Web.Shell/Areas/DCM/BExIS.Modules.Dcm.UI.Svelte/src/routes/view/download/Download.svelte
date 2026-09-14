@@ -5,6 +5,8 @@
 	import Request from "./Request.svelte";
 	import { positionType, Spinner } from "@bexis2/bexis2-core-ui";
 	import { ProgressRadial } from "@skeletonlabs/skeleton";
+  import {scope} from '../../view/stores';
+	import { get } from "svelte/store";
 
 
  export let id;
@@ -45,6 +47,9 @@ export let requestExist: boolean = false; // user has already requested the data
  $: selected = downloadFormats.find(d => d.value === selectedFormat);
  $: withUnits = selected?.withUnits ?? false;
  $: selectedMimeType = selected?.format ?? '';
+ 
+
+
 
 async function downloadDatasetFn()
 {
@@ -78,7 +83,19 @@ async function downloadDatasetWithFormatFn(event)
 
   isDownloading = true;
 
-  const res = await downloadZip(id, format, versionId, false, withUnits);
+  let f = false;
+  const s = get(scope);
+
+  if(s && ((s.filter && s.filter.length > 0) || (s.sort && s.sort.length > 0 )))
+  {
+    f = true;
+  }
+  else
+  {
+    f = false;
+  }
+
+  const res = await downloadZip(id, format, versionId, f , withUnits,s);
   
   if(res)
   {

@@ -30,7 +30,7 @@
 	import Link from '$lib/hooks/view/Link.svelte';
 	import Back from '$lib/components/utils/Back.svelte';
 	import Attachment from '$lib/hooks/view/Attachment.svelte';
-
+ import {scope} from './stores';
 	let title = '';
 
 	let container;
@@ -49,6 +49,7 @@
 	let entityName;
 
 	let useTags: boolean = false;
+	let showTagsView: boolean = true;
 
 	let addtionalhooks: HookModel[];
 	$: addtionalhooks = [];
@@ -86,6 +87,9 @@
 			id = model.id;
 			tag = model.tag;
 			entityName = model.entityName;
+			showTagsView = model.settings.useTags;
+
+			scope.set(null);
 
 			console.log('model',model);
 			console.log('hooks', hooks);
@@ -105,7 +109,7 @@
 	}
 
 	function isPartOfCollectionFunc() {
-		if(model.links.to.filter(link => link.referenceType === 'Collection').length > 0){
+		if(model.links.to.filter(link => link.referenceType === 'IsPartOf').length > 0){
 			isPartOfCollection = true;
 		}
 	}
@@ -147,7 +151,7 @@
 
 	{#await load()}
 			<div class="text-surface-800">
-				<Spinner position={positionType.center} label="loading dataset" />
+				<Spinner position={positionType.center} label="loading" />
 			</div>
 		{:then result}
 
@@ -166,17 +170,17 @@
 
 			/>
 
-		<div class="flex">
+	<div class="flex gap-4">
 
-				{#if metadataHook}
-						<div class="flex-grow card p-5 w-3/4 flex flex-col gap-3">
-										<Metadata {id} {version} {tag} hook={metadataHook} description={model.description} />
-						</div>
-					{/if}
+			{#if metadataHook}
+					<div class="flex-1 min-w-0 flex flex-col gap-3">
+									<Metadata {id} {version} {tag} hook={metadataHook} description={model.description} />
+					</div>
+				{/if}
 
-					{#if entityName?.toLowerCase()!='extension'}
+				{#if entityName?.toLowerCase()!='extension'}
 
-						<div class="flex flex-col ml-5 gap-3 w-1/4">
+					<div class="flex flex-col gap-3 w-1/4 shrink-0">
 
 								<CitationDownload	{id} {version} {tag} {useTags} />
 
@@ -192,11 +196,22 @@
 									hasRequestRight = {model.hasRequestRight}
 									requestExist = {model.requestExist}
 								/> 
-								{#if model.settings.useTags}
-									<Tags  {id} {version}  tag={model.tag}/>
+								<div class="card p-5 flex flex-col gap-3">
+									{#if model.hasEditRight && model.settings.useTags}
+										<div class="flex justify-end gap-2">
+											<button class="chip p-1 {showTagsView ? 'variant-filled-primary' : 'variant-ghost-surface'}"
+												on:click={() => showTagsView = true}>Releases</button>
+											<button class="chip p-1 {!showTagsView ? 'variant-filled-primary' : 'variant-ghost-surface'}"
+												on:click={() => showTagsView = false}>Versions</button>
+										</div>
+									{/if}
+
+									{#if showTagsView}
+										<Tags  {id} {version}  tag={model.tag}/>
 									{:else}
-									<Versions	{id} {version} />	
-								{/if}
+										<Versions	{id} {version} useTags={model.settings.useTags} />	
+									{/if}
+								</div>
 
 								<Funding f={model.additionalInformations['funder']}  />
 								<Keywords k={model.additionalInformations['keyword']} />
@@ -216,9 +231,8 @@
 		{#if dataDescriptionHook && model.dataStructureId	!== undefined && model.dataStructureId > 0}
 			 <DataDescription	{id} {version} {tag} hook={dataDescriptionHook}/>
 		{/if}
-
-		{#if dataHook	&& model.hasData}
-
+ 
+		{#if dataHook	&& model.hasData && model.downloadAccess}
 			<Data {id} {version} hook={dataHook}/>
 		{/if}
 

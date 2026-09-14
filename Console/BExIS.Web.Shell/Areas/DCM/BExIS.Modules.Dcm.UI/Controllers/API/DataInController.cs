@@ -257,9 +257,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             //Update Method -- UPDATE
                             //splite datatuples into new and updated tuples
 
+                            int rowsAdded = 0;
+                            int rowsUpdated = 0;
+
                             if (datatuples.Count > 0)
                             {
                                 var splittedDatatuples = uploadHelper.GetSplitDatatuples(datatuples, pkVariables.Select(v => v.Id).ToList(), workingCopy, ref datatupleFromDatabaseIds);
+                                rowsAdded = splittedDatatuples["new"].Count;
+                                rowsUpdated = splittedDatatuples["edit"].Count;
                                 datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                             }
 
@@ -277,14 +282,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             };
                             datasetManager.EditDatasetVersion(workingCopy, null, null, null);
 
-                            datasetManager.CheckInDataset(dataset.Id, data.Data.Length + " rows via api.", user.UserName);
+                            string checkInComment = $"{data.Data.Length} rows via api";
+                            if (rowsAdded > 0 || rowsUpdated > 0)
+                                checkInComment = $"{rowsAdded} rows added, {rowsUpdated} rows updated via api";
+
+                            datasetManager.CheckInDataset(dataset.Id, checkInComment, user.UserName);
 
                             //send email
 
                             using(var emailService = new EmailService())
                             {
                                 emailService.Send(MessageHelper.GetUpdateDatasetHeader(dataset.Id),
-                                MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.DisplayName, typeof(Dataset).Name),
+                                MessageHelper.GetUpdateDatasetMessage(dataset.Id, title, user.DisplayName, typeof(Dataset).Name, data.Data.Length, 0, rowsAdded, rowsUpdated),
                                 new List<string>() { user.Email },
                                        new List<string>() { GeneralSettings.SystemEmail }
                                 );

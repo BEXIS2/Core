@@ -236,7 +236,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                     if (fileErrors == null || fileErrors.Count == 0)
                                                     {
                                                         // check if primary key is set
-                                                        if (!enforcePrimaryKey && !hasPrimaryKey)
+                                                        if (!hasPrimaryKey)
                                                         {
                                                             fileWarnings.Add(new Warning(ErrorType.PrimaryKey, "No primary key has been defined for the selected data structure, which can lead to problems when updating data. To avoid this, define a primary key in the data structure above.", "Primary Key"));
                                                         }

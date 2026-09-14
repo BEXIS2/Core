@@ -36,6 +36,7 @@
 	export let path: string;
 	export let p: string = '';
 	export let description: string = '';
+	export let allChildrenOptional: boolean = false;
 
 	let label: string =
 		path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path;
@@ -48,6 +49,14 @@
 
 	const togglePath = p !== '' ? p : path;
 
+
+// show if childrens has values	in metadataStore
+let hasValues	= false;
+metadataStore.subscribe(() => {
+		hasValuesInMetadataStore();
+	});
+
+
 	export let active: boolean = false;
 	$: active;
 
@@ -58,6 +67,8 @@
 		} else {
 			active = true;
 		}
+
+		hasValuesInMetadataStore();
 	});
 
 	function initActivity() {
@@ -70,12 +81,18 @@
 		}
 	}
 
+	function hasValuesInMetadataStore() {
+		const data = getNodeByPath(path);
+		hasValues = hasValue(data);
+	}
+
 	function changeFn(a: boolean) {
 		active = !a;
 
 		if (active) {
 			setActive(path);
 			activateShow(path);
+		
 		} else {
 			setInactive(path);
 			// remove from validation store
@@ -161,11 +178,11 @@
 		<h4 id={path} class="text-md font-bold">
 			{convertDisplayName(label, true)}
 			{#if required}
-				<span class="text-red-500">*</span>
+				<span class="text-error-500">*</span>
+				{#if !hasValues && allChildrenOptional} <!-- Show warning if no values and all children are optional -->
+					<span class="text-warning-500"> (Please provide at least one of the optional fields below.)</span>
+				{/if}
 			{/if}
-			<!--{#if description}
-				<button class="badge h-full mt-1" on:click|stopPropagation={()=>showDescription = !showDescription} title="Show Description"><Fa icon={faCircleQuestionRegular} size="lg"/></button>
-		{/if}-->
 		</h4>
 	</button>
 

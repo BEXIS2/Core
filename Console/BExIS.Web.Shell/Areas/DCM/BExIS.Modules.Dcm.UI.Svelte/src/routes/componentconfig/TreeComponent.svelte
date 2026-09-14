@@ -10,6 +10,7 @@
     let s: any;
     let currentSchema: number = 2;
     let generatedNodes: any[] = [];
+    let systemMappings: ApiCalls.SystemMappings | null = null;
     
     $: schema = s;
 
@@ -25,6 +26,9 @@
         try {
             schema = await ApiCalls.GetMetadataSchema(entity.metadataStructure.id);
             s = schema;
+
+            // load system mappings for this metadata structure
+            systemMappings = await ApiCalls.GetSystemMappings(entity.metadataStructure.id);
             
             // generate nodes after schema is loaded
             if (schema) {
@@ -47,6 +51,22 @@
         }
 
         return nodes;
+    }
+
+    function getMappingInfo(path: string): { isPartyMapped: boolean; isKeyMapped: boolean; keyName?: string; partySelector?: boolean; partyComplex?: boolean } {
+        if (!systemMappings) return { isPartyMapped: false, isKeyMapped: false };
+        
+        // check party mappings — match by path or parentPath
+        const partyMatch = systemMappings.partyMappings?.find(m => m.path === path || m.parentPath === path);
+        const keyMatch = systemMappings.keyMappings?.find(m => m.path === path);
+        
+        return {
+            isPartyMapped: !!partyMatch,
+            isKeyMapped: !!keyMatch,
+            keyName: keyMatch?.systemKeyName,
+            partySelector: partyMatch?.selector ?? false,
+            partyComplex: partyMatch?.complexity ?? false
+        };
     }
 
     function traverseSchema(
@@ -79,7 +99,7 @@
                     draggable: false,
                     selectable: false,
                     deletable: false,
-                    style: 'width: 200px; height: 40px;'
+                    style: 'width: 280px; height: 40px;'
                 };
                 nodes.push(sectionNode);
                 position.y += 40; // space between sections
@@ -100,10 +120,21 @@
                         draggable: false,
                         selectable: false,
                         deletable: false,
-                        style: 'width: 200px; height: 40px;'
+                        style: 'width: 280px; height: 40px;'
                     };
                     nodes.push(choiceSectionNode);
-                    position.y += 50; // space between sections
+                    position.y += 50;
+
+                    // recurse into each variant's properties
+                    const variants = value.oneOf || value.anyOf || value.allOf;
+                    variants.forEach((variant: any, idx: number) => {
+                        const variantPath = `${currentPath}[${idx}]`;
+                        if (variant.type === 'object' && variant.properties) {
+                            position = traverseSchema(variant, variantPath, nodes, position, spacing);
+                        } else if (variant.$ref || variant.properties) {
+                            position = traverseSchema(variant, variantPath, nodes, position, spacing);
+                        }
+                    });
                 } else {
                     position.y += 20; // space between section and first leaf
                     position = traverseSchema(value, currentPath, nodes, position, spacing);
@@ -126,13 +157,14 @@
                         is_input: false,
                         is_output: true,
                         target_variable: key,
-                        is_visible: true
+                        is_visible: true,
+                        ...getMappingInfo(currentPath)
                     },
                     position: { x: position.x + 30, y: position.y }, // indentation
                     draggable: true,
                     selectable: true,
                     deletable: false,
-                    style: 'width: 220px; height: 60px;' //previously = 180
+                    style: 'width: 280px; height: 80px;' //previously = 180
                 };
                 nodes.push(leafNode);
                 position.y += spacing;
@@ -152,7 +184,7 @@
                             draggable: false,
                             selectable: false,
                             deletable: false,
-                            style: 'width: 200px; height: 40px;'
+                            style: 'width: 280px; height: 40px;'
                         };
                         nodes.push(arraySectionNode);
                         position.y += 50;  // space between sections
@@ -162,13 +194,9 @@
                         console.log('processing array items for key:', key);
         
                         // object items with properties -> recurse
-                       // if (value.items.type === 'array' && value.items.properties) {
-                       //     console.log('array items properties:', value.items.properties);
-                       //     position = traverseSchema(value.items, currentPath, nodes, position, spacing);
-        
-                        // primitive item types -> create a leaf node for the array item
-                       // } else 
-                         if (value.items.type === 'object' && value.items.properties && value.items.properties['#text'])  {
+                         if (value.items.type === 'object' && value.items.properties && !value.items.properties['#text']) {
+                             position = traverseSchema(value.items, currentPath, nodes, position, spacing);
+                         } else if (value.items.type === 'object' && value.items.properties && value.items.properties['#text'])  {
                             const arrLeaf = {
                                 id: `schema-array-item-${currentPath}`,
                                 type: 'leafNode',
@@ -183,13 +211,14 @@
                                     is_input: false,
                                     is_output: true,
                                     target_variable: key,
-                                    is_visible: true
+                                    is_visible: true,
+                                    ...getMappingInfo(currentPath)
                                 },
                                 position: { x: position.x + 30, y: position.y },
                                 draggable: true,
                                 selectable: true,
                                 deletable: false,
-                                style: 'width: 220px; height: 60px;'
+                                style: 'width: 280px; height: 80px;'
                             };
                             nodes.push(arrLeaf);
                             position.y += spacing;
@@ -216,13 +245,14 @@
                                             is_input: false,
                                             is_output: true,
                                             target_variable: key,
-                                            is_visible: true
+                                            is_visible: true,
+                                            ...getMappingInfo(variantPath)
                                         },
                                         position: { x: position.x + 30, y: position.y },
                                         draggable: true,
                                         selectable: true,
                                         deletable: false,
-                                        style: 'width: 220px; height: 60px;'
+                                        style: 'width: 280px; height: 80px;'
                                     };
                                     nodes.push(vLeaf);
                                     position.y += spacing;
@@ -232,6 +262,33 @@
                         } else {
                             console.log('unhandled array.items type for key:', key, value.items);
                         }
+                    } else if (value.type === 'string' || value.type === 'number' || value.type === 'boolean' || value.type === 'integer') {
+                        // primitive field directly in properties -> create a leaf node
+                        const primLeaf = {
+                            id: `schema-leaf-${currentPath}`,
+                            type: 'leafNode',
+                            data: {
+                                label: key,
+                                description: value.description || `metadata field: ${key}`,
+                                type: value.type || 'string',
+                                format: value.format || 'text',
+                                required: false,
+                                path: currentPath,
+                                isLeaf: true,
+                                is_input: false,
+                                is_output: true,
+                                target_variable: key,
+                                is_visible: true,
+                                ...getMappingInfo(currentPath)
+                            },
+                            position: { x: position.x + 30, y: position.y },
+                            draggable: true,
+                            selectable: true,
+                            deletable: false,
+                            style: 'width: 280px; height: 80px;'
+                        };
+                        nodes.push(primLeaf);
+                        position.y += spacing;
                     } else {
                         console.log('unhandled schema node type for key:', key, 'type:', value.type);
                     }

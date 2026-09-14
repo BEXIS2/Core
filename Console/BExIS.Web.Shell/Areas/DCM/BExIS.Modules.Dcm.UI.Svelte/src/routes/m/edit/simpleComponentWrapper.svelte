@@ -39,25 +39,54 @@ const dispatch = createEventDispatcher();
 
 		config = getConfigStore();
 
-				// check if this component is an anchor point
-		//console.log("check for anchorpoin", config)
+		//console.log('[simpleComponentWrapper] path:', path, 'config:', config);
+
+		if (!config?.components) {
+			//console.log('[simpleComponentWrapper] no config.components, skipping');
+			return;
+		}
+
 		for (const component of config.components) {
 
-			// check if path is array which is indicated if the last part after the point is a number
-			let isPathArray = path.includes('.') && !isNaN(Number(path.split('.').pop()));
-			console.log(component.globalSettings.anchorpoint, path, isPathArray)
-			if (component.globalSettings.anchorpoint == path || (isPathArray && component.globalSettings.anchorpoint == path.split('.').slice(0, -1).join('.'))) {
-				isAnchor = true;
-				customComponent = customComponentsCatalog[component.meta.component_name].component;
-			} 
-			for (const variable of component.mode.variables.variable) {
+			// strip array indices from path (e.g. "A.2.B.0.C" -> "A.B.C") for anchorpoint matching
+			let pathWithoutIndices = path.split('.').filter(p => isNaN(Number(p))).join('.');
+			//console.log('[simpleComponentWrapper] checking anchor:', component.globalSettings.anchorpoint, 'vs path:', path, 'pathWithoutIndices:', pathWithoutIndices);
 
-				if (variable.JSONPath == path && variable.is_visible == false) {
-					isVisible = false;
-				}	
+			// check if this path is under this component's anchorpoint
+
+			const anchorpoint = component.globalSettings.anchorpoint;
+			const parent = pathWithoutIndices.substring(0, path.lastIndexOf('.'))
+			const anchor_parent = anchorpoint.substring(0, anchorpoint.lastIndexOf('.'))
+
+			let isUnderThisAnchor = anchorpoint == path // match
+			|| anchorpoint == pathWithoutIndices // exact	match without indices
+			|| pathWithoutIndices.startsWith(anchorpoint + '.')
+			|| anchor_parent == parent; // sameParent
+			
+			//console.log("[simpleComponentWrapper] ~ path:", path, anchorpoint, isUnderThisAnchor, parent, anchor_parent);
+	
+			if (isUnderThisAnchor) {
+				if (component.globalSettings.anchorpoint == path || component.globalSettings.anchorpoint == pathWithoutIndices) {
+					isAnchor = true;
+					let componentName = component.meta.component_name;
+					//console.log('[simpleComponentWrapper] MATCH! anchor:', component.globalSettings.anchorpoint, 'component:', componentName, 'in catalog:', !!customComponentsCatalog[componentName]);
+					customComponent = customComponentsCatalog[componentName]?.component;
+					if (!customComponent) {
+						console.warn('[simpleComponentWrapper] component not found in catalog:', componentName);
+					}
+				}
+
+				// only check is_visible for variables belonging to this component's anchor
+				for (const variable of component.mode.variables.variable) {
+					//console.log('[simpleComponentWrapper] checking variable:', variable.JSONPath, 'is_visible:', variable.is_visible, 'vs path:', path, 'pathWithoutIndices:', pathWithoutIndices);
+					if ((variable.JSONPath == path || variable.JSONPath == pathWithoutIndices) && variable.is_visible == false) {
+						isVisible = false;
+					}
+				}
 			}
 		}
 
+		//console.log('[simpleComponentWrapper] result for path:', path, 'isAnchor:', isAnchor, 'isVisible:', isVisible, 'customComponent:', !!customComponent);
 
 	})
 
@@ -79,6 +108,7 @@ const dispatch = createEventDispatcher();
 
 	
 </script>
+
 
 {#if path && simpleComponent.properties}
  {#if isVisible && !isAnchor}

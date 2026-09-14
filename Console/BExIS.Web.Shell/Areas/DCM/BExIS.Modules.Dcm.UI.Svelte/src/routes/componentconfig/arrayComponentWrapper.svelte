@@ -43,7 +43,7 @@
             draggable: true,
             selectable: true,
             deletable: false,
-            style: 'width: 220px; height: 60px; background: #fff3e0; border: 2px solid #f57c00;'
+            style: 'width: 280px; height: 80px; background: #fff3e0; border: 2px solid #f57c00;'
         };
         nodes.push(headerNode);
         currentPosition.y += nodeSpacing;
@@ -92,7 +92,7 @@
                         draggable: true,
                         selectable: true,
                         deletable: false,
-                        style: 'width: 220px; height: 60px; background: #fff8e1;'
+                        style: 'width: 280px; height: 80px; background: #fff8e1;'
                     };
                     nodes.push(simpleNode);
                     currentPos.y += nodeSpacing;
@@ -115,7 +115,7 @@
                         draggable: true,
                         selectable: true,
                         deletable: false,
-                        style: 'width: 220px; height: 60px; background: #e3f2fd; border: 2px solid #1976d2;'
+                        style: 'width: 280px; height: 80px; background: #e3f2fd; border: 2px solid #1976d2;'
                     };
                     nodes.push(nestedHeaderNode);
                     currentPos.y += nodeSpacing;
@@ -154,7 +154,7 @@
             draggable: true,
             selectable: true,
             deletable: false,
-            style: 'width: 220px; height: 60px; background: #fff8e1;'
+            style: 'width: 280px; height: 80px; background: #fff8e1;'
         };
     }
 

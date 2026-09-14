@@ -289,5 +289,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 return file.FileName;
             }
         }
+        private int getFileSize(HttpPostedFileBase file)
+        {
+            // Checking for Internet Explorer
+            if (Request.Browser.Browser.ToUpper() == "IE" || Request.Browser.Browser.ToUpper() == "INTERNETEXPLORER")
+            {
+                var size = file.ContentLength;
+                return size;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
     }
 }

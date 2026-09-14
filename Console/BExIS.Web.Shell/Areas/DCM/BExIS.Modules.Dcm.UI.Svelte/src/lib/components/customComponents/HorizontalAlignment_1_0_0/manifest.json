@@ -36,32 +36,12 @@
                 "type": "string",
                 "value": ""
               }
-            }, 
-            {
-              "name": "Default Value Field Right",
-              "description": "Default value for the right field",
-              "type": "string",
-              "target_variable": "defaultValueRight",
-              "default_value": {
-                "type": "string",
-                "value": ""
-              }
             },
             {
               "name": "Description Field Left",
               "description": "Overwrite default description of the left field.",
               "type": "string",
               "target_variable": "descriptionLeft",
-              "default_value": {
-                "type": "string",
-                "value": ""
-              }
-            },
-            {
-              "name": "Description Field Right",
-              "description": "Overwrite default description of the right field.",
-              "type": "string",
-              "target_variable": "descriptionRight",
               "default_value": {
                 "type": "string",
                 "value": ""
@@ -75,6 +55,26 @@
               "default_value": {
                 "type": "boolean",
                 "value": false
+              }
+            }, 
+            {
+              "name": "Default Value Field Right",
+              "description": "Default value for the right field",
+              "type": "string",
+              "target_variable": "defaultValueRight",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "Description Field Right",
+              "description": "Overwrite default description of the right field.",
+              "type": "string",
+              "target_variable": "descriptionRight",
+              "default_value": {
+                "type": "string",
+                "value": ""
               }
             },
             {
@@ -130,30 +130,30 @@
               }
             },
             {
-              "name": "Default Value Field Mid",
-              "description": "Default value for the middle field",
-              "type": "string",
-              "target_variable": "defaultValueMid",
-              "default_value": {
-                "type": "string",
-                "value": ""
-              }
-            },
-            {
-              "name": "Default Value Field Right",
-              "description": "Default value for the right field",
-              "type": "string",
-              "target_variable": "defaultValueRight",
-              "default_value": {
-                "type": "string",
-                "value": ""
-              }
-            },
-            {
               "name": "Description Field Left",
               "description": "Overwrite default description of the left field.",
               "type": "string",
               "target_variable": "descriptionLeft",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "Disabled Field Left",
+              "description": "Disable the left field",
+              "type": "boolean",
+              "target_variable": "disabledLeft",
+              "default_value": {
+                "type": "boolean",
+                "value": false
+              }
+            }, 
+            {
+              "name": "Default Value Field Mid",
+              "description": "Default value for the middle field",
+              "type": "string",
+              "target_variable": "defaultValueMid",
               "default_value": {
                 "type": "string",
                 "value": ""
@@ -170,26 +170,6 @@
               }
             },
             {
-              "name": "Description Field Right",
-              "description": "Overwrite default description of the right field.",
-              "type": "string",
-              "target_variable": "descriptionRight",
-              "default_value": {
-                "type": "string",
-                "value": ""
-              }
-            },
-            {
-              "name": "Disabled Field Left",
-              "description": "Disable the left field",
-              "type": "boolean",
-              "target_variable": "disabledLeft",
-              "default_value": {
-                "type": "boolean",
-                "value": false
-              }
-            },
-            {
               "name": "Disabled Field Mid",
               "description": "Disable the middle field",
               "type": "boolean",
@@ -197,6 +177,26 @@
               "default_value": {
                 "type": "boolean",
                 "value": false
+              }
+            }, 
+            {
+              "name": "Default Value Field Right",
+              "description": "Default value for the right field",
+              "type": "string",
+              "target_variable": "defaultValueRight",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "Description Field Right",
+              "description": "Overwrite default description of the right field.",
+              "type": "string",
+              "target_variable": "descriptionRight",
+              "default_value": {
+                "type": "string",
+                "value": ""
               }
             },
             {

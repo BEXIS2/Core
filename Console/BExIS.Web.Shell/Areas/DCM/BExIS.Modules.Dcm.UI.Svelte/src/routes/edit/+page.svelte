@@ -9,6 +9,7 @@
  import type { ExtensionType} from './types'
 	import AdvancedEntity from './AdvancedEntity.svelte';
 	import { getExtensions } from './services';
+	import type { EntityTemplateModel } from '$models/EntityTemplate';
 
 
 	let container;
@@ -16,7 +17,7 @@
 	let version: number;
  let title = "";
 
- let entityTemplate = null;
+ let entityTemplate:EntityTemplateModel;
  let extensions:ExtensionType[] = []
 
  const links: linkType[] = [
@@ -36,7 +37,7 @@
   entityTemplate = await getEntityTemplateByObject(id);
   console.log("🚀 ~ entityTemplate:", entityTemplate)
 
-  if(entityTemplate.hasExtension) // load extentions if existing
+  if(entityTemplate && entityTemplate.hasExtension) // load extentions if existing
   {
    extensions = await getExtensions(id);
    console.log("🚀 ~ extensions:", extensions)

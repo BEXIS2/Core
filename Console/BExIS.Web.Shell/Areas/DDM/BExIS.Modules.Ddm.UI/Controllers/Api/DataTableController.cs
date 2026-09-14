@@ -67,7 +67,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             long versionId = command.Version;
             int pageNumber = command.Offset / command.Limit;
             int pageSize = command.Limit;
-
+            
             DataTableRecieveModel recieveModel = new DataTableRecieveModel();
             recieveModel.Send = command;
 
@@ -109,7 +109,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         Dataset dataset = datasetManager.GetDataset(id);
                         if (dataset == null) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "dataset " + id + " not exist.");
 
-                        DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                        DatasetVersion LatestDatasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                        DatasetVersion datasetVersion = null;
 
                         // If the requested version is -1 or the last version of the dataset, then the data will be loaded in a
                         // different way than when loading the data from an older version
@@ -120,8 +121,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         {
                             // check version id belongs to dataset
                             if (!dataset.Versions.Select(v => v.Id).Contains(versionId)) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "this version id is not part of the dataset " + id);
-                            if (versionId == -1 || datasetVersion.Id == versionId) isLatestVersion = true;
+                            if (versionId == -1 || LatestDatasetVersion.Id == versionId) isLatestVersion = true;
                         }
+
+                        if (isLatestVersion)
+                        { 
+                            datasetVersion = LatestDatasetVersion;
+                        }
+                        else
+                        {
+                            datasetVersion = datasetManager.GetDatasetVersion(versionId);
+                        }
+
                         DataTable dt = null;
 
                         if (datasetVersion.Dataset.DataStructure != null)
@@ -154,7 +165,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 for (int i = 0; i < dt.Columns.Count; i++)
                                 {
                                     var c = dt.Columns[i];
-                                    c.ColumnName = c.Caption;
+                                    var caption = string.IsNullOrWhiteSpace(c.Caption) ? c.ColumnName : c.Caption;
+                                    c.ColumnName = caption.ToCamelCase();
                                 }
                             }
                             else
@@ -166,6 +178,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                                 dt = datasetManager.GetDatasetVersionTuples(datasetVersion.Id, pageNumber, pageSize);
                                 dt.Strip();
+
+                                // replace column name to caption
+                                for (int i = 0; i < dt.Columns.Count; i++)
+                                {
+                                    var c = dt.Columns[i];
+                                    var caption = string.IsNullOrWhiteSpace(c.Caption) ? c.ColumnName : c.Caption;
+                                    c.ColumnName = caption.ToCamelCase();
+                                }
                             }
                         }
                         else

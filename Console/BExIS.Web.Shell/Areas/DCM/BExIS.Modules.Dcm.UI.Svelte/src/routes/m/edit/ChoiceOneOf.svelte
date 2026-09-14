@@ -13,6 +13,7 @@
 
 	export let choiceComponent: any;
 	export let path: string;
+	export let required: boolean = false;
 
 	let target = "";
 	let choices: {key:string, value:string, display:string}[] = getChoices(choiceComponent);
@@ -167,7 +168,7 @@
 </script>
 
 <div class="grid grid-cols-1 gap-0 m-2">
-		<Header {path} />
+		<Header {required} {path} />
 	{#if !$hideStore.includes(path) && $activeStore.includes(path)}
 	<div in:slide out:slide class="card px-5 py-4" id={path}>
 		{#if choiceComponent.oneOf}

@@ -24,18 +24,18 @@
 
 </script>
 
-<div class="grid grid-cols-1 gap-0 m-2">
+<div class="">
 	<Header {path} p={path} />
 
 	{#if !$hideStore.includes(path) && $activeStore.includes(path)}
-		<div in:slide out:slide class="px-5" id={path}>
+		<div in:slide out:slide class="pl-2" id={path}>
 			{#if choiceComponent.oneOf && choices.length > 0}
-				<div class="mb-3 text-sm font-semibold text-gray-700">
+				<div class="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-200">
 					{label}: {resolvedSelection || 'No selection'}
 				</div>
 				<!--{#each choices as item}
 					<div class="flex items-center gap-2 py-1">
-						<span class="text-sm text-gray-600">{item.display}</span>
+						<span class="text-sm text-gray-600 dark:text-gray-300">{item.display}</span>
 						{#if item.key === resolvedSelection}
 							<span class="badge variant-filled-primary">Selected</span>
 						{/if}
@@ -45,9 +45,9 @@
 
 			{#if selectedChoice && selectedPath}
 				{#if selectedChoice.type === 'object' && selectedChoice.properties && !selectedChoice.properties['#text']}
-					<div class="grid grid-cols-1 gap-0 m-2">
+					<div class="grid grid-cols-1 gap-0">
 						{#if !$hideStore.includes(selectedPath) && $activeStore.includes(path)}
-							<div in:slide out:slide class="card px-5" id={selectedPath}>
+							<div in:slide out:slide class="pl-2" id={selectedPath}>
 								<ComplexComponent
 									complexComponent={selectedChoice}
 									path={selectedPath}
@@ -57,7 +57,7 @@
 						{/if}
 					</div>
 				{:else if selectedChoice.type === 'object' && selectedChoice.properties && selectedChoice.properties['#text']}
-					<div class="px-5">
+					<div class="pl-2">
 						<SimpleComponent
 							simpleComponent={selectedChoice.properties['#text']}
 							path={selectedPath}

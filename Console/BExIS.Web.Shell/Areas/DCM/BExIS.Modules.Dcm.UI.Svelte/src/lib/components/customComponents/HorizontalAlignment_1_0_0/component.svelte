@@ -119,10 +119,10 @@
 
 {#if isViewMode}
 	<div class="entry">
-		<span class="key text-sm font-medium text-gray-500">
+		<span class="key text-sm font-medium text-gray-600 dark:text-gray-300">
 			{customLabel || getLabelByPath(anchor)}
 		</span>
-		<span class="val text-sm text-gray-900 font-semibold">
+		<span class="val text-sm text-gray-900">
 			{simpleComponents.map((sc) => sc.value || '').filter((v) => v !== '').join(separator) || '—'}
 		</span>
 	</div>
@@ -144,8 +144,7 @@
 
 <style>
 	.entry {
-		display: flex;
-		flex-direction: row;
+		padding-bottom: 0.35rem;
 	}
 
 	.key {
@@ -156,6 +155,11 @@
 	.val {
 		display: inline-block;
 		width: 30vw;
-		font-weight: bold;
+	}
+
+	@media (max-width: 768px) {
+		.val {
+			width: 50vw;
+		}
 	}
 </style>

@@ -47,7 +47,7 @@
 				disableFiltering: true
 			},
 			dataType: {
-				header: 'Data Type'
+				header: 'Type'
 			},
 			isOptional: {
 				header: 'Optional',

@@ -54,7 +54,7 @@ namespace BExIS.Xml.Helpers
         {
             foreach (XmlNode node in root.ChildNodes)
             {
-                Debug.WriteLine(node.Name);///////////////////////////////////////////////////////////////////////////
+                //Debug.WriteLine(node.Name);
                 if (!node.HasChildNodes)
                 {
                     if (node.NodeType == System.Xml.XmlNodeType.Text)
@@ -99,7 +99,7 @@ namespace BExIS.Xml.Helpers
         {
             foreach (XmlNode node in root.ChildNodes)
             {
-                Debug.WriteLine(node.Name);///////////////////////////////////////////////////////////////////////////
+                //Debug.WriteLine(node.Name);///////////////////////////////////////////////////////////////////////////
                 if (node.HasChildNodes)
                 {
                     string xpath = XmlUtility.FindXPath(node); // xpath in doc

@@ -14,7 +14,6 @@ namespace BExIS.Modules.Ddm.UI.Models
             MyDatasets = new DataTable();
         }
     }
-
     public class MyDatasetsModel
     {
         public long Id { get; set; }
@@ -27,8 +26,12 @@ namespace BExIS.Modules.Ddm.UI.Models
 
         public string IsValid { get; set; }
         public string Type { get; set; }
+        public bool HasTag { get; set; }
+        public double TagNr { get; set; }
+        public bool HasData { get; set; }
 
-        public MyDatasetsModel(long id, string title, string description, bool isOwn, string isValid, string type)
+
+        public MyDatasetsModel(long id, string title, string description, bool isOwn, string isValid, string type, bool hasTag = false, double tagNr = 0, bool hasData = false)
         {
             Id = id;
             Title = title;
@@ -36,6 +39,9 @@ namespace BExIS.Modules.Ddm.UI.Models
             IsOwn = isOwn;
             IsValid = isValid;
             Type = type;
+            HasTag = hasTag;
+            TagNr = tagNr;
+            HasData = hasData;
         }
     }
 }

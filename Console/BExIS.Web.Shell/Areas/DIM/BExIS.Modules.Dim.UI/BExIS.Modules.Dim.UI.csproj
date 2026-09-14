@@ -517,6 +517,7 @@
     <Compile Include="Hooks\PublishEditHook.cs" />
     <Compile Include="Hooks\PublishViewHook.cs" />
     <Compile Include="Models\AdminModel.cs" />
+    <Compile Include="Models\API\ApiModels.cs" />
     <Compile Include="Models\DataCiteDOIModels.cs" />
     <Compile Include="Models\DatasetModel.cs" />
     <Compile Include="Models\DatasetVersionModel.cs" />

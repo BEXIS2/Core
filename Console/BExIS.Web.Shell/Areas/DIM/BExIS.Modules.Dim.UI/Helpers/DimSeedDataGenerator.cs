@@ -1855,23 +1855,29 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 foreach (var complex in complexElements)
                 {
-                    string sIdComplex = complex.Attribute("id").Value;
-                    string nameComplex = complex.Attribute("name").Value;
-                    LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(sIdComplex), nameComplex,
-                        complexType, LinkElementComplexity.Complex, complex.GetAbsoluteXPath());
-
-                    Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(tmpComplexElement, le, 1, new TransformationRule(), root, mappingManager);
-
-                    IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
-
-                    foreach (XElement xElement in simpleElements)
+                    if (complex != null)
                     {
-                        string sId = xElement.Attribute("id").Value;
-                        string name = xElement.Attribute("name").Value;
-                        LinkElement tmp = createLinkELementIfNotExist(mappingManager,metadataAttributeManager, Convert.ToInt64(sId), name,
-                            simpleType, LinkElementComplexity.Simple, xElement.GetAbsoluteXPath());
+                        string sIdComplex = complex.Attribute("id").Value;
+                        string nameComplex = complex.Attribute("name").Value;
+                        LinkElement tmpComplexElement = createLinkELementIfNotExist(mappingManager, metadataAttributeManager, Convert.ToInt64(sIdComplex), nameComplex,
+                            complexType, LinkElementComplexity.Complex, complex.GetAbsoluteXPath());
 
-                        MappingHelper.CreateIfNotExistMapping(tmp, le, 2, transformationRule, complexMapping, mappingManager);
+                        Mapping complexMapping = MappingHelper.CreateIfNotExistMapping(tmpComplexElement, le, 1, new TransformationRule(), root, mappingManager);
+
+                        IEnumerable<XElement> simpleElements = XmlUtility.GetAllChildren(complex).Where(s => s.Name.LocalName.Equals(simpleNodeName));
+
+                        if (simpleElements != null & simpleElements.Any())
+                        {
+                            foreach (XElement xElement in simpleElements)
+                            {
+                                string sId = xElement.Attribute("id").Value;
+                                string name = xElement.Attribute("name").Value;
+                                LinkElement tmp = createLinkELementIfNotExist(mappingManager, metadataAttributeManager, Convert.ToInt64(sId), name,
+                                    simpleType, LinkElementComplexity.Simple, xElement.GetAbsoluteXPath());
+
+                                MappingHelper.CreateIfNotExistMapping(tmp, le, 2, transformationRule, complexMapping, mappingManager);
+                            }
+                        }
                     }
                 }
             }

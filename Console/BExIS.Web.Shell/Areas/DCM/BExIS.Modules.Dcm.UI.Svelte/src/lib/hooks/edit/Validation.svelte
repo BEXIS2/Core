@@ -16,8 +16,9 @@
 	import { onMount, onDestroy } from 'svelte';
 
 	import type { ValidationModel } from '$models/ValidationModels';
-	import PlaceHolderHookContent from './placeholder/PlaceHolderHookContent.svelte';
+
 	import { get } from 'svelte/store';
+	import PlaceholderHook from './placeholder/PlaceholderHook.svelte';
 
 	export let id = 0;
 	export let version = 1;
@@ -79,20 +80,20 @@
 	}
 </script>
 
-{#if validationPromise}
-	{#await validationPromise}
-		<PlaceHolderHookContent />
-	{:then a}
-		{#if model && model.fileResults}
-			{#each model.fileResults as fileResult}
-				<ValidationResult
-					bind:sortedErrors={fileResult.sortedErrors}
-					bind:sortedWarnings={fileResult.sortedWarnings}
-					bind:file={fileResult.file}
-				/>
-			{/each}
-		{/if}
-	{:catch error}
-		<ErrorMessage {error} />
-	{/await}
-{/if}
+
+{#await validationPromise}
+<PlaceholderHook/>
+{:then a}
+	{#if model && model.fileResults}
+		{#each model.fileResults as fileResult}
+			<ValidationResult
+				bind:sortedErrors={fileResult.sortedErrors}
+				bind:sortedWarnings={fileResult.sortedWarnings}
+				bind:file={fileResult.file}
+			/>
+		{/each}
+	{/if}
+{:catch error}
+	<ErrorMessage {error} />
+{/await}
+

@@ -100,7 +100,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     long dsId = dm.GetDatasetLatestVersion(id).Id;
                     DatasetVersion ds = uow.GetUnitOfWork().GetReadOnlyRepository<DatasetVersion>().Get(dsId);
 
-                    XmlDocument document = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport,
+                    XmlDocument document = OutputMetadataManager.GetConvertedMetadata(id,-1, TransmissionType.mappingFileExport,
                              ds.Dataset.MetadataStructure.Name);
 
                     string htmlPage = PartialView("SimpleMetadata", document).RenderToString();
@@ -229,7 +229,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     #region Metadata
 
                     //metadata as XML
-                    XmlDocument document = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport, datasetVersion.Dataset.MetadataStructure.Name);
+                    XmlDocument document = OutputMetadataManager.GetConvertedMetadata(id, versionid, TransmissionType.mappingFileExport, datasetVersion.Dataset.MetadataStructure.Name);
 
                     //generate data structure as html 
                     generateMetadataAsHtml(datasetVersion);
@@ -355,9 +355,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 }
                                 else // all other files from unstructured and attachments
                                      // get filename from path
-                                     // the files stay with there original file names
+                                     // place files in a "data" subfolder inside the zip
                                 {
-                                    name = Path.GetFileName(cd.URI);
+                                    name = "data/" + Path.GetFileName(cd.URI);
                                 }
 
 
@@ -746,16 +746,18 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 FilterExpression filter = null;
                 OrderByExpression orderBy = null;
                 ProjectionExpression projection = null;
+                string query = "";
                 string[] columns = null;
 
                 if (Session["DataFilter"] != null) filter  = (FilterExpression)Session["DataFilter"];
                 if (Session["DataOrderBy"] != null) orderBy = (OrderByExpression)Session["DataOrderBy"];
                 if (Session["DataProjection"] != null) projection = (ProjectionExpression)Session["DataProjection"];
+                if (Session["DataQuery"] != null) query = Session["DataQuery"].ToString();
 
 
                 long count = datasetManager.RowCount(datasetId, filter);
 
-                DataTable table = datasetManager.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, projection, "", 0, (int)count);
+                DataTable table = datasetManager.GetLatestDatasetVersionTuples(datasetId, filter, orderBy, projection, query, 0, (int)count);
 
                 if (projection == null) table.Strip();
 
@@ -772,13 +774,18 @@ namespace BExIS.Modules.Dim.UI.Controllers
             FilterExpression filter = null;
             OrderByExpression orderBy = null;
             ProjectionExpression projection = null;
+            string q = "";
             string[] columns = null;
 
             if (Session["DataFilter"] != null) filter = (FilterExpression)Session["DataFilter"];
             if (Session["DataOrderBy"] != null) orderBy = (OrderByExpression)Session["DataOrderBy"];
             if (Session["DataProjection"] != null) projection = (ProjectionExpression)Session["DataProjection"];
+            if (Session["DataQuery"] != null) q = Session["DataQuery"].ToString();
 
-            string query = filter?.ToSQL() + orderBy?.ToSQL() + projection?.ToSQL();
+            string query = filter?.ToSQL() + orderBy?.ToSQL() + projection?.ToSQL() ;
+
+            if (!string.IsNullOrEmpty(q))
+                query = "q=" + q + " AND " + query;
 
             return query;
         }

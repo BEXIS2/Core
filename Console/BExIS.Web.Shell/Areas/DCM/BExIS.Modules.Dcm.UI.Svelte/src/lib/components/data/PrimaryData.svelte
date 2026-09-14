@@ -3,6 +3,7 @@
 	import { host } from '@bexis2/bexis2-core-ui';
 	import { writable } from 'svelte/store';
 	import { createEventDispatcher } from 'svelte';
+	import { scope } from '../../../routes/view/stores';
 
 	export let id: number | undefined = undefined;
 	export let version: number | undefined = undefined;
@@ -21,6 +22,9 @@
 
 	load();
 
+	let count= 0;
+	$:count;
+
 	async function load() {
 		const tableStore = writable<any[]>([]);
 		const url = host + '/api/datatable/';
@@ -38,8 +42,18 @@
 			}
 		};
 	}
+
+	function changeFn(e){
+		const send = e.detail;
+		console.log("changeFn",send);
+		scope.set(send);
+	}
+
+	
+
+
 </script>
 
 {#if serverTableConfig}
-	<Table config={serverTableConfig} />
+	<Table config={serverTableConfig} on:change={(e)=>changeFn(e)} />
 {/if}

@@ -122,7 +122,7 @@
 
 	function reloadMetadata() {
 		reload = !reload;
-		alert('Metadata updated successfully!');
+		//alert('Metadata updated successfully!');
 	}
 
 </script>

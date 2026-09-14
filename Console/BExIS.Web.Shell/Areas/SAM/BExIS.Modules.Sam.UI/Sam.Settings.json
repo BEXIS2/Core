@@ -9,7 +9,8 @@
       "value": "alumni",
       "type": "String",
       "options": [],
-      "description": "The entry specifies the name of the group assigned to a user when they are no longer an active user of your instance. The user group needs to be created before."
+      "description": "The entry specifies the name of the group assigned to a user when they are no longer an active user of your instance. The user group needs to be created before.",
+      "apiSource": "groups"
     },
     {
       "key": "mailTextTitle",

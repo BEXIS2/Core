@@ -124,6 +124,7 @@
     <Compile Include="Party\PartyTypePair.cs" />
     <Compile Include="Party\PartyCustomGridColumns.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SpeciesMatching\SpeciesMatchingResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Administration\Administration.cd" />

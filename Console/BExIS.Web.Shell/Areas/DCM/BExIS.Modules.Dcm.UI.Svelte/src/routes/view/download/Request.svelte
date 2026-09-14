@@ -9,10 +9,10 @@
   export let id 
   export let exist: boolean = false;
 
-  let intension: string = "";
+  let intention: string = "";
 
-  function send(id, intension) {
-    sendRequest(id, intension)
+  function send(id, intention) {
+    sendRequest(id, intention)
       .then(response => {
         console.log('Request sent successfully:', response);
         exist = true; // Update the exist variable to true after sending the request
@@ -30,10 +30,10 @@
   </div>
 {:else}
   
-  <button class="btn variant-filled-primary" disabled={intension.trim() === ''} on:click={() => send(id, intension)}>
+  <button class="btn variant-filled-primary" disabled={intention.trim() === ''} on:click={() => send(id, intention)}>
     <Fa icon={faEnvelope} />
     <span class="padding-left-5">Send Request</span>
   </button>
 
-  <TextArea bind:value={intension} label="Please provide a reason for your request" placeholder="Enter your reason here..." />
+  <TextArea bind:value={intention} label="Please provide a reason for your request" placeholder="Enter your reason here..." />
 {/if}

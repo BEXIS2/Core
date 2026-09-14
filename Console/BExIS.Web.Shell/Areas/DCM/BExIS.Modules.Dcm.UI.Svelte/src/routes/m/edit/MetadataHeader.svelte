@@ -141,7 +141,7 @@
 
       setTimeout(() => {
         dispatch('metadataUpdated');
-      }, 500);  
+      },1000);  
       
 
       }
@@ -192,7 +192,7 @@
           class="btn variant-ghost"
           title="Cancel editing and go back to the metadata view page. All unsaved changes will be lost."
           on:click={() => {
-            goTo(`/m/${datasetId}`);
+            goTo(`/view?id=${datasetId}`);
           }}
         >
          <Fa icon={faXmark} />&nbsp;Cancel

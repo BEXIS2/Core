@@ -50,23 +50,23 @@
 			{@const hiddenCount = typeLinks.length - maxVisible}
 			<div class="flex flex-col gap-2">
 				<span
-					class="text-xs font-semibold uppercase tracking-wider text-surface-500 flex items-center gap-1"
+					class="text-xs font-semibold uppercase tracking-wider text-surface-700 dark:text-surface-200 flex items-center gap-1"
 				>
-					<Fa icon={faLink} class="text-surface-400" />
+					<Fa icon={faLink} class="text-surface-700 dark:text-surface-200" />
 					{getTypeLabel(type)}
-					<span class="font-normal text-surface-400">({typeLinks.length})</span>
+					<span class="font-normal text-surface-700 dark:text-surface-200">({typeLinks.length})</span>
 				</span>
 				<div class="flex flex-col gap-1.5">
 					{#each visibleLinks as link, i}
 						{@const showBadge =
 							i === 0 || (visibleLinks[i - 1].referenceType || '') !== (link.referenceType || '')}
 						<div
-							class="flex items-center gap-2 rounded-lg border border-surface-200 dark:border-surface-700 px-3 py-2 hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors"
+							class="flex items-center gap-2 rounded-lg border border-surface-300 dark:border-surface-600 px-3 py-2 hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors"
 						>
 							<span
 								class="badge {showBadge
 									? 'variant-soft-surface'
-									: ''}  text-xs whitespace-nowrap shrink-0 w-28 text-center"
+									: ''}  text-xs whitespace-nowrap shrink-0 w-28 text-center text-surface-700 dark:text-surface-200"
 								>{showBadge ? link.referenceType : ''}</span
 							>
 							<div class="flex items-center gap-2 flex-wrap min-w-0 flex-1">
@@ -98,7 +98,7 @@
 										target="_blank"
 									>
 										{link.target?.title ? link.target.title : 'No title available'}
-										<Fa icon={faArrowUpRightFromSquare} class="text-xs opacity-60" />
+										<Fa icon={faArrowUpRightFromSquare} class="text-xs opacity-80" />
 									</a>
 									{#if link.target.latestVersion}
 									<!--	<span
@@ -120,13 +120,13 @@
 												href="/dcm/view?id={link.target.id}&version={link.target.version}"
 												target="_blank"
 											>older version
-                      <Fa icon={faArrowUpRightFromSquare} class="text-xs opacity-60" />
+                      <Fa icon={faArrowUpRightFromSquare} class="text-xs opacity-80" />
 												
 											</a>										</span>
 									{/if}
 								{/if}
 								{#if link.context}
-									<span class="text-xs text-surface-400 ml-auto truncate" title={link.context}
+									<span class="text-xs text-surface-700 dark:text-surface-200 ml-auto truncate" title={link.context}
 										>{link.context}</span
 									>
 								{/if}
@@ -136,7 +136,7 @@
 				</div>
 				{#if hiddenCount > 0}
 					<button
-						class="btn btn-sm variant-ghost-surface self-start mt-1 inline-flex items-center gap-1.5 text-xs"
+						class="btn btn-sm variant-ghost-surface self-start mt-1 inline-flex items-center gap-1.5 text-xs text-surface-700 dark:text-surface-200"
 						on:click={() => toggle(type)}
 					>
 						{#if isExpanded}

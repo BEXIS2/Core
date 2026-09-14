@@ -6,7 +6,7 @@
 	import ComplexComponent from './complexComponentWrapper.svelte';
 
 	import * as apiCalls from '$services/MetadataCaller';
-	import { ErrorMessage, helpStore, notificationType, Page, pageContentLayoutType, Spinner } from '@bexis2/bexis2-core-ui';
+	import { ErrorMessage, Page, pageContentLayoutType, Spinner } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa';
 	import	{ faDownload } from '@fortawesome/free-solid-svg-icons';
 
@@ -18,11 +18,9 @@
 
 	import {
 		activeStore,
-		showAllDescriptionsStore,
-		hideStore,
-		descriptionStore
+		hideStore
 	} from '$lib/components/utils/metadata/stores';
-	import { faEye, faEyeSlash, faChevronUp, faChevronDown, faArrowUp, faBars } from '@fortawesome/free-solid-svg-icons';
+	import {faChevronUp, faChevronDown, faArrowUp, faBars } from '@fortawesome/free-solid-svg-icons';
 	import Overview from './Overview.svelte';
 	// import configJson from './customComponents/config.json';
 
@@ -42,8 +40,8 @@
 
 	async function load() {
 
-			container = document.getElementById('metadata');
-			console.log("🚀 ~ load ~ container:", container)
+		container = document.getElementById('metadata');
+		console.log("🚀 ~ load ~ container:", container)
 			
 			id = Number(container?.getAttribute('dataset'));
 			version = Number(container?.getAttribute('version'));
@@ -185,13 +183,10 @@ function activateShow(key: string) {
 	{#await load()}
 		<Spinner />
 	{:then}
-	<div class="flex flex-col overflow-visible h-auto lg:flex-row lg:overflow-hidden lg:h-[calc(100dvh-180px)] relative">
+	<div id="metadata-content" class="flex flex-col overflow-visible h-auto lg:flex-row lg:overflow-hidden lg:h-[calc(100dvh-180px)] relative">
 
 <div class="w-full lg:flex-1 flex flex-col gap-4 min-w-0">
-			<div>
-					<!-- Show all descriptions -->
-					<div class="flex flex-col gap-2">
-
+					<div class="flex flex-col">
 						<div class="w-full flex flex-wrap items-center gap-1 pr-2 text-sm">
 							<!-- First block stays on the left naturally -->
 							<div class="pl-2 flex items-center gap-1">
@@ -223,12 +218,15 @@ function activateShow(key: string) {
 							</div>
 						</div>
 					</div>
-					<div class="flex-1 scrollable overflow-visible lg:overflow-y-auto">
+			<div class="scrollable overflow-y-auto">
+					<!-- Show all descriptions -->
+
+					<div class="flex-1  h-full">
 						<div class="px-2" id="top">
 							<ComplexComponent complexComponent={schema} path={''} />
 						</div>
 					</div>
-				</div>
+			</div>
 
 </div>
 {#if showSidebar}
@@ -273,7 +271,7 @@ function activateShow(key: string) {
 					{#if typeof value === 'object' && value !== null}
 						<a href="#{key}" class="w-full" on:click={() => activateShow(key)}>
 							<li class="flex items-center gap-1">
-								<span class="h-1.5 w-1.5 rounded-full bg-gray-500 mr-2"></span>
+								<span class="h-1.5 w-1.5 rounded-full bg-gray-600 mr-2"></span>
                 <span class="">{convertDisplayName(key)}</span>
 							</li>
 						</a>
