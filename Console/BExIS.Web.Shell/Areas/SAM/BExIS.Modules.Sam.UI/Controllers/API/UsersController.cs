@@ -17,10 +17,12 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
 {
     public class UsersController : ApiController
     {
+        private readonly GroupManager _groupManager;
         private readonly UserManager _userManager;
 
-        public UsersController(UserManager userManager)
+        public UsersController(GroupManager groupManager, UserManager userManager)
         {
+            _groupManager = groupManager;
             _userManager = userManager;
         }
 

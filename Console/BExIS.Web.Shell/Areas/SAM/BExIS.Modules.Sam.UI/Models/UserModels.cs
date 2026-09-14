@@ -1,13 +1,15 @@
 ﻿using BExIS.Security.Entities.Subjects;
+using BExIS.UI.Helpers;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Mvc;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
-    public class ReadUserModel
+    public class UserModel
     {
         [JsonProperty("id")]
         public long Id { get; set; }
@@ -24,6 +26,39 @@ namespace BExIS.Modules.Sam.UI.Models
         [JsonProperty("modificationDate")]
         public DateTime ModificationDate { get; set; }
 
+        public static UserModel Convert(User user)
+        {
+            return new UserModel()
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                CreationDate = user.RegistrationDate,
+                ModificationDate = user.RegistrationDate
+            };
+        }
+    }
+
+    public class ReadUserModel
+    {
+        [JsonProperty("id")]
+        public long Id { get; set; }
+
+        [JsonProperty("email")]
+        public string Email { get; set; }
+
+        [JsonProperty("userName")]
+        public string UserName { get; set; }
+
+        [JsonProperty("creationDate")]
+        public DateTime RegistrationDate { get; set; }
+
+        [JsonProperty("modificationDate")]
+        public DateTime ModificationDate { get; set; }
+
+        [JsonProperty("groupIds")]
+        public List<long> GroupIds { get; set; }
+
         public static ReadUserModel Convert(User user)
         {
             return new ReadUserModel()
@@ -31,8 +66,9 @@ namespace BExIS.Modules.Sam.UI.Models
                 Id = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
-                CreationDate = user.RegistrationDate,
-                ModificationDate = user.RegistrationDate
+                RegistrationDate = user.RegistrationDate,
+                ModificationDate = user.ModificationDate,
+                GroupIds = user.Groups.Select(g => g.Id).ToList()
             };
         }
     }
