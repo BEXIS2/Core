@@ -16,10 +16,12 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
     public class GroupsController : ApiController
     {
         private readonly GroupManager _groupManager;
+        private readonly UserManager _userManager;
 
-        public GroupsController(GroupManager groupManager)
+        public GroupsController(GroupManager groupManager, UserManager userManager)
         {
             _groupManager = groupManager;
+            _userManager = userManager;
         }
 
         // GET: Groups
@@ -32,6 +34,25 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
 
                 if (group == null)
                     return Request.CreateResponse(HttpStatusCode.BadRequest, $"group with id: {groupId} does not exist.");
+
+                return Request.CreateResponse(HttpStatusCode.OK, ReadGroupModel.Convert(group));
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        // GET: Groups
+        [BExISApiAuthorize, HttpGet, GetRoute("api/groups/{groupName}")]
+        public async Task<HttpResponseMessage> GetByName(string groupName)
+        {
+            try
+            {
+                var group = await _groupManager.FindByNameAsync(groupName);
+
+                if (group == null)
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, $"group with name: {groupName} does not exist.");
 
                 return Request.CreateResponse(HttpStatusCode.OK, ReadGroupModel.Convert(group));
             }
@@ -71,6 +92,15 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
 
                 await _groupManager.CreateAsync(group);
 
+                foreach (var userId in model.UserIds)
+                {
+                    var user = await _userManager.FindByIdAsync(userId);
+                    if (user != null)
+                    {
+                        await _userManager.AddToRoleAsync(userId, group.Name);
+                    }
+                }
+
                 return Request.CreateResponse(HttpStatusCode.Created);
             }
             catch (Exception ex)
@@ -89,12 +119,41 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
 
             await _groupManager.UpdateAsync(group);
 
+            // removable users from the group
+            var userIds = group.Users.Select(u => u.Id).ToList();
+
+            foreach (var userId in userIds)
+            {
+                if (!model.UserIds.Contains(userId))
+                {
+                    await _userManager.RemoveFromRoleAsync(userId, group.Name);
+                }
+            }
+
+            foreach (var userId in model.UserIds)
+            {
+                if (!userIds.Contains(userId))
+                {
+                    await _userManager.AddToRoleAsync(userId, group.Name);
+                }
+            }
+
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
         [BExISApiAuthorize, HttpDelete, DeleteRoute("api/groups/{groupId}")]
         public async Task<HttpResponseMessage> DeleteByIdAsync(long groupId)
         {
+            var group = await _groupManager.FindByIdAsync(groupId) ?? throw new ArgumentNullException();
+
+            if(group == null)
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+
+            foreach (var userId in group.Users.Select(x => x.Id))
+            {
+                await _userManager.RemoveFromRoleAsync(userId, group.Name);
+            }
+
             var deleted = _groupManager.Delete(groupId);
 
             if (deleted)

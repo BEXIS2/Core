@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 
 namespace BExIS.Security.Entities.Subjects
@@ -8,11 +9,15 @@ namespace BExIS.Security.Entities.Subjects
         public Group()
         {
             Users = new List<User>();
+            CreationDate = DateTime.Now;
+            ModificationDate = CreationDate;
         }
 
         public virtual string Description { get; set; }
         public virtual bool IsSystemGroup { get; set; }
         public virtual bool IsValid { get; set; }
+        public virtual DateTime ModificationDate { get; set; }
+        public virtual DateTime CreationDate { get; set; }
         public virtual ICollection<User> Users { get; set; }
     }
 }
