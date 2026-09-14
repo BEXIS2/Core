@@ -27,7 +27,7 @@
 		console.log('id', id);
 		console.log('version', version);
 
-		const res = await getVersions(id, version);
+		const res = await getVersions(id);
 		versions = res;
 		console.log("🚀 ~ versions:", versions);
 
