@@ -309,7 +309,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             if (datasetVersion.Dataset.DataStructure != null && datasetVersion.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
                             {
                                 dataStructureType = DataStructureType.Structured.ToString();
-                                long c = datasetManager.RowCount(datasetVersion.Dataset.Id, null);
+                                long c = 0; 
+                                if(latestVersion)   
+                                    c = datasetManager.RowCount(datasetVersion.Dataset.Id, null);
+                                else
+                                    c = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion).Count;
+
                                 ViewData["gridTotal"] = c;
                                 if (c > 0) model.HasData = true;
                             }

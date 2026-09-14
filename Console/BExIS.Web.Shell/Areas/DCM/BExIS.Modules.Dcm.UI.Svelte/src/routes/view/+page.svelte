@@ -231,9 +231,8 @@
 		{#if dataDescriptionHook && model.dataStructureId	!== undefined && model.dataStructureId > 0}
 			 <DataDescription	{id} {version} {tag} hook={dataDescriptionHook}/>
 		{/if}
-
+ 
 		{#if dataHook	&& model.hasData && model.downloadAccess}
-
 			<Data {id} {version} hook={dataHook}/>
 		{/if}
 

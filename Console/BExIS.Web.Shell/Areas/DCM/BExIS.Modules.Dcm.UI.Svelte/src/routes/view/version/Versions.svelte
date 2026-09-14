@@ -118,7 +118,8 @@
 					<div class="flex justify-between items-center">
 						<a href="/dcm/view?id={id}&version={v.id}" 
 							class="font-bold underline hover:text-primary-500 cursor-pointer"
-							title="Switch to Version {v.id}">
+							title="Switch to Version {v.id}"
+							target="_blank">
 							Version {v.id}
 						</a>
 						<div class="flex items-center gap-2">

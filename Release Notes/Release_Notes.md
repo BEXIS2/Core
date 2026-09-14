@@ -6,7 +6,7 @@
 
 
 ### Database Update(s):
-- Update script from version 4.3.1 to 5.0.0: [Update_Script_4.3.1_5.0.0.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/4.3.1-5.0.0.sql)
+- Update script from version 4.3.1 to 5.0.0: [Update_Script_4.3.1_5.0.0.sql](https://github.com/BEXIS2/Core/blob/rc/database%20update%20scripts/4.3.1-5.0.0/4.3.1-5.0.0.sql)
 
 ### Web.config changes
 - Clean up web.config by removing **ApplicationName**, **SystemEmail**, **SendExceptions**, **UseMultiMediaModule**, **usePersonEmailAttributeName**, and **PersonEmailAttributeName**, as these attributes are now managed in Application Settings.

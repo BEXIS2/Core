@@ -22,6 +22,9 @@
 
 	load();
 
+	let count= 0;
+	$:count;
+
 	async function load() {
 		const tableStore = writable<any[]>([]);
 		const url = host + '/api/datatable/';
@@ -41,11 +44,13 @@
 	}
 
 	function changeFn(e){
-
 		const send = e.detail;
 		console.log("changeFn",send);
 		scope.set(send);
 	}
+
+	
+
 
 </script>
 
