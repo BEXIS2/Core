@@ -1,78 +1,120 @@
+<!-- src/lib/components/createGroup.svelte -->
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	import { createUser } from '../../routes/users/services';
-	import type { CreateUserModel } from '../../routes/users/types';
+	import { createEventDispatcher, SvelteComponent, setContext, type ComponentType } from 'svelte';
 	import Fa from 'svelte-fa';
 	import { faXmark, faSave } from '@fortawesome/free-solid-svg-icons';
+	import { TextInput, TextArea, Table } from '@bexis2/bexis2-core-ui';
+	import type { CreateUserModel } from '../../routes/users/types';
+	import { createUser } from '../../routes/users/services';
+	import CreateUserOptions from './createUserOptions.svelte';
+	import createUserValidation from './createUserValidation';
+	import { groupsStore } from '../../routes/groups/services';
 
 	const dispatch = createEventDispatcher();
 
 	let isSubmitting = false;
 
+	export let user: CreateUserModel;
+
+	setContext('user', user);
+
+	console.log('Initial user:', user);
+
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
-
-		const form = event.target as HTMLFormElement;
-		const formData = new FormData(form);
-
-		const model: CreateUserModel = {
-			userName: formData.get('userName') as string,
-			email: formData.get('email') as string
-		};
 
 		isSubmitting = true;
 
 		try {
-			await createUser(model);
-			dispatch('success'); // Parent schließt + lädt neu
+			await createUser(user);
+			dispatch('success');
 		} catch (error) {
-			console.error(error);
-			// Optional: Fehlermeldung anzeigen
+			console.error('Fehler:', error);
 		} finally {
 			isSubmitting = false;
 		}
 	}
+
+	$: groupsTableConfig = {
+		id: 'groupsTable',
+		data: groupsStore,
+		optionsComponent: CreateUserOptions as ComponentType<SvelteComponent>,
+		columns: {
+			creationDate: { exclude: true },
+			modificationDate: { exclude: true },
+			userIds: { exclude: true }
+		}
+	};
+
+		// validation
+	let res = createUserValidation.get();
+	// flag to enable submit button
+	$: disabled = !res.isValid();
+
+	//change event: if input change check also validation only on the field
+	// e.target.id is the id of the input component
+	async function onChangeHandler(e) {
+
+		setTimeout(async () => {
+			res = createUserValidation(user, e.target.id);
+		}, 10);
+	}
 </script>
 
-<form on:submit={handleSubmit} class="space-y-4">
-	<div>
-		<label class="block text-sm font-medium">Name</label>
-		<input
-			type="text"
-			name="userName"
-			required
-			class="input input-bordered w-full"
-			disabled={isSubmitting}
-		/>
-	</div>
+<div class="card p-4">
+	<form on:submit={handleSubmit} class="space-y-4">
+		<div class="flex grow gap-4">
+			<div class="grow">
+				<TextInput
+					id="userName"
+					label="User Name"
+					help={true}
+					required={true}
+					bind:value={user.userName}
+					valid={res.isValid('userName')}
+					invalid={res.hasErrors('userName')}
+					feedback={res.getErrors('userName')}
+					on:input={onChangeHandler}
+				/>
+			</div>
 
-	<div>
-		<label class="block text-sm font-medium">Email</label>
-		<input
-			type="email"
-			name="email"
-			required
-			class="input input-bordered w-full"
-			disabled={isSubmitting}
-		/>
-	</div>
+			<div class="grow">
+				<TextInput
+					id="email"
+					label="Email"
+					help={true}
+					required={true}
+					bind:value={user.email}
+					valid={res.isValid('email')}
+					invalid={res.hasErrors('email')}
+					feedback={res.getErrors('email')}
+					on:input={onChangeHandler}
+				/>
+			</div>
+		</div>
 
-	<div class="flex gap-2 justify-end">
-		<button
-			type="button"
-			class="btn variant-filled-warning h-9 w-16 shadow-md"
-			disabled={isSubmitting}
-			on:click={() => dispatch('close')}
-		>
-			<Fa icon={faXmark} />
-		</button>
+		<div class="w-full">
+			<label>Groups</label>
+			<Table config={groupsTableConfig} />
+		</div>
 
-		<button
-			type="submit"
-			class="btn variant-filled-primary h-9 w-16 shadow-md"
-			disabled={isSubmitting}
-		>
-			<Fa icon={faSave} />
-		</button>
-	</div>
-</form>
+		<div class="flex gap-2 justify-end">
+			<button
+				type="button"
+				class="btn variant-filled-warning h-9 w-16 shadow-md"
+				disabled={isSubmitting}
+				on:click={() => dispatch('close')}
+			>
+				<Fa icon={faXmark} />
+			</button>
+
+			<button
+				type="submit"
+				class="btn variant-filled-primary h-9 w-16 shadow-md"
+				disabled={isSubmitting || disabled}
+			>
+				<Fa icon={faSave} />
+			</button>
+		</div>
+	</form>
+</div>

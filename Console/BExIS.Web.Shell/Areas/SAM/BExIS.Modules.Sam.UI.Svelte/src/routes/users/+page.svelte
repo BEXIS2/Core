@@ -1,16 +1,18 @@
 <script lang="ts">
 	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
-	import { Page, Table, TablePlaceholder, type TableConfig } from '@bexis2/bexis2-core-ui';
-	import type { ReadUserModel } from './types';
-	import { usersStore, getUsers, deleteUser } from './services';
+	import { notificationStore, notificationType, Page, Table, TablePlaceholder, type TableConfig } from '@bexis2/bexis2-core-ui';
+	import { usersStore, getUsers, deleteUserById } from './services';
 	import usersTableOptions from '../../lib/components/usersTableOptions.svelte';
-	import { onMount } from 'svelte';
+	import { onMount, setContext } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import Fa from 'svelte-fa';
 	import { faPlus } from '@fortawesome/free-solid-svg-icons';
 	import CreateUser from '../../lib/components/createUser.svelte';
 	import UpdateUser from '../../lib/components/updateUser.svelte';
 	import type { ComponentType, SvelteComponent } from 'svelte';
+	import { get } from 'svelte/store';
+	import type { CreateUserModel, ReadUserModel } from './types';
+	import { getGroups } from '../groups/services';
 
 	$: formTitle =
 		activeComponent === UpdateUser && selectedUser
@@ -18,7 +20,7 @@
 			: 'Create new User';
 
 	let activeComponent: ComponentType<SvelteComponent> | null = null;
-	let selectedUser: ReadUserModel | null = null; // für Update
+	let selectedUser: ReadUserModel | CreateUserModel | null = null;
 	let loading = true;
 
 	const modalStore = getModalStore();
@@ -26,6 +28,7 @@
 	async function reload() {
 		loading = true;
 		await getUsers();
+		await getGroups();
 		loading = false;
 	}
 
@@ -39,7 +42,7 @@
 		reload();
 	}
 
-	const usersTableActions = (action: CustomEvent<{ row: ReadUserModel; type: string }>) => {
+	const usersTableActions = (action: CustomEvent<{ type: string; row: ReadUserModel }>) => {
 		const { type, row } = action.detail;
 		if (!row) return;
 
@@ -52,15 +55,24 @@
 			case 'DELETE':
 				modalStore.trigger({
 					type: 'confirm',
-					title: `Delete User (<strong>${row.userName}</strong>)`,
+					title: `Delete Group (<strong>${row.userName}</strong>)`,
 					body: `Are you sure you want to delete <strong>${row.userName}</strong>?`,
 					response: async (result: boolean) => {
 						if (result) {
-							await deleteUser(row.id);
+							await deleteUserById(row.id);
+							await closeForm();
 							await reload();
+
+							notificationStore.showNotification({
+    							notificationType: notificationType.success,
+    							message: `Deleted group (<strong>${row.userName}</strong>) successfully.`,
+   							});
 						}
 					}
 				});
+				break;
+
+			default:
 				break;
 		}
 	};
@@ -70,7 +82,7 @@
 	const usersConfig: TableConfig<ReadUserModel> = {
 		id: 'usersTable',
 		data: usersStore,
-		optionsComponent: usersTableOptions,
+		optionsComponent: usersTableOptions as ComponentType<SvelteComponent>,
 		columns: {
 			creationDate: {
 				header: 'Creation Date',
@@ -97,16 +109,16 @@
 					toSortableValueFn: (date: Date) => date.getTime(),
 					toFilterableValueFn: (date: Date) => date
 				}
-			}
+			},
+			groupIds: { exclude: true }
 		}
 	};
 </script>
 
 <Page help={true} title="Manage Users">
 	<h1 class="h1">Users</h1>
-
 	<div class="table-container w-full">
-		<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500">
+		<div class="grid grid-cols-2 gap-5 my-4 pb-1 border-b border-primary-500 w-full">
 			<div class="h3 h-9">{formTitle}</div>
 			<div class="flex justify-end">
 				{#if !activeComponent}
@@ -114,7 +126,7 @@
 						class="btn variant-filled-secondary shadow-md h-9 w-16"
 						disabled={loading}
 						on:click={() => {
-							selectedUser = null;
+							selectedUser = {userName: '', email: '', groupIds: []};
 							activeComponent = CreateUser;
 						}}
 					>
