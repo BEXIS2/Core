@@ -21,11 +21,11 @@
 -->
 		<Export tag="settings" id="users" order="1"
 		  title="Manage Users" description="Manage Users" icon=""
-		  controller="users" action="index" argument="Users"
+		  controller="users" action="" argument=""
 		  extends="./settingsRoot" />
 		<Export tag="settings" id="groups" order="2"
 		  title="Manage Groups" description="Manage Groups" icon=""
-		  controller="groups" action="index" argument="Groups"
+		  controller="groups" action="" argument=""
 		  extends="./settingsRoot" />
 		<Export tag="settings" id="features" order="3"
 		  title="Feature Permissions" description="Manage Feature Permissions" icon=""

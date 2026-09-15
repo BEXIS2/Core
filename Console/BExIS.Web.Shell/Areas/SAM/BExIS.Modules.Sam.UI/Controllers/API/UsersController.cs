@@ -89,11 +89,17 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             {
                 var user = new User()
                 {
-                    UserName = model.UserName,
-                    Email = model.Email
+                    Email = model.Email,
+                    Name = model.UserName
                 };
 
-                var response = await _userManager.CreateAsync(user);
+                await _userManager.CreateAsync(user);
+
+                foreach (var groupId in model.GroupIds)
+                {
+                    var group = await _groupManager.FindByIdAsync(groupId) ?? throw new ArgumentNullException();
+                    await _userManager.AddToRoleAsync(user.Id, group.Name);
+                }
 
                 return Request.CreateResponse(HttpStatusCode.Created);
             }
@@ -108,18 +114,37 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
         {
             var user = await _userManager.FindByIdAsync(userId) ?? throw new ArgumentNullException();
 
-            if(user.Id == model.Id)
-            {
-                user.UserName = model.UserName;
-                user.Email = model.Email;
-                var response = await _userManager.UpdateAsync(user);
-                return Request.CreateResponse(HttpStatusCode.OK);
+            user.UserName = model.UserName;
+            user.Email = model.Email;
 
-            }
-            else
+            await _userManager.UpdateAsync(user);
+
+            // removable users from the group
+            var groups = user.Groups.Select(g => new
             {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, $"error");
+                g.Id,
+                g.Name
+            })
+            .ToList();
+
+            foreach (var group in groups)
+            {
+                if (!model.GroupIds.Contains(group.Id))
+                {
+                    await _userManager.RemoveFromRoleAsync(userId, group.Name);
+                }
             }
+
+            foreach (var groupId in model.GroupIds)
+            {
+                if (!groups.Select(g => g.Id).Contains(groupId))
+                {
+                    var group = await _groupManager.FindByIdAsync(groupId) ?? throw new ArgumentNullException();
+                    await _userManager.AddToRoleAsync(userId, group.Name);
+                }
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
         [BExISApiAuthorize, HttpPut, PutRoute("api/users/{userId}/groups")]

@@ -20,8 +20,8 @@ namespace BExIS.Modules.Sam.UI.Models
         [JsonProperty("userName")]
         public string UserName { get; set; }
 
-        [JsonProperty("creationDate")]
-        public DateTime CreationDate { get; set; }
+        [JsonProperty("registrationDate")]
+        public DateTime RegistrationDate { get; set; }
 
         [JsonProperty("modificationDate")]
         public DateTime ModificationDate { get; set; }
@@ -33,8 +33,8 @@ namespace BExIS.Modules.Sam.UI.Models
                 Id = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
-                CreationDate = user.RegistrationDate,
-                ModificationDate = user.RegistrationDate
+                RegistrationDate = user.RegistrationDate,
+                ModificationDate = user.ModificationDate
             };
         }
     }
@@ -50,7 +50,7 @@ namespace BExIS.Modules.Sam.UI.Models
         [JsonProperty("userName")]
         public string UserName { get; set; }
 
-        [JsonProperty("creationDate")]
+        [JsonProperty("registrationDate")]
         public DateTime RegistrationDate { get; set; }
 
         [JsonProperty("modificationDate")]
@@ -85,10 +85,14 @@ namespace BExIS.Modules.Sam.UI.Models
         [JsonProperty("userName")]
         public string UserName { get; set; }
 
+        [JsonProperty("groupIds")]
+        public List<long> GroupIds { get; set; }
+
         public CreateUserModel()
         {
             Email = "";
             UserName = "";
+            GroupIds = new List<long>();
         }
 
     }
@@ -110,13 +114,25 @@ namespace BExIS.Modules.Sam.UI.Models
         [Remote("ValidateUsername", "Users", AdditionalFields = "Id")]
         public string UserName { get; set; }
 
+        [JsonProperty("groupIds")]
+        public List<long> GroupIds { get; set; }
+
+        [JsonProperty("registrationDate")]
+        public DateTimeOffset RegistrationDate { get; set; }
+
+        [JsonProperty("modificationDate")]
+        public DateTimeOffset ModificationDate { get; set; }
+
         public static UpdateUserModel Convert(User user)
         {
             return new UpdateUserModel()
             {
                 Email = user.Email,
                 Id = user.Id,
-                UserName = user.Name
+                UserName = user.Name,
+                RegistrationDate = user.RegistrationDate,
+                ModificationDate = user.ModificationDate,
+                GroupIds = user.Groups.Select(g => g.Id).ToList()
             };
         }
     }

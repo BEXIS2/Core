@@ -84,8 +84,8 @@
 		data: usersStore,
 		optionsComponent: usersTableOptions as ComponentType<SvelteComponent>,
 		columns: {
-			creationDate: {
-				header: 'Creation Date',
+			registrationDate: {
+				header: 'Registration Date',
 				instructions: {
 					toStringFn: (date: Date) =>
 						date.toLocaleString('en-US', {
