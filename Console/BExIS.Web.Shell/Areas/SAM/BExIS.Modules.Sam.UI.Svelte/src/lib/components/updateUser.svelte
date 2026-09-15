@@ -52,16 +52,16 @@
 	};
 
 			// validation
-	let res = updateUserValidation.get();
+	let validationResult = updateUserValidation.get();
 	// flag to enable submit button
-	$: disabled = !res.isValid();
+	$: disabled = validationResult.hasErrors();
 
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
 	async function onChangeHandler(e) {
 
 		setTimeout(async () => {
-			res = updateUserValidation(user, e.target.id);
+			validationResult = updateUserValidation(user, e.target.id);
 		}, 10);
 	}
 </script>
@@ -76,9 +76,9 @@
 					help={true}
 					required={true}
 					bind:value={user.userName}
-					valid={res.isValid('userName')}
-					invalid={res.hasErrors('userName')}
-					feedback={res.getErrors('userName')}
+					valid={validationResult.isValid('userName')}
+					invalid={validationResult.hasErrors('userName')}
+					feedback={validationResult.getErrors('userName')}
 					on:input={onChangeHandler}
 				/>
 			</div>
@@ -90,9 +90,9 @@
 					help={true}
 					required={true}
 					bind:value={user.email}
-					valid={res.isValid('email')}
-					invalid={res.hasErrors('email')}
-					feedback={res.getErrors('email')}
+					valid={validationResult.isValid('email')}
+					invalid={validationResult.hasErrors('email')}
+					feedback={validationResult.getErrors('email')}
 					on:input={onChangeHandler}
 				/>
 			</div>
