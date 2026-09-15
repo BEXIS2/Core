@@ -50,17 +50,17 @@
 		}
 	};
 
-			// validation
-	let res = updateGroupValidation.get();
+	// validation
+	let validationResult = updateGroupValidation.get();
 	// flag to enable submit button
-	$: disabled = !res.isValid();
+	$: disabled = validationResult.hasErrors();
 
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
 	async function onChangeHandler(e) {
 
 		setTimeout(async () => {
-			res = updateGroupValidation(group, e.target.id);
+			validationResult = updateGroupValidation(group, e.target.id);
 		}, 10);
 	}
 </script>
@@ -75,9 +75,9 @@
 					help={true}
 					required={true}
 					bind:value={group.name}
-					valid={res.isValid('name')}
-					invalid={res.hasErrors('name')}
-					feedback={res.getErrors('name')}
+					valid={validationResult.isValid('name')}
+					invalid={validationResult.hasErrors('name')}
+					feedback={validationResult.getErrors('name')}
 					on:input={onChangeHandler}
 				/>
 			</div>
@@ -89,9 +89,9 @@
 					help={true}
 					required={true}
 					bind:value={group.description}
-					valid={res.isValid('description')}
-					invalid={res.hasErrors('description')}
-					feedback={res.getErrors('description')}
+					valid={validationResult.isValid('description')}
+					invalid={validationResult.hasErrors('description')}
+					feedback={validationResult.getErrors('description')}
 					on:input={onChangeHandler}
 				/>
 			</div>
