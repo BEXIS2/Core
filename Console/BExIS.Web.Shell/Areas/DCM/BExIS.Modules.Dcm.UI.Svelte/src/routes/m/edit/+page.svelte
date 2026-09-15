@@ -46,6 +46,7 @@
 	} from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { convertDisplayName } from '$lib/components/utils/metadata/metadataShared';
+	import { goTo } from '$services/BaseCaller';
 	// import configJson from './customComponents/config.json';
 
 	export let id: number = 3;
@@ -122,6 +123,7 @@
 
 	function reloadMetadata() {
 		reload = !reload;
+		goTo("/view?id=" + id);
 		//alert('Metadata updated successfully!');
 	}
 
