@@ -98,7 +98,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Entity Permissions", Session.GetTenant());
 
-                var entities = entityManager.Entities.Select(e => EntityTreeViewItemModel.Convert(e, e.Parent.Id)).ToList();
+                var entities = entityManager.Entities.Where(e=>!e.Name.ToLower().Equals("extension")).Select(e => EntityTreeViewItemModel.Convert(e, e.Parent.Id)).ToList();
 
                 foreach (var entity in entities)
                 {
