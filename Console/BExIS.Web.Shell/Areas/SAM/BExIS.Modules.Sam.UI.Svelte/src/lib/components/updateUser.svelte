@@ -51,7 +51,7 @@
 		}
 	};
 
-			// validation
+	// validation
 	let validationResult = updateUserValidation.get();
 	// flag to enable submit button
 	$: disabled = validationResult.hasErrors();
