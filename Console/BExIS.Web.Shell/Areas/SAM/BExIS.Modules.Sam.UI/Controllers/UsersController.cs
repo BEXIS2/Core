@@ -1,5 +1,9 @@
-﻿using BExIS.Dlm.Services.Party;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Sam.UI.Models;
+using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
@@ -130,6 +134,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         public ActionResult Index()
         {
+            string module = "SAM";
+
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
+
             return View();
         }
 
