@@ -20,8 +20,8 @@ namespace BExIS.Modules.Sam.UI.Models
         [JsonProperty("userName")]
         public string UserName { get; set; }
 
-        [JsonProperty("creationDate")]
-        public DateTime CreationDate { get; set; }
+        [JsonProperty("registrationDate")]
+        public DateTime RegistrationDate { get; set; }
 
         [JsonProperty("modificationDate")]
         public DateTime ModificationDate { get; set; }
@@ -33,8 +33,8 @@ namespace BExIS.Modules.Sam.UI.Models
                 Id = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
-                CreationDate = user.RegistrationDate,
-                ModificationDate = user.RegistrationDate
+                RegistrationDate = user.RegistrationDate,
+                ModificationDate = user.ModificationDate
             };
         }
     }
@@ -50,7 +50,7 @@ namespace BExIS.Modules.Sam.UI.Models
         [JsonProperty("userName")]
         public string UserName { get; set; }
 
-        [JsonProperty("creationDate")]
+        [JsonProperty("registrationDate")]
         public DateTime RegistrationDate { get; set; }
 
         [JsonProperty("modificationDate")]
