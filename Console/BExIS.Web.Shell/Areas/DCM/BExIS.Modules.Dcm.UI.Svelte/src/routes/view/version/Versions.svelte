@@ -52,7 +52,8 @@
 			{#if useTags && currentVersion?.tagNr}
 				<a href="/dcm/view?id={id}&tag={currentVersion.tagNr}" 
 					class="badge variant-soft-primary text-xs hover:variant-filled-primary cursor-pointer"
-					title="Switch to Tag {currentVersion.tagNr}">
+					title="Switch to Tag {currentVersion.tagNr}"
+					target="_blank">
 					Tag {currentVersion.tagNr}
 				</a>
 			{:else if useTags}
@@ -92,7 +93,8 @@
 					<div class="flex justify-between items-center">
 						<a href="/dcm/view?id={id}&tag={t.version}" 
 							class="font-bold underline hover:text-primary-500 cursor-pointer"
-							title="Switch to Tag {t.version}">
+							title="Switch to Tag {t.version}"
+							target="_blank">
 							Tag {t.version}
 						</a>
 						<span class="text-sm text-surface-800 semi-bold italic">
