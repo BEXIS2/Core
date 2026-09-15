@@ -271,10 +271,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "Validation", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "Metadata", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "Messages", "*", DatasetUploadFeature);
-                operationManager.Create("DCM", "DataDescription", "*", DatasetUploadFeature);
+                operationManager.Create("DCM", "DataDescription", "*"); // must be open for the view of the data description in the dataset overview page
                 operationManager.Create("DCM", "Test", "*", DatasetUploadFeature);
-                operationManager.Create("DCM", "Data", "*", DatasetUploadFeature);
-
+                operationManager.Create("DCM", "Data", "*"); // must be open for the view of the data in the dataset overview page
                 #endregion Update Dataset Workflow
 
                 #region Easy Upload
@@ -323,7 +322,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 //Attachments
                 operationManager.Create("DCM", "Attachments", "*");
                 operationManager.Create("DCM", "Test", "*");
-                operationManager.Create("DCM", "Data", "*");
 
                 #endregion public available
 
