@@ -260,7 +260,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "Push", "*", DatasetUploadFeature);
 
                 operationManager.Create("Api", "DataIn", "*", DatasetUploadFeature);
-                operationManager.Create("Api", "Data", "*", DatasetUploadFeature);
+                //operationManager.Create("Api", "Data", "*", DatasetUploadFeature);
                 operationManager.Create("Api", "AttachmentIn", "*", DatasetUploadFeature);
                 operationManager.Create("Api", "Attachment", "*", DatasetUploadFeature);
                 operationManager.Create("Api", "File", "*", DatasetUploadFeature);
@@ -323,6 +323,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 //Attachments
                 operationManager.Create("DCM", "Attachments", "*");
                 operationManager.Create("DCM", "Test", "*");
+                operationManager.Create("DCM", "Data", "*");
 
                 #endregion public available
 

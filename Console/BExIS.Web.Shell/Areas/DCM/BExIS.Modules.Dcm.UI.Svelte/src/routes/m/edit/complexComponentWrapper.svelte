@@ -34,7 +34,7 @@
 
 	function isRequiredKey(key: string, v:any): boolean {
 	
-		console.log("🚀 ~ isRequiredKey ~ key:", key, v)
+		//console.log("🚀 ~ isRequiredKey ~ key:", key, v)
 
 		const normalizedKey = normalizeRequiredKey(key);
 		var isRequired = requiredList.some((requiredKey: string) => normalizeRequiredKey(requiredKey) === normalizedKey);
