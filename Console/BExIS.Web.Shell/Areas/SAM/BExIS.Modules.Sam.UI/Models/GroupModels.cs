@@ -93,9 +93,6 @@ namespace BExIS.Modules.Sam.UI.Models
         }
     }
 
-
-
-
     public class ReadGroupModel
     {
         [JsonProperty("id")]
@@ -108,10 +105,10 @@ namespace BExIS.Modules.Sam.UI.Models
         public string Description { get; set; }
 
         [JsonProperty("creationDate")]
-        public DateTimeOffset CreationDate { get; set; }
+        public DateTime CreationDate { get; set; }
 
         [JsonProperty("modificationDate")]
-        public DateTimeOffset ModificationDate { get; set; }
+        public DateTime ModificationDate { get; set; }
 
         [JsonProperty("userIds")]
         public List<long> UserIds { get; set; }
@@ -124,8 +121,8 @@ namespace BExIS.Modules.Sam.UI.Models
                 Id = group.Id,
                 Name = group.Name,
                 Description = group.Description,
-                CreationDate = DateTimeOffset.Now,
-                ModificationDate = DateTimeOffset.Now,
+                CreationDate = group.CreationDate,
+                ModificationDate = group.ModificationDate,
                 UserIds = group.Users.Select(u => u.Id).ToList()
             };
         }
@@ -143,10 +140,10 @@ namespace BExIS.Modules.Sam.UI.Models
         public string Description { get; set; }
 
         [JsonProperty("creationDate")]
-        public DateTimeOffset CreationDate { get; set; }
+        public DateTime CreationDate { get; set; }
 
         [JsonProperty("modificationDate")]
-        public DateTimeOffset ModificationDate { get; set; }
+        public DateTime ModificationDate { get; set; }
 
         public static GroupModel Convert(Group group)
         {
@@ -178,10 +175,10 @@ namespace BExIS.Modules.Sam.UI.Models
         public List<long> UserIds { get; set; }
 
         [JsonProperty("creationDate")]
-        public DateTimeOffset CreationDate { get; set; }
+        public DateTime CreationDate { get; set; }
 
         [JsonProperty("modificationDate")]
-        public DateTimeOffset ModificationDate { get; set; }
+        public DateTime ModificationDate { get; set; }
 
         public static UpdateGroupModel Convert(Group group)
         {

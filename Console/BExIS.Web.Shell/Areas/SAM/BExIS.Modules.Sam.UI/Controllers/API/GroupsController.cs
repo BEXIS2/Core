@@ -84,10 +84,14 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
         {
             try
             {
+                var date = DateTime.Now;
+
                 var group = new Group()
                 {
                     Description = model.Description,
-                    Name = model.Name
+                    Name = model.Name,
+                    CreationDate = date,
+                    ModificationDate = date
                 };
 
                 await _groupManager.CreateAsync(group);
@@ -116,6 +120,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
 
             group.Name = model.Name;
             group.Description = model.Description;
+            group.ModificationDate = DateTime.Now;
 
             await _groupManager.UpdateAsync(group);
 
