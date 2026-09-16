@@ -87,10 +87,14 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
         {
             try
             {
+                var date = DateTime.Now;
+
                 var user = new User()
                 {
                     Email = model.Email,
-                    Name = model.UserName
+                    Name = model.UserName,
+                    RegistrationDate = date,
+                    ModificationDate = date
                 };
 
                 await _userManager.CreateAsync(user);
@@ -116,6 +120,7 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
 
             user.UserName = model.UserName;
             user.Email = model.Email;
+            user.ModificationDate = DateTime.Now;
 
             await _userManager.UpdateAsync(user);
 

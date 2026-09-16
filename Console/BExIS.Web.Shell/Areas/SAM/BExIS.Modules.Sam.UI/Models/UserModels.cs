@@ -118,10 +118,10 @@ namespace BExIS.Modules.Sam.UI.Models
         public List<long> GroupIds { get; set; }
 
         [JsonProperty("registrationDate")]
-        public DateTimeOffset RegistrationDate { get; set; }
+        public DateTime RegistrationDate { get; set; }
 
         [JsonProperty("modificationDate")]
-        public DateTimeOffset ModificationDate { get; set; }
+        public DateTime ModificationDate { get; set; }
 
         public static UpdateUserModel Convert(User user)
         {
