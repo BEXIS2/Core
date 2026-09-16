@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
-	import { notificationStore, notificationType, Page, Table, TablePlaceholder, type TableConfig } from '@bexis2/bexis2-core-ui';
+	import {
+		notificationStore,
+		notificationType,
+		Page,
+		Table,
+		TablePlaceholder,
+		type TableConfig
+	} from '@bexis2/bexis2-core-ui';
 	import { usersStore, getUsers, deleteUserById } from './services';
 	import usersTableOptions from '../../lib/components/usersTableOptions.svelte';
 	import { onMount, setContext } from 'svelte';
@@ -64,9 +71,9 @@
 							await reload();
 
 							notificationStore.showNotification({
-    							notificationType: notificationType.success,
-    							message: `Deleted group (<strong>${row.userName}</strong>) successfully.`,
-   							});
+								notificationType: notificationType.success,
+								message: `Deleted group (<strong>${row.userName}</strong>) successfully.`
+							});
 						}
 					}
 				});
@@ -85,30 +92,10 @@
 		optionsComponent: usersTableOptions as ComponentType<SvelteComponent>,
 		columns: {
 			registrationDate: {
-				header: 'Registration Date',
-				instructions: {
-					toStringFn: (date: Date) =>
-						date.toLocaleString('en-US', {
-							month: 'short',
-							day: 'numeric',
-							year: 'numeric'
-						}),
-					toSortableValueFn: (date: Date) => date.getTime(),
-					toFilterableValueFn: (date: Date) => date
-				}
+				header: 'Registration Date'
 			},
 			modificationDate: {
-				header: 'Modification Date',
-				instructions: {
-					toStringFn: (date: Date) =>
-						date.toLocaleString('en-US', {
-							month: 'short',
-							day: 'numeric',
-							year: 'numeric'
-						}),
-					toSortableValueFn: (date: Date) => date.getTime(),
-					toFilterableValueFn: (date: Date) => date
-				}
+				header: 'Modification Date'
 			},
 			groupIds: { exclude: true }
 		}
@@ -126,7 +113,7 @@
 						class="btn variant-filled-secondary shadow-md h-9 w-16"
 						disabled={loading}
 						on:click={() => {
-							selectedUser = {userName: '', email: '', groupIds: []};
+							selectedUser = { userName: '', email: '', groupIds: [] };
 							activeComponent = CreateUser;
 						}}
 					>
