@@ -183,7 +183,7 @@ function activateShow(key: string) {
 	{#await load()}
 		<Spinner />
 	{:then}
-	<div id="metadata-content" class="flex flex-col overflow-visible h-auto lg:flex-row lg:overflow-hidden lg:h-[calc(100dvh-180px)] relative">
+	<div  class="flex flex-col overflow-visible h-auto lg:flex-row lg:overflow-hidden lg:h-[calc(100dvh-180px)] relative">
 
 <div class="w-full lg:flex-1 flex flex-col gap-4 min-w-0">
 					<div class="flex flex-col">
@@ -218,7 +218,7 @@ function activateShow(key: string) {
 							</div>
 						</div>
 					</div>
-			<div class="scrollable overflow-y-auto">
+			<div id="metadata-content" class="scrollable overflow-y-auto">
 					<!-- Show all descriptions -->
 
 					<div class="flex-1  h-full">

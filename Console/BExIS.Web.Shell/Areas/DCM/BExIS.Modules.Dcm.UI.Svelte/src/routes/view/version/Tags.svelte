@@ -81,7 +81,8 @@
 						<div class="flex justify-between items-center">
 							<a href="/dcm/view?id={id}&tag={v.version}" 
 								class="font-bold underline hover:text-primary-500 cursor-pointer"
-								title="Switch to Tag {v.version}">
+								title="Switch to Tag {v.version}"
+								target="_blank">
 								Tag {v.version}
 							</a>
 							<span class="text-sm text-surface-800 semi-bold italic" title="Release Date">

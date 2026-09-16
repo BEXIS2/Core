@@ -341,19 +341,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var operation = operationManager.Find("rpm", "datastructure", "*");
                 var user = BExISAuthorizeHelper.GetUserFromAuthorizationAsync(context).Result;
 
-                var feature = operation.Feature;
+                if (user != null)
+                {
+                    var feature = operation.Feature;
 
-                //if opration has no feature and is public
-                if (operation.Feature == null) return true;
+                    //if opration has no feature and is public
+                    if (operation.Feature == null) return true;
 
-                // if feature is public
-                if (featurePermissionManager.ExistsAsync(null, feature.Id).Result) return true;
+                    // if feature is public
+                    if (featurePermissionManager.ExistsAsync(null, feature.Id).Result) return true;
 
-                // feature and user exist
-                if (feature != null && !featurePermissionManager.ExistsAsync(null, feature.Id).Result)
-                    if (featurePermissionManager.HasAccessAsync(user.Id, feature.Id).Result)
-                        return true;
-
+                    // feature and user exist
+                    if (feature != null && !featurePermissionManager.ExistsAsync(null, feature.Id).Result)
+                        if (featurePermissionManager.HasAccessAsync(user.Id, feature.Id).Result)
+                            return true;
+                }
                 return false;
             }
         }
