@@ -11,8 +11,6 @@ namespace BExIS.Security.Entities.Subjects
         {
             Groups = new List<Group>();
             Logins = new List<Login>();
-            RegistrationDate = DateTime.Now;
-            ModificationDate = RegistrationDate;
         }
 
         public virtual int AccessFailedCount { get; set; }
