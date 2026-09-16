@@ -9,8 +9,6 @@ namespace BExIS.Security.Entities.Subjects
         public Group()
         {
             Users = new List<User>();
-            CreationDate = DateTime.Now;
-            ModificationDate = CreationDate;
         }
 
         public virtual string Description { get; set; }
