@@ -2,8 +2,8 @@ export interface ReadGroupModel {
     id: number;
     name: string;
     description: string;
-    creationDate: string;
-    modificationDate: string;
+    creationDate: Date;
+    modificationDate: Date;
     userIds: number[];
 }
 
@@ -11,8 +11,8 @@ export interface GroupModel {
     id: number;
     name: string;
     description: string;
-    creationDate: string;
-    modificationDate: string;
+    creationDate: Date;
+    modificationDate: Date;
 }
 export interface CreateGroupModel {
     name: string;

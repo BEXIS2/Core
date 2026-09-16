@@ -86,29 +86,9 @@
 		columns: {
 			creationDate: {
 				header: 'Creation Date',
-				instructions: {
-					toStringFn: (date: Date) =>
-						date.toLocaleString('en-US', {
-							month: 'short',
-							day: 'numeric',
-							year: 'numeric'
-						}),
-					toSortableValueFn: (date: Date) => date.getTime(),
-					toFilterableValueFn: (date: Date) => date
-				}
 			},
 			modificationDate: {
 				header: 'Modification Date',
-				instructions: {
-					toStringFn: (date: Date) =>
-						date.toLocaleString('en-US', {
-							month: 'short',
-							day: 'numeric',
-							year: 'numeric'
-						}),
-					toSortableValueFn: (date: Date) => date.getTime(),
-					toFilterableValueFn: (date: Date) => date
-				}
 			},
 			userIds: { exclude: true }
 		}

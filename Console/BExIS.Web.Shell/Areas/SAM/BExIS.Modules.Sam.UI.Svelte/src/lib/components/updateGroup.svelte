@@ -53,7 +53,7 @@
 	// validation
 	let validationResult = updateGroupValidation.get();
 	// flag to enable submit button
-	$: disabled = validationResult.hasErrors() || !validationResult.isValid();
+	$: disabled = validationResult.hasErrors();
 
 	//change event: if input change check also validation only on the field
 	// e.target.id is the id of the input component
