@@ -236,7 +236,6 @@ function activateShow(key: string) {
     
 <h3 class="h3 font-semibold text-gray-700 dark:text-gray-300  whitespace-nowrap">Metadata Overview</h3>
 
-
 <Overview	{id} {version} {tag} />
 
     <h2 class="h3 font-semibold text-gray-700 dark:text-gray-300  whitespace-nowrap">Download Metadata</h2>

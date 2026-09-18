@@ -54,6 +54,7 @@
 					<Header {required} path={p} {p} description={value.description} />
 					{#if !$hideStore.includes(p) && $activeStore.includes(p)}
 						<div class="pl-2  dark:bg-surface-800/50 rounded-sm flex flex-col" id={p}>
+			
 							<ComplexComponent
 								complexComponent={value}
 								path={p}
