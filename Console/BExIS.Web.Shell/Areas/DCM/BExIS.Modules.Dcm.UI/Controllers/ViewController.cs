@@ -927,7 +927,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     using (DatasetManager datasetManager = new DatasetManager())
                     {
                         var dataset = datasetManager.GetDataset(id);
-                        var structure = (StructuredDataStructure)dataset.DataStructure.Self;
+                        var structure = dataset.DataStructure != null ? (StructuredDataStructure)dataset.DataStructure.Self : null;
                         if (structure != null)
                         {
                             var varsAsKVP = DataTableHelper.variablesAsKVP(structure.Variables);
