@@ -174,7 +174,7 @@
 
 			{#if metadataHook}
 					<div class="flex-1 min-w-0 flex flex-col gap-3">
-									<Metadata {id} {version} {tag} hook={metadataHook} description={model.description} />
+									<Metadata {id} {version} {tag} hook={metadataHook} description={model.description} readable={model.downloadAccess}/>
 					</div>
 				{/if}
 
