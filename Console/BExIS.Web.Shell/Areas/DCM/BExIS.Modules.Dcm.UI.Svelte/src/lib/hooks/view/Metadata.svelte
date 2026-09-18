@@ -8,6 +8,7 @@
 	export let tag = 0;
 	export let hook;
 	export let description = '';
+	export let readable = false;
 
 	const url = `/dcm/view/metadata?id=${id}&version=${version}&tag=${tag}`;
 
@@ -28,10 +29,13 @@
 				<span class="ml-1">Hide</span>
 			</button>
 		{/if}
-		<a href={url} target="_blank" class="btn btn-sm variant-soft-primary" title="Open full metadata view in new window">
-			<Fa icon={faUpRightFromSquare} />
-			<span class="ml-1">Open</span>
-		</a>
+		{#if readable}
+			<a href={url} target="_blank" class="btn btn-sm variant-soft-primary" 
+			title="Open full metadata view in new window">
+				<Fa icon={faUpRightFromSquare} />
+				<span class="ml-1">Open</span>
+			</a>
+		{/if}
 	</div>
 </div>
 
