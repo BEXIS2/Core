@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getConfigStore, getLabelByPath, getValueByPath, hideDescriptionHandler, showDescriptionHandler, updateValidationState} from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { getConfigStore, getLabelByPath, getNodeByPath, getValueByPath, hideDescriptionHandler, showDescriptionHandler, updateValidationState} from '$lib/components/utils/metadata/metadataComponentUtils';
 
 	import SimpleComponent from '$lib/components/metadata/simpleComponent.svelte';
 	import { metadataStore } from '$lib/components/utils/metadata/stores';
@@ -17,13 +17,15 @@
 	let label = getLabelByPath(path);
 
 	metadataStore.subscribe(() => {
-		//console.log("metadataStore subscribe in simpleComponentWrapper.svelte:", path, value)
-		value = getValueByPath(path);
-		//const res = suite(path);
-		// setTimeout(async () => {
-		// 	updateValidationState(path, res);
-		// 	dispatch('updated');
-		// }, 2000);
+		if(!isMulti)
+		{	
+			value = getValueByPath(path); 
+		}
+		else // if its multi, then value is an array
+		{
+			value = getNodeByPath(path); // get node instead of value to get an array
+		}
+
 	});
 
 

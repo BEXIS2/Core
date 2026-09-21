@@ -132,7 +132,7 @@
 
 		// add some delay so the entityTemplate is updated
 		// otherwise the values are old
-		//console.log("metadata store:", $metadataStore);
+		console.log("metadata store:", $metadataStore);
 		dispatch('updated');
 		
 
@@ -352,6 +352,7 @@
 				{:else}
 					<!-- Handle multi select for array of simple types -->
 					{#if isMulti}
+					{value}
 						<MultiSelect
 							{... commonProps}
 							title={convertDisplayName(label)}
