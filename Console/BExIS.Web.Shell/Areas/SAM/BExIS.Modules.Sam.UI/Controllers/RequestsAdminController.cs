@@ -109,7 +109,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Entity Requests and Decisions", Session.GetTenant());
 
                 var entities =
-                    entityManager.Entities.Select(e => EntityTreeViewItemModel.Convert(e, e.Parent.Id)).ToList();
+                    entityManager.Entities.Where(e => !e.Name.ToLower().Equals("extension")).Select(e => EntityTreeViewItemModel.Convert(e, e.Parent.Id)).ToList();
 
                 foreach (var entity in entities)
                 {
