@@ -89,58 +89,6 @@
                 }
             </tbody>
         </table>
-
-        <h3>Link from</h3>
-        <table id="source_reference_table" class="display" style="width:100%">
-            <thead>
-                <tr>
-
-                    <th title="Identifier">Id</th>
-                    <th title="Version">V</th>
-                    <th title="Title">Title</th>
-                    <th title="Description">Comment</th>
-                    <th title="Entity type">Type</th>
-                    <th title="Link to Version">To version</th>
-
-                    <th title="Type of the reference">Reference Type</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @foreach (var srm in Model.SourceReferences)
-                {
-
-                    string targetName = string.IsNullOrEmpty(srm.Target.Title) ? "No Title available" : srm.Target.Title;
-                    <tr>
-                        <td>@srm.Source.Id</td>
-                        <td>@srm.Source.Version</td>
-                        <td>
-                            <a href="/dcm/view?id=@srm.Source.Id&version=@srm.Source.Version">@targetName</a> 
-                        </td>
-                        <td>@srm.Context</td>
-                        <td>@srm.Source.Type</td>
-                        <td>@srm.Target.Version</td>
-                        <td>@srm.ReferenceType</td>
-                        <td class="dt-body-center">
-
-
-                            <a href="/dcm/view?id=@srm.Source.Id&version=@srm.Source.Version" class="bx bx-grid-function bx-show" title="Go to this version." target="_blank"></a>
-
-                            @if (!srm.Source.LatestVersion)
-                            {
-                                <a href="/dcm/view?id=@srm.Source.Id" class="bx bx-grid-function bx-fast-forward" title="Go to latest version." target="_blank"></a>
-
-                            }
-                            @if (!@srm.ReferenceType.ToLower().Equals("metadata link") && Model.HasEditRights)
-                            {
-                                <button id="@srm.RefId" class="bx bx-grid-function bx-trash delete-reference-bt" title="Delete this Reference"></button>
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
     </div>
 </div>
 
