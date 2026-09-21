@@ -62,7 +62,17 @@ export function getPartyIdByPath(path: string) {
  */
 export function getSchemaAttributes(schemaNode: any): string[] {
 	if (!schemaNode?.properties) return [];
-	return Object.keys(schemaNode.properties).filter(k => k.startsWith('@') && k !== '@ref');
+	return Object.keys(schemaNode.properties).filter(k => k.startsWith('@') && k !== '@ref' && k !== '@partyid');
+}
+
+export function getSchemaAttributeTypes(schemaNode: any): any {
+	if (!schemaNode?.properties) return {};
+ 
+	const keys = getSchemaAttributes(schemaNode);
+
+	const attr = schemaNode.properties;
+
+	return Object.fromEntries(keys.map(key => [key, attr[key]]));
 }
 
 /**
@@ -79,7 +89,9 @@ export function getAttributeValue(path: string, attrKey: string): any {
 export function updateAttribute(path: string, attrKey: string, attrValue: any): void {
 	let obj: any = {};
 	metadataStore.subscribe((v) => { obj = v; })();
+
 	obj = setValueByPath(obj, path + '.' + attrKey, attrValue);
+
 	metadataStore.set(JSON.parse(JSON.stringify(obj)));
 }
 

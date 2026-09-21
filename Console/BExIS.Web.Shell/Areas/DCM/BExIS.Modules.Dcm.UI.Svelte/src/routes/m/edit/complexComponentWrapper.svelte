@@ -10,6 +10,7 @@
 	import { convertDisplayName } from '$lib/components/utils/metadata/metadataShared';
 	import { registerValidationItem, updateValidationState, getSchemaAttributes, getAttributeValue, updateAttribute } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import Attributes from '$lib/components/metadata/Attributes.svelte';
 
 
 	export let complexComponent: any;
@@ -65,17 +66,7 @@
 
 	// Schema-driven attributes on this compound node (excluding @ref and @partyid)
 	$: schemaAttrs = getSchemaAttributes(complexComponent).filter(a => a !== '@partyid');
-	$: storeData = $metadataStore;
-	$: attrValues = schemaAttrs.reduce((acc: Record<string, any>, attr: string) => {
-		acc[attr] = getAttributeValue(path, attr);
-		return acc;
-	}, {});
-
-	function onAttrChange(attr: string, e: any) {
-		updateAttribute(path, attr, e.target?.value ?? '');
-	}
-
-
+	
 	function onChangeHandler(e: CustomEvent<any>) {
   //console.log("🚀 ~ complex child onChangeHandler:", path, res.isValid(path))
 		res = suite(path);
@@ -155,19 +146,7 @@ function allchildrensAreOptional(cc: any): boolean {
 	{/each}
 
 	{#if schemaAttrs.length > 0}
-		<div class="flex flex-col gap-1 mt-1 pl-2 border-l-2 border-surface-200 dark:border-surface-700">
-			{#each schemaAttrs as attr}
-				<div class="flex items-center gap-2">
-					<span class="text-xs text-surface-600 dark:text-surface-300 w-24 shrink-0 font-medium">{attr.replace('@', '')}</span>
-					<input
-						type="text"
-						class="input variant-form-material text-xs py-1 flex-1"
-						value={attrValues[attr] ?? ''}
-						on:input={(e) => onAttrChange(attr, e)}
-					/>
-				</div>
-			{/each}
-		</div>
+		<Attributes {path} component={complexComponent} />
 	{/if}
 {/if}
 
