@@ -36,7 +36,7 @@
 	function isRequiredKey(key: string, v:any): boolean {
 
 		const normalizedKey = normalizeRequiredKey(key);
-	 //console.log("🚀 ~ isRequiredKey:", key,requiredList)
+	 console.log("🚀 ~ isRequiredKey:", key)
 
 		var isRequired = requiredList.some((requiredKey: string) => requiredKey === key);
 
@@ -112,7 +112,7 @@ function allchildrensAreOptional(cc: any): boolean {
 		{@const l = label = key}
 		{#if (value.type === 'object' && value.properties && !value.properties['#text']) }
 			{#if value.oneOf || value.anyOf || value.allOf}
-				<ChoiceComponent choiceComponent={value} {path} on:updated={onChangeHandler} required={isRequiredKey(p, value)} />
+				<ChoiceComponent choiceComponent={value} {path} on:updated={onChangeHandler} required={isRequiredKey(key, value)} />
 			{:else}
 				<div class="grid grid-cols-1 gap-0 ">
 

@@ -88,17 +88,6 @@ namespace BExIS.Xml.Helpers
                             metadataJson.Add(usage.Label, packageUsageJson);
                     }
 
-
-                    //for (int i = 0; i < root.ChildNodes.Count; i++)
-                    //{
-                    //    XmlNode node = root.ChildNodes[i];
-                    //    long usageId = metadataStructure.MetadataPackageUsages.ElementAt(i).Id;
-                    //    var usage = metadataStructureManager.PackageUsageRepo.Get(usageId);
-
-                    //    var packageUsageJson = _convertPackageUsage(node, usage, includeEmpty);
-                    //    if (packageUsageJson != null)
-                    //        metadataJson.Add(usage.Label, packageUsageJson);
-                    //}
                 }
             }
 
@@ -147,7 +136,7 @@ namespace BExIS.Xml.Helpers
                         else
                         {
                             setReference(complex, (XmlElement)tCHild, includeEmpty);
-                            setParameters(complex, (XmlElement)tCHild, includeEmpty);
+                            setParameters(complex, (XmlElement)tCHild, includeEmpty, usage);
 
                         }
 
@@ -250,7 +239,7 @@ namespace BExIS.Xml.Helpers
                             else
                             {
                                 setReference(complex, (XmlElement)tCHild, includeEmpty);
-                                setParameters(complex, (XmlElement)tCHild, includeEmpty);
+                                setParameters(complex, (XmlElement)tCHild, includeEmpty, usage);
 
                             }
 
@@ -339,7 +328,7 @@ namespace BExIS.Xml.Helpers
             }
 
             setReference(simple, reference, includeEmpty);
-            setParameters(simple, reference, includeEmpty);
+            setParameters(simple, reference, includeEmpty, usage);
 
             simple.Add(new JProperty("#text", value));
 
@@ -367,17 +356,36 @@ namespace BExIS.Xml.Helpers
             }
         }
 
-        private void setParameters(JObject target, XmlElement element, bool includeEmpty)
+        private void setParameters(JObject target, XmlElement element, bool includeEmpty, BaseUsage usage)
         { 
             if(element.HasAttributes)
             {
                 List<String> ignore = new List<String>() { "type", "ref", "id", "roleId", "number", "name","partyid"  }; // system attributes
 
-                foreach (XmlAttribute attr in element.Attributes)
+                var ma = getType(usage);
+                 
+                if (ma!= null &&  ma.MetadataParameterUsages!= null && ma.MetadataParameterUsages.Count > 0)
                 {
-                    if (!ignore.Contains(attr.Name))
+                    foreach (XmlAttribute attr in element.Attributes)
                     {
-                        target.Add("@" + attr.Name, attr.Value);
+                        if (!ignore.Contains(attr.Name))
+                        {
+                            // check if parameter exist
+                            if (ma.MetadataParameterUsages.Any(m => m.Label.ToLower().Equals(attr.Name.ToLower())))
+                            {
+                                var dataType = ma.MetadataParameterUsages.FirstOrDefault(m => m.Label.ToLower().Equals(attr.Name.ToLower()))?.Member.DataType;
+                                DataTypeCheck dataTypeChecker = new DataTypeCheck("", dataType.SystemType, IO.DecimalCharacter.point);
+                                var result = dataTypeChecker.Execute(attr.Value);
+
+                                if(result is Error)
+                                    target.Add(new JProperty("@" + attr.Name, attr.Value));
+                                else
+                                    target.Add(new JProperty("@" + attr.Name, result));
+
+                                //attr.Value = result;
+
+                            }
+                        }
                     }
                 }
             }

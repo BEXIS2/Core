@@ -32,7 +32,6 @@
 
 
 </script>
-
 	{#if type }
 		{#if type == 'oneOf'}
 			<ChoiceOneOf	choiceComponent={choiceComponent} {path} on:updated {required}/>

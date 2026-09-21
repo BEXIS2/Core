@@ -9,17 +9,14 @@
  export let key;
 
  function onChangeFn( e: any) {
-
 		updateAttribute(path, key, value);
-		console.log("attributes - update - metadata", $metadataStore)
-
+		//console.log("attributes - update - metadata",path, key, value, $metadataStore)
 	}
 
 </script>
 
 <div class="flex items-center gap-2">
 					<span class="text-xs text-surface-600 dark:text-surface-300 w-20 shrink-0 font-medium">{key.replace('@', '')}</span>
-    
 				{#if type=='boolean'}
 					<input
 						type="checkbox" 
@@ -31,8 +28,8 @@
 					<input
 						type="number"
 						class="input variant-form-material text-xs py-1 "
-						value={value}
-						on:input={(e)=> onChangeFn(e)}
+						bind:value={value}
+						on:change={(e)=> onChangeFn(e)}
 					/>
      {:else if type =='date'}
 					<input
