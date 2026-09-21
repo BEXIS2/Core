@@ -352,7 +352,6 @@
 				{:else}
 					<!-- Handle multi select for array of simple types -->
 					{#if isMulti}
-					{value}
 						<MultiSelect
 							{... commonProps}
 							title={convertDisplayName(label)}
