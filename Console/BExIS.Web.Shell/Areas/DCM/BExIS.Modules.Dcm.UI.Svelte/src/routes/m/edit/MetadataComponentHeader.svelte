@@ -31,7 +31,7 @@
 	} from '$lib/components/utils/metadata/stores';
 	import { onMount } from 'svelte';
 
-	export let required: boolean = false;
+	export let required: boolean;
 	//  $:required;
 	export let path: string;
 	export let p: string = '';
@@ -147,6 +147,7 @@ metadataStore.subscribe(() => {
 	on:focus={handleShowDescription}
 	on:blur={handleHideDescription}
 >
+
 	<div>
 		{#if !active}
 			<button

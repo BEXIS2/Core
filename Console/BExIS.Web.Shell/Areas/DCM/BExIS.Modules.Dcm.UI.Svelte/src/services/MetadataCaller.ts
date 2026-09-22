@@ -63,7 +63,7 @@ export const GetTemplateConfig = async (id: number) => {
 
 export const SaveMetadata = async (id: number, value: any, comment: string) => {
 	try {
-		console.log(" value:", value);
+		//console.log("METADATA SAVE", value);
 		value["@comment"] = comment;
 		const response = await Api.put('/api/Metadata/' + id, value);
 		// console.log('Dataset filled:', response);

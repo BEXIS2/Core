@@ -110,7 +110,7 @@ export function setValueByPath(obj: any, path: string, value: any) {
 }
 // Update metadata store with a new value at the specified path
 export function updateMetadataStore(path: string, value: any, isMulti?: boolean, ref?: any, partyid?: number): any {
-	//console.log('Updating metadata store at path:', path, 'with value:', value, 'isMulti:', isMulti, 'ref:', ref, 'partyid:', partyid);
+	console.log('Updating metadata store at path:', path, 'with value:', value, 'isMulti:', isMulti, 'ref:', ref, 'partyid:', partyid);
 	let obj: any = {};
 	if (path !== undefined && path !== null && path !== '') {
 		metadataStore.subscribe((v) => {
@@ -120,7 +120,9 @@ export function updateMetadataStore(path: string, value: any, isMulti?: boolean,
 			if (value !== getValueByPath(path) || ref !== getRefByPath(path)) {
 
 				if (isMulti) {
+
 					obj = setValueByPath(obj, path, value);
+					
 				} else {
 					// Keep party-id-only updates untouched for complex parent nodes.
 					if ((value === undefined || value === null) && partyid !== undefined && partyid !== null) {
@@ -148,10 +150,10 @@ export function updateMetadataStore(path: string, value: any, isMulti?: boolean,
 				}
 				//console.log("🚀 ~ updateMetadataStore ~ parent:", parent)
 			}
-
 		}
+		console.log('Updated metadata store:', obj, JSON.stringify(obj));
 	}
-	//console.log('Updated metadata store:', obj);
+	
 	return obj;
 }
 
@@ -170,6 +172,33 @@ export function removeFromMetadataStore(path: string): any {
 	console.log('remove metadata store:', obj);
 	return obj;
 }
+
+export function insertAtPath( path, value) {
+
+console.log("🚀 ~ insertAtPath ~ path:", path, value)
+
+let obj: any = {};
+	if (path !== undefined && path !== null && path !== '') {
+		metadataStore.subscribe((v) => {
+			obj = v;
+		});
+		{
+			 const keys = path.replace(/^\$/, '').split('.').filter(k => k);
+				let current = obj;
+				
+				for (let i = 0; i < keys.length - 1; i++) {
+						const key = keys[i];
+						if (!(key in current)) current[key] = {};
+						current = current[key];
+				}
+				
+				const lastKey = keys[keys.length - 1];
+				current[lastKey] = value;
+				return obj;
+			}
+	} 
+}
+
 
 function removeByPath(obj, path) {
 	const parts = path.split('.');

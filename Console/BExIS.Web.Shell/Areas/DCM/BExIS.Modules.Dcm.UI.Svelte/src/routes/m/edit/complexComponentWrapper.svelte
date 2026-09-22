@@ -110,12 +110,14 @@ function allchildrensAreOptional(cc: any): boolean {
 	{#each Object.entries(complexComponent.properties) as [key, value]}
 		{@const p = path = path ? path + '.' + key : key}
 		{@const l = label = key}
+
 		{#if (value.type === 'object' && value.properties && !value.properties['#text']) }
 			{#if value.oneOf || value.anyOf || value.allOf}
-				<ChoiceComponent choiceComponent={value} {path} on:updated={onChangeHandler} required={isRequiredKey(key, value)} />
+
+			<ChoiceComponent choiceComponent={value} {path} on:updated={onChangeHandler} required={isRequiredKey(key, value)} />
 			{:else}
 				<div class="grid grid-cols-1 gap-0 ">
-
+				
 					<Header	required={isRequiredKey(key, value)} {path} {p} description={value.description} allChildrenOptional={allchildrensAreOptional(value)}	  />
 
 					{#if !$hideStore.includes(path) && $activeStore.includes(path)}
@@ -141,6 +143,7 @@ function allchildrensAreOptional(cc: any): boolean {
 				</div>
 			</div>
 		{:else if value.type === 'array' && value.items}
+			
 			<ArrayComponent arrayComponent={value} {path} on:updated={onChangeHandler} required={isRequiredKey(key,value)} />
 		{/if}
 	{/each}

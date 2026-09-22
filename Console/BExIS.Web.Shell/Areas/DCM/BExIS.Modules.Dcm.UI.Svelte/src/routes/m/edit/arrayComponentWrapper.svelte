@@ -106,17 +106,21 @@ function removeFromValidationStore(path: string) {
 		render = !render;
 		onChangeHandler();
 	}
+
+
 </script>
 
 {#if arrayComponent.items}
 	<div class="" id={path}>
+	
 		{#key render}
 			{#if arrayComponent.items.type === 'object' && arrayComponent.items.properties && !arrayComponent.items.properties['#text']}
 				<div class="grid grid-cols-1 gap-0">
 					{#if arrayComponent.items.anyOf || arrayComponent.items.allOf}
-					 <ChoiceComponent choiceComponent={arrayComponent} {path} />
+
+					 <ChoiceComponent choiceComponent={arrayComponent} {path} {required}/>
 					{:else}
-					
+		   		
 					 <Header	path={path} {required} />
 
 						{#if !$hideStore.includes(path) && $activeStore.includes(path)}

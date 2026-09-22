@@ -205,9 +205,10 @@
           on:click={async () => {
             try {
 
-              console.log('Saving metadata:', datasetId, metadata);
+              //console.log('Saving metadata Snapshot JSON:', datasetId, JSON.stringify($metadataStore));
+
               const savedMetadata = await apiCalls.SaveMetadata(datasetId, metadata,comment);
-              console.log('Metadata saved successfully:', savedMetadata);
+              //console.log('Metadata saved successfully:', savedMetadata);
               notificationStore.showNotification({
                 notificationType: notificationType.success,
                 message: 'Metadata saved successfully.',

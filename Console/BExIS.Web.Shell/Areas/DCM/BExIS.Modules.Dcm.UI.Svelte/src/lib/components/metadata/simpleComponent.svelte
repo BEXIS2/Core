@@ -15,14 +15,7 @@
 		showDescriptionHandler,
 		hideDescriptionHandler,
 		updateValidationState,
-		registerValidationItem,
-		getSchemaAttributes,
-		getAttributeValue,
-		updateAttribute,
-		getParentPath,
-
-		getSchemaAttributeTypes
-
+		registerValidationItem
 	} from '$lib/components/utils/metadata/metadataComponentUtils';
 
 	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
@@ -132,7 +125,7 @@
 
 		// add some delay so the entityTemplate is updated
 		// otherwise the values are old
-		console.log("metadata store:", $metadataStore);
+		//console.log("metadata store:", $metadataStore);
 		dispatch('updated');
 		
 
