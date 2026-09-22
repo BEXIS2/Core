@@ -1,4 +1,5 @@
 ﻿using BExIS.Security.Entities.Subjects;
+using Newtonsoft.Json;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
@@ -32,5 +33,41 @@ namespace BExIS.Modules.Sam.UI.Models
 
     public class FeaturePermissionReadModel
     {
+    }
+
+    public class CreateFeaturePermissionModel
+    {
+        [JsonProperty("featureId")]
+        public long FeatureId { get; set; }
+
+        [JsonProperty("subjectId")]
+        public long SubjectId { get; set; }
+
+        [JsonProperty("featurePermissionType")]
+        public int FeaturePermissionType { get; set; }
+    }
+
+    public class ReadFeaturePermissionModel
+    {
+        [JsonProperty("id")]
+        public long Id { get; set; }
+
+        [JsonProperty("featureId")]
+        public long FeatureId { get; set; }
+
+        [JsonProperty("subjectId")]
+        public long SubjectId { get; set; }
+
+        [JsonProperty("featurePermissionType")]
+        public int FeaturePermissionType { get; set; }
+    }
+
+    public class UpdateFeaturePermissionModel
+    {
+        [JsonProperty("id")]
+        public long Id { get; set; }
+
+        [JsonProperty("featurePermissionType")]
+        public int FeaturePermissionType { get; set; }
     }
 }
