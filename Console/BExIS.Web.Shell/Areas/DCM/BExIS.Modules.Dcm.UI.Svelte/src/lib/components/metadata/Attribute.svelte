@@ -8,6 +8,13 @@
  export let path;
  export let key;
 
+
+	// if(value=='' && (type=='number' || type=='integer'))
+	// {
+	// 		value = 0
+	// 		updateAttribute(path, key, value);
+	// }
+
  function onChangeFn( e: any) {
 		updateAttribute(path, key, value);
 		//console.log("attributes - update - metadata",path, key, value, $metadataStore)

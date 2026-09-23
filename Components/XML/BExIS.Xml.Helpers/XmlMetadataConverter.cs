@@ -368,7 +368,7 @@ namespace BExIS.Xml.Helpers
                 {
                     foreach (XmlAttribute attr in element.Attributes)
                     {
-                        if (!ignore.Contains(attr.Name))
+                        if (!ignore.Contains(attr.Name) && !string.IsNullOrEmpty(attr.Value))
                         {
                             // check if parameter exist
                             if (ma.MetadataParameterUsages.Any(m => m.Label.ToLower().Equals(attr.Name.ToLower())))
