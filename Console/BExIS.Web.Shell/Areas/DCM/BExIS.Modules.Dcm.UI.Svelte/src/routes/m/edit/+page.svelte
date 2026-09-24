@@ -3,6 +3,7 @@
 
 	import * as apiCalls from '$services/MetadataCaller';
 	import {
+	ErrorMessage,
 		helpStore,
 		notificationType,
 		Page,
@@ -234,6 +235,8 @@
 				</div>
 			</div>
 		{/key}
+		{:catch error}
+			<ErrorMessage {error} />
 	{/await}
 </Page>
 
