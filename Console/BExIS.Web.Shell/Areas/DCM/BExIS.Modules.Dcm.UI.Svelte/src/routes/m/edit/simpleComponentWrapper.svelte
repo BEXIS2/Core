@@ -126,6 +126,7 @@ const dispatch = createEventDispatcher();
 
 	{:else if isAnchor && !useFallback}
 		<div class="pr-2" id={path}>
+
 		<svelte:component this={customComponent} anchor={path}
 						on:showDescription={handleShowDescription}
 						on:hideDescription={handleHideDescription}

@@ -36,7 +36,7 @@
 	function isRequiredKey(key: string, v:any): boolean {
 
 		const normalizedKey = normalizeRequiredKey(key);
-	 console.log("🚀 ~ isRequiredKey:", key)
+	 //console.log("🚀 ~ isRequiredKey:", key)
 
 		var isRequired = requiredList.some((requiredKey: string) => requiredKey === key);
 
@@ -88,7 +88,7 @@ function allchildrensAreOptional(cc: any): boolean {
 			: [];
 
 	for (const [key, value] of Object.entries(cc.properties)) {
-		console.log("allchildren",key, isRequiredKey(key, cc))
+		//console.log("allchildren",key, isRequiredKey(key, cc))
 		if (rl.some((requiredKey: string) => requiredKey === key))
   {
 			return false; // Found a required property
