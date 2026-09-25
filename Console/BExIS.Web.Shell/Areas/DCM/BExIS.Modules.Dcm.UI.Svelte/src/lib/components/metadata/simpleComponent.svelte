@@ -190,7 +190,6 @@
 </script>
 
 <div class="pr-2" id={path}>
- {Date.now().toString()}-{value}
 		<!--	if the field is mapped to a party or key, show blocked component with info, otherwise show the normal input component based on the type and format of the field -->
 		{#if mappingComponentConfig && ((mappingComponentConfig.isMappedToParty && !mappingComponentConfig.isSelector) || mappingComponentConfig.isMappedToKey)}
 			<Blocked
