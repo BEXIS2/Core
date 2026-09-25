@@ -109,6 +109,10 @@
 							mapping.parentPath == parentPathWithoutIndices && mapping.path !== pathWithoutIndices
 					)
 					.forEach(async (mapping: any) => {
+					console.log("🚀 ~ onUpdateParty ~ mapping:", mapping)
+
+						
+
 						// updateMetadataStore(mapping.path, value,	isMulti, undefined, e.detail.partyId);
 						const childvalue = await GetPartyValue(partyid, mapping.linkElementId);
 
