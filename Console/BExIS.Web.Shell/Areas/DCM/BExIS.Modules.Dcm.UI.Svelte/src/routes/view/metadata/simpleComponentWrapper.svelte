@@ -65,6 +65,7 @@
 		<div id={path}>
 			<svelte:component
 				this={customComponent}
+				{label}
 				anchor={path}
 				path={path}
 				mode="view"
