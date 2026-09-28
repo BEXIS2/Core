@@ -118,16 +118,19 @@ export function updateMetadataStore(path: string, value: any, isMulti?: boolean,
 		});
 		{
 			if (value !== getValueByPath(path) || ref !== getRefByPath(path)) {
+				//console.log("🚀 ~ updateMetadataStore ~ value:", value,getValueByPath(path), path, ref,getRefByPath(path) )
 
 				if (isMulti) {
 
 					obj = setValueByPath(obj, path, value);
 					
 				} else {
+					
 					// Keep party-id-only updates untouched for complex parent nodes.
 					if ((value === undefined || value === null) && partyid !== undefined && partyid !== null) {
 						const parent = getByPath(path);
 						parent["@partyid"] = partyid;
+						console.log("party id set",parent,partyid)
 					} else {
 						obj = setValueByPath(obj, path + '.#text', value ?? '');
 					}
@@ -143,12 +146,13 @@ export function updateMetadataStore(path: string, value: any, isMulti?: boolean,
 				}
 			}
 			else if ((value === undefined || value === null) && partyid !== undefined && partyid !== null) {
+				console.log("parent party id set")
 				const parent = getByPath(path);
-				parent["@partyid"] = partyid;
+					parent["@partyid"] = partyid;
 				if (obj !== undefined && obj !== null) {
 					metadataStore.set(obj);
 				}
-				//console.log("🚀 ~ updateMetadataStore ~ parent:", parent)
+				console.log("🚀 ~ updateMetadataStore ~ parent:",path, parent)
 			}
 		}
 		//console.log('Updated metadata store:', obj, JSON.stringify(obj));
