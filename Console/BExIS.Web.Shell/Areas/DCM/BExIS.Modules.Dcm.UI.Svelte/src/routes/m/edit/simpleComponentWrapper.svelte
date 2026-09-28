@@ -52,12 +52,13 @@ const dispatch = createEventDispatcher();
 
 			// strip array indices from path (e.g. "A.2.B.0.C" -> "A.B.C") for anchorpoint matching
 			let pathWithoutIndices = path.split('.').filter(p => isNaN(Number(p))).join('.');
-			//console.log('[simpleComponentWrapper] checking anchor:', component.globalSettings.anchorpoint, 'vs path:', path, 'pathWithoutIndices:', pathWithoutIndices);
+			// console.log('[simpleComponentWrapper] checking anchor:', component.globalSettings.anchorpoint, 'vs path:', path, 'pathWithoutIndices:', pathWithoutIndices);
 
 			// check if this path is under this component's anchorpoint
 
 			const anchorpoint = component.globalSettings.anchorpoint;
-			const parent = pathWithoutIndices.substring(0, path.lastIndexOf('.'))
+			const parent = pathWithoutIndices.substring(0, pathWithoutIndices.lastIndexOf('.'))
+			console.log("🚀 ~ parent:", parent)
 			const anchor_parent = anchorpoint.substring(0, anchorpoint.lastIndexOf('.'))
 
 			let isUnderThisAnchor = anchorpoint == path // match
@@ -65,9 +66,8 @@ const dispatch = createEventDispatcher();
 			|| pathWithoutIndices.startsWith(anchorpoint + '.')
 			|| anchor_parent == parent; // sameParent
 			
-			//console.log("[simpleComponentWrapper] ~ path:", path, anchorpoint, isUnderThisAnchor, parent, anchor_parent);
-	
 			if (isUnderThisAnchor) {
+
 				if (component.globalSettings.anchorpoint == path || component.globalSettings.anchorpoint == pathWithoutIndices) {
 					isAnchor = true;
 					let componentName = component.meta.component_name;
@@ -80,8 +80,8 @@ const dispatch = createEventDispatcher();
 
 				// only check is_visible for variables belonging to this component's anchor
 				for (const variable of component.mode.variables.variable) {
-					//console.log('[simpleComponentWrapper] checking variable:', variable.JSONPath, 'is_visible:', variable.is_visible, 'vs path:', path, 'pathWithoutIndices:', pathWithoutIndices);
-					if ((variable.JSONPath == path || variable.JSONPath == pathWithoutIndices) && variable.is_visible == false) {
+					//console.log('[simpleComponentWrapper] checking variable:', variable.JSONPath, 'is_visible:', variable.is_visible, 'vs path:', path, 'pathWithoutIndices:', pathWithoutIndices,path, component.mode.variables);
+			 	if ((variable.JSONPath == path || variable.JSONPath == pathWithoutIndices) && variable.is_visible == false) {
 						isVisible = false;
 					}
 				}
@@ -111,7 +111,6 @@ const dispatch = createEventDispatcher();
 	
 </script>
 
-
 {#if path && simpleComponent.properties}
  {#if isVisible && !isAnchor}
 			<SimpleComponent 
@@ -122,6 +121,7 @@ const dispatch = createEventDispatcher();
 			bind:value={value} 
 			on:updated
 			{isMulti} 
+			
 			/>
 
 	{:else if isAnchor && !useFallback}
