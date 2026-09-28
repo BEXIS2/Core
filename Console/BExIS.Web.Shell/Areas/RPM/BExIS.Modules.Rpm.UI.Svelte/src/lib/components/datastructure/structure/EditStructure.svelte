@@ -111,18 +111,18 @@
 </script>
 
 <div>
-	<div transition:fade class="flex px-2">
+	<div transition:fade class="flex px-1">
 		<div class="grow">
-			<button title="back" class="btn variant-filled-warning" on:click={() => back()}
-				><Fa icon={faArrowLeft} /></button
+			<button title="Back" class="btn variant-filled-warning" on:click={() => back()}
+				><Fa icon={faArrowLeft} /><span class="pl-1">Back</span></button
 			>
 		</div>
 		<div class="flex-none text-end">
-			{#if pksHasChanged && !pksValid && dataExist}
+			{#if pksHasChanged && !pksValid && dataExist && isPKSet}
 				<button
 					id="check"
 					title="Check changed primary key against datasets that belong to the data structure."
-					class="btn variant-filled-error text-xl"
+					class="btn variant-filled-error"
 					on:mouseover={() => helpStore.show('check')}
 					on:focus={() => helpStore.show('check')}
 					on:click={onCheckPKHandler}
@@ -130,8 +130,8 @@
 				>
 			{/if}
 			<button
-				title="save"
-				class="btn variant-filled-primary text-xl"
+				title="Save data structure"
+				class="btn variant-filled-primary"
 				on:click={onSaveHandler}
 				on:keypress={onSaveHandler}
 				disabled={!areVariablesValid ||
@@ -145,7 +145,7 @@
 	<Attributes {model} bind:valid={areAttributesValid} />
 	<div class="px-2">
 		{#if enforcePrimaryKey && model.variables.length > 0 && currentPks.length == 0}
-			<Alert message="Please select a (combined) primary key." cssClass="variant-soft-error p-1"
+			<Alert message="Please select a (combined) primary key to allow identification for each row." cssClass="variant-soft-error p-1"
 			></Alert>
 		{/if}
 		{#if model.variables.length == currentPks.length}

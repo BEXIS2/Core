@@ -1,8 +1,10 @@
 ﻿using System.Web.Mvc;
+using System.Web.SessionState;
 using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class HeaderController : Controller
     {
         // GET: Header

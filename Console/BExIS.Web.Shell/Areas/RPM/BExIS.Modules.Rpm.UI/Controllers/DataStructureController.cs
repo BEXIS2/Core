@@ -26,6 +26,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using System.Web.UI.HtmlControls;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Data;
@@ -33,6 +34,8 @@ using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
+    
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class DataStructureController : Controller
     {
         public ActionResult Index()
@@ -227,10 +230,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     // get orderNo
                     int orderNo = model.Variables.IndexOf(variable) + 1;
 
-                    // list missing values
                     List<MissingValue> missingValues = new List<MissingValue>();
-                    if(variable.MissingValues.Any()) missingValues = variableHelper.ConvertTo(variable.MissingValues);
-                    else missingValues = variableHelper.ConvertTo(model.MissingValues);
+                    // if atatype is not boolean add missing values otherwhise there is no way to create a missing value
+                    if (dataType.SystemType.ToLower() != "boolean")
+                    {
+                        // list missing values
+                        if (variable.MissingValues.Any()) missingValues = variableHelper.ConvertTo(variable.MissingValues);
+                        else missingValues = variableHelper.ConvertTo(model.MissingValues);
+                    }
 
                     long varTempId = variable.Template != null ? variable.Template.Id : 0;
 
@@ -653,7 +660,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public JsonResult CheckPrimaryKeySet(long id, long[] primaryKeys)
         {
             if (id <= 0) throw new ArgumentNullException("id");
-            if (primaryKeys == null) primaryKeys = new long[0];
+            if (primaryKeys == null || primaryKeys.Length == 0)
+                return Json(false, JsonRequestBehavior.AllowGet);
 
             UploadHelper helper = new UploadHelper();
 
@@ -804,7 +812,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 {
                     foreach (var variableTemplate in variableTemplates.Where(t => t.Approved))
                     {
-                        list.Add(_helper.ConvertTo(variableTemplate, "other"));
+                        list.Add(_helper.ConvertTo(variableTemplate, unitManager, "other"));
                     }
                 }
 

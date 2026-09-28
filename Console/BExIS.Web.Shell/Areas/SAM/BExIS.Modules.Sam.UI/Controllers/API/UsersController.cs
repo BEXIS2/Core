@@ -17,10 +17,12 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
 {
     public class UsersController : ApiController
     {
+        private readonly GroupManager _groupManager;
         private readonly UserManager _userManager;
 
-        public UsersController(UserManager userManager)
+        public UsersController(GroupManager groupManager, UserManager userManager)
         {
+            _groupManager = groupManager;
             _userManager = userManager;
         }
 
@@ -80,18 +82,28 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             }
         }
 
-        [BExISApiAuthorize, HttpPost, PostRoute("api/users")]
+        [BExISApiAuthorize, HttpPost, PostRoute("api/users"), JsonNetFilter]
         public async Task<HttpResponseMessage> PostAsync(CreateUserModel model)
         {
             try
             {
+                var date = DateTime.Now;
+
                 var user = new User()
                 {
-                    UserName = model.UserName,
-                    Email = model.Email
+                    Email = model.Email,
+                    Name = model.UserName,
+                    RegistrationDate = date,
+                    ModificationDate = date
                 };
 
                 await _userManager.CreateAsync(user);
+
+                foreach (var groupId in model.GroupIds)
+                {
+                    var group = await _groupManager.FindByIdAsync(groupId) ?? throw new ArgumentNullException();
+                    await _userManager.AddToRoleAsync(user.Id, group.Name);
+                }
 
                 return Request.CreateResponse(HttpStatusCode.Created);
             }
@@ -105,6 +117,37 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
         public async Task<HttpResponseMessage> PutByIdAsync(long userId, UpdateUserModel model)
         {
             var user = await _userManager.FindByIdAsync(userId) ?? throw new ArgumentNullException();
+
+            user.UserName = model.UserName;
+            user.Email = model.Email;
+            user.ModificationDate = DateTime.Now;
+
+            await _userManager.UpdateAsync(user);
+
+            // removable users from the group
+            var groups = user.Groups.Select(g => new
+            {
+                g.Id,
+                g.Name
+            })
+            .ToList();
+
+            foreach (var group in groups)
+            {
+                if (!model.GroupIds.Contains(group.Id))
+                {
+                    await _userManager.RemoveFromRoleAsync(userId, group.Name);
+                }
+            }
+
+            foreach (var groupId in model.GroupIds)
+            {
+                if (!groups.Select(g => g.Id).Contains(groupId))
+                {
+                    var group = await _groupManager.FindByIdAsync(groupId) ?? throw new ArgumentNullException();
+                    await _userManager.AddToRoleAsync(userId, group.Name);
+                }
+            }
 
             return Request.CreateResponse(HttpStatusCode.OK);
         }

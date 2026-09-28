@@ -331,6 +331,13 @@ namespace BExIS.Web.Shell.Controllers
                         authManager.SignIn(new AuthenticationProperties { IsPersistent = model.RememberMe }, new ClaimsIdentity(identity)
                         );
 
+                        // Forcefully remove the old cache if it exists
+                        string cacheKey = "Menu_" + user.UserName;
+                        if (HttpContext.Cache[cacheKey] != null)
+                        {
+                            HttpContext.Cache.Remove(cacheKey);
+                        }
+
                         return RedirectToLocal(returnUrl);
 
                     case SignInStatus.LockedOut:
@@ -409,7 +416,7 @@ namespace BExIS.Web.Shell.Controllers
                     using (var emailService = new EmailService())
                     {
                         emailService.Send(MessageHelper.GetTryToRegisterUserHeader(),
-                            MessageHelper.GetTryToRegisterUserMessage(user.Id, user.Name, user.Email),
+                            MessageHelper.GetTryToRegisterUserMessage(user.Id, user.DisplayName, user.Email),
                             GeneralSettings.SystemEmail
                             );
                     }

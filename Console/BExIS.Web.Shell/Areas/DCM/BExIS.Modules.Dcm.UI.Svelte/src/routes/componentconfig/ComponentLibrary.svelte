@@ -61,8 +61,13 @@
     selectedModeForAdd = null;
   }
 </script>
-
 <div class="component-library">
+ <div class="save-mappings-section w-full mb-4">
+    <button class="save-mappings-button" on:click={onSave}>
+      Save
+    </button>
+  </div>
+
   <h3>Component Library</h3>
 {#each componentManifestJson as componentManifest}
   <div class="components-section">
@@ -132,11 +137,7 @@
     {/if}
   </div>
  {/each} 
-  <div class="save-mappings-section">
-    <button class="save-mappings-button" on:click={onSave}>
-      Save
-    </button>
-  </div>
+ 
 </div>
 
 
@@ -286,7 +287,7 @@
 
   .save-mappings-section {
     padding: 1rem 0 0 0;
-    border-top: 1px solid #ddd;
+   /* border-top: 1px solid #ddd;*/
     margin-top: auto;
   }
   

@@ -1,0 +1,23 @@
+﻿@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
+
+    long id = 0;
+    long version = 0;
+    long versionId = 0;
+
+    if (ViewData["id"] != null) { id = Convert.ToInt64(ViewData["id"]); }
+
+    if (ViewData["version"] != null) { version = Convert.ToInt64(ViewData["version"]); }
+    if (ViewData["versionId"] != null) { versionId = Convert.ToInt64(ViewData["versionId"]); }
+
+}
+
+<script>
+
+</script>
+<div id="data" dataset="@id" version="@version" versionId="@versionId">
+
+    @Html.Partial("_sveltePage")
+
+</div>

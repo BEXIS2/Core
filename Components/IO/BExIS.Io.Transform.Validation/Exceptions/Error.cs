@@ -186,13 +186,13 @@ namespace BExIS.IO.Transform.Validation.Exceptions
             {
                 case ErrorType.Value:
                     {
-                        string message = String.Format("{0} : Variables : {1} , Value : {2}, in Row : {3}, Data type : {4}", _issue, _name, _value, _row.ToString(), _dataType);
+                        string message = String.Format("{0}: Variable: {1}, Row: {3}, Value: {2}", _issue, _name, _value, _row.ToString(), _dataType);
                         if (!string.IsNullOrEmpty(_datePattern)) message += String.Format(" , Date pattern : {0}", _datePattern);
 
                         return message;
                     }
-                case ErrorType.Dataset: return String.Format("{0} ({1})", _issue, _name);
-                case ErrorType.Datastructure: return String.Format("{0} ({1})", _issue, _name);
+                case ErrorType.Dataset: return String.Format("{0}: {1}", _issue, _name);
+                case ErrorType.Datastructure: return String.Format("{0}: {1}", _issue, _name);
                 case ErrorType.MetadataAttribute: return String.Format("(Attribute number {3} name = <b>{0}</b> in {5} with value = {1} ) : {2} in {5} Number {4}", _name, _value, _issue, _number, _package, _packageLabel);
                 default: return String.Format("{0}", _issue);
             }
@@ -206,17 +206,24 @@ namespace BExIS.IO.Transform.Validation.Exceptions
         /// <param>NA</param>
         public string ToHtmlString()
         {
+
             switch (_errorType)
             {
                 case ErrorType.Value:
                     {
-                        string message = String.Format("{0} : Variables : {1} , Value : {2}, in Row : {3}, Data type : {4}", _issue, _name, _value, _row.ToString(), _dataType);
+                        if (_issue.Length > 200)
+                        {
+                            _issue = _issue.Substring(0, 200) + " ...";
+                        }
+
+                        string message = String.Format("{0}: Variable: {1}, Row: {3}, Value: {2}", _issue, _name, _value, _row.ToString(), _dataType);
+                    
                         if (!string.IsNullOrEmpty(_datePattern)) message += String.Format(" , Date pattern : {0}", _datePattern);
 
                         return message;
                     }
-                case ErrorType.Dataset: return String.Format("{0} : {1}", _issue, _name);
-                case ErrorType.Datastructure: return String.Format("{0} : {1}", _issue, _name);
+                case ErrorType.Dataset: return String.Format("{0}: {1}", _issue, _name);
+                case ErrorType.Datastructure: return String.Format("{0}: {1}", _issue, _name);
                 case ErrorType.MetadataAttribute:
                     {
                         if (String.IsNullOrEmpty(_value))
@@ -405,13 +412,13 @@ namespace BExIS.IO.Transform.Validation.Exceptions
             switch (_errorType)
             {
                 case ErrorType.Value: { 
-                        string message =  String.Format("{0} : Variables : {1} , Value : {2}, in Row : {3}, Data type : {4}", _issue, _name, _value, _row.ToString(), _dataType);
+                        string message =  String.Format("{0}: Variable: {1}, Row: {3}, Value: {2}", _issue, _name, _value, _row.ToString(), _dataType);
                         if(!string.IsNullOrEmpty(_datePattern)) message += String.Format(" , Date pattern : {0}", _datePattern);
 
                         return message;
                     }
-                case ErrorType.Dataset: return String.Format("{0} ({1})", _issue, _name);
-                case ErrorType.Datastructure: return String.Format("{0} ({1})", _issue, _name);
+                case ErrorType.Dataset: return String.Format("{0}: {1}", _issue, _name);
+                case ErrorType.Datastructure: return String.Format("{0}: {1}", _issue, _name);
                 case ErrorType.MetadataAttribute: return String.Format("(Attribute number {3} name = <b>{0}</b> in {5} with value = {1} ) : {2} in {5} Number {4}", _name, _value, _issue, _number, _package, _packageLabel);
                 default: return String.Format("{0}", _issue);
             }
@@ -426,11 +433,18 @@ namespace BExIS.IO.Transform.Validation.Exceptions
         public string ToHtmlString()
         {
             switch (_errorType)
-            {
-                case ErrorType.Value: return String.Format("{0} : Variables : {1} , Value : {2}, in Row : {3}, Data type : {4}", _issue, _name, _value, _row.ToString(), _dataType);
-                case ErrorType.Dataset: return String.Format("{0} : {1}", _issue, _name);
-                case ErrorType.Datastructure: return String.Format("{0} : {1}", _issue, _name);
-                case ErrorType.MetadataAttribute:
+                {
+                    case ErrorType.Value:
+                    {
+                        if (_issue.Length > 200)
+                        {
+                            _issue = _issue.Substring( 0, 200) + "...";
+                        }
+                        return String.Format("{0}: Variable: {1}, Row: {3}, Value: {2}", _issue, _name, _value, _row.ToString(), _dataType);
+                    }
+                    case ErrorType.Dataset: return String.Format("{0}: {1}", _issue, _name);
+                    case ErrorType.Datastructure: return String.Format("{0}: {1}", _issue, _name);
+                    case ErrorType.MetadataAttribute:
                     {
                         if (String.IsNullOrEmpty(_value))
                             return String.Format("in Package : <b>{5} ({4})</b><br> Attribute : <b>{0} ({3})</b> <br> with value = <b>{1}</b><br>{2} <br>  <hr>", _name, _value, _issue, _number, _package, _packageLabel);

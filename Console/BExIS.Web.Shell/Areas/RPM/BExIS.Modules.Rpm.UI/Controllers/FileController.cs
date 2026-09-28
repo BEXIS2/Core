@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Data;
 using BExIS.UI.Models;
@@ -19,6 +20,8 @@ using BExIS.UI.Hooks.Logs;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
+    
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class FileController : Controller
     {
         // GET: File

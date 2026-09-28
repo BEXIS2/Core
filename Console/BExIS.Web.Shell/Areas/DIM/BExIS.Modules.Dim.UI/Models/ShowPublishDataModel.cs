@@ -8,6 +8,7 @@ namespace BExIS.Modules.Dim.UI.Models
     {
         public List<ListItem> Brokers;
         public long DatasetId;
+        public string Title;
         public bool EditRights;
         public bool DownloadRights;
         public bool MetadataIsValid;
@@ -22,7 +23,8 @@ namespace BExIS.Modules.Dim.UI.Models
             EditRights = false;
             DownloadRights = false;
             MetadataIsValid = false;
-        }
+            Title = "No title available";
+    }
     }
 
     public class PublicationModel

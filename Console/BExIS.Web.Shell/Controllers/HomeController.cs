@@ -12,6 +12,7 @@ using System.Configuration;
 using System.IO;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Data;
 using Vaiona.Web.Mvc.Models;
@@ -19,6 +20,7 @@ using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Web.Shell.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class HomeController : Controller
     {
         private readonly UserManager _userManager;

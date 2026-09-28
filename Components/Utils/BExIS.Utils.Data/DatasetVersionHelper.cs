@@ -3,6 +3,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using System.Threading.Tasks;
+using Vaiona.Web.Mvc.Modularity;
 
 
 namespace BExIS.Utils.Data
@@ -16,7 +17,6 @@ namespace BExIS.Utils.Data
             bool isPublic = false;
             bool isVerionReady = false;
 
-
             using (var datasetManager = new DatasetManager())
             {
                 var permissionManager = new EntityPermissionManager();
@@ -29,7 +29,7 @@ namespace BExIS.Utils.Data
                 // if dataset is deleted and public return the latest version
                 if (dataset.Status == DatasetStatus.Deleted && isPublic)
                 {
-                    if (tagNr > 0)
+                    if (tagNr > 0 && useTags)
                     {
                         return datasetManager.GetLatestVersionIdByTagNr(datasetId, tagNr);
                     }

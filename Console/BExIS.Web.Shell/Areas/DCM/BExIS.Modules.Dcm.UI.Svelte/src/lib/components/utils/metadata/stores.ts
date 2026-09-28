@@ -4,6 +4,8 @@ import type { SystemMappingEditModel } from '../../../../routes/m/edit/types';
 
 export const metadataStore = writable<any>();
 
+export const schemaStore = writable<any>();
+
 export const configStore = writable<any>();
 
 export const systemMappingsStore = writable<SystemMappingEditModel>();
@@ -13,3 +15,7 @@ export const hideStore = writable<string[]>([]);
 export const activeStore = writable<string[]>([]);
 
 export const validationStore = writable<validationStoretype>();
+
+export const descriptionStore = writable<{ type: 'simple' | 'complex', content: string, path: string } | null>(null);
+
+export const showAllDescriptionsStore = writable<boolean>(false);

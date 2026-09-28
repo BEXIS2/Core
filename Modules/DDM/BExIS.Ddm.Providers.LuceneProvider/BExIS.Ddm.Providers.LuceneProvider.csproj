@@ -190,6 +190,10 @@
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
       <Name>BExIS.Xml.Helpers</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\DIM\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
+      <Project>{34CAD2A2-6928-458B-B8DC-AF71D55F20CC}</Project>
+      <Name>BExIS.Dim.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\DIM\BExIS.Dim.Services\BExIS.Dim.Services.csproj">
       <Project>{CAC933A2-6849-4C61-82B4-CBF4052210CC}</Project>
       <Name>BExIS.Dim.Services</Name>

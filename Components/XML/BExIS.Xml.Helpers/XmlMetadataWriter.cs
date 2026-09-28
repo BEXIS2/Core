@@ -56,7 +56,7 @@ namespace BExIS.Xml.Helpers
         /// <seealso cref=""/>
         /// <param name="metadataStructureId"></param>
         /// <returns></returns>
-        public XDocument CreateMetadataXml(long metadataStructureId, XDocument importXml = null)
+        public XDocument CreateMetadataXml(long metadataStructureId, XDocument importXml = null, bool withChoiceChildrens = false)
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
@@ -108,8 +108,8 @@ namespace BExIS.Xml.Helpers
                         package.SetAttributeValue("number", i);
                         role.Add(package);
 
-                        if (mpu.Extra == null || !IsChoice(mpu.Extra))
-                            setChildren(package, mpu, importXml);
+                        if (mpu.Extra == null || (!IsChoice(mpu.Extra) || withChoiceChildrens))
+                            setChildren(package, mpu, importXml, withChoiceChildrens);
 
                     }
                 }
@@ -228,9 +228,11 @@ namespace BExIS.Xml.Helpers
                         }
                         else
                         {
-                            Debug.WriteLine("NULL OR EMPTY:------> " + usagePath);
-
-                            typeList = addAndReturnAttribute(element, nestedUsage, 1, 1);
+          
+                            // if the element is null, in xml as default the value should exist, but in case of the parent is a choice
+                            // there should only be a part if it exist otherwhise the xml document is not valid
+                            if (usage.Extra == null || !IsChoice(usage.Extra))
+                                typeList = addAndReturnAttribute(element, nestedUsage, 1, 1);                           
                         }
 
                         foreach (var type in typeList)
@@ -244,7 +246,7 @@ namespace BExIS.Xml.Helpers
 
                         typeList = addAndReturnAttribute(element, nestedUsage, 1, 1);
 
-                        if (nestedUsage.Extra == null || !IsChoice(nestedUsage.Extra))
+                        if (nestedUsage.Extra == null || (!IsChoice(nestedUsage.Extra) || withChoiceChildren))
                             setChildren(typeList.FirstOrDefault(), nestedUsage, importDocument, withChoiceChildren);
                     }
                 }
@@ -279,9 +281,8 @@ namespace BExIS.Xml.Helpers
                             }
                             else
                             {
-                                Debug.WriteLine("NULL OR EMPTY:------> " + usagePath);
-
-                                typeList = addAndReturnAttribute(element, attrUsage, 1, 1);
+                                if (usage.Extra == null || !IsChoice(usage.Extra))
+                                    typeList = addAndReturnAttribute(element, attrUsage, 1, 1);
                             }
 
                             foreach (var type in typeList)

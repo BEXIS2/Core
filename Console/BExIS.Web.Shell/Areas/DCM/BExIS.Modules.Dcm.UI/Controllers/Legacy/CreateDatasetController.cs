@@ -31,6 +31,7 @@ using BExIS.Utils.Data.Upload;
 using BExIS.Utils.Extensions;
 using BExIS.Xml.Helpers;
 using BEXIS.JSON.Helpers;
+using Microsoft.AspNet.Identity;
 using Newtonsoft.Json.Schema;
 using NHibernate.Cfg.MappingSchema;
 using System;
@@ -57,7 +58,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     {
         private CreateTaskmanager TaskManager;
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+        private readonly UserManager _userManager;
 
+        public CreateDatasetController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
 
         #region Submit And Create And Finish And Cancel and Reset
 
@@ -166,7 +172,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 int v = 1;
                                 if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
 
-                                TaskManager.Bus[CreateTaskmanager.METADATA_XML] = setSystemValuesToMetadata(datasetId, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newDataset);
+                                double tag = workingCopy.Tag!=null? workingCopy.Tag.Nr : 0;
+
+                                TaskManager.Bus[CreateTaskmanager.METADATA_XML] = setSystemValuesToMetadata(datasetId, v, tag, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newDataset);
 
 
                                 // check if metadata is valid against the metadatastructure
@@ -216,20 +224,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
 
                             LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
-
-                            using(var emailService = new EmailService())
+                            
+                            using (var emailService = new EmailService())
                             {
                                 if (newDataset)
                                 {
                                     emailService.Send(MessageHelper.GetCreateDatasetHeader(datasetId, entityname),
-                                        MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
+                                        MessageHelper.GetCreateDatasetMessage(datasetId, title, GetDisplayName(), entityname),
                                         GeneralSettings.SystemEmail
                                         );
                                 }
                                 else
                                 {
                                     emailService.Send(MessageHelper.GetMetadataUpdatHeader(datasetId, entityname),
-                                        MessageHelper.GetUpdateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityname),
+                                        MessageHelper.GetUpdateDatasetMessage(datasetId, title, GetDisplayName(), entityname),
                                         GeneralSettings.SystemEmail
                                         );
                                 }
@@ -375,6 +383,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             catch { }
 
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+        }
+
+        public string GetDisplayName()
+        {
+            string username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+                User user = _userManager.FindByNameAsync(username).Result;
+
+                return user.DisplayName;
+            }
+            catch { 
+                return "DEFAULT";
+            } 
         }
 
         public List<ListViewItem> LoadDatasetViewList()
@@ -704,7 +727,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return false;
         }
 
-        private XDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)
+        private XDocument setSystemValuesToMetadata(long datasetid, long version,double tag, long metadataStructureId, XmlDocument metadata, bool newDataset)
         {
             SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
 
@@ -713,7 +736,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied };
             else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataLastModfied };
 
-            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version,tag, metadataStructureId, metadata, myObjArray);
 
             return XmlUtility.ToXDocument(metadata);
         }
@@ -802,7 +825,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         xVersion,
                                         xpath,
                                         DefaultEntitiyReferenceType.MetadataLink.GetDisplayName(),
-                                        DateTime.Now
+                                        DateTime.Now,
+                                        "",
+                                        ""
                                     ));
                             }
                         }

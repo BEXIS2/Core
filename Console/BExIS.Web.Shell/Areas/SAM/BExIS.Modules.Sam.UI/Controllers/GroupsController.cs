@@ -122,16 +122,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
         }
 
-        /// <summary>
-        /// ToDo: Documentation
-        /// </summary>
-        /// <returns></returns>
         public ActionResult Index()
         {
             string module = "SAM";
 
-            //ViewData["app"] = SvelteHelper.GetApp(module);
-            //ViewData["start"] = SvelteHelper.GetStart(module);
+            ViewData["app"] = SvelteHelper.GetApp(module);
+            ViewData["start"] = SvelteHelper.GetStart(module);
 
             return View();
         }

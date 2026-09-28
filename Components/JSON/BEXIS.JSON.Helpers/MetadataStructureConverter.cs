@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using Vaiona.Persistence.Api;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace BEXIS.JSON.Helpers
@@ -229,6 +230,52 @@ namespace BEXIS.JSON.Helpers
 
                 //current.Properties.Add("@ref",currentRef);
                 current.Properties.Add("#text", currentText);
+
+                // add metadata parameters (XSD attributes) as @-prefixed properties
+                // load parameter usages directly from the database to avoid lazy-loading issues
+                using (var metadataAttributeManager = new MetadataAttributeManager())
+                {
+                    var uow = metadataAttributeManager.GetIsolatedUnitOfWork();
+                    var paramUsageRepo = uow.GetReadOnlyRepository<MetadataParameterUsage>();
+                    // query all parameter usages where Master == this metadata attribute
+                    var parameterUsages = paramUsageRepo.Query(p => p.Master.Id == type.Id).ToList();
+
+                    var paramRepo = uow.GetReadOnlyRepository<MetadataParameter>();
+
+                    foreach (var paramUsage in parameterUsages)
+                    {
+                        string attrKey = "@" + paramUsage.Label;
+                        if (!current.Properties.ContainsKey(attrKey))
+                        {
+                            JSchema attrSchema = new JSchema();
+
+                            // load the parameter member to get its datatype
+                            var freshMember = paramRepo.Get(paramUsage.Member.Id);
+                            if (freshMember != null && freshMember.DataType != null)
+                            {
+                                attrSchema.Type = convertToJSchemaType(freshMember.DataType);
+                            }
+                            else
+                            {
+                                attrSchema.Type = JSchemaType.String;
+                            }
+
+                            // set default value if available
+                            if (!string.IsNullOrEmpty(paramUsage.DefaultValue))
+                            {
+                                attrSchema.Default = JToken.FromObject(paramUsage.DefaultValue);
+                            }
+
+                            // set fixed value if available
+                            if (!string.IsNullOrEmpty(paramUsage.FixedValue))
+                            {
+                                attrSchema.Default = JToken.FromObject(paramUsage.FixedValue);
+                            }
+
+                            current.Properties.Add(attrKey, attrSchema);
+                        }
+                    }
+                }
             }
 
             if (type.Self is MetadataCompoundAttribute)
@@ -276,6 +323,47 @@ namespace BEXIS.JSON.Helpers
                         else if (_childIsRequired)
                         {
                             current.Required.Add(lastPropName);
+                        }
+                    }
+                }
+
+                // add metadata parameters (XSD attributes) as @-prefixed properties
+                // load parameter usages directly from the database to avoid lazy-loading issues
+                using (var metadataAttributeManager = new MetadataAttributeManager())
+                {
+                    var uow = metadataAttributeManager.GetIsolatedUnitOfWork();
+                    var paramUsageRepo = uow.GetReadOnlyRepository<MetadataParameterUsage>();
+                    var paramRepo = uow.GetReadOnlyRepository<MetadataParameter>();
+                    var parameterUsages = paramUsageRepo.Query(p => p.Master.Id == type.Id).ToList();
+
+                    foreach (var paramUsage in parameterUsages)
+                    {
+                        string attrKey = "@" + paramUsage.Label;
+                        if (!current.Properties.ContainsKey(attrKey))
+                        {
+                            JSchema attrSchema = new JSchema();
+
+                            var freshMember = paramRepo.Get(paramUsage.Member.Id);
+                            if (freshMember != null && freshMember.DataType != null)
+                            {
+                                attrSchema.Type = convertToJSchemaType(freshMember.DataType);
+                            }
+                            else
+                            {
+                                attrSchema.Type = JSchemaType.String;
+                            }
+
+                            if (!string.IsNullOrEmpty(paramUsage.DefaultValue))
+                            {
+                                attrSchema.Default = JToken.FromObject(paramUsage.DefaultValue);
+                            }
+
+                            if (!string.IsNullOrEmpty(paramUsage.FixedValue))
+                            {
+                                attrSchema.Default = JToken.FromObject(paramUsage.FixedValue);
+                            }
+
+                            current.Properties.Add(attrKey, attrSchema);
                         }
                     }
                 }
@@ -356,6 +444,11 @@ namespace BEXIS.JSON.Helpers
             JSchema refValue = new JSchema();
             refValue.Type = JSchemaType.String;
             current.Properties.Add("@ref", refValue);
+
+            // party id
+            JSchema partyIdValue = new JSchema();
+            partyIdValue.Type = JSchemaType.String;
+            current.Properties.Add("@partyid", partyIdValue);
 
             return current;
         }

@@ -610,7 +610,7 @@
              <remarks>
              </remarks>
         </member>
-        <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataStatisticOutController.Post(BExIS.Modules.Dim.UI.Models.Api.PostApiMetadataStatisticModel)">
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.MetadataStatisticOutController.Post(BExIS.Dim.Helpers.Models.PostApiMetadataStatisticModel)">
             <summary>
             Get a list of unique metadata values, count and list of occurrence for a given XPath.
             </summary>
@@ -892,6 +892,14 @@
              <returns>metadata as xml or json</returns>
         </member>
         <member name="M:BExIS.Modules.Dim.UI.Controllers.PublishController.Start(System.Int64,System.Int32)">
+            <summary>
+            Entrypoint for Publish Hook
+            </summary>
+            <param name="id"></param>
+            <param name="version"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BExIS.Modules.Dim.UI.Controllers.PublishController.StartView(System.Int64,System.Int32)">
             <summary>
             Entrypoint for Publish Hook
             </summary>

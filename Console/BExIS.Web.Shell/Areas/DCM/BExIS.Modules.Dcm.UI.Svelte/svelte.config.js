@@ -8,6 +8,9 @@ const config = {
 	// Consult https://kit.svelte.dev/docs/integrations#preprocessors
 	// for more information about preprocessors
 	preprocess: vitePreprocess(),
+	esbuild:{
+		drop: ['console'] 
+	},
 	kit: {
 		adapter: adapter({
 			pages: '../BExIS.Modules.Dcm.UI/Scripts/svelte', // ../BExIS.Modules.Dcm.UI/Scripts/svelte
@@ -21,7 +24,6 @@ const config = {
 			relative: true,
 			base: process.env.NODE_ENV === 'production' ? '/dcm' : '' // add module id here,
 		},
-
 		alias: {
 			$models: './src/models',
 			$services: './src/services'

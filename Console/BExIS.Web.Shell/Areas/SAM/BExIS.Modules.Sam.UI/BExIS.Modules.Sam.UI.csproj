@@ -128,6 +128,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\API\EntityPermissionsController.cs" />
+    <Compile Include="Controllers\API\FeaturePermissionsController.cs" />
     <Compile Include="Controllers\API\GroupsController.cs" />
     <Compile Include="Controllers\API\UsersController.cs" />
     <Compile Include="Controllers\DatasetsController.cs" />
@@ -145,7 +147,8 @@
     <Compile Include="Helpers\Attributes.cs" />
     <Compile Include="Helpers\FormerMemberStatus.cs" />
     <Compile Include="Helpers\SAMSeedDataGenerator.cs" />
-    <Compile Include="Hooks\UserPermissionsHook.cs" />
+    <Compile Include="Hooks\UserPermissionsViewHook.cs" />
+    <Compile Include="Hooks\UserPermissionsEditHook.cs" />
     <Compile Include="Models\DatasetModels.cs" />
     <Compile Include="Models\DatasetStatModel.cs" />
     <Compile Include="Models\DecisionModels.cs" />
@@ -242,6 +245,8 @@
     <Content Include="Views\FormerMember\_formerMemberSearch.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Views\Datasets\UndoDelete.cshtml" />
+    <Content Include="Views\Users\Index_Old.cshtml" />
+    <Content Include="Views\Groups\Index_Old.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

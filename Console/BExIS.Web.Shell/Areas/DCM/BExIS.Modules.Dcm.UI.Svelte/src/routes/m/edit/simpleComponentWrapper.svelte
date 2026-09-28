@@ -1,34 +1,141 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import {
-		TextInput,
-		NumberInput,
-		TextArea,
-		DropdownKVP,
-		helpStore,
-		CodeEditor
-	} from '@bexis2/bexis2-core-ui';
-	import { SlideToggle } from '@skeletonlabs/skeleton';
+	import { getConfigStore, getLabelByPath, getNodeByPath, getValueByPath, hideDescriptionHandler, showDescriptionHandler, updateValidationState} from '$lib/components/utils/metadata/metadataComponentUtils';
 
-	import { getValueByPath, setValueByPath, updateMetadataStore } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import SimpleComponent from '$lib/components/metadata/simpleComponent.svelte';
+	import { metadataStore } from '$lib/components/utils/metadata/stores';
 
-	import SimpleComponent from './simpleComponent.svelte';
+	import { onMount, createEventDispatcher } from 'svelte';
+	import { customComponentsCatalog } from '$lib/components/customComponents/componentCatalog';
+	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
 
 	export let simpleComponent: any;
 	export let path: string;
 	export let required: boolean = false;
-
-	let label: string = !path
-		? ''
-		: path.split('.').length > 1
-			? path.split('.')[path.split('.').length - 1]
-			: path;
+	export	let isMulti: boolean = false;
 
 	let value = getValueByPath(path);
+	let label = getLabelByPath(path);
+
+	metadataStore.subscribe(() => {
+		if(!isMulti)
+		{	
+			value = getValueByPath(path); 
+		}
+		else // if its multi, then value is an array
+		{
+			value = getNodeByPath(path); // get node instead of value to get an array
+		}
+
+	});
+
+
+
+ let config: any;
+	let isAnchor: boolean = false;
+	let isVisible: boolean = true;
+	let customComponent: any;
+// dispatcher to forward events to parent components
+const dispatch = createEventDispatcher();
+
+	onMount(async () => {
+
+		config = getConfigStore();
+
+		//console.log('[simpleComponentWrapper] path:', path, 'config:', config);
+
+		if (!config?.components) {
+			//console.log('[simpleComponentWrapper] no config.components, skipping');
+			return;
+		}
+
+		for (const component of config.components) {
+
+			// strip array indices from path (e.g. "A.2.B.0.C" -> "A.B.C") for anchorpoint matching
+			let pathWithoutIndices = path.split('.').filter(p => isNaN(Number(p))).join('.');
+			// console.log('[simpleComponentWrapper] checking anchor:', component.globalSettings.anchorpoint, 'vs path:', path, 'pathWithoutIndices:', pathWithoutIndices);
+
+			// check if this path is under this component's anchorpoint
+
+			const anchorpoint = component.globalSettings.anchorpoint;
+			const parent = pathWithoutIndices.substring(0, pathWithoutIndices.lastIndexOf('.'))
+			console.log("🚀 ~ parent:", parent)
+			const anchor_parent = anchorpoint.substring(0, anchorpoint.lastIndexOf('.'))
+
+			let isUnderThisAnchor = anchorpoint == path // match
+			|| anchorpoint == pathWithoutIndices // exact	match without indices
+			|| pathWithoutIndices.startsWith(anchorpoint + '.')
+			|| anchor_parent == parent; // sameParent
+			
+			if (isUnderThisAnchor) {
+
+				if (component.globalSettings.anchorpoint == path || component.globalSettings.anchorpoint == pathWithoutIndices) {
+					isAnchor = true;
+					let componentName = component.meta.component_name;
+					//console.log('[simpleComponentWrapper] MATCH! anchor:', component.globalSettings.anchorpoint, 'component:', componentName, 'in catalog:', !!customComponentsCatalog[componentName]);
+					customComponent = customComponentsCatalog[componentName]?.component;
+					if (!customComponent) {
+						console.warn('[simpleComponentWrapper] component not found in catalog:', componentName);
+					}
+				}
+
+				// only check is_visible for variables belonging to this component's anchor
+				for (const variable of component.mode.variables.variable) {
+					//console.log('[simpleComponentWrapper] checking variable:', variable.JSONPath, 'is_visible:', variable.is_visible, 'vs path:', path, 'pathWithoutIndices:', pathWithoutIndices,path, component.mode.variables);
+			 	if ((variable.JSONPath == path || variable.JSONPath == pathWithoutIndices) && variable.is_visible == false) {
+						isVisible = false;
+					}
+				}
+			}
+		}
+
+		//console.log('[simpleComponentWrapper] result for path:', path, 'isAnchor:', isAnchor, 'isVisible:', isVisible, 'customComponent:', !!customComponent);
+
+	})
+
+
+	function handleShowDescription(e: CustomEvent<any>) {
+		showDescriptionHandler(e, 'simple');
+	}
+
+	function handleHideDescription(e: CustomEvent<any>) {
+		hideDescriptionHandler(e, 'simple');
+	}
+	
+
+	// in case the custom component fails to load, we can use a fallback component
+	let useFallback = false;
+	function handleFallback(e) {
+		useFallback = true;
+	}
+
 	
 </script>
 
 {#if path && simpleComponent.properties}
-	<SimpleComponent {simpleComponent} {path} {required} {label} {value} on:reload />
+ {#if isVisible && !isAnchor}
+			<SimpleComponent 
+			{simpleComponent} 
+			{path} 
+			{required} 
+			{label} 
+			bind:value={value} 
+			on:updated
+			{isMulti} 
+			
+			/>
+
+	{:else if isAnchor && !useFallback}
+		<div class="pr-2" id={path}>
+
+		<svelte:component this={customComponent} anchor={path}
+						on:showDescription={handleShowDescription}
+						on:hideDescription={handleHideDescription}
+						path={path}
+						mode="edit"
+						on:updated
+						on:fallback={handleFallback}
+					/>
+		</div>
+	{/if}
 {/if}
 

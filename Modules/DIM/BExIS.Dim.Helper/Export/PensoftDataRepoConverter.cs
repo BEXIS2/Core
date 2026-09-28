@@ -35,8 +35,7 @@ namespace BExIS.Dim.Helpers.Export
                 long datasetId = datasetVersion.Dataset.Id;
                 string name = datasetManager.GetDatasetVersion(datasetVersionId).Dataset.MetadataStructure.Name;
 
-                XmlDocument metadata = OutputMetadataManager.GetConvertedMetadata(datasetId,
-                    TransmissionType.mappingFileExport, name, false);
+                XmlDocument metadata = OutputMetadataManager.GetConvertedMetadata(datasetId, datasetVersionId, TransmissionType.mappingFileExport, name, false);
 
                 // create links to the api calls of the primary data?
 

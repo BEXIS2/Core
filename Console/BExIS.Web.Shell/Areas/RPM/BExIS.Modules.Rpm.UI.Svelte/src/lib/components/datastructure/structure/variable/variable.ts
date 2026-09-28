@@ -10,18 +10,18 @@ const suite = create((data = {}, fieldName) => {
 	const isTemplateRequired = get(isTemplateRequiredStore);
 	const isMeaningRequired = get(isMeaningRequiredStore);
 	//only(fieldName);
-	test('name', 'name is required', () => {
+	test('name', 'variable name is required', () => {
 		enforce(data.name).isNotBlank();
 		//console.log("description");
 	});
 
-	test('description', 'description is required', () => {
+	test('description', 'variable description is required', () => {
 		enforce(data.description).isNotBlank();
 		//console.log("description");
 	});
 
 	// Datatype
-	test('dataType', 'datatype is required', () => {
+	test('dataType', 'data type is required', () => {
 		//console.log("dataType",data.dataType);
 
 		enforce(data.dataType).isNotNull();
@@ -32,7 +32,7 @@ const suite = create((data = {}, fieldName) => {
 	skipWhen(
 		(res) => res.hasErrors('dataType'),
 		() => {
-			test('dataType', 'data type not match with the unit', () => {
+			test('dataType', 'data type does not match with the unit', () => {
 				if (data.unit.dataTypes.includes(data.dataType.text)) {
 					return true;
 				} else {
@@ -65,7 +65,7 @@ const suite = create((data = {}, fieldName) => {
 	skipWhen(
 		(res) => res.hasErrors('unit'),
 		() => {
-			test('unit', 'unit not match with the data type', () => {
+			test('unit', 'unit does not match with the data type', () => {
 				if (data.unit.dataTypes.includes(data.dataType.text)) {
 					return true;
 				} else {
@@ -73,7 +73,7 @@ const suite = create((data = {}, fieldName) => {
 				}
 			});
 
-			test('unit', 'unit not match with the template', () => {
+			test('unit', 'unit does not match with the template', () => {
 				if (!isTemplateRequired && (!data.template || data.template.id == 0)) {
 					return true;
 				}
@@ -114,7 +114,7 @@ const suite = create((data = {}, fieldName) => {
 	skipWhen(
 		(res) => res.hasErrors('variableTemplate'),
 		() => {
-			test('variableTemplate', 'unit not match with the template', () => {
+			test('variableTemplate', 'unit does not match with the template', () => {
 				//console.log('🚀 ~ file: variable.ts:100 ~ test ~ data.template:', data.template);
 				if (!isTemplateRequired && (!data.template || data.template.id == 0)) {
 					return true;
@@ -127,7 +127,7 @@ const suite = create((data = {}, fieldName) => {
 				}
 			});
 
-			test('variableTemplate', 'data type not match with the template', () => {
+			test('variableTemplate', 'data type does not match with the template', () => {
 				// run this check only
 				// 1. template is required
 				// 2. template is not required but set

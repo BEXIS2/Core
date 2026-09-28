@@ -1,21 +1,38 @@
 ﻿using BExIS.Security.Entities.Subjects;
+using BExIS.UI.Helpers;
+using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
     public class CreateGroupModel
     {
+        [JsonProperty("description")]
         public string Description { get; set; }
 
         [Required]
         [Remote("ValidateGroupname", "Groups")]
+        [JsonProperty("name")]
         public string Name { get; set; }
 
+        [JsonProperty("type")]
         public int Type { get; set; }
+
+        [JsonProperty("userIds")]
+        public List<long> UserIds { get; set; }
+
+        public CreateGroupModel()
+        {
+            Name = "";
+            Description = "";
+            UserIds = new List<long>();
+        }
     }
 
     public class DeleteGroupModel
@@ -88,10 +105,14 @@ namespace BExIS.Modules.Sam.UI.Models
         public string Description { get; set; }
 
         [JsonProperty("creationDate")]
-        public DateTimeOffset CreationDate { get; set; }
+        public DateTime CreationDate { get; set; }
 
         [JsonProperty("modificationDate")]
-        public DateTimeOffset ModificationDate { get; set; }
+        public DateTime ModificationDate { get; set; }
+
+        [JsonProperty("userIds")]
+        public List<long> UserIds { get; set; }
+
 
         public static ReadGroupModel Convert(Group group)
         {
@@ -100,21 +121,64 @@ namespace BExIS.Modules.Sam.UI.Models
                 Id = group.Id,
                 Name = group.Name,
                 Description = group.Description,
-                CreationDate = DateTimeOffset.Now,
-                ModificationDate = DateTimeOffset.Now
+                CreationDate = group.CreationDate,
+                ModificationDate = group.ModificationDate,
+                UserIds = group.Users.Select(u => u.Id).ToList()
+            };
+        }
+    }
+
+    public class GroupModel
+    {
+        [JsonProperty("id")]
+        public long Id { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("description")]
+        public string Description { get; set; }
+
+        [JsonProperty("creationDate")]
+        public DateTime CreationDate { get; set; }
+
+        [JsonProperty("modificationDate")]
+        public DateTime ModificationDate { get; set; }
+
+        public static GroupModel Convert(Group group)
+        {
+            return new GroupModel()
+            {
+                Id = group.Id,
+                Name = group.Name,
+                Description = group.Description,
+                CreationDate = group.CreationDate,
+                ModificationDate = group.ModificationDate,
             };
         }
     }
 
     public class UpdateGroupModel
     {
+        [JsonProperty("description")]
         public string Description { get; set; }
-        public int GroupType { get; set; }
+
+        [JsonProperty("type")]
+        public int Type { get; set; }
         public long Id { get; set; }
 
         [Required]
         [Remote("ValidateGroupname", "Groups", AdditionalFields = "Id")]
         public string Name { get; set; }
+
+        [JsonProperty("userIds")]
+        public List<long> UserIds { get; set; }
+
+        [JsonProperty("creationDate")]
+        public DateTime CreationDate { get; set; }
+
+        [JsonProperty("modificationDate")]
+        public DateTime ModificationDate { get; set; }
 
         public static UpdateGroupModel Convert(Group group)
         {
@@ -122,7 +186,10 @@ namespace BExIS.Modules.Sam.UI.Models
             {
                 Id = group.Id,
                 Name = group.Name,
-                Description = group.Description
+                Description = group.Description,
+                UserIds = group.Users.Select(u => u.Id).ToList(),
+                CreationDate = group.CreationDate,
+                ModificationDate= group.ModificationDate
             };
         }
     }

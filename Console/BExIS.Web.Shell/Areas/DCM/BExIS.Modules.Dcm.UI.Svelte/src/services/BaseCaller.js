@@ -1,6 +1,6 @@
 // Implementations for all the calls for the pokemon endpoints.
 //import Api from "./Api";
-import { host } from '@bexis2/bexis2-core-ui';
+import { host, Api } from '@bexis2/bexis2-core-ui';
 
 // go to a internal action
 export const goTo = async (url, intern = true) => {
@@ -15,8 +15,6 @@ export const goTo = async (url, intern = true) => {
 	}
 };
 
-import { Api } from '@bexis2/bexis2-core-ui';
-
 export const getToken = async () => {
 	try {
 		const response = await Api.get('/tokens/get');
@@ -26,3 +24,15 @@ export const getToken = async () => {
 		throw error;
 	}
 };
+
+export const goToEntity = async (url, id, version, tag) => {
+
+ if(version>=0 && tag==0){
+		goTo(`${url}?id=${id}&version=${version}`);
+	}
+
+	if(version==0 && tag!=0){
+		goTo(`${url}?${id}&tag=${tag}`);
+	}
+};
+

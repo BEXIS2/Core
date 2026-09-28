@@ -1,12 +1,44 @@
 ﻿using BExIS.Security.Entities.Subjects;
+using BExIS.UI.Helpers;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Mvc;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
+    public class UserModel
+    {
+        [JsonProperty("id")]
+        public long Id { get; set; }
+
+        [JsonProperty("email")]
+        public string Email { get; set; }
+
+        [JsonProperty("userName")]
+        public string UserName { get; set; }
+
+        [JsonProperty("registrationDate")]
+        public DateTime RegistrationDate { get; set; }
+
+        [JsonProperty("modificationDate")]
+        public DateTime ModificationDate { get; set; }
+
+        public static UserModel Convert(User user)
+        {
+            return new UserModel()
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                RegistrationDate = user.RegistrationDate,
+                ModificationDate = user.ModificationDate
+            };
+        }
+    }
+
     public class ReadUserModel
     {
         [JsonProperty("id")]
@@ -18,11 +50,14 @@ namespace BExIS.Modules.Sam.UI.Models
         [JsonProperty("userName")]
         public string UserName { get; set; }
 
-        [JsonProperty("creationDate")]
-        public DateTime CreationDate { get; set; }
+        [JsonProperty("registrationDate")]
+        public DateTime RegistrationDate { get; set; }
 
         [JsonProperty("modificationDate")]
         public DateTime ModificationDate { get; set; }
+
+        [JsonProperty("groupIds")]
+        public List<long> GroupIds { get; set; }
 
         public static ReadUserModel Convert(User user)
         {
@@ -31,8 +66,9 @@ namespace BExIS.Modules.Sam.UI.Models
                 Id = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
-                CreationDate = user.RegistrationDate,
-                ModificationDate = user.RegistrationDate
+                RegistrationDate = user.RegistrationDate,
+                ModificationDate = user.ModificationDate,
+                GroupIds = user.Groups.Select(g => g.Id).ToList()
             };
         }
     }
@@ -41,11 +77,24 @@ namespace BExIS.Modules.Sam.UI.Models
     {
         [Remote("ValidateEmail", "Users")]
         [Required]
+        [JsonProperty("email")]
         public string Email { get; set; }
 
         [Remote("ValidateUsername", "Users")]
         [Required]
+        [JsonProperty("userName")]
         public string UserName { get; set; }
+
+        [JsonProperty("groupIds")]
+        public List<long> GroupIds { get; set; }
+
+        public CreateUserModel()
+        {
+            Email = "";
+            UserName = "";
+            GroupIds = new List<long>();
+        }
+
     }
 
     public class DeleteUserModel
@@ -65,13 +114,25 @@ namespace BExIS.Modules.Sam.UI.Models
         [Remote("ValidateUsername", "Users", AdditionalFields = "Id")]
         public string UserName { get; set; }
 
+        [JsonProperty("groupIds")]
+        public List<long> GroupIds { get; set; }
+
+        [JsonProperty("registrationDate")]
+        public DateTime RegistrationDate { get; set; }
+
+        [JsonProperty("modificationDate")]
+        public DateTime ModificationDate { get; set; }
+
         public static UpdateUserModel Convert(User user)
         {
             return new UpdateUserModel()
             {
                 Email = user.Email,
                 Id = user.Id,
-                UserName = user.Name
+                UserName = user.Name,
+                RegistrationDate = user.RegistrationDate,
+                ModificationDate = user.ModificationDate,
+                GroupIds = user.Groups.Select(g => g.Id).ToList()
             };
         }
     }
