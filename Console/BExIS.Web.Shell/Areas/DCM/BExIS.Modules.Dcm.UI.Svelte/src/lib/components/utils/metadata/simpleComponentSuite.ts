@@ -26,11 +26,16 @@ const suite = create((fieldName: string = '') => {
    if (validationStoreValues.simpleTypeValidationItems.length > 0) {
         each(validationStoreValues.simpleTypeValidationItems, (item) => {
             if ((fieldName && fieldName == item.path) || fieldName === '') {
-                const data = getValueByPath(item.path);
+                let data = getValueByPath(item.path);
+
+                if(data === undefined || data === null){ // if value is undefined or null, try to get the value from the node by path to grab array
+                    data = getNodeByPath(item.path);
+                }
                 //console.log("🚀 ~ data:", data)
 
                 //Validate required field
                 if(item.required){
+                    console.log('Validating required field:',item.label, item.path, data);
                     test( item.path, `${item.label} is required`, () => {      
                         enforce(data).isNotBlank();
                     });
@@ -84,9 +89,17 @@ const suite = create((fieldName: string = '') => {
                 // Validate enum values if defined
                 if(item.enum && item.enum.length>0 && !isEmpty(data)){
                     //console.log('Validating regex pattern for field:', item.path);
-                    test( item.path, `Invalid ${item.label}. Choose from the list.`, () => {
-                        enforce(data).isValueOf(item.enum);
-                    });
+                    if (Array.isArray(data)) {
+                        test( item.path, `Invalid ${item.label}. Choose from the list.`, () => {
+                            data.forEach((value: any) => {
+                                enforce(value['#text']).isValueOf(item.enum);
+                            });
+                        });
+                    } else {
+                        test( item.path, `Invalid ${item.label}. Choose from the list.`, () => {
+                            enforce(data).isValueOf(item.enum);
+                        });
+                    }
                 }   
 
 
