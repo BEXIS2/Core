@@ -84,7 +84,7 @@
 
 			if (id > 0) m = await apiCalls.GetMetadata(id, datasetInfos.version, 0);
 			else m = schemaToJson(s);
-			console.log('Metadata loaded', m, JSON.stringify(m));
+			console.log('Metadata loaded', m);
 			setMetadataStore(m);
 
 			const configJson = await apiCalls.GetComponentConfig(datasetInfos.entityTemplateId, 'edit');

@@ -973,6 +973,7 @@ export function getMetadata(path: string): { value: any, ref: any, label: string
 export function updateValidationState(path: string, res: any): void {
 	let errorMessage = '';
 	if (res && res.hasErrors(path)) {
+		//console.log('🚀 ~ updateValidationState ~ path:', path, 'res:', res, 'hasErrors:', res.hasErrors(path), 'getErrors:', res.getErrors(path));
 		errorMessage = res.getErrors(path).join('.  ');
 	}
 
@@ -1003,7 +1004,7 @@ export function registerValidationItem(
 
 			//	check if the schemaNode is a complex component and add the specific validation item to the validation store
 			if(isSimpleComponent(schemaNode, path)){
-					//console.log('🚀 ~ registerValidationItem ~ simple:', path);
+					console.log('🚀 ~ registerValidationItem ~ simple:', path);
 				let validationItem = createSimpleComponentValidationItem(
 					path,
 					label,
@@ -1013,7 +1014,7 @@ export function registerValidationItem(
 				ValidationStoreAddSimpleComponent(validationItem, forceRegistration);
 		}else{
 
-			//console.log('🚀 ~ registerValidationItem ~ complex:', path);
+			console.log('🚀 ~ registerValidationItem ~ complex:', path);
 
 			let validationItem = createComplexComponentValidationItem(
 				path,

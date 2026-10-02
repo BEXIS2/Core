@@ -67,7 +67,7 @@
 	
 
 	onMount(async () => {
-		//console.log('🚀 ~ onMount ~ simpleComponent:', value)
+		console.log('🚀 ~ onMount ~ simpleComponent:'+label , value)
 
 		// checks for date
 		if (
@@ -90,6 +90,11 @@
 		}
 
 		if (isMulti && simpleComponent.properties['#text'].enum) {
+			value = sanitizeEmptyMultiValue(value);
+			if (hasArrayOnlyOneEmtpy(value)) {
+				value = [];
+			}
+			
 			jsonItems = simpleComponent.properties['#text'].enum.map((item: any) => {
 				return {
 					'@ref': '',
@@ -115,6 +120,34 @@
 
 		}, 100);
 	});
+
+ function hasArrayOnlyOneEmtpy(vvalue: any): boolean {
+		if (!Array.isArray(vvalue)) return false;
+		return vvalue.length > 0 && vvalue.every((item) => {
+			if (typeof item === 'string') return item === '';
+			if (item && typeof item === 'object') return item['#text'] === '' || item['#text'] === undefined || item['#text'] === null;
+			return item === null || item === undefined;
+		});
+	}
+
+	function sanitizeEmptyMultiValue(valueToSanitize: any): any {
+		if (!Array.isArray(valueToSanitize)) return valueToSanitize;
+
+		const cleaned = valueToSanitize.filter((item) => {
+			if (typeof item === 'string') return item !== '';
+			if (item && typeof item === 'object') return item['#text'] !== '' && item['#text'] !== undefined && item['#text'] !== null;
+			return item !== null && item !== undefined;
+		});
+
+		return cleaned;
+	}
+
+	$: if (isMulti && Array.isArray(value)) {
+		const cleanedValue = sanitizeEmptyMultiValue(value);
+		if (cleanedValue.length !== value.length || cleanedValue.some((item, index) => item !== value[index])) {
+			value = cleanedValue;
+		}
+	}
 
 	// Do not mutate validation state on unmount.
 	// Collapsing sections via toggleShow unmounts child fields temporarily.
@@ -161,12 +194,12 @@
 	}
 
 	function updateValue(value: any, _path: string) {
-		// console.log("🚀 ~ updateValue ~ value:", value)
+		console.log("🚀 ~ updateValue ~ value:"+label, value)
 		// check changed field only
 		res = suite(_path);
 
 		setTimeout(async () => {
-					//console.log("🚀 ~ path:", path, res.isValid(path))
+					//console.log("🚀 ~ path:", _path, res.isValid(_path), res.getErrors(_path), value)
 			updateValidationState(_path, res);
 		}, 10);
 	}
@@ -346,6 +379,7 @@
 					{/if}
 				{:else}
 					<!-- Handle multi select for array of simple types -->
+
 					{#if isMulti}
 						<MultiSelect
 							{... commonProps}
