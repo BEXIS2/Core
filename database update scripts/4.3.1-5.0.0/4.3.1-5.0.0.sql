@@ -410,6 +410,17 @@ WHERE NOT EXISTS (
       AND inverse.versionno = 1
 );
 
+-- ---------------------------
+--  Users and Groups
+-- ---------------------------
+ALTER TABLE IF EXISTS public.groups
+    ADD COLUMN creationdate timestamp without time zone;
+
+ALTER TABLE IF EXISTS public.groups
+    ADD COLUMN modificationdate timestamp without time zone;
+
+ALTER TABLE IF EXISTS public.users
+    ADD COLUMN modificationdate timestamp without time zone;
 
 
 -- ---------------------------
