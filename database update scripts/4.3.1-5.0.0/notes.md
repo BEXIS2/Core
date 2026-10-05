@@ -1,10 +1,8 @@
 1. run db script
-2. set extension metadatastrutcure mapping -> title and description to system title and description
-
 
 ## if you have allready extensions
 
-3. change existing entitytemplates to extensions if exist
+32. change existing entitytemplates to extensions if exist
 4. create a dataset with extension
 5. grab metadata from database
 6. change title and description in metadata
