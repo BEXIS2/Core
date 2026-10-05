@@ -46,8 +46,8 @@
 	let viewDescription: string | null = null;
 
 	$: validationItem = $validationStore?.simpleTypeValidationItems?.find(
-		(i) => i.path === term_field_path
-	);
+		(i) => i.path === path
+	); // change to path because of may array positions that are not existing in term_field_path
 
 	console.log(targetVars);
 	let parameter = targetVars?.find((v) => v.target_variable === 'parameter')?.value ?? '';
@@ -175,10 +175,11 @@
 	// Update the value in the metadata store and validate it.
 	function updateValue(value: any, _path: string) {
 		res = suite(_path);
+
 		updateValidationState(_path, res);
 
 		const isNotEmpty = value != null && String(value).trim() !== '';
-		 console.log('🚀 ~ updateValue ~ path:', _path, 'value:', value, 'isNotEmpty:', isNotEmpty);
+		 console.log('🚀 ~ updateValue ~ path:', _path, 'value:', value, 'isNotEmpty:', isNotEmpty, res.isValid());
 		if (required && !isNotEmpty) {
 			validateCustomCondition(_path, false, 'Please select a term from the terminology service.');
 		} 
