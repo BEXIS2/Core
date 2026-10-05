@@ -125,6 +125,9 @@
 						updateValue(childvalue, childPathWithIndex);
 
 						//console.log("🚀 ~ onUpdateParty ~ dispatch reload for path:", selectorValue)
+
+						dispatch('updated');
+		
 					});
 			}
 		}, 100);
@@ -143,6 +146,9 @@
 		}
 		// update validationstore
 		ValidationStoreSetSimpleTypeValid(_path, res.isValid(_path), errorMessage);
+
+
+
 	}
 
 	if (getIsRequiredBySchemaAndPath(path)) {
