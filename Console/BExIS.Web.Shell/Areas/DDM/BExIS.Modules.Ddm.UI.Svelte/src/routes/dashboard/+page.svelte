@@ -170,7 +170,9 @@
 				on:click={() => switchTab('datasets')}>
 				<Fa icon={faTableColumns} class="mr-1" />
 				My Datasets
-				<span class="ml-1 text-xs text-surface-600 dark:text-surface-300">({datasets.length})</span>
+				<!-- Show the number of datasets -->
+				<!-- <span class="ml-1 text-xs text-surface-600 dark:text-surface-300">({datasets.length})</span> -->
+				
 			</button>
 			<button
 				class="px-4 py-2 text-sm font-medium border-b-2 transition-colors {activeTab === 'requests' ? 'border-primary-500 text-primary-700 dark:text-primary-300' : 'border-transparent text-surface-600 dark:text-surface-300 hover:text-surface-800'}"
@@ -211,17 +213,18 @@
 						class="badge {datasetRightType === tab.key ? 'variant-filled-primary' : 'variant-soft-surface'} cursor-pointer"
 						on:click={() => switchDatasetTab(tab.key)}>
 						{tab.label}
+						{#if datasets.length > 0 && datasetRightType === tab.key}
+							({datasets.length})
+						{/if}
 					</button>
 				{/each}
-				{#if datasetRightType === ''}
-					<span class="text-sm text-surface-600 dark:text-surface-300">Select a right type to load datasets</span>
-				{/if}
+				
 			</div>
-
-			{#if loadingDatasets}
+			
+			{#if datasetRightType === ''}
+				<div class="py-8 text-surface-900 dark:text-surface-300 text"><b>Select a permission type above to load datasets.</b></div>
+			{:else if loadingDatasets}
 				<TablePlaceholder cols={6} />
-			{:else if datasetRightType === ''}
-				<div class="text-center py-8 text-surface-600 dark:text-surface-300 text-sm">Select a right type above to load datasets.</div>
 			{:else if datasets.length > 0}
 				<div class="table table-compact w-full">
 					{#key datasetRightType + entityName}
@@ -233,9 +236,9 @@
 								optionsComponent: TableOptionsCasted,
 								columns: {
 									id: { header: 'ID', disableFiltering: true, fixedWidth: 70 },
-									type: { header: 'Type', fixedWidth: 60, disableFiltering: true, instructions: { renderComponent: TableTypeIconCasted, toStringFn: (v) => v, toSortableValueFn: (v) => v } },
+									type: { header: 'Type', fixedWidth: 65, disableFiltering: true, instructions: { renderComponent: TableTypeIconCasted, toStringFn: (v) => v, toSortableValueFn: (v) => v } },
 									hasTag: { header: 'Tag', fixedWidth: 60, disableFiltering: true, exclude: !useTags, instructions: { renderComponent: TableTagIconCasted, toStringFn: (v) => v ? 'yes' : 'no', toSortableValueFn: (v) => v } },
-									hasData: { header: 'Data', fixedWidth: 50, disableFiltering: true, disableSorting: true, instructions: { renderComponent: TableDataIconCasted, toStringFn: (v) => v ? 'yes' : 'no' } },
+									hasData: { header: 'Data', fixedWidth: 60, disableFiltering: true, instructions: { renderComponent: TableDataIconCasted, toStringFn: (v) => v ? 'yes' : 'no' } },
 									title: { header: 'Title' },
 									description: { header: 'Description', disableFiltering: true },
 									isValid: { header: 'Valid', fixedWidth: 80, instructions: { renderComponent: TableValidBadgeCasted, toStringFn: (v) => v === 'yes' ? 'valid' : 'invalid', toFilterableValueFn: (v) => v === 'yes' ? 'valid' : 'invalid', toSortableValueFn: (v) => v } },
