@@ -9,7 +9,7 @@
 	import { activeStore, hideStore, validationStore } from '$lib/components/utils/metadata/stores';
 	import { convertDisplayName } from '../../../lib/components/utils/metadata/metadataShared';
 	import Header from './MetadataComponentHeader.svelte';
-	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import suite from '$lib/components/utils/metadata/ComponentSuite';
 	import { onMount } from 'svelte';
 
 

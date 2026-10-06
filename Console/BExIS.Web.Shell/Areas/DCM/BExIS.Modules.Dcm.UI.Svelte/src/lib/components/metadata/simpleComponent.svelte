@@ -18,7 +18,7 @@
 		registerValidationItem
 	} from '$lib/components/utils/metadata/metadataComponentUtils';
 
-	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import suite from '$lib/components/utils/metadata/ComponentSuite';
 	import type {
 		MappingComponentConfig,
 	} from '$lib/components/utils/metadata/models';
@@ -67,7 +67,7 @@
 	
 
 	onMount(async () => {
-		console.log('🚀 ~ onMount ~ simpleComponent:'+label , value)
+		//console.log('🚀 ~ onMount ~ simpleComponent:'+label , value)
 
 		// checks for date
 		if (
@@ -194,7 +194,7 @@
 	}
 
 	function updateValue(value: any, _path: string) {
-		console.log("🚀 ~ updateValue ~ value:"+label, value)
+		// console.log("🚀 ~ updateValue ~ value:"+label, value)
 		// check changed field only
 		res = suite(_path);
 
@@ -372,6 +372,7 @@
 							bind:target={value}
 							isMulti={false}
 							clearable={required ? false : true}
+							on:clear={onChangeHandler}
 							on:change={onChangeHandler}
 							on:showDescription={handleShowDescription}
 							on:hideDescription={handleHideDescription}
@@ -392,6 +393,7 @@
 							bind:target={value}
 							isMulti={true}
 							clearable={required ? false : true}
+							on:clear={onChangeHandler}
 							on:change={onChangeHandler}
 							on:showDescription={handleShowDescription}
 							on:hideDescription={handleHideDescription}

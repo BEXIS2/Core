@@ -6,7 +6,7 @@
 
 	import { onMount, createEventDispatcher } from 'svelte';
 	import { customComponentsCatalog } from '$lib/components/customComponents/componentCatalog';
-	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import suite from '$lib/components/utils/metadata/ComponentSuite';
 
 	export let simpleComponent: any;
 	export let path: string;

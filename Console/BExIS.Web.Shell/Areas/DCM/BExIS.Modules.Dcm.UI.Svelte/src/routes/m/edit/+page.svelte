@@ -24,7 +24,7 @@
 		setSystemMappingsStore
 	} from '$lib/components/utils/metadata/metadataComponentUtils';
 	import type { SystemMappingEditModel } from '$lib/components/utils/metadata/models';
-	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import suite from '$lib/components/utils/metadata/ComponentSuite';
 	import MetadataHeader from './MetadataHeader.svelte';
 
 	// import active and hide store for metadata component
@@ -141,12 +141,14 @@
 				{/if}
 				<div class="nav-left scrollable bg-white dark:bg-surface-900 w-[280px] shrink-0 overflow-y-auto" class:nav-open={showNav}>
 					{#if m}
+					
 						<Functions
 							bind:metadata={m}
 							{saveWithError}
 							bind:datasetId={id}
 							on:navigate={() => (showNav = false)}
 						/>
+						
 					{/if}
 				</div>
 

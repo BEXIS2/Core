@@ -18,7 +18,7 @@
 	import { InputContainer, MultiSelect } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa';
 	import { faCircleCheck, faCircleQuestion, faXmark } from '@fortawesome/free-solid-svg-icons';
-	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import suite from '$lib/components/utils/metadata/ComponentSuite';
 	import { validationStore, metadataStore, systemMappingsStore } from '$lib/components/utils/metadata/stores';
 	import { getMappingComponentConfig } from '$lib/components/utils/metadata/mappingHelper';
 	import { GetPartyValue } from '../../../../services/MetadataCaller';

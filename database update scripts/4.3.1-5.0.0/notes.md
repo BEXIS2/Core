@@ -1,9 +1,8 @@
 1. run db script
 
-## if you have allready extensions
-
-32. change existing entitytemplates to extensions if exist
-4. create a dataset with extension
+## if you have allready extension
+2. change existing entitytemplates to extensions if exist
+3. create a dataset with extension
 5. grab metadata from database
 6. change title and description in metadata
 7. replace all updated existing extensions with the metadata from point 5

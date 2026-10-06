@@ -12,7 +12,7 @@
   import {convertDisplayName} from '../../../lib/components/utils/metadata/metadataShared';
 	import { goTo } from '$services/BaseCaller';
   import { createEventDispatcher } from 'svelte';
-	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import suite from '$lib/components/utils/metadata/ComponentSuite';
 	import { FileButton } from '@skeletonlabs/skeleton';
 
   const dispatch = createEventDispatcher();

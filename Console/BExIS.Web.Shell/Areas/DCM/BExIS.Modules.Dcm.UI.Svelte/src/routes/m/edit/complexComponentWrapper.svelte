@@ -9,14 +9,18 @@
 	import Header from './MetadataComponentHeader.svelte';
 	import { convertDisplayName } from '$lib/components/utils/metadata/metadataShared';
 	import { registerValidationItem, updateValidationState, getSchemaAttributes, getAttributeValue, updateAttribute } from '$lib/components/utils/metadata/metadataComponentUtils';
-	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import suite from '$lib/components/utils/metadata/ComponentSuite';
 	import Attributes from '$lib/components/metadata/Attributes.svelte';
+	import { onMount } from 'svelte';
 
 
 	export let complexComponent: any;
 	export let path: string;
 	export let required: boolean = false;
 	export let description: string = '';
+
+	let res = suite.get();
+
 
 
 	let label: string =
@@ -53,26 +57,30 @@
 	}
 
 
+	onMount(async () => {
+		
 	//#### VALIDATION	 ####
 	registerValidationItem(path, convertDisplayName(label), required, complexComponent);
 
-	let res = suite.get();
 
 	// init
-	setTimeout(async () => {
-		updateValidationState(path, res);
-	}, 100);
- 
+	validation();
+
+});
 
 	// Schema-driven attributes on this compound node (excluding @ref and @partyid)
-	$: schemaAttrs = getSchemaAttributes(complexComponent).filter(a => a !== '@partyid');
+$: schemaAttrs = getSchemaAttributes(complexComponent).filter(a => a !== '@partyid');
 	
-	function onChangeHandler(e: CustomEvent<any>) {
+function onChangeHandler(e: CustomEvent<any>) {
   //console.log("🚀 ~ complex child onChangeHandler:", path, res.isValid(path))
+		validation();
+}
+
+function validation()	{
 		res = suite(path);
 		setTimeout(async () => {
 			updateValidationState(path, res);
-		}, 10);
+		}, 100);
 
 }
 

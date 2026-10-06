@@ -1,6 +1,6 @@
 import { create, test, enforce, only, each, optional } from 'vest';
 import type { validationStoretype } from '$lib/components/utils/metadata/models';
-import { getNodeByPath, getValidationStore, getValueByPath } from '$lib/components/utils/metadata/metadataComponentUtils';
+import { getNodeByPath, getSchemaAttributes, getValidationStore, getValueByPath, hasValue } from '$lib/components/utils/metadata/metadataComponentUtils';
 import { hideStore, metadataStore } from '$lib/components/utils/metadata/stores';
 import { get } from 'svelte/store';
 
@@ -34,8 +34,9 @@ const suite = create((fieldName: string = '') => {
                 //console.log("🚀 ~ data:", data)
 
                 //Validate required field
+                
                 if(item.required){
-                    console.log('Validating required field:',item.label, item.path, data);
+                    //console.log('Validating required field:',item.label, item.path, data);
                     test( item.path, `${item.label} is required`, () => {      
                         enforce(data).isNotBlank();
                     });
@@ -120,12 +121,30 @@ const suite = create((fieldName: string = '') => {
             if ((fieldName && fieldName == item.path) || fieldName === '') {
               
                 const node = getNodeByPath(item.path);
-  
+
                 //Validate required field
                 if(item.required){
                     test( item.path, `${item.label} is required`, () => {      
                         enforce(node).isNotBlank();
                     });
+
+                    // item required and all children are optional, then at least one child must have a value
+                    if(item.allChildrenAreOptinal) 
+                    {  
+                        test( item.path, `At least one field is required`, () => { 
+                                        
+                                    const hasValues = hasValue(node);
+                                
+                                    //console.log("🚀xyz path"+item.path+ "~ hasNoValues:", hasValues, "allChildrensOptional:", node)    ;
+                                    // enforce((!hasValues && allChildrensOptional)).isFalsy();
+                                    // has value = false -> isTruhy, -> message appears
+                                    // hat keinen wert und ist optional
+
+                                    enforce(hasValues).isTruthy();
+                                }
+                                
+                            )
+                    }
                 }
                 else
                 {
@@ -166,5 +185,6 @@ const suite = create((fieldName: string = '') => {
 function isEmpty(value: any) {
     return value === null || value === undefined || value === '';
 }
+
 
 export default suite;

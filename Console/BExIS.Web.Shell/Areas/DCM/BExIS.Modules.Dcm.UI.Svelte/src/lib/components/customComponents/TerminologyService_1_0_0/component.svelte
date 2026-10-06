@@ -15,7 +15,7 @@
 	import { InputContainer } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa';
 	import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
-	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import suite from '$lib/components/utils/metadata/ComponentSuite';
 	import { metadataStore, validationStore } from '$lib/components/utils/metadata/stores';
 
 	let res = suite.get();
@@ -179,7 +179,7 @@
 		updateValidationState(_path, res);
 
 		const isNotEmpty = value != null && String(value).trim() !== '';
-		 console.log('🚀 ~ updateValue ~ path:', _path, 'value:', value, 'isNotEmpty:', isNotEmpty, res.isValid());
+		 //console.log('🚀 ~ updateValue ~ path:', _path, 'value:', value, 'isNotEmpty:', isNotEmpty, res.isValid());
 		if (required && !isNotEmpty) {
 			validateCustomCondition(_path, false, 'Please select a term from the terminology service.');
 		} 
