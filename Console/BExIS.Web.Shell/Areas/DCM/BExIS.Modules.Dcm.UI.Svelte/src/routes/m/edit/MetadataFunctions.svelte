@@ -31,7 +31,7 @@
 	import { convertDisplayName } from '../../../lib/components/utils/metadata/metadataShared';
 	import { goTo } from '$services/BaseCaller';
 	import { createEventDispatcher } from 'svelte';
-	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import suite from '$lib/components/utils/metadata/ComponentSuite';
 	import { FileButton } from '@skeletonlabs/skeleton';
 
 	const dispatch = createEventDispatcher();
@@ -122,55 +122,6 @@
 		}, 500);
 	}
 
-	// function successHandler(e) {
-	// 	console.log('🚀 ~ successHandler ~ e:', e);
-
-	// 	const status = e.detail.status;
-	// 	if (status === 200) {
-	// 		notificationStore.showNotification({
-	// 			notificationType: notificationType.success,
-	// 			message: 'Metadata successfully imported.'
-	// 		});
-
-	// 		//console.log("🚀 ~ successHandler ~ metadata:", metadata)
-	// 		metadata = JSON.parse(String(e.detail.data));
-	// 		//console.log("🚀 ~ successHandler ~ metadata:", metadata)
-	// 		setMetadataStore(metadata);
-	// 		dispatch('metadataUpdated');
-	// 	}
-	// }
-
-	// let files: FileList;
-
-	// async function fileUploadSelectionFn(e) {
-	// 	console.log('🚀 ~ fileUploadSelectionFn ~ e:', e);
-	// 	const file = e.target.files[0];
-	// 	if (file) {
-	// 		fileUploadType.existingFiles = [file.name];
-	// 		console.log('🚀 ~ fileUploadSelectionFn ~ fileUploadType:', fileUploadType);
-
-	// 		const formData = new FormData();
-	// 		formData.append('id', datasetId.toString());
-	// 		formData.append(file.name, file);
-
-	// 		const res = await Api.post('/dcm/m/import', formData);
-
-	// 		console.log('🚀 ~ fileUploadSelectionFn ~ res:', res);
-
-	// 		if (res.status === 200) {
-	// 			notificationStore.showNotification({
-	// 				notificationType: notificationType.success,
-	// 				message: 'Metadata successfully imported.'
-	// 			});
-
-	// 			//console.log("🚀 ~ successHandler ~ metadata:", metadata)
-	// 			metadata = JSON.parse(String(res.data));
-	// 			//console.log("🚀 ~ successHandler ~ metadata:", metadata)
-	// 			setMetadataStore(metadata);
-	// 			dispatch('metadataUpdated');
-	// 		}
-	// 	}
-	// }
 </script>
 
 
@@ -185,7 +136,8 @@
 	<div class="flex flex-col gap-2 items-end w-full pr-5">
 		{#if validationStoreValues}
 			{#key validationStoreValues}
-				{#if validationStoreValues.simpleTypeValidationItems.filter((item) => item.isValid === false && item.errorMessage && item.errorMessage.trim() !== '').length > 0}
+				{#if validationStoreValues.simpleTypeValidationItems.filter((item) => item.isValid === false && item.errorMessage && item.errorMessage.trim() !== '').length > 0 || 
+			 validationStoreValues.complexTypeValidationItems.filter((item) => item.isValid === false && item.errorMessage && item.errorMessage.trim() !== '').length}
 					<button
 						class="badge" title="There are validation errors in the metadata."
 						on:click={() => (showErrorOverview = !showErrorOverview)}
@@ -197,6 +149,8 @@
             {/if}
             &nbsp;Warnings: {validationStoreValues.simpleTypeValidationItems.filter(
 							(item) => item.isValid === false && item.errorMessage && item.errorMessage.trim() !== ''
+						).length + validationStoreValues.complexTypeValidationItems.filter(
+							(item) => item.isValid === false && item.errorMessage && item.errorMessage.trim() !== ''
 						).length}
 					</button>
 				{/if}
@@ -206,6 +160,7 @@
 
 	<div>
 		<hr />
+	
 		<nav class="list-nav">
 			<ul class="list-disc space-y-2">
 				{#each Object.entries(metadata) as [key, value]}
@@ -226,6 +181,33 @@
 						{#if validationStoreValues && showErrorOverview}
 							{#key validationStoreValues}
 								{#each validationStoreValues.simpleTypeValidationItems.filter((item) => item.isValid === false && item.errorMessage && item.errorMessage.trim() !== '') as item}
+									{#if item.path.startsWith(key)}
+										<div class="ml-4 flex flex-col">
+											<button
+												type="button"
+												class="text-sm text-gray-500 text-left p-0 m-0 border border-solid border-gray-300 rounded-md hover:bg-gray-100"
+												on:click={() => toggleAll(item.path)}
+												aria-label={`Open ${item.path}`}
+											>
+												<div>
+													{item.path
+														.split('.')
+														.slice(1)
+														.map((segment) => {
+															// Check if the segment is a non-empty string that represents an integer
+															const isInteger = segment.trim() !== '' && !isNaN(Number(segment));
+															const processedSegment = isInteger ? String(Number(segment) + 1) : segment;
+
+															return convertDisplayName(processedSegment);
+														})
+														.join('/')}
+													<br /><span class="text-xs italic bold pl-2">{item.errorMessage}</span>
+												</div>
+											</button>
+										</div>
+									{/if}
+								{/each}
+								{#each validationStoreValues.complexTypeValidationItems.filter((item) => item.isValid === false && item.errorMessage && item.errorMessage.trim() !== '') as item}
 									{#if item.path.startsWith(key)}
 										<div class="ml-4 flex flex-col">
 											<button

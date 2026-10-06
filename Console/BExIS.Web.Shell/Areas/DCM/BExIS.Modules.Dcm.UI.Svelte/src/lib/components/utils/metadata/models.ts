@@ -37,6 +37,8 @@ export interface ComplexComponentData {
 	maxItems?: number;
 	minItems?: number;
 	isValid: boolean;
+	allChildrenAreOptinal:	boolean;
+	type: string;
 }
 
 /* PARTIES */

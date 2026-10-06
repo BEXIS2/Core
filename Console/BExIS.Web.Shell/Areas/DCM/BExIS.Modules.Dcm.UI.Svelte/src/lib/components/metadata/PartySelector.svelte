@@ -2,7 +2,7 @@
 	import { MappingComponentConfig } from '$lib/components/utils/metadata/models';
 	import { MultiSelect } from '@bexis2/bexis2-core-ui';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import suite from '$lib/components/utils/metadata/ComponentSuite';
 
 	import {
 		getByPath,

@@ -12,7 +12,7 @@
 	} from '../../utils/metadata/metadataComponentUtils';
 
 	import {TextArea} from '@bexis2/bexis2-core-ui';
-	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import suite from '$lib/components/utils/metadata/ComponentSuite';
 	import { validationStore } from '$lib/components/utils/metadata/stores';
 
 	const dispatch = createEventDispatcher();
