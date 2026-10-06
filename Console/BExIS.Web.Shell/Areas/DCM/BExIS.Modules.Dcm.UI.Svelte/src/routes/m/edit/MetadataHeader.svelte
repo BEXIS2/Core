@@ -192,7 +192,7 @@
           class="btn variant-ghost"
           title="Cancel editing and go back to the metadata view page. All unsaved changes will be lost."
           on:click={() => {
-            goTo(`/view?id=${datasetId}`);
+            goTo(`/dcm/view?id=${datasetId}`);
           }}
         >
          <Fa icon={faXmark} />&nbsp;Cancel
