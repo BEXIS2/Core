@@ -9,11 +9,10 @@
   import {metadataStore, validationStore} from '$lib/components/utils/metadata/stores';
 
 	import { Api, FileUploader, notificationStore, notificationType, TextInput, type fileUploaderType } from '@bexis2/bexis2-core-ui';
-  import {convertDisplayName} from '../../../lib/components/utils/metadata/metadataShared';
 	import { goTo } from '$services/BaseCaller';
   import { createEventDispatcher } from 'svelte';
-	import suite from '$lib/components/utils/metadata/ComponentSuite';
-	import { FileButton } from '@skeletonlabs/skeleton';
+	
+	import { FileButton, ProgressRadial } from '@skeletonlabs/skeleton';
 
   const dispatch = createEventDispatcher();
 
@@ -36,7 +35,7 @@
 
   $:showErrorOverview;
   $:metadata; //console.log("functions - metadata:", metadata);
-  
+  $:isSaving = false;
 
 	let disbaleSaveBtn: boolean = false;
 	$:disbaleSaveBtn;
@@ -204,7 +203,7 @@
 
           on:click={async () => {
             try {
-
+              isSaving = true;
               //console.log('Saving metadata Snapshot JSON:', datasetId, JSON.stringify($metadataStore));
 
               const savedMetadata = await apiCalls.SaveMetadata(datasetId, metadata,comment);
@@ -213,6 +212,8 @@
                 notificationType: notificationType.success,
                 message: 'Metadata saved successfully.',
               });
+
+              isSaving = false;
             } catch (error) {
               console.error('Error saving metadata:', error);
               notificationStore.showNotification({
@@ -221,7 +222,7 @@
               });
             }
           }}>
-          <Fa icon={faSave}/>&nbsp;Save
+           {#if isSaving}<ProgressRadial width="w-4"  stroke={60}  meter="stroke-tertiary-500" track="stroke-primary-500/30" strokeLinecap="round"/>{:else}<Fa icon={faSave} />{/if}&nbsp;Save
         </button>
  
 </div>
