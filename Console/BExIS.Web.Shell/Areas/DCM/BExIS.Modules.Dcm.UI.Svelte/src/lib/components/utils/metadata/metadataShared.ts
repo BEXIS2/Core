@@ -24,6 +24,13 @@ export function convertDisplayName(name: string, header: boolean = false): strin
     
     displayName = wordList.join(' ');
     displayName = displayName.charAt(0).toUpperCase() + displayName.slice(1).replace(/_/g, ' ');
+    
+    // if the first word is a position indicator (e.g., "1. ", "2. "), make the first letter of the first word uppercase
+    const positionIndicatorRegex = /^\d+\.\s+/;
+    if (positionIndicatorRegex.test(displayName)) {
+        const firstWord = displayName.split(' ')[1];
+        displayName = displayName.replace(firstWord, firstWord.charAt(0).toUpperCase() + firstWord.slice(1));
+    }
 
     // add hardcoded exception rules here for specific terms (also replaces if part of label)
     const specialTerms: { [key: string]: string } = {
@@ -46,8 +53,6 @@ export function convertDisplayName(name: string, header: boolean = false): strin
         const regex = new RegExp(`\\b${lowerTerm}\\b`, 'gi');
         displayName = displayName.replace(regex, correctTerm);
     }
-
-
 
     return displayName;
 }
