@@ -148,7 +148,7 @@ metadataStore.subscribe(() => {
 	on:blur={handleHideDescription}
 >
 
-	<div>
+	<div >
 		{#if !active}
 			<button
 				class="badge mt-1 ml-1 mr-1"

@@ -117,7 +117,7 @@
 		dispatch('navigate');
 
 		setTimeout(() => {
-			const ziel = document.getElementById(path + '.item');
+			const ziel = document.getElementById(path);
 			ziel?.scrollIntoView({ behavior: 'smooth' });
 		}, 500);
 	}
@@ -209,7 +209,7 @@
 								{/each}
 								{#each validationStoreValues.complexTypeValidationItems.filter((item) => item.isValid === false && item.errorMessage && item.errorMessage.trim() !== '') as item}
 									{#if item.path.startsWith(key)}
-										<div class="ml-4 flex flex-col">
+										<div class="ml-4 flex flex-col">							
 											<button
 												type="button"
 												class="text-sm text-gray-500 text-left p-0 m-0 border border-solid border-gray-300 rounded-md hover:bg-gray-100"
@@ -217,6 +217,7 @@
 												aria-label={`Open ${item.path}`}
 											>
 												<div>
+								
 													{item.path
 														.split('.')
 														.slice(1)
