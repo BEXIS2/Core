@@ -180,6 +180,37 @@
 						</a>
 						{#if validationStoreValues && showErrorOverview}
 							{#key validationStoreValues}
+							{#each validationStoreValues.complexTypeValidationItems.filter((item) => item.isValid === false && item.errorMessage && item.errorMessage.trim() !== '') as item}
+									{#if item.path.startsWith(key)}
+									{@const index =	item.path.split('.').length - 1 == 0 ? 0 : 1}
+										<div class="ml-4 flex flex-col">							
+											<button
+												type="button"
+												class="text-sm text-gray-500 text-left p-0 m-0 border border-solid border-gray-300 rounded-md hover:bg-gray-100"
+												on:click={() => toggleAll(item.path)}
+												aria-label={`Open ${item.path}`}
+											>
+												<div>
+												{#if index >0}
+													{item.path
+															.split('.')
+															.slice(1)
+															.map((segment) => {
+																// Check if the segment is a non-empty string that represents an integer
+																const isInteger = segment.trim() !== '' && !isNaN(Number(segment));
+																const processedSegment = isInteger ? String(Number(segment) + 1) : segment;
+
+																return convertDisplayName(processedSegment);
+															})
+															.join('/')}
+															<br/>
+													{/if}
+													<span class="text-xs italic bold pl-2">{item.errorMessage}</span>
+												</div>
+											</button>
+										</div>
+									{/if}
+								{/each}
 								{#each validationStoreValues.simpleTypeValidationItems.filter((item) => item.isValid === false && item.errorMessage && item.errorMessage.trim() !== '') as item}
 									{#if item.path.startsWith(key)}
 										<div class="ml-4 flex flex-col">
@@ -207,34 +238,7 @@
 										</div>
 									{/if}
 								{/each}
-								{#each validationStoreValues.complexTypeValidationItems.filter((item) => item.isValid === false && item.errorMessage && item.errorMessage.trim() !== '') as item}
-									{#if item.path.startsWith(key)}
-										<div class="ml-4 flex flex-col">							
-											<button
-												type="button"
-												class="text-sm text-gray-500 text-left p-0 m-0 border border-solid border-gray-300 rounded-md hover:bg-gray-100"
-												on:click={() => toggleAll(item.path)}
-												aria-label={`Open ${item.path}`}
-											>
-												<div>
 								
-													{item.path
-														.split('.')
-														.slice(1)
-														.map((segment) => {
-															// Check if the segment is a non-empty string that represents an integer
-															const isInteger = segment.trim() !== '' && !isNaN(Number(segment));
-															const processedSegment = isInteger ? String(Number(segment) + 1) : segment;
-
-															return convertDisplayName(processedSegment);
-														})
-														.join('/')}
-													<br /><span class="text-xs italic bold pl-2">{item.errorMessage}</span>
-												</div>
-											</button>
-										</div>
-									{/if}
-								{/each}
 							{/key}
 						{/if}
 					{/if}

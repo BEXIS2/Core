@@ -8,7 +8,7 @@
 	import { activeStore, hideStore, metadataStore, validationStore } from '$lib/components/utils/metadata/stores';
 	import Header from './MetadataComponentHeader.svelte';
 	import { convertDisplayName } from '$lib/components/utils/metadata/metadataShared';
-	import { registerValidationItem, updateValidationState, getSchemaAttributes, getAttributeValue, updateAttribute } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { registerValidationItem, updateValidationState, getSchemaAttributes, getAttributeValue, updateAttribute, allchildrensAreOptional } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import suite from '$lib/components/utils/metadata/ComponentSuite';
 	import Attributes from '$lib/components/metadata/Attributes.svelte';
 	import { onMount } from 'svelte';
@@ -61,7 +61,7 @@
 		
 	//#### VALIDATION	 ####
 	registerValidationItem(path, convertDisplayName(label), required, complexComponent);
-
+ console.log("🚀 ~ validationStore:", $validationStore)
 
 	// init
 	validation();
@@ -84,30 +84,6 @@ function validation()	{
 
 }
 
-// Check if all children of a complex component are optional
-function allchildrensAreOptional(cc: any): boolean {
-	if (!cc || cc.type !== 'object' || !cc.properties) {
-		return true; // No properties means all are optional
-	}
-
-	// get required list of cc
-	const rl = cc && cc.type === 'object' && cc.required
-			? cc.required
-			: [];
-
-	for (const [key, value] of Object.entries(cc.properties)) {
-		//console.log("allchildren",key, isRequiredKey(key, cc))
-		if (rl.some((requiredKey: string) => requiredKey === key))
-  {
-			return false; // Found a required property
-		}
-		if (value.type === 'object' && !allchildrensAreOptional(value)) {
-			return false; // Nested object has required properties
-		}
-	}
-
-	return true; // All properties are optional
-}
 
 
 </script>
