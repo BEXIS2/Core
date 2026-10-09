@@ -18,7 +18,7 @@
 	import { InputContainer, MultiSelect } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa';
 	import { faCircleCheck, faCircleQuestion, faXmark } from '@fortawesome/free-solid-svg-icons';
-	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import suite from '$lib/components/utils/metadata/ComponentSuite';
 	import { validationStore, metadataStore, systemMappingsStore } from '$lib/components/utils/metadata/stores';
 	import { getMappingComponentConfig } from '$lib/components/utils/metadata/mappingHelper';
 	import { GetPartyValue } from '../../../../services/MetadataCaller';
@@ -138,6 +138,7 @@
 		showOrcidSearch = false;
 
 		setTimeout(async () => {
+			console.log("before update parent is Complex?",isComplexMapping )
 			if (!isComplexMapping) {
 				updateMetadataStore(orcid_field_path, newValue, false, undefined, partyid);
 				value = newValue;
@@ -149,7 +150,9 @@
 
 				const parentPath = getParentPath(orcid_field_path);
 				const parentPathWithoutIndices = removeJsonPathIndices(parentPath);
+				console.log("before update parent",partyid)
 				updateMetadataStore(parentPath, null, false, undefined, partyid);
+				console.log("🚀 ~ onUpdateParty ~ orcid_field_path:", orcid_field_path, parentPath, $metadataStore)
 
 				await Promise.all($systemMappingsStore.partyMappings
 					.filter((mapping: any) =>
@@ -306,6 +309,8 @@
 					currentPartyId = getPartyIdByPath(orcid_field_path);
 				}
 				const pid = currentPartyId ? Number(currentPartyId) : 0;
+				//console.log("🚀 ~ pid:",partyMappingObject, pid, partyList, orcid_field_path, currentPartyId)
+				
 				if (pid > 0 && partyList.length > 0) {
 					selectorValue = partyList.find((item: any) => Number(item.partyId) === pid) ?? null;
 				}
@@ -667,20 +672,21 @@
 
 			// If this field is mapped to a party, update the party id
 			if (canLinkToParty && partyMappingObject) {
-				console.log('[ORCID] party block:', { canLinkToParty, partyListLength: partyList?.length, isComplexMapping });
 				// console.log('[ORCID] looking for party match:', { displayName, orcidId: result.orcidId, partyListSample: partyList?.slice(0, 3) });
-
+				
 				const partyid = partyMappingObject.list?.find((item: any) =>
-					item.value === displayName || item.value === result.orcidId
-				)?.partyId ?? 0;
+				item.value.toLowerCase() === displayName.toLowerCase() || item.value === result.orcidId
+			)?.partyId ?? 0;
+			
+				
 
+			console.log('[ORCID] party block:', { canLinkToParty, partyListLength: partyList?.length, isComplexMapping });
 				// console.log('[ORCID] party match result:', { partyid });
 
 				// update the MultiSelect UI to show the selected party
 				if (partyid > 0) {
 					selectorValue = partyList.find((item: any) => Number(item.partyId) === partyid) ?? null;
 				}
-
 				if (!isComplexMapping) {
 					updateMetadataStore(orcid_field_path, displayName, false, result.orcidUri, partyid);
 				} else {
@@ -807,7 +813,8 @@
 			orcid_field_path,
 			value != undefined && value != null ? value.toString() : '',
 			false,
-			ref != undefined && ref != null ? ref.toString() : ''
+			ref != undefined && ref != null ? ref.toString() : '',
+			currentPartyId
 		);
 		updateOrcidValue(value, orcid_field_path);
 		validationReady = true;

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getHookStart } from '$services/HookCaller';
-	import { latestFileUploadDate, latestDataDescriptionDate } from '../../../routes/edit/stores';
+	import { latestFileUploadDate, latestDataDescriptionDate, latestSubmitDate } from '../../../routes/edit/stores';
 	import { onMount, createEventDispatcher } from 'svelte';
 
 	import Generate from '$lib/components/datadescription/Generate.svelte';
@@ -28,6 +28,11 @@
         load();
     }
 
+				$: if (isMounted && $latestSubmitDate > 0) {
+        load();
+    }
+
+
 	let errorMessage: any = null;
 	const dispatch = createEventDispatcher();
 
@@ -40,20 +45,20 @@
 	async function load() {
 		loading = true;
 		try {
-            model = await getHookStart(hook.start, id, version);
-            dispatch('dateChanged', { lastModification: model.lastModification });
-        } catch (error) {
-            console.error("Failed to fetch data description:", error);
-			errorMessage = error;
-        } finally {
-            loading = false;
-        }
-    }
+									model = await getHookStart(hook.start, id, version);
+									dispatch('dateChanged', { lastModification: model.lastModification });
+					} catch (error) {
+									console.error("Failed to fetch data description:", error);
+errorMessage = error;
+					} finally {
+									loading = false;
+					}
+	}
 
-    async function reloadByFileUpdate() {
-        if (model && model.structureId === 0) {
-            await load();
-        }
+	async function reloadByFileUpdate() {
+					if (model && model.structureId === 0) {
+									await load();
+					}
 	}
 
 </script>

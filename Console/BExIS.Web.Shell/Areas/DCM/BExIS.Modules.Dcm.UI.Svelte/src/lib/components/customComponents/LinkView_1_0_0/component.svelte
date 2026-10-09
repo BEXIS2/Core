@@ -32,17 +32,35 @@
 </div>
 
 <style>
-	.entry {
-		padding-bottom: 0.35rem;
-	}
-	.key {
-		display: inline-block;
-		flex-grow: 1;
-	}
-	.val {
-		display: inline-block;
-		width: 35vw;
-	}
+	.cont {
+  margin-left: 1em;
+}
+
+.arr:not(:last-child) {
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid black;
+}
+
+.entry {
+  display: flex;
+  flex-direction: row; 
+  padding-bottom: 0.35rem;}
+  
+.val  {
+  display: inline-block;
+  width: 30vw;
+}
+.key {
+  display: inline-block;
+  flex-grow: 1;
+}
+
+@media (max-width: 768px) {
+  .val {
+    width: 50vw;
+  }
+}
+
 	.link-ref {
 		display: inline-flex;
 		align-items: center;
@@ -57,9 +75,4 @@
 		opacity: 0.8;
 	}
 
-	@media (max-width: 768px) {
-		.val {
-			width: 50vw;
-		}
-	}
 </style>

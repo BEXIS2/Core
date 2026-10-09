@@ -2,7 +2,7 @@
 	import { MappingComponentConfig } from '$lib/components/utils/metadata/models';
 	import { MultiSelect } from '@bexis2/bexis2-core-ui';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import suite from '$lib/components/utils/metadata/ComponentSuite';
 
 	import {
 		getByPath,
@@ -109,6 +109,10 @@
 							mapping.parentPath == parentPathWithoutIndices && mapping.path !== pathWithoutIndices
 					)
 					.forEach(async (mapping: any) => {
+					console.log("🚀 ~ onUpdateParty ~ mapping:", mapping)
+
+						
+
 						// updateMetadataStore(mapping.path, value,	isMulti, undefined, e.detail.partyId);
 						const childvalue = await GetPartyValue(partyid, mapping.linkElementId);
 
@@ -121,6 +125,9 @@
 						updateValue(childvalue, childPathWithIndex);
 
 						//console.log("🚀 ~ onUpdateParty ~ dispatch reload for path:", selectorValue)
+
+						dispatch('updated');
+		
 					});
 			}
 		}, 100);
@@ -139,6 +146,9 @@
 		}
 		// update validationstore
 		ValidationStoreSetSimpleTypeValid(_path, res.isValid(_path), errorMessage);
+
+
+
 	}
 
 	if (getIsRequiredBySchemaAndPath(path)) {

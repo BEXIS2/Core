@@ -9,14 +9,18 @@
 	import Header from './MetadataComponentHeader.svelte';
 	import { convertDisplayName } from '$lib/components/utils/metadata/metadataShared';
 	import { registerValidationItem, updateValidationState, getSchemaAttributes, getAttributeValue, updateAttribute } from '$lib/components/utils/metadata/metadataComponentUtils';
-	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import suite from '$lib/components/utils/metadata/ComponentSuite';
 	import Attributes from '$lib/components/metadata/Attributes.svelte';
+	import { onMount } from 'svelte';
 
 
 	export let complexComponent: any;
 	export let path: string;
 	export let required: boolean = false;
 	export let description: string = '';
+
+	let res = suite.get();
+
 
 
 	let label: string =
@@ -36,7 +40,7 @@
 	function isRequiredKey(key: string, v:any): boolean {
 
 		const normalizedKey = normalizeRequiredKey(key);
-	 console.log("🚀 ~ isRequiredKey:", key)
+	 //console.log("🚀 ~ isRequiredKey:", key)
 
 		var isRequired = requiredList.some((requiredKey: string) => requiredKey === key);
 
@@ -53,26 +57,30 @@
 	}
 
 
+	onMount(async () => {
+		
 	//#### VALIDATION	 ####
 	registerValidationItem(path, convertDisplayName(label), required, complexComponent);
 
-	let res = suite.get();
 
 	// init
-	setTimeout(async () => {
-		updateValidationState(path, res);
-	}, 100);
- 
+	validation();
+
+});
 
 	// Schema-driven attributes on this compound node (excluding @ref and @partyid)
-	$: schemaAttrs = getSchemaAttributes(complexComponent).filter(a => a !== '@partyid');
+$: schemaAttrs = getSchemaAttributes(complexComponent).filter(a => a !== '@partyid');
 	
-	function onChangeHandler(e: CustomEvent<any>) {
+function onChangeHandler(e: CustomEvent<any>) {
   //console.log("🚀 ~ complex child onChangeHandler:", path, res.isValid(path))
+		validation();
+}
+
+function validation()	{
 		res = suite(path);
 		setTimeout(async () => {
 			updateValidationState(path, res);
-		}, 10);
+		}, 100);
 
 }
 
@@ -88,7 +96,7 @@ function allchildrensAreOptional(cc: any): boolean {
 			: [];
 
 	for (const [key, value] of Object.entries(cc.properties)) {
-		console.log("allchildren",key, isRequiredKey(key, cc))
+		//console.log("allchildren",key, isRequiredKey(key, cc))
 		if (rl.some((requiredKey: string) => requiredKey === key))
   {
 			return false; // Found a required property
@@ -110,12 +118,14 @@ function allchildrensAreOptional(cc: any): boolean {
 	{#each Object.entries(complexComponent.properties) as [key, value]}
 		{@const p = path = path ? path + '.' + key : key}
 		{@const l = label = key}
+
 		{#if (value.type === 'object' && value.properties && !value.properties['#text']) }
 			{#if value.oneOf || value.anyOf || value.allOf}
-				<ChoiceComponent choiceComponent={value} {path} on:updated={onChangeHandler} required={isRequiredKey(key, value)} />
+
+			<ChoiceComponent choiceComponent={value} {path} on:updated={onChangeHandler} required={isRequiredKey(key, value)} />
 			{:else}
 				<div class="grid grid-cols-1 gap-0 ">
-
+				
 					<Header	required={isRequiredKey(key, value)} {path} {p} description={value.description} allChildrenOptional={allchildrensAreOptional(value)}	  />
 
 					{#if !$hideStore.includes(path) && $activeStore.includes(path)}
@@ -141,6 +151,7 @@ function allchildrensAreOptional(cc: any): boolean {
 				</div>
 			</div>
 		{:else if value.type === 'array' && value.items}
+			
 			<ArrayComponent arrayComponent={value} {path} on:updated={onChangeHandler} required={isRequiredKey(key,value)} />
 		{/if}
 	{/each}

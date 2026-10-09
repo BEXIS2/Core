@@ -31,7 +31,7 @@
 	} from '$lib/components/utils/metadata/stores';
 	import { onMount } from 'svelte';
 
-	export let required: boolean = false;
+	export let required: boolean;
 	//  $:required;
 	export let path: string;
 	export let p: string = '';
@@ -147,7 +147,8 @@ metadataStore.subscribe(() => {
 	on:focus={handleShowDescription}
 	on:blur={handleHideDescription}
 >
-	<div>
+
+	<div >
 		{#if !active}
 			<button
 				class="badge mt-1 ml-1 mr-1"
@@ -180,7 +181,7 @@ metadataStore.subscribe(() => {
 			{#if required}
 				<span class="text-error-500">*</span>
 				{#if !hasValues && allChildrenOptional} <!-- Show warning if no values and all children are optional -->
-					<span class="text-warning-500"> (Please provide at least one of the optional fields below.)</span>
+					<span class="bg-white text-warning-500"> (At least one field in this section is required.)</span>
 				{/if}
 			{/if}
 		</h4>

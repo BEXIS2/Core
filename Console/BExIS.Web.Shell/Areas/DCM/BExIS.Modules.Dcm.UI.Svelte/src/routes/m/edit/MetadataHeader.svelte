@@ -9,11 +9,10 @@
   import {metadataStore, validationStore} from '$lib/components/utils/metadata/stores';
 
 	import { Api, FileUploader, notificationStore, notificationType, TextInput, type fileUploaderType } from '@bexis2/bexis2-core-ui';
-  import {convertDisplayName} from '../../../lib/components/utils/metadata/metadataShared';
 	import { goTo } from '$services/BaseCaller';
   import { createEventDispatcher } from 'svelte';
-	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
-	import { FileButton } from '@skeletonlabs/skeleton';
+	
+	import { FileButton, ProgressRadial } from '@skeletonlabs/skeleton';
 
   const dispatch = createEventDispatcher();
 
@@ -36,7 +35,7 @@
 
   $:showErrorOverview;
   $:metadata; //console.log("functions - metadata:", metadata);
-  
+  $:isSaving = false;
 
 	let disbaleSaveBtn: boolean = false;
 	$:disbaleSaveBtn;
@@ -192,7 +191,7 @@
           class="btn variant-ghost"
           title="Cancel editing and go back to the metadata view page. All unsaved changes will be lost."
           on:click={() => {
-            goTo(`/view?id=${datasetId}`);
+            goTo(`/dcm/view?id=${datasetId}`);
           }}
         >
          <Fa icon={faXmark} />&nbsp;Cancel
@@ -204,14 +203,17 @@
 
           on:click={async () => {
             try {
+              isSaving = true;
+              //console.log('Saving metadata Snapshot JSON:', datasetId, JSON.stringify($metadataStore));
 
-              console.log('Saving metadata:', datasetId, metadata);
               const savedMetadata = await apiCalls.SaveMetadata(datasetId, metadata,comment);
-              console.log('Metadata saved successfully:', savedMetadata);
+              //console.log('Metadata saved successfully:', savedMetadata);
               notificationStore.showNotification({
                 notificationType: notificationType.success,
                 message: 'Metadata saved successfully.',
               });
+
+              isSaving = false;
             } catch (error) {
               console.error('Error saving metadata:', error);
               notificationStore.showNotification({
@@ -220,7 +222,7 @@
               });
             }
           }}>
-          <Fa icon={faSave}/>&nbsp;Save
+           {#if isSaving}<ProgressRadial width="w-4"  stroke={60}  meter="stroke-tertiary-500" track="stroke-primary-500/30" strokeLinecap="round"/>{:else}<Fa icon={faSave} />{/if}&nbsp;Save
         </button>
  
 </div>

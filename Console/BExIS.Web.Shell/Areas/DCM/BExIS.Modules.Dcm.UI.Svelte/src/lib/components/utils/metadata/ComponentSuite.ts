@@ -1,6 +1,6 @@
 import { create, test, enforce, only, each, optional } from 'vest';
 import type { validationStoretype } from '$lib/components/utils/metadata/models';
-import { getNodeByPath, getValidationStore, getValueByPath } from '$lib/components/utils/metadata/metadataComponentUtils';
+import { getNodeByPath, getSchemaAttributes, getValidationStore, getValueByPath, hasValue } from '$lib/components/utils/metadata/metadataComponentUtils';
 import { hideStore, metadataStore } from '$lib/components/utils/metadata/stores';
 import { get } from 'svelte/store';
 
@@ -26,11 +26,17 @@ const suite = create((fieldName: string = '') => {
    if (validationStoreValues.simpleTypeValidationItems.length > 0) {
         each(validationStoreValues.simpleTypeValidationItems, (item) => {
             if ((fieldName && fieldName == item.path) || fieldName === '') {
-                const data = getValueByPath(item.path);
+                let data = getValueByPath(item.path);
+
+                if(data === undefined || data === null){ // if value is undefined or null, try to get the value from the node by path to grab array
+                    data = getNodeByPath(item.path);
+                }
                 //console.log("🚀 ~ data:", data)
 
                 //Validate required field
+                
                 if(item.required){
+                    //console.log('Validating required field:',item.label, item.path, data);
                     test( item.path, `${item.label} is required`, () => {      
                         enforce(data).isNotBlank();
                     });
@@ -84,9 +90,17 @@ const suite = create((fieldName: string = '') => {
                 // Validate enum values if defined
                 if(item.enum && item.enum.length>0 && !isEmpty(data)){
                     //console.log('Validating regex pattern for field:', item.path);
-                    test( item.path, `Invalid ${item.label}. Choose from the list.`, () => {
-                        enforce(data).isValueOf(item.enum);
-                    });
+                    if (Array.isArray(data)) {
+                        test( item.path, `Invalid ${item.label}. Choose from the list.`, () => {
+                            data.forEach((value: any) => {
+                                enforce(value['#text']).isValueOf(item.enum);
+                            });
+                        });
+                    } else {
+                        test( item.path, `Invalid ${item.label}. Choose from the list.`, () => {
+                            enforce(data).isValueOf(item.enum);
+                        });
+                    }
                 }   
 
 
@@ -107,12 +121,30 @@ const suite = create((fieldName: string = '') => {
             if ((fieldName && fieldName == item.path) || fieldName === '') {
               
                 const node = getNodeByPath(item.path);
-  
+
                 //Validate required field
                 if(item.required){
                     test( item.path, `${item.label} is required`, () => {      
                         enforce(node).isNotBlank();
                     });
+
+                    // item required and all children are optional, then at least one child must have a value
+                    if(item.allChildrenAreOptinal) 
+                    {  
+                        test( item.path, `At least one field is required`, () => { 
+                                        
+                                    const hasValues = hasValue(node);
+                                
+                                    //console.log("🚀xyz path"+item.path+ "~ hasNoValues:", hasValues, "allChildrensOptional:", node)    ;
+                                    // enforce((!hasValues && allChildrensOptional)).isFalsy();
+                                    // has value = false -> isTruhy, -> message appears
+                                    // hat keinen wert und ist optional
+
+                                    enforce(hasValues).isTruthy();
+                                }
+                                
+                            )
+                    }
                 }
                 else
                 {
@@ -153,5 +185,6 @@ const suite = create((fieldName: string = '') => {
 function isEmpty(value: any) {
     return value === null || value === undefined || value === '';
 }
+
 
 export default suite;

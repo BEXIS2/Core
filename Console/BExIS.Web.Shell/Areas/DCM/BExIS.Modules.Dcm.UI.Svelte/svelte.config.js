@@ -8,9 +8,6 @@ const config = {
 	// Consult https://kit.svelte.dev/docs/integrations#preprocessors
 	// for more information about preprocessors
 	preprocess: vitePreprocess(),
-	esbuild:{
-		drop: ['console'] 
-	},
 	kit: {
 		adapter: adapter({
 			pages: '../BExIS.Modules.Dcm.UI/Scripts/svelte', // ../BExIS.Modules.Dcm.UI/Scripts/svelte

@@ -15,17 +15,10 @@
 		showDescriptionHandler,
 		hideDescriptionHandler,
 		updateValidationState,
-		registerValidationItem,
-		getSchemaAttributes,
-		getAttributeValue,
-		updateAttribute,
-		getParentPath,
-
-		getSchemaAttributeTypes
-
+		registerValidationItem
 	} from '$lib/components/utils/metadata/metadataComponentUtils';
 
-	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import suite from '$lib/components/utils/metadata/ComponentSuite';
 	import type {
 		MappingComponentConfig,
 	} from '$lib/components/utils/metadata/models';
@@ -74,7 +67,7 @@
 	
 
 	onMount(async () => {
-		//console.log('🚀 ~ onMount ~ simpleComponent:', value)
+		//console.log('🚀 ~ onMount ~ simpleComponent:'+label , value)
 
 		// checks for date
 		if (
@@ -97,6 +90,11 @@
 		}
 
 		if (isMulti && simpleComponent.properties['#text'].enum) {
+			value = sanitizeEmptyMultiValue(value);
+			if (hasArrayOnlyOneEmtpy(value)) {
+				value = [];
+			}
+			
 			jsonItems = simpleComponent.properties['#text'].enum.map((item: any) => {
 				return {
 					'@ref': '',
@@ -123,6 +121,34 @@
 		}, 100);
 	});
 
+ function hasArrayOnlyOneEmtpy(vvalue: any): boolean {
+		if (!Array.isArray(vvalue)) return false;
+		return vvalue.length > 0 && vvalue.every((item) => {
+			if (typeof item === 'string') return item === '';
+			if (item && typeof item === 'object') return item['#text'] === '' || item['#text'] === undefined || item['#text'] === null;
+			return item === null || item === undefined;
+		});
+	}
+
+	function sanitizeEmptyMultiValue(valueToSanitize: any): any {
+		if (!Array.isArray(valueToSanitize)) return valueToSanitize;
+
+		const cleaned = valueToSanitize.filter((item) => {
+			if (typeof item === 'string') return item !== '';
+			if (item && typeof item === 'object') return item['#text'] !== '' && item['#text'] !== undefined && item['#text'] !== null;
+			return item !== null && item !== undefined;
+		});
+
+		return cleaned;
+	}
+
+	$: if (isMulti && Array.isArray(value)) {
+		const cleanedValue = sanitizeEmptyMultiValue(value);
+		if (cleanedValue.length !== value.length || cleanedValue.some((item, index) => item !== value[index])) {
+			value = cleanedValue;
+		}
+	}
+
 	// Do not mutate validation state on unmount.
 	// Collapsing sections via toggleShow unmounts child fields temporarily.
 
@@ -132,7 +158,7 @@
 
 		// add some delay so the entityTemplate is updated
 		// otherwise the values are old
-		console.log("metadata store:", $metadataStore);
+		//console.log("metadata store:", $metadataStore);
 		dispatch('updated');
 		
 
@@ -168,12 +194,12 @@
 	}
 
 	function updateValue(value: any, _path: string) {
-		// console.log("🚀 ~ updateValue ~ value:", value)
+		// console.log("🚀 ~ updateValue ~ value:"+label, value)
 		// check changed field only
 		res = suite(_path);
 
 		setTimeout(async () => {
-					//console.log("🚀 ~ path:", path, res.isValid(path))
+					//console.log("🚀 ~ path:", _path, res.isValid(_path), res.getErrors(_path), value)
 			updateValidationState(_path, res);
 		}, 10);
 	}
@@ -207,10 +233,11 @@
 				{path}
 			/>
 		{:else if mappingComponentConfig && mappingComponentConfig.isMappedToParty && mappingComponentConfig.isSelector}
+		 {#key value}
 			<PartySelector
 				{...commonProps}
 				{path}
-				{value}
+				bind:value
 				label= {convertDisplayName(label)}
 				{mappingComponentConfig}
 				{required}
@@ -218,6 +245,7 @@
 				{handleShowDescription}
 				{handleHideDescription}
 			/>
+			{/key}
 		{:else if path && simpleComponent.properties}
 			<!-- Handle different formats and types -->
 			{#if simpleComponent.properties['#text'].format !== undefined && simpleComponent.properties['#text'].format !== null}
@@ -344,6 +372,7 @@
 							bind:target={value}
 							isMulti={false}
 							clearable={required ? false : true}
+							on:clear={onChangeHandler}
 							on:change={onChangeHandler}
 							on:showDescription={handleShowDescription}
 							on:hideDescription={handleHideDescription}
@@ -351,6 +380,7 @@
 					{/if}
 				{:else}
 					<!-- Handle multi select for array of simple types -->
+
 					{#if isMulti}
 						<MultiSelect
 							{... commonProps}
@@ -363,6 +393,7 @@
 							bind:target={value}
 							isMulti={true}
 							clearable={required ? false : true}
+							on:clear={onChangeHandler}
 							on:change={onChangeHandler}
 							on:showDescription={handleShowDescription}
 							on:hideDescription={handleHideDescription}

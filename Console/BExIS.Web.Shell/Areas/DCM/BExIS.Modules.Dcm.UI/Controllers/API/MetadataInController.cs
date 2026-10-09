@@ -336,6 +336,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
             catch (Exception ex)
             {
+
+                datasetManager.UndoCheckoutDataset(id, user.Name);
+
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
             finally

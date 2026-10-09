@@ -37,7 +37,7 @@ import Citation from "./Citation.svelte";
 			<div>
 			<button	class="badge variant-filled-secondary mr-5" on:click={() => window.location.href = `/dcm/edit?id=${id}`}>
 				<Fa icon={faPen} /> 
-				<span>edit</span>
+				<span>Edit</span>
 			</button>
 			</div>
 		{/if}

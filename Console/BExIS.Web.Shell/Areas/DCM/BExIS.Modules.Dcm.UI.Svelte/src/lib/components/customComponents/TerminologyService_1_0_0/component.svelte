@@ -15,8 +15,8 @@
 	import { InputContainer } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa';
 	import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
-	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
-	import { validationStore } from '$lib/components/utils/metadata/stores';
+	import suite from '$lib/components/utils/metadata/ComponentSuite';
+	import { metadataStore, validationStore } from '$lib/components/utils/metadata/stores';
 
 	let res = suite.get();
 	let componentName: string = 'terminology_v1.0.0';
@@ -40,14 +40,14 @@
 	if (term_field_path && term_field_path == anchor.split('.').slice(0, -1).join('.')) {
 		term_field_path = anchor;
 	}
-	let { value, ref, label, description, required } = getMetadata(term_field_path);
+	let { value, ref, label, description, required } = getMetadata(path);
 	let validationRegistered = false;
 	let validationReady = false;
 	let viewDescription: string | null = null;
 
 	$: validationItem = $validationStore?.simpleTypeValidationItems?.find(
-		(i) => i.path === term_field_path
-	);
+		(i) => i.path === path
+	); // change to path because of may array positions that are not existing in term_field_path
 
 	console.log(targetVars);
 	let parameter = targetVars?.find((v) => v.target_variable === 'parameter')?.value ?? '';
@@ -112,6 +112,8 @@
 							ref = props.map((item) => item.iri).toString();
 							data = props;
 							syncTermValue();
+							console.log("TS4NFDI props", props)
+
 						},
 						parameter: parameter,
 						placeholder: 'Select a term within pre-selected ontologies ..',
@@ -122,8 +124,9 @@
 					},
 					containerElement
 				);
+				
+			
 
-				// console.log('TS4NFDI AutocompleteWidget rendered.');
 			} catch (error) {
 				console.error('Error creating autocomplete widget:', error);
 			}
@@ -172,10 +175,11 @@
 	// Update the value in the metadata store and validate it.
 	function updateValue(value: any, _path: string) {
 		res = suite(_path);
+
 		updateValidationState(_path, res);
 
 		const isNotEmpty = value != null && String(value).trim() !== '';
-		// console.log('🚀 ~ updateValue ~ path:', _path, 'value:', value, 'isNotEmpty:', isNotEmpty);
+		 //console.log('🚀 ~ updateValue ~ path:', _path, 'value:', value, 'isNotEmpty:', isNotEmpty, res.isValid());
 		if (required && !isNotEmpty) {
 			validateCustomCondition(_path, false, 'Please select a term from the terminology service.');
 		} 
@@ -185,13 +189,16 @@
 	function syncTermValue() {
 		if (!validationRegistered) return;
 
+	
 		updateMetadataStore(
-			term_field_path,
+			path,
 			value != undefined && value != null ? value.toString() : '',
 			false,
 			ref != undefined && ref != null ? ref.toString() : ''
 		);
-		updateValue(value, term_field_path);
+	 console.log("syncTermValue", term_field_path, path, value, $metadataStore, JSON.stringify($metadataStore))
+	
+		updateValue(value, path);
 		validationReady = true;
 	}
 
@@ -202,7 +209,7 @@
 		// https://semanticlookup.zbmed.de/ols/api/terms?iri=http:%2F%2Fpurl.obolibrary.org%2Fobo%2FNCBITaxon_146500
 		const response = await fetch(TerminologyServiceUrl + `terms?iri=${encodeURIComponent(ref)}`);
 		const data = await response.json();
-		console.log('🚀 ~ getDescriptionFromAPI ~ data:', data._embedded.terms[0].description[0]);
+		//console.log('🚀 ~ getDescriptionFromAPI ~ data:', data._embedded.terms[0].description[0]);
 		if (!data?._embedded?.terms?.length) {
 			console.warn('Term not found in terminology service.');
 			return 'No description available';

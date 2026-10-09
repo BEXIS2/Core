@@ -118,14 +118,19 @@ export function updateMetadataStore(path: string, value: any, isMulti?: boolean,
 		});
 		{
 			if (value !== getValueByPath(path) || ref !== getRefByPath(path)) {
+				//console.log("🚀 ~ updateMetadataStore ~ value:", value,getValueByPath(path), path, ref,getRefByPath(path) )
 
 				if (isMulti) {
+
 					obj = setValueByPath(obj, path, value);
+					
 				} else {
+					
 					// Keep party-id-only updates untouched for complex parent nodes.
 					if ((value === undefined || value === null) && partyid !== undefined && partyid !== null) {
 						const parent = getByPath(path);
 						parent["@partyid"] = partyid;
+						console.log("party id set",parent,partyid)
 					} else {
 						obj = setValueByPath(obj, path + '.#text', value ?? '');
 					}
@@ -141,17 +146,18 @@ export function updateMetadataStore(path: string, value: any, isMulti?: boolean,
 				}
 			}
 			else if ((value === undefined || value === null) && partyid !== undefined && partyid !== null) {
+				console.log("parent party id set")
 				const parent = getByPath(path);
-				parent["@partyid"] = partyid;
+					parent["@partyid"] = partyid;
 				if (obj !== undefined && obj !== null) {
 					metadataStore.set(obj);
 				}
-				//console.log("🚀 ~ updateMetadataStore ~ parent:", parent)
+				console.log("🚀 ~ updateMetadataStore ~ parent:",path, parent)
 			}
-
 		}
+		//console.log('Updated metadata store:', obj, JSON.stringify(obj));
 	}
-	//console.log('Updated metadata store:', obj);
+	
 	return obj;
 }
 
@@ -167,9 +173,36 @@ export function removeFromMetadataStore(path: string): any {
 			metadataStore.set(obj);
 		}
 	}
-	console.log('remove metadata store:', obj);
+	console.log('remove metadata store:', path);
 	return obj;
 }
+
+export function insertAtPath( path, value) {
+
+console.log("🚀 ~ insertAtPath ~ path:", path)
+
+let obj: any = {};
+	if (path !== undefined && path !== null && path !== '') {
+		metadataStore.subscribe((v) => {
+			obj = v;
+		});
+		{
+			 const keys = path.replace(/^\$/, '').split('.').filter(k => k);
+				let current = obj;
+				
+				for (let i = 0; i < keys.length - 1; i++) {
+						const key = keys[i];
+						if (!(key in current)) current[key] = {};
+						current = current[key];
+				}
+				
+				const lastKey = keys[keys.length - 1];
+				current[lastKey] = value;
+				return obj;
+			}
+	} 
+}
+
 
 function removeByPath(obj, path) {
 	const parts = path.split('.');
@@ -294,7 +327,7 @@ export function getTargetVariablesWithValues(config: any): TargetVar[] {
 export function getVariableSoursePathFromConfig(componentName: string, anchor: string, targetVariableName: string): string {
 	if (componentName != null && componentName != undefined && componentName != '') {
 		let variables = getVariablesFromConfig(componentName, anchor);
-		console.log('Searching for target variable:', targetVariableName, 'in variables:', variables);
+		//console.log('Searching for target variable:', targetVariableName, 'in variables:', variables);
 		for (const variable of variables) {
 			if (variable.target_variable === targetVariableName) {
 				console.log('Found variable:', variable.JSONPath);
@@ -302,7 +335,7 @@ export function getVariableSoursePathFromConfig(componentName: string, anchor: s
 			}
 		}
 		if (targetVariableName === 'value' && variables.length > 0) {
-			console.log('Found variable (fallback):', variables[0].JSONPath);
+			//console.log('Found variable (fallback):', variables[0].JSONPath);
 			return variables[0].JSONPath;
 		}
 	}
@@ -383,6 +416,13 @@ export function hasValue(node) {
 		//console.log("🚀 ~ hasValue ~ node:", node, node.trim().length)
 		return node.trim().length > 0;
 	}
+
+	if (typeof node === 'number') {
+		//console.log("🚀 ~ hasValue ~ node:", node, node.trim().length)
+		return Number.isFinite(node);
+	}
+
+	
 
 	//return Boolean(node);
 
@@ -604,7 +644,7 @@ export function ValidationStoreSetComplexTypeValid(
 		...validationStoreValues,
 		complexTypeValidationItems: [...validationStoreValues.complexTypeValidationItems]
 	});
-	//console.log("🚀 ~ ValidationStoreSetSimpleTypeValid ~ validationStore:", get(validationStore))
+	//console.log("🚀 ~ ValidationStoreSetComplexTypeValid ~ validationStore:", get(validationStore))
 	return valid;
 }
 
@@ -721,7 +761,10 @@ export function createComplexComponentValidationItem(path: string, label: string
 		path: path, 
 		required: required, 
 		isValid: false, 
-		errorMessage: '' };
+		errorMessage: '',
+ 	allChildrenAreOptinal: false,
+		type: complexComponent.type
+ };
 
 	let item = complexComponent;
 
@@ -738,6 +781,9 @@ export function createComplexComponentValidationItem(path: string, label: string
 		complexComponentValidationItem.minItems = item.minItems;
 	}
 
+
+	complexComponentValidationItem.allChildrenAreOptinal = allchildrensAreOptional(complexComponent);
+	
 	// // set minLength if defined
 	// if (item.minLength && item.minLength != undefined && item.minLength != null && item.minLength != '') {
 	// 	simpleComponentValidationItem.minLength = item.minLength;
@@ -772,6 +818,35 @@ export function createComplexComponentValidationItem(path: string, label: string
 
 	return complexComponentValidationItem;
 }
+
+// Check if all children of a complex component are optional
+function allchildrensAreOptional(cc: any): boolean {
+
+    //console.log("🚀 ~ allchildrensAreOptional ~ cc:", cc)
+
+	if (!cc || cc.type !== 'object' || !cc.properties) {
+		return true; // No properties means all are optional
+	}
+
+	// get required list of cc
+	const rl = cc && cc.type === 'object' && cc.required
+			? cc.required
+			: [];
+
+	for (const [key, value] of Object.entries(cc.properties)) {
+		//console.log("allchildren",key, isRequiredKey(key, cc))
+		if (rl.some((requiredKey: string) => requiredKey === key))
+  {
+			return false; // Found a required property
+		}
+		if (value.type === 'object' && !allchildrensAreOptional(value)) {
+			return false; // Nested object has required properties
+		}
+	}
+
+	return true; // All properties are optional
+}
+
 
 
 export function removeJsonPathIndices(path) {
@@ -927,10 +1002,10 @@ export function getLabelByPath(path: string): string {
 }
 
 export function getMetadata(path: string): { value: any, ref: any, label: string, description: string, required: boolean } {
-	console.log('🚀 ~ getMetadata ~ path:', path);
 	let value: any = getValueByPath(path);
+	console.log('🚀 ~ getMetadata ~ path:', path, value);
 	let ref: any = getRefByPath(path);
-	console.log('🚀 ~ getMetadata ~ path: label', path);
+	//console.log('🚀 ~ getMetadata ~ path: label', path);
 	let label: string = getLabelByPath(path);
 	let description = getDescriptionBySchemaAndPath(path);
 	let required = !!getIsRequiredBySchemaAndPath(path);
@@ -940,7 +1015,8 @@ export function getMetadata(path: string): { value: any, ref: any, label: string
 export function updateValidationState(path: string, res: any): void {
 	let errorMessage = '';
 	if (res && res.hasErrors(path)) {
-		errorMessage = res.getErrors(path).join('.  ');
+		console.log('🚀 ~ updateValidationState ~ path:', path, 'res:', res, 'hasErrors:', res.hasErrors(path), 'getErrors:', res.getErrors(path));
+		errorMessage = res?.getErrors(path).join('.  ');
 	}
 
 	//console.log('🚀 ~ updateValidationState ~ path:', path, 'res:', res, 'errorMessage:', errorMessage, get(validationStore));
@@ -981,14 +1057,15 @@ export function registerValidationItem(
 		}else{
 
 			//console.log('🚀 ~ registerValidationItem ~ complex:', path);
-
+			
 			let validationItem = createComplexComponentValidationItem(
 				path,
 				label,
 				required,
 				schemaNode
 			);
-			ValidationStoreAddComplexComponent(validationItem, forceRegistration);
+			const x = ValidationStoreAddComplexComponent(validationItem, forceRegistration);
+			//console.log("🚀 ~ registerValidationItem ~ x:", x)
 		}
 
 	}

@@ -368,7 +368,7 @@ namespace BExIS.Xml.Helpers
                 {
                     foreach (XmlAttribute attr in element.Attributes)
                     {
-                        if (!ignore.Contains(attr.Name))
+                        if (!ignore.Contains(attr.Name) && !string.IsNullOrEmpty(attr.Value))
                         {
                             // check if parameter exist
                             if (ma.MetadataParameterUsages.Any(m => m.Label.ToLower().Equals(attr.Name.ToLower())))
@@ -423,7 +423,7 @@ namespace BExIS.Xml.Helpers
                     // generate intern template metadata xml with needed attribtes
                     // also every object with index > 1 is generate with attribtes but without values
                     var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
-                    var metadataWithAttributesXml = xmlMetadatWriter.CreateMetadataXml(id, XmlUtility.ToXDocument(target));
+                    var metadataWithAttributesXml = xmlMetadatWriter.CreateMetadataXml(id, XmlUtility.ToXDocument(target), true);
 
                     // merge the metadata with attributes and the metadata with values together
                     var completeMetadata = XmlMetadataImportHelper.FillInXmlValues(target,

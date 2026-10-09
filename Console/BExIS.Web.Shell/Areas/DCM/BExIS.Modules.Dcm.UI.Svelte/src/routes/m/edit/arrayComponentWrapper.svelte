@@ -9,7 +9,7 @@
 	import { activeStore, hideStore, validationStore } from '$lib/components/utils/metadata/stores';
 	import { convertDisplayName } from '../../../lib/components/utils/metadata/metadataShared';
 	import Header from './MetadataComponentHeader.svelte';
-	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
+	import suite from '$lib/components/utils/metadata/ComponentSuite';
 	import { onMount } from 'svelte';
 
 
@@ -106,17 +106,21 @@ function removeFromValidationStore(path: string) {
 		render = !render;
 		onChangeHandler();
 	}
+
+
 </script>
 
 {#if arrayComponent.items}
 	<div class="" id={path}>
+	
 		{#key render}
 			{#if arrayComponent.items.type === 'object' && arrayComponent.items.properties && !arrayComponent.items.properties['#text']}
 				<div class="grid grid-cols-1 gap-0">
 					{#if arrayComponent.items.anyOf || arrayComponent.items.allOf}
-					 <ChoiceComponent choiceComponent={arrayComponent} {path} />
+
+					 <ChoiceComponent choiceComponent={arrayComponent} {path} {required}/>
 					{:else}
-					
+		   		
 					 <Header	path={path} {required} />
 
 						{#if !$hideStore.includes(path) && $activeStore.includes(path)}

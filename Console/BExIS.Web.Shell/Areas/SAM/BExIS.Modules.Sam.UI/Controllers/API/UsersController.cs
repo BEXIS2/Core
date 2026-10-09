@@ -97,15 +97,35 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
                     ModificationDate = date
                 };
 
-                await _userManager.CreateAsync(user);
-
-                foreach (var groupId in model.GroupIds)
+                var result = await _userManager.CreateAsync(user);
+                if (result.Succeeded)
                 {
-                    var group = await _groupManager.FindByIdAsync(groupId) ?? throw new ArgumentNullException();
-                    await _userManager.AddToRoleAsync(user.Id, group.Name);
+                    foreach (var groupId in model.GroupIds)
+                    {
+                        var group = await _groupManager.FindByIdAsync(groupId) ?? throw new ArgumentNullException();
+                        await _userManager.AddToRoleAsync(user.Id, group.Name);
+                    }
+
+                    var code = await _userManager.GeneratePasswordResetTokenAsync(user.Id);
+
+                    var scheme = Request.RequestUri.Scheme;
+                    var host = Request.RequestUri.Host;
+                    var port = Request.RequestUri.Port;
+
+                    var portPart = port == 80 && scheme == "http" || port == 443 && scheme == "https"
+                        ? ""
+                        : ":" + port;
+
+                    var callbackUrl = scheme + "://" + host + portPart + "/Account/ResetPassword?userId=" + user.Id + "&code=" + code;
+
+                    await
+                        _userManager.SendEmailAsync(user.Id, "Set your password!",
+                            "Please set your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                    return Request.CreateResponse(HttpStatusCode.Created);
                 }
 
-                return Request.CreateResponse(HttpStatusCode.Created);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
             catch (Exception ex)
             {

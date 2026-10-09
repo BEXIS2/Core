@@ -1,12 +1,19 @@
 <script lang="ts">
 	import { updateAttribute } from "../utils/metadata/metadataComponentUtils";
-	import { metadataStore } from "../utils/metadata/stores";
-
+	import { convertDisplayName } from "../utils/metadata/metadataShared";
+	
 
  export let value;
  export let type;
  export let path;
  export let key;
+
+
+	// if(value=='' && (type=='number' || type=='integer'))
+	// {
+	// 		value = 0
+	// 		updateAttribute(path, key, value);
+	// }
 
  function onChangeFn( e: any) {
 		updateAttribute(path, key, value);
@@ -16,7 +23,7 @@
 </script>
 
 <div class="flex items-center gap-2">
-					<span class="text-xs text-surface-600 dark:text-surface-300 w-20 shrink-0 font-medium">{key.replace('@', '')}</span>
+					<span class="text-xs text-surface-800 dark:text-surface-300 w-20 shrink-0 font-medium">{convertDisplayName(key.replace('@', ''), false)}</span>
 				{#if type=='boolean'}
 					<input
 						type="checkbox" 
@@ -46,10 +53,9 @@
 						on:input={(e)=> onChangeFn(e)}
 					/>
      {:else}
-
 					<input
-						type="string"
-						class="input variant-form-material text-xs py-1 flex-1"
+						type="text"
+						class="input variant-form-material dark:bg-zinc-700 bg-zinc-50 placeholder:text-gray-400"
 						bind:value={value}
 						on:input={(e)=> onChangeFn(e)}
 					/>
