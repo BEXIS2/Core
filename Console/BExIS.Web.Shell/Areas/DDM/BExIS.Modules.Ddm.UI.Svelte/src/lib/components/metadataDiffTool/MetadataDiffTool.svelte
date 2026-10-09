@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Api, Spinner, DropdownKVP, MultiSelect, Page } from '@bexis2/bexis2-core-ui';
+	import { Api, Spinner, MultiSelect, Page } from '@bexis2/bexis2-core-ui';
 	import { onMount } from 'svelte';
 	import DiffNode from './DiffNode.svelte';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
@@ -7,10 +7,14 @@
 	export let datasetIdStart: number | null = null;
 	let datasetId: number | null = null;
 	// TODO: Fetch available datasets from API if needed
-	let datasets = []; // datasetId ? [{ id: datasetId, name: 'Current Dataset' }] : [];
+	let datasets: any[] = []; // datasetId ? [{ id: datasetId, name: 'Current Dataset' }] : [];
 
 	let datasetResponse1: { maxVersion?: number; error?: any } = {};
 	let datasetResponse2: { maxVersion?: number; error?: any } = {};
+
+	let useSimpleFormat: boolean = false;
+	let hideUnchanged: boolean = true;
+	let lastUpdated = 'No local data available';
 
 	onMount(async () => {
 		// read id from URL if not provided (id is provided in route)
@@ -20,8 +24,48 @@
 			datasetIdStart = parseInt(urlDatasetId);
 			console.log('Dataset ID from URL:', datasetIdStart);
 		}
+		// fetch datasets from API if not already provided and in the local storage
+		let storedDatasets: string | null = null;
+		let storedDatasetsDate: string | null = null;
+		try {
+			storedDatasets = localStorage.getItem('datasets');
+			storedDatasetsDate = localStorage.getItem('datasetsDate');
+		} catch (e) {
+			console.warn('localStorage access failed, fetching from API:', e);
+		}
 
-		datasets = datasets.length > 0 ? datasets : await fetchAllDatasets();
+		let loadedFromCache = false;
+		if (storedDatasets && storedDatasetsDate) {
+			try {
+				const parsed = JSON.parse(storedDatasets);
+				if (Array.isArray(parsed)) {
+					const datasetsDate = new Date(storedDatasetsDate);
+					const now = new Date();
+					const timeDiff = Math.abs(now.getTime() - datasetsDate.getTime());
+					const hoursDiff = timeDiff / (1000 * 60 * 60);
+					if (hoursDiff < 24 * 7) {
+						datasets = parsed;
+						loadedFromCache = true;
+					}
+				}
+			} catch (e) {
+				console.warn('Corrupted datasets in localStorage, refetching:', e);
+			}
+		}
+
+		if (!loadedFromCache) {
+			datasets = await fetchAllDatasets();
+			if (Array.isArray(datasets)) {
+				try {
+					localStorage.setItem('datasets', JSON.stringify(datasets));
+					localStorage.setItem('datasetsDate', new Date().toISOString());
+				} catch (e) {
+					console.warn('Failed to cache datasets in localStorage:', e);
+				}
+			}
+		}
+		lastUpdated = getStoredDate();
+		
 		console.log(datasets);
 		if (datasetIdStart !== null) {
 			datasetId = datasetIdStart;
@@ -47,7 +91,8 @@
 				.map((ds: any) => ({ id: ds.Id, text: ds.Id + ' ' + ds.Title }))
 				.sort((a: any, b: any) => b.id - a.id);
 		} catch (error) {
-			return { error };
+			console.error('Error fetching datasets:', error);
+			return [];
 		}
 	}
 
@@ -75,7 +120,6 @@
 		}
 	}
 
-	onMount(async () => {});
 
 	let versions1: number[] = [];
 	let versions2: number[] = [];
@@ -109,8 +153,11 @@
 			else {	
 			datasetResponse1 = response;
 			console.log('Dataset Response 1:', datasetResponse1);
+			const maxVer = datasetResponse1.maxVersion ?? 0;	
 			versions1 = Array.from({ length: datasetResponse1.maxVersion ?? 0 }, (_, i) => i + 1);
-			selectedVersion1 = datasetResponse1.maxVersion ?? null;
+			// max minus 1 because we want to compare the previous version with the current version
+			selectedVersion1 = maxVer > 1 ? maxVer - 1 : (maxVer === 1 ? 1 : null);
+			
 			onChangeSelectedVersion1(new Event('init'));
 			}
 		});
@@ -133,7 +180,8 @@
 			
 			
 			datasetResponse2 = response;
-			versions2 = Array.from({ length: datasetResponse2.maxVersion ?? 0 }, (_, i) => i + 1);
+			const maxVer = datasetResponse2.maxVersion ?? 0;
+			versions2 = Array.from({ length: maxVer ?? 0 }, (_, i) => i + 1);
 			selectedVersion2 = datasetResponse2.maxVersion ?? null;
 			onChangeSelectedVersion2(new Event('init'));
 			}
@@ -170,7 +218,7 @@
 		}
 		metadata2 = null;
 		loading2 = true;
-		if (selectedVersion2 === null) {
+		if (selectedVersion2 === null || selectedDataset2 === null) {
 			return;
 		}
 		console.log('Fetching metadata for version 2:', selectedVersion2);
@@ -180,11 +228,52 @@
 		});
 	}
 
+	function getStoredDate(): string {
+		try {
+			const dateStr = localStorage.getItem('datasetsDate');
+			return dateStr ? new Date(dateStr).toLocaleString() : 'No local data available';
+		} catch {
+			return 'No local data available';
+		}
+	}
+
+	$: lastUpdated = getStoredDate();
+	function updateLocalData() {
+		try {
+			localStorage.removeItem('datasets');
+			localStorage.removeItem('datasetsDate');
+		} catch (e) {
+			console.warn('Failed to clear localStorage:', e);
+		}
+		fetchAllDatasets().then((fetchedDatasets) => {
+			if (!Array.isArray(fetchedDatasets)) {
+				console.error('Failed to fetch datasets:', fetchedDatasets);
+				return;
+			}
+			datasets = fetchedDatasets;
+			try {
+				localStorage.setItem('datasets', JSON.stringify(datasets));
+				localStorage.setItem('datasetsDate', new Date().toISOString());
+			} catch (e) {
+				console.warn('Failed to cache datasets in localStorage:', e);
+			}
+			lastUpdated = getStoredDate();
+		});
+	}
+	
 	let syncSelections: boolean = true;
 </script>
 
-<Page help={true} title="Metadata Diff Tool">
-<h2 class="m-4 text-2xl font-bold">Metadata Diff Tool</h2>
+<Page help={true} title="Metadata Change Viewer">
+<h2 class="m-4 text-2xl font-bold">Metadata Change Viewer</h2>
+<!--show datasets and versions and add button to update local data-->
+<div class="flex items-center gap-2 mx-4 mb-2 text-sm">
+	<button class="btn btn-primary variant-ghost-primary" on:click={updateLocalData} title="Update the cached dataset list from the server. This may take a while if there are many datasets.">
+		Update cached dataset list
+	</button>
+	<div>(Last updated: {lastUpdated})</div>
+
+</div>
 <p class="mx-4 mb-2 text-sm ">Select datasets and versions to compare their metadata.</p>
 
 {#if datasetResponse1.error || datasetResponse2.error}
@@ -205,7 +294,7 @@
 					selectedDataset2 = selectedDataset1;
 					onChangeSelectedDataset2(new Event('init'));
 			  }}
-		>Sync selection</SlideToggle
+		>{#if syncSelections}Compare version within one dataset{:else}Compare versions in different datasets{/if}	</SlideToggle
 	>
 </div>
 	<div class="mx-4 mb-4 flex justify-around gap-x-8 gap-y-4">
@@ -213,7 +302,7 @@
 			<div class="w-full mb-2">
 				<MultiSelect
 					id="dataset1"
-					title="Select Dataset 1"
+					title="Dataset"
 					bind:source={datasets}
 					itemId="id"
 					itemLabel="text"
@@ -227,10 +316,10 @@
 					on:change={onChangeSelectedDataset1}
 				/>
 			</div>
-			<div class="w-full font-bold">{selectedDataset1 ? selectedDataset1.text : 'None'}</div>
+			<div class="w-full font-bold"> {selectedDataset1 ? 'ID: ' + selectedDataset1.text : 'None'}</div>
 			<div class="w-full">
 				<label>
-					<span>Version 1:</span>
+					<span>Previous version</span>
 					<select
 						class="select min-w-40"
 						id="version1"
@@ -248,26 +337,44 @@
 		</div>
 		<div class="flex flex-wrap gap-2 w-1/2">
 			<div class="w-full mb-2">
-				<MultiSelect
-					id="dataset2"
-					title="Select Dataset 2"
-					bind:source={datasets}
-					itemId="id"
-					itemLabel="text"
-					itemGroup="group"
-					complexSource={true}
-					complexTarget={true}
-					bind:target={selectedDataset2}
-					isMulti={false}
-					placeholder="-- Please select --"
-					clearable={false}
-					on:change={onChangeSelectedDataset2}
-				/>
+				{#if syncSelections}
+					<MultiSelect
+						id="dataset2"
+						title="Comparison Dataset"
+						bind:source={datasets}
+						itemId="id"
+						itemLabel="text"
+						itemGroup="group"
+						complexSource={true}
+						complexTarget={true}
+						bind:target={selectedDataset2}
+						isMulti={false}
+						placeholder="-- Please select --"
+						clearable={false}
+						disabled
+					/>
+				{:else}
+					<MultiSelect
+						id="dataset2"
+						title="Comparison Dataset"
+						bind:source={datasets}
+						itemId="id"
+						itemLabel="text"
+						itemGroup="group"
+						complexSource={true}
+						complexTarget={true}
+						bind:target={selectedDataset2}
+						isMulti={false}
+						placeholder="-- Please select --"
+						clearable={false}
+						on:change={onChangeSelectedDataset2}
+					/>
+				{/if}
 			</div>
-			<div class="w-full font-bold">{selectedDataset2 ? selectedDataset2.text : 'None'}</div>
+			<div class="w-full font-bold">{#if !syncSelections}ID: {selectedDataset2 ? selectedDataset2.text : 'None'}{/if}&nbsp;</div>
 			<div class="w-full">
 				<label>
-					<span>Version 2:</span>
+					<span>... compared to more recent version</span>
 					<select
 						class="select min-w-40"
 						id="version2"
@@ -284,6 +391,23 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="flex items-center gap-2 mx-4 mb-4 text-sm">
+		<input
+			type="checkbox"
+			id="useSimpleFormat"
+			bind:checked={useSimpleFormat}
+		/>
+		<label for="useSimpleFormat">Switch Diff Mode</label>
+
+		<input
+			type="checkbox"
+			id="hideUnchanged"
+			bind:checked={hideUnchanged}
+		/>
+		<label for="hideUnchanged">Hide unchanged rows</label>
+		</div>
+
 	{#if selectedVersion1 && selectedVersion2}
 		{#if loading1 || loading2}
 			<div class="wrap mx-4 flex gap-4">
@@ -302,7 +426,7 @@
 			</div>
 		{:else if metadata1 && metadata2}
 			{#key `${selectedVersion1}\n\n---\n\n${selectedVersion2}`}
-				<DiffNode value1={metadata1} value2={metadata2} />
+				<DiffNode value1={metadata1} value2={metadata2} useSimpleFormat={useSimpleFormat} hideUnchanged={hideUnchanged} />
 			{/key}
 		{/if}
 	{/if}

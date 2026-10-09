@@ -6,10 +6,12 @@ using System.Linq;
 using System.Net;
 using System.Web.Http;
 using System.Web.Http.Description;
+using System.Web.SessionState;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
+    [System.Web.Mvc.SessionState(SessionStateBehavior.ReadOnly)]
     public class StructuresController : ApiController
     {
         // GET: api/Structures

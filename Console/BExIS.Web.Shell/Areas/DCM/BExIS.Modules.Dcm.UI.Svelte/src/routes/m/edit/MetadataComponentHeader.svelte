@@ -1,122 +1,209 @@
 <script lang="ts">
-	import { empty, getNodeByPath, hasValue, isActive, setActive, setInactive, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
-	import { convertDisplayName } from '../metadataShared';
-	import { faPlus, faChevronUp, faChevronDown, faQuestion } from '@fortawesome/free-solid-svg-icons';
-  import Fa from 'svelte-fa';
-  import { activeStore, hideStore, validationStore } from '$lib/components/utils/metadata/stores';
-  import { onMount } from 'svelte';
-	
+	import {
+		empty,
+		getNodeByPath,
+		getPartyIdByPath,
+		hasValue,
+		isActive,
+		setActive,
+		setInactive,
+		toggleShow,
+		activateShow,
+		showDescriptionHandler,
+		hideDescriptionHandler
+	} from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { convertDisplayName } from '../../../lib/components/utils/metadata/metadataShared';
+	import {
+		faPlus,
+		faChevronUp,
+		faChevronDown,
+		faQuestion,
+		faTrash,
+		faCircleQuestion
+	} from '@fortawesome/free-solid-svg-icons';
+	import Fa from 'svelte-fa';
+	import {
+		activeStore,
+		hideStore,
+		metadataStore,
+		validationStore,
+		showAllDescriptionsStore
+	} from '$lib/components/utils/metadata/stores';
+	import { onMount } from 'svelte';
 
- export let required: boolean = false;
- //  $:required;
- export let path: string;
- export let p:string = '';
- export let description: string = '';
- 
- let active: boolean = false;
- $:active;
+	export let required: boolean;
+	//  $:required;
+	export let path: string;
+	export let p: string = '';
+	export let description: string = '';
+	export let allChildrenOptional: boolean = false;
+	export let childOfChoice: boolean = false;
 
- let label: string = path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path;
- let showDescription: boolean = false;
+	let label: string =
+		path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path;
 
- const togglePath = p!=='' ? p : path; 
+	// set showDescription  if showAllDescriptionsStore is true or false; use local if showAllDescriptionsStore is null or undefined
+	$: showDescription =
+		$showAllDescriptionsStore !== null && $showAllDescriptionsStore !== undefined
+			? $showAllDescriptionsStore
+			: false;
+
+	const togglePath = p !== '' ? p : path;
 
 
- onMount(() => {
-  // console.log('MetadataComponentHeader mounted with path: ', path);   
-    if(!$activeStore.includes(path)) {
-      initActivity();
-    }
-    else {
-      active = true;
-    }
-    //console.log('init-active', $activeStore);
- });
+// show if childrens has values	in metadataStore
+let hasValues	= false;
+metadataStore.subscribe(() => {
+		hasValuesInMetadataStore();
+	});
 
-function initActivity() {
-  active = isActive(p,required);
-  if(active) {
-    setActive(path)
-  }
-  else {
-    setInactive(path);
-  } 
-}
 
-function changeFn(active: boolean) {
-  
-  if(active) {
-    setActive(path)
-  }
-  else {
-    setInactive(path);
-    // remove from validation store
-    removeFromValidationStore(path);
-    // empty data in metadata store for this path and all child paths
-    const data = getNodeByPath(path); 
-    empty(data);
-  } 
+	export let active: boolean = false;
+	$: active;
 
-  // console.log('active',active,path, $activeStore);
-}
+	onMount(() => {
+		//console.log('complexComponentWrapper onMount', path, $activeStore);
+		if (!$activeStore.includes(path)) {
+			initActivity();
+		} else {
+			active = true;
+		}
 
-function removeFromValidationStore(path: string) {
-  validationStore.update(store => {
-    return {
-      ...store,
-      simpleTypeValidationItems: store.simpleTypeValidationItems.filter(item => !item.path.startsWith(path)),
-      complexTypeValidationItems: store.complexTypeValidationItems.filter(item => !item.path.startsWith(path))
-    };
-  });
-}
+		hasValuesInMetadataStore();
+	});
 
+	function initActivity() {
+		active = isActive(path, required);
+
+		if (active) {
+			setActive(path);
+		} else {
+			setInactive(path);
+		}
+	}
+
+	function hasValuesInMetadataStore() {
+		const data = getNodeByPath(path);
+		hasValues = hasValue(data);
+	}
+
+	function changeFn(a: boolean) {
+		active = !a;
+
+		if (active) {
+			setActive(path);
+			activateShow(path);
+		
+		} else {
+			setInactive(path);
+			// remove from validation store
+			removeFromValidationStore(path);
+			// empty data in metadata store for this path and all child paths
+			const data = getNodeByPath(path);
+			empty(data);
+		}
+
+		// console.log('active',active,path, $activeStore);
+	}
+
+	function removeFromValidationStore(path: string) {
+		validationStore.update((store) => {
+			return {
+				...store,
+				simpleTypeValidationItems: store.simpleTypeValidationItems.filter(
+					(item) => !item.path.startsWith(path)
+				),
+				complexTypeValidationItems: store.complexTypeValidationItems.filter(
+					(item) => !item.path.startsWith(path)
+				)
+			};
+		});
+	}
+
+	function handleShowDescription(e: MouseEvent | FocusEvent) {
+		if (description) {
+			const desc = { detail: { description: description ? description : '', id: path } };
+			showDescriptionHandler(desc, 'complex');
+		}
+	}
+
+	function handleHideDescription(e: MouseEvent | FocusEvent) {
+		hideDescriptionHandler(e, 'complex');
+	}
+
+	function handleToggleShow() {
+		if (!active || !$activeStore.includes(path)) {
+			return;
+		}
+		toggleShow(togglePath);
+	}
 </script>
 
+<div
+	class="card flex min-h-8 bg-primary-300 dark:bg-primary-800 items-center gap-2"
+	role="button"
+	tabindex="0"
+	on:mouseover={handleShowDescription}
+	on:mouseleave={handleHideDescription}
+	on:focus={handleShowDescription}
+	on:blur={handleHideDescription}
+>
 
-
-<div class="card flex h-10 bg-primary-300 dark:bg-primary-800 pl-2 items-center">
-
- 
-<div>
-    {#if !required}
-      <input class="checkbox" type="checkbox" bind:checked={active} on:change={()=>changeFn(active)}/>
-    {:else}
-      <h4 class="h4 text-red-500">
-        *
-      </h4>
-    {/if}
-</div>
- <div class="text-left grow pl-2">
-	   <h4 id="{path}" class="h4">
-    {convertDisplayName(label, true)} 
-   </h4>
- </div>
-
- 
- {#if description && showDescription}
-  <div	class="text-sm text-gray-500 py-1">{@html description}</div>
- {/if}
- <div class="text-left flex justify-end w-2 px-6 ">
-  {#if description}
-				<button class="badge" on:click={()=>showDescription = !showDescription}><Fa icon={faQuestion} /></button>
+	<div >
+		{#if !childOfChoice} <!-- Don't show the add button if this is a child of a choice component (activation is set by parent)-->
+		{#if !active}
+			<button
+				class="badge mt-1 ml-1 mr-1"
+				on:click={() => changeFn(active)}
+				title="Add {convertDisplayName(label, true)} node"><Fa icon={faPlus} /></button
+			>
+		{:else if $activeStore.includes(path)}
+			{#if !$hideStore.includes(path)}
+				<button
+					class="btn-sm text-right"
+					title="Open or close {convertDisplayName(label, true)}"
+					on:click={handleToggleShow}><Fa icon={faChevronUp} /></button
+				>
+			{:else}
+				<button
+					class="btn-sm text-right"
+					title="Open or close {convertDisplayName(label, true)}"
+					on:click={handleToggleShow}><Fa icon={faChevronDown} /></button
+				>
+			{/if}
 		{/if}
- </div>
- <div class="text-left flex justify-end w-2 px-2">
+		{/if}
 
-  {#if $activeStore.includes(path)}
-    {#if !$hideStore.includes(path) }
-      <button
-        class="btn h-9 w-10 text-right"
-        title="Open or close {convertDisplayName(label, true)}"
-        on:click={() => toggleShow(togglePath)}><Fa icon={faChevronUp} /></button
-      >
-      {:else}
-      <button
-        class="btn h-9 w-10 text-right"
-        title="Open or close {convertDisplayName(label, true)}"
-        on:click={() => toggleShow(togglePath)}><Fa icon={faChevronDown} /></button
-      >
-      {/if}
-    {/if}
- </div>
+		<!-- <Fa icon={faPlus} class="text-green-500" />
+
+      <input class="checkbox" type="checkbox" bind:checked={active} on:change={()=>changeFn(active)}/> -->
+	</div>
+	<button class="text-left grow" on:click={handleToggleShow} type="button">
+		<h4 id={path} class="text-md font-bold">
+			{convertDisplayName(label, true)}
+			{#if required}
+				<span class="text-error-500">*</span>
+				{#if !hasValues && allChildrenOptional} <!-- Show warning if no values and all children are optional -->
+					<span class="bg-white text-warning-500"> (At least one field in this section is required.)</span>
+				{/if}
+			{/if}
+		</h4>
+	</button>
+
+	<div class="text-left flex justify-end w-2">
+	{#if !childOfChoice} <!-- Don't show the remove button if this is a child of a choice component (activation is set by parent)-->
+		{#if active && !required}
+			<button
+				class="badge mt-1"
+				on:click={() => changeFn(active)}
+				title="Remove {convertDisplayName(label, true)} node. Content will be lost."
+				><Fa icon={faTrash} /></button
+			>
+		{/if}
+		{/if}
+	</div>
+	<div class="text-left flex justify-end w-2 px-2"></div>
 </div>
+{#if description && showDescription}
+	<div class="text-sm text-gray-500 py-1 pl-2">{@html description}</div>
+{/if}

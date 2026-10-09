@@ -1,13 +1,17 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.UI.Helpers;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.IO;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Vaiona.Utils.Cfg;
 
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class ComponentConfigController : Controller
     {
         public ActionResult Index(long id = 0)
@@ -70,12 +74,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             public string Id { get; set; }
             public string Content { get; set; }
+            public List<string> Components { get; set; }
             public string Type { get; set; }
 
             public Data()
             {
                 Id = "";
                 Content = "";
+                Components = new List<string>();
                 Type = "";
             }
         }

@@ -107,9 +107,9 @@ namespace BExIS.Dim.Services.Mappings
             return this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get().FirstOrDefault(le => le.ElementId.Equals(elementid) && le.Type.Equals(type));
         }
 
-        public LinkElement GetLinkElement(long elementid, string name, LinkElementType type)
+        public LinkElement GetLinkElement(long elementid, string name, LinkElementType type, string path)
         {
-            return this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get().FirstOrDefault(le => le.ElementId.Equals(elementid) && le.Name.Equals(name) && le.Type.Equals(type));
+            return this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get().FirstOrDefault(le => le.ElementId.Equals(elementid) && le.Name.Equals(name) && le.Type.Equals(type) && le.XPath == path);
         }
 
         public IEnumerable<LinkElement> GetLinkElements()

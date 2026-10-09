@@ -127,7 +127,7 @@ namespace BExIS.Security.Services.Utilities
                 mimeMessage.Subject = GeneralSettings.ApplicationName + " - " + subject;
 
                 var builder = new BodyBuilder();
-                builder.HtmlBody = body;
+                builder.HtmlBody = body?.Replace("\n", "<br/>");
 
                 if (attachments != null)
                 {

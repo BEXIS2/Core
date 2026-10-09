@@ -1,38 +1,35 @@
 ﻿@{
-    ViewBag.Title = "Test";
+
     Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
 
-    string page = ViewData["PageScript"].ToString();
-    string pagecss = ViewData["PageCss"].ToString();
-    string pageId = ViewData["PageId"].ToString();
+    long id = 0;
+    long version = -1;
+    long tag = 0;
+    string entity = "dataset";
 
-    //string skeletoncss = "../../../Content/skeleton/themes/theme-modern.css";
+    if (ViewData["id"] != null) { id = Convert.ToInt64(ViewData["id"]); }
 
-    string layoutcss = "";
-    if (ViewData["LayoutCss"] != null)
+    if (ViewData["version"] != null) { version = Convert.ToInt64(ViewData["version"]); }
+
+    if (ViewData["tag"] != null) { tag = Convert.ToInt64(ViewData["tag"]); }
+
+    if (ViewData["entity"] != null) { entity = ViewData["entity"].ToString(); }
+
+    ViewBag.Title = String.Format("View {0} ({1})",entity.Capitalize(),id);
+
+    string bioSchemaInfos = "";
+    if (ViewData["bioSchema"] != null)
     {
-        layoutcss =  ViewData["LayoutCss"].ToString();
+        bioSchemaInfos = ViewData["bioSchema"].ToString();
     }
-
-    string layoutScript = ViewData["LayoutScript"].ToString();
-
-    string layoutSvelteScript = ViewData["LayoutSvelteScript"].ToString();
-
-    long id = Convert.ToInt64(ViewData["id"]);
-    long version = Convert.ToInt64(ViewData["version"]);
 
 }
 
-<link href="@pagecss" rel="stylesheet">
-<link href="@layoutcss" rel="stylesheet">
-
-<script src="@layoutSvelteScript" type="module"></script>
-
-<script type="module" data-sveltekit-hydrate="view">
-
-        import page from '@page'
-
-        const app = new page({
-            target: document.querySelector('[data-sveltekit-hydrate="view"]').parentNode
-        });
+<script type="application/ld+json">
+    @Html.Raw(bioSchemaInfos)
 </script>
+
+<div id="view" dataset="@id" version="@version" tag="@tag"  >
+
+    @Html.Partial("_sveltePage")
+</div>

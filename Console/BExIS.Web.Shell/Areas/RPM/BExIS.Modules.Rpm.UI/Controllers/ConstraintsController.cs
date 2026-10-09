@@ -16,10 +16,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using System.Web.UI.WebControls;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class ConstraintsController : Controller
     {
         private readonly UserManager _userManager;
@@ -77,7 +79,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 {
                     inUseChecker.reset();
                     List<DomainConstraint> domainConstraints = new List<DomainConstraint>();
-                    List<DomainConstraint> dcs = constraintManager.DomainConstraints.Where(c => c.DataContainer == null).ToList();
+                  //  List<DomainConstraint> dcs = constraintManager.ConstraintRepository.Query(c => c.DataContainer == null).Cast<DomainConstraint>().ToList();
+                    List<DomainConstraint> dcs = constraintManager.ConstraintRepository.Query(c => c.DataContainer == null).OfType<DomainConstraint>().ToList();
                     foreach (DomainConstraint dc in dcs)
                     {
                         dc.Materialize();

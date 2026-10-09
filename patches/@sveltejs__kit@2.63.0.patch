@@ -1,0 +1,13 @@
+diff --git a/src/core/adapt/builder.js b/src/core/adapt/builder.js
+index fb618f2f22bebafeb2401c54077401bb3997224f..4b53541f41ef28e191b907796f7bb61a6791b1b4 100644
+--- a/src/core/adapt/builder.js
++++ b/src/core/adapt/builder.js
+@@ -248,7 +248,7 @@ export function create_builder({
+ 		writeClient(dest) {
+ 			return copy(`${config.kit.outDir}/output/client`, dest, {
+ 				// avoid making vite build artefacts public
+-				filter: (basename) => basename !== '.vite'
++				// pnpm patch filter: (basename) => basename !== '.vite'
+ 			});
+ 		},
+ 

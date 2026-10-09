@@ -18,6 +18,7 @@
   let regexOutputValue = '';
   
   let showResetConfirm = false;
+  let showSettingDescriptions = false;
 
   $: connectedLeafNodes = getConnectedLeafNodes(get(edges), get(nodes), selectedNode?.id || '');
   $: selectedComponentNode = selectedNode ? (Array.isArray(get(nodes)) ? (get(nodes) as any[]).find((n: any) => n.id === selectedNode.id) : null) : null;
@@ -149,6 +150,22 @@
     return found || selectedMode;
   }
 
+  function getDefaultValue(setting: any): string {
+    const defaultValue = setting?.default_value;
+    if (defaultValue && typeof defaultValue === 'object' && 'value' in defaultValue) {
+      return defaultValue.value ?? '';
+    }
+    if (defaultValue === null || defaultValue === undefined) {
+      return '';
+    }
+    return String(defaultValue);
+  }
+
+  function getDefaultLabel(setting: any): string {
+    const value = getDefaultValue(setting);
+    return value === '' ? 'No default' : value;
+  }
+
   // merge manifest settings with config settings for correct setting values
   function mergeSettingsWithConfig(manifestSettings: any[], configSettings: any[]) {
 
@@ -163,7 +180,8 @@
         type: manifestSetting.type,
         description: manifestSetting.description,
         default_value: manifestSetting.default_value,
-        value: configSetting?.value ?? manifestSetting.default_value?.value ?? ''
+        enum: Array.isArray(manifestSetting.enum) ? manifestSetting.enum : [],
+        value: configSetting?.value ?? getDefaultValue(manifestSetting)
       };
 
       return merged;
@@ -190,8 +208,9 @@
     const defaults = {};
     if (selectedMode?.settings?.setting) {
       selectedMode.settings.setting.forEach(setting => {
-        if (setting.default_value) {
-          defaults[setting.target_variable] = setting.default_value.value;
+        const defaultValue = getDefaultValue(setting);
+        if (defaultValue !== '') {
+          defaults[setting.target_variable] = defaultValue;
         }
       });
     }
@@ -202,8 +221,9 @@
     const defaults = {};
     if (componentManifest?.globalSettings?.globalsetting) {
       componentManifest.globalSettings.globalsetting.forEach(setting => {
-        if (setting.default_value) {
-          defaults[setting.target_variable] = setting.default_value.value;
+        const defaultValue = getDefaultValue(setting);
+        if (defaultValue !== '') {
+          defaults[setting.target_variable] = defaultValue;
         }
       });
     }
@@ -471,7 +491,7 @@
         anchorpoint: selectedNode.data?.anchorpoint || '',
         globalsetting: (componentManifest?.globalSettings?.globalsetting || []).map((gs: any) => ({
           target_variable: gs.target_variable,
-          value: gs.default_value?.value || ''
+          value: getDefaultValue(gs)
         }))
       },
       mode: {
@@ -479,7 +499,7 @@
         settings: {
           setting: (manifestMode.settings?.setting || []).map((s: any) => ({
             target_variable: s.target_variable,
-            value: s.default_value?.value || ''
+            value: getDefaultValue(s)
           }))
         },
         variables: {
@@ -510,14 +530,14 @@
     const manifestModeSettings = manifestMode?.settings?.setting || [];
     currentComponent.mode.settings.setting = manifestModeSettings.map((ms: any) => ({
       target_variable: ms.target_variable,
-      value: ms.default_value?.value ?? ''
+      value: getDefaultValue(ms)
     }));
     
     // reset global settings to manifest defaults
     const manifestGlobalSettings = componentManifest?.globalSettings?.globalsetting || [];
     currentComponent.globalSettings.globalsetting = manifestGlobalSettings.map((mgs: any) => ({
       target_variable: mgs.target_variable,
-      value: mgs.default_value?.value ?? ''
+      value: getDefaultValue(mgs)
     }));
     
     componentConfig = { ...componentConfig };
@@ -791,7 +811,17 @@
 </script>
 
 <div class="config-tab">
-  <h4>Configuration</h4>
+  <div class="config-header">
+    <h4>Configuration</h4>
+    <button
+      class="description-toggle"
+      type="button"
+      aria-pressed={showSettingDescriptions}
+      on:click={() => showSettingDescriptions = !showSettingDescriptions}
+    >
+      {showSettingDescriptions ? 'Hide setting descriptions' : 'Show setting descriptions'}
+    </button>
+  </div>
 
   <!-- anchorpoint selection -->
   {#if connectedLeafNodes.length > 0}
@@ -861,6 +891,22 @@
                 Default: {setting.default_value?.value ?? 'false'}
               </div>
             {:else}
+              {#if setting.enum && setting.enum.length > 0}
+                <label class="setting-name" for={`global-select-${setting.target_variable}`}>{setting.name || setting.target_variable}:</label>
+                <select
+                  id={`global-select-${setting.target_variable}`}
+                  value={setting.value || ''}
+                  on:change={(e) => handleGlobalInputChange(setting, e)}
+                >
+                  <option value="">-- Select --</option>
+                  {#each setting.enum as option}
+                    <option value={option}>{option}</option>
+                  {/each}
+                </select>
+                <div class="default-info">
+                  Default: {getDefaultLabel(setting)}
+                </div>
+              {:else}
               <label class="setting-name" for={`global-text-${setting.target_variable}`}>{setting.name || setting.target_variable}:</label>
               <input 
                 id={`global-text-${setting.target_variable}`}
@@ -870,8 +916,12 @@
                 placeholder={`Default: ${setting.default_value?.value || 'No default'}`}
               />
               <div class="default-info">
-                Default: {setting.default_value?.value || 'No default'}
+                Default: {getDefaultLabel(setting)}
               </div>
+              {/if}
+            {/if}
+            {#if showSettingDescriptions && setting.description}
+              <p class="setting-description">{setting.description}</p>
             {/if}
           </div>
         {/each}
@@ -900,6 +950,22 @@
                 Default: {setting.default_value?.value ?? 'false'}
               </div>
             {:else}
+              {#if setting.enum && setting.enum.length > 0}
+                <label class="setting-name" for={`setting-select-${setting.target_variable}`}>{setting.name || setting.target_variable}:</label>
+                <select
+                  id={`setting-select-${setting.target_variable}`}
+                  value={setting.value || ''}
+                  on:change={(e) => handleInputChange(setting, e)}
+                >
+                  <option value="">-- Select --</option>
+                  {#each setting.enum as option}
+                    <option value={option}>{option}</option>
+                  {/each}
+                </select>
+                <div class="default-info">
+                  Default: {getDefaultLabel(setting)}
+                </div>
+              {:else}
               <label class="setting-name" for={`setting-text-${setting.target_variable}`}>{setting.name || setting.target_variable}:</label>
               <input 
                 id={`setting-text-${setting.target_variable}`}
@@ -909,8 +975,12 @@
                 placeholder={`Default: ${setting.default_value?.value || 'No default'}`}
               />
               <div class="default-info">
-                Default: {setting.default_value?.value || 'No default'}
+                Default: {getDefaultLabel(setting)}
               </div>
+              {/if}
+            {/if}
+            {#if showSettingDescriptions && setting.description}
+              <p class="setting-description">{setting.description}</p>
             {/if}
           </div>
         {/each}
@@ -1121,6 +1191,24 @@
     margin: 0 0 1rem 0;
     color: #333;
   }
+  .config-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .description-toggle {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    color: #555;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+  .description-toggle:hover {
+    background: #f8f9fa;
+  }
   .section {
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
@@ -1204,6 +1292,7 @@
   }
   .setting-item.boolean {
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     gap: 0.75rem;
   }
@@ -1222,6 +1311,13 @@
     font-weight: bold;
     color: #333;
     margin: 0;
+  }
+  .setting-description {
+    flex-basis: 100%;
+    margin: 0;
+    color: #666;
+    font-size: 0.85rem;
+    line-height: 1.4;
   }
   .setting-item input[type="text"] {
     padding: 0.5rem;

@@ -195,6 +195,7 @@
 				</form>
 				<button
 					class="btn variant-filled-primary mb-2"
+					id="sendRequestForTagApproval"
 					on:click={() => sendRequestForTagApprovalFn(requestTagApprovalMessage)}
 					>Send Request to Curator</button
 				>

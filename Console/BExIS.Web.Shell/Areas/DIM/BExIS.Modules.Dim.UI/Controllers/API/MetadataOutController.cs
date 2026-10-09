@@ -420,7 +420,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     List<string> t = xmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
                     string convertTo = t.ToArray().FirstOrDefault();
-                    xmlDoc = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport, convertTo);
+                    xmlDoc = OutputMetadataManager.GetConvertedMetadata(id, versionId, TransmissionType.mappingFileExport, convertTo);
                 }
 
                 //format = flatten
@@ -429,7 +429,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     List<string> t = xmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
                     string convertTo = t.ToArray().FirstOrDefault();
-                    xmlDoc = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport, convertTo);
+                    xmlDoc = OutputMetadataManager.GetConvertedMetadata(id,versionId, TransmissionType.mappingFileExport, convertTo);
                     flatmetadata = OutputMetadataManager.GetFlattenMetadata(xmlDoc);
                 }
                
@@ -462,28 +462,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             {
                                 string json = "";
 
-                                switch (simplifiedJson)
-                                {
-                                    case 0:
-                                        {
-                                            json = JsonConvert.SerializeObject(xmlDoc.DocumentElement);
-                                            break;
-                                        }
-                                    case 1:
-                                        {
-                                            XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
-                                            json = xmlMetadataConverter.ConvertTo(xmlDoc, true).ToString();
-
-                                            break;
-                                        }
-                                    case 2:
-                                        {
-                                            XmlMetadataConverter xmlMetadataConverter = new XmlMetadataConverter();
-                                            json = xmlMetadataConverter.ConvertTo(xmlDoc).ToString();
-
-                                            break;
-                                        }
-                                }
+                                json = OutputMetadataManager.GetMetadataAsJson(xmlDoc, simplifiedJson);
 
                                 HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(json, Encoding.UTF8, "application/json") };
                       

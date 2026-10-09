@@ -1,18 +1,18 @@
 {
   "meta": {
-    "title": "Date Range Picker Widget",
+    "title": "Date Range Checker",
     "component_name": "date_range_picker_v1.0.0",
     "author": "Franziska Zander",
     "version": "1.0.0",
-    "description": "Component for selecting a date range"
+    "description": "Component for validating a date range"
   },
   "globalSettings": {
     "globalsetting": [
       {
-        "name": "Parameter",
-        "description": "String to configure the terminology widget",
+        "name": "Description",
+        "description": "Overwrite default description of the field.",
         "type": "string",
-        "target_variable": "",
+        "target_variable": "description",
         "default_value": {
           "type": "string",
           "value": ""
@@ -24,17 +24,17 @@
     "edit": [
       {
         "mode_name": "range_selection",
-        "description": "Basic Configuration of the date range picker widget",
+        "description": "Basic Configuration of the date range checker",
         "settings": {
           "setting": [
             {
-              "name": "Range Limit",
-              "description": "Limit the selectable date range",
-              "type": "string",
-              "target_variable": "rangeLimit",
+              "name": "Disable",
+              "description": "Disable the date range checker",
+              "type": "boolean",
+              "target_variable": "disable",
               "default_value": {
-                "type": "string",
-                "value": ""
+                "type": "boolean",
+                "value": false
               }
             }
           ]
@@ -43,7 +43,7 @@
           "variable": [
             {
               "name": "Start Date",
-              "description": "Start date of the range",
+              "description": "Start date",
               "type": "string",
               "format": "",
               "target_variable": "startDate",
@@ -53,12 +53,12 @@
               "is_output": true,
               "default_value": {
                 "type": "string",
-                "value": "2024-01-01"
+                "value": ""
               }
             },
             {
               "name": "End Date",
-              "description": "End date of the range",
+              "description": "End date",
               "type": "string",
               "format": "",
               "target_variable": "endDate",
@@ -68,7 +68,7 @@
               "is_output": true,
               "default_value": {
                 "type": "string",
-                "value": "2024-12-31"
+                "value": ""
               }
             }
           ]
@@ -80,15 +80,13 @@
         "mode_name": "Range Display",
         "description": "Mode for displaying selected date range",
         "settings": {
-          "setting": [
-          
-          ]
+          "setting": []
         },
         "variables": {
           "variable": [
             {
               "name": "Start Date",
-              "description": "Start date of the range",
+              "description": "Start date",
               "type": "string",
               "target_variable": "startDate",
               "allowregex_input": true,
@@ -102,7 +100,7 @@
             },
             {
               "name": "End Date",
-              "description": "End date of the range",
+              "description": "End date",
               "type": "string",
               "target_variable": "endDate",
               "allowregex_input": true,

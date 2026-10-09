@@ -197,11 +197,20 @@
         {#each childItems as item, i (item.id)}
           {@const variable = data?.componentVariables?.find(v => v.target_variable === item.id)}
           <div class="node-item">
-            <!-- single handle on the left for all component child items -->
+            <!-- handle on the left for all component child items -->
+            <!-- source handle: allows starting a connection from here (for OUT) -->
             <Handle 
               type="source" 
               position={Position.Left} 
               id={`${id}-${item.id}-handle`}
+              style="left: 0px; top: 50%; transform: translate(-50%, -50%); pointer-events: none;"
+              isConnectable={true}
+            />
+            <!-- target handle: allows ending a connection here (for IN) -->
+            <Handle 
+              type="target" 
+              position={Position.Left} 
+              id={`${id}-${item.id}-handle-target`}
               style="left: 0px; top: 50%; transform: translate(-50%, -50%);"
               isConnectable={isHandleTargetable(item.id, item)}
             />

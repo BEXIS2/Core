@@ -21,11 +21,11 @@
 -->
 		<Export tag="settings" id="users" order="1"
 		  title="Manage Users" description="Manage Users" icon=""
-		  controller="users" action="index" argument="Users"
+		  controller="users" action="" argument=""
 		  extends="./settingsRoot" />
 		<Export tag="settings" id="groups" order="2"
 		  title="Manage Groups" description="Manage Groups" icon=""
-		  controller="groups" action="index" argument="Groups"
+		  controller="groups" action="" argument=""
 		  extends="./settingsRoot" />
 		<Export tag="settings" id="features" order="3"
 		  title="Feature Permissions" description="Manage Feature Permissions" icon=""
@@ -102,22 +102,22 @@
 
 	<!-- fill out alle the hook aatributes otherwise there will not be loaded -->
 	<Hooks>
-		<Hook
-			name="permission"
+		<!--<Hook
+			name="permissions"
 			displayName="Permissions"
 			mode="view"
 			entity="dataset"
 			place="details"
 			module="sam"
-			type="BExIS.Modules.Sam.UI.Hooks.UserPermissionsHook, BExIS.Modules.SAM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+			type="BExIS.Modules.Sam.UI.Hooks.UserPermissionsViewHook, BExIS.Modules.SAM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />-->
 
-		<!--<Hook
-			name="permission"
+		<Hook
+			name="permissions"
 			displayName="Permissions"
 			mode="edit"
 			entity="dataset"
 			place="details"
 			module="sam"
-			type="BExIS.Modules.Sam.UI.Hooks.UserPermissionsHook, BExIS.Modules.SAM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />-->
+			type="BExIS.Modules.Sam.UI.Hooks.UserPermissionsEditHook, BExIS.Modules.SAM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 	</Hooks>
 </Manifest>

@@ -27,6 +27,8 @@ namespace BExIS.Security.Entities.Objects
         public virtual int TargetVersion { get; set; }
         public virtual string Context { get; set; }
         public virtual string ReferenceType { get; set; }
+        public virtual string LinkType { get; set; }
+        public virtual string Category { get; set; }
         public virtual DateTime CreationDate { get; set; }
 
         public EntityReference()
@@ -37,9 +39,14 @@ namespace BExIS.Security.Entities.Objects
             TargetEntityId = 0;
             Context = "";
             ReferenceType = "";
+            CreationDate = DateTime.Now;
+            LinkType = "";
+            Category = "";
+            SourceVersion = 0;
+            TargetVersion = 0;
         }
 
-        public EntityReference(long sourceId, long sourceEntityId, int sourceVersion, long targetId, long targetEntityId, int targetVersion, string context, string type, DateTime creationDate)
+        public EntityReference(long sourceId, long sourceEntityId, int sourceVersion, long targetId, long targetEntityId, int targetVersion, string context, string type, DateTime creationDate, string linkType , string category)
         {
             SourceId = sourceId;
             SourceEntityId = sourceEntityId;
@@ -50,6 +57,8 @@ namespace BExIS.Security.Entities.Objects
             Context = context;
             ReferenceType = type;
             CreationDate = creationDate;
+            Category = category;
+            LinkType = linkType;
         }
     }
 }

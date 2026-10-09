@@ -15,6 +15,8 @@
   } from '@xyflow/svelte';
   import { writable, type Writable, get } from 'svelte/store';
   import '@xyflow/svelte/dist/style.css';
+  import Fa from 'svelte-fa';
+  import { faMagnifyingGlass, faXmark } from '@fortawesome/free-solid-svg-icons';
   import { onMount, tick } from 'svelte';
 
   // import custom components
@@ -30,6 +32,9 @@
   import SectionNode from './SectionNode.svelte';
   import LeafNode from './LeafNode.svelte';
   import ResetViewButton from './ResetViewButton.svelte';
+  import FlowHelper from './FlowHelper.svelte';
+
+  let setCenterFn: (x: number, y: number, zoom?: number) => void = () => {};
 
   // import file helpers for config management
   import { 
@@ -43,7 +48,7 @@
   } from './Services/fileHelpers';
   
   // import componentManifestJson from './componentManifest.json';
-	import { Page, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
+	import { Page, pageContentLayoutType, notificationStore, notificationType } from '@bexis2/bexis2-core-ui';
 	import { SaveConfig, LoadConfig } from './Services/apiCalls';
 	import { getEntityTemplateList } from '$services/EntityTemplateCaller';
 
@@ -77,6 +82,73 @@
   let configLoaded = false;
   // store for node specific modes
   let nodeSpecificModes = new Map<string, any>();
+  let searchTerm = '';
+  let searchResults: any[] = [];
+  let currentSearchIndex = -1;
+
+  // search nodes by label or path
+  function performSearch() {
+    if (!searchTerm.trim()) {
+      searchResults = [];
+      currentSearchIndex = -1;
+      // clear highlights
+      nodes.update(ns => ns.map(n => ({ ...n, data: { ...n.data, _searchMatch: false } })));
+      return;
+    }
+
+    const term = searchTerm.toLowerCase().trim();
+    searchResults = get(nodes).filter(n => {
+      const label = (n.data?.label || '').toString().toLowerCase();
+      const path = (n.data?.path || '').toString().toLowerCase();
+      return label.includes(term) || path.includes(term);
+    });
+
+    // highlight matches
+    nodes.update(ns => ns.map(n => {
+      const label = (n.data?.label || '').toString().toLowerCase();
+      const path = (n.data?.path || '').toString().toLowerCase();
+      const isMatch = label.includes(term) || path.includes(term);
+      return { ...n, data: { ...n.data, _searchMatch: isMatch } };
+    }));
+
+    if (searchResults.length > 0) {
+      currentSearchIndex = 0;
+      focusNode(searchResults[0]);
+    }
+  }
+
+  function focusNextResult() {
+    if (searchResults.length === 0) return;
+    currentSearchIndex = (currentSearchIndex + 1) % searchResults.length;
+    focusNode(searchResults[currentSearchIndex]);
+  }
+
+  function focusPrevResult() {
+    if (searchResults.length === 0) return;
+    currentSearchIndex = currentSearchIndex <= 0 ? searchResults.length - 1 : currentSearchIndex - 1;
+    focusNode(searchResults[currentSearchIndex]);
+  }
+
+  function focusNode(node: any) {
+    if (!node?.position) return;
+    // highlight node
+    nodes.update(ns => ns.map(n => ({
+      ...n,
+      selected: n.id === node.id,
+      data: { ...n.data, _searchCurrent: n.id === node.id }
+    })));
+    // move viewport to center on the node
+    const x = node.position.x + 140; // half node width
+    const y = node.position.y + 40;  // half node height
+    setCenterFn(x, y, 1.2);
+  }
+
+  function clearSearch() {
+    searchTerm = '';
+    searchResults = [];
+    currentSearchIndex = -1;
+    nodes.update(ns => ns.map(n => ({ ...n, data: { ...n.data, _searchMatch: false, _searchCurrent: false } })));
+  }
 
   // reactive: convert template ID to full object
   $: if (selectedEntityTemplateId && entityTemplateList.length > 0) {
@@ -115,6 +187,11 @@
   // delete confirmation dialog state
   let showDeleteWarning = false;
   let nodeToDelete: Node | null = null;
+
+  // anchorpoint warning dialog state
+  let showAnchorpointWarning = false;
+  let anchorpointWarningItems: string[] = [];
+  let anchorpointWarningExtraCount = 0;
 
   // init counter for forcing node updates
   let nodeVersion = 0;
@@ -293,10 +370,15 @@
   function buildComponentData(node: Node): any {
     if (!node || !node.data) return null;
 
+    // find the correct manifest for this node's component type
+    const nodeManifest = componentManifestList.find(
+      (m: any) => m.meta?.component_name === node.data.componentName
+    ) || selectedComponentManifest;
+
     // structure as in config files
     const componentData: any = {
       meta: {
-        component_name: node.data.componentName || selectedComponentManifest?.meta?.component_name,
+        component_name: node.data.componentName || nodeManifest?.meta?.component_name,
         component_ui_id: node.id
       },
       globalSettings: {
@@ -316,7 +398,7 @@
     };
 
     const modeKey = node.data.interactionMode || currentInteractionMode;
-    const manifestModes = selectedComponentManifest?.modes?.[modeKey as string] || [];
+    const manifestModes = nodeManifest?.modes?.[modeKey as string] || [];
     const manifestMode = manifestModes.find((m: any) => m.mode_name === node.data.modeName);
     const currentConfigRef = modeKey === 'edit' ? componentConfig_edit : componentConfig_view;
     
@@ -325,7 +407,7 @@
     );
     
     // global settings
-    const manifestGlobalSettings = selectedComponentManifest?.globalSettings?.globalsetting || [];
+    const manifestGlobalSettings = nodeManifest?.globalSettings?.globalsetting || [];
     const configGlobalSettings = existingComponent?.globalSettings?.globalsetting || [];
     
     // cycle through manifest global settings and fill from config or default
@@ -362,7 +444,11 @@
       const sourceHandle = `${node.id}-${variableId}-handle`;
 
       const connectedEdges = allEdges.filter(
-        (edge: Edge) => edge.sourceHandle === sourceHandle || edge.targetHandle === sourceHandle
+        (edge: Edge) => {
+          const isHandleMatch = edge.sourceHandle === sourceHandle || edge.targetHandle === sourceHandle;
+          const isSameMode = !edge.data?.sourceMode || edge.data.sourceMode === modeKey;
+          return isHandleMatch && isSameMode;
+        }
       );
 
       // case 1: has edges > create from edge data
@@ -521,11 +607,14 @@
     
     currentInteractionMode = newMode; // switch mode
     updateInteractionModeInConfig(newMode);
-    
-    if (sidebarMode === 'edit') {
-      sidebarMode = 'empty';
-      selectedNode.set(null);
-    }
+
+    // Reset selection/sidebar to avoid stale node data (e.g. anchorpoint) leaking between modes.
+    sidebarMode = 'empty';
+    activeTab = 0;
+    selectedNode.set(null);
+    selectedEdge.set(null);
+    // Rebuild edges for the target mode only.
+    edges.set([]);
     
     // get manifest submodes for new interaction mode
     const newModes = selectedComponentManifest?.modes?.[newMode];
@@ -570,21 +659,62 @@
 
   // save all component configurations and positions from both modes and download files
 
+  $: missingAnchorInEditPreview = getConfigComponentsMissingAnchorpoint(componentConfig_edit, 'edit');
+  $: missingAnchorInViewPreview = getConfigComponentsMissingAnchorpoint(componentConfig_view, 'view');
+  $: missingAnchorBadgeCount = [...missingAnchorInEditPreview, ...missingAnchorInViewPreview].length;
+
+  function openAnchorpointWarning(items: string[]) {
+    anchorpointWarningItems = items.slice(0, 10);
+    anchorpointWarningExtraCount = Math.max(0, items.length - 10);
+    showAnchorpointWarning = true;
+  }
+
+  function closeAnchorpointWarning() {
+    showAnchorpointWarning = false;
+    anchorpointWarningItems = [];
+    anchorpointWarningExtraCount = 0;
+  }
+
+  function hasMappedVariable(component: any): boolean {
+    const vars = component?.mode?.variables?.variable || [];
+    return vars.some((v: any) => String(v?.JSONPath || '').replace(/^\$\.?/, '').trim() !== '');
+  }
+
+  function getConfigComponentsMissingAnchorpoint(config: ConfigFile, modeLabel: 'edit' | 'view'): string[] {
+    const components = config?.components || [];
+
+    return components
+      .filter((component: any) => {
+        if (!hasMappedVariable(component)) return false;
+        const anchorpoint = String(component?.globalSettings?.anchorpoint || '').replace(/^\$\.?/, '').trim();
+        return anchorpoint === '';
+      })
+      .map((component: any) => `${component?.meta?.component_name || component?.meta?.component_ui_id || 'unknown'} (${modeLabel})`);
+  }
+
   function handleSaveEdit() {
     const currentNodes = get(nodes);
+    const shouldUpdateEditMode = currentInteractionMode === 'edit';
+    const shouldUpdateViewMode = currentInteractionMode === 'view';
     
     // collect all nodes from both modes
+    // start with current canvas nodes (which have the latest data, e.g. mode changes),
+    // then add cached nodes from the other mode that are not on the canvas right now
     const allEditNodes = [
-      ...editModeNodes,
       ...currentNodes.filter(n => 
-        n.type === 'nodeWithItems' &&  n.data?.interactionMode === 'edit' && !editModeNodes.find(existing => existing.id === n.id)
+        n.type === 'nodeWithItems' &&  n.data?.interactionMode === 'edit'
+      ),
+      ...editModeNodes.filter(existing => 
+        !currentNodes.find(n => n.id === existing.id)
       )
     ];
     
     const allViewNodes = [
-      ...viewModeNodes,
       ...currentNodes.filter(n => 
-        n.type === 'nodeWithItems' && n.data?.interactionMode === 'view' && !viewModeNodes.find(existing => existing.id === n.id)
+        n.type === 'nodeWithItems' && n.data?.interactionMode === 'view'
+      ),
+      ...viewModeNodes.filter(existing => 
+        !currentNodes.find(n => n.id === existing.id)
       )
     ];
 
@@ -606,8 +736,9 @@
       };
     });
     
-    // update or add edit components to config
-    editModeNodes.forEach(node => {
+    // update or add edit components to config (only when edit mode is active)
+    if (shouldUpdateEditMode) {
+      editModeNodes.forEach(node => {
       const compIdx = componentConfig_edit?.components.findIndex(
         (c: any) => c.meta.component_ui_id === node.id
       );
@@ -638,6 +769,11 @@
           });
           
           componentConfig_edit.components[compIdx].mode.variables.variable = mergedVariables;
+          // update mode_name, settings and globalSettings to reflect mode changes
+          componentConfig_edit.components[compIdx].mode.mode_name = componentData.mode.mode_name;
+          componentConfig_edit.components[compIdx].mode.settings = componentData.mode.settings;
+          componentConfig_edit.components[compIdx].globalSettings.globalsetting = componentData.globalSettings.globalsetting;
+          componentConfig_edit.components[compIdx].globalSettings.anchorpoint = componentData.globalSettings.anchorpoint;
         }
       } else {
         // add new component if missing
@@ -646,10 +782,12 @@
           componentConfig_edit?.components.push(componentData);
         }
       }
-    });
+      });
+    }
     
-    // update or add view components
-    viewModeNodes.forEach(node => {
+    // update or add view components (only when view mode is active)
+    if (shouldUpdateViewMode) {
+      viewModeNodes.forEach(node => {
       const compIdx = componentConfig_view?.components.findIndex(
         (c: any) => c.meta.component_ui_id === node.id
       );
@@ -658,6 +796,11 @@
         const componentData = buildComponentData(node);
         if (componentData) {
           componentConfig_view.components[compIdx].mode.variables = componentData.mode.variables;
+          // update mode_name, settings and globalSettings to reflect mode changes
+          componentConfig_view.components[compIdx].mode.mode_name = componentData.mode.mode_name;
+          componentConfig_view.components[compIdx].mode.settings = componentData.mode.settings;
+          componentConfig_view.components[compIdx].globalSettings.globalsetting = componentData.globalSettings.globalsetting;
+          componentConfig_view.components[compIdx].globalSettings.anchorpoint = componentData.globalSettings.anchorpoint;
         }
       } else {
         // add new component if missing
@@ -666,19 +809,42 @@
           componentConfig_view.components.push(componentData);
         }
       }
-    });
+      });
+    }
 
     // force config reactivity
     componentConfig_edit = { ...componentConfig_edit };
     componentConfig_view = { ...componentConfig_view };
+
+    const missingAnchorInEdit = getConfigComponentsMissingAnchorpoint(componentConfig_edit, 'edit');
+    const missingAnchorInView = getConfigComponentsMissingAnchorpoint(componentConfig_view, 'view');
+    const allMissingAnchors = [...missingAnchorInEdit, ...missingAnchorInView];
+
+    if (allMissingAnchors.length > 0) {
+      openAnchorpointWarning(allMissingAnchors);
+      return;
+    }
     
-    SaveConfig(componentConfig_edit, Number(selectedEntityTemplateId), 'edit');
-    SaveConfig(componentConfig_view, Number(selectedEntityTemplateId), 'view');
-    SaveConfig(componentPositions, Number(selectedEntityTemplateId), 'positions');
+    SaveConfig(componentConfig_edit, Number(selectedEntityTemplateId), 'edit')
+      .then(() => SaveConfig(componentConfig_view, Number(selectedEntityTemplateId), 'view'))
+      .then(() => SaveConfig(componentPositions, Number(selectedEntityTemplateId), 'positions'))
+      .then(() => {
+        notificationStore.showNotification({
+          notificationType: notificationType.success,
+          message: 'Configuration saved successfully.'
+        });
+      })
+      .catch((error) => {
+        console.error('Error saving configuration:', error);
+        notificationStore.showNotification({
+          notificationType: notificationType.error,
+          message: 'Failed to save configuration. Please try again.'
+        });
+      });
     
     
     
-    alert(`Configuration saved!
+    /*alert(`Configuration saved!
 
     EDIT Mode: ${componentConfig_edit?.components.length} component(s)
     VIEW Mode: ${componentConfig_view?.components.length} component(s)
@@ -687,7 +853,7 @@
     Files downloaded:
     - componentConfig_edit.json
     - componentConfig_view.json
-    - componentPositions.json`);
+    - componentPositions.json`);*/
   }
 
   function handleCancelEdit() {
@@ -777,16 +943,34 @@
         }
       }
     });
+
+    const missingAnchorInEdit = getConfigComponentsMissingAnchorpoint(componentConfig_edit, 'edit');
+    const missingAnchorInView = getConfigComponentsMissingAnchorpoint(componentConfig_view, 'view');
+    const allMissingAnchors = [...missingAnchorInEdit, ...missingAnchorInView];
+
+    if (allMissingAnchors.length > 0) {
+      openAnchorpointWarning(allMissingAnchors);
+      return;
+    }
       
     
-    SaveConfig(componentConfig_edit, 1, 'edit');
-    SaveConfig(componentConfig_view, 1, 'view');
-    SaveConfig(componentPositions, 1, 'positions');
-    
-    // download all configs
-    downloadAllConfigs(componentConfig_edit, componentConfig_view, componentPositions);
-  
-    // alert('Mappings saved!');
+    SaveConfig(componentConfig_edit, 1, 'edit')
+      .then(() => SaveConfig(componentConfig_view, 1, 'view'))
+      .then(() => SaveConfig(componentPositions, 1, 'positions'))
+      .then(() => {
+        notificationStore.showNotification({
+          notificationType: notificationType.success,
+          message: 'Mappings saved successfully.'
+        });
+        downloadAllConfigs(componentConfig_edit, componentConfig_view, componentPositions);
+      })
+      .catch((error) => {
+        console.error('Error saving mappings:', error);
+        notificationStore.showNotification({
+          notificationType: notificationType.error,
+          message: 'Failed to save mappings. Please try again.'
+        });
+      });
   }
 
   // apply loaded positions to nodes via ID
@@ -869,7 +1053,7 @@
 
           const sourceHandle = `${componentNode.id}-${variable.target_variable}-handle`;
           const targetHandle = `${schemaNode.id}-handle`;
-          const edgeId = `${sourceHandle}-${schemaNode.id}`;
+          const edgeId = `${mode}::${sourceHandle}=>${targetHandle}`;
 
           // add new edge if it doesn't exist
           if (!existingIds.has(edgeId)) {
@@ -1264,12 +1448,18 @@ $: {
     
     if (configNode) {
       // node exists in config: update with config data
+      // but preserve canvas-only changes (modeName, componentVariables, childItems)
+      // that may have been changed by handleModeChange but not yet saved to config
       allNodes.push({
         ...configNode,
         position: existingNode.position,
         data: {
           ...configNode.data,
-          anchorpoint: existingNode.data.anchorpoint || configNode.data.anchorpoint || '',
+          modeName: existingNode.data?.modeName ?? configNode.data.modeName,
+          componentVariables: existingNode.data?.componentVariables ?? configNode.data.componentVariables,
+          childItems: existingNode.data?.childItems ?? configNode.data.childItems,
+          // Prefer config anchorpoint for the active mode, fallback to existing UI value.
+          anchorpoint: configNode.data.anchorpoint || existingNode.data.anchorpoint || '',
           edges,
           version: nodeVersion,
           isGrayedOut: isEditingComponent && existingNode.id !== $selectedNode?.id && existingNode.data?.interactionMode === currentInteractionMode,
@@ -1650,6 +1840,11 @@ function handleAddComponent(component: any) {
 // find initial edge direction on connection based on component variable settings
 function determineInitialDirection(sourceHandleId: string, targetHandleId: string) {
 
+  // normalize handle ids: strip -target suffix so both source and target handles match -handle pattern
+  const normalizeHandle = (h: string) => h ? h.replace(/-target$/, '') : h;
+  const normSource = normalizeHandle(sourceHandleId);
+  const normTarget = normalizeHandle(targetHandleId);
+
   let componentVariablesToCheck: any[] = []; // variables array to check
   let componentHandleId = '';
   
@@ -1659,13 +1854,13 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
   for (const node of allNodes) {
     if (node.type === 'nodeWithItems') {
       // check if source or target handle belongs to this component
-      if (sourceHandleId && sourceHandleId.startsWith(`${node.id}-`) && sourceHandleId.endsWith('-handle')) {
+      if (normSource && normSource.startsWith(`${node.id}-`) && normSource.endsWith('-handle')) {
         componentVariablesToCheck = Array.isArray(node.data?.componentVariables) ? node.data.componentVariables : [];
-        componentHandleId = sourceHandleId;
+        componentHandleId = normSource;
         break;
-      } else if (targetHandleId && targetHandleId.startsWith(`${node.id}-`) && targetHandleId.endsWith('-handle')) {
+      } else if (normTarget && normTarget.startsWith(`${node.id}-`) && normTarget.endsWith('-handle')) {
         componentVariablesToCheck = Array.isArray(node.data?.componentVariables) ? node.data.componentVariables : [];
-        componentHandleId = targetHandleId;
+        componentHandleId = normTarget;
         break;
       }
     }
@@ -2032,12 +2227,18 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
     }
 
     // create new edge
+    // normalize handle ids: strip -target suffix from target handles so all code matches -handle pattern
+    const normSourceHandle = params.sourceHandle ? params.sourceHandle.replace(/-target$/, '') : params.sourceHandle;
+    const normTargetHandle = params.targetHandle ? params.targetHandle.replace(/-target$/, '') : params.targetHandle;
+    const sourceNodeModeForId = sourceNode?.data?.interactionMode || currentInteractionMode;
+    const generatedEdgeId = `${sourceNodeModeForId}::${normSourceHandle ?? params.source}=>${normTargetHandle ?? params.target}`;
+
     const newEdge = {
-      id: `${params.source}-${params.target}`,
+      id: generatedEdgeId,
       source: params.source,
       target: params.target,
-      sourceHandle: params.sourceHandle,
-      targetHandle: params.targetHandle,
+      sourceHandle: normSourceHandle,
+      targetHandle: normTargetHandle,
       type: 'button',
       animated: false,
       style: 'stroke: #007acc; stroke-width: 2px;',
@@ -2047,8 +2248,8 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
       data: {
         leftDirection: initialDirection.leftDirection,
         rightDirection: initialDirection.rightDirection,
-        sourceHandleId: params.sourceHandle,
-        targetHandleId: params.targetHandle,
+        sourceHandleId: normSourceHandle,
+        targetHandleId: normTargetHandle,
         sourceMode: sourceNodeMode
       }
     };
@@ -2056,6 +2257,7 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
     edges.update(all => [...all, newEdge]);
 
     // update component variable with JSONPath & directions
+    // case 1: component -> leaf (source is component)
     if (sourceNode?.type === 'nodeWithItems' && targetNode?.type === 'leafNode') {
       const cfg = getCurrentConfig();
       const compIdx = cfg.components.findIndex((c: any) =>
@@ -2065,7 +2267,7 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
       // update variable entry
       if (compIdx >= 0) {
         const varsArr = cfg.components[compIdx].mode?.variables?.variable || [];
-        const parts = (params.sourceHandle || '').split('-');
+        const parts = (normSourceHandle || '').split('-');
         const varName = parts.length >= 3 ? parts[parts.length - 2] : '';
         const vIdx = varsArr.findIndex((v: any) => v.target_variable === varName);
         const jsonPath = targetNode.data?.path || '';
@@ -2077,6 +2279,38 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
           varsArr[vIdx].is_output = newEdge.data.leftDirection;
           if (typeof targetNode.data?.is_visible === 'boolean') {
             varsArr[vIdx].is_visible = targetNode.data.is_visible;
+          } else if (varsArr[vIdx].is_visible === undefined) {
+            varsArr[vIdx].is_visible = true;
+          }
+        }
+        if (currentInteractionMode === 'edit') {
+          componentConfig_edit = { ...componentConfig_edit };
+        } else {
+          componentConfig_view = { ...componentConfig_view };
+        }
+      }
+    }
+
+    // case 2: leaf -> component (target is component, for IN-only variables)
+    if (sourceNode?.type === 'leafNode' && targetNode?.type === 'nodeWithItems') {
+      const cfg = getCurrentConfig();
+      const compIdx = cfg.components.findIndex((c: any) =>
+        c.meta.component_ui_id === targetNode.id
+      );
+
+      if (compIdx >= 0) {
+        const varsArr = cfg.components[compIdx].mode?.variables?.variable || [];
+        const parts = (normTargetHandle || '').split('-');
+        const varName = parts.length >= 3 ? parts[parts.length - 2] : '';
+        const vIdx = varsArr.findIndex((v: any) => v.target_variable === varName);
+        const jsonPath = sourceNode.data?.path || '';
+        
+        if (vIdx >= 0 && jsonPath) {
+          varsArr[vIdx].JSONPath = jsonPath;
+          varsArr[vIdx].is_input = newEdge.data.rightDirection;
+          varsArr[vIdx].is_output = newEdge.data.leftDirection;
+          if (typeof sourceNode.data?.is_visible === 'boolean') {
+            varsArr[vIdx].is_visible = sourceNode.data.is_visible;
           } else if (varsArr[vIdx].is_visible === undefined) {
             varsArr[vIdx].is_visible = true;
           }
@@ -2354,6 +2588,26 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
         <option value={template.id}>{template.name}</option>
       {/each}
     </select>
+
+    <!-- Search nodes -->
+    <div class="search-box">
+      <Fa icon={faMagnifyingGlass} class="search-icon" />
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search fields..."
+        bind:value={searchTerm}
+        on:input={performSearch}
+        on:keydown={(e) => {
+          if (e.key === 'Enter') { e.preventDefault(); focusNextResult(); }
+          if (e.key === 'Escape') clearSearch();
+        }}
+      />
+      {#if searchTerm}
+        <span class="search-count">{#if searchResults.length > 0}{currentSearchIndex + 1}/{searchResults.length}{:else}0{/if}</span>
+        <button class="search-clear" on:click={clearSearch} title="Clear search"><Fa icon={faXmark} /></button>
+      {/if}
+    </div>
     <div class="mode-controls">
       <button 
         class="mode-button" 
@@ -2375,6 +2629,7 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
   <div class="layout_treeflow-sidebar">
     <div class="flow-wrapper">
       <SvelteFlowProvider>
+        <FlowHelper onReady={(fn) => (setCenterFn = fn)} />
         <SvelteFlow
           {nodes}
           {edges}
@@ -2415,6 +2670,20 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
           onDelete={handleDeleteComponent}
         />
       {:else if sidebarMode === 'edit'}
+      <!-- save/cancel buttons -->
+        <div class="edit-actions">
+          <button class="cancel-edit-button" on:click={handleCancelEdit}>
+            Cancel
+          </button>
+          <button class="save-edit-button" on:click={handleSaveEdit}>
+            Save
+          </button>
+        </div>
+        {#if missingAnchorBadgeCount > 0}
+          <div class="anchorpoint-warning-badge" role="status" aria-live="polite">
+            Missing anchorpoint for {missingAnchorBadgeCount} mapped component{missingAnchorBadgeCount === 1 ? '' : 's'}
+          </div>
+        {/if}
         <div class="tabs">
           <button class="tab" class:active={activeTab === 0} on:click={() => activeTab = 0}>
             Modes
@@ -2457,17 +2726,7 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
               componentConfig={getCurrentConfig()}
             />
           {/if}
-        </div>
-        
-        <!-- save/cancel buttons -->
-        <div class="edit-actions">
-          <button class="cancel-edit-button" on:click={handleCancelEdit}>
-            Cancel
-          </button>
-          <button class="save-edit-button" on:click={handleSaveEdit}>
-            Save
-          </button>
-        </div>
+        </div>       
       {/if}
     </div>
   </div>
@@ -2517,6 +2776,26 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
   </div>
 {/if}
 
+{#if showAnchorpointWarning}
+  <div class="modal-overlay">
+    <div class="modal">
+      <h3>Missing Anchorpoint</h3>
+      <p>Please select an anchorpoint for the following mapped components before saving:</p>
+      <ul class="anchorpoint-warning-list">
+        {#each anchorpointWarningItems as item}
+          <li>{item}</li>
+        {/each}
+      </ul>
+      {#if anchorpointWarningExtraCount > 0}
+        <p class="anchorpoint-warning-more">...and {anchorpointWarningExtraCount} more.</p>
+      {/if}
+      <div class="modal-buttons">
+        <button class="confirm-button" on:click={closeAnchorpointWarning}>OK</button>
+      </div>
+    </div>
+  </div>
+{/if}
+
 <!-- schema tree component for node generation -->
 <TreeComponent on:nodesGenerated={handleSchemaNodesGenerated} bind:entity={selectedEntityTemplate}/>
 
@@ -2531,7 +2810,7 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
   }
   
   .top-bar_treeflow {
-    height: 60px;
+    height: 80px;
     background: #ffffff;
     border-bottom: 2px solid #007acc;
     display: flex;
@@ -2539,13 +2818,60 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
     justify-content: space-between;
     padding: 0 2rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    z-index: 1000;
+
+
   }
   
   .project-name {
     font-size: 1.2rem;
     font-weight: bold;
     color: #333;
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 0.3rem 0.5rem;
+    min-width: 220px;
+  }
+  .search-box:focus-within {
+    border-color: #007acc;
+    box-shadow: 0 0 3px rgba(0, 122, 204, 0.3);
+  }
+  .search-icon {
+    color: #888;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .search-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 0.85rem;
+    flex: 1;
+    min-width: 0;
+  }
+  .search-count {
+    font-size: 0.7rem;
+    color: #888;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .search-clear {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #888;
+    padding: 0;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .search-clear:hover {
+    color: #d32f2f;
   }
   
   .mode-controls {
@@ -2642,6 +2968,17 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
     border-top: 1px solid #ddd;
     background: #f8f9fa;
     margin-top: auto;
+  }
+
+  .anchorpoint-warning-badge {
+    margin: 0 1rem 0.75rem 1rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #f5c2c7;
+    background: #f8d7da;
+    color: #842029;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
   }
   
   .save-edit-button,
@@ -2749,6 +3086,25 @@ function determineInitialDirection(sourceHandleId: string, targetHandleId: strin
     margin: 0 0 1.5rem 0;
     color: #666;
     line-height: 1.5;
+  }
+
+  .anchorpoint-warning-list {
+    margin: 0 0 1rem 1.25rem;
+    padding: 0;
+    max-height: 220px;
+    overflow-y: auto;
+    color: #333;
+  }
+
+  .anchorpoint-warning-list li {
+    margin-bottom: 0.35rem;
+    word-break: break-word;
+  }
+
+  .anchorpoint-warning-more {
+    margin: 0 0 1rem 0;
+    color: #666;
+    font-size: 0.9rem;
   }
   
   .modal-buttons {

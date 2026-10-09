@@ -23,6 +23,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             entityTemplate.HasDatastructure = model.HasDatastructure;
             entityTemplate.DisabledHooks = model.DisabledHooks;
             entityTemplate.DatastructureList = model.DatastructureList;
+            entityTemplate.HasExtension = model.HasExtension;
+            entityTemplate.ExtensionList = model.ExtensionList;
             entityTemplate.AllowedFileTypes = model.AllowedFileTypes;
             entityTemplate.PermissionGroups = model.PermissionGroups;
             entityTemplate.NotificationGroups = model.NotificationGroups;
@@ -49,6 +51,22 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             return entityTemplate;
         }
 
+        public static object ConvertToSimple(EntityTemplate entityTemplate)
+        {
+            var model = new
+            {
+                Id = entityTemplate.Id,
+                Name = entityTemplate.Name,
+                Description = entityTemplate.Description,
+                MetadataStructure = entityTemplate.MetadataStructure != null ? new ListItem(entityTemplate.MetadataStructure.Id, entityTemplate.MetadataStructure.Name) : null,
+                EntityType = entityTemplate.EntityType != null ? new ListItem(entityTemplate.EntityType.Id, entityTemplate.EntityType.Name) : null,
+                MetadataInvalidSaveMode = entityTemplate.MetadataInvalidSaveMode,
+                HasDatastructure = entityTemplate.HasDatastructure
+            };
+
+            return model;
+        }
+
         public static EntityTemplate Merge(EntityTemplateModel model)
         {
             using (var entityTemplateManager = new EntityTemplateManager())
@@ -62,8 +80,10 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     entityTemplate.Description = model.Description;
                     entityTemplate.MetadataInvalidSaveMode = model.MetadataInvalidSaveMode;
                     entityTemplate.HasDatastructure = model.HasDatastructure;
+                    entityTemplate.HasExtension = model.HasExtension;
                     entityTemplate.DisabledHooks = model.DisabledHooks;
                     entityTemplate.DatastructureList = model.DatastructureList;
+                    entityTemplate.ExtensionList = model.ExtensionList;
                     entityTemplate.AllowedFileTypes = model.AllowedFileTypes;
                     entityTemplate.PermissionGroups = model.PermissionGroups;
                     entityTemplate.NotificationGroups = model.NotificationGroups;
@@ -93,8 +113,10 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             model.Description = entityTemplate.Description;
             model.MetadataInvalidSaveMode = entityTemplate.MetadataInvalidSaveMode;
             model.HasDatastructure = entityTemplate.HasDatastructure;
+            model.HasExtension = entityTemplate.HasExtension;
             model.DisabledHooks = entityTemplate.DisabledHooks != null ? entityTemplate.DisabledHooks : new List<string>(); ;
             model.DatastructureList = entityTemplate.DatastructureList != null ? entityTemplate.DatastructureList : new List<long>();
+            model.ExtensionList = entityTemplate.ExtensionList != null ? entityTemplate.ExtensionList : new List<ExtensionType>();
             model.AllowedFileTypes = entityTemplate.AllowedFileTypes != null ? entityTemplate.AllowedFileTypes : new List<string>();
             model.PermissionGroups = entityTemplate.PermissionGroups != null ? entityTemplate.PermissionGroups : new PermissionsType();
             model.NotificationGroups = entityTemplate.NotificationGroups != null ? entityTemplate.NotificationGroups : new List<long>();
@@ -111,7 +133,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
             model.EntityType = new ListItem(entityTemplate.EntityType.Id, entityTemplate.EntityType.Name);
 
-            // check if subject are allready created, and list them for the view
+            // check if subject are already created, and list them for the view
             using (var datasetManager = new DatasetManager())
             {
                 long etId = entityTemplate.Id;

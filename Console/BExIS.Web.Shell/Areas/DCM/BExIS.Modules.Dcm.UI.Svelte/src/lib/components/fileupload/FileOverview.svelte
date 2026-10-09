@@ -14,6 +14,8 @@
 
 	// add description to file display row
 	export let descriptionType;
+	export let descriptionSave = true;
+
 	let withDescription: boolean;
 
 	const dispatch = createEventDispatcher();
@@ -42,6 +44,7 @@
 	}
 
 	async function handleSave(e) {
+		
 		dispatch('success', { text: e.detail.text });
 	}
 
@@ -79,6 +82,7 @@
 						on:removed={(e) => handleRemoveFile(e, index)}
 						on:saved={handleSave}
 						{withDescription}
+						{descriptionSave}
 					/>
 				{/each}
 				<!-- </Container> -->

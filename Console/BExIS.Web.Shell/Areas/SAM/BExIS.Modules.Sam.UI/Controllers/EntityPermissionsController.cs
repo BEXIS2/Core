@@ -9,9 +9,10 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Helpers;
 using BExIS.Utils.NH.Querying;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
+using BExIS.Utils.Config;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -28,6 +29,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class EntityPermissionsController : BaseController
     {
+        private readonly UserManager _userManager;
+
+        public EntityPermissionsController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
         public async Task AddInstanceToPublic(long entityId, long instanceId)
         {
             var entityPermissionManager = new EntityPermissionManager();
@@ -48,8 +55,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     using (var emailService = new EmailService())
                     {
                         emailService.Send(MessageHelper.GetSetPublicHeader(instanceId, typeof(Dataset).Name),
-                            MessageHelper.GetSetPublicMessage(getPartyNameOrDefault(), instanceId, typeof(Dataset).Name),
-                            ConfigurationManager.AppSettings["SystemEmail"]
+                            MessageHelper.GetSetPublicMessage(GetDisplayName(), instanceId, typeof(Dataset).Name),
+                            GeneralSettings.SystemEmail
                             );
                     }
                 }
@@ -91,7 +98,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             {
                 ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Entity Permissions", Session.GetTenant());
 
-                var entities = entityManager.Entities.Select(e => EntityTreeViewItemModel.Convert(e, e.Parent.Id)).ToList();
+                var entities = entityManager.Entities.Where(e=>!e.Name.ToLower().Equals("extension")).Select(e => EntityTreeViewItemModel.Convert(e, e.Parent.Id)).ToList();
 
                 foreach (var entity in entities)
                 {
@@ -204,8 +211,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
             using (var emailService = new EmailService())
             {
                 emailService.Send(MessageHelper.GetUnsetPublicHeader(instanceId, typeof(Dataset).Name),
-                    MessageHelper.GetUnsetPublicMessage(getPartyNameOrDefault(), instanceId, typeof(Dataset).Name),
-                    ConfigurationManager.AppSettings["SystemEmail"]
+                    MessageHelper.GetUnsetPublicMessage(GetDisplayName(), instanceId, typeof(Dataset).Name),
+                    GeneralSettings.SystemEmail
                     );
             }
         }
@@ -288,29 +295,20 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
         }
 
-        private string getPartyNameOrDefault()
+        public string GetDisplayName()
         {
-            var userName = string.Empty;
+            string username = string.Empty;
             try
             {
-                userName = HttpContext.User.Identity.Name;
-            }
-            catch { }
+                username = HttpContext.User.Identity.Name;
+                User user = _userManager.FindByNameAsync(username).Result;
 
-            if (userName != null)
+                return user.DisplayName;
+            }
+            catch
             {
-                using (var uow = this.GetUnitOfWork())
-                {
-                    var userRepository = uow.GetReadOnlyRepository<User>();
-                    var user = userRepository.Query(s => s.Name.ToUpperInvariant() == userName.ToUpperInvariant()).FirstOrDefault();
-
-                    if (user != null)
-                    {
-                        return user.DisplayName;
-                    }
-                }
+                return "DEFAULT";
             }
-            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
         }
     }
 }

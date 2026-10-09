@@ -331,6 +331,13 @@ namespace BExIS.Web.Shell.Controllers
                         authManager.SignIn(new AuthenticationProperties { IsPersistent = model.RememberMe }, new ClaimsIdentity(identity)
                         );
 
+                        // Forcefully remove the old cache if it exists
+                        string cacheKey = "Menu_" + user.UserName;
+                        if (HttpContext.Cache[cacheKey] != null)
+                        {
+                            HttpContext.Cache.Remove(cacheKey);
+                        }
+
                         return RedirectToLocal(returnUrl);
 
                     case SignInStatus.LockedOut:
@@ -393,7 +400,8 @@ namespace BExIS.Web.Shell.Controllers
                 if (!string.IsNullOrEmpty(model.Extra))
                     return View(model);
 
-                var user = new User { UserName = model.UserName, FullName = model.UserName, Email = model.Email, HasTermsAndConditionsAccepted = model.TermsAndConditions };
+                var date = DateTime.Now;
+                var user = new User { UserName = model.UserName, FullName = model.UserName, Email = model.Email, HasTermsAndConditionsAccepted = model.TermsAndConditions, RegistrationDate = date, ModificationDate = date };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -409,7 +417,7 @@ namespace BExIS.Web.Shell.Controllers
                     using (var emailService = new EmailService())
                     {
                         emailService.Send(MessageHelper.GetTryToRegisterUserHeader(),
-                            MessageHelper.GetTryToRegisterUserMessage(user.Id, user.Name, user.Email),
+                            MessageHelper.GetTryToRegisterUserMessage(user.Id, user.DisplayName, user.Email),
                             GeneralSettings.SystemEmail
                             );
                     }

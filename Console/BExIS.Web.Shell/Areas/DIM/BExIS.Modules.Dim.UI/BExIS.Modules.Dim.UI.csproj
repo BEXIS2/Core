@@ -154,6 +154,9 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Linq.Dynamic.Core, Version=1.7.2.0, Culture=neutral, PublicKeyToken=0f07ec44de6ac832, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Linq.Dynamic.Core.1.7.2\lib\net46\System.Linq.Dynamic.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System.Linq.Expressions, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\System.Linq.Expressions.4.3.0\lib\net463\System.Linq.Expressions.dll</HintPath>
       <Private>True</Private>
@@ -280,8 +283,8 @@
     <Reference Include="Telerik.Web.Mvc, Version=2013.2.611.340, Culture=neutral, PublicKeyToken=29ac1a93ec063d92, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\TelerikMvcExtensions.2013.2.611\lib\net40\Telerik.Web.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="Vaelastrasz.Library, Version=6.2.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\Vaelastrasz.Library.6.2.2\lib\netstandard2.0\Vaelastrasz.Library.dll</HintPath>
+    <Reference Include="Vaelastrasz.Library, Version=6.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Vaelastrasz.Library.6.3.0\lib\netstandard2.0\Vaelastrasz.Library.dll</HintPath>
     </Reference>
     <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\WebActivatorEx.2.2.0\lib\net40\WebActivatorEx.dll</HintPath>
@@ -480,6 +483,7 @@
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\API\DataCiteController.cs" />
     <Compile Include="Controllers\API\DataQualityOutController.cs" />
     <Compile Include="Controllers\API\DatasetOutController.cs" />
     <Compile Include="Controllers\API\AttachmentOutController.cs" />
@@ -511,9 +515,10 @@
     <Compile Include="Helpers\MappingHelper.cs" />
     <Compile Include="Helpers\ReleationshipHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
-    <Compile Include="Hooks\PublishHook.cs" />
+    <Compile Include="Hooks\PublishEditHook.cs" />
+    <Compile Include="Hooks\PublishViewHook.cs" />
     <Compile Include="Models\AdminModel.cs" />
-    <Compile Include="Models\Api\ApiModels.cs" />
+    <Compile Include="Models\API\ApiModels.cs" />
     <Compile Include="Models\DataCiteDOIModels.cs" />
     <Compile Include="Models\DatasetModel.cs" />
     <Compile Include="Models\DatasetVersionModel.cs" />

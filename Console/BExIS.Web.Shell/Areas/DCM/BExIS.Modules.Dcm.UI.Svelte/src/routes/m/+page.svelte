@@ -8,6 +8,7 @@
 
 	//export let schemaId: number = 3;
 	export let datasetId: number = 3;
+
  $:datasetId;
 
 	let mode: 'edit' | 'view' = 'edit';

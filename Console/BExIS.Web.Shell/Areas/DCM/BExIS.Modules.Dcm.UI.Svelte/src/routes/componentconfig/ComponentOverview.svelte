@@ -7,8 +7,20 @@
 
 <div class="overview">
   <h3>Overview</h3>
-  
+   <!-- delete / save buttons-->
+  <div class="action-buttons mb-4">
+    <button class="delete-button" on:click={onDelete}>
+      Delete
+    </button>
+    <button class="save-button" on:click={onSave}>
+      Save
+    </button>
+  </div>
   {#if selectedNode}
+ <button class="edit-button" on:click={onEdit}>
+        Edit Component
+      </button>
+
     <div class="overview-content">
       <div class="node-info">
         <div class="info-row">
@@ -36,21 +48,11 @@
         </div>
       </div>
       
-      <button class="edit-button" on:click={onEdit}>
-        Edit Component
-      </button>
+     
     </div>
   {/if}
   
-  <!-- delete / save buttons-->
-  <div class="action-buttons">
-    <button class="delete-button" on:click={onDelete}>
-      Delete
-    </button>
-    <button class="save-button" on:click={onSave}>
-      Save
-    </button>
-  </div>
+ 
 </div>
 
 <style>

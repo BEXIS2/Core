@@ -2,19 +2,32 @@
 using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
+using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.Edit;
+using BExIS.Modules.Dcm.UI.Models.EntityTemplate;
 using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Objects;
+using BExIS.Security.Services.Objects;
 using BExIS.UI.Helpers;
 using BExIS.UI.Hooks;
+using BExIS.UI.Models;
+using BExIS.Utils.Data.Helpers;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Web.Mvc;
+using System.Web.SessionState;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
-{
+{   
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class EditController : Controller
     {
         // GET: Edit
+        
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
         public ActionResult Index(long id, int version = 0)
         {
@@ -24,6 +37,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["version"] = version;
             ViewData["app"] = SvelteHelper.GetApp(module);
             ViewData["start"] = SvelteHelper.GetStart(module);
+
+            using (var datasetmanager = new DatasetManager())
+            {
+                var dataset = datasetmanager.GetDataset(id);
+                ViewData["entity"] = dataset.EntityTemplate.EntityType.Name;
+            }
 
             return View();
         }
@@ -121,5 +140,223 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 return Json(Hooks, JsonRequestBehavior.AllowGet);
             }
         }
+
+        #region extension
+        [JsonNetFilter]
+        public JsonResult GetExtensions(long id)
+        {
+            List<ExtensionItem> tmp = new List<ExtensionItem>();
+
+            using (var datasetManager = new DatasetManager())
+            using (var entityReferenceManager = new EntityReferenceManager())
+            { 
+                var dataset = datasetManager.GetDataset(id);
+                var entity = dataset.EntityTemplate.EntityType;
+
+                var entityreferences = entityReferenceManager.ReferenceRepository.Query(e =>
+                        e.LinkType.Equals("extension") &&
+                        e.SourceId.Equals(id) &&
+                        e.SourceEntityId.Equals(entity.Id)).ToList();
+
+                foreach (var x in entityreferences)
+                {
+                    string title = "";
+                    if (x.TargetVersion == 0) // latest
+                        title = datasetManager.GetDatasetLatestVersion(x.TargetId).Title;
+                    else
+                     title  = datasetManager.GetDatasetVersion(x.TargetId, x.TargetVersion).Title;
+
+                    tmp.Add(new ExtensionItem()
+                    {
+                        Id = x.TargetId,
+                        Version = x.TargetVersion,
+                        Title = title,
+                        LinkType = x.LinkType,
+                        ReferenceType = x.ReferenceType
+                    });
+                }
+            }
+            return Json(tmp, JsonRequestBehavior.AllowGet);
+        }
+
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult GetExtensionEntityTemplateList(long id)
+        {
+            if(id==0) throw new Exception("id is missing");
+
+            List<EntityTemplateModel> entityTemplateModels = new List<EntityTemplateModel>();
+
+            using (var datasetManager = new DatasetManager())
+            using (var entityTemplateManager = new EntityTemplateManager())
+            using (var entityReferenceManager = new EntityReferenceManager())
+            {
+                var dataset = datasetManager.GetDataset(id);
+                var template = dataset.EntityTemplate;
+                var entity = template.EntityType;
+
+
+                var existingEntityReferences = entityReferenceManager.ReferenceRepository.Query(e =>
+                        e.LinkType.Equals("extension") &&
+                        e.SourceId.Equals(id) &&
+                        e.SourceEntityId.Equals(entity.Id)).ToList();
+
+                var usedEntityTemplateIds = new List<long>();
+
+                // get used Tempalates
+                foreach (var e in existingEntityReferences)
+                {
+                    var d = datasetManager.GetDataset(e.TargetId);
+                    var t = d.EntityTemplate;
+                    usedEntityTemplateIds.Add(t.Id);
+                }
+
+
+        
+
+                var extensions = template.ExtensionList.Where(e=> e.Unique == false || (e.Unique && !usedEntityTemplateIds.Contains(e.TemplateId))).Select(e=>e.TemplateId);
+
+                    foreach (var e in entityTemplateManager.Repo.Query(e => e.Activated && extensions.Contains(e.Id)).ToList())
+                    {
+                        
+                        entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e, false));
+                    }
+
+                }
+            
+                return Json(entityTemplateModels, JsonRequestBehavior.AllowGet);
+            
+        }
+
+        [JsonNetFilter]
+        [HttpPost]
+        public JsonResult CreateExtensionLink(long id, long extensionId)
+        {
+            using (var datasetmanager = new DatasetManager())
+            using (var entityReferenceManager = new EntityReferenceManager())
+            {
+                try
+                {
+
+                    if (id == 0) throw new Exception("id is missing");
+                    if (extensionId == 0) throw new Exception("extensionId is missing");
+
+                    var usedEntityTemplateIds = new List<long>();
+                    // get object
+                    var dataset = datasetmanager.GetDataset(id);
+                    var extension = datasetmanager.GetDataset(extensionId);
+
+                    // get templates
+                    var datasetTemplate = dataset.EntityTemplate;
+                    var extensionTemplate = extension.EntityTemplate;
+
+                    var extensionType = datasetTemplate.ExtensionList.Where(e => e.TemplateId.Equals(extensionTemplate.Id)).FirstOrDefault();
+
+                    // check if extension is allowed
+                    if (datasetTemplate.ExtensionList == null || extensionType == null)
+                        throw new Exception("This extension is not allowed for this subject.");
+
+                    // check if extension is unique and allready exists
+                    if (datasetTemplate.ExtensionList.Any(e => e.TemplateId.Equals(extensionTemplate.Id) && e.Unique))
+                    {
+
+                        var existing = entityReferenceManager.ReferenceRepository.Query(e =>
+                            e.LinkType.Equals("extension") &&
+                            e.TargetId.Equals(extension.Id) &&
+                            e.SourceId.Equals(id) &&
+                            e.SourceEntityId.Equals(dataset.EntityTemplate.EntityType.Id) &&
+                            e.TargetEntityId.Equals(extension.EntityTemplate.EntityType.Id)).Any();
+
+
+
+                        //foreach (var e in existingLinks)
+                        //{
+                        //    var d = datasetmanager.GetDataset(e.TargetId);
+                        //    var t = d.EntityTemplate;
+                        //    usedEntityTemplateIds.Add(t.Id);
+                        //}
+
+
+                        //var extensions = datasetTemplate.ExtensionList.Where(e => e.Unique == false || (e.Unique && !usedEntityTemplateIds.Contains(e.TemplateId))).Select(e => e.TemplateId);
+
+                        if (existing)
+                            throw new Exception("This extension is unique and allready exists.");
+                    }
+
+                    // create link
+                    EntityReferenceHelper entityReferenceHelper = new EntityReferenceHelper();
+                    var extensionRef = entityReferenceHelper.GetReferenceConfigByType(extensionType.ReferenceType);
+
+
+
+                    EntityReference entitreference = new EntityReference();
+                    entitreference.SourceId = id;
+                    entitreference.SourceEntityId = dataset.EntityTemplate.EntityType.Id;
+                    entitreference.SourceVersion = 0; // not used
+                    entitreference.TargetId = extensionId;
+                    entitreference.TargetEntityId = extension.EntityTemplate.EntityType.Id;
+                    entitreference.TargetVersion = 0;
+                    entitreference.LinkType = extensionRef.LinkType;
+                    entitreference.ReferenceType = extensionRef.ReferenceType;
+                    //entitreference.Context = "added";
+                    entitreference.Category = extensionRef.Category;
+
+                    entityReferenceManager.Create(entitreference);
+
+                        
+
+                }
+                catch (Exception ex)
+                {
+                    datasetmanager.PurgeDataset(extensionId);
+
+                    throw new Exception(ex.Message);    
+                }
+            }
+
+            return Json(true);
+        }
+
+        [JsonNetFilter]
+        [HttpPost]
+        public JsonResult DeleteExtension(long extensionId)
+        {
+
+
+            using (var datasetmanager = new DatasetManager())
+            using (var entityReferenceManager = new EntityReferenceManager())
+            {
+                try
+                {
+                    if (extensionId == 0) throw new Exception("extensionId is missing");
+
+                    // remove all existing links
+
+                    var linkIds = entityReferenceManager.ReferenceRepository.Query(e =>
+                        e.TargetId.Equals(extensionId) &&
+                        e.LinkType.Equals("extension")).Select(l=>l.Id);
+
+                    entityReferenceManager.Delete(linkIds.ToList());
+
+
+                    // purge dataset
+                    datasetmanager.PurgeDataset(extensionId);
+
+
+                }
+                catch (Exception ex)
+                {
+              
+                    throw new Exception(ex.Message);
+                }
+            }
+
+            Response.StatusCode = (int)HttpStatusCode.OK;
+         
+            return Json( new { Success = true, Message = "Extension successful deleted" });
+        
+        }
+
+        #endregion
     }
 }

@@ -13,9 +13,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Helpers;
 using System.Web.Mvc;
+using System.Web.SessionState;
 
 namespace BExIS.Web.Shell.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class TokensController : Controller
     {
         private readonly UserManager _userManager;

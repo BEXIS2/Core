@@ -31,6 +31,7 @@ namespace BExIS.Modules.Ddm.UI.Models
         Bibtex
     }
 
+  
 
     [XmlRoot("data")]
     public class CitationDataModel

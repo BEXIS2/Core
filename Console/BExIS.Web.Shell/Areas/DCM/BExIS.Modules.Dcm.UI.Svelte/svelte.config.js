@@ -21,7 +21,6 @@ const config = {
 			relative: true,
 			base: process.env.NODE_ENV === 'production' ? '/dcm' : '' // add module id here,
 		},
-
 		alias: {
 			$models: './src/models',
 			$services: './src/services'

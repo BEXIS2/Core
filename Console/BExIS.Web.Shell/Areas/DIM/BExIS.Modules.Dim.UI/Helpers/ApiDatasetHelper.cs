@@ -1,9 +1,9 @@
 ﻿using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Helpers.Mappings;
+using BExIS.Dim.Helpers.Models;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
-using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Utils.Data.Helpers;
@@ -30,6 +30,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 Version = versionNumber,
                 VersionId = datasetVersion.Id,
                 VersionDate = datasetVersion.Timestamp.ToString(new CultureInfo("en-US")),
+                Tag = datasetVersion.Tag?.Nr ?? 0,
                 Title = datasetVersion.Title,
                 Description = datasetVersion.Description,
                 DataStructureId = dataStructureId,
@@ -47,7 +48,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 if (tmp != null)
                 {
-                    string value = string.Join(",", tmp.Distinct());
+                    string value = string.Join(", ", tmp.Distinct());
                     if (!string.IsNullOrEmpty(value))
                     {
                         datasetModel.AdditionalInformations.Add(k.ToString(), value);

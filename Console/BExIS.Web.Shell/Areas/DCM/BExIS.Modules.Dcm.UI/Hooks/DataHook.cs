@@ -8,7 +8,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
     {
         public DataHook()
         {
-            Start = "/dcm/view/startData";
+            Start = "/dcm/data/start";
         }
 
         public override void Check(long id, string username)

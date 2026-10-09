@@ -6,7 +6,7 @@
 	import { activeStore } from '$lib/components/utils/metadata/stores';
 	export let choiceComponent: any;
 	export let path: string;
-
+ export let required: boolean = false;
 
 	let type = '';
 	choiceComponent.oneOf ? 'oneOf' : choiceComponent.items.anyOf ? 'anyOf' : choiceComponent.items.allOf ? 'allOf' : null;
@@ -26,8 +26,6 @@
 		{
 			type = 'allOf';
 		}
-
-		
 	});
 
 
@@ -35,10 +33,10 @@
 
 	{#if type }
 		{#if type == 'oneOf'}
-			<ChoiceOneOf	choiceComponent={choiceComponent} {path} />
+			<ChoiceOneOf	choiceComponent={choiceComponent} {path} on:updated {required}/>
 		{:else	if type == 'anyOf'}
-			<ChoiceAnyOf	choiceComponent={choiceComponent} {path} />
+			<ChoiceAnyOf	choiceComponent={choiceComponent} {path} on:updated {required}/>
 		{:else if type == 'allOf'}
-			<ChoiceAllOf	choiceComponent={choiceComponent} {path} />
+			<ChoiceAllOf	choiceComponent={choiceComponent} {path} on:updated {required}/>
 		{/if}
 	{/if}

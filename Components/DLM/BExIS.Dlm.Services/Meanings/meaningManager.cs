@@ -129,6 +129,10 @@ namespace BExIS.Dlm.Services.Meanings
                 {
                     IRepository<Meaning> repo = uow.GetRepository<Meaning>();
                     meaning = repo.Reload(meaning);
+
+                    if (IsMeaningInUse(meaning.Id))
+                        throw new InvalidOperationException("The meaning is still linked to one or more variable templates or variables and cannot be deleted.");
+
                     meaning.ExternalLinks.Clear();
                     repo.Delete(meaning);
                     uow.Commit();
@@ -150,6 +154,10 @@ namespace BExIS.Dlm.Services.Meanings
                 {
                     IRepository<Meaning> repo = uow.GetRepository<Meaning>();
                     Meaning meaning = repo.Get().FirstOrDefault(x => id == x.Id);
+
+                    if (IsMeaningInUse(id))
+                        throw new InvalidOperationException("The meaning is still linked to one or more variable templates or variables and cannot be deleted.");
+
                     meaning = repo.Reload(meaning);
                     meaning.ExternalLinks.Clear();
                     repo.Delete(meaning);
@@ -161,6 +169,15 @@ namespace BExIS.Dlm.Services.Meanings
             catch (Exception exc)
             {
                 throw (exc);
+            }
+        }
+
+        public bool IsMeaningInUse(Int64 meaningId)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var repo = uow.GetReadOnlyRepository<Variable>();
+                return repo.Get().Any(v => v.Meanings.Any(m => m.Id == meaningId));
             }
         }
 
