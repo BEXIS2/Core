@@ -3,13 +3,14 @@
 	import ComplexComponent from './complexComponentWrapper.svelte';
 	import SimpleComponent from '$lib/components/metadata/simpleComponent.svelte';
 	import { onMount } from 'svelte';
-	import { activateShow, getNodeByPath, removeFromMetadataStore, setActive, ValidationStoreSetSimpleTypeValid } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { activateShow, allchildrensAreOptional, getNodeByPath, registerValidationItem, removeFromMetadataStore, setActive, ValidationStoreSetSimpleTypeValid } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { activeStore, hideStore, validationStore } from '$lib/components/utils/metadata/stores';
 	import { isActive} from '$lib/components/utils/metadata/metadataComponentUtils';
 
 
 	import { slide } from 'svelte/transition';
 	import Header from './MetadataComponentHeader.svelte';
+	import { convertDisplayName } from '$lib/components/utils/metadata/metadataShared';
 
 	export let choiceComponent: any;
 	export let path: string;
@@ -33,6 +34,7 @@
 			previousTarget = existingChoice.key;
 			initializedTarget = true;
 		}
+
 	});
 
 
@@ -168,6 +170,7 @@
 </script>
 
 <div class="grid grid-cols-1 gap-0 m-2">
+  
 		<Header {required} {path} />
 	{#if !$hideStore.includes(path) && $activeStore.includes(path)}
 	<div in:slide out:slide class="card px-5 py-4" id={path}>
@@ -185,7 +188,7 @@
 	
 				<div class="grid grid-cols-1 gap-0 m-2">
 					{#key targetKey}
-						<Header path = {path + '.' + targetKey} />
+						<Header path = {path + '.' + targetKey} childOfChoice={true}/>
 					{/key}
 					{#if !$hideStore.includes(path + '.' + targetKey) && $activeStore.includes(path)}
 					<div in:slide out:slide class="card px-5 py-4" id={path + '.' + targetKey}>

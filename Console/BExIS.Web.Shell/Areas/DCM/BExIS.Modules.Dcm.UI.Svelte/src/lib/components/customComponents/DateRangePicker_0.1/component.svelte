@@ -55,9 +55,14 @@
 	let validationRegistered = false;
 	let validationReady = false;
 	let rangeError: string = '';
+	let endDateError: string = '';
 
-	$: validationItem = $validationStore?.simpleTypeValidationItems?.find(
+	$: validationItemStart = $validationStore?.simpleTypeValidationItems?.find(
 		(i) => i.path === start_date_path
+	);
+
+	$: validationItemEnd = $validationStore?.simpleTypeValidationItems?.find(
+		(i) => i.path === end_date_path
 	);
 
 	onMount(async () => {
@@ -67,25 +72,60 @@
 			const { node: schemaNode } = resolveNode(start_date_path);
 			registerValidationItem(start_date_path, label, required, schemaNode, true);
 			validationRegistered = true;
-			validationReady = true;
-			validateRange();
 		}
+
+		if (end_date_path) {
+			const { node: schemaNode } = resolveNode(end_date_path);
+			registerValidationItem(end_date_path, label, required, schemaNode, true);
+		}
+
+		validationReady = true;
+		validateRange();
 	});
 
 	function validateRange(): boolean {
-		if (startValue && endValue) {
+		let isValid = true;
+		rangeError = '';
+		endDateError = '';
+
+		// Check if start date is required but empty
+		if (required && start_date_path) {
+			const isStartEmpty = startValue == null || String(startValue).trim() === '';
+			if (isStartEmpty) {
+				rangeError = 'Please select a start date.';
+				isValid = false;
+			}
+		}
+
+		// Check if end date is required but empty
+		if (required && end_date_path) {
+			const isEndEmpty = endValue == null || String(endValue).trim() === '';
+			if (isEndEmpty) {
+				endDateError = 'Please select an end date.';
+				isValid = false;
+			}
+		}
+
+		// Check if both dates exist and start is after end
+		if (startValue && endValue && !rangeError && !endDateError) {
 			const start = new Date(startValue);
 			const end = new Date(endValue);
 			if (start > end) {
 				rangeError = 'Start date must not be after the end date.';
-				if (validationRegistered && start_date_path) {
-					validateCustomCondition(start_date_path, false, rangeError);
-				}
-				return false;
+				endDateError = 'End date must not be before the start date.';
+				isValid = false;
 			}
 		}
-		rangeError = '';
-		return true;
+
+		// Update validation for both fields
+		if (start_date_path) {
+			validateCustomCondition(start_date_path, !rangeError, rangeError);
+		}
+		if (end_date_path) {
+			validateCustomCondition(end_date_path, !endDateError, endDateError);
+		}
+
+		return isValid;
 	}
 
 	function onStartChange(e: Event) {
@@ -96,20 +136,19 @@
 			updateMetadataStore(start_date_path, startValue, false, '');
 		}
 
-		if (!validateRange() && end_date_path) {
-			validateCustomCondition(end_date_path, false, 'Start date is after end date.');
-		} else if (end_date_path) {
-			validateCustomCondition(end_date_path, true, '');
-		}
+		// Validate the entire range when start date changes
+		validateRange();
 
+		// Update validation state for start field
 		if (validationRegistered && start_date_path) {
 			res = suite(start_date_path);
 			updateValidationState(start_date_path, res);
+		}
 
-			const isNotEmpty = startValue != null && String(startValue).trim() !== '';
-			if (required && !isNotEmpty) {
-				validateCustomCondition(start_date_path, false, 'Please select a start date.');
-			}
+		// Update validation state for end field if it exists and has range error
+		if (end_date_path && endDateError) {
+			res = suite(end_date_path);
+			updateValidationState(end_date_path, res);
 		}
 
 		dispatch('change');
@@ -123,27 +162,37 @@
 			updateMetadataStore(end_date_path, endValue, false, '');
 		}
 
-		if (!validateRange() && start_date_path) {
-			validateCustomCondition(start_date_path, false, 'End date is before start date.');
-		} else if (start_date_path && !rangeError) {
-			const isNotEmpty = startValue != null && String(startValue).trim() !== '';
-			if (required && !isNotEmpty) {
-				validateCustomCondition(start_date_path, false, 'Please select a start date.');
-			} else {
-				res = suite(start_date_path);
-				updateValidationState(start_date_path, res);
-			}
+		// Validate the entire range when end date changes
+		validateRange();
+
+		// Update validation state for end field
+		if (validationRegistered && end_date_path) {
+			res = suite(end_date_path);
+			updateValidationState(end_date_path, res);
+		}
+
+		// Update validation state for start field if it exists and has range error
+		if (start_date_path && rangeError) {
+			res = suite(start_date_path);
+			updateValidationState(start_date_path, res);
 		}
 
 		dispatch('change');
 	}
 
-	$: startInvalid = validationReady && validationItem ? !validationItem.isValid : false;
-	$: endInvalid = !!rangeError;
+	$: startInvalid = validationReady && validationItemStart ? !validationItemStart.isValid : !!rangeError;
+	$: endInvalid = validationReady && validationItemEnd ? !validationItemEnd.isValid : !!endDateError;
+	
 	$: startFeedback = rangeError
 		? [rangeError]
-		: validationItem && validationItem.errorMessage
-			? validationItem.errorMessage.split('\n')
+		: validationItemStart && validationItemStart.errorMessage
+			? validationItemStart.errorMessage.split('\n')
+			: [];
+	
+	$: endFeedback = endDateError
+		? [endDateError]
+		: validationItemEnd && validationItemEnd.errorMessage
+			? validationItemEnd.errorMessage.split('\n')
 			: [];
 </script>
 
@@ -159,17 +208,6 @@
 		</span>
 	</div>
 {:else}
-	<InputContainer
-		id={path}
-		{label}
-		feedback={startFeedback}
-		{required}
-		{description}
-		showDescription={false}
-		showIcon={false}
-		on:showDescription
-		on:hideDescription
-	>
 		<div class="drp-row">
 			<div class="drp-field">
 				<DateInput
@@ -177,9 +215,10 @@
 					label="Start"
 					bind:value={startValue}
 					invalid={startInvalid}
-					valid={validationReady && validationItem ? validationItem.isValid && !rangeError : false}
+					valid={validationReady && validationItemStart ? validationItemStart.isValid && !rangeError : false}
 					{required}
 					{disabled}
+					feedback={startFeedback}
 					on:input={onStartChange}
 					on:change={onStartChange}
 					on:showDescription
@@ -192,9 +231,10 @@
 					label="End"
 					bind:value={endValue}
 					invalid={endInvalid}
-					valid={!rangeError && !!endValue}
+					valid={validationReady && validationItemEnd ? validationItemEnd.isValid && !endDateError : false}
+					{required}
 					{disabled}
-					feedback={rangeError ? [rangeError] : []}
+					feedback={endFeedback}
 					on:input={onEndChange}
 					on:change={onEndChange}
 					on:showDescription
@@ -202,7 +242,6 @@
 				/>
 			</div>
 		</div>
-	</InputContainer>
 {/if}
 
 <style>
