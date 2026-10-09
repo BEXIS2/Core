@@ -9,7 +9,6 @@ export async function getGroups() {
     const response = await Api.get('/api/groups');
     groupsStore.set(await response.data); // Speichere Daten im Store
   } catch (err) {
-    console.error('Fehler beim Laden der Posts:', err);
     groupsStore.set([]); // Fehlerfall: leere Liste
   }
 }
@@ -24,11 +23,8 @@ export async function deleteGroupById(id:number) {
 
 export async function updateGroupById(id:number, model:UpdateGroupModel) {
   try {
-    console.log('Updating user with model:', model);
-    console.log('User ID:', id);
     await Api.put('/api/groups/' + id, model);
   } catch (err) {
-    console.error('Fehler beim Laden der Posts:', err);
     groupsStore.set([]); // Fehlerfall: leere Liste
   }
 }
@@ -37,7 +33,6 @@ export async function createGroup(model:CreateGroupModel) {
   try {
     const response = await Api.post('/api/groups/', model);
   } catch (err) {
-    console.error('Fehler beim Laden der Posts:', err);
     groupsStore.set([]); // Fehlerfall: leere Liste
   }
 }
