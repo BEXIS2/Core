@@ -400,7 +400,8 @@ namespace BExIS.Web.Shell.Controllers
                 if (!string.IsNullOrEmpty(model.Extra))
                     return View(model);
 
-                var user = new User { UserName = model.UserName, FullName = model.UserName, Email = model.Email, HasTermsAndConditionsAccepted = model.TermsAndConditions };
+                var date = DateTime.Now;
+                var user = new User { UserName = model.UserName, FullName = model.UserName, Email = model.Email, HasTermsAndConditionsAccepted = model.TermsAndConditions, RegistrationDate = date, ModificationDate = date };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
