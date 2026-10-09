@@ -820,10 +820,9 @@ export function createComplexComponentValidationItem(path: string, label: string
 }
 
 // Check if all children of a complex component are optional
-function allchildrensAreOptional(cc: any): boolean {
+export function allchildrensAreOptional(cc: any): boolean {
 
-    //console.log("🚀 ~ allchildrensAreOptional ~ cc:", cc)
-
+ 
 	if (!cc || cc.type !== 'object' || !cc.properties) {
 		return true; // No properties means all are optional
 	}
@@ -833,15 +832,15 @@ function allchildrensAreOptional(cc: any): boolean {
 			? cc.required
 			: [];
 
+
+
 	for (const [key, value] of Object.entries(cc.properties)) {
-		//console.log("allchildren",key, isRequiredKey(key, cc))
+	
 		if (rl.some((requiredKey: string) => requiredKey === key))
   {
 			return false; // Found a required property
 		}
-		if (value.type === 'object' && !allchildrensAreOptional(value)) {
-			return false; // Nested object has required properties
-		}
+	
 	}
 
 	return true; // All properties are optional

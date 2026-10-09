@@ -37,6 +37,7 @@
 	export let p: string = '';
 	export let description: string = '';
 	export let allChildrenOptional: boolean = false;
+	export let childOfChoice: boolean = false;
 
 	let label: string =
 		path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path;
@@ -149,6 +150,7 @@ metadataStore.subscribe(() => {
 >
 
 	<div >
+		{#if !childOfChoice} <!-- Don't show the add button if this is a child of a choice component (activation is set by parent)-->
 		{#if !active}
 			<button
 				class="badge mt-1 ml-1 mr-1"
@@ -170,6 +172,7 @@ metadataStore.subscribe(() => {
 				>
 			{/if}
 		{/if}
+		{/if}
 
 		<!-- <Fa icon={faPlus} class="text-green-500" />
 
@@ -188,6 +191,7 @@ metadataStore.subscribe(() => {
 	</button>
 
 	<div class="text-left flex justify-end w-2">
+	{#if !childOfChoice} <!-- Don't show the remove button if this is a child of a choice component (activation is set by parent)-->
 		{#if active && !required}
 			<button
 				class="badge mt-1"
@@ -195,6 +199,7 @@ metadataStore.subscribe(() => {
 				title="Remove {convertDisplayName(label, true)} node. Content will be lost."
 				><Fa icon={faTrash} /></button
 			>
+		{/if}
 		{/if}
 	</div>
 	<div class="text-left flex justify-end w-2 px-2"></div>
