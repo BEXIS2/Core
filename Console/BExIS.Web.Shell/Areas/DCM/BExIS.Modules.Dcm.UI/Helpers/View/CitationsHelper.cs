@@ -1,4 +1,4 @@
-﻿using BExIS.Dim.Helpers.Mappings;
+using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Services;
 using BExIS.Dim.Services.Mappings;
 using BExIS.Dlm.Entities.Data;
@@ -6,6 +6,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Models.View;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using DocumentFormat.OpenXml.Spreadsheet;
 using NameParser;
 using System;
 using System.Collections.Generic;
@@ -131,6 +132,19 @@ namespace BExIS.Modules.Dcm.UI.Helpers.View
             }
         }
 
+        public static CitationDataModel CreateReadCitationDataModel(DatasetVersion datasetVersion, ReadCitationFormat readformat)
+        {
+            if (Enum.TryParse(readformat.ToString(), out CitationFormat format))
+            {
+
+                return CreateCitationDataModel(datasetVersion, format);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public static bool IsCitationDataModelValid(CitationDataModel model)
         {
             try
@@ -221,9 +235,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers.View
             if (isPublic)
             {
                 if (useTags && !String.IsNullOrEmpty(model.Tag))
-                    url += "/ddm/data/Showdata/" + entityId + "?tag=" + model.Tag + "";
+                    url += "/dcm/view/?id=" + entityId + "&tag=" + model.Tag + "";
                 else
-                    url += "/ddm/data/Showdata/" + entityId + "?version=" + model.Version + "";
+                    url += "/dcm/view/?id=" + entityId + "&version=" + model.Version + "";
 
                 bibtex += "url ={" + url + "},\n";
             }
@@ -279,9 +293,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers.View
             if (isPublic)
             {
                 if (useTags && !String.IsNullOrEmpty(model.Tag))
-                    url += "/ddm/data/Showdata/" + entityId + "?tag=" + model.Tag + "";
+                    url += "/dcm/view/?id=" + entityId + "&tag=" + model.Tag + "";
                 else
-                    url += "/ddm/data/Showdata/" + entityId + "?version=" + model.Version + "";
+                    url += "/dcm/view/?id=" + entityId + "&version=" + model.Version + "";
 
                 ris += "UR - " + url + "\n";
             }
@@ -329,9 +343,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers.View
                 if (isPublic)
                 {
                     if (useTags && !String.IsNullOrEmpty(model.Tag))
-                        url += "/ddm/data/Showdata/" + entityId + "?tag=" + model.Tag + "";
+                        url += "/dcm/view/?id=" + entityId + "&tag=" + model.Tag + "";
                     else
-                        url += "/ddm/data/Showdata/" + entityId + "?version=" + model.Version + "";
+                        url += "/dcm/view/?id=" + entityId + "&version=" + model.Version + "";
 
                     text += url + ". ";
                 }

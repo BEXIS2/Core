@@ -29,7 +29,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             using (var entityManager = new EntityManager())
             {
-                return RedirectToAction("SubjectsPartialView", "UserPermissions", new { EntityId = entityManager.FindByName("Dataset").Id, InstanceId = id });
+                return RedirectToAction("SubjectsView", "UserPermissions", new { EntityId = entityManager.FindByName("Dataset").Id, InstanceId = id });
             }
         }
 
@@ -69,10 +69,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
         }
 
-        public ActionResult SubjectsPartialView(long entityId, long instanceId)
-        {
-            return PartialView("_Subjects", new EntityInstanceModel() { EntityId = entityId, InstanceId = instanceId });
-        }
+        //public ActionResult SubjectsPartialView(long entityId, long instanceId)
+        //{
+        //    return PartialView("_Subjects", new EntityInstanceModel() { EntityId = entityId, InstanceId = instanceId });
+        //}
 
         public ActionResult SubjectsView(long entityId, long instanceId)
         {

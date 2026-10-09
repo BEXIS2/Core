@@ -101,9 +101,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             MetadataLastModfied = 104,
             DataCreationDate = 105,
             DataLastModified = 106, // also for Dubline Core date
+            Tag = 107
              */
 
-            List<long> ints = new List<long>() { 100, 101, 102, 103, 104, 105, 106 };
+            List<long> ints = new List<long>() { 100, 101, 102, 103, 104, 105, 106,107 };
 
             // not implemented
             using (var mappingManager = new MappingManager())
@@ -323,7 +324,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             {
                                 JObject metadataJson = serializer.Deserialize<JObject>(jsonReader);
 
-                               
+
                                 if (metadataJson.ContainsKey("@id"))
                                 {
                                     if (Int64.TryParse(metadataJson.Property("@id").Value.ToString(), out mdid) && mdid == metadataStructureId)
@@ -334,7 +335,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                         if (converter.HasValidStructure(metadataJson, mdid, out notAllowedElements))
                                         {
                                             completeMetadata = converter.ConvertTo(metadataJson);
-                                            
+
                                         }
                                         else
                                         {
@@ -345,7 +346,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     else
                                     {
                                         Response.StatusCode = (int)HttpStatusCode.ExpectationFailed;
-                                        errorMessage = string.Format("The metadata ID is either invalid or does not match the expected structure ID ({0}).",metadataStructureId);
+                                        errorMessage = string.Format("The metadata ID is either invalid or does not match the expected structure ID ({0}).", metadataStructureId);
                                     }
 
                                 }
@@ -377,7 +378,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 }
             }
-            #endregion 
+
 
             // 2. Return the JSON error payload
             return Json(new
@@ -388,96 +389,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }, JsonRequestBehavior.AllowGet);
 
         }
-
-        #region download
-
-        //html
-
-        public ActionResult DownloadAsHtml(long id, int version )
-        {
-         
-
-            return Content("not implemented.");
-        }
-
-        //flatten
-
-
-        //json
-        public ActionResult DownloadAsJson(long id, int version)
-        {
-            try
-            {
-                string metadata = OutputMetadataManager.GetMetadataAsJson(id, version, 2);
-
-                byte[] bytes = Encoding.ASCII.GetBytes(metadata);
-
-                return File(bytes, "application/json");
-        
-            }
-            catch (Exception ex)
-            {
-                return Content(ex.Message);
-            }
-        }
-
-
-        //xml
-        public ActionResult DownloadAsXml(long id, int version)
-        {
-
-
-            return Content("no metadata xml file is loaded.");
-        }
-
-
         #endregion
 
-
-        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
-        public ActionResult View(long id, int version = 0, double tag = 0)
-        {
-
-            // if version is 0 , get latest version, otherwise get the specified version
-            long versionId = getVersionId(id, version, "", tag).Result;
-
-            // get version based on version id
-            using (var datasetManager = new DatasetManager())
-            {
-                version = datasetManager.GetDatasetVersionNr(versionId);
-            }
-
-            string module = "DCM";
-
-            ViewData["id"] = id;
-            ViewData["version"] = version;
-            ViewData["app"] = SvelteHelper.GetApp(module);
-            ViewData["start"] = SvelteHelper.GetStart(module);
-
-            return View();
-        }
-
-        private async Task<long> getVersionId(long datasetId, int versionNr = 0, string versionName = "", double tagNr = 0)
-        {
-
-            var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
-            bool useTags = false;
-            bool.TryParse(moduleSettings.GetValueByKey("use_tags").ToString(), out useTags);
-
-            return await DatasetVersionHelper.GetVersionId(datasetId, GetUsernameOrDefault(), versionNr, useTags, tagNr);
-
-        }
-
-        public string GetUsernameOrDefault()
-        {
-            var username = string.Empty;
-            try
-            {
-                username = HttpContext.User.Identity.Name;
-            }
-            catch { }
-
-            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
-        }
     }
 }

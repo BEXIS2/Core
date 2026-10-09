@@ -56,7 +56,7 @@
 
 {#if isEnabled}
 	<div class="mb-3 hook-status-{status} hook" class:inactive={!active} title={description} on:click>
-    <button class="chip variant-filled-secondary flex-none" on:click={editFn}><Fa icon={faPen} /></button>
+    <button class="btn btn-sm variant-filled-secondary flex-none" on:click={editFn}><Fa icon={faPen} /></button>
 	</div>
 
 

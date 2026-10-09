@@ -81,6 +81,7 @@
 	{:else}
 		{#if hasChanges && row.tagId > 0}
 			<button
+				id="saveTagInfo-{row.versionId}"
 				class="btn btn-sm variant-filled-primary"
 				title="Save changes"
 				on:click|preventDefault={() => eventDispatchFn('SAVE')}
@@ -92,12 +93,14 @@
 		{#if noTag}
 			{#if withMinor}
 				<button
+					id="createMinorVersion-{row.versionId}"
 					class="btn btn-sm variant-filled-primary"
 					title="Create new minor version. All untagged versions until this will belong to this minor version."
 					on:click|preventDefault={() => eventDispatchFn('MINOR')}>minor</button
 				>
 			{/if}
 			<button
+				id="createMajorVersion-{row.versionId}"
 				class="btn btn-sm variant-filled-primary"
 				title="Create new major version. All untagged versions until this will belong to this major version."
 				on:click|preventDefault={() => eventDispatchFn('MAJOR')}>major</button

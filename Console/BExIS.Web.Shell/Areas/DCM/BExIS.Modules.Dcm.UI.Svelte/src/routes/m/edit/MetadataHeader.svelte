@@ -3,17 +3,16 @@
 	import Fa from 'svelte-fa';
   import { faCancel, faCheck, faFileUpload, faSave, faTriangleExclamation, faXmark } from '@fortawesome/free-solid-svg-icons';
 	import { onMount } from 'svelte';
-  import * as apiCalls from '../services/apiCalls';
+  import * as apiCalls from '../../../services/MetadataCaller';
 	import { activateShow, getValidationStore, setMetadataStore, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import type { validationStoretype } from '$lib/components/utils/metadata/models';
   import {metadataStore, validationStore} from '$lib/components/utils/metadata/stores';
 
 	import { Api, FileUploader, notificationStore, notificationType, TextInput, type fileUploaderType } from '@bexis2/bexis2-core-ui';
-  import {convertDisplayName} from '../metadataShared';
 	import { goTo } from '$services/BaseCaller';
   import { createEventDispatcher } from 'svelte';
-	import suite from '$lib/components/utils/metadata/simpleComponentSuite';
-	import { FileButton } from '@skeletonlabs/skeleton';
+	
+	import { FileButton, ProgressRadial } from '@skeletonlabs/skeleton';
 
   const dispatch = createEventDispatcher();
 
@@ -36,7 +35,7 @@
 
   $:showErrorOverview;
   $:metadata; //console.log("functions - metadata:", metadata);
-  
+  $:isSaving = false;
 
 	let disbaleSaveBtn: boolean = false;
 	$:disbaleSaveBtn;
@@ -71,16 +70,22 @@
   function hasErrors(key) {
 
    if(validationStoreValues){
-    const invalidParts = validationStoreValues.simpleTypeValidationItems.filter(item => item.path.startsWith(key) && item.isValid === false);
+    const invalidParts = validationStoreValues.simpleTypeValidationItems.filter(
+      item =>
+        item.path.startsWith(key) &&
+        item.isValid === false &&
+        item.errorMessage &&
+        item.errorMessage.trim() !== ''
+    );
      return (invalidParts && invalidParts.length > 0);
    };
   }
 
 
 	function disableSaveFn():boolean {
-    //console.log("🚀 ~ disableSaveFn ~ hasChanged:", hasChanged, saveWithError)
+    // console.log("🚀 ~ disableSaveFn ~ hasChanged:", hasChanged, saveWithError)
     if (hasChanged == false) return true; // when there are changes, the save button is enabled, so return false for disabled
-		if (saveWithError) return false; // when save with error is allowd, the save button is always enabled
+		if (saveWithError) return false; // when save with error is allowed, the save button is always enabled
 		if (!validationStoreValues) return true; // if there is no validation result, we consider the form as not valid, so the save button is disabled
 	
 		return !validationStoreValues.allSimpleRequiredValid; //	disable save button when the metadata is not valid
@@ -104,26 +109,7 @@
     
   }
 
-  function successHandler(e){
-
-    console.log("🚀 ~ successHandler ~ e:", e)
-
-    const status = e.detail.status;
-    if(status === 200){
-      notificationStore.showNotification({
-        notificationType: notificationType.success,
-        message: 'Metadata successfully imported.',
-      });
-
-      //console.log("🚀 ~ successHandler ~ metadata:", metadata)
-      metadata = JSON.parse(String(e.detail.data));
-      //console.log("🚀 ~ successHandler ~ metadata:", metadata)
-      setMetadataStore(metadata);
-      dispatch('metadataUpdated');
-
-      }
-  }
-
+ 
   let files: FileList;
 
   async function fileUploadSelectionFn(e){
@@ -151,7 +137,11 @@
       metadata = JSON.parse(String(res.data));
       //console.log("🚀 ~ successHandler ~ metadata:", metadata)
       setMetadataStore(metadata);
-      dispatch('metadataUpdated');
+
+      setTimeout(() => {
+        dispatch('metadataUpdated');
+      },1000);  
+      
 
       }
 
@@ -178,8 +168,8 @@
           button="btn variant-ghost"
           on:change={fileUploadSelectionFn}
           bind:files
-        accept=".json,.xml"
-      >
+          accept=".json,.xml"
+        >
         <Fa icon={faFileUpload} />&nbsp;Upload
       </FileButton>
     </span>
@@ -190,7 +180,7 @@
         
       <input
         type="text"
-        placeholder="Add a comment about the changes you made"
+        placeholder="What changed? Add a comment..."
         class="input variant-form-material dark:bg-zinc-700 bg-zinc-50 placeholder:text-gray-400"
         bind:value={comment}
       />
@@ -201,7 +191,7 @@
           class="btn variant-ghost"
           title="Cancel editing and go back to the metadata view page. All unsaved changes will be lost."
           on:click={() => {
-            goTo(`/m/${datasetId}`);
+            goTo(`/dcm/view?id=${datasetId}`);
           }}
         >
          <Fa icon={faXmark} />&nbsp;Cancel
@@ -213,14 +203,17 @@
 
           on:click={async () => {
             try {
+              isSaving = true;
+              //console.log('Saving metadata Snapshot JSON:', datasetId, JSON.stringify($metadataStore));
 
-              console.log('Saving metadata:', datasetId, metadata);
               const savedMetadata = await apiCalls.SaveMetadata(datasetId, metadata,comment);
-              console.log('Metadata saved successfully:', savedMetadata);
+              //console.log('Metadata saved successfully:', savedMetadata);
               notificationStore.showNotification({
                 notificationType: notificationType.success,
                 message: 'Metadata saved successfully.',
               });
+
+              isSaving = false;
             } catch (error) {
               console.error('Error saving metadata:', error);
               notificationStore.showNotification({
@@ -229,7 +222,7 @@
               });
             }
           }}>
-          <Fa icon={faSave}/>&nbsp;Save
+           {#if isSaving}<ProgressRadial width="w-4"  stroke={60}  meter="stroke-tertiary-500" track="stroke-primary-500/30" strokeLinecap="round"/>{:else}<Fa icon={faSave} />{/if}&nbsp;Save
         </button>
  
 </div>

@@ -1,8 +1,10 @@
 
+import type { FileInfo, fileInfoType } from "@bexis2/bexis2-core-ui";
 import type { HookModel } from "./Hook";
 
 export interface ViewModel extends ApiDatasetModel {
 				settings: ViewSettings;
+				entityName: string;
 				hasData: boolean;
 				count: number;
 				isValid: boolean;
@@ -10,6 +12,7 @@ export interface ViewModel extends ApiDatasetModel {
 				requestExist: boolean;
 				requestAble: boolean;
 				hasRequestRight: boolean;
+				hasEditRight: boolean;
 				labels: { [key: string]: string; };
 }
 
@@ -24,6 +27,7 @@ export interface ApiDatasetModel {
 				id: number;
 				version: number;
 				versionId: number;
+				tag:number;
 				title: string;
 				description: string;
 				dataStructureId: number;
@@ -146,8 +150,8 @@ export interface CitationDataModel {
     tag: string;
     projects: string[];
     year: string;
-    dOI: string;
-    uRL: string;
+    doi: string;
+    url: string;
     authors: string[];
     entryType: string;
     entityName: string;
@@ -155,3 +159,9 @@ export interface CitationDataModel {
     keyword: string;
     note: string;
 }
+
+
+export interface AttachmentsViewModel {
+		id:number;
+		files: fileInfoType[]
+	}

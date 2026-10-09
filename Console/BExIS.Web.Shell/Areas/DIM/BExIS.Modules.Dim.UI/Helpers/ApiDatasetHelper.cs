@@ -30,6 +30,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 Version = versionNumber,
                 VersionId = datasetVersion.Id,
                 VersionDate = datasetVersion.Timestamp.ToString(new CultureInfo("en-US")),
+                Tag = datasetVersion.Tag?.Nr ?? 0,
                 Title = datasetVersion.Title,
                 Description = datasetVersion.Description,
                 DataStructureId = dataStructureId,
@@ -47,7 +48,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
                 if (tmp != null)
                 {
-                    string value = string.Join(",", tmp.Distinct());
+                    string value = string.Join(", ", tmp.Distinct());
                     if (!string.IsNullOrEmpty(value))
                     {
                         datasetModel.AdditionalInformations.Add(k.ToString(), value);

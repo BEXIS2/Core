@@ -420,7 +420,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     List<string> t = xmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
                     string convertTo = t.ToArray().FirstOrDefault();
-                    xmlDoc = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport, convertTo);
+                    xmlDoc = OutputMetadataManager.GetConvertedMetadata(id, versionId, TransmissionType.mappingFileExport, convertTo);
                 }
 
                 //format = flatten
@@ -429,7 +429,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     List<string> t = xmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
                     string convertTo = t.ToArray().FirstOrDefault();
-                    xmlDoc = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport, convertTo);
+                    xmlDoc = OutputMetadataManager.GetConvertedMetadata(id,versionId, TransmissionType.mappingFileExport, convertTo);
                     flatmetadata = OutputMetadataManager.GetFlattenMetadata(xmlDoc);
                 }
                

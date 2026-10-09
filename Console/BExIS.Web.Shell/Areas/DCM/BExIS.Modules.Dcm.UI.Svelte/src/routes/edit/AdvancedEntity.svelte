@@ -10,7 +10,8 @@
 	import ExtensionCreation from './ExtensionCreation.svelte';
   import Fa from 'svelte-fa';
   import { faTrash } from '@fortawesome/free-solid-svg-icons';
-  import { deleteExtension } from './services';
+  import { deleteExtension, getExtensionEntityTemplateList } from './services';
+	import { onMount } from 'svelte';
 
 	const modalStore = getModalStore();
 
@@ -21,7 +22,8 @@
  export let entity = "";
  export let extensions:ExtensionType[] = []
 
- 
+ $: entitytemplates = [];
+
  async function removeExtensionFn( extId, title){ 
 		const modal: ModalSettings = {
 			type: 'confirm',
@@ -58,6 +60,11 @@
 		modalStore.trigger(modal);
 	}
 
+  onMount(async () => {
+
+    entitytemplates = await getExtensionEntityTemplateList(id);
+  });
+
 </script>
 
 <TabGroup>
@@ -68,29 +75,35 @@
 
  {#each extensions as ext (ext.id)}
   <Tab bind:group={tabSet} name={ext.title} value={ext.id}>
+  {#if ext.title.length > 0}
    {ext.title} 
+  {:else}
+    {entity} (Ext.)
+  {/if}
    
 
   </Tab>
  {/each}
  <!--add extentions -->
- <Tab bind:group={tabSet}  name="add" value={100}>
-  +
- </Tab>
-
+ {#if entitytemplates.length > 0}
+  <Tab bind:group={tabSet} name="add" value={100} title="Add additional dataset as extension to the current dataset">
+   + Add Data as Extension
+  </Tab>
+ {/if}
+ 
   <svelte:fragment slot="panel">
 
   {#if tabSet === 0}
    <Entity {id} {version} {title} />
   {:else if tabSet === 100}
-   <ExtensionCreation {id}/>
+   <ExtensionCreation {id}  {entitytemplates}/>
   {/if}
 
  {#each extensions as ext (ext.id)}
 
    {#if tabSet === ext.id}
    <div class="flex justify-end">
-    <button class="chip variant-filled-error " type="button" on:click={() => removeExtensionFn(ext.id, ext.title)} ><Fa icon={faTrash} /></button>   
+    <button class="chip variant-filled-error " type="button" on:click={() => removeExtensionFn(ext.id, ext.title)} ><Fa icon={faTrash} /> <span class="pl-1">Delete Extension</span></button>   
   </div>
   
   <Entity id={ext.id} version={0} title={ext.title} />

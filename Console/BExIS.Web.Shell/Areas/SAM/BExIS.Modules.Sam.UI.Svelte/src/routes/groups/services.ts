@@ -1,0 +1,38 @@
+import { Api } from '@bexis2/bexis2-core-ui';
+import { writable } from 'svelte/store';
+import type { CreateGroupModel, ReadGroupModel, UpdateGroupModel } from './types';
+
+export const groupsStore = writable<ReadGroupModel[]>([]);
+
+export async function getGroups() {
+  try {
+    const response = await Api.get('/api/groups');
+    groupsStore.set(await response.data); // Speichere Daten im Store
+  } catch (err) {
+    groupsStore.set([]); // Fehlerfall: leere Liste
+  }
+}
+
+export async function deleteGroupById(id:number) {
+  try {
+    const response = await Api.delete('/api/groups/' + id, {  });
+  } catch (err) {
+    groupsStore.set([]); // Fehlerfall: leere Liste
+  }
+}
+
+export async function updateGroupById(id:number, model:UpdateGroupModel) {
+  try {
+    await Api.put('/api/groups/' + id, model);
+  } catch (err) {
+    groupsStore.set([]); // Fehlerfall: leere Liste
+  }
+}
+
+export async function createGroup(model:CreateGroupModel) {
+  try {
+    const response = await Api.post('/api/groups/', model);
+  } catch (err) {
+    groupsStore.set([]); // Fehlerfall: leere Liste
+  }
+}

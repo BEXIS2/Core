@@ -1,7 +1,9 @@
+import type { listItemType } from "@bexis2/bexis2-core-ui";
 import type { HookModel } from "../edit/types";
 
 export interface ViewModel extends ApiDatasetModel {
     settings: ViewSettings;
+    entityName: string;
     hasData: boolean;
     count: number;
     isValid: boolean;
@@ -75,4 +77,22 @@ export interface ReferenceElementModel {
     type: string;
     title: string;
     latestVersion: boolean;
+}
+
+export interface versionListItemType extends listItemType {
+	date: string;
+	tagNr: number;
+	changeDescription: string;
+}
+
+export interface TagInfoViewModel {
+	version: number;
+	releaseNotes: string[];
+	releaseDate: Date;
+}
+
+export interface DeletedModel{
+   id: number;
+   title: string;
+   links: LinksOverview;
 }

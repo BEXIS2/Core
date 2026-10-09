@@ -126,13 +126,14 @@ namespace BExIS.Modules.Rpm.UI.Helpers
         {
             using (var constraintManager = new ConstraintManager())
             {
-                var constraints = constraintManager.ConstraintRepository.Query(c => c.DataContainer == null);
+                var constraints = constraintManager.ConstraintRepository.Query(c => c.DataContainer == null).ToList();
                 List<ListItem> list = new List<ListItem>();
 
                 if (constraints.Any())
                 {
                     foreach (var item in constraints)
                     {
+                        item.Materialize();
                         list.Add(new ListItem(item.Id, item.Name, getConstraintType(item), item.FormalDescription));
                     }
                 }

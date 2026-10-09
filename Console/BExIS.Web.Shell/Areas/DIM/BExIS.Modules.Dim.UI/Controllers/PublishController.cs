@@ -35,7 +35,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
         public ActionResult StartView(long id, int version = 0)
         {
-            return RedirectToAction("getPublishDataPartialView", "Submission", new { datasetId = id, versionId = version });
+            return RedirectToAction("getPublishDataView", "Submission", new { datasetId = id, versionId = version });
         }
     }
 }

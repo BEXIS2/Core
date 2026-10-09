@@ -1,7 +1,5 @@
 <script lang="ts">
-	import { Api } from '@bexis2/bexis2-core-ui';
-
-	export let card: {
+		export let card: {
 		title: string;
 		description: string;
 		author: string;
@@ -11,6 +9,7 @@
 		entity: string;
 		date: string;
 		entitytemplate: string;
+		hasextension:string
 	} = {
 		title: '',
 		description: '',
@@ -20,13 +19,14 @@
 		doi: '',
 		entity: '',
 		date: '',
-		entitytemplate: ''
+		entitytemplate: '',
+		hasextension:''
 	};
 
 	export let authorLabel = 'Authors';
 	export let dateLabel = 'Modified';
 
-	const { title, description, author, license, id, doi, entity, date, entitytemplate } = card;
+	const { title, description, author, license, id, doi, entity, date, entitytemplate, hasextension } = card;
 
 	// let author = '';
 	// let authorsLabel = 'Authors';
@@ -81,8 +81,8 @@
 <div class="flex grow">
 	<div
 		class="p-4 px-5 border rounded-md bg-neutral-50 border-neutral-200 grow cursor-pointer hover:border-primary-500"
-		on:click={() => window.open(`/ddm/data/Showdata/${id}`)}
-		on:keydown={() => window.open(`/ddm/data/Showdata/${id}`)}
+		on:click={() => window.open(`/dcm/view?id=${id}`)}
+		on:keydown={() => window.open(`/dcm/view?id=${id}`)}
 		role="link"
 		tabindex="0"
 		title="View dataset details in a new tab"
@@ -132,6 +132,14 @@
 					{/if}
 				</div>
 				<div class="ml-auto flex gap-2">
+					{#if hasextension.toLowerCase() === 'true'}
+						<div title="Entity Extension" class="rounded-full px-3 p-1 bg-secondary-300">
+							<span class="text-sm font-semibold text-on-secondary-token"
+								>has extension</span
+							>
+						</div>
+					{/if}
+
 					{#if entitytemplate && entitytemplate.length > 0}
 						<div title="Entity Category" class="rounded-full px-3 p-1 bg-primary-400">
 							<span class="text-sm font-semibold text-on-secondary-token"
@@ -139,6 +147,8 @@
 							>
 						</div>
 					{/if}
+
+					
 
 					{#if entity && entity.length > 0}
 						<div title="Entity Type" class="rounded-full px-3 p-1 bg-primary-500">

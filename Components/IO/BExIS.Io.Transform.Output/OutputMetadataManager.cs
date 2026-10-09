@@ -36,7 +36,7 @@ namespace BExIS.IO.Transform.Output
                 XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
                 xmlMapperManager.Load(pathMappingFile, "exporttest");
 
-                XmlDocument tmp = GetConvertedMetadata(datasetId, type, mappingName, false);
+                XmlDocument tmp = GetConvertedMetadata(datasetId,-1, type, mappingName, false);
 
                 string path = Path.Combine(AppConfiguration.DataPath, "Temp", "System", "convertedMetadata.xml");
 
@@ -61,7 +61,7 @@ namespace BExIS.IO.Transform.Output
             }
         }
 
-        public static XmlDocument GetConvertedMetadata(long datasetId, TransmissionType type, string mappingName, bool storing = true)
+        public static XmlDocument GetConvertedMetadata(long datasetId,long versionId, TransmissionType type, string mappingName, bool storing = true)
         {
             using (DatasetManager datasetManager = new DatasetManager())
             {
@@ -69,7 +69,12 @@ namespace BExIS.IO.Transform.Output
 
                 try
                 {
-                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                    DatasetVersion datasetVersion = null;
+                    if (versionId <= 0)
+                        datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                    else
+                        datasetVersion = datasetManager.GetDatasetVersion(versionId);
+
                     XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
                     // if no mapping name  is provided, use the metadata structure name

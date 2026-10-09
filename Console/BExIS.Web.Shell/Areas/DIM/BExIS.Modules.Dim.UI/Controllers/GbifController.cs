@@ -133,6 +133,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         // check if doi mapping to metadata exist, and add it also there
                         setDoiInMetadataIfExist(datasetVersion, doi, datasetManager);
 
+                        // set doi in tag if used
+                        setDoiInTagIfExist(publication, doi);
+
                     }
                     else // fail
                     { 
@@ -221,6 +224,23 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 datasetManager.UpdateSingleValueInMetadata(version.Id, target.XPath, doi);
 
                 return true;
+            }
+
+            return false;
+        }
+
+        private bool setDoiInTagIfExist(Publication p, string doi)
+        {
+            using (var tagManager = new TagManager())
+            {
+                if (p.Tag != null)
+                {
+                    var tag = tagManager.Repo.Get(p.Tag.Id);
+                    tag.Doi = doi;
+                    tagManager.Update(tag);
+
+                    return true;
+                }
             }
 
             return false;

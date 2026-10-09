@@ -357,12 +357,12 @@
 	// if you change the delimeter you need to change/update also the table information
 	function changeDelimiter(e) {
 		// wait a little bit, because the value is not set yet in firefox
-		 setTimeout(async () => {
-				console.log("changeDelimiter", model.delimeter, e.currentTarget?.value);
+		setTimeout(async () => {
+			console.log('changeDelimiter', model.delimeter, e.currentTarget?.value);
 
-				setTableInfos(model.preview);
-				prepareData(model.preview);
-		 }, 10);
+			setTableInfos(model.preview);
+			prepareData(model.preview);
+		}, 10);
 	}
 
 	// ROW Selection
@@ -382,26 +382,28 @@
 		}
 	};
 
-	async function onChangeEncodingHandler(e) {
-		const encoding = e;
-		console.log('🚀 ~ e.detail:', e);
-		const m = await load(model.file, model.entityId, encoding, 0);
-		model.preview = m.preview;
+	async function onChangeEncodingHandler() {
+		// wait a little bit, because the value is not set yet in firefox
+		setTimeout(async () => {
+			console.log('onChangeEncoding', model.fileEncoding);
+			const m = await load(model.file, model.entityId, model.fileEncoding, 0);
+			model.preview = m.preview;
+			setTableInfos(model.preview);
+			prepareData(model.preview);
+		}, 10);
 	}
 
 	function textMarkerHandling(row: string): [] {
 		const d = String.fromCharCode(model.delimeter);
 		const t = String.fromCharCode(model.textMarker);
 
-
 		const values = row.split(d);
 
 		let temp = [];
 
-		console.log("🚀 ~ textMarkerHandling ~ t:", t, model.textMarker)
-	if (row.includes(t) && model.textMarker != 0) {
-
-		console.log("🚀 ~ in ~ model.textMarker:", model.textMarker)
+		console.log('🚀 ~ textMarkerHandling ~ t:', t, model.textMarker);
+		if (row.includes(t) && model.textMarker != 0) {
+			console.log('🚀 ~ in ~ model.textMarker:', model.textMarker);
 
 			let tempValue: string = '';
 			let startText: boolean = false;
@@ -458,40 +460,52 @@
 	}
 </script>
 
-
 {#if !model || state.length == 0 || generate == false}
 	<button title="back" class="btn variant-filled-warning" on:click={() => back()}
-		><Fa icon={faArrowLeft} /></button
+		><Fa icon={faArrowLeft} /><span class="ml-2">Back</span></button
 	>
 
 	<!--if the model == false, access denied-->
 	{#if !model || state.length == 0 || generate == false}
 		<div class="h-full w-full text-surface-700">
-
 			<Spinner
-			position={positionType.center}
-			label="Loading Structure Suggestion based on: {model.file}"/>
+				position={positionType.center}
+				label="Loading data structure suggestion based on: {model.file}"
+			/>
 
 			<div class="mt-10">
 				<Info></Info>
 			</div>
-			
 		</div>
 	{:else}
 		<div class="h-full w-full text-surface-700">
-			<Spinner position={positionType.center} label="Generate Structure..." />
+			<Spinner position={positionType.center} label="Generating data structure ..." />
 		</div>
 	{/if}
 {:else}
 	<!-- load page -->
 	<form on:submit|preventDefault={save}>
+	<div class="text-right justify-end gap-2">
+					<button
+						type="button"
+						title="cancel"
+						class="btn variant-filled-warning text-lg"
+						on:click={cancelFn}
+					>
+						<Fa icon={faXmark} size="lg" /><span class="ml-2">Cancel</span>
+					</button>
+					<button title="save" class="btn variant-filled-primary text-lg" disabled={!isValid}>
+						<Fa icon={faSave} size="lg" /><span class="ml-2">Save</span>
+					</button>
+				</div>
 		<div
 			id="structure-suggestion-container"
 			class="flex-col gap-3"
 			on:mousedown={beginDrag}
 			on:mouseup={endDrag}
+			role="presentation"
 		>
-			<label id="title"><b>File Structure</b></label>
+			<label id="title" for="structure-suggestion-container"><b>File Structure</b></label>
 			<div class="flex gap-5">
 				<div id="edit" class="flex flex-col grow gap-2">
 					<div id="reader selections" class="flex flex-none gap-2">
@@ -512,6 +526,7 @@
 							source={model.decimals}
 							complexTarget={false}
 							help={true}
+							on:change={changeDelimiter}
 						/>
 
 						<DropdownKVP
@@ -521,6 +536,7 @@
 							source={model.textMarkers}
 							complexTarget={false}
 							help={true}
+							on:change={changeDelimiter}
 						/>
 
 						<DropdownKVP
@@ -530,7 +546,7 @@
 							source={model.encodings}
 							complexTarget={false}
 							help={true}
-							on:change={onChangeEncodingHandler(model.fileEncoding)}
+							on:change={onChangeEncodingHandler}
 						/>
 					</div>
 
@@ -546,13 +562,15 @@
 							id="selectVar"
 							type="button"
 							on:click={() => onclickHandler(MARKER_TYPE.VARIABLE)}
-							on:mouseover={() => helpStore.show('selectVar')}>Variable</button
+							on:mouseover={() => helpStore.show('selectVar')}
+							on:focus={() => helpStore.show('selectVar')}>Variable</button
 						>
 						<button
 							class="btn variant-filled-success"
 							type="button"
 							id="selectUnit"
 							on:mouseover={() => helpStore.show('selectUnit')}
+							on:focus={() => helpStore.show('selectUnit')}
 							on:click={() => onclickHandler(MARKER_TYPE.UNIT)}>Unit</button
 						>
 						<button
@@ -560,6 +578,7 @@
 							type="button"
 							id="selectDescription"
 							on:mouseover={() => helpStore.show('selectDescription')}
+							on:focus={() => helpStore.show('selectDescription')}
 							on:click={() => onclickHandler(MARKER_TYPE.DESCRIPTION)}>Description</button
 						>
 						<button
@@ -568,6 +587,7 @@
 							color="info"
 							id="selectMissingValues"
 							on:mouseover={() => helpStore.show('selectMissingValues')}
+							on:focus={() => helpStore.show('selectMissingValues')}
 							on:click={() => onclickHandler(MARKER_TYPE.MISSING_VALUES)}>Missing Values</button
 						>
 						<button
@@ -575,6 +595,7 @@
 							type="button"
 							id="selectData"
 							on:mouseover={() => helpStore.show('selectData')}
+							on:focus={() => helpStore.show('selectData')}
 							on:click={() => onclickHandler(MARKER_TYPE.DATA)}>Data</button
 						>
 						<div class="ml-10">
@@ -584,6 +605,7 @@
 								class="btn variant-ghost-surface text-lg"
 								type="button"
 								on:mouseover={() => helpStore.show('resetSelection')}
+								on:focus={() => helpStore.show('resetSelection')}
 								on:click={resetSelection}>Reset</button
 							>
 						</div>
@@ -593,33 +615,22 @@
 								<label class="text-error-500">{error}</label>
 							{/each}
 						</div>
-						<div class="text-right">
-							<button
-								type="button"
-								title="cancel"
-								class="btn variant-filled-warning text-lg"
-								on:click={cancelFn}
-							>
-								<Fa icon={faXmark} size="lg" />
-							</button>
-							<button title="save" class="btn variant-filled-primary text-lg" disabled={!isValid}>
-								<Fa icon={faSave} size="lg" />
-							</button>
-						</div>
 					</div>
 
 					<div class="flex"></div>
 				</div>
-
+			
 				<div class="controls"><Controls /></div>
 			</div>
 
 			<div id="preview data" class="flex-col py-5">
 				<div id="data infos" class="flex flex-auto gap-5 pb-2">
-					<label><b>Total:</b> {model.total}</label>
-					<label><b>Found:</b> {model.total - model.skipped}</label>
-					<label><b>Skipped:</b> {model.skipped}</label>
-					<label class="grow text-right"><i>you see only the first 10 rows of the data</i> </label>
+					<label for="total"><b>Total:</b> {model.total}</label>
+					<label for="found"><b>Found:</b> {model.total - model.skipped}</label>
+					<label for="skipped"><b>Skipped:</b> {model.skipped}</label>
+					<label class="grow text-right" for="data-description">
+						<i>you see only the first 10 rows of the data</i>
+					</label>
 				</div>
 
 				<div class="overflow-x-auto">

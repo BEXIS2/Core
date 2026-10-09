@@ -33,7 +33,7 @@
             draggable: true,
             selectable: true,
             deletable: false,
-            style: 'width: 200px; height: 60px; background: #e8f5e8; border: 2px solid #4caf50;'
+            style: 'width: 280px; height: 80px; background: #e8f5e8; border: 2px solid #4caf50;'
         };
     }
 

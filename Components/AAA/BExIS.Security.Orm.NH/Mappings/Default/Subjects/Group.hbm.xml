@@ -9,5 +9,7 @@
       <key column="GroupRef" />
       <many-to-many column="UserRef" class="BExIS.Security.Entities.Subjects.User, BExIS.Security.Entities" />
     </set>
+	  <property name="CreationDate" type="DateTime" />
+	  <property name="ModificationDate" type="DateTime" />
   </union-subclass>
 </hibernate-mapping>

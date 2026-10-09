@@ -6,12 +6,13 @@
 
 	import { Spinner, positionType } from '@bexis2/bexis2-core-ui';
 	import { createExtensionLink, getExtensionEntityTemplateList } from './services';
-	import { goTo } from '$services/BaseCaller';
 
 	import type { EntityTemplateModel } from '$models/EntityTemplate';
 
 	let entitytemplate: EntityTemplateModel;
 	export let id;
+
+	export let entitytemplates = [];
 
 	$: entitytemplates = [];
 	// $:systemkeys= [];

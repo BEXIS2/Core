@@ -53,4 +53,19 @@ namespace BExIS.Modules.Sam.UI.Models
         public long InstanceId { get; set; }
         public long SubjectId { get; set; }
     }
+
+    public class CreateEntityPermissionModel
+    {
+        
+    }
+
+    public class UpdateEntityPermissionModel
+    {
+        
+    }
+
+    public class ReadEntityPermissionModel
+    {
+        
+    }
 }

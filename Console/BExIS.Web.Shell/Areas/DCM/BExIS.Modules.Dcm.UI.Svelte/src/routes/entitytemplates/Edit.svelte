@@ -182,6 +182,7 @@
 function	updateIsExtensions(entityTypeText:string){
 		if(entityTypeText === "Extension"){
 			isExtensions = true;
+			entityTemplate.hasDatastructure = true;
 		}else{
 			isExtensions = false;
 		}
@@ -298,13 +299,16 @@ function	updateIsExtensions(entityTypeText:string){
 							on:mouseover={() => helpStore.show('hasDatastructure')}
 							on:focus={() => helpStore.show('hasDatastructure')}
 						>
-							<SlideToggle
-								active="bg-primary-500"
-								name="use_data_structure"
-								bind:checked={entityTemplate.hasDatastructure}
-							>
-								Allow to use data structures
-							</SlideToggle>
+
+						{#if !isExtensions}
+								<SlideToggle
+									active="bg-primary-500"
+									name="use_data_structure"
+									bind:checked={entityTemplate.hasDatastructure}
+								>
+									Allow to use data structures
+								</SlideToggle>
+							{/if}
 
 							{#if entityTemplate.hasDatastructure}
 								<MultiSelect
@@ -470,12 +474,12 @@ function	updateIsExtensions(entityTypeText:string){
 				</div>
 				<div class="grow text-right gap-2">
 					<button
-						title="cancel"
+						title="Cancel"
 						type="button"
 						class="btn variant-filled-warning"
 						on:click={onCancel}><Fa icon={faXmark} /></button
 					>
-					<button title="save" type="submit" class="btn variant-filled-primary" {disabled}
+					<button title="Save Template" type="submit" class="btn variant-filled-primary" {disabled} 
 						><Fa icon={faSave} /></button
 					>
 				</div>

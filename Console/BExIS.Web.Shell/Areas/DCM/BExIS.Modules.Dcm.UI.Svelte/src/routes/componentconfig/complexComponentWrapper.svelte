@@ -51,7 +51,7 @@
                             draggable: true,
                             selectable: true,
                             deletable: false,
-                            style: 'width: 200px; height: 60px; background: #e3f2fd; border: 2px solid #1976d2;'
+                            style: 'width: 280px; height: 80px; background: #e3f2fd; border: 2px solid #1976d2;'
                         };
                         nodes.push(headerNode);
                         currentPosition.y += nodeSpacing;
@@ -104,7 +104,7 @@
                         draggable: true,
                         selectable: true,
                         deletable: false,
-                        style: 'width: 200px; height: 60px;'
+                        style: 'width: 280px; height: 80px;'
                     };
                     nodes.push(simpleNode);
                     currentPos.y += nodeSpacing;
@@ -131,7 +131,7 @@
             draggable: true,
             selectable: true,
             deletable: false,
-            style: 'width: 200px; height: 60px;'
+            style: 'width: 280px; height: 80px;'
         }];
     }
 
@@ -155,7 +155,7 @@
             draggable: true,
             selectable: true,
             deletable: false,
-            style: 'width: 200px; height: 60px; background: #fff3e0; border: 2px solid #f57c00;'
+            style: 'width: 280px; height: 80px; background: #fff3e0; border: 2px solid #f57c00;'
         };
         nodes.push(headerNode);
         currentPos.y += nodeSpacing;
@@ -183,7 +183,7 @@
                     draggable: true,
                     selectable: true,
                     deletable: false,
-                    style: 'width: 200px; height: 60px;'
+                    style: 'width: 280px; height: 80px;'
                 };
                 nodes.push(itemNode);
             }
@@ -213,7 +213,7 @@
             draggable: true,
             selectable: true,
             deletable: false,
-            style: 'width: 200px; height: 60px; background: #f3e5f5; border: 2px solid #7b1fa2;'
+            style: 'width: 280px; height: 80px; background: #f3e5f5; border: 2px solid #7b1fa2;'
         };
         nodes.push(headerNode);
         currentPos.y += nodeSpacing;
@@ -237,7 +237,7 @@
                     draggable: true,
                     selectable: true,
                     deletable: false,
-                    style: 'width: 200px; height: 60px;'
+                    style: 'width: 280px; height: 80px;'
                 };
                 nodes.push(choiceNode);
                 currentPos.y += nodeSpacing;

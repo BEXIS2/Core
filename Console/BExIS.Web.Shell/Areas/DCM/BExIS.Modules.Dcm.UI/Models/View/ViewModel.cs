@@ -1,6 +1,8 @@
 ﻿using BExIS.Dim.Helpers.Models;
 using BExIS.Modules.Dim.UI.Models.Download;
 using BExIS.UI.Hooks;
+using BExIS.UI.Hooks.Caches;
+using BExIS.UI.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,6 +13,7 @@ namespace BExIS.Modules.Dcm.UI.Models.View
     public class ViewModel:ApiDatasetModel
     {
         public ViewSettings Settings { get; set; }
+        public string EntityName { get; set; }
         public bool HasData { get; set; }
         public int Count { get; set; }
         public bool IsValid { get; set; }
@@ -18,6 +21,7 @@ namespace BExIS.Modules.Dcm.UI.Models.View
         public bool RequestExist { get; set; }
         public bool RequestAble { get; set; }
         public bool HasRequestRight { get; set; }
+        public bool HasEditRight { get; set; }
 
 
         public Dictionary<string, string> Labels { get; set; }
@@ -27,8 +31,10 @@ namespace BExIS.Modules.Dcm.UI.Models.View
             Id = 0;
             Version = 0;
             VersionId = 0;
+            Tag = 0;
             Title = "";
             HasData = false;
+            HasEditRight = false;
             Labels = new Dictionary<string, string>();
             Settings = new ViewSettings();
         }
@@ -71,6 +77,8 @@ namespace BExIS.Modules.Dcm.UI.Models.View
         public bool UseMinor { get; set; } // use minor tags, e.g., 1.1, 1.2, 1.3
         public string DataAggrement { get; set; }
 
+        public string Entity { get; set; }
+
         public List<Hook> Hooks { get; set; }
 
         public ViewSettings()
@@ -78,6 +86,7 @@ namespace BExIS.Modules.Dcm.UI.Models.View
             UseTags = false;
             UseMinor = false;
             Hooks = new List<Hook>();
+            Entity = "";
         }
     }
 
@@ -158,4 +167,34 @@ namespace BExIS.Modules.Dcm.UI.Models.View
             Link = link;
         }
     }
+
+    public class VersionListeItem : ListItem
+    {
+        public string Date { get; set; }
+        public double TagNr { get; set; }
+        public string ChangeDescription { get; set; }
+    }
+
+    public class DeletedModel
+    {
+        public long Id { get; set; }
+        public string Title { get; set; }
+
+        public LinksOverview Links { get; set; }
+        
+        public DeletedModel()
+        {
+            Id = 0;
+            Title = "";
+            Links = new LinksOverview();
+        }
+    }
+
+    public class AttachtmentsViewModel
+    {
+        public long Id { get; set; }
+        
+        public List<FileInfo> Files { get; set; }
+    }
+
 }

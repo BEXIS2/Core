@@ -424,8 +424,8 @@ namespace BExIS.IO.Transform.Input
                     foreach (var item in byUnit)
                     {
                         // if variableTemplate allready exist in the matches increase the value by 1
-                        if (matches.ContainsKey(item)) matches[item] += 1;
-                        else matches.Add(item, 1);
+                        if (matches.ContainsKey(item)) matches[item] += 2;
+                        else matches.Add(item, 2);
                     }
 
                     //add dimenions results to matches
@@ -449,7 +449,29 @@ namespace BExIS.IO.Transform.Input
                 }
             }
 
-            return matches.OrderByDescending(x => x.Value).Select(u => u.Key).ToList();
+            // 1. Sort and grab the highest value first
+            var sortedMatches = matches.OrderByDescending(x => x.Value).ToList();
+
+            // 2. Protect against an empty list, then grab the maximum value
+            double threshold = 0.0;
+            if (sortedMatches.Any())
+            {
+                double highestValue = sortedMatches.First().Value;
+
+                // 3. Define your maximum allowed relative gap (e.g., 0.20 means a max 20% drop)
+                double maxAllowedGap = 0.20;
+                threshold = highestValue * (1.0 - maxAllowedGap);
+
+                
+            }
+            // 4. Filter out anything below the threshold and select the keys
+            var result = sortedMatches
+                .Where(x => x.Value >= threshold)
+                .Select(u => u.Key)
+                .ToList();
+
+            return result;
+
         }
 
         public List<string> GetRandowRows(List<string> rows, int numberOfRows)

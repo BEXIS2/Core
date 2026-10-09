@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 
 	import { Alert, Spinner } from '@bexis2/bexis2-core-ui';
 	import { fade } from 'svelte/transition';
@@ -38,9 +38,11 @@
 	}
 
 
+	let unsubHooksStatus;
+
 	onMount(async () => {
 		//active = setActive(status);
-		hooksStatus.subscribe((h) => {
+		unsubHooksStatus = hooksStatus.subscribe((h) => {
 			if (h[name] != undefined) {
 				setStatus(h[name]);
 			}
@@ -48,6 +50,12 @@
 		error = [];
 		success = null;
 		warnings = [];
+	});
+
+	onDestroy(() => {
+		if (unsubHooksStatus) {
+			unsubHooksStatus();
+		}
 	});
 
 	function errorHandler(e) {
@@ -85,7 +93,7 @@
 			active = true; // every other status enable the hook
 		}
 
-		wait = status == 6 ? true : false; // wait for somthing
+		wait = status == 6 ? true : false; // wait for something
 
 		if (wait) {
 			resetAlerts();
@@ -131,7 +139,7 @@
 				{:else}
 					<div class="flex gap-2 text-surface-600">
 						<Fa icon={faLock} size="lg" />
-						<span>this area is locked, because data is uploading</span>
+						<span>This area is locked, because data is uploading</span>
 					</div>
 				{/if}
 			</div>

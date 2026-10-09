@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "title": "Default Values Widget",
+    "component_name": "defaultValues_v1.0.0",
+    "author": "David Schöne",
+    "version": "1.0.0",
+    "description": "Component for Default Values"
+  },
+  "globalSettings": {
+    "globalsetting": [
+      {
+        "name": "Description",
+        "description": "Overwrite default description of the field.",
+        "type": "string",
+        "target_variable": "description",
+        "default_value": {
+          "type": "string",
+          "value": ""
+        }
+      }
+    ]
+  },
+  "modes": {
+    "edit": [
+      {
+        "mode_name": "Default Values",
+        "description": "Basic Configuration of the default values widget",
+        "settings": {
+          "setting": [
+            {
+              "name": "Default Values",
+              "description": "Default value)",
+              "type": "string",
+              "target_variable": "defaultValue",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "Disable",
+              "description": "Disable the text field",
+              "type": "boolean",
+              "target_variable": "disabled",
+              "default_value": {
+                "type": "boolean",
+                "value": false
+              }
+            },
+            {
+              "name": "Description",
+              "description": "Overwrite default description of the field.",
+              "type": "string",
+              "target_variable": "description",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Field",
+              "description": "field input",
+              "target_variable": "Field",
+              "type": "string",
+              "allowregex_input": true,
+              "allowregex_output": true,
+              "is_input": true,
+              "is_output": true
+            }
+          ]
+        }
+      }]
+  }
+}
+   

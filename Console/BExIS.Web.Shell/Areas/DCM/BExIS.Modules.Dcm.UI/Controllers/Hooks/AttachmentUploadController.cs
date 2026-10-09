@@ -335,7 +335,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 Directory.CreateDirectory(Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments"));
                             var destinationPath = Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
                             file.SaveAs(destinationPath);
-                            AddFileInContentDiscriptor(datasetVersion, fileName);
+                            AddFileInContentDiscriptor(datasetVersion, fileName, file.ContentLength);
                         }
 
                         using (var emailService = new EmailService())
@@ -373,7 +373,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
-        private string AddFileInContentDiscriptor(DatasetVersion datasetVersion, String fileName)
+        private string AddFileInContentDiscriptor(DatasetVersion datasetVersion, String fileName, int fileSize)
         {
             string dataPath = AppConfiguration.DataPath;
             string storePath = Path.Combine(dataPath, "Datasets", datasetVersion.Dataset.Id.ToString(), "Attachments");
@@ -387,7 +387,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Name = fileName,
                 MimeType = MimeMapping.GetMimeMapping(fileName),
                 URI = Path.Combine("Datasets", datasetVersion.Dataset.Id.ToString(), "Attachments", fileName),
-                DatasetVersion = datasetVersion
+                DatasetVersion = datasetVersion,
+                FileSize = fileSize
             };
             // replace the URI and description in case they have a same name
             if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(originalDescriptor.Name)) > 0)

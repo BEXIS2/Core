@@ -51,6 +51,22 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             return entityTemplate;
         }
 
+        public static object ConvertToSimple(EntityTemplate entityTemplate)
+        {
+            var model = new
+            {
+                Id = entityTemplate.Id,
+                Name = entityTemplate.Name,
+                Description = entityTemplate.Description,
+                MetadataStructure = entityTemplate.MetadataStructure != null ? new ListItem(entityTemplate.MetadataStructure.Id, entityTemplate.MetadataStructure.Name) : null,
+                EntityType = entityTemplate.EntityType != null ? new ListItem(entityTemplate.EntityType.Id, entityTemplate.EntityType.Name) : null,
+                MetadataInvalidSaveMode = entityTemplate.MetadataInvalidSaveMode,
+                HasDatastructure = entityTemplate.HasDatastructure
+            };
+
+            return model;
+        }
+
         public static EntityTemplate Merge(EntityTemplateModel model)
         {
             using (var entityTemplateManager = new EntityTemplateManager())
@@ -117,7 +133,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
             model.EntityType = new ListItem(entityTemplate.EntityType.Id, entityTemplate.EntityType.Name);
 
-            // check if subject are allready created, and list them for the view
+            // check if subject are already created, and list them for the view
             using (var datasetManager = new DatasetManager())
             {
                 long etId = entityTemplate.Id;

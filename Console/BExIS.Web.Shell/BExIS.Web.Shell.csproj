@@ -1114,7 +1114,7 @@
     <None Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Areas\" />
+    <Folder Include="Areas\SMM\BExIS.Modules.Smm.UI.Controllers\" />
     <Folder Include="Scripts\svelte\" />
     <Folder Include="Views\Jwt\" />
   </ItemGroup>

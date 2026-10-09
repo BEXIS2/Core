@@ -172,7 +172,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 int v = 1;
                                 if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
 
-                                TaskManager.Bus[CreateTaskmanager.METADATA_XML] = setSystemValuesToMetadata(datasetId, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newDataset);
+                                double tag = workingCopy.Tag!=null? workingCopy.Tag.Nr : 0;
+
+                                TaskManager.Bus[CreateTaskmanager.METADATA_XML] = setSystemValuesToMetadata(datasetId, v, tag, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newDataset);
 
 
                                 // check if metadata is valid against the metadatastructure
@@ -725,7 +727,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return false;
         }
 
-        private XDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)
+        private XDocument setSystemValuesToMetadata(long datasetid, long version,double tag, long metadataStructureId, XmlDocument metadata, bool newDataset)
         {
             SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
 
@@ -734,7 +736,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataCreationDate, Key.MetadataLastModfied };
             else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.MetadataLastModfied };
 
-            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version,tag, metadataStructureId, metadata, myObjArray);
 
             return XmlUtility.ToXDocument(metadata);
         }

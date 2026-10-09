@@ -68,7 +68,7 @@
     <!-- Mapping Dataset properties -->
 
     <property name="Title" type="string">
-      <column name="Title" />
+      <column name="Title" sql-type="varchar"/>
     </property>
 
     <property name="Description" type="string">

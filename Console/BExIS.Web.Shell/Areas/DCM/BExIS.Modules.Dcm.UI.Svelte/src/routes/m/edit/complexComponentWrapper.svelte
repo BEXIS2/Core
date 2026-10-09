@@ -4,14 +4,23 @@
 	import ArrayComponent from './arrayComponentWrapper.svelte';
 	import ChoiceComponent from './choiceComponentWrapper.svelte';
 
-	import { slide, fade } from 'svelte/transition';
-	import { activeStore, hideStore } from '$lib/components/utils/metadata/stores';
+	import { slide } from 'svelte/transition';
+	import { activeStore, hideStore, metadataStore, validationStore } from '$lib/components/utils/metadata/stores';
 	import Header from './MetadataComponentHeader.svelte';
+	import { convertDisplayName } from '$lib/components/utils/metadata/metadataShared';
+	import { registerValidationItem, updateValidationState, getSchemaAttributes, getAttributeValue, updateAttribute, allchildrensAreOptional } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import suite from '$lib/components/utils/metadata/ComponentSuite';
+	import Attributes from '$lib/components/metadata/Attributes.svelte';
+	import { onMount } from 'svelte';
+
 
 	export let complexComponent: any;
 	export let path: string;
 	export let required: boolean = false;
 	export let description: string = '';
+
+	let res = suite.get();
+
 
 
 	let label: string =
@@ -22,26 +31,87 @@
 			? complexComponent.required
 			: [];
 
+	function normalizeRequiredKey(value: string): string {
+		return String(value ?? '')
+			.toLowerCase()
+			.replace(/[^a-z0-9]/g, '');
+	}
+
+	function isRequiredKey(key: string, v:any): boolean {
+
+		const normalizedKey = normalizeRequiredKey(key);
+	 //console.log("🚀 ~ isRequiredKey:", key)
+
+		var isRequired = requiredList.some((requiredKey: string) => requiredKey === key);
+
+		if(isRequired) {
+			return true;
+		}
+
+		// // may the component is an array or a choice and has a minItems attribute
+		if(v && (v.type === 'array' || v.type === 'choice') && v.minItems) {
+			return v.minItems > 0;
+		}
+
+		return false;
+	}
+
+
+	onMount(async () => {
+		
+	//#### VALIDATION	 ####
+	registerValidationItem(path, convertDisplayName(label), required, complexComponent);
+
+
+	// init
+	validation();
+
+});
+
+	// Schema-driven attributes on this compound node (excluding @ref and @partyid)
+$: schemaAttrs = getSchemaAttributes(complexComponent).filter(a => a !== '@partyid');
+	
+function onChangeHandler(e: CustomEvent<any>) {
+  //console.log("🚀 ~ complex child onChangeHandler:", path, res.isValid(path))
+		validation();
+}
+
+function validation()	{
+		res = suite(path);
+		setTimeout(async () => {
+			updateValidationState(path, res);
+		}, 100);
+
+}
+
+
+
 </script>
-<!-- {#key reloading} -->
+
+
+
 {#if complexComponent && complexComponent.type === 'object' && complexComponent.properties}
 	{#each Object.entries(complexComponent.properties) as [key, value]}
 		{@const p = path = path ? path + '.' + key : key}
 		{@const l = label = key}
+
 		{#if (value.type === 'object' && value.properties && !value.properties['#text']) }
 			{#if value.oneOf || value.anyOf || value.allOf}
-				<ChoiceComponent choiceComponent={value} {path} />
+
+			<ChoiceComponent choiceComponent={value} {path} on:updated={onChangeHandler} required={isRequiredKey(key, value)} />
 			{:else}
 				<div class="grid grid-cols-1 gap-0 ">
-
-					<Header	{required} {path} {p} description={value.description}  />
+				
+					<Header	required={isRequiredKey(key, value)} {path} {p} description={value.description} allChildrenOptional={allchildrensAreOptional(value)}	  />
 
 					{#if !$hideStore.includes(path) && $activeStore.includes(path)}
 						<div in:slide out:slide class="card pl-5 py-1" id={path}>
 						 <ComplexComponent
 								complexComponent={value}
 								{path}
-								required={requiredList.includes(key)}
+								required={isRequiredKey(key, value)}
+								on:updated={onChangeHandler}
+								
 							/>
 
 						</div>
@@ -50,17 +120,21 @@
 			{/if}
 		{:else if value.type === 'object' && value.properties['#text']}
 			<div class="mb-1">
-				<div class="flex flex-col md:flex-row md:items-center gap-2">
-					<div class="flex-1 min-w-[100px]">
-						<SimpleComponent simpleComponent={value} {path} required={requiredList.includes(key)} />
+				<div class="flex flex-col md:flex-row md:items-center gap-2 mb">
+					<div class="flex-1 min-w-[100px] pt-1">
+						<SimpleComponent simpleComponent={value} {path} required={isRequiredKey(key,value)} on:updated={onChangeHandler} />
 					</div>
 				</div>
-			
 			</div>
 		{:else if value.type === 'array' && value.items}
-			<ArrayComponent arrayComponent={value} {path} />
+			
+			<ArrayComponent arrayComponent={value} {path} on:updated={onChangeHandler} required={isRequiredKey(key,value)} />
 		{/if}
 	{/each}
-	
+
+	{#if schemaAttrs.length > 0}
+		<Attributes {path} component={complexComponent} />
+	{/if}
 {/if}
+
 

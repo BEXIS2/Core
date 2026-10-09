@@ -98,6 +98,38 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             }
         }
 
+        public ActionResult multimediaDataView(long datasetID, long versionId = 0, string entityType = "Dataset")
+        {
+            ViewData["Id"] = datasetID;
+
+            using (DatasetManager datasetManager = new DatasetManager())
+            {
+                try
+                {
+                    EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+                    bool isLatestVersion = false;
+                    if (versionId == datasetManager.GetDatasetLatestVersion(datasetID).Id)
+                        isLatestVersion = true;
+
+                    ViewData["edit"] = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Write).Result;
+
+                    bool access = entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Read).Result;
+                    Session["DatasetInfo"] = new DatasetInfo(datasetID, versionId, isLatestVersion, access, entityPermissionManager.HasEffectiveRightsAsync(HttpContext.User.Identity.Name, typeof(Dataset), datasetID, RightType.Delete).Result);
+                    if (access)
+                        return View("_multimediaData", getFilesByDatasetId(datasetID, entityType, versionId));
+                    else
+                        return null;
+                }
+                catch
+                {
+                    return null;
+                }
+                finally
+                {
+                }
+            }
+        }
+
         public ActionResult getFilePreview(string path, string type)
         {
             switch (type)
@@ -244,7 +276,10 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                                 // set system key values
                                 int v = 1;
                                 if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
-                                workingCopy.Metadata = setSystemValuesToMetadata(v, workingCopy.Dataset.Id, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
+                                
+                                double tag = workingCopy.Tag != null ? workingCopy.Tag.Nr : 0;
+
+                                workingCopy.Metadata = setSystemValuesToMetadata(v, workingCopy.Dataset.Id, tag, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata);
 
                                 datasetManager.EditDatasetVersion(workingCopy, null, null, null);
 
@@ -633,15 +668,15 @@ namespace IDIV.Modules.Mmm.UI.Controllers
             return new Measurement();
         }
 
-        private XmlDocument setSystemValuesToMetadata(long version, long datasetId, long metadataStructureId, XmlDocument metadata)
+        private XmlDocument setSystemValuesToMetadata(long version, long datasetId,double tag, long metadataStructureId, XmlDocument metadata)
         {
             SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
 
             Key[] myObjArray = { };
 
-            myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
+            myObjArray = new Key[] { Key.Id, Key.Version,Key.Tag, Key.DateOfVersion, Key.DataLastModified };
 
-            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetId, version, metadataStructureId, metadata, myObjArray);
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetId, version,tag, metadataStructureId, metadata, myObjArray);
 
             return metadata;
         }

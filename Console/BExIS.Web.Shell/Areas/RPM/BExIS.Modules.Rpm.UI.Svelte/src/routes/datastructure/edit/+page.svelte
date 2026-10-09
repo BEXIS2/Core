@@ -135,9 +135,9 @@
 <Page
 	title="Data Structure"
 	note="This page allows you to create and edit data structures."
-	contentLayoutType={pageContentLayoutType.full}
-	help={true}
-	footer={false}
+	contentLayoutType={pageContentLayoutType.center}
+	help={false}
+	footer={true}
 	{links}
 >
 	{#await start()}
