@@ -7,7 +7,7 @@ export interface ReadUserModel {
     groupIds: number[];
 }
 
-export type UserModel = {
+export interface UserModel {
     id: number;
     email: string;
     userName: string;
