@@ -91,7 +91,16 @@
 					item.errorMessage &&
 					item.errorMessage.trim() !== ''
 			);
-			return invalidParts && invalidParts.length > 0;
+
+			const invalidComplexParts = validationStoreValues.complexTypeValidationItems.filter(
+				(item) =>
+					item.path.startsWith(key) &&
+					item.isValid === false &&
+					item.errorMessage &&
+					item.errorMessage.trim() !== ''
+			);
+
+			return invalidParts && invalidParts.length > 0 || invalidComplexParts && invalidComplexParts.length > 0;
 		}
 	}
 
