@@ -211,7 +211,7 @@ function getChoices(cComponent: any): {key:string, value:string}[] {
 						{#if choiceComponent.items.properties[item].type === 'object' && choiceComponent.items.properties[item].properties && !choiceComponent.items.properties[item].properties['#text']}
 							<div class="grid grid-cols-1 gap-0 pl-1">
 	
-								<Header path = {path + pathaddtion + item}  description={choiceComponent.items.properties[item].description} />
+								<Header path = {path + pathaddtion + item}  description={choiceComponent.items.properties[item].description} childOfChoice={true} />
 
 								{#if !$hideStore.includes(path + '.' + item) }
 								<div in:slide out:slide class="card px-5 py-4" id={path + pathaddtion + item}>

@@ -61,7 +61,7 @@
 		
 	//#### VALIDATION	 ####
 	registerValidationItem(path, convertDisplayName(label), required, complexComponent);
- console.log("🚀 ~ validationStore:", $validationStore)
+
 
 	// init
 	validation();
