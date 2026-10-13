@@ -200,10 +200,6 @@
       <Project>{5f5d22e8-8c05-49cd-854e-8fe8eff1aa6c}</Project>
       <Name>Vaiona.Web.Mvc</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Web.Security\Vaiona.Web.Security.csproj">
-      <Project>{d15121e6-58d0-4796-9da0-f07a828b9ce2}</Project>
-      <Name>Vaiona.Web.Security</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Web\Vaiona.Web.csproj">
       <Project>{5b48b5a8-eae8-4ef8-8f2c-7fedb1b095d3}</Project>
       <Name>Vaiona.Web</Name>
