@@ -31,7 +31,7 @@ using System.Web;
 using System.Web.Routing;
 using System.Xml;
 using Vaiona.Entities.Common;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Dcm.UI.Helpers

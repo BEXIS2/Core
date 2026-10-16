@@ -1,7 +1,7 @@
 ﻿using BExIS.Security.Entities.Objects;
 using System;
 using System.Linq;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Security.Services.Objects
 {

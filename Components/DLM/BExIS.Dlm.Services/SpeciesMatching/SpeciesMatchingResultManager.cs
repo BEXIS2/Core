@@ -6,7 +6,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Dlm.Services.SpeciesMatching
 {
@@ -130,7 +130,7 @@ namespace BExIS.Dlm.Services.SpeciesMatching
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<SpeciesMatchingResult> repo = uow.GetRepository<SpeciesMatchingResult>();
-
+                matchingResult = repo.Get(matchingResult.Id);
                 repo.Delete(matchingResult);
                 uow.Commit();
 

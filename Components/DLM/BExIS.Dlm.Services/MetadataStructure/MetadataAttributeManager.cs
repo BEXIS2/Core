@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Security.Cryptography;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Dlm.Services.MetadataStructure

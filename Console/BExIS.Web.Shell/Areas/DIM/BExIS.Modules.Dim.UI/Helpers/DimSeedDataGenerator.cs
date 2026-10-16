@@ -22,7 +22,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using Telerik.Web.Mvc.UI;
 using Vaelastrasz.Library.Models;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 using Vaiona.Web.Mvc.Modularity;
 using static BExIS.Modules.Dim.UI.Controllers.ConceptOutController;
 using static BExIS.Modules.Dim.UI.Controllers.LinkElementTypeController;

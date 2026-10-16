@@ -16,7 +16,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {

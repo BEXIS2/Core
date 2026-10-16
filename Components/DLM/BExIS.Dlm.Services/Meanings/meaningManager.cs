@@ -7,7 +7,7 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Dlm.Services.Meanings
 {

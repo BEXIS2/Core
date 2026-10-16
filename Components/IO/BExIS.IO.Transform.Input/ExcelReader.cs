@@ -78,6 +78,7 @@ namespace BExIS.IO.Transform.Input
         {
             FileStream tmp = base.Open(fileName);
             loadProperties(tmp);
+             
 
             return tmp;
         }

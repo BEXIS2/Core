@@ -11,7 +11,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 using Vaiona.Utils.Cfg;
 
 // Javad: 18.07.2017 This class has a remarkable overlap with BExIS.IO.Transform.Output.OutputDatmanager and BExIS.Dlm.Services.Helpers.DatasetConvertor.

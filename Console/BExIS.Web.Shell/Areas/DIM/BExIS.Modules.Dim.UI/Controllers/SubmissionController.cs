@@ -25,7 +25,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Modularity;

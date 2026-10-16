@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 using BExIS.App.Testing;
 using BExIS.Utils.Config;
 using System.Linq;

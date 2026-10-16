@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Security.Services.Subjects
 {

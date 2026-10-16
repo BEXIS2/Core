@@ -108,6 +108,18 @@
     <Compile Include="CodeCheck.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\DB\BEXIS2.DB.Persistence.API\BEXIS2.DB.Persistence.API.csproj">
+      <Project>{ea5204fe-ef38-463a-bfde-d93b1cc85bba}</Project>
+      <Name>BEXIS2.DB.Persistence.API</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DB\BEXIS2.DB.Persistence.NH\BEXIS2.DB.Persistence.NH.csproj">
+      <Project>{3628a0dd-755f-43b6-be43-7e25749961f5}</Project>
+      <Name>BEXIS2.DB.Persistence.NH</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DB\BEXIS2.DB.PersistenceProviders.NH\BEXIS2.DB.PersistenceProviders.NH.csproj">
+      <Project>{254dd905-625f-42ec-bd8e-ec4ec4f4c679}</Project>
+      <Name>BEXIS2.DB.PersistenceProviders.NH</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
       <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
       <Name>BExIS.Utils.Config</Name>
@@ -139,18 +151,6 @@
     <ProjectReference Include="..\..\Vaiona\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj">
       <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
       <Name>Vaiona.Persistence.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj">
-      <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
-      <Name>Vaiona.Persistence.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Persistence.NH\Vaiona.Persistence.NH.csproj">
-      <Project>{8c5c0209-69a3-4579-9f9b-4d5f084a3b85}</Project>
-      <Name>Vaiona.Persistence.NH</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.PersistenceProviders.NH\Vaiona.PersistenceProviders.NH.csproj">
-      <Project>{2fb8def8-5749-4eae-8588-8a5aaed251a5}</Project>
-      <Name>Vaiona.PersistenceProviders.NH</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
       <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>

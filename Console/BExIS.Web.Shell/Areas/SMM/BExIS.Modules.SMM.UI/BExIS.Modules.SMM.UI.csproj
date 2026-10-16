@@ -216,6 +216,10 @@
       <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
       <Name>BExIS.Security.Services</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\DB\BEXIS2.DB.Persistence.API\BEXIS2.DB.Persistence.API.csproj">
+      <Project>{ea5204fe-ef38-463a-bfde-d93b1cc85bba}</Project>
+      <Name>BEXIS2.DB.Persistence.API</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>

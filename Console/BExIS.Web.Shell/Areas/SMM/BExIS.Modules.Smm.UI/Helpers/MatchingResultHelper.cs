@@ -13,7 +13,7 @@ using System.Text;
 using System.Web;
 using System.Web.Http.Results;
 using System.Web.Mvc;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Modules.Smm.UI.Helpers
 {

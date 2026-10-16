@@ -22,7 +22,7 @@ using System.Web.Mvc;
 using System.Xml;
 using Vaiona.Entities.Common;
 using Vaiona.Logging;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 using Vaiona.Utils.Cfg;
 
 namespace IDIV.Modules.Mmm.UI.Controllers

@@ -1,7 +1,7 @@
 ﻿using BExIS.Dlm.Entities.DataStructure;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Dlm.Services.Helpers
 {

@@ -60,7 +60,7 @@ using System.Web.SessionState;
 using System.Web.UI.WebControls;
 using System.Xml;
 using Vaiona.Logging;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 

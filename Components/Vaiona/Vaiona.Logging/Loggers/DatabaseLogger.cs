@@ -1,5 +1,5 @@
 ﻿using Vaiona.Entities.Logging;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace Vaiona.Logging.Loggers
 {

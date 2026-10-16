@@ -164,9 +164,6 @@
     <Reference Include="Vaiona.Entities">
       <HintPath>..\..\Vaiona\Vaiona.Entities\bin\Release\Vaiona.Entities.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Persistence.Api">
-      <HintPath>..\..\Vaiona\Vaiona.Persistence.Api\bin\Debug\Vaiona.Persistence.Api.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authentication\LdapAuthenticationManager.cs" />
@@ -197,6 +194,10 @@
     <Compile Include="Versions\VersionManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\DB\BEXIS2.DB.Persistence.API\BEXIS2.DB.Persistence.API.csproj">
+      <Project>{EA5204FE-EF38-463A-BFDE-D93B1CC85BBA}</Project>
+      <Name>BEXIS2.DB.Persistence.API</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>

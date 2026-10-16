@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 using Version = BExIS.Security.Entities.Versions.Version;
 
 namespace BExIS.Security.Services.Versions

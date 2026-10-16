@@ -24,7 +24,7 @@ using System.Data;
 using System.Linq;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;

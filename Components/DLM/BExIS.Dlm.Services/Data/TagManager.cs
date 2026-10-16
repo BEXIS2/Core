@@ -1,7 +1,7 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using System;
 using System.Diagnostics.Contracts;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Dlm.Services.Data
 {

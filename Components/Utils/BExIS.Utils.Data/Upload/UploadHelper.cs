@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Vaiona.Model.MTnt;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 /// <summary>
 ///

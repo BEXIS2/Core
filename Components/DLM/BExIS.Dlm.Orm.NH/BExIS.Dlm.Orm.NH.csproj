@@ -256,6 +256,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\DB\BEXIS2.DB.Persistence.API\BEXIS2.DB.Persistence.API.csproj">
+      <Project>{EA5204FE-EF38-463A-BFDE-D93B1CC85BBA}</Project>
+      <Name>BEXIS2.DB.Persistence.API</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Utils\BExIS.Utils.NH\BExIS.Utils.NH.csproj">
       <Project>{0F1EC13E-D685-4F4D-A438-52797B0E53A0}</Project>
       <Name>BExIS.Utils.NH</Name>

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 using DataStructureEntity = BExIS.Dlm.Entities.DataStructure.DataStructure;
 
 namespace BExIS.Dlm.Services.Administration

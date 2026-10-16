@@ -8,7 +8,7 @@ using System.Web.Mvc;
 using System.Web.SessionState;
 using Vaiona.Entities.Security;
 using Vaiona.IoC;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace Vaiona.Web.Security.Az.Attributes
 {

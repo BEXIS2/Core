@@ -6,7 +6,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Xml.Linq;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Dim.Helpers.Tests
 {

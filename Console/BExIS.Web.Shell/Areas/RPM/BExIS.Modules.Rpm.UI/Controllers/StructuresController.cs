@@ -7,7 +7,7 @@ using System.Net;
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Web.SessionState;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {

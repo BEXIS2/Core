@@ -35,6 +35,11 @@ namespace BExIS.Dlm.Tests.Services.SpeciesMatching
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
+            using (var speciesMatchingResultManager = new SpeciesMatchingResultManager())
+            { 
+                speciesMatchingResultManager.Repo.Get().ToList().ForEach(x => speciesMatchingResultManager.Delete(x));
+            }
+            
             datasetHelper.PurgeAllDatasets();
         }
 
@@ -72,6 +77,8 @@ namespace BExIS.Dlm.Tests.Services.SpeciesMatching
                 Assert.IsNotNull(created);
                 Assert.IsNotNull(fromdb);
                 Assert.That(created.Id.Equals(fromdb.Id));
+
+                speciesMatchingResultManager.Delete(fromdb);
             }
         }
     }

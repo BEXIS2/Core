@@ -43,7 +43,7 @@ using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
 using Telerik.Web.Mvc.Extensions;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;

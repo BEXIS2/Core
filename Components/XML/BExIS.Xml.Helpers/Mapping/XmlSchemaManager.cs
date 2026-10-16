@@ -13,7 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Xml.Helpers.Mapping

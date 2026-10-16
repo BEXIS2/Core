@@ -1,7 +1,7 @@
 ﻿using BExIS.Dlm.Entities.Party;
 using System;
 using System.Linq;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Dlm.Services.Party
 {

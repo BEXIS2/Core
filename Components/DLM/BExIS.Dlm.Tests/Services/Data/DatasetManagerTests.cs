@@ -32,6 +32,7 @@ namespace BExIS.Dlm.Tests.Services.Data
         public void SetUp()
         {
             var dsHelper = new DatasetHelper();
+
             //dsHelper.PurgeAllDatasets();
             //dsHelper.PurgeAllDataStructures();
             //dsHelper.PurgeAllResearchPlans();

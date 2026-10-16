@@ -278,6 +278,10 @@
       <Project>{7D7FBF8E-37D7-4A4C-B40E-3F267E9B9760}</Project>
       <Name>BExIS.App.Bootstrap</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\DB\BEXIS2.DB.Persistence.API\BEXIS2.DB.Persistence.API.csproj">
+      <Project>{ea5204fe-ef38-463a-bfde-d93b1cc85bba}</Project>
+      <Name>BEXIS2.DB.Persistence.API</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>
@@ -329,10 +333,6 @@
     <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.MultiTenancy.Services\Vaiona.MultiTenancy.Services.csproj">
       <Project>{4639D130-E0AA-4AEF-B9BD-BEF6AD99DBAF}</Project>
       <Name>Vaiona.MultiTenancy.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj">
-      <Project>{640BF81D-354A-4BF0-85FC-F0AD587CF8A2}</Project>
-      <Name>Vaiona.Persistence.Api</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
       <Project>{63FCACAA-9534-4FDD-A082-78DCC06BAF28}</Project>

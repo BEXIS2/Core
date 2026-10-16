@@ -41,7 +41,7 @@ using System.Xml.Linq;
 using Vaiona.Entities.Common;
 using Vaiona.IoC;
 using Vaiona.Logging;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 using BExIS.Modules.Dcm.UI.Helpers;

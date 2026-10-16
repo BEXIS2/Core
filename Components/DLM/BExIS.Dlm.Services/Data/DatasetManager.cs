@@ -17,7 +17,7 @@ using System.Text;
 using System.Xml;
 using Vaiona.Entities.Logging;
 using Vaiona.Logging;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
 
 namespace System.Data

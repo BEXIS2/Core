@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 using PartyX = BExIS.Dlm.Entities.Party.Party;
 
 namespace BExIS.Dlm.Services.Party

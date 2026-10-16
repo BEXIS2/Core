@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace BEXIS.JSON.Helpers

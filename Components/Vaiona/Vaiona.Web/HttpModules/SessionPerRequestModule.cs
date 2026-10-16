@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 
 // This is needed for the DependencyResolver...wish they would've just used Common Service Locator!
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace Vaiona.Web.HttpModules
 {

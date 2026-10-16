@@ -26,7 +26,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using Vaiona.Logging;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 /// <summary>
 ///

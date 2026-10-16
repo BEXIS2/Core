@@ -32,6 +32,10 @@ namespace BExIS.Utils.Data.Tests
             helper = new TestSetupHelper(WebApiConfig.Register, false);
             dsHelper = new DatasetHelper();
 
+            dsHelper.PurgeAllDatasets();
+            dsHelper.PurgeAllDataStructures();
+            dsHelper.PurgeAllResearchPlans();
+
             using (var dm = new DatasetManager())
             using (var rsm = new ResearchPlanManager())
             using (var mdm = new MetadataStructureManager())

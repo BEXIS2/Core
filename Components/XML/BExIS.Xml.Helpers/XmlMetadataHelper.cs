@@ -3,7 +3,7 @@ using BExIS.Utils.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Xml.Helpers
 {

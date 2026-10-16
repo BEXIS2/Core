@@ -19,7 +19,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;

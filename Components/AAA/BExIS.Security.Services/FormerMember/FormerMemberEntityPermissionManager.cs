@@ -3,7 +3,7 @@ using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using System;
 using System.Linq;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Security.Services.FormerMember
 {

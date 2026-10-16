@@ -5,6 +5,7 @@ using BExIS.Utils.Config.Configurations;
 using BExIS.Web.Shell.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using NHibernate;
 using System;
 using System.Linq;
 using System.Web;
@@ -24,6 +25,7 @@ namespace BExIS.Web.Shell
 
     public class MvcApplication : HttpApplication
     {
+
         private BExIS.App.Bootstrap.Application app = null;
 
         protected void Application_Start()
