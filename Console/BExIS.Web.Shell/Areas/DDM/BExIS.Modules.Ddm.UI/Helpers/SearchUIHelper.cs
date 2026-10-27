@@ -12,7 +12,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
 using BEXIS2.DB.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 // Javad: 18.07.2017 This class has a remarkable overlap with BExIS.IO.Transform.Output.OutputDatmanager and BExIS.Dlm.Services.Helpers.DatasetConvertor.
 // All the dataset related functions of the two classes must be moved to the DatasetConvertor

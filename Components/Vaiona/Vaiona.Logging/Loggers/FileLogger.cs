@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using BEXIS2.DB.Entities.Logging;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace Vaiona.Logging.Loggers
 {

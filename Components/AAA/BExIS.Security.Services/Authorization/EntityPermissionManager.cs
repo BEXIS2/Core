@@ -10,7 +10,7 @@ using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using BEXIS2.DB.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 // This comment is needed due to github issues.
 

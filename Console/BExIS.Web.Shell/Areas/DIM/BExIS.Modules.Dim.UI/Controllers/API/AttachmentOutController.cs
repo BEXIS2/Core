@@ -19,7 +19,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Web.Http;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {

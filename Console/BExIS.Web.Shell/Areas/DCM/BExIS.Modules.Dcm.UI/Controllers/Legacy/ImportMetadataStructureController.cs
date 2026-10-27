@@ -9,7 +9,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 

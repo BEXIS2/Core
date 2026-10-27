@@ -7,7 +7,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Security.Cryptography;
 using BEXIS2.DB.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Dlm.Services.MetadataStructure
 {

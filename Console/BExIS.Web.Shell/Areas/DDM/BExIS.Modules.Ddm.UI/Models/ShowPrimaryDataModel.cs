@@ -9,7 +9,7 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Modules.Ddm.UI.Models
 {

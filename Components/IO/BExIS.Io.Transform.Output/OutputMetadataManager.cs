@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.IO.Transform.Output
 {

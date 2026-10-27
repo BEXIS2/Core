@@ -15,7 +15,7 @@ using System.Web.Routing;
 using Vaiona.IoC;
 using Vaiona.Model.MTnt;
 using Vaiona.MultiTenancy.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell

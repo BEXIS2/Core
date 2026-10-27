@@ -39,7 +39,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using BEXIS2.DB.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
 

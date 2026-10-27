@@ -61,7 +61,7 @@ using System.Web.UI.WebControls;
 using System.Xml;
 using Vaiona.Logging;
 using BEXIS2.DB.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
 using Caches = BExIS.UI.Hooks.Caches;

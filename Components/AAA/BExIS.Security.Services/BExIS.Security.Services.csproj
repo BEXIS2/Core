@@ -211,17 +211,13 @@
       <Project>{0F1EC13E-D685-4F4D-A438-52797B0E53A0}</Project>
       <Name>BExIS.Utils.NH</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Utils\BEXIS2.Utils\BEXIS2.Utils.csproj">
+      <Project>{64c9fd56-c5b2-4eb2-ae33-4c6a9cfde3e2}</Project>
+      <Name>BEXIS2.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.IoC\Vaiona.IoC.csproj">
       <Project>{29A7BE0F-A17C-4AE8-8CA1-15FE4DD74129}</Project>
       <Name>Vaiona.IoC</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
-      <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
-      <Name>Vaiona.Utils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
-      <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
-      <Name>Vaiona.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">
       <Project>{705f8751-e58a-453e-a7fd-0c310fd3cae8}</Project>

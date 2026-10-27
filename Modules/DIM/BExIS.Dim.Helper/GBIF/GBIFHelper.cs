@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 
 

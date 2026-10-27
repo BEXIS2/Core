@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 using Vaiona.Model.MTnt;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace Vaiona.MultiTenancy.Services
 {

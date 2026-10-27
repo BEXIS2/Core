@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using Vaiona.Model.MTnt;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace Vaiona.MultiTenancy.Services
 {

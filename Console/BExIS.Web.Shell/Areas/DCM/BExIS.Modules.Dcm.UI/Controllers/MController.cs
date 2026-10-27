@@ -36,7 +36,7 @@ using System.Web.SessionState;
 using System.Web.UI.WebControls;
 using System.Xml;
 using BEXIS2.DB.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers

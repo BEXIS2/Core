@@ -58,7 +58,7 @@ namespace BExIS.Utils.WebHelpers
 
                     if (launchBarItem.HasAttributes && launchBarItem.Attribute("id").Value.Equals("help"))
                     {
-                        var help_list = GeneralSettings.GetValueByKey("help") as List<Vaiona.Utils.Cfg.Entry>;
+                        var help_list = GeneralSettings.GetValueByKey("help") as List<BEXIS2.Utils.Cfg.Entry>;
                         foreach (var help in help_list)
                         {
                             sb.Append($"<li><a href='{help.Value}' target=\"_blank\" >{help.Description}</a></li>");

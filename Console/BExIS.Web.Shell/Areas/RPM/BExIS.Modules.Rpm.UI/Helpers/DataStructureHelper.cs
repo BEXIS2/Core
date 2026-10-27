@@ -7,7 +7,7 @@ using Sylvan.Data.Csv;
 using Sylvan.Data.Excel;
 using System.Collections.Generic;
 using System.IO;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Modules.Rpm.UI.Helpers
 {

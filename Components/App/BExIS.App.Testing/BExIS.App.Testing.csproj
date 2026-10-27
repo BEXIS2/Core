@@ -62,6 +62,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.ConfigurationManager, Version=10.0.0.14, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\System.Configuration.ConfigurationManager.10.0.14\lib\net462\System.Configuration.ConfigurationManager.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
@@ -124,6 +127,10 @@
       <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
       <Name>BExIS.Utils.Config</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Utils\BEXIS2.Utils\BEXIS2.Utils.csproj">
+      <Project>{64c9fd56-c5b2-4eb2-ae33-4c6a9cfde3e2}</Project>
+      <Name>BEXIS2.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.IoC\Vaiona.IoC.csproj">
       <Project>{29a7be0f-a17c-4ae8-8ca1-15fe4dd74129}</Project>
       <Name>Vaiona.IoC</Name>
@@ -147,14 +154,6 @@
     <ProjectReference Include="..\..\Vaiona\Vaiona.MultiTenancy.Api\Vaiona.MultiTenancy.Api.csproj">
       <Project>{bccd3d7b-8a50-4fa2-b9d3-2cb31bea60b3}</Project>
       <Name>Vaiona.MultiTenancy.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
-      <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
-      <Name>Vaiona.Utils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
-      <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
-      <Name>Vaiona.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">
       <Project>{705f8751-e58a-453e-a7fd-0c310fd3cae8}</Project>

@@ -18,7 +18,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Xml;
 using Telerik.Web.Mvc.Extensions;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 

@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using Vaiona.IoC;
 using Vaiona.Logging;
 using BEXIS2.DB.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BEXIS2.DB.PersistenceProviders.NH

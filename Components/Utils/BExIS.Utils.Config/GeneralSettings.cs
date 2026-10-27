@@ -11,7 +11,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web.Http.Results;
 using Vaiona.IoC;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Utils.Config
 {

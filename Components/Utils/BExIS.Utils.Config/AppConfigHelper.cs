@@ -1,7 +1,7 @@
 ﻿using System.Configuration;
 using System.IO;
 using System.Linq;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Utils.Config
 {

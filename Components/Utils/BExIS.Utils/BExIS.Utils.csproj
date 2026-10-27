@@ -427,10 +427,6 @@
       <Project>{8affebcb-804c-490f-a8c1-bacfddafb8d8}</Project>
       <Name>BEXIS2.DB.Entities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
-      <Project>{63FCACAA-9534-4FDD-A082-78DCC06BAF28}</Project>
-      <Name>Vaiona.Utils</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">
       <Project>{705f8751-e58a-453e-a7fd-0c310fd3cae8}</Project>
       <Name>Vaiona.Web.Mvc.Modularity</Name>
@@ -438,6 +434,10 @@
     <ProjectReference Include="..\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
       <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
       <Name>BExIS.Utils.Config</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BEXIS2.Utils\BEXIS2.Utils.csproj">
+      <Project>{64c9fd56-c5b2-4eb2-ae33-4c6a9cfde3e2}</Project>
+      <Name>BEXIS2.Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

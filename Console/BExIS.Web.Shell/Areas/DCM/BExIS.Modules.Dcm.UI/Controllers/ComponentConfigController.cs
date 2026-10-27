@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Web.Mvc;
 using System.Web.SessionState;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 
 namespace BExIS.Modules.Dcm.UI.Controllers

@@ -77,6 +77,10 @@
       <Project>{8affebcb-804c-490f-a8c1-bacfddafb8d8}</Project>
       <Name>BEXIS2.DB.Entities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Utils\BEXIS2.Utils\BEXIS2.Utils.csproj">
+      <Project>{64c9fd56-c5b2-4eb2-ae33-4c6a9cfde3e2}</Project>
+      <Name>BEXIS2.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.IoC\Vaiona.IoC.csproj">
       <Project>{29A7BE0F-A17C-4AE8-8CA1-15FE4DD74129}</Project>
       <Name>Vaiona.IoC</Name>
@@ -84,10 +88,6 @@
     <ProjectReference Include="..\..\Vaiona\Vaiona.MultiTenancy.Services\Vaiona.MultiTenancy.Services.csproj">
       <Project>{4639d130-e0aa-4aef-b9bd-bef6ad99dbaf}</Project>
       <Name>Vaiona.MultiTenancy.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
-      <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
-      <Name>Vaiona.Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -15,7 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.Configuration;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using DataTable = System.Data.DataTable;
 
 namespace BExIS.IO.Transform.Output

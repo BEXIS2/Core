@@ -24,7 +24,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using BEXIS2.DB.Entities.Common;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Modules.Dcm.UI.Helper.API
 {

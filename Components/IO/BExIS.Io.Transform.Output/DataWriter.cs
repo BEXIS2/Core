@@ -15,7 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Path = System.IO.Path;
 
 /// <summary>

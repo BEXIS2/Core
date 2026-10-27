@@ -227,7 +227,7 @@ namespace BExIS.Web.Shell.Helpers
         {
             List<MenuItem> menuItems = help.Items;
 
-            var help_list = GeneralSettings.GetValueByKey("help") as List<Vaiona.Utils.Cfg.Entry>;
+            var help_list = GeneralSettings.GetValueByKey("help") as List<BEXIS2.Utils.Cfg.Entry>;
 
             // go throw each item
             foreach (var link in help_list)

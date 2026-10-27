@@ -14,7 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using Vaiona.Logging;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc;
 
 

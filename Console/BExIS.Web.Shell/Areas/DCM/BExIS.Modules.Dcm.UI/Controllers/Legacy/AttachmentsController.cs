@@ -22,7 +22,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml;
 using BEXIS2.DB.Entities.Common;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 

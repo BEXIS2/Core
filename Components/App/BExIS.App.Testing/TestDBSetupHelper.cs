@@ -2,7 +2,7 @@
 using System.IO;
 using Vaiona.IoC;
 using BEXIS2.DB.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.App.Testing
 {

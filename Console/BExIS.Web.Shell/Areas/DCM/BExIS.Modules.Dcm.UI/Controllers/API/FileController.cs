@@ -21,7 +21,7 @@ using System.Web;
 using System.Web.Http;
 using System.Xml;
 using BEXIS2.DB.Entities.Common;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {

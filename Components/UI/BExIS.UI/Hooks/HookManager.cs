@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.UI.Hooks

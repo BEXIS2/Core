@@ -15,7 +15,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.SessionState;
 using Telerik.Web.Mvc.Infrastructure.Implementation;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers

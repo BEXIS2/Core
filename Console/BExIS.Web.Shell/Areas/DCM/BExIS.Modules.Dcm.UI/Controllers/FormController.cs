@@ -44,7 +44,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Telerik.Web.Mvc.Extensions;
 using BEXIS2.DB.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;

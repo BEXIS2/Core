@@ -24,8 +24,9 @@ using Vaiona.Logging;
 using Vaiona.Model.MTnt;
 using Vaiona.MultiTenancy.Api;
 using BEXIS2.DB.Persistence.Api;
-using Vaiona.Utils.Cfg;
+
 using Vaiona.Web.Mvc.Modularity;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.App.Bootstrap
 {
@@ -158,6 +159,10 @@ namespace BExIS.App.Bootstrap
             });
 
             //GlobalConfiguration.Configure(configurationCallback);
+
+            // set http contextaccessor for the current request
+            AppConfiguration.Configure(() => HttpContext.Current);
+
 
             // This method initializes the registered modules. It MUST be before initializing the persistence!
             initModules();

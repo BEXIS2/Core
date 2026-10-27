@@ -8,7 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Web;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Modules.Smm.UI.Helpers
 {

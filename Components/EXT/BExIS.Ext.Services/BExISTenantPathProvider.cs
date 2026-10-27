@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using Vaiona.MultiTenancy.Services;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Ext.Services
 {

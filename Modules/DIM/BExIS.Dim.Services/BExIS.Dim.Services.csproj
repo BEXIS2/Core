@@ -66,9 +66,9 @@
       <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Components\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
-      <Project>{63FCACAA-9534-4FDD-A082-78DCC06BAF28}</Project>
-      <Name>Vaiona.Utils</Name>
+    <ProjectReference Include="..\..\..\Components\Utils\BEXIS2.Utils\BEXIS2.Utils.csproj">
+      <Project>{64c9fd56-c5b2-4eb2-ae33-4c6a9cfde3e2}</Project>
+      <Name>BEXIS2.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
       <Project>{34cad2a2-6928-458b-b8dc-af71d55f20cc}</Project>

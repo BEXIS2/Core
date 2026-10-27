@@ -28,7 +28,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.SessionState;
 using System.Web.UI.HtmlControls;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Data;
 using Vaiona.Web.Mvc.Modularity;
 

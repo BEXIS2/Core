@@ -3,7 +3,7 @@ using BExIS.Security.Services.Objects;
 using System;
 using System.Linq;
 using Vaiona.Logging;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Modules.Smm.UI.Helpers
 {

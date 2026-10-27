@@ -9,7 +9,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Logging;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Modules.Pum.UI.Helpers
 {

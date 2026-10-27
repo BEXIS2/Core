@@ -2,7 +2,7 @@
 using NHibernate.Cfg;
 using System;
 using BEXIS2.DB.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BEXIS2.DB.PersistenceProviders.NH
 {

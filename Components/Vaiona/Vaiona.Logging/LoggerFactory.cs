@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using BEXIS2.DB.Entities.Logging;
 using Vaiona.Logging.Loggers;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace Vaiona.Logging
 {
@@ -45,18 +45,18 @@ namespace Vaiona.Logging
             if (AppConfiguration.HttpContext != null && AppConfiguration.HttpContext.Request != null)
             {
                 logEntry.Environemt = string.Join(", ", logEntry.Environemt, string.Format("UserAgent={0}, HttpMethod={1}, IsSecureConnection={2}, UserHostAddress={3} ({4})",
-                                                                            AppConfiguration.HttpContext.Request.UserAgent,
-                                                                            AppConfiguration.HttpContext.Request.HttpMethod,
-                                                                            AppConfiguration.HttpContext.Request.IsSecureConnection,
-                                                                            AppConfiguration.HttpContext.Request.UserHostAddress,
-                                                                            (AppConfiguration.HttpContext.Request.IsLocal ? "Local Request" : "Remote Request")
+                                                                            AppConfiguration.UserAgent,
+                                                                            AppConfiguration.HttpMethod,
+                                                                            AppConfiguration.IsSecureConnection,
+                                                                            AppConfiguration.UserHostAddress,
+                                                                            (AppConfiguration.IsLocal ? "Local Request" : "Remote Request")
                                                                             )
                                                  );
             }
             logEntry.Environemt = logEntry.Environemt.TrimStart(", ".ToCharArray());
 
             if (logEntry.ExtraInfo != null && AppConfiguration.HttpContext != null)
-                logEntry.ExtraInfo = string.Join(", ", logEntry.ExtraInfo, string.Format("SessionID={0}", AppConfiguration.HttpContext.Session.SessionID))
+                logEntry.ExtraInfo = string.Join(", ", logEntry.ExtraInfo, string.Format("SessionID={0}", AppConfiguration.SessionID))
                                        .TrimStart(", ".ToCharArray());
             return logEntry;
         }

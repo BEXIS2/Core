@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Utils\BEXIS2.Utils\BEXIS2.Utils.csproj" />
     <ProjectReference Include="..\..\Vaiona\Vaiona.IoC\Vaiona.IoC.csproj" />
   </ItemGroup>
 

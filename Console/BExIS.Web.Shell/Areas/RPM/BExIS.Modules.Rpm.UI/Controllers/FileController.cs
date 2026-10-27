@@ -12,7 +12,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.SessionState;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Data;
 using BExIS.UI.Models;
 using Vaiona.Web.Mvc.Modularity;
@@ -325,7 +325,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             var list = new List<MissingValueModel>();
             // get default missing values
             var settings = ModuleManager.GetModuleSettings("rpm");
-            var mv_list = settings.GetValueByKey("missingValues") as List<Vaiona.Utils.Cfg.Entry>;
+            var mv_list = settings.GetValueByKey("missingValues") as List<BEXIS2.Utils.Cfg.Entry>;
 
             if (mv_list != null)
             {

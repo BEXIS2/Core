@@ -1,6 +1,6 @@
 ﻿using System;
 using Vaiona.IoC.Unity;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace Vaiona.IoC
 {

@@ -314,6 +314,10 @@
       <Project>{782B71C1-707F-4AB1-80E9-90D2880635B4}</Project>
       <Name>BExIS.Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\Utils\BEXIS2.Utils\BEXIS2.Utils.csproj">
+      <Project>{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}</Project>
+      <Name>BEXIS2.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.IoC\Vaiona.IoC.csproj">
       <Project>{29a7be0f-a17c-4ae8-8ca1-15fe4dd74129}</Project>
       <Name>Vaiona.IoC</Name>
@@ -333,10 +337,6 @@
     <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.MultiTenancy.Services\Vaiona.MultiTenancy.Services.csproj">
       <Project>{4639D130-E0AA-4AEF-B9BD-BEF6AD99DBAF}</Project>
       <Name>Vaiona.MultiTenancy.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
-      <Project>{63FCACAA-9534-4FDD-A082-78DCC06BAF28}</Project>
-      <Name>Vaiona.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">
       <Project>{705F8751-E58A-453E-A7FD-0C310FD3CAE8}</Project>

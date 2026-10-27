@@ -7,7 +7,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 /// <summary>
 ///

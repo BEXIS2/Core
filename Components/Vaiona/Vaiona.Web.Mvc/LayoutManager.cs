@@ -8,7 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
 using System.Xml.Linq;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Models;
 
 namespace Vaiona.Web.Mvc
@@ -50,7 +50,7 @@ namespace Vaiona.Web.Mvc
             string layoutName = "~/Views/Shared/_Layout.cshtml"; // built-in layout
             var request = helper.ViewContext.HttpContext.Request;
             var session = helper.ViewContext.HttpContext.Session;
-            if (AppConfiguration.IsPostBack(request) && !string.IsNullOrWhiteSpace(request["Theme"]))
+            if (AppConfiguration.IsPostBack() && !string.IsNullOrWhiteSpace(request["Theme"]))
             {
                 Themes.CurrentTheme = request["Theme"];
                 session["CurrentTheme"] = Themes.CurrentTheme;

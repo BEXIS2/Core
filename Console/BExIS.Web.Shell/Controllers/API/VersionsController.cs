@@ -10,7 +10,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Xml.Linq;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Web.Shell.Controllers.API
 {

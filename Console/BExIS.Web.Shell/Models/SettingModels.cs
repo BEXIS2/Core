@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Web.Shell.Models
 {

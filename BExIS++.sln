@@ -252,6 +252,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BEXIS2.DB.Entities.Orm.NH",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BEXIS2.Xml.Serialization", "Components\XML\BEXIS2.Xml.Serialization\BEXIS2.Xml.Serialization.csproj", "{9182A75E-EC48-4B7F-AA2D-EF8F14E4C1B8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BEXIS2.Utils", "Components\Utils\BEXIS2.Utils\BEXIS2.Utils.csproj", "{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1652,6 +1654,24 @@ Global
 		{9182A75E-EC48-4B7F-AA2D-EF8F14E4C1B8}.TestServerRelease|Mixed Platforms.Build.0 = Release|Any CPU
 		{9182A75E-EC48-4B7F-AA2D-EF8F14E4C1B8}.TestServerRelease|x86.ActiveCfg = Release|Any CPU
 		{9182A75E-EC48-4B7F-AA2D-EF8F14E4C1B8}.TestServerRelease|x86.Build.0 = Release|Any CPU
+		{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}.Debug|x86.Build.0 = Debug|Any CPU
+		{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}.Release|x86.ActiveCfg = Release|Any CPU
+		{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}.Release|x86.Build.0 = Release|Any CPU
+		{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}.TestServerRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}.TestServerRelease|Any CPU.Build.0 = Release|Any CPU
+		{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}.TestServerRelease|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}.TestServerRelease|Mixed Platforms.Build.0 = Release|Any CPU
+		{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}.TestServerRelease|x86.ActiveCfg = Release|Any CPU
+		{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}.TestServerRelease|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1757,6 +1777,7 @@ Global
 		{8AFFEBCB-804C-490F-A8C1-BACFDDAFB8D8} = {899EE3A1-6C73-4F58-83CE-82F874C4DC32}
 		{F9E2022B-718D-4DE0-BFCF-E0DD733F3D5C} = {899EE3A1-6C73-4F58-83CE-82F874C4DC32}
 		{9182A75E-EC48-4B7F-AA2D-EF8F14E4C1B8} = {36639C81-78C6-4C77-B856-41B8291942DA}
+		{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2} = {8ACF0B65-BAFD-49FD-A840-D04C4DCDE993}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35

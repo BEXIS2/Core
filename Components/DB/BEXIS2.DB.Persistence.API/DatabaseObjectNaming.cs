@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BEXIS2.DB.Persistence.Api
 {

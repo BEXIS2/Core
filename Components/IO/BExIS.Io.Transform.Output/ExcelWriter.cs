@@ -15,7 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using BEXIS2.DB.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 /// <summary>
 ///

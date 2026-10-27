@@ -124,13 +124,13 @@
       <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
       <Name>BExIS.Utils.Config</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Utils\BEXIS2.Utils\BEXIS2.Utils.csproj">
+      <Project>{64c9fd56-c5b2-4eb2-ae33-4c6a9cfde3e2}</Project>
+      <Name>BEXIS2.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Vaiona.Model\Vaiona.Model.csproj">
       <Project>{a60ac05f-8c9a-4efd-9826-452e6049da4d}</Project>
       <Name>Vaiona.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Vaiona.Utils\Vaiona.Utils.csproj">
-      <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
-      <Name>Vaiona.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\Vaiona.Web\Vaiona.Web.csproj">
       <Project>{5b48b5a8-eae8-4ef8-8f2c-7fedb1b095d3}</Project>

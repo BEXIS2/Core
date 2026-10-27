@@ -4,7 +4,7 @@ using BExIS.UI.Helpers;
 using Newtonsoft.Json;
 using System.IO;
 using System.Web.Mvc;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 
 namespace BExIS.Modules.Ddm.UI.Controllers

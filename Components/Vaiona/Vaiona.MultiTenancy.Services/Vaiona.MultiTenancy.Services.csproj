@@ -58,6 +58,10 @@
     <Compile Include="XmlTenantStore.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Utils\BEXIS2.Utils\BEXIS2.Utils.csproj">
+      <Project>{64c9fd56-c5b2-4eb2-ae33-4c6a9cfde3e2}</Project>
+      <Name>BEXIS2.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Vaiona.Model\Vaiona.Model.csproj">
       <Project>{a60ac05f-8c9a-4efd-9826-452e6049da4d}</Project>
       <Name>Vaiona.Model</Name>
@@ -65,10 +69,6 @@
     <ProjectReference Include="..\Vaiona.MultiTenancy.Api\Vaiona.MultiTenancy.Api.csproj">
       <Project>{bccd3d7b-8a50-4fa2-b9d3-2cb31bea60b3}</Project>
       <Name>Vaiona.MultiTenancy.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Vaiona.Utils\Vaiona.Utils.csproj">
-      <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
-      <Name>Vaiona.Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

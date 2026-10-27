@@ -178,13 +178,13 @@
       <Project>{782B71C1-707F-4AB1-80E9-90D2880635B4}</Project>
       <Name>BExIS.Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\Utils\BEXIS2.Utils\BEXIS2.Utils.csproj">
+      <Project>{64c9fd56-c5b2-4eb2-ae33-4c6a9cfde3e2}</Project>
+      <Name>BEXIS2.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Components\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
       <Project>{E8B37581-1CAC-463D-903B-B4BEE8B2B0E3}</Project>
       <Name>Vaiona.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Components\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
-      <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
-      <Name>Vaiona.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>

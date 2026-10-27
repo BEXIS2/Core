@@ -7,8 +7,8 @@ using System.Web.Compilation;
 using System.Web.Hosting;
 using System.Xml.Linq;
 using Vaiona.Logging;
-using Vaiona.Utils.Cfg;
-using Vaiona.Utils.IO;
+using BEXIS2.Utils.Cfg;
+using BEXIS2.Utils.IO;
 
 namespace Vaiona.Web.Mvc.Modularity
 {

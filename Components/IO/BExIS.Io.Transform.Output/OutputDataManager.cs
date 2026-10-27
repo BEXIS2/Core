@@ -8,7 +8,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Web;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.IO.Transform.Output
 {

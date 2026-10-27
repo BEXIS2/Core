@@ -5,7 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using BEXIS2.DB.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Dlm.Orm.NH.Utils
 {

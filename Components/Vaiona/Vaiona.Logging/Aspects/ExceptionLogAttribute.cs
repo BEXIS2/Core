@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 using BEXIS2.DB.Entities.Logging;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace Vaiona.Logging.Aspects
 {

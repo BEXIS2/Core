@@ -5,7 +5,7 @@ using BExIS.UI.Hooks.Caches;
 using NHibernate.Util;
 using System;
 using System.IO;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Modules.Dcm.UI.Helpers
 {

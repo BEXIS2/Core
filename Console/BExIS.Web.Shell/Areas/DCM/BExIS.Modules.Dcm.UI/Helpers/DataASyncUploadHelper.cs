@@ -32,7 +32,7 @@ using System.Web.Routing;
 using System.Xml;
 using BEXIS2.DB.Entities.Common;
 using BEXIS2.DB.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Modules.Dcm.UI.Helpers
 {

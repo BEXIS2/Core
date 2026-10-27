@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.SessionState;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 using ModuleSettings = Vaiona.Web.Mvc.Modularity.ModuleSettings;
 
@@ -93,7 +93,7 @@ namespace BExIS.Web.Shell.Controllers
                     switch (entry.Type)
                     {
                         case EntryType.EntryList:
-                            entry.Value = JsonConvert.DeserializeObject<List<Vaiona.Utils.Cfg.Entry>>(entry.Value);
+                            entry.Value = JsonConvert.DeserializeObject<List<BEXIS2.Utils.Cfg.Entry>>(entry.Value);
                             break;
 
                         default:

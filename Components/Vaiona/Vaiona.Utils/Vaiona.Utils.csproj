@@ -8,8 +8,8 @@
     <ProjectGuid>{63FCACAA-9534-4FDD-A082-78DCC06BAF28}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Vaiona.Utils</RootNamespace>
-    <AssemblyName>Vaiona.Utils</AssemblyName>
+    <RootNamespace>BEXIS2.Utils</RootNamespace>
+    <AssemblyName>BEXIS2.Utils</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

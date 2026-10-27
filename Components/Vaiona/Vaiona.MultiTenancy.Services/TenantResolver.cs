@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using Vaiona.Model.MTnt;
 using Vaiona.MultiTenancy.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace Vaiona.MultiTenancy.Services
 {
