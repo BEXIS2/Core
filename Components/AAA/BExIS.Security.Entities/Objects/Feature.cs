@@ -1,6 +1,6 @@
 ﻿using BExIS.Security.Entities.Authorization;
 using System.Collections.Generic;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 
 namespace BExIS.Security.Entities.Objects
 {

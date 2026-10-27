@@ -15,7 +15,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Xml;
-using Vaiona.Entities.Logging;
+using BEXIS2.DB.Entities.Logging;
 using Vaiona.Logging;
 using BEXIS2.DB.Persistence.Api;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
@@ -3290,7 +3290,7 @@ namespace BExIS.Dlm.Services.Data
                     ds.LastCheckIOTimestamp = DateTime.UtcNow;
                     ds.CheckOutUser = string.Empty;
                     if (ds.StateInfo == null)
-                        ds.StateInfo = new Vaiona.Entities.Common.EntityStateInfo();
+                        ds.StateInfo = new BEXIS2.DB.Entities.Common.EntityStateInfo();
                     ds.ModificationInfo.Comment = mStateComment;
 
 
@@ -3365,7 +3365,7 @@ namespace BExIS.Dlm.Services.Data
                         // it is fetched again, because it is possible the the first if block is not executed
                         //Dataset dataset = repo.Get(datasetId);
                         if (dataset.StateInfo == null)
-                            dataset.StateInfo = new Vaiona.Entities.Common.EntityStateInfo();
+                            dataset.StateInfo = new BEXIS2.DB.Entities.Common.EntityStateInfo();
                         dataset.StateInfo.State = "Synced";
                         dataset.StateInfo.Timestamp = DateTime.UtcNow;
                         repo.Put(dataset);

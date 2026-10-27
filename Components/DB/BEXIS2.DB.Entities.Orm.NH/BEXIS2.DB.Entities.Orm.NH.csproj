@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Mappings\db2dialect\**" />
+    <Compile Remove="Mappings\mssql2008dialect\**" />
+    <EmbeddedResource Remove="Mappings\db2dialect\**" />
+    <EmbeddedResource Remove="Mappings\mssql2008dialect\**" />
+    <None Remove="Mappings\db2dialect\**" />
+    <None Remove="Mappings\mssql2008dialect\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Mappings\Default\Logging\LogEntryEntity.CustomLog.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\Logging\LogEntryEntity.DataLog.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\Logging\LogEntryEntity.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\Logging\LogEntryEntity.MethodLog.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\Logging\LogEntryEntity.RelationLog.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\Seucrity\AccessRuleEntity.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="rmdir /S /Q  &quot;$(SolutionDir)Console\Workspace\Components\Db\Mappings&quot;&#xD;&#xA;C:\Windows\System32\xcopy &quot;$(ProjectDir)Mappings&quot; &quot;$(SolutionDir)Console\Workspace\Components\Db\Mappings&quot; /E /C /Y /I /D" />
+  </Target>
+
+</Project>

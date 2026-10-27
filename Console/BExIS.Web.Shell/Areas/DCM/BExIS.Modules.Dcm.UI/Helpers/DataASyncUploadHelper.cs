@@ -30,7 +30,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Routing;
 using System.Xml;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 using BEXIS2.DB.Persistence.Api;
 using Vaiona.Utils.Cfg;
 
@@ -141,7 +141,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             //    //set StateInfo of the previus version
                             //    if (workingCopy.StateInfo == null)
                             //    {
-                            //        workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
+                            //        workingCopy.StateInfo = new BEXIS2.DB.Entities.Common.EntityStateInfo()
                             //        {
                             //            State = status
                             //        };
@@ -248,7 +248,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     //set StateInfo of the previous version
                                     if (workingCopy.StateInfo == null)
                                     {
-                                        workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
+                                        workingCopy.StateInfo = new BEXIS2.DB.Entities.Common.EntityStateInfo()
                                         {
                                             State = status
                                         };
@@ -435,7 +435,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                 //set StateInfo of the previus version
                                 if (workingCopy.StateInfo == null)
                                 {
-                                    workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
+                                    workingCopy.StateInfo = new BEXIS2.DB.Entities.Common.EntityStateInfo()
                                     {
                                         State = status
                                     };

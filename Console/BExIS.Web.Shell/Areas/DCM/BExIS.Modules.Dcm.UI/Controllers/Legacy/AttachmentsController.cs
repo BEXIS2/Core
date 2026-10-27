@@ -21,7 +21,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
@@ -234,7 +234,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     //set StateInfo of the previus version
                     if (datasetVersion.StateInfo == null)
                     {
-                        datasetVersion.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
+                        datasetVersion.StateInfo = new BEXIS2.DB.Entities.Common.EntityStateInfo()
                         {
                             State = status
                         };
@@ -398,7 +398,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     //set StateInfo of the previus version
                     if (datasetVersion.StateInfo == null)
                     {
-                        datasetVersion.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
+                        datasetVersion.StateInfo = new BEXIS2.DB.Entities.Common.EntityStateInfo()
                         {
                             State = status
                         };

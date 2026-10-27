@@ -5,7 +5,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 
 namespace BExIS.Dlm.Entities.DataStructure
 {

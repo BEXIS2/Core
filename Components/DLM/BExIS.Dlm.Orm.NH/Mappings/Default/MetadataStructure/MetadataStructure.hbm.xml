@@ -30,7 +30,7 @@
     </component>
 
     <component name="CreationInfo">
-      <property name="ActionType" type="Vaiona.Entities.Common.AuditActionType, Vaiona.Entities">
+      <property name="ActionType" type="BEXIS2.DB.Entities.Common.AuditActionType, BEXIS2.DB.Entities">
         <column name="C_ActionType" />
       </property>
       <property name="Performer" type="string">
@@ -45,7 +45,7 @@
     </component>
 
     <component name="ModificationInfo">
-      <property name="ActionType" type="Vaiona.Entities.Common.AuditActionType, Vaiona.Entities">
+      <property name="ActionType" type="BEXIS2.DB.Entities.Common.AuditActionType, BEXIS2.DB.Entities">
         <column name="M_ActionType" />
       </property>
       <property name="Performer" type="string">

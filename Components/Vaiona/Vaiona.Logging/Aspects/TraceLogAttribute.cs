@@ -1,7 +1,7 @@
 ﻿using PostSharp.Aspects;
 using System;
 using System.Diagnostics;
-using Vaiona.Entities.Logging;
+using BEXIS2.DB.Entities.Logging;
 using Vaiona.Utils.Cfg;
 
 namespace Vaiona.Logging.Aspects

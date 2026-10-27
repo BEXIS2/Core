@@ -1,4 +1,4 @@
-﻿using Vaiona.Entities.Logging;
+﻿using BEXIS2.DB.Entities.Logging;
 
 namespace Vaiona.Logging
 {

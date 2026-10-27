@@ -42,7 +42,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 using Vaiona.IoC;
 using Vaiona.Logging;
 using BEXIS2.DB.Persistence.Api;
@@ -223,7 +223,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             await reindex(datasetId, useTags);
 
 
-                            LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
+                            LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, BEXIS2.DB.Entities.Logging.CrudState.Created);
                             
                             using (var emailService = new EmailService())
                             {
@@ -841,7 +841,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private DatasetVersion setStateInfo(DatasetVersion workingCopy, bool valid)
         {
             //StateInfo
-            if (workingCopy.StateInfo == null) workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo();
+            if (workingCopy.StateInfo == null) workingCopy.StateInfo = new BEXIS2.DB.Entities.Common.EntityStateInfo();
 
             if (valid)
                 workingCopy.StateInfo.State = DatasetStateInfo.Valid.ToString();

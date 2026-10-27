@@ -27,7 +27,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 using Vaiona.Web.Mvc.Modularity;
 using BExIS.Modules.Dcm.UI.Helpers;
 using System.Xml;

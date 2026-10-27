@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 
 namespace BExIS.Dim.Entities.Mappings
 {

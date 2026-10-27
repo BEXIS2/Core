@@ -731,45 +731,45 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 !string.IsNullOrEmpty(d.ModificationInfo.Comment))
             {
                 // Metadata cration & edit
-                if (d.ModificationInfo.Comment.Equals("Metadata") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
+                if (d.ModificationInfo.Comment.Equals("Metadata") && d.ModificationInfo.ActionType == BEXIS2.DB.Entities.Common.AuditActionType.Create)
                 {
                     sb.Append(String.Format("Metadata creation ({0}{1})", createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
-                else if (d.ModificationInfo.Comment.Equals("Metadata") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Edit)
+                else if (d.ModificationInfo.Comment.Equals("Metadata") && d.ModificationInfo.ActionType == BEXIS2.DB.Entities.Common.AuditActionType.Edit)
                 {
                     sb.Append(String.Format("Metadata edited ({0}{1})", createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
 
                 //unstructured file upload & delete
-                else if (d.ModificationInfo.Comment.Equals("File") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
+                else if (d.ModificationInfo.Comment.Equals("File") && d.ModificationInfo.ActionType == BEXIS2.DB.Entities.Common.AuditActionType.Create)
                 {
                     sb.Append(String.Format("File uploaded: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
-                else if (d.ModificationInfo.Comment.Equals("File") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Delete)
+                else if (d.ModificationInfo.Comment.Equals("File") && d.ModificationInfo.ActionType == BEXIS2.DB.Entities.Common.AuditActionType.Delete)
                 {
                     sb.Append(String.Format("File deleted: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
 
                 // structured data import & update & delete
-                else if (d.ModificationInfo.Comment.Equals("Data") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
+                else if (d.ModificationInfo.Comment.Equals("Data") && d.ModificationInfo.ActionType == BEXIS2.DB.Entities.Common.AuditActionType.Create)
                 {
                     sb.Append(String.Format("Data imported: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
-                else if (d.ModificationInfo.Comment.Equals("Data") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Edit)
+                else if (d.ModificationInfo.Comment.Equals("Data") && d.ModificationInfo.ActionType == BEXIS2.DB.Entities.Common.AuditActionType.Edit)
                 {
                     sb.Append(String.Format("Data added: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
-                else if (d.ModificationInfo.Comment.Equals("Data") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Delete)
+                else if (d.ModificationInfo.Comment.Equals("Data") && d.ModificationInfo.ActionType == BEXIS2.DB.Entities.Common.AuditActionType.Delete)
                 {
                     sb.Append(String.Format("Data deleted ({0}{1})", createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
 
                 // attachment
-                else if (d.ModificationInfo.Comment.Equals("Attachment") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Create)
+                else if (d.ModificationInfo.Comment.Equals("Attachment") && d.ModificationInfo.ActionType == BEXIS2.DB.Entities.Common.AuditActionType.Create)
                 {
                     sb.Append(String.Format("Attachment uploaded: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }
-                else if (d.ModificationInfo.Comment.Equals("Attachment") && d.ModificationInfo.ActionType == Vaiona.Entities.Common.AuditActionType.Delete)
+                else if (d.ModificationInfo.Comment.Equals("Attachment") && d.ModificationInfo.ActionType == BEXIS2.DB.Entities.Common.AuditActionType.Delete)
                 {
                     sb.Append(String.Format("Attachment deleted: {0} ({1}{2})", Truncate(d.ChangeDescription, 30), createEditedBy(d.ModificationInfo.Performer), d.Timestamp.ToString("dd.MM.yyyy")));
                 }

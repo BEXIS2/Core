@@ -73,9 +73,9 @@
       <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
       <Name>BExIS.Security.Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Entities\Vaiona.Entities.csproj">
-      <Project>{0815d220-3625-4e23-bbbc-8152345637fe}</Project>
-      <Name>Vaiona.Entities</Name>
+    <ProjectReference Include="..\..\DB\BEXIS2.DB.Entities\BEXIS2.DB.Entities.csproj">
+      <Project>{8affebcb-804c-490f-a8c1-bacfddafb8d8}</Project>
+      <Name>BEXIS2.DB.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.IoC\Vaiona.IoC.csproj">
       <Project>{29A7BE0F-A17C-4AE8-8CA1-15FE4DD74129}</Project>

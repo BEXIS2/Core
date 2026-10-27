@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.SessionState;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Modularity;
 

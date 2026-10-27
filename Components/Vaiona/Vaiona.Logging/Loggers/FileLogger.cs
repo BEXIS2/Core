@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using Vaiona.Entities.Logging;
+using BEXIS2.DB.Entities.Logging;
 using Vaiona.Utils.Cfg;
 
 namespace Vaiona.Logging.Loggers

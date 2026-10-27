@@ -14,6 +14,7 @@
     <ProjectReference Include="..\..\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj" />
     <ProjectReference Include="..\..\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj" />
     <ProjectReference Include="..\..\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj" />
+    <ProjectReference Include="..\BEXIS2.DB.Entities\BEXIS2.DB.Entities.csproj" />
     <ProjectReference Include="..\BEXIS2.DB.Persistence.API\BEXIS2.DB.Persistence.API.csproj" />
   </ItemGroup>
 

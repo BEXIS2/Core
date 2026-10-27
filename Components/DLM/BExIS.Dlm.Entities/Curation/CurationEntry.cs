@@ -3,7 +3,7 @@ using BExIS.Security.Entities.Subjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 
 namespace BExIS.Dlm.Entities.Curation
 {

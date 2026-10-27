@@ -26,7 +26,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using System.Xml;
 using System.Xml.Linq;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 
 namespace BExIS.Modules.Dcm.UI.Controllers.API
 {

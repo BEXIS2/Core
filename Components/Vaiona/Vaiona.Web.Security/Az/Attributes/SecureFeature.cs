@@ -6,7 +6,7 @@ using System.Runtime.Caching;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.SessionState;
-using Vaiona.Entities.Security;
+using BEXIS2.DB.Entities.Security;
 using Vaiona.IoC;
 using BEXIS2.DB.Persistence.Api;
 

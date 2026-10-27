@@ -140,21 +140,17 @@
       <Project>{0FCF7DE1-E8F2-484C-8638-EF759B11D8A2}</Project>
       <Name>BExIS.App.Testing</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\DB\BEXIS2.DB.Entities\BEXIS2.DB.Entities.csproj">
+      <Project>{8affebcb-804c-490f-a8c1-bacfddafb8d8}</Project>
+      <Name>BEXIS2.DB.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\IO\BExIS.IO.Transform.Input\BExIS.IO.Transform.Input.csproj">
       <Project>{5C4C8570-A53B-4191-A414-DE028AAAF36A}</Project>
       <Name>BExIS.IO.Transform.Input</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Core\Vaiona.Core.csproj">
-      <Project>{b446c14f-9df1-4c3c-a634-e3addd05c48a}</Project>
-      <Name>Vaiona.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Entities.Orm.NH\Vaiona.Entities.Orm.NH.csproj">
       <Project>{c4d4bc9e-8832-4966-be58-cb684e9a74e8}</Project>
       <Name>Vaiona.Entities.Orm.NH</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Entities\Vaiona.Entities.csproj">
-      <Project>{0815d220-3625-4e23-bbbc-8152345637fe}</Project>
-      <Name>Vaiona.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.IoC\Vaiona.IoC.csproj">
       <Project>{29a7be0f-a17c-4ae8-8ca1-15fe4dd74129}</Project>
@@ -175,18 +171,6 @@
     <ProjectReference Include="..\..\Vaiona\Vaiona.MultiTenancy.Services\Vaiona.MultiTenancy.Services.csproj">
       <Project>{4639d130-e0aa-4aef-b9bd-bef6ad99dbaf}</Project>
       <Name>Vaiona.MultiTenancy.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Persistence.Api\Vaiona.Persistence.Api.csproj">
-      <Project>{640bf81d-354a-4bf0-85fc-f0ad587cf8a2}</Project>
-      <Name>Vaiona.Persistence.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Persistence.NH\Vaiona.Persistence.NH.csproj">
-      <Project>{8c5c0209-69a3-4579-9f9b-4d5f084a3b85}</Project>
-      <Name>Vaiona.Persistence.NH</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.PersistenceProviders.NH\Vaiona.PersistenceProviders.NH.csproj">
-      <Project>{2fb8def8-5749-4eae-8588-8a5aaed251a5}</Project>
-      <Name>Vaiona.PersistenceProviders.NH</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
       <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>

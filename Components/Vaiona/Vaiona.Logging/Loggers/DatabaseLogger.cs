@@ -1,4 +1,4 @@
-﻿using Vaiona.Entities.Logging;
+﻿using BEXIS2.DB.Entities.Logging;
 using BEXIS2.DB.Persistence.Api;
 
 namespace Vaiona.Logging.Loggers
@@ -17,7 +17,7 @@ namespace Vaiona.Logging.Loggers
             }
         }
 
-        public void LogData(Entities.Logging.DataLogEntry logEntry)
+        public void LogData(DataLogEntry logEntry)
         {
             using (IUnitOfWork unit = pManager.UnitOfWorkFactory.CreateIsolatedUnitOfWork(false, true, null, null, null, null))
             {
@@ -27,7 +27,7 @@ namespace Vaiona.Logging.Loggers
             }
         }
 
-        public void LogRelation(Entities.Logging.RelationLogEntry logEntry)
+        public void LogRelation(RelationLogEntry logEntry)
         {
             using (IUnitOfWork unit = pManager.UnitOfWorkFactory.CreateIsolatedUnitOfWork(false, true, null, null, null, null))
             {
@@ -60,5 +60,6 @@ namespace Vaiona.Logging.Loggers
                 unit.Commit();
             }
         }
+
     }
 }

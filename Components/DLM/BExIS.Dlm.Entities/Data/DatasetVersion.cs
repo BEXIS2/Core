@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 
 /// <summary>
 ///

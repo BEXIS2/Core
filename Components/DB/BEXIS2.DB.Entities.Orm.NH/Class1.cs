@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BEXIS2.DB.Persistence.NH
+namespace BEXIS2.DB.Entities.Orm.NH
 {
     public class Class1
     {

@@ -27,7 +27,7 @@ using System.Web.Mvc;
 using System.Xml.Linq;
 using System.Xml;
 using System.Xml.XPath;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 using BExIS.Utils.Config;
 using System.Web.SessionState;
 using Vaiona.Web.Mvc.Modularity;
@@ -578,7 +578,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private DatasetVersion setStateInfo(DatasetVersion workingCopy, bool valid)
         {
             //StateInfo
-            if (workingCopy.StateInfo == null) workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo();
+            if (workingCopy.StateInfo == null) workingCopy.StateInfo = new BEXIS2.DB.Entities.Common.EntityStateInfo();
 
             if (valid)
                 workingCopy.StateInfo.State = DatasetStateInfo.Valid.ToString();

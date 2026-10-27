@@ -2,7 +2,7 @@
 using BExIS.Dlm.Entities.DataStructure;
 using System;
 using System.Collections.Generic;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 
 /// <summary>
 ///

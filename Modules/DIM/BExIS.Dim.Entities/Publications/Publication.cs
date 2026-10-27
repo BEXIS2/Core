@@ -1,6 +1,6 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using System;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 
 
 namespace BExIS.Dim.Entities.Publications

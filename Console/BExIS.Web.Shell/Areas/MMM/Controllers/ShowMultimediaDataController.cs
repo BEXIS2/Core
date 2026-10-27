@@ -20,7 +20,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 using Vaiona.Logging;
 using BEXIS2.DB.Persistence.Api;
 using Vaiona.Utils.Cfg;
@@ -248,7 +248,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
                                     //set StateInfo of the previus version
                                     if (workingCopy.StateInfo == null)
                                     {
-                                        workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
+                                        workingCopy.StateInfo = new BEXIS2.DB.Entities.Common.EntityStateInfo()
                                         {
                                             State = status
                                         };

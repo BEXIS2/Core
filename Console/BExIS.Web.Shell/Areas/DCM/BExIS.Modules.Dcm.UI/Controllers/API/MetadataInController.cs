@@ -38,7 +38,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using System.Xml;
 using System.Xml.Linq;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 using Vaiona.IoC;
 using Vaiona.Logging;
 using BEXIS2.DB.Persistence.Api;
@@ -273,7 +273,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         bool valid = json.IsValid(jsonSchema);
 
                         //set state based on valid or not valid
-                        if (workingCopy.StateInfo == null) workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo();
+                        if (workingCopy.StateInfo == null) workingCopy.StateInfo = new BEXIS2.DB.Entities.Common.EntityStateInfo();
                         workingCopy.StateInfo.State = valid ? DatasetStateInfo.Valid.ToString() : DatasetStateInfo.NotValid.ToString();
 
                         title = workingCopy.Title;
@@ -320,7 +320,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         await reindex(id, useTags);
                     }
 
-                    LoggerFactory.LogData(id.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
+                    LoggerFactory.LogData(id.ToString(), typeof(Dataset).Name, BEXIS2.DB.Entities.Logging.CrudState.Created);
 
                     using (var emailService = new EmailService())
                     {
