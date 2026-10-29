@@ -43,13 +43,12 @@ using System.Web.Routing;
 using System.Web.UI.WebControls;
 using System.Xml;
 using Telerik.Web.Mvc;
-
-using Vaiona.Logging;
 using BEXIS2.DB.Persistence.Api;
 using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Modularity;
 using static System.Net.Mime.MediaTypeNames;
+using Vaiona.Logging;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {

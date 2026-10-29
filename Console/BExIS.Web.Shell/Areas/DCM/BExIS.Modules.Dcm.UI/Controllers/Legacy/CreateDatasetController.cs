@@ -44,12 +44,12 @@ using System.Xml;
 using System.Xml.Linq;
 using BEXIS2.DB.Entities.Common;
 using Vaiona.IoC;
-using Vaiona.Logging;
 using BEXIS2.DB.Persistence.Api;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
+using Vaiona.Logging;
 
 
 namespace BExIS.Modules.Dcm.UI.Controllers

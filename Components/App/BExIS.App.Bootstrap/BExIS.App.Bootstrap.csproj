@@ -224,11 +224,11 @@
       <Name>Vaiona.IoC</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
-      <Project>{E8B37581-1CAC-463D-903B-B4BEE8B2B0E3}</Project>
+      <Project>{e8b37581-1cac-463d-903b-b4bee8b2b0e3}</Project>
       <Name>Vaiona.Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
-      <Project>{e8b37581-1cac-463d-903b-b4bee8b2b0e3}</Project>
+      <Project>{07B0DF99-AB49-49A3-802B-C15353FD3EAA}</Project>
       <Name>Vaiona.Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Model\Vaiona.Model.csproj">
