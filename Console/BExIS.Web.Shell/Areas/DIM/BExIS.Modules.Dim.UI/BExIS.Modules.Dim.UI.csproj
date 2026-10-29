@@ -71,8 +71,8 @@
     <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=7.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Microsoft.Extensions.Configuration.Abstractions.7.0.0\lib\net462\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Extensions.Primitives, Version=7.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\Microsoft.Extensions.Primitives.7.0.0\lib\net462\Microsoft.Extensions.Primitives.dll</HintPath>
+    <Reference Include="Microsoft.Extensions.Primitives, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\Microsoft.Extensions.Primitives.8.0.0\lib\net462\Microsoft.Extensions.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\Microsoft.AspNet.WebHelpers.3.2.9\lib\net45\Microsoft.Web.Helpers.dll</HintPath>

@@ -7,8 +7,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.13" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.Extensions.Primitives" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.14" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.0" />
   </ItemGroup>
 
 </Project>

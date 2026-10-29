@@ -148,10 +148,6 @@
       <Project>{5C4C8570-A53B-4191-A414-DE028AAAF36A}</Project>
       <Name>BExIS.IO.Transform.Input</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Entities.Orm.NH\Vaiona.Entities.Orm.NH.csproj">
-      <Project>{c4d4bc9e-8832-4966-be58-cb684e9a74e8}</Project>
-      <Name>Vaiona.Entities.Orm.NH</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.IoC\Vaiona.IoC.csproj">
       <Project>{29a7be0f-a17c-4ae8-8ca1-15fe4dd74129}</Project>
       <Name>Vaiona.IoC</Name>
@@ -171,10 +167,6 @@
     <ProjectReference Include="..\..\Vaiona\Vaiona.MultiTenancy.Services\Vaiona.MultiTenancy.Services.csproj">
       <Project>{4639d130-e0aa-4aef-b9bd-bef6ad99dbaf}</Project>
       <Name>Vaiona.MultiTenancy.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Utils\Vaiona.Utils.csproj">
-      <Project>{63fcacaa-9534-4fdd-a082-78dcc06baf28}</Project>
-      <Name>Vaiona.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">
       <Project>{705f8751-e58a-453e-a7fd-0c310fd3cae8}</Project>
