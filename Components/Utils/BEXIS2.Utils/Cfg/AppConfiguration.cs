@@ -190,9 +190,9 @@ namespace BEXIS2.Utils.Cfg
 
                     DirectoryInfo di = new DirectoryInfo(AppRoot);
                     // Suche nach Konfigurationsdateien oder Projektdateien als Abbruchbedingung
-                    while (di != null && di.GetFiles("*.config").Length == 0 && di.GetFiles("*.csproj").Length == 0)
+                    while (di != null && di.GetFiles("*.config").Length >1)
                     {
-                        di = di.Parent;
+                        di = di.Parent; // go to console
                     }
 
                     if (di == null)
