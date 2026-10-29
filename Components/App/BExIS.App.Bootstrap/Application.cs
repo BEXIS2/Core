@@ -20,13 +20,13 @@ using System.Web.Http.Dispatcher;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Vaiona.IoC;
-using Vaiona.Logging;
 using Vaiona.Model.MTnt;
 using Vaiona.MultiTenancy.Api;
 using BEXIS2.DB.Persistence.Api;
 
 using Vaiona.Web.Mvc.Modularity;
 using BEXIS2.Utils.Cfg;
+using Vaiona.Logging;
 
 namespace BExIS.App.Bootstrap
 {

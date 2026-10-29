@@ -204,7 +204,7 @@
       <Name>BEXIS2.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
-      <Project>{e8b37581-1cac-463d-903b-b4bee8b2b0e3}</Project>
+      <Project>{07B0DF99-AB49-49A3-802B-C15353FD3EAA}</Project>
       <Name>Vaiona.Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">

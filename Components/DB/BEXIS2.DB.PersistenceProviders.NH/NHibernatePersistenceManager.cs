@@ -9,10 +9,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Vaiona.IoC;
-using Vaiona.Logging;
 using BEXIS2.DB.Persistence.Api;
 using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
+using Vaiona.Logging;
 
 namespace BEXIS2.DB.PersistenceProviders.NH
 {

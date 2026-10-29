@@ -16,9 +16,9 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Xml;
 using BEXIS2.DB.Entities.Logging;
-using Vaiona.Logging;
 using BEXIS2.DB.Persistence.Api;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
+using Vaiona.Logging;
 
 namespace System.Data
 {
