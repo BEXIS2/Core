@@ -19,7 +19,7 @@ using System.Text;
 using System.Web.Routing;
 using System.Xml;
 using BEXIS2.Utils.Cfg;
-using Vaiona.Logging;
+using BEXIS2.App.Logging;
 
 namespace BExIS.Dim.Helpers.Export
 {

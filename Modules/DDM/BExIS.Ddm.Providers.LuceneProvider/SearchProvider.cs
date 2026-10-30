@@ -13,7 +13,7 @@ using Lucene.Net.Search;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Vaiona.Logging;
+using BEXIS2.App.Logging;
 using SearchCriteria = BExIS.Utils.Models.SearchCriteria;
 using SearchCriterion = BExIS.Utils.Models.SearchCriterion;
 using SearchModel = BExIS.Utils.Models.SearchModel;

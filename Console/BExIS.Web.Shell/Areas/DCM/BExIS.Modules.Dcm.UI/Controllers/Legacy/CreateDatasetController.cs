@@ -49,7 +49,7 @@ using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
-using Vaiona.Logging;
+using BEXIS2.App.Logging;
 
 
 namespace BExIS.Modules.Dcm.UI.Controllers

@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Aspects\" />
+    <Compile Remove="Aspects\**" />
+    <EmbeddedResource Remove="Aspects\**" />
+    <None Remove="Aspects\**" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,6 @@
 ﻿using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
-using Vaiona.Logging;
+using BEXIS2.App.Logging;
 
 namespace BExIS.UI.Helpers
 {

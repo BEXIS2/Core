@@ -34,7 +34,7 @@ namespace BExIS.App.Bootstrap
             catch (Exception ex)
             {
                 // Loggen (empfohlen)
-                // Vaiona.Logging.ILogger.LogError(ex, $"Controller resolution failed for {controllerType.FullName}");
+                // BEXIS2.App.Logging.ILogger.LogError(ex, $"Controller resolution failed for {controllerType.FullName}");
 
                 // HttpException 404 werfen → sauberes 404 statt InvalidOperationException
                 throw new HttpException(404,

@@ -154,6 +154,10 @@
       <Project>{681C8BC4-55F0-4F43-A685-90E246A88CB1}</Project>
       <Name>BExIS.Security.Services</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\App\BEXIS2.App.Logging\BEXIS2.App.Logging.csproj">
+      <Project>{9c0c4946-d981-4c83-a28c-462ec5f61ac0}</Project>
+      <Name>BEXIS2.App.Logging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Components\DB\BEXIS2.DB.Entities\BEXIS2.DB.Entities.csproj">
       <Project>{8affebcb-804c-490f-a8c1-bacfddafb8d8}</Project>
       <Name>BEXIS2.DB.Entities</Name>
@@ -181,10 +185,6 @@
     <ProjectReference Include="..\..\..\Components\Utils\BEXIS2.Utils\BEXIS2.Utils.csproj">
       <Project>{64c9fd56-c5b2-4eb2-ae33-4c6a9cfde3e2}</Project>
       <Name>BEXIS2.Utils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Components\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
-      <Project>{07B0DF99-AB49-49A3-802B-C15353FD3EAA}</Project>
-      <Name>Vaiona.Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>

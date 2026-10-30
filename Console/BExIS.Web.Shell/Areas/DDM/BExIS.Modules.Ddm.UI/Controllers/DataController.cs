@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
-using Vaiona.Logging;
+using BEXIS2.App.Logging;
 using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc;
 

@@ -40,7 +40,7 @@ using System.Xml;
 using System.Xml.Linq;
 using BEXIS2.DB.Entities.Common;
 using Vaiona.IoC;
-using Vaiona.Logging;
+using BEXIS2.App.Logging;
 using BEXIS2.DB.Persistence.Api;
 using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;

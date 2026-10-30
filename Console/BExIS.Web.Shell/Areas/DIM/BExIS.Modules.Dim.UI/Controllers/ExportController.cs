@@ -48,7 +48,7 @@ using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Modularity;
 using static System.Net.Mime.MediaTypeNames;
-using Vaiona.Logging;
+using BEXIS2.App.Logging;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {

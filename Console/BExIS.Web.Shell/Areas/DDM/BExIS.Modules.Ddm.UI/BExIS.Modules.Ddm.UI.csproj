@@ -323,6 +323,10 @@
       <Project>{7d7fbf8e-37d7-4a4c-b40e-3f267e9b9760}</Project>
       <Name>BExIS.App.Bootstrap</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\App\BEXIS2.App.Logging\BEXIS2.App.Logging.csproj">
+      <Project>{9c0c4946-d981-4c83-a28c-462ec5f61ac0}</Project>
+      <Name>BEXIS2.App.Logging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\DB\BEXIS2.DB.Entities\BEXIS2.DB.Entities.csproj">
       <Project>{8affebcb-804c-490f-a8c1-bacfddafb8d8}</Project>
       <Name>BEXIS2.DB.Entities</Name>
@@ -378,10 +382,6 @@
     <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.IoC\Vaiona.IoC.csproj">
       <Project>{29a7be0f-a17c-4ae8-8ca1-15fe4dd74129}</Project>
       <Name>Vaiona.IoC</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
-      <Project>{07B0DF99-AB49-49A3-802B-C15353FD3EAA}</Project>
-      <Name>Vaiona.Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Model\Vaiona.Model.csproj">
       <Project>{a60ac05f-8c9a-4efd-9826-452e6049da4d}</Project>

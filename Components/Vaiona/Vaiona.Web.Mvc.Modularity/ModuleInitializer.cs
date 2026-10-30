@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Web.Compilation;
 using System.Web.Hosting;
 using System.Xml.Linq;
-using Vaiona.Logging;
+using BEXIS2.App.Logging;
 using BEXIS2.Utils.Cfg;
 using BEXIS2.Utils.IO;
 

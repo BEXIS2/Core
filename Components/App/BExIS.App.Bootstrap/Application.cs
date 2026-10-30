@@ -26,7 +26,7 @@ using BEXIS2.DB.Persistence.Api;
 
 using Vaiona.Web.Mvc.Modularity;
 using BEXIS2.Utils.Cfg;
-using Vaiona.Logging;
+using BEXIS2.App.Logging;
 
 namespace BExIS.App.Bootstrap
 {

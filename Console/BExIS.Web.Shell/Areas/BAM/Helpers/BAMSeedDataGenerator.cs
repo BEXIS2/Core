@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using Vaiona.Logging;
+using BEXIS2.App.Logging;
 using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Modules.Bam.UI.Helpers

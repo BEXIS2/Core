@@ -3,6 +3,7 @@ using System.Diagnostics;
 using BEXIS2.DB.Entities.Logging;
 using Vaiona.Logging.Loggers;
 using BEXIS2.Utils.Cfg;
+using Vaiona.IoC;
 
 namespace Vaiona.Logging
 {
@@ -25,7 +26,7 @@ namespace Vaiona.Logging
             if (loggerType.Equals("DB"))
             {
                 string loggerKey = string.Format("{0}.Logging", LogType);
-                if (IoC.IoCFactory.Container.IsRegistered<ILogger>(loggerKey))
+                if (IoCFactory.Container.IsRegistered<ILogger>(loggerKey))
                     return IoC.IoCFactory.Container.Resolve<ILogger>(loggerKey);
                 loggerKey = "General.Logging";
                 if (IoC.IoCFactory.Container.IsRegistered<ILogger>(loggerKey))

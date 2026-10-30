@@ -23,7 +23,7 @@ using System.Xml;
 using BEXIS2.DB.Entities.Common;
 using BEXIS2.DB.Persistence.Api;
 using BEXIS2.Utils.Cfg;
-using Vaiona.Logging;
+using BEXIS2.App.Logging;
 
 namespace IDIV.Modules.Mmm.UI.Controllers
 {

@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Vaiona.Logging;
+using BEXIS2.App.Logging;
 
 namespace Vaiona.Web.Mvc.Modularity
 {

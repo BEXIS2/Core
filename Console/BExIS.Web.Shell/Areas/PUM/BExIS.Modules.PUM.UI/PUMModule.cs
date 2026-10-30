@@ -1,6 +1,6 @@
 ﻿using BExIS.Modules.Pum.UI.Helpers;
 using System;
-using Vaiona.Logging;
+using BEXIS2.App.Logging;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Pum.UI

@@ -37,7 +37,7 @@ namespace BExIS.App.Bootstrap
             catch (Exception ex)
             {
                 // Optional: Logging
-                // Vaiona.Logging.ILogger.LogError(ex, $"ApiController activation failed: {controllerType.FullName}");
+                // BEXIS2.App.Logging.ILogger.LogError(ex, $"ApiController activation failed: {controllerType.FullName}");
 
                 // Saubere Fehlerantwort für die API
                 throw new HttpResponseException(
