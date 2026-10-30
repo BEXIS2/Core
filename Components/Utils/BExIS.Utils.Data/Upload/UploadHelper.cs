@@ -427,7 +427,7 @@ namespace BExIS.Utils.Upload
             int packageSize = 1000;
             int position = 1;
 
-            if (ext.Equals(".txt") || ext.Equals(".csv") || ext.Equals(".tsv"))
+            if (ext.Equals(".txt", StringComparison.OrdinalIgnoreCase) || ext.Equals(".csv", StringComparison.OrdinalIgnoreCase) || ext.Equals(".tsv", StringComparison.OrdinalIgnoreCase))
             {
                 #region csv
 
@@ -495,7 +495,7 @@ namespace BExIS.Utils.Upload
                 #endregion csv
             }
 
-            if (ext.Equals(".xlsm"))
+            if (ext.Equals(".xlsm", StringComparison.OrdinalIgnoreCase))
             {
                 #region excel template
 

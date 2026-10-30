@@ -340,9 +340,9 @@ namespace BExIS.IO
         /// <returns></returns>
         public bool IsSupportedAsciiFile(string extention)
         {
-            if (extention.Equals(".csv") ||
-            extention.Equals(".tsv") ||
-            extention.Equals(".txt"))
+            if (extention.Equals(".csv", StringComparison.OrdinalIgnoreCase) ||
+            extention.Equals(".tsv", StringComparison.OrdinalIgnoreCase) ||
+            extention.Equals(".txt", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
@@ -366,8 +366,8 @@ namespace BExIS.IO
 
         public bool IsSupportedExcelFile(string extention)
         {
-            if (extention.Equals(".xls") ||
-            extention.Equals(".xlsx"))
+            if (extention.Equals(".xls", StringComparison.OrdinalIgnoreCase) ||
+            extention.Equals(".xlsx", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
