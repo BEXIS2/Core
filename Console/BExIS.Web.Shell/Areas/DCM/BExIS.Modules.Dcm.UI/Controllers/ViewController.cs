@@ -119,7 +119,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // version 0 means latest — get the latest version number for BioSchema
                 using (var datasetManagerForVersion = new DatasetManager())
                 {
-                    bioSchemaVersion = (int)datasetManagerForVersion.GetDatasetLatestVersion(id).VersionNo;
+                    if (!datasetManagerForVersion.IsDatasetDeleted(id))
+                    {
+                        bioSchemaVersion = (int)datasetManagerForVersion.GetDatasetLatestVersion(id).VersionNo;
+                    }
                 }
             }
             if (bioSchemaVersion > 0)
@@ -396,14 +399,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         model.Id = id;
                         model.Title = title;
 
-                        long entityTypeId = deletedVersion.Dataset.EntityTemplate.EntityType.Id;
+                        var dataset = datasetManager.GetDataset(id);
+                        if (dataset != null && dataset.ModificationInfo != null)
+                        {
+                            model.Reason = dataset.ModificationInfo.Comment;
+                        }
 
-                        // get links
-                        EntityReferenceHelper entityReferenceHelper = new EntityReferenceHelper();
-                        model.Links.From = entityReferenceHelper.GetSourceReferences(id, entityTypeId);
-                        model.Links.To = entityReferenceHelper.GetTargetReferences(id, entityTypeId);
+                        if (deletedVersion != null)
+                        {
+                            long entityTypeId = deletedVersion.Dataset.EntityTemplate.EntityType.Id;
 
-
+                            // get links
+                            EntityReferenceHelper entityReferenceHelper = new EntityReferenceHelper();
+                            model.Links.From = entityReferenceHelper.GetSourceReferences(id, entityTypeId);
+                            model.Links.To = entityReferenceHelper.GetTargetReferences(id, entityTypeId);
+                        }
                     }
                 }
 

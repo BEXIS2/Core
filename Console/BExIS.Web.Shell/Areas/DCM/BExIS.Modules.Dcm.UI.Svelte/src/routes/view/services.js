@@ -1,4 +1,5 @@
-import { Api } from '@bexis2/bexis2-core-ui'; // get model for View page
+import { get } from 'svelte/store';
+import { Api, errorStore } from '@bexis2/bexis2-core-ui'; // get model for View page
 
 export const getView = async (id, version, tag) => {
 	try {
@@ -7,7 +8,7 @@ export const getView = async (id, version, tag) => {
 		return response;
 	} catch (error) {
 		console.error(error);
-		throw error;
+		throw get(errorStore);
 	}
 };
 

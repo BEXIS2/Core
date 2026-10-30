@@ -179,6 +179,7 @@ namespace BExIS.Modules.Dcm.UI.Models.View
     {
         public long Id { get; set; }
         public string Title { get; set; }
+        public string Reason { get; set; }
 
         public LinksOverview Links { get; set; }
         
@@ -186,6 +187,7 @@ namespace BExIS.Modules.Dcm.UI.Models.View
         {
             Id = 0;
             Title = "";
+            Reason = "";
             Links = new LinksOverview();
         }
     }

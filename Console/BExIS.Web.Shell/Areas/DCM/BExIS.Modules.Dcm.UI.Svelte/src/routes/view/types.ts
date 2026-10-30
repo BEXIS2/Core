@@ -94,5 +94,6 @@ export interface TagInfoViewModel {
 export interface DeletedModel{
    id: number;
    title: string;
+   reason: string;
    links: LinksOverview;
 }
