@@ -1,7 +1,7 @@
 ﻿using BExIS.Utils.Config;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using Vaiona.Model.MTnt;
+using BEXIS2.App.Model.MTnt;
 
 namespace Vaiona.Web.Mvc.Models
 {

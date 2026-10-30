@@ -116,6 +116,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\App\BEXIS2.App.Model\BEXIS2.App.Model.csproj">
+      <Project>{00869862-96D4-43DC-AEEA-A8CE09537D25}</Project>
+      <Name>BEXIS2.App.Model</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\DB\BEXIS2.DB.Persistence.API\BEXIS2.DB.Persistence.API.csproj">
       <Project>{ea5204fe-ef38-463a-bfde-d93b1cc85bba}</Project>
       <Name>BEXIS2.DB.Persistence.API</Name>
@@ -127,10 +131,6 @@
     <ProjectReference Include="..\..\Utils\BEXIS2.Utils\BEXIS2.Utils.csproj">
       <Project>{64c9fd56-c5b2-4eb2-ae33-4c6a9cfde3e2}</Project>
       <Name>BEXIS2.Utils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Vaiona.Model\Vaiona.Model.csproj">
-      <Project>{a60ac05f-8c9a-4efd-9826-452e6049da4d}</Project>
-      <Name>Vaiona.Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\Vaiona.Web\Vaiona.Web.csproj">
       <Project>{5b48b5a8-eae8-4ef8-8f2c-7fedb1b095d3}</Project>

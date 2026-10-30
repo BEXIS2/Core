@@ -24,7 +24,7 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
-    <IISExpressSSLPort>44390</IISExpressSSLPort>
+    <IISExpressSSLPort>44345</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>
     </IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>
@@ -118,6 +118,12 @@
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Owin, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Identity.Owin.2.2.4\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Http.Abstractions, Version=2.3.13.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNetCore.Http.Abstractions.2.3.13\lib\netstandard2.0\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Http.Features, Version=2.3.12.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNetCore.Http.Features.2.3.12\lib\netstandard2.0\Microsoft.AspNetCore.Http.Features.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=7.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
@@ -230,6 +236,9 @@
       <HintPath>..\..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
     </Reference>
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Text.Encodings.Web, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Text.Encodings.Web.8.0.0\lib\net462\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
@@ -1197,6 +1206,14 @@
       <Project>{7d7fbf8e-37d7-4a4c-b40e-3f267e9b9760}</Project>
       <Name>BExIS.App.Bootstrap</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Components\App\BEXIS2.App.Model\BEXIS2.App.Model.csproj">
+      <Project>{00869862-96d4-43dc-aeea-a8ce09537d25}</Project>
+      <Name>BEXIS2.App.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\App\BEXIS2.App.MultiTenancy.Api\BEXIS2.App.MultiTenancy.Api.csproj">
+      <Project>{517074f2-bbba-4007-2775-02b9cbb0f766}</Project>
+      <Name>BEXIS2.App.MultiTenancy.Api</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Components\DB\BEXIS2.DB.Entities\BEXIS2.DB.Entities.csproj">
       <Project>{8affebcb-804c-490f-a8c1-bacfddafb8d8}</Project>
       <Name>BEXIS2.DB.Entities</Name>
@@ -1252,14 +1269,6 @@
     <ProjectReference Include="..\..\Components\Vaiona\Vaiona.IoC\Vaiona.IoC.csproj">
       <Project>{29a7be0f-a17c-4ae8-8ca1-15fe4dd74129}</Project>
       <Name>Vaiona.IoC</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.Model\Vaiona.Model.csproj">
-      <Project>{a60ac05f-8c9a-4efd-9826-452e6049da4d}</Project>
-      <Name>Vaiona.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\Vaiona\Vaiona.MultiTenancy.Api\Vaiona.MultiTenancy.Api.csproj">
-      <Project>{bccd3d7b-8a50-4fa2-b9d3-2cb31bea60b3}</Project>
-      <Name>Vaiona.MultiTenancy.Api</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Components\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">
       <Project>{705f8751-e58a-453e-a7fd-0c310fd3cae8}</Project>

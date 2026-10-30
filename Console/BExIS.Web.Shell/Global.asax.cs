@@ -13,8 +13,8 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Vaiona.IoC;
-using Vaiona.Model.MTnt;
-using Vaiona.MultiTenancy.Api;
+using BEXIS2.App.Model.MTnt;
+using BEXIS2.App.MultiTenancy.Api;
 using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Extensions;
 
@@ -86,13 +86,9 @@ namespace BExIS.Web.Shell
             IoCFactory.Container.StartSessionLevelContainer();
             Session.ApplyCulture(AppConfiguration.DefaultCulture);
 
+   
             ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
-            Tenant tenant = tenantResolver.Resolve(this.Request);
-
-            // if the tenant has no landing page, set the application's default landing page for it.
-
-            //var landingPage = GeneralSettings.LandingPage;
-            //tenant.LandingPage = landingPage; // checks and sets
+            Tenant tenant = tenantResolver.Resolve();
 
             this.Session.SetTenant(tenant);
         }

@@ -48,10 +48,6 @@
       <Project>{29a7be0f-a17c-4ae8-8ca1-15fe4dd74129}</Project>
       <Name>Vaiona.IoC</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Vaiona.Model\Vaiona.Model.csproj">
-      <Project>{a60ac05f-8c9a-4efd-9826-452e6049da4d}</Project>
-      <Name>Vaiona.Model</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

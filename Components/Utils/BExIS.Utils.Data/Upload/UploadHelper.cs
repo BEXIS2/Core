@@ -10,7 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Vaiona.Model.MTnt;
+using BEXIS2.App.Model.MTnt;
 using BEXIS2.DB.Persistence.Api;
 
 /// <summary>

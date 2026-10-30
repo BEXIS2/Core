@@ -82,7 +82,7 @@ namespace Vaiona.Web.Security.Az.Attributes
         /// 4: The permission cache is per user, so it is persisted in a session level variable and gets invalidated using a config based sliding policy "AutorizationResultCacheTime".
         /// Also all user level permissions get invalidated upon log-off and log-in.
         ///
-        /// ps: On first run, in order to create database table(s), set the config key CreateDatabase to true, set the db connection info in the Vaiona.Model.Persistence.NH project's MsSql2008Dialect.hibernate.cfg.xml file
+        /// ps: On first run, in order to create database table(s), set the config key CreateDatabase to true, set the db connection info in the BEXIS2.App.Model.Persistence.NH project's MsSql2008Dialect.hibernate.cfg.xml file
         /// also you need to config the app to use the ASP.NET Membership and Role providers
         /// </summary>
         /// <param name="filterContext"></param>

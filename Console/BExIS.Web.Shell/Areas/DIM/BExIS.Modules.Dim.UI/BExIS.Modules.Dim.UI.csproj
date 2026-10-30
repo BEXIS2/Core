@@ -871,6 +871,10 @@
       <Project>{9c0c4946-d981-4c83-a28c-462ec5f61ac0}</Project>
       <Name>BEXIS2.App.Logging</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\App\BEXIS2.App.Model\BEXIS2.App.Model.csproj">
+      <Project>{00869862-96D4-43DC-AEEA-A8CE09537D25}</Project>
+      <Name>BEXIS2.App.Model</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\DB\BEXIS2.DB.Entities\BEXIS2.DB.Entities.csproj">
       <Project>{8affebcb-804c-490f-a8c1-bacfddafb8d8}</Project>
       <Name>BEXIS2.DB.Entities</Name>
@@ -926,10 +930,6 @@
     <ProjectReference Include="..\..\..\..\..\Components\Utils\BEXIS2.Utils\BEXIS2.Utils.csproj">
       <Project>{64C9FD56-C5B2-4EB2-AE33-4C6A9CFDE3E2}</Project>
       <Name>BEXIS2.Utils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Model\Vaiona.Model.csproj">
-      <Project>{a60ac05f-8c9a-4efd-9826-452e6049da4d}</Project>
-      <Name>Vaiona.Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">
       <Project>{705f8751-e58a-453e-a7fd-0c310fd3cae8}</Project>

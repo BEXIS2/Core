@@ -12,7 +12,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.SessionState;
 using Vaiona.IoC;
-using Vaiona.MultiTenancy.Api;
+using BEXIS2.App.MultiTenancy.Api;
 
 namespace BExIS.App.Testing
 {

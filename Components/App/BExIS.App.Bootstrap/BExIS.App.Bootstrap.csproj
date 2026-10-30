@@ -175,6 +175,10 @@
     <Compile Include="UnityHttpControllerActivator.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BEXIS2.App.MultiTenancy.Services\BEXIS2.App.MultiTenancy.Services.csproj">
+      <Project>{AD0948EE-D9CF-4CE4-8D09-D0E235F6FA77}</Project>
+      <Name>BEXIS2.App.MultiTenancy.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
       <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
       <Name>BExIS.Security.Entities</Name>
@@ -231,21 +235,9 @@
       <Project>{a60ac05f-8c9a-4efd-9826-452e6049da4d}</Project>
       <Name>Vaiona.Model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Model\Vaiona.Model.csproj">
-      <Project>{a60ac05f-8c9a-4efd-9826-452e6049da4d}</Project>
-      <Name>Vaiona.Model</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.MultiTenancy.Api\Vaiona.MultiTenancy.Api.csproj">
       <Project>{bccd3d7b-8a50-4fa2-b9d3-2cb31bea60b3}</Project>
       <Name>Vaiona.MultiTenancy.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.MultiTenancy.Api\Vaiona.MultiTenancy.Api.csproj">
-      <Project>{bccd3d7b-8a50-4fa2-b9d3-2cb31bea60b3}</Project>
-      <Name>Vaiona.MultiTenancy.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.MultiTenancy.Services\Vaiona.MultiTenancy.Services.csproj">
-      <Project>{4639d130-e0aa-4aef-b9bd-bef6ad99dbaf}</Project>
-      <Name>Vaiona.MultiTenancy.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.MultiTenancy.Services\Vaiona.MultiTenancy.Services.csproj">
       <Project>{4639d130-e0aa-4aef-b9bd-bef6ad99dbaf}</Project>
@@ -262,6 +254,14 @@
     <ProjectReference Include="..\BEXIS2.App.Logging\BEXIS2.App.Logging.csproj">
       <Project>{9c0c4946-d981-4c83-a28c-462ec5f61ac0}</Project>
       <Name>BEXIS2.App.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BEXIS2.App.Model\BEXIS2.App.Model.csproj">
+      <Project>{00869862-96D4-43DC-AEEA-A8CE09537D25}</Project>
+      <Name>BEXIS2.App.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BEXIS2.App.MultiTenancy.Api\BEXIS2.App.MultiTenancy.Api.csproj">
+      <Project>{517074F2-BBBA-4007-2775-02B9CBB0F766}</Project>
+      <Name>BEXIS2.App.MultiTenancy.Api</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Components\App\BEXIS2.App.Model\BEXIS2.App.Model.csproj" />
+    <ProjectReference Include="..\Components\App\BEXIS2.App.MultiTenancy.Api\BEXIS2.App.MultiTenancy.Api.csproj" />
+  </ItemGroup>
+
+</Project>

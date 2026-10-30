@@ -156,14 +156,6 @@
       <Project>{a60ac05f-8c9a-4efd-9826-452e6049da4d}</Project>
       <Name>Vaiona.Model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Model\Vaiona.Model.csproj">
-      <Project>{a60ac05f-8c9a-4efd-9826-452e6049da4d}</Project>
-      <Name>Vaiona.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.MultiTenancy.Api\Vaiona.MultiTenancy.Api.csproj">
-      <Project>{bccd3d7b-8a50-4fa2-b9d3-2cb31bea60b3}</Project>
-      <Name>Vaiona.MultiTenancy.Api</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.MultiTenancy.Api\Vaiona.MultiTenancy.Api.csproj">
       <Project>{bccd3d7b-8a50-4fa2-b9d3-2cb31bea60b3}</Project>
       <Name>Vaiona.MultiTenancy.Api</Name>
@@ -175,6 +167,14 @@
     <ProjectReference Include="..\BExIS.App.Bootstrap\BExIS.App.Bootstrap.csproj">
       <Project>{7d7fbf8e-37d7-4a4c-b40e-3f267e9b9760}</Project>
       <Name>BExIS.App.Bootstrap</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BEXIS2.App.Model\BEXIS2.App.Model.csproj">
+      <Project>{00869862-96d4-43dc-aeea-a8ce09537d25}</Project>
+      <Name>BEXIS2.App.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BEXIS2.App.MultiTenancy.Api\BEXIS2.App.MultiTenancy.Api.csproj">
+      <Project>{517074F2-BBBA-4007-2775-02B9CBB0F766}</Project>
+      <Name>BEXIS2.App.MultiTenancy.Api</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

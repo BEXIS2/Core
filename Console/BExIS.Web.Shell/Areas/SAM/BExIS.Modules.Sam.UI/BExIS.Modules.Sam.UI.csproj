@@ -266,6 +266,10 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\BEXIS2.App.MultiTenancy.Services\BEXIS2.App.MultiTenancy.Services.csproj">
+      <Project>{ad0948ee-d9cf-4ce4-8d09-d0e235f6fa77}</Project>
+      <Name>BEXIS2.App.MultiTenancy.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
       <Project>{C230693B-D780-438B-B26C-82257642DD5C}</Project>
       <Name>BExIS.Security.Entities</Name>
@@ -281,6 +285,14 @@
     <ProjectReference Include="..\..\..\..\..\Components\App\BEXIS2.App.Logging\BEXIS2.App.Logging.csproj">
       <Project>{9c0c4946-d981-4c83-a28c-462ec5f61ac0}</Project>
       <Name>BEXIS2.App.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\App\BEXIS2.App.Model\BEXIS2.App.Model.csproj">
+      <Project>{00869862-96D4-43DC-AEEA-A8CE09537D25}</Project>
+      <Name>BEXIS2.App.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\App\BEXIS2.App.MultiTenancy.Api\BEXIS2.App.MultiTenancy.Api.csproj">
+      <Project>{517074f2-bbba-4007-2775-02b9cbb0f766}</Project>
+      <Name>BEXIS2.App.MultiTenancy.Api</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\DB\BEXIS2.DB.Entities\BEXIS2.DB.Entities.csproj">
       <Project>{8affebcb-804c-490f-a8c1-bacfddafb8d8}</Project>
@@ -325,18 +337,6 @@
     <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.IoC\Vaiona.IoC.csproj">
       <Project>{29a7be0f-a17c-4ae8-8ca1-15fe4dd74129}</Project>
       <Name>Vaiona.IoC</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Model\Vaiona.Model.csproj">
-      <Project>{a60ac05f-8c9a-4efd-9826-452e6049da4d}</Project>
-      <Name>Vaiona.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.MultiTenancy.Api\Vaiona.MultiTenancy.Api.csproj">
-      <Project>{bccd3d7b-8a50-4fa2-b9d3-2cb31bea60b3}</Project>
-      <Name>Vaiona.MultiTenancy.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.MultiTenancy.Services\Vaiona.MultiTenancy.Services.csproj">
-      <Project>{4639D130-E0AA-4AEF-B9BD-BEF6AD99DBAF}</Project>
-      <Name>Vaiona.MultiTenancy.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">
       <Project>{705F8751-E58A-453E-A7FD-0C310FD3CAE8}</Project>

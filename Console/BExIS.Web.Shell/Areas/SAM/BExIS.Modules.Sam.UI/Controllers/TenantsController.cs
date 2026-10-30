@@ -5,8 +5,8 @@ using System.Linq;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using Vaiona.IoC;
-using Vaiona.Model.MTnt;
-using Vaiona.MultiTenancy.Api;
+using BEXIS2.App.Model.MTnt;
+using BEXIS2.App.MultiTenancy.Api;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 

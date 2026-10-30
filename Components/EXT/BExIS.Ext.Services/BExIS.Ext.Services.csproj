@@ -65,6 +65,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BEXIS2.App.MultiTenancy.Services\BEXIS2.App.MultiTenancy.Services.csproj">
+      <Project>{AD0948EE-D9CF-4CE4-8D09-D0E235F6FA77}</Project>
+      <Name>BEXIS2.App.MultiTenancy.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
       <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
       <Name>BExIS.Security.Entities</Name>
@@ -84,10 +88,6 @@
     <ProjectReference Include="..\..\Vaiona\Vaiona.IoC\Vaiona.IoC.csproj">
       <Project>{29A7BE0F-A17C-4AE8-8CA1-15FE4DD74129}</Project>
       <Name>Vaiona.IoC</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.MultiTenancy.Services\Vaiona.MultiTenancy.Services.csproj">
-      <Project>{4639d130-e0aa-4aef-b9bd-bef6ad99dbaf}</Project>
-      <Name>Vaiona.MultiTenancy.Services</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
