@@ -98,6 +98,22 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return getData(id, variableId, token);
         }
 
+        // POST api/DataStatistic/{id}/unique
+        /// <summary>
+        /// Get unique value combinations across multiple variables
+        /// </summary>
+        /// <param name="id">Dataset Id</param>
+        /// <param name="data">Model containing the list of variable IDs</param>
+        [BExISApiAuthorize]
+        [PostRoute("api/DataStatistic/{id}/unique")]
+        [ResponseType(typeof(ApiMultiColumnStatisticModel))]
+        [HttpPost]
+        public HttpResponseMessage Unique(long id, [FromBody] PostApiDataStatisticModel data)
+        {
+            string token = this.Request.Headers.Authorization?.Parameter;
+            return getDataMultiColumn(id, data, token);
+        }
+
         private HttpResponseMessage getData(long id, int variableId, string token)
         {
             DatasetManager datasetManager = new DatasetManager();
@@ -279,6 +295,125 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
+        private HttpResponseMessage getDataMultiColumn(long id, PostApiDataStatisticModel data, string token)
+        {
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            using (DatasetManager datasetManager = new DatasetManager())
+            using (EntityManager entityManager = new EntityManager())
+            using (DataStructureManager dataStructureManager = new DataStructureManager())
+            {
+                bool isPublic = false;
+
+                #region is public
+
+                long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
+                entityTypeId = entityTypeId.HasValue ? entityTypeId.Value : -1;
+
+                isPublic = entityPermissionManager.ExistsAsync(entityTypeId.Value, id).Result;
+
+                #endregion is public
+
+                if (!isPublic && String.IsNullOrEmpty(token))
+                {
+                    var request = Request.CreateResponse();
+                    request.Content = new StringContent("Bearer token not exist.");
+
+                    return request;
+                }
+
+                User user = ControllerContext.RouteData.Values["user"] as User;
+
+                if (isPublic || user != null)
+                {
+                    if (isPublic || entityPermissionManager.HasEffectiveRightsAsync(user.Name, typeof(Dataset), id, RightType.Read).Result)
+                    {
+                        if (data == null || data.VariableIds == null || data.VariableIds.Length == 0)
+                        {
+                            var request = Request.CreateResponse(HttpStatusCode.BadRequest);
+                            request.Content = new StringContent("VariableIds must not be empty.");
+
+                            return request;
+                        }
+
+                        Dataset dataset = datasetManager.GetDataset(id);
+                        DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+
+                        if (datasetVersion.Dataset.DataStructure != null)
+                        {
+                            StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(datasetVersion.Dataset.DataStructure.Id);
+
+                            List<long> variableIds = new List<long>(data.VariableIds);
+                            List<string> varColumns = new List<string>();
+                            List<ApiVariableInfoModel> variableInfos = new List<ApiVariableInfoModel>();
+
+                            foreach (VariableInstance vs in structuredDataStructure.Variables)
+                            {
+                                if (variableIds.Contains(vs.Id))
+                                {
+                                    varColumns.Add("var" + vs.Id);
+
+                                    ApiVariableInfoModel varInfo = new ApiVariableInfoModel();
+                                    varInfo.VariableId = vs.Id;
+                                    varInfo.VariableName = vs.Label;
+                                    varInfo.VariableDescription = vs.Description;
+                                    varInfo.DataTypeName = vs.DataType.Name;
+                                    varInfo.DataTypeSystemType = vs.DataType.SystemType;
+                                    varInfo.Unit = vs.Unit.Name;
+                                    variableInfos.Add(varInfo);
+                                }
+                            }
+
+                            if (varColumns.Count == 0)
+                            {
+                                var request = Request.CreateResponse(HttpStatusCode.BadRequest);
+                                request.Content = new StringContent("No matching variables found in the dataset.");
+
+                                return request;
+                            }
+
+                            DataTable dt = GetUniqueValuesMultiColumn(id, varColumns);
+
+                            ApiMultiColumnStatisticModel model = new ApiMultiColumnStatisticModel();
+                            model.DatasetId = id;
+                            model.Variables = variableInfos;
+                            model.uniqueValues = dt;
+
+                            if (dt != null)
+                            {
+                                model.count = dt.Compute("Sum(count)", string.Empty).ToString();
+                            }
+
+                            var response = Request.CreateResponse(HttpStatusCode.OK);
+                            string resp = JsonConvert.SerializeObject(model);
+
+                            response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
+                            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                            return response;
+                        }
+                        else
+                        {
+                            return Request.CreateResponse();
+                        }
+                    }
+                    else
+                    {
+                        var request = Request.CreateResponse();
+                        request.Content = new StringContent("User has no read right.");
+
+                        return request;
+                    }
+                }
+                else
+                {
+                    var request = Request.CreateResponse();
+                    request.Content = new StringContent("User is not available.");
+
+                    return request;
+                }
+            }
+        }
+
         private static ProjectionExpression GetProjectionExpression(string projection)
         {
             ProjectionExpression pe = new ProjectionExpression();
@@ -319,6 +454,26 @@ namespace BExIS.Modules.Dim.UI.Controllers
         {
             StringBuilder mvBuilder = new StringBuilder();
             mvBuilder.AppendLine($"SELECT var{variableId} as var, count(id), length(var{variableId}::text) FROM {BuildName(datasetId).ToLower()} group by var{variableId} order by var;");
+            // execute the statement
+            try
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    var result = uow.ExecuteQuery(mvBuilder.ToString());
+                    return result;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private DataTable GetUniqueValuesMultiColumn(long datasetId, List<string> variables)
+        {
+            StringBuilder mvBuilder = new StringBuilder();
+            string columns = string.Join(",", variables);
+            mvBuilder.AppendLine($"SELECT {columns}, count(*) FROM {BuildName(datasetId).ToLower()} group by {columns} order by {columns};");
             // execute the statement
             try
             {

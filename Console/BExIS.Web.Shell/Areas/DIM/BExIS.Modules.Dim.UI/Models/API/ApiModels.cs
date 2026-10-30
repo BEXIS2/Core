@@ -122,6 +122,46 @@ namespace BExIS.Modules.Dim.UI.Models.Api
     }
 
     /// <summary>
+    /// Input model for multi-column unique values API
+    /// </summary>
+    public class PostApiDataStatisticModel
+    {
+        /// <summary>
+        /// List of variable IDs to get unique value combinations for
+        /// </summary>
+        public long[] VariableIds { get; set; }
+    }
+
+    /// <summary>
+    /// Variable information for multi-column statistics
+    /// </summary>
+    public class ApiVariableInfoModel
+    {
+        public long VariableId { get; set; }
+        public string VariableName { get; set; }
+        public string VariableDescription { get; set; }
+        public string DataTypeName { get; set; }
+        public string DataTypeSystemType { get; set; }
+        public string Unit { get; set; }
+    }
+
+    /// <summary>
+    /// Return model of multi-column Data Statistic API
+    /// </summary>
+    public class ApiMultiColumnStatisticModel
+    {
+        public long DatasetId { get; set; }
+        public List<ApiVariableInfoModel> Variables { get; set; }
+        public DataTable uniqueValues { get; set; }
+        public string count { get; set; }
+
+        public ApiMultiColumnStatisticModel()
+        {
+            Variables = new List<ApiVariableInfoModel>();
+        }
+    }
+
+    /// <summary>
     /// Return model of Metadata Statistic API
     /// </summary>
     public class PostApiMetadataStatisticModel
