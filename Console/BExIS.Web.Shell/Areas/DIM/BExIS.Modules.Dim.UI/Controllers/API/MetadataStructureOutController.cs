@@ -3,7 +3,7 @@ using BEXIS2.Dlm.Entities.MetadataStructure;
 using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.Utils.Route;
 using BEXIS2.Xml.Helpers;
-using BEXIS.JSON.Helpers;
+using BEXIS2.JSON.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BEXIS.JSON.Helpers.Extensions
+namespace BEXIS2.JSON.Helpers.Extensions
 {
     public static class JsonExtensions
     {

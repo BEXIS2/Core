@@ -1,7 +1,7 @@
 
 using BExIS.App.Testing;
 using BExIS.Utils.Config;
-using BEXIS.JSON.Helpers;
+using BEXIS2.JSON.Helpers;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using NUnit.Framework;

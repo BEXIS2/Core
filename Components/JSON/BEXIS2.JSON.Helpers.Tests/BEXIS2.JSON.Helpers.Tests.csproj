@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\App\BExIS.App.Testing\BExIS.App.Testing.csproj" />
-    <ProjectReference Include="..\BEXIS.JSON.Helpers\BEXIS.JSON.Helpers.csproj" />
+    <ProjectReference Include="..\BEXIS2.JSON.Helpers\BEXIS2.JSON.Helpers.csproj" />
   </ItemGroup>
 
   <ItemGroup>

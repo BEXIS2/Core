@@ -26,7 +26,7 @@ using BExIS.Security.Services.Objects;
 using BEXIS2.Utils.Data.MetadataStructure;
 using BEXIS2.Xml.Helpers;
 using BEXIS2.Xml.Helpers.Mapping;
-using BEXIS.JSON.Helpers;
+using BEXIS2.JSON.Helpers;
 using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Newtonsoft.Json.Schema;

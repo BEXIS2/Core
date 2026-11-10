@@ -86,41 +86,37 @@
       <Project>{ea5204fe-ef38-463a-bfde-d93b1cc85bba}</Project>
       <Name>BEXIS2.DB.Persistence.API</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
-      <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
-      <Name>BExIS.Dlm.Entities</Name>
+    <ProjectReference Include="..\..\DLM\BEXIS2.Dlm.Entities\BEXIS2.Dlm.Entities.csproj">
+      <Project>{d19d7601-4b10-429f-b1a7-9a0cdbb8e6cf}</Project>
+      <Name>BEXIS2.Dlm.Entities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
-      <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
-      <Name>BExIS.Dlm.Services</Name>
+    <ProjectReference Include="..\..\DLM\BEXIS2.Dlm.Services\BEXIS2.Dlm.Services.csproj">
+      <Project>{cbdcfcbb-05fb-4531-86a6-df6cc38f1e55}</Project>
+      <Name>BEXIS2.Dlm.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Utils\BEXIS2.Utils\BEXIS2.Utils.csproj">
       <Project>{64c9fd56-c5b2-4eb2-ae33-4c6a9cfde3e2}</Project>
       <Name>BEXIS2.Utils</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
-      <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
-      <Name>BExIS.Xml.Helpers</Name>
+    <ProjectReference Include="..\..\XML\BEXIS2.Xml.Helpers\BEXIS2.Xml.Helpers.csproj">
+      <Project>{22E13A7F-DC93-4E6D-AE2D-E7EF5FEE01F4}</Project>
+      <Name>BEXIS2.Xml.Helpers</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj">
-      <Project>{8b2ec2b0-6870-456b-be2d-b0fb4ea68d83}</Project>
-      <Name>BExIS.IO.DataType.DisplayPattern</Name>
+    <ProjectReference Include="..\..\XML\BEXIS2.XML.Models\BEXIS2.XML.Models.csproj">
+      <Project>{BD5698D7-EE53-40E9-9941-78A5F9E34025}</Project>
+      <Name>BEXIS2.XML.Models</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\XML\BExIS.Xml.Models\BExIS.Xml.Models.csproj">
-      <Project>{C0C9F0F2-9E65-448D-8000-D311DB326460}</Project>
-      <Name>BExIS.Xml.Models</Name>
+    <ProjectReference Include="..\BEXIS2.IO.DataType.DisplayPattern\BEXIS2.IO.DataType.DisplayPattern.csproj">
+      <Project>{154146d1-8354-42c1-b7a9-5d224bc3795c}</Project>
+      <Name>BEXIS2.IO.DataType.DisplayPattern</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj">
-      <Project>{8b2ec2b0-6870-456b-be2d-b0fb4ea68d83}</Project>
-      <Name>BExIS.IO.DataType.DisplayPattern</Name>
+    <ProjectReference Include="..\BEXIS2.IO.Transform.Validation\BEXIS2.IO.Transform.Validation.csproj">
+      <Project>{4C993D8A-B86D-4563-A8F2-FB39474D8716}</Project>
+      <Name>BEXIS2.IO.Transform.Validation</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BExIS.IO.Transform.Validation\BExIS.IO.Transform.Validation.csproj">
-      <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
-      <Name>BExIS.IO.Transform.Validation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BExIS.IO\BExIS.IO.csproj">
-      <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
-      <Name>BExIS.IO</Name>
+    <ProjectReference Include="..\BEXIS2.IO\BEXIS2.IO.csproj">
+      <Project>{67D97D3B-739E-09F5-903E-6D9144A0EE4D}</Project>
+      <Name>BEXIS2.IO</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

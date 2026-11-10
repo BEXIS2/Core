@@ -11,7 +11,7 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Utilities;
 using BEXIS2.Xml.Helpers;
-using BEXIS.JSON.Helpers.Extensions;
+using BEXIS2.JSON.Helpers.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;

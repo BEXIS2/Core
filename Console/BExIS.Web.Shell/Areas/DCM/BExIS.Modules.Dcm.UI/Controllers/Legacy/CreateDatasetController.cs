@@ -30,7 +30,7 @@ using BEXIS2.Utils.Data.Helpers;
 using BEXIS2.Utils.Data.Upload;
 using BExIS.Utils.Extensions;
 using BEXIS2.Xml.Helpers;
-using BEXIS.JSON.Helpers;
+using BEXIS2.JSON.Helpers;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json.Schema;
 using NHibernate.Cfg.MappingSchema;
