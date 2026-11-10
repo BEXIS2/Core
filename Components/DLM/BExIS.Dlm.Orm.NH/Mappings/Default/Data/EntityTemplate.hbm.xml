@@ -3,7 +3,7 @@
 <!DOCTYPE hibernate-mapping [ <!ENTITY BaseEntityProperties SYSTEM "..\BaseEntityProperties.xml"> ]>
 -->
 
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Data">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.Data">
   <class xmlns="urn:nhibernate-mapping-2.2" name="EntityTemplate" table="EntityTemplates">
     <!-- Mapping BaseEntity properties -->
     <id name="Id" type="Int64">
@@ -77,6 +77,6 @@
 
 	<many-to-one name="EntityType" class="BExIS.Security.Entities.Objects.Entity" not-null="true" column="EntityRef" />
 
-	<many-to-one name="MetadataStructure" class="BExIS.Dlm.Entities.MetadataStructure.MetadataStructure" not-null="true" column="MetadataStructureRef" />
+	<many-to-one name="MetadataStructure" class="BEXIS2.Dlm.Entities.MetadataStructure.MetadataStructure" not-null="true" column="MetadataStructureRef" />
   </class>
 </hibernate-mapping>

@@ -1,13 +1,13 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using BExIS.IO;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.IO;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Route;
-using BExIS.Xml.Helpers;
+using BEXIS2.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;

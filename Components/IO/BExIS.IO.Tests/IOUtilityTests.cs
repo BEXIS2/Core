@@ -1,5 +1,6 @@
-﻿using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.IO.Transform.Validation.ValueCheck;
+﻿using BEXIS2.IO;
+using BEXIS2.IO.Transform.Validation.Exceptions;
+using BEXIS2.IO.Transform.Validation.ValueCheck;
 using FluentAssertions;
 using NUnit.Framework;
 using System;

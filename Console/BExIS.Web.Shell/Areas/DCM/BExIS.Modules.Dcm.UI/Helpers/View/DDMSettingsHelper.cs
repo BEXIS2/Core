@@ -1,4 +1,4 @@
-﻿using BExIS.Xml.Helpers;
+﻿using BEXIS2.Xml.Helpers;
 using System.Collections.Generic;
 using System;
 using System.IO;

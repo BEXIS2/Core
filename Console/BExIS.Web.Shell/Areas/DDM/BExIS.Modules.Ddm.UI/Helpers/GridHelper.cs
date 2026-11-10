@@ -1,4 +1,4 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BEXIS2.Dlm.Entities.Data;
 using BExIS.Utils.NH.Querying;
 using System;
 using System.Collections.Generic;

@@ -1,6 +1,6 @@
-﻿using BExIS.Dlm.Entities.Common;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
+﻿using BEXIS2.Dlm.Entities.Common;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Services.MetadataStructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;

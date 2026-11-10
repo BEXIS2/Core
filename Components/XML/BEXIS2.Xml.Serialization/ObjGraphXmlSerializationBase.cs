@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace BExIS.Xml.Helpers.Serialization
+namespace BEXIS2.Xml.Helpers.Serialization
 {
     /// <summary>
     /// In case of assembly name/ version change or type change, programmer can use this interface to implement proper

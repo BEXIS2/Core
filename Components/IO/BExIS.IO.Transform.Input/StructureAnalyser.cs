@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.DataStructure;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.IO.Transform.Validation.ValueCheck;
@@ -10,9 +10,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-using Entites = BExIS.Dlm.Entities.DataStructure;
+using Entites = BEXIS2.Dlm.Entities.DataStructure;
 
-namespace BExIS.IO.Transform.Input
+namespace BEXIS2.IO.Transform.Input
 {
     public class StructureAnalyser
     {

@@ -1,6 +1,6 @@
 ﻿using BExIS.Ddm.Providers.LuceneProvider.Helpers;
 using BExIS.Ddm.Providers.LuceneProvider.Indexer;
-using BExIS.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.Data;
 using BExIS.Utils.Models;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;

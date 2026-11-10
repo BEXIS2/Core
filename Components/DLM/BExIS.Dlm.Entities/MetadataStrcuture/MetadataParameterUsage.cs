@@ -1,9 +1,9 @@
-﻿using BExIS.Dlm.Entities.Common;
+﻿using BEXIS2.Dlm.Entities.Common;
 
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.Dlm.Entities.MetadataStructure
+namespace BEXIS2.Dlm.Entities.MetadataStructure
 {
     /// <summary>
     ///

@@ -2,7 +2,7 @@
 using System;
 using BEXIS2.DB.Entities.Common;
 
-namespace BExIS.Dlm.Entities.Curation
+namespace BEXIS2.Dlm.Entities.Curation
 {
     public class CurationNote: BaseEntity
     {

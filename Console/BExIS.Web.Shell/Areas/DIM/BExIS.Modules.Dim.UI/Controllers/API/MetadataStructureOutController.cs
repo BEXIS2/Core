@@ -1,8 +1,8 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.Utils.Route;
-using BExIS.Xml.Helpers;
+using BEXIS2.Xml.Helpers;
 using BEXIS.JSON.Helpers;
 using System;
 using System.Collections.Generic;

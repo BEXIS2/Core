@@ -1,6 +1,6 @@
 using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.Models;
-using BExIS.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;

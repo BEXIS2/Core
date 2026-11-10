@@ -1,8 +1,9 @@
-﻿using BExIS.Dlm.Services.Data;
+﻿using BEXIS2.Dlm.Services.Data;
 using BExIS.Security.Entities.Authorization;
-using BExIS.UI.Hooks;
-using BExIS.UI.Hooks.Caches;
+using BEXIS2.UI.Hooks;
+using BEXIS2.UI.Hooks;
 using System.Linq;
+using BEXIS2.UI.Hooks.Caches;
 
 namespace BExIS.Modules.Dcm.UI.Hooks
 {

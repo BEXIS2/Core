@@ -4,7 +4,7 @@ using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.Export;
 using BExIS.Dim.Helpers.Models;
 using BExIS.Dim.Services.Publications;
-using BExIS.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.Data;
 using BExIS.Modules.Dim.UI.Models;
 using BExIS.Security.Services.Subjects;
 using Microsoft.AspNet.Identity;

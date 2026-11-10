@@ -6,7 +6,7 @@
 @{
     var partyDataTable = (System.Data.DataTable)@ViewBag.partyDataTable;
     var partyTypeId = (long)@ViewBag.partyTypeId;
-    var partyManager = new BExIS.Dlm.Services.Party.PartyManager();
+    var partyManager = new BEXIS2.Dlm.Services.Party.PartyManager();
     var partyCustomGridColumns = partyManager.GetPartyCustomGridColumns(partyTypeId);
 }
 <div style="overflow:auto;">

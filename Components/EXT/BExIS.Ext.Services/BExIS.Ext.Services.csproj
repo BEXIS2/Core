@@ -65,10 +65,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\BEXIS2.App.MultiTenancy.Services\BEXIS2.App.MultiTenancy.Services.csproj">
-      <Project>{AD0948EE-D9CF-4CE4-8D09-D0E235F6FA77}</Project>
-      <Name>BEXIS2.App.MultiTenancy.Services</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
       <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
       <Name>BExIS.Security.Entities</Name>
@@ -76,6 +72,18 @@
     <ProjectReference Include="..\..\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
       <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
       <Name>BExIS.Security.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\App\BEXIS2.App.Model\BEXIS2.App.Model.csproj">
+      <Project>{00869862-96d4-43dc-aeea-a8ce09537d25}</Project>
+      <Name>BEXIS2.App.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\App\BEXIS2.App.MultiTenancy.Api\BEXIS2.App.MultiTenancy.Api.csproj">
+      <Project>{517074f2-bbba-4007-2775-02b9cbb0f766}</Project>
+      <Name>BEXIS2.App.MultiTenancy.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\App\BEXIS2.App.MultiTenancy.Services\BEXIS2.App.MultiTenancy.Services.csproj">
+      <Project>{7264db56-6327-cf6c-d01a-e86287c946c9}</Project>
+      <Name>BEXIS2.App.MultiTenancy.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DB\BEXIS2.DB.Entities\BEXIS2.DB.Entities.csproj">
       <Project>{8affebcb-804c-490f-a8c1-bacfddafb8d8}</Project>

@@ -56,11 +56,11 @@
 
 		<!-- Associations -->
 
-		<many-to-one class="BExIS.Dlm.Entities.Data.DatasetVersion" name="DatasetVersion" column="DatasetVersionRef" />
+		<many-to-one class="BEXIS2.Dlm.Entities.Data.DatasetVersion" name="DatasetVersion" column="DatasetVersionRef" />
 
-		<many-to-one class="BExIS.Dlm.Entities.Data.Dataset" name="Dataset" column="DatasetRef" />
+		<many-to-one class="BEXIS2.Dlm.Entities.Data.Dataset" name="Dataset" column="DatasetRef" />
 		
-		<many-to-one class="BExIS.Dlm.Entities.Data.Tag" name="Tag" column="TagRef" />
+		<many-to-one class="BEXIS2.Dlm.Entities.Data.Tag" name="Tag" column="TagRef" />
 
 		<many-to-one class="Broker" name="Broker" column="BrokerRef" />
 

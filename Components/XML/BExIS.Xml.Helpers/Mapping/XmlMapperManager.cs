@@ -1,6 +1,6 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.MetadataStructure;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.IO;
 using BExIS.Xml.Models.Mapping;
 using System;
@@ -12,7 +12,7 @@ using System.Xml;
 using System.Xml.Schema;
 using BEXIS2.Utils.Cfg;
 
-namespace BExIS.Xml.Helpers.Mapping
+namespace BEXIS2.Xml.Helpers.Mapping
 {
     public enum TransactionDirection
     {

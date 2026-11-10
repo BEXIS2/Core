@@ -1,11 +1,11 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using BEXIS2.DB.Persistence.Api;
 
-namespace BExIS.Dlm.Services.DataStructure
+namespace BEXIS2.Dlm.Services.DataStructure
 {
     public class DataTypeManager : IDisposable
     {

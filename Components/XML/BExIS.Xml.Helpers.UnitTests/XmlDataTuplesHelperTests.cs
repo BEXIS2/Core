@@ -1,10 +1,10 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BEXIS2.Dlm.Entities.Data;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using Assert = NUnit.Framework.Assert;
 
-namespace BExIS.Xml.Helpers.UnitTests
+namespace BEXIS2.Xml.Helpers.UnitTests
 {
     [TestFixture()]
     public class XmlDataTuplesHelperTests

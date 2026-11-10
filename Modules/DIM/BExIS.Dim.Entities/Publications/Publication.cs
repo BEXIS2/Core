@@ -1,4 +1,4 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BEXIS2.Dlm.Entities.Data;
 using System;
 using BEXIS2.DB.Entities.Common;
 

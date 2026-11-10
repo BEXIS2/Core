@@ -1,4 +1,4 @@
-﻿using BExIS.Dlm.Entities.Party;
+﻿using BEXIS2.Dlm.Entities.Party;
 using BExIS.Ext.Model;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using BEXIS2.DB.Persistence.Api;
 
-namespace BExIS.Dlm.Services.Party
+namespace BEXIS2.Dlm.Services.Party
 {
     public class PartyTypeManager : IDisposable
     {

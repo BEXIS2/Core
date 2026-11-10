@@ -1,4 +1,4 @@
-﻿using BExIS.Dlm.Entities.Party;
+﻿using BEXIS2.Dlm.Entities.Party;
 
 namespace BExIS.Modules.Bam.UI.Models
 {

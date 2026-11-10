@@ -152,17 +152,9 @@
       <Project>{8affebcb-804c-490f-a8c1-bacfddafb8d8}</Project>
       <Name>BEXIS2.DB.Entities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
-      <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
-      <Name>BExIS.Dlm.Entities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\IO\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj">
-      <Project>{8b2ec2b0-6870-456b-be2d-b0fb4ea68d83}</Project>
-      <Name>BExIS.IO.DataType.DisplayPattern</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\IO\BExIS.IO.Transform.Input\BExIS.IO.Transform.Input.csproj">
-      <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
-      <Name>BExIS.IO.Transform.Input</Name>
+    <ProjectReference Include="..\..\DLM\BEXIS2.Dlm.Entities\BEXIS2.Dlm.Entities.csproj">
+      <Project>{D19D7601-4B10-429F-B1A7-9A0CDBB8E6CF}</Project>
+      <Name>BEXIS2.Dlm.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\IO\BExIS.IO.Transform.Validation\BExIS.IO.Transform.Validation.csproj">
       <Project>{C8A05313-B960-406E-92EC-C1E5B3F47FCD}</Project>
@@ -191,10 +183,6 @@
     <ProjectReference Include="..\..\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">
       <Project>{705f8751-e58a-453e-a7fd-0c310fd3cae8}</Project>
       <Name>Vaiona.Web.Mvc.Modularity</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
-      <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
-      <Name>BExIS.Xml.Helpers</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

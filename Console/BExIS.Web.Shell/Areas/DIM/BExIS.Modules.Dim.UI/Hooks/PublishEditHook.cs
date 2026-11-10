@@ -1,7 +1,8 @@
-﻿using BExIS.Dlm.Services.Data;
+﻿using BEXIS2.Dlm.Services.Data;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Objects;
-using BExIS.UI.Hooks;
+using BEXIS2.UI.Hooks;
+using BEXIS2.Dlm.Entities.Data;
 
 namespace BExIS.Modules.Dim.UI.Hooks
 {
@@ -37,7 +38,7 @@ namespace BExIS.Modules.Dim.UI.Hooks
             using (var datasetManager = new DatasetManager())
             {
                 var dataset = datasetManager.GetDataset(id);
-                if (dataset.Status != Dlm.Entities.Data.DatasetStatus.CheckedIn) Status = HookStatus.Disabled;
+                if (dataset.Status != DatasetStatus.CheckedIn) Status = HookStatus.Disabled;
             }
         }
         private void checkEntity(long id)

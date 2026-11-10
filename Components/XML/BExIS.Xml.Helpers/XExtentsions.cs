@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Xml.Linq;
 
-namespace BExIS.Xml.Helpers
+namespace BEXIS2.Xml.Helpers
 {
     public static class XExtentsions
     {

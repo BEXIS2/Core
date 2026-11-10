@@ -1,7 +1,7 @@
 ﻿using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
-using BExIS.UI.Models;
+using BEXIS2.UI.Models;
 using BExIS.Utils.Config;
 using System;
 using System.Collections.Generic;

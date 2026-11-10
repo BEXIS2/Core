@@ -1,14 +1,14 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.Meanings;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.Meanings;
-using BExIS.Dlm.Services.MetadataStructure;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.Meanings;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.Dlm.Services.Meanings;
+using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Modules.Rpm.UI.Models.Dimensions;
 using BExIS.Modules.Rpm.UI.Models.Units;
-using BExIS.UI.Helpers;
+using BEXIS2.UI.Helpers;
 using BExIS.Utils.NH.Querying;
 using System;
 using System.Collections.Generic;
@@ -196,20 +196,20 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return dimensionListItem;
         }
 
-        private List<DataTypeListItem> convertToDataTypeListItem(List<Dlm.Entities.DataStructure.DataType> dataTypes)
+        private List<DataTypeListItem> convertToDataTypeListItem(List<BEXIS2.Dlm.Entities.DataStructure.DataType> dataTypes)
         {
             if (dataTypes == null || dataTypes.Count == 0)
                 return new List<DataTypeListItem>();
 
             List<DataTypeListItem> dataTypeListItems = new List<DataTypeListItem>();
 
-            foreach (Dlm.Entities.DataStructure.DataType dataType in dataTypes)
+            foreach (BEXIS2.Dlm.Entities.DataStructure.DataType dataType in dataTypes)
             {
                 dataTypeListItems.Add(convertToDataTypeListItem(dataType));
             }
             return dataTypeListItems;
         }
-        private DataTypeListItem convertToDataTypeListItem(Dlm.Entities.DataStructure.DataType dataType)
+        private DataTypeListItem convertToDataTypeListItem(BEXIS2.Dlm.Entities.DataStructure.DataType dataType)
         {
             if (dataType == null)
                 return new DataTypeListItem();

@@ -1,5 +1,5 @@
 ﻿using BExIS.Dim.Entities.Publications;
-using BExIS.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.Data;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;

@@ -1,7 +1,7 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Data;
 
-namespace BExIS.IO.Transform.Input
+namespace BEXIS2.IO.Transform.Input
 {
     public class APIDataReader : DataReader
     {

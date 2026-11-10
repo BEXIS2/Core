@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Schema;
 
-namespace BExIS.Xml.Helpers
+namespace BEXIS2.Xml.Helpers
 {
     public class XmlSchemaUtility
     {

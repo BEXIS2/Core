@@ -7,7 +7,7 @@ using System.Xml.XPath;
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.Xml.Helpers
+namespace BEXIS2.Xml.Helpers
 {
     /// <summary>
     ///

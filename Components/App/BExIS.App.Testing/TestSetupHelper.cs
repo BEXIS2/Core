@@ -25,10 +25,12 @@ namespace BExIS.App.Testing
 
         public TestSetupHelper(Action<HttpConfiguration> configurationCallback, bool configureModules)
         {
+            HttpContext.Current = FakeHttpContext();
+
             app = Application.GetInstance(RunStage.Test);
             app.Start(configurationCallback, configureModules);
 
-            HttpContext.Current = FakeHttpContext();
+            
         }
 
         public ControllerContext BuildHttpContext()

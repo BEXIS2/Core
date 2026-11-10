@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using BEXIS2.DB.Entities.Common;
 
-namespace BExIS.Dlm.Entities.Party
+namespace BEXIS2.Dlm.Entities.Party
 {
     public class PartyType : BaseEntity
     {

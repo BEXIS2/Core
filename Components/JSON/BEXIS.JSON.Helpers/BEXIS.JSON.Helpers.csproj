@@ -58,17 +58,17 @@
       <Project>{ea5204fe-ef38-463a-bfde-d93b1cc85bba}</Project>
       <Name>BEXIS2.DB.Persistence.API</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
-      <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
-      <Name>BExIS.Dlm.Entities</Name>
+    <ProjectReference Include="..\..\DLM\BEXIS2.Dlm.Entities\BEXIS2.Dlm.Entities.csproj">
+      <Project>{D19D7601-4B10-429F-B1A7-9A0CDBB8E6CF}</Project>
+      <Name>BEXIS2.Dlm.Entities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
-      <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
-      <Name>BExIS.Dlm.Services</Name>
+    <ProjectReference Include="..\..\DLM\BEXIS2.Dlm.Services\BEXIS2.Dlm.Services.csproj">
+      <Project>{CBDCFCBB-05FB-4531-86A6-DF6CC38F1E55}</Project>
+      <Name>BEXIS2.Dlm.Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
-      <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
-      <Name>BExIS.Xml.Helpers</Name>
+    <ProjectReference Include="..\..\XML\BEXIS2.Xml.Helpers\BEXIS2.Xml.Helpers.csproj">
+      <Project>{22E13A7F-DC93-4E6D-AE2D-E7EF5FEE01F4}</Project>
+      <Name>BEXIS2.Xml.Helpers</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

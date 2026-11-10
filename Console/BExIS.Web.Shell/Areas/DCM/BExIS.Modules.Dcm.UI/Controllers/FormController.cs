@@ -4,17 +4,17 @@ using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Helpers.Mappings;
-using BExIS.Dlm.Entities.Common;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.Administration;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Dlm.Services.TypeSystem;
-using BExIS.IO;
+using BEXIS2.Dlm.Entities.Common;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Services.Administration;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.MetadataStructure;
+using BEXIS2.Dlm.Services.TypeSystem;
+using BEXIS2.IO;
 using BExIS.IO.Transform.Output;
-using BExIS.IO.Transform.Validation.Exceptions;
+using BEXIS2.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.CreateDataset;
 using BExIS.Modules.Dcm.UI.Models.Metadata;
@@ -23,9 +23,9 @@ using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
-using BExIS.Utils.Data.MetadataStructure;
-using BExIS.Xml.Helpers;
-using BExIS.Xml.Helpers.Mapping;
+using BEXIS2.Utils.Data.MetadataStructure;
+using BEXIS2.Xml.Helpers;
+using BEXIS2.Xml.Helpers.Mapping;
 using BEXIS.JSON.Helpers;
 using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Spreadsheet;
@@ -49,7 +49,7 @@ using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
-using BExISExceptions = BExIS.IO.Transform.Validation.Exceptions;
+using BExISExceptions = BEXIS2.IO.Transform.Validation.Exceptions;
 using JsonSchema = Newtonsoft.Json.Schema; 
 
 namespace BExIS.Modules.Dcm.UI.Controllers
@@ -351,8 +351,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     var ready = true;
 
-                    // todo i case of entity "BExIS.Dlm.Entities.Data.Dataset" we need to have a check if the dataset is checked in later all enitities should support such functions over webapis
-                    if (entityClassPath.Equals("BExIS.Dlm.Entities.Data.Dataset"))
+                    // todo i case of entity "BEXIS2.Dlm.Entities.Data.Dataset" we need to have a check if the dataset is checked in later all enitities should support such functions over webapis
+                    if (entityClassPath.Equals("BEXIS2.Dlm.Entities.Data.Dataset"))
                     {
                         //todo need a check if entity is in use
                         if (!dm.IsDatasetCheckedIn(entityId))
@@ -471,8 +471,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     var ready = true;
 
-                    // todo i case of entity "BExIS.Dlm.Entities.Data.Dataset" we need to have a check if the dataset is checked in later all enitities should support such functions over webapis
-                    if (entityClassPath.Equals("BExIS.Dlm.Entities.Data.Dataset"))
+                    // todo i case of entity "BEXIS2.Dlm.Entities.Data.Dataset" we need to have a check if the dataset is checked in later all enitities should support such functions over webapis
+                    if (entityClassPath.Equals("BEXIS2.Dlm.Entities.Data.Dataset"))
                     {
                         //todo need a check if entity is in use
                         if (!dm.IsDatasetCheckedIn(entityId))
@@ -889,7 +889,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     var metadataResult = xmlMapperManager.Generate(metadataForImport, 1, true);
 
                     // generate intern template metadata xml with needed attribtes
-                    var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
+                    var xmlMetadatWriter = new XmlMetadataWriter(BEXIS2.Xml.Helpers.XmlNodeMode.xPath);
                     var metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStructureId,
                         XmlUtility.ToXDocument(metadataResult));
 
@@ -1720,12 +1720,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (usage is MetadataPackageUsage)
                 {
-                    keyValueDic.Add("type", BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage.ToString());
+                    keyValueDic.Add("type", BEXIS2.Xml.Helpers.XmlNodeType.MetadataPackageUsage.ToString());
                     elements = XmlUtility.GetXElementsByAttribute(usage.Label, keyValueDic, xMetadata).ToList();
                 }
                 else
                 {
-                    keyValueDic.Add("type", BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage.ToString());
+                    keyValueDic.Add("type", BEXIS2.Xml.Helpers.XmlNodeType.MetadataAttributeUsage.ToString());
                     elements = XmlUtility.GetXElementsByAttribute(usage.Label, keyValueDic, xMetadata).ToList();
                 }
 
@@ -2069,12 +2069,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (usage is MetadataPackageUsage)
                 {
-                    keyValueDic.Add("type", BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage.ToString());
+                    keyValueDic.Add("type", BEXIS2.Xml.Helpers.XmlNodeType.MetadataPackageUsage.ToString());
                     parentXElement = XmlUtility.GetXElementByXPath(parent.XPath, xMetadata);
                 }
                 else
                 {
-                    keyValueDic.Add("type", BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage.ToString());
+                    keyValueDic.Add("type", BEXIS2.Xml.Helpers.XmlNodeType.MetadataAttributeUsage.ToString());
                     parentXElement = XmlUtility.GetXElementByXPath(parent.XPath, xMetadata);
                 }
 
@@ -2970,7 +2970,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
-            metadataXml = xmlMetadataWriter.AddPackage(metadataXml, usage, number, metadataStructureUsageHelper.GetNameOfType(usage), metadataStructureUsageHelper.GetIdOfType(usage), metadataStructureUsageHelper.GetChildren(usage.Id, usage.GetType()), BExIS.Xml.Helpers.XmlNodeType.MetadataAttribute, BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage, xpath);
+            metadataXml = xmlMetadataWriter.AddPackage(metadataXml, usage, number, metadataStructureUsageHelper.GetNameOfType(usage), metadataStructureUsageHelper.GetIdOfType(usage), metadataStructureUsageHelper.GetChildren(usage.Id, usage.GetType()), BEXIS2.Xml.Helpers.XmlNodeType.MetadataAttribute, BEXIS2.Xml.Helpers.XmlNodeType.MetadataAttributeUsage, xpath);
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
         }
@@ -2990,8 +2990,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 metadataStructureUsageHelper.GetNameOfType(usage),
                 metadataStructureUsageHelper.GetIdOfType(usage),
                 metadataStructureUsageHelper.GetChildren(usage.Id, usage.GetType()),
-                BExIS.Xml.Helpers.XmlNodeType.MetadataPackage,
-                BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage,
+                BEXIS2.Xml.Helpers.XmlNodeType.MetadataPackage,
+                BEXIS2.Xml.Helpers.XmlNodeType.MetadataPackageUsage,
                 xpath);
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
@@ -3147,8 +3147,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 metadataStructureUsageHelper.GetNameOfType(usage),
                 metadataStructureUsageHelper.GetIdOfType(usage),
                 metadataStructureUsageHelper.GetChildren(usage.Id, usage.GetType()),
-                BExIS.Xml.Helpers.XmlNodeType.MetadataAttribute,
-                BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage, xpath);
+                BEXIS2.Xml.Helpers.XmlNodeType.MetadataAttribute,
+                BEXIS2.Xml.Helpers.XmlNodeType.MetadataAttributeUsage, xpath);
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
         }

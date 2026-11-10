@@ -1,4 +1,4 @@
-﻿using BExIS.Dlm.Services.Party;
+﻿using BEXIS2.Dlm.Services.Party;
 using BExIS.Modules.SAM.UI.Helpers;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;

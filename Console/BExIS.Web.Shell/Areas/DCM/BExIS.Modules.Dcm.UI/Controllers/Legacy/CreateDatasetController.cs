@@ -3,16 +3,16 @@ using BExIS.Dcm.Wizard;
 using BExIS.Ddm.Api;
 using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Helpers.Mappings;
-using BExIS.Dlm.Entities.Administration;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Entities.Party;
-using BExIS.Dlm.Services.Administration;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Dlm.Services.Party;
+using BEXIS2.Dlm.Entities.Administration;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Entities.Party;
+using BEXIS2.Dlm.Services.Administration;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.Dlm.Services.MetadataStructure;
+using BEXIS2.Dlm.Services.Party;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Modules.Dcm.UI.Models.CreateDataset;
@@ -23,13 +23,13 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
-using BExIS.UI.Helpers;
-using BExIS.UI.Models;
+using BEXIS2.UI.Helpers;
+using BEXIS2.UI.Models;
 using BExIS.Utils.Config;
-using BExIS.Utils.Data.Helpers;
-using BExIS.Utils.Data.Upload;
+using BEXIS2.Utils.Data.Helpers;
+using BEXIS2.Utils.Data.Upload;
 using BExIS.Utils.Extensions;
-using BExIS.Xml.Helpers;
+using BEXIS2.Xml.Helpers;
 using BEXIS.JSON.Helpers;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json.Schema;
@@ -163,7 +163,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
 
                                 XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
-                                workingCopy.Metadata = Xml.Helpers.XmlWriter.ToXmlDocument(xMetadata);
+                                workingCopy.Metadata = BEXIS2.Xml.Helpers.XmlWriter.ToXmlDocument(xMetadata);
 
                                 workingCopy.Title = xmlDatasetHelper.GetInformation(datasetId, workingCopy.Metadata, NameAttributeValues.title);
                                 workingCopy.Description = xmlDatasetHelper.GetInformation(datasetId, workingCopy.Metadata, NameAttributeValues.description);
@@ -476,7 +476,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 foreach (MetadataStructure metadataStructure in metadataStructureList)
                 {
                     if (xmlDatasetHelper.IsActive(metadataStructure.Id) &&
-                        xmlDatasetHelper.HasEntityType(metadataStructure.Id, "bexis.dlm.entities.data.dataset"))
+                        xmlDatasetHelper.HasEntityType(metadataStructure.Id, "BEXIS2.Dlm.Entities.data.dataset"))
                     {
                         string title = metadataStructure.Name;
 

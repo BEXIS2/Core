@@ -1,5 +1,5 @@
 ﻿using BExIS.Security.Entities.Subjects;
-using BExIS.UI.Helpers;
+using BEXIS2.UI.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

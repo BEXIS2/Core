@@ -1,5 +1,5 @@
 ﻿@model BExIS.Modules.Ddm.UI.Models.ShowDataModel
-@using BExIS.UI.Hooks;
+@using BEXIS2.UI.Hooks;
 @*@using BExIS.Modules.Ddm.UI.Helpers;*@
 @using BExIS.Utils.Extensions
 
@@ -421,14 +421,14 @@
                     <!--dataset hooks-->
                     @foreach (var hook in datasetHooks)
                     {
-                        if (hook.Status != BExIS.UI.Hooks.HookStatus.AccessDenied &&
-                        hook.Status != BExIS.UI.Hooks.HookStatus.Disabled)
+                        if (hook.Status !=BEXIS2.UI.Hooks.HookStatus.AccessDenied &&
+                        hook.Status !=BEXIS2.UI.Hooks.HookStatus.Disabled)
                         {
 
                             var baseid = @hook.Name.ToLower();
                             <!--set first element to active-->
                             var active = hook.Name.Equals(activeHook.Name) ? "active" : "";
-                            var disabled = hook.Status.Equals(BExIS.UI.Hooks.HookStatus.Disabled) ? "disabled" : "";
+                            var disabled = hook.Status.Equals(BEXIS2.UI.Hooks.HookStatus.Disabled) ? "disabled" : "";
 
                             <li role="presentation" class="@active @disabled">
                                 <a href="#@baseid" aria-controls="@baseid" role="tab" data-toggle="tab" onclick="selectTab('@hook.Name.ToLower()')" onmouseover="prefetch('@hook.Name.ToLower()', '@hook.Start', @Model.Id, @Model.Version)">@hook.DisplayName.ToUpper()</a>
@@ -441,15 +441,15 @@
 
                     @foreach (var hook in additionalHooks)
                     {
-                        if (hook.Status != BExIS.UI.Hooks.HookStatus.AccessDenied &&
-                            hook.Status != BExIS.UI.Hooks.HookStatus.Disabled)
+                        if (hook.Status !=BEXIS2.UI.Hooks.HookStatus.AccessDenied &&
+                            hook.Status !=BEXIS2.UI.Hooks.HookStatus.Disabled)
                         {
 
                             var baseid = @hook.Name.ToLower();
                             var active = hook.Name.Equals(activeHook.Name) ? "active" : "";
 
                             <!--set first element to active-->
-                            var disabled = hook.Status.Equals(BExIS.UI.Hooks.HookStatus.Disabled) ? "disabled" : "";
+                            var disabled = hook.Status.Equals(BEXIS2.UI.Hooks.HookStatus.Disabled) ? "disabled" : "";
 
                             <li role="presentation" class="@active @disabled">
                                 <a href="#@baseid" aria-controls="@baseid" role="tab" data-toggle="tab" onclick="selectTab('@hook.Name.ToLower()')" onmouseover="prefetch('@hook.Name.ToLower()', '@hook.Start', @Model.Id, @Model.Version)">@hook.DisplayName.ToUpper()</a>

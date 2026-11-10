@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.Party;
-using BExIS.Dlm.Services.Party;
+﻿using BEXIS2.Dlm.Entities.Party;
+using BEXIS2.Dlm.Services.Party;
 using BExIS.Modules.Bam.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using System;
@@ -115,7 +115,7 @@ namespace BExIS.Modules.Bam.UI.Helpers
             }
         }
 
-        public static string GetDisplayName(Dlm.Entities.Party.PartyRelationshipType partyRelatinshipType)
+        public static string GetDisplayName(PartyRelationshipType partyRelatinshipType)
         {
             return (string.IsNullOrWhiteSpace(partyRelatinshipType.DisplayName) ? partyRelatinshipType.Title : partyRelatinshipType.DisplayName);
         }

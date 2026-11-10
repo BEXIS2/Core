@@ -1,5 +1,5 @@
-﻿using BExIS.IO.Transform.Input;
-using BExIS.UI.Models;
+﻿using BEXIS2.IO.Transform.Input;
+using BEXIS2.UI.Models;
 using System.Collections.Generic;
 
 namespace BExIS.Modules.Rpm.UI.Models.DataStructure

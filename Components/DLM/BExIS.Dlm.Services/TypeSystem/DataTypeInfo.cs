@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BExIS.Dlm.Services.TypeSystem
+namespace BEXIS2.Dlm.Services.TypeSystem
 {
     /// <summary>
     /// The class holds information about all supported data types specific to the application domain, as well as any given data type.

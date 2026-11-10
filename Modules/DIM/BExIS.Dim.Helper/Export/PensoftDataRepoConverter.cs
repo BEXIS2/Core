@@ -1,11 +1,11 @@
 ﻿using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Services;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.IO;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.MetadataStructure;
+using BEXIS2.IO;
 using BExIS.IO.Transform.Output;
-using BExIS.Xml.Helpers;
+using BEXIS2.Xml.Helpers;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;

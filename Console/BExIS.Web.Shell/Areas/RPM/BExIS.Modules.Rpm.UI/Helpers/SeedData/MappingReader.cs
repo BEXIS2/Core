@@ -1,9 +1,9 @@
 ﻿//using Microsoft.Office.Interop.Excel;
 //using BExIS.IO.Transform;
-//using BExIS.IO.Transform.Input;
+//using BEXIS2.IO.Transform.Input;
 
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.DataStructure;
 using System;
 using System.IO;
 using System.Linq;

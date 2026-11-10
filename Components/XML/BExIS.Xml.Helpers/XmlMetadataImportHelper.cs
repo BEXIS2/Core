@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
+﻿using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Services.MetadataStructure;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace BExIS.Xml.Helpers
+namespace BEXIS2.Xml.Helpers
 {
     public class XmlMetadataImportHelper
     {

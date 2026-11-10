@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Services.TypeSystem;
-using BExIS.IO.DataType.DisplayPattern;
+﻿using BEXIS2.Dlm.Services.TypeSystem;
+using BEXIS2.IO.DataType.DisplayPattern;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.Collections.Generic;
@@ -99,7 +99,7 @@ namespace BExIS.IO.Transform.Output
         /// <param name="systemType"></param>
         /// <param name="styleIndex"></param>
         /// <returns></returns>
-        public static uint GetExcelStyleIndex(BExIS.Dlm.Entities.DataStructure.DataType dataType, List<StyleIndexStruct> styleIndex, int displayPatternId)
+        public static uint GetExcelStyleIndex(BEXIS2.Dlm.Entities.DataStructure.DataType dataType, List<StyleIndexStruct> styleIndex, int displayPatternId)
         {
             if (dataType.SystemType == DataTypeCode.Double.ToString() || dataType.SystemType == DataTypeCode.Decimal.ToString())
                 return styleIndex.Where(p => p.Name.Equals("Decimal")).FirstOrDefault().Index;

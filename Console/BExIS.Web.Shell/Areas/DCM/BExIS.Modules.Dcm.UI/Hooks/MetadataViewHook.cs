@@ -1,4 +1,4 @@
-﻿using BExIS.UI.Hooks;
+﻿using BEXIS2.UI.Hooks;
 
 namespace BExIS.Modules.Dcm.UI.Hooks
 {

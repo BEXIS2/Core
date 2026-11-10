@@ -150,8 +150,8 @@
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
@@ -199,9 +199,9 @@
       <Project>{EA5204FE-EF38-463A-BFDE-D93B1CC85BBA}</Project>
       <Name>BEXIS2.DB.Persistence.API</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
-      <Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>
-      <Name>BExIS.Dlm.Entities</Name>
+    <ProjectReference Include="..\..\DLM\BEXIS2.Dlm.Entities\BEXIS2.Dlm.Entities.csproj">
+      <Project>{d19d7601-4b10-429f-b1a7-9a0cdbb8e6cf}</Project>
+      <Name>BEXIS2.Dlm.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
       <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>

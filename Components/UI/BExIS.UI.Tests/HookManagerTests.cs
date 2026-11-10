@@ -1,14 +1,14 @@
 ﻿using BExIS.App.Testing;
-using BExIS.IO.Transform.Input;
-using BExIS.UI.Hooks;
-using BExIS.UI.Hooks.Caches;
+using BEXIS2.IO.Transform.Input;
+using BEXIS2.UI.Hooks;
+using BEXIS2.UI.Hooks.Caches;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Assert = NUnit.Framework.Assert;
 
-namespace BExIS.UI.Tests
+namespace BEXIS2.UI.Tests
 {
     [TestFixture()]
     public class HookManagerTests

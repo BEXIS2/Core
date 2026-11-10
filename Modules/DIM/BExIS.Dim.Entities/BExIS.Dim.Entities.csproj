@@ -67,9 +67,9 @@
       <Project>{8affebcb-804c-490f-a8c1-bacfddafb8d8}</Project>
       <Name>BEXIS2.DB.Entities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
-      <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
-      <Name>BExIS.Dlm.Entities</Name>
+    <ProjectReference Include="..\..\..\Components\DLM\BEXIS2.Dlm.Entities\BEXIS2.Dlm.Entities.csproj">
+      <Project>{d19d7601-4b10-429f-b1a7-9a0cdbb8e6cf}</Project>
+      <Name>BEXIS2.Dlm.Entities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

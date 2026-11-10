@@ -1,4 +1,4 @@
-﻿@model List<BExIS.Dlm.Entities.Party.PartyCustomGridColumns>
+﻿@model List<BEXIS2.Dlm.Entities.Party.PartyCustomGridColumns>
 
 @{
         String partyTypeTitle = "";
@@ -10,7 +10,7 @@
     <div>
         <div style="min-height:200px;width:50%;display:inline-block;vertical-align:top">
             <div style="background-color:whitesmoke">Custom attributes</div>
-            @foreach (BExIS.Dlm.Entities.Party.PartyCustomGridColumns partyCustomGridColumns in Model.Where(cc => cc.TypePair == null))
+            @foreach (BEXIS2.Dlm.Entities.Party.PartyCustomGridColumns partyCustomGridColumns in Model.Where(cc => cc.TypePair == null))
                 {
                 <div style="padding-left:15px;">
                     <div style="display:inline-block"><input type="checkbox" name="@partyCustomGridColumns.Id" @(partyCustomGridColumns.Enable?"checked":"") /></div><div style="display:inline-block">@Html.DisplayFor(cc => partyCustomGridColumns.CustomAttribute.DisplayName)</div>
@@ -18,7 +18,7 @@
             }
         </div><div style="min-height:200px;width:49%;display:inline-block;vertical-align:top">
             <div style="background-color:whitesmoke">Party type pairs</div>
-            @foreach (BExIS.Dlm.Entities.Party.PartyCustomGridColumns partyCustomGridColumns in Model.Where(cc => cc.CustomAttribute == null))
+            @foreach (BEXIS2.Dlm.Entities.Party.PartyCustomGridColumns partyCustomGridColumns in Model.Where(cc => cc.CustomAttribute == null))
             {
                 <div style="padding-left:15px;">
                     <div style="display:inline-block"><input type="checkbox" name="@partyCustomGridColumns.Id"  @(partyCustomGridColumns.Enable?"checked":"") /></div><div style="display:inline-block">@Html.DisplayFor(cc => partyCustomGridColumns.TypePair.Title)</div>

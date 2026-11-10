@@ -3,7 +3,7 @@
 <!DOCTYPE hibernate-mapping [ <!ENTITY BaseEntityProperties SYSTEM "..\BaseEntityProperties.xml"> ]>
 -->
 
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Data">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.Data">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Dataset" table="Datasets">
     <!-- Mapping BaseEntity properties -->
     <id name="Id" type="Int64">
@@ -67,7 +67,7 @@
 
     <!-- Mapping Dataset properties -->
 
-    <property name="Status" type="BExIS.Dlm.Entities.Data.DatasetStatus, BExIS.Dlm.Entities">
+    <property name="Status" type="BEXIS2.Dlm.Entities.Data.DatasetStatus, BEXIS2.Dlm.Entities">
       <column name="Status" index="idx_ContentDescriptors_status" />
     </property>
 
@@ -80,13 +80,13 @@
     </property>
 
     <!-- Mapping entity associations -->
-    <many-to-one name="DataStructure" class="BExIS.Dlm.Entities.DataStructure.DataStructure" not-null="false" column="DataStructureRef" />
+    <many-to-one name="DataStructure" class="BEXIS2.Dlm.Entities.DataStructure.DataStructure" not-null="false" column="DataStructureRef" />
 
-    <many-to-one name="MetadataStructure" class="BExIS.Dlm.Entities.MetadataStructure.MetadataStructure" not-null="false" column="MetadataStructureRef" /> <!-- not-null should be true, when testing is finished-->
+    <many-to-one name="MetadataStructure" class="BEXIS2.Dlm.Entities.MetadataStructure.MetadataStructure" not-null="false" column="MetadataStructureRef" /> <!-- not-null should be true, when testing is finished-->
 
-    <many-to-one name="ResearchPlan" class="BExIS.Dlm.Entities.Administration.ResearchPlan" not-null="false" column="ResearchPlanRef" />
+    <many-to-one name="ResearchPlan" class="BEXIS2.Dlm.Entities.Administration.ResearchPlan" not-null="false" column="ResearchPlanRef" />
 
-	<many-to-one name="EntityTemplate" class="BExIS.Dlm.Entities.Data.EntityTemplate" not-null="true" column="EntityTemplateRef" />
+	<many-to-one name="EntityTemplate" class="BEXIS2.Dlm.Entities.Data.EntityTemplate" not-null="true" column="EntityTemplateRef" />
 
 	  <set name="Versions" inverse="true" lazy="true" order-by="Timestamp desc" cascade="all-delete-orphan">
       <key>
@@ -97,12 +97,12 @@
 
     <set name="Views" inverse="true" lazy="true" cascade="all">
       <key column="DatasetRef" not-null="false" foreign-key="FK_Views_Datasets" />
-      <one-to-many class="BExIS.Dlm.Entities.DataStructure.DatasetView" />
+      <one-to-many class="BEXIS2.Dlm.Entities.DataStructure.DatasetView" />
     </set>
   </class>
 
   <sql-query name="test1">
-    <return alias="dataset" class="BExIS.Dlm.Entities.Data.Dataset" />
+    <return alias="dataset" class="BEXIS2.Dlm.Entities.Data.Dataset" />
     select * from Datasets where xmlexists('$c/Metadata/Ownership[LastName= "Chamanara"]' passing Datasets.Metadata as "c")
   </sql-query>
 </hibernate-mapping>

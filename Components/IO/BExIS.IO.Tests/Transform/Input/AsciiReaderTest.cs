@@ -1,9 +1,9 @@
 ﻿using BExIS.App.Testing;
-using BExIS.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.DataStructure;
 using BExIS.IO.Tests.Helper;
 using BExIS.IO.Tests.Helpers;
-using BExIS.IO.Transform.Input;
-using BExIS.IO.Transform.Validation.Exceptions;
+using BEXIS2.IO.Transform.Input;
+using BEXIS2.IO.Transform.Validation.Exceptions;
 using BExIS.Utils.Config;
 using Moq;
 using NUnit.Framework;
@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using BEXIS2.Utils.Cfg;
+using BEXIS2.IO;
 
 namespace BExIS.IO.Tests.Transform.Input
 {

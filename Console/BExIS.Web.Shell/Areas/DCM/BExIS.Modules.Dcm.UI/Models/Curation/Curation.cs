@@ -1,5 +1,5 @@
 ﻿using BExIS.Dim.Entities.Publications;
-using BExIS.Dlm.Entities.Curation;
+using BEXIS2.Dlm.Entities.Curation;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Utils.Config.Configurations;
 using System;

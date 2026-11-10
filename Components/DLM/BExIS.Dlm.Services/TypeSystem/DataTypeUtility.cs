@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BExIS.Dlm.Services.TypeSystem
+namespace BEXIS2.Dlm.Services.TypeSystem
 {
     public class DataTypeUtility
     {

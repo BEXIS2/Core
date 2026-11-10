@@ -4,7 +4,7 @@ using BEXIS2.DB.Entities.Common;
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.Dlm.Entities.DataStructure
+namespace BEXIS2.Dlm.Entities.DataStructure
 {
     /// <summary>
     ///

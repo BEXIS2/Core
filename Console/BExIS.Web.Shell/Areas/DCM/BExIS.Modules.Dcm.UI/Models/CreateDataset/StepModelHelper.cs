@@ -1,5 +1,5 @@
 ﻿using BExIS.Modules.Dcm.UI.Models.Metadata;
-using BExIS.Xml.Helpers;
+using BEXIS2.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

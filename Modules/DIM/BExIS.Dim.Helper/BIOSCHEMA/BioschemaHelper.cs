@@ -2,7 +2,7 @@
 using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Services.Mappings;
-using BExIS.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.Data;
 using BEXIS.JSON.Helpers.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

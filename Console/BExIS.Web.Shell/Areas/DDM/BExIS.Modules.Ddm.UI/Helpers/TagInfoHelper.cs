@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
 using BExIS.Modules.Ddm.UI.Models;
 using BExIS.Security.Entities.Versions;
 using System;

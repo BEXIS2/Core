@@ -9,7 +9,7 @@ using System.Xml.Linq;
 using System.Xml.Schema;
 using System.Xml.XPath;
 
-namespace BExIS.Xml.Helpers
+namespace BEXIS2.Xml.Helpers
 {
     public class XmlUtility
     {

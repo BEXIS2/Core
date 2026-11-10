@@ -1,8 +1,8 @@
 ﻿using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Helpers.Mappings;
-using BExIS.Dlm.Entities.Party;
-using BExIS.Dlm.Services.Party;
-using BExIS.Xml.Helpers;
+using BEXIS2.Dlm.Entities.Party;
+using BEXIS2.Dlm.Services.Party;
+using BEXIS2.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

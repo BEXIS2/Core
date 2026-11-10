@@ -1,4 +1,4 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
 using System;
 using System.Collections.Generic;
 using System.Data;

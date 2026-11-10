@@ -1,4 +1,4 @@
-using BExIS.UI.Helpers;
+using BEXIS2.UI.Helpers;
 using System.Web.Mvc;
 
 namespace BExIS.Modules.Smm.UI.Controllers

@@ -1,9 +1,9 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BEXIS2.Dlm.Entities.Data;
 using BExIS.Security.Entities.Subjects;
 using System;
 using BEXIS2.DB.Entities.Common;
 
-namespace BExIS.Dlm.Entities.SpeciesMatching
+namespace BEXIS2.Dlm.Entities.SpeciesMatching
 {
     public class SpeciesMatchingResult : BaseEntity
     {

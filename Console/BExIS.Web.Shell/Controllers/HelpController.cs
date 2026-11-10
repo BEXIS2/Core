@@ -1,4 +1,4 @@
-﻿using BExIS.UI.Helpers;
+﻿using BEXIS2.UI.Helpers;
 using BExIS.Utils.Config;
 using System.Web.Mvc;
 using System.Web.SessionState;

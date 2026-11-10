@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.Party;
-using BExIS.Dlm.Services.Party;
+﻿using BEXIS2.Dlm.Entities.Party;
+using BEXIS2.Dlm.Services.Party;
 using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Requests;
 using BExIS.Security.Entities.Subjects;

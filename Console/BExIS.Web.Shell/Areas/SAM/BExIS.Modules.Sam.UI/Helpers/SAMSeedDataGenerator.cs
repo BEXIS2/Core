@@ -3,7 +3,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.UI.Helpers;
+using BEXIS2.UI.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using Vaiona.IoC;

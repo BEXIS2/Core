@@ -1,22 +1,21 @@
 using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.Edit;
-using BExIS.UI.Hooks;
-using BExIS.UI.Hooks.Caches;
-using BExIS.UI.Hooks.Logs;
-using BExIS.UI.Models;
+using BEXIS2.UI.Hooks;
+using BEXIS2.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.SessionState;
-using Telerik.Web.Mvc.Infrastructure.Implementation;
 using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
+using BEXIS2.UI.Hooks.Logs;
+using BEXIS2.UI.Hooks.Caches;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -201,7 +200,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <exception cref="Exception"></exception>
         [HttpPost]
         [CustomValidateAntiForgeryToken]
-        public JsonResult SaveFileDescription(long id, BExIS.UI.Hooks.Caches.FileInfo file)
+        public JsonResult SaveFileDescription(long id,BEXIS2.UI.Hooks.Caches.FileInfo file)
         {
             // remove file from cache
             HookManager hookManager = new HookManager();

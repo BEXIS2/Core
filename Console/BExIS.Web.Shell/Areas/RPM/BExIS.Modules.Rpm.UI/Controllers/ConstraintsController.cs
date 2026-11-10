@@ -1,15 +1,15 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.Meanings;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.Meanings;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.Meanings;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.Dlm.Services.Meanings;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
-using BExIS.UI.Helpers;
+using BEXIS2.UI.Helpers;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
@@ -179,7 +179,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (ConstraintManager constraintManager = new ConstraintManager())
                 {
-                    Dlm.Entities.DataStructure.Constraint constraint = constraintManager.Constraints.Where(c => c.Id == Id).FirstOrDefault();
+                    BEXIS2.Dlm.Entities.DataStructure.Constraint constraint = constraintManager.Constraints.Where(c => c.Id == Id).FirstOrDefault();
                     constraint.Materialize();
                     List<long> variableIds = constraint.VariableConstraints.Select(v => v.Id).ToList();
 
@@ -222,7 +222,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (ConstraintManager constraintManager = new ConstraintManager())
                 {
-                    Dlm.Entities.DataStructure.Constraint constraint = constraintManager.Constraints.Where(c => c.Id == Id).FirstOrDefault();
+                    BEXIS2.Dlm.Entities.DataStructure.Constraint constraint = constraintManager.Constraints.Where(c => c.Id == Id).FirstOrDefault();
                     constraint.Materialize();
                     using (MeaningManager meaningManager = new MeaningManager())
                     {
@@ -271,7 +271,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (ConstraintManager constraintManager = new ConstraintManager())
                 {
-                    List<Dlm.Entities.DataStructure.Constraint> constraints = constraintManager.Constraints.Where(c => c.DataContainer == null).ToList();
+                    List<BEXIS2.Dlm.Entities.DataStructure.Constraint> constraints = constraintManager.Constraints.Where(c => c.DataContainer == null).ToList();
                     validationResult = ConstraintValidation(constraints, constraintListItem);
 
                     if (validationResult.IsValid)
@@ -371,7 +371,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (ConstraintManager constraintManager = new ConstraintManager())
                 {
-                    List<Dlm.Entities.DataStructure.Constraint> constraints = constraintManager.Constraints.Where(c => c.DataContainer == null).ToList();
+                    List<BEXIS2.Dlm.Entities.DataStructure.Constraint> constraints = constraintManager.Constraints.Where(c => c.DataContainer == null).ToList();
                     validationResult = ConstraintValidation(constraints, constraintListItem);
 
                     if (validationResult.IsValid)
@@ -468,7 +468,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 using (ConstraintManager constraintManager = new ConstraintManager())
                 {
-                    List<Dlm.Entities.DataStructure.Constraint> constraints = constraintManager.Constraints.Where(c => c.DataContainer == null).ToList();
+                    List<BEXIS2.Dlm.Entities.DataStructure.Constraint> constraints = constraintManager.Constraints.Where(c => c.DataContainer == null).ToList();
                     validationResult = ConstraintValidation(constraints, constraintListItem);
 
                     if (validationResult.IsValid)
@@ -532,7 +532,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return Json(Enum.GetNames(typeof(ConstraintType)), JsonRequestBehavior.AllowGet);
         }
 
-        private ValidationResult ConstraintValidation(List<Dlm.Entities.DataStructure.Constraint> constraints, EditConstraintModel constaint)
+        private ValidationResult ConstraintValidation(List<BEXIS2.Dlm.Entities.DataStructure.Constraint> constraints, EditConstraintModel constaint)
         {
             ValidationResult result = new ValidationResult();
 
@@ -558,9 +558,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return result;
         }
 
-        private ValidationResult ConstraintValidation(List<Dlm.Entities.DataStructure.Constraint> constraints, EditDomainConstraintModel constaint)
+        private ValidationResult ConstraintValidation(List<BEXIS2.Dlm.Entities.DataStructure.Constraint> constraints, EditDomainConstraintModel constaint)
         {
-            ValidationResult result = ConstraintValidation(constraints.Cast<Dlm.Entities.DataStructure.Constraint>().ToList(), (EditConstraintModel)constaint);
+            ValidationResult result = ConstraintValidation(constraints.Cast<BEXIS2.Dlm.Entities.DataStructure.Constraint>().ToList(), (EditConstraintModel)constaint);
             if (String.IsNullOrEmpty(constaint.Domain))
             {
                 result.IsValid = false;
@@ -569,9 +569,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return result;
         }
 
-        private ValidationResult ConstraintValidation(List<Dlm.Entities.DataStructure.Constraint> constraints, EditRangeConstraintModel constaint)
+        private ValidationResult ConstraintValidation(List<BEXIS2.Dlm.Entities.DataStructure.Constraint> constraints, EditRangeConstraintModel constaint)
         {
-            ValidationResult result = ConstraintValidation(constraints.Cast<Dlm.Entities.DataStructure.Constraint>().ToList(), (EditConstraintModel)constaint);
+            ValidationResult result = ConstraintValidation(constraints.Cast<BEXIS2.Dlm.Entities.DataStructure.Constraint>().ToList(), (EditConstraintModel)constaint);
             if (constaint.Lowerbound > constaint.Upperbound)
             {
                 result.IsValid = false;
@@ -580,9 +580,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return result;
         }
 
-        private ValidationResult ConstraintValidation(List<Dlm.Entities.DataStructure.Constraint> constraints, EditPatternConstraintModel constaint)
+        private ValidationResult ConstraintValidation(List<BEXIS2.Dlm.Entities.DataStructure.Constraint> constraints, EditPatternConstraintModel constaint)
         {
-            ValidationResult result = ConstraintValidation(constraints.Cast<Dlm.Entities.DataStructure.Constraint>().ToList(), (EditConstraintModel)constaint);
+            ValidationResult result = ConstraintValidation(constraints.Cast<BEXIS2.Dlm.Entities.DataStructure.Constraint>().ToList(), (EditConstraintModel)constaint);
             return result;
         }
 

@@ -1,0 +1,24 @@
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.DataStructure">
+  <subclass name="VariableInstance" extends="Variable" discriminator-value="VAR_INST" dynamic-update="true">
+
+	  <property name="OrderNo" type="Int32">
+		  <column name="OrderNo" />
+	  </property>
+
+	  <property name="DisplayPatternId" type="Int32">
+		  <column name="DisplayPatternId" />
+	  </property>
+
+	  <property name="IsKey" type="Boolean">
+		  <column name="IsKey" />
+	  </property>
+
+	  <many-to-one name="DataStructure" class="StructuredDataStructure" not-null="false" column="DataStructureRef" />
+	  <many-to-one name="VariableTemplate" class="VariableTemplate" not-null="false" column="VarTemplateRef" />
+
+	  <set name="MissingValues" cascade="all-delete-orphan">
+		  <key column="VariableRef" not-null="true" />
+		  <one-to-many class="MissingValue" />
+	  </set>
+  </subclass>
+</hibernate-mapping>

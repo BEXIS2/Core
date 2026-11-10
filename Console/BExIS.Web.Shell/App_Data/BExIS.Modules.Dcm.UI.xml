@@ -63,7 +63,7 @@
              <param name="dataset"></param>
              <returns> HttpResponseMessage </returns>
         </member>
-        <member name="M:BExIS.Modules.Dcm.UI.Controllers.AttachmentsController.GetDatasetFileList(BExIS.Dlm.Entities.Data.DatasetVersion)">
+        <member name="M:BExIS.Modules.Dcm.UI.Controllers.AttachmentsController.GetDatasetFileList(BEXIS2.Dlm.Entities.Data.DatasetVersion)">
             <summary>
             read filenames from datapath/Datasets/id
             </summary>

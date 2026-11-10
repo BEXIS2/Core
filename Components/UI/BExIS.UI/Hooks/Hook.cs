@@ -1,4 +1,4 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BEXIS2.Dlm.Entities.Data;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;

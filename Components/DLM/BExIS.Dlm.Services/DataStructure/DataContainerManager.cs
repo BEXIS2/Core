@@ -1,11 +1,11 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Helpers;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using BEXIS2.DB.Persistence.Api;
 
-namespace BExIS.Dlm.Services.DataStructure
+namespace BEXIS2.Dlm.Services.DataStructure
 {
     public class DataContainerManager : IDisposable
     {

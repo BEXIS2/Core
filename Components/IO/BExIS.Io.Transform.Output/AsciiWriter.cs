@@ -1,6 +1,5 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.IO.Transform.Validation.DSValidation;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using BEXIS2.Utils.Cfg;
+using BEXIS2.IO;
+using BEXIS2.IO.Transform.Validation.DSValidation;
 
 /// <summary>
 ///
@@ -244,7 +245,7 @@ namespace BExIS.IO.Transform.Output
 
                 if (variable != null)
                 {
-                    Dlm.Entities.DataStructure.DataType dataType = variable.DataType;
+                    DataType dataType = variable.DataType;
 
                     VariableValue vv = tuple.VariableValues.Where(v => v.VariableId.Equals(vi.id)).FirstOrDefault();
 
@@ -376,7 +377,7 @@ namespace BExIS.IO.Transform.Output
         /// <param name="format"></param>
         /// <param name="missingValues"></param>
         /// <returns></returns>
-        private string formatValue(object v, Dlm.Entities.DataStructure.DataType dataType, long displayPatternId, string format, ICollection<MissingValue> missingValues)
+        private string formatValue(object v, DataType dataType, long displayPatternId, string format, ICollection<MissingValue> missingValues)
         {
             string originalValue = v.ToString(); //prepare to check against the missing values
                                                  //checking for display pattern

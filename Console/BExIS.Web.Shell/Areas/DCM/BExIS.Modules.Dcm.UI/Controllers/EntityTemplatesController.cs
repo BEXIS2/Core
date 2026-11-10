@@ -2,19 +2,19 @@
 using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Services;
 using BExIS.Dim.Services.Mappings;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.EntityTemplate;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.UI.Helpers;
-using BExIS.UI.Hooks;
-using BExIS.UI.Models;
-using BExIS.Utils.Data.Helpers;
-using BExIS.Xml.Helpers;
+using BEXIS2.UI.Helpers;
+using BEXIS2.UI.Hooks;
+using BEXIS2.UI.Models;
+using BEXIS2.Utils.Data.Helpers;
+using BEXIS2.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -244,7 +244,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 var extensionEntity = entityManager.EntityRepository.Get().Where(e => e.Name.Equals("Extension")).FirstOrDefault();
                 tmp = entityTemplateManager.Repo.Query(t=>t.EntityType.Id.Equals(extensionEntity.Id) && t.Activated)
-                    .Select(e => new ListItem(e.Id, e.Name,"")).ToList();
+                    .Select(e => new ListItem(e.Id, e.Name,"","")).ToList();
             }
 
             return Json(tmp, JsonRequestBehavior.AllowGet);

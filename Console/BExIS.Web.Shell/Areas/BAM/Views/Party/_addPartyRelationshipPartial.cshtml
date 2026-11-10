@@ -1,12 +1,12 @@
 ﻿@model List<BExIS.Modules.Bam.UI.Models.AddRelationshipModel>
 @{
     var hasParty = false;
-    var sourceParty = (BExIS.Dlm.Entities.Party.Party)ViewBag.sourceParty;
-    var subModels = new Dictionary<IEnumerable<BExIS.Dlm.Entities.Party.PartyRelationshipType>, BExIS.Dlm.Entities.Party.Party>();
+    var sourceParty = (BEXIS2.Dlm.Entities.Party.Party)ViewBag.sourceParty;
+    var subModels = new Dictionary<IEnumerable<BEXIS2.Dlm.Entities.Party.PartyRelationshipType>, BEXIS2.Dlm.Entities.Party.Party>();
     //subModels.Add(Model.Where(cc => cc.AssociatedPairs.Any(item => item.SourcePartyType.Id == sourceParty.PartyType.Id)), sourceParty);
     // subModels.Add(Model.Where(cc => cc.AssociatedPairs.Any(item => item.TargetPartyType.Id == sourceParty.PartyType.Id)), sourceParty);
 
-    var partyManager = new BExIS.Dlm.Services.Party.PartyManager();
+    var partyManager = new BEXIS2.Dlm.Services.Party.PartyManager();
 }
 
 <div style="max-height:420px;overflow:auto;">

@@ -1,9 +1,9 @@
 ﻿@model BExIS.Modules.Bam.UI.Models.AddRelationshipModel
-@using BExIS.Dlm.Entities.Party;
+@using BEXIS2.Dlm.Entities.Party;
 @using System.Linq;
 @{
     var sourceParty = Model.SourceParty;
-    var partyManager = new BExIS.Dlm.Services.Party.PartyManager();
+    var partyManager = new BEXIS2.Dlm.Services.Party.PartyManager();
 }
 @if (!Model.PartyRelationshipTypes.Any())
 {<div id="divRelationshipNotFoundTitle"> There is not any allowed related parties for making relationship!</div>

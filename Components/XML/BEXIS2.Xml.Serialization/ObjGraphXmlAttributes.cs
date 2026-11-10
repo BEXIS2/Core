@@ -1,6 +1,6 @@
 using System;
 
-namespace BExIS.Xml.Helpers.Serialization
+namespace BEXIS2.Xml.Helpers.Serialization
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public class XmlIgnoreBaseTypeAttribute : Attribute

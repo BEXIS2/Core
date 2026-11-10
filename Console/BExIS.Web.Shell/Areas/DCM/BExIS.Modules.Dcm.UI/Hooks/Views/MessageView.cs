@@ -1,5 +1,5 @@
 ﻿using BExIS.Security.Entities.Authorization;
-using BExIS.UI.Hooks;
+using BEXIS2.UI.Hooks;
 
 namespace BExIS.Modules.Dcm.UI.Hooks.Views
 {
@@ -29,4 +29,5 @@ namespace BExIS.Modules.Dcm.UI.Hooks.Views
             else Status = HookStatus.Open;
         }
     }
+
 }

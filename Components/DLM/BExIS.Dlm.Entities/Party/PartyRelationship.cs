@@ -1,7 +1,7 @@
 ﻿using System;
 using BEXIS2.DB.Entities.Common;
 
-namespace BExIS.Dlm.Entities.Party
+namespace BEXIS2.Dlm.Entities.Party
 {
     /// <summary>
     /// this.PartyRelationshipType.PartyTypePairs.SourcePartyType MUST CONTAIN this.SourceParty.PartyRelationshipType

@@ -1,10 +1,10 @@
 ﻿using BExIS.Dcm.ImportMetadataStructureWizard;
 using BExIS.Dcm.Wizard;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.IO.Transform.Validation.Exceptions;
+using BEXIS2.Dlm.Services.MetadataStructure;
+using BEXIS2.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Models.ImportMetadata;
 using BExIS.Utils.Helpers;
-using BExIS.Xml.Helpers.Mapping;
+using BEXIS2.Xml.Helpers.Mapping;
 using System;
 using System.Linq;
 using System.Web.Mvc;

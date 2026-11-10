@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.UI.Models;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.UI.Models;
 using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate

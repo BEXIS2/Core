@@ -1,4 +1,4 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BEXIS2.Dlm.Entities.Data;
 using FluentAssertions;
 using NUnit.Framework;
 using System;

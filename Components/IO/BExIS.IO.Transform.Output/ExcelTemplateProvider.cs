@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.DataStructure;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;

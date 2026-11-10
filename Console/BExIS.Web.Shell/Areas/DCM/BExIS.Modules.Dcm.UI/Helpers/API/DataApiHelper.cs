@@ -1,12 +1,12 @@
 ﻿using BExIS.Dim.Entities.Mappings;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.IO;
-using BExIS.IO.Transform.Input;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.IO;
+using BEXIS2.IO.Transform.Input;
 using BExIS.IO.Transform.Output;
-using BExIS.IO.Transform.Validation.Exceptions;
+using BEXIS2.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.API;
 using BExIS.Security.Entities.Subjects;
@@ -14,7 +14,7 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
-using BExIS.Utils.Data.Upload;
+using BEXIS2.Utils.Data.Upload;
 using BExIS.Utils.Upload;
 using System;
 using System.Collections.Generic;
@@ -127,7 +127,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
             {
                 Debug.WriteLine("start storing data");
 
-                asciiWriter = new AsciiWriter(IO.TextSeperator.tab);
+                asciiWriter = new AsciiWriter(BEXIS2.IO.TextSeperator.tab);
                 //create a file in a user tempfolder
                 _filepath = Path.Combine(AppConfiguration.DataPath, _user.UserName, "temp" + DateTime.Now.Millisecond + ".tsv");
 

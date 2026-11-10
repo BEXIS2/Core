@@ -2,7 +2,6 @@
 using BExIS.Security.Services.Versions;
 using BExIS.Utils.Route;
 using BExIS.Web.Shell.Models;
-using BExIS.Xml.Helpers;
 using System;
 using System.Configuration;
 using System.IO;
@@ -11,6 +10,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Xml.Linq;
 using BEXIS2.Utils.Cfg;
+using BEXIS2.Xml.Helpers;
 
 namespace BExIS.Web.Shell.Controllers.API
 {

@@ -1,5 +1,5 @@
 using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.Data;
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Entities.Authorization;
 using System;

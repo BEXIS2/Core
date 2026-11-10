@@ -1,22 +1,22 @@
 using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.MetadataStructure;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.UI.Models.EntityReference;
-using BExIS.Utils.Data.Helpers;
-using BExIS.Xml.Helpers;
-using DocumentFormat.OpenXml.EMMA;
+using BEXIS2.UI.Models.EntityReference;
+using BEXIS2.Utils.Data.Helpers;
+using BEXIS2.Xml.Helpers;
 using NHibernate.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Mvc;
 using System.Web.SessionState;
 using BEXIS2.DB.Persistence.Api;
+using BEXIS2.UI.Models;
+using System.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -157,10 +157,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public JsonResult GetTargets(long id)
         {
             EntityReferenceHelper helper = new EntityReferenceHelper();
-            List<SelectListItem> tmp = new List<SelectListItem>();
+            List<ListItem> tmp = new List<ListItem>();
 
             if (id > 0)
-                helper.GetEntities(id).OrderByDescending(s => s.Id).ForEach(e => tmp.Add(new SelectListItem() { Text = e.Id + ": " + e.Title, Value = e.Id.ToString() }));
+                helper.GetEntities(id).OrderByDescending(s => s.Id).ForEach(e => tmp.Add(new ListItem() { Text = e.Id + ": " + e.Title, Value = e.Id.ToString() }));
 
             return Json(tmp, JsonRequestBehavior.AllowGet);
         }
@@ -168,7 +168,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public JsonResult GetTargetVersions(long id, long type)
         {
             EntityReferenceHelper helper = new EntityReferenceHelper();
-            SelectList tmp = new SelectList(new List<SelectListItem>());
+            BEXIS2.UI.Models.SelectList tmp = new BEXIS2.UI.Models.SelectList();
 
             if (id > 0)
                 tmp = helper.GetEntityVersionsDesc(id, type);
@@ -258,8 +258,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["Version"] = helper.CountVersions(id, type);
             // ViewData for enitity type list
             ViewData["TargetType"] = helper.GetEntityTypes();
-            ViewData["Target"] = new SelectList(new List<SelectListItem>(), "Text", "Value");
-            ViewData["TargetVersion"] = new SelectList(new List<SelectListItem>(), "Text", "Value");
+            ViewData["Target"] = new BEXIS2.UI.Models.SelectList();
+            ViewData["TargetVersion"] = new BEXIS2.UI.Models.SelectList();
             ViewData["ReferenceType"] = helper.GetReferencesTypes();
             ViewData["ReferenceTypeHelp"] = helper.GetReferencesHelpTypes();
             //"This references is saved."

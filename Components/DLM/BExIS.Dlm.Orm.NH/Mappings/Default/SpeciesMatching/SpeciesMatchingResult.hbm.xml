@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.SpeciesMatching">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.SpeciesMatching">
 
 	<class name="SpeciesMatchingResult" table="smm_species_matching_result" lazy="true">
 		<id name="Id" column="id" type="Int64">
@@ -55,7 +55,7 @@
 		<property name="DatasetVersionId" column="dataset_version_id" type="Int64" not-null="false" />
 		
 		<!--Dataset-->
-		<many-to-one name="Dataset" class="BExIS.Dlm.Entities.Data.Dataset" not-null="false" column="DatasetRef" />
+		<many-to-one name="Dataset" class="BEXIS2.Dlm.Entities.Data.Dataset" not-null="false" column="DatasetRef" />
 		
 		<!--DatasetVersion (does not work this way ... Error: refers to unmapped ...-->
 		<!--

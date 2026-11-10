@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
-using BExIS.IO.DataType.DisplayPattern;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.IO.DataType.DisplayPattern;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;

@@ -1,14 +1,14 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq;
 
-namespace BExIS.Dlm.Services.Helpers
+namespace BEXIS2.Dlm.Services.Helpers
 {
     public class DatasetConvertor
     {

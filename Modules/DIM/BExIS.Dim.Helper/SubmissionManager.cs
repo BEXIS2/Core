@@ -1,7 +1,7 @@
 ﻿using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Services;
-using BExIS.IO;
-using BExIS.Xml.Helpers;
+using BEXIS2.IO;
+using BEXIS2.Xml.Helpers;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;

@@ -1,0 +1,216 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Mappings\db2dialect\**" />
+    <Compile Remove="Mappings\mssql2008dialect\**" />
+    <EmbeddedResource Remove="Mappings\db2dialect\**" />
+    <EmbeddedResource Remove="Mappings\mssql2008dialect\**" />
+    <None Remove="Mappings\db2dialect\**" />
+    <None Remove="Mappings\mssql2008dialect\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Mappings\Default\Administration\ResearchPlan.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\Base\BaseEntityProperties.xml" />
+    <Content Include="Mappings\Default\Curation\CurationEntry.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\Curation\CurationNote.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\AggregateFunction.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\Classifier.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\Constraint.ComparisonConstraint.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\Constraint.DomainConstraint.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\Constraint.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\Constraint.PatternConstraint.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\Constraint.RangeConstraint.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\ConversionMethod.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\DataContainer.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\DataStructure.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\DataStructure.StructuredDataStructure.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\DataStructure.UnStructuredDataStructure.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\DataType.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\DataView.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\Dimension.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\ExtendedProperty.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\GlobalizationInfo.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\Methodology.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\MissingValue.hbm.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\Unit.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\Variable.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\DataStructure\Variable.VariableInstance.hbm.xml" />
+    <Content Include="Mappings\Default\DataStructure\Variable.VarTemplate.hbm.xml" />
+    <Content Include="Mappings\Default\Data\ContentDescriptor.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\Data\Dataset.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\Data\DatasetVersion.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\Data\DataTuple.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\Data\DataTupleVersion.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\Data\EntityTemplate.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\Data\Tag.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\Meaning\ExternalLink.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\Meaning\Meaning.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\Meaning\MeaningEntry.hbm.xml" />
+    <Content Include="Mappings\Default\Meaning\PrefixCategory.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\MetadataStructure\DataContainer.MetadataAttribute.Compound.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\MetadataStructure\DataContainer.MetadataAttribute.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\MetadataStructure\DataContainer.MetadataAttribute.Parameter.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\MetadataStructure\DataContainer.MetadataAttribute.Simple.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\MetadataStructure\MetadataAttributeUsage.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\MetadataStructure\MetadataNestedAttributeUsage.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\MetadataStructure\MetadataPackage.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\MetadataStructure\MetadataPackageUsage.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\MetadataStructure\MetadataParameterUsage.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\MetadataStructure\MetadataStructure.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\Party\Party.hbm.xml" />
+    <Content Include="Mappings\Default\Party\PartyCustomAttribute.hbm.xml" />
+    <Content Include="Mappings\Default\Party\PartyCustomAttributeValue.hbm.xml" />
+    <Content Include="Mappings\Default\Party\PartyCustomGridColumns.hbm.xml" />
+    <Content Include="Mappings\Default\Party\PartyRelationship.hbm.xml" />
+    <Content Include="Mappings\Default\Party\PartyRelationshipType.hbm.xml" />
+    <Content Include="Mappings\Default\Party\PartyStatus.hbm.xml" />
+    <Content Include="Mappings\Default\Party\PartyStatusType.hbm.xml" />
+    <Content Include="Mappings\Default\Party\PartyType.hbm.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\Party\PartyTypePair.hbm.xml" />
+    <Content Include="Mappings\Default\Party\PartyUser.hbm.xml" />
+    <Content Include="Mappings\Default\SpeciesMatching\SpeciesMatchingResult.hbm.xml" />
+    <Content Include="Mappings\PostgreSQL82Dialect\NativeObjects\Queries.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Mappings\Default\nativeobjects\" />
+    <Folder Include="Mappings\Default\postobjects\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DB\BEXIS2.DB.Persistence.API\BEXIS2.DB.Persistence.API.csproj" />
+    <ProjectReference Include="..\..\Utils\BExIS.Utils.NH\BExIS.Utils.NH.csproj" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="rmdir /S /Q  &quot;$(SolutionDir)Console\Workspace\Components\Dlm\Db\Mappings&quot;&#xD;&#xA;C:\Windows\System32\xcopy &quot;$(ProjectDir)Mappings&quot; &quot;$(SolutionDir)Console\Workspace\Components\Dlm\Db\Mappings&quot; /E /C /Y /I /D" />
+  </Target>
+
+</Project>

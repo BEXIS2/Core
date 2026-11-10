@@ -1,6 +1,6 @@
 
 using System.Collections.Generic;
-using BExIS.Dlm.Entities.Meanings;
+using BEXIS2.Dlm.Entities.Meanings;
 using System.Runtime.Remoting.Activation;
 using BExIS.Modules.Rpm.UI.Models.Dimensions;
 using BExIS.Modules.Rpm.UI.Models.Dimensions;

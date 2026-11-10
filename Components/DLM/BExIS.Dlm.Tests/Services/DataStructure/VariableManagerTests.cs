@@ -1,10 +1,10 @@
 ﻿
 
 using BExIS.App.Testing;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.Meanings;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.Meanings;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.Meanings;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.Dlm.Services.Meanings;
 using BExIS.Utils.Config;
 using NUnit.Framework;
 using System;

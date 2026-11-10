@@ -3,7 +3,7 @@
 <!DOCTYPE hibernate-mapping [ <!ENTITY BaseEntityProperties SYSTEM "..\BaseEntityProperties.xml"> ]>
 -->
 
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Data">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.Data">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Tag" table="Tags">
     <!-- Mapping BaseEntity properties -->
     <id name="Id" type="Int64">

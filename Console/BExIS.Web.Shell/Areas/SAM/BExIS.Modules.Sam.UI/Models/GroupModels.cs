@@ -1,5 +1,5 @@
 ﻿using BExIS.Security.Entities.Subjects;
-using BExIS.UI.Helpers;
+using BEXIS2.UI.Helpers;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 using System;

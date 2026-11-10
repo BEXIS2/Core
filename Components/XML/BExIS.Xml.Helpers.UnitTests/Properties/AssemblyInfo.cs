@@ -1,11 +1,11 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("BExIS.Xml.Helpers.UnitTests")]
+[assembly: AssemblyTitle("BEXIS2.Xml.Helpers.UnitTests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("BExIS.Xml.Helpers.UnitTests")]
+[assembly: AssemblyProduct("BEXIS2.Xml.Helpers.UnitTests")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

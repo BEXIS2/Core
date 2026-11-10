@@ -1,8 +1,8 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dim.Entities.Mappings;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using BExIS.IO;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.IO;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.Attachments;
 using BExIS.Security.Entities.Authorization;

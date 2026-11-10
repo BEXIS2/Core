@@ -1,10 +1,10 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
 using System.Collections.Generic;
 
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.Dlm.Entities.MetadataStructure
+namespace BEXIS2.Dlm.Entities.MetadataStructure
 {
     /// <summary>
     ///

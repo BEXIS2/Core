@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using BEXIS2.DB.Entities.Common;
 
-namespace BExIS.Dlm.Entities.DataStructure
+namespace BEXIS2.Dlm.Entities.DataStructure
 {
     /// <summary>
     /// The base class for all concrete constraint types. It provides various attributes needed for all the constraint sub types. Among them the cultureId is a means

@@ -1,5 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.DataStructure;
 using BExIS.IO.Transform.Output;
 using System.Collections.Generic;
 using System.Linq;

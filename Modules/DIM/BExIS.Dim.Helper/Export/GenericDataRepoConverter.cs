@@ -1,14 +1,14 @@
 ﻿using BExIS.Dim.Entities.Export.GBIF;
 using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Services;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.IO;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Utils.Extensions;
-using BExIS.Xml.Helpers;
+using BEXIS2.Xml.Helpers;
 using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
@@ -20,6 +20,7 @@ using System.Web.Routing;
 using System.Xml;
 using BEXIS2.Utils.Cfg;
 using BEXIS2.App.Logging;
+using BEXIS2.IO;
 
 namespace BExIS.Dim.Helpers.Export
 {

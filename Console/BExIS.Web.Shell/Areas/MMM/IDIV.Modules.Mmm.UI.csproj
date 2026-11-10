@@ -90,11 +90,11 @@
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
-    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.Helpers.dll</HintPath>
@@ -237,17 +237,17 @@
       <Project>{ea5204fe-ef38-463a-bfde-d93b1cc85bba}</Project>
       <Name>BEXIS2.DB.Persistence.API</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
-      <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
-      <Name>BExIS.Dlm.Entities</Name>
+    <ProjectReference Include="..\..\..\..\Components\DLM\BEXIS2.Dlm.Entities\BEXIS2.Dlm.Entities.csproj">
+      <Project>{d19d7601-4b10-429f-b1a7-9a0cdbb8e6cf}</Project>
+      <Name>BEXIS2.Dlm.Entities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
-      <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
-      <Name>BExIS.Dlm.Services</Name>
+    <ProjectReference Include="..\..\..\..\Components\DLM\BEXIS2.Dlm.Services\BEXIS2.Dlm.Services.csproj">
+      <Project>{cbdcfcbb-05fb-4531-86a6-df6cc38f1e55}</Project>
+      <Name>BEXIS2.Dlm.Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
-      <Project>{E4795F06-20C2-4C4C-A720-9A79896384DF}</Project>
-      <Name>BExIS.IO</Name>
+    <ProjectReference Include="..\..\..\..\Components\IO\BEXIS2.IO\BEXIS2.IO.csproj">
+      <Project>{67d97d3b-739e-09f5-903e-6d9144a0ee4d}</Project>
+      <Name>BEXIS2.IO</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
       <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>

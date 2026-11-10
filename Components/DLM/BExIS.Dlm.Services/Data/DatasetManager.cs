@@ -1,8 +1,8 @@
-﻿using BExIS.Dlm.Entities.Administration;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
+﻿using BEXIS2.Dlm.Entities.Administration;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Orm.NH.Utils;
-using BExIS.Dlm.Services.Helpers;
+using BEXIS2.Dlm.Services.Helpers;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Versions;
@@ -17,7 +17,7 @@ using System.Text;
 using System.Xml;
 using BEXIS2.DB.Entities.Logging;
 using BEXIS2.DB.Persistence.Api;
-using MDS = BExIS.Dlm.Entities.MetadataStructure;
+using MDS = BEXIS2.Dlm.Entities.MetadataStructure;
 using BEXIS2.App.Logging;
 
 namespace System.Data
@@ -35,10 +35,10 @@ namespace System.Data
 }
 
 /// <summary>
-/// The BExIS.Dlm.Services.Data namespace provides classes and interfaces that enable access to the datasets managed by the system.
-/// This includes creating a <see cref="BExIS.Dlm.Entities.Dataset"/>, a <see cref="BExIS.Dlm.Entities.Version"/> of a dataset, or manipulating data tuples associated with a specific version.
+/// The BEXIS2.Dlm.Services.Data namespace provides classes and interfaces that enable access to the datasets managed by the system.
+/// This includes creating a <see cref="BEXIS2.Dlm.Entities.Dataset"/>, a <see cref="BEXIS2.Dlm.Entities.Version"/> of a dataset, or manipulating data tuples associated with a specific version.
 /// </summary>
-namespace BExIS.Dlm.Services.Data
+namespace BEXIS2.Dlm.Services.Data
 {
     /// <summary>
     /// Determines whether a mterialized view should be created at datasets' checkin time, and weather such a view should be refreshed.

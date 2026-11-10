@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.Administration;
-using BExIS.Dlm.Services.Administration;
+﻿using BEXIS2.Dlm.Entities.Administration;
+using BEXIS2.Dlm.Services.Administration;
 using BExIS.Modules.Rpm.UI.Helpers.SeedData;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;

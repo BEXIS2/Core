@@ -1,4 +1,4 @@
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.MetadataStructure">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.MetadataStructure">
   <subclass name="MetadataCompoundAttribute" extends="MetadataAttribute" discriminator-value="CMA" dynamic-update="true">
 
     <set name="MetadataNestedAttributeUsages" inverse="true" order-by="Id" cascade="all-delete-orphan" lazy="false">

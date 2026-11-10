@@ -2,7 +2,7 @@
 using System.IO;
 using System.Xml;
 
-namespace BExIS.Xml.Helpers.Serialization
+namespace BEXIS2.Xml.Helpers.Serialization
 {
     public class XmlObjectTransformer : IObjectTransfromer
     {

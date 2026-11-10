@@ -1,8 +1,8 @@
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Services;
 using BExIS.Dim.Services.Mappings;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Models.View;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;

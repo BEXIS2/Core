@@ -1,4 +1,4 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BEXIS2.Dlm.Entities.Data;
 
 namespace BExIS.Modules.Sam.UI.Models
 {

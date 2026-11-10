@@ -1,9 +1,9 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
 using System;
 using System.Diagnostics.Contracts;
 using BEXIS2.DB.Persistence.Api;
 
-namespace BExIS.Dlm.Services.Helpers
+namespace BEXIS2.Dlm.Services.Helpers
 {
     /// <summary>
     /// Design decision: should it be a static class?!

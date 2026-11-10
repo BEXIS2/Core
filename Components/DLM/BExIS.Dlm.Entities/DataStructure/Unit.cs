@@ -1,11 +1,11 @@
-﻿using BExIS.Dlm.Entities.Meanings;
+﻿using BEXIS2.Dlm.Entities.Meanings;
 using System.Collections.Generic;
 using BEXIS2.DB.Entities.Common;
 
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.Dlm.Entities.DataStructure
+namespace BEXIS2.Dlm.Entities.DataStructure
 {
     /// <summary>
     ///

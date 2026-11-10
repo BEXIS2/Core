@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using System.IO;
 using BEXIS2.Utils.Cfg;
+using BEXIS2.IO;
 
 namespace BExIS.IO.Tests
 {

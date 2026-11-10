@@ -1,17 +1,15 @@
 using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.IO;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.IO;
 using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
-using BExIS.UI.Helpers;
-using BExIS.UI.Hooks;
-using BExIS.UI.Hooks.Caches;
-using BExIS.UI.Hooks.Logs;
-using BExIS.UI.Models;
+using BEXIS2.UI.Hooks;
+using BEXIS2.UI.Hooks.Logs;
+using BEXIS2.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,7 +20,8 @@ using System.Web.SessionState;
 using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
-using Cache = BExIS.UI.Hooks.Caches;
+using Cache =BEXIS2.UI.Hooks.Caches;
+using BEXIS2.UI.Hooks.Caches;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {

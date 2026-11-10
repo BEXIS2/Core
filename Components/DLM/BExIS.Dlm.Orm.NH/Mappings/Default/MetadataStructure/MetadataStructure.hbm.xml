@@ -1,4 +1,4 @@
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.MetadataStructure">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.MetadataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="MetadataStructure" table="MetadataStructures" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
 
@@ -94,7 +94,7 @@
 
     <set name="Datasets" inverse="true" lazy="true" order-by="Id" cascade="all"> <!--cascade only insert, update, set null in case of delete-->
       <key column ="MetadataStructureRef" not-null="true" foreign-key="FK_Datasets_MetadataStructures" />
-      <one-to-many class="BExIS.Dlm.Entities.Data.Dataset" />
+      <one-to-many class="BEXIS2.Dlm.Entities.Data.Dataset" />
     </set>
   </class>
 </hibernate-mapping>

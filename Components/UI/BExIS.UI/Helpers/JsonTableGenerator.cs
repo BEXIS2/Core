@@ -1,5 +1,4 @@
 ﻿using BExIS.IO.DataType.DisplayPattern;
-using BExIS.Utils.Models;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
@@ -11,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace BExIS.UI.Helpers
+namespace BEXIS2.UI.Helpers
 {
     public class JsonTableGenerator
     {

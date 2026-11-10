@@ -6,16 +6,16 @@ using BExIS.Dim.Helpers.Export;
 using BExIS.Dim.Helpers.GFBIO;
 using BExIS.Dim.Helpers.Models;
 using BExIS.Dim.Services;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using BExIS.IO;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Versions;
 using BExIS.Security.Services.Authorization;
-using BExIS.Utils.Data;
-using BExIS.Xml.Helpers;
+using BEXIS2.Utils.Data;
+using BEXIS2.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -25,10 +25,11 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
-using BEXIS2.DB.Persistence.Api;
+
 using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Modularity;
+using BEXIS2.UI.Models;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -453,7 +454,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     string name = broker.Name;
                     if (!String.IsNullOrEmpty(broker.Type)) name += " (" + broker.Type + ")";
-                    model.Brokers.Add(new BExIS.UI.Models.ListItem(broker.Id, name));
+                    model.Brokers.Add(new ListItem(broker.Id, name));
                 }
 
                 model.DatasetId = datasetId;

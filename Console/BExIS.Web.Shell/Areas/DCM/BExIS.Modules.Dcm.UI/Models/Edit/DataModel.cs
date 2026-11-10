@@ -1,5 +1,5 @@
-﻿using BExIS.UI.Hooks.Caches;
-using BExIS.UI.Models;
+﻿using BEXIS2.UI.Hooks.Caches;
+using BEXIS2.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -4,7 +4,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.UI.Helpers;
+using BEXIS2.UI.Helpers;
 using BExIS.Utils.NH.Querying;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +13,7 @@ using Telerik.Web.Mvc;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
+using BExIS.Modules.Sam.UI.Helpers;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {

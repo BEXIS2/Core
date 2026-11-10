@@ -1,5 +1,5 @@
 ﻿using BExIS.Dim.Helpers.Models;
-using BExIS.UI.Helpers;
+using BEXIS2.UI.Helpers;
 using System.Collections.Generic;
 using System.Reflection;
 

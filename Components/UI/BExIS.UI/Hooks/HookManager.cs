@@ -1,5 +1,5 @@
 ﻿using BExIS.IO;
-using BExIS.Xml.Helpers;
+using BEXIS2.Xml.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

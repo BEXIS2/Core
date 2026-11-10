@@ -1,9 +1,10 @@
-﻿using BExIS.Dlm.Entities.Administration;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Administration;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
+﻿
+using BEXIS2.Dlm.Entities.Administration;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Administration;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;
@@ -70,7 +71,7 @@ namespace BExIS.IO.Tests.Helpers
             try
             {
                 var dim = unitManager.Create("TestDimnesion", "For Unit Testing", "");
-                var unit = unitManager.Create("None_UT", "NoneUT", "Use in unit tsting", dim, Dlm.Entities.DataStructure.MeasurementSystem.Metric);
+                var unit = unitManager.Create("None_UT", "NoneUT", "Use in unit tsting", dim, MeasurementSystem.Metric);
 
                 var intType = dataTypeManager.Repo.Get().FirstOrDefault(d => d.Name.Equals("Integer")) == null ? dataTypeManager.Create("Integer", "Integer", TypeCode.Int32) : dataTypeManager.Repo.Get().FirstOrDefault(d => d.Name.Equals("Integer"));
                 var strType = dataTypeManager.Repo.Get().FirstOrDefault(d => d.Name.Equals("String")) == null ? dataTypeManager.Create("String", "String", TypeCode.String) : dataTypeManager.Repo.Get().FirstOrDefault(d => d.Name.Equals("String"));
@@ -84,7 +85,7 @@ namespace BExIS.IO.Tests.Helpers
                 var varTemplate4 = variableManager.CreateVariableTemplate("att4UT", boolType, unit, "Attribute for Unit testing");
                 var varTemplate5 = variableManager.CreateVariableTemplate("att5UT", dateTimeType, unit, "Attribute for Unit testing");
 
-                StructuredDataStructure dataStructure = dsManager.CreateStructuredDataStructure("dsForTesting", "DS for unit testing", "", "", Dlm.Entities.DataStructure.DataStructureCategory.Generic);
+                StructuredDataStructure dataStructure = dsManager.CreateStructuredDataStructure("dsForTesting", "DS for unit testing", "", "", DataStructureCategory.Generic);
 
                 var var1 = variableManager.CreateVariable("var1UT", dataStructure.Id, varTemplate1.Id);
                 var var2 = variableManager.CreateVariable("var2UT", dataStructure.Id, varTemplate2.Id);

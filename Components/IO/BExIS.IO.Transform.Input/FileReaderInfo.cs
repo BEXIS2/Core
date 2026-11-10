@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace BExIS.IO.Transform.Input
+namespace BEXIS2.IO.Transform.Input
 {
     public class FileReaderInfo
     {

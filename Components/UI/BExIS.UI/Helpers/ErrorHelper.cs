@@ -2,7 +2,7 @@
 using BExIS.Utils.Config;
 using BEXIS2.App.Logging;
 
-namespace BExIS.UI.Helpers
+namespace BEXIS2.UI.Helpers
 {
     public class ErrorHelper
     {

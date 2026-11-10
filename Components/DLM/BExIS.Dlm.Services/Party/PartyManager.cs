@@ -1,4 +1,4 @@
-﻿using BExIS.Dlm.Entities.Party;
+﻿using BEXIS2.Dlm.Entities.Party;
 using BExIS.Ext.Model;
 using NCalc;
 using System;
@@ -7,9 +7,9 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text.RegularExpressions;
 using BEXIS2.DB.Persistence.Api;
-using PartyX = BExIS.Dlm.Entities.Party.Party;
+using PartyX = BEXIS2.Dlm.Entities.Party.Party;
 
-namespace BExIS.Dlm.Services.Party
+namespace BEXIS2.Dlm.Services.Party
 {
     public sealed class PartyManager : IDisposable
     {

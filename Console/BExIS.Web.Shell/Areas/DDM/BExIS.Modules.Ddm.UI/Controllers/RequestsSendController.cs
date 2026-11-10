@@ -1,7 +1,7 @@
 ﻿using BExIS.App.Bootstrap.Helpers;
-using BExIS.Dlm.Entities.Party;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.Party;
+using BEXIS2.Dlm.Entities.Party;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.Party;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Requests;

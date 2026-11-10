@@ -1,4 +1,4 @@
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.DataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Unit" table="Units" dynamic-update="true" select-before-update="true">
     <!-- Mapping BaseEntity properties -->
 
@@ -29,7 +29,7 @@
       <column name="Description" />
     </property>
 
-    <property name="MeasurementSystem" type="BExIS.Dlm.Entities.DataStructure.MeasurementSystem, BExIS.Dlm.Entities">
+    <property name="MeasurementSystem" type="BEXIS2.Dlm.Entities.DataStructure.MeasurementSystem, BEXIS2.Dlm.Entities">
       <column name="MeasurementSystem" index="idx_Units_measurementSystem" />
     </property>
 
@@ -59,8 +59,8 @@
       <many-to-many column="DataTypeRef" class="DataType" />
     </set>
 
-    <many-to-one name="Dimension" class="BExIS.Dlm.Entities.DataStructure.Dimension" not-null="true" column="DimensionRef" />
+    <many-to-one name="Dimension" class="BEXIS2.Dlm.Entities.DataStructure.Dimension" not-null="true" column="DimensionRef" />
 
-	<many-to-one name="ExternalLink" class="BExIS.Dlm.Entities.Meanings.ExternalLink" not-null="false" column="ExternalLinkRef" />
+	<many-to-one name="ExternalLink" class="BEXIS2.Dlm.Entities.Meanings.ExternalLink" not-null="false" column="ExternalLinkRef" />
   </class>
 </hibernate-mapping>

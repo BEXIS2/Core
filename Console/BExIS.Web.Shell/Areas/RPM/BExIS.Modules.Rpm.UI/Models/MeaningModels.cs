@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.Meanings;
-using BExIS.UI.Models;
+﻿using BEXIS2.Dlm.Entities.Meanings;
+using BEXIS2.UI.Models;
 using System;
 using System.Collections.Generic;
 

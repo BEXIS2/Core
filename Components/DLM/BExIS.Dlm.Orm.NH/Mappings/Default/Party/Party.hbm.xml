@@ -1,4 +1,4 @@
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Party">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.Party">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Party" table="Parties" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
 
@@ -40,7 +40,7 @@
       <column name="IsTemp" />
     </property>
 
-    <many-to-one name="PartyType" class="BExIS.Dlm.Entities.Party.PartyType"  not-null="true" column="PartyTypeRef"  lazy="false" />
+    <many-to-one name="PartyType" class="BEXIS2.Dlm.Entities.Party.PartyType"  not-null="true" column="PartyTypeRef"  lazy="false" />
 
     <set name="CustomAttributeValues" table="PartyCustomAttributeValues" cascade="all" lazy="true">
       <key column="PartyRef" />

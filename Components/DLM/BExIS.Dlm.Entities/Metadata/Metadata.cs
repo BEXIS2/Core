@@ -1,7 +1,7 @@
 ﻿/// <summary>
 ///
 /// </summary>
-namespace BExIS.Dlm.Entities.Metadata
+namespace BEXIS2.Dlm.Entities.Metadata
 {
     /// <summary>
     ///

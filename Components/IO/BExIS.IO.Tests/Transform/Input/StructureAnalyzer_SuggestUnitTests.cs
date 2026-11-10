@@ -1,5 +1,5 @@
 ﻿using BExIS.App.Testing;
-using BExIS.IO.Transform.Input;
+using BEXIS2.IO.Transform.Input;
 using BExIS.Utils.Config;
 using NUnit.Framework;
 using System.Linq;

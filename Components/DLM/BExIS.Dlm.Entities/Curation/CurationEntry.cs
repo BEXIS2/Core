@@ -1,11 +1,11 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BEXIS2.Dlm.Entities.Data;
 using BExIS.Security.Entities.Subjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using BEXIS2.DB.Entities.Common;
 
-namespace BExIS.Dlm.Entities.Curation
+namespace BEXIS2.Dlm.Entities.Curation
 {
     public class CurationEntry:BaseEntity
     {

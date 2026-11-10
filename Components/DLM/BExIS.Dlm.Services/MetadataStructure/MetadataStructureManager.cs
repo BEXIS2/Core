@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.MetadataStructure;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.MetadataStructure;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -8,9 +8,9 @@ using System.Xml;
 using BEXIS2.DB.Persistence.Api;
 using BEXIS2.Utils.Cfg;
 
-using MDS = BExIS.Dlm.Entities.MetadataStructure;
+using MDS = BEXIS2.Dlm.Entities.MetadataStructure;
 
-namespace BExIS.Dlm.Services.MetadataStructure
+namespace BEXIS2.Dlm.Services.MetadataStructure
 {
     public class MetadataStructureManager : IDisposable
     {

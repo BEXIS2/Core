@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.Party;
-using BExIS.Dlm.Services.Party;
+﻿using BEXIS2.Dlm.Entities.Party;
+using BEXIS2.Dlm.Services.Party;
 using BExIS.Modules.Bam.UI.Helpers;
 using BExIS.Modules.Bam.UI.Models;
 using BExIS.Security.Services.Subjects;
@@ -11,6 +11,7 @@ using System.Data;
 using System.Linq;
 using System.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
+using BEXIS2.IO.Transform.Validation.Exceptions;
 
 namespace BExIS.Modules.Bam.UI.Controllers
 {
@@ -306,9 +307,9 @@ namespace BExIS.Modules.Bam.UI.Controllers
         private void validateAttribute(PartyModel partyModel)
         {
             if (partyModel.StartDate > partyModel.EndDate)
-                partyModel.Errors.Add(new IO.Transform.Validation.Exceptions.Error(IO.Transform.Validation.Exceptions.ErrorType.Other, "Start date is greater than end date!"));
+                partyModel.Errors.Add(new Error(ErrorType.Other, "Start date is greater than end date!"));
             if (partyModel.PartyType.Id == 0)
-                partyModel.Errors.Add(new IO.Transform.Validation.Exceptions.Error(IO.Transform.Validation.Exceptions.ErrorType.Other, "Please select party type!"));
+                partyModel.Errors.Add(new Error(ErrorType.Other, "Please select party type!"));
         }
 
         /// <summary>

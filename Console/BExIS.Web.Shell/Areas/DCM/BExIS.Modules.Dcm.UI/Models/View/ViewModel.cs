@@ -1,8 +1,8 @@
 ﻿using BExIS.Dim.Helpers.Models;
 using BExIS.Modules.Dim.UI.Models.Download;
-using BExIS.UI.Hooks;
-using BExIS.UI.Hooks.Caches;
-using BExIS.UI.Models;
+using BEXIS2.UI.Hooks;
+using BEXIS2.UI.Hooks.Caches;
+using BEXIS2.UI.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

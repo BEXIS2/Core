@@ -1,4 +1,4 @@
-﻿using BExIS.UI.Models.EntityReference;
+﻿using BEXIS2.UI.Models.EntityReference;
 using System.Collections.Generic;
 using System.Data;
 

@@ -1,9 +1,9 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BEXIS2.Dlm.Entities.Data;
 using System;
 using System.Collections.Generic;
 using System.Xml;
 
-namespace BExIS.Xml.Helpers
+namespace BEXIS2.Xml.Helpers
 {
     public class XmlDataTupleHelper
     {

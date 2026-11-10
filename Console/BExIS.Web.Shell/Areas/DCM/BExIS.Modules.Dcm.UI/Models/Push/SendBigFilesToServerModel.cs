@@ -1,4 +1,4 @@
-﻿using BExIS.IO;
+﻿using BEXIS2.IO;
 using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Models.Push

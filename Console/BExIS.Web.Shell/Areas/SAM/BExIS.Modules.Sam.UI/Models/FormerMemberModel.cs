@@ -1,4 +1,4 @@
-﻿using BExIS.Dlm.Entities.Party;
+﻿using BEXIS2.Dlm.Entities.Party;
 using BExIS.Security.Entities.Subjects;
 using System;
 

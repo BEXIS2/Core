@@ -1,8 +1,8 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.Data;
 using BExIS.Security.Entities.Authorization;
-using BExIS.UI.Hooks;
-using BExIS.UI.Hooks.Logs;
+using BEXIS2.UI.Hooks;
+using BEXIS2.UI.Hooks.Logs;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

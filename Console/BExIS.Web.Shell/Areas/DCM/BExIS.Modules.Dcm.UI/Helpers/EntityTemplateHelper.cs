@@ -1,11 +1,11 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.MetadataStructure;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dcm.UI.Models.EntityTemplate;
 using BExIS.Security.Services.Objects;
-using BExIS.UI.Models;
-using BExIS.Xml.Helpers;
+using BEXIS2.UI.Models;
+using BEXIS2.Xml.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 

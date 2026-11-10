@@ -1,6 +1,6 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Data;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
 using DocumentFormat.OpenXml;
@@ -17,7 +17,7 @@ using System.Text.RegularExpressions;
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.IO.Transform.Input
+namespace BEXIS2.IO.Transform.Input
 {
     /// <summary>
     /// http://blogs.msdn.com/b/brian_jones/archive/2010/05/27/parsing-and-reading-large-excel-files-with-the-open-xml-sdk.aspx

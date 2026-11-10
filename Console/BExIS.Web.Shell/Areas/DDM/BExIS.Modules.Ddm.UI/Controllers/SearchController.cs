@@ -1,9 +1,9 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Ddm.Api;
 using BExIS.Security.Entities.Requests;
-using BExIS.UI.Helpers;
+using BEXIS2.UI.Helpers;
 using BExIS.Utils.Models;
-using BExIS.Xml.Helpers;
+using BEXIS2.Xml.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

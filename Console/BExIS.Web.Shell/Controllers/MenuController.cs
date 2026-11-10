@@ -2,7 +2,7 @@ using BExIS.App.Bootstrap.Extensions;
 using BExIS.App.Bootstrap.Helpers;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
-using BExIS.UI.Models;
+using BEXIS2.UI.Models;
 using BExIS.Web.Shell.Helpers;
 using Microsoft.AspNet.Identity.Owin;
 using System;

@@ -1,6 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Ddm.Api;
-using BExIS.UI.Helpers;
+using BEXIS2.UI.Helpers;
 using BExIS.Utils.Models;
 using Newtonsoft.Json;
 using System;

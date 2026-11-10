@@ -1,6 +1,6 @@
 ﻿using BExIS.App.Testing;
-using BExIS.Dlm.Entities.Party;
-using BExIS.Dlm.Services.Party;
+using BEXIS2.Dlm.Entities.Party;
+using BEXIS2.Dlm.Services.Party;
 using BExIS.Utils.Config;
 using FluentAssertions;
 using NUnit.Framework;

@@ -113,8 +113,8 @@
       <HintPath>..\..\..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Caching" />
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Security" />
     <Reference Include="System.Text.Encodings.Web, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -175,10 +175,6 @@
     <Compile Include="UnityHttpControllerActivator.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\BEXIS2.App.MultiTenancy.Services\BEXIS2.App.MultiTenancy.Services.csproj">
-      <Project>{AD0948EE-D9CF-4CE4-8D09-D0E235F6FA77}</Project>
-      <Name>BEXIS2.App.MultiTenancy.Services</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
       <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
       <Name>BExIS.Security.Entities</Name>
@@ -211,9 +207,9 @@
       <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
       <Name>BExIS.Utils.Config</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
-      <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
-      <Name>BExIS.Utils.Data</Name>
+    <ProjectReference Include="..\..\Utils\BExIS.Utils\BExIS.Utils.csproj">
+      <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
+      <Name>BExIS.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Utils\BEXIS2.Utils\BEXIS2.Utils.csproj">
       <Project>{64c9fd56-c5b2-4eb2-ae33-4c6a9cfde3e2}</Project>
@@ -226,22 +222,6 @@
     <ProjectReference Include="..\..\Vaiona\Vaiona.IoC\Vaiona.IoC.csproj">
       <Project>{29a7be0f-a17c-4ae8-8ca1-15fe4dd74129}</Project>
       <Name>Vaiona.IoC</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Logging\Vaiona.Logging.csproj">
-      <Project>{07B0DF99-AB49-49A3-802B-C15353FD3EAA}</Project>
-      <Name>Vaiona.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.Model\Vaiona.Model.csproj">
-      <Project>{a60ac05f-8c9a-4efd-9826-452e6049da4d}</Project>
-      <Name>Vaiona.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.MultiTenancy.Api\Vaiona.MultiTenancy.Api.csproj">
-      <Project>{bccd3d7b-8a50-4fa2-b9d3-2cb31bea60b3}</Project>
-      <Name>Vaiona.MultiTenancy.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Vaiona\Vaiona.MultiTenancy.Services\Vaiona.MultiTenancy.Services.csproj">
-      <Project>{4639d130-e0aa-4aef-b9bd-bef6ad99dbaf}</Project>
-      <Name>Vaiona.MultiTenancy.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">
       <Project>{705F8751-E58A-453E-A7FD-0C310FD3CAE8}</Project>
@@ -262,6 +242,10 @@
     <ProjectReference Include="..\BEXIS2.App.MultiTenancy.Api\BEXIS2.App.MultiTenancy.Api.csproj">
       <Project>{517074F2-BBBA-4007-2775-02B9CBB0F766}</Project>
       <Name>BEXIS2.App.MultiTenancy.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BEXIS2.App.MultiTenancy.Services\BEXIS2.App.MultiTenancy.Services.csproj">
+      <Project>{7264DB56-6327-CF6C-D01A-E86287C946C9}</Project>
+      <Name>BEXIS2.App.MultiTenancy.Services</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

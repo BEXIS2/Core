@@ -1,9 +1,9 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BEXIS2.Dlm.Entities.Data;
 using System;
 using System.Diagnostics.Contracts;
 using BEXIS2.DB.Persistence.Api;
 
-namespace BExIS.Dlm.Services.Data
+namespace BEXIS2.Dlm.Services.Data
 {
     public class TagManager : IDisposable
     {

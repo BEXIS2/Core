@@ -7,7 +7,7 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace BExIS.Xml.Helpers.Serialization
+namespace BEXIS2.Xml.Helpers.Serialization
 {
     public class ObjGraphXmlSerializer : ObjGraphXmlSerializationBase
     {

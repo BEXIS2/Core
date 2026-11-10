@@ -1,12 +1,12 @@
-﻿using BExIS.Dlm.Entities.Curation;
-using BExIS.Dlm.Entities.Data;
+﻿using BEXIS2.Dlm.Entities.Curation;
+using BEXIS2.Dlm.Entities.Data;
 using BExIS.Security.Entities.Subjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using BEXIS2.DB.Persistence.Api;
 
-namespace BExIS.Dlm.Services.Curation
+namespace BEXIS2.Dlm.Services.Curation
 {
     public class CurationManager : IDisposable
     {

@@ -1,5 +1,5 @@
 ﻿using BExIS.App.Testing;
-using BExIS.Dlm.Services.Meanings;
+using BEXIS2.Dlm.Services.Meanings;
 using BExIS.Utils.Config;
 using FluentAssertions;
 using NUnit.Framework;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BExIS.Dlm.Entities.Meanings.Tests
+namespace BEXIS2.Dlm.Entities.Meanings.Tests
 {
     public class MeaningManagerTests
     {

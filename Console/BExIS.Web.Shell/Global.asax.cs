@@ -1,5 +1,5 @@
 ﻿using BExIS.App.Bootstrap;
-using BExIS.UI.Helpers;
+using BEXIS2.UI.Helpers;
 using BExIS.Utils.Config;
 using BExIS.Utils.Config.Configurations;
 using BExIS.Web.Shell.Helpers;

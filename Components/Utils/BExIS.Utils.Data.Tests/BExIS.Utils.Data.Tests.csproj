@@ -113,8 +113,8 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Extensions, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\System.Runtime.Extensions.4.3.1\lib\net462\System.Runtime.Extensions.dll</HintPath>
@@ -159,21 +159,21 @@
       <Project>{254dd905-625f-42ec-bd8e-ec4ec4f4c679}</Project>
       <Name>BEXIS2.DB.PersistenceProviders.NH</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
-      <Project>{A7FBCC13-7E29-4710-82A1-BD6D6F811FDA}</Project>
-      <Name>BExIS.Utils.Data</Name>
+    <ProjectReference Include="..\..\DLM\BEXIS2.Dlm.Entities\BEXIS2.Dlm.Entities.csproj">
+      <Project>{d19d7601-4b10-429f-b1a7-9a0cdbb8e6cf}</Project>
+      <Name>BEXIS2.Dlm.Entities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
-      <Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>
-      <Name>BExIS.Dlm.Entities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
-      <Project>{C4CA0A99-0AF3-4372-A9B7-B9073599BD8B}</Project>
-      <Name>BExIS.Dlm.Services</Name>
+    <ProjectReference Include="..\..\DLM\BEXIS2.Dlm.Services\BEXIS2.Dlm.Services.csproj">
+      <Project>{cbdcfcbb-05fb-4531-86a6-df6cc38f1e55}</Project>
+      <Name>BEXIS2.Dlm.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
       <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
       <Name>BExIS.Utils.Config</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BEXIS2.Utils.Data\BEXIS2.Utils.Data.csproj">
+      <Project>{15C59767-818F-4A0E-B012-B1DD756A29CF}</Project>
+      <Name>BEXIS2.Utils.Data</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

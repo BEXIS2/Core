@@ -1,7 +1,7 @@
 ﻿using BExIS.App.Testing;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Helpers;
-using BExIS.Dlm.Services.MetadataStructure;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Helpers;
+using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.Utils.Config;
 using NUnit.Framework;
 using System;

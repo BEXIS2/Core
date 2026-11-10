@@ -2,7 +2,7 @@
 using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
-using BExIS.UI.Helpers;
+using BEXIS2.UI.Helpers;
 using BExIS.Utils.NH.Querying;
 using Microsoft.AspNet.Identity;
 using System;
@@ -14,6 +14,7 @@ using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
 using Vaiona.Web.Mvc;
+using BExIS.Modules.Sam.UI.Helpers;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {

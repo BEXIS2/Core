@@ -1,8 +1,7 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.TypeSystem;
-using BExIS.IO;
-using BExIS.IO.DataType.DisplayPattern;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.TypeSystem;
+using BEXIS2.IO;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -10,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using BEXIS2.Utils.Cfg;
+using BEXIS2.IO.DataType.DisplayPattern;
 
 namespace BExIS.Modules.Ddm.UI.Models
 {

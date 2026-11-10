@@ -1,5 +1,5 @@
-﻿using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.UI.Hooks;
+﻿using BEXIS2.IO.Transform.Validation.Exceptions;
+using BEXIS2.UI.Hooks;
 using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Models.Edit
@@ -11,7 +11,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
         public int Version { get; set; }
         public string Title { get; set; }
         public List<Hook> Hooks { get; set; }
-        public List<BExIS.UI.Hooks.View> Views { get; set; }
+        public List<BEXIS2.UI.Hooks.View> Views { get; set; }
 
         public EditModel()
         {
@@ -20,7 +20,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
             VersionId = 0;
             Title = "";
             Hooks = new List<Hook>();
-            Views = new List<BExIS.UI.Hooks.View>();
+            Views = new List<BEXIS2.UI.Hooks.View>();
         }
     }
 

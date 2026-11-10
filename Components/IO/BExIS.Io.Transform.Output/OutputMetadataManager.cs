@@ -1,9 +1,9 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Xml.Helpers;
-using BExIS.Xml.Helpers.Mapping;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.MetadataStructure;
+using BEXIS2.Xml.Helpers;
+using BEXIS2.Xml.Helpers.Mapping;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,6 +13,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using BEXIS2.Utils.Cfg;
+using BEXIS2.IO;
 
 namespace BExIS.IO.Transform.Output
 {

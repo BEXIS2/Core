@@ -1,11 +1,11 @@
 ﻿using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Services.Mappings;
-using BExIS.Dlm.Entities.Party;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Dlm.Services.Party;
+using BEXIS2.Dlm.Entities.Party;
+using BEXIS2.Dlm.Services.MetadataStructure;
+using BEXIS2.Dlm.Services.Party;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
-using BExIS.Xml.Helpers;
+using BEXIS2.Xml.Helpers;
 using DataAnnotationsValidator;
 using System;
 using System.Collections.Generic;

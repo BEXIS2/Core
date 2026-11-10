@@ -1,9 +1,9 @@
 ﻿using BExIS.App.Testing;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.SpeciesMatching;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Dlm.Services.SpeciesMatching;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.SpeciesMatching;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.MetadataStructure;
+using BEXIS2.Dlm.Services.SpeciesMatching;
 using BExIS.Dlm.Tests.Helpers;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;

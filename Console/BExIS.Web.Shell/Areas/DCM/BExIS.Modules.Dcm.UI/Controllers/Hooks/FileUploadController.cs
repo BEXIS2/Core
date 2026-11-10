@@ -1,16 +1,14 @@
 using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.IO.Transform.Input;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.IO.Transform.Input;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.Edit;
-using BExIS.UI.Hooks;
-using BExIS.UI.Hooks.Caches;
-using BExIS.UI.Hooks.Logs;
-using BExIS.UI.Models;
-using BExIS.Utils.Data.Upload;
+using BEXIS2.UI.Hooks;
+using BEXIS2.UI.Models;
+using BEXIS2.Utils.Data.Upload;
 using BExIS.Utils.Upload;
 using System;
 using System.Collections.Generic;
@@ -25,7 +23,9 @@ using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Modularity;
 
-using Cache = BExIS.UI.Hooks.Caches;
+using Cache =BEXIS2.UI.Hooks.Caches;
+using BEXIS2.UI.Hooks.Caches;
+using BEXIS2.UI.Hooks.Logs;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -206,7 +206,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         [HttpPost]
         [CustomValidateAntiForgeryToken]
-        public JsonResult RemoveFile(long id, BExIS.UI.Hooks.Caches.FileInfo file)
+        public JsonResult RemoveFile(long id,BEXIS2.UI.Hooks.Caches.FileInfo file)
         {
             // remove file from server
             string path = Path.Combine(AppConfiguration.DataPath, "datasets", id.ToString(), "Temp", file.Name);
@@ -234,7 +234,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         [HttpPost]
         [CustomValidateAntiForgeryToken]
-        public JsonResult SaveFileDescription(long id, BExIS.UI.Hooks.Caches.FileInfo file, string description)
+        public JsonResult SaveFileDescription(long id,BEXIS2.UI.Hooks.Caches.FileInfo file, string description)
         {
             // remove file from cache
             HookManager hookManager = new HookManager();

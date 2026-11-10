@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Xml;
 
-namespace BExIS.Xml.Helpers.Extensions
+namespace BEXIS2.Xml.Helpers.Extensions
 {
     public static class XmlExtensions
     {

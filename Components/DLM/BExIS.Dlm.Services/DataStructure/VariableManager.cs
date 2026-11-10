@@ -1,12 +1,12 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.Meanings;
-using BExIS.Dlm.Services.TypeSystem;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.Meanings;
+using BEXIS2.Dlm.Services.TypeSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using BEXIS2.DB.Persistence.Api;
 
-namespace BExIS.Dlm.Services.DataStructure
+namespace BEXIS2.Dlm.Services.DataStructure
 {
     /// <summary>
     /// DataStructureManager class is responsible for CRUD (Create, Read, Update, Delete) operations on the aggregate area of the data structure.

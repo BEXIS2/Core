@@ -1,10 +1,10 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using BEXIS2.DB.Entities.Common;
 
-namespace BExIS.Dlm.Entities.Meanings
+namespace BEXIS2.Dlm.Entities.Meanings
 {
     public class Meaning : BaseEntity
     {

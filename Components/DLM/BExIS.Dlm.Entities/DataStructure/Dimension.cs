@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using BEXIS2.DB.Entities.Common;
 
-namespace BExIS.Dlm.Entities.DataStructure
+namespace BEXIS2.Dlm.Entities.DataStructure
 {
     public class Dimension : BaseEntity
     {

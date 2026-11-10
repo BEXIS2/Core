@@ -1,9 +1,9 @@
-﻿using BExIS.Dlm.Entities.Common;
+﻿using BEXIS2.Dlm.Entities.Common;
 
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.Dlm.Entities.MetadataStructure
+namespace BEXIS2.Dlm.Entities.MetadataStructure
 {
     /// <summary>
     ///
@@ -20,7 +20,7 @@ namespace BExIS.Dlm.Entities.MetadataStructure
         /// </summary>
         /// <remarks> intentionally used the full name. otherwise is not shown in the class diagram. </remarks>
         /// <seealso cref=""/>
-        public virtual BExIS.Dlm.Entities.MetadataStructure.MetadataStructure MetadataStructure { get; set; }
+        public virtual BEXIS2.Dlm.Entities.MetadataStructure.MetadataStructure MetadataStructure { get; set; }
 
         /// <summary>
         ///

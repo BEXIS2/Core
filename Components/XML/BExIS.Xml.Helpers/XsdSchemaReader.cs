@@ -10,7 +10,7 @@ using BEXIS2.Utils.Cfg;
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.Xml.Helpers
+namespace BEXIS2.Xml.Helpers
 {
     /// <summary>
     ///

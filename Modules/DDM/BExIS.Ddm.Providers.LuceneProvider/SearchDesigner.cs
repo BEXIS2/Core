@@ -1,9 +1,9 @@
 ﻿using BExIS.Ddm.Api;
 using BExIS.Ddm.Providers.LuceneProvider.Helpers;
 using BExIS.Ddm.Providers.LuceneProvider.Indexer;
-using BExIS.Dlm.Services.MetadataStructure;
+using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.Utils.Models;
-using BExIS.Xml.Helpers;
+using BEXIS2.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -3,12 +3,12 @@ using BExIS.Ddm.Api;
 using BExIS.Ddm.Providers.LuceneProvider;
 using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Helpers.Mappings;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Entities.Party;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Dlm.Services.Party;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Entities.Party;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.MetadataStructure;
+using BEXIS2.Dlm.Services.Party;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
@@ -17,11 +17,11 @@ using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
-using BExIS.Utils.Data.Helpers;
+using BEXIS2.Utils.Data.Helpers;
 using BExIS.Utils.Extensions;
 using BExIS.Utils.Route;
-using BExIS.Xml.Helpers;
-using BExIS.Xml.Helpers.Mapping;
+using BEXIS2.Xml.Helpers;
+using BEXIS2.Xml.Helpers.Mapping;
 using BEXIS.JSON.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -182,7 +182,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     var metadataResult = xmlMapperManager.Generate(metadataForImport, 1, true);
 
                     // generate intern template metadata xml with needed attribtes
-                    var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
+                    var xmlMetadatWriter = new XmlMetadataWriter(BEXIS2.Xml.Helpers.XmlNodeMode.xPath);
                     var metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStructureId,
                         XmlUtility.ToXDocument(metadataResult));
 

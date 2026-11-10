@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Xml;
-using BExIS.Xml.Helpers.Serialization;
+using BEXIS2.Xml.Helpers.Serialization;
 
 namespace BEXIS2.DB.Entities.Common
 {

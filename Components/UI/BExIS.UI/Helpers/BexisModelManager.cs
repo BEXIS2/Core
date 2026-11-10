@@ -1,7 +1,7 @@
 ﻿using BExIS.UI.Models;
 using System.Collections.Generic;
 
-namespace BExIS.UI.Helpers
+namespace BEXIS2.UI.Helpers
 {
     public static class BexisModelManager
     {

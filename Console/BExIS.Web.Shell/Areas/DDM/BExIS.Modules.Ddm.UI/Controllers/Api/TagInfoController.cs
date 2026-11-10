@@ -1,7 +1,7 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dim.Entities.Mappings;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
 using BExIS.Modules.Ddm.UI.Helpers;
 using BExIS.Modules.Ddm.UI.Models;
 using BExIS.Utils.Route;

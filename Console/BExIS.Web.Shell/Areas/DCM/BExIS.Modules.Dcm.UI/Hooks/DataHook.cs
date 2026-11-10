@@ -1,6 +1,7 @@
-﻿using BExIS.Dlm.Services.Data;
+﻿using BEXIS2.Dlm.Services.Data;
 using BExIS.Security.Entities.Authorization;
-using BExIS.UI.Hooks;
+using BEXIS2.UI.Hooks;
+using BEXIS2.Dlm.Entities.Data;
 
 namespace BExIS.Modules.Dcm.UI.Hooks
 {
@@ -42,7 +43,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
                 if (dataset == null && dataset.DataStructure == null) { Status = HookStatus.Disabled; return; }
                 else Status = HookStatus.Open;
 
-                if (dataset.Status != Dlm.Entities.Data.DatasetStatus.CheckedIn) Status = HookStatus.Disabled;
+                if (dataset.Status != DatasetStatus.CheckedIn) Status = HookStatus.Disabled;
             }
         }
     }

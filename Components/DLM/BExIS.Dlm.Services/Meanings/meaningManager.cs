@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.Meanings;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.Meanings;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using BEXIS2.DB.Persistence.Api;
 
-namespace BExIS.Dlm.Services.Meanings
+namespace BEXIS2.Dlm.Services.Meanings
 {
     public class MeaningManager : IDisposable
     {

@@ -595,7 +595,7 @@
             <param name="menuBar"></param>
             <returns></returns>
         </member>
-        <member name="M:BExIS.Web.Shell.Helpers.MenuHelper.AdditionalHelpBar(BExIS.UI.Models.MenuItem)">
+        <member name="M:BExIS.Web.Shell.Helpers.MenuHelper.AdditionalHelpBar(BEXIS2.UI.Models.MenuItem)">
             <summary>
             defaul menubar load with bar name like
             menubarRoot

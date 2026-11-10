@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using System.Threading.Tasks;
@@ -48,8 +48,8 @@ namespace BExIS.Utils.Data
                 }
 
                 // get rights
-                bool hasEditRights = await permissionManager.HasEffectiveRightsAsync(username, typeof(BExIS.Dlm.Entities.Data.Dataset), datasetId, RightType.Write);
-                bool hasReadRights = await permissionManager.HasEffectiveRightsAsync(username, typeof(BExIS.Dlm.Entities.Data.Dataset), datasetId, RightType.Read);
+                bool hasEditRights = await permissionManager.HasEffectiveRightsAsync(username, typeof(BEXIS2.Dlm.Entities.Data.Dataset), datasetId, RightType.Write);
+                bool hasReadRights = await permissionManager.HasEffectiveRightsAsync(username, typeof(BEXIS2.Dlm.Entities.Data.Dataset), datasetId, RightType.Read);
 
                 // if user has edit rights && public/ internal accessible dont matter
                 if (hasEditRights)

@@ -3,7 +3,7 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Versions;
-using BExIS.UI.Helpers;
+using BEXIS2.UI.Helpers;
 using BExIS.Utils.Config;
 using BExIS.Web.Shell.Models;
 using Microsoft.AspNet.Identity.Owin;

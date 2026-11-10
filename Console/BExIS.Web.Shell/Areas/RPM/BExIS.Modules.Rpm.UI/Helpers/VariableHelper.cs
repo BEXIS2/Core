@@ -1,11 +1,11 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.Meanings;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.Meanings;
-using BExIS.IO.DataType.DisplayPattern;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.Meanings;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.Dlm.Services.Meanings;
+using BEXIS2.IO.DataType.DisplayPattern;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Modules.Rpm.UI.Models.DataStructure;
-using BExIS.UI.Models;
+using BEXIS2.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

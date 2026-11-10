@@ -1,7 +1,7 @@
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.MetadataStructure">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.MetadataStructure">
 
   <sql-query name="GetEffectivePackageUsages">
-    <return alias="metadataPackageUsage" class="BExIS.Dlm.Entities.MetadataStructure.MetadataPackageUsage" />
+    <return alias="metadataPackageUsage" class="BEXIS2.Dlm.Entities.MetadataStructure.MetadataPackageUsage" />
     WITH RECURSIVE hid(id, name, parentref, level) AS (
     SELECT id, name, parentref, 0 as level
     FROM metadatastructures
@@ -33,7 +33,7 @@
   </sql-query>
 
 <sql-query name="GetEffectiveMetadataNestedUsages">
-	<return alias="metadataNestedAttributeUsage" class="BExIS.Dlm.Entities.MetadataStructure.MetadataNestedAttributeUsage" />
+	<return alias="metadataNestedAttributeUsage" class="BEXIS2.Dlm.Entities.MetadataStructure.MetadataNestedAttributeUsage" />
 
 
 	WITH RECURSIVE x AS (

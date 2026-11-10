@@ -1,4 +1,4 @@
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Party">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.Party">
   <class xmlns="urn:nhibernate-mapping-2.2" name="PartyRelationship" table="PartyRelationships">
     <!-- Mapping BaseEntity properties -->
 
@@ -40,12 +40,12 @@
       <column name="Scope" />
     </property>
 
-    <many-to-one name="PartyRelationshipType" class="BExIS.Dlm.Entities.Party.PartyRelationshipType"  not-null="true" column="PartyRelationshipTypeRef" />
+    <many-to-one name="PartyRelationshipType" class="BEXIS2.Dlm.Entities.Party.PartyRelationshipType"  not-null="true" column="PartyRelationshipTypeRef" />
 
-    <many-to-one name="PartyTypePair" class="BExIS.Dlm.Entities.Party.PartyTypePair"  not-null="false" column="PartyRelationshipTypePairRef" />
+    <many-to-one name="PartyTypePair" class="BEXIS2.Dlm.Entities.Party.PartyTypePair"  not-null="false" column="PartyRelationshipTypePairRef" />
 
-    <many-to-one name="SourceParty" class="BExIS.Dlm.Entities.Party.Party"  not-null="true" column="SourcePartyRef" />
+    <many-to-one name="SourceParty" class="BEXIS2.Dlm.Entities.Party.Party"  not-null="true" column="SourcePartyRef" />
 
-    <many-to-one name="TargetParty" class="BExIS.Dlm.Entities.Party.Party" not-null="true" column="TargetPartyRef" />
+    <many-to-one name="TargetParty" class="BEXIS2.Dlm.Entities.Party.Party" not-null="true" column="TargetPartyRef" />
   </class>
 </hibernate-mapping>

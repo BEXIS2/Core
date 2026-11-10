@@ -1,4 +1,4 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BEXIS2.Dlm.Entities.Data;
 using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;

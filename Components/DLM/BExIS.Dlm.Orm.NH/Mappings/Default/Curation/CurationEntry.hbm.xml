@@ -3,7 +3,7 @@
 <!DOCTYPE hibernate-mapping [ <!ENTITY BaseEntityProperties SYSTEM "..\BaseEntityProperties.xml"> ]>
 -->
 
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Curation">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.Curation">
   <class xmlns="urn:nhibernate-mapping-2.2" name="CurationEntry" table="CurationEntries">
     <!-- Mapping BaseEntity properties -->
     <id name="Id" type="Int64">
@@ -28,7 +28,7 @@
 		  <column name="Topic"  sql-type="text"/>
 	  </property>
 	  
-	<property name="Type" type=" BExIS.Dlm.Entities.Curation.CurationEntryType, BExIS.Dlm.Entities">
+	<property name="Type" type=" BEXIS2.Dlm.Entities.Curation.CurationEntryType, BEXIS2.Dlm.Entities">
 		<column name="Type" />
 	</property>
 	  
@@ -74,7 +74,7 @@
 
 	<!-- Mapping entity associations -->
 	  <!--Dataset-->
-	  <many-to-one name="Dataset" class="BExIS.Dlm.Entities.Data.Dataset" not-null="false" column="DatasetRef" />
+	  <many-to-one name="Dataset" class="BEXIS2.Dlm.Entities.Data.Dataset" not-null="false" column="DatasetRef" />
 
 	  <!--Creator-->
 	  <many-to-one name="Creator" class="BExIS.Security.Entities.Subjects.User" not-null="false" column="UserRef" />
@@ -85,7 +85,7 @@
 		<key>
 		<column name="CurationEntryRef" />
 		</key>
-		<one-to-many class="BExIS.Dlm.Entities.Curation.CurationNote" />
+		<one-to-many class="BEXIS2.Dlm.Entities.Curation.CurationNote" />
 	</set>
 
 

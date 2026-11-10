@@ -1,4 +1,4 @@
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.DataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Variable" table="Variables" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
 
@@ -49,7 +49,7 @@
 
 	<set name="Meanings" table="rpm_meanings_variables"  lazy="false" fetch="select">
 		<key column="VariableRef" />
-		<many-to-many class="BExIS.Dlm.Entities.Meanings.Meaning" column="MeaningRef" />
+		<many-to-many class="BEXIS2.Dlm.Entities.Meanings.Meaning" column="MeaningRef" />
 	</set>
   </class>
 </hibernate-mapping>

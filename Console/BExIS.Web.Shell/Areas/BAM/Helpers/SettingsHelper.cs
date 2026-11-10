@@ -1,5 +1,5 @@
 ﻿using BExIS.Modules.Bam.UI.Configurations;
-using BExIS.Xml.Helpers;
+using BEXIS2.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;

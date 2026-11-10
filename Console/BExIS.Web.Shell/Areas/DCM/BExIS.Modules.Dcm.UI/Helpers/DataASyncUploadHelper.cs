@@ -1,38 +1,32 @@
-﻿using BExIS.App.Bootstrap.Helpers;
-using BExIS.Dcm.UploadWizard;
-using BExIS.Dim.Entities.Mappings;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.IO;
-using BExIS.IO.Transform.Input;
+﻿using BExIS.Dim.Entities.Mappings;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.IO;
+using BEXIS2.IO.Transform.Input;
 using BExIS.IO.Transform.Output;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Modules.Dcm.UI.Hooks;
+using BEXIS2.IO.Transform.Validation.Exceptions;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Utilities;
-using BExIS.UI.Hooks;
-using BExIS.UI.Hooks.Caches;
-using BExIS.UI.Hooks.Logs;
+using BEXIS2.UI.Hooks;
+using BEXIS2.UI.Hooks.Logs;
 using BExIS.Utils.Config;
-using BExIS.Utils.Data.Upload;
+using BEXIS2.Utils.Data.Upload;
 using BExIS.Utils.Upload;
-using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web;
-using System.Web.Routing;
 using System.Xml;
 using BEXIS2.DB.Entities.Common;
 using BEXIS2.DB.Persistence.Api;
 using BEXIS2.Utils.Cfg;
+using BEXIS2.UI.Hooks.Caches;
+using BEXIS2.Xml.Helpers;
 
 namespace BExIS.Modules.Dcm.UI.Helpers
 {
@@ -623,9 +617,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 if (temp.Count == 0)// reset cache if success, no errors in temp
                 {
-                    Cache.Files = new List<BExIS.UI.Hooks.Caches.FileInfo>();
-                    Cache.DeleteFiles = new List<BExIS.UI.Hooks.Caches.FileInfo>();
-                    Cache.ModifiedFiles = new List<BExIS.UI.Hooks.Caches.FileInfo>();
+                    Cache.Files = new List<BEXIS2.UI.Hooks.Caches.FileInfo>();
+                    Cache.DeleteFiles = new List<BEXIS2.UI.Hooks.Caches.FileInfo>();
+                    Cache.ModifiedFiles = new List<BEXIS2.UI.Hooks.Caches.FileInfo>();
                     //logs.Messages.Add(new LogMessage(DateTime.Now, messages, username, "Attachment upload","upload"));
                     Log.Messages.Add(new LogMessage(DateTime.Now, "data was successfully uploaded", User.Name, "Submit", "Upload"));
                 }
@@ -644,7 +638,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         }
 
         //[MeasurePerformance]
-        private string MoveAndSaveOriginalFileInContentDiscriptor(DatasetVersion datasetVersion, string title, long datasetId, long dataStructureId, string originalFilePath, BExIS.UI.Hooks.Caches.FileInfo file)
+        private string MoveAndSaveOriginalFileInContentDiscriptor(DatasetVersion datasetVersion, string title, long datasetId, long dataStructureId, string originalFilePath,BEXIS2.UI.Hooks.Caches.FileInfo file)
         {
             string ext = ".xlsm";// Bus[TaskManager.EXTENTION].ToString();
 
@@ -688,7 +682,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             return storePath;
         }
 
-        private string SaveFileInContentDiscriptor(DatasetVersion datasetVersion, BExIS.UI.Hooks.Caches.FileInfo file, string getpath)
+        private string SaveFileInContentDiscriptor(DatasetVersion datasetVersion,BEXIS2.UI.Hooks.Caches.FileInfo file, string getpath)
         {
             try
             {

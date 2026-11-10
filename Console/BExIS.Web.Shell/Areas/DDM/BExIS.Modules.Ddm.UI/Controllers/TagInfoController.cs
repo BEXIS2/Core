@@ -1,12 +1,12 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
-using BExIS.Dlm.Entities.Curation;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
+using BEXIS2.Dlm.Entities.Curation;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
-using BExIS.UI.Helpers;
+using BEXIS2.UI.Helpers;
 using BExIS.Utils.Config;
 using Microsoft.AspNet.Identity;
 using NHibernate.Linq;

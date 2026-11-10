@@ -1,14 +1,14 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.Administration;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Services.Administration;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
-using BExIS.Xml.Helpers;
-using BExIS.Xml.Helpers.Mapping;
+using BEXIS2.Xml.Helpers;
+using BEXIS2.Xml.Helpers.Mapping;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -85,7 +85,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     entity = new Entity();
                     entity.Name = "Dataset";
                     entity.EntityType = typeof(Dataset);
-                    entity.EntityStoreType = typeof(Xml.Helpers.DatasetStore);
+                    entity.EntityStoreType = typeof(BEXIS2.Xml.Helpers.DatasetStore);
                     entity.UseMetadata = true;
                     entity.Securable = true;
 
@@ -124,7 +124,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     publication = new Entity();
                     publication.Name = "Publication";
                     publication.EntityType = typeof(Dataset);
-                    publication.EntityStoreType = typeof(Xml.Helpers.PublicationStore);
+                    publication.EntityStoreType = typeof(PublicationStore);
                     publication.UseMetadata = true;
                     publication.Securable = true;
 
@@ -163,7 +163,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     extension = new Entity();
                     extension.Name = "Extension";
                     extension.EntityType = typeof(Dataset);
-                    extension.EntityStoreType = typeof(Xml.Helpers.ExtensionStore);
+                    extension.EntityStoreType = typeof(ExtensionStore);
                     extension.UseMetadata = true;
                     extension.Securable = true;
 

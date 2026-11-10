@@ -1,11 +1,11 @@
-﻿using BExIS.Dlm.Entities.MetadataStructure;
+﻿using BEXIS2.Dlm.Entities.MetadataStructure;
 using BExIS.Utils.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using BEXIS2.DB.Persistence.Api;
 
-namespace BExIS.Xml.Helpers
+namespace BEXIS2.Xml.Helpers
 {
     public class XmlMetadataHelper
     {

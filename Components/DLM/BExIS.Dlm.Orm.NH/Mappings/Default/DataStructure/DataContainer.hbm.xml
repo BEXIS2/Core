@@ -1,4 +1,4 @@
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.DataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="DataContainer" table="DataContainers" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
 
@@ -91,11 +91,11 @@
       <column name="EntitySelectionPredicate" />
     </property>
 
-    <property name="ContainerType" type="BExIS.Dlm.Entities.DataStructure.DataContainerType, BExIS.Dlm.Entities">
+    <property name="ContainerType" type="BEXIS2.Dlm.Entities.DataStructure.DataContainerType, BEXIS2.Dlm.Entities">
       <column name="ContainerType" />
     </property>
 
-    <property name="MeasurementScale" type="BExIS.Dlm.Entities.DataStructure.MeasurementScale, BExIS.Dlm.Entities">
+    <property name="MeasurementScale" type="BEXIS2.Dlm.Entities.DataStructure.MeasurementScale, BEXIS2.Dlm.Entities">
       <column name="MeasurementScale" />
     </property>
 

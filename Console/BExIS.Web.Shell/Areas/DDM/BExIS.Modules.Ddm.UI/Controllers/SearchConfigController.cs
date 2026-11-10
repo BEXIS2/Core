@@ -1,6 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Ddm.Providers.LuceneProvider;
-using BExIS.UI.Helpers;
+using BEXIS2.UI.Helpers;
 using Newtonsoft.Json;
 using System.IO;
 using System.Web.Mvc;

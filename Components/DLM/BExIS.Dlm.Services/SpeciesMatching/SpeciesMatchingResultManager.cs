@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.SpeciesMatching;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.SpeciesMatching;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BEXIS2.DB.Persistence.Api;
 
-namespace BExIS.Dlm.Services.SpeciesMatching
+namespace BEXIS2.Dlm.Services.SpeciesMatching
 {
     public class SpeciesMatchingResultManager : IDisposable
     {

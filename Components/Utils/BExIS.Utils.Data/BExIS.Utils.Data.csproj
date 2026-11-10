@@ -105,25 +105,9 @@
       <Project>{ea5204fe-ef38-463a-bfde-d93b1cc85bba}</Project>
       <Name>BEXIS2.DB.Persistence.API</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
-      <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
-      <Name>BExIS.Dlm.Entities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
-      <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
-      <Name>BExIS.Dlm.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\IO\BExIS.IO.Transform.Input\BExIS.IO.Transform.Input.csproj">
-      <Project>{5C4C8570-A53B-4191-A414-DE028AAAF36A}</Project>
-      <Name>BExIS.IO.Transform.Input</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\IO\BExIS.IO\BExIS.IO.csproj">
-      <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
-      <Name>BExIS.IO</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\UI\BExIS.UI\BExIS.UI.csproj">
-      <Project>{de0ad99c-c559-422f-8132-cc4d7c46ff83}</Project>
-      <Name>BExIS.UI</Name>
+    <ProjectReference Include="..\..\DLM\BEXIS2.Dlm.Entities\BEXIS2.Dlm.Entities.csproj">
+      <Project>{D19D7601-4B10-429F-B1A7-9A0CDBB8E6CF}</Project>
+      <Name>BEXIS2.Dlm.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj">
       <Project>{705f8751-e58a-453e-a7fd-0c310fd3cae8}</Project>

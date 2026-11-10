@@ -1,9 +1,9 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Services.Mappings;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.Party;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.Party;
 using BExIS.Modules.Ddm.UI.Helpers;
 using BExIS.Modules.Ddm.UI.Models;
 using BExIS.Security.Entities.Subjects;

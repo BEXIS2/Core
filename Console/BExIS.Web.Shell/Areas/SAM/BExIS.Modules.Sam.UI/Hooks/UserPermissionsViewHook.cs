@@ -1,11 +1,7 @@
-﻿using BExIS.Dlm.Services.Data;
+﻿using BEXIS2.Dlm.Services.Data;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Objects;
-using BExIS.UI.Hooks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using BEXIS2.UI.Hooks;
 
 namespace BExIS.Modules.Sam.UI.Hooks
 {

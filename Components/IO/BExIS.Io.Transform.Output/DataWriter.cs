@@ -1,13 +1,10 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.TypeSystem;
-using BExIS.IO.DataType.DisplayPattern;
-using BExIS.IO.Transform.Validation.DSValidation;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Xml.Helpers;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.Dlm.Services.TypeSystem;
+using BEXIS2.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -17,6 +14,10 @@ using System.Xml;
 using System.Xml.Linq;
 using BEXIS2.Utils.Cfg;
 using Path = System.IO.Path;
+using BEXIS2.IO;
+using BEXIS2.IO.Transform.Validation.DSValidation;
+using BEXIS2.IO.Transform.Validation.Exceptions;
+using BEXIS2.IO.DataType.DisplayPattern;
 
 /// <summary>
 ///
@@ -476,7 +477,7 @@ namespace BExIS.IO.Transform.Output
             return "";
         }
 
-        protected string GetFormatedValue(object value, Dlm.Entities.DataStructure.DataType datatype, string format)
+        protected string GetFormatedValue(object value, DataType datatype, string format)
         {
             string tmp = value.ToString();
 

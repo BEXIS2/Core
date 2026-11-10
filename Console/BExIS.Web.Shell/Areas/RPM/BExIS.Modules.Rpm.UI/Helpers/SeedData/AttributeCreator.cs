@@ -1,7 +1,7 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.TypeSystem;
-using BExIS.IO.DataType.DisplayPattern;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.Dlm.Services.TypeSystem;
+using BEXIS2.IO.DataType.DisplayPattern;
 using System;
 using System.Collections.Generic;
 using System.Data;

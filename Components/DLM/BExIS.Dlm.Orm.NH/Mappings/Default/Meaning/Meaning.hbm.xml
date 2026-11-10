@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Meanings">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.Meanings">
 
 	<class xmlns="urn:nhibernate-mapping-2.2" name="Meaning" table="rpm_meanings" dynamic-update="true">
 
@@ -33,7 +33,7 @@
 
 		<set name="Constraints" inverse="false" table="rpm_meaning_constraints" lazy="true" cascade="save-update">
 			<key column="MeaningRef" />
-			<many-to-many column="ConstraintRef" class="BExIS.Dlm.Entities.DataStructure.Constraint" />
+			<many-to-many column="ConstraintRef" class="BEXIS2.Dlm.Entities.DataStructure.Constraint" />
 		</set>
 
 		<bag name="Related_meaning" inverse="true" cascade="all" table="rpm_Meaning_Related_meaning">
@@ -65,13 +65,13 @@
 	  <list name="Related_meaning" table="rpm_meaning_meaning" inverse ="true" cascade="save-update">
 		  <key column="MeaningParentRef"></key>
 		  <index column="id"></index>
-		  <many-to-many class="BExIS.Dlm.Entities.Meanings.Meaning" column="MeaningchildrenRef" />
+		  <many-to-many class="BEXIS2.Dlm.Entities.Meanings.Meaning" column="MeaningchildrenRef" />
 	  </list>
 
 	  <list name="ExternalLinks" table="rpm_meanings_MeaningEntry" cascade="save-update,delete-orphan">
 		  <key column="MeaningRef"></key>
 		  <index column="id"></index>
-		  <many-to-many class="BExIS.Dlm.Entities.Meanings.MeaningEntry" column="MeaningEntryRef" />
+		  <many-to-many class="BEXIS2.Dlm.Entities.Meanings.MeaningEntry" column="MeaningEntryRef" />
 	  </list>
 -->
 	</class>

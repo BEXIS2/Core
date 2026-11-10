@@ -1,6 +1,5 @@
 using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Party;
+using BEXIS2.Dlm.Entities.Data;
 using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
@@ -10,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
+using BEXIS2.Dlm.Services.Party;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {

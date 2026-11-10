@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace BExIS.UI.Helpers
+namespace BEXIS2.UI.Helpers
 {
     public class SvelteHelper
     {

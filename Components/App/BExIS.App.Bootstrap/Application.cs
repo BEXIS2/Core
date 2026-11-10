@@ -194,7 +194,7 @@ namespace BExIS.App.Bootstrap
 
         private void initIoC()
         {
-            string path = Path.Combine(AppConfiguration.AppRoot, "IoC.config");
+             string path = Path.Combine(AppConfiguration.AppRoot, "IoC.config");
 
             if (!File.Exists(path))
                 throw new FileNotFoundException($"IoC.config file expected but was not found in '{path}'.");

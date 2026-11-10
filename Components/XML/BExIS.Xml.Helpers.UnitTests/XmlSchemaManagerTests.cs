@@ -1,14 +1,14 @@
 ﻿using BExIS.App.Testing;
-using BExIS.Dlm.Services.MetadataStructure;
+using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.Utils.Config;
-using BExIS.Xml.Helpers.Mapping;
+using BEXIS2.Xml.Helpers.Mapping;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using BEXIS2.Utils.Cfg;
 
-namespace BExIS.Xml.Helpers.UnitTests
+namespace BEXIS2.Xml.Helpers.UnitTests
 {
     [TestFixture()]
     public class XmlSchemaManagerTests

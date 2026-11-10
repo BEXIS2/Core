@@ -1,11 +1,11 @@
-﻿using BExIS.Dlm.Services.Data;
+﻿using BEXIS2.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Models.Edit;
-using BExIS.UI.Hooks;
-using BExIS.UI.Hooks.Caches;
+using BEXIS2.UI.Hooks;
 using NHibernate.Util;
 using System;
 using System.IO;
 using BEXIS2.Utils.Cfg;
+using BEXIS2.UI.Hooks.Caches;
 
 namespace BExIS.Modules.Dcm.UI.Helpers
 {

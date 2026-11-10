@@ -1,7 +1,7 @@
-﻿using BExIS.Dlm.Entities.Common;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
+﻿using BEXIS2.Dlm.Entities.Common;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.IO.Transform.Validation.ValueCheck;
 using Newtonsoft.Json;
@@ -13,7 +13,7 @@ using System.Security.Cryptography;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace BExIS.Xml.Helpers
+namespace BEXIS2.Xml.Helpers
 {
     public class XmlMetadataConverter
     {
@@ -422,7 +422,7 @@ namespace BExIS.Xml.Helpers
 
                     // generate intern template metadata xml with needed attribtes
                     // also every object with index > 1 is generate with attribtes but without values
-                    var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
+                    var xmlMetadatWriter = new XmlMetadataWriter(BEXIS2.Xml.Helpers.XmlNodeMode.xPath);
                     var metadataWithAttributesXml = xmlMetadatWriter.CreateMetadataXml(id, XmlUtility.ToXDocument(target), true);
 
                     // merge the metadata with attributes and the metadata with values together
@@ -668,7 +668,7 @@ namespace BExIS.Xml.Helpers
             XmlDocument metadataInput = JsonConvert.DeserializeXmlNode(metadataJson.ToString(), "Metadata");
 
             // load example xml based on metadata structure
-            var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
+            var xmlMetadatWriter = new XmlMetadataWriter(BEXIS2.Xml.Helpers.XmlNodeMode.xPath);
             var metadataExample = xmlMetadatWriter.CreateTempMetadataXmlWithChoiceChildrens(metadataStructureId);
 
             // get all elements from xml documents to compare

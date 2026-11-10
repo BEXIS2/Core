@@ -107,8 +107,8 @@
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Text.Encoding.CodePages, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -339,37 +339,33 @@
       <Project>{ea5204fe-ef38-463a-bfde-d93b1cc85bba}</Project>
       <Name>BEXIS2.DB.Persistence.API</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
-      <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
-      <Name>BExIS.Dlm.Entities</Name>
+    <ProjectReference Include="..\..\..\..\..\Components\DLM\BEXIS2.Dlm.Entities\BEXIS2.Dlm.Entities.csproj">
+      <Project>{D19D7601-4B10-429F-B1A7-9A0CDBB8E6CF}</Project>
+      <Name>BEXIS2.Dlm.Entities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
-      <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
-      <Name>BExIS.Dlm.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Components\IO\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj">
-      <Project>{8B2EC2B0-6870-456B-BE2D-B0FB4EA68D83}</Project>
-      <Name>BExIS.IO.DataType.DisplayPattern</Name>
+    <ProjectReference Include="..\..\..\..\..\Components\DLM\BEXIS2.Dlm.Services\BEXIS2.Dlm.Services.csproj">
+      <Project>{cbdcfcbb-05fb-4531-86a6-df6cc38f1e55}</Project>
+      <Name>BEXIS2.Dlm.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
       <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
       <Name>BExIS.IO.Transform.Output</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
-      <Project>{E4795F06-20C2-4C4C-A720-9A79896384DF}</Project>
-      <Name>BExIS.IO</Name>
+    <ProjectReference Include="..\..\..\..\..\Components\IO\BEXIS2.IO.DataType.DisplayPattern\BEXIS2.IO.DataType.DisplayPattern.csproj">
+      <Project>{154146D1-8354-42C1-B7A9-5D224BC3795C}</Project>
+      <Name>BEXIS2.IO.DataType.DisplayPattern</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Components\UI\BExIS.UI\BExIS.UI.csproj">
-      <Project>{de0ad99c-c559-422f-8132-cc4d7c46ff83}</Project>
-      <Name>BExIS.UI</Name>
+    <ProjectReference Include="..\..\..\..\..\Components\IO\BEXIS2.IO\BEXIS2.IO.csproj">
+      <Project>{67d97d3b-739e-09f5-903e-6d9144a0ee4d}</Project>
+      <Name>BEXIS2.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\UI\BEXIS2.UI\BEXIS2.UI.csproj">
+      <Project>{4B31CEBF-945D-4688-A5B2-00C90F71E35A}</Project>
+      <Name>BEXIS2.UI</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
       <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
       <Name>BExIS.Utils.Config</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
-      <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
-      <Name>BExIS.Utils.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\Utils\BExIS.Utils.NH\BExIS.Utils.NH.csproj">
       <Project>{0F1EC13E-D685-4F4D-A438-52797B0E53A0}</Project>
@@ -399,9 +395,9 @@
       <Project>{5b48b5a8-eae8-4ef8-8f2c-7fedb1b095d3}</Project>
       <Name>Vaiona.Web</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
-      <Project>{252F7872-A69C-43A6-84B4-4D2ABDBDD9AB}</Project>
-      <Name>BExIS.Xml.Helpers</Name>
+    <ProjectReference Include="..\..\..\..\..\Components\XML\BEXIS2.Xml.Helpers\BEXIS2.Xml.Helpers.csproj">
+      <Project>{22e13a7f-dc93-4e6d-ae2d-e7ef5fee01f4}</Project>
+      <Name>BEXIS2.Xml.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
       <Project>{8519EAC6-FBF8-48B3-813F-E0B9D3CC4A52}</Project>

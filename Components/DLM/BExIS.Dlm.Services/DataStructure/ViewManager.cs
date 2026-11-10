@@ -1,10 +1,10 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using BEXIS2.DB.Persistence.Api;
 
-namespace BExIS.Dlm.Services.DataStructure
+namespace BEXIS2.Dlm.Services.DataStructure
 {
     public class ViewManager
     {
@@ -35,7 +35,7 @@ namespace BExIS.Dlm.Services.DataStructure
             return (e);
         }
 
-        public DatasetView CreateDataView(string name, string contentSelectionCriterion, string containerSelectionCriterion, BExIS.Dlm.Entities.DataStructure.DataStructure dataStructure)
+        public DatasetView CreateDataView(string name, string contentSelectionCriterion, string containerSelectionCriterion, BEXIS2.Dlm.Entities.DataStructure.DataStructure dataStructure)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
             Contract.Requires(!string.IsNullOrWhiteSpace(contentSelectionCriterion) || !string.IsNullOrWhiteSpace(containerSelectionCriterion));

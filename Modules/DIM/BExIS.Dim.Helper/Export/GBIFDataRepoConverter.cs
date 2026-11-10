@@ -6,9 +6,9 @@ using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Helpers.Models;
 using BExIS.Dim.Services;
 using BExIS.Dim.Services.Mappings;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using BExIS.IO;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.IO;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using BExIS.Utils.Extensions;
@@ -26,6 +26,7 @@ using System.Xml;
 using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 using static BExIS.Dim.Helpers.Export.GBIFDataRepoConverter;
+using BEXIS2.IO;
 
 namespace BExIS.Dim.Helpers.Export
 {

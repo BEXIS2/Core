@@ -1,19 +1,17 @@
 using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using BExIS.IO;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.IO;
 using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
-using BExIS.UI.Hooks;
-using BExIS.UI.Hooks.Caches;
-using BExIS.UI.Hooks.Logs;
-using BExIS.UI.Models;
+using BEXIS2.UI.Hooks;
+using BEXIS2.UI.Models;
 using BExIS.Utils.Config;
-using BExIS.Utils.Data.Upload;
+using BEXIS2.Utils.Data.Upload;
 using BExIS.Utils.Upload;
 using System;
 using System.Collections.Generic;
@@ -29,7 +27,9 @@ using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Modularity;
 
-using Cache = BExIS.UI.Hooks.Caches;
+using Cache =BEXIS2.UI.Hooks.Caches;
+using BEXIS2.UI.Hooks.Caches;
+using BEXIS2.UI.Hooks.Logs;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -173,7 +173,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         [HttpPost]
         [CustomValidateAntiForgeryToken]
-        public JsonResult RemoveFile(long id, BExIS.UI.Hooks.Caches.FileInfo file)
+        public JsonResult RemoveFile(long id,BEXIS2.UI.Hooks.Caches.FileInfo file)
         {
             // load edit dataset cache
             HookManager hookManager = new HookManager();
@@ -238,7 +238,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         [HttpPost]
         [CustomValidateAntiForgeryToken]
-        public JsonResult SaveFileDescription(long id, BExIS.UI.Hooks.Caches.FileInfo file, string description)
+        public JsonResult SaveFileDescription(long id,BEXIS2.UI.Hooks.Caches.FileInfo file, string description)
         {
             HookManager hookManager = new HookManager();
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
