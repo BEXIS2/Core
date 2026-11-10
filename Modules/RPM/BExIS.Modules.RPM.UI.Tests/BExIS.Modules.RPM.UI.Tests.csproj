@@ -89,6 +89,10 @@
       <Project>{0FCF7DE1-E8F2-484C-8638-EF759B11D8A2}</Project>
       <Name>BExIS.App.Testing</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\IO\BEXIS2.IO.Transform.Output\BEXIS2.IO.Transform.Output.csproj">
+      <Project>{b35c9bf9-b2a3-4fb2-9d14-dd73b5163d1b}</Project>
+      <Name>BEXIS2.IO.Transform.Output</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Console\BExIS.Web.Shell\Areas\RPM\BExIS.Modules.Rpm.UI\BExIS.Modules.Rpm.UI.csproj">
       <Project>{76702A4F-D6E5-416F-BD81-58447514AF05}</Project>
       <Name>BExIS.Modules.Rpm.UI</Name>

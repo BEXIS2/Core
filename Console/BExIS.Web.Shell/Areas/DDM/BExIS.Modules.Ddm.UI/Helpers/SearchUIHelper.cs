@@ -14,7 +14,7 @@ using System.Xml.Xsl;
 using BEXIS2.DB.Persistence.Api;
 using BEXIS2.Utils.Cfg;
 
-// Javad: 18.07.2017 This class has a remarkable overlap with BExIS.IO.Transform.Output.OutputDatmanager and BEXIS2.Dlm.Services.Helpers.DatasetConvertor.
+// Javad: 18.07.2017 This class has a remarkable overlap with BEXIS2.IO.Transform.Output.OutputDatmanager and BEXIS2.Dlm.Services.Helpers.DatasetConvertor.
 // All the dataset related functions of the two classes must be moved to the DatasetConvertor
 namespace BExIS.Modules.Ddm.UI.Helpers
 {

@@ -22,7 +22,7 @@ using BEXIS2.IO.DataType.DisplayPattern;
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.IO.Transform.Output
+namespace BEXIS2.IO.Transform.Output
 {
     /// <summary>
     /// DataWriter is an abstract class that has basic functions for storing file.

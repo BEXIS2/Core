@@ -2,7 +2,7 @@
 using BEXIS2.Dlm.Entities.MetadataStructure;
 using BEXIS2.Dlm.Services.Data;
 using BEXIS2.Dlm.Services.MetadataStructure;
-using BExIS.IO.Transform.Output;
+using BEXIS2.IO.Transform.Output;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Security.Services.Objects;
 using BExIS.Utils.Extensions;

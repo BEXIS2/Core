@@ -13,7 +13,7 @@ using BEXIS2.Dlm.Services.Data;
 using BEXIS2.Dlm.Services.MetadataStructure;
 using BEXIS2.Dlm.Services.TypeSystem;
 using BEXIS2.IO;
-using BExIS.IO.Transform.Output;
+using BEXIS2.IO.Transform.Output;
 using BEXIS2.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.CreateDataset;

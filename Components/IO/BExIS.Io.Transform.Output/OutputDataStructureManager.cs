@@ -19,7 +19,7 @@ using DataTable = System.Data.DataTable;
 using Constraint = BEXIS2.Dlm.Entities.DataStructure.Constraint;
 using BEXIS2.IO.DataType.DisplayPattern;
 
-namespace BExIS.IO.Transform.Output
+namespace BEXIS2.IO.Transform.Output
 {
     public class DataStructureDataTable
     {

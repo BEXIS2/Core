@@ -13,7 +13,7 @@ using BEXIS2.Dlm.Services.Data;
 using BEXIS2.Dlm.Services.DataStructure;
 using BEXIS2.Dlm.Services.Party;
 using BEXIS2.IO;
-using BExIS.IO.Transform.Output;
+using BEXIS2.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models.Download;
 using BExIS.Modules.Dim.UI.Models.Export;
 using BExIS.Security.Entities.Subjects;

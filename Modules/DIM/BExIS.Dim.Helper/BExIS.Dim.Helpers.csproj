@@ -220,13 +220,17 @@
       <Project>{cbdcfcbb-05fb-4531-86a6-df6cc38f1e55}</Project>
       <Name>BEXIS2.Dlm.Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
-      <Project>{455EC826-9A92-40FF-BD3B-388C288955CE}</Project>
-      <Name>BExIS.IO.Transform.Output</Name>
+    <ProjectReference Include="..\..\..\Components\IO\BEXIS2.IO.Transform.Output\BEXIS2.IO.Transform.Output.csproj">
+      <Project>{b35c9bf9-b2a3-4fb2-9d14-dd73b5163d1b}</Project>
+      <Name>BEXIS2.IO.Transform.Output</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Components\IO\BEXIS2.IO\BEXIS2.IO.csproj">
       <Project>{67D97D3B-739E-09F5-903E-6D9144A0EE4D}</Project>
       <Name>BEXIS2.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Components\JSON\BEXIS2.JSON.Helpers\BEXIS2.JSON.Helpers.csproj">
+      <Project>{a31c16e7-6956-422d-8241-ab5eafd9f49b}</Project>
+      <Name>BEXIS2.JSON.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Components\UI\BEXIS2.UI\BEXIS2.UI.csproj">
       <Project>{4b31cebf-945d-4688-a5b2-00c90f71e35a}</Project>

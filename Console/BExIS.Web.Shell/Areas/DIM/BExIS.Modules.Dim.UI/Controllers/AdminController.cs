@@ -1,7 +1,7 @@
 ﻿using BEXIS2.Dlm.Entities.Data;
 using BEXIS2.Dlm.Entities.MetadataStructure;
 using BEXIS2.Dlm.Services.Data;
-using BExIS.IO.Transform.Output;
+using BEXIS2.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models;
 using BEXIS2.Xml.Helpers;
 using BEXIS2.Xml.Helpers.Mapping;

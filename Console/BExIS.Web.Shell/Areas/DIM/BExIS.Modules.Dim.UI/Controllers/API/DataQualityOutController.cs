@@ -4,7 +4,7 @@ using BEXIS2.Dlm.Entities.Data;
 using BEXIS2.Dlm.Entities.DataStructure;
 using BEXIS2.Dlm.Services.Data;
 using BEXIS2.Dlm.Services.DataStructure;
-using BExIS.IO.Transform.Output;
+using BEXIS2.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;

@@ -6,7 +6,7 @@ using BExIS.Dim.Services.Mappings;
 using BEXIS2.Dlm.Entities.Data;
 using BEXIS2.Dlm.Entities.MetadataStructure;
 using BEXIS2.Dlm.Services.Data;
-using BExIS.IO.Transform.Output;
+using BEXIS2.IO.Transform.Output;
 using BEXIS2.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;

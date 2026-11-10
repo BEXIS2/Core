@@ -8,7 +8,7 @@ using BExIS.Dim.Helpers.Models;
 using BEXIS2.Dlm.Entities.Meanings;
 using BEXIS2.Dlm.Services.Data;
 using BEXIS2.Dlm.Services.DataStructure;
-using BExIS.IO.Transform.Output;
+using BEXIS2.IO.Transform.Output;
 using BEXIS2.Xml.Helpers.Mapping;
 using Newtonsoft.Json;
 using System;

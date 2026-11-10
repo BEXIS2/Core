@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 
-namespace BExIS.IO.Transform.Output
+namespace BEXIS2.IO.Transform.Output
 {
     public class OutputDatasetManager
     {

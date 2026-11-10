@@ -21,7 +21,7 @@ using BEXIS2.IO.Transform.Validation.DSValidation;
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.IO.Transform.Output
+namespace BEXIS2.IO.Transform.Output
 {
     /// <summary>
     ///

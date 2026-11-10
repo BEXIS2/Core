@@ -236,9 +236,9 @@
       <Project>{CBDCFCBB-05FB-4531-86A6-DF6CC38F1E55}</Project>
       <Name>BEXIS2.Dlm.Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
-      <Project>{455EC826-9A92-40FF-BD3B-388C288955CE}</Project>
-      <Name>BExIS.IO.Transform.Output</Name>
+    <ProjectReference Include="..\..\..\..\..\Components\IO\BEXIS2.IO.Transform.Output\BEXIS2.IO.Transform.Output.csproj">
+      <Project>{b35c9bf9-b2a3-4fb2-9d14-dd73b5163d1b}</Project>
+      <Name>BEXIS2.IO.Transform.Output</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\UI\BEXIS2.UI\BEXIS2.UI.csproj">
       <Project>{4b31cebf-945d-4688-a5b2-00c90f71e35a}</Project>

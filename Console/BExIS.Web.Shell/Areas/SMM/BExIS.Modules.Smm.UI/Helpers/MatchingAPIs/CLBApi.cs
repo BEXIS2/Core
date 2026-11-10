@@ -1,7 +1,7 @@
 ﻿using BExIS.Dim.Entities.Export.GBIF;
 using BEXIS2.Dlm.Entities.SpeciesMatching;
 using BEXIS2.Dlm.Services.SpeciesMatching;
-using BExIS.IO.Transform.Output;
+using BEXIS2.IO.Transform.Output;
 using BExIS.Modules.Smm.UI.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

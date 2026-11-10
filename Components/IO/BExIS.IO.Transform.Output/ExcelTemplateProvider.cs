@@ -11,7 +11,7 @@ using System.Xml;
 using BEXIS2.DB.Persistence.Api;
 using BEXIS2.Utils.Cfg;
 
-namespace BExIS.IO.Transform.Output
+namespace BEXIS2.IO.Transform.Output
 {
     public class ExcelTemplateProvider
     {

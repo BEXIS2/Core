@@ -4,7 +4,7 @@ using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Services.Mappings;
 using BEXIS2.Dlm.Entities.Data;
 using BEXIS2.Dlm.Services.Data;
-using BExIS.IO.Transform.Output;
+using BEXIS2.IO.Transform.Output;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;

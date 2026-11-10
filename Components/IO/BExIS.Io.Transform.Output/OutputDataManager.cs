@@ -11,7 +11,7 @@ using System.Web;
 using BEXIS2.Utils.Cfg;
 using BEXIS2.IO;
 
-namespace BExIS.IO.Transform.Output
+namespace BEXIS2.IO.Transform.Output
 {
     public class OutputDataManager
     {

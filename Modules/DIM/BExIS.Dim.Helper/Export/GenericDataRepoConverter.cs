@@ -6,7 +6,7 @@ using BEXIS2.Dlm.Entities.DataStructure;
 using BEXIS2.Dlm.Services.Data;
 using BEXIS2.Dlm.Services.DataStructure;
 using BEXIS2.IO;
-using BExIS.IO.Transform.Output;
+using BEXIS2.IO.Transform.Output;
 using BExIS.Utils.Extensions;
 using BEXIS2.Xml.Helpers;
 using ICSharpCode.SharpZipLib.Zip;

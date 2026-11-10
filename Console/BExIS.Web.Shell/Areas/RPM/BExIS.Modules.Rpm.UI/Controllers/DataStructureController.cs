@@ -8,7 +8,7 @@ using BEXIS2.Dlm.Services.Meanings;
 using BEXIS2.IO;
 using BEXIS2.IO.DataType.DisplayPattern;
 using BEXIS2.IO.Transform.Input;
-using BExIS.IO.Transform.Output;
+using BEXIS2.IO.Transform.Output;
 using BExIS.Modules.Rpm.UI.Helpers;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Modules.Rpm.UI.Models.DataStructure;

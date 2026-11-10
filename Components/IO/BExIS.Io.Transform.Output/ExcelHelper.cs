@@ -5,7 +5,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BExIS.IO.Transform.Output
+namespace BEXIS2.IO.Transform.Output
 {
     public class ExcelHelper
     {

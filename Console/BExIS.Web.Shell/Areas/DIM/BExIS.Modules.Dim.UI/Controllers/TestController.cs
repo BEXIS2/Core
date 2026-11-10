@@ -7,7 +7,7 @@ using BEXIS2.Dlm.Entities.Data;
 using BEXIS2.Dlm.Entities.Party;
 using BEXIS2.Dlm.Services.Data;
 using BEXIS2.Dlm.Services.Party;
-using BExIS.IO.Transform.Output;
+using BEXIS2.IO.Transform.Output;
 using BEXIS2.Xml.Helpers;
 using System;
 using System.Collections.Generic;

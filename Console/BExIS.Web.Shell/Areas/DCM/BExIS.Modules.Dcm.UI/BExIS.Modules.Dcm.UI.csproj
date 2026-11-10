@@ -502,8 +502,11 @@
     <Folder Include="Views\Validation\" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="DocumentFormat.OpenXml, Version=2.15.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\packages\DocumentFormat.OpenXml.2.15.0\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    <Reference Include="DocumentFormat.OpenXml, Version=3.5.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\DocumentFormat.OpenXml.3.5.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml.Framework, Version=3.5.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\packages\DocumentFormat.OpenXml.Framework.3.5.1\lib\net46\DocumentFormat.OpenXml.Framework.dll</HintPath>
     </Reference>
     <Reference Include="EPPlus, Version=5.0.3.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\packages\EPPlus.5.0.3\lib\net45\EPPlus.dll</HintPath>
@@ -786,10 +789,6 @@
       <Project>{cbdcfcbb-05fb-4531-86a6-df6cc38f1e55}</Project>
       <Name>BEXIS2.Dlm.Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
-      <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
-      <Name>BExIS.IO.Transform.Output</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\IO\BEXIS2.IO.DataType.DisplayPattern\BEXIS2.IO.DataType.DisplayPattern.csproj">
       <Project>{154146d1-8354-42c1-b7a9-5d224bc3795c}</Project>
       <Name>BEXIS2.IO.DataType.DisplayPattern</Name>
@@ -797,6 +796,10 @@
     <ProjectReference Include="..\..\..\..\..\Components\IO\BEXIS2.IO.Transform.Input\BEXIS2.IO.Transform.Input.csproj">
       <Project>{a2889f35-2dda-411c-a4e3-a708df6bb835}</Project>
       <Name>BEXIS2.IO.Transform.Input</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\IO\BEXIS2.IO.Transform.Output\BEXIS2.IO.Transform.Output.csproj">
+      <Project>{b35c9bf9-b2a3-4fb2-9d14-dd73b5163d1b}</Project>
+      <Name>BEXIS2.IO.Transform.Output</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\IO\BEXIS2.IO.Transform.Validation\BEXIS2.IO.Transform.Validation.csproj">
       <Project>{4c993d8a-b86d-4563-a8f2-fb39474d8716}</Project>
