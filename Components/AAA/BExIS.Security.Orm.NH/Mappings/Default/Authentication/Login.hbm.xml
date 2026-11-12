@@ -1,4 +1,4 @@
-﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Authentication">
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Security.Entities" namespace="BEXIS2.Security.Entities.Authentication">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Login" table="Logins" dynamic-update="true">
 
     <id name="Id" type="Int64">
@@ -15,6 +15,6 @@
 
     <property name="LoginProvider" type="String" />
     <property name="ProviderKey" type="String" />
-    <many-to-one name="User" column="UserRef" class="BExIS.Security.Entities.Subjects.User, BExIS.Security.Entities" />
+    <many-to-one name="User" column="UserRef" class="BEXIS2.Security.Entities.Subjects.User, BEXIS2.Security.Entities" />
   </class>
 </hibernate-mapping>

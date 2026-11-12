@@ -5,7 +5,7 @@ using BEXIS2.Dlm.Services.Administration;
 using BEXIS2.Dlm.Services.Data;
 using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Tests.Helpers;
-using BExIS.Security.Entities.Versions;
+using BEXIS2.Security.Entities.Versions;
 using BExIS.Utils.Config;
 using BExIS.Utils.NH.Querying;
 using FluentAssertions;

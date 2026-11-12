@@ -1,4 +1,4 @@
-﻿using BExIS.Security.Entities.Objects;
+﻿using BEXIS2.Security.Entities.Objects;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;

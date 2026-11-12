@@ -1,7 +1,7 @@
 ﻿using BEXIS2.Dlm.Entities.Party;
-using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Objects;
+using BEXIS2.Security.Entities.Subjects;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;

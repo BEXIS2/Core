@@ -1,4 +1,4 @@
-﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Subjects">
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Security.Entities" namespace="BEXIS2.Security.Entities.Subjects">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Subject" table="Subjects" abstract="true" dynamic-update="true">
     <id name="Id" type="Int64">
       <column name="Id" />
@@ -14,11 +14,11 @@
     <property name="DisplayName" type="string" />
     <set name="EntityPermissions" cascade="all-delete-orphan" lazy="true">
       <key column="SubjectRef" />
-      <one-to-many class="BExIS.Security.Entities.Authorization.EntityPermission, BExIS.Security.Entities" />
+      <one-to-many class="BEXIS2.Security.Entities.Authorization.EntityPermission, BEXIS2.Security.Entities" />
     </set>
     <set name="FeaturePermissions" inverse="true" lazy="true">
       <key column="SubjectRef" />
-      <one-to-many class="BExIS.Security.Entities.Authorization.FeaturePermission, BExIS.Security.Entities" />
+      <one-to-many class="BEXIS2.Security.Entities.Authorization.FeaturePermission, BEXIS2.Security.Entities" />
     </set>
   </class>
 </hibernate-mapping>

@@ -7,7 +7,7 @@ using BEXIS2.IO;
 using BEXIS2.IO.Transform.Input;
 using BEXIS2.IO.Transform.Output;
 using BEXIS2.IO.Transform.Validation.Exceptions;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Utilities;
 using BEXIS2.UI.Hooks;
 using BEXIS2.UI.Hooks.Logs;

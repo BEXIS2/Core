@@ -1,4 +1,4 @@
-﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Objects">
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Security.Entities" namespace="BEXIS2.Security.Entities.Objects">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Operation" table="Operations" dynamic-update="true">
 
     <id name="Id" type="Int64">
@@ -16,6 +16,6 @@
     <property name="Module" type="String" />
     <property name="Controller" type="String" />
     <property name="Action" type="String" />
-    <many-to-one name="Feature" column="FeatureRef" class="BExIS.Security.Entities.Objects.Feature, BExIS.Security.Entities" />
+    <many-to-one name="Feature" column="FeatureRef" class="BEXIS2.Security.Entities.Objects.Feature, BEXIS2.Security.Entities" />
   </class>
 </hibernate-mapping>

@@ -1,9 +1,9 @@
-﻿using BExIS.Security.Entities.Authorization;
+﻿using BEXIS2.Security.Entities.Authorization;
 using System;
 using System.Collections.Generic;
 using BEXIS2.DB.Entities.Common;
 
-namespace BExIS.Security.Entities.Objects
+namespace BEXIS2.Security.Entities.Objects
 {
     public class Entity : BaseEntity
     {

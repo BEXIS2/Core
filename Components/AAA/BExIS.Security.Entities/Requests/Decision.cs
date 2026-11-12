@@ -1,8 +1,8 @@
-﻿using BExIS.Security.Entities.Subjects;
+﻿using BEXIS2.Security.Entities.Subjects;
 using System;
 using BEXIS2.DB.Entities.Common;
 
-namespace BExIS.Security.Entities.Requests
+namespace BEXIS2.Security.Entities.Requests
 {
     public enum DecisionStatus
     {

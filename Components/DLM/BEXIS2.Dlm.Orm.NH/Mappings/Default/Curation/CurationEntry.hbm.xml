@@ -77,7 +77,7 @@
 	  <many-to-one name="Dataset" class="BEXIS2.Dlm.Entities.Data.Dataset" not-null="false" column="DatasetRef" />
 
 	  <!--Creator-->
-	  <many-to-one name="Creator" class="BExIS.Security.Entities.Subjects.User" not-null="false" column="UserRef" />
+	  <many-to-one name="Creator" class="BEXIS2.Security.Entities.Subjects.User" not-null="false" column="UserRef" />
 
 	  <!--Notes-->
 	  

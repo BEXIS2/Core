@@ -7,7 +7,7 @@ using BEXIS2.Dlm.Entities.Party;
 using BEXIS2.Dlm.Services.MetadataStructure;
 using BEXIS2.Dlm.Services.Party;
 using BExIS.Modules.Dim.UI.Models.Mapping;
-using BExIS.Security.Entities.Objects;
+using BEXIS2.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using BEXIS2.Utils.Data.MetadataStructure;
 using LiteDB;

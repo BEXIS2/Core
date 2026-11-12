@@ -1,7 +1,7 @@
 using BExIS.App.Bootstrap.Attributes;
 using BEXIS2.Dlm.Entities.Data;
 using BExIS.Modules.Dcm.UI.Models.Edit;
-using BExIS.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Authorization;
 using System;
 using System.Web.Mvc;
 using System.Web.SessionState;

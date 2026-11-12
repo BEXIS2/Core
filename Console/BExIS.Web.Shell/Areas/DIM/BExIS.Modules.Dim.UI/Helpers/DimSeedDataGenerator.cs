@@ -9,7 +9,7 @@ using BEXIS2.Dlm.Entities.Party;
 using BEXIS2.Dlm.Services.Meanings;
 using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dim.UI.Helper;
-using BExIS.Security.Entities.Objects;
+using BEXIS2.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BEXIS2.Xml.Helpers;
@@ -67,7 +67,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
                 if (API == null) API = featureManager.Create("API", "API", DataDissemination);
 
                 //set api public
-                var result_create = featurePermissionManager.CreateAsync(null, API.Id, Security.Entities.Authorization.PermissionType.Grant).Result;
+                var result_create = featurePermissionManager.CreateAsync(null, API.Id, BEXIS2.Security.Entities.Authorization.PermissionType.Grant).Result;
 
                 Operation operation = null;
 

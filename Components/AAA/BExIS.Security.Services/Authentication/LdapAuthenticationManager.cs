@@ -1,12 +1,10 @@
-﻿using BExIS.Security.Entities.Subjects;
-using BExIS.Utils.Config;
+﻿using BEXIS2.Security.Entities.Subjects;
 using BExIS.Utils.Config.Configurations;
 using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices.Protocols;
 using System.Net;
-using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Security.Services.Authentication
 {

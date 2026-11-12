@@ -311,13 +311,13 @@
     <Folder Include="Views\Home\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
-      <Project>{C230693B-D780-438B-B26C-82257642DD5C}</Project>
-      <Name>BExIS.Security.Entities</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
       <Project>{681C8BC4-55F0-4F43-A685-90E246A88CB1}</Project>
       <Name>BExIS.Security.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Components\AAA\BEXIS2.Security.Entities\BEXIS2.Security.Entities.csproj">
+      <Project>{88cad710-1a6c-44ba-8184-a7c049435531}</Project>
+      <Name>BEXIS2.Security.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Components\App\BExIS.App.Bootstrap\BExIS.App.Bootstrap.csproj">
       <Project>{7d7fbf8e-37d7-4a4c-b40e-3f267e9b9760}</Project>

@@ -1,6 +1,6 @@
 ﻿using BEXIS2.DB.Entities.Common;
 
-namespace BExIS.Security.Entities.Notifications
+namespace BEXIS2.Security.Entities.Notifications
 {
     public class Notification : BaseEntity
     {

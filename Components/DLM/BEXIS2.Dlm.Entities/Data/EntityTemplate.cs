@@ -1,4 +1,4 @@
-﻿using BExIS.Security.Entities.Objects;
+﻿using BEXIS2.Security.Entities.Objects;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using BEXIS2.DB.Entities.Common;

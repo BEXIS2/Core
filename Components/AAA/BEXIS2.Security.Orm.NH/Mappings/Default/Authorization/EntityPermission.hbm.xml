@@ -1,0 +1,25 @@
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Security.Entities" namespace="BEXIS2.Security.Entities.Authorization">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="EntityPermission" table="EntityPermissions" dynamic-update="true">
+
+    <id name="Id" type="Int64">
+      <generator class="native" />
+    </id>
+
+    <version name="VersionNo" type="Int32">
+      <column name="VersionNo" />
+    </version>
+
+    <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <column name="Extra" not-null="false" sql-type="xml" />
+    </property>
+
+	<property name="CreationDate" type="DateTime">
+	  <column name="CreationDate" />
+	</property>
+
+    <many-to-one name="Entity" column="EntityRef" class="BEXIS2.Security.Entities.Objects.Entity, BEXIS2.Security.Entities" index="idx_EntityPermissions_EntityRef" />
+    <property name="Key" type="Int64" index="idx_EntityPermissions_Key" />
+    <property name="Rights" type="Int32" index="idx_EntityPermissions_Rights" />
+    <many-to-one name="Subject" column="SubjectRef" class="BEXIS2.Security.Entities.Subjects.Subject, BEXIS2.Security.Entities" not-null="false" index="idx_EntityPermissions_SubjectRef" />
+  </class>
+</hibernate-mapping>

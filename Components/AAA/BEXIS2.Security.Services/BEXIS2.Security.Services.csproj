@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="10.0.14" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DB\BEXIS2.DB.Persistence.API\BEXIS2.DB.Persistence.API.csproj" />
+    <ProjectReference Include="..\..\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj" />
+    <ProjectReference Include="..\..\Utils\BExIS.Utils\BExIS.Utils.csproj" />
+    <ProjectReference Include="..\BEXIS2.Security.Entities\BEXIS2.Security.Entities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.DirectoryServices.Protocols">
+      <HintPath>..\..\..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.DirectoryServices.Protocols.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

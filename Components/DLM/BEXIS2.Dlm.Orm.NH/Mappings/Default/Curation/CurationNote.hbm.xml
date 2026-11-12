@@ -36,7 +36,7 @@
 	  </property>
 
 	  <!--User-->
-	  <many-to-one name="User" class="BExIS.Security.Entities.Subjects.User" not-null="false" column="UserRef" />
+	  <many-to-one name="User" class="BEXIS2.Security.Entities.Subjects.User" not-null="false" column="UserRef" />
 
 
   </class>

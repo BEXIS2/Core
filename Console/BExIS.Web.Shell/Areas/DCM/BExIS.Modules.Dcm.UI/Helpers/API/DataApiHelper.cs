@@ -9,7 +9,7 @@ using BEXIS2.IO.Transform.Output;
 using BEXIS2.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.API;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;

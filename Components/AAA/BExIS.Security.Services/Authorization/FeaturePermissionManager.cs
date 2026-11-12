@@ -1,6 +1,6 @@
-﻿using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Subjects;
+﻿using BEXIS2.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Objects;
+using BEXIS2.Security.Entities.Subjects;
 using Org.BouncyCastle.Bcpg.Sig;
 using System;
 using System.Collections.Generic;

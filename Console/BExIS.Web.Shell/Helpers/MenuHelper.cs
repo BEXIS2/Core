@@ -1,4 +1,4 @@
-﻿using BExIS.Security.Entities.Subjects;
+﻿using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BEXIS2.UI.Models;

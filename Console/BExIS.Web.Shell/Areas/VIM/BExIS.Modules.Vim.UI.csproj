@@ -325,13 +325,13 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
-      <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
-      <Name>BExIS.Security.Entities</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
       <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
       <Name>BExIS.Security.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\AAA\BEXIS2.Security.Entities\BEXIS2.Security.Entities.csproj">
+      <Project>{88cad710-1a6c-44ba-8184-a7c049435531}</Project>
+      <Name>BEXIS2.Security.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\App\BEXIS2.App.Logging\BEXIS2.App.Logging.csproj">
       <Project>{9c0c4946-d981-4c83-a28c-462ec5f61ac0}</Project>

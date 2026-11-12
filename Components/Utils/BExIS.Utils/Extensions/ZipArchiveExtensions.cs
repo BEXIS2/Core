@@ -1,4 +1,4 @@
-﻿using BExIS.Security.Entities.Authorization;
+﻿using BEXIS2.Security.Entities.Authorization;
 using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;

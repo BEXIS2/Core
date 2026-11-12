@@ -1,4 +1,4 @@
-﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Requests">
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Security.Entities" namespace="BEXIS2.Security.Entities.Requests">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Decision" table="Decisions" dynamic-update="true">
 
     <id name="Id" type="Int64">
@@ -21,12 +21,12 @@
       <column name="Reason" sql-type="text" />
     </property>
 
-    <property name="Status" type="BExIS.Security.Entities.Requests.DecisionStatus, BExIS.Security.Entities">
+    <property name="Status" type="BEXIS2.Security.Entities.Requests.DecisionStatus, BEXIS2.Security.Entities">
       <column name="Status" />
     </property>
 
-    <many-to-one name="DecisionMaker" column="DecisionMakerRef" class="BExIS.Security.Entities.Subjects.User, BExIS.Security.Entities" />
+    <many-to-one name="DecisionMaker" column="DecisionMakerRef" class="BEXIS2.Security.Entities.Subjects.User, BEXIS2.Security.Entities" />
 
-    <many-to-one name="Request" column="RequestRef" class="BExIS.Security.Entities.Requests.Request, BExIS.Security.Entities" />
+    <many-to-one name="Request" column="RequestRef" class="BEXIS2.Security.Entities.Requests.Request, BEXIS2.Security.Entities" />
   </class>
 </hibernate-mapping>

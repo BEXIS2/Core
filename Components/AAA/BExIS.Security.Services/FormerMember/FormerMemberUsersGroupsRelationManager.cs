@@ -1,4 +1,4 @@
-﻿using BExIS.Security.Entities.FormerMember;
+﻿using BEXIS2.Security.Entities.FormerMember;
 using System;
 using System.Linq;
 using BEXIS2.DB.Persistence.Api;

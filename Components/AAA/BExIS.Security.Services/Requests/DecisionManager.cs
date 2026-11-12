@@ -1,10 +1,10 @@
-﻿using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Requests;
-using BExIS.Security.Entities.Subjects;
-using System;
+﻿using System;
 using System.Linq;
 using BEXIS2.DB.Persistence.Api;
+using BEXIS2.Security.Entities.Requests;
+using BEXIS2.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Objects;
+using BEXIS2.Security.Entities.Subjects;
 
 namespace BExIS.Security.Services.Requests
 {

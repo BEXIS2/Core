@@ -223,9 +223,9 @@
       <Project>{705f8751-e58a-453e-a7fd-0c310fd3cae8}</Project>
       <Name>Vaiona.Web.Mvc.Modularity</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
-      <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
-      <Name>BExIS.Security.Entities</Name>
+    <ProjectReference Include="..\BEXIS2.Security.Entities\BEXIS2.Security.Entities.csproj">
+      <Project>{88CAD710-1A6C-44BA-8184-A7C049435531}</Project>
+      <Name>BEXIS2.Security.Entities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

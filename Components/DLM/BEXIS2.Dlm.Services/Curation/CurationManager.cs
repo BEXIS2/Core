@@ -1,6 +1,6 @@
 ﻿using BEXIS2.Dlm.Entities.Curation;
 using BEXIS2.Dlm.Entities.Data;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Subjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;

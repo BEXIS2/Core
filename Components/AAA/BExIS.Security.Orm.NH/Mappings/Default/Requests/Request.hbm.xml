@@ -1,4 +1,4 @@
-﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Requests">
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Security.Entities" namespace="BEXIS2.Security.Entities.Requests">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Request" table="Requests" dynamic-update="true">
 
     <id name="Id" type="Int64">
@@ -28,17 +28,17 @@
       <column name="Rights" />
     </property>
 
-    <property name="Status" type="BExIS.Security.Entities.Requests.RequestStatus, BExIS.Security.Entities">
+    <property name="Status" type="BEXIS2.Security.Entities.Requests.RequestStatus, BEXIS2.Security.Entities">
       <column name="Status" />
     </property>
 
     <set name="Decisions" inverse="true" cascade="all-delete-orphan" lazy="true">
       <key column="RequestRef" />
-      <one-to-many class="BExIS.Security.Entities.Requests.Decision, BExIS.Security.Entities" />
+      <one-to-many class="BEXIS2.Security.Entities.Requests.Decision, BEXIS2.Security.Entities" />
     </set>
 
-    <many-to-one name="Entity" column="EntityRef" class="BExIS.Security.Entities.Objects.Entity, BExIS.Security.Entities" />
+    <many-to-one name="Entity" column="EntityRef" class="BEXIS2.Security.Entities.Objects.Entity, BEXIS2.Security.Entities" />
 
-    <many-to-one name="Applicant" column="ApplicantRef" class="BExIS.Security.Entities.Subjects.User, BExIS.Security.Entities" />
+    <many-to-one name="Applicant" column="ApplicantRef" class="BEXIS2.Security.Entities.Subjects.User, BEXIS2.Security.Entities" />
   </class>
 </hibernate-mapping>

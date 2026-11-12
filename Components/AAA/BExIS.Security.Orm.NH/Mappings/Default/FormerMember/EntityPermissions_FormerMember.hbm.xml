@@ -1,4 +1,4 @@
-﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.FormerMember">
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Security.Entities" namespace="BEXIS2.Security.Entities.FormerMember">
   <class xmlns="urn:nhibernate-mapping-2.2" name="EntityPermissionFormerMember" table="EntityPermissions_FormerMember" dynamic-update="true">
 
     <id name="Id" type="Int64">
@@ -13,9 +13,9 @@
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
-    <many-to-one name="Entity" column="EntityRef" class="BExIS.Security.Entities.Objects.Entity, BExIS.Security.Entities" />
+    <many-to-one name="Entity" column="EntityRef" class="BEXIS2.Security.Entities.Objects.Entity, BEXIS2.Security.Entities" />
     <property name="Key" type="Int64" />
     <property name="Rights" type="Int32" />
-    <many-to-one name="Subject" column="SubjectRef" class="BExIS.Security.Entities.Subjects.Subject, BExIS.Security.Entities" not-null="false" />
+    <many-to-one name="Subject" column="SubjectRef" class="BEXIS2.Security.Entities.Subjects.Subject, BEXIS2.Security.Entities" not-null="false" />
   </class>
 </hibernate-mapping>

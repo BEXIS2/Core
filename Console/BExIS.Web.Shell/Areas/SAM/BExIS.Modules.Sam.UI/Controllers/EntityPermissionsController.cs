@@ -1,8 +1,8 @@
 ﻿using BEXIS2.Dlm.Entities.Data;
 using BEXIS2.Dlm.Services.Party;
 using BExIS.Modules.Sam.UI.Models;
-using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;

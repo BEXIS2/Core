@@ -1,6 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Ddm.Api;
-using BExIS.Security.Entities.Requests;
+using BEXIS2.Security.Entities.Requests;
 using BEXIS2.UI.Helpers;
 using BExIS.Utils.Models;
 using BEXIS2.Xml.Helpers;

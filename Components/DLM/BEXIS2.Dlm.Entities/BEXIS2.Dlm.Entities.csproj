@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj" />
+    <ProjectReference Include="..\..\AAA\BEXIS2.Security.Entities\BEXIS2.Security.Entities.csproj" />
     <ProjectReference Include="..\..\DB\BEXIS2.DB.Entities\BEXIS2.DB.Entities.csproj" />
   </ItemGroup>
 

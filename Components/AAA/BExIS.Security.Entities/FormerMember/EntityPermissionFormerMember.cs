@@ -1,8 +1,8 @@
-﻿using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Subjects;
+﻿using BEXIS2.Security.Entities.Objects;
+using BEXIS2.Security.Entities.Subjects;
 using BEXIS2.DB.Entities.Common;
 
-namespace BExIS.Security.Entities.FormerMember
+namespace BEXIS2.Security.Entities.FormerMember
 {
     /// <summary>
     ///

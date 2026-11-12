@@ -1,6 +1,6 @@
 ﻿using BExIS.App.Bootstrap;
 using BExIS.App.Bootstrap.Helpers;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Authentication;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;

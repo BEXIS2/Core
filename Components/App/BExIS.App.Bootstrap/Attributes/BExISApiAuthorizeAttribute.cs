@@ -1,5 +1,5 @@
-﻿using BExIS.Security.Entities.Requests;
-using BExIS.Security.Entities.Subjects;
+﻿using BEXIS2.Security.Entities.Requests;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;

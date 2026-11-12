@@ -200,13 +200,13 @@
       <Project>{15c59767-818f-4a0e-b012-b1dd756a29cf}</Project>
       <Name>BEXIS2.Utils.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
-      <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
-      <Name>BExIS.Security.Entities</Name>
-    </ProjectReference>
     <ProjectReference Include="..\BExIS.Security.Services\BExIS.Security.Services.csproj">
       <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
       <Name>BExIS.Security.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BEXIS2.Security.Entities\BEXIS2.Security.Entities.csproj">
+      <Project>{88cad710-1a6c-44ba-8184-a7c049435531}</Project>
+      <Name>BEXIS2.Security.Entities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

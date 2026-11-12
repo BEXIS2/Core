@@ -3,7 +3,7 @@ using BExIS.App.Bootstrap.Helpers;
 using BEXIS2.Dlm.Entities.Curation;
 using BEXIS2.Dlm.Entities.Data;
 using BEXIS2.Dlm.Services.Data;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BEXIS2.UI.Helpers;

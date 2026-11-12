@@ -75,7 +75,7 @@
 		  <column name="Activated" />
 	  </property>
 
-	<many-to-one name="EntityType" class="BExIS.Security.Entities.Objects.Entity" not-null="true" column="EntityRef" />
+	<many-to-one name="EntityType" class="BEXIS2.Security.Entities.Objects.Entity" not-null="true" column="EntityRef" />
 
 	<many-to-one name="MetadataStructure" class="BEXIS2.Dlm.Entities.MetadataStructure.MetadataStructure" not-null="true" column="MetadataStructureRef" />
   </class>

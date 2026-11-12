@@ -1,6 +1,6 @@
 using BExIS.App.Bootstrap.Extensions;
 using BExIS.App.Bootstrap.Helpers;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BEXIS2.UI.Models;
 using BExIS.Web.Shell.Helpers;

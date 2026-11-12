@@ -9,7 +9,7 @@ using BExIS.Dim.Services.Mappings;
 using BEXIS2.Dlm.Entities.Data;
 using BEXIS2.Dlm.Services.Data;
 using BEXIS2.IO;
-using BExIS.Security.Entities.Objects;
+using BEXIS2.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using BExIS.Utils.Extensions;
 using ICSharpCode.SharpZipLib.Zip;

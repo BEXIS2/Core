@@ -3,7 +3,7 @@ using BExIS.Dcm.Wizard;
 using BEXIS2.Dlm.Entities.MetadataStructure;
 using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dcm.UI.Models.ImportMetadata;
-using BExIS.Security.Entities.Objects;
+using BEXIS2.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using BEXIS2.UI.Helpers;
 using BEXIS2.UI.Models;

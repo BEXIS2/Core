@@ -1,6 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BEXIS2.Dlm.Entities.Data;
-using BExIS.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Authorization;
 using System.Web.Mvc;
 
 namespace BExIS.Modules.Dim.UI.Controllers

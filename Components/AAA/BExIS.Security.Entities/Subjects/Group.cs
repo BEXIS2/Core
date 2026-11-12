@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace BExIS.Security.Entities.Subjects
+namespace BEXIS2.Security.Entities.Subjects
 {
     public class Group : Subject, IRole<long>
     {

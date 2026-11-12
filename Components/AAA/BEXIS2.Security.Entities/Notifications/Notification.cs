@@ -1,0 +1,11 @@
+﻿using BEXIS2.DB.Entities.Common;
+
+namespace BEXIS2.Security.Entities.Notifications
+{
+    public class Notification : BaseEntity
+    {
+        public virtual string Body { get; set; }
+        public virtual string Destination { get; set; }
+        public virtual string Subject { get; set; }
+    }
+}

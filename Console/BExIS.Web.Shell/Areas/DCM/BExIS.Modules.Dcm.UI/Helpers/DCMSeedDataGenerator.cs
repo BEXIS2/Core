@@ -5,7 +5,7 @@ using BEXIS2.Dlm.Services.Administration;
 using BEXIS2.Dlm.Services.Data;
 using BEXIS2.Dlm.Services.DataStructure;
 using BEXIS2.Dlm.Services.MetadataStructure;
-using BExIS.Security.Entities.Objects;
+using BEXIS2.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using BEXIS2.Xml.Helpers;
 using BEXIS2.Xml.Helpers.Mapping;

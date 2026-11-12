@@ -1,7 +1,7 @@
 ﻿using BEXIS2.Dlm.Entities.Party;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Requests;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Objects;
+using BEXIS2.Security.Entities.Requests;
+using BEXIS2.Security.Entities.Subjects;
 using System;
 using System.Linq;
 using BEXIS2.DB.Persistence.Api;

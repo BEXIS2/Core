@@ -1,7 +1,7 @@
 using BExIS.App.Bootstrap.Attributes;
 using BEXIS2.Dlm.Entities.Data;
 using BExIS.Modules.Sam.UI.Models;
-using BExIS.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;

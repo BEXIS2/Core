@@ -1,6 +1,6 @@
 ﻿using BExIS.Dim.Entities.Publications;
 using BEXIS2.Dlm.Entities.Curation;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Utils.Config.Configurations;
 using System;
 using System.Collections.Generic;

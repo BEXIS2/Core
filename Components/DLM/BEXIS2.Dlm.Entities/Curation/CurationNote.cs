@@ -1,4 +1,4 @@
-﻿using BExIS.Security.Entities.Subjects;
+﻿using BEXIS2.Security.Entities.Subjects;
 using System;
 using BEXIS2.DB.Entities.Common;
 

@@ -21,8 +21,8 @@ using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Helpers.View;
 using BExIS.Modules.Dcm.UI.Models.View;
 using BExIS.Modules.Dim.UI.Helpers;
-using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Requests;
@@ -828,7 +828,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                             r.Applicant.Id.Equals(userId) &&
                                             r.Entity.Id.Equals(entityId) &&
                                             r.Key.Equals(datasetId) &&
-                                            r.Status == Security.Entities.Requests.RequestStatus.Open).FirstOrDefault();
+                                            r.Status == BEXIS2.Security.Entities.Requests.RequestStatus.Open).FirstOrDefault();
 
                     if (request != null) return true;
                 }

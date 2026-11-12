@@ -1,6 +1,6 @@
 ﻿using BEXIS2.Dlm.Entities.Data;
 using BEXIS2.Dlm.Services.Data;
-using BExIS.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using System.Threading.Tasks;
 using Vaiona.Web.Mvc.Modularity;

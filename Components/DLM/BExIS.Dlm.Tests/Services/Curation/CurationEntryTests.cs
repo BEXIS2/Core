@@ -7,7 +7,7 @@ using BEXIS2.Dlm.Services.Curation;
 using BEXIS2.Dlm.Services.Data;
 using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Tests.Helpers;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Config;
 using BExIS.Utils.NH.Querying;

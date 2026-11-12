@@ -2,7 +2,7 @@
 using BEXIS2.Dlm.Entities.Party;
 using BEXIS2.Dlm.Services.Data;
 using BEXIS2.Dlm.Services.Party;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Requests;
 using BExIS.Security.Services.Subjects;
@@ -38,7 +38,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).First().Id;
 
                 if (!requestManager.Exists(userId, entityId, id) ||
-                    !(requestManager.Exists(userId, entityId, id, Security.Entities.Requests.RequestStatus.Open)))
+                    !(requestManager.Exists(userId, entityId, id, BEXIS2.Security.Entities.Requests.RequestStatus.Open)))
                 {
                     var request = requestManager.Create(userId, entityId, id, 3, intention);
 

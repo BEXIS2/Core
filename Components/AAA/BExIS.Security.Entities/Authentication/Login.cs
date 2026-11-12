@@ -1,7 +1,7 @@
-﻿using BExIS.Security.Entities.Subjects;
+﻿using BEXIS2.Security.Entities.Subjects;
 using BEXIS2.DB.Entities.Common;
 
-namespace BExIS.Security.Entities.Authentication
+namespace BEXIS2.Security.Entities.Authentication
 {
     public class Login : BaseEntity
     {

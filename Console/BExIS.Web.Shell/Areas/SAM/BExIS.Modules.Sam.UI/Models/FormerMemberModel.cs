@@ -1,5 +1,5 @@
 ﻿using BEXIS2.Dlm.Entities.Party;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Subjects;
 using System;
 
 namespace BEXIS.Modules.SAM.UI.Model

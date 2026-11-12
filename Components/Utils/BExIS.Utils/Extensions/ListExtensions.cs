@@ -1,4 +1,4 @@
-﻿using BExIS.Security.Entities.Authorization;
+﻿using BEXIS2.Security.Entities.Authorization;
 using System.Collections.Generic;
 using System.Linq;
 

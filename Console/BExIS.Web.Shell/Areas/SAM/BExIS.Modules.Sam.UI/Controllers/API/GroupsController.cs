@@ -1,6 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Modules.Sam.UI.Models;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Route;
 using System;

@@ -1,5 +1,5 @@
 ﻿using BEXIS2.Dlm.Services.Data;
-using BExIS.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Authorization;
 using BEXIS2.UI.Hooks;
 using System.Linq;
 using BEXIS2.UI.Hooks.Caches;

@@ -1,7 +1,7 @@
 ﻿using BEXIS2.Dlm.Entities.Party;
 using BEXIS2.Dlm.Services.Party;
 using BExIS.Modules.Bam.UI.Models;
-using BExIS.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Data;

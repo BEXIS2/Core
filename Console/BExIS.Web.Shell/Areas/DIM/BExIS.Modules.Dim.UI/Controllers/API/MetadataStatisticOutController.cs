@@ -1,6 +1,6 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dim.Helpers.Models;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Utils.Route;
 using Newtonsoft.Json;
 using System;

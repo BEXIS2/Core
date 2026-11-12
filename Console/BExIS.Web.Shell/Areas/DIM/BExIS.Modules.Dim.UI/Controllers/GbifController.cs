@@ -9,7 +9,7 @@ using BEXIS2.Dlm.Entities.Data;
 using BEXIS2.Dlm.Entities.MetadataStructure;
 using BEXIS2.Dlm.Services.Data;
 using BExIS.Modules.Dim.UI.Models.Export;
-using BExIS.Security.Entities.Requests;
+using BEXIS2.Security.Entities.Requests;
 using BEXIS2.UI.Helpers;
 using Newtonsoft.Json;
 using System;

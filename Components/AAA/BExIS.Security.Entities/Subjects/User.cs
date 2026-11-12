@@ -1,9 +1,9 @@
-﻿using BExIS.Security.Entities.Authentication;
+﻿using BEXIS2.Security.Entities.Authentication;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 
-namespace BExIS.Security.Entities.Subjects
+namespace BEXIS2.Security.Entities.Subjects
 {
     public class User : Subject, IUser<long>
     {

@@ -1,6 +1,6 @@
 ﻿using BEXIS2.Dlm.Entities.Data;
-using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using Newtonsoft.Json;
 using System;

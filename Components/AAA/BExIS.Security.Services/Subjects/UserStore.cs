@@ -1,6 +1,6 @@
-﻿using BExIS.Security.Entities.Authentication;
-using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
+﻿using BEXIS2.Security.Entities.Authentication;
+using BEXIS2.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Subjects;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;

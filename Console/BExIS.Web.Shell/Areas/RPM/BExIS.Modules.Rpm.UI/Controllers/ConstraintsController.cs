@@ -6,7 +6,7 @@ using BEXIS2.Dlm.Services.Data;
 using BEXIS2.Dlm.Services.DataStructure;
 using BEXIS2.Dlm.Services.Meanings;
 using BExIS.Modules.Rpm.UI.Models;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BEXIS2.UI.Helpers;

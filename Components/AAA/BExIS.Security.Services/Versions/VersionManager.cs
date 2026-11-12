@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using BEXIS2.DB.Persistence.Api;
-using Version = BExIS.Security.Entities.Versions.Version;
+using Version = BEXIS2.Security.Entities.Versions.Version;
 
 namespace BExIS.Security.Services.Versions
 {

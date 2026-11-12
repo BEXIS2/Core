@@ -3,7 +3,7 @@ using BEXIS2.Dlm.Entities.DataStructure;
 using BEXIS2.Dlm.Services.Data;
 using BEXIS2.Dlm.Services.DataStructure;
 using BExIS.Modules.Sam.UI.Models;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
@@ -91,7 +91,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     if (user != null)
                     {
                         // is the user allowed to delete this dataset
-                        if (entityPermissionManager.HasEffectiveRightsAsync(user.UserName, typeof(Dataset), id, Security.Entities.Authorization.RightType.Delete).Result)
+                        if (entityPermissionManager.HasEffectiveRightsAsync(user.UserName, typeof(Dataset), id, BEXIS2.Security.Entities.Authorization.RightType.Delete).Result)
                         {
                             //try delete the dataset
                             if (datasetManager.DeleteDataset(id, ControllerContext.HttpContext.User.Identity.Name, true))
@@ -172,7 +172,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     if (user != null)
                     {
                         // is the user allowed to delete this dataset
-                        if (entityPermissionManager.HasEffectiveRightsAsync(user.UserName, typeof(Dataset), id, Security.Entities.Authorization.RightType.Delete).Result)
+                        if (entityPermissionManager.HasEffectiveRightsAsync(user.UserName, typeof(Dataset), id, BEXIS2.Security.Entities.Authorization.RightType.Delete).Result)
                         {
                             //try delete the dataset
                             if (datasetManager.UndoDeleteDataset(id, ControllerContext.HttpContext.User.Identity.Name, true))
@@ -420,7 +420,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     if (user != null)
                     {
                         // is the user allowed to delete this dataset
-                        if (entityPermissionManager.HasEffectiveRightsAsync(user.UserName, typeof(Dataset), id, Security.Entities.Authorization.RightType.Delete).Result)
+                        if (entityPermissionManager.HasEffectiveRightsAsync(user.UserName, typeof(Dataset), id, BEXIS2.Security.Entities.Authorization.RightType.Delete).Result)
                         {
                             if (dm.PurgeDataset(id))
                             {

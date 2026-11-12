@@ -10,7 +10,7 @@ using BEXIS2.IO.Transform.Output;
 using BEXIS2.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
-using BExIS.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Authorization;
 using BEXIS2.UI.Helpers;
 using BEXIS2.Utils.Data;
 using BExIS.Utils.Route;

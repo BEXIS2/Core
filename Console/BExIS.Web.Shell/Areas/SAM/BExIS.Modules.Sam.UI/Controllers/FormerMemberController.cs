@@ -1,6 +1,6 @@
 ﻿using BEXIS2.Dlm.Services.Party;
 using BExIS.Modules.SAM.UI.Helpers;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BEXIS.Modules.SAM.UI.Model;

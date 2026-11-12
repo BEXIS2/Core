@@ -1,4 +1,4 @@
-﻿using BExIS.Security.Entities.Subjects;
+﻿using BEXIS2.Security.Entities.Subjects;
 using BExIS.Utils.NH.Querying;
 using System;
 using System.Collections.Generic;

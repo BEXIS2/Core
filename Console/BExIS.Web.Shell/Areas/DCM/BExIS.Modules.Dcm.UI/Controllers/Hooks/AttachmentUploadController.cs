@@ -5,7 +5,7 @@ using BEXIS2.Dlm.Services.Data;
 using BEXIS2.IO;
 using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.Edit;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BEXIS2.UI.Hooks;

@@ -1,6 +1,6 @@
-﻿using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Entities.Versions;
+﻿using BEXIS2.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Versions;
 using BExIS.Utils.NH.Querying;
 using Microsoft.AspNet.Identity;
 using NHibernate;
