@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>ee51dd4a-cf3b-43e6-900c-dc341d453ac2</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.24.2-preview.1" />
+    <PackageReference Include="NHibernate" Version="5.7.1" />
+    <PackageReference Include="Npgsql" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj" />
+    <ProjectReference Include="..\..\Components\App\BEXIS2.App.MultiTenancy.Api\BEXIS2.App.MultiTenancy.Api.csproj" />
+    <ProjectReference Include="..\..\Components\App\BEXIS2.App.MultiTenancy.Services\BEXIS2.App.MultiTenancy.Services.csproj" />
+    <ProjectReference Include="..\..\Components\DB\BEXIS2.DB.Entities\BEXIS2.DB.Entities.csproj" />
+    <ProjectReference Include="..\..\Components\DB\BEXIS2.DB.Persistence.API\BEXIS2.DB.Persistence.API.csproj" />
+    <ProjectReference Include="..\..\Components\DB\BEXIS2.DB.Persistence.NH\BEXIS2.DB.Persistence.NH.csproj" />
+    <ProjectReference Include="..\..\Components\DLM\BEXIS2.Dlm.Entities\BEXIS2.Dlm.Entities.csproj" />
+    <ProjectReference Include="..\..\Components\DLM\BEXIS2.Dlm.Orm.NH\BEXIS2.Dlm.Orm.NH.csproj" />
+    <ProjectReference Include="..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj" />
+    <ProjectReference Include="..\..\Components\Utils\BEXIS2.Utils.Data\BEXIS2.Utils.Data.csproj" />
+  </ItemGroup>
+
+</Project>
