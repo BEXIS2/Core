@@ -7,7 +7,7 @@ using System.Text;
 using BEXIS2.DB.Persistence.Api;
 using BEXIS2.Utils.Cfg;
 
-namespace BExIS.Dlm.Orm.NH.Utils
+namespace BEXIS2.Dlm.Orm.NH.Utils
 {
     public class MaterializedViewHelper
     {

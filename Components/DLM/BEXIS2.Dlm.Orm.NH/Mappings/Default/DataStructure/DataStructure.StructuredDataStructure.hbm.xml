@@ -12,7 +12,7 @@
       <one-to-many class="VariableInstance" />
     </set>
 
-    <property name="TemplatePaths" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <property name="TemplatePaths" type="XmlDoc">
       <column name="XmlTemplatePaths" not-null="false" sql-type="xml" />
     </property>
   </subclass>

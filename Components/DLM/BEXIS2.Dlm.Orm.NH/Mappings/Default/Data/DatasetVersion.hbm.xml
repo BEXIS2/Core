@@ -17,7 +17,7 @@
       <column name="VersionNo" />
     </version>
 
-    <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <property name="Extra" type="XmlDoc">
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
@@ -87,11 +87,11 @@
       <column name="Status" index="idx_DatasetVersions_status" />
     </property>
 
-    <property name="Metadata" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <property name="Metadata" type="XmlDoc">
       <column name="Metadata" not-null="false" sql-type="xml" />
     </property>
 
-    <property name="XmlExtendedPropertyValues" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <property name="XmlExtendedPropertyValues" type="XmlDoc">
       <column name="XmlExtendedPropertyValues" not-null="false" sql-type="xml" />
     </property>
 

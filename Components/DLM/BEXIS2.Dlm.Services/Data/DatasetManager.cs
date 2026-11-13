@@ -1,7 +1,7 @@
 ﻿using BEXIS2.Dlm.Entities.Administration;
 using BEXIS2.Dlm.Entities.Data;
 using BEXIS2.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Orm.NH.Utils;
+using BEXIS2.Dlm.Orm.NH.Utils;
 using BEXIS2.Dlm.Services.Helpers;
 using BEXIS2.Security.Entities.Authorization;
 using BEXIS2.Security.Entities.Objects;

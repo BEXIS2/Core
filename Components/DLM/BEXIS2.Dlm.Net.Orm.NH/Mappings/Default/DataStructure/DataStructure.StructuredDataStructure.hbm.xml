@@ -1,0 +1,19 @@
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.DataStructure">
+  <subclass name="StructuredDataStructure" extends="DataStructure" discriminator-value="STR" dynamic-update="true">
+
+    <property name="IndexerType" type="BEXIS2.Dlm.Entities.DataStructure.DataStructureCategory, BEXIS2.Dlm.Entities">
+      <column name="IndexerType" />
+    </property>
+
+    <many-to-one name="Indexer" class="VariableInstance" not-null="false" column="IndexerRef" />
+
+    <set name="Variables" order-by="orderno asc" lazy="false" cascade="save-update">
+      <key column="DataStructureRef" not-null="false" />
+      <one-to-many class="VariableInstance" />
+    </set>
+
+    <property name="TemplatePaths" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <column name="XmlTemplatePaths" not-null="false" sql-type="xml" />
+    </property>
+  </subclass>
+</hibernate-mapping>
