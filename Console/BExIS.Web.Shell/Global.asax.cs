@@ -17,6 +17,8 @@ using BEXIS2.App.Model.MTnt;
 using BEXIS2.App.MultiTenancy.Api;
 using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Extensions;
+using Autofac;
+using Autofac.Integration.Mvc;
 
 namespace BExIS.Web.Shell
 {
@@ -25,6 +27,7 @@ namespace BExIS.Web.Shell
 
     public class MvcApplication : HttpApplication
     {
+        private static ISessionFactory _sessionFactory;
 
         private BExIS.App.Bootstrap.Application app = null;
 
@@ -56,6 +59,33 @@ namespace BExIS.Web.Shell
             app.Start(WebApiConfig.Register, true);
 
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+
+            // Autofac
+            // 1. NHibernate SessionFactory einmalig initialisieren (Beispiel)
+            _sessionFactory = new NHibernate.Cfg.Configuration().Configure().BuildSessionFactory();
+
+            var builder = new ContainerBuilder();
+            // 2. ISessionFactory als Singleton registrieren
+            builder.RegisterInstance(_sessionFactory).As<ISessionFactory>().SingleInstance();
+
+
+            // 3. ISession als "Per Request" binden (Wichtig: Verwerfen am Request-Ende inklusive)
+            builder.Register(context => context.Resolve<ISessionFactory>().OpenSession())
+                   .As<ISession>()
+                   .InstancePerRequest();
+
+            // 4. Alle Manager/Services im Assembly automatisch registrieren
+            // Sucht nach Klassen, deren Name auf "Manager" oder "Service" endet
+            builder.RegisterAssemblyTypes(typeof(MvcApplication).Assembly) // bzw. Assembly.GetExecutingAssembly()
+                   .Where(t => t.Name.EndsWith("Manager") || t.Name.EndsWith("Service"))
+                   .AsSelf()
+                   .InstancePerRequest();
+
+            // 5. Container bauen und den MVC Dependency Resolver setzen
+            var container = builder.Build();
+            DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
+
         }
 
         protected void Application_End()

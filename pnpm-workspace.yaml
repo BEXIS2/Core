@@ -1,7 +1,9 @@
 # This file is used to configure the pnpm workspace for the BExIS2 project. It specifies which packages are included in the workspace, which packages are allowed to be built, and some other settings.
 packages:
   - 'Console/BExIS.Web.Shell.Svelte'
+  - 'Console/BEXIS2.Web.Shell.Svelte'
   - 'Console/BExIS.Web.Shell/Areas/**/BExIS.Modules.*.UI.Svelte'
+  - 'Console/BEXIS2.Web.Shell/Areas/**/BEXIS2.Modules.*.UI.Svelte'
 # specify which packages are allowed to be built
 allowBuilds:
   '@bexis2/bexis2-rpm-ui': true

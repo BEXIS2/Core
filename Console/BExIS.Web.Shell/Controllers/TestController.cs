@@ -21,6 +21,7 @@ using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Data;
 using Vaiona.Web.Mvc.Models;
 using BEXIS2.Dlm.Services.Party;
+using Microsoft.Ajax.Utilities;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -29,10 +30,12 @@ namespace BExIS.Web.Shell.Controllers
     {
         private readonly GroupManager _groupManager;
         private readonly UserManager _userManager;
-        public TestController(GroupManager groupManager, UserManager userManager) 
+        private readonly EntityTemplate2Manager _entityTemplate2Manager;
+        public TestController(GroupManager groupManager, UserManager userManager, EntityTemplate2Manager entityTemplate2Manager) 
         {
             _groupManager = groupManager;
             _userManager = userManager;
+            _entityTemplate2Manager = entityTemplate2Manager;
         }
 
         public ActionResult About()
@@ -1239,6 +1242,20 @@ namespace BExIS.Web.Shell.Controllers
         public JsonResult ErrorTest()
         {
             throw new NotImplementedException("this is a error test");
+        }
+
+        public JsonResult NewManagerTest()
+        {
+            EntityTemplate entityTemplate = new EntityTemplate()
+            {
+                Name = "test",
+                Description = "test"
+            };
+
+            _entityTemplate2Manager.Create(entityTemplate);
+
+
+            return Json(true, JsonRequestBehavior.AllowGet);
         }
     }
 }

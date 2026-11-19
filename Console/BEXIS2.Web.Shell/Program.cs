@@ -1,21 +1,23 @@
 
-using BEXIS2.DB.Persistence.NH;
 using BEXIS2.DB.Persistence.Api;
+using BEXIS2.DB.Persistence.NH;
 using BEXIS2.Web.Shell.DB;
 using BEXIS2.Web.Shell.Extensions;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Dialect;
 using NHibernate.Driver;
-using DbSession = NHibernate.ISession; // Alias definieren
+using BEXIS2DlmServices =  BEXIS2.Dlm.Services.Data; // Alias definieren
+using DbSession = NHibernate.ISession;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddIoCConfiguration(builder.Configuration);
 
-var app = builder.Build();
+
 
 // 1. ISessionFactory als Singleton registrieren (teuer in der Erstellung, wird einmalig initialisiert)
 builder.Services.AddSingleton<ISessionFactory>(provider =>
@@ -66,8 +68,10 @@ builder.Services.AddScoped<DbSession>(provider =>
 });
 
 builder.Services.AddScoped<DatasetManager>();
+builder.Services.AddScoped<BEXIS2DlmServices.EntityTemplate2Manager>();
 
 
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -78,9 +82,11 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseStaticFiles();
 
 app.MapStaticAssets();
 

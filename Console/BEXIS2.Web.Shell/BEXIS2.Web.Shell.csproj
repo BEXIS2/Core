@@ -24,8 +24,15 @@
     <ProjectReference Include="..\..\Components\DB\BEXIS2.DB.Persistence.NH\BEXIS2.DB.Persistence.NH.csproj" />
     <ProjectReference Include="..\..\Components\DLM\BEXIS2.Dlm.Entities\BEXIS2.Dlm.Entities.csproj" />
     <ProjectReference Include="..\..\Components\DLM\BEXIS2.Dlm.Orm.NH\BEXIS2.Dlm.Orm.NH.csproj" />
+    <ProjectReference Include="..\..\Components\DLM\BEXIS2.Dlm.Services\BEXIS2.Dlm.Services.csproj" />
     <ProjectReference Include="..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj" />
     <ProjectReference Include="..\..\Components\Utils\BEXIS2.Utils.Data\BEXIS2.Utils.Data.csproj" />
+  </ItemGroup>
+
+  <!-- Exclude pre-compressed files from static web assets to avoid Content-Encoding issues -->
+  <ItemGroup>
+    <StaticWebAssetExclusionPatterns Include="*.br" />
+    <StaticWebAssetExclusionPatterns Include="*.gz" />
   </ItemGroup>
 
 </Project>

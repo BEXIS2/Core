@@ -2,6 +2,11 @@
 using BExIS.Ext.Services;
 using BExIS.Utils.Config;
 using BExIS.Utils.Config.Configurations;
+using BEXIS2.App.Logging;
+using BEXIS2.App.Model.MTnt;
+using BEXIS2.App.MultiTenancy.Api;
+using BEXIS2.DB.Persistence.Api;
+using BEXIS2.Utils.Cfg;
 using Microsoft.Owin;
 using Microsoft.Owin.Host.SystemWeb;
 using Microsoft.Owin.Security;
@@ -20,17 +25,15 @@ using System.Web.Http.Dispatcher;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Vaiona.IoC;
-using BEXIS2.App.Model.MTnt;
-using BEXIS2.App.MultiTenancy.Api;
-using BEXIS2.DB.Persistence.Api;
-
 using Vaiona.Web.Mvc.Modularity;
-using BEXIS2.Utils.Cfg;
-using BEXIS2.App.Logging;
+using NHibernate;
 
 
 namespace BExIS.App.Bootstrap
 {
+
+   
+
     public enum RunStage
     {
         Test,
@@ -39,6 +42,9 @@ namespace BExIS.App.Bootstrap
 
     public class Application
     {
+
+        private static ISessionFactory _sessionFactory;
+
         // keep on instance per run stage
         private static Dictionary<RunStage, Application> instances = new Dictionary<RunStage, Application>();
 
@@ -183,6 +189,7 @@ namespace BExIS.App.Bootstrap
             ControllerBuilder.Current.SetControllerFactory(new IoCControllerFactory());
 
             GeneralSettings.CreateIssuerSigningKey();
+
         }
 
         private void initTenancy()

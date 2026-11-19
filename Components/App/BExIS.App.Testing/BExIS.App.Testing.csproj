@@ -138,6 +138,14 @@
       <Project>{254dd905-625f-42ec-bd8e-ec4ec4f4c679}</Project>
       <Name>BEXIS2.DB.PersistenceProviders.NH</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\DLM\BEXIS2.Dlm.Entities\BEXIS2.Dlm.Entities.csproj">
+      <Project>{d19d7601-4b10-429f-b1a7-9a0cdbb8e6cf}</Project>
+      <Name>BEXIS2.Dlm.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DLM\BEXIS2.Dlm.Services\BEXIS2.Dlm.Services.csproj">
+      <Project>{cbdcfcbb-05fb-4531-86a6-df6cc38f1e55}</Project>
+      <Name>BEXIS2.Dlm.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Utils\BExIS.Utils.Config\BExIS.Utils.Config.csproj">
       <Project>{6EAD7D02-02F7-42FF-85E4-90BB892D3846}</Project>
       <Name>BExIS.Utils.Config</Name>

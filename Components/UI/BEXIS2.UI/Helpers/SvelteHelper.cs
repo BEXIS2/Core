@@ -142,10 +142,10 @@ namespace BEXIS2.UI.Helpers
                         continue;
                     }
                 }
-              
-          
+
                 return svelteBuildPath + pagehash;
             }
         }
+
     }
 }
