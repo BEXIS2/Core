@@ -244,12 +244,12 @@
 
 	function onDatasetAction(e: any) {
 		const { action, id } = e.detail.type;
-		if (action === 'view') window.open(`/dcm/view/?id=${id}`, '_self');
-		else if (action === 'edit') window.open(`/dcm/edit/?id=${id}`, '_self');
+		if (action === 'view') window.open(`/dcm/view/?id=${id}`, '_blank');
+		else if (action === 'edit') window.open(`/dcm/edit/?id=${id}`, '_blank');
 		else if (action === 'copy') {
 			if (confirm('Do you really want to create a copy of this dataset? This will create a new dataset.'))
 				window.open(`/dcm/create/copy?id=${id}`, '_blank');
-		} else if (action === 'tags') window.open(`/ddm/taginfo/?id=${id}`, '_self');
+		} else if (action === 'tags') window.open(`/ddm/taginfo/?id=${id}`, '_blank');
 	}
 </script>
 
