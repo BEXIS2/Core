@@ -67,6 +67,9 @@ namespace Vaiona.Utils.Cfg
 
         [JsonProperty("apiSource", NullValueHandling = NullValueHandling.Ignore)]
         public string ApiSource { get; set; }
+
+        [JsonProperty("multi", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? Multi { get; set; }
     }
 
     public class JsonSettings
