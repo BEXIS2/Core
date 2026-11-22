@@ -289,7 +289,7 @@
 
 		<!-- Datasets tab -->
 		{#if activeTab === 'datasets'}
-			{#if entities.length > 1}
+			{#if entities.length >= 1}
 				<div class="flex gap-2">
 					{#each entities as ent}
 						<button

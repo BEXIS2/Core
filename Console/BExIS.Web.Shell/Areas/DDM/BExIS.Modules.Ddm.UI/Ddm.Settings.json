@@ -102,6 +102,15 @@
       },
       "type": "JSON",
       "description": "Customize the labels that can be used in the curation. \nExample: \"curationLabels\": [ { \"name\": \"custom-label-1\", \"color\": \"#ff0000\" }, ... ]"
+    },
+    {
+      "description": "Select entity types to exclude from the dashboard.",
+      "key": "dashboard_excluded_entities",
+      "title": "Exclude entities from dashboard",
+      "type": "String",
+      "value": "",
+      "apiSource": "entities",
+      "multi": true
     }
 
   ]

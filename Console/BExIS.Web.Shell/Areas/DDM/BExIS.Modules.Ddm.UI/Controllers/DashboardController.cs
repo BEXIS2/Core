@@ -59,17 +59,29 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         [JsonNetFilter]
         [System.Web.Mvc.HttpGet]
-        public JsonResult GetEntities()
+        public JsonResult GetEntities(bool forExclusion = false)
         {
             try
             {
                 var entities = new List<object>();
                 using (var entityManager = new EntityManager())
                 {
+                    var moduleSettings = ModuleManager.GetModuleSettings("Ddm");
+                    string excludedRaw = moduleSettings.GetValueByKey("dashboard_excluded_entities")?.ToString() ?? "";
+                    var excluded = excludedRaw.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(e => e.Trim().ToLowerInvariant())
+                        .ToList();
+
                     foreach (var entity in entityManager.Entities)
                     {
-                        if(!entity.Name.ToLower().Contains("extension"))
+                        if (!entity.Name.ToLower().Contains("extension") && !excluded.Contains(entity.Name.ToLower()))
+                        {
+                            // When populating the exclusion settings dropdown, "Dataset" is not excludable
+                            if (forExclusion && entity.Name.Equals("Dataset", StringComparison.OrdinalIgnoreCase))
+                                continue;
+
                             entities.Add(new { id = entity.Id, name = entity.Name });
+                        }
                     }
                 }
                 return Json(entities, JsonRequestBehavior.AllowGet);
