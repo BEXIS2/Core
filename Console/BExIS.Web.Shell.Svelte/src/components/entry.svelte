@@ -25,6 +25,23 @@
 	let apiLoaded = false;
 	let apiLoading = false;
 
+	// For multi-select apiSource: convert between comma-separated string and array
+	let multiSelected: string[] = [];
+	$: isMultiApi = hasApiSource && entry.multi === true;
+
+	function syncMultiSelected() {
+		if (typeof entry.value === 'string') {
+			multiSelected = entry.value
+				? entry.value.split(',').map((v: string) => v.trim()).filter(Boolean)
+				: [];
+		}
+	}
+
+	function onMultiSelectChange() {
+		entry.value = multiSelected.join(', ');
+		onDirty();
+	}
+
 	// Fallback mapping: if apiSource is not set on the entry (backend not rebuilt),
 	// check known setting keys that should use API-sourced dropdowns
 	const knownApiSources: Record<string, string> = {
@@ -55,6 +72,9 @@
 			} else if (source === 'relationshipTypes') {
 				url = '/api/partyRelationshipTypes';
 				nameField = 'Title';
+			} else if (source === 'entities') {
+				url = '/ddm/Dashboard/GetEntities?forExclusion=true';
+				nameField = 'name';
 			} else if (source.startsWith('http') || source.startsWith('/')) {
 				url = source;
 			}
@@ -77,6 +97,7 @@
 				console.log('Loaded API values:', apiValues);
 			}
 			apiLoaded = true;
+			if (isMultiApi) syncMultiSelected();
 		} catch (e) {
 			console.error('Failed to load API values for', entry.apiSource, e);
 			apiLoaded = true;
@@ -97,6 +118,8 @@
 		initialJSONValue = JSON.stringify(entry.value, null, 2);
 		JSONValue = initialJSONValue;
 	}
+
+	if (isMultiApi) syncMultiSelected();
 
 	$: onChange(JSONValue);
 
@@ -144,6 +167,38 @@
 				bind:target={entry.value}
 				isMulti={false}
 			/>
+		</div>
+	{:else if hasApiSource && entry.type.toLowerCase() === 'string' && isMultiApi}
+		<div id={entry.key} on:mouseover={() => helpStore.show(entry.key)}>
+			{#if apiLoading}
+				<TextInput
+					id={entry.key}
+					label="{entry.title} (key: {entry.key})"
+					value="loading..."
+					disabled={true}
+					help={true}
+				/>
+			{:else if apiValues.length > 0}
+				<MultiSelect
+					id={entry.key}
+					title="{entry.title} (key: {entry.key})"
+					source={apiValues}
+					bind:target={multiSelected}
+					isMulti={true}
+					on:change={onMultiSelectChange}
+					on:clear={onMultiSelectChange}
+				/>
+			{:else}
+				<TextInput
+					id={entry.key}
+					placeholder={entry.key}
+					label="{entry.title} (key: {entry.key})"
+					bind:value={entry.value}
+					on:input
+					help={true}
+				/>
+				<span class="text-xs text-warning-600">No {entry.apiSource} found in the system.</span>
+			{/if}
 		</div>
 	{:else if hasApiSource && entry.type.toLowerCase() === 'string'}
 		<div id={entry.key} on:mouseover={() => helpStore.show(entry.key)}>
