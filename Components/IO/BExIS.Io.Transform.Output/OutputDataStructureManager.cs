@@ -450,16 +450,29 @@ namespace BExIS.IO.Transform.Output
 
                 if (dataStructure != null)
                 {
-                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => v.Label)));
-                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => v.Unit?.Name)));
-                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => v.Description)));
-                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => v.DataType?.Name)));
-                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => v.IsValueOptional? "optional" : "mandatory")));
-                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => v.IsKey?"primary key":"")));
+                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => EscapeCsv(v.Label))));
+                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => EscapeCsv(v.Unit?.Name))));
+                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => EscapeCsv(v.Description))));
+                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => EscapeCsv(v.DataType?.Name))));
+                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => EscapeCsv(v.IsValueOptional? "optional" : "mandatory"))));
+                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => EscapeCsv(v.IsKey?"primary key":""))));
                 }
             }
 
             return stringBuilder.ToString();
+        }
+
+        private static string EscapeCsv(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return value;
+
+            if (value.IndexOfAny(new[] { ',', ';', '"', '\n', '\r' }) != -1)
+            {
+                return "\"" + value.Replace("\"", "\"\"") + "\"";
+            }
+
+            return value;
         }
 
 
