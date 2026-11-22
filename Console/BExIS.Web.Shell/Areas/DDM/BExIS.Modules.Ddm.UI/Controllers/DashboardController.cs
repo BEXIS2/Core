@@ -82,11 +82,123 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         [JsonNetFilter]
         [System.Web.Mvc.HttpGet]
+        public JsonResult GetDatasetCounts(string entityName = "Dataset")
+        {
+            try
+            {
+                string username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
+                EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+
+                List<long> grantIds = entityPermissionManager.GetKeys(username, entityName, typeof(Dataset), RightType.Grant).Result;
+                List<long> writeIds = entityPermissionManager.GetKeys(username, entityName, typeof(Dataset), RightType.Write).Result;
+                List<long> readIds = entityPermissionManager.GetKeys(username, entityName, typeof(Dataset), RightType.Read).Result;
+
+                // filter out deleted datasets to match what GetMyDatasets actually returns
+                List<long> allIds = grantIds.Union(writeIds).Union(readIds).Distinct().ToList();
+                HashSet<long> validIds;
+                using (var datasetManager = new DatasetManager())
+                {
+                    var datasets = datasetManager.DatasetRepo.Query(d => allIds.Contains(d.Id) && d.Status != DatasetStatus.Deleted);
+                    validIds = new HashSet<long>(datasets.Select(d => d.Id).ToList());
+                }
+
+                int grantCount = grantIds.Count(id => validIds.Contains(id));
+                int writeCount = writeIds.Count(id => validIds.Contains(id));
+                int readCount = readIds.Count(id => validIds.Contains(id));
+
+                return Json(new { grant = grantCount, write = writeCount, read = readCount }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [JsonNetFilter]
+        [System.Web.Mvc.HttpGet]
+        public JsonResult GetAllMyDatasets(string entityName = "Dataset")
+        {
+            try
+            {
+                List<MyDatasetsModel> model = new List<MyDatasetsModel>();
+                string username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
+
+                using (var datasetManager = new DatasetManager())
+                using (var entityManager = new EntityManager())
+                {
+                    EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+                    var entity = entityManager.FindByName(entityName);
+
+                    // fetch all 3 right levels in one shot (fast DB queries with bitmask filter)
+                    List<long> grantIds = entityPermissionManager.GetKeys(username, entityName, typeof(Dataset), RightType.Grant).Result;
+                    List<long> writeIds = entityPermissionManager.GetKeys(username, entityName, typeof(Dataset), RightType.Write).Result;
+                    List<long> readIds = entityPermissionManager.GetKeys(username, entityName, typeof(Dataset), RightType.Read).Result;
+
+                    // superset = all datasets with at least read access
+                    List<long> allIds = readIds.Distinct().ToList();
+
+                    // build lookup: datasetId → highest right level
+                    HashSet<long> grantSet = new HashSet<long>(grantIds);
+                    HashSet<long> writeSet = new HashSet<long>(writeIds);
+
+                    string getRightType(long datasetId)
+                    {
+                        if (grantSet.Contains(datasetId)) return "grant";
+                        if (writeSet.Contains(datasetId)) return "write";
+                        return "read";
+                    }
+
+                    List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(allIds, true);
+
+                    var datasetTags = datasetManager.GetDatasetIdsWithLatestTagNr(allIds, true);
+
+                    var datasetIdsWithData = datasetManager.GetDatasetIdsWithData(allIds);
+
+                    foreach (var dsv in datasetVersions)
+                    {
+                        string rightType = getRightType(dsv.Dataset.Id);
+                        bool isOwn = rightType == "grant" || rightType == "write";
+                        string type = dsv.Dataset.DataStructure != null ? "tabular" : "file";
+                        double tagNr = datasetTags.TryGetValue(dsv.Dataset.Id, out var tn) ? tn : 0;
+                        bool hasTag = tagNr > 0;
+                        bool hasData = datasetIdsWithData.Contains(dsv.Dataset.Id);
+                        string isValid = "no";
+
+                        if (dsv.Dataset.Status == DatasetStatus.CheckedIn)
+                        {
+                            string title = dsv.Title;
+                            string description = dsv.Description;
+
+                            if (dsv.StateInfo != null)
+                            {
+                                isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
+                            }
+
+                            model.Add(new MyDatasetsModel(dsv.Dataset.Id, title, description, isOwn, isValid, type, hasTag, tagNr, hasData, rightType));
+                        }
+                        else
+                        {
+                            model.Add(new MyDatasetsModel(dsv.Dataset.Id, "", "Dataset is just in processing.", isOwn, "no", type, hasTag, tagNr, hasData, rightType));
+                        }
+                    }
+                }
+
+                return Json(model, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [JsonNetFilter]
+        [System.Web.Mvc.HttpGet]
         public JsonResult GetMyDatasets(string rightType = "grant", string entityName = "Dataset")
         {
             try
             {
                 RightType rt = (RightType)Enum.Parse(typeof(RightType), rightType, true);
+                string username = BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext);
                 List<MyDatasetsModel> model = new List<MyDatasetsModel>();
 
                 using (var datasetManager = new DatasetManager())
@@ -95,20 +207,38 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                     var entity = entityManager.FindByName(entityName);
 
-                    List<long> datasetIds = entityPermissionManager.GetKeys(BExISAuthorizeHelper.GetAuthorizedUserName(HttpContext), entityName, typeof(Dataset), rt).Result;
+                    List<long> datasetIds = entityPermissionManager.GetKeys(username, entityName, typeof(Dataset), rt).Result;
+
+                    // determine actual highest right per dataset for the cache hierarchy to work
+                    HashSet<long> grantSet = null;
+                    HashSet<long> writeSet = null;
+
+                    // only need extra lookups if the queried level is not the highest
+                    if (rt != RightType.Grant)
+                    {
+                        grantSet = new HashSet<long>(entityPermissionManager.GetKeys(username, entityName, typeof(Dataset), RightType.Grant).Result);
+                        if (rt == RightType.Read)
+                            writeSet = new HashSet<long>(entityPermissionManager.GetKeys(username, entityName, typeof(Dataset), RightType.Write).Result);
+                    }
+
+                    string getRightType(long datasetId)
+                    {
+                        if (grantSet != null && grantSet.Contains(datasetId)) return "grant";
+                        if (writeSet != null && writeSet.Contains(datasetId)) return "write";
+                        return rightType.ToLower();
+                    }
 
                     List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(datasetIds, true);
 
-                    // batch query: get all dataset IDs with their latest released tag number (single DB query)
-                    var datasetTags = datasetManager.GetDatasetIdsWithLatestTagNr(true);
+                    var datasetTags = datasetManager.GetDatasetIdsWithLatestTagNr(datasetIds, true);
 
-                    // batch query: get all dataset IDs that have data
                     var datasetIdsWithData = datasetManager.GetDatasetIdsWithData(datasetIds);
 
                     foreach (var dsv in datasetVersions)
                     {
+                        string dsRightType = getRightType(dsv.Dataset.Id);
                         string isValid = "no";
-                        bool isOwn = rt == RightType.Grant || rt == RightType.Write;
+                        bool isOwn = dsRightType == "grant" || dsRightType == "write";
                         string type = dsv.Dataset.DataStructure != null ? "tabular" : "file";
                         double tagNr = datasetTags.TryGetValue(dsv.Dataset.Id, out var tn) ? tn : 0;
                         bool hasTag = tagNr > 0;
@@ -124,11 +254,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
                             }
 
-                            model.Add(new MyDatasetsModel(dsv.Dataset.Id, title, description, isOwn, isValid, type, hasTag, tagNr, hasData));
+                            model.Add(new MyDatasetsModel(dsv.Dataset.Id, title, description, isOwn, isValid, type, hasTag, tagNr, hasData, dsRightType));
                         }
                         else
                         {
-                            model.Add(new MyDatasetsModel(dsv.Dataset.Id, "", "Dataset is just in processing.", isOwn, "no", type, hasTag, tagNr, hasData));
+                            model.Add(new MyDatasetsModel(dsv.Dataset.Id, "", "Dataset is just in processing.", isOwn, "no", type, hasTag, tagNr, hasData, dsRightType));
                         }
                     }
                 }

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
-	import { Page, Spinner, Table, TablePlaceholder, notificationStore, notificationType } from '@bexis2/bexis2-core-ui';
+	import { Page, Spinner, Table, TablePlaceholder, notificationStore, notificationType, positionType } from '@bexis2/bexis2-core-ui';
 	import Fa from 'svelte-fa';
 	import {
 		faTable,
@@ -19,17 +19,20 @@
 	} from '@fortawesome/free-solid-svg-icons';
 	import {
 		getMyDatasets,
+		getAllMyDatasets,
 		getMyRequests,
 		getDecisions,
 		getUseTags,
 		getEntities,
+		getDatasetCounts,
 		withdrawRequest,
 		acceptDecision,
 		rejectDecision,
 		type MyDatasetModel,
 		type RequestModel,
 		type DecisionModel,
-		type EntityModel
+		type EntityModel,
+		type DatasetCounts
 	} from './services';
 	import TableOptions from './tableOptions.svelte';
 	import TableTypeIcon from './tableTypeIcon.svelte';
@@ -58,6 +61,16 @@
 	let datasets: MyDatasetModel[] = [];
 	let requests: RequestModel[] = [];
 	let decisions: DecisionModel[] = [];
+	let datasetCounts: DatasetCounts = { grant: 0, write: 0, read: 0 };
+	let loadingCounts = false;
+	// when true, all datasets are loaded once and filtered client-side (admin case)
+	let useSingleLoad = false;
+
+	// cache per right level: key = rightType, value = sorted MyDatasetModel[]
+	// hierarchy: grant ⊆ write ⊆ read — if a superset is cached, filter from it instead of fetching
+	const datasetsCache = new Map<string, MyDatasetModel[]>();
+	// track which entity the cache was loaded for
+	let cachedEntity: string = '';
 
 	const datasetsStore = writable<any[]>([]);
 
@@ -69,6 +82,13 @@
 		{ key: 'read', label: 'Download' }
 	];
 
+	// rights hierarchy: lower index = fewer datasets
+	const rightLevels = ['grant', 'write', 'read'];
+
+	function getCount(key: string): number {
+		return datasetCounts[key as keyof DatasetCounts] ?? 0;
+	}
+
 	function formatDate(dateStr: string): string {
 		if (!dateStr) return '';
 		return new Date(dateStr).toLocaleDateString();
@@ -78,17 +98,86 @@
 		useTags = await getUseTags();
 		useTagsStore.set(useTags);
 		entities = await getEntities();
-		// load requests and decisions upfront for badge counts; datasets load on demand
-		await Promise.all([loadRequests(), loadDecisions()]);
+		await Promise.all([loadDatasetCounts(), loadRequests(), loadDecisions()]);
 	});
 
+	async function loadDatasetCounts() {
+		loadingCounts = true;
+		datasetCounts = await getDatasetCounts(entityName);
+		loadingCounts = false;
+
+		// decide strategy: if the smallest level is more than 50% of the largest,
+		// the levels overlap heavily — load all once and filter client-side (admin case)
+		const smallest = Math.min(datasetCounts.grant, datasetCounts.write, datasetCounts.read);
+		const largest = Math.max(datasetCounts.grant, datasetCounts.write, datasetCounts.read);
+		useSingleLoad = largest > 0 && smallest / largest > 0.5;
+
+		// auto-select the smallest non-zero right level
+		if (!datasetRightType) {
+			if (datasetCounts.grant > 0) datasetRightType = 'grant';
+			else if (datasetCounts.write > 0) datasetRightType = 'write';
+			else if (datasetCounts.read > 0) datasetRightType = 'read';
+			if (datasetRightType) await loadDatasets();
+		}
+	}
+
+	function updateDatasetsStore(list: MyDatasetModel[]) {
+		datasetsStore.set(list.map(ds => ({ id: ds.id, type: ds.type, hasTag: ds.tagNr > 0 ? ds.tagNr : 0, hasData: ds.hasData, title: ds.title, description: ds.description, isValid: ds.isValid, isOwn: ds.isOwn })));
+	}
+
+	function applyDatasetFilter() {
+		const selectedLevel = rightLevels.indexOf(datasetRightType);
+		// collect from all cached supersets (single-load stores everything under 'read')
+		const allCached = datasetsCache.get('read') || [];
+		datasets = allCached.filter(ds => rightLevels.indexOf(ds.rightType) <= selectedLevel);
+		updateDatasetsStore(datasets);
+	}
+
 	async function loadDatasets() {
+		if (!datasetRightType) return;
+
+		// invalidate cache if entity changed
+		if (cachedEntity !== entityName) {
+			datasetsCache.clear();
+			cachedEntity = entityName;
+		}
+
+		// strategy 1: single load (admin case) — everything cached under 'read', filter client-side
+		if (useSingleLoad) {
+			if (datasetsCache.has('read')) {
+				applyDatasetFilter();
+				return;
+			}
+			loadingDatasets = true;
+			const all = (await getAllMyDatasets(entityName)).sort((a, b) => b.id - a.id);
+			datasetsCache.set('read', all);
+			loadingDatasets = false;
+			applyDatasetFilter();
+			return;
+		}
+
+		// strategy 2: lazy per-tab loading with hierarchy cache
+		const selectedLevel = rightLevels.indexOf(datasetRightType);
+		for (let i = rightLevels.length - 1; i > selectedLevel; i--) {
+			const supersetKey = rightLevels[i];
+			if (datasetsCache.has(supersetKey)) {
+				const superset = datasetsCache.get(supersetKey)!;
+				datasets = superset.filter(ds => rightLevels.indexOf(ds.rightType) <= selectedLevel);
+				updateDatasetsStore(datasets);
+				return;
+			}
+		}
+
+		if (datasetsCache.has(datasetRightType)) {
+			datasets = datasetsCache.get(datasetRightType)!;
+			updateDatasetsStore(datasets);
+			return;
+		}
+
 		loadingDatasets = true;
-		datasets = await getMyDatasets(datasetRightType, entityName);
-		// sort descending by ID (newest first)
-		datasets = datasets.sort((a, b) => b.id - a.id);
-		// restructure objects so columns are in the right order — Table derives column order from data keys
-		datasetsStore.set(datasets.map(ds => ({ id: ds.id, type: ds.type, hasTag: ds.tagNr > 0 ? ds.tagNr : 0, hasData: ds.hasData, title: ds.title, description: ds.description, isValid: ds.isValid, isOwn: ds.isOwn })));
+		datasets = (await getMyDatasets(datasetRightType, entityName)).sort((a, b) => b.id - a.id);
+		datasetsCache.set(datasetRightType, datasets);
+		updateDatasetsStore(datasets);
 		loadingDatasets = false;
 	}
 
@@ -111,7 +200,11 @@
 
 	async function switchEntity(name: string) {
 		entityName = name;
-		await loadDatasets();
+		datasetsCache.clear();
+		cachedEntity = '';
+		datasets = [];
+		datasetRightType = '';
+		await loadDatasetCounts();
 	}
 
 	async function switchTab(tab: Tab) {
@@ -213,18 +306,21 @@
 						class="badge {datasetRightType === tab.key ? 'variant-filled-primary' : 'variant-soft-surface'} cursor-pointer"
 						on:click={() => switchDatasetTab(tab.key)}>
 						{tab.label}
-						{#if datasets.length > 0 && datasetRightType === tab.key}
-							({datasets.length})
+						{#if tab.key === 'grant' && datasetCounts.grant > 0}
+							({datasetCounts.grant})
+						{:else if tab.key === 'write' && datasetCounts.write > 0}
+							({datasetCounts.write})
+						{:else if tab.key === 'read' && datasetCounts.read > 0}
+							({datasetCounts.read})
 						{/if}
 					</button>
 				{/each}
-				
 			</div>
 			
-			{#if datasetRightType === ''}
-				<div class="py-8 text-surface-900 dark:text-surface-300 text"><b>Select a permission type above to load datasets.</b></div>
-			{:else if loadingDatasets}
-				<TablePlaceholder cols={6} />
+			{#if loadingCounts || loadingDatasets}
+				<div class="py-8"><Spinner position={positionType.center} label="loading" /></div>
+			{:else if datasetRightType === ''}
+				<div class="py-8 text-surface-900 dark:text-surface-300 text"><b>No datasets found.</b></div>
 			{:else if datasets.length > 0}
 				<div class="table table-compact w-full">
 					{#key datasetRightType + entityName}

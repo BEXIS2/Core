@@ -29,9 +29,10 @@ namespace BExIS.Modules.Ddm.UI.Models
         public bool HasTag { get; set; }
         public double TagNr { get; set; }
         public bool HasData { get; set; }
+        public string RightType { get; set; }
 
 
-        public MyDatasetsModel(long id, string title, string description, bool isOwn, string isValid, string type, bool hasTag = false, double tagNr = 0, bool hasData = false)
+        public MyDatasetsModel(long id, string title, string description, bool isOwn, string isValid, string type, bool hasTag = false, double tagNr = 0, bool hasData = false, string rightType = "read")
         {
             Id = id;
             Title = title;
@@ -42,6 +43,7 @@ namespace BExIS.Modules.Ddm.UI.Models
             HasTag = hasTag;
             TagNr = tagNr;
             HasData = hasData;
+            RightType = rightType;
         }
     }
 }

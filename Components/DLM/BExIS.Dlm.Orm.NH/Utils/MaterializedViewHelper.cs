@@ -290,6 +290,72 @@ namespace BExIS.Dlm.Orm.NH.Utils
             }
         }
 
+        public HashSet<long> AnyBatch(List<long> datasetIds, IUnitOfWork uow)
+        {
+            HashSet<long> result = new HashSet<long>();
+
+            if (datasetIds == null || datasetIds.Count == 0)
+                return result;
+
+            // Step 1: Find which materialized views exist for our dataset IDs
+            List<string> viewNames = datasetIds.Select(id => "'" + BuildName(id).ToLower() + "'").ToList();
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("SELECT tablename FROM pg_tables WHERE schemaname = 'public' AND tablename IN (" + string.Join(",", viewNames) + ");");
+
+            DataTable existingViews;
+            try
+            {
+                existingViews = uow.ExecuteQuery(sb.ToString());
+            }
+            catch
+            {
+                return result;
+            }
+
+            // Parse existing view names to get dataset IDs
+            List<long> existingIds = new List<long>();
+            foreach (DataRow row in existingViews.Rows)
+            {
+                string tablename = row[0].ToString();
+                string idStr = tablename.Replace("mvdataset", "");
+                if (long.TryParse(idStr, out long id) && datasetIds.Contains(id))
+                {
+                    existingIds.Add(id);
+                }
+            }
+
+            if (existingIds.Count == 0)
+                return result;
+
+            // Step 2: Build a UNION ALL query to check which views have at least 1 row
+            StringBuilder unionBuilder = new StringBuilder();
+            for (int i = 0; i < existingIds.Count; i++)
+            {
+                if (i > 0) unionBuilder.AppendLine(" UNION ALL ");
+                unionBuilder.AppendFormat("SELECT {0} AS dataset_id FROM {1} LIMIT 1", existingIds[i], BuildName(existingIds[i]).ToLower());
+            }
+            unionBuilder.AppendLine(";");
+
+            try
+            {
+                DataTable hasDataResult = uow.ExecuteQuery(unionBuilder.ToString());
+                foreach (DataRow row in hasDataResult.Rows)
+                {
+                    if (long.TryParse(row[0].ToString(), out long id))
+                    {
+                        result.Add(id);
+                    }
+                }
+            }
+            catch
+            {
+                // If the batch query fails, return what we have
+            }
+
+            return result;
+        }
+
         public bool Any(long datasetId, IUnitOfWork uow)
         {
             StringBuilder mvBuilder = new StringBuilder();

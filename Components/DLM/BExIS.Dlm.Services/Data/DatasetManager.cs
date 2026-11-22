@@ -1506,25 +1506,39 @@ namespace BExIS.Dlm.Services.Data
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
+                var datasetRepo = uow.GetReadOnlyRepository<Dataset>();
+
+                IQueryable<DatasetVersion> query;
 
                 if (includeCheckouts) // the working copy versions of checked out datasets are also included
                 {
-                    var q1 = datasetVersionRepo.Query(p =>
+                    query = datasetVersionRepo.Query(p =>
                             datasetIds.Contains(p.Dataset.Id)
                             && (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut)
                             && (p.Status == DatasetVersionStatus.CheckedIn || p.Status == DatasetVersionStatus.CheckedOut)
                         );
-                    return (q1.ToList());
                 }
                 else //just latest checked in versions or checked in datasets
                 {
-                    var q1 = datasetVersionRepo.Query(p =>
+                    query = datasetVersionRepo.Query(p =>
                             datasetIds.Contains(p.Dataset.Id)
                             && (p.Dataset.Status == DatasetStatus.CheckedIn)
                             && (p.Status == DatasetVersionStatus.CheckedIn)
                         );
-                    return (q1.ToList());
                 }
+
+                var result = query.ToList();
+
+                // Batch-load Dataset entities into the session to prevent N+1 lazy loading
+                // when the caller accesses dsv.Dataset or dsv.Dataset.DataStructure later.
+                // Accessing the proxy's Id does not trigger lazy loading.
+                var dsIds = result.Select(v => v.Dataset.Id).Distinct().ToList();
+                if (dsIds.Count > 0)
+                {
+                    datasetRepo.Query(d => dsIds.Contains(d.Id)).ToList();
+                }
+
+                return result;
             }
         }
 
@@ -4302,12 +4316,15 @@ namespace BExIS.Dlm.Services.Data
         /// Get a dictionary of dataset IDs to their latest released tag number (single DB query).
         /// Only returns datasets that have a Final tag on a CheckedIn version.
         /// </summary>
-        public Dictionary<long, double> GetDatasetIdsWithLatestTagNr(bool onlyReady = true)
+        public Dictionary<long, double> GetDatasetIdsWithLatestTagNr(List<long> datasetIds = null, bool onlyReady = true)
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 var query = DatasetVersionRepo.Query()
                     .Where(v => v.Tag != null && v.Dataset.Status == DatasetStatus.CheckedIn);
+
+                if (datasetIds != null)
+                    query = query.Where(v => datasetIds.Contains(v.Dataset.Id));
 
                 if (onlyReady)
                     query = query.Where(v => v.Tag.Final == true);
@@ -4356,10 +4373,12 @@ namespace BExIS.Dlm.Services.Data
                     .Distinct()
                     .ToList();
 
-                foreach (var id in structuredCandidates)
+                var candidatesToCheck = structuredCandidates.Where(id => !result.Contains(id)).ToList();
+                if (candidatesToCheck.Count > 0)
                 {
-                    if (result.Contains(id)) continue;
-                    if (RowAny(id))
+                    MaterializedViewHelper mvHelper = new MaterializedViewHelper();
+                    var withData = mvHelper.AnyBatch(candidatesToCheck, uow);
+                    foreach (var id in withData)
                         result.Add(id);
                 }
             }

@@ -410,8 +410,7 @@ namespace BExIS.Security.Services.Authorization
                 var user = userRepository.Query(s => s.Name.ToUpperInvariant() == userName.ToUpperInvariant()).FirstOrDefault();
                 if (user == null)
                     return await Task.FromResult(entityPermissionRepository
-                        .Query(e => e.Subject == null && e.Entity.Id == entity.Id).AsEnumerable()
-                        .Where(e => (e.Rights & (int)rightType) > 0)
+                        .Query(e => e.Subject == null && e.Entity.Id == entity.Id && (e.Rights & (int)rightType) > 0)
                         .Select(e => e.Key)
                         .ToList());
 
@@ -419,8 +418,7 @@ namespace BExIS.Security.Services.Authorization
                 subjectIds.AddRange(user.Groups.Select(g => g.Id).ToList());
 
                 return entityPermissionRepository
-                        .Query(e => (subjectIds.Contains(e.Subject.Id) || e.Subject == null) && e.Entity.Id == entity.Id).AsEnumerable()
-                        .Where(e => (e.Rights & (int)rightType) > 0)
+                        .Query(e => (subjectIds.Contains(e.Subject.Id) || e.Subject == null) && e.Entity.Id == entity.Id && (e.Rights & (int)rightType) > 0)
                         .Select(e => e.Key)
                         .Distinct()
                         .ToList();

@@ -10,6 +10,7 @@ export interface MyDatasetModel {
 	hasTag: boolean;
 	tagNr: number;
 	hasData: boolean;
+	rightType: string;
 }
 
 export interface RequestModel {
@@ -43,6 +44,32 @@ export interface EntityModel {
 export const getEntities = async (): Promise<EntityModel[]> => {
 	try {
 		const response = await Api.get('/ddm/Dashboard/GetEntities');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		return [];
+	}
+};
+
+export interface DatasetCounts {
+	grant: number;
+	write: number;
+	read: number;
+}
+
+export const getDatasetCounts = async (entityName: string = 'Dataset'): Promise<DatasetCounts> => {
+	try {
+		const response = await Api.get(`/ddm/Dashboard/GetDatasetCounts?entityName=${entityName}`);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		return { grant: 0, write: 0, read: 0 };
+	}
+};
+
+export const getAllMyDatasets = async (entityName: string = 'Dataset'): Promise<MyDatasetModel[]> => {
+	try {
+		const response = await Api.get(`/ddm/Dashboard/GetAllMyDatasets?entityName=${entityName}`);
 		return response.data;
 	} catch (error) {
 		console.error(error);
