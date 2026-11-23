@@ -40,7 +40,7 @@ namespace BExIS.Dlm.Tests.Services.Data
             var connectionString = AppConfiguration.DefaultApplicationConnection.ConnectionString;
             var cfg = new Configuration();
             cfg.SetProperty(NHibernate.Cfg.Environment.ConnectionString, connectionString);
-
+          
             string workspacepath = Path.Combine(AppConfiguration.WorkspaceRootPath, "Components");
     
             DirectoryInfo mappingDirectory = new DirectoryInfo(workspacepath);

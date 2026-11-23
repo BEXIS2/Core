@@ -1,24 +1,32 @@
-﻿using BExIS.App.Bootstrap;
-using BEXIS2.UI.Helpers;
+﻿using Autofac;
+using Autofac.Integration.Mvc;
+using BExIS.App.Bootstrap;
+using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Config;
 using BExIS.Utils.Config.Configurations;
 using BExIS.Web.Shell.Helpers;
+using BEXIS2.App.Model.MTnt;
+using BEXIS2.App.MultiTenancy.Api;
+using BEXIS2.DB.Persistence.Api;
+using BEXIS2.DB.Persistence.NH;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Security.Entities.Subjects;
+using BEXIS2.UI.Helpers;
+using BEXIS2.Utils.Cfg;
+using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using NHibernate;
+using NHibernate.Cfg;
 using System;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Vaiona.IoC;
-using BEXIS2.App.Model.MTnt;
-using BEXIS2.App.MultiTenancy.Api;
-using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Extensions;
-using Autofac;
-using Autofac.Integration.Mvc;
 
 namespace BExIS.Web.Shell
 {
@@ -57,19 +65,30 @@ namespace BExIS.Web.Shell
 
             app = BExIS.App.Bootstrap.Application.GetInstance(RunStage.Production);
             app.Start(WebApiConfig.Register, true);
-
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+            //IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
+            //_sessionFactory = (ISessionFactory)pManager.Factory;
 
-            // Autofac
             // 1. NHibernate SessionFactory einmalig initialisieren (Beispiel)
-            _sessionFactory = new NHibernate.Cfg.Configuration().Configure().BuildSessionFactory();
+            var connectionString = AppConfiguration.DefaultApplicationConnection.ConnectionString;
+            var cfg = new Configuration();
+            string configFileName = string.Format(@"{0}.hibernate.cfg.xml", "PostgreSQL82Dialect");
+            string configFileFullPath = Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "Db", "Settings", configFileName);
+            cfg.Configure(configFileFullPath);
+
+            cfg.SetProperty(NHibernate.Cfg.Environment.ConnectionString, connectionString);
+
+            string workspacepath = Path.Combine(AppConfiguration.WorkspaceRootPath, "Components");
+
+            DirectoryInfo mappingDirectory = new DirectoryInfo(workspacepath);
+            cfg.AddDirectory(mappingDirectory);
+            ISessionFactory _sessionFactory = cfg.BuildSessionFactory();
 
             var builder = new ContainerBuilder();
             // 2. ISessionFactory als Singleton registrieren
             builder.RegisterInstance(_sessionFactory).As<ISessionFactory>().SingleInstance();
-
-
+          
             // 3. ISession als "Per Request" binden (Wichtig: Verwerfen am Request-Ende inklusive)
             builder.Register(context => context.Resolve<ISessionFactory>().OpenSession())
                    .As<ISession>()
@@ -82,9 +101,33 @@ namespace BExIS.Web.Shell
                    .AsSelf()
                    .InstancePerRequest();
 
+            builder.RegisterControllers(typeof(MvcApplication).Assembly);
+
+
+            builder.RegisterType<UserStore>()
+               .As<IUserStore<User,long>> () // or IUserStore<ApplicationUser>, depending on UserStore's generic/non-generic signature
+               .InstancePerRequest();
+
+            builder.RegisterType<GroupStore>()
+               .As<IRoleStore<Group, long>>() // or IUserStore<ApplicationUser>, depending on UserStore's generic/non-generic signature
+               .InstancePerRequest();
+
+            builder.RegisterType<GroupManager>().AsSelf()
+                   .InstancePerRequest();
+            builder.RegisterType<EntityTemplate2Manager>().AsSelf()
+                   .InstancePerRequest();
+            builder.RegisterType<UserManager>().AsSelf()
+                   .InstancePerRequest();
+            builder.RegisterType<GroupManager>().AsSelf()
+                   .InstancePerRequest();
+            
+
             // 5. Container bauen und den MVC Dependency Resolver setzen
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
+
+            ControllerBuilder.Current.SetControllerFactory(new DefaultControllerFactory());
+            var x = ControllerBuilder.Current.GetControllerFactory().GetType().FullName;
 
         }
 

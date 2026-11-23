@@ -31,6 +31,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     public class EntityTemplatesController : Controller
     {
         private readonly GroupManager _groupManager;
+        private readonly EntityTemplate2Manager _entityTemplate2Manager;
+
+        public EntityTemplatesController(GroupManager groupManager, EntityTemplate2Manager entityTemplate2Manager)
+        {
+            _groupManager = groupManager;
+            _entityTemplate2Manager = entityTemplate2Manager;
+        }
 
         public EntityTemplatesController(GroupManager groupManager)
         {

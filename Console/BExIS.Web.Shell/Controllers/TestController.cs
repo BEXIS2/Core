@@ -26,7 +26,7 @@ using Microsoft.Ajax.Utilities;
 namespace BExIS.Web.Shell.Controllers
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
-    public class TestController : BaseController
+    public class TestController : Controller
     {
         private readonly GroupManager _groupManager;
         private readonly UserManager _userManager;
