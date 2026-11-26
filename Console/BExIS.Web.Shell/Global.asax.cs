@@ -19,9 +19,13 @@ using Newtonsoft.Json.Serialization;
 using NHibernate;
 using NHibernate.Cfg;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Web;
+using System.Web.Compilation;
+using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -32,13 +36,13 @@ namespace BExIS.Web.Shell
 {
     // Note: For instructions on enabling IIS6 or IIS7 classic mode,
     // visit http://go.microsoft.com/?LinkId=9394801
-
     public class MvcApplication : HttpApplication
     {
         private static ISessionFactory _sessionFactory;
 
         private BExIS.App.Bootstrap.Application app = null;
 
+        
         protected void Application_Start()
         {
             // Json Settings
@@ -66,6 +70,8 @@ namespace BExIS.Web.Shell
             app = BExIS.App.Bootstrap.Application.GetInstance(RunStage.Production);
             app.Start(WebApiConfig.Register, true);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            //AreaRegistration.RegisterAllAreas();
 
             //IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             //_sessionFactory = (ISessionFactory)pManager.Factory;
@@ -120,7 +126,49 @@ namespace BExIS.Web.Shell
                    .InstancePerRequest();
             builder.RegisterType<GroupManager>().AsSelf()
                    .InstancePerRequest();
-            
+
+
+            // add modules
+            var areasRoot = HostingEnvironment.MapPath("~/Areas");
+            var moduleAssemblies = new List<Assembly>();
+
+            if (!string.IsNullOrEmpty(areasRoot) && Directory.Exists(areasRoot))
+            {
+                foreach (var dllPath in Directory.GetFiles(areasRoot, "*.UI.dll", SearchOption.AllDirectories))
+                {
+                    // Optional: bestehende bin-Assemblies überspringen, falls doppelt vorhanden
+                    //var asmName = AssemblyName.GetAssemblyName(dllPath);
+                    //if (AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name == asmName.Name))
+                    //    continue;
+
+                    var assembly = Assembly.LoadFrom(dllPath);
+
+                    if(!moduleAssemblies.Contains(assembly)) moduleAssemblies.Add(assembly);
+
+                }
+            }
+
+            //// Falls AreaRegistration.RegisterAllAreas() schon vor dem Laden der DLLs aufgerufen wurde:
+            //foreach (var asm in moduleAssemblies)
+            //{
+            //    var areaRegTypes = asm.GetTypes()
+            //        .Where(t => typeof(AreaRegistration).IsAssignableFrom(t) && !t.IsAbstract);
+
+            //    foreach (var regType in areaRegTypes)
+            //    {
+            //        var reg = (AreaRegistration)Activator.CreateInstance(regType);
+            //        var ctx = new AreaRegistrationContext(reg.AreaName, RouteTable.Routes);
+            //        reg.RegisterArea(ctx);
+            //    }
+            //}
+
+            foreach (var asm in moduleAssemblies)
+            {
+                builder.RegisterControllers(asm);
+                builder.RegisterAssemblyModules(asm);
+            }
+
+            //builder.RegisterFilterProvider();
 
             // 5. Container bauen und den MVC Dependency Resolver setzen
             var container = builder.Build();

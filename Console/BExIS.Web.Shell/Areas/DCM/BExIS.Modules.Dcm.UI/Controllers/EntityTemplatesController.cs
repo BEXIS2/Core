@@ -31,17 +31,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     public class EntityTemplatesController : Controller
     {
         private readonly GroupManager _groupManager;
-        private readonly EntityTemplate2Manager _entityTemplate2Manager;
+        private readonly EntityTemplate2Manager _entityTemplateManager;
 
         public EntityTemplatesController(GroupManager groupManager, EntityTemplate2Manager entityTemplate2Manager)
         {
             _groupManager = groupManager;
-            _entityTemplate2Manager = entityTemplate2Manager;
-        }
-
-        public EntityTemplatesController(GroupManager groupManager)
-        {
-            _groupManager = groupManager;
+            _entityTemplateManager = entityTemplate2Manager;
         }
 
         // GET: EntityTemplate
@@ -60,17 +55,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public JsonResult Load()
         {
             List<EntityTemplateModel> entityTemplateModels = new List<EntityTemplateModel>();
-            using (var entityTemplateManager = new EntityTemplateManager())
+           
+            var l = _entityTemplateManager.GetAllAsync().OrderBy(e => e.Order).ToList();
+
+            foreach (var e in l)
             {
-                var l = entityTemplateManager.Repo.Query().OrderBy(e => e.Order).ToList();
-
-                foreach (var e in l)
-                {
-                    entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e));
-                }
-
-                return Json(entityTemplateModels, JsonRequestBehavior.AllowGet);
+                entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e));
             }
+
+            return Json(entityTemplateModels, JsonRequestBehavior.AllowGet);
+            
         }
 
         [JsonNetFilter]
@@ -79,11 +73,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             if (id == 0) return Json(new EntityTemplateModel(), JsonRequestBehavior.AllowGet);
 
-            using (var entityTemplateManager = new EntityTemplateManager())
-            {
-                var entityTemplate = entityTemplateManager.Repo.Get(id);
+                var entityTemplate = _entityTemplateManager.Get(id);
                 return Json(EntityTemplateHelper.ConvertTo(entityTemplate), JsonRequestBehavior.AllowGet);
-            }
         }
 
         [JsonNetFilter]
@@ -93,11 +84,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             // return error if id is 0, because this method is used to get the entity template for a dataset and the dataset must have an entity template
             if (id == 0) return Json(new EntityTemplateModel(), JsonRequestBehavior.AllowGet);
 
-            using (var entityTemplateManager = new EntityTemplateManager())
-            {
-                var entityTemplate = entityTemplateManager.Repo.Get(id);
-                return Json(EntityTemplateHelper.ConvertToSimple(entityTemplate), JsonRequestBehavior.AllowGet);
-            }
+            var entityTemplate = _entityTemplateManager.Get(id);
+            return Json(EntityTemplateHelper.ConvertToSimple(entityTemplate), JsonRequestBehavior.AllowGet);
         }
 
 
@@ -108,10 +96,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (id == 0) return Json(new EntityTemplateModel(), JsonRequestBehavior.AllowGet);
 
             using (var datasetManager = new DatasetManager())
-            using (var entityTemplateManager = new EntityTemplateManager())
             {
                 var obj = datasetManager.GetDataset(id);
-                var entityTemplate = entityTemplateManager.Repo.Get(obj.EntityTemplate.Id);
+                var entityTemplate = _entityTemplateManager.Get(obj.EntityTemplate.Id);
                 return Json(EntityTemplateHelper.ConvertTo(entityTemplate), JsonRequestBehavior.AllowGet);
             }
         }
@@ -121,11 +108,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpDelete]
         public JsonResult Delete(long id)
         {
-            using (var entityTemplateManager = new EntityTemplateManager())
-            {
-                var result = entityTemplateManager.Delete(id);
-                return Json(result);
-            }
+            var result = _entityTemplateManager.Delete(id);
+            return Json(result);
         }
 
         [JsonNetFilter]
@@ -133,17 +117,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [CustomValidateAntiForgeryToken]
         public JsonResult Update(EntityTemplateModel entityTemplate)
         {
-            using (var entityTemplateManager = new EntityTemplateManager())
-            {
-                EntityTemplate result = null;
+            EntityTemplate result = null;
 
-                if (entityTemplate.Id == 0)
-                    result = entityTemplateManager.Create(EntityTemplateHelper.ConvertTo(entityTemplate));
-                else
-                    result = entityTemplateManager.Update(EntityTemplateHelper.Merge(entityTemplate));
+            if (entityTemplate.Id == 0)
+                result = _entityTemplateManager.Create(EntityTemplateHelper.ConvertTo(entityTemplate));
+            else
+                result = _entityTemplateManager.Update(EntityTemplateHelper.Merge(entityTemplate));
 
-                if (result != null) return Json(EntityTemplateHelper.ConvertTo(result));
-            }
+            if (result != null) return Json(EntityTemplateHelper.ConvertTo(result));
 
             return Json(false);
         }
@@ -246,11 +227,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public JsonResult Extensions()
         {
             List<ListItem> tmp = new List<ListItem>();
-            using (var entityTemplateManager = new EntityTemplateManager())
+       
             using (var entityManager = new EntityManager())
             {
                 var extensionEntity = entityManager.EntityRepository.Get().Where(e => e.Name.Equals("Extension")).FirstOrDefault();
-                tmp = entityTemplateManager.Repo.Query(t=>t.EntityType.Id.Equals(extensionEntity.Id) && t.Activated)
+
+                tmp = _entityTemplateManager.GetAllAsync().Where(t=>t.EntityType.Id.Equals(extensionEntity.Id) && t.Activated)
+
                     .Select(e => new ListItem(e.Id, e.Name,"","")).ToList();
             }
 
