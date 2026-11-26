@@ -1,4 +1,4 @@
-﻿using BExIS.Dlm.Entities.Party;
+﻿using BEXIS2.Dlm.Entities.Party;
 using BExIS.Ext.Model;
 using NCalc;
 using System;
@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Vaiona.Persistence.Api;
-using PartyX = BExIS.Dlm.Entities.Party.Party;
+using BEXIS2.DB.Persistence.Api;
+using PartyX = BEXIS2.Dlm.Entities.Party.Party;
 
-namespace BExIS.Dlm.Services.Party
+namespace BEXIS2.Dlm.Services.Party
 {
     public sealed class PartyManager : IDisposable
     {
@@ -245,6 +245,7 @@ namespace BExIS.Dlm.Services.Party
                     party.StartDate = DateTime.MinValue;
                 if (party.EndDate == null || party.EndDate == DateTime.MinValue)
                     party.EndDate = DateTime.MaxValue;
+
                 if (party.StartDate > party.EndDate)
                     BexisException.Throw(null, "End date should be greater than start date.");
                 if ((ValidateRelationships(party.Id)).Any())
@@ -1137,4 +1138,5 @@ namespace BExIS.Dlm.Services.Party
 
         #endregion privateMethod
     }
+
 }

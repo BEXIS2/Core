@@ -1,14 +1,14 @@
 ﻿using BExIS.Dcm.ImportMetadataStructureWizard;
 using BExIS.Dcm.Wizard;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dcm.UI.Models.ImportMetadata;
-using BExIS.Security.Entities.Objects;
+using BEXIS2.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
-using BExIS.UI.Helpers;
-using BExIS.UI.Models;
+using BEXIS2.UI.Helpers;
+using BEXIS2.UI.Models;
 using BExIS.Utils.Models;
-using BExIS.Xml.Helpers;
+using BEXIS2.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +16,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {

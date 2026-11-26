@@ -1,4 +1,4 @@
-﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Attributes;
 using BExIS.Dim.Entities.Export.GBIF;
 using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers;
@@ -6,16 +6,16 @@ using BExIS.Dim.Helpers.Export;
 using BExIS.Dim.Helpers.GFBIO;
 using BExIS.Dim.Helpers.Models;
 using BExIS.Dim.Services;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using BExIS.IO;
-using BExIS.IO.Transform.Output;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.IO;
+using BEXIS2.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models;
-using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Versions;
+using BEXIS2.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Versions;
 using BExIS.Security.Services.Authorization;
-using BExIS.Utils.Data;
-using BExIS.Xml.Helpers;
+using BEXIS2.Utils.Data;
+using BEXIS2.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -25,10 +25,11 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
-using Vaiona.Persistence.Api;
-using Vaiona.Utils.Cfg;
+
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Modularity;
+using BEXIS2.UI.Models;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -146,6 +147,15 @@ namespace BExIS.Modules.Dim.UI.Controllers
             ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
 
             return PartialView("_showPublishDataView", model);
+        }
+
+        [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Read)]
+        public ActionResult getPublishDataView(long datasetId, long datasetVersionId = -1)
+        {
+            setViewData(datasetId);
+            ShowPublishDataModel model = getShowPublishDataModel(datasetId, datasetVersionId);
+
+            return View("_showPublishDataView", model);
         }
 
         public async Task<ActionResult> LoadRequirementView(long brokerId, long datasetId, int versionNr = 0, double tagNr = 0)
@@ -317,7 +327,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                             if (repository != null && repository.Name.ToLower() == "datacite")
                             {
-                                string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + datasetVersion.Dataset.Id).ToString()).ToString();
+                                string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/dcm/view/?id=" + datasetVersion.Dataset.Id).ToString()).ToString();
                                 //new DataCiteDOIHelper().sendRequest(datasetVersion, datasetUrl);
 
                                 string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
@@ -338,7 +348,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                             if (repository != null && repository.Name.ToLower() == "datacite")
                             {
-                                //string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + datasetVersion.Dataset.Id).ToString()).ToString();
+                                //string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/dcm/view/?id=" + datasetVersion.Dataset.Id).ToString()).ToString();
                                 //new DataCiteDOIHelper().sendRequest(datasetVersion, datasetUrl);
 
                                 string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
@@ -435,6 +445,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
             try
             {
                 Dataset dataset = datasetManager.GetDataset(datasetId);
+                var latestVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                model.Title = latestVersion != null ? latestVersion.Title : "No title available";
 
                 List<Broker> Brokers = GetBrokers(dataset.MetadataStructure.Id, publicationManager);
 
@@ -442,7 +454,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 {
                     string name = broker.Name;
                     if (!String.IsNullOrEmpty(broker.Type)) name += " (" + broker.Type + ")";
-                    model.Brokers.Add(new BExIS.UI.Models.ListItem(broker.Id, name));
+                    model.Brokers.Add(new ListItem(broker.Id, name));
                 }
 
                 model.DatasetId = datasetId;
@@ -501,16 +513,15 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         Status = pub.Status,
                         DatasetVersionNr = versionNr,
                         Tag = pub.DatasetVersion.Tag != null ? pub.DatasetVersion.Tag.Nr : 0,
+                       
                     });
                 }
-
                 return model;
             }
             finally
             {
                 publicationManager.Dispose();
                 datasetManager.Dispose();
-                entityPermissionManager.Dispose();
             }
         }
 
@@ -587,7 +598,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <param name="brokerId"></param>
         /// <returns></returns>
         private Tuple<string, string> PrepareData(long datasetVersionId, long brokerId)
-        {
+         {
             Tuple<string, string> tmp = null;
             try
             {
@@ -722,7 +733,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             //    return Json(jsonresult);
             //}
-            ////user exist and api user has access to the api´s
+            ////user exist and api user has access to the api�s
             //else
             //{
             //    //load metadata from version
@@ -915,7 +926,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 ViewData["VersionNrs"] = versionNumbers;
                 ViewData["Tags"] = tags;
-                
+                ViewData["Title"] = tags;
+
             }
         }
     }

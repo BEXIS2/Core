@@ -5,11 +5,11 @@ using BExIS.Dim.Helpers.Export;
 using BExIS.Dim.Helpers.GFBIO;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Helpers.Models;
-using BExIS.Dlm.Entities.Meanings;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.IO.Transform.Output;
-using BExIS.Xml.Helpers.Mapping;
+using BEXIS2.Dlm.Entities.Meanings;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.IO.Transform.Output;
+using BEXIS2.Xml.Helpers.Mapping;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 
 

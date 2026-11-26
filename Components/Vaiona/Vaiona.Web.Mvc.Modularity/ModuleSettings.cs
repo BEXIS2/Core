@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace Vaiona.Web.Mvc.Modularity
 {

@@ -1,0 +1,20 @@
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.DB.Entities" namespace="BEXIS2.DB.Entities.Logging">
+  <subclass name="DataLogEntry" extends="LogEntry" discriminator-value="Data" dynamic-update="true">
+
+    <property name="ObjectId" type="String">
+      <column name="ObjectId" />
+    </property>
+
+    <property name="ObjectType" type="String">
+      <column name="ObjectType" />
+    </property>
+
+    <property name="GroupId" type="String">
+      <column name="GroupId" />
+    </property>
+
+    <property name="State" type="BEXIS2.DB.Entities.Logging.CrudState, BEXIS2.DB.Entities">
+      <column name="EntityState" />
+    </property>
+  </subclass>
+</hibernate-mapping>

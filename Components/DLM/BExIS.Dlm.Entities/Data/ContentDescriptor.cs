@@ -1,10 +1,10 @@
 ﻿using System;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.Dlm.Entities.Data
+namespace BEXIS2.Dlm.Entities.Data
 {
     /// <summary>
     ///

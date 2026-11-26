@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Primitives" Version="8.0.0" />
+    <PackageReference Include="NHibernate" Version="5.7.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\App\BEXIS2.App.Logging\BEXIS2.App.Logging.csproj" />
+    <ProjectReference Include="..\..\Vaiona\Vaiona.IoC\Vaiona.IoC.csproj" />
+    <ProjectReference Include="..\..\Vaiona\Vaiona.Web.Mvc.Modularity\Vaiona.Web.Mvc.Modularity.csproj" />
+    <ProjectReference Include="..\BEXIS2.DB.Entities\BEXIS2.DB.Entities.csproj" />
+    <ProjectReference Include="..\BEXIS2.DB.Persistence.API\BEXIS2.DB.Persistence.API.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Manifest moduleId="PUM" displayName="Publication Tracking Module" version="1.0.0" builtin="true">
+	<Description>
+		...
+	</Description>
+	<Assemblies>
+		<Assembly fullName="" role="" />
+	</Assemblies>
+	<Dependencies>
+		<Dependency moduleId="dcm" version="*.*.*" />
+	</Dependencies>
+	<Exports>
+		<!--
+    <Export tag="settings" id="usrList" order="1"
+            title="Manage Users" description="List Only users without groups" icon=""
+            controller="subjets" action="index" argument="user"
+            extends="./settingsRoot" />
+-->
+		<!--<Export tag="settings" id="modules" order="5"
+    title="Manage Modules" description="Manage Modules" icon=""
+    controller="modules" action="index" argument="Modules"
+    extends="./settingsRoot" />-->
+		<!--<Export tag="settings" id="datasets" order="6"
+		  title="Manage Datasets" description="Manage Datasets" icon=""
+		  controller="datasets" action="index" argument="Datasets"
+		  extends="./settingsRoot" />
+
+		<Export tag="settings" id="datasets" order="7"
+		  title="Manage Requests" description="Manage Requests" icon=""
+		  controller="requestsadmin" action="index" argument="Manage Requests"
+		  extends="./settingsRoot" />-->
+
+		<!--<Export tag="settings" id="datasets" order="8"
+          title="Manage Documents" description="Manage Documents" icon=""
+          controller="Files" action="index" argument="Manage Documents"
+          extends="./settingsRoot" />-->
+
+		<!--<Export tag="settings" id="datasets" order="9"
+      title="Files List" description="Files List" icon=""
+      controller="Files" action="FileList" argument="Files list"
+      extends="./settingsRoot" />-->
+
+		<!--<Export tag="lunchbar" id="helpSam" order="7"
+				title="Administration" description="Administration Help Manual" icon=""
+				controller="help" action="index"
+				extends="./lunchbarRoot/help" />
+
+		<Export tag="settings" id="formerMember" order="15"
+		  title="Manage Former Member" description="" icon=""
+		  controller="FormerMember" action="Index"
+		  extends="./settingsRoot" />-->
+
+		<!-- internal api -->
+
+		<!--<Export tag="internalApi" id="userPermissions_subjects"
+			title="User Permissions - Subjects" description="User Permissions - Subjects" icon=""
+			controller="UserPermissions" action="Subjects"
+			extends="" />
+
+		<Export tag="internalApi" id="entityPermissions_add"
+		  title="Entity Permissions - Subjects" description="Entity Permissions - Add" icon=""
+		  controller="EntityPermissions" action="AddRightToEntityPermission"
+		  extends="" />
+
+		<Export tag="internalApi" id="entityPermissions_remove"
+		  title="Entity Permissions - Subjects" description="Entity Permissions - Remove" icon=""
+		  controller="EntityPermissions" action="RemoveRightFromEntityPermission"
+		  extends="" />
+
+		<Export tag="internalApi" id="loadRequests"
+			title="load requests overview" description="load the overview if requests based on entity and user" icon=""
+			controller="requests" action="requests"
+			extends="" />
+
+		<Export tag="internalApi" id="loadDecisions"
+			title="load decisions overview" description="load the overview if decisions based on entity and user" icon=""
+			controller="requests" action="decisions"
+			extends="" />
+
+		--><!-- api --><!--
+
+		<Export tag="api" id="tntList"
+				title="List Tenants" description="List tenants and their status" icon=""
+				controller="tenants" action="index"
+				extends="./apiRoot" />-->
+	</Exports>
+
+	<!-- fill out alle the hook aatributes otherwise there will not be loaded -->
+	<Hooks>
+		<!--<Hook
+			name="permission"
+			displayName="Permissions"
+			mode="view"
+			entity="dataset"
+			place="details"
+			module="sam"
+			type="BExIS.Modules.Sam.UI.Hooks.UserPermissionsHook, BExIS.Modules.SAM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />-->
+
+		<!--<Hook
+			name="permission"
+			displayName="Permissions"
+			mode="edit"
+			entity="dataset"
+			place="details"
+			module="sam"
+			type="BExIS.Modules.Sam.UI.Hooks.UserPermissionsHook, BExIS.Modules.SAM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />-->
+	</Hooks>
+</Manifest>

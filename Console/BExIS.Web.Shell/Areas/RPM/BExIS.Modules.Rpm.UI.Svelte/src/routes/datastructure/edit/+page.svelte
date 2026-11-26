@@ -25,7 +25,8 @@
 		setByTemplateStore,
 		updateDescriptionByTemplateStore,
 		enforcePrimaryKeyStore,
-		changeablePrimaryKeyStore
+		changeablePrimaryKeyStore,
+		showDarwinCoreValidationStore
 	} from '$lib/components/datastructure/store';
 	import { pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
@@ -94,17 +95,26 @@
 			container?.getAttribute('updateDescriptionByTemplate')?.toLocaleLowerCase() == 'true' ? true : false;
 			updateDescriptionByTemplateStore.set(updateDescriptionByTemplate);
 
+		const showDarwinCoreValidation	=
+			container?.getAttribute('showDarwinCoreValidation')?.toLocaleLowerCase() == 'true' ? true : false;
+			showDarwinCoreValidationStore.set(showDarwinCoreValidation);
+
 		//console.log('edit structure', datastructureId);
 
+		const [ model_, structures, displayPattern] = await Promise.all([
+			get(datastructureId),
+			getStructures(),
+			getDisplayPattern()
+		]);
 		// copy structure
-		model = await get(datastructureId);
-
+		// model = await get(datastructureId);
+		model = model_;
 		// load sturctures for validation against existings
-		const structures = await getStructures();
+		//const structures = await getStructures();
 		structureStore.set(structures);
 
 		// load display pattern onces for all edit types
-		const displayPattern = await getDisplayPattern();
+		//const displayPattern = await getDisplayPattern();
 		displayPatternStore.set(displayPattern);
 
 		// console.log('model', model);
@@ -125,9 +135,9 @@
 <Page
 	title="Data Structure"
 	note="This page allows you to create and edit data structures."
-	contentLayoutType={pageContentLayoutType.full}
-	help={true}
-	footer={false}
+	contentLayoutType={pageContentLayoutType.center}
+	help={false}
+	footer={true}
 	{links}
 >
 	{#await start()}

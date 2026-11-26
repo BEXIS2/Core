@@ -1,7 +1,10 @@
-﻿using BExIS.Security.Services.Utilities;
+﻿using BExIS.Security.Services.Authentication;
+using BExIS.Security.Services.Utilities;
 using BExIS.Web.Shell;
+using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Owin;
+
 
 [assembly: OwinStartup(typeof(Startup))]
 
@@ -12,6 +15,8 @@ namespace BExIS.Web.Shell
         public void Configuration(IAppBuilder app)
         {
             Auth.Configure(app);
+
+            app.CreatePerOwinContext<SignInManager>(SignInManager.Create);
         }
     }
 }

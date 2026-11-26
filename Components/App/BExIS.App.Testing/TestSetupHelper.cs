@@ -12,7 +12,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.SessionState;
 using Vaiona.IoC;
-using Vaiona.MultiTenancy.Api;
+using BEXIS2.App.MultiTenancy.Api;
 
 namespace BExIS.App.Testing
 {
@@ -25,10 +25,12 @@ namespace BExIS.App.Testing
 
         public TestSetupHelper(Action<HttpConfiguration> configurationCallback, bool configureModules)
         {
+            HttpContext.Current = FakeHttpContext();
+
             app = Application.GetInstance(RunStage.Test);
             app.Start(configurationCallback, configureModules);
 
-            HttpContext.Current = FakeHttpContext();
+            
         }
 
         public ControllerContext BuildHttpContext()

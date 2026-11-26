@@ -1,6 +1,7 @@
 [submodule "Console/Workspace"]
 	path = Console/Workspace
 	url = https://github.com/BEXIS2/Workspace.git
+	branch = .
 [submodule "Components/Vaiona"]
 	path = Components/Vaiona
 	url = https://github.com/BEXIS2/VWF.Mvc.git

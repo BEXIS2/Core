@@ -1,7 +1,7 @@
 using Moq;
 using NUnit.Framework;
 
-namespace BExIS.Xml.Helpers.UnitTests
+namespace BEXIS2.Xml.Helpers.UnitTests
 {
     [TestFixture]
     public class XsdSchemaReaderTests

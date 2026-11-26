@@ -2,17 +2,17 @@
 using BExIS.Dcm.UploadWizard;
 using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Helpers.Mappings;
-using BExIS.Dlm.Entities.Common;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.IO.DataType.DisplayPattern;
+using BEXIS2.Dlm.Entities.Common;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Services.MetadataStructure;
+using BEXIS2.IO.DataType.DisplayPattern;
 using BExIS.Modules.Dcm.UI.Models.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Modules.Dcm.UI.Helpers
 {

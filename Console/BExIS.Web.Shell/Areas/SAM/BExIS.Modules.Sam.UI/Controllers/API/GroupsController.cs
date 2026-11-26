@@ -1,5 +1,6 @@
-﻿using BExIS.Modules.Sam.UI.Models;
-using BExIS.Security.Entities.Subjects;
+﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.Modules.Sam.UI.Models;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Route;
 using System;
@@ -14,22 +15,27 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
 {
     public class GroupsController : ApiController
     {
+        private readonly GroupManager _groupManager;
+        private readonly UserManager _userManager;
+
+        public GroupsController(GroupManager groupManager, UserManager userManager)
+        {
+            _groupManager = groupManager;
+            _userManager = userManager;
+        }
+
         // GET: Groups
-        [HttpGet, GetRoute("api/groups/{groupId}")]
+        [BExISApiAuthorize, HttpGet, GetRoute("api/groups/{groupId}")]
         public async Task<HttpResponseMessage> GetById(long groupId)
         {
             try
             {
-                using (var groupManager = new GroupManager())
-                using (var identityGroupService = new IdentityGroupService(groupManager))
-                {
-                    var group = await identityGroupService.FindByIdAsync(groupId);
+                var group = await _groupManager.FindByIdAsync(groupId);
 
-                    if (group == null)
-                        return Request.CreateResponse(HttpStatusCode.BadRequest, $"group with id: {groupId} does not exist.");
+                if (group == null)
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, $"group with id: {groupId} does not exist.");
 
-                    return Request.CreateResponse(HttpStatusCode.OK, ReadGroupModel.Convert(group));
-                }
+                return Request.CreateResponse(HttpStatusCode.OK, ReadGroupModel.Convert(group));
             }
             catch (Exception ex)
             {
@@ -37,20 +43,35 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             }
         }
 
-        [HttpGet, GetRoute("api/groups")]
+        // GET: Groups
+        [BExISApiAuthorize, HttpGet, GetRoute("api/groups/{groupName}")]
+        public async Task<HttpResponseMessage> GetByName(string groupName)
+        {
+            try
+            {
+                var group = await _groupManager.FindByNameAsync(groupName);
+
+                if (group == null)
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, $"group with name: {groupName} does not exist.");
+
+                return Request.CreateResponse(HttpStatusCode.OK, ReadGroupModel.Convert(group));
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        [BExISApiAuthorize, HttpGet, GetRoute("api/groups")]
         public async Task<HttpResponseMessage> Get()
         {
             try
             {
-                using (var groupManager = new GroupManager())
-                using (var identityGroupService = new IdentityGroupService(groupManager))
-                {
-                    var groups = identityGroupService.Roles.ToList();
+                var groups = _groupManager.Roles.ToList();
 
-                    var model = groups.Select(g => ReadGroupModel.Convert(g));
+                var model = groups.Select(g => ReadGroupModel.Convert(g));
 
-                    return Request.CreateResponse(HttpStatusCode.OK, model);
-                }
+                return Request.CreateResponse(HttpStatusCode.OK, model);
             }
             catch (Exception ex)
             {
@@ -58,24 +79,33 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             }
         }
 
-        [HttpPost, PostRoute("api/groups")]
+        [BExISApiAuthorize, HttpPost, PostRoute("api/groups")]
         public async Task<HttpResponseMessage> Post(CreateGroupModel model)
         {
             try
             {
-                using (var groupManager = new GroupManager())
-                using (var identityGroupService = new IdentityGroupService(groupManager))
+                var date = DateTime.Now;
+
+                var group = new Group()
                 {
-                    var group = new Group()
+                    Description = model.Description,
+                    Name = model.Name,
+                    CreationDate = date,
+                    ModificationDate = date
+                };
+
+                await _groupManager.CreateAsync(group);
+
+                foreach (var userId in model.UserIds)
+                {
+                    var user = await _userManager.FindByIdAsync(userId);
+                    if (user != null)
                     {
-                        Description = model.Description,
-                        Name = model.Name
-                    };
-
-                    await identityGroupService.CreateAsync(group);
-
-                    return Request.CreateResponse(HttpStatusCode.Created);
+                        await _userManager.AddToRoleAsync(userId, group.Name);
+                    }
                 }
+
+                return Request.CreateResponse(HttpStatusCode.Created);
             }
             catch (Exception ex)
             {
@@ -83,33 +113,58 @@ namespace BExIS.Modules.Sam.UI.Controllers.API
             }
         }
 
-        [HttpPut, PutRoute("api/groups/{groupId}")]
+        [BExISApiAuthorize, HttpPut, PutRoute("api/groups/{groupId}")]
         public async Task<HttpResponseMessage> PutByIdAsync(long groupId, UpdateGroupModel model)
         {
-            using (var groupManager = new GroupManager())
-            using (var identityGroupService = new IdentityGroupService(groupManager))
+            var group = await _groupManager.FindByIdAsync(groupId) ?? throw new ArgumentNullException();
+
+            group.Name = model.Name;
+            group.Description = model.Description;
+            group.ModificationDate = DateTime.Now;
+
+            await _groupManager.UpdateAsync(group);
+
+            // removable users from the group
+            var userIds = group.Users.Select(u => u.Id).ToList();
+
+            foreach (var userId in userIds)
             {
-                var group = await identityGroupService.FindByIdAsync(groupId) ?? throw new ArgumentNullException();
-
-                group.Name = model.Name;
-                group.Description = model.Description;
-
-                await identityGroupService.UpdateAsync(group);
-
-                return Request.CreateResponse(HttpStatusCode.OK);
+                if (!model.UserIds.Contains(userId))
+                {
+                    await _userManager.RemoveFromRoleAsync(userId, group.Name);
+                }
             }
+
+            foreach (var userId in model.UserIds)
+            {
+                if (!userIds.Contains(userId))
+                {
+                    await _userManager.AddToRoleAsync(userId, group.Name);
+                }
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
-        [HttpDelete, DeleteRoute("api/groups/{groupId}")]
+        [BExISApiAuthorize, HttpDelete, DeleteRoute("api/groups/{groupId}")]
         public async Task<HttpResponseMessage> DeleteByIdAsync(long groupId)
         {
-            using (var groupManager = new GroupManager())
-            using (var identityGroupService = new IdentityGroupService(groupManager))
-            {
-                await identityGroupService.DeleteByIdAsync(groupId);
+            var group = await _groupManager.FindByIdAsync(groupId) ?? throw new ArgumentNullException();
 
-                return Request.CreateResponse(HttpStatusCode.OK);
+            if(group == null)
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+
+            foreach (var userId in group.Users.Select(x => x.Id))
+            {
+                await _userManager.RemoveFromRoleAsync(userId, group.Name);
             }
+
+            var deleted = _groupManager.Delete(groupId);
+
+            if (deleted)
+                return Request.CreateResponse(HttpStatusCode.OK);
+            else
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
         }
     }
 }

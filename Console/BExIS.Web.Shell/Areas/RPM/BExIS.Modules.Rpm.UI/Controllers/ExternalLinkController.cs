@@ -1,17 +1,20 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.Meanings;
-using BExIS.Dlm.Services.Meanings;
+using BEXIS2.Dlm.Entities.Meanings;
+using BEXIS2.Dlm.Services.Meanings;
 using BExIS.Modules.Rpm.UI.Helpers;
 using BExIS.Modules.Rpm.UI.Models;
-using BExIS.UI.Helpers;
-using BExIS.UI.Models;
+using BEXIS2.UI.Helpers;
+using BEXIS2.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.SessionState;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
+    
+    [SessionState(SessionStateBehavior.ReadOnly)]   
     public class ExternalLinkController : Controller
     {
         // GET: ExternalLink

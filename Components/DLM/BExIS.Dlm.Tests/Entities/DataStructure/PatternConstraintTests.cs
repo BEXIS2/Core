@@ -1,4 +1,4 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
 using NUnit.Framework;
 
 namespace BExIS.Dlm.Tests.Entities.DataStructure

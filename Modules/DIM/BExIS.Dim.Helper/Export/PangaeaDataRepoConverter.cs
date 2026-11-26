@@ -3,12 +3,12 @@ using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Helpers.Models;
 using BExIS.Dim.Services;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.IO;
-using BExIS.IO.Transform.Output;
-using BExIS.Xml.Helpers;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.IO;
+using BEXIS2.IO.Transform.Output;
+using BEXIS2.Xml.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -116,7 +116,7 @@ namespace BExIS.Dim.Helpers.Export
                 {
                     DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
-                    if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                    if (datasetVersion.Dataset.DataStructure!=null)
                     {
                         OutputDataManager outputDataManager = new OutputDataManager();
                         SubmissionManager submissionManager = new SubmissionManager();

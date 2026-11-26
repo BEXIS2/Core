@@ -57,6 +57,10 @@
 			showFirstLastButtons
 			showPreviousNextButtons
 			on:page={(e) => (paginationSettings.page = e.detail)}
+			on:amount={(e) => {
+				paginationSettings.limit = e.detail;
+				paginationSettings.page = 0;
+			}}
 		/>
 	{/if}
 </div>

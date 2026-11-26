@@ -1,4 +1,4 @@
-﻿using BExIS.Dlm.Services.Party;
+﻿using BEXIS2.Dlm.Services.Party;
 using BExIS.Modules.Bam.UI.Models;
 using System;
 using System.Collections.Generic;

@@ -261,7 +261,7 @@
 			</div>
 		</div>
 
-		<!--Missing Values-->
+		<!--Missing Values not save in the variable template
 		<div
 			id="missingvaluesContainer"
 			on:mouseover={() => {
@@ -270,7 +270,7 @@
 		>
 			<MissingValues bind:list={variable.missingValues} />
 		</div>
-
+-->
 		<div>
 			<MultiSelect
 				id="links"

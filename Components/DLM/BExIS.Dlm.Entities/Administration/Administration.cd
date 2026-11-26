@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="BExIS.Dlm.Entities.Administration.ResearchPlan">
+  <Class Name="BEXIS2.Dlm.Entities.Administration.ResearchPlan">
     <Position X="7.25" Y="2.25" Width="1.5" />
-    <AssociationLine Name="DataStructures" Type="BExIS.Dlm.Entities.DataStructure.DataStructure" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="DataStructures" Type="BEXIS2.Dlm.Entities.DataStructure.DataStructure" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="8.75" Y="2.688" />
         <Point X="10.625" Y="2.688" />
@@ -18,7 +18,7 @@
       <Property Name="DataStructures" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.DataStructure.DataStructure">
+  <Class Name="BEXIS2.Dlm.Entities.DataStructure.DataStructure">
     <Position X="9.5" Y="4.5" Width="1.5" />
     <Compartments>
       <Compartment Name="Properties" Collapsed="true" />
@@ -31,13 +31,13 @@
       <Property Name="ResearchPlans" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.Data.Dataset">
+  <Class Name="BEXIS2.Dlm.Entities.Data.Dataset">
     <Position X="4.75" Y="4.25" Width="1.5" />
     <Compartments>
       <Compartment Name="Properties" Collapsed="true" />
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
-    <AssociationLine Name="ResearchPlan" Type="BExIS.Dlm.Entities.Administration.ResearchPlan" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="ResearchPlan" Type="BEXIS2.Dlm.Entities.Administration.ResearchPlan" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="5.812" Y="4.25" />
         <Point X="5.812" Y="3.366" />

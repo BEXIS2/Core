@@ -1,24 +1,27 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
-using BExIS.IO.Transform.Input;
-using BExIS.IO;
+using BEXIS2.IO.Transform.Input;
+using BEXIS2.IO;
 using BExIS.Modules.Rpm.UI.Models.DataStructure;
-using BExIS.UI.Hooks.Caches;
-using BExIS.UI.Hooks;
+using BEXIS2.UI.Hooks;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Vaiona.Utils.Cfg;
+using System.Web.SessionState;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Data;
-using BExIS.UI.Models;
+using BEXIS2.UI.Models;
 using Vaiona.Web.Mvc.Modularity;
-using BExIS.UI.Hooks.Logs;
+using BEXIS2.UI.Hooks.Logs;
+using BEXIS2.UI.Hooks.Caches;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
+    
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class FileController : Controller
     {
         // GET: File
@@ -322,7 +325,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             var list = new List<MissingValueModel>();
             // get default missing values
             var settings = ModuleManager.GetModuleSettings("rpm");
-            var mv_list = settings.GetValueByKey("missingValues") as List<Vaiona.Utils.Cfg.Entry>;
+            var mv_list = settings.GetValueByKey("missingValues") as List<BEXIS2.Utils.Cfg.Entry>;
 
             if (mv_list != null)
             {

@@ -1,4 +1,4 @@
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.DataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Dimension" table="Dimensions" dynamic-update="true" select-before-update="true">
     <!-- Mapping BaseEntity properties -->
 
@@ -33,7 +33,7 @@
       <key>
         <column name="DimensionRef" />
       </key>
-      <one-to-many class="BExIS.Dlm.Entities.DataStructure.Unit" />
+      <one-to-many class="BEXIS2.Dlm.Entities.DataStructure.Unit" />
     </set>
   </class>
 </hibernate-mapping>

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Assert = NUnit.Framework.Assert;
 
-namespace BExIS.Xml.Helpers.UnitTests
+namespace BEXIS2.Xml.Helpers.UnitTests
 {
     [TestFixture()]
     public class XmlUtility_XDocumentTests

@@ -1,21 +1,21 @@
 ﻿using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Services;
 using BExIS.Dim.Services.Mappings;
-using BExIS.Dlm.Entities.Common;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Entities.Party;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Dlm.Services.Party;
+using BEXIS2.Dlm.Entities.Common;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Entities.Party;
+using BEXIS2.Dlm.Services.MetadataStructure;
+using BEXIS2.Dlm.Services.Party;
 using BExIS.Modules.Dim.UI.Models.Mapping;
-using BExIS.Security.Entities.Objects;
+using BEXIS2.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
-using BExIS.Utils.Data.MetadataStructure;
+using BEXIS2.Utils.Data.MetadataStructure;
 using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Modules.Dim.UI.Helper
 {
@@ -1008,11 +1008,11 @@ namespace BExIS.Modules.Dim.UI.Helper
                     .FirstOrDefault(le =>
                     le.ElementId.Equals(leModel.ElementId) &&
                     le.Type.Equals(leModel.Type) &&
-                    le.Complexity.Equals(leModel.Complexity)
-                    //le.Parent.Id.Equals(parentId)
+                    le.Complexity.Equals(leModel.Complexity)&&
+                    le.XPath == leModel.XPath
                     );
 
-                if (element.XPath == null || !element.XPath.Equals(leModel.XPath))
+                if (element.XPath == null/* || !element.XPath.Equals(leModel.XPath)*/)
                 {
                     element.XPath = leModel.XPath;
                     mappingManager.UpdateLinkElement(element);
@@ -1211,9 +1211,11 @@ namespace BExIS.Modules.Dim.UI.Helper
 
         public static bool ExistLinkElementModel(LinkElementModel leModel, List<LinkElementModel> leModels)
         {
+
             if (leModels.Any(le => le.ElementId.Equals(leModel.ElementId) &&
                 le.Type.Equals(leModel.Type) &&
-                le.Complexity.Equals(leModel.Complexity)))
+                le.Complexity.Equals(leModel.Complexity) &&
+                le.XPath == leModel.XPath))
             {
                 return true;
             }
@@ -1224,13 +1226,15 @@ namespace BExIS.Modules.Dim.UI.Helper
         public static bool ExistLinkElement(LinkElementModel leModel)
         {
             MappingManager mappingManager = new MappingManager();
-
             try
             {
                 if (mappingManager.LinkElementRepo.Get()
                     .Any(le => le.ElementId.Equals(leModel.ElementId) &&
                     le.Type.Equals(leModel.Type) &&
-                    le.Complexity.Equals(leModel.Complexity)))
+                    le.Complexity.Equals(leModel.Complexity)&&
+                    le.XPath == leModel.XPath
+                    ))
+              
                 {
                     return true;
                 }

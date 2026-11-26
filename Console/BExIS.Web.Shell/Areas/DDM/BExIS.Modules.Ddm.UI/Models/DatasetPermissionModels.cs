@@ -1,5 +1,5 @@
-﻿using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Subjects;
+﻿using BEXIS2.Security.Entities.Objects;
+using BEXIS2.Security.Entities.Subjects;
 using System.Collections.Generic;
 
 namespace BExIS.Modules.Ddm.UI.Models

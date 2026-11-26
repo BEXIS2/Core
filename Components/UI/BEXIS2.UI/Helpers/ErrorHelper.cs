@@ -1,0 +1,36 @@
+﻿using BExIS.Security.Services.Utilities;
+using BExIS.Utils.Config;
+using BEXIS2.App.Logging;
+using System;
+
+namespace BEXIS2.UI.Helpers
+{
+    public class ErrorHelper
+    {
+        public static void SendEmailWithErrors(string result)
+        {
+            try
+            {
+                var subject = "Error in system";
+
+                using(var emailService = new EmailService())
+                {
+                    emailService.Send(subject,
+                    result,
+                    GeneralSettings.SystemEmail
+                    );
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                // Write o the event log.
+            }
+        }
+
+        public static void Log(string result)
+        {
+            LoggerFactory.GetFileLogger().LogCustom(result);
+        }
+    }
+}

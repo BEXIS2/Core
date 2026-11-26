@@ -1,18 +1,17 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.IO.Transform.Output;
+using BExIS.Dim.Helpers.Models;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models;
-using BExIS.Modules.Dim.UI.Models.Api;
-using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
-using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Route;
-using BExIS.Xml.Helpers;
+using BEXIS2.Xml.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -24,7 +23,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Web.Http;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -48,7 +47,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 foreach (int id in datasetIds)
                 {
                     DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(id);
-                    if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                    if (datasetVersion.Dataset.DataStructure!=null)
                     {
                         structuredIds.Add(id);
                     }
@@ -76,7 +75,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
         private HttpResponseMessage getData(long id, int variableId, string token)
         {
             DatasetManager datasetManager = new DatasetManager();
-            UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             EntityManager entityManager = new EntityManager();
             DataStructureManager dataStructureManager = null;
@@ -121,7 +119,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         string title = datasetVersion.Title;
 
                         // check the data sturcture type ...
-                        if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                        if (datasetVersion.Dataset.DataStructure!=null)
                         {
                             object stats = new object();
 
@@ -184,8 +182,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             finally
             {
                 datasetManager.Dispose();
-                userManager.Dispose();
-                entityPermissionManager.Dispose();
                 entityManager.Dispose();
                 dataStructureManager.Dispose();
             }

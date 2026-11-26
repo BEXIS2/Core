@@ -1,8 +1,8 @@
 ﻿using BExIS.Security.Entities.Subjects;
 using System;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 
-namespace BExIS.Dlm.Entities.Curation
+namespace BEXIS2.Dlm.Entities.Curation
 {
     public class CurationNote: BaseEntity
     {
@@ -29,10 +29,10 @@ namespace BExIS.Dlm.Entities.Curation
             User = user;
         }
 
-        public CurationNote(User user, string comment)
+        public CurationNote(User user, string comment, CurationUserType userType)
         {
             Id = 0;
-            UserType = CurationEntry.GetCurationUserType(user);
+            UserType = userType;
             CreationDate = DateTime.Now;
             Comment = comment;
             User = user;

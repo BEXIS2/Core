@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using BEXIS2.IO;
+using System.Collections.Generic;
 
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.IO.Transform.Output
+namespace BEXIS2.IO.Transform.Output
 {
     /// <summary>
     ///

@@ -16,6 +16,7 @@
 	onMount(async () => {
 		//load javascript from server
 		const urlscript = host + start + '?id=' + id + '&&version=' + version;
+		console.log("🚀 ~ urlscript:", urlscript)
 
 		import(urlscript).then((resp) => {
 			ExtComponent = resp.default;

@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Xml.Helpers;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Xml.Helpers;
 using System.Linq;
 
 namespace BExIS.Modules.Sam.UI.Models

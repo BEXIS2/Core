@@ -65,7 +65,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     // every mapping will be check
                     // if a link element has no xpath get it from the generated models and update them for the furture
 
-                    updateXPaths(model.ParentMappings, model.Source, model.Target);
+                    //updateXPaths(model.ParentMappings, model.Source, model.Target);
                 }
 
                 return View(model);

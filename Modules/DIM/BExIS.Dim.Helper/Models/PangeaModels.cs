@@ -1,4 +1,4 @@
-﻿using BExIS.IO.Transform.Output;
+﻿using BEXIS2.IO.Transform.Output;
 using System.Collections.Generic;
 
 namespace BExIS.Dim.Helpers.Models

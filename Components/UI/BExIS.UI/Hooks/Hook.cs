@@ -1,4 +1,4 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using BEXIS2.Dlm.Entities.Data;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
@@ -87,10 +87,8 @@ namespace BExIS.UI.Hooks
         {
             #region security permissions and authorisations check
 
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
-            {
-                return entityPermissionManager.HasEffectiveRightsAsync(userName, typeof(Dataset), entityId, rightType).Result;
-            }
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            return entityPermissionManager.HasEffectiveRightsAsync(userName, typeof(Dataset), entityId, rightType).Result;
 
             #endregion security permissions and authorisations check
         }

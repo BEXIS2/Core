@@ -1,15 +1,15 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.Helpers;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Security.Cryptography;
-using Vaiona.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.DB.Persistence.Api;
+using BEXIS2.Utils.Cfg;
 
-namespace BExIS.Dlm.Services.MetadataStructure
+namespace BEXIS2.Dlm.Services.MetadataStructure
 {
     public class MetadataAttributeManager : IDisposable
     {

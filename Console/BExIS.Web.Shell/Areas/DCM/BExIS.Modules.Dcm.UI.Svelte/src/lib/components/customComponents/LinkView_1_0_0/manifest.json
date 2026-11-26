@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "title": "Link View Widget",
+    "component_name": "linkView_v1.0.0",
+    "author": "BEXIS2",
+    "version": "1.0.0",
+    "description": "View-only component that displays a field value as a clickable link using its ref"
+  },
+  "globalSettings": {
+    "globalsetting": []
+  },
+  "modes": {
+    "view": [
+      {
+        "mode_name": "Link Display",
+        "description": "Displays the field value as a link if a ref is available",
+        "settings": {
+          "setting": []
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Field",
+              "description": "Field to display as a link",
+              "type": "string",
+              "target_variable": "field",
+              "allowregex_input": true,
+              "allowregex_output": false,
+              "is_input": true,
+              "is_output": false,
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

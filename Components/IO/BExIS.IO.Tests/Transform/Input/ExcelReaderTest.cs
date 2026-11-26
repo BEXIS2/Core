@@ -1,4 +1,4 @@
-﻿using BExIS.IO.Transform.Input;
+﻿using BEXIS2.IO.Transform.Input;
 using NUnit.Framework;
 using System;
 

@@ -1,7 +1,7 @@
-@model List<BExIS.Dlm.Entities.Party.PartyCustomAttribute>
+@model List<BEXIS2.Dlm.Entities.Party.PartyCustomAttribute>
 @{
     ViewBag.Title = "customAttributesPartial";
-    List<BExIS.Dlm.Entities.Party.PartyCustomAttributeValue> partyCustomAttributeValues = (List<BExIS.Dlm.Entities.Party.PartyCustomAttributeValue>)ViewBag.customAttrValues;
+    List<BEXIS2.Dlm.Entities.Party.PartyCustomAttributeValue> partyCustomAttributeValues = (List<BEXIS2.Dlm.Entities.Party.PartyCustomAttributeValue>)ViewBag.customAttrValues;
     long partyId = 0;
     long partyTypeId = 0;
     if (Model != null && Model.Any())

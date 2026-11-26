@@ -1,13 +1,13 @@
 ﻿using BExIS.Dim.Entities.Publications;
-using BExIS.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.Data;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Vaiona.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.DB.Persistence.Api;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Dim.Services.Publications
 {

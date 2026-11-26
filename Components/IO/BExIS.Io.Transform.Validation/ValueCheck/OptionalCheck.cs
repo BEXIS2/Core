@@ -71,7 +71,7 @@ namespace BExIS.IO.Transform.Validation.ValueCheck
             if (String.IsNullOrEmpty(value) && this.optional == false)
             {
                 // create Error Object
-                Error e = new Error(ErrorType.Value, "Is empty and not optional ", new object[] { name, "empty", row, dataType });
+                Error e = new Error(ErrorType.Value, "Value is empty but not optional. Fill the empty fields with missing values or mark as optional.", new object[] { name, "empty", row, dataType });
                 return e;
             }
             return value;

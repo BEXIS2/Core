@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.Common;
-using BExIS.Xml.Helpers;
+﻿using BEXIS2.Dlm.Entities.Common;
+using BEXIS2.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

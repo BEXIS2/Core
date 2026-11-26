@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Schema;
 
-namespace BExIS.Xml.Helpers
+namespace BEXIS2.Xml.Helpers
 {
     public class XmlSchemaUtility
     {
@@ -71,10 +71,6 @@ namespace BExIS.Xml.Helpers
             {
                 if (item is XmlSchemaElement)
                 {
-                    Debug.WriteLine("                          ");
-                    Debug.WriteLine("__________________________");
-                    Debug.WriteLine(item.Name);
-                    Debug.WriteLine("---------------------------------");
                     //elements.Add((XmlSchemaElement)item);
                     elements = GetElements((XmlSchemaElement)item, elements, true, new List<XmlSchemaElement>());
                 }
@@ -282,7 +278,6 @@ namespace BExIS.Xml.Helpers
 
                         if (recursive)
                         {
-                            Debug.WriteLine("--<" + child.Name);
 
                             XmlSchemaComplexType complexType = child.ElementSchemaType as XmlSchemaComplexType;
                             if (complexType != null)
@@ -337,8 +332,6 @@ namespace BExIS.Xml.Helpers
 
                             if (recursive)
                             {
-                                Debug.WriteLine("--<" + refElement.Name);
-
                                 XmlSchemaComplexType complexType = refElement.ElementSchemaType as XmlSchemaComplexType;
                                 if (complexType != null)
                                 {

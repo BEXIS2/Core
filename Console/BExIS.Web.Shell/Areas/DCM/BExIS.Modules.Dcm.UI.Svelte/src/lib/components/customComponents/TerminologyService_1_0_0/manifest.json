@@ -1,0 +1,140 @@
+{
+  "meta": {
+    "title": "Terminology Widget",
+    "component_name": "terminology_v1.0.0",
+    "author": "Franziska Zander",
+    "version": "1.0.0",
+    "description": "Component for Terminology selection based on the Terminology Services for NFDI"
+  },
+  "globalSettings": {
+    "globalsetting": [
+      {
+        "target_variable": "TerminologyServiceUrl",
+        "name": "Terminology Service URL",
+        "description": "URL of the terminology service to use",
+        "type": "string",
+        "enum": [
+          "https://terminology.services.base4nfdi.de/api-gateway/",
+          "https://api.terminology.tib.eu/api/",
+          "https://ols3-semanticlookup.zbmed.de/ols/api/",
+          "https://semanticlookup.zbmed.de/ols/api/",
+          "https://www.ebi.ac.uk/ols4/api/"
+        ],
+        "default_value": "https://semanticlookup.zbmed.de/ols/api/"
+      },
+      {
+        "name": "Description",
+        "description": "Overwrite default description of the field.",
+        "type": "string",
+        "target_variable": "description",
+        "default_value": {
+          "type": "string",
+          "value": ""
+        }
+      }
+    ]
+  },
+  "modes": {
+    "edit": [
+      {
+        "mode_name": "simple",
+        "description": "Basic Configuration of the terminology widget",
+        "settings": {
+          "setting": [
+            {
+              "name": "Parameter",
+              "description": "String to configure the terminology widget. PLease check the documentation of the terminology service for the correct parameter format.(https://terminology.services.base4nfdi.de/tss/comp/latest/?path=/docs/html_search-autocompletewidget--docs)",
+              "type": "string",
+              "target_variable": "parameter",
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            },
+            {
+              "name": "allowCustomTerms",
+              "description": "Allow users to enter custom terms that are not in the terminology service",
+              "type": "boolean",
+              "target_variable": "allowCustomTerms",
+              "default_value": {
+                "type": "boolean",
+                "value": false
+              }
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Term",
+              "description": "Term with reference to the terminology service",
+              "type": "string",
+              "format": "",
+              "target_variable": "term_field",
+              "allowregex_input": true,
+              "allowregex_output": true,
+              "is_input": true,
+              "is_output": true,
+              "default_value": {
+                "type": "string",
+                "value": "Rainforest"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "view": [
+      {
+        "mode_name": "Linked Terminology Display",
+        "description": "Mode for displaying linked terminology",
+        "settings": {
+          "setting": []
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Display Term",
+              "description": "Term to display",
+              "type": "string",
+              "target_variable": "displayTerm",
+              "allowregex_input": true,
+              "allowregex_output": false,
+              "is_input": true,
+              "is_output": false,
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            }
+          ]
+        }
+      },
+      {
+        "mode_name": "Linked Terminology Display with Description",
+        "description": "Mode for displaying linked terminology with description",
+        "settings": {
+          "setting": []
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Display Term",
+              "description": "Term to display with description",
+              "type": "string",
+              "target_variable": "displayTerm",
+              "allowregex_input": true,
+              "allowregex_output": false,
+              "is_input": true,
+              "is_output": false,
+              "default_value": {
+                "type": "string",
+                "value": ""
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

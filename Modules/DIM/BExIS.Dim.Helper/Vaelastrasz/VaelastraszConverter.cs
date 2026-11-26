@@ -4,12 +4,12 @@ using BExIS.Dim.Helpers.Export;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Helpers.Models;
 using BExIS.Dim.Services.Mappings;
-using BExIS.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.Data;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Dim.Helpers.Vaelastrasz
 {

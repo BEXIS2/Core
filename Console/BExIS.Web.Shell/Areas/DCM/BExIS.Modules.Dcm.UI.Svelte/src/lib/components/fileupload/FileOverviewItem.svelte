@@ -12,6 +12,7 @@
 	export let file: FileInfo;
 
 	export let withDescription;
+	export let descriptionSave = true;
 	const dispatch = createEventDispatcher();
 
 	// action to save description
@@ -44,9 +45,16 @@
 	}
 
 	async function handleSaveFileDescription() {
+		
 		const res = await saveFileDescription(save, id, file);
 		if (res) {
-			let message = 'Description of ' + file.name + ' is updated.';
+			let message = '';
+			if (!descriptionSave) {
+				message = "noAltertText";
+			}
+			else{
+		 		message = 'Description of ' + file.name + ' was updated.';
+			}
 			dispatch('saved', { text: message });
 		}
 	}
@@ -76,7 +84,7 @@
 			{#if loading}
 				<Spinner textCss="text-surface-500" />
 			{:else}
-				<button class="btn" on:click={(e) => handleRemoveFile(e)}><Fa icon={faIcon} /></button>
+				<button  title="Remove file" class="btn" on:click={(e) => handleRemoveFile(e)}><Fa icon={faIcon} /></button>
 			{/if}
 		</div>
 	</div>

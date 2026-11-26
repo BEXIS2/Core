@@ -1,17 +1,17 @@
 ﻿using BExIS.App.Testing;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Administration;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.MetadataStructure;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Administration;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.Utils.Config;
 using BExIS.Utils.Tests.Data.Helpers;
-using BExIS.Utils.Upload;
 using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BExIS.Utils.Upload;
 
 namespace BExIS.Utils.Data.Tests
 {
@@ -31,6 +31,10 @@ namespace BExIS.Utils.Data.Tests
         {
             helper = new TestSetupHelper(WebApiConfig.Register, false);
             dsHelper = new DatasetHelper();
+
+            dsHelper.PurgeAllDatasets();
+            dsHelper.PurgeAllDataStructures();
+            dsHelper.PurgeAllResearchPlans();
 
             using (var dm = new DatasetManager())
             using (var rsm = new ResearchPlanManager())

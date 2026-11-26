@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.Dlm.Entities.DataStructure
+namespace BEXIS2.Dlm.Entities.DataStructure
 {
     /// <summary>
     /// This entity lets define various processing functions that can be applied on variables. for example, temperature can be processed by Min, Max, Average, etc.

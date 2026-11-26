@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace BExIS.IO.Transform.Input
+namespace BEXIS2.IO.Transform.Input
 {
     public class ExcelHelper
     {

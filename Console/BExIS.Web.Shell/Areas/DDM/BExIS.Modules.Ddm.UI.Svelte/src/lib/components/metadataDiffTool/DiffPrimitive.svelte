@@ -2,12 +2,14 @@
 	export let value1: string | number | boolean | undefined | null;
 	export let value2: string | number | boolean | undefined | null;
 	export let byChar: boolean = false;
+	export let useSimpleFormat: boolean = false;
+	export let hideUnchanged: boolean = true;
 
 	$: value1String = String(value1);
 	$: value2String = String(value2);
 
-	$: useSimpleFormat =
-		typeof value1 !== typeof value2 || value1String.length < 40 || value2String.length < 40;
+	// $: useSimpleFormat = false;
+		// typeof value1 !== typeof value2 || value1String.length < 40 || value2String.length < 40;
 	$: isDiff = value1 !== value2;
 
 	interface DiffPart {
@@ -90,20 +92,7 @@
 	let showCustomDiff = true;
 </script>
 
-{#if !isDiff}
-	{#if !isEmpty(value1String)}
-		<span class="rounded bg-surface-100 px-1">
-			{#each splitLines(value1String) as line, index}
-				{renderValue(line)}
-				{#if index < splitLines(value1String).length - 1}
-					<br />
-				{/if}
-			{/each}
-		</span>
-	{:else}
-		<span class="empty">empty</span>
-	{/if}
-{:else}
+{#if isDiff}
 	<!-- Simple Format -->
 	<div class:flex={!showCustomDiff || useSimpleFormat} class="my-2 hidden items-center gap-2">
 		<span class="h-full rounded bg-error-50 px-2 py-0.5 text-error-800">
@@ -118,7 +107,7 @@
 				<span class="empty">empty</span>
 			{/if}
 		</span>
-		<span class="text-surface-500">→</span>
+		<span class="text-surface-900 bold text-lg">→</span>
 		<span class="h-full rounded bg-success-100 px-2 py-0.5 text-success-800">
 			{#if !isEmpty(value2String)}
 				{#each splitLines(value2String) as line, index}
@@ -150,11 +139,18 @@
 			{/each}
 		</p>
 	{/if}
-	{#if !useSimpleFormat}
-		<label class="my-2 flex cursor-pointer items-center justify-center gap-1">
-			<input type="checkbox" bind:checked={showCustomDiff} class="checkbox mr-1" />
-			<span class="text-sm text-surface-600">Show detailed diff</span>
-		</label>
+{:else if !hideUnchanged}
+	{#if !isEmpty(value1String)}
+		<span class="rounded bg-surface-100 px-1">
+			{#each splitLines(value1String) as line, index}
+				{renderValue(line)}
+				{#if index < splitLines(value1String).length - 1}
+					<br />
+				{/if}
+			{/each}
+		</span>
+	{:else}
+		<span class="empty">empty</span>
 	{/if}
 {/if}
 

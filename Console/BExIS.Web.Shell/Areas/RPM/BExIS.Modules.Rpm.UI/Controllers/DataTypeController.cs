@@ -1,16 +1,18 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.DataStructure;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Modules.Rpm.UI.Models.DataTypes;
-using BExIS.UI.Helpers;
+using BEXIS2.UI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.SessionState;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class DataTypeController : Controller
     {
         public ActionResult Index()

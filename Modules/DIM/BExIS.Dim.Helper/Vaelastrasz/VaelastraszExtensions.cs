@@ -1,6 +1,6 @@
-﻿using BExIS.Dim.Entities.Publications;
+using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.Models;
-using BExIS.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +24,7 @@ namespace BExIS.Dim.Helpers.Vaelastrasz
                     #region URL
                     case "URL":
 
-                        model.Data.Attributes.URL = $"{HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)}/ddm/Data/ShowData/{replacement}";
+                        model.Data.Attributes.URL = $"{HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)}/dcm/view/?id={replacement}";
                         break;
                     #endregion
 

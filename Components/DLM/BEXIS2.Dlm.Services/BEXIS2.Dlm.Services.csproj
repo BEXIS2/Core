@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NCalc-Edge" Version="1.4.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\App\BExIS.App.Bootstrap\BExIS.App.Bootstrap.csproj" />
+    <ProjectReference Include="..\..\DB\BEXIS2.DB.Entities\BEXIS2.DB.Entities.csproj" />
+    <ProjectReference Include="..\..\DB\BEXIS2.DB.Persistence.API\BEXIS2.DB.Persistence.API.csproj" />
+    <ProjectReference Include="..\..\EXT\BExIS.Ext.Model\BExIS.Ext.Model.csproj" />
+    <ProjectReference Include="..\..\Utils\BExIS.Utils\BExIS.Utils.csproj" />
+    <ProjectReference Include="..\..\Utils\BEXIS2.Utils\BEXIS2.Utils.csproj" />
+    <ProjectReference Include="..\BEXIS2.Dlm.Entities\BEXIS2.Dlm.Entities.csproj" />
+    <ProjectReference Include="..\BEXIS2.Dlm.Orm.NH\BEXIS2.Dlm.Orm.NH.csproj" />
+  </ItemGroup>
+
+</Project>

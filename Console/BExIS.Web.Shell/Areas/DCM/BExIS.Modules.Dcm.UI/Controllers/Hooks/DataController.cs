@@ -1,29 +1,34 @@
-﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
-using BExIS.Dlm.Services.Data;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
 using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.Edit;
-using BExIS.UI.Hooks;
-using BExIS.UI.Hooks.Caches;
-using BExIS.UI.Hooks.Logs;
-using BExIS.UI.Models;
+using BEXIS2.UI.Hooks;
+using BEXIS2.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Telerik.Web.Mvc.Infrastructure.Implementation;
-using Vaiona.Utils.Cfg;
+using System.Web.SessionState;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
+using BEXIS2.UI.Hooks.Logs;
+using BEXIS2.UI.Hooks.Caches;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class DataController : Controller
     {
         // GET: Data
-        public ActionResult Start(long id, int version)
+        [JsonNetFilter]
+        public JsonResult Start(long id, int version)
         {
-            return RedirectToAction("load", new { id, version });
+            // return RedirectToAction("load", new { id, version });
+            var jsonResult = Load(id, version );
+            return jsonResult;
         }
 
         [JsonNetFilter]
@@ -48,11 +53,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (var datamanager = new DatasetManager())
             {
                 if(datamanager.IsDatasetCheckedIn(id))
-                { 
-                    var datasetversion = datamanager.GetDatasetLatestVersion(id); // get latest version of dataset
+                {
+                    DatasetVersion datasetversion;
+
+                    if(version>=0)
+                        datasetversion = datamanager.GetDatasetVersion(id, version); // get specific version of dataset
+                    else
+                        datasetversion = datamanager.GetDatasetLatestVersion(id); // get latest version of dataset
 
                     if (datasetversion != null) // if dataset version  
                     {
+                        model.VersionId = datasetversion.Id;
+
                         // check if dataset has structure
                         if (datasetversion.Dataset.DataStructure != null)
                         {
@@ -84,7 +96,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                     Name = name,
                                                     Description = content.Description,
                                                     Type = content.MimeType,
-                                                    Lenght = content.FileSize
+                                                    Lenght = content.FileSize,
+                                                    Path = content.URI
                                                 });
                                             }
                                             else // exist allready modified
@@ -187,7 +200,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <exception cref="Exception"></exception>
         [HttpPost]
         [CustomValidateAntiForgeryToken]
-        public JsonResult SaveFileDescription(long id, BExIS.UI.Hooks.Caches.FileInfo file)
+        public JsonResult SaveFileDescription(long id,BEXIS2.UI.Hooks.Caches.FileInfo file)
         {
             // remove file from cache
             HookManager hookManager = new HookManager();

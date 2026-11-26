@@ -206,6 +206,15 @@ export const getConstraints = async () => {
 	}
 };
 
+export const getDWCList = async () => {
+	try {
+		const response = await Api.get('/rpm/DataStructure/getDWCRequirements');
+		return response.data;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 // go to a internal action
 export const goTo = async (url: string) => {
 	window.open(host + url, '_self').focus();

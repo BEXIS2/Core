@@ -1,14 +1,15 @@
 ﻿using BExIS.Dim.Entities.Export.GBIF;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.IO.Transform.Output;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.MetadataStructure;
+using BEXIS2.IO.Transform.Output;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Security.Services.Objects;
 using BExIS.Utils.Extensions;
 using BExIS.Utils.Models;
-using BExIS.Xml.Helpers;
-using BExIS.Xml.Helpers.Mapping;
+using BEXIS2.Xml.Helpers;
+using BEXIS2.Xml.Helpers.Mapping;
+using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +18,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Xml;
 using Telerik.Web.Mvc.Extensions;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
@@ -76,15 +77,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     
                     var memoryStream = new MemoryStream();
 
-                    using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+                    using (var archive = new ZipOutputStream(memoryStream))
                     {
                         // Add each file from the folder to the archive
+                        archive.IsStreamOwner = false;
                         archive.AddAllFilesFromDirectory(path);
-                    }
+                        //archive.Finish();
+                        //archive.Close();
+                      
+                        archive.Finish();
 
+                    }
                     memoryStream.Position = 0;
 
                     return File(memoryStream, "application/zip", $"{metadataStructure.Name}.zip");
+
                 }
             }
             catch (Exception ex)

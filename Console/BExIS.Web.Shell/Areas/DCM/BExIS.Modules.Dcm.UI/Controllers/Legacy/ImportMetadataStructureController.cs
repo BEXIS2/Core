@@ -1,7 +1,7 @@
 ﻿using BExIS.Dcm.ImportMetadataStructureWizard;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.IO;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Services.MetadataStructure;
+using BEXIS2.IO;
 using BExIS.Utils.Helpers;
 using System;
 using System.IO;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 

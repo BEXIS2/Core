@@ -1,5 +1,5 @@
-﻿using BExIS.IO;
-using BExIS.IO.Transform.Validation.Exceptions;
+﻿using BEXIS2.IO;
+using BEXIS2.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +9,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 {
     public class EditHelper
     {
-        public static bool IsReadable(BExIS.UI.Hooks.Caches.FileInfo file)
+        public static bool IsReadable(BEXIS2.UI.Hooks.Caches.FileInfo file)
         {
             IOUtility iou = new IOUtility();
             return iou.IsSupportedAsciiFile(Path.GetExtension(file.Name));

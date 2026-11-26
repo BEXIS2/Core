@@ -4,7 +4,7 @@ using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.Export;
 using BExIS.Dim.Helpers.Models;
 using BExIS.Dim.Services.Publications;
-using BExIS.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.Data;
 using BExIS.Modules.Dim.UI.Models;
 using BExIS.Security.Services.Subjects;
 using Microsoft.AspNet.Identity;
@@ -70,9 +70,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         [HttpPost]
         public async Task<ActionResult> Update(UpdatePublicationModel model)
-        {
-            var groupManager = new GroupManager();
-
+        { 
             try
             {
                 using(var publicationManager = new PublicationManager())
@@ -90,9 +88,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 return null;
             }
-            finally
+            catch(Exception ex)
             {
-                groupManager.Dispose();
+                throw ex;
             }
         }
 

@@ -1,10 +1,11 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
+﻿
+using BEXIS2.Dlm.Services.Data;
 using BExIS.Modules.Vim.UI.Models;
 using BExIS.Security.Services.Authorization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using BEXIS2.Dlm.Entities.Data;
 
 namespace BExIS.Modules.Vim.UI.Controllers
 {
@@ -25,8 +26,8 @@ namespace BExIS.Modules.Vim.UI.Controllers
             //--------
 
             using (DatasetManager dm = new DatasetManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             {
+                EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                 List<Dataset> datasets = dm.DatasetRepo.Query().OrderBy(p => p.Id).ToList();
                 List<long> datasetIds = datasets.Select(p => p.Id).ToList();
 

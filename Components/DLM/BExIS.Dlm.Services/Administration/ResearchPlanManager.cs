@@ -1,12 +1,12 @@
-﻿using BExIS.Dlm.Entities.Administration;
+﻿using BEXIS2.Dlm.Entities.Administration;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using Vaiona.Persistence.Api;
-using DataStructureEntity = BExIS.Dlm.Entities.DataStructure.DataStructure;
+using BEXIS2.DB.Persistence.Api;
+using DataStructureEntity = BEXIS2.Dlm.Entities.DataStructure.DataStructure;
 
-namespace BExIS.Dlm.Services.Administration
+namespace BEXIS2.Dlm.Services.Administration
 {
     public class ResearchPlanManager : IDisposable
     {

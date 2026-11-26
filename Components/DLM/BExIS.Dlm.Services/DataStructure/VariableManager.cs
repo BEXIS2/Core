@@ -1,12 +1,12 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.Meanings;
-using BExIS.Dlm.Services.TypeSystem;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.Meanings;
+using BEXIS2.Dlm.Services.TypeSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
-namespace BExIS.Dlm.Services.DataStructure
+namespace BEXIS2.Dlm.Services.DataStructure
 {
     /// <summary>
     /// DataStructureManager class is responsible for CRUD (Create, Read, Update, Delete) operations on the aggregate area of the data structure.
@@ -400,8 +400,8 @@ namespace BExIS.Dlm.Services.DataStructure
                 merged.VariableTemplate = entity.VariableTemplate;
                 merged.VariableConstraints = entity.VariableConstraints;    
                 merged.Meanings = entity.Meanings;  
-                merged.MissingValues = entity.MissingValues;
-                merged.Description = entity.Description;  
+                merged.Description = entity.Description;
+
                 repo.Put(merged);
                 uow.Commit();
             }
@@ -617,15 +617,10 @@ namespace BExIS.Dlm.Services.DataStructure
                     case TypeCode.String:
                         try
                         {
-                            int temp = DateTime.Now.Ticks.GetHashCode();
-                            List<string> placeholders = missingValues.Select(mv => mv.Placeholder).ToList();
-
-                            while (placeholders.Contains(temp.ToString(format)))
-                            {
-                                temp += 1;
-                            }
-
-                            return temp.ToString(format);
+                            var x = missingValues.First(mv => mv.Placeholder == null);
+                            if (x != null) return x.DisplayName;
+                           
+                            return "";
                         }
                         catch
                         {

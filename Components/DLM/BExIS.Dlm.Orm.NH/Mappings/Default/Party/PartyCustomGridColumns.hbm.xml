@@ -1,4 +1,4 @@
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Party">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.Party">
   <class xmlns="urn:nhibernate-mapping-2.2" name="PartyCustomGridColumns" table="PartyCustomGridColumns">
     <!-- Mapping BaseEntity properties -->
 
@@ -22,7 +22,7 @@
     <property name="Enable" type="yes_no">
       <column name="Enable" />
     </property>
-    <many-to-one name="CustomAttribute" class="BExIS.Dlm.Entities.Party.PartyCustomAttribute" not-null="false" column="CustomAttributeRef" />
-    <many-to-one name="TypePair" class="BExIS.Dlm.Entities.Party.PartyTypePair" not-null="false" column="TypePairRef" />
+    <many-to-one name="CustomAttribute" class="BEXIS2.Dlm.Entities.Party.PartyCustomAttribute" not-null="false" column="CustomAttributeRef" />
+    <many-to-one name="TypePair" class="BEXIS2.Dlm.Entities.Party.PartyTypePair" not-null="false" column="TypePairRef" />
   </class>
 </hibernate-mapping>

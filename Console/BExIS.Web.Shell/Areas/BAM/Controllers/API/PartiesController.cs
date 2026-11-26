@@ -1,4 +1,5 @@
-﻿using BExIS.Dlm.Services.Party;
+﻿using BEXIS2.Dlm.Services.Party;
+using BEXIS2.Dlm.Entities.Party;
 using BExIS.Modules.Bam.UI.Models;
 using BExIS.Utils.Route;
 using System;

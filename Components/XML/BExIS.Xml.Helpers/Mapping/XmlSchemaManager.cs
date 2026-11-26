@@ -1,7 +1,7 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.IO;
 using BExIS.IO.DataType;
 using BExIS.Xml.Models.Mapping;
@@ -13,10 +13,10 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
-using Vaiona.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.DB.Persistence.Api;
+using BEXIS2.Utils.Cfg;
 
-namespace BExIS.Xml.Helpers.Mapping
+namespace BEXIS2.Xml.Helpers.Mapping
 {
     public class XmlSchemaManager
     {
@@ -2135,13 +2135,26 @@ namespace BExIS.Xml.Helpers.Mapping
             {
                 if (!dataTypeAsString.ToLower().Equals("Object"))
                 {
+
                     TypeCode typeCode = ConvertStringToSystemType(dataTypeAsString);
                     DataType dataType = null;
                     // if datatime - need to check typeCodeName for date, time , datetime
 
-    
+
                     TypeCode c = DataTypeHelper.GetMaxTypeCode(typeCode);
                     string label = DataTypeHelper.GetLabel(typeCode);
+
+                    // in case of time or date, there is no system type for it so we need to set it
+                    if (typeCodeName.ToLower().Equals("time"))
+                    {
+                        c = TypeCode.DateTime;
+                        label = "Time";
+                    }
+                    else if(typeCodeName.ToLower().Equals("date"))
+                    {
+                        c = TypeCode.DateTime;
+                        label = "Date";
+                    }
 
                     if (dataTypeAsString.Equals(TypeCode.DateTime.ToString()))
                     {
@@ -2158,7 +2171,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         dataType =
                             dataTypeManager.Repo.Query()
                                 .Where(
-                                    d =>                         
+                                    d =>
                                         d.Name.ToLower().Equals(label.ToString().ToLower()))
                                 .FirstOrDefault();
 

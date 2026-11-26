@@ -30,8 +30,24 @@
       "title": "Party Relationship Type for Owner",
       "type": "String",
       "value": "Owner"
+    },
+    {
+      "key": "externalApiMetadata",
+      "title": "External API Metadata",
+      "type": "JSON",
+      "value": {
+        "clb": {
+          "sourceKeyInfo": [
+            {
+              "sourceKey": "",
+              "title": "",
+              "alias": ""
+            }
+          ]
+        }
+      }
     }
   ],
-  "id": "smm",
+  "id": "Smm",
   "name": "species mapping"
 }

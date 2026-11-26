@@ -1,7 +1,7 @@
-﻿using BExIS.Dlm.Entities.Common;
-using BExIS.Dlm.Entities.MetadataStructure;
+﻿using BEXIS2.Dlm.Entities.Common;
+using BEXIS2.Dlm.Entities.MetadataStructure;
 using BExIS.Modules.Dcm.UI.Helpers;
-using BExIS.Utils.Data.MetadataStructure;
+using BEXIS2.Utils.Data.MetadataStructure;
 using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Models.Metadata

@@ -1,14 +1,25 @@
-﻿using BExIS.Dlm.Entities.Administration;
-using BExIS.Dlm.Entities.DataStructure;
+﻿using BEXIS2.Dlm.Entities.Administration;
+using BEXIS2.Dlm.Entities.DataStructure;
 using System;
 using System.Collections.Generic;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.Dlm.Entities.Data
+namespace BEXIS2.Dlm.Entities.Data
 {
+    /// <summary>
+    /// This is a list fo currently used entity types in BExIS. It is used to identify the type of the entity in a generic way.
+    /// </summary>
+    public enum EntityType
+    {
+        Dataset = 1,
+        Publication = 2,
+        Sample = 3,
+        Extension = 4,
+    }
+
     /// <summary>
     ///
     /// </summary>

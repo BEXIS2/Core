@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.UI.Models;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.UI.Models;
 using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
@@ -20,6 +20,11 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
         /// Description of the Entity Template
         /// </summary>
         public string Description { get; set; }
+
+        /// <summary>
+        /// Order of the Entity Template in the list of templates
+        /// </summary>
+        public int Order { get; set; }
 
         /// <summary>
         /// Entity
@@ -46,6 +51,11 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
         public virtual bool HasDatastructure { get; set; }
 
         /// <summary>
+        /// If this flag is true, the entity will have a extensions
+        /// </summary>
+        public virtual bool HasExtension { get; set; }
+
+        /// <summary>
         /// If this flag is true, user can use this tempate to create a entity
         /// </summary>
         public virtual bool Activated { get; set; }
@@ -54,6 +64,11 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
         /// List of available Datatructures
         /// </summary>
         public virtual List<long> DatastructureList { get; set; }
+
+        /// <summary>
+        /// List of available extensions
+        /// </summary>
+        public virtual List<ExtensionType> ExtensionList { get; set; }
 
         public List<string> AllowedFileTypes { get; set; }
 
@@ -101,6 +116,7 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
 
             LinkedSubjects = new List<ListItem>();
             InUse = false;
+            Order = 0;
         }
 
         public class KvP

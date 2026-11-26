@@ -5,12 +5,12 @@ using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.GBIF;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Services;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.Data;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Services.Data;
 using BExIS.Modules.Dim.UI.Models.Export;
-using BExIS.Security.Entities.Requests;
-using BExIS.UI.Helpers;
+using BEXIS2.Security.Entities.Requests;
+using BEXIS2.UI.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Vaiona.Web.Mvc.Modularity;
+using static System.Net.WebRequestMethods;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -125,12 +126,15 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         publication.Status = PublicationStatus.Registered.ToString();
                         publication.FilePath = downloadPath;
                         publication.Response = result.Replace('\"', ' ').Trim();
-                        publication.ExternalLink = doi;
+                        publication.ExternalLink = "https://doi.org/"+doi;
                         publication.ExternalLinkType = "DOI";
                         publicationManager.UpdatePublication(publication);
 
                         // check if doi mapping to metadata exist, and add it also there
                         setDoiInMetadataIfExist(datasetVersion, doi, datasetManager);
+
+                        // set doi in tag if used
+                        setDoiInTagIfExist(publication, doi);
 
                     }
                     else // fail
@@ -220,6 +224,23 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 datasetManager.UpdateSingleValueInMetadata(version.Id, target.XPath, doi);
 
                 return true;
+            }
+
+            return false;
+        }
+
+        private bool setDoiInTagIfExist(Publication p, string doi)
+        {
+            using (var tagManager = new TagManager())
+            {
+                if (p.Tag != null)
+                {
+                    var tag = tagManager.Repo.Get(p.Tag.Id);
+                    tag.Doi = doi;
+                    tagManager.Update(tag);
+
+                    return true;
+                }
             }
 
             return false;

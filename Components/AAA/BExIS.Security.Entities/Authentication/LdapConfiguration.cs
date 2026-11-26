@@ -1,7 +1,7 @@
 ﻿using System.Configuration;
 using System.Globalization;
 
-namespace BExIS.Security.Entities.Authentication
+namespace BEXIS2.Security.Entities.Authentication
 {
     public class LdapConfiguration
     {

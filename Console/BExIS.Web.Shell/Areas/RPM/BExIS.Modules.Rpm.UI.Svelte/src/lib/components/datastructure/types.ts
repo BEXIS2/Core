@@ -92,7 +92,7 @@ export class VariableInstanceModel extends VariableModel {
 	isOptional: boolean;
 	displayPattern: listItemType | undefined;
 	possibleUnits: unitListItemType[];
-	possibleTemplates: templateListItemType[];
+	possibleTemplates: number[];
 	possibleDisplayPattern: listItemType[];
 
 	public constructor() {
@@ -134,4 +134,11 @@ export interface meaningEntryItemType {
 	prefix: string;
 	releation: string;
 	link: string;
+}
+
+export interface dwcExtention{
+	name:string,
+	linkName:string,
+	rowType:string,
+	requiredFields:string[],
 }

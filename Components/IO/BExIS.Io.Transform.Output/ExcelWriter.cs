@@ -1,9 +1,7 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.IO.DataType.DisplayPattern;
-using BExIS.IO.Transform.Validation.DSValidation;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
@@ -14,13 +12,16 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Vaiona.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.DB.Persistence.Api;
+using BEXIS2.Utils.Cfg;
+using BEXIS2.IO;
+using BEXIS2.IO.DataType.DisplayPattern;
+using BEXIS2.IO.Transform.Validation.DSValidation;
 
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.IO.Transform.Output
+namespace BEXIS2.IO.Transform.Output
 {
     /// <summary>
     ///

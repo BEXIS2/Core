@@ -1,21 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="BExIS.Dlm.Entities.Party.Party" Collapsed="true">
+  <Class Name="BEXIS2.Dlm.Entities.Party.Party" Collapsed="true">
     <Position X="12.5" Y="7.25" Width="1.5" />
-    <AssociationLine Name="PartyType" Type="BExIS.Dlm.Entities.Party.PartyType" FixedFromPoint="true">
+    <AssociationLine Name="PartyType" Type="BEXIS2.Dlm.Entities.Party.PartyType" FixedFromPoint="true">
       <Path>
         <Point X="13.125" Y="7.25" />
         <Point X="13.125" Y="5.191" />
       </Path>
     </AssociationLine>
-    <AssociationLine Name="CustomAttributeValues" Type="BExIS.Dlm.Entities.Party.PartyCustomAttributeValue" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="CustomAttributeValues" Type="BEXIS2.Dlm.Entities.Party.PartyCustomAttributeValue" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="12.75" Y="7.25" />
         <Point X="12.75" Y="6.688" />
         <Point X="11.75" Y="6.688" />
       </Path>
     </AssociationLine>
-    <AssociationLine Name="History" Type="BExIS.Dlm.Entities.Party.PartyStatus" FixedToPoint="true">
+    <AssociationLine Name="History" Type="BEXIS2.Dlm.Entities.Party.PartyStatus" FixedToPoint="true">
       <Path>
         <Point X="14" Y="7.875" />
         <Point X="16" Y="7.875" />
@@ -24,7 +24,7 @@
         <Position X="0.612" Y="-0.098" />
       </MemberNameLabel>
     </AssociationLine>
-    <AssociationLine Name="CurrentStatus" Type="BExIS.Dlm.Entities.Party.PartyStatus">
+    <AssociationLine Name="CurrentStatus" Type="BEXIS2.Dlm.Entities.Party.PartyStatus">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.422" Y="-0.107" />
       </MemberNameLabel>
@@ -42,9 +42,9 @@
       <Property Name="History" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.Party.PartyCustomAttribute" Collapsed="true">
+  <Class Name="BEXIS2.Dlm.Entities.Party.PartyCustomAttribute" Collapsed="true">
     <Position X="9.5" Y="5.25" Width="2" />
-    <AssociationLine Name="PartyType" Type="BExIS.Dlm.Entities.Party.PartyType" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="PartyType" Type="BEXIS2.Dlm.Entities.Party.PartyType" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="10.916" Y="5.25" />
         <Point X="10.916" Y="4.875" />
@@ -54,7 +54,7 @@
         <Position X="0.641" Y="-0.086" />
       </MemberNameLabel>
     </AssociationLine>
-    <AssociationLine Name="CustomAttributeValues" Type="BExIS.Dlm.Entities.Party.PartyCustomAttributeValue" FixedFromPoint="true">
+    <AssociationLine Name="CustomAttributeValues" Type="BEXIS2.Dlm.Entities.Party.PartyCustomAttributeValue" FixedFromPoint="true">
       <Path>
         <Point X="11.167" Y="5.941" />
         <Point X="11.167" Y="6.5" />
@@ -74,9 +74,9 @@
       <Property Name="CustomAttributeValues" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.Party.PartyCustomAttributeValue" Collapsed="true">
+  <Class Name="BEXIS2.Dlm.Entities.Party.PartyCustomAttributeValue" Collapsed="true">
     <Position X="9.5" Y="6.5" Width="2.25" />
-    <AssociationLine Name="CustomAttribute" Type="BExIS.Dlm.Entities.Party.PartyCustomAttribute" FixedToPoint="true">
+    <AssociationLine Name="CustomAttribute" Type="BEXIS2.Dlm.Entities.Party.PartyCustomAttribute" FixedToPoint="true">
       <Path>
         <Point X="9.916" Y="6.5" />
         <Point X="9.916" Y="5.941" />
@@ -93,9 +93,9 @@
       <Property Name="CustomAttribute" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.Party.PartyStatus" Collapsed="true">
+  <Class Name="BEXIS2.Dlm.Entities.Party.PartyStatus" Collapsed="true">
     <Position X="16" Y="7.25" Width="1.5" />
-    <AssociationLine Name="Party" Type="BExIS.Dlm.Entities.Party.Party" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="Party" Type="BEXIS2.Dlm.Entities.Party.Party" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="16" Y="7.375" />
         <Point X="15.75" Y="7.375" />
@@ -115,14 +115,14 @@
       <Property Name="Party" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.Party.PartyStatusType" Collapsed="true">
+  <Class Name="BEXIS2.Dlm.Entities.Party.PartyStatusType" Collapsed="true">
     <Position X="16" Y="4.5" Width="1.5" />
-    <AssociationLine Name="PartyType" Type="BExIS.Dlm.Entities.Party.PartyType">
+    <AssociationLine Name="PartyType" Type="BEXIS2.Dlm.Entities.Party.PartyType">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.61" Y="-0.107" />
       </MemberNameLabel>
     </AssociationLine>
-    <AssociationLine Name="Statuses" Type="BExIS.Dlm.Entities.Party.PartyStatus">
+    <AssociationLine Name="Statuses" Type="BEXIS2.Dlm.Entities.Party.PartyStatus">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="-0.463" Y="0.352" />
       </MemberNameLabel>
@@ -138,14 +138,14 @@
       <Property Name="Statuses" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.Party.PartyType" Collapsed="true">
+  <Class Name="BEXIS2.Dlm.Entities.Party.PartyType" Collapsed="true">
     <Position X="12.5" Y="4.5" Width="1.5" />
-    <AssociationLine Name="Parties" Type="BExIS.Dlm.Entities.Party.Party">
+    <AssociationLine Name="Parties" Type="BEXIS2.Dlm.Entities.Party.Party">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="-0.328" Y="0.247" />
       </MemberNameLabel>
     </AssociationLine>
-    <AssociationLine Name="CustomAttributes" Type="BExIS.Dlm.Entities.Party.PartyCustomAttribute" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="CustomAttributes" Type="BEXIS2.Dlm.Entities.Party.PartyCustomAttribute" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="12.5" Y="4.625" />
         <Point X="9.751" Y="4.625" />
@@ -155,7 +155,7 @@
         <Position X="-1.421" Y="0.539" />
       </MemberNameLabel>
     </AssociationLine>
-    <AssociationLine Name="StatusTypes" Type="BExIS.Dlm.Entities.Party.PartyStatusType">
+    <AssociationLine Name="StatusTypes" Type="BEXIS2.Dlm.Entities.Party.PartyStatusType">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.527" Y="-0.096" />
       </MemberNameLabel>
@@ -170,9 +170,9 @@
       <Property Name="StatusTypes" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.Party.PartyTypePair">
+  <Class Name="BEXIS2.Dlm.Entities.Party.PartyTypePair">
     <Position X="12.5" Y="1.5" Width="1.5" />
-    <AssociationLine Name="PartyRelationshipType" Type="BExIS.Dlm.Entities.Party.PartyRelationshipType" FixedFromPoint="true">
+    <AssociationLine Name="PartyRelationshipType" Type="BEXIS2.Dlm.Entities.Party.PartyRelationshipType" FixedFromPoint="true">
       <Path>
         <Point X="12.5" Y="2.403" />
         <Point X="8.25" Y="2.403" />
@@ -189,9 +189,9 @@
       <Property Name="PartyRelationshipType" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.Party.PartyRelationshipType">
+  <Class Name="BEXIS2.Dlm.Entities.Party.PartyRelationshipType">
     <Position X="6.5" Y="2" Width="1.75" />
-    <AssociationLine Name="AssociatedPairs" Type="BExIS.Dlm.Entities.Party.PartyTypePair" FixedFromPoint="true">
+    <AssociationLine Name="AssociatedPairs" Type="BEXIS2.Dlm.Entities.Party.PartyTypePair" FixedFromPoint="true">
       <Path>
         <Point X="8.25" Y="2.668" />
         <Point X="12.5" Y="2.668" />
@@ -200,7 +200,7 @@
         <Position X="0.308" Y="-0.065" />
       </MemberNameLabel>
     </AssociationLine>
-    <AssociationLine Name="PartyRelationships" Type="BExIS.Dlm.Entities.Party.PartyRelationship">
+    <AssociationLine Name="PartyRelationships" Type="BEXIS2.Dlm.Entities.Party.PartyRelationship">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="-0.234" Y="0.393" />
       </MemberNameLabel>
@@ -214,14 +214,14 @@
       <Property Name="PartyRelationships" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.Party.PartyRelationship">
+  <Class Name="BEXIS2.Dlm.Entities.Party.PartyRelationship">
     <Position X="6.5" Y="7.25" Width="1.5" />
-    <AssociationLine Name="PartyRelationshipType" Type="BExIS.Dlm.Entities.Party.PartyRelationshipType">
+    <AssociationLine Name="PartyRelationshipType" Type="BEXIS2.Dlm.Entities.Party.PartyRelationshipType">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="-0.838" Y="0.373" />
       </MemberNameLabel>
     </AssociationLine>
-    <AssociationLine Name="SourceParty" Type="BExIS.Dlm.Entities.Party.Party" FixedFromPoint="true">
+    <AssociationLine Name="SourceParty" Type="BEXIS2.Dlm.Entities.Party.Party" FixedFromPoint="true">
       <Path>
         <Point X="8" Y="8.519" />
         <Point X="13.281" Y="8.519" />
@@ -231,7 +231,7 @@
         <Position X="-0.086" Y="0.37" />
       </MemberNameLabel>
     </AssociationLine>
-    <AssociationLine Name="TargetParty" Type="BExIS.Dlm.Entities.Party.Party">
+    <AssociationLine Name="TargetParty" Type="BEXIS2.Dlm.Entities.Party.Party">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.308" Y="-0.086" />
       </MemberNameLabel>

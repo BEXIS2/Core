@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj" />
+    <ProjectReference Include="..\..\DB\BEXIS2.DB.Persistence.API\BEXIS2.DB.Persistence.API.csproj" />
+    <ProjectReference Include="..\..\DLM\BEXIS2.Dlm.Services\BEXIS2.Dlm.Services.csproj" />
+    <ProjectReference Include="..\..\IO\BEXIS2.IO.Transform.Validation\BEXIS2.IO.Transform.Validation.csproj" />
+    <ProjectReference Include="..\..\IO\BEXIS2.IO\BEXIS2.IO.csproj" />
+    <ProjectReference Include="..\BEXIS2.XML.Models\BEXIS2.XML.Models.csproj" />
+  </ItemGroup>
+
+</Project>

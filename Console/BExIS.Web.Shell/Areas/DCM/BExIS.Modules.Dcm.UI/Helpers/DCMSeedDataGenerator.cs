@@ -1,21 +1,21 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.Administration;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Security.Entities.Objects;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Services.Administration;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.Dlm.Services.MetadataStructure;
+using BEXIS2.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
-using BExIS.Xml.Helpers;
-using BExIS.Xml.Helpers.Mapping;
+using BEXIS2.Xml.Helpers;
+using BEXIS2.Xml.Helpers.Mapping;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using Vaiona.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.DB.Persistence.Api;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Helpers
@@ -85,7 +85,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     entity = new Entity();
                     entity.Name = "Dataset";
                     entity.EntityType = typeof(Dataset);
-                    entity.EntityStoreType = typeof(Xml.Helpers.DatasetStore);
+                    entity.EntityStoreType = typeof(BEXIS2.Xml.Helpers.DatasetStore);
                     entity.UseMetadata = true;
                     entity.Securable = true;
 
@@ -124,7 +124,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     publication = new Entity();
                     publication.Name = "Publication";
                     publication.EntityType = typeof(Dataset);
-                    publication.EntityStoreType = typeof(Xml.Helpers.PublicationStore);
+                    publication.EntityStoreType = typeof(PublicationStore);
                     publication.UseMetadata = true;
                     publication.Securable = true;
 
@@ -153,6 +153,45 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     publication.Extra = xmlDoc;
 
                     entityManager.Update(publication);
+                }
+
+                // publication
+                var extension = entityManager.Entities.Where(e => e.Name.ToUpperInvariant() == "Extension".ToUpperInvariant()).FirstOrDefault();
+
+                if (extension == null)
+                {
+                    extension = new Entity();
+                    extension.Name = "Extension";
+                    extension.EntityType = typeof(Dataset);
+                    extension.EntityStoreType = typeof(ExtensionStore);
+                    extension.UseMetadata = true;
+                    extension.Securable = true;
+
+                    //add to Extra
+
+                    XmlDocument xmlDoc = new XmlDocument();
+                    XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                    xmlDatasetHelper.AddReferenceToXml(xmlDoc, AttributeNames.name.ToString(), "ddm", AttributeType.parameter.ToString(), "extra/modules/module");
+
+                    extension.Extra = xmlDoc;
+
+                    entityManager.Create(extension);
+                }
+                else
+                {
+                    XmlDocument xmlDoc = new XmlDocument();
+
+                    if (extension.Extra != null)
+                        if (extension.Extra is XmlDocument) xmlDoc = extension.Extra as XmlDocument;
+                        else xmlDoc.AppendChild(extension.Extra);
+
+                    //update to Extra
+                    XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                    xmlDatasetHelper.AddReferenceToXml(xmlDoc, AttributeNames.name.ToString(), "ddm", AttributeType.parameter.ToString(), "extra/modules/module");
+
+                    extension.Extra = xmlDoc;
+
+                    entityManager.Update(extension);
                 }
 
                 #endregion create entities
@@ -193,6 +232,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "Create", "*", DatasetCreationFeature);
                 operationManager.Create("DCM", "CreateDataset", "*", DatasetCreationFeature);
                 operationManager.Create("DCM", "Form", "*");
+                operationManager.Create("DCM", "M", "*");
 
                 operationManager.Create("Api", "DatasetIn", "*", DatasetCreationFeature);
                 operationManager.Create("Api", "Dataset", "*", DatasetCreationFeature);
@@ -220,7 +260,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "Push", "*", DatasetUploadFeature);
 
                 operationManager.Create("Api", "DataIn", "*", DatasetUploadFeature);
-                operationManager.Create("Api", "Data", "*", DatasetUploadFeature);
+                //operationManager.Create("Api", "Data", "*", DatasetUploadFeature);
                 operationManager.Create("Api", "AttachmentIn", "*", DatasetUploadFeature);
                 operationManager.Create("Api", "Attachment", "*", DatasetUploadFeature);
                 operationManager.Create("Api", "File", "*", DatasetUploadFeature);
@@ -231,10 +271,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "Validation", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "Metadata", "*", DatasetUploadFeature);
                 operationManager.Create("DCM", "Messages", "*", DatasetUploadFeature);
-                operationManager.Create("DCM", "DataDescription", "*", DatasetUploadFeature);
+                operationManager.Create("DCM", "DataDescription", "*"); // must be open for the view of the data description in the dataset overview page
                 operationManager.Create("DCM", "Test", "*", DatasetUploadFeature);
-                operationManager.Create("DCM", "Data", "*", DatasetUploadFeature);
-
+                operationManager.Create("DCM", "Data", "*"); // must be open for the view of the data in the dataset overview page
                 #endregion Update Dataset Workflow
 
                 #region Easy Upload
@@ -266,6 +305,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 operationManager.Create("DCM", "EntityTemplates", "*", EntityTemplateManagementFeature);
 
                 #endregion entity template
+
+                #region New Metadata Edit, Config and View
+                // TODO add to feature
+                operationManager.Create("DCM", "ComponentConfig","*", MetadataManagementFeature);
+                // operationManager.Create("DCM", "MetadateEdit", "*");
+
+                #endregion
 
                 #region public available
 
@@ -308,9 +354,17 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Publication")))
                 {
                     string titleXPath = "Metadata/publication/publication/Title/TitleDatatype_string";
-                    string descriptionXpath = "Metadata/publication/publication/Abstract/AbstractXmlSchemaSimpleType";
+                    string descriptionXpath = "Metadata/publication/publication/Abstract/AbstractDatatype_string";
 
                     ImportSchema("Publication", "BEXIS2-Publication-Schema-draft.xsd", "Metadata", publication.Name, publication.EntityType.FullName, titleXPath, descriptionXpath);
+                }
+
+                if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Extension")))
+                {
+                    string titleXPath = "Metadata/metadata/metadata/title/titleXmlSchemaComplexType";
+                    string descriptionXpath = "Metadata/metadata/metadata/description/descriptionXmlSchemaComplexType\r\n ";
+
+                    ImportSchema("Extension", "BEXIS2-Extension.xsd", "", extension.Name, extension.EntityType.FullName, titleXPath, descriptionXpath);
                 }
 
                 #endregion Add Metadata

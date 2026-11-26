@@ -1,4 +1,4 @@
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Party">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.Party">
   <class xmlns="urn:nhibernate-mapping-2.2" name="PartyUser" table="PartyUsers">
     <!-- Mapping BaseEntity properties -->
 
@@ -19,7 +19,7 @@
     <property name="PartyId" type="Int64">
       <column name="PartyId" />
     </property>
-    <many-to-one name="Party" class="BExIS.Dlm.Entities.Party.Party"  not-null="true" column="PartyRef" />
+    <many-to-one name="Party" class="BEXIS2.Dlm.Entities.Party.Party"  not-null="true" column="PartyRef" />
 
     <property name="UserId" type="Int64">
       <column name="UserId" />

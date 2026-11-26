@@ -1,53 +1,108 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Manifest moduleId="SMM" displayName="Business Administration Module" version="1.0.0" builtin="false">
+<Manifest moduleId="SMM" displayName="Species Mapping Module" version="1.0.0" builtin="true">
 	<Description>
-    BAM provides the ability to work with objects such as Party Package. All the packages related to the core of system belong to this module.
-  </Description>
+		...
+	</Description>
 	<Assemblies>
 		<Assembly fullName="" role="" />
 	</Assemblies>
 	<Dependencies>
-		<!--<Dependency moduleId="dcm" version="*.*.*" />-->
+		<Dependency moduleId="dcm" version="*.*.*" />
 	</Dependencies>
 	<Exports>
-		<!--add proper menu items-->
+		<!--
+    <Export tag="settings" id="usrList" order="1"
+            title="Manage Users" description="List Only users without groups" icon=""
+            controller="subjets" action="index" argument="user"
+            extends="./settingsRoot" />
+-->
+		<!--<Export tag="settings" id="modules" order="5"
+    title="Manage Modules" description="Manage Modules" icon=""
+    controller="modules" action="index" argument="Modules"
+    extends="./settingsRoot" />-->
+		<!--<Export tag="settings" id="datasets" order="6"
+		  title="Manage Datasets" description="Manage Datasets" icon=""
+		  controller="datasets" action="index" argument="Datasets"
+		  extends="./settingsRoot" />
 
-		<!--<Export tag="settings" id="createDataset" order="1"
-						title="Manage Parties" description="" icon=""
-						controller="Party" action="index"
-						extends="./settingsRoot" />-->
+		<Export tag="settings" id="datasets" order="7"
+		  title="Manage Requests" description="Manage Requests" icon=""
+		  controller="requestsadmin" action="index" argument="Manage Requests"
+		  extends="./settingsRoot" />-->
 
-		<!-- INTERNAL-->
+		<!--<Export tag="settings" id="datasets" order="8"
+          title="Manage Documents" description="Manage Documents" icon=""
+          controller="Files" action="index" argument="Manage Documents"
+          extends="./settingsRoot" />-->
 
-		<!--<Export tag="internalApi" id="loadFromPartyUserRegisterationForm"
-						title="Load From Party User Registration Form" description="Load FromParty User Registration Form" icon=""
-						controller="PartyService" action="UserRegistration"
-						extends="" />
-		<Export tag="internalApi" id="GetPartyTypesForAccount"
-				title="Get partyTypes for account" description="Get partyTypes for account which are defined in setting.xml" icon=""
-				controller="PartyService" action="GetPartyTypesForAccount"
-				extends="" />-->
-		<Export tag="lunchbar" id="helpSmm" order="2"
-						title="Account / Parties" description="Parties Help Manual" icon=""
-						controller="Help" action="index"
-						extends="./lunchbarRoot/help" />
-	<!-- Settings Example-->
-		<!--<Export tag="settings" id="manageMetadata" order="1"
-						title="Manage Metadata Structure" description="Edit or Importa new Metadata Structure" icon=""
-						controller="ManageMetadataStructure" action="Index" argument=""
-						extends="./settingsRoot"
-						/>-->
-	<!-- Menubar Example-->
-		<!--<Export tag="menubar" id="createDataset" order="1"
-						title="Create Dataset" description="Create new Dataset" icon=""
-						controller="CreateDataset" action="index"
-						extends="./menubarRoot/collect" />-->
+		<!--<Export tag="settings" id="datasets" order="9"
+      title="Files List" description="Files List" icon=""
+      controller="Files" action="FileList" argument="Files list"
+      extends="./settingsRoot" />-->
 
-		<!-- Api Example-->
-		<!-- <Export tag="api" id="tntList"
-						title="No thing" description="Change me!" icon=""
-						controller="home" action="index"
-						extends="./apiRoot"
-						/>-->
+		<!--<Export tag="lunchbar" id="helpSam" order="7"
+				title="Administration" description="Administration Help Manual" icon=""
+				controller="help" action="index"
+				extends="./lunchbarRoot/help" />
+
+		<Export tag="settings" id="formerMember" order="15"
+		  title="Manage Former Member" description="" icon=""
+		  controller="FormerMember" action="Index"
+		  extends="./settingsRoot" />-->
+
+		<!-- internal api -->
+
+		<!--<Export tag="internalApi" id="userPermissions_subjects"
+			title="User Permissions - Subjects" description="User Permissions - Subjects" icon=""
+			controller="UserPermissions" action="Subjects"
+			extends="" />
+
+		<Export tag="internalApi" id="entityPermissions_add"
+		  title="Entity Permissions - Subjects" description="Entity Permissions - Add" icon=""
+		  controller="EntityPermissions" action="AddRightToEntityPermission"
+		  extends="" />
+
+		<Export tag="internalApi" id="entityPermissions_remove"
+		  title="Entity Permissions - Subjects" description="Entity Permissions - Remove" icon=""
+		  controller="EntityPermissions" action="RemoveRightFromEntityPermission"
+		  extends="" />
+
+		<Export tag="internalApi" id="loadRequests"
+			title="load requests overview" description="load the overview if requests based on entity and user" icon=""
+			controller="requests" action="requests"
+			extends="" />
+
+		<Export tag="internalApi" id="loadDecisions"
+			title="load decisions overview" description="load the overview if decisions based on entity and user" icon=""
+			controller="requests" action="decisions"
+			extends="" />
+
+		--><!-- api --><!--
+
+		<Export tag="api" id="tntList"
+				title="List Tenants" description="List tenants and their status" icon=""
+				controller="tenants" action="index"
+				extends="./apiRoot" />-->
 	</Exports>
+
+	<!-- fill out alle the hook aatributes otherwise there will not be loaded -->
+	<Hooks>
+		<!--<Hook
+			name="permission"
+			displayName="Permissions"
+			mode="view"
+			entity="dataset"
+			place="details"
+			module="sam"
+			type="BExIS.Modules.Sam.UI.Hooks.UserPermissionsHook, BExIS.Modules.SAM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />-->
+
+		<!--<Hook
+			name="permission"
+			displayName="Permissions"
+			mode="edit"
+			entity="dataset"
+			place="details"
+			module="sam"
+			type="BExIS.Modules.Sam.UI.Hooks.UserPermissionsHook, BExIS.Modules.SAM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />-->
+	</Hooks>
 </Manifest>

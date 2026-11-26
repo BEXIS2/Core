@@ -1,6 +1,8 @@
-﻿using BExIS.Dlm.Services.Data;
-using BExIS.Security.Entities.Authorization;
-using BExIS.UI.Hooks;
+﻿using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Security.Entities.Authorization;
+using BExIS.Security.Services.Objects;
+using BEXIS2.UI.Hooks;
+using BEXIS2.Dlm.Entities.Data;
 
 namespace BExIS.Modules.Dcm.UI.Hooks
 {
@@ -8,13 +10,16 @@ namespace BExIS.Modules.Dcm.UI.Hooks
     {
         public AttachmentViewHook()
         {
-            Start = "/dcm/attachments/start";
+            Start = "/dcm/view/StartAttachments";
         }
 
         public override void Check(long id, string username)
         {
             // check status
             checkStatus(id, username);
+
+            // disable for extension entity
+            checkEntity(id);
         }
 
         private void checkStatus(long id, string username)
@@ -32,7 +37,20 @@ namespace BExIS.Modules.Dcm.UI.Hooks
             using (var datasetManager = new DatasetManager())
             {
                 var dataset = datasetManager.GetDataset(id);
-                if (dataset.Status != Dlm.Entities.Data.DatasetStatus.CheckedIn) Status = HookStatus.Disabled;
+                if (dataset.Status != DatasetStatus.CheckedIn) Status = HookStatus.Disabled;
+            }
+        }
+
+        private void checkEntity(long id)
+        {
+            using (var datasetManager = new DatasetManager())
+            using (var entityManager = new EntityManager())
+            {
+                var entity = entityManager.FindByName("extension"); // get entity
+                if (entity != null)
+                {
+                    Status = datasetManager.GetDataset(id).EntityTemplate.EntityType.Id.Equals(entity.Id) ? HookStatus.Disabled : Status; // disable if entity type matches
+                }
             }
         }
     }

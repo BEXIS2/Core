@@ -13,7 +13,7 @@ namespace BExIS.Modules.Rpm.UI.Test.Controllers.API
         public void GetDataCiteDOICredentials()
         {
             //var appConfiguration = AppConfiguration.WorkspaceRootPath;
-            var constraintsController = new ConstraintsController();
+            //var constraintsController = new ConstraintsController();
         }
 
         [OneTimeSetUp]

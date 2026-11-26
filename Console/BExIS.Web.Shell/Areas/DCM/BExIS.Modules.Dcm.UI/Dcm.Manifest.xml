@@ -30,11 +30,6 @@
 				controller="Push" action="index"
 				extends="./menubarRoot/collect" />-->
 
-		<Export tag="lunchbar" id="helpDcm" order="3"
-				title=" Metadata and Data" description="Data Collection Help Manual" icon=""
-				controller="help" action="index"
-				extends="./lunchbarRoot/help" />
-
 		<Export tag="api" id="tntList"
 				title="No thing" description="Change me!" icon=""
 				controller="home" action="index"
@@ -45,6 +40,10 @@
             controller="entitytemplates" action="" argument=""
             extends="./settingsRoot" />
 
+		<Export tag="settings" id="manageCustomUI" order="1"
+            title="Manage Custom UI" description="..." icon=""
+            controller="componentconfig" action="" argument=""
+            extends="./settingsRoot" />
 		<!-- INTERNAL-->
 
 		<Export tag="internalApi" id="loadFromFromExternal"
@@ -78,6 +77,7 @@
 
 	<!-- fill out alle the hook aatributes otherwise there will not be loaded -->
 	<Hooks>
+		
 		<!-- VIEW-->
 		<Hook
 			  name="metadata"
@@ -87,6 +87,7 @@
 			  place="details"
 			  module="dcm"
 			  type="BExIS.Modules.Dcm.UI.Hooks.MetadataViewHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+
 		<Hook
 			name="data"
 			displayName ="Data"
@@ -107,7 +108,7 @@
 
 		<Hook
 			name="link"
-			displayName="Link"
+			displayName="Links"
 			mode="view"
 			entity="dataset"
 			place="details"
@@ -169,14 +170,14 @@
 			module="dcm"
 			type="BExIS.Modules.Dcm.UI.Hooks.ValidationHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 
-		<!--<Hook
+		<Hook
 			name="link"
-			displayName="Link"
+			displayName="Links"
 			mode="edit"
 			entity="dataset"
 			place="details"
 			module="dcm"
-			type="BExIS.Modules.Dcm.UI.Hooks.LinkEditHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />-->
+			type="BExIS.Modules.Dcm.UI.Hooks.LinkEditHook, BExIS.Modules.DCM.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
 		
 		<Hook
 			name="attachments"

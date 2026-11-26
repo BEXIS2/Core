@@ -1,4 +1,4 @@
-﻿using Vaiona.Entities.Common;
+﻿using BEXIS2.DB.Entities.Common;
 
 namespace BExIS.Ext.Model
 {

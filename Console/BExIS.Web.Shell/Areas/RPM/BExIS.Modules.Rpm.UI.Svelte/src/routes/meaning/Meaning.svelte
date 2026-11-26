@@ -31,7 +31,7 @@
 	let res = suite.get();
 	$: isValid = res.isValid();
 
-	let linksValid: boolean = true;
+	$: linksValid = meaning.externalLinks.every((entry) => entry.isValid);
 
 	const dispatch = createEventDispatcher();
 

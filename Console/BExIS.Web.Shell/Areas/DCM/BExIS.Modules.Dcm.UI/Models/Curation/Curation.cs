@@ -1,6 +1,6 @@
 ﻿using BExIS.Dim.Entities.Publications;
-using BExIS.Dlm.Entities.Curation;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Dlm.Entities.Curation;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Utils.Config.Configurations;
 using System;
 using System.Collections.Generic;
@@ -123,11 +123,11 @@ namespace BExIS.Modules.Dcm.UI.Models.Curation
             CurationUserType = curationUserType;
         }
 
-        public CurationUserModel(User user, long id)
+        public CurationUserModel(User user, long id, CurationUserType curationUserType)
         {
             Id = id;
             DisplayName = user.DisplayName;
-            CurationUserType = CurationEntry.GetCurationUserType(user);
+            CurationUserType = curationUserType;
         }
     }
 

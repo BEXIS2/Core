@@ -1,22 +1,22 @@
-﻿using BExIS.Dim.Entities.Mappings;
+using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Services.Mappings;
 using BExIS.Dim.Services.Publications;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
 using BExIS.Modules.Dim.UI.Helpers;
 using BExIS.Modules.Dim.UI.Models;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Utilities;
-using BExIS.Xml.Helpers;
-using BEXIS.JSON.Helpers.Extensions;
+using BEXIS2.Xml.Helpers;
+using BEXIS2.JSON.Helpers.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
+using BExIS.Utils.Config;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -102,9 +102,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
             using (DatasetManager datasetManager = new DatasetManager())
             using (PublicationManager publicationManager = new PublicationManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (EntityManager entityManager = new EntityManager())
             {
+                var entityPermissionManager = new EntityPermissionManager();
                 // dataset - version
                 DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
@@ -114,7 +114,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 DatasetVersion latestDatasetVersion = datasetManager.GetDatasetLatestVersion(datasetVersion.Dataset.Id);
 
-                string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + datasetVersion.Dataset.Id).ToString()).ToString();
+                string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/dcm/view/?id=" + datasetVersion.Dataset.Id).ToString()).ToString();
 
                 return PartialView("_requestRow", new PublicationModel()
                 {
@@ -166,6 +166,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     var settingsHelper = new SettingsHelper();
                     var placeholders = settingsHelper.GetDataCitePlaceholders();
                     var mappings = settingsHelper.GetDataCiteMappings();
+                    var updateProperties = settingsHelper.GetDataCiteUpdateProperties();
 
                     // Placeholders for DOI
                     for (int i = 0; i < placeholders.Count; i++)
@@ -203,7 +204,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     var model = new CreateDataCiteModel();
 
-                    var configuration = new Vaelastrasz.Library.Configurations.Configuration(publication.Broker.UserName, publication.Broker.Password, publication.Broker.Host, true);
+                    var configuration = new Vaelastrasz.Library.Configurations.Configuration(publication.Broker.UserName, publication.Broker.Password, publication.Broker.Host);
                     var doiService = new DOIService(configuration);
                     var createSuffixModel = new CreateSuffixModel()
                     {
@@ -244,6 +245,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     json = JsonConvert.SerializeObject(jObject, Formatting.Indented);
 
+
                     try
                     {
                         model = JsonConvert.DeserializeObject<CreateDataCiteModel>(json);
@@ -278,7 +280,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                                 var host = Request.Url.Host;
                                 var port = Request.Url.IsDefaultPort ? "" : ":" + Request.Url.Port;
                                 var url = mapping.Value.Replace(placeholders);
-                                model.SetUrl($"{scheme}://{host}{port}/ddm/Data/ShowData/{url}");
+                                model.SetUrl($"{scheme}://{host}{port}/dcm/view/?id={url}");
                                 break;
 
                             case "Version":
@@ -290,6 +292,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         }
                     }
 
+                    // Update Properties
+                    model.Update("Creators");
+                    model.Update("Contributors");
+
                     // Vaelastrasz
                     var dataCiteService = new DataCiteService(configuration);
                     var dataCiteResponse = await dataCiteService.CreateAsync(model);
@@ -299,13 +305,25 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     {
                         publication.Status = "accepted";
                         publication.Response = JsonConvert.SerializeObject(dataCiteResponse.Data);
-                        publication.ExternalLink = dataCiteResponse.Data.Data.Attributes.Doi;
+
+                        if(dataCiteResponse.Data.Data.Attributes.Identifiers.Count > 0)
+                        {
+                            publication.ExternalLink = dataCiteResponse.Data.Data.Id;
+                        }
+                        else
+                        {
+                            publication.ExternalLink = dataCiteResponse.Data.Data.Attributes.Doi;
+                        }
+
                         publication.ExternalLinkType = "DOI";
 
                         publicationManager.Update(publication);
 
                         // kritisch, dass hier der Manager weiter geleitet wird?!
                         setDoiInMetadataIfExist(publication.DatasetVersion, dataCiteResponse.Data.Data.Attributes.Doi, datasetManager);
+
+                        // set doi in tag if used
+                        setDoiInTagIfExist(publication, dataCiteResponse.Data.Data.Attributes.Doi);
                     }
                     else
                     {
@@ -316,7 +334,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     }
 
                     // E-Mail
-                    string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + publication.DatasetVersion.Dataset.Id).ToString()).ToString();
+                    string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/dcm/view/?id=" + publication.DatasetVersion.Dataset.Id).ToString()).ToString();
                     List<string> tmp = null;
                     string title = new XmlDatasetHelper().GetInformationFromVersion(publication.DatasetVersion.Id, NameAttributeValues.title);
                     string subject = "DOI Request for Dataset " + title + "(" + publication.DatasetVersion.Dataset.Id + ")";
@@ -340,7 +358,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     using(var emailService = new EmailService())
                     {
                         emailService.Send(subject, body, emails);
-                        emailService.Send(subject, body, ConfigurationManager.AppSettings["SystemEmail"]);
+                        emailService.Send(subject, body, GeneralSettings.SystemEmail);
                     }
 
                     return PartialView("_requestRow", new PublicationModel()
@@ -363,6 +381,23 @@ namespace BExIS.Modules.Dim.UI.Controllers
             {
                 throw;
             }
+        }
+
+        private bool setDoiInTagIfExist(Publication p, string doi)
+        {
+            using (var tagManager = new TagManager())
+            {
+                if (p.Tag != null)
+                {
+                    var tag = tagManager.Repo.Get(p.Tag.Id);
+                    tag.Doi = doi;
+                    tagManager.Update(tag);
+
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public ActionResult Reject(long publicationId)
@@ -482,7 +517,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (var brokerManager = new BrokerManager())
             {
                 List<long> brokerIds = brokerManager.FindByName("datacite").Select(b => b.Id).ToList();
-                List<Publication> publications = publicationManager.Publications.Where(p => brokerIds.Contains(p.Broker.Id)).ToList();
+                List<Publication> publications = publicationManager.Publications.Where(p => brokerIds.Contains(p.Broker.Id)).OrderByDescending(p => p.Timestamp).ToList();
 
                 foreach (Publication p in publications)
                 {

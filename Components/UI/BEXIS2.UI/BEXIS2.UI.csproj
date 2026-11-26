@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DocumentFormat.OpenXml" Version="3.5.1" />
+    <PackageReference Include="Microsoft.AspNet.Identity.Core" Version="2.2.4" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\IO\BEXIS2.IO.DataType.DisplayPattern\BEXIS2.IO.DataType.DisplayPattern.csproj" />
+    <ProjectReference Include="..\..\IO\BEXIS2.IO.Transform.Input\BEXIS2.IO.Transform.Input.csproj" />
+  </ItemGroup>
+
+</Project>

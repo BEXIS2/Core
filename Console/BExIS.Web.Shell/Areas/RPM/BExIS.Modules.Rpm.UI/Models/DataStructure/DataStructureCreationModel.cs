@@ -1,5 +1,5 @@
-﻿using BExIS.IO.Transform.Input;
-using BExIS.UI.Models;
+﻿using BEXIS2.IO.Transform.Input;
+using BEXIS2.UI.Models;
 using System.Collections.Generic;
 
 namespace BExIS.Modules.Rpm.UI.Models.DataStructure
@@ -35,6 +35,8 @@ namespace BExIS.Modules.Rpm.UI.Models.DataStructure
         public List<ListItem> Decimals { get; set; }
         public List<ListItem> TextMarkers { get; set; }
         public List<ListItem> Encodings { get; set; }
+
+        public List<VariableTemplateItem> Templates { get; set; }
 
         public List<string> Preview { get; set; }
 

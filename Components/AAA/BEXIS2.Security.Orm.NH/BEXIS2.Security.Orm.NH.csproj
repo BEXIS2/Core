@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Mappings\Default\Authentication\Login.hbm.xml" />
+    <Content Include="Mappings\Default\Authorization\EntityPermission.hbm.xml" />
+    <Content Include="Mappings\Default\Authorization\FeaturePermission.hbm.xml" />
+    <Content Include="Mappings\Default\FormerMember\EntityPermissions_FormerMember.hbm.xml" />
+    <Content Include="Mappings\Default\FormerMember\FeaturePermissions_FormerMember.hbm.xml" />
+    <Content Include="Mappings\Default\FormerMember\Users_Groups_FormerMember.hbm.xml" />
+    <Content Include="Mappings\Default\Objects\Entity.hbm.xml" />
+    <Content Include="Mappings\Default\Objects\EntityReference.hbm.xml" />
+    <Content Include="Mappings\Default\Objects\Feature.hbm.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\Objects\Operation.hbm.xml" />
+    <Content Include="Mappings\Default\Requests\Decision.hbm.xml" />
+    <Content Include="Mappings\Default\Requests\Request.hbm.xml" />
+    <Content Include="Mappings\Default\Subjects\Group.hbm.xml" />
+    <Content Include="Mappings\Default\Subjects\Subject.hbm.xml" />
+    <Content Include="Mappings\Default\Subjects\User.hbm.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\Versions\Version.hbm.xml" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="rmdir /S /Q  &quot;$(SolutionDir)Console\Workspace\Components\Security\Db\Mappings&quot;&#xD;&#xA;C:\Windows\System32\xcopy &quot;$(ProjectDir)Mappings&quot; &quot;$(SolutionDir)Console\Workspace\Components\Security\Db\Mappings&quot; /E /C /Y /I /D" />
+  </Target>
+
+</Project>

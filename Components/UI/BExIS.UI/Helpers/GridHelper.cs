@@ -1,11 +1,11 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
 using BExIS.UI.Models;
 using BExIS.Utils.NH.Querying;
 using System;
 using System.Collections.Generic;
 using DataType = BExIS.Utils.NH.Querying.DataType;
 
-namespace BExIS.UI.Helpers
+namespace BEXIS2.UI.Helpers
 {
     public class DataTableHelper
     {

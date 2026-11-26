@@ -1,7 +1,7 @@
 ﻿/// <summary>
 ///
 /// </summary>
-namespace BExIS.IO.Transform.Input
+namespace BEXIS2.IO.Transform.Input
 {
     /// <summary>
     ///

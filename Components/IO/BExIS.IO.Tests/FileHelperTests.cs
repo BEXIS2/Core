@@ -1,7 +1,8 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
 using System.IO;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
+using BEXIS2.IO;
 
 namespace BExIS.IO.Tests
 {

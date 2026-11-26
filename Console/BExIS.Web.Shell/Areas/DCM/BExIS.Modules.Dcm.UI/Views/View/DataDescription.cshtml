@@ -1,0 +1,21 @@
+﻿@{
+    ViewBag.Title = "Data Description";
+    Layout = "~/Themes/Default/Layouts/_svelteLayout.cshtml";
+
+    long id = 0;
+    long version = 0;
+
+    if (ViewData["id"] != null) { id = Convert.ToInt64(ViewData["id"]); }
+
+    if (ViewData["version"] != null) { version = Convert.ToInt64(ViewData["version"]); }
+
+}
+
+<script>
+    console.log("location in dcm", location);
+</script>
+<div id="datadescription" dataset="@id" version="@version">
+
+    @Html.Partial("_sveltePage")
+
+</div>

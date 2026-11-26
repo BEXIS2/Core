@@ -1,15 +1,15 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.IO.Transform.Output;
-using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.IO.Transform.Output;
+using BEXIS2.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Route;
-using BExIS.Xml.Helpers;
+using BEXIS2.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -241,7 +241,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
 
             DatasetManager datasetManager = new DatasetManager();
-            UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             EntityManager entityManager = new EntityManager();
 
@@ -299,7 +298,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             string title = datasetVersion.Title;
 
                             // check the data sturcture type ...
-                            if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                            if (datasetVersion.Dataset.DataStructure != null)
                             {
                                 // apply selection and projection
                                 long count = datasetManager.GetDataTuplesCount(datasetVersion.Id);
@@ -343,7 +342,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             string title = datasetVersion.Title;
 
                             // check the data sturcture type ...
-                            if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                            if (datasetVersion.Dataset.DataStructure!=null)
                             {
                                 //FilterExpression filter = null;
                                 //OrderByExpression orderBy = null;
@@ -422,8 +421,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             finally
             {
                 datasetManager.Dispose();
-                userManager.Dispose();
-                entityPermissionManager.Dispose();
                 entityManager.Dispose();
             }
         }

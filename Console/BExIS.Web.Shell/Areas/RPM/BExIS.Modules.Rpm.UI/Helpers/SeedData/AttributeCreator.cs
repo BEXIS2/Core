@@ -1,13 +1,13 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.TypeSystem;
-using BExIS.IO.DataType.DisplayPattern;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.Dlm.Services.TypeSystem;
+using BEXIS2.IO.DataType.DisplayPattern;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Xml;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 {
@@ -205,8 +205,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                     DataType dataType = new DataType();
                     // get existing dataTypes
                     DataType existDT = dataTypeManager.Repo.Get().Where(d =>
-                        d.Name.Equals(dtName) &&
-                        d.SystemType.ToString().Equals(mappedDataType["SystemType"].ToString())
+                        d.Name.Equals(dtName)
                         ).FirstOrDefault();
                     // return ID of existing dataType or create dataType
                     if (existDT == null && dtSystemType != null)
@@ -226,7 +225,10 @@ namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
                     }
                     else
                     {
+                        existDT.Description = dtDescription;
+                        existDT.SystemType = dtSystemType.ToString();
                         dataType = existDT;
+                        dataTypeManager.Update(dataType);
                     }
 
                     mappedDataType["DataTypesId"] = dataType.Id;

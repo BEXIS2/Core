@@ -1,0 +1,85 @@
+﻿using BExIS.App.Testing;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.SpeciesMatching;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.MetadataStructure;
+using BEXIS2.Dlm.Services.SpeciesMatching;
+using BExIS.Dlm.Tests.Helpers;
+using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Subjects;
+using BExIS.Utils.Config;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Vaiona.IoC;
+
+namespace BExIS.Dlm.Tests.Services.SpeciesMatching
+{
+    internal class SpeciesMatchingResultManagerTest
+    {
+        private TestSetupHelper helper = null;
+        DatasetHelper datasetHelper = new DatasetHelper();
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            helper = new TestSetupHelper(WebApiConfig.Register, false);
+
+           
+            var dataset = datasetHelper.CreateDataset();
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            using (var speciesMatchingResultManager = new SpeciesMatchingResultManager())
+            { 
+                speciesMatchingResultManager.Repo.Get().ToList().ForEach(x => speciesMatchingResultManager.Delete(x));
+            }
+            
+            datasetHelper.PurgeAllDatasets();
+        }
+
+        [Test()]
+        public void Create_Valid_EntityTemplate()
+        {
+            using (var speciesMatchingResultManager = new SpeciesMatchingResultManager())
+            using (var datasetManager = new DatasetManager())
+            {
+                var userManager = IoCFactory.Container.Resolve<UserManager>();
+                //Arrange
+                SpeciesMatchingResult matchingResult = new SpeciesMatchingResult();
+
+                var user = userManager.Users.FirstOrDefault();
+                var dataset = datasetManager.DatasetRepo.Get().FirstOrDefault();
+
+                matchingResult.OriginalName = "Sunflower";
+                matchingResult.EditedName = "";
+                matchingResult.MatchedName = "";
+                matchingResult.Status = "";
+                matchingResult.MatchType = "";
+                matchingResult.TimestampMatch = DateTime.Now;
+                matchingResult.MatchSource = "";
+                matchingResult.MatchSourceVersion = "";
+                matchingResult.ConfirmedByUser = false;
+                matchingResult.Dataset = dataset;
+                matchingResult.DatasetVersionId = 1;
+                matchingResult.StepId = -1;
+
+                //Act
+                var created = speciesMatchingResultManager.Create(matchingResult);
+                var fromdb = speciesMatchingResultManager.Repo.Get().LastOrDefault();
+
+                //Assert
+                Assert.IsNotNull(created);
+                Assert.IsNotNull(fromdb);
+                Assert.That(created.Id.Equals(fromdb.Id));
+
+                speciesMatchingResultManager.Delete(fromdb);
+            }
+        }
+    }
+}

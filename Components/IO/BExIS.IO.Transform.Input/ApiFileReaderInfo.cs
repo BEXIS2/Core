@@ -1,7 +1,7 @@
 ﻿/// <summary>
 ///
 /// </summary>
-namespace BExIS.IO.Transform.Input
+namespace BEXIS2.IO.Transform.Input
 {
     /// <summary>
     /// This class is required to store information that is important to read of data from ascii files.

@@ -1,4 +1,4 @@
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Data">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.Data">
   <class xmlns="urn:nhibernate-mapping-2.2" name="DataTupleVersion" table="DataTupleVersions">
     <!-- Mapping BaseEntity properties -->
 
@@ -21,7 +21,7 @@
       <column name="OrderNo" />
     </property>
 
-    <property name="TupleAction" type="BExIS.Dlm.Entities.Data.TupleAction, BExIS.Dlm.Entities">
+    <property name="TupleAction" type="BEXIS2.Dlm.Entities.Data.TupleAction, BEXIS2.Dlm.Entities">
       <column name="TupleAction" />
     </property>
 

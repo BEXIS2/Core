@@ -10,7 +10,7 @@
 			<ul class="list-none">
 				{#each value as elem}
 					{#if elem != undefined}
-						<li><a class="a" href="/ddm/show?id={elem}">{elem}</a></li>
+						<li><a class="a" href="/ddm/data/show?id={elem}">{elem}</a></li>
 					{/if}
 				{/each}
 			</ul>

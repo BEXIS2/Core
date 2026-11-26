@@ -1,0 +1,46 @@
+ {
+        "mode_name": "Validate and Fill",
+        "description": "Validate based on name (in variables) and fill ORCID data into output variables",
+        "settings": {
+          "setting": [
+            {
+              "name": "Debounce",
+              "description": "Debounce time in ms for search requests",
+              "type": "string",
+              "target_variable": "debounce",
+              "default_value": {
+                "type": "string",
+                "value": "400"
+              }
+            }
+          ]
+        },
+        "variables": {
+          "variable": [
+            {
+              "name": "Given Name",
+              "description": "Given name from metadata, used to search ORCID",
+              "type": "string",
+              "target_variable": "given_name",
+              "is_input": true,
+              "is_output": true
+            },
+            {
+              "name": "Family Name",
+              "description": "Family name from metadata, used to search ORCID",
+              "type": "string",
+              "target_variable": "family_name",
+              "is_input": true,
+              "is_output": true
+            },
+            {
+              "name": "ORCID iD",
+              "description": "The ORCID iD filled from the selected ORCID record",
+              "type": "string",
+              "target_variable": "orcid_id",
+              "is_input": false,
+              "is_output": true
+            }
+          ]
+        }
+      }

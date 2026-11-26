@@ -35,6 +35,7 @@
                             <label for="StartDate">Start Date</label>
                         </td>
                         <td>
+                            @Html.HiddenFor(m => m.StartDate)
                             @Model.StartDate
                         </td>
                     </tr>
@@ -44,6 +45,7 @@
                             <label for="EndDate">End Date</label>
                         </td>
                         <td>
+                            @Html.HiddenFor(m => m.EndDate)
                             @Model.EndDate
                         </td>
                     </tr>
@@ -70,8 +72,8 @@
     )<span style="color:red" id="errorsMsgSpan"></span>
 
     <div id="divSubmitButtons" class="bx-footer right" style="text-align:left;">
-        <button type="submit" id="submitBtn" class="bx-button action"  onclick="return submitClick();">Save</button>
-        @Html.ActionLink("Cancel", "Index", "Home", new {  @class = "bx-button action" })
+        <button type="submit" id="submitBtn" class="bx-button action" onclick="return submitClick();">Save</button>
+        @Html.ActionLink("Cancel", "Index", "Home", new { @class = "bx-button action" })
     </div>
 }
 

@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Web;
 using System.Web.SessionState;
-using Vaiona.Model.MTnt;
+using BEXIS2.App.Model.MTnt;
 using Vaiona.Web.Helpers;
 
 namespace Vaiona.Web.Extensions

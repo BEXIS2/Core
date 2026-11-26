@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Configuration;
+using BExIS.Utils.Config;
 using System.Text;
 
 namespace BExIS.Security.Services.Utilities
@@ -153,14 +153,14 @@ namespace BExIS.Security.Services.Utilities
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendLine($"User \"{requester}\" (\"{email}\") sent a data request for dataset <b>\"{title}\"</b> with ID <b>{datasetid}</b> <br/>");
             stringBuilder.AppendLine($"<b>Intention:</b> \"{reason}\" <br/><br/>");
-            stringBuilder.AppendLine("To decide on this request login to  " + ConfigurationManager.AppSettings["ApplicationName"] + ". You will find all pending requests under My Data/Dashboard -> Datasets -> Decisions.");
+            stringBuilder.AppendLine("To decide on this request login to  " + GeneralSettings.ApplicationName + ". You will find all pending requests under My Data/Dashboard -> Datasets -> Decisions.");
 
             return stringBuilder.ToString();
         }
 
         public static string GetWithdrawRequestHeader(long datasetid, string requester)
         {
-            return $"Data request from {requester} for dataset with ID <b>{datasetid}</b> withdrawn";
+            return $"Data request from {requester} for dataset with ID {datasetid} withdrawn";
         }
 
         public static string GetWithdrawRequestMessage(long datasetid, string title, string requester)
@@ -173,7 +173,7 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetAcceptRequestHeader(long datasetid, string requester)
         {
-            return $"Data request from {requester} for dataset with ID <b>{datasetid}</b> granted";
+            return $"Data request from {requester} for dataset with ID {datasetid} granted";
         }
 
         public static string GetAcceptRequestMessage(long datasetid, string title)
@@ -186,7 +186,7 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetRejectedRequestHeader(long datasetid, string requester)
         {
-            return $"Data request from {requester} for dataset with ID <b>{datasetid}</b> rejected";
+            return $"Data request from {requester} for dataset with ID {datasetid} rejected";
         }
 
         public static string GetRejectedRequestMessage(long datasetid, string title)
@@ -212,20 +212,30 @@ namespace BExIS.Security.Services.Utilities
             return $"{entityname}: Metadata updated (ID {datasetid})";
         }
 
-        public static string GeFileUpdatHeader(long datasetid)
+        public static string GeFileUploadHeader(long datasetid)
         {
             return $"File was uploaded (ID {datasetid})";
         }
 
-        public static string GetFileUploaddMessage(long userId, string title, string userName, string filename)
+        public static string GeFileUpdateHeader(long datasetid)
         {
-            return $"User <b>\"{userName}\"</b>(ID {userId}) has uploaded to the dataset <b>\"{title}\"</b> a file: <b>{filename}</b>.";
+            return $"File(s) were updated (ID {datasetid})";
         }
 
-        public static string GetFilesUploaddMessage(long userId,string title, string userName, string[] filenames)
+        public static string GetFileUpdatedMessage(long userId, string title, string userName, string filenames, string type)
+        {
+            return $"User <b>\"{userName}\"</b>(ID {userId}) has {type} files to/at the dataset <b>\"{title}\"</b>. File(s): <b>{filenames}</b>.";
+        }
+
+        public static string GetFilesUploadMessage(long userId,string title, string userName, string[] filenames)
         {
             var fnames = string.Join(",", filenames);
             return $"User <b>\"{userName}\"</b>(ID {userId}) has uploaded to the dataset <b>\"{title}\"</b> this files: <b>{fnames}</b>.";
+        }
+
+        public static string GetFilesUploadMessage(long userId, string title, string userName, string filename)
+        {
+            return $"User <b>\"{userName}\"</b>(ID {userId}) has uploaded to the dataset <b>\"{title}\"</b> this files: <b>{filename}</b>.";
         }
 
         public static string GetFileDownloadHeader(long datasetid, long version)
@@ -243,13 +253,15 @@ namespace BExIS.Security.Services.Utilities
             return $"Data uploaded (ID {datasetid})";
         }
 
-        public static string GetUpdateDatasetMessage(long datasetid, string title, string userName, string entityname, int numberOfRows = 0, int numberOfSkippedRows = 0)
+        public static string GetUpdateDatasetMessage(long datasetid, string title, string userName, string entityname, int numberOfRows = 0, int numberOfSkippedRows = 0, int numberOfRowsAdded = 0, int numberOfRowsUpdated = 0)
         {
 
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"{entityname} <b>\"{title}\"</b> with ID <b>{datasetid}</b> was updated");
+            stringBuilder.AppendLine($"{entityname} <b>\"{title}\"</b> with ID <b>{datasetid}</b> was updated by {userName}");
             if(numberOfRows>0)
                 stringBuilder.AppendLine($"<b>\"{numberOfRows}\"</b> rows have been successfully added/edited.");
+            if(numberOfRowsAdded>0 || numberOfRowsUpdated>0)
+                stringBuilder.AppendLine($"<b>{numberOfRowsAdded}</b> rows added, <b>{numberOfRowsUpdated}</b> rows updated.");
             if(numberOfSkippedRows>0)
                 stringBuilder.AppendLine($"<b>\"{numberOfSkippedRows}\"</b> rows were be skipped.");
 
@@ -338,11 +350,21 @@ namespace BExIS.Security.Services.Utilities
             return $"The {entityname} with ID {datasetid} was unset from public by {userName}.";
         }
 
+        public static string GetReleaseTagHeader(long datasetid, string entityname)
+        {
+            return $"{entityname}: Release tag requested (ID {datasetid})";
+        }
+
+        public static string GetReleaseTagMessage(string userName, long datasetid, string entityname, string title, string message)
+        {
+            return $"User {userName} has submitted a release request for the dataset \"{title}\" (ID: {datasetid}). <br/><br/>Request: {message}";
+        }
+
         #region upload api
 
         public static string GetPushApiStoreHeader(long datasetid, string title)
         {
-            return $"Receive data for dataset '{title}' with ID <b>{datasetid}</b>";
+            return $"Receive data for dataset '{title}' with ID {datasetid}";
         }
 
         public static string GetPushApiStoreMessage(long datasetid, string userName, string[] errors = null)
@@ -386,7 +408,7 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetPushApiUploadSuccessHeader(long datasetid, string title)
         {
-            return $"Upload <b>completed</b> for dataset: '{title}' with ID <b>{datasetid}</b>";
+            return $"Upload completed for dataset: '{title}' with ID {datasetid}";
         }
 
         public static string GetPushApiUploadSuccessMessage(long datasetid, string userName)
@@ -396,7 +418,7 @@ namespace BExIS.Security.Services.Utilities
 
         public static string GetPushApiUploadFailHeader(long datasetid, string title)
         {
-            return $"Upload  was not successful for dataset '{title}' with ID <b>{datasetid}</b>";
+            return $"Upload  was not successful for dataset '{title}' with ID {datasetid}";
         }
 
         public static string GetPushApiUploadFailMessage(long datasetid, string userName, string[] errors)

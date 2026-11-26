@@ -1,4 +1,4 @@
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Administration">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.Administration">
   <class xmlns="urn:nhibernate-mapping-2.2" name="ResearchPlan" table="ResearchPlans">
     <!-- Mapping BaseEntity properties -->
     <id name="Id" type="Int64">
@@ -29,12 +29,12 @@
     <!-- Mapping entity associations -->
     <set cascade="none" name="Datasets" inverse="true" lazy="true">
       <key column="ResearchPlanRef" not-null="false" foreign-key="FK_Datasets_ResearchPlans" />
-      <one-to-many class="BExIS.Dlm.Entities.Data.Dataset" />
+      <one-to-many class="BEXIS2.Dlm.Entities.Data.Dataset" />
     </set>
 
     <set name="DataStructures" table="ResearchPlans_DataStructures" cascade="all-delete-orphan"  lazy="true">
       <key column="ResearchPlanRef" />
-      <many-to-many column="DataStructureRef" class="BExIS.Dlm.Entities.DataStructure.DataStructure" />
+      <many-to-many column="DataStructureRef" class="BEXIS2.Dlm.Entities.DataStructure.DataStructure" />
     </set>
   </class>
 </hibernate-mapping>

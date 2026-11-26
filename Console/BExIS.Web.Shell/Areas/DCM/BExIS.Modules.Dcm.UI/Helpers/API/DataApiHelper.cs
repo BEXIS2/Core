@@ -1,20 +1,20 @@
 ﻿using BExIS.Dim.Entities.Mappings;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.IO;
-using BExIS.IO.Transform.Input;
-using BExIS.IO.Transform.Output;
-using BExIS.IO.Transform.Validation.Exceptions;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.IO;
+using BEXIS2.IO.Transform.Input;
+using BEXIS2.IO.Transform.Output;
+using BEXIS2.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.API;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Utils.Config;
-using BExIS.Utils.Data.Upload;
+using BEXIS2.Utils.Data.Upload;
 using BExIS.Utils.Upload;
 using System;
 using System.Collections.Generic;
@@ -23,8 +23,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
-using Vaiona.Entities.Common;
-using Vaiona.Utils.Cfg;
+using BEXIS2.DB.Entities.Common;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Modules.Dcm.UI.Helper.API
 {
@@ -44,14 +44,15 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
         private AsciiReader reader = null;
         private FileStream Stream = null;
         private UploadHelper uploadHelper = new UploadHelper();
-        private UserManager userManager = new UserManager();
         private List<long> variableIds = new List<long>();
+        private int totalRowsUpdated;
+        private int totalRowsAdded;
+
         //private UploadMethod _uploadMethod;
 
         public DataApiHelper(Dataset dataset, User user, DataApiModel data, string title, UploadMethod uploadMethod)
         {
             datasetManager = new DatasetManager();
-            userManager = new UserManager();
             entityPermissionManager = new EntityPermissionManager();
             dataStructureManager = new DataStructureManager();
             uploadHelper = new UploadHelper();
@@ -103,7 +104,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 using (var emailService = new EmailService())
                 {
                     emailService.Send(MessageHelper.GetPushApiPKCheckHeader(_dataset.Id, _title),
-                                            MessageHelper.GetPushApiPKCheckMessage(_dataset.Id, _user.UserName, errors.ToArray()),
+                                            MessageHelper.GetPushApiPKCheckMessage(_dataset.Id, _user.DisplayName, errors.ToArray()),
                                             new List<string>() { _user.Email },
                                             new List<string>() { GeneralSettings.SystemEmail }
                                             );
@@ -126,7 +127,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
             {
                 Debug.WriteLine("start storing data");
 
-                asciiWriter = new AsciiWriter(IO.TextSeperator.tab);
+                asciiWriter = new AsciiWriter(BEXIS2.IO.TextSeperator.tab);
                 //create a file in a user tempfolder
                 _filepath = Path.Combine(AppConfiguration.DataPath, _user.UserName, "temp" + DateTime.Now.Millisecond + ".tsv");
 
@@ -140,7 +141,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 using (var emailService = new EmailService())
                 {
                     emailService.Send(MessageHelper.GetPushApiStoreHeader(_dataset.Id, _title),
-                        MessageHelper.GetPushApiStoreMessage(_dataset.Id, _user.UserName),
+                        MessageHelper.GetPushApiStoreMessage(_dataset.Id, _user.DisplayName),
                         new List<string>() { _user.Email },
                         new List<string>() { GeneralSettings.SystemEmail }
                         );
@@ -152,7 +153,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 using (var emailService = new EmailService())
                 {
                     emailService.Send(MessageHelper.GetPushApiStoreHeader(_data.DatasetId, _title),
-                                            MessageHelper.GetPushApiStoreMessage(_dataset.Id, _user.UserName, new string[] { ex.Message }),
+                                            MessageHelper.GetPushApiStoreMessage(_dataset.Id, _user.DisplayName, new string[] { ex.Message }),
                                             new List<string>() { _user.Email },
                                             new List<string>() { GeneralSettings.SystemEmail }
                                             );
@@ -190,7 +191,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                     if (datatupleFromDatabaseIds.Count > 0) isUpdatingData = true;
 
                     // update metadata based on system keys mappings
-                    workingCopy.Metadata = setSystemValuesToMetadata(workingCopy.Id, datasetManager.GetDatasetVersionCount(workingCopy.Id) + 1, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, isUpdatingData);
+                    workingCopy.Metadata = setSystemValuesToMetadata(workingCopy.Id, datasetManager.GetDatasetVersionCount(workingCopy.Id) + 1,0, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, isUpdatingData);
 
                     ////set modification
                     workingCopy.ModificationInfo = new EntityAuditInfo()
@@ -226,7 +227,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                             {
                                 //send error messages
                                 emailService.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id, _title),
-                                        MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.UserName, errorArray.ToArray()),
+                                        MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.DisplayName, errorArray.ToArray()),
                                         new List<string>() { _user.Email },
                                         new List<string>() { GeneralSettings.SystemEmail }
                                         );
@@ -235,28 +236,37 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                             return false;
                         }
 
-                        //Update Method -- append or update
-                        if (rows.Count() > 0)
-                        {
-                            var splittedDatatuples = uploadHelper.GetSplitDatatuples(rows, variableIds, workingCopy, ref datatupleFromDatabaseIds);
-                            datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
-                            inputWasAltered = true;
-                        }
-                    } while (rows.Count() > 0 || inputWasAltered == true);
+                    //Update Method -- append or update
+                    int totalRowsAdded = 0;
+                    int totalRowsUpdated = 0;
 
-                    datasetManager.CheckInDataset(id, "via API", userName);
-
-                    string title = workingCopy.Title;
-
-                    //send email
-                    using (var emailService = new EmailService())
+                    if (rows.Count() > 0)
                     {
-                        emailService.Send(MessageHelper.GetUpdateDatasetHeader(id),
-                            MessageHelper.GetUpdateDatasetMessage(id, title, _user.DisplayName, typeof(Dataset).Name),
-                            new List<string>() { _user.Email },
-                                   new List<string>() { GeneralSettings.SystemEmail }
-                            );
+                        var splittedDatatuples = uploadHelper.GetSplitDatatuples(rows, variableIds, workingCopy, ref datatupleFromDatabaseIds);
+                        totalRowsAdded += splittedDatatuples["new"].Count;
+                        totalRowsUpdated += splittedDatatuples["edit"].Count;
+                        datasetManager.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
+                        inputWasAltered = true;
                     }
+                } while (rows.Count() > 0 || inputWasAltered == true);
+
+                string checkInComment = "via API";
+                if (totalRowsAdded > 0 || totalRowsUpdated > 0)
+                    checkInComment = $"{totalRowsAdded} rows added, {totalRowsUpdated} rows updated via API";
+
+                datasetManager.CheckInDataset(id, checkInComment, userName);
+
+                string title = workingCopy.Title;
+
+                //send email
+                using (var emailService = new EmailService())
+                {
+                    emailService.Send(MessageHelper.GetUpdateDatasetHeader(id),
+                        MessageHelper.GetUpdateDatasetMessage(id, title, _user.DisplayName, typeof(Dataset).Name, totalRowsAdded + totalRowsUpdated, 0, totalRowsAdded, totalRowsUpdated),
+                        new List<string>() { _user.Email },
+                               new List<string>() { GeneralSettings.SystemEmail }
+                        );
+                }
                 }
                 else
                 {
@@ -264,7 +274,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                     {
                         //ToDo send email to user
                         emailService.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id, _title),
-                                   MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.UserName, new string[] { "The temporarily stored data could not be read or the dataset is already in checkout status." }),
+                                   MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.DisplayName, new string[] { "The temporarily stored data could not be read or the dataset is already in checkout status." }),
                                    new List<string>() { _user.Email },
                                    new List<string>() { GeneralSettings.SystemEmail }
                                    );
@@ -282,7 +292,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                 {
                     //ToDo send email to user
                     emailService.Send(MessageHelper.GetPushApiUploadFailHeader(_dataset.Id, _title),
-                                    MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.UserName, new string[] { ex.Message }),
+                                    MessageHelper.GetPushApiUploadFailMessage(_dataset.Id, _user.DisplayName, new string[] { ex.Message }),
                                     new List<string>() { _user.Email },
                                     new List<string>() { GeneralSettings.SystemEmail }
                                     );
@@ -328,7 +338,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                     using (var emailService = new EmailService())
                     {
                         emailService.Send(MessageHelper.GetPushApiValidateHeader(_dataset.Id, _title),
-                            MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.UserName, errorArray.ToArray()),
+                            MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.DisplayName, errorArray.ToArray()),
                             new List<string>() { _user.Email },
                             new List<string>() { GeneralSettings.SystemEmail }
                             );
@@ -341,7 +351,7 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
                     using (var emailService = new EmailService())
                     {
                         emailService.Send(MessageHelper.GetPushApiValidateHeader(_dataset.Id, _title),
-                            MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.UserName),
+                            MessageHelper.GetPushApiValidateMessage(_dataset.Id, _user.DisplayName),
                             new List<string>() { _user.Email },
                             new List<string>() { GeneralSettings.SystemEmail }
                             );
@@ -353,16 +363,16 @@ namespace BExIS.Modules.Dcm.UI.Helper.API
             return await Upload();
         }
 
-        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool updateData = false)
+        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId,double tag, XmlDocument metadata, bool updateData = false)
         {
             SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
 
             Key[] myObjArray = { };
 
-            if (updateData) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
-            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DataCreationDate, Key.DataLastModified };
+            if (updateData) myObjArray = new Key[] { Key.Id, Key.Version,Key.Tag, Key.DateOfVersion, Key.DataLastModified };
+            else myObjArray = new Key[] { Key.Id, Key.Version, Key.Tag, Key.DataCreationDate, Key.DataLastModified };
 
-            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version,tag, metadataStructureId, metadata, myObjArray);
 
             return metadata;
         }

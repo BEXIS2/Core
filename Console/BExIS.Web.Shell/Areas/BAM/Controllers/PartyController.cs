@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.Party;
-using BExIS.Dlm.Services.Party;
+﻿using BEXIS2.Dlm.Entities.Party;
+using BEXIS2.Dlm.Services.Party;
 using BExIS.Modules.Bam.UI.Helpers;
 using BExIS.Modules.Bam.UI.Models;
 using BExIS.Security.Services.Subjects;
@@ -11,11 +11,19 @@ using System.Data;
 using System.Linq;
 using System.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
+using BEXIS2.IO.Transform.Validation.Exceptions;
 
 namespace BExIS.Modules.Bam.UI.Controllers
 {
     public class PartyController : Controller
     {
+        private readonly UserManager _userManager;
+
+        public PartyController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
+
         public ActionResult Index()
         {
             using (var partyTypeManager = new PartyTypeManager())
@@ -152,7 +160,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
             using (PartyManager partyManager = new PartyManager())
             using (PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager())
             using (PartyTypeManager partyTypeManager = new PartyTypeManager())
-            using (UserManager userManager = new UserManager())
             {
                 var party = new Party();
                 // Create a new party
@@ -178,7 +185,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
                             // get user based on party
                             var userid = partyManager.GetUserIdByParty(party.Id);
-                            var userTask = userManager.FindByIdAsync(userid);
+                            var userTask = _userManager.FindByIdAsync(userid);
                             userTask.Wait();
                             var user = userTask.Result;
 
@@ -193,7 +200,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
                                 // Update user email
                                 user.Email = entity.Value;
-                                userManager.UpdateAsync(user);
+                                _userManager.UpdateAsync(user);
                             }
                         }
                     }
@@ -300,9 +307,9 @@ namespace BExIS.Modules.Bam.UI.Controllers
         private void validateAttribute(PartyModel partyModel)
         {
             if (partyModel.StartDate > partyModel.EndDate)
-                partyModel.Errors.Add(new IO.Transform.Validation.Exceptions.Error(IO.Transform.Validation.Exceptions.ErrorType.Other, "Start date is greater than end date!"));
+                partyModel.Errors.Add(new Error(ErrorType.Other, "Start date is greater than end date!"));
             if (partyModel.PartyType.Id == 0)
-                partyModel.Errors.Add(new IO.Transform.Validation.Exceptions.Error(IO.Transform.Validation.Exceptions.ErrorType.Other, "Please select party type!"));
+                partyModel.Errors.Add(new Error(ErrorType.Other, "Please select party type!"));
         }
 
         /// <summary>

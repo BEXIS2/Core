@@ -6,25 +6,27 @@ using BExIS.Dim.Helpers.Mappings;
 using BExIS.Dim.Helpers.Models;
 using BExIS.Dim.Services;
 using BExIS.Dim.Services.Mappings;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using BExIS.IO;
-using BExIS.Security.Entities.Objects;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.IO;
+using BEXIS2.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using BExIS.Utils.Extensions;
+using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 using static BExIS.Dim.Helpers.Export.GBIFDataRepoConverter;
+using BEXIS2.IO;
 
 namespace BExIS.Dim.Helpers.Export
 {
@@ -94,15 +96,15 @@ namespace BExIS.Dim.Helpers.Export
                     string xsdPath = Path.Combine(AppConfiguration.WorkspaceRootPath, concept.XSD);
 
                     using (var zipFileStream = new FileStream(zipfilepath, FileMode.Create))
-                    using (var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Update))
+                    using (var archive = new ZipOutputStream(zipFileStream))
                     {
                         // generate metadata
                         string metadataFilePath = helper.GenerateResourceMetadata(concept.Id, metadatastructureId, datasetversion.Metadata, folder, xsdPath);
-                        if (File.Exists(metadataFilePath)) archive.AddFileToArchive(metadataFilePath, "");
+                        if (File.Exists(metadataFilePath)) archive.AddFileToArchive(metadataFilePath, Path.GetFileName(metadataFilePath));
 
                         // get data
                         string datapath = helper.GenerateData(id, versionId);
-                        if (File.Exists(datapath)) archive.AddFileToArchive(datapath, "");
+                        if (File.Exists(datapath)) archive.AddFileToArchive(datapath, Path.GetFileName(datapath));
 
                         // has links to extentions? (IsDwcEventOf,IsDwcHumboltExtensionOf, IsEwcEMofExtensionOf)
                         // has links?
@@ -126,14 +128,14 @@ namespace BExIS.Dim.Helpers.Export
                                     var extention = helper.GetExtention(r.ReferenceType);
 
                                     extentions.Add(new ExtentionEntity() { IdIndex = 0, Version = r.SourceVersion, StructureId = structureId, Extention = extention, dataPath = Path.GetFileName(rPath) });
-                                    archive.AddFileToArchive(rPath, "");
+                                    archive.AddFileToArchive(rPath, Path.GetFileName(rPath));
                                 }
                             }
                         }
 
                         // generate meta file
                         string metaFilePath = helper.GenerateMeta(_type, dataset.DataStructure.Id, folder, Path.GetFileName(datapath), extentions);
-                        if (File.Exists(metaFilePath)) archive.AddFileToArchive(metaFilePath, "");
+                        if (File.Exists(metaFilePath)) archive.AddFileToArchive(metaFilePath, Path.GetFileName(metaFilePath));
                     }
 
                     return zipfilepath;

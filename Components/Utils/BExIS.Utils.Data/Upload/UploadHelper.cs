@@ -1,17 +1,17 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
 using BExIS.IO;
-using BExIS.IO.Transform.Input;
+using BEXIS2.IO.Transform.Input;
 using BExIS.Utils.Data.Upload;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Vaiona.Model.MTnt;
-using Vaiona.Persistence.Api;
+using BEXIS2.App.Model.MTnt;
+using BEXIS2.DB.Persistence.Api;
 
 /// <summary>
 ///
@@ -467,11 +467,7 @@ namespace BExIS.Utils.Upload
                             // 2 [2][Javad] = 2Javad
                             foreach (List<string> l in tempList)
                             {
-                                string tempString = "";
-                                foreach (string s in l)
-                                {
-                                    tempString += s;
-                                }
+                                string tempString = String.Join("_", l);
                                 if (!String.IsNullOrEmpty(tempString)) primaryValuesAsOneString.Add(tempString);
                             }
 

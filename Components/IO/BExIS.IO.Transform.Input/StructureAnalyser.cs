@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.DataStructure;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.IO.Transform.Validation.ValueCheck;
@@ -10,9 +10,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-using Entites = BExIS.Dlm.Entities.DataStructure;
+using Entites = BEXIS2.Dlm.Entities.DataStructure;
 
-namespace BExIS.IO.Transform.Input
+namespace BEXIS2.IO.Transform.Input
 {
     public class StructureAnalyser
     {
@@ -424,8 +424,8 @@ namespace BExIS.IO.Transform.Input
                     foreach (var item in byUnit)
                     {
                         // if variableTemplate allready exist in the matches increase the value by 1
-                        if (matches.ContainsKey(item)) matches[item] += 1;
-                        else matches.Add(item, 1);
+                        if (matches.ContainsKey(item)) matches[item] += 2;
+                        else matches.Add(item, 2);
                     }
 
                     //add dimenions results to matches
@@ -449,7 +449,29 @@ namespace BExIS.IO.Transform.Input
                 }
             }
 
-            return matches.OrderByDescending(x => x.Value).Select(u => u.Key).ToList();
+            // 1. Sort and grab the highest value first
+            var sortedMatches = matches.OrderByDescending(x => x.Value).ToList();
+
+            // 2. Protect against an empty list, then grab the maximum value
+            double threshold = 0.0;
+            if (sortedMatches.Any())
+            {
+                double highestValue = sortedMatches.First().Value;
+
+                // 3. Define your maximum allowed relative gap (e.g., 0.20 means a max 20% drop)
+                double maxAllowedGap = 0.20;
+                threshold = highestValue * (1.0 - maxAllowedGap);
+
+                
+            }
+            // 4. Filter out anything below the threshold and select the keys
+            var result = sortedMatches
+                .Where(x => x.Value >= threshold)
+                .Select(u => u.Key)
+                .ToList();
+
+            return result;
+
         }
 
         public List<string> GetRandowRows(List<string> rows, int numberOfRows)
@@ -457,13 +479,19 @@ namespace BExIS.IO.Transform.Input
             throw new NotImplementedException();
         }
 
-        public Dictionary<int, Type> SuggestSystemTypes(List<string> rows, TextSeperator delimeter, DecimalCharacter decimalCharacter, List<string> missingValues)
+        public Dictionary<int, Type> SuggestSystemTypes(List<string> rows,TextMarker textMarker, TextSeperator delimeter, DecimalCharacter decimalCharacter, List<string> missingValues)
         {
             Dictionary<int, List<Type>> source = new Dictionary<int, List<Type>>();
             Dictionary<int, Type> result = new Dictionary<int, Type>();
 
             // get type checks
             checks = getDataTypeChecks(decimalCharacter);
+
+            // validate input
+            AsciiFileReaderInfo info = new AsciiFileReaderInfo();
+            info.Seperator = delimeter;
+            info.TextMarker = textMarker;
+            AsciiReader reader = new AsciiReader(new StructuredDataStructure(), info);
 
             // create dictionary with types per column
             char seperator = AsciiFileReaderInfo.GetSeperator(delimeter);
@@ -477,8 +505,11 @@ namespace BExIS.IO.Transform.Input
             // go throw each row
             foreach (var row in rows)
             {
+                // 
+                var cells = reader.rowToList(row, seperator);
+
                 //split row based on sepeartor
-                foreach (var cell in row.Split(seperator).Select((x, i) => new { Value = x, Index = i }))
+                foreach (var cell in cells.Select((x, i) => new { Value = x, Index = i }))
                 {
                     //update possible list of types by check the value against the existing list
                     source[cell.Index] = checkValue(cell.Value, source[cell.Index], missingValues);

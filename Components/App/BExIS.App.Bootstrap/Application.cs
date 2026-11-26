@@ -1,24 +1,39 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.Ext.Services;
 using BExIS.Utils.Config;
+using BExIS.Utils.Config.Configurations;
+using BEXIS2.App.Logging;
+using BEXIS2.App.Model.MTnt;
+using BEXIS2.App.MultiTenancy.Api;
+using BEXIS2.DB.Persistence.Api;
+using BEXIS2.Utils.Cfg;
+using Microsoft.Owin;
+using Microsoft.Owin.Host.SystemWeb;
+using Microsoft.Owin.Security;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Runtime;
 using System.Threading;
+using System.Web;
 using System.Web.Http;
+using System.Web.Http.Dispatcher;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Vaiona.IoC;
-using Vaiona.Logging;
-using Vaiona.Model.MTnt;
-using Vaiona.MultiTenancy.Api;
-using Vaiona.Persistence.Api;
-using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
+using NHibernate;
+
 
 namespace BExIS.App.Bootstrap
 {
+
+   
+
     public enum RunStage
     {
         Test,
@@ -27,6 +42,9 @@ namespace BExIS.App.Bootstrap
 
     public class Application
     {
+
+        private static ISessionFactory _sessionFactory;
+
         // keep on instance per run stage
         private static Dictionary<RunStage, Application> instances = new Dictionary<RunStage, Application>();
 
@@ -128,7 +146,30 @@ namespace BExIS.App.Bootstrap
             // This MUST be before IoC initialization.
             AppDomain.CurrentDomain.AssemblyResolve += ModuleManager.ResolveCurrentDomainAssembly;
             initIoC();
-            GlobalConfiguration.Configure(configurationCallback);
+
+            // ================================================
+            // Web API konfigurieren + unseren Activator setzen
+            // ================================================
+            GlobalConfiguration.Configure(config =>
+            {
+                // Deine bestehende Konfiguration (falls du eine Callback-Methode hast)
+                configurationCallback?.Invoke(config);
+
+                // WICHTIG: Hier den Unity Activator für alle ApiController registrieren
+                config.Services.Replace(
+                    typeof(IHttpControllerActivator),
+                    new UnityHttpControllerActivator()
+                );
+
+                // Optional: Vollständiger Dependency Resolver (für Filter, etc.)
+                // config.DependencyResolver = new UnityDependencyResolver(IoCFactory.Container);
+            });
+
+            //GlobalConfiguration.Configure(configurationCallback);
+
+            // set http contextaccessor for the current request
+            AppConfiguration.Configure(() => HttpContext.Current);
+
 
             // This method initializes the registered modules. It MUST be before initializing the persistence!
             initModules();
@@ -145,7 +186,10 @@ namespace BExIS.App.Bootstrap
             // This call starts them.
             ModuleManager.StartModules();
 
-            // generate settings
+            ControllerBuilder.Current.SetControllerFactory(new IoCControllerFactory());
+
+            GeneralSettings.CreateIssuerSigningKey();
+
         }
 
         private void initTenancy()
@@ -157,7 +201,7 @@ namespace BExIS.App.Bootstrap
 
         private void initIoC()
         {
-            string path = Path.Combine(AppConfiguration.AppRoot, "IoC.config");
+             string path = Path.Combine(AppConfiguration.AppRoot, "IoC.config");
 
             if (!File.Exists(path))
                 throw new FileNotFoundException($"IoC.config file expected but was not found in '{path}'.");

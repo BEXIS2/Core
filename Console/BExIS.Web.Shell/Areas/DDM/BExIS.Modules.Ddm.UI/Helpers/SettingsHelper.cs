@@ -1,9 +1,9 @@
-﻿using BExIS.Xml.Helpers;
+﻿using BEXIS2.Xml.Helpers;
 using System.Collections.Generic;
 using System;
 using System.IO;
 using System.Xml.Linq;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
 using BExIS.Modules.Ddm.UI.Models;
 

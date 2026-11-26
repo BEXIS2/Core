@@ -1,15 +1,13 @@
 ﻿@using System.Web.Optimization
 @using BExIS.Utils.WebHelpers
 @using Microsoft.AspNet.Identity
-@using Telerik.Web.Mvc.UI;
-@using Vaiona.Web.Mvc;
 
 <!DOCTYPE html>
 <html>
 <head>
     <title>@ViewBag.Title</title>
 
-    @Html.Favicon(Html.GetTenant().FavIconPath)
+    @*@Html.Favicon(Html.GetTenant().FavIconPath)*@
 
     @Styles.Render("~/bundles/svelte_general_bexis")
 
@@ -23,10 +21,10 @@
 
     @if (Request.IsAuthenticated)
     {
-        using (Html.BeginForm())
-        {
+        //using (Html.BeginForm())
+        //{
             @Html.AntiForgeryToken() <!-- This generates the hidden input field -->
-        }
+        //}
 
         <script>
         // Get the anti-forgery token from the hidden input field

@@ -1,4 +1,4 @@
-﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.FormerMember">
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Security.Entities" namespace="BEXIS2.Security.Entities.FormerMember">
   <class xmlns="urn:nhibernate-mapping-2.2" name="UsersGroupsRelationFormerMember" table="Users_Groups_FormerMember" dynamic-update="true">
 
     <id name="Id" type="Int64">

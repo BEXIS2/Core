@@ -17,9 +17,14 @@ export interface DataDescriptionModel {
 }
 
 export interface VariableModel {
-	id: number;
-	name: string;
-	unit: string;
-	dataType: string;
-	isKey: boolean;
+    id: number;
+    name: string;
+    description: string;
+    unit: string;
+    dataType: string;
+    category: string;
+    missingValues: string;
+    meanings: string;
+    isOptional: boolean;
+    isKeys: boolean;
 }

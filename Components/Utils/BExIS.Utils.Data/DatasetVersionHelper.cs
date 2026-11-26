@@ -1,8 +1,9 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using System.Threading.Tasks;
+using Vaiona.Web.Mvc.Modularity;
 
 
 namespace BExIS.Utils.Data
@@ -16,10 +17,9 @@ namespace BExIS.Utils.Data
             bool isPublic = false;
             bool isVerionReady = false;
 
-
-            using (var permissionManager = new EntityPermissionManager())
             using (var datasetManager = new DatasetManager())
             {
+                var permissionManager = new EntityPermissionManager();
                 var dataset = datasetManager.GetDataset(datasetId);
 
 
@@ -29,7 +29,7 @@ namespace BExIS.Utils.Data
                 // if dataset is deleted and public return the latest version
                 if (dataset.Status == DatasetStatus.Deleted && isPublic)
                 {
-                    if (tagNr > 0)
+                    if (tagNr > 0 && useTags)
                     {
                         return datasetManager.GetLatestVersionIdByTagNr(datasetId, tagNr);
                     }
@@ -48,8 +48,8 @@ namespace BExIS.Utils.Data
                 }
 
                 // get rights
-                bool hasEditRights = await permissionManager.HasEffectiveRightsAsync(username, typeof(BExIS.Dlm.Entities.Data.Dataset), datasetId, RightType.Write);
-                bool hasReadRights = await permissionManager.HasEffectiveRightsAsync(username, typeof(BExIS.Dlm.Entities.Data.Dataset), datasetId, RightType.Read);
+                bool hasEditRights = await permissionManager.HasEffectiveRightsAsync(username, typeof(BEXIS2.Dlm.Entities.Data.Dataset), datasetId, RightType.Write);
+                bool hasReadRights = await permissionManager.HasEffectiveRightsAsync(username, typeof(BEXIS2.Dlm.Entities.Data.Dataset), datasetId, RightType.Read);
 
                 // if user has edit rights && public/ internal accessible dont matter
                 if (hasEditRights)

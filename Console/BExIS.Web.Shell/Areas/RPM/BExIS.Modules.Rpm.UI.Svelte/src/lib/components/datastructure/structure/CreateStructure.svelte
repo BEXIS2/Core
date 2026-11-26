@@ -17,12 +17,20 @@
 	import { goTo } from '$services/BaseCaller';
 	import { get } from 'svelte/store';
 
-	import type { DataStructureCreationModel } from '../types';
-	import { Alert, helpStore } from '@bexis2/bexis2-core-ui';
+	import type { DataStructureCreationModel, dwcExtention } from '../types';
+	import { Alert, helpStore, MultiSelect } from '@bexis2/bexis2-core-ui';
 	import { type ModalSettings, getModalStore } from '@skeletonlabs/skeleton';
+
 	const modalStore = getModalStore();
 
 	export let model: DataStructureCreationModel;
+	export let dwcExtensions: dwcExtention[] = [];
+
+ // let dwcSelections:dwcExtention[] = [];
+ // $: dwcSelections;
+	let dwcSelection:dwcExtention;
+ let notSet:string[]	= [];
+
 	let enforcePrimaryKey: boolean = get(enforcePrimaryKeyStore);
 
 	$: isPKSet = false;
@@ -81,10 +89,11 @@
 		};
 		modalStore.trigger(confirm);
 	}
+
 </script>
 
-<div>
-	<div transition:fade class="flex">
+<div class="gap-4">
+	<div transition:fade class="flex gap-5 items-start">
 		<div class="grow">
 			{#if model.file}
 				<button
@@ -93,39 +102,42 @@
 					class="btn variant-filled-warning"
 					on:mouseover={() => helpStore.show('back')}
 					on:focus={() => helpStore.show('back')}
-					on:click={() => back()}><Fa icon={faArrowLeft} /></button
+					on:click={() => back()}><Fa icon={faArrowLeft} /><span class="ml-2">Back</span></button
 				>
 			{/if}
 		</div>
+
 		<div class="flex-none text-end">
 			<button
 				id="cancel"
-				title="cancel"
-				class="btn variant-filled-warning text-xl"
+				title="Cancel data structure generation"
+				class="btn variant-filled-warning"
 				on:mouseover={() => helpStore.show('cancel')}
 				on:focus={() => helpStore.show('cancel')}
-				on:click={() => cancelFn()}><Fa icon={faXmark} /></button
+				on:click={() => cancelFn()}><Fa icon={faXmark} /><span class="ml-2">Cancel</span></button
 			>
 			<button
 				id="save"
-				title="save"
-				class="btn variant-filled-primary text-xl"
+				title="Save data structure"
+				class="btn variant-filled-primary"
 				on:mouseover={() => helpStore.show('save')}
 				on:focus={() => helpStore.show('save')}
 				on:click={onSaveHandler}
 				on:keypress={onSaveHandler}
 				disabled={!areVariablesValid ||
 					!areAttributesValid ||
-					!((enforcePrimaryKey && isPKSet) || !enforcePrimaryKey)}><Fa icon={faSave} /></button
+					!((enforcePrimaryKey && isPKSet) || !enforcePrimaryKey)}><Fa icon={faSave} /><span class="ml-2">Save</span></button
 			>
+
 		</div>
 	</div>
 
 	<Attributes {model} bind:valid={areAttributesValid} />
 	{#if enforcePrimaryKey && model.variables.length > 0 && !isPKSet}
-		<Alert message="Please select a (combined) primary key." cssClass="variant-filled-warning"
+		<Alert message="Please select a (combined) primary key." cssClass="variant-soft-error p-1"
 		></Alert>
 	{/if}
+
 
 	<Variables
 		bind:variables={model.variables}

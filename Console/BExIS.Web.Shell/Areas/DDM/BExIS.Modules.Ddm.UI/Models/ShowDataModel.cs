@@ -1,4 +1,4 @@
-﻿using BExIS.UI.Hooks;
+﻿using BEXIS2.UI.Hooks;
 using System.Collections.Generic;
 
 namespace BExIS.Modules.Ddm.UI.Models

@@ -1,6 +1,6 @@
 ﻿using BExIS.App.Testing;
 using BExIS.Utils.Config;
-using BEXIS.JSON.Helpers;
+using BEXIS2.JSON.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
@@ -14,7 +14,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Assert = NUnit.Framework.Assert;
 
-namespace BExIS.Xml.Helpers.UnitTests
+namespace BEXIS2.Xml.Helpers.UnitTests
 {
     [TestFixture()]
     public class XmlMetadataConverterTests
@@ -64,7 +64,9 @@ namespace BExIS.Xml.Helpers.UnitTests
             JObject result = xmlMetadataHelper.ConvertTo(xmlDocument);
             JObject result2 = xmlMetadataHelper.ConvertTo(xmlDocument, true);
 
-            bool isvalid = result.IsValid(schema);
+            IList<string> errorMessages = new List<string>();
+
+            bool isvalid = result.IsValid(schema, out errorMessages);
 
             var json = JsonConvert.SerializeObject(result);
             var json2 = JsonConvert.SerializeObject(result2);

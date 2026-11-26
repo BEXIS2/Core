@@ -1,4 +1,4 @@
-﻿using BExIS.Security.Entities.Requests;
+﻿using BEXIS2.Security.Entities.Requests;
 using System.Web.Helpers;
 using System.Web.Mvc;
 

@@ -1,8 +1,8 @@
-﻿using BExIS.Dlm.Entities.Party;
-using BExIS.Dlm.Services.Party;
+﻿using BEXIS2.Dlm.Entities.Party;
+using BEXIS2.Dlm.Services.Party;
 using BExIS.Modules.Sam.UI.Models;
-using BExIS.Security.Entities.Requests;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Requests;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Requests;
@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
@@ -53,9 +53,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Decisions(long entityId, string status = "")
         {
             using (var entityManager = new EntityManager())
-            using (var entityPermissionManager = new EntityPermissionManager())
             using (var decisionManager = new DecisionManager())
             {
+                var entityPermissionManager = new EntityPermissionManager();
                 var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
 
                 IQueryable<Decision> decisions = null;
@@ -109,7 +109,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Entity Requests and Decisions", Session.GetTenant());
 
                 var entities =
-                    entityManager.Entities.Select(e => EntityTreeViewItemModel.Convert(e, e.Parent.Id)).ToList();
+                    entityManager.Entities.Where(e => !e.Name.ToLower().Equals("extension")).Select(e => EntityTreeViewItemModel.Convert(e, e.Parent.Id)).ToList();
 
                 foreach (var entity in entities)
                 {

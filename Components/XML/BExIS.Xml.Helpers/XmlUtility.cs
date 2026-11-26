@@ -9,7 +9,7 @@ using System.Xml.Linq;
 using System.Xml.Schema;
 using System.Xml.XPath;
 
-namespace BExIS.Xml.Helpers
+namespace BEXIS2.Xml.Helpers
 {
     public class XmlUtility
     {
@@ -22,7 +22,7 @@ namespace BExIS.Xml.Helpers
             // Only allow XPaths like /a/b/c or /a[1]/b matches, no function calls, no quotes, etc.
             // You can adjust the pattern according to the actual requirements.
             // This only allows: /node1/node2/...
-            var safePattern = @"^(/[a-zA-Z_][\w\-]*(\[\d+\])?)*$";
+            var safePattern = @"^(/?/?[a-zA-Z_][\w\-]*(\[\d+\])?)*$";
             return System.Text.RegularExpressions.Regex.IsMatch(xpath, safePattern);
         }
 
@@ -324,8 +324,6 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public static XmlNode GenerateNodeFromXPath(XmlDocument doc, XmlNode parent, string xpath, List<XmlSchemaElement> XsdElements, XmlNamespaceManager nsManager)
         {
-            Debug.WriteLine("-------------------------------");
-            Debug.WriteLine(xpath);
 
             // grab the next node name in the xpath; or return parent if empty
             string[] partsOfXPath = xpath.Trim('/').Split('/');
@@ -362,13 +360,8 @@ namespace BExIS.Xml.Helpers
                 prefix = nsManager.LookupPrefix(nameSpace);
                 name = xsdelement.QualifiedName.Name;
 
-                Debug.WriteLine(nameSpace);
-                Debug.WriteLine(prefix);
-                Debug.WriteLine(name);
-
+    
                 string searchName = String.IsNullOrEmpty(prefix) ? name : prefix + ":" + name;
-
-                Debug.WriteLine(searchName);
 
                 if (!String.IsNullOrEmpty(nameSpace) && !String.IsNullOrEmpty(prefix))
                     nodes = parent.SelectNodes(searchName, nsManager);

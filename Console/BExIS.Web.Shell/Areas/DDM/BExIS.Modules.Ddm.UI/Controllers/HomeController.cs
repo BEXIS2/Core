@@ -1,6 +1,6 @@
 ﻿using BExIS.Ddm.Api;
 using BExIS.Utils.Models;
-using BExIS.Xml.Helpers;
+using BEXIS2.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;

@@ -1,32 +1,34 @@
-﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.IO;
-using BExIS.IO.Transform.Input;
-using BExIS.IO.Transform.Validation.Exceptions;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.IO;
+using BEXIS2.IO.Transform.Input;
+using BEXIS2.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.Edit;
-using BExIS.Security.Entities.Authorization;
-using BExIS.UI.Hooks;
-using BExIS.UI.Hooks.Caches;
-using BExIS.UI.Hooks.Logs;
+using BEXIS2.Security.Entities.Authorization;
+using BEXIS2.UI.Hooks;
 using BExIS.Utils.Helpers;
-using BExIS.Utils.Upload;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Telerik.Web.Mvc.Extensions;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Modularity;
+using BExIS.Utils.Upload;
+using BEXIS2.UI.Hooks.Caches;
+using BEXIS2.UI.Hooks.Logs;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class ValidationController : Controller
     {
         private FileStream Stream;
@@ -44,9 +46,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
         [JsonNetFilter]
-        public ActionResult Start(long id, int version = 0)
+        public JsonResult Start(long id, int version)
         {
-            return RedirectToAction("Validate", new { id, version });
+            // return RedirectToAction("load", new { id, version });
+            var jsonResult = Validate(id, version);
+            return jsonResult;
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
@@ -232,7 +236,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                     if (fileErrors == null || fileErrors.Count == 0)
                                                     {
                                                         // check if primary key is set
-                                                        if (!enforcePrimaryKey && !hasPrimaryKey)
+                                                        if (!hasPrimaryKey)
                                                         {
                                                             fileWarnings.Add(new Warning(ErrorType.PrimaryKey, "No primary key has been defined for the selected data structure, which can lead to problems when updating data. To avoid this, define a primary key in the data structure above.", "Primary Key"));
                                                         }

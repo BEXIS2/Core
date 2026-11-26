@@ -1,0 +1,28 @@
+﻿using System.Collections.Generic;
+using BEXIS2.DB.Entities.Common;
+
+namespace BEXIS2.Dlm.Entities.Party
+{
+    public class PartyStatusType : BaseEntity
+    {
+        public PartyStatusType()
+        {
+            Statuses = new List<PartyStatus>();
+        }
+
+        #region Attributes
+
+        public virtual string Name { get; set; }
+        public virtual string Description { get; set; }
+        public virtual int DisplayOrder { get; set; }
+
+        #endregion Attributes
+
+        #region Associations
+
+        public virtual PartyType PartyType { get; set; }
+        public virtual ICollection<PartyStatus> Statuses { get; set; }
+
+        #endregion Associations
+    }
+}

@@ -7,7 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Xsl;
-using Vaiona.Model.MTnt;
+using BEXIS2.App.Model.MTnt;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Helpers;
 

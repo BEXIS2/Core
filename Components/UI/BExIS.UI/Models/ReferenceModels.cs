@@ -40,6 +40,8 @@ namespace BExIS.UI.Models.EntityReference
 
         public string Context { get; set; }
         public string ReferenceType { get; set; }
+        public string LinkType { get; set; }
+        public string Category { get; set; }
 
         public ReferenceModel()
         {
@@ -48,6 +50,8 @@ namespace BExIS.UI.Models.EntityReference
             Source = new ReferenceElementModel();
             Context = "";
             ReferenceType = "";
+            LinkType = "";
+            Category = "";
         }
     }
 
@@ -100,6 +104,7 @@ namespace BExIS.UI.Models.EntityReference
         [Required]
         public String ReferenceType { get; set; }
 
+
         public CreateSimpleReferenceModel()
         {
             Context = "";
@@ -111,6 +116,41 @@ namespace BExIS.UI.Models.EntityReference
             SourceTypeId = sourceTypeId;
             SourceVersion = sourceVersion;
             Context = "";
+        }
+    }
+
+    public class ReferenceConfig
+    {
+        public List<ReferenceConfigElement> ReferenceTypes { get; set; }
+        public List<string> EntityWhiteList { get; set; }
+
+        public ReferenceConfig()
+        {
+            ReferenceTypes = new List<ReferenceConfigElement>();
+            EntityWhiteList = new List<string>();
+        }
+    }
+
+    public class ReferenceConfigElement
+    {
+        /*
+         	"description": "has dwc:Event extension",
+			"referenceType": "HasEvent",
+            "linkType": "extension",
+            "category": "extension"
+			},
+        */
+        public string ReferenceType { get; set; }
+        public string Description { get; set; }
+        public string LinkType { get; set; }
+        public string Category { get; set; }
+
+        public ReferenceConfigElement()
+        {
+            ReferenceType="";
+            Description = "";
+            LinkType = "";
+            Category = "";
         }
     }
 }

@@ -1,12 +1,12 @@
-﻿using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Subjects;
+﻿using BEXIS2.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Objects;
+using BEXIS2.Security.Entities.Subjects;
 using Org.BouncyCastle.Bcpg.Sig;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Security.Services.Authorization
 {
@@ -266,7 +266,7 @@ namespace BExIS.Security.Services.Authorization
             if (operation == null) return false;
 
             var feature = operation?.Feature;
-            var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
+            var subject = !string.IsNullOrEmpty(subjectName) ? SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault() : null;
 
             //both exits
             if (feature != null)

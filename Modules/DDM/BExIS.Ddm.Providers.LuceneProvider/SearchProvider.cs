@@ -13,7 +13,7 @@ using Lucene.Net.Search;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Vaiona.Logging;
+using BEXIS2.App.Logging;
 using SearchCriteria = BExIS.Utils.Models.SearchCriteria;
 using SearchCriterion = BExIS.Utils.Models.SearchCriterion;
 using SearchModel = BExIS.Utils.Models.SearchModel;
@@ -135,6 +135,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                                 { Name="gen_modifieddate", DefaultValue = "", DisplayName = "Last modified date", Value = "", IsVisible = true},
                         new General()
                                 { Name="gen_entitytemplate", DefaultValue = "", DisplayName = "Template", Value = "", IsVisible = true},
+                        new General()
+                                { Name="gen_hasextensions", DefaultValue = "", DisplayName = "Has Extensions", Value = "", IsVisible = true}
                         };
 
             return model;
@@ -174,6 +176,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                                 { Name="gen_modifieddate", DefaultValue = "", DisplayName = "Last modified date", Value = "", IsVisible = true},
                         new General()
                                 { Name="gen_entitytemplate", DefaultValue = "", DisplayName = "Template", Value = "", IsVisible = true},
+                        new General()
+                                { Name="gen_hasextensions", DefaultValue = "", DisplayName = "Has Extensions", Value = "", IsVisible = true}
                         };
             return model;
             //throw new NotImplementedException();

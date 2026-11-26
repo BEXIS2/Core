@@ -28,6 +28,7 @@
 	<div title="Show the release note of this version; Click save to apply changes.">
 		{#if currentRow && currentRow.tagId > 0}
 			<SlideToggle
+				id="showTagInfo-{currentRow.versionId}"
 				name={'' + currentRow.versionId}
 				class=""
 				checked={currentRow.show}

@@ -38,7 +38,7 @@
 		  <one-to-many class="BExIS.Dim.Entities.Mappings.MappingKey, BExIS.Dim.Entities"/>
 	  </set>
 
-	  <many-to-one name="Parent" column="ParentRef" class="BExIS.Dim.Entities.Mappings.MappingKey, BExIS.Security.Entities" />
+	  <many-to-one name="Parent" column="ParentRef" class="BExIS.Dim.Entities.Mappings.MappingKey, BEXIS2.Security.Entities" />
 	  
   </class>
 

@@ -1,5 +1,5 @@
 ﻿using BExIS.Dcm.Wizard;
-using BExIS.IO.Transform.Validation.Exceptions;
+using BEXIS2.IO.Transform.Validation.Exceptions;
 using System;
 using System.Collections.Generic;
 

@@ -1,6 +1,6 @@
 ﻿using BExIS.Dcm.Wizard;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Utils.Data.Upload;
+using BEXIS2.IO.Transform.Validation.Exceptions;
+using BEXIS2.Utils.Data.Upload;
 using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Models

@@ -1,7 +1,9 @@
-﻿using BExIS.App.Testing;
-using BExIS.Dlm.Entities.Party;
-using BExIS.Dlm.Services.Party;
+﻿
+
+using BExIS.App.Testing;
 using BExIS.Utils.Config;
+using BEXIS2.Dlm.Entities.Party;
+using BEXIS2.Dlm.Services.Party;
 using FluentAssertions;
 using NUnit.Framework;
 using System;
@@ -125,7 +127,7 @@ namespace BExIS.Dlm.Tests.Services.Party
             var partyStatusType = partyTypeManager.GetStatusType(partyTypeTest, "Created");
             var party1 = partyManager.Create(partyTypeTest, "alias", "description test", DateTime.Now.AddMonths(-1), DateTime.Now.AddMonths(1), partyStatusType);
             var party2 = partyManager.Create(partyTypeTest, "alias2", "description test2", DateTime.Now.AddMonths(-1), DateTime.Now.AddMonths(1), partyStatusType);
-            List<Dlm.Entities.Party.Party> parties = new List<Dlm.Entities.Party.Party>();
+            List<BEXIS2.Dlm.Entities.Party.Party> parties = new List<BEXIS2.Dlm.Entities.Party.Party>();
             parties.Add(party1);
             parties.Add(party2);
             partyManager.Delete(parties);

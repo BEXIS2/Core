@@ -1,11 +1,11 @@
 ﻿using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Services;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.IO;
-using BExIS.IO.Transform.Output;
-using BExIS.Xml.Helpers;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.MetadataStructure;
+using BEXIS2.IO;
+using BEXIS2.IO.Transform.Output;
+using BEXIS2.Xml.Helpers;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
@@ -35,8 +35,7 @@ namespace BExIS.Dim.Helpers.Export
                 long datasetId = datasetVersion.Dataset.Id;
                 string name = datasetManager.GetDatasetVersion(datasetVersionId).Dataset.MetadataStructure.Name;
 
-                XmlDocument metadata = OutputMetadataManager.GetConvertedMetadata(datasetId,
-                    TransmissionType.mappingFileExport, name, false);
+                XmlDocument metadata = OutputMetadataManager.GetConvertedMetadata(datasetId, datasetVersionId, TransmissionType.mappingFileExport, name, false);
 
                 // create links to the api calls of the primary data?
 

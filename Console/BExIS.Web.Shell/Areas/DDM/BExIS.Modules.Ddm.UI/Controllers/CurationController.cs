@@ -1,5 +1,5 @@
 ﻿using System.Web.Mvc;
-using BExIS.UI.Helpers;
+using BEXIS2.UI.Helpers;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {

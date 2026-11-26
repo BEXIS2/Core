@@ -1,14 +1,15 @@
 ﻿using BExIS.Dim.Entities.Export.GBIF;
 using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Services;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.IO;
-using BExIS.IO.Transform.Output;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.IO;
+using BEXIS2.IO.Transform.Output;
 using BExIS.Utils.Extensions;
-using BExIS.Xml.Helpers;
+using BEXIS2.Xml.Helpers;
+using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,8 +18,9 @@ using System.Linq;
 using System.Text;
 using System.Web.Routing;
 using System.Xml;
-using Vaiona.Logging;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
+using BEXIS2.App.Logging;
+using BEXIS2.IO;
 
 namespace BExIS.Dim.Helpers.Export
 {
@@ -57,8 +59,8 @@ namespace BExIS.Dim.Helpers.Export
 
                     if (broker != null)
                     {
-                        OutputMetadataManager.GetConvertedMetadata(datasetId, TransmissionType.mappingFileExport,
-                            broker.MetadataFormat);
+                        OutputMetadataManager.GetConvertedMetadata(datasetId, datasetVersionId, TransmissionType.mappingFileExport,
+                            metadataStructureName);
 
                         // get primary data
                         // check the data sturcture type ...
@@ -114,7 +116,7 @@ namespace BExIS.Dim.Helpers.Export
                         #endregion datatructure
 
                         using (var zipFileStream = new FileStream(zipFilePath, FileMode.Create))
-                        using (var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Update))
+                        using (var archive = new ZipOutputStream(zipFileStream))
                         {
                             datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
@@ -123,12 +125,12 @@ namespace BExIS.Dim.Helpers.Export
                                 string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
                                 string name = cd.URI.Split('\\').Last();
 
-                                if (cd.Name.StartsWith("generated") && !cd.Name.Equals("text/csv")) continue;
+                                if (cd.Name.StartsWith("generated") && !cd.MimeType.Equals(broker.PrimaryDataFormat)) continue;
 
                                 if (FileHelper.FileExist(path))
                                 {
-                                    if (!archive.Entries.Any(entry => entry.Name.EndsWith(name)))
-                                        archive.AddFileToArchive(path, name);
+                                    //if (!archive.Entries.Any(entry => entry.Name.EndsWith(name)))
+                                     archive.AddFileToArchive(path, name);
                                 }
                             }
 

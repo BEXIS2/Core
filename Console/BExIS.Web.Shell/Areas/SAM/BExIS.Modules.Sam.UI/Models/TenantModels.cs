@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web;
-using Vaiona.Model.MTnt;
+using BEXIS2.App.Model.MTnt;
 
 namespace BExIS.Modules.Sam.UI.Models
 {

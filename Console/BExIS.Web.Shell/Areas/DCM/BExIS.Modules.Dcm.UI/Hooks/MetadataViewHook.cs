@@ -1,4 +1,4 @@
-﻿using BExIS.UI.Hooks;
+﻿using BEXIS2.UI.Hooks;
 
 namespace BExIS.Modules.Dcm.UI.Hooks
 {
@@ -6,7 +6,7 @@ namespace BExIS.Modules.Dcm.UI.Hooks
     {
         public MetadataViewHook()
         {
-            Start = "/dcm/view/start";
+            Start = "/dcm/view/metadata";
         }
 
         public override void Check(long id, string username)

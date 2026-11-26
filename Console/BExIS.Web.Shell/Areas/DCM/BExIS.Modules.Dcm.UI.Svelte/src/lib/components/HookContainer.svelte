@@ -1,7 +1,8 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 
 	import { Alert, Spinner } from '@bexis2/bexis2-core-ui';
+	import { fade } from 'svelte/transition';
 
 	import { hooksStatus } from '../../routes/edit/stores';
 
@@ -25,10 +26,23 @@
 
 	$: active = false;
 	$: wait = false;
+	
+	let timer;
+	$: if (success) {
+		// Clear any existing active timer to reset the 3-second clock if a new message arrives
+		clearTimeout(timer);
+		
+		timer = setTimeout(() => {
+			success = null;
+		}, 3000); // 3000 milliseconds = 3 seconds
+	}
+
+
+	let unsubHooksStatus;
 
 	onMount(async () => {
 		//active = setActive(status);
-		hooksStatus.subscribe((h) => {
+		unsubHooksStatus = hooksStatus.subscribe((h) => {
 			if (h[name] != undefined) {
 				setStatus(h[name]);
 			}
@@ -38,9 +52,16 @@
 		warnings = [];
 	});
 
+	onDestroy(() => {
+		if (unsubHooksStatus) {
+			unsubHooksStatus();
+		}
+	});
+
 	function errorHandler(e) {
 		resetInformations();
-		error = e.detail.messages;
+		error = e.detail.messages.filter((item) => item != null &&	item != undefined &&	item != '');
+
 	}
 
 	function successHandler(e) {
@@ -72,7 +93,7 @@
 			active = true; // every other status enable the hook
 		}
 
-		wait = status == 6 ? true : false; // wait for somthing
+		wait = status == 6 ? true : false; // wait for something
 
 		if (wait) {
 			resetAlerts();
@@ -108,7 +129,9 @@
 				{/each}
 			{/if}
 			{#if success}
+			<div transition:fade={{ duration: 500 }}>
 				<Alert cssClass="variant-filled-success" message={success} />
+			</div>
 			{/if}
 			<div class="h-full w-full">
 				{#if !wait}
@@ -116,7 +139,7 @@
 				{:else}
 					<div class="flex gap-2 text-surface-600">
 						<Fa icon={faLock} size="lg" />
-						<span>this area is locked, because data is uploading</span>
+						<span>This area is locked, because data is uploading</span>
 					</div>
 				{/if}
 			</div>

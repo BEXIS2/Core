@@ -1,10 +1,10 @@
-﻿using BExIS.Xml.Helpers;
+﻿using BEXIS2.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using Vaiona.Web.Mvc.Modularity;
 
-namespace BExIS.UI.Helpers
+namespace BEXIS2.UI.Helpers
 {
     public class EntityViewerHelper
     {

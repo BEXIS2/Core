@@ -1,4 +1,4 @@
-﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.FormerMember">
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Security.Entities" namespace="BEXIS2.Security.Entities.FormerMember">
   <class xmlns="urn:nhibernate-mapping-2.2" name="FeaturePermissionFormerMember" table="FeaturePermissions_FormerMember" dynamic-update="true">
 
     <id name="Id" type="Int64">
@@ -13,10 +13,10 @@
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
-    <many-to-one name="Feature" column="FeatureRef" class="BExIS.Security.Entities.Objects.Feature, BExIS.Security.Entities" />
-    <property name="PermissionType" type="BExIS.Security.Entities.Authorization.PermissionType, BExIS.Security.Entities">
+    <many-to-one name="Feature" column="FeatureRef" class="BEXIS2.Security.Entities.Objects.Feature, BEXIS2.Security.Entities" />
+    <property name="PermissionType" type="BEXIS2.Security.Entities.Authorization.PermissionType, BEXIS2.Security.Entities">
       <column name="PermissionType" not-null="true" sql-type="int" />
     </property>
-    <many-to-one name="Subject" column="SubjectRef" class="BExIS.Security.Entities.Subjects.Subject, BExIS.Security.Entities" not-null="false" />
+    <many-to-one name="Subject" column="SubjectRef" class="BEXIS2.Security.Entities.Subjects.Subject, BEXIS2.Security.Entities" not-null="false" />
   </class>
 </hibernate-mapping>

@@ -1,5 +1,5 @@
-﻿using BExIS.UI.Hooks.Caches;
-using BExIS.UI.Models;
+﻿using BEXIS2.UI.Hooks.Caches;
+using BEXIS2.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +12,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Edit
     {
         public long Id { get; set; }
         public int Version { get; set; }
+        public long VersionId { get; set; }
         public bool HasStructure { get; set; }
         public List<FileInfo> ExistingFiles { get; set; }
         public List<FileInfo> DeleteFiles { get; set; }

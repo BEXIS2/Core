@@ -1,14 +1,14 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using BExIS.Modules.Dim.UI.Models.Api;
-using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
+using BExIS.Dim.Helpers.Models;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Route;
-using BExIS.Xml.Helpers;
+using BEXIS2.Xml.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Web.Http;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Modules.Dim.UI.Controllers
 {
@@ -29,6 +29,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
     public class AttachmentOutController : ApiController
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+        private readonly UserManager _userManager;
+
+        public AttachmentOutController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
 
         // GET: api/Attachment
         /// <summary>
@@ -77,8 +84,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset id can not be 0.");
 
             using (DatasetManager datasetManager = new DatasetManager())
-            using (UserManager userManager = new UserManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (EntityManager entityManager = new EntityManager())
             {
                 bool isPublic = false;
@@ -86,6 +91,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 try
                 {
+                    var entityPermissionManager = new EntityPermissionManager();
+
                     #region is public
 
                     long? entityTypeId = entityManager.FindByName(typeof(Dataset).Name)?.Id;
@@ -155,7 +162,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             if (attachmentid == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the attachment id can not be 0.");
 
             DatasetManager datasetManager = new DatasetManager();
-            UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             EntityManager entityManager = new EntityManager();
 
@@ -237,8 +243,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             finally
             {
                 datasetManager.Dispose();
-                userManager.Dispose();
-                entityPermissionManager.Dispose();
                 entityManager.Dispose();
             }
         }

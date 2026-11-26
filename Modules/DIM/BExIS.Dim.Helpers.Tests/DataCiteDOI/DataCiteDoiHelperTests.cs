@@ -1,7 +1,7 @@
 ﻿using BExIS.App.Testing;
 using BExIS.Utils.Config;
 using NUnit.Framework;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Dim.Helpers.Tests.DataCiteDOI
 {

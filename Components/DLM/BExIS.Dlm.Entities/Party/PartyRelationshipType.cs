@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 
-namespace BExIS.Dlm.Entities.Party
+namespace BEXIS2.Dlm.Entities.Party
 {
     /// <summary>
     /// RelationshipTypes are described from the source point of view. The sources are the higher level or the container entities.

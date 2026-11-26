@@ -3,7 +3,7 @@
 <!DOCTYPE hibernate-mapping [ <!ENTITY BaseEntityProperties SYSTEM "..\BaseEntityProperties.xml"> ]>
 -->
 
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Curation">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.Curation">
   <class xmlns="urn:nhibernate-mapping-2.2" name="CurationNote" table="CurationNotes">
     <!-- Mapping BaseEntity properties -->
     <id name="Id" type="Int64">
@@ -23,7 +23,7 @@
 
 	  <!-- Mapping  CurationNote -->
 	  
-	  <property name="UserType" type=" BExIS.Dlm.Entities.Curation.CurationUserType, BExIS.Dlm.Entities">
+	  <property name="UserType" type=" BEXIS2.Dlm.Entities.Curation.CurationUserType, BEXIS2.Dlm.Entities">
 		  <column name="UserType" />
 	  </property>
 

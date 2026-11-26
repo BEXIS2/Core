@@ -1,6 +1,6 @@
 ﻿using BExIS.App.Testing;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.DataStructure;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.DataStructure;
 using BExIS.Dlm.Tests.Helpers;
 using BExIS.Utils.Config;
 using NUnit.Framework;
@@ -35,7 +35,7 @@ namespace BExIS.Dlm.Tests.Services.DataStructure
             {
                 //Arrange
                 //Act
-                StructuredDataStructure dataStructure = dataStructureManager.CreateStructuredDataStructure("dsForTesting", "DS for unit testing", "", "", Dlm.Entities.DataStructure.DataStructureCategory.Generic);
+                StructuredDataStructure dataStructure = dataStructureManager.CreateStructuredDataStructure("dsForTesting", "DS for unit testing", "", "", DataStructureCategory.Generic);
 
                 //Assert
                 Assert.IsNotNull(dataStructure);

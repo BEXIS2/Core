@@ -1,39 +1,32 @@
-﻿using BExIS.App.Bootstrap.Helpers;
-using BExIS.Dcm.UploadWizard;
-using BExIS.Dim.Entities.Mappings;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.IO;
-using BExIS.IO.Transform.Input;
-using BExIS.IO.Transform.Output;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Modules.Dcm.UI.Hooks;
-using BExIS.Security.Entities.Subjects;
+﻿using BExIS.Dim.Entities.Mappings;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.IO;
+using BEXIS2.IO.Transform.Input;
+using BEXIS2.IO.Transform.Output;
+using BEXIS2.IO.Transform.Validation.Exceptions;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Utilities;
-using BExIS.UI.Hooks;
-using BExIS.UI.Hooks.Caches;
-using BExIS.UI.Hooks.Logs;
+using BEXIS2.UI.Hooks;
+using BEXIS2.UI.Hooks.Logs;
 using BExIS.Utils.Config;
-using BExIS.Utils.Data.Upload;
+using BEXIS2.Utils.Data.Upload;
 using BExIS.Utils.Upload;
-using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web;
-using System.Web.Routing;
 using System.Xml;
-using Vaiona.Entities.Common;
-using Vaiona.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.DB.Entities.Common;
+using BEXIS2.DB.Persistence.Api;
+using BEXIS2.Utils.Cfg;
+using BEXIS2.UI.Hooks.Caches;
+using BEXIS2.Xml.Helpers;
 
 namespace BExIS.Modules.Dcm.UI.Helpers
 {
@@ -70,6 +63,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             string title = "";
             int numberOfRows = 0;
             int numberOfSkippedRows = 0;
+            int totalRowsAdded = 0;
+            int totalRowsUpdated = 0;
 
             try
             {
@@ -140,7 +135,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             //    //set StateInfo of the previus version
                             //    if (workingCopy.StateInfo == null)
                             //    {
-                            //        workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
+                            //        workingCopy.StateInfo = new BEXIS2.DB.Entities.Common.EntityStateInfo()
                             //        {
                             //            State = status
                             //        };
@@ -247,7 +242,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     //set StateInfo of the previous version
                                     if (workingCopy.StateInfo == null)
                                     {
-                                        workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
+                                        workingCopy.StateInfo = new BEXIS2.DB.Entities.Common.EntityStateInfo()
                                         {
                                             State = status
                                         };
@@ -285,6 +280,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                         if (datasetStatus == AuditActionType.Create || Cache.UpdateSetup.UpdateMethod.Equals(UploadMethod.Append) || Cache.UpdateSetup.PrimaryKeys == null)
                                         {
                                             dm.EditDatasetVersion(workingCopy, rows, null, null); // add all data tuples to the dataset version
+                                            totalRowsAdded += rows.Count();
                                         }
                                         else
                                         if (datasetStatus == AuditActionType.Edit) // data tuples already exist
@@ -293,6 +289,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                             {
                                                 //split the incoming data tuples to (new|edit) based on the primary keys
                                                 var splittedDatatuples = uploadWizardHelper.GetSplitDatatuples(rows, Cache.UpdateSetup.PrimaryKeys, workingCopy, ref datatupleFromDatabaseIds);
+                                                totalRowsAdded += splittedDatatuples["new"].Count;
+                                                totalRowsUpdated += splittedDatatuples["edit"].Count;
                                                 dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                                                 inputWasAltered = true;
                                             }
@@ -361,7 +359,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                 Timestamp = DateTime.Now
                             };
 
-                            workingCopy.Metadata = setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
+                            workingCopy.Metadata = setSystemValuesToMetadata(id, v, 0, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
                             dm.EditDatasetVersion(workingCopy, null, null, null);
 
                             #endregion set System value into metadata
@@ -376,7 +374,11 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             comment += ")";
 
                             // ToDo: Get Comment from ui and users
-                            dm.CheckInDataset(id, numberOfRows + " rows", User.Name, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, TagType.None);
+                            string checkInComment = numberOfRows + " rows";
+                            if (totalRowsAdded > 0 || totalRowsUpdated > 0)
+                                checkInComment = $"{totalRowsAdded} rows added, {totalRowsUpdated} rows updated";
+
+                            dm.CheckInDataset(id, checkInComment, User.Name, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh, TagType.None);
 
                             Cache.UpdateSetup.UpdateMethod = UpdateMethod.Update;
 
@@ -384,7 +386,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             using (var emailService = new EmailService())
                             {
                                 emailService.Send(MessageHelper.GetUpdateDatasetHeader(id),
-                                MessageHelper.GetUpdateDatasetMessage(id, title, User.DisplayName, typeof(Dataset).Name, numberOfRows, numberOfSkippedRows),
+                                MessageHelper.GetUpdateDatasetMessage(id, title, User.DisplayName, typeof(Dataset).Name, numberOfRows, numberOfSkippedRows, totalRowsAdded, totalRowsUpdated),
                                 GeneralSettings.SystemEmail
                                 );
                             }
@@ -396,7 +398,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             {
                                 emailService.Send(MessageHelper.GetErrorHeader(),
                                     "Dataset: " + title + "(ID: " + id + ", User: " + User.DisplayName + " )" + " Can not upload. : " + e.Message,
-                                    ConfigurationManager.AppSettings["SystemEmail"]
+                                    GeneralSettings.SystemEmail
                                     );
                             }
                         }
@@ -409,8 +411,11 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                     #region unstructured data
                     string filecomment = "";
+                    string newFiles = "";
                     string modcomments = "";
+                    string modifiedFiles = "";
                     string deletedComments = "";
+                    string deletedFiles = "";
 
 
                     if (structureId <= 0)
@@ -424,7 +429,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                 //set StateInfo of the previus version
                                 if (workingCopy.StateInfo == null)
                                 {
-                                    workingCopy.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
+                                    workingCopy.StateInfo = new BEXIS2.DB.Entities.Common.EntityStateInfo()
                                     {
                                         State = status
                                     };
@@ -436,7 +441,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                 unitOfWork.GetReadOnlyRepository<DatasetVersion>().Load(workingCopy.ContentDescriptors);
 
-                          
+
 
                                 // save all incoming files in content descriptor
                                 foreach (var file in Cache.Files)
@@ -445,6 +450,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                     //filenames
                                     string fileNames = string.Join(",", Cache.Files.Select(f => f.Name).ToArray());
+                                    newFiles = fileNames;
                                     filecomment = "File(s) uploaded (" + fileNames + ")";
                                 }
 
@@ -456,6 +462,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                                     //filenames
                                     string fileNames = string.Join(",", Cache.ModifiedFiles.Select(f => f.Name).ToArray());
+                                    modifiedFiles = fileNames;
                                     modcomments = "File(s) updated (" + fileNames + ")";
 
                                     var contentDescriptor = workingCopy.ContentDescriptors.FirstOrDefault(item => item.URI == dynamicStorePath);
@@ -479,12 +486,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     }
 
                                     if (File.Exists(storePath))
-                                    { 
+                                    {
                                         File.Delete(storePath);
                                     }
 
                                     //filenames
                                     string fileNames = string.Join(",", Cache.DeleteFiles.Select(f => f.Name).ToArray());
+                                    deletedFiles = fileNames;
                                     deletedComments = "File(s) deleted (" + fileNames + ")";
 
                                 }
@@ -503,7 +511,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                 Timestamp = DateTime.Now
                             };
 
-                            workingCopy.Metadata = setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
+                            workingCopy.Metadata = setSystemValuesToMetadata(id, v, 0, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
 
                             dm.EditDatasetVersion(workingCopy, null, null, null);
 
@@ -517,6 +525,26 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                             // ToDo: Get Comment from ui and users
                             dm.CheckInDataset(id, comment, User.Name, ViewCreationBehavior.None, TagType.None);
+                            var user = User;
+                            using (var emailService = new EmailService())
+                            {
+                                if (!string.IsNullOrEmpty(filecomment))
+                                    emailService.Send(MessageHelper.GeFileUpdateHeader(id),
+                                 MessageHelper.GetFileUpdatedMessage(id, title, user.DisplayName, newFiles, "added"),
+                                 null, null, new List<string> { GeneralSettings.SystemEmail });
+
+                                if (!string.IsNullOrEmpty(modcomments))
+                                    emailService.Send(MessageHelper.GeFileUpdateHeader(id),
+                                    MessageHelper.GetFileUpdatedMessage(id, title, user.DisplayName, modifiedFiles, "modified" ),
+                                    null, null, new List<string> { GeneralSettings.SystemEmail });
+
+                                if (!string.IsNullOrEmpty(deletedComments))
+                                    emailService.Send(MessageHelper.GeFileUpdateHeader(id),
+                                    MessageHelper.GetFileUpdatedMessage(id, title, user.DisplayName, deletedFiles, "deleted"),
+                                    null, null, new List<string> { GeneralSettings.SystemEmail });
+
+                            }
+                        
                         }
                         catch (Exception ex)
                         {
@@ -559,7 +587,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         if (temp.Any())
                         {
                             emailService.Send(MessageHelper.GetPushApiUploadFailHeader(id, title),
-                                MessageHelper.GetPushApiUploadFailMessage(id, user.Name, temp.Select(e => e.ToString()).ToArray()),
+                                MessageHelper.GetPushApiUploadFailMessage(id, user.DisplayName, temp.Select(e => e.ToString()).ToArray()),
                                 new List<string> { user.Email }, null, new List<string> { GeneralSettings.SystemEmail });
                         }
                         else
@@ -572,15 +600,16 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         }
 
                         if (Cache.Files.Count == 1)
-                            emailService.Send(MessageHelper.GeFileUpdatHeader(id),
-                                MessageHelper.GetFileUploaddMessage(id,title, user.DisplayName, Cache.Files.FirstOrDefault().Name),
+                            emailService.Send(MessageHelper.GeFileUploadHeader(id),
+                                MessageHelper.GetFilesUploadMessage(id,title, user.DisplayName, Cache.Files.FirstOrDefault().Name),
                                 new List<string> { user.Email }, null, new List<string> { GeneralSettings.SystemEmail });
 
                         if (Cache.Files.Count > 1)
-                            emailService.Send(MessageHelper.GeFileUpdatHeader(id),
-                                MessageHelper.GetFilesUploaddMessage(id,title, user.DisplayName, Cache.Files.Select(f => f.Name).ToArray()),
+                            emailService.Send(MessageHelper.GeFileUploadHeader(id),
+                                MessageHelper.GetFilesUploadMessage(id,title, user.DisplayName, Cache.Files.Select(f => f.Name).ToArray()),
                                 new List<string> { user.Email }, null, new List<string> { GeneralSettings.SystemEmail });
-                    }
+                        }
+           
                 }
 
                 dm.Dispose();
@@ -588,9 +617,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 if (temp.Count == 0)// reset cache if success, no errors in temp
                 {
-                    Cache.Files = new List<BExIS.UI.Hooks.Caches.FileInfo>();
-                    Cache.DeleteFiles = new List<BExIS.UI.Hooks.Caches.FileInfo>();
-                    Cache.ModifiedFiles = new List<BExIS.UI.Hooks.Caches.FileInfo>();
+                    Cache.Files = new List<BEXIS2.UI.Hooks.Caches.FileInfo>();
+                    Cache.DeleteFiles = new List<BEXIS2.UI.Hooks.Caches.FileInfo>();
+                    Cache.ModifiedFiles = new List<BEXIS2.UI.Hooks.Caches.FileInfo>();
                     //logs.Messages.Add(new LogMessage(DateTime.Now, messages, username, "Attachment upload","upload"));
                     Log.Messages.Add(new LogMessage(DateTime.Now, "data was successfully uploaded", User.Name, "Submit", "Upload"));
                 }
@@ -609,7 +638,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         }
 
         //[MeasurePerformance]
-        private string MoveAndSaveOriginalFileInContentDiscriptor(DatasetVersion datasetVersion, string title, long datasetId, long dataStructureId, string originalFilePath, BExIS.UI.Hooks.Caches.FileInfo file)
+        private string MoveAndSaveOriginalFileInContentDiscriptor(DatasetVersion datasetVersion, string title, long datasetId, long dataStructureId, string originalFilePath,BEXIS2.UI.Hooks.Caches.FileInfo file)
         {
             string ext = ".xlsm";// Bus[TaskManager.EXTENTION].ToString();
 
@@ -653,7 +682,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             return storePath;
         }
 
-        private string SaveFileInContentDiscriptor(DatasetVersion datasetVersion, BExIS.UI.Hooks.Caches.FileInfo file, string getpath)
+        private string SaveFileInContentDiscriptor(DatasetVersion datasetVersion,BEXIS2.UI.Hooks.Caches.FileInfo file, string getpath)
         {
             try
             {
@@ -700,7 +729,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     MimeType = mimeType,
                     URI = dynamicStorePath,
                     DatasetVersion = datasetVersion,
-                    Description = file.Description
+                    Description = file.Description,
+                    FileSize = file.Lenght
                 };
 
                 // add current content desciptor to list
@@ -716,16 +746,16 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
         
 
-        private XmlDocument setSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, bool newDataset)
+        private XmlDocument setSystemValuesToMetadata(long datasetid, long version,double tag, long metadataStructureId, XmlDocument metadata, bool newDataset)
         {
             SystemMetadataHelper SystemMetadataHelper = new SystemMetadataHelper();
 
             Key[] myObjArray = { };
 
-            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataCreationDate, Key.DataLastModified };
-            else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
+            if (newDataset) myObjArray = new Key[] { Key.Id, Key.Version,Key.Tag, Key.DateOfVersion, Key.DataCreationDate, Key.DataLastModified };
+            else myObjArray = new Key[] { Key.Id, Key.Version,Key.Tag, Key.DateOfVersion, Key.DataLastModified };
 
-            var metadata_new = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
+            var metadata_new = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version,tag, metadataStructureId, metadata, myObjArray);
 
             return metadata_new;
         }

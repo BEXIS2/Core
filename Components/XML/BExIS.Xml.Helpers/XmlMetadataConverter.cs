@@ -1,7 +1,7 @@
-﻿using BExIS.Dlm.Entities.Common;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
+﻿using BEXIS2.Dlm.Entities.Common;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.IO.Transform.Validation.ValueCheck;
 using Newtonsoft.Json;
@@ -9,10 +9,11 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace BExIS.Xml.Helpers
+namespace BEXIS2.Xml.Helpers
 {
     public class XmlMetadataConverter
     {
@@ -87,17 +88,6 @@ namespace BExIS.Xml.Helpers
                             metadataJson.Add(usage.Label, packageUsageJson);
                     }
 
-
-                    //for (int i = 0; i < root.ChildNodes.Count; i++)
-                    //{
-                    //    XmlNode node = root.ChildNodes[i];
-                    //    long usageId = metadataStructure.MetadataPackageUsages.ElementAt(i).Id;
-                    //    var usage = metadataStructureManager.PackageUsageRepo.Get(usageId);
-
-                    //    var packageUsageJson = _convertPackageUsage(node, usage, includeEmpty);
-                    //    if (packageUsageJson != null)
-                    //        metadataJson.Add(usage.Label, packageUsageJson);
-                    //}
                 }
             }
 
@@ -122,7 +112,8 @@ namespace BExIS.Xml.Helpers
                         // complex stuff
                         // add all children nodes
                         JObject complex = new JObject();
-                        setReference(complex, (XmlElement)tCHild, includeEmpty);
+                        //setReference(complex, (XmlElement)tCHild, includeEmpty);
+                        //setParameters(complex, (XmlElement)tCHild, includeEmpty);
 
                         for (int i = 0; i < tCHild.ChildNodes.Count; i++)
                         {
@@ -142,6 +133,13 @@ namespace BExIS.Xml.Helpers
                         }
 
                         if (!complex.Children().Any()) return null;
+                        else
+                        {
+                            setReference(complex, (XmlElement)tCHild, includeEmpty);
+                            setParameters(complex, (XmlElement)tCHild, includeEmpty, usage);
+
+                        }
+
 
                         if (getMaxCardinality(usage) <= 1) return complex;
                         else
@@ -216,8 +214,7 @@ namespace BExIS.Xml.Helpers
                             // complex stuff
                             // add all children nodes
                             JObject complex = new JObject();
-                            setReference(complex, (XmlElement)tCHild, includeEmpty);
-
+                     
                             for (int i = 0; i < tCHild.ChildNodes.Count; i++)
                             {
                                 XmlNode child = tCHild.ChildNodes[i];
@@ -239,6 +236,13 @@ namespace BExIS.Xml.Helpers
                             }
 
                             if (!complex.Children().Any()) return null;
+                            else
+                            {
+                                setReference(complex, (XmlElement)tCHild, includeEmpty);
+                                setParameters(complex, (XmlElement)tCHild, includeEmpty, usage);
+
+                            }
+
 
                             if (getMaxCardinality(usage) <= 1) return complex;
                             else
@@ -324,6 +328,7 @@ namespace BExIS.Xml.Helpers
             }
 
             setReference(simple, reference, includeEmpty);
+            setParameters(simple, reference, includeEmpty, usage);
 
             simple.Add(new JProperty("#text", value));
 
@@ -351,6 +356,41 @@ namespace BExIS.Xml.Helpers
             }
         }
 
+        private void setParameters(JObject target, XmlElement element, bool includeEmpty, BaseUsage usage)
+        { 
+            if(element.HasAttributes)
+            {
+                List<String> ignore = new List<String>() { "type", "ref", "id", "roleId", "number", "name","partyid"  }; // system attributes
+
+                var ma = getType(usage);
+                 
+                if (ma!= null &&  ma.MetadataParameterUsages!= null && ma.MetadataParameterUsages.Count > 0)
+                {
+                    foreach (XmlAttribute attr in element.Attributes)
+                    {
+                        if (!ignore.Contains(attr.Name) && !string.IsNullOrEmpty(attr.Value))
+                        {
+                            // check if parameter exist
+                            if (ma.MetadataParameterUsages.Any(m => m.Label.ToLower().Equals(attr.Name.ToLower())))
+                            {
+                                var dataType = ma.MetadataParameterUsages.FirstOrDefault(m => m.Label.ToLower().Equals(attr.Name.ToLower()))?.Member.DataType;
+                                DataTypeCheck dataTypeChecker = new DataTypeCheck("", dataType.SystemType, IO.DecimalCharacter.point);
+                                var result = dataTypeChecker.Execute(attr.Value);
+
+                                if(result is Error)
+                                    target.Add(new JProperty("@" + attr.Name, attr.Value));
+                                else
+                                    target.Add(new JProperty("@" + attr.Name, result));
+
+                                //attr.Value = result;
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         #endregion XML to JSON
 
         #region JSON to XML
@@ -366,12 +406,15 @@ namespace BExIS.Xml.Helpers
                 if (Int64.TryParse(metadataJson.Property("@id").Value.ToString(), out id))
                 {
                     XmlMetadataWriter writer = new XmlMetadataWriter(XmlNodeMode.xPath);
+                    // we need all xpaths, choices should also be created weven its not valid.
+                    // only to have all xptahs
+                    XmlDocument targetAllChildrens = XmlUtility.ToXmlDocument(writer.CreateMetadataXml(id, null, true));
                     XmlDocument target = XmlUtility.ToXmlDocument(writer.CreateMetadataXml(id));
 
                     var source = JsonConvert.DeserializeXmlNode(metadataJson.ToString(), "Metadata");
 
                     // generate dictionary with source path as key and target path as value
-                    mappings = getXPathMapping(target);
+                    mappings = getXPathMapping(targetAllChildrens);
 
                     /// put the incoming xml to the internal structure
                     /// BUT if there are elements with index >1 then the attributes like id,roleid are not set
@@ -379,8 +422,8 @@ namespace BExIS.Xml.Helpers
 
                     // generate intern template metadata xml with needed attribtes
                     // also every object with index > 1 is generate with attribtes but without values
-                    var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
-                    var metadataWithAttributesXml = xmlMetadatWriter.CreateMetadataXml(id, XmlUtility.ToXDocument(target));
+                    var xmlMetadatWriter = new XmlMetadataWriter(BEXIS2.Xml.Helpers.XmlNodeMode.xPath);
+                    var metadataWithAttributesXml = xmlMetadatWriter.CreateMetadataXml(id, XmlUtility.ToXDocument(target), true);
 
                     // merge the metadata with attributes and the metadata with values together
                     var completeMetadata = XmlMetadataImportHelper.FillInXmlValues(target,
@@ -467,6 +510,9 @@ namespace BExIS.Xml.Helpers
                 // if a xml element has text, then there is a child of type xmltext
                 if (!string.IsNullOrEmpty(sourceNode.InnerText) == sourceNode.LastChild is XmlText)
                     destinationNode.InnerText = sourceNode.InnerText;
+
+                // if the element is a choice, its not created in the metadata, so it must be filled 
+
 
                 // add dynamic att
                 if (sourceNode.Attributes.Count > 0) // may not add if attr is empty
@@ -622,8 +668,8 @@ namespace BExIS.Xml.Helpers
             XmlDocument metadataInput = JsonConvert.DeserializeXmlNode(metadataJson.ToString(), "Metadata");
 
             // load example xml based on metadata structure
-            var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
-            var metadataExample = xmlMetadatWriter.CreateMetadataXml(metadataStructureId);
+            var xmlMetadatWriter = new XmlMetadataWriter(BEXIS2.Xml.Helpers.XmlNodeMode.xPath);
+            var metadataExample = xmlMetadatWriter.CreateTempMetadataXmlWithChoiceChildrens(metadataStructureId);
 
             // get all elements from xml documents to compare
             var listOfElementsInput = XmlUtility.GetAllChildren(XmlUtility.ToXDocument(metadataInput).Root).Select(e => e.Name.LocalName);

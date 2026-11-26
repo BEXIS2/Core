@@ -1,6 +1,6 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Data;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
 using System;
@@ -13,7 +13,7 @@ using System.Text;
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.IO.Transform.Input
+namespace BEXIS2.IO.Transform.Input
 {
     /// <summary>
     /// this class is used to read and validate ascii files
@@ -986,6 +986,28 @@ namespace BExIS.IO.Transform.Input
                 }
             }
             return line.Split(seperator).ToList();
+        }
+
+        /// <summary>
+        /// Convert a row as a string to a list of strings based on offset,seperator and textmarker
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="line">Row as a string</param>
+        /// <param name="seperator">Character used as TextSeparator</param>
+        /// <param name="textMarker">Character used as TextMarker</param>
+        /// <param name="offset">offset to skip values from begin</param>
+        /// <returns>List of values</returns>
+        public List<string> RowToList(string line, char seperator, char textMarker, int offset = 0)
+        {
+            List<string> tempRow = new List<string>();
+
+            tempRow = new List<string>();
+            tempRow = TextMarkerHandling(line, seperator,textMarker);
+
+            //if a offset is marked in the file reader information the offset needs to skip from the complete string array
+            return tempRow.Skip(offset).ToList();
+            //return line.Split(seperator).ToList();
         }
 
         private List<string> values;

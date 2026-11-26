@@ -1,12 +1,12 @@
-﻿using BExIS.Dlm.Entities.MetadataStructure;
+﻿using BEXIS2.Dlm.Entities.MetadataStructure;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Xml;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
-namespace BExIS.Dlm.Services.MetadataStructure
+namespace BEXIS2.Dlm.Services.MetadataStructure
 {
     public class MetadataPackageManager : IDisposable
     {

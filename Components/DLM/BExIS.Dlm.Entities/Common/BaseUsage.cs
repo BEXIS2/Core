@@ -1,6 +1,6 @@
-﻿using Vaiona.Entities.Common;
+﻿using BEXIS2.DB.Entities.Common;
 
-namespace BExIS.Dlm.Entities.Common
+namespace BEXIS2.Dlm.Entities.Common
 {
     public class BaseUsage : BaseEntity
     {

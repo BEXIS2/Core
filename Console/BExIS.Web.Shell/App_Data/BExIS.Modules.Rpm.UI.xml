@@ -165,7 +165,7 @@
              <remarks></remarks>
              <seealso cref="!:" />
         </member>
-        <member name="M:BExIS.Modules.Rpm.UI.Models.DataStructureTreeList.#ctor(System.Collections.Generic.IList{BExIS.Dlm.Entities.DataStructure.StructuredDataStructure})">
+        <member name="M:BExIS.Modules.Rpm.UI.Models.DataStructureTreeList.#ctor(System.Collections.Generic.IList{BEXIS2.Dlm.Entities.DataStructure.StructuredDataStructure})">
             <summary>
             </summary>
             <remarks></remarks>
@@ -173,7 +173,7 @@
             <param name="structuredDatastructureList"></param>
             <return></return>
         </member>
-        <member name="M:BExIS.Modules.Rpm.UI.Models.DataStructureTreeList.#ctor(System.Collections.Generic.IList{BExIS.Dlm.Entities.DataStructure.UnStructuredDataStructure})">
+        <member name="M:BExIS.Modules.Rpm.UI.Models.DataStructureTreeList.#ctor(System.Collections.Generic.IList{BEXIS2.Dlm.Entities.DataStructure.UnStructuredDataStructure})">
             <summary>
             </summary>
             <remarks></remarks>

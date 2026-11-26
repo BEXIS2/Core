@@ -1,4 +1,4 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
 using System.Collections.Generic;
 
 namespace BExIS.IO.Transform.Validation.ValueCheck

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using Vaiona.IoC;
-using Vaiona.Persistence.Api;
-using Vaiona.Utils.Cfg;
+using BEXIS2.DB.Persistence.Api;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.App.Testing
 {

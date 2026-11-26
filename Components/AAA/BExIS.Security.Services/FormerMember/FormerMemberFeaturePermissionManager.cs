@@ -1,10 +1,10 @@
-﻿using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.FormerMember;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Subjects;
+﻿using BEXIS2.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.FormerMember;
+using BEXIS2.Security.Entities.Objects;
+using BEXIS2.Security.Entities.Subjects;
 using System;
 using System.Linq;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Security.Services.FormerMember
 {
@@ -28,7 +28,7 @@ namespace BExIS.Security.Services.FormerMember
 
         public IQueryable<FeaturePermissionFormerMember> FormerMemberFeaturePermissions => FormerMemberFeaturePermissionRepository.Query();
 
-        public void Create(long? subjectId, long featureId, BExIS.Security.Entities.Authorization.PermissionType permissionType)
+        public void Create(long? subjectId, long featureId, BEXIS2.Security.Entities.Authorization.PermissionType permissionType)
         {
             using (var uow = this.GetUnitOfWork())
             {

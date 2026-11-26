@@ -1,9 +1,9 @@
 ﻿using BExIS.Dcm.ImportMetadataStructureWizard;
 using BExIS.Dcm.Wizard;
-using BExIS.IO;
-using BExIS.IO.Transform.Validation.Exceptions;
+using BEXIS2.IO;
+using BEXIS2.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Models;
-using BExIS.Xml.Helpers.Mapping;
+using BEXIS2.Xml.Helpers.Mapping;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {

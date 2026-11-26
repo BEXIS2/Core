@@ -39,6 +39,7 @@ export class ReadEntryModel {
 	type: string;
 	description: string;
 	options: string[];
+	apiSource: string;
 
 	constructor(json: any) {
 		this.key = json.key;
@@ -47,6 +48,7 @@ export class ReadEntryModel {
 		this.type = json.type;
 		this.description = json.description;
 		this.options = json.options;
+		this.apiSource = json.apiSource;
 	}
 }
 
@@ -57,6 +59,7 @@ export class UpdateEntryModel {
 	type: string;
 	description: string;
 	options: string[];
+	apiSource: string;
 
 	constructor(json: any) {
 		this.key = json.key;
@@ -64,6 +67,7 @@ export class UpdateEntryModel {
 		this.type = json.type;
 		this.description = json.description;
 		this.options = json.options;
+		this.apiSource = json.apiSource;
 		this.value = JSON.stringify(json.value);
 	}
 }

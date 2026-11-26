@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.Dlm.Entities.MetadataStructure
+namespace BEXIS2.Dlm.Entities.MetadataStructure
 {
     /// <summary>
     ///

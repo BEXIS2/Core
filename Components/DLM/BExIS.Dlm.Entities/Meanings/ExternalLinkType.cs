@@ -1,4 +1,4 @@
-﻿namespace BExIS.Dlm.Entities.Meanings
+﻿namespace BEXIS2.Dlm.Entities.Meanings
 {
     /*
     public class ExternalLinkType : BaseEntity, IDisposable

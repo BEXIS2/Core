@@ -1,4 +1,4 @@
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Party">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.Party">
   <class xmlns="urn:nhibernate-mapping-2.2" name="PartyStatus" table="PartyStatuses">
     <!-- Mapping BaseEntity properties -->
 
@@ -28,8 +28,8 @@
       <column name="ChangeLog" sql-type="xml" />
     </property>
 
-    <many-to-one name="StatusType" class="BExIS.Dlm.Entities.Party.PartyStatusType" not-null="true" column="PartyStatusTypeRef" />
+    <many-to-one name="StatusType" class="BEXIS2.Dlm.Entities.Party.PartyStatusType" not-null="true" column="PartyStatusTypeRef" />
 
-    <many-to-one name="Party" class="BExIS.Dlm.Entities.Party.Party" not-null="true" column="PartyRef" />
+    <many-to-one name="Party" class="BEXIS2.Dlm.Entities.Party.Party" not-null="true" column="PartyRef" />
   </class>
 </hibernate-mapping>

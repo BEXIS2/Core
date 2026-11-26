@@ -1,13 +1,13 @@
-﻿using BExIS.Dlm.Entities.Administration;
-using BExIS.Dlm.Entities.Data;
+﻿using BEXIS2.Dlm.Entities.Administration;
+using BEXIS2.Dlm.Entities.Data;
 using System.Collections.Generic;
 using System.Xml;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.Dlm.Entities.DataStructure
+namespace BEXIS2.Dlm.Entities.DataStructure
 {
     /// <summary>
     ///

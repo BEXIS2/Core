@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace BExIS.UI.Tests
+namespace BEXIS2.UI.Tests
 {
     public class SettingsHelperTests
     {

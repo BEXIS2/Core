@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.Party;
-using BExIS.IO.Transform.Validation.Exceptions;
+﻿using BEXIS2.Dlm.Entities.Party;
+using BEXIS2.IO.Transform.Validation.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

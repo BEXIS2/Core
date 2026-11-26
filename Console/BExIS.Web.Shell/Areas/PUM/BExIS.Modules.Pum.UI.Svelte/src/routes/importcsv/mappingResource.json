@@ -1,0 +1,64 @@
+{
+	"Mappings": [
+		{
+			"Source": "Data Publisher",
+			"Target": "$.Resource.Submitted_by"
+		},
+		{
+			"Source": "Code Publisher",
+			"Target": "$.Resource.Submitted_by"
+		},
+		{
+			"Source": "Data URL",
+			"Target": "$.Resource.Access.uri"
+		},
+		{
+			"Source": "Code URL",
+			"Target": "$.Resource.Access.uri"
+		},
+		{
+			"Source": "Data URL resolves",
+			"Target": "$.Resource.Access.uri_health"
+		},
+		{
+			"Source": "Code URL resolves",
+			"Target": "$.Resource.Access.uri_health"
+		},
+		{
+			"Source": "Data DOI",
+			"Target": "$.Resource.Access.doi"
+		},
+		{
+			"Source": "Code DOI",
+			"Target": "$.Resource.Access.doi"
+		},
+		{
+			"Source": "Data DOI resolves",
+			"Target": "$.Resource.Access.doi_health"
+		},
+		{
+			"Source": "Code DOI resolves",
+			"Target": "$.Resource.Access.doi_health"
+		},
+		{
+			"Source": "Data License",
+			"Target": "$.Resource.Access.licence"
+		},
+		{
+			"Source": "Code License",
+			"Target": "$.Resource.Access.licence"
+		},
+		{
+			"Source": "Data format",
+			"Target": "$.Resource.File.file_format"
+		},
+		{
+			"Source": "Code format",
+			"Target": "$.Resource.File.file_format"
+		},
+		{
+			"Source": "Programming Language",
+			"Target": "$.Resource.Code.Programing_Language"
+		}
+	]
+}

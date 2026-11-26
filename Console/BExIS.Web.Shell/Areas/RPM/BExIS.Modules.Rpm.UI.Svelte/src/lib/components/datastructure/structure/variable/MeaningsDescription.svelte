@@ -5,11 +5,12 @@
 	console.log('🚀 ~ file: MeaningsDescription.svelte:5 ~ list:', list);
 </script>
 
-<div class="flex-col gap-2">
+<div class="flex flex-wrap gap-2">
 	{#if list}
 		{#each list as meaningItem}
+		<div>
 			<span class="text-xs font-semibold">{meaningItem.text}</span>
-			<div class="flex">
+			<div class="">
 				{#if meaningItem.links}
 					{#each meaningItem.links as l}
 						<a
@@ -20,6 +21,7 @@
 						>
 					{/each}
 				{/if}
+			</div>
 			</div>
 		{/each}
 	{/if}

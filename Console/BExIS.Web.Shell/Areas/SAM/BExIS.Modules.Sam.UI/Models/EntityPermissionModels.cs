@@ -1,4 +1,4 @@
-﻿using BExIS.Security.Entities.Subjects;
+﻿using BEXIS2.Security.Entities.Subjects;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
@@ -52,5 +52,20 @@ namespace BExIS.Modules.Sam.UI.Models
         public long EntityId { get; set; }
         public long InstanceId { get; set; }
         public long SubjectId { get; set; }
+    }
+
+    public class CreateEntityPermissionModel
+    {
+        
+    }
+
+    public class UpdateEntityPermissionModel
+    {
+        
+    }
+
+    public class ReadEntityPermissionModel
+    {
+        
     }
 }

@@ -1,4 +1,5 @@
 import type { Columns } from '@bexis2/bexis2-core-ui';
+import tableSearchOverview from '$lib/components/tableSearchOverview.svelte';
 
 export const pascalToCamel = (str: string) => {
 	return str
@@ -21,6 +22,7 @@ export const convertTableData = (columns: Columns, rows: any, header: any, visib
 					...columns,
 					[pascalToCamel(header[index].Name)]: {
 						header: header[index].DisplayName,
+						instructions: { renderComponent: tableSearchOverview },
 						exclude
 					}
 				};

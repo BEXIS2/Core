@@ -1,4 +1,4 @@
-﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Authorization">
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Security.Entities" namespace="BEXIS2.Security.Entities.Authorization">
   <class xmlns="urn:nhibernate-mapping-2.2" name="EntityPermission" table="EntityPermissions" dynamic-update="true">
 
     <id name="Id" type="Int64">
@@ -17,9 +17,9 @@
 	  <column name="CreationDate" />
 	</property>
 
-    <many-to-one name="Entity" column="EntityRef" class="BExIS.Security.Entities.Objects.Entity, BExIS.Security.Entities" index="idx_EntityPermissions_EntityRef" />
+    <many-to-one name="Entity" column="EntityRef" class="BEXIS2.Security.Entities.Objects.Entity, BEXIS2.Security.Entities" index="idx_EntityPermissions_EntityRef" />
     <property name="Key" type="Int64" index="idx_EntityPermissions_Key" />
     <property name="Rights" type="Int32" index="idx_EntityPermissions_Rights" />
-    <many-to-one name="Subject" column="SubjectRef" class="BExIS.Security.Entities.Subjects.Subject, BExIS.Security.Entities" not-null="false" index="idx_EntityPermissions_SubjectRef" />
+    <many-to-one name="Subject" column="SubjectRef" class="BEXIS2.Security.Entities.Subjects.Subject, BEXIS2.Security.Entities" not-null="false" index="idx_EntityPermissions_SubjectRef" />
   </class>
 </hibernate-mapping>

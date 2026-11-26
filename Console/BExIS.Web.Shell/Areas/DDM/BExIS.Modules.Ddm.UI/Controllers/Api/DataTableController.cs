@@ -1,18 +1,18 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.IO.DataType.DisplayPattern;
-using BExIS.IO.Transform.Output;
-using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.IO.DataType.DisplayPattern;
+using BEXIS2.IO.Transform.Output;
+using BEXIS2.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.UI.Helpers;
-using BExIS.UI.Models;
+using BEXIS2.UI.Helpers;
+using BEXIS2.UI.Models;
 using BExIS.Utils.NH.Querying;
-using BExIS.Xml.Helpers;
+using BEXIS2.Xml.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -67,7 +67,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             long versionId = command.Version;
             int pageNumber = command.Offset / command.Limit;
             int pageSize = command.Limit;
-
+            
             DataTableRecieveModel recieveModel = new DataTableRecieveModel();
             recieveModel.Send = command;
 
@@ -75,7 +75,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Id should be greater then 0");
 
             DatasetManager datasetManager = new DatasetManager();
-            UserManager userManager = new UserManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             EntityManager entityManager = new EntityManager();
 
@@ -110,7 +109,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         Dataset dataset = datasetManager.GetDataset(id);
                         if (dataset == null) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "dataset " + id + " not exist.");
 
-                        DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                        DatasetVersion LatestDatasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                        DatasetVersion datasetVersion = null;
 
                         // If the requested version is -1 or the last version of the dataset, then the data will be loaded in a
                         // different way than when loading the data from an older version
@@ -121,8 +121,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         {
                             // check version id belongs to dataset
                             if (!dataset.Versions.Select(v => v.Id).Contains(versionId)) return Request.CreateResponse(HttpStatusCode.PreconditionFailed, "this version id is not part of the dataset " + id);
-                            if (versionId == -1 || datasetVersion.Id == versionId) isLatestVersion = true;
+                            if (versionId == -1 || LatestDatasetVersion.Id == versionId) isLatestVersion = true;
                         }
+
+                        if (isLatestVersion)
+                        { 
+                            datasetVersion = LatestDatasetVersion;
+                        }
+                        else
+                        {
+                            datasetVersion = datasetManager.GetDatasetVersion(versionId);
+                        }
+
                         DataTable dt = null;
 
                         if (datasetVersion.Dataset.DataStructure != null)
@@ -155,7 +165,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 for (int i = 0; i < dt.Columns.Count; i++)
                                 {
                                     var c = dt.Columns[i];
-                                    c.ColumnName = c.Caption;
+                                    var caption = string.IsNullOrWhiteSpace(c.Caption) ? c.ColumnName : c.Caption;
+                                    c.ColumnName = caption.ToCamelCase();
                                 }
                             }
                             else
@@ -167,6 +178,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                                 dt = datasetManager.GetDatasetVersionTuples(datasetVersion.Id, pageNumber, pageSize);
                                 dt.Strip();
+
+                                // replace column name to caption
+                                for (int i = 0; i < dt.Columns.Count; i++)
+                                {
+                                    var c = dt.Columns[i];
+                                    var caption = string.IsNullOrWhiteSpace(c.Caption) ? c.ColumnName : c.Caption;
+                                    c.ColumnName = caption.ToCamelCase();
+                                }
                             }
                         }
                         else
@@ -217,8 +236,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             finally
             {
                 datasetManager.Dispose();
-                userManager.Dispose();
-                entityPermissionManager.Dispose();
                 entityManager.Dispose();
             }
         }
@@ -250,7 +267,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 // missing values
                 if (variable.MissingValues.Any())
                 {
-                    variable.MissingValues.ToList().ForEach(x => column.Instructions.MissingValues.Add(x.Placeholder, x.DisplayName));
+                    foreach (var m in variable.MissingValues)
+                    {
+                        if (m.Placeholder != null)
+                            column.Instructions.MissingValues.Add(m.Placeholder, m.DisplayName);
+                    }
                 }
 
                 tmp.Add(column);

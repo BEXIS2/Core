@@ -1,15 +1,17 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.IO.Transform.Output;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.IO.Transform.Output;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
 using System.Web.Http.Description;
-using Vaiona.Persistence.Api;
+using System.Web.SessionState;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
+    [System.Web.Mvc.SessionState(SessionStateBehavior.ReadOnly)]
     public class StructuresController : ApiController
     {
         // GET: api/Structures

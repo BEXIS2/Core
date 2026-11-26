@@ -1,18 +1,17 @@
-﻿using BExIS.App.Bootstrap.Attributes;
+using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using BExIS.IO;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.IO;
 using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.Edit;
-using BExIS.Security.Entities.Subjects;
+using BEXIS2.Security.Entities.Subjects;
+using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
-using BExIS.UI.Hooks;
-using BExIS.UI.Hooks.Caches;
-using BExIS.UI.Hooks.Logs;
-using BExIS.UI.Models;
+using BEXIS2.UI.Hooks;
+using BEXIS2.UI.Models;
 using BExIS.Utils.Config;
-using BExIS.Utils.Data.Upload;
+using BEXIS2.Utils.Data.Upload;
 using BExIS.Utils.Upload;
 using System;
 using System.Collections.Generic;
@@ -22,25 +21,37 @@ using System.Linq;
 using System.Net.Mail;
 using System.Web;
 using System.Web.Mvc;
-using Vaiona.Entities.Common;
-using Vaiona.Utils.Cfg;
+using System.Web.SessionState;
+using BEXIS2.DB.Entities.Common;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Modularity;
 
-using Cache = BExIS.UI.Hooks.Caches;
+using Cache =BEXIS2.UI.Hooks.Caches;
+using BEXIS2.UI.Hooks.Caches;
+using BEXIS2.UI.Hooks.Logs;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class AttachmentUploadController : Controller
     {
+        private readonly UserManager _userManager;
+        
+        public AttachmentUploadController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
         /// <summary>
         /// entry for hook
         /// </summary>
         /// <returns></returns>
-        public ActionResult Start(long id, int version)
+        [JsonNetFilter]
+        public JsonResult Start(long id, int version)
         {
-            //return View();
-            return RedirectToAction("load", new { id, version });
+            // return RedirectToAction("load", new { id, version });
+            var jsonResult = Load(id, version);
+            return jsonResult;
         }
 
         // GET: FileUpload
@@ -162,7 +173,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         [HttpPost]
         [CustomValidateAntiForgeryToken]
-        public JsonResult RemoveFile(long id, BExIS.UI.Hooks.Caches.FileInfo file)
+        public JsonResult RemoveFile(long id,BEXIS2.UI.Hooks.Caches.FileInfo file)
         {
             // load edit dataset cache
             HookManager hookManager = new HookManager();
@@ -207,7 +218,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     using (var emailService = new EmailService())
                     {
                         emailService.Send(MessageHelper.GetAttachmentDeleteHeader(id, typeof(Dataset).Name),
-                                        MessageHelper.GetAttachmentDeleteMessage(id, file.Name, username),
+                                        MessageHelper.GetAttachmentDeleteMessage(id, file.Name, GetDisplayName()),
                                         GeneralSettings.SystemEmail
                                         );
                     }
@@ -227,7 +238,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         [HttpPost]
         [CustomValidateAntiForgeryToken]
-        public JsonResult SaveFileDescription(long id, BExIS.UI.Hooks.Caches.FileInfo file, string description)
+        public JsonResult SaveFileDescription(long id,BEXIS2.UI.Hooks.Caches.FileInfo file, string description)
         {
             HookManager hookManager = new HookManager();
             EditDatasetDetailsCache cache = hookManager.LoadCache<EditDatasetDetailsCache>("dataset", "details", HookMode.edit, id);
@@ -304,7 +315,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         //set StateInfo of the previus version
                         if (datasetVersion.StateInfo == null)
                         {
-                            datasetVersion.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
+                            datasetVersion.StateInfo = new BEXIS2.DB.Entities.Common.EntityStateInfo()
                             {
                                 State = status
                             };
@@ -324,7 +335,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 Directory.CreateDirectory(Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments"));
                             var destinationPath = Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
                             file.SaveAs(destinationPath);
-                            AddFileInContentDiscriptor(datasetVersion, fileName);
+                            AddFileInContentDiscriptor(datasetVersion, fileName, file.ContentLength);
                         }
 
                         using (var emailService = new EmailService())
@@ -362,7 +373,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
-        private string AddFileInContentDiscriptor(DatasetVersion datasetVersion, String fileName)
+        private string AddFileInContentDiscriptor(DatasetVersion datasetVersion, String fileName, int fileSize)
         {
             string dataPath = AppConfiguration.DataPath;
             string storePath = Path.Combine(dataPath, "Datasets", datasetVersion.Dataset.Id.ToString(), "Attachments");
@@ -376,7 +387,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Name = fileName,
                 MimeType = MimeMapping.GetMimeMapping(fileName),
                 URI = Path.Combine("Datasets", datasetVersion.Dataset.Id.ToString(), "Attachments", fileName),
-                DatasetVersion = datasetVersion
+                DatasetVersion = datasetVersion,
+                FileSize = fileSize
             };
             // replace the URI and description in case they have a same name
             if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(originalDescriptor.Name)) > 0)
@@ -418,6 +430,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
+        public string GetDisplayName()
+        {
+            string username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+                User user = _userManager.FindByNameAsync(username).Result;
+
+                return user.DisplayName;
+            }
+            catch
+            {
+                return "DEFAULT";
+            }
+        }
         #endregion helper
     }
 }

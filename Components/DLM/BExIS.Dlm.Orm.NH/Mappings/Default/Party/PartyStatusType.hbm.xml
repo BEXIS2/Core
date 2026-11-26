@@ -1,4 +1,4 @@
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Party">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.Party">
   <class xmlns="urn:nhibernate-mapping-2.2" name="PartyStatusType" table="PartyStatusTypes">
     <!-- Mapping BaseEntity properties -->
 
@@ -28,7 +28,7 @@
       <column name="DisplayOrder" />
     </property>
 
-    <many-to-one name="PartyType" class="BExIS.Dlm.Entities.Party.PartyType" not-null="false" column="PartyTypeRef" />
+    <many-to-one name="PartyType" class="BEXIS2.Dlm.Entities.Party.PartyType" not-null="false" column="PartyTypeRef" />
 
     <set name="Statuses" table="PartyStatuses" lazy="true">
       <key column="PartyStatusTypeRef" />

@@ -1,0 +1,1969 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GBIF",
+  "description": "GBIF",
+  "type": "object",
+  "properties": {
+    "Basic": {
+      "title": "Basic",
+      "description": "Attributes from the root node",
+      "type": "object",
+      "properties": {
+        "alternateIdentifier": {
+          "type": "array",
+          "items": {
+            "title": "alternateIdentifier",
+            "description": "This is the only identifier issued by the IPT for the metadata document; it is a UUID",
+            "type": "object",
+            "properties": {
+              "#text": {
+                "type": "string"
+              },
+              "@ref": {
+                "type": "string"
+              }
+            }
+          },
+          "minItems": 0,
+          "maxItems": 2147483647
+        },
+        "title": {
+          "type": "array",
+          "items": {
+            "title": "title",
+            "description": "The 'title' field provides a description of the resource that is being documented that is long enough to differentiate it from other similar resources. Multiple titles may be provided, particularly when trying to express the title in more than one language (use the \"xml:lang\" attribute to indicate the language if not English/en).",
+            "type": "object",
+            "properties": {
+              "#text": {
+                "type": "string"
+              },
+              "@ref": {
+                "type": "string"
+              }
+            }
+          },
+          "minItems": 1,
+          "maxItems": 2147483647
+        },
+        "pubDate": {
+          "title": "pubDate",
+          "description": "The date on which the resource was published",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string",
+              "format": "date"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "language": {
+          "title": "language",
+          "description": "The language in which the resource (not the metadata document) is written",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "[\\s]*[\\S][\\s\\S]*"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "@ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "pubDate"
+      ]
+    },
+    "creator": {
+      "title": "creator",
+      "description": "The creator is the person who created the resource (not necessarily the author of this metadata about the resource).\nThis is the person or institution to contact with questions about the use, interpretation of a dataset.\n",
+      "type": "object",
+      "properties": {
+        "organizationName": {
+          "title": "organizationName",
+          "description": "The language in which the resource (not the metadata document) is written",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "[\\s]*[\\S][\\s\\S]*"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "individualName": {
+          "title": "individualName",
+          "description": "The individualName field contains subfields so that a person's name can be broken down into parts.",
+          "type": "object",
+          "properties": {
+            "givenName": {
+              "title": "givenName",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "surName": {
+              "title": "surName",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "@ref": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "surName"
+          ]
+        },
+        "positionName": {
+          "title": "positionName",
+          "description": "The language in which the resource (not the metadata document) is written",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "[\\s]*[\\S][\\s\\S]*"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "address": {
+          "title": "address",
+          "description": "The address field is a container for multiple subfields that describe the physical or electronic address of the responsible party for a resource.",
+          "type": "object",
+          "properties": {
+            "deliveryPoint": {
+              "title": "deliveryPoint",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "city": {
+              "title": "city",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "administrativeArea": {
+              "title": "administrativeArea",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "postalCode": {
+              "title": "postalCode",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "country": {
+              "title": "country",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "phone": {
+          "title": "phone",
+          "description": "The phone field describes information about the responsible party's telephone, be it a voice phone, fax.",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "electronicMailAddress": {
+          "title": "electronicMailAddress",
+          "description": "The language in which the resource (not the metadata document) is written",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "[\\s]*[\\S][\\s\\S]*"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "onlineUrl": {
+          "title": "onlineUrl",
+          "description": "A link to associated online information, usually a web site. When the party represents an organization, this is the URL to a website or other online information about the organization. If the party is an individual, it might be their personal web site or other related online information about the party.",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "@ref": {
+          "type": "string"
+        }
+      }
+    },
+    "metadataProvider": {
+      "title": "metadataProvider",
+      "description": "The party responsible for the creation of the metadata document",
+      "type": "object",
+      "properties": {
+        "organizationName": {
+          "title": "organizationName",
+          "description": "The language in which the resource (not the metadata document) is written",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "[\\s]*[\\S][\\s\\S]*"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "individualName": {
+          "title": "individualName",
+          "description": "The individualName field contains subfields so that a person's name can be broken down into parts.",
+          "type": "object",
+          "properties": {
+            "givenName": {
+              "title": "givenName",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "surName": {
+              "title": "surName",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "@ref": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "surName"
+          ]
+        },
+        "positionName": {
+          "title": "positionName",
+          "description": "The language in which the resource (not the metadata document) is written",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "[\\s]*[\\S][\\s\\S]*"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "address": {
+          "title": "address",
+          "description": "The address field is a container for multiple subfields that describe the physical or electronic address of the responsible party for a resource.",
+          "type": "object",
+          "properties": {
+            "deliveryPoint": {
+              "title": "deliveryPoint",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "city": {
+              "title": "city",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "administrativeArea": {
+              "title": "administrativeArea",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "postalCode": {
+              "title": "postalCode",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "country": {
+              "title": "country",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "phone": {
+          "title": "phone",
+          "description": "The phone field describes information about the responsible party's telephone, be it a voice phone, fax.",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "electronicMailAddress": {
+          "title": "electronicMailAddress",
+          "description": "The language in which the resource (not the metadata document) is written",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "[\\s]*[\\S][\\s\\S]*"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "onlineUrl": {
+          "title": "onlineUrl",
+          "description": "A link to associated online information, usually a web site. When the party represents an organization, this is the URL to a website or other online information about the organization. If the party is an individual, it might be their personal web site or other related online information about the party.",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "@ref": {
+          "type": "string"
+        }
+      }
+    },
+    "associatedParty": {
+      "type": "array",
+      "items": {
+        "title": "associatedParty",
+        "description": "A party associated with the resource. Parties have particular roles.",
+        "type": "object",
+        "properties": {
+          "organizationName": {
+            "title": "organizationName",
+            "description": "The language in which the resource (not the metadata document) is written",
+            "type": "object",
+            "properties": {
+              "#text": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "[\\s]*[\\S][\\s\\S]*"
+              },
+              "@ref": {
+                "type": "string"
+              }
+            }
+          },
+          "individualName": {
+            "title": "individualName",
+            "description": "The individualName field contains subfields so that a person's name can be broken down into parts.",
+            "type": "object",
+            "properties": {
+              "givenName": {
+                "title": "givenName",
+                "description": "The language in which the resource (not the metadata document) is written",
+                "type": "object",
+                "properties": {
+                  "#text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "[\\s]*[\\S][\\s\\S]*"
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "surName": {
+                "title": "surName",
+                "description": "The language in which the resource (not the metadata document) is written",
+                "type": "object",
+                "properties": {
+                  "#text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "[\\s]*[\\S][\\s\\S]*"
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "@ref": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "surName"
+            ]
+          },
+          "positionName": {
+            "title": "positionName",
+            "description": "The language in which the resource (not the metadata document) is written",
+            "type": "object",
+            "properties": {
+              "#text": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "[\\s]*[\\S][\\s\\S]*"
+              },
+              "@ref": {
+                "type": "string"
+              }
+            }
+          },
+          "address": {
+            "title": "address",
+            "description": "The address field is a container for multiple subfields that describe the physical or electronic address of the responsible party for a resource.",
+            "type": "object",
+            "properties": {
+              "deliveryPoint": {
+                "title": "deliveryPoint",
+                "description": "The language in which the resource (not the metadata document) is written",
+                "type": "object",
+                "properties": {
+                  "#text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "[\\s]*[\\S][\\s\\S]*"
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "city": {
+                "title": "city",
+                "description": "The language in which the resource (not the metadata document) is written",
+                "type": "object",
+                "properties": {
+                  "#text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "[\\s]*[\\S][\\s\\S]*"
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "administrativeArea": {
+                "title": "administrativeArea",
+                "description": "The language in which the resource (not the metadata document) is written",
+                "type": "object",
+                "properties": {
+                  "#text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "[\\s]*[\\S][\\s\\S]*"
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "postalCode": {
+                "title": "postalCode",
+                "description": "The language in which the resource (not the metadata document) is written",
+                "type": "object",
+                "properties": {
+                  "#text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "[\\s]*[\\S][\\s\\S]*"
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "country": {
+                "title": "country",
+                "description": "The language in which the resource (not the metadata document) is written",
+                "type": "object",
+                "properties": {
+                  "#text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "[\\s]*[\\S][\\s\\S]*"
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "@ref": {
+                "type": "string"
+              }
+            }
+          },
+          "phone": {
+            "title": "phone",
+            "description": "The phone field describes information about the responsible party's telephone, be it a voice phone, fax.",
+            "type": "object",
+            "properties": {
+              "#text": {
+                "type": "string"
+              },
+              "@ref": {
+                "type": "string"
+              }
+            }
+          },
+          "electronicMailAddress": {
+            "title": "electronicMailAddress",
+            "description": "The language in which the resource (not the metadata document) is written",
+            "type": "object",
+            "properties": {
+              "#text": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "[\\s]*[\\S][\\s\\S]*"
+              },
+              "@ref": {
+                "type": "string"
+              }
+            }
+          },
+          "onlineUrl": {
+            "title": "onlineUrl",
+            "description": "A link to associated online information, usually a web site. When the party represents an organization, this is the URL to a website or other online information about the organization. If the party is an individual, it might be their personal web site or other related online information about the party.",
+            "type": "object",
+            "properties": {
+              "#text": {
+                "type": "string"
+              },
+              "@ref": {
+                "type": "string"
+              }
+            }
+          },
+          "role": {
+            "title": "role",
+            "description": "Use this field to describe the role the party played with respect to the resource. Some potential roles include technician, reviewer, principal investigator, and many others.",
+            "type": "object",
+            "properties": {
+              "#text": {
+                "type": "string"
+              },
+              "@ref": {
+                "type": "string"
+              }
+            }
+          },
+          "@ref": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 2147483647
+    },
+    "abstract": {
+      "title": "abstract",
+      "description": "A brief overview describing the dataset",
+      "type": "object",
+      "properties": {
+        "para": {
+          "title": "para",
+          "description": "The \"paragraph\" element allows for text blocks to be included in EML. ",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "@ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "para"
+      ]
+    },
+    "keywordSet": {
+      "type": "array",
+      "items": {
+        "title": "keywordSet",
+        "description": "A wrapper element for the keyword and keywordThesaurus elements",
+        "type": "object",
+        "properties": {
+          "keyword": {
+            "type": "array",
+            "items": {
+              "title": "keyword",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "minItems": 1,
+            "maxItems": 2147483647
+          },
+          "keywordThesaurus": {
+            "title": "keywordThesaurus",
+            "description": "The language in which the resource (not the metadata document) is written",
+            "type": "object",
+            "properties": {
+              "#text": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "[\\s]*[\\S][\\s\\S]*"
+              },
+              "@ref": {
+                "type": "string"
+              }
+            }
+          },
+          "@ref": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "keyword",
+          "keywordThesaurus"
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 2147483647
+    },
+    "additionalInfo": {
+      "title": "additionalInfo",
+      "description": "Any information that is not characterized by the other resource metadata fields",
+      "type": "object",
+      "properties": {
+        "para": {
+          "title": "para",
+          "description": "The \"paragraph\" element allows for text blocks to be included in EML. ",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "@ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "para"
+      ]
+    },
+    "intellectualRights": {
+      "title": "intellectualRights",
+      "description": "Contain a rights management statement for the resource, or reference a service providing such information",
+      "type": "object",
+      "properties": {
+        "para": {
+          "title": "para",
+          "description": "The \"paragraph\" element allows for text blocks to be included in EML. ",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "@ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "para"
+      ]
+    },
+    "distribution": {
+      "title": "distribution",
+      "description": "This element provides information on how the resource is distributed. When used at the resource level, this element can provide only general information, but elements for describing connections to online systems are provided.",
+      "type": "object",
+      "properties": {
+        "online": {
+          "title": "online",
+          "description": "This element contains information for accessing the resource online represented as a URL connection",
+          "type": "object",
+          "properties": {
+            "url": {
+              "title": "url",
+              "description": "The URL of the resource that is available online. ",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "@ref": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "url"
+          ]
+        },
+        "@ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "online"
+      ]
+    },
+    "coverage": {
+      "type": "array",
+      "items": {
+        "title": "coverage",
+        "description": "Describes the extent of the coverage of the resource in terms of its spatial extent, temporal extent, and taxonomic extent",
+        "type": "object",
+        "properties": {
+          "geographicCoverage": {
+            "title": "geographicCoverage",
+            "description": "A container for spatial information about a resource; allows a bounding box for the overall coverage (in lat long), and also allows description of arbitrary polygons with exclusions.",
+            "type": "object",
+            "properties": {
+              "geographicDescription": {
+                "title": "geographicDescription",
+                "description": "The language in which the resource (not the metadata document) is written",
+                "type": "object",
+                "properties": {
+                  "#text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "[\\s]*[\\S][\\s\\S]*"
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "boundingCoordinates": {
+                "title": "boundingCoordinates",
+                "description": "Bounding Coordinates are the four margins (N, S, E, W) of a bounding box, or when considered in lat-lon pairs, the corners of the box.",
+                "type": "object",
+                "properties": {
+                  "westBoundingCoordinate": {
+                    "title": "westBoundingCoordinate",
+                    "description": "The westBoundingCoordinate field defines the longitude of the western-most point of the bounding box that is being described.",
+                    "type": "object",
+                    "properties": {
+                      "#text": {
+                        "type": "number"
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "eastBoundingCoordinate": {
+                    "title": "eastBoundingCoordinate",
+                    "description": "The eastBoundingCoordinate field defines the longitude of the eastern-most point of the bounding box that is being described.",
+                    "type": "object",
+                    "properties": {
+                      "#text": {
+                        "type": "number"
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "northBoundingCoordinate": {
+                    "title": "northBoundingCoordinate",
+                    "description": "The northBoundingCoordinate field defines the latitude of the northern-most point of the bounding box that is being described.",
+                    "type": "object",
+                    "properties": {
+                      "#text": {
+                        "type": "number"
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "southBoundingCoordinate": {
+                    "title": "southBoundingCoordinate",
+                    "description": "The southBoundingCoordinate field defines the latitude of the southern-most point of the bounding box that is being described.",
+                    "type": "object",
+                    "properties": {
+                      "#text": {
+                        "type": "number"
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "westBoundingCoordinate",
+                  "eastBoundingCoordinate",
+                  "northBoundingCoordinate",
+                  "southBoundingCoordinate"
+                ]
+              },
+              "@ref": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "geographicDescription",
+              "boundingCoordinates"
+            ]
+          },
+          "temporalCoverage": {
+            "title": "temporalCoverage",
+            "description": "This field specifies temporal coverage, and allows coverages to be a single point in time, multiple points in time, or a range of dates. ",
+            "type": "object",
+            "properties": {
+              "rangeOfDates": {
+                "title": "rangeOfDates",
+                "description": "The 'RangeOfDates' field is intended to be used for describing a range of dates and/or times. It may be used multiple times to document multiple date ranges. It allows for two 'singleDateTime' fields, the first to be used as the beginning dateTime, and the second to be used as the ending dateTime of the range.",
+                "type": "object",
+                "properties": {
+                  "beginDate": {
+                    "title": "beginDate",
+                    "description": "A single time stamp signifying the beginning of some time period",
+                    "type": "object",
+                    "properties": {
+                      "calendarDate2": {
+                        "title": "calendarDate2",
+                        "description": "The date on which the resource was published",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "calendarDate2"
+                    ]
+                  },
+                  "endDate": {
+                    "title": "endDate",
+                    "description": "A single time stamp signifying the end of some time period",
+                    "type": "object",
+                    "properties": {
+                      "calendarDate2": {
+                        "title": "calendarDate2",
+                        "description": "The date on which the resource was published",
+                        "type": "object",
+                        "properties": {
+                          "#text": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "@ref": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "calendarDate2"
+                    ]
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "beginDate",
+                  "endDate"
+                ]
+              },
+              "singleDateTime": {
+                "title": "singleDateTime",
+                "description": "The SingleDateTime field is intended to describe a single date and time for an event",
+                "type": "object",
+                "properties": {
+                  "calendarDate2": {
+                    "title": "calendarDate2",
+                    "description": "The date on which the resource was published",
+                    "type": "object",
+                    "properties": {
+                      "#text": {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "calendarDate2"
+                ]
+              },
+              "@ref": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "rangeOfDates",
+              "singleDateTime"
+            ],
+            "oneOf": [
+              {
+                "$ref": "#/properties/coverage/items/properties/temporalCoverage/properties/rangeOfDates"
+              },
+              {
+                "$ref": "#/properties/coverage/items/properties/temporalCoverage/properties/singleDateTime"
+              }
+            ]
+          },
+          "taxonomicCoverage": {
+            "title": "taxonomicCoverage",
+            "description": "Taxonomic Coverage is a container for taxonomic information about a resource. It includes a list of species names (or higher level ranks) from one or more classification systems.",
+            "type": "object",
+            "properties": {
+              "generalTaxonomicCoverage": {
+                "title": "generalTaxonomicCoverage",
+                "description": "The language in which the resource (not the metadata document) is written",
+                "type": "object",
+                "properties": {
+                  "#text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "[\\s]*[\\S][\\s\\S]*"
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "taxonomicClassification": {
+                "type": "array",
+                "items": {
+                  "title": "taxonomicClassification",
+                  "description": "Information about the range of taxa addressed in the dataset or collection",
+                  "type": "object",
+                  "properties": {
+                    "taxonRankName": {
+                      "title": "taxonRankName",
+                      "description": "The language in which the resource (not the metadata document) is written",
+                      "type": "object",
+                      "properties": {
+                        "#text": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "[\\s]*[\\S][\\s\\S]*"
+                        },
+                        "@ref": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "taxonRankValue": {
+                      "title": "taxonRankValue",
+                      "description": "The language in which the resource (not the metadata document) is written",
+                      "type": "object",
+                      "properties": {
+                        "#text": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "[\\s]*[\\S][\\s\\S]*"
+                        },
+                        "@ref": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "commonName": {
+                      "title": "commonName",
+                      "description": "The language in which the resource (not the metadata document) is written",
+                      "type": "object",
+                      "properties": {
+                        "#text": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "[\\s]*[\\S][\\s\\S]*"
+                        },
+                        "@ref": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "@ref": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "taxonRankValue"
+                  ]
+                },
+                "minItems": 1,
+                "maxItems": 2147483647
+              },
+              "@ref": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "taxonomicClassification"
+            ]
+          },
+          "@ref": {
+            "type": "string"
+          }
+        },
+        "anyOf": [
+          {
+            "$ref": "#/properties/coverage/items/properties/geographicCoverage"
+          },
+          {
+            "$ref": "#/properties/coverage/items/properties/temporalCoverage"
+          },
+          {
+            "$ref": "#/properties/coverage/items/properties/taxonomicCoverage"
+          }
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 1
+    },
+    "purpose": {
+      "title": "purpose",
+      "description": "A description of the purpose of the resource/dataset",
+      "type": "object",
+      "properties": {
+        "para": {
+          "title": "para",
+          "description": "The \"paragraph\" element allows for text blocks to be included in EML. ",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "@ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "para"
+      ]
+    },
+    "contact": {
+      "title": "contact",
+      "description": "",
+      "type": "object",
+      "properties": {
+        "organizationName": {
+          "title": "organizationName",
+          "description": "The language in which the resource (not the metadata document) is written",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "[\\s]*[\\S][\\s\\S]*"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "individualName": {
+          "title": "individualName",
+          "description": "The individualName field contains subfields so that a person's name can be broken down into parts.",
+          "type": "object",
+          "properties": {
+            "givenName": {
+              "title": "givenName",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "surName": {
+              "title": "surName",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "@ref": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "surName"
+          ]
+        },
+        "positionName": {
+          "title": "positionName",
+          "description": "The language in which the resource (not the metadata document) is written",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "[\\s]*[\\S][\\s\\S]*"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "address": {
+          "title": "address",
+          "description": "The address field is a container for multiple subfields that describe the physical or electronic address of the responsible party for a resource.",
+          "type": "object",
+          "properties": {
+            "deliveryPoint": {
+              "title": "deliveryPoint",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "city": {
+              "title": "city",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "administrativeArea": {
+              "title": "administrativeArea",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "postalCode": {
+              "title": "postalCode",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "country": {
+              "title": "country",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "phone": {
+          "title": "phone",
+          "description": "The phone field describes information about the responsible party's telephone, be it a voice phone, fax.",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "electronicMailAddress": {
+          "title": "electronicMailAddress",
+          "description": "The language in which the resource (not the metadata document) is written",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "[\\s]*[\\S][\\s\\S]*"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "onlineUrl": {
+          "title": "onlineUrl",
+          "description": "A link to associated online information, usually a web site. When the party represents an organization, this is the URL to a website or other online information about the organization. If the party is an individual, it might be their personal web site or other related online information about the party.",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "@ref": {
+          "type": "string"
+        }
+      }
+    },
+    "methods": {
+      "type": "array",
+      "items": {
+        "title": "methods",
+        "description": "The methods field documents scientific methods used in the collection of this dataset. It includes information on items such as tools, instrument calibration and software.",
+        "type": "object",
+        "properties": {
+          "methodStep": {
+            "title": "methodStep",
+            "description": "The methodStep field allows for repeated sets of elements that document a series of procedures followed to produce a data object. These include text descriptions of the procedures, relevant literature, software, instrumentation, source data and any quality control measures taken.",
+            "type": "object",
+            "properties": {
+              "description": {
+                "title": "description",
+                "description": "The field Description contains general textual descriptions.",
+                "type": "object",
+                "properties": {
+                  "#text": {
+                    "type": "string"
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "@ref": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "description"
+            ]
+          },
+          "qualityControl": {
+            "title": "qualityControl",
+            "description": "The qualityControl field provides a location for the description of actions taken to either control or assess the quality of data resulting from the associated method step. ",
+            "type": "object",
+            "properties": {
+              "description": {
+                "title": "description",
+                "description": "The field Description contains general textual descriptions.",
+                "type": "object",
+                "properties": {
+                  "#text": {
+                    "type": "string"
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                }
+              },
+              "@ref": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "description"
+            ]
+          },
+          "sampling": {
+            "title": "sampling",
+            "description": "Description of sampling procedures including the geographic, temporal and taxonomic coverage of the study.",
+            "type": "object",
+            "properties": {
+              "studyExtent": {
+                "title": "studyExtent",
+                "description": "The field studyExtent represents both a specific sampling area and the sampling frequency (temporal boundaries, frequency of occurrence). The geographic studyExtent is usually a surrogate (representative area of) for the larger area documented in the \"studyAreaDescription\". ",
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "title": "description",
+                    "description": "The field Description contains general textual descriptions.",
+                    "type": "object",
+                    "properties": {
+                      "#text": {
+                        "type": "string"
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "description"
+                ]
+              },
+              "samplingDescription": {
+                "title": "samplingDescription",
+                "description": "The samplingDescription field allows for a text-based/human readable description of the sampling procedures used in the research project. The content of this element would be similar to a description of sampling procedures found in the methods section of a journal article.",
+                "type": "object",
+                "properties": {
+                  "para": {
+                    "title": "para",
+                    "description": "The \"paragraph\" element allows for text blocks to be included in EML. ",
+                    "type": "object",
+                    "properties": {
+                      "#text": {
+                        "type": "string"
+                      },
+                      "@ref": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "@ref": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "para"
+                ]
+              },
+              "@ref": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "studyExtent",
+              "samplingDescription"
+            ]
+          },
+          "@ref": {
+            "type": "string"
+          }
+        },
+        "anyOf": [
+          {
+            "$ref": "#/properties/methods/items/properties/methodStep"
+          },
+          {
+            "$ref": "#/properties/methods/items/properties/qualityControl"
+          },
+          {
+            "$ref": "#/properties/methods/items/properties/sampling"
+          }
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 1
+    },
+    "project": {
+      "title": "project",
+      "description": "The project field contains information on the project in which this dataset was collected. It includes information such as project personnel, funding, study area, project design and related projects.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "title": "title",
+          "description": "The 'title' field provides a description of the resource that is being documented that is long enough to differentiate it from other similar resources. Multiple titles may be provided, particularly when trying to express the title in more than one language (use the \"xml:lang\" attribute to indicate the language if not English/en).",
+          "type": "object",
+          "properties": {
+            "#text": {
+              "type": "string"
+            },
+            "@ref": {
+              "type": "string"
+            }
+          }
+        },
+        "personnel": {
+          "title": "personnel",
+          "description": "The Personnel field extends ResponsibleParty with role information and is used to document people involved in a research project by providing contact information and their role in the project. ",
+          "type": "object",
+          "properties": {
+            "organizationName": {
+              "title": "organizationName",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "individualName": {
+              "title": "individualName",
+              "description": "The individualName field contains subfields so that a person's name can be broken down into parts.",
+              "type": "object",
+              "properties": {
+                "givenName": {
+                  "title": "givenName",
+                  "description": "The language in which the resource (not the metadata document) is written",
+                  "type": "object",
+                  "properties": {
+                    "#text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "[\\s]*[\\S][\\s\\S]*"
+                    },
+                    "@ref": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "surName": {
+                  "title": "surName",
+                  "description": "The language in which the resource (not the metadata document) is written",
+                  "type": "object",
+                  "properties": {
+                    "#text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "[\\s]*[\\S][\\s\\S]*"
+                    },
+                    "@ref": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "surName"
+              ]
+            },
+            "positionName": {
+              "title": "positionName",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "address": {
+              "title": "address",
+              "description": "The address field is a container for multiple subfields that describe the physical or electronic address of the responsible party for a resource.",
+              "type": "object",
+              "properties": {
+                "deliveryPoint": {
+                  "title": "deliveryPoint",
+                  "description": "The language in which the resource (not the metadata document) is written",
+                  "type": "object",
+                  "properties": {
+                    "#text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "[\\s]*[\\S][\\s\\S]*"
+                    },
+                    "@ref": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "city": {
+                  "title": "city",
+                  "description": "The language in which the resource (not the metadata document) is written",
+                  "type": "object",
+                  "properties": {
+                    "#text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "[\\s]*[\\S][\\s\\S]*"
+                    },
+                    "@ref": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "administrativeArea": {
+                  "title": "administrativeArea",
+                  "description": "The language in which the resource (not the metadata document) is written",
+                  "type": "object",
+                  "properties": {
+                    "#text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "[\\s]*[\\S][\\s\\S]*"
+                    },
+                    "@ref": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "postalCode": {
+                  "title": "postalCode",
+                  "description": "The language in which the resource (not the metadata document) is written",
+                  "type": "object",
+                  "properties": {
+                    "#text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "[\\s]*[\\S][\\s\\S]*"
+                    },
+                    "@ref": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "country": {
+                  "title": "country",
+                  "description": "The language in which the resource (not the metadata document) is written",
+                  "type": "object",
+                  "properties": {
+                    "#text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "[\\s]*[\\S][\\s\\S]*"
+                    },
+                    "@ref": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "phone": {
+              "title": "phone",
+              "description": "The phone field describes information about the responsible party's telephone, be it a voice phone, fax.",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "electronicMailAddress": {
+              "title": "electronicMailAddress",
+              "description": "The language in which the resource (not the metadata document) is written",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "[\\s]*[\\S][\\s\\S]*"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "onlineUrl": {
+              "title": "onlineUrl",
+              "description": "A link to associated online information, usually a web site. When the party represents an organization, this is the URL to a website or other online information about the organization. If the party is an individual, it might be their personal web site or other related online information about the party.",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "role": {
+              "title": "role",
+              "description": "Use this field to describe the role the party played with respect to the resource. Some potential roles include technician, reviewer, principal investigator, and many others.",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "@ref": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "role"
+          ]
+        },
+        "funding": {
+          "title": "funding",
+          "description": "The funding field is used to provide information about funding sources for the project such as: grant and contract numbers; names and addresses of funding sources.",
+          "type": "object",
+          "properties": {
+            "para": {
+              "title": "para",
+              "description": "The \"paragraph\" element allows for text blocks to be included in EML. ",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "@ref": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "para"
+          ]
+        },
+        "studyAreaDescription": {
+          "title": "studyAreaDescription",
+          "description": "The studyAreaDescription field documents the physical area associated with the research project. It can include descriptions of the geographic, temporal, and taxonomic coverage of the research location and descriptions of domains (themes) of interest such as climate, geology, soils or disturbances.",
+          "type": "object",
+          "properties": {
+            "descriptor": {
+              "title": "descriptor",
+              "description": "The descriptor field is used to document domains (themes) of interest such as climate, geology, soils or disturbances.",
+              "type": "object",
+              "properties": {
+                "descriptorValue": {
+                  "title": "descriptorValue",
+                  "description": "The descriptorValue field contains a general description, either thematic or geographic, of the study area.",
+                  "type": "object",
+                  "properties": {
+                    "#text": {
+                      "type": "string"
+                    },
+                    "@ref": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "descriptorValue"
+              ]
+            },
+            "@ref": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "descriptor"
+          ]
+        },
+        "designDescription": {
+          "title": "designDescription",
+          "description": "The field designDescription contains general textual descriptions of research design. It can include detailed accounts of goals, motivations, theory, hypotheses, strategy, statistical design, and actual work. ",
+          "type": "object",
+          "properties": {
+            "description": {
+              "title": "description",
+              "description": "The field Description contains general textual descriptions.",
+              "type": "object",
+              "properties": {
+                "#text": {
+                  "type": "string"
+                },
+                "@ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "@ref": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "description"
+          ]
+        },
+        "@ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "personnel",
+        "funding",
+        "studyAreaDescription",
+        "designDescription"
+      ]
+    }
+  },
+  "required": [
+    "Basic",
+    "creator",
+    "metadataProvider",
+    "abstract",
+    "contact"
+  ]
+}

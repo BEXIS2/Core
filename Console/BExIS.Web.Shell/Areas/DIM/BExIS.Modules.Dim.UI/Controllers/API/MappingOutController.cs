@@ -2,7 +2,7 @@
 using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Services.Mappings;
 using BExIS.Utils.Route;
-using BExIS.Xml.Helpers;
+using BEXIS2.Xml.Helpers;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Data;

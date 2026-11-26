@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\App\BEXIS2.App.Model\BEXIS2.App.Model.csproj" />
+    <ProjectReference Include="..\..\DLM\BEXIS2.Dlm.Entities\BEXIS2.Dlm.Entities.csproj" />
+    <ProjectReference Include="..\..\IO\BEXIS2.IO.Transform.Input\BEXIS2.IO.Transform.Input.csproj" />
+    <ProjectReference Include="..\..\IO\BEXIS2.IO\BEXIS2.IO.csproj" />
+    <ProjectReference Include="..\..\UI\BEXIS2.UI\BEXIS2.UI.csproj" />
+  </ItemGroup>
+
+</Project>

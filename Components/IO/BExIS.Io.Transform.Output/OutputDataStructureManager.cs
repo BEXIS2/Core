@@ -1,17 +1,25 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.Meanings;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.Meanings;
-using BExIS.IO.DataType.DisplayPattern;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.Meanings;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.Dlm.Services.Meanings;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.Math;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Web.Configuration;
+using BEXIS2.Utils.Cfg;
+using DataTable = System.Data.DataTable;
+using Constraint = BEXIS2.Dlm.Entities.DataStructure.Constraint;
+using BEXIS2.IO.DataType.DisplayPattern;
 
-namespace BExIS.IO.Transform.Output
+namespace BEXIS2.IO.Transform.Output
 {
     public class DataStructureDataTable
     {
@@ -186,7 +194,7 @@ namespace BExIS.IO.Transform.Output
             }
         }
 
-        private string getConstraintType(Dlm.Entities.DataStructure.Constraint c)
+        private string getConstraintType(Constraint c)
         {
             if (c is DomainConstraint) return "Domain";
             if (c is RangeConstraint) return "Range";
@@ -339,7 +347,7 @@ namespace BExIS.IO.Transform.Output
             try
             {
                 dtm = new DataTypeManager();
-                Dlm.Entities.DataStructure.DataType dataType = dtm.Repo.Get(dataTypeId);
+                DataType dataType = dtm.Repo.Get(dataTypeId);
                 Id = dataType.Id;
                 Name = dataType.Name;
                 Description = dataType.Description;
@@ -426,15 +434,35 @@ namespace BExIS.IO.Transform.Output
             return JsonConvert.SerializeObject(new DataStructureDataTable(id));
         }
 
-        //public static string GetVariableListAsJson(long id)
-        //{
-        //    return JsonConvert.SerializeObject(new DataStructureDataList(id), Newtonsoft.Json.Formatting.Indented);
-        //}
 
         public static DataStructureDataList GetVariableList(long id)
         {
             return new DataStructureDataList(id);
         }
+
+        public static string GenerateDataStructureAsText(long datastructureId)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            using (var dataStructureManager = new DataStructureManager())
+            {
+                StructuredDataStructure dataStructure = new StructuredDataStructure();
+                dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(datastructureId);
+
+                if (dataStructure != null)
+                {
+                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => v.Label)));
+                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => v.Unit?.Name)));
+                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => v.Description)));
+                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => v.DataType?.Name)));
+                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => v.IsValueOptional? "optional" : "mandatory")));
+                    stringBuilder.AppendLine(String.Join(",", dataStructure.Variables.Select(v => v.IsKey?"primary key":"")));
+                }
+            }
+
+            return stringBuilder.ToString();
+        }
+
 
         public static string GenerateDataStructure(long datasetId)
         {

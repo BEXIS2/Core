@@ -1,4 +1,4 @@
-﻿using BExIS.Dlm.Entities.DataStructure;
+﻿using BEXIS2.Dlm.Entities.DataStructure;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.Dlm.Entities.Data
+namespace BEXIS2.Dlm.Entities.Data
 {
     /// <summary>
     ///
@@ -61,7 +61,7 @@ namespace BExIS.Dlm.Entities.Data
         {
             get
             {
-                if (this.Tuple.DatasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                if (this.Tuple.DatasetVersion.Dataset.DataStructure != null)
                 {
                     VariableInstance u = (this.Tuple.DatasetVersion.Dataset.DataStructure.Self as StructuredDataStructure).Variables
                         .Where(p => p.Id.Equals(this.VariableId))

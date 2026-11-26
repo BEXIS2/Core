@@ -1,9 +1,9 @@
-﻿using BExIS.Dlm.Entities.Common;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.IO.Transform.Validation.Exceptions;
+﻿using BEXIS2.Dlm.Entities.Common;
+using BEXIS2.Dlm.Entities.MetadataStructure;
+using BEXIS2.IO.Transform.Validation.Exceptions;
 using System;
 using System.Collections.Generic;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Modules.Dcm.UI.Models.Metadata
 {

@@ -1,6 +1,6 @@
 ﻿using BExIS.Ddm.Providers.LuceneProvider.Helpers;
 using BExIS.Ddm.Providers.LuceneProvider.Indexer;
-using BExIS.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.Data;
 using BExIS.Utils.Models;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
@@ -236,6 +236,14 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
             doi.Placeholder = "doi";
             Header.Add(doi);
 
+            // create has extension
+            HeaderItem hasExt = new HeaderItem();
+            hasExt.DisplayName = "Has Extension";
+            hasExt.Name = "hasextension";
+            hasExt.DataType = "boolean";
+            hasExt.Placeholder = "hasextension";
+            Header.Add(hasExt);
+
             //DefaultHeader.Add(entity);
 
             foreach (XmlNode ade in headerItemXmlNodeList)
@@ -263,11 +271,12 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 Row r = new Row();
                 List<object> ValueList = new List<object>();
                 ValueList = new List<object>();
-                ValueList.Add(doc.Get("doc_id"));
+                ValueList.Add(Int64.Parse(doc.Get("doc_id")));
                 ValueList.Add(doc.Get("gen_entity_name"));
                 ValueList.Add(doc.Get("gen_entitytemplate"));
                 ValueList.Add(doc.Get("gen_modifieddate"));
                 ValueList.Add(doc.Get("gen_doi"));
+                ValueList.Add(doc.Get("gen_hasextension"));
 
                 // check if there are more than one entities in the result list
                 if (moreThanOneEntityFound == false && ValueList[1].ToString() != valueLastEntity && valueLastEntity != "")

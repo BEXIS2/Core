@@ -4,6 +4,9 @@ namespace BExIS.Utils.Config.Configurations
 {
     public class JwtConfiguration
     {
+        [JsonProperty("isActive")]
+        public bool IsActive { get; set; }
+
         [JsonProperty("issuerSigningKey")]
         public string IssuerSigningKey { get; set; }
 

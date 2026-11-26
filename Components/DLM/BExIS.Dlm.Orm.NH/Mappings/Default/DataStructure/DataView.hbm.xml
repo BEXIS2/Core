@@ -1,4 +1,4 @@
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BEXIS2.Dlm.Entities" namespace="BEXIS2.Dlm.Entities.DataStructure">
   <class xmlns="urn:nhibernate-mapping-2.2" name="DatasetView" table="DatasetViews" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
 
@@ -33,7 +33,7 @@
     </property>
 
     <!-- Mapping associations -->
-    <many-to-one name="Dataset" class="BExIS.Dlm.Entities.Data.Dataset" not-null="false" column="DatasetRef" /> <!-- nullable as it is also associated with the DataStructure -->
+    <many-to-one name="Dataset" class="BEXIS2.Dlm.Entities.Data.Dataset" not-null="false" column="DatasetRef" /> <!-- nullable as it is also associated with the DataStructure -->
 
     <set name="DataStructures" table="DataStructures_Views" lazy="true">
       <key column="ViewRef" />

@@ -19,10 +19,25 @@ export const getEdit = async (id) => {
 
 // get Model for Edit page
 export const getHooks = async (id) => {
-	console.log('getHooks', id);
+	//console.log('getHooks', id);
 
 	try {
 		const response = await Api.get('/dcm/edit/hooks?id=' + id);
+		//console.log(response);
+
+		return response.data;
+	} catch (error) {
+		console.error('error', error);
+		throw error;
+	}
+};
+
+// get Model for Edit page
+export const getExtensions = async (id) => {
+	console.log('getExtensions', id);
+
+	try {
+		const response = await Api.get('/dcm/edit/GetExtensions?id=' + id);
 		console.log(response);
 
 		return response.data;
@@ -80,3 +95,34 @@ export const removeFile = async (action, id, file) => {
 		throw error;
 	}
 };
+
+export const getExtensionEntityTemplateList = async (id) => {
+	try {
+		const response = await Api.get('/dcm/edit/GetExtensionEntityTemplateList?id=' + id);
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
+export const createExtensionLink = async (id, extensionId) => {
+	try {
+		const response = await Api.post('/dcm/edit/CreateExtensionLink',{ id, extensionId });
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+
+export const deleteExtension = async (extensionId) => {
+	try {
+		const response = await Api.post('/dcm/edit/DeleteExtension',{ extensionId });
+		return response.data;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+};
+

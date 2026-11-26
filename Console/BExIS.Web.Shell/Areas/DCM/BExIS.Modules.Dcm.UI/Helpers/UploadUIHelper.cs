@@ -1,4 +1,4 @@
-﻿using BExIS.IO.DataType.DisplayPattern;
+﻿using BEXIS2.IO.DataType.DisplayPattern;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;

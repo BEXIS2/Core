@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Xml;
-using Vaiona.Entities.Common;
+using BEXIS2.DB.Entities.Common;
 
-namespace BExIS.Dlm.Entities.Party
+namespace BEXIS2.Dlm.Entities.Party
 {
     public class PartyStatus : BaseEntity
     {

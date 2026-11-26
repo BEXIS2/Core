@@ -1,9 +1,9 @@
 ﻿using BExIS.App.Testing;
-using BExIS.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Entities.DataStructure;
 using BExIS.IO.Tests.Helper;
 using BExIS.IO.Tests.Helpers;
-using BExIS.IO.Transform.Input;
-using BExIS.IO.Transform.Validation.Exceptions;
+using BEXIS2.IO.Transform.Input;
+using BEXIS2.IO.Transform.Validation.Exceptions;
 using BExIS.Utils.Config;
 using Moq;
 using NUnit.Framework;
@@ -12,7 +12,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
+using BEXIS2.IO;
 
 namespace BExIS.IO.Tests.Transform.Input
 {
@@ -120,6 +121,29 @@ namespace BExIS.IO.Tests.Transform.Input
             Assert.That(values.Count, Is.EqualTo(expectedOutcome.Count));
             Assert.That(values, Is.EquivalentTo(expectedOutcome));
         }
+
+        [Test]
+        public void rowToList_RowAsOneVariablewithQuotesAndSeperatorInQuotes_ReturnExpectedListOfStrings()
+        {
+            //Arrange
+            string row = "V1,V2,'V3,V4'";
+            List<string> expectedOutcome = new List<string> { "V1", "V2", "V3,V4" };
+
+            AsciiFileReaderInfo info = new AsciiFileReaderInfo();
+            info.Seperator = TextSeperator.comma;
+
+            AsciiReader reader = new AsciiReader(new StructuredDataStructure(), info);
+
+            //Act
+
+            List<string> values = reader.rowToList(row,
+                AsciiFileReaderInfo.GetSeperator(TextSeperator.comma));
+
+            //Assert
+            Assert.That(values.Count, Is.EqualTo(expectedOutcome.Count));
+            Assert.That(values, Is.EquivalentTo(expectedOutcome));
+        }
+
 
         [Test]
         public void ValidateRow_runNotValid_LimitErrors()

@@ -1,14 +1,9 @@
-﻿using BExIS.Dlm.Entities.Party;
-using BExIS.Dlm.Services.Party;
+﻿using BEXIS2.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Xml;
-using System.Xml.Linq;
-using Vaiona.Logging;
-using Vaiona.Utils.Cfg;
+using BEXIS2.App.Logging;
+using BEXIS2.Utils.Cfg;
 
 namespace BExIS.Modules.Smm.UI.Helpers
 {
@@ -16,12 +11,35 @@ namespace BExIS.Modules.Smm.UI.Helpers
     {
         public void GenerateSeedData()
         {
+            FeatureManager featureManager = new FeatureManager();
+            OperationManager operationManager = new OperationManager();
 
+            try
+            {
+                #region SECURITY
+
+                Feature speciesMatchingFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Species Matching"));
+                if (speciesMatchingFeature == null) speciesMatchingFeature = featureManager.Create("Species Matching", "Species matching and taxonomic validation");
+
+                operationManager.Create("SMM", "Home", "*");
+                operationManager.Create("SMM", "Species", "*", speciesMatchingFeature);
+                operationManager.Create("SMM", "DatasetsOverview", "*", speciesMatchingFeature);
+                operationManager.Create("SMM", "Headermapping", "*", speciesMatchingFeature);
+                operationManager.Create("SMM", "Matchingresult", "*", speciesMatchingFeature);
+                operationManager.Create("SMM", "ProgressOverview", "*", speciesMatchingFeature);
+                operationManager.Create("SMM", "TailorView", "*", speciesMatchingFeature);
+
+                #endregion SECURITY
+            }
+            finally
+            {
+                featureManager.Dispose();
+                operationManager.Dispose();
+            }
         }
 
         public void Dispose()
         {
-            //throw new NotImplementedException();
         }
     }
 }

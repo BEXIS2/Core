@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using Vaiona.Persistence.Api;
+using BEXIS2.DB.Persistence.Api;
 
 namespace BExIS.Dim.Services.Mappings
 {
@@ -107,9 +107,9 @@ namespace BExIS.Dim.Services.Mappings
             return this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get().FirstOrDefault(le => le.ElementId.Equals(elementid) && le.Type.Equals(type));
         }
 
-        public LinkElement GetLinkElement(long elementid, string name, LinkElementType type)
+        public LinkElement GetLinkElement(long elementid, string name, LinkElementType type, string path)
         {
-            return this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get().FirstOrDefault(le => le.ElementId.Equals(elementid) && le.Name.Equals(name) && le.Type.Equals(type));
+            return this.GetUnitOfWork().GetReadOnlyRepository<LinkElement>().Get().FirstOrDefault(le => le.ElementId.Equals(elementid) && le.Name.Equals(name) && le.Type.Equals(type) && le.XPath == path);
         }
 
         public IEnumerable<LinkElement> GetLinkElements()

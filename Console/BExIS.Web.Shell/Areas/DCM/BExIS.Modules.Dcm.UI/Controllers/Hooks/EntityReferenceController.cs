@@ -1,26 +1,36 @@
-﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Objects;
+using BExIS.App.Bootstrap.Attributes;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.MetadataStructure;
+using BEXIS2.Security.Entities.Authorization;
+using BEXIS2.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.UI.Models.EntityReference;
-using BExIS.Utils.Data.Helpers;
-using BExIS.Xml.Helpers;
+using BEXIS2.UI.Models.EntityReference;
+using BEXIS2.Utils.Data.Helpers;
+using BEXIS2.Xml.Helpers;
 using NHibernate.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.SessionState;
+using BEXIS2.DB.Persistence.Api;
+using BEXIS2.UI.Models;
 using System.Web.Mvc;
-using Vaiona.Persistence.Api;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class EntityReferenceController : Controller
     {
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+
+        private readonly UserManager _userManager;
+
+        public EntityReferenceController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
 
         // GET: EntityReference
         public ActionResult Index()
@@ -59,12 +69,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 using (EntityManager entityManager = new EntityManager())
                 {
                     var entity = entityManager.Entities.Where(e => e.Name.Equals(entityName)).FirstOrDefault();
-                    return RedirectToAction("Show", "EntityReference", new { sourceId = id, sourceTypeId = entity.Id, sourceVersion = version });
+                    return RedirectToAction("Show2", "EntityReference", new { sourceId = id, sourceTypeId = entity.Id, sourceVersion = version });
                 }
             }
         }
 
-        [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Read)]
+        
         public ActionResult StartView(long id, int version)
         {
             var sourceTypeId = 0;
@@ -82,7 +92,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 using (EntityManager entityManager = new EntityManager())
                 {
                     var entity = entityManager.Entities.Where(e => e.Name.Equals(entityName)).FirstOrDefault();
-                    return RedirectToAction("Show", "EntityReference", new { sourceId = id, sourceTypeId = entity.Id, sourceVersion = version });
+                    return RedirectToAction("Show2", "EntityReference", new { sourceId = id, sourceTypeId = entity.Id, sourceVersion = version });
                 }
             }
         }
@@ -122,6 +132,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     EntityReference entityReference = helper.Convert(model);
                     entityReferenceManager.Create(entityReference);
 
+                    EntityReference entityReferenceObosite = helper.Switch(entityReference);
+                    entityReferenceManager.Create(entityReferenceObosite);
+
+
                     // if successfuly created a entity link return a json true
                     return Json(true);
                 }
@@ -143,10 +157,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public JsonResult GetTargets(long id)
         {
             EntityReferenceHelper helper = new EntityReferenceHelper();
-            List<SelectListItem> tmp = new List<SelectListItem>();
+            List<ListItem> tmp = new List<ListItem>();
 
             if (id > 0)
-                helper.GetEntities(id).OrderByDescending(s => s.Id).ForEach(e => tmp.Add(new SelectListItem() { Text = e.Id + ": " + e.Title, Value = e.Id.ToString() }));
+                helper.GetEntities(id).OrderByDescending(s => s.Id).ForEach(e => tmp.Add(new ListItem() { Text = e.Id + ": " + e.Title, Value = e.Id.ToString() }));
 
             return Json(tmp, JsonRequestBehavior.AllowGet);
         }
@@ -154,7 +168,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public JsonResult GetTargetVersions(long id, long type)
         {
             EntityReferenceHelper helper = new EntityReferenceHelper();
-            SelectList tmp = new SelectList(new List<SelectListItem>());
+            BEXIS2.UI.Models.SelectList tmp = new BEXIS2.UI.Models.SelectList();
 
             if (id > 0)
                 tmp = helper.GetEntityVersionsDesc(id, type);
@@ -170,7 +184,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
 
         [HttpPost]
-        [CustomValidateAntiForgeryToken]
         public JsonResult Delete(long id)
         {
             if (id == 0) return Json(false);
@@ -245,8 +258,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewData["Version"] = helper.CountVersions(id, type);
             // ViewData for enitity type list
             ViewData["TargetType"] = helper.GetEntityTypes();
-            ViewData["Target"] = new SelectList(new List<SelectListItem>(), "Text", "Value");
-            ViewData["TargetVersion"] = new SelectList(new List<SelectListItem>(), "Text", "Value");
+            ViewData["Target"] = new BEXIS2.UI.Models.SelectList();
+            ViewData["TargetVersion"] = new BEXIS2.UI.Models.SelectList();
             ViewData["ReferenceType"] = helper.GetReferencesTypes();
             ViewData["ReferenceTypeHelp"] = helper.GetReferencesHelpTypes();
             //"This references is saved."
@@ -293,14 +306,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private bool hasUserRights(long instanceId, long entityId, RightType rightType)
         {
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            UserManager userManager = new UserManager();
             EntityManager entityManager = new EntityManager();
 
             try
             {
                 #region security permissions and authorisations check
 
-                var user = userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
+                var user = _userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
                 if (user == null) return false;
 
                 var entity = entityManager.FindByName("Dataset");
@@ -315,8 +327,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
             finally
             {
-                entityPermissionManager.Dispose();
-                userManager.Dispose();
                 entityManager.Dispose();
             }
         }

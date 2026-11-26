@@ -1,5 +1,5 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.IO.Transform.Validation.Exceptions;
+﻿using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.IO.Transform.Validation.Exceptions;
 using System.Collections.Generic;
 using System.IO;
 using System.Web;

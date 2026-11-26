@@ -1,6 +1,6 @@
 ﻿using BExIS.Modules.Mmm.UI.Helpers;
 using System;
-using Vaiona.Logging;
+using BEXIS2.App.Logging;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace IDIV.Modules.Mmm.UI

@@ -1,7 +1,8 @@
-import { asciiFileReaderInfoType, fileInfoType } from '@bexis2/bexis2-core-ui';
-import { sortedError } from './Models';
+import type { asciiFileReaderInfoType, fileInfoType } from '@bexis2/bexis2-core-ui';
+import type { sortedError } from './Models';
 
 export interface SubmitModel {
+	deletedFiles: fileInfoType[];
 	id: number;
 	title: string;
 	isDataValid: boolean;

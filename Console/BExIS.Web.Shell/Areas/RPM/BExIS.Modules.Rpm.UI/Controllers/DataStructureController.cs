@@ -1,23 +1,19 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.Meanings;
-using BExIS.IO;
-using BExIS.IO.DataType.DisplayPattern;
-using BExIS.IO.Transform.Input;
-using BExIS.IO.Transform.Output;
+using BExIS.Dim.Helpers.GBIF;
+using BEXIS2.Dlm.Entities.DataStructure;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.Dlm.Services.Meanings;
+using BEXIS2.IO;
+using BEXIS2.IO.DataType.DisplayPattern;
+using BEXIS2.IO.Transform.Input;
+using BEXIS2.IO.Transform.Output;
 using BExIS.Modules.Rpm.UI.Helpers;
 using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Modules.Rpm.UI.Models.DataStructure;
-using BExIS.UI.Helpers;
-using BExIS.UI.Hooks;
-using BExIS.UI.Hooks.Caches;
-using BExIS.UI.Hooks.Logs;
-using BExIS.UI.Models;
-using BExIS.Utils.Models;
-using BExIS.Utils.Upload;
+using BEXIS2.UI.Helpers;
+using BEXIS2.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,12 +21,17 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using Vaiona.Utils.Cfg;
+using System.Web.SessionState;
+using System.Web.UI.HtmlControls;
+using BEXIS2.Utils.Cfg;
 using Vaiona.Web.Mvc.Data;
 using Vaiona.Web.Mvc.Modularity;
+using BExIS.Utils.Upload;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
+    
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class DataStructureController : Controller
     {
         public ActionResult Index()
@@ -131,6 +132,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             bool enforcePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("enforcePrimaryKey");
             ViewData["enforcePrimaryKey"] = enforcePrimaryKey;
 
+            bool showDarwinCoreValidation = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("showDarwinCoreValidation");
+            ViewData["showDarwinCoreValidation"] = showDarwinCoreValidation;
+
             return View("Create");
         }
 
@@ -162,6 +166,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             bool enforcePrimaryKey = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("enforcePrimaryKey");
             ViewData["enforcePrimaryKey"] = enforcePrimaryKey;
+
+            bool showDarwinCoreValidation = (bool)ModuleManager.GetModuleSettings("RPM").GetValueByKey("showDarwinCoreValidation");
+            ViewData["showDarwinCoreValidation"] = showDarwinCoreValidation;
 
             ViewData["dataExist"] = structureHelper.InUseAndDataExist(structureId);
 
@@ -219,10 +226,14 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     // get orderNo
                     int orderNo = model.Variables.IndexOf(variable) + 1;
 
-                    // list missing values
                     List<MissingValue> missingValues = new List<MissingValue>();
-                    if(variable.MissingValues.Any()) missingValues = variableHelper.ConvertTo(variable.MissingValues);
-                    else missingValues = variableHelper.ConvertTo(model.MissingValues);
+                    // if atatype is not boolean add missing values otherwhise there is no way to create a missing value
+                    if (dataType.SystemType.ToLower() != "boolean")
+                    {
+                        // list missing values
+                        if (variable.MissingValues.Any()) missingValues = variableHelper.ConvertTo(variable.MissingValues);
+                        else missingValues = variableHelper.ConvertTo(model.MissingValues);
+                    }
 
                     long varTempId = variable.Template != null ? variable.Template.Id : 0;
 
@@ -434,6 +445,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 path,
                 AsciiFileReaderInfo.GetSeperator((char)model.Delimeter),
                 AsciiFileReaderInfo.GetDecimalCharacter((char)model.Decimal),
+                AsciiFileReaderInfo.GetTextMarker((char)model.TextMarker),
                 missingValues,
                 startdataIndex + 1
                 );
@@ -533,10 +545,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         }
 
                         // variable template
-                        templates.ForEach(t => var.PossibleTemplates.Add(helper.ConvertTo(t, "detect")));
+                        templates.ForEach(t => var.PossibleTemplates.Add(t.Id));
 
                         if (var.PossibleTemplates.Any())
-                            var.Template = var.PossibleTemplates.FirstOrDefault();
+                        {
+                            var ft = var.PossibleTemplates.First();
+                            var template = templates.FirstOrDefault(t => t.Id.Equals(ft));
+                            var.Template = helper.ConvertTo(template,"detect");
+                        }
+
 
                         // set meanings,constraints and description from template
                         if (var.Template?.Id == 0) var.Template = null;
@@ -639,7 +656,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         public JsonResult CheckPrimaryKeySet(long id, long[] primaryKeys)
         {
             if (id <= 0) throw new ArgumentNullException("id");
-            if (primaryKeys == null) primaryKeys = new long[0];
+            if (primaryKeys == null || primaryKeys.Length == 0)
+                return Json(false, JsonRequestBehavior.AllowGet);
 
             UploadHelper helper = new UploadHelper();
 
@@ -790,7 +808,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 {
                     foreach (var variableTemplate in variableTemplates.Where(t => t.Approved))
                     {
-                        list.Add(_helper.ConvertTo(variableTemplate, "other"));
+                        list.Add(_helper.ConvertTo(variableTemplate, unitManager, "other"));
                     }
                 }
 
@@ -818,6 +836,15 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             return Json(list.OrderBy(l => l.Text), JsonRequestBehavior.AllowGet);
         }
 
+        [JsonNetFilter]
+        public JsonResult GetDWCRequirements()
+        {
+            GbifHelper gbifHelper = new GbifHelper();
+            var t = gbifHelper.LoadExtentionList();
+
+            return Json(t, JsonRequestBehavior.AllowGet);
+        }
+
 
         /// <summary>
         /// suggestDataTypes datatypes based on incoming file and start data row (not index)
@@ -828,7 +855,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         /// <param name="missingValues"></param>
         /// <param name="datastart">row not index!</param>
         /// <returns></returns>
-        private Dictionary<int, Type> suggestSystemTypes(string file, TextSeperator delimeter, DecimalCharacter decimalCharacter, List<string> missingValues, int datastart)
+        private Dictionary<int, Type> suggestSystemTypes(string file, TextSeperator delimeter, DecimalCharacter decimalCharacter, TextMarker textMarker, List<string> missingValues, int datastart)
         {
             var settings = ModuleManager.GetModuleSettings("Rpm");
             int min = Convert.ToInt32(settings.GetValueByKey("minToAnalyse"));
@@ -847,7 +874,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
             List<string> rows = AsciiReader.GetRandowRows(file, total, selection, datastart);
 
-            return structureAnalyser.SuggestSystemTypes(rows, delimeter, decimalCharacter, missingValues);
+            return structureAnalyser.SuggestSystemTypes(rows, textMarker, delimeter, decimalCharacter, missingValues);
         }
 
         private string getValueFromMarkedRow(List<string> rows, List<Marker> markers, string type, char delimeter, int position, char textMarker)

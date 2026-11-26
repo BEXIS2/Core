@@ -2,28 +2,43 @@
 using BExIS.Dim.Entities.Mappings;
 using BExIS.Dim.Services;
 using BExIS.Dim.Services.Mappings;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
+using BEXIS2.Dlm.Entities.Data;
+using BEXIS2.Dlm.Services.Data;
+using BEXIS2.Dlm.Services.DataStructure;
+using BEXIS2.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models.EntityTemplate;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.UI.Helpers;
-using BExIS.UI.Hooks;
-using BExIS.UI.Models;
-using BExIS.Xml.Helpers;
+using BEXIS2.UI.Helpers;
+using BEXIS2.UI.Hooks;
+using BEXIS2.UI.Models;
+using BEXIS2.Utils.Data.Helpers;
+using BEXIS2.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Web.Mvc;
+using System.Web.SessionState;
+using Telerik.Web.Mvc.Extensions;
 using Vaiona.Web.Extensions;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class EntityTemplatesController : Controller
     {
+        private readonly GroupManager _groupManager;
+        private readonly EntityTemplate2Manager _entityTemplateManager;
+
+        public EntityTemplatesController(GroupManager groupManager, EntityTemplate2Manager entityTemplate2Manager)
+        {
+            _groupManager = groupManager;
+            _entityTemplateManager = entityTemplate2Manager;
+        }
+
         // GET: EntityTemplate
         public ActionResult Index()
         {
@@ -40,15 +55,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public JsonResult Load()
         {
             List<EntityTemplateModel> entityTemplateModels = new List<EntityTemplateModel>();
-            using (var entityTemplateManager = new EntityTemplateManager())
-            {
-                foreach (var e in entityTemplateManager.Repo.Get())
-                {
-                    entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e));
-                }
+           
+            var l = _entityTemplateManager.GetAllAsync().OrderBy(e => e.Order).ToList();
 
-                return Json(entityTemplateModels, JsonRequestBehavior.AllowGet);
+            foreach (var e in l)
+            {
+                entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e));
             }
+
+            return Json(entityTemplateModels, JsonRequestBehavior.AllowGet);
+            
         }
 
         [JsonNetFilter]
@@ -57,22 +73,43 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             if (id == 0) return Json(new EntityTemplateModel(), JsonRequestBehavior.AllowGet);
 
-            using (var entityTemplateManager = new EntityTemplateManager())
+                var entityTemplate = _entityTemplateManager.Get(id);
+                return Json(EntityTemplateHelper.ConvertTo(entityTemplate), JsonRequestBehavior.AllowGet);
+        }
+
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult GetSimple(long id)
+        {
+            // return error if id is 0, because this method is used to get the entity template for a dataset and the dataset must have an entity template
+            if (id == 0) return Json(new EntityTemplateModel(), JsonRequestBehavior.AllowGet);
+
+            var entityTemplate = _entityTemplateManager.Get(id);
+            return Json(EntityTemplateHelper.ConvertToSimple(entityTemplate), JsonRequestBehavior.AllowGet);
+        }
+
+
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult GetByObject(long id)
+        {
+            if (id == 0) return Json(new EntityTemplateModel(), JsonRequestBehavior.AllowGet);
+
+            using (var datasetManager = new DatasetManager())
             {
-                var entityTemplate = entityTemplateManager.Repo.Get(id);
+                var obj = datasetManager.GetDataset(id);
+                var entityTemplate = _entityTemplateManager.Get(obj.EntityTemplate.Id);
                 return Json(EntityTemplateHelper.ConvertTo(entityTemplate), JsonRequestBehavior.AllowGet);
             }
         }
+
 
         [JsonNetFilter]
         [HttpDelete]
         public JsonResult Delete(long id)
         {
-            using (var entityTemplateManager = new EntityTemplateManager())
-            {
-                var result = entityTemplateManager.Delete(id);
-                return Json(result);
-            }
+            var result = _entityTemplateManager.Delete(id);
+            return Json(result);
         }
 
         [JsonNetFilter]
@@ -80,17 +117,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [CustomValidateAntiForgeryToken]
         public JsonResult Update(EntityTemplateModel entityTemplate)
         {
-            using (var entityTemplateManager = new EntityTemplateManager())
-            {
-                EntityTemplate result = null;
+            EntityTemplate result = null;
 
-                if (entityTemplate.Id == 0)
-                    result = entityTemplateManager.Create(EntityTemplateHelper.ConvertTo(entityTemplate));
-                else
-                    result = entityTemplateManager.Update(EntityTemplateHelper.Merge(entityTemplate));
+            if (entityTemplate.Id == 0)
+                result = _entityTemplateManager.Create(EntityTemplateHelper.ConvertTo(entityTemplate));
+            else
+                result = _entityTemplateManager.Update(EntityTemplateHelper.Merge(entityTemplate));
 
-                if (result != null) return Json(EntityTemplateHelper.ConvertTo(result));
-            }
+            if (result != null) return Json(EntityTemplateHelper.ConvertTo(result));
 
             return Json(false);
         }
@@ -190,6 +224,32 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         [JsonNetFilter]
         [HttpGet]
+        public JsonResult Extensions()
+        {
+            List<ListItem> tmp = new List<ListItem>();
+       
+            using (var entityManager = new EntityManager())
+            {
+                var extensionEntity = entityManager.EntityRepository.Get().Where(e => e.Name.Equals("Extension")).FirstOrDefault();
+
+                tmp = _entityTemplateManager.GetAllAsync().Where(t=>t.EntityType.Id.Equals(extensionEntity.Id) && t.Activated)
+
+                    .Select(e => new ListItem(e.Id, e.Name,"","")).ToList();
+            }
+
+            return Json(tmp, JsonRequestBehavior.AllowGet);
+        }
+
+        [JsonNetFilter]
+        [HttpGet]
+        public JsonResult ReferenceTypes()
+        {
+            EntityReferenceHelper helper = new EntityReferenceHelper();
+            return Json(helper.GetReferencesTypesAsKVP("extension"), JsonRequestBehavior.AllowGet);
+        }
+
+        [JsonNetFilter]
+        [HttpGet]
         public JsonResult Hooks()
         {
             HookManager hookManager = new HookManager();
@@ -214,12 +274,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public JsonResult Groups()
         {
             List<KeyValuePair<long, string>> tmp = new List<KeyValuePair<long, string>>();
-            using (var groupManager = new GroupManager())
+
+            foreach (var group in _groupManager.Roles)
             {
-                foreach (var group in groupManager.Groups)
-                {
-                    tmp.Add(new KeyValuePair<long, string>(group.Id, group.Name));
-                }
+                tmp.Add(new KeyValuePair<long, string>(group.Id, group.Name));
             }
 
             return Json(tmp, JsonRequestBehavior.AllowGet);

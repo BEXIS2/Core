@@ -5,12 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
-using Vaiona.Utils.Cfg;
+using BEXIS2.Utils.Cfg;
 
 /// <summary>
 ///
 /// </summary>
-namespace BExIS.Xml.Helpers
+namespace BEXIS2.Xml.Helpers
 {
     /// <summary>
     ///
@@ -62,24 +62,24 @@ namespace BExIS.Xml.Helpers
                 {
                     readXmlSchemaElement(element, null);
                 }
-                Debug.WriteLine("-------------------------------------------------");
-                Debug.WriteLine("-------------metadataAttributeNames--------------");
-                Debug.WriteLine("-------------------------------------------------");
+                //Debug.WriteLine("-------------------------------------------------");
+                //Debug.WriteLine("-------------metadataAttributeNames--------------");
+                //Debug.WriteLine("-------------------------------------------------");
                 if (metadataAttributeNames.Count > 0)
                 {
                     metadataAttributeNames.ForEach(p => Debug.WriteLine(p));
                 }
 
-                Debug.WriteLine("-------------metadataPackageNames--------------");
-                Debug.WriteLine("-------------------------------------------------");
+                //Debug.WriteLine("-------------metadataPackageNames--------------");
+                //Debug.WriteLine("-------------------------------------------------");
                 if (metadataPackageNames.Count > 0)
                 {
                     metadataPackageNames.ForEach(p => Debug.WriteLine(p));
                 }
-                Debug.WriteLine("-------------------------------------------------");
-                Debug.WriteLine("Packages :" + packages);
-                Debug.WriteLine("PackagesAsParents :" + metadataPackageNames.Count);
-                Debug.WriteLine("Attributes :" + metadataAttributeNames.Count);
+                //    Debug.WriteLine("-------------------------------------------------");
+                //    Debug.WriteLine("Packages :" + packages);
+                //    Debug.WriteLine("PackagesAsParents :" + metadataPackageNames.Count);
+                //    Debug.WriteLine("Attributes :" + metadataAttributeNames.Count);
             }
         }
 

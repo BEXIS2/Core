@@ -1,5 +1,5 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
-using BExIS.Dlm.Services.Meanings;
+using BEXIS2.Dlm.Services.Meanings;
 using BExIS.Utils.Route;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;

@@ -1,4 +1,4 @@
-﻿namespace BExIS.Dlm.Entities.MetadataStructure
+﻿namespace BEXIS2.Dlm.Entities.MetadataStructure
 {
     public class MetadataSimpleAttribute : MetadataAttribute
     {

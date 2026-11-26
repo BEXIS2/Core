@@ -24,7 +24,6 @@ module.exports = {
 	plugins: [
 		require('@tailwindcss/forms'),
 		require('@tailwindcss/typography'),
-		require('@tailwindcss/line-clamp'),
 		skeleton({
 			themes: {
 				// Register each theme within this array:

@@ -8,7 +8,7 @@ namespace BExIS.Modules.Mmm.UI.Helpers
 {
     public class SystemMetadataHelper
     {
-        public XmlDocument SetSystemValuesToMetadata(long datasetid, long version, long metadataStructureId, XmlDocument metadata, params Key[] systemKeyList)
+        public XmlDocument SetSystemValuesToMetadata(long datasetid, long version, double tag, long metadataStructureId, XmlDocument metadata, params Key[] systemKeyList)
         {
             foreach (var t in systemKeyList)
             {
@@ -30,6 +30,12 @@ namespace BExIS.Modules.Mmm.UI.Helpers
                                 case Key.Version:
                                     {
                                         metadata = setValue(mapping.Target.XPath, version.ToString(), metadata); break;
+                                    }
+                                case Key.Tag:
+                                    {
+                                        if(tag > 0)
+                                            metadata = setValue(mapping.Target.XPath, tag.ToString(), metadata); 
+                                        break;
                                     }
                                 case Key.DateOfVersion:
                                     {
