@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.10.12306.391 oobstable
+VisualStudioVersion = 18.10.12306.391
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Console", "Console", "{A24A6801-2ECC-4F47-8284-8C93277D3030}"
 EndProject
@@ -1529,7 +1529,6 @@ Global
 		{ED1A8E2C-B0F4-4878-82C9-1B496710BC12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED1A8E2C-B0F4-4878-82C9-1B496710BC12}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ED1A8E2C-B0F4-4878-82C9-1B496710BC12}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{ED1A8E2C-B0F4-4878-82C9-1B496710BC12}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{ED1A8E2C-B0F4-4878-82C9-1B496710BC12}.Release|x86.ActiveCfg = Release|Any CPU
 		{ED1A8E2C-B0F4-4878-82C9-1B496710BC12}.Release|x86.Build.0 = Release|Any CPU
 		{ED1A8E2C-B0F4-4878-82C9-1B496710BC12}.TestServerRelease|Any CPU.ActiveCfg = Release|Any CPU
@@ -1640,8 +1639,8 @@ Global
 		{ED1A8E2C-B0F4-4878-82C9-1B496710BC12} = {A24A6801-2ECC-4F47-8284-8C93277D3030}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {9B6E4921-8EBA-487D-A098-3E473A0EAC64}
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
+		SolutionGuid = {9B6E4921-8EBA-487D-A098-3E473A0EAC64}
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
